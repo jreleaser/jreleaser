@@ -1,0 +1,16 @@
+.gradle/
+*.iml
+*.ipr
+*.iws
+.idea/
+build/
+out/
+target/
+.classpath
+.project
+samples/
+userHome/
+tmp/
+.gen-changelog.sh
+.DS_Store
+.tmp
