@@ -1,0 +1,15 @@
+= JReleaser
+:linkattrs:
+:project-owner:   kordamp
+:project-repo:    maven
+:project-name:    jreleaser
+:project-group:   org.kordamp.jreleaser
+:project-version: 0.1.0
+
+image:https://github.com/{project-owner}/{project-name}/workflows/Build/badge.svg["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
+image:https://api.bintray.com/packages/{project-owner}/{project-repo}/{project-name}/images/download.svg[link="https://bintray.com/{project-owner}/{project-repo}/{project-name}/_latestVersion"]
+image:https://img.shields.io/maven-central/v/{project-group}/{project-name}-core.svg[Download, link="https://search.maven.org/#search|ga|1|{project-name}"]
+
+---
+
+Release Java projects quickly and easily with JReleaser!
