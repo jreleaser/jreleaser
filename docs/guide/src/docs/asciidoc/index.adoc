@@ -1,0 +1,23 @@
+ifndef::imagesdir[]
+:imagesdir: ../resources/images
+endif::[]
+ifndef::includedir[]
+:includedir: .
+endif::[]
+= {project-title}
+:author: {project-author}
+:revnumber: {project-version}
+:toclevels: 4
+:docinfo1:
+
+include::{includedir}/_links.adoc[]
+
+:leveloffset: 1
+include::{includedir}/introduction.adoc[]
+include::{includedir}/usage.adoc[]
+
+= Links
+
+link:api/index.html[Javadoc, window="_blank"]
+
+link:api-html/index.html[Source, window="_blank"]

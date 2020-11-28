@@ -1,0 +1,83 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2020 Andres Almiray.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        jcenter()
+        mavenLocal()
+    }
+    dependencies {
+        classpath "gradle.plugin.org.beryx:badass-jar:$beryxJarPluginVersion"
+        classpath "org.ajoberstar:gradle-git-publish:$gitPluginVersion"
+        classpath "org.kordamp.gradle:java-project-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:bintray-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:guide-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:plugin-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:kordamp-parentbuild:$kordampBuildVersion"
+        classpath "org.ow2.asm:asm:$asmVersion"
+        classpath "org.ow2.asm:asm-commons:$asmVersion"
+        classpath "org.ow2.asm:asm-analysis:$asmVersion"
+        classpath "org.ow2.asm:asm-tree:$asmVersion"
+    }
+}
+apply plugin: 'org.kordamp.gradle.kordamp-parentbuild'
+
+rootProject.name = 'jreleaser'
+
+projects {
+    directories = ['apps', 'docs', 'core', 'sdks', 'plugins']
+
+    plugins {
+        all {
+            id 'idea'
+        }
+        path(':') {
+            id 'org.kordamp.gradle.java-project'
+            id 'org.kordamp.gradle.bintray'
+        }
+        path(':guide') {
+            id 'org.kordamp.gradle.guide'
+            id 'org.ajoberstar.git-publish'
+        }
+        dirs(['apps', 'core', 'sdks', 'plugins']) {
+            id 'java-library'
+            id 'org.beryx.jar'
+        }
+    }
+}
+
+enforce {
+    mergeStrategy = 'append'
+
+    rule(enforcer.rules.ForceDependencies) { r ->
+        r.dependencies.addAll "org.apache.maven:maven-artifact:$mavenVersion",
+            "org.codehaus.plexus:plexus-utils:$plexusVersion",
+            "org.codehaus.plexus:plexus-component-annotations:1.7.1",
+            "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
+            "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion",
+            "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
+            "org.hamcrest:hamcrest-core:$hamcrestVersion",
+            "org.slf4j:slf4j-api:$slf4jVersion",
+            "org.apache.commons:commons-lang3:3.8.1",
+            "org.opentest4j:opentest4j:1.2.0",
+            "jakarta.activation:jakarta.activation-api:1.2.2",
+            "org.yaml:snakeyaml:$snakeYamlVersion",
+            "info.picocli:picocli:$picocliVersion"
+    }
+}

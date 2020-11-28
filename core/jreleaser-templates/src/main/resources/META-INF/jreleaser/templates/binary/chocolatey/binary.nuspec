@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Do not remove this test for UTF-8: if “Ω” doesn’t appear as greek uppercase omega letter enclosed in quotation marks, you should use an editor that supports UTF-8, not this one. -->
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <!-- required -->
+    <id>{{distributionName}}</id>
+    <version>{{projectVersion}}</version>
+    <authors>{{projectAuthorsByComma}}</authors>
+    <description>{{projectLongDescription}}</description>
+    <!-- optional -->
+    <title>{{projectName}}</title>
+    <projectUrl>{{projectWebsite}}</projectUrl>
+    <license type="expression">{{projectLicense}}</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>{{distributionTagsBySpace}}</tags>
+    <summary>{{projectDescription}}</summary>
+    <releaseNotes>{{distributionReleaseNotes}}</releaseNotes>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
