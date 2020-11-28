@@ -39,3 +39,13 @@ jobs:
         with:
            name: reports-${{ runner.os }}
            path: build/
+      - name: 'Release early-access artifacts'
+        if: github.ref == 'refs/heads/main' && ${{ matrix.os }} == 'ubuntu-latest'
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          automatic_release_tag: 'early-access'
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          title: "JReleaser Early-Access"
+          files: |
+            apps/jreleaser-tool-provider/build/libs/*.jar
