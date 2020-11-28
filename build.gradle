@@ -78,14 +78,6 @@ subprojects {
             c.targetCompatibility = JavaVersion.VERSION_1_8
         }
 
-        if (project.projectDir.parentFile.name != 'plugins' &&
-                project.name != 'jreleaser-tool-provider') {
-            jar {
-                multiRelease = true
-                moduleInfoPath = 'src/main/module/module-info.java'
-            }
-        }
-
         license {
             exclude('build/**')
             exclude('**/*.tpl')

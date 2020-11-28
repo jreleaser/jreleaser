@@ -22,7 +22,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath "gradle.plugin.org.beryx:badass-jar:$beryxJarPluginVersion"
+        classpath "com.github.jengelman.gradle.plugins:shadow:$shadowPluginVersion"
         classpath "org.ajoberstar:gradle-git-publish:$gitPluginVersion"
         classpath "org.kordamp.gradle:java-project-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordampPluginVersion"
@@ -57,7 +57,6 @@ projects {
         }
         dirs(['apps', 'core', 'sdks', 'plugins']) {
             id 'java-library'
-            id 'org.beryx.jar'
         }
     }
 }

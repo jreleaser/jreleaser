@@ -16,9 +16,52 @@
  * limitations under the License.
  */
 
-dependencies {
-    api project(':jreleaser')
+plugins {
+    id 'com.github.johnrengelman.shadow'
+    id 'application'
 }
+
+mainClassName = 'org.kordamp.jreleaser.tool.JReleaser'
+
+configurations {
+    uberjar
+}
+
+dependencies {
+    uberjar project(':jreleaser')
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.uberjar
+        runtimeClasspath += compileClasspath
+    }
+}
+
+idea {
+    module {
+        scopes.PROVIDED.plus += [configurations.uberjar]
+    }
+}
+
+shadowJar {
+    configurations    = [project.configurations.uberjar]
+    archiveBaseName   = project.name
+    archiveClassifier = ''
+    exclude 'META-INF/maven/**'
+    exclude 'META-INF/plexus/**'
+    exclude 'META-INF/m2e/**'
+    exclude 'plugin.xml'
+}
+
+task relocateShadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation) {
+    target = tasks.shadowJar
+    prefix = 'jreleaser.shadow'
+}
+
+tasks.shadowJar.dependsOn tasks.relocateShadowJar
+
+jar.finalizedBy shadowJar
 
 tasks.withType(JavaCompile) { JavaCompile c ->
     c.sourceCompatibility = JavaVersion.VERSION_1_9
@@ -30,4 +73,3 @@ java {
         languageVersion = JavaLanguageVersion.of(9)
     }
 }
-

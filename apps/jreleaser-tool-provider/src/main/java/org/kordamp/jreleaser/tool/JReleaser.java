@@ -15,15 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kordamp.jreleaser.tool;
 
-module org.kordamp.jreleaser.config.yaml {
-    exports org.kordamp.jreleaser.config.yaml;
-    requires org.kordamp.jreleaser.config;
-    requires org.kordamp.jreleaser.model;
-    requires org.yaml.snakeyaml;
-    requires static org.kordamp.jipsy;
-    requires static org.kordamp.jipsy.annotations;
+import org.kordamp.jreleaser.app.Main;
 
-    provides org.kordamp.jreleaser.config.JReleaserConfigParser
-        with org.kordamp.jreleaser.config.yaml.YamlJReleaserConfigParser;
+import java.io.PrintWriter;
+import java.util.spi.ToolProvider;
+
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+public class JReleaser implements ToolProvider {
+    public String name() {
+        return "jreleaser";
+    }
+
+    public int run(PrintWriter out, PrintWriter err, String... args) {
+        return Main.run(out, err, args);
+    }
+
+    public static void main(String[] args) {
+        Main.run(new PrintWriter(System.out), new PrintWriter(System.err), args);
+    }
 }
