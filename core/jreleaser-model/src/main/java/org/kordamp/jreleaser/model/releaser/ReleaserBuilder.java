@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Andres Almiray.
+ * Copyright 2020-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package org.kordamp.jreleaser.model.releaser;
 
 import org.kordamp.jreleaser.model.JReleaserModel;
 
+import java.nio.file.Path;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -26,5 +28,5 @@ import org.kordamp.jreleaser.model.JReleaserModel;
 public interface ReleaserBuilder<R extends Releaser> {
     R build();
 
-    R buildFromModel(JReleaserModel model);
+    R buildFromModel(Path basedir, JReleaserModel model);
 }

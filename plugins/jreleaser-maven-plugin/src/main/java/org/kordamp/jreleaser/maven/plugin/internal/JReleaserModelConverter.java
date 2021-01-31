@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Andres Almiray.
+ * Copyright 2020-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,13 @@ package org.kordamp.jreleaser.maven.plugin.internal;
 
 import org.kordamp.jreleaser.maven.plugin.Artifact;
 import org.kordamp.jreleaser.maven.plugin.Brew;
+import org.kordamp.jreleaser.maven.plugin.Changelog;
 import org.kordamp.jreleaser.maven.plugin.Chocolatey;
 import org.kordamp.jreleaser.maven.plugin.Distribution;
+import org.kordamp.jreleaser.maven.plugin.GitService;
+import org.kordamp.jreleaser.maven.plugin.Gitea;
+import org.kordamp.jreleaser.maven.plugin.Github;
+import org.kordamp.jreleaser.maven.plugin.Gitlab;
 import org.kordamp.jreleaser.maven.plugin.Jreleaser;
 import org.kordamp.jreleaser.maven.plugin.Packagers;
 import org.kordamp.jreleaser.maven.plugin.Plug;
@@ -71,24 +76,63 @@ public final class JReleaserModelConverter {
 
     private static org.kordamp.jreleaser.model.Release convertRelease(Release release) {
         org.kordamp.jreleaser.model.Release r = new org.kordamp.jreleaser.model.Release();
-        if (null != release.getRepoType()) r.setRepoType(release.getRepoType().name());
-        r.setRepoOwner(release.getRepoOwner());
-        r.setRepoName(release.getReleaseNotesUrlFormat());
-        r.setDownloadUrlFormat(release.getDownloadUrlFormat());
-        r.setReleaseNotesUrlFormat(release.getReleaseNotesUrlFormat());
-        r.setLatestReleaseUrlFormat(release.getLatestReleaseUrlFormat());
-        r.setIssueTrackerUrlFormat(release.getIssueTrackerUrlFormat());
-        r.setAuthorization(release.getAuthorization());
-        r.setTagName(release.getTagName());
-        r.setTargetCommitish(release.getTargetCommitish());
-        r.setReleaseName(release.getReleaseName());
-        r.setBody(release.getBody());
-        r.setDraft(release.isDraft());
-        r.setPrerelease(release.isPrerelease());
-        r.setOverwrite(release.isOverwrite());
-        r.setAllowUploadToExisting(release.isAllowUploadToExisting());
-        r.setApiEndpoint(release.getApiEndpoint());
+        if (release.isEnabledSet()) r.setEnabled(release.isEnabled());
+        r.setGithub(convertGithub(release.getGithub()));
+        r.setGitlab(convertGitlab(release.getGitlab()));
+        r.setGitea(convertGitea(release.getGitea()));
         return r;
+    }
+
+    private static org.kordamp.jreleaser.model.Github convertGithub(Github github) {
+        if (null == github) return null;
+        org.kordamp.jreleaser.model.Github g = new org.kordamp.jreleaser.model.Github();
+        convertGitService(github, g);
+        g.setTargetCommitish(github.getTargetCommitish());
+        g.setDraft(github.isDraft());
+        g.setPrerelease(github.isPrerelease());
+        return g;
+    }
+
+    private static org.kordamp.jreleaser.model.Gitlab convertGitlab(Gitlab gitlab) {
+        if (null == gitlab) return null;
+        org.kordamp.jreleaser.model.Gitlab g = new org.kordamp.jreleaser.model.Gitlab();
+        convertGitService(gitlab, g);
+        g.setRef(gitlab.getRef());
+        return g;
+    }
+
+    private static org.kordamp.jreleaser.model.Gitea convertGitea(Gitea gitea) {
+        if (null == gitea) return null;
+        org.kordamp.jreleaser.model.Gitea g = new org.kordamp.jreleaser.model.Gitea();
+        convertGitService(gitea, g);
+        g.setTargetCommitish(gitea.getTargetCommitish());
+        g.setDraft(gitea.isDraft());
+        g.setPrerelease(gitea.isPrerelease());
+        return g;
+    }
+
+    private static void convertGitService(GitService service, org.kordamp.jreleaser.model.GitService s) {
+        s.setRepoOwner(service.getRepoOwner());
+        s.setRepoName(service.getReleaseNotesUrlFormat());
+        s.setDownloadUrlFormat(service.getDownloadUrlFormat());
+        s.setReleaseNotesUrlFormat(service.getReleaseNotesUrlFormat());
+        s.setLatestReleaseUrlFormat(service.getLatestReleaseUrlFormat());
+        s.setIssueTrackerUrlFormat(service.getIssueTrackerUrlFormat());
+        s.setAuthorization(service.getAuthorization());
+        s.setTagName(service.getTagName());
+        s.setReleaseName(service.getReleaseName());
+        s.setOverwrite(service.isOverwrite());
+        s.setAllowUploadToExisting(service.isAllowUploadToExisting());
+        s.setApiEndpoint(service.getApiEndpoint());
+        s.setChangelog(convertChangelog(service.getChangelog()));
+    }
+
+    private static org.kordamp.jreleaser.model.Changelog convertChangelog(Changelog changelog) {
+        org.kordamp.jreleaser.model.Changelog c = new org.kordamp.jreleaser.model.Changelog();
+        c.setEnabled(changelog.isEnabled());
+        c.setSort(changelog.getSort().name());
+        c.setExternal(changelog.getExternal());
+        return c;
     }
 
     private static org.kordamp.jreleaser.model.Packagers convertPackagers(Packagers packagers) {

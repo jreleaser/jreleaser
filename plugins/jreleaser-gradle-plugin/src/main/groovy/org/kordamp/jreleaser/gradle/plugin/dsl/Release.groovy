@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Andres Almiray.
+ * Copyright 2020-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package org.kordamp.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.provider.Property
 
 /**
@@ -27,41 +28,17 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Release {
-    Property<org.kordamp.jreleaser.model.Release.RepoType> getRepoType()
+    Property<Boolean> getEnabled()
 
-    Property<String> getRepoHost()
+    Github getGithub()
 
-    Property<String> getRepoOwner()
+    Gitlab getGitlab()
 
-    Property<String> getRepoName()
+    Gitea getGitea()
 
-    Property<String> getDownloadUrlFormat()
+    void github(Action<? super Github> action)
 
-    Property<String> getReleaseNotesUrlFormat()
+    void gitlab(Action<? super Gitlab> action)
 
-    Property<String> getLatestReleaseUrlFormat()
-
-    Property<String> getIssueTrackerUrlFormat()
-
-    void setRepoType(String repoType)
-
-    Property<String> getAuthorization()
-
-    Property<String> getTagName()
-
-    Property<String> getTargetCommitish()
-
-    Property<String> getReleaseName()
-
-    Property<String> getBody()
-
-    Property<String> getApiEndpoint()
-
-    Property<Boolean> getDraft()
-
-    Property<Boolean> getPrerelease()
-
-    Property<Boolean> getOverwrite()
-
-    Property<Boolean> getAllowUploadToExisting()
+    void gitea(Action<? super Gitea> action)
 }

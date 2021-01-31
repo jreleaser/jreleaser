@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Andres Almiray.
+ * Copyright 2020-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,12 @@
 package org.kordamp.jreleaser.sdk.github;
 
 import org.kohsuke.github.GHRelease;
+import org.kordamp.jreleaser.model.Changelog;
 import org.kordamp.jreleaser.model.JReleaserModel;
 import org.kordamp.jreleaser.model.releaser.ReleaseException;
 import org.kordamp.jreleaser.model.releaser.Releaser;
 import org.kordamp.jreleaser.model.releaser.ReleaserBuilder;
+import org.kordamp.jreleaser.sdk.git.ChangelogProvider;
 import org.kordamp.jreleaser.util.Logger;
 
 import java.io.IOException;
@@ -39,12 +41,13 @@ import static org.kordamp.jreleaser.util.StringUtils.requireNonBlank;
  */
 public class GithubReleaser implements Releaser {
     private final Logger logger;
+    private final Path basedir;
     private final String repo;
     private final String authorization;
     private final String tagName;
     private final String targetCommitish;
     private final String releaseName;
-    private final String body;
+    private final Changelog changelog;
     private final boolean draft;
     private final boolean prerelease;
     private final boolean overwrite;
@@ -52,17 +55,18 @@ public class GithubReleaser implements Releaser {
     private final String apiEndpoint;
     private final List<Path> assets = new ArrayList<>();
 
-    public GithubReleaser(Logger logger, String repo, String authorization,
+    public GithubReleaser(Path basedir, Logger logger, String repo, String authorization,
                           String tagName, String targetCommitish, String releaseName,
-                          String body, boolean draft, boolean prerelease, boolean overwrite,
+                          Changelog changelog, boolean draft, boolean prerelease, boolean overwrite,
                           boolean allowUploadToExisting, String apiEndpoint, List<Path> assets) {
+        this.basedir = basedir;
         this.logger = logger;
         this.repo = repo;
         this.authorization = authorization;
         this.tagName = tagName;
         this.targetCommitish = targetCommitish;
         this.releaseName = releaseName;
-        this.body = body;
+        this.changelog = changelog;
         this.draft = draft;
         this.prerelease = prerelease;
         this.overwrite = overwrite;
@@ -100,7 +104,7 @@ public class GithubReleaser implements Releaser {
             .name(releaseName)
             .draft(draft)
             .prerelease(prerelease)
-            .body(body)
+            .body(ChangelogProvider.getChangelog(basedir, changelog))
             .create();
         api.uploadAssets(release, assets);
     }
@@ -111,18 +115,24 @@ public class GithubReleaser implements Releaser {
 
     public static class Builder implements ReleaserBuilder<GithubReleaser> {
         private final List<Path> assets = new ArrayList<>();
+        private Path basedir;
         private Logger logger;
         private String repo;
         private String authorization;
         private String tagName;
         private String targetCommitish = "main";
         private String releaseName;
-        private String body = "";
+        private Changelog changelog;
         private boolean draft;
         private boolean prerelease;
         private boolean overwrite;
         private boolean allowUploadToExisting;
         private String apiEndpoint = Github.ENDPOINT;
+
+        public Builder basedir(Path basedir) {
+            this.basedir = requireNonNull(basedir, "'basedir' must not be null");
+            return this;
+        }
 
         public Builder logger(Logger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be null");
@@ -154,8 +164,8 @@ public class GithubReleaser implements Releaser {
             return this;
         }
 
-        public Builder body(String body) {
-            this.body = body;
+        public Builder changelog(Changelog changelog) {
+            this.changelog = changelog;
             return this;
         }
 
@@ -193,6 +203,7 @@ public class GithubReleaser implements Releaser {
 
         @Override
         public GithubReleaser build() {
+            requireNonNull(basedir, "'basedir' must not be null");
             requireNonNull(logger, "'logger' must not be null");
             requireNonBlank(repo, "'repo' must not be blank");
             requireNonBlank(authorization, "'authorization' must not be blank");
@@ -203,25 +214,26 @@ public class GithubReleaser implements Releaser {
                 throw new IllegalArgumentException("'assets must not be empty");
             }
 
-            return new GithubReleaser(logger, repo, authorization,
+            return new GithubReleaser(basedir, logger, repo, authorization,
                 tagName, targetCommitish, releaseName,
-                body, draft, prerelease, overwrite,
+                changelog, draft, prerelease, overwrite,
                 allowUploadToExisting, apiEndpoint, assets);
         }
 
         @Override
-        public GithubReleaser buildFromModel(JReleaserModel model) {
-            repo(model.getRelease().getRepoName());
-            authorization(model.getRelease().getAuthorization());
-            tagName(model.getRelease().getTagName());
-            targetCommitish(model.getRelease().getTargetCommitish());
-            releaseName(model.getRelease().getRepoName());
-            body(model.getRelease().getBody());
-            draft(model.getRelease().isDraft());
-            prerelease(model.getRelease().isPrerelease());
-            overwrite(model.getRelease().isOverwrite());
-            allowUploadToExisting(model.getRelease().isAllowUploadToExisting());
-            apiEndpoint(model.getRelease().getApiEndpoint());
+        public GithubReleaser buildFromModel(Path basedir, JReleaserModel model) {
+            basedir(basedir);
+            repo(model.getRelease().getGithub().getRepoName());
+            authorization(model.getRelease().getGithub().getAuthorization());
+            tagName(model.getRelease().getGithub().getTagName());
+            targetCommitish(model.getRelease().getGithub().getTargetCommitish());
+            releaseName(model.getRelease().getGithub().getRepoName());
+            draft(model.getRelease().getGithub().isDraft());
+            prerelease(model.getRelease().getGithub().isPrerelease());
+            overwrite(model.getRelease().getGithub().isOverwrite());
+            allowUploadToExisting(model.getRelease().getGithub().isAllowUploadToExisting());
+            apiEndpoint(model.getRelease().getGithub().getApiEndpoint());
+            changelog(model.getRelease().getGithub().getChangelog());
             return build();
         }
     }

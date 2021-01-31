@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Andres Almiray.
+ * Copyright 2020-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Internal
 import org.kordamp.jreleaser.gradle.plugin.dsl.Snap
 import org.kordamp.jreleaser.model.Plug
 import org.kordamp.jreleaser.model.Slot
@@ -89,6 +90,7 @@ class SnapImpl extends AbstractTool implements Snap {
     }
 
     @Override
+    @Internal
     boolean isSet() {
         return super.isSet() ||
             base.present ||

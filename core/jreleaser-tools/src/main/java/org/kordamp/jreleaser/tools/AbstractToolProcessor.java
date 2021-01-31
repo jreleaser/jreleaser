@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Andres Almiray.
+ * Copyright 2020-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,9 +182,9 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     protected void fillReleaseProperties(Map<String, Object> context, Release release) {
-        context.put(Constants.KEY_REPO_HOST, release.getRepoHost());
-        context.put(Constants.KEY_REPO_OWNER, release.getRepoOwner());
-        context.put(Constants.KEY_REPO_NAME, release.getRepoName());
+        context.put(Constants.KEY_REPO_HOST, release.getGitService().getRepoHost());
+        context.put(Constants.KEY_REPO_OWNER, release.getGitService().getRepoOwner());
+        context.put(Constants.KEY_REPO_NAME, release.getGitService().getRepoName());
     }
 
     protected void fillDistributionProperties(Map<String, Object> context, Distribution distribution, Release release) {
@@ -192,9 +192,9 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         context.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, distribution.getExecutable());
         context.put(Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", distribution.getTags()));
         context.put(Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", distribution.getTags()));
-        context.put(Constants.KEY_DISTRIBUTION_RELEASE_NOTES, applyTemplate(new StringReader(release.getReleaseNotesUrlFormat()), context));
-        context.put(Constants.KEY_DISTRIBUTION_ISSUE_TRACKER, applyTemplate(new StringReader(release.getIssueTrackerUrlFormat()), context));
-        context.put(Constants.KEY_DISTRIBUTION_LATEST_RELEASE, applyTemplate(new StringReader(release.getLatestReleaseUrlFormat()), context));
+        context.put(Constants.KEY_DISTRIBUTION_RELEASE_NOTES, applyTemplate(new StringReader(release.getGitService().getReleaseNotesUrlFormat()), context));
+        context.put(Constants.KEY_DISTRIBUTION_ISSUE_TRACKER, applyTemplate(new StringReader(release.getGitService().getIssueTrackerUrlFormat()), context));
+        context.put(Constants.KEY_DISTRIBUTION_LATEST_RELEASE, applyTemplate(new StringReader(release.getGitService().getLatestReleaseUrlFormat()), context));
         context.putAll(distribution.getExtraProperties());
     }
 
@@ -247,7 +247,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             context.put("artifact" + classifier + "Hash", artifact.getHash());
             Map<String, Object> newContext = new LinkedHashMap<>(context);
             newContext.put("artifactFileName", artifactFileName);
-            String artifactUrl = applyTemplate(new StringReader(model.getRelease().getDownloadUrlFormat()), newContext, "downloadUrl");
+            String artifactUrl = applyTemplate(new StringReader(model.getRelease().getGitService().getDownloadUrlFormat()), newContext, "downloadUrl");
             context.put("artifact" + classifier + "Url", artifactUrl);
 
             if (0 == i) {

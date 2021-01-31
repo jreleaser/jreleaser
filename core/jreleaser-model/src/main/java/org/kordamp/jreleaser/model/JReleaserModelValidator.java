@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Andres Almiray.
+ * Copyright 2020-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,46 +80,75 @@ public final class JReleaserModelValidator {
     }
 
     private static void validateRelease(Logger logger, Path basedir, Project project, Release release, List<String> errors) {
-        if (isBlank(release.getRepoOwner())) {
-            errors.add("release.repoOwner must not be blank");
+        int count = 0;
+        count += validateGithub(logger, basedir, project, release.getGithub(), errors);
+        count += validateGitlab(logger, basedir, project, release.getGitlab(), errors);
+        count += validateGitea(logger, basedir, project, release.getGitea(), errors);
+
+        if (0 == count) {
+            errors.add("One of release.github, release.gitlab, release.gitea must be defined");
+            return;
         }
-        if (isBlank(release.getRepoName())) {
-            release.setRepoName(project.getName());
+        if (count > 1) {
+            errors.add("Only one of release.github, release.gitlab, release.gitea can be defined");
         }
-        if (null == release.getRepoType()) {
-            release.setRepoType(Release.RepoType.GITHUB);
+    }
+
+    private static void validateGitService(Logger logger, Path basedir, Project project, GitService service, List<String> errors) {
+        if (isBlank(service.getRepoOwner())) {
+            errors.add("service.repoOwner must not be blank");
+        }
+        if (isBlank(service.getRepoName())) {
+            service.setRepoName(project.getName());
         }
 
-        if (isBlank(release.getRepoHost())) {
-            release.setRepoHost(release.getRepoType().repoHost());
-        }
-        if (isBlank(release.getDownloadUrlFormat())) {
-            release.setDownloadUrlFormat(release.getRepoType().downloadUrlFormat());
-        }
-        if (isBlank(release.getReleaseNotesUrlFormat())) {
-            release.setReleaseNotesUrlFormat(release.getRepoType().releaseNotesUrlFormat());
-        }
-        if (isBlank(release.getLatestReleaseUrlFormat())) {
-            release.setLatestReleaseUrlFormat(release.getRepoType().latestReleaseUrlFormat());
-        }
-        if (isBlank(release.getIssueTrackerUrlFormat())) {
-            release.setIssueTrackerUrlFormat(release.getRepoType().issueTrackerUrlFormat());
-        }
-
-        if (isBlank(release.getAuthorization())) {
-            String tokenName = release.getRepoType().name() + "_TOKEN";
-            logger.warn("release.auhorization is not explicitly defined. Checking environment for {}", tokenName);
+        if (isBlank(service.getAuthorization())) {
+            String tokenName = service.getClass().getSimpleName().toUpperCase() + "_TOKEN";
+            logger.warn("service.auhorization is not explicitly defined. Checking environment for {}", tokenName);
             if (isBlank(System.getenv(tokenName))) {
-                errors.add("release.authorization must not be blank. Alternatively define a " + tokenName + " environment variable.");
+                errors.add("service.authorization must not be blank. Alternatively define a " + tokenName + " environment variable.");
             }
             return;
         }
-        if (isBlank(release.getTagName())) {
-            release.setTagName("v" + project.getVersion());
+        if (isBlank(service.getTagName())) {
+            service.setTagName("v" + project.getVersion());
         }
-        if (isBlank(release.getTargetCommitish())) {
-            release.setTargetCommitish("main");
+    }
+
+    private static int validateGithub(Logger logger, Path basedir, Project project, Github github, List<String> errors) {
+        if (null == github) return 0;
+
+        validateGitService(logger, basedir, project, github, errors);
+
+        if (isBlank(github.getTargetCommitish())) {
+            github.setTargetCommitish("main");
         }
+
+        return 1;
+    }
+
+    private static int validateGitlab(Logger logger, Path basedir, Project project, Gitlab gitlab, List<String> errors) {
+        if (null == gitlab) return 0;
+
+        validateGitService(logger, basedir, project, gitlab, errors);
+
+        if (isBlank(gitlab.getRef())) {
+            gitlab.setRef("main");
+        }
+
+        return 1;
+    }
+
+    private static int validateGitea(Logger logger, Path basedir, Project project, Gitea gitea, List<String> errors) {
+        if (null == gitea) return 0;
+
+        validateGitService(logger, basedir, project, gitea, errors);
+
+        if (isBlank(gitea.getTargetCommitish())) {
+            gitea.setTargetCommitish("main");
+        }
+
+        return 1;
     }
 
     private static void validateDistributions(Logger logger, Path basedir, JReleaserModel model, Map<String, Distribution> distributions, List<String> errors) {
@@ -246,13 +275,13 @@ public final class JReleaserModelValidator {
         if (isBlank(tool.getCheckverUrl())) {
             tool.setCheckverUrl(commonScoop.getCheckverUrl());
             if (isBlank(tool.getCheckverUrl())) {
-                tool.setCheckverUrl(model.getRelease().getLatestReleaseUrlFormat());
+                tool.setCheckverUrl(model.getRelease().getGitService().getLatestReleaseUrlFormat());
             }
         }
         if (isBlank(tool.getAutoupdateUrl())) {
             tool.setAutoupdateUrl(commonScoop.getAutoupdateUrl());
             if (isBlank(tool.getAutoupdateUrl())) {
-                tool.setAutoupdateUrl(model.getRelease().getDownloadUrlFormat());
+                tool.setAutoupdateUrl(model.getRelease().getGitService().getDownloadUrlFormat());
             }
         }
     }

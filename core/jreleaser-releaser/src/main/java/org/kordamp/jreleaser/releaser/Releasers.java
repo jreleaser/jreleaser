@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Andres Almiray.
+ * Copyright 2020-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,15 @@ import org.kordamp.jreleaser.util.Logger;
  */
 public class Releasers {
     public static <RB extends ReleaserBuilder> RB findReleaser(Logger logger, JReleaserModel model) {
-        switch (model.getRelease().getRepoType()) {
-            case GITHUB:
-                return (RB) GithubReleaser.builder();
-            default:
-                throw new IllegalArgumentException("Unsupported releaser " + model.getRelease().getRepoType());
+        if (null != model.getRelease().getGithub()) {
+            return (RB) GithubReleaser.builder();
         }
+        // if(null != model.getRelease().getGitlab()) {
+        //     return (RB) GitlabReleaser.builder();
+        // }
+        // if(null != model.getRelease().getGitea()) {
+        //     return (RB) GiteaReleaser.builder();
+        // }
+        throw new IllegalArgumentException("No suitable git releaser has been configured");
     }
 }

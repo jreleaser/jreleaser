@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Andres Almiray.
+ * Copyright 2020-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Internal
 import org.kordamp.jreleaser.gradle.plugin.dsl.Scoop
 
 import javax.inject.Inject
@@ -48,6 +49,7 @@ class ScoopImpl extends AbstractTool implements Scoop {
     protected String toolName() { 'scoop' }
 
     @Override
+    @Internal
     boolean isSet() {
         return super.isSet() ||
                 checkverUrl.present ||

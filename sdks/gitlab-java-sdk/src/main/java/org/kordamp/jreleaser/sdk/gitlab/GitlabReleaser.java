@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Andres Almiray.
+ * Copyright 2020-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package org.kordamp.jreleaser.sdk.gitlab;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.Release;
 import org.gitlab4j.api.models.ReleaseParams;
+import org.kordamp.jreleaser.model.Changelog;
 import org.kordamp.jreleaser.model.JReleaserModel;
 import org.kordamp.jreleaser.model.releaser.ReleaseException;
 import org.kordamp.jreleaser.model.releaser.Releaser;
@@ -40,29 +41,31 @@ import static org.kordamp.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class GitlabReleaser implements Releaser {
+    private final Path basedir;
     private final Logger logger;
     private final String repo;
     private final String authorization;
     private final String tagName;
     private final String ref;
-    private final String body;
+    private final Changelog changelog;
     private final String releaseName;
     private final boolean overwrite;
     private final boolean allowUploadToExisting;
     private final String apiEndpoint;
     private final List<Path> assets = new ArrayList<>();
 
-    public GitlabReleaser(Logger logger, String repo, String authorization,
+    public GitlabReleaser(Path basedir, Logger logger, String repo, String authorization,
                           String tagName, String ref, String releaseName,
-                          String body, boolean overwrite,
+                          Changelog changelog, boolean overwrite,
                           boolean allowUploadToExisting, String apiEndpoint, List<Path> assets) {
+        this.basedir = basedir;
         this.logger = logger;
         this.repo = repo;
         this.authorization = authorization;
         this.tagName = tagName;
         this.ref = ref;
         this.releaseName = releaseName;
-        this.body = body;
+        this.changelog = changelog;
         this.overwrite = overwrite;
         this.allowUploadToExisting = allowUploadToExisting;
         this.apiEndpoint = apiEndpoint;
@@ -107,16 +110,22 @@ public class GitlabReleaser implements Releaser {
 
     public static class Builder implements ReleaserBuilder<GitlabReleaser> {
         private final List<Path> assets = new ArrayList<>();
+        private Path basedir;
         private Logger logger;
         private String repo;
         private String authorization;
         private String tagName;
         private String ref = "main";
         private String releaseName;
-        private String body = "";
+        private Changelog changelog;
         private boolean overwrite;
         private boolean allowUploadToExisting;
         private String apiEndpoint = Gitlab.ENDPOINT;
+
+        public Builder basedir(Path basedir) {
+            this.basedir = requireNonNull(basedir, "'basedir' must not be null");
+            return this;
+        }
 
         public Builder logger(Logger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be null");
@@ -148,8 +157,8 @@ public class GitlabReleaser implements Releaser {
             return this;
         }
 
-        public Builder body(String body) {
-            this.body = body;
+        public Builder changelog(Changelog changelog) {
+            this.changelog = changelog;
             return this;
         }
 
@@ -177,6 +186,7 @@ public class GitlabReleaser implements Releaser {
 
         @Override
         public GitlabReleaser build() {
+            requireNonNull(basedir, "'basedir' must not be null");
             requireNonNull(logger, "'logger' must not be null");
             requireNonBlank(repo, "'repo' must not be blank");
             requireNonBlank(authorization, "'authorization' must not be blank");
@@ -187,23 +197,24 @@ public class GitlabReleaser implements Releaser {
                 throw new IllegalArgumentException("'assets must not be empty");
             }
 
-            return new GitlabReleaser(logger, repo, authorization,
+            return new GitlabReleaser(basedir, logger, repo, authorization,
                 tagName, ref, releaseName,
-                body, overwrite,
+                changelog, overwrite,
                 allowUploadToExisting, apiEndpoint, assets);
         }
 
         @Override
-        public GitlabReleaser buildFromModel(JReleaserModel model) {
-            repo(model.getRelease().getRepoName());
-            authorization(model.getRelease().getAuthorization());
-            tagName(model.getRelease().getTagName());
-            ref(model.getRelease().getTargetCommitish());
-            releaseName(model.getRelease().getRepoName());
-            body(model.getRelease().getBody());
-            overwrite(model.getRelease().isOverwrite());
-            allowUploadToExisting(model.getRelease().isAllowUploadToExisting());
-            apiEndpoint(model.getRelease().getApiEndpoint());
+        public GitlabReleaser buildFromModel(Path basedir, JReleaserModel model) {
+            basedir(basedir);
+            repo(model.getRelease().getGitlab().getRepoName());
+            authorization(model.getRelease().getGitlab().getAuthorization());
+            tagName(model.getRelease().getGitlab().getTagName());
+            ref(model.getRelease().getGitlab().getRef());
+            releaseName(model.getRelease().getGitlab().getRepoName());
+            overwrite(model.getRelease().getGitlab().isOverwrite());
+            allowUploadToExisting(model.getRelease().getGitlab().isAllowUploadToExisting());
+            apiEndpoint(model.getRelease().getGitlab().getApiEndpoint());
+            changelog(model.getRelease().getGitlab().getChangelog());
             return build();
         }
     }

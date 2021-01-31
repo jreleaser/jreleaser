@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020 Andres Almiray.
+ * Copyright 2020-2021 Andres Almiray.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ final class ProcessorUtils {
             context.put("artifact" + classifier + "Hash", artifact.getHash());
             Map<String, Object> newContext = new LinkedHashMap<>(context);
             newContext.put("artifactFileName", artifactFileName);
-            String artifactUrl = applyTemplate(new StringReader(model.getRelease().getDownloadUrlFormat()), newContext, "downloadUrl");
+            String artifactUrl = applyTemplate(new StringReader(model.getRelease().getGitService().getDownloadUrlFormat()), newContext, "downloadUrl");
             context.put("artifact" + classifier + "Url", artifactUrl);
 
             if (0 == i) {
