@@ -20,7 +20,7 @@ plugins {
     id 'application'
 }
 
-mainClassName = 'org.kordamp.jreleaser.tool.JReleaser'
+mainClassName = 'org.jreleaser.tool.JReleaser'
 
 config {
     docs {

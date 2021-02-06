@@ -37,7 +37,7 @@ dependencies {
     runtimeOnly "org.slf4j:slf4j-simple:$slf4jVersion"
 }
 
-mainClassName = 'org.kordamp.jreleaser.app.Main'
+mainClassName = 'org.jreleaser.app.Main'
 
 processResources {
     inputs.property('version', project.version)
