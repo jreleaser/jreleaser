@@ -36,6 +36,9 @@ configurations {
 
 dependencies {
     uberjar project(':jreleaser')
+
+    compileOnly "org.kordamp.jipsy:jipsy:${jipsyVersion}"
+    annotationProcessor "org.kordamp.jipsy:jipsy:${jipsyVersion}"
 }
 
 sourceSets {

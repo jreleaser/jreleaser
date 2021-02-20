@@ -18,6 +18,7 @@
 package org.jreleaser.tool;
 
 import org.jreleaser.app.Main;
+import org.kordamp.jipsy.ServiceProviderFor;
 
 import java.io.PrintWriter;
 import java.util.spi.ToolProvider;
@@ -26,6 +27,7 @@ import java.util.spi.ToolProvider;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@ServiceProviderFor(ToolProvider.class)
 public class JReleaser implements ToolProvider {
     public String name() {
         return "jreleaser";
@@ -36,6 +38,14 @@ public class JReleaser implements ToolProvider {
     }
 
     public static void main(String[] args) {
-        Main.run(new PrintWriter(System.out), new PrintWriter(System.err), args);
+        PrintWriter out = new PrintWriter(System.out);
+        PrintWriter err = new PrintWriter(System.err);
+
+        try {
+            Main.run(out, err, args);
+        } finally {
+            out.flush();
+            err.flush();
+        }
     }
 }

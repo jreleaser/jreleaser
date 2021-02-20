@@ -412,7 +412,7 @@ public class StringUtils {
      * blank.
      */
     public static boolean isNotBlank(String str) {
-        return ((boolean) (!isBlank(str)));
+        return !isBlank(str);
     }
 
     /**
