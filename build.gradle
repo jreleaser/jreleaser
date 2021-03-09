@@ -46,7 +46,7 @@ config {
 allprojects {
     repositories {
         gradlePluginPortal()
-        jcenter()
+        mavenCentral()
         mavenLocal()
     }
 

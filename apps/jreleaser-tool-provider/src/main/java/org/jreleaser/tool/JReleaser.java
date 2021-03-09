@@ -18,7 +18,7 @@
 package org.jreleaser.tool;
 
 import org.jreleaser.app.Main;
-import org.kordamp.jipsy.ServiceProviderFor;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 import java.io.PrintWriter;
 import java.util.spi.ToolProvider;

@@ -17,7 +17,7 @@
  */
 package org.jreleaser.config.yaml;
 
-import org.kordamp.jipsy.ServiceProviderFor;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.JReleaserModel;

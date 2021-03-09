@@ -19,6 +19,6 @@ dependencies {
     api project(':jreleaser-config')
     api "org.yaml:snakeyaml:$snakeYamlVersion"
 
-    compileOnly "org.kordamp.jipsy:jipsy:${jipsyVersion}"
-    annotationProcessor "org.kordamp.jipsy:jipsy:${jipsyVersion}"
+    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
+    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
 }
