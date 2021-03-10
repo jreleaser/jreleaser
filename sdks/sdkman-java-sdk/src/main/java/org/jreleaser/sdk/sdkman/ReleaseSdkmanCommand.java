@@ -17,83 +17,33 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.jreleaser.sdk.sdkman.ApiEndpoints.RELEASE_ENDPOINT;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class ReleaseSdkmanCommand extends AbstractMultiSdkmanCommand {
-    private final String url;
+public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
     private final Map<String, String> platforms = new LinkedHashMap<>();
 
-    private ReleaseSdkmanCommand(String consumerKey,
+    private ReleaseSdkmanCommand(String apiHost,
+                                 String consumerKey,
                                  String consumerToken,
                                  String candidate,
                                  String version,
-                                 String apiHost,
-                                 boolean https,
-                                 String url,
                                  Map<String, String> platforms) {
-        super(consumerKey,
-            consumerToken,
-            candidate,
-            version,
-            apiHost,
-            https);
-        this.url = url;
+        super(apiHost, consumerKey, consumerToken, candidate, version);
         this.platforms.putAll(platforms);
     }
 
     @Override
-    protected Map<String, String> getPayload() {
-        Map<String, String> payload = super.getPayload();
-        payload.put("platform", "UNIVERSAL");
-        payload.put("url", url);
-        return payload;
-    }
-
-    @Override
-    protected Response executeRequests() throws IOException {
-        if (platforms.isEmpty()) {
-            return execCall(createRequest(getPayload()));
-        }
-
-        List<Response> responses = new ArrayList<>();
-        for (Map.Entry<String, String> platform : platforms.entrySet()) {
-            Map<String, String> payload = super.getPayload();
-            payload.put("platform", platform.getKey());
-            payload.put("url", platform.getValue());
-            responses.add(execCall(createRequest(payload)));
-        }
-
-        return responses.stream()
-            .filter(resp -> {
-                int statusCode = resp.code();
-                return statusCode < 200 || statusCode >= 300;
-            })
-            .findFirst()
-            .orElse(responses.get(responses.size() - 1));
-    }
-
-    private Request createRequest(Map<String, String> payload) {
-        RequestBody body = RequestBody.create(JSON, toJson(payload));
-        return new Request.Builder()
-            .url(createURL(RELEASE_ENDPOINT))
-            .post(body)
-            .build();
+    public void execute() throws SdkmanException {
+        sdkman.release(candidate, version, platforms);
     }
 
     public static Builder builder() {
@@ -141,25 +91,26 @@ public class ReleaseSdkmanCommand extends AbstractMultiSdkmanCommand {
         }
 
         public ReleaseSdkmanCommand build() {
+            requireNonBlank(apiHost, "'apiHost' must not be blank");
             requireNonBlank(consumerKey, "'consumerKey' must not be blank");
             requireNonBlank(consumerToken, "'consumerToken' must not be blank");
             requireNonBlank(candidate, "'candidate' must not be blank");
             requireNonBlank(version, "'version' must not be blank");
-            requireNonBlank(apiHost, "'apiHost' must not be blank");
 
             // url is required if platforms is empty
             if ((platforms.isEmpty()) && isBlank(url)) {
                 throw new IllegalArgumentException("Missing url");
             }
+            if (isNotBlank(url)) {
+                platforms.put("UNIVERSAL", url);
+            }
 
             return new ReleaseSdkmanCommand(
+                apiHost,
                 consumerKey,
                 consumerToken,
                 candidate,
                 version,
-                apiHost,
-                https,
-                url,
                 platforms);
         }
     }

@@ -17,55 +17,31 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import okhttp3.Request;
-import okhttp3.RequestBody;
-
-import java.util.Map;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class AnnounceSdkmanCommand extends AbstractSingleSdkmanCommand {
+public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
     private final String hashtag;
     private final String releaseNotesUrl;
 
-    private AnnounceSdkmanCommand(String consumerKey,
+    private AnnounceSdkmanCommand(String apiHost,
+                                  String consumerKey,
                                   String consumerToken,
                                   String candidate,
                                   String version,
-                                  String apiHost,
-                                  boolean https,
                                   String hashtag,
                                   String releaseNotesUrl) {
-        super(consumerKey,
-            consumerToken,
-            candidate,
-            version,
-            apiHost,
-            https);
+        super(apiHost, consumerKey, consumerToken, candidate, version);
         this.hashtag = hashtag;
         this.releaseNotesUrl = releaseNotesUrl;
     }
 
     @Override
-    protected Map<String, String> getPayload() {
-        Map<String, String> payload = super.getPayload();
-        if (isNotBlank(hashtag)) payload.put("hashtag", hashtag.trim());
-        if (isNotBlank(releaseNotesUrl)) payload.put("url", releaseNotesUrl.trim());
-        return payload;
-    }
-
-    @Override
-    protected Request createRequest(Map<String, String> payload) {
-        RequestBody body = RequestBody.create(JSON, toJson(payload));
-        return new Request.Builder()
-            .url(createURL(ApiEndpoints.ANNOUNCE_ENDPOINT))
-            .post(body)
-            .build();
+    public void execute() throws SdkmanException {
+        sdkman.announce(candidate, version, hashtag, releaseNotesUrl);
     }
 
     public static Builder builder() {
@@ -93,19 +69,18 @@ public class AnnounceSdkmanCommand extends AbstractSingleSdkmanCommand {
         }
 
         public AnnounceSdkmanCommand build() {
+            requireNonBlank(apiHost, "'apiHost' must not be blank");
             requireNonBlank(consumerKey, "'consumerKey' must not be blank");
             requireNonBlank(consumerToken, "'consumerToken' must not be blank");
             requireNonBlank(candidate, "'candidate' must not be blank");
             requireNonBlank(version, "'version' must not be blank");
-            requireNonBlank(apiHost, "'apiHost' must not be blank");
 
             return new AnnounceSdkmanCommand(
+                apiHost,
                 consumerKey,
                 consumerToken,
                 candidate,
                 version,
-                apiHost,
-                https,
                 hashtag,
                 releaseNotesUrl);
         }

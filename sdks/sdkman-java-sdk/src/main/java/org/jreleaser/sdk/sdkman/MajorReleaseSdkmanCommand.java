@@ -17,19 +17,9 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.jreleaser.sdk.sdkman.ApiEndpoints.ANNOUNCE_ENDPOINT;
-import static org.jreleaser.sdk.sdkman.ApiEndpoints.DEFAULT_ENDPOINT;
-import static org.jreleaser.sdk.sdkman.ApiEndpoints.RELEASE_ENDPOINT;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -38,94 +28,28 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class MajorReleaseSdkmanCommand extends AbstractMultiSdkmanCommand {
+public class MajorReleaseSdkmanCommand extends AbstractSdkmanCommand {
     private final String hashtag;
     private final String releaseNotesUrl;
-    private final String url;
     private final Map<String, String> platforms = new LinkedHashMap<>();
 
-    private MajorReleaseSdkmanCommand(String consumerKey,
+    private MajorReleaseSdkmanCommand(String apiHost,
+                                      String consumerKey,
                                       String consumerToken,
                                       String candidate,
                                       String version,
-                                      String apiHost,
-                                      boolean https,
                                       String hashtag,
                                       String releaseNotesUrl,
-                                      String url,
                                       Map<String, String> platforms) {
-        super(consumerKey,
-            consumerToken,
-            candidate,
-            version,
-            apiHost,
-            https);
+        super(apiHost, consumerKey, consumerToken, candidate, version);
         this.hashtag = hashtag;
         this.releaseNotesUrl = releaseNotesUrl;
-        this.url = url;
         this.platforms.putAll(platforms);
     }
 
     @Override
-    protected Response executeRequests() throws IOException {
-        List<Response> responses = new ArrayList<>();
-
-        if (platforms.isEmpty()) {
-            responses.add(execCall(createRequest(getReleasePayload())));
-        } else {
-            for (Map.Entry<String, String> platform : platforms.entrySet()) {
-                Map<String, String> payload = super.getPayload();
-                payload.put("platform", platform.getKey());
-                payload.put("url", platform.getValue());
-                responses.add(execCall(createRequest(payload)));
-            }
-        }
-
-        responses.add(execCall(createAnnounceRequest()));
-        responses.add(execCall(createDefaultRequest()));
-
-        return responses.stream()
-            .filter(resp -> {
-                int statusCode = resp.code();
-                return statusCode < 200 || statusCode >= 300;
-            })
-            .findFirst()
-            .orElse(responses.get(responses.size() - 1));
-    }
-
-    private Map<String, String> getReleasePayload() {
-        Map<String, String> payload = super.getPayload();
-        payload.put("platform", "UNIVERSAL");
-        payload.put("url", url);
-        return payload;
-    }
-
-    private Request createRequest(Map<String, String> payload) {
-        RequestBody body = RequestBody.create(JSON, toJson(payload));
-        return new Request.Builder()
-            .url(createURL(RELEASE_ENDPOINT))
-            .post(body)
-            .build();
-    }
-
-    private Request createAnnounceRequest() {
-        Map<String, String> payload = super.getPayload();
-        if (isNotBlank(hashtag)) payload.put("hashtag", hashtag.trim());
-        if (isNotBlank(releaseNotesUrl)) payload.put("url", releaseNotesUrl.trim());
-
-        RequestBody body = RequestBody.create(JSON, toJson(payload));
-        return new Request.Builder()
-            .url(createURL(ANNOUNCE_ENDPOINT))
-            .post(body)
-            .build();
-    }
-
-    private Request createDefaultRequest() {
-        RequestBody body = RequestBody.create(JSON, toJson(super.getPayload()));
-        return new Request.Builder()
-            .url(createURL(DEFAULT_ENDPOINT))
-            .put(body)
-            .build();
+    public void execute() throws SdkmanException {
+        sdkman.majorRelease(candidate, version, platforms, hashtag, releaseNotesUrl);
     }
 
     public static Builder builder() {
@@ -191,27 +115,28 @@ public class MajorReleaseSdkmanCommand extends AbstractMultiSdkmanCommand {
         }
 
         public MajorReleaseSdkmanCommand build() {
+            requireNonBlank(apiHost, "'apiHost' must not be blank");
             requireNonBlank(consumerKey, "'consumerKey' must not be blank");
             requireNonBlank(consumerToken, "'consumerToken' must not be blank");
             requireNonBlank(candidate, "'candidate' must not be blank");
             requireNonBlank(version, "'version' must not be blank");
-            requireNonBlank(apiHost, "'apiHost' must not be blank");
 
             // url is required if platforms is empty
             if ((platforms.isEmpty()) && isBlank(url)) {
                 throw new IllegalArgumentException("Missing url");
             }
+            if (isNotBlank(url)) {
+                platforms.put("UNIVERSAL", url);
+            }
 
             return new MajorReleaseSdkmanCommand(
+                apiHost,
                 consumerKey,
                 consumerToken,
                 candidate,
                 version,
-                apiHost,
-                https,
                 hashtag,
                 releaseNotesUrl,
-                url,
                 platforms);
         }
     }

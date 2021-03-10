@@ -16,5 +16,5 @@
  * limitations under the License.
  */
 dependencies {
-    api('kr.motd.maven:os-maven-plugin:1.6.2') { transitive = false }
+    api('kr.motd.maven:os-maven-plugin:1.7.0') { transitive = false }
 }

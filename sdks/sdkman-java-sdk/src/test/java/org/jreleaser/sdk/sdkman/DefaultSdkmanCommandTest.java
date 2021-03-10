@@ -41,41 +41,39 @@ public class DefaultSdkmanCommandTest {
     public void testStructuredAnnouncement() throws SdkmanException {
         // given:
         stubFor(put(urlEqualTo(ApiEndpoints.DEFAULT_ENDPOINT))
-                .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
+            .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
 
         DefaultSdkmanCommand command = DefaultSdkmanCommand.builder()
-                .apiHost(api.baseUrl())
-                .consumerKey("CONSUMER_KEY")
-                .consumerToken("CONSUMER_TOKEN")
-                .candidate("jreleaser")
-                .version("1.0.0")
-                .https(false)
-                .build();
+            .apiHost(api.baseUrl())
+            .consumerKey("CONSUMER_KEY")
+            .consumerToken("CONSUMER_TOKEN")
+            .candidate("jreleaser")
+            .version("1.0.0")
+            .build();
 
         // when:
         command.execute();
 
         // then:
         Stubs.verifyPut(ApiEndpoints.DEFAULT_ENDPOINT, "{\n" +
-                "   \"candidate\": \"jreleaser\",\n" +
-                "   \"version\": \"1.0.0\"\n" +
-                "}");
+            "   \"candidate\": \"jreleaser\",\n" +
+            "   \"version\": \"1.0.0\"\n" +
+            "}");
     }
 
     @Test
     public void testError() {
         // given:
         stubFor(post(urlEqualTo(ApiEndpoints.DEFAULT_ENDPOINT))
-                .willReturn(aResponse().withStatus(400)));
+            .willReturn(aResponse().withStatus(400)));
 
         DefaultSdkmanCommand command = DefaultSdkmanCommand.builder()
-                .apiHost(api.baseUrl())
-                .consumerKey("CONSUMER_KEY")
-                .consumerToken("CONSUMER_TOKEN")
-                .candidate("jreleaser")
-                .version("1.0.0")
-                .https(false)
-                .build();
+            .apiHost(api.baseUrl())
+            .consumerKey("CONSUMER_KEY")
+            .consumerToken("CONSUMER_TOKEN")
+            .candidate("jreleaser")
+            .version("1.0.0")
+            .build();
 
         // expected:
         assertThrows(SdkmanException.class, command::execute);

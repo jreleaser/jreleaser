@@ -18,9 +18,10 @@
 dependencies {
     api project(':jreleaser-utils')
 
+    api "io.github.openfeign:feign-core:$feignVersion"
+    api "io.github.openfeign:feign-jackson:$feignVersion"
     api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    api "com.squareup.okhttp3:okhttp:$okhttpVersion"
 
     testImplementation "com.github.tomakehurst:wiremock-jre8:$wiremockVersion"
 }

@@ -17,21 +17,6 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -39,82 +24,18 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 abstract class AbstractSdkmanCommand implements SdkmanCommand {
-    protected static final MediaType JSON = MediaType.get("application/json; charset=UTF-8");
-
-    protected final String consumerKey;
-    protected final String consumerToken;
     protected final String candidate;
     protected final String version;
-    protected final String apiHost;
-    protected final boolean https;
+    protected final Sdkman sdkman;
 
-    protected AbstractSdkmanCommand(String consumerKey,
+    protected AbstractSdkmanCommand(String apiHost,
+                                    String consumerKey,
                                     String consumerToken,
                                     String candidate,
-                                    String version,
-                                    String apiHost,
-                                    boolean https) {
-        this.consumerKey = consumerKey;
-        this.consumerToken = consumerToken;
+                                    String version) {
+        this.sdkman = new Sdkman(apiHost, consumerKey, consumerToken);
         this.candidate = candidate;
         this.version = version;
-        this.apiHost = apiHost;
-        this.https = https;
-    }
-
-    protected Map<String, String> getPayload() {
-        Map<String, String> payload = new HashMap<>();
-        payload.put("candidate", candidate);
-        payload.put("version", version);
-        return payload;
-    }
-
-    protected String toJson(Map<String, String> payload) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(payload);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Invalid JSON", e);
-        }
-    }
-
-    protected Response execCall(Request req) throws IOException {
-        req = req.newBuilder()
-            .addHeader("Consumer-Key", consumerKey)
-            .addHeader("Consumer-Token", consumerToken)
-            .addHeader("Content-Type", "application/json")
-            .addHeader("Accept", "application/json")
-            .build();
-
-        OkHttpClient client = new OkHttpClient();
-        try (Response response = client.newCall(req).execute()) {
-            return response;
-        }
-    }
-
-    protected URL createURL(String endpoint) {
-        try {
-            return createURI(endpoint).toURL();
-        } catch (MalformedURLException | URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid URL", e);
-        }
-    }
-
-    private URI createURI(String endpoint) throws URISyntaxException {
-        String host = apiHost;
-        int i = host.indexOf("://");
-        if (i > -1) {
-            host = host.substring(i + 3);
-        }
-
-        String[] parts = host.split(":");
-        if (parts.length == 1) {
-            return new URI(https ? "https" : "http", host, endpoint, null);
-        } else if (parts.length == 2) {
-            return new URI(https ? "https" : "http", null, parts[0], Integer.parseInt(parts[1]), endpoint, null, null);
-        } else {
-            throw new URISyntaxException(apiHost, "Invalid");
-        }
     }
 
     static class Builder<S extends Builder<S>> {
@@ -122,8 +43,7 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
         protected String consumerToken;
         protected String candidate;
         protected String version;
-        protected String apiHost = "vendors.sdkman.io";
-        protected boolean https = true;
+        protected String apiHost = "https://vendors.sdkman.io";
 
         protected final S self() {
             return (S) this;
@@ -166,14 +86,6 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
          */
         public S apiHost(String apiHost) {
             this.apiHost = requireNonBlank(apiHost, "'apiHost' must not be blank").trim();
-            return self();
-        }
-
-        /**
-         * Use HTTPS
-         */
-        public S https(boolean https) {
-            this.https = https;
             return self();
         }
     }

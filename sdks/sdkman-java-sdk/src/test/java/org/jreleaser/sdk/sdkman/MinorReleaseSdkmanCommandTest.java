@@ -26,9 +26,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.jreleaser.sdk.sdkman.ApiEndpoints.ANNOUNCE_ENDPOINT;
 import static org.jreleaser.sdk.sdkman.ApiEndpoints.RELEASE_ENDPOINT;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andres Almiray
@@ -42,51 +42,49 @@ public class MinorReleaseSdkmanCommandTest {
     public void testMinorReleaseWithAnnouncement() throws SdkmanException {
         // given:
         stubFor(post(urlEqualTo(RELEASE_ENDPOINT))
-                .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
+            .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
         stubFor(post(urlEqualTo(ANNOUNCE_ENDPOINT))
-                .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
+            .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
         MinorReleaseSdkmanCommand command = MinorReleaseSdkmanCommand.builder()
-                .apiHost(api.baseUrl())
-                .consumerKey("CONSUMER_KEY")
-                .consumerToken("CONSUMER_TOKEN")
-                .candidate("jreleaser")
-                .version("1.0.0")
-                .url("https://host/jreleaser-1.0.0.zip")
-                .https(false)
-                .build();
+            .apiHost(api.baseUrl())
+            .consumerKey("CONSUMER_KEY")
+            .consumerToken("CONSUMER_TOKEN")
+            .candidate("jreleaser")
+            .version("1.0.0")
+            .url("https://host/jreleaser-1.0.0.zip")
+            .build();
 
         // when:
         command.execute();
 
         // then:
         Stubs.verifyPost(RELEASE_ENDPOINT, "{\n" +
-                "   \"candidate\": \"jreleaser\",\n" +
-                "   \"version\": \"1.0.0\",\n" +
-                "   \"platform\": \"UNIVERSAL\",\n" +
-                "   \"url\": \"https://host/jreleaser-1.0.0.zip\"\n" +
-                "}");
+            "   \"candidate\": \"jreleaser\",\n" +
+            "   \"version\": \"1.0.0\",\n" +
+            "   \"platform\": \"UNIVERSAL\",\n" +
+            "   \"url\": \"https://host/jreleaser-1.0.0.zip\"\n" +
+            "}");
         Stubs.verifyPost(ANNOUNCE_ENDPOINT, "{\n" +
-                "   \"candidate\": \"jreleaser\",\n" +
-                "   \"version\": \"1.0.0\"\n" +
-                "}");
+            "   \"candidate\": \"jreleaser\",\n" +
+            "   \"version\": \"1.0.0\"\n" +
+            "}");
     }
 
     @Test
     public void testError() {
         // given:
         stubFor(post(urlEqualTo(RELEASE_ENDPOINT))
-                .willReturn(aResponse().withStatus(500)));
+            .willReturn(aResponse().withStatus(500)));
 
         MinorReleaseSdkmanCommand command = MinorReleaseSdkmanCommand.builder()
-                .apiHost(api.baseUrl())
-                .consumerKey("CONSUMER_KEY")
-                .consumerToken("CONSUMER_TOKEN")
-                .candidate("jreleaser")
-                .version("1.0.0")
-                .url("https://host/jreleaser-1.0.0.zip")
-                .https(false)
-                .build();
+            .apiHost(api.baseUrl())
+            .consumerKey("CONSUMER_KEY")
+            .consumerToken("CONSUMER_TOKEN")
+            .candidate("jreleaser")
+            .version("1.0.0")
+            .url("https://host/jreleaser-1.0.0.zip")
+            .build();
 
         // expected:
         assertThrows(SdkmanException.class, command::execute);

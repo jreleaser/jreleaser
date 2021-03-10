@@ -15,11 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-model')
-    api project(':git-sdk')
+package org.jreleaser.sdk.sdkman.api;
 
-    api "org.apache.tika:tika-core:$tikaVersion"
+import feign.RequestLine;
 
-    api 'org.gitlab4j:gitlab4j-api:4.15.7'
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+public interface SdkmanAPI {
+    @RequestLine("POST /announce/struct")
+    void announce(Announce announce);
+
+    @RequestLine("PUT /default")
+    void setDefault(Candidate candidate);
+
+    @RequestLine("POST /release")
+    void release(Release release);
 }

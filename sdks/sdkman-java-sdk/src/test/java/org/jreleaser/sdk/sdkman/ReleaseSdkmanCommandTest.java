@@ -40,115 +40,111 @@ public class ReleaseSdkmanCommandTest {
     public void testSingleUniversalRelease() throws SdkmanException {
         // given:
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
-                .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
+            .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand.builder()
-                .apiHost(api.baseUrl())
-                .consumerKey("CONSUMER_KEY")
-                .consumerToken("CONSUMER_TOKEN")
-                .candidate("jreleaser")
-                .version("1.0.0")
-                .url("https://host/jreleaser-1.0.0.zip")
-                .https(false)
-                .build();
+            .apiHost(api.baseUrl())
+            .consumerKey("CONSUMER_KEY")
+            .consumerToken("CONSUMER_TOKEN")
+            .candidate("jreleaser")
+            .version("1.0.0")
+            .url("https://host/jreleaser-1.0.0.zip")
+            .build();
 
         // when:
         command.execute();
 
         // then:
         Stubs.verifyPost(ApiEndpoints.RELEASE_ENDPOINT, "{\n" +
-                "   \"candidate\": \"jreleaser\",\n" +
-                "   \"version\": \"1.0.0\",\n" +
-                "   \"platform\": \"UNIVERSAL\",\n" +
-                "   \"url\": \"https://host/jreleaser-1.0.0.zip\"\n" +
-                "}");
+            "   \"candidate\": \"jreleaser\",\n" +
+            "   \"version\": \"1.0.0\",\n" +
+            "   \"platform\": \"UNIVERSAL\",\n" +
+            "   \"url\": \"https://host/jreleaser-1.0.0.zip\"\n" +
+            "}");
     }
 
     @Test
     public void testSinglePlatformRelease() throws SdkmanException {
         // given:
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
-                .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
+            .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand.builder()
-                .apiHost(api.baseUrl())
-                .consumerKey("CONSUMER_KEY")
-                .consumerToken("CONSUMER_TOKEN")
-                .candidate("jreleaser")
-                .version("1.0.0")
-                .platform("MAC_OSX", "https://host/jreleaser-1.0.0.zip")
-                .https(false)
-                .build();
+            .apiHost(api.baseUrl())
+            .consumerKey("CONSUMER_KEY")
+            .consumerToken("CONSUMER_TOKEN")
+            .candidate("jreleaser")
+            .version("1.0.0")
+            .platform("MAC_OSX", "https://host/jreleaser-1.0.0.zip")
+            .build();
 
         // when:
         command.execute();
 
         // then:
         Stubs.verifyPost(ApiEndpoints.RELEASE_ENDPOINT, "{\n" +
-                "   \"candidate\": \"jreleaser\",\n" +
-                "   \"version\": \"1.0.0\",\n" +
-                "   \"platform\": \"MAC_OSX\",\n" +
-                "   \"url\": \"https://host/jreleaser-1.0.0.zip\"\n" +
-                "}");
+            "   \"candidate\": \"jreleaser\",\n" +
+            "   \"version\": \"1.0.0\",\n" +
+            "   \"platform\": \"MAC_OSX\",\n" +
+            "   \"url\": \"https://host/jreleaser-1.0.0.zip\"\n" +
+            "}");
     }
 
     @Test
     public void testMultiPlatformRelease() throws SdkmanException {
         // given:
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
-                .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
+            .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand.builder()
-                .apiHost(api.baseUrl())
-                .consumerKey("CONSUMER_KEY")
-                .consumerToken("CONSUMER_TOKEN")
-                .candidate("jreleaser")
-                .version("1.0.0")
-                .platform("MAC_OSX", "https://host/jreleaser-1.0.0-mac.zip")
-                .platform("WINDOWS_64", "https://host/jreleaser-1.0.0-win.zip")
-                .platform("LINUX_64", "https://host/jreleaser-1.0.0-linux.zip")
-                .https(false)
-                .build();
+            .apiHost(api.baseUrl())
+            .consumerKey("CONSUMER_KEY")
+            .consumerToken("CONSUMER_TOKEN")
+            .candidate("jreleaser")
+            .version("1.0.0")
+            .platform("MAC_OSX", "https://host/jreleaser-1.0.0-mac.zip")
+            .platform("WINDOWS_64", "https://host/jreleaser-1.0.0-win.zip")
+            .platform("LINUX_64", "https://host/jreleaser-1.0.0-linux.zip")
+            .build();
 
         // when:
         command.execute();
 
         // then:
         Stubs.verifyPost(ApiEndpoints.RELEASE_ENDPOINT, "{\n" +
-                "   \"candidate\": \"jreleaser\",\n" +
-                "   \"version\": \"1.0.0\",\n" +
-                "   \"platform\": \"MAC_OSX\",\n" +
-                "   \"url\": \"https://host/jreleaser-1.0.0-mac.zip\"\n" +
-                "}");
+            "   \"candidate\": \"jreleaser\",\n" +
+            "   \"version\": \"1.0.0\",\n" +
+            "   \"platform\": \"MAC_OSX\",\n" +
+            "   \"url\": \"https://host/jreleaser-1.0.0-mac.zip\"\n" +
+            "}");
         Stubs.verifyPost(ApiEndpoints.RELEASE_ENDPOINT, "{\n" +
-                "   \"candidate\": \"jreleaser\",\n" +
-                "   \"version\": \"1.0.0\",\n" +
-                "   \"platform\": \"WINDOWS_64\",\n" +
-                "   \"url\": \"https://host/jreleaser-1.0.0-win.zip\"\n" +
-                "}");
+            "   \"candidate\": \"jreleaser\",\n" +
+            "   \"version\": \"1.0.0\",\n" +
+            "   \"platform\": \"WINDOWS_64\",\n" +
+            "   \"url\": \"https://host/jreleaser-1.0.0-win.zip\"\n" +
+            "}");
         Stubs.verifyPost(ApiEndpoints.RELEASE_ENDPOINT, "{\n" +
-                "   \"candidate\": \"jreleaser\",\n" +
-                "   \"version\": \"1.0.0\",\n" +
-                "   \"platform\": \"LINUX_64\",\n" +
-                "   \"url\": \"https://host/jreleaser-1.0.0-linux.zip\"\n" +
-                "}");
+            "   \"candidate\": \"jreleaser\",\n" +
+            "   \"version\": \"1.0.0\",\n" +
+            "   \"platform\": \"LINUX_64\",\n" +
+            "   \"url\": \"https://host/jreleaser-1.0.0-linux.zip\"\n" +
+            "}");
     }
 
     @Test
     public void testError() {
         // given:
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
-                .willReturn(aResponse().withStatus(500)));
+            .willReturn(aResponse().withStatus(500)));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand.builder()
-                .apiHost(api.baseUrl())
-                .consumerKey("CONSUMER_KEY")
-                .consumerToken("CONSUMER_TOKEN")
-                .candidate("jreleaser")
-                .version("1.0.0")
-                .url("https://host/jreleaser-1.0.0.zip")
-                .https(false)
-                .build();
+            .apiHost(api.baseUrl())
+            .consumerKey("CONSUMER_KEY")
+            .consumerToken("CONSUMER_TOKEN")
+            .candidate("jreleaser")
+            .version("1.0.0")
+            .url("https://host/jreleaser-1.0.0.zip")
+            .build();
 
         // expected:
         assertThrows(SdkmanException.class, command::execute);

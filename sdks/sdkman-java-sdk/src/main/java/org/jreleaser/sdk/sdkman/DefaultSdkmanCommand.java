@@ -17,35 +17,24 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import okhttp3.Request;
-import okhttp3.RequestBody;
-
-import java.util.Map;
-
-import static org.jreleaser.sdk.sdkman.ApiEndpoints.DEFAULT_ENDPOINT;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class DefaultSdkmanCommand extends AbstractSingleSdkmanCommand {
-    private DefaultSdkmanCommand(String consumerKey,
+public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
+    private DefaultSdkmanCommand(String apiHost,
+                                 String consumerKey,
                                  String consumerToken,
                                  String candidate,
-                                 String version,
-                                 String apiHost,
-                                 boolean https) {
-        super(consumerKey, consumerToken, candidate, version, apiHost, https);
+                                 String version) {
+        super(apiHost, consumerKey, consumerToken, candidate, version);
     }
 
     @Override
-    protected Request createRequest(Map<String, String> payload) {
-        RequestBody body = RequestBody.create(JSON, toJson(payload));
-        return new Request.Builder()
-            .url(createURL(DEFAULT_ENDPOINT))
-            .put(body)
-            .build();
+    public void execute() throws SdkmanException {
+        sdkman.setDefault(candidate, version);
     }
 
     public static Builder builder() {
@@ -54,19 +43,18 @@ public class DefaultSdkmanCommand extends AbstractSingleSdkmanCommand {
 
     public static class Builder extends AbstractSdkmanCommand.Builder<Builder> {
         public DefaultSdkmanCommand build() {
+            requireNonBlank(apiHost, "'apiHost' must not be blank");
             requireNonBlank(consumerKey, "'consumerKey' must not be blank");
             requireNonBlank(consumerToken, "'consumerToken' must not be blank");
             requireNonBlank(candidate, "'candidate' must not be blank");
             requireNonBlank(version, "'version' must not be blank");
-            requireNonBlank(apiHost, "'apiHost' must not be blank");
 
             return new DefaultSdkmanCommand(
+                apiHost,
                 consumerKey,
                 consumerToken,
                 candidate,
-                version,
-                apiHost,
-                https);
+                version);
         }
     }
 }

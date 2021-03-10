@@ -50,7 +50,6 @@ public class AnnounceSdkmanCommandTest {
                 .consumerToken("CONSUMER_TOKEN")
                 .candidate("jreleaser")
                 .version("1.0.0")
-                .https(false)
                 .build();
 
         // when:
@@ -75,7 +74,6 @@ public class AnnounceSdkmanCommandTest {
                 .consumerToken("CONSUMER_TOKEN")
                 .candidate("jreleaser")
                 .version("1.0.0")
-                .https(false)
                 .build();
 
         // expected:
