@@ -24,6 +24,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import org.jreleaser.gradle.plugin.internal.JReleaserExtensionImpl
+import org.jreleaser.gradle.plugin.internal.JReleaserProjectConfigurer
 
 /**
  *
@@ -42,7 +44,7 @@ class JReleaserPlugin implements Plugin<Project> {
         Provider<Directory> distributionsDirProvider = project.provider({ ->
             project.layout.projectDirectory.dir('src/distributions')
         })
-        project.extensions.create(JReleaserExtension, 'jreleaser', org.jreleaser.gradle.plugin.internal.JReleaserExtensionImpl,
+        project.extensions.create(JReleaserExtension, 'jreleaser', JReleaserExtensionImpl,
             project.objects, nameProvider, descriptionProvider, versionProvider, distributionsDirProvider)
 
         project.afterEvaluate(new Action<Project>() {
@@ -61,7 +63,7 @@ class JReleaserPlugin implements Plugin<Project> {
     }
 
     private void configureJReleaser(Project project) {
-        org.jreleaser.gradle.plugin.internal.JReleaserProjectConfigurer.configure(project)
+        JReleaserProjectConfigurer.configure(project)
     }
 
     private boolean hasKordampBasePluginApplied(Project project) {

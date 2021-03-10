@@ -113,6 +113,9 @@ public final class JReleaserModelValidator {
         if (isBlank(service.getTagName())) {
             service.setTagName("v" + project.getVersion());
         }
+        if (!service.getChangelog().isEnabledSet()) {
+            service.getChangelog().setEnabled(true);
+        }
     }
 
     private static int validateGithub(Logger logger, Path basedir, Project project, Github github, List<String> errors) {
@@ -241,6 +244,8 @@ public final class JReleaserModelValidator {
         if (!tool.isEnabledSet() && model.getPackagers().getBrew().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getBrew().isEnabled());
         }
+        if (!tool.isEnabled()) return;
+
         validateTemplate(logger, model, distribution, tool, tool.getToolName(), errors);
         adjustExtraProperties(model.getPackagers().getBrew(), tool.getToolName());
         adjustExtraProperties(tool, tool.getToolName());
@@ -256,6 +261,8 @@ public final class JReleaserModelValidator {
         if (!tool.isEnabledSet() && model.getPackagers().getChocolatey().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getChocolatey().isEnabled());
         }
+        if (!tool.isEnabled()) return;
+
         validateTemplate(logger, model, distribution, tool, tool.getToolName(), errors);
         adjustExtraProperties(model.getPackagers().getChocolatey(), tool.getToolName());
         adjustExtraProperties(tool, tool.getToolName());
@@ -266,6 +273,8 @@ public final class JReleaserModelValidator {
         if (!tool.isEnabledSet() && model.getPackagers().getScoop().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getScoop().isEnabled());
         }
+        if (!tool.isEnabled()) return;
+
         validateTemplate(logger, model, distribution, tool, tool.getToolName(), errors);
         Scoop commonScoop = model.getPackagers().getScoop();
         adjustExtraProperties(commonScoop, tool.getToolName());
@@ -290,6 +299,8 @@ public final class JReleaserModelValidator {
         if (!tool.isEnabledSet() && model.getPackagers().getSnap().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getSnap().isEnabled());
         }
+        if (!tool.isEnabled()) return;
+
         validateTemplate(logger, model, distribution, tool, tool.getToolName(), errors);
         Snap commonSnap = model.getPackagers().getSnap();
         adjustExtraProperties(commonSnap, tool.getToolName());

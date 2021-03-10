@@ -24,6 +24,7 @@ import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
+import org.jreleaser.gradle.plugin.dsl.Release
 
 /**
  *
@@ -36,7 +37,7 @@ interface JReleaserExtension {
 
     Project getProject()
 
-    org.jreleaser.gradle.plugin.dsl.Release getRelease()
+    Release getRelease()
 
     Packagers getPackagers()
 
@@ -44,7 +45,7 @@ interface JReleaserExtension {
 
     void project(Action<? super Project> action)
 
-    void release(Action<? super org.jreleaser.gradle.plugin.dsl.Release> action)
+    void release(Action<? super Release> action)
 
     void packagers(Action<? super Packagers> action)
 }

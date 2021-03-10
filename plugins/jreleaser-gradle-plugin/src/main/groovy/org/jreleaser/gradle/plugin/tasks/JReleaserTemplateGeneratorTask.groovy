@@ -92,22 +92,22 @@ abstract class JReleaserTemplateGeneratorTask extends DefaultTask {
     }
 
     @TaskAction
-    void createOutput() {
+    void generateTemplate() {
         boolean result = TemplateGenerator.builder()
-                .logger(new JReleaserLoggerAdapter(project.logger))
-                .distributionName(distributionName.get())
-                .distributionType(distributionType.get())
-                .toolName(toolName.get())
-                .outputDirectory(outputDirectory.get().asFile.toPath())
-                .overwrite(overwrite.get())
-                .build()
-                .generate()
+            .logger(new JReleaserLoggerAdapter(project.logger))
+            .distributionName(distributionName.get())
+            .distributionType(distributionType.get())
+            .toolName(toolName.get())
+            .outputDirectory(outputDirectory.get().asFile.toPath())
+            .overwrite(overwrite.get())
+            .build()
+            .generate()
 
         if (result) {
             println('Template generated at ' +
-                    outputDirectory.get().asFile.toPath()
-                            .resolve(distributionName.get())
-                            .resolve(toolName.get()))
+                outputDirectory.get().asFile.toPath()
+                    .resolve(distributionName.get())
+                    .resolve(toolName.get()))
         }
     }
 }

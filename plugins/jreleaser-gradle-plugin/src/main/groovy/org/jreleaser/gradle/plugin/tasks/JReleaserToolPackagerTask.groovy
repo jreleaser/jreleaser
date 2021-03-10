@@ -72,16 +72,16 @@ abstract class JReleaserToolPackagerTask extends DefaultTask {
     }
 
     @TaskAction
-    void createOutput() {
+    void packageTool() {
         boolean result = DistributionProcessor.builder()
-                .logger(new JReleaserLoggerAdapter(project.logger))
-                .model(jreleaserModel.get())
-                .distributionName(distributionName.get())
-                .toolName(toolName.get())
-                .checksumDirectory(checksumDirectory.get().asFile.toPath())
-                .outputDirectory(outputDirectory.get().asFile.toPath())
-                .build()
-                .packageDistribution()
+            .logger(new JReleaserLoggerAdapter(project.logger))
+            .model(jreleaserModel.get())
+            .distributionName(distributionName.get())
+            .toolName(toolName.get())
+            .checksumDirectory(checksumDirectory.get().asFile.toPath())
+            .outputDirectory(outputDirectory.get().asFile.toPath())
+            .build()
+            .packageDistribution()
 
         if (result) {
             println("Packaged ${distributionName.get()} distribution with tool ${toolName.get()}")

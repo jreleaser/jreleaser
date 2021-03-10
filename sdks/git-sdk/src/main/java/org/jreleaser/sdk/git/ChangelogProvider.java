@@ -32,9 +32,9 @@ public class ChangelogProvider {
     public static String getChangelog(Path basedir, Changelog changelog) throws IOException {
         File externalChangelog = changelog.getExternal();
 
-        if(null != externalChangelog) {
-            if(!externalChangelog.exists()) {
-                throw new IllegalStateException("Changelog "+basedir.resolve(externalChangelog.toPath())+" does not exist");
+        if (null != externalChangelog) {
+            if (!externalChangelog.exists()) {
+                throw new IllegalStateException("Changelog " + basedir.resolve(externalChangelog.toPath()) + " does not exist");
             }
 
             return new String(Files.readAllBytes(basedir.resolve(externalChangelog.toPath())));

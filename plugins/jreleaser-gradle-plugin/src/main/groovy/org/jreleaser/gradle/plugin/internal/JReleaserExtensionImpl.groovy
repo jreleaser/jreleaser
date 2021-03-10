@@ -26,10 +26,14 @@ import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Packagers
+import org.jreleaser.gradle.plugin.dsl.Project
+import org.jreleaser.gradle.plugin.dsl.Release
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
+import org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl
 import org.jreleaser.model.Distribution
 import org.jreleaser.model.JReleaserModel
 
@@ -42,10 +46,10 @@ import java.util.stream.Collectors
  * @since 0.1.0
  */
 @CompileStatic
-class JReleaserExtensionImpl implements org.jreleaser.gradle.plugin.JReleaserExtension {
+class JReleaserExtensionImpl implements JReleaserExtension {
     final Property<Boolean> enabled
     final ProjectImpl project
-    final org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl release
+    final ReleaseImpl release
     final PackagersImpl packagers
     final NamedDomainObjectContainer<DistributionImpl> distributions
 
@@ -57,7 +61,7 @@ class JReleaserExtensionImpl implements org.jreleaser.gradle.plugin.JReleaserExt
                            Provider<Directory> distributionsDirProvider) {
         enabled = objects.property(Boolean).convention(true)
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)
-        release = objects.newInstance(org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl, objects)
+        release = objects.newInstance(ReleaseImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)
         distributions = objects.domainObjectContainer(DistributionImpl, new NamedDomainObjectFactory<DistributionImpl>() {
             @Override
@@ -70,12 +74,12 @@ class JReleaserExtensionImpl implements org.jreleaser.gradle.plugin.JReleaserExt
     }
 
     @Override
-    void project(Action<? super org.jreleaser.gradle.plugin.dsl.Project> action) {
+    void project(Action<? super Project> action) {
         action.execute(project)
     }
 
     @Override
-    void release(Action<? super org.jreleaser.gradle.plugin.dsl.Release> action) {
+    void release(Action<? super Release> action) {
         action.execute(release)
     }
 

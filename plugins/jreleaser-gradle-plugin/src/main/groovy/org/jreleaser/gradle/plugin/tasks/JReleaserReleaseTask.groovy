@@ -18,12 +18,14 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.JReleaserModel
-import org.kordamp.gradle.plugin.base.tasks.AbstractSettingsTask
+import org.jreleaser.releaser.Releasers
 
 import javax.inject.Inject
 
@@ -33,18 +35,19 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserConfigTask extends AbstractSettingsTask {
+abstract class JReleaserReleaseTask extends DefaultTask {
     @Internal
     final Property<JReleaserModel> jreleaserModel
 
     @Inject
-    JReleaserConfigTask(ObjectFactory objects) {
+    JReleaserReleaseTask(ObjectFactory objects) {
         jreleaserModel = objects.property(JReleaserModel)
     }
 
     @TaskAction
-    void displayConfig() {
-        println '== JReleaser =='
-        doPrintMap(jreleaserModel.get().asMap(), 0)
+    void createRelease() {
+        Releasers.findReleaser(new JReleaserLoggerAdapter(project.logger), jreleaserModel.get())
+            .buildFromModel(project.projectDir.toPath(), jreleaserModel.get())
+            .release()
     }
 }

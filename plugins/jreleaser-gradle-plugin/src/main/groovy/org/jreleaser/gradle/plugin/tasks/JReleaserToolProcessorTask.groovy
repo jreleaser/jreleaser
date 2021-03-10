@@ -29,6 +29,7 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.JReleaserModel
 import org.jreleaser.tools.DistributionProcessor
 
@@ -71,16 +72,16 @@ abstract class JReleaserToolProcessorTask extends DefaultTask {
     }
 
     @TaskAction
-    void createOutput() {
+    void processTool() {
         boolean result = DistributionProcessor.builder()
-                .logger(new org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter(project.logger))
-                .model(jreleaserModel.get())
-                .distributionName(distributionName.get())
-                .toolName(toolName.get())
-                .checksumDirectory(checksumDirectory.get().asFile.toPath())
-                .outputDirectory(outputDirectory.get().asFile.toPath())
-                .build()
-                .prepareDistribution()
+            .logger(new JReleaserLoggerAdapter(project.logger))
+            .model(jreleaserModel.get())
+            .distributionName(distributionName.get())
+            .toolName(toolName.get())
+            .checksumDirectory(checksumDirectory.get().asFile.toPath())
+            .outputDirectory(outputDirectory.get().asFile.toPath())
+            .build()
+            .prepareDistribution()
 
         if (result) {
             println("Prepared ${distributionName.get()} distribution with tool ${toolName.get()}")

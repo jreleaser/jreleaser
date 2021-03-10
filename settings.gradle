@@ -74,6 +74,7 @@ enforce {
             "org.hamcrest:hamcrest-core:$hamcrestVersion",
             "org.slf4j:slf4j-api:$slf4jVersion",
             "org.apache.commons:commons-lang3:3.8.1",
+            "commons-io:commons-io:2.5",
             "org.opentest4j:opentest4j:1.2.0",
             "jakarta.activation:jakarta.activation-api:1.2.2",
             "org.yaml:snakeyaml:$snakeYamlVersion",
