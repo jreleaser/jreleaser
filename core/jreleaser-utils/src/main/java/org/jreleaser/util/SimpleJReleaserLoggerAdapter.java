@@ -15,27 +15,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.app.internal;
+package org.jreleaser.util;
 
-import org.jreleaser.util.Logger;
 import org.slf4j.helpers.MessageFormatter;
-import picocli.CommandLine;
 
+import java.io.OutputStream;
 import java.io.PrintWriter;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserLoggerAdapter implements Logger {
+public class SimpleJReleaserLoggerAdapter implements Logger {
     private final PrintWriter out;
     private final Level level;
 
-    public JReleaserLoggerAdapter(PrintWriter out) {
+    public SimpleJReleaserLoggerAdapter() {
+        this(System.out, Level.WARN);
+    }
+
+    public SimpleJReleaserLoggerAdapter(Level level) {
+        this(System.out, level);
+    }
+
+    public SimpleJReleaserLoggerAdapter(OutputStream out) {
+        this(new PrintWriter(out, true), Level.WARN);
+    }
+
+    public SimpleJReleaserLoggerAdapter(OutputStream out, Level level) {
+        this(new PrintWriter(out, true), level);
+    }
+
+    public SimpleJReleaserLoggerAdapter(PrintWriter out) {
         this(out, Level.WARN);
     }
 
-    public JReleaserLoggerAdapter(PrintWriter out, Level level) {
+    public SimpleJReleaserLoggerAdapter(PrintWriter out, Level level) {
         this.out = out;
         this.level = level;
     }
@@ -130,7 +145,8 @@ public class JReleaserLoggerAdapter implements Logger {
 
     private void printThrowable(Throwable throwable) {
         if (null != throwable) {
-            throwable.printStackTrace(new Colorizer(out));
+            throwable.printStackTrace(out);
+            out.flush();
         }
     }
 
@@ -139,24 +155,14 @@ public class JReleaserLoggerAdapter implements Logger {
     }
 
     public enum Level {
-        DEBUG("cyan"),
-        INFO("blue"),
-        WARN("yellow"),
-        ERROR("red");
-
-        private final String color;
-
-        Level(String color) {
-            this.color = color;
-        }
+        DEBUG,
+        INFO,
+        WARN,
+        ERROR;
 
         @Override
         public String toString() {
-            return "[" + colorize(name()) + "] ";
-        }
-
-        private String colorize(String input) {
-            return CommandLine.Help.Ansi.AUTO.string("@|" + color + " " + input + "|@");
+            return "[" + name() + "] ";
         }
     }
 }

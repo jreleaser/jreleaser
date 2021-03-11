@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
+import org.jreleaser.util.SimpleJReleaserLoggerAdapter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -42,7 +43,8 @@ public class ReleaseSdkmanCommandTest {
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
-        ReleaseSdkmanCommand command = ReleaseSdkmanCommand.builder()
+        ReleaseSdkmanCommand command = ReleaseSdkmanCommand
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")
@@ -69,7 +71,8 @@ public class ReleaseSdkmanCommandTest {
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
-        ReleaseSdkmanCommand command = ReleaseSdkmanCommand.builder()
+        ReleaseSdkmanCommand command = ReleaseSdkmanCommand
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")
@@ -96,7 +99,8 @@ public class ReleaseSdkmanCommandTest {
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
-        ReleaseSdkmanCommand command = ReleaseSdkmanCommand.builder()
+        ReleaseSdkmanCommand command = ReleaseSdkmanCommand
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")
@@ -137,7 +141,8 @@ public class ReleaseSdkmanCommandTest {
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
             .willReturn(aResponse().withStatus(500)));
 
-        ReleaseSdkmanCommand command = ReleaseSdkmanCommand.builder()
+        ReleaseSdkmanCommand command = ReleaseSdkmanCommand
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")

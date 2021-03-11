@@ -22,7 +22,7 @@ package org.jreleaser.sdk.sdkman;
  * @since 0.1.0
  */
 public class ApiEndpoints {
-   public static final String ANNOUNCE_ENDPOINT = "/announce/struct";
-   public static final String DEFAULT_ENDPOINT = "/default";
-   public static final String RELEASE_ENDPOINT = "/release";
+    public static final String ANNOUNCE_ENDPOINT = "/announce/struct";
+    public static final String DEFAULT_ENDPOINT = "/default";
+    public static final String RELEASE_ENDPOINT = "/release";
 }

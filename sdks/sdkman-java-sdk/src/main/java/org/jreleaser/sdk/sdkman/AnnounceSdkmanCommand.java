@@ -17,6 +17,8 @@
  */
 package org.jreleaser.sdk.sdkman;
 
+import org.jreleaser.util.Logger;
+
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -27,14 +29,16 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
     private final String hashtag;
     private final String releaseNotesUrl;
 
-    private AnnounceSdkmanCommand(String apiHost,
+    private AnnounceSdkmanCommand(Logger logger,
+                                  String apiHost,
                                   String consumerKey,
                                   String consumerToken,
                                   String candidate,
                                   String version,
+                                  boolean dryRun,
                                   String hashtag,
                                   String releaseNotesUrl) {
-        super(apiHost, consumerKey, consumerToken, candidate, version);
+        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryRun);
         this.hashtag = hashtag;
         this.releaseNotesUrl = releaseNotesUrl;
     }
@@ -44,13 +48,17 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
         sdkman.announce(candidate, version, hashtag, releaseNotesUrl);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(Logger logger) {
+        return new Builder(logger);
     }
 
     public static class Builder extends AbstractSdkmanCommand.Builder<Builder> {
         private String hashtag;
         private String releaseNotesUrl;
+
+        protected Builder(Logger logger) {
+            super(logger);
+        }
 
         /**
          * The hashtag to use (legacy)
@@ -76,11 +84,13 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
             requireNonBlank(version, "'version' must not be blank");
 
             return new AnnounceSdkmanCommand(
+                logger,
                 apiHost,
                 consumerKey,
                 consumerToken,
                 candidate,
                 version,
+                dryRun,
                 hashtag,
                 releaseNotesUrl);
         }

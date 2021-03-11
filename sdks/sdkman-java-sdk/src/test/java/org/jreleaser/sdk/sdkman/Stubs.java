@@ -37,9 +37,9 @@ class Stubs {
 
     private static void verifyRequest(RequestPatternBuilder builder, String json) {
         verify(builder.withHeader("Content-Type", equalTo("application/json"))
-                .withHeader("Accept", equalTo("application/json"))
-                .withHeader("Consumer-Key", equalTo("CONSUMER_KEY"))
-                .withHeader("Consumer-Token", equalTo("CONSUMER_TOKEN"))
-                .withRequestBody(equalToJson(json)));
+            .withHeader("Accept", equalTo("application/json"))
+            .withHeader("Consumer-Key", equalTo("CONSUMER_KEY"))
+            .withHeader("Consumer-Token", equalTo("CONSUMER_TOKEN"))
+            .withRequestBody(equalToJson(json)));
     }
 }

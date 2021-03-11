@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
+import org.jreleaser.util.SimpleJReleaserLoggerAdapter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -52,7 +53,8 @@ public class MajorReleaseSdkmanCommandTest {
         stubFor(put(urlEqualTo(DEFAULT_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
-        MajorReleaseSdkmanCommand command = MajorReleaseSdkmanCommand.builder()
+        MajorReleaseSdkmanCommand command = MajorReleaseSdkmanCommand
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")
@@ -87,7 +89,8 @@ public class MajorReleaseSdkmanCommandTest {
         stubFor(post(urlEqualTo(RELEASE_ENDPOINT))
             .willReturn(aResponse().withStatus(500)));
 
-        MajorReleaseSdkmanCommand command = MajorReleaseSdkmanCommand.builder()
+        MajorReleaseSdkmanCommand command = MajorReleaseSdkmanCommand
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")

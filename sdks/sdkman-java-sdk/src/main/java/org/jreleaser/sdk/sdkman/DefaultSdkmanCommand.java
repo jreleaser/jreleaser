@@ -17,6 +17,8 @@
  */
 package org.jreleaser.sdk.sdkman;
 
+import org.jreleaser.util.Logger;
+
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -24,12 +26,14 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
-    private DefaultSdkmanCommand(String apiHost,
+    private DefaultSdkmanCommand(Logger logger,
+                                 String apiHost,
                                  String consumerKey,
                                  String consumerToken,
                                  String candidate,
-                                 String version) {
-        super(apiHost, consumerKey, consumerToken, candidate, version);
+                                 String version,
+                                 boolean dryRun) {
+        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryRun);
     }
 
     @Override
@@ -37,11 +41,15 @@ public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
         sdkman.setDefault(candidate, version);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(Logger logger) {
+        return new Builder(logger);
     }
 
     public static class Builder extends AbstractSdkmanCommand.Builder<Builder> {
+        protected Builder(Logger logger) {
+            super(logger);
+        }
+
         public DefaultSdkmanCommand build() {
             requireNonBlank(apiHost, "'apiHost' must not be blank");
             requireNonBlank(consumerKey, "'consumerKey' must not be blank");
@@ -50,11 +58,13 @@ public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
             requireNonBlank(version, "'version' must not be blank");
 
             return new DefaultSdkmanCommand(
+                logger,
                 apiHost,
                 consumerKey,
                 consumerToken,
                 candidate,
-                version);
+                version,
+                dryRun);
         }
     }
 }

@@ -18,4 +18,5 @@
 dependencies {
     api('kr.motd.maven:os-maven-plugin:1.7.0') { transitive = false }
     api "com.github.spullara.mustache.java:compiler:$mustacheVersion"
+    api "org.slf4j:slf4j-api:$slf4jVersion"
 }

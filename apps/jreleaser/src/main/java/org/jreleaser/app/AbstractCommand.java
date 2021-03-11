@@ -18,7 +18,7 @@
 package org.jreleaser.app;
 
 import org.jreleaser.app.internal.Colorizer;
-import org.jreleaser.app.internal.JReleaserLoggerAdapter;
+import org.jreleaser.app.internal.ColorizedJReleaserLoggerAdapter;
 import org.jreleaser.util.Logger;
 import picocli.CommandLine;
 
@@ -61,22 +61,22 @@ abstract class AbstractCommand implements Callable<Integer> {
     public Integer call() {
         Banner.display();
 
-        JReleaserLoggerAdapter.Level level = JReleaserLoggerAdapter.Level.WARN;
+        ColorizedJReleaserLoggerAdapter.Level level = ColorizedJReleaserLoggerAdapter.Level.WARN;
         if (debug) {
-            level = JReleaserLoggerAdapter.Level.DEBUG;
+            level = ColorizedJReleaserLoggerAdapter.Level.DEBUG;
             System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
         } else if (info) {
-            level = JReleaserLoggerAdapter.Level.INFO;
+            level = ColorizedJReleaserLoggerAdapter.Level.INFO;
             System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
         } else if (warn) {
-            level = JReleaserLoggerAdapter.Level.WARN;
+            level = ColorizedJReleaserLoggerAdapter.Level.WARN;
             System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "warn");
         } else if (quiet) {
-            level = JReleaserLoggerAdapter.Level.ERROR;
+            level = ColorizedJReleaserLoggerAdapter.Level.ERROR;
             System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
         }
 
-        logger = new JReleaserLoggerAdapter(parent().out, level);
+        logger = new ColorizedJReleaserLoggerAdapter(parent().out, level);
 
         try {
             execute();

@@ -17,6 +17,8 @@
  */
 package org.jreleaser.sdk.sdkman;
 
+import org.jreleaser.util.Logger;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -33,15 +35,17 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
     private final String releaseNotesUrl;
     private final Map<String, String> platforms = new LinkedHashMap<>();
 
-    private MinorReleaseSdkmanCommand(String apiHost,
+    private MinorReleaseSdkmanCommand(Logger logger,
+                                      String apiHost,
                                       String consumerKey,
                                       String consumerToken,
                                       String candidate,
                                       String version,
+                                      boolean dryRun,
                                       String hashtag,
                                       String releaseNotesUrl,
                                       Map<String, String> platforms) {
-        super(apiHost, consumerKey, consumerToken, candidate, version);
+        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryRun);
         this.hashtag = hashtag;
         this.releaseNotesUrl = releaseNotesUrl;
         this.platforms.putAll(platforms);
@@ -52,8 +56,8 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
         sdkman.minorRelease(candidate, version, platforms, hashtag, releaseNotesUrl);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(Logger logger) {
+        return new Builder(logger);
     }
 
     public static class Builder extends AbstractSdkmanCommand.Builder<Builder> {
@@ -61,6 +65,10 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
         private String hashtag;
         private String releaseNotesUrl;
         private String url;
+
+        protected Builder(Logger logger) {
+            super(logger);
+        }
 
         /**
          * The hashtag to use (legacy)
@@ -87,7 +95,7 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
         }
 
         /**
-         * Platform to downlodable URL mappings.
+         * Platform to downloadable URL mappings.
          * Supported platforms are:
          * <ul>
          * <li>MAC_OSX</li>
@@ -130,11 +138,13 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
             }
 
             return new MinorReleaseSdkmanCommand(
+                logger,
                 apiHost,
                 consumerKey,
                 consumerToken,
                 candidate,
                 version,
+                dryRun,
                 hashtag,
                 releaseNotesUrl,
                 platforms);

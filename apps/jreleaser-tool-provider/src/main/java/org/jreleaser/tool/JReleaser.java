@@ -38,14 +38,8 @@ public class JReleaser implements ToolProvider {
     }
 
     public static void main(String[] args) {
-        PrintWriter out = new PrintWriter(System.out);
-        PrintWriter err = new PrintWriter(System.err);
-
-        try {
-            Main.run(out, err, args);
-        } finally {
-            out.flush();
-            err.flush();
-        }
+        PrintWriter out = new PrintWriter(System.out, true);
+        PrintWriter err = new PrintWriter(System.err, true);
+        Main.run(out, err, args);
     }
 }

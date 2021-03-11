@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
+import org.jreleaser.util.SimpleJReleaserLoggerAdapter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -26,9 +27,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.jreleaser.sdk.sdkman.ApiEndpoints.ANNOUNCE_ENDPOINT;
 import static org.jreleaser.sdk.sdkman.Stubs.verifyPost;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andres Almiray
@@ -42,39 +43,41 @@ public class AnnounceSdkmanCommandTest {
     public void testStructuredAnnouncement() throws SdkmanException {
         // given:
         stubFor(post(urlEqualTo(ANNOUNCE_ENDPOINT))
-                .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
+            .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
 
-        AnnounceSdkmanCommand command = AnnounceSdkmanCommand.builder()
-                .apiHost(api.baseUrl())
-                .consumerKey("CONSUMER_KEY")
-                .consumerToken("CONSUMER_TOKEN")
-                .candidate("jreleaser")
-                .version("1.0.0")
-                .build();
+        AnnounceSdkmanCommand command = AnnounceSdkmanCommand
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .apiHost(api.baseUrl())
+            .consumerKey("CONSUMER_KEY")
+            .consumerToken("CONSUMER_TOKEN")
+            .candidate("jreleaser")
+            .version("1.0.0")
+            .build();
 
         // when:
         command.execute();
 
         // then:
         verifyPost(ANNOUNCE_ENDPOINT, "{\n" +
-                "   \"candidate\": \"jreleaser\",\n" +
-                "   \"version\": \"1.0.0\"\n" +
-                "}");
+            "   \"candidate\": \"jreleaser\",\n" +
+            "   \"version\": \"1.0.0\"\n" +
+            "}");
     }
 
     @Test
     public void testError() {
         // given:
         stubFor(post(urlEqualTo(ANNOUNCE_ENDPOINT))
-                .willReturn(aResponse().withStatus(400)));
+            .willReturn(aResponse().withStatus(400)));
 
-        AnnounceSdkmanCommand command = AnnounceSdkmanCommand.builder()
-                .apiHost(api.baseUrl())
-                .consumerKey("CONSUMER_KEY")
-                .consumerToken("CONSUMER_TOKEN")
-                .candidate("jreleaser")
-                .version("1.0.0")
-                .build();
+        AnnounceSdkmanCommand command = AnnounceSdkmanCommand
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .apiHost(api.baseUrl())
+            .consumerKey("CONSUMER_KEY")
+            .consumerToken("CONSUMER_TOKEN")
+            .candidate("jreleaser")
+            .version("1.0.0")
+            .build();
 
         // expected:
         assertThrows(SdkmanException.class, command::execute);

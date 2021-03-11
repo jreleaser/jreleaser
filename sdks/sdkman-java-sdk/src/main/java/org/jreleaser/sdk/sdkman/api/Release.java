@@ -46,12 +46,12 @@ public class Release extends Candidate {
 
     @Override
     public String toString() {
-        return "Release{" +
+        return "Release[" +
             "candidate='" + candidate + '\'' +
             ", version='" + version + '\'' +
             ", platform='" + platform + '\'' +
             ", url='" + url + '\'' +
-            '}';
+            ']';
     }
 
     public static Release of(String candidate,

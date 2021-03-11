@@ -17,6 +17,8 @@
  */
 package org.jreleaser.sdk.sdkman;
 
+import org.jreleaser.util.Logger;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,13 +33,15 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
     private final Map<String, String> platforms = new LinkedHashMap<>();
 
-    private ReleaseSdkmanCommand(String apiHost,
+    private ReleaseSdkmanCommand(Logger logger,
+                                 String apiHost,
                                  String consumerKey,
                                  String consumerToken,
                                  String candidate,
                                  String version,
+                                 boolean dryRun,
                                  Map<String, String> platforms) {
-        super(apiHost, consumerKey, consumerToken, candidate, version);
+        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryRun);
         this.platforms.putAll(platforms);
     }
 
@@ -46,13 +50,17 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
         sdkman.release(candidate, version, platforms);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(Logger logger) {
+        return new Builder(logger);
     }
 
     public static class Builder extends AbstractSdkmanCommand.Builder<Builder> {
         private final Map<String, String> platforms = new LinkedHashMap<>();
         private String url;
+
+        protected Builder(Logger logger) {
+            super(logger);
+        }
 
         /**
          * The URL from where the candidate version can be downloaded
@@ -63,7 +71,7 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
         }
 
         /**
-         * Platform to downlodable URL mappings.
+         * Platform to downloadable URL mappings.
          * Supported platforms are:
          * <ul>
          * <li>MAC_OSX</li>
@@ -106,11 +114,13 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
             }
 
             return new ReleaseSdkmanCommand(
+                logger,
                 apiHost,
                 consumerKey,
                 consumerToken,
                 candidate,
                 version,
+                dryRun,
                 platforms);
         }
     }

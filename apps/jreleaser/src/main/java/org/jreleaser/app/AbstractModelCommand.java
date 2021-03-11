@@ -17,7 +17,7 @@
  */
 package org.jreleaser.app;
 
-import org.jreleaser.app.internal.JReleaserLoggerAdapter;
+import org.jreleaser.app.internal.ColorizedJReleaserLoggerAdapter;
 import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
@@ -84,7 +84,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
             JReleaserModel jreleaserModel = JReleaserConfigLoader.loadConfig(actualConfigFile);
             List<String> errors = JReleaserModelValidator.validate(logger, actualBasedir, jreleaserModel);
             if (!errors.isEmpty()) {
-                Logger logger = new JReleaserLoggerAdapter(parent.out);
+                Logger logger = new ColorizedJReleaserLoggerAdapter(parent.out);
                 logger.error("== JReleaser ==");
                 errors.forEach(logger::error);
                 throw new JReleaserException("JReleaser with " + actualConfigFile.toAbsolutePath() + " has not been properly configured.");

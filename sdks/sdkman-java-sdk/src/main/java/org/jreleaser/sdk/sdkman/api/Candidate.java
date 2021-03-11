@@ -45,10 +45,10 @@ public class Candidate {
 
     @Override
     public String toString() {
-        return "Candidate{" +
+        return "Candidate[" +
             "candidate='" + candidate + '\'' +
             ", version='" + version + '\'' +
-            '}';
+            ']';
     }
 
     public static Candidate of(String candidate, String version) {

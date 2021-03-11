@@ -46,12 +46,12 @@ public class Announce extends Candidate {
 
     @Override
     public String toString() {
-        return "Announce{" +
+        return "Announce[" +
             "candidate='" + candidate + '\'' +
             ", version='" + version + '\'' +
             ", hashtag='" + hashtag + '\'' +
             ", releaseNotesUrl='" + releaseNotesUrl + '\'' +
-            '}';
+            ']';
     }
 
     public static Announce of(String candidate,
