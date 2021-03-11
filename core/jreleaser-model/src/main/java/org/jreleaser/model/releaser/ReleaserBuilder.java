@@ -17,16 +17,43 @@
  */
 package org.jreleaser.model.releaser;
 
+import org.jreleaser.model.Changelog;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.util.Logger;
 
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface ReleaserBuilder<R extends Releaser> {
-    R build();
+public interface ReleaserBuilder<R extends Releaser, B extends ReleaserBuilder<R, B>> {
+    B configureWith(Path basedir, JReleaserModel model);
 
-    R buildFromModel(Path basedir, JReleaserModel model);
+    B basedir(Path basedir);
+
+    B logger(Logger logger);
+
+    B repo(String repo);
+
+    B authorization(String authorization);
+
+    B tagName(String tagName);
+
+    B releaseName(String releaseName);
+
+    B changelog(Changelog changelog);
+
+    B overwrite(boolean overwrite);
+
+    B allowUploadToExisting(boolean allowUploadToExisting);
+
+    B commitsUrl(String commitsUrl);
+
+    B addReleaseAsset(Path asset);
+
+    B setReleaseAssets(List<Path> assets);
+
+    R build();
 }

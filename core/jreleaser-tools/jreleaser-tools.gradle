@@ -18,6 +18,6 @@
 dependencies {
     api project(':jreleaser-model')
     api project(':jreleaser-templates')
-    api "com.github.spullara.mustache.java:compiler:$mustacheVersion"
+    api("com.google.guava:guava:$guavaVersion") { transitive = false }
     api "org.zeroturnaround:zt-exec:$ztexecVersion"
 }

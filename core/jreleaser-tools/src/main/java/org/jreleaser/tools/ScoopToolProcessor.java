@@ -21,6 +21,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Scoop;
+import org.jreleaser.util.Constants;
 import org.jreleaser.util.Logger;
 
 import java.io.StringReader;
@@ -31,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
-import static org.jreleaser.tools.ProcessorUtils.applyTemplate;
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
 
 /**
  * @author Andres Almiray

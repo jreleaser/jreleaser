@@ -28,6 +28,8 @@ public abstract class GitService extends AbstractDomain {
     private String repoHost;
     private String repoOwner;
     private String repoName;
+    private String repoUrlFormat;
+    private String commitUrlFormat;
     private String downloadUrlFormat;
     private String releaseNotesUrlFormat;
     private String latestReleaseUrlFormat;
@@ -44,6 +46,8 @@ public abstract class GitService extends AbstractDomain {
         this.repoHost = service.repoHost;
         this.repoOwner = service.repoOwner;
         this.repoName = service.repoName;
+        this.repoUrlFormat = service.repoUrlFormat;
+        this.commitUrlFormat = service.commitUrlFormat;
         this.downloadUrlFormat = service.downloadUrlFormat;
         this.releaseNotesUrlFormat = service.releaseNotesUrlFormat;
         this.latestReleaseUrlFormat = service.latestReleaseUrlFormat;
@@ -79,6 +83,22 @@ public abstract class GitService extends AbstractDomain {
 
     public void setRepoName(String repoName) {
         this.repoName = repoName;
+    }
+
+    public String getRepoUrlFormat() {
+        return repoUrlFormat;
+    }
+
+    public void setRepoUrlFormat(String repoUrlFormat) {
+        this.repoUrlFormat = repoUrlFormat;
+    }
+
+    public String getCommitUrlFormat() {
+        return commitUrlFormat;
+    }
+
+    public void setCommitUrlFormat(String commitUrlFormat) {
+        this.commitUrlFormat = commitUrlFormat;
     }
 
     public String getDownloadUrlFormat() {
@@ -175,6 +195,8 @@ public abstract class GitService extends AbstractDomain {
         map.put("repoHost", repoHost);
         map.put("repoOwner", repoOwner);
         map.put("repoName", repoName);
+        map.put("repoUrlFormat", repoUrlFormat);
+        map.put("commitUrlFormat", commitUrlFormat);
         map.put("downloadUrlFormat", downloadUrlFormat);
         map.put("releaseNotesUrlFormat", releaseNotesUrlFormat);
         map.put("latestReleaseUrlFormat", latestReleaseUrlFormat);

@@ -19,6 +19,7 @@ package org.jreleaser.app;
 
 import org.jreleaser.app.internal.JReleaserLoggerAdapter;
 import org.jreleaser.config.JReleaserConfigLoader;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserModelValidator;
 import org.jreleaser.util.Logger;

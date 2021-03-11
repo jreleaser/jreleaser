@@ -43,7 +43,6 @@ dependencies {
     api project(':jreleaser-releaser')
     api project(':jreleaser-templates')
     api "org.kordamp.gradle:base-gradle-plugin:$kordampPluginVersion"
-    api "gradle.plugin.org.gradle.crypto:checksum:$checksumPluginVersion"
 }
 
 processResources {

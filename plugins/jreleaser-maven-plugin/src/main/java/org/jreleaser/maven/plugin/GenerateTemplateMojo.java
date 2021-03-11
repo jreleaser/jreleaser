@@ -33,31 +33,31 @@ public class GenerateTemplateMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.generate.template.skip")
+    @Parameter(property = "jreleaser.template.skip")
     private boolean skip;
 
     /**
      * The name of the distribution
      */
-    @Parameter(property = "jreleaser.generate.template.distributionName", required = true)
+    @Parameter(property = "jreleaser.template.distributionName", required = true)
     private String distributionName;
 
     /**
      * The type of the distribution
      */
-    @Parameter(property = "jreleaser.generate.template.distributionType", defaultValue = "BINARY")
+    @Parameter(property = "jreleaser.template.distributionType", defaultValue = "BINARY")
     private Distribution.DistributionType distributionType = Distribution.DistributionType.BINARY;
 
     /**
      * The name of the distribution
      */
-    @Parameter(property = "jreleaser.generate.template.toolName", required = true)
+    @Parameter(property = "jreleaser.template.toolName", required = true)
     private String toolName;
 
     /**
      * Overwrite existing files.
      */
-    @Parameter(property = "jreleaser.generate.template.overwrite")
+    @Parameter(property = "jreleaser.template.overwrite")
     private boolean overwrite;
 
     @Override

@@ -27,7 +27,6 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.JReleaserModel
-import org.jreleaser.releaser.Releasers
 import org.jreleaser.tools.Checksums
 
 import javax.inject.Inject
@@ -38,7 +37,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserReleaseTask extends DefaultTask {
+abstract class JReleaserPrepareTask extends DefaultTask {
     @Internal
     final Property<JReleaserModel> jreleaserModel
 
@@ -46,20 +45,14 @@ abstract class JReleaserReleaseTask extends DefaultTask {
     final DirectoryProperty checksumDirectory
 
     @Inject
-    JReleaserReleaseTask(ObjectFactory objects) {
-        jreleaserModel = objects.property(JReleaserModel)
+    JReleaserPrepareTask(ObjectFactory objects) {
         checksumDirectory = objects.directoryProperty()
     }
 
     @TaskAction
-    void createRelease() {
+    void prepare() {
         Checksums.collectAndWriteChecksums(new JReleaserLoggerAdapter(project.logger),
             jreleaserModel.get(),
             checksumDirectory.getAsFile().get().toPath())
-
-        Releasers.findReleaser(new JReleaserLoggerAdapter(project.logger), jreleaserModel.get())
-            .configureWith(project.projectDir.toPath(), jreleaserModel.get())
-            .build()
-            .release()
     }
 }

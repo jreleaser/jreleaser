@@ -29,7 +29,7 @@ import org.jreleaser.util.Logger;
 public class Releasers {
     public static <RB extends ReleaserBuilder> RB findReleaser(Logger logger, JReleaserModel model) {
         if (null != model.getRelease().getGithub()) {
-            return (RB) GithubReleaser.builder();
+            return (RB) GithubReleaser.builder(logger);
         }
         // if(null != model.getRelease().getGitlab()) {
         //     return (RB) GitlabReleaser.builder();

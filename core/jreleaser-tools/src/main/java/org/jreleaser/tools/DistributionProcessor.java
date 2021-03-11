@@ -21,6 +21,7 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Tool;
+import org.jreleaser.util.Constants;
 import org.jreleaser.util.Logger;
 
 import java.io.IOException;
@@ -97,7 +98,7 @@ public class DistributionProcessor {
         logger.debug("Reading checksums for {} distribution", distributionName);
         for (int i = 0; i < distribution.getArtifacts().size(); i++) {
             Artifact artifact = distribution.getArtifacts().get(i);
-            readHash(artifact, checksumDirectory);
+            Checksums.readHash(logger, distributionName, artifact, checksumDirectory);
         }
 
         ToolProcessor<?> toolProcessor = ToolProcessors.findProcessor(logger, model, tool);
@@ -125,14 +126,18 @@ public class DistributionProcessor {
 
     private void readHash(Artifact artifact, Path checksumDirectory) throws ToolProcessingException {
         Path artifactPath = Paths.get(artifact.getPath());
-        Path checksumPath = checksumDirectory.resolve(artifactPath.getFileName() + ".sha256");
+        Path checksumPath = checksumDirectory.resolve(distributionName).resolve(artifactPath.getFileName() + ".sha256");
 
         if (!artifactPath.toFile().exists()) {
             throw new ToolProcessingException("Artifact does not exist. " + artifactPath.toAbsolutePath());
         }
 
         if (!checksumPath.toFile().exists()) {
-            throw new ToolProcessingException("Artifact checksum does not exist. " + checksumPath.toAbsolutePath());
+            logger.info("Artifact checksum does not exist. " + checksumPath.toAbsolutePath());
+            Checksums.calculateHash(logger, artifactPath, checksumPath);
+        } else if (artifactPath.toFile().lastModified() > checksumPath.toFile().lastModified()) {
+            logger.info("Artifact {} is newer than {}", artifactPath.toAbsolutePath(), checksumPath.toAbsolutePath());
+            Checksums.calculateHash(logger, artifactPath, checksumPath);
         }
 
         try {

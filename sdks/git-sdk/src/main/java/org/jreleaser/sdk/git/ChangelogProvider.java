@@ -29,7 +29,7 @@ import java.nio.file.Path;
  * @since 0.1.0
  */
 public class ChangelogProvider {
-    public static String getChangelog(Path basedir, Changelog changelog) throws IOException {
+    public static String getChangelog(Path basedir, String commitsUrl, Changelog changelog) throws IOException {
         File externalChangelog = changelog.getExternal();
 
         if (null != externalChangelog) {
@@ -40,6 +40,6 @@ public class ChangelogProvider {
             return new String(Files.readAllBytes(basedir.resolve(externalChangelog.toPath())));
         }
 
-        return ChangelogGenerator.generate(basedir, changelog);
+        return ChangelogGenerator.generate(basedir, commitsUrl, changelog);
     }
 }

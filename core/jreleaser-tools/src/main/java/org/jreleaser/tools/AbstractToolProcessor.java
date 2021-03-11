@@ -23,6 +23,7 @@ import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Release;
 import org.jreleaser.model.Tool;
+import org.jreleaser.util.Constants;
 import org.jreleaser.util.Logger;
 import org.zeroturnaround.exec.ProcessExecutor;
 
@@ -46,7 +47,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
-import static org.jreleaser.tools.ProcessorUtils.applyTemplate;
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
 import static org.jreleaser.util.StringUtils.capitalize;

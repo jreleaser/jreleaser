@@ -21,6 +21,7 @@ import org.jreleaser.model.Brew;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
+import org.jreleaser.util.Constants;
 import org.jreleaser.util.Logger;
 
 import java.nio.file.Path;

@@ -30,6 +30,8 @@ public class Gitea extends GitService {
 
     public Gitea() {
         setRepoHost("try.gitea.io");
+        setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
+        setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");
         setDownloadUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/v{{projectVersion}}/{{artifactFileName}}");
         setReleaseNotesUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/tag/v{{projectVersion}}");
         setLatestReleaseUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/latest");

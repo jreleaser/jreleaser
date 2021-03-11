@@ -28,11 +28,11 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
-import org.gradle.crypto.checksum.Checksum
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateGeneratorTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserToolPackagerTask
@@ -102,36 +102,22 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        Set<TaskProvider<?>> checksumTasks = new LinkedHashSet<>()
         Set<TaskProvider<?>> prepareTasks = new LinkedHashSet<>()
         Set<TaskProvider<?>> packageTasks = new LinkedHashSet<>()
         model.distributions.values().each { distribution ->
             List<TaskProvider<?>> tasks = configureDistribution(project, model, distribution)
             if (tasks) {
-                checksumTasks << tasks[0]
-                prepareTasks << tasks[1]
-                packageTasks << tasks[2]
+                prepareTasks << tasks[0]
+                packageTasks << tasks[1]
             }
-        }
-
-        if (checksumTasks) {
-            project.tasks.register('checksum', DefaultTask,
-                new Action<DefaultTask>() {
-                    @Override
-                    void execute(DefaultTask t) {
-                        t.group = JRELEASER_GROUP
-                        t.description = 'Generates checksums for all distributions'
-                        t.dependsOn(checksumTasks)
-                    }
-                })
         }
 
         Set<TaskProvider<?>> jreleaserDeps = new LinkedHashSet<>()
         if (prepareTasks) {
-            jreleaserDeps << project.tasks.register('jreleaserPrepare', DefaultTask,
-                new Action<DefaultTask>() {
+            jreleaserDeps << project.tasks.register('jreleaserPrepare', JReleaserPrepareTask,
+                new Action<JReleaserPrepareTask>() {
                     @Override
-                    void execute(DefaultTask t) {
+                    void execute(JReleaserPrepareTask t) {
                         t.group = JRELEASER_GROUP
                         t.description = 'Prepares all distributions'
                         t.dependsOn(prepareTasks)
@@ -161,6 +147,9 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Creates or updates a release'
                     t.jreleaserModel.set(model)
+                    t.checksumDirectory.set(project.layout
+                        .buildDirectory
+                        .dir('jreleaser/checksums'))
                 }
             })
 
@@ -236,40 +225,6 @@ class JReleaserProjectConfigurer {
         }
 
         if (prepareTasks) {
-            Provider<Directory> checksumDirectory = project.layout
-                .buildDirectory
-                .dir('jreleaser/checksums/' + distributionName)
-
-            TaskProvider<Checksum> checksumTask = project.tasks.register("checksum${capitalizedDistributionName}", Checksum,
-                new Action<Checksum>() {
-                    @Override
-                    void execute(Checksum t) {
-                        t.group = JRELEASER_GROUP
-                        t.description = "Generates checksums for the ${distributionName} distribution"
-                        t.files = project.files(distribution.artifacts*.path)
-                        t.algorithm = Checksum.Algorithm.SHA256
-                        t.outputDir = checksumDirectory.get().asFile
-                    }
-                })
-            prepareTasks.each { TaskProvider<JReleaserToolProcessorTask> tp ->
-                tp.configure(new Action<JReleaserToolProcessorTask>() {
-                    @Override
-                    void execute(JReleaserToolProcessorTask t) {
-                        t.dependsOn(checksumTask)
-                        t.checksumDirectory.set(checksumDirectory)
-                    }
-                })
-            }
-            packageTasks.each { TaskProvider<JReleaserToolPackagerTask> tp ->
-                tp.configure(new Action<JReleaserToolPackagerTask>() {
-                    @Override
-                    void execute(JReleaserToolPackagerTask t) {
-                        t.dependsOn(checksumTask)
-                        t.checksumDirectory.set(checksumDirectory)
-                    }
-                })
-            }
-
             TaskProvider<DefaultTask> prepareTask = project.tasks.register("prepare${capitalizedDistributionName}", DefaultTask,
                 new Action<DefaultTask>() {
                     @Override
@@ -292,7 +247,6 @@ class JReleaserProjectConfigurer {
 
             // pleasing the static compiler ... *grumble*
             List<TaskProvider<?>> list = []
-            list.add(checksumTask)
             list.add(prepareTask)
             list.add(packageTask)
             return list
@@ -317,6 +271,9 @@ class JReleaserProjectConfigurer {
                     t.toolName.set(toolName)
                     t.jreleaserModel.set(model)
                     t.artifacts.from(distribution.artifacts*.path)
+                    t.checksumDirectory.set(project.layout
+                        .buildDirectory
+                        .dir('jreleaser/checksums'))
                     t.outputDirectory.set(project.layout
                         .buildDirectory
                         .dir("jreleaser/${distributionName}/${toolName}".toString()))
@@ -342,6 +299,9 @@ class JReleaserProjectConfigurer {
                     t.toolName.set(toolName)
                     t.jreleaserModel.set(model)
                     t.artifacts.from(distribution.artifacts*.path)
+                    t.checksumDirectory.set(project.layout
+                        .buildDirectory
+                        .dir('jreleaser/checksums'))
                     t.outputDirectory.set(project.layout
                         .buildDirectory
                         .dir("jreleaser/${distributionName}/${toolName}".toString()))

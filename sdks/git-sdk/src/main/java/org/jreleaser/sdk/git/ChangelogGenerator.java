@@ -45,7 +45,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class ChangelogGenerator {
     private static final String REFS_TAGS = "refs/tags/";
 
-    public static String generate(Path basedir, Changelog changelog) throws IOException {
+    public static String generate(Path basedir, String commitsUrl,
+                                  Changelog changelog) throws IOException {
         if (!changelog.isEnabled()) {
             return "";
         }
@@ -54,7 +55,7 @@ public class ChangelogGenerator {
             return readChangelogFile(changelog.getExternal());
         }
 
-        return createChangelog(basedir);
+        return createChangelog(basedir, commitsUrl);
     }
 
     private static String readChangelogFile(File file) throws IOException {
@@ -64,7 +65,7 @@ public class ChangelogGenerator {
             String.join(System.lineSeparator(), Files.readAllLines(file.toPath()));
     }
 
-    private static String createChangelog(Path basedir) throws IOException {
+    private static String createChangelog(Path basedir, String commitsUrl) throws IOException {
         try {
             Git git = Git.open(basedir.toFile());
             Iterable<RevCommit> commits = resolveCommits(git);
@@ -73,21 +74,22 @@ public class ChangelogGenerator {
                 System.lineSeparator() +
                 System.lineSeparator() +
                 StreamSupport.stream(commits.spliterator(), false)
-                    .map(ChangelogGenerator::formatCommit)
+                    .map(commit -> formatCommit(commit, commitsUrl))
                     .collect(Collectors.joining(System.lineSeparator()));
         } catch (GitAPIException e) {
             throw new IOException(e);
         }
     }
 
-    private static String formatCommit(RevCommit commit) {
-        String abbreviation = commit.getTree().getId().abbreviate(8).name();
+    private static String formatCommit(RevCommit commit, String commitsUrl) {
+        String commitHash = commit.getId().name();
+        String abbreviation = commit.getId().abbreviate(7).name();
         String[] input = commit.getFullMessage().trim().split(System.lineSeparator());
 
         List<String> lines = new ArrayList<>();
         for (int i = 0; i < input.length; i++) {
             if (i == 0) {
-                lines.add(abbreviation + " " + input[i].trim());
+                lines.add("[" + abbreviation + "](" + commitsUrl + "/" + commitHash + ") " + input[i].trim());
             } else if (isNotBlank(input[i])) {
                 lines.add("         " + input[i].trim());
             }

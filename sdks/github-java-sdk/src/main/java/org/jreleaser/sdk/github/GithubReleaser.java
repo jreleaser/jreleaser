@@ -17,21 +17,20 @@
  */
 package org.jreleaser.sdk.github;
 
-import org.kohsuke.github.GHRelease;
 import org.jreleaser.model.Changelog;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.releaser.AbstractReleaserBuilder;
 import org.jreleaser.model.releaser.ReleaseException;
 import org.jreleaser.model.releaser.Releaser;
-import org.jreleaser.model.releaser.ReleaserBuilder;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.util.Logger;
+import org.kohsuke.github.GHRelease;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
@@ -43,6 +42,7 @@ public class GithubReleaser implements Releaser {
     private final Logger logger;
     private final Path basedir;
     private final String repo;
+    private final String commitsUrl;
     private final String authorization;
     private final String tagName;
     private final String targetCommitish;
@@ -55,13 +55,14 @@ public class GithubReleaser implements Releaser {
     private final String apiEndpoint;
     private final List<Path> assets = new ArrayList<>();
 
-    public GithubReleaser(Path basedir, Logger logger, String repo, String authorization,
+    public GithubReleaser(Path basedir, Logger logger, String repo, String commitsUrl, String authorization,
                           String tagName, String targetCommitish, String releaseName,
                           Changelog changelog, boolean draft, boolean prerelease, boolean overwrite,
                           boolean allowUploadToExisting, String apiEndpoint, List<Path> assets) {
         this.basedir = basedir;
         this.logger = logger;
         this.repo = repo;
+        this.commitsUrl = commitsUrl;
         this.authorization = authorization;
         this.tagName = tagName;
         this.targetCommitish = targetCommitish;
@@ -79,18 +80,25 @@ public class GithubReleaser implements Releaser {
         Github api = new Github(logger, apiEndpoint, authorization);
 
         try {
+            logger.info("Looking up release with tag {} at repository {}", tagName, repo);
             GHRelease release = api.findReleaseByTag(repo, tagName);
             if (null != release) {
+                logger.info("Release {} exists", tagName);
                 if (overwrite) {
+                    logger.info("Deleting release {}", tagName);
                     release.delete();
+                    logger.info("Creating release {}", tagName);
                     createRelease(api);
                 } else if (allowUploadToExisting) {
+                    logger.info("Updating release {}", tagName);
                     api.uploadAssets(release, assets);
                 } else {
                     throw new IllegalStateException("Github release failed because release " +
-                        tagName + " already exists");
+                        tagName + " already exists. overwrite = false; allowUploadToExisting = false");
                 }
             } else {
+                logger.info("Release {} does not exist", tagName);
+                logger.info("Creating release {}", tagName);
                 createRelease(api);
             }
         } catch (IOException | IllegalStateException e) {
@@ -104,137 +112,66 @@ public class GithubReleaser implements Releaser {
             .name(releaseName)
             .draft(draft)
             .prerelease(prerelease)
-            .body(ChangelogProvider.getChangelog(basedir, changelog))
+            .body(ChangelogProvider.getChangelog(basedir, commitsUrl, changelog))
             .create();
         api.uploadAssets(release, assets);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(Logger logger) {
+        Builder builder = new Builder();
+        builder.logger(logger);
+        return builder;
     }
 
-    public static class Builder implements ReleaserBuilder<GithubReleaser> {
-        private final List<Path> assets = new ArrayList<>();
-        private Path basedir;
-        private Logger logger;
-        private String repo;
-        private String authorization;
-        private String tagName;
+    public static class Builder extends AbstractReleaserBuilder<GithubReleaser, Builder> {
         private String targetCommitish = "main";
-        private String releaseName;
-        private Changelog changelog;
         private boolean draft;
         private boolean prerelease;
-        private boolean overwrite;
-        private boolean allowUploadToExisting;
         private String apiEndpoint = Github.ENDPOINT;
-
-        public Builder basedir(Path basedir) {
-            this.basedir = requireNonNull(basedir, "'basedir' must not be null");
-            return this;
-        }
-
-        public Builder logger(Logger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be null");
-            return this;
-        }
-
-        public Builder repo(String repo) {
-            this.repo = requireNonBlank(repo, "'repo' must not be blank");
-            return this;
-        }
-
-        public Builder authorization(String authorization) {
-            this.authorization = requireNonBlank(authorization, "'authorization' must not be blank");
-            return this;
-        }
-
-        public Builder tagName(String tagName) {
-            this.tagName = requireNonBlank(tagName, "'tagName' must not be blank");
-            return this;
-        }
 
         public Builder targetCommitish(String targetCommitish) {
             this.targetCommitish = requireNonBlank(targetCommitish, "'targetCommitish' must not be blank");
-            return this;
-        }
-
-        public Builder releaseName(String releaseName) {
-            this.releaseName = requireNonBlank(releaseName, "'releaseName' must not be blank");
-            return this;
-        }
-
-        public Builder changelog(Changelog changelog) {
-            this.changelog = changelog;
-            return this;
+            return self();
         }
 
         public Builder draft(boolean draft) {
             this.draft = draft;
-            return this;
+            return self();
         }
 
         public Builder prerelease(boolean prerelease) {
             this.prerelease = prerelease;
-            return this;
-        }
-
-        public Builder overwrite(boolean overwrite) {
-            this.overwrite = overwrite;
-            return this;
-        }
-
-        public Builder allowUploadToExisting(boolean allowUploadToExisting) {
-            this.allowUploadToExisting = allowUploadToExisting;
-            return this;
+            return self();
         }
 
         public Builder apiEndpoint(String apiEndpoint) {
             this.apiEndpoint = isNotBlank(apiEndpoint) ? apiEndpoint : Github.ENDPOINT;
-            return this;
-        }
-
-        public Builder setReleaseAssets(List<Path> assets) {
-            if (null != assets) {
-                this.assets.addAll(assets);
-            }
-            return this;
+            return self();
         }
 
         @Override
         public GithubReleaser build() {
-            requireNonNull(basedir, "'basedir' must not be null");
-            requireNonNull(logger, "'logger' must not be null");
-            requireNonBlank(repo, "'repo' must not be blank");
-            requireNonBlank(authorization, "'authorization' must not be blank");
-            requireNonBlank(tagName, "'tagName' must not be blank");
+            validate();
             requireNonBlank(targetCommitish, "'targetCommitish' must not be blank");
-            requireNonBlank(releaseName, "'releaseName' must not be blank");
-            if (assets.isEmpty()) {
-                throw new IllegalArgumentException("'assets must not be empty");
-            }
 
-            return new GithubReleaser(basedir, logger, repo, authorization,
+            return new GithubReleaser(basedir, logger, repo, commitsUrl, authorization,
                 tagName, targetCommitish, releaseName,
                 changelog, draft, prerelease, overwrite,
                 allowUploadToExisting, apiEndpoint, assets);
         }
 
         @Override
-        public GithubReleaser buildFromModel(Path basedir, JReleaserModel model) {
-            basedir(basedir);
-            repo(model.getRelease().getGithub().getRepoName());
-            authorization(model.getRelease().getGithub().getAuthorization());
-            tagName(model.getRelease().getGithub().getTagName());
-            targetCommitish(model.getRelease().getGithub().getTargetCommitish());
-            releaseName(model.getRelease().getGithub().getRepoName());
-            draft(model.getRelease().getGithub().isDraft());
-            prerelease(model.getRelease().getGithub().isPrerelease());
-            overwrite(model.getRelease().getGithub().isOverwrite());
-            allowUploadToExisting(model.getRelease().getGithub().isAllowUploadToExisting());
-            apiEndpoint(model.getRelease().getGithub().getApiEndpoint());
-            changelog(model.getRelease().getGithub().getChangelog());
-            return build();
+        public Builder configureWith(Path basedir, JReleaserModel model) {
+            super.configureWith(basedir, model);
+
+            org.jreleaser.model.Github github = model.getRelease().getGithub();
+
+            targetCommitish(github.getTargetCommitish());
+            draft(github.isDraft());
+            prerelease(github.isPrerelease());
+            apiEndpoint(github.getApiEndpoint());
+
+            return self();
         }
     }
 }

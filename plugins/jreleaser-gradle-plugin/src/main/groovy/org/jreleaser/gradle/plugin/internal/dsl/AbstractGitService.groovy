@@ -36,6 +36,8 @@ abstract class AbstractGitService implements GitService {
     final Property<String> repoHost
     final Property<String> repoOwner
     final Property<String> repoName
+    final Property<String> repoUrlFormat
+    final Property<String> commitUrlFormat
     final Property<String> downloadUrlFormat
     final Property<String> releaseNotesUrlFormat
     final Property<String> latestReleaseUrlFormat
@@ -52,6 +54,8 @@ abstract class AbstractGitService implements GitService {
         repoHost = objects.property(String).convention(Providers.notDefined())
         repoOwner = objects.property(String).convention(Providers.notDefined())
         repoName = objects.property(String).convention(Providers.notDefined())
+        repoUrlFormat = objects.property(String).convention(Providers.notDefined())
+        commitUrlFormat = objects.property(String).convention(Providers.notDefined())
         downloadUrlFormat = objects.property(String).convention(Providers.notDefined())
         releaseNotesUrlFormat = objects.property(String).convention(Providers.notDefined())
         latestReleaseUrlFormat = objects.property(String).convention(Providers.notDefined())
@@ -70,6 +74,8 @@ abstract class AbstractGitService implements GitService {
         repoHost.present ||
             repoOwner.present ||
             repoName.present ||
+            repoUrlFormat.present ||
+            commitUrlFormat.present ||
             downloadUrlFormat.present ||
             releaseNotesUrlFormat.present ||
             latestReleaseUrlFormat.present ||
@@ -86,6 +92,8 @@ abstract class AbstractGitService implements GitService {
         service.repoHost = repoHost.orNull
         service.repoOwner = repoOwner.orNull
         service.repoName = repoName.orNull
+        service.repoUrlFormat = repoUrlFormat.orNull
+        service.commitUrlFormat = commitUrlFormat.orNull
         service.downloadUrlFormat = downloadUrlFormat.orNull
         service.releaseNotesUrlFormat = releaseNotesUrlFormat.orNull
         service.latestReleaseUrlFormat = latestReleaseUrlFormat.orNull

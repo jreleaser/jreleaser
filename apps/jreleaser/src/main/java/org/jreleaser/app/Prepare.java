@@ -17,21 +17,11 @@
  */
 package org.jreleaser.app;
 
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
-import org.jreleaser.model.Artifact;
-import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.tools.Checksums;
 import org.jreleaser.tools.DistributionProcessor;
 import org.jreleaser.tools.ToolProcessingException;
 import picocli.CommandLine;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * @author Andres Almiray
@@ -41,37 +31,16 @@ import java.util.stream.Stream;
     description = "Prepares all distributions")
 public class Prepare extends AbstractProcessorCommand {
     @Override
+    protected void consumeModel(JReleaserModel jreleaserModel) {
+        super.consumeModel(jreleaserModel);
+        Checksums.collectAndWriteChecksums(logger, jreleaserModel, getChecksumsDirectory());
+    }
+
+    @Override
     protected void consumeProcessor(DistributionProcessor processor) throws ToolProcessingException {
         if (processor.prepareDistribution()) {
             parent.out.println("Prepared " + processor.getDistributionName() +
                 " distribution with tool " + processor.getToolName());
         }
-    }
-
-    @Override
-    protected Path computeChecksums(JReleaserModel jreleaserModel, Path outputDirectory) {
-        Path checksumDirectory = super.computeChecksums(jreleaserModel, outputDirectory);
-
-        try {
-            java.nio.file.Files.createDirectories(checksumDirectory);
-        } catch (IOException e) {
-            throw new JReleaserException("Unexpected error creating checksum directory.", e);
-        }
-
-        jreleaserModel.getDistributions().values()
-            .stream().flatMap((Function<Distribution, Stream<Artifact>>) distribution -> distribution.getArtifacts()
-            .stream()).forEach(artifact -> {
-            Path inputFile = Paths.get(artifact.getPath()).toAbsolutePath();
-            String fileName = inputFile.getFileName().toString();
-            Path checksumFilePath = checksumDirectory.resolve(fileName + ".sha256");
-            try {
-                HashCode hashCode = Files.asByteSource(inputFile.toFile()).hash(Hashing.sha256());
-                Files.write(hashCode.toString().getBytes(), checksumFilePath.toFile());
-            } catch (IOException e) {
-                throw new JReleaserException("Unexpected error creating checksum for " + inputFile, e);
-            }
-        });
-
-        return checksumDirectory;
     }
 }

@@ -18,6 +18,7 @@
 package org.jreleaser.app;
 
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.tools.DistributionProcessor;
 import org.jreleaser.tools.ToolProcessingException;
@@ -41,22 +42,19 @@ public abstract class AbstractProcessorCommand extends AbstractModelCommand {
 
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
-        outputDirectory = actualBasedir.resolve("out");
+        outputDirectory = getOutputDirectory();
 
-        Path checksumDirectory = computeChecksums(jreleaserModel, outputDirectory);
-
-        List<ToolProcessingException> exceptions = new ArrayList<>();
+        List<Exception> exceptions = new ArrayList<>();
         for (Distribution distribution : jreleaserModel.getDistributions().values()) {
             for (String toolName : Distribution.supportedTools()) {
                 try {
                     DistributionProcessor processor = createDistributionProcessor(jreleaserModel,
-                        checksumDirectory,
                         outputDirectory,
                         distribution,
                         toolName);
 
                     consumeProcessor(processor);
-                } catch (ToolProcessingException e) {
+                } catch (JReleaserException | ToolProcessingException e) {
                     if (failFast) throw new IllegalStateException("Unexpected error", e);
                     exceptions.add(e);
                     logger.warn("Unexpected error", e);
@@ -72,7 +70,6 @@ public abstract class AbstractProcessorCommand extends AbstractModelCommand {
     protected abstract void consumeProcessor(DistributionProcessor processor) throws ToolProcessingException;
 
     private DistributionProcessor createDistributionProcessor(JReleaserModel jreleaserModel,
-                                                              Path checksumDirectory,
                                                               Path outputDirectory,
                                                               Distribution distribution,
                                                               String toolName) {
@@ -81,7 +78,7 @@ public abstract class AbstractProcessorCommand extends AbstractModelCommand {
             .model(jreleaserModel)
             .distributionName(distribution.getName())
             .toolName(toolName)
-            .checksumDirectory(checksumDirectory)
+            .checksumDirectory(getChecksumsDirectory())
             .outputDirectory(outputDirectory
                 .resolve("jreleaser")
                 .resolve(distribution.getName())
@@ -89,8 +86,13 @@ public abstract class AbstractProcessorCommand extends AbstractModelCommand {
             .build();
     }
 
-    protected Path computeChecksums(JReleaserModel jreleaserModel, Path outputDirectory) {
-        return outputDirectory.resolve("jreleaser")
+    protected Path getOutputDirectory() {
+        return actualBasedir.resolve("out");
+    }
+
+    protected Path getChecksumsDirectory() {
+        return getOutputDirectory()
+            .resolve("jreleaser")
             .resolve("checksums");
     }
 }

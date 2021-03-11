@@ -23,18 +23,31 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserModelValidator;
 import org.jreleaser.model.releaser.ReleaseException;
 import org.jreleaser.model.releaser.Releaser;
 import org.jreleaser.releaser.Releasers;
+import org.jreleaser.tools.Checksums;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 @Mojo(name = "release")
 public class ReleaseMojo extends AbstractJReleaserMojo {
+    /**
+     * Skip execution.
+     */
+    @Parameter(property = "jreleaser.release.skip")
+    private boolean skip;
+
     @Parameter(required = true)
     private Jreleaser jreleaser;
+
+    @Parameter(property = "jreleaser.checksum.directory", required = true)
+    private File checksumDirectory;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -49,9 +62,17 @@ public class ReleaseMojo extends AbstractJReleaserMojo {
             throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.");
         }
 
+        Path checksumsFilePath = checksumDirectory.toPath().resolve("checksums.txt");
+        try {
+            Checksums.collectAndWriteChecksums(getLogger(), jreleaserModel, checksumDirectory.toPath());
+        } catch (JReleaserException e) {
+            throw new MojoExecutionException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
+        }
+
         try {
             Releaser releaser = Releasers.findReleaser(getLogger(), jreleaserModel)
-                .buildFromModel(project.getBasedir().toPath(), jreleaserModel);
+                .configureWith(project.getBasedir().toPath(), jreleaserModel)
+                .build();
             releaser.release();
         } catch (ReleaseException e) {
             throw new MojoExecutionException("Unexpected error", e);

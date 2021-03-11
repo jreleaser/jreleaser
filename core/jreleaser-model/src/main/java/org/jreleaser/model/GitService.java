@@ -17,8 +17,13 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Constants;
+
+import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
 
 /**
  * @author Andres Almiray
@@ -28,6 +33,8 @@ public abstract class GitService extends AbstractDomain {
     private String repoHost;
     private String repoOwner;
     private String repoName;
+    private String repoUrlFormat;
+    private String commitUrlFormat;
     private String downloadUrlFormat;
     private String releaseNotesUrlFormat;
     private String latestReleaseUrlFormat;
@@ -44,6 +51,8 @@ public abstract class GitService extends AbstractDomain {
         this.repoHost = service.repoHost;
         this.repoOwner = service.repoOwner;
         this.repoName = service.repoName;
+        this.repoUrlFormat = service.repoUrlFormat;
+        this.commitUrlFormat = service.commitUrlFormat;
         this.downloadUrlFormat = service.downloadUrlFormat;
         this.releaseNotesUrlFormat = service.releaseNotesUrlFormat;
         this.latestReleaseUrlFormat = service.latestReleaseUrlFormat;
@@ -55,6 +64,42 @@ public abstract class GitService extends AbstractDomain {
         this.allowUploadToExisting = service.allowUploadToExisting;
         this.apiEndpoint = service.apiEndpoint;
         this.changelog.setAll(service.changelog);
+    }
+
+    public String getCanonicalRepo() {
+        return repoOwner + "/" + repoName;
+    }
+
+    private Map<String, Object> createContext() {
+        Map<String, Object> context = new LinkedHashMap<>();
+        context.put(Constants.KEY_REPO_HOST, repoHost);
+        context.put(Constants.KEY_REPO_OWNER, repoOwner);
+        context.put(Constants.KEY_REPO_NAME, repoName);
+        return context;
+    }
+
+    public String getResolvedRepoUrl() {
+        return applyTemplate(new StringReader(repoUrlFormat), createContext());
+    }
+
+    public String getResolvedCommitUrl() {
+        return applyTemplate(new StringReader(commitUrlFormat), createContext());
+    }
+
+    public String getResolvedDownloadUrl() {
+        return applyTemplate(new StringReader(downloadUrlFormat), createContext());
+    }
+
+    public String getResolvedReleaseNotesUrl() {
+        return applyTemplate(new StringReader(releaseNotesUrlFormat), createContext());
+    }
+
+    public String getResolvedLatestReleaseUrl() {
+        return applyTemplate(new StringReader(latestReleaseUrlFormat), createContext());
+    }
+
+    public String getResolvedIssueTrackerUrl() {
+        return applyTemplate(new StringReader(issueTrackerUrlFormat), createContext());
     }
 
     public String getRepoHost() {
@@ -79,6 +124,22 @@ public abstract class GitService extends AbstractDomain {
 
     public void setRepoName(String repoName) {
         this.repoName = repoName;
+    }
+
+    public String getRepoUrlFormat() {
+        return repoUrlFormat;
+    }
+
+    public void setRepoUrlFormat(String repoUrlFormat) {
+        this.repoUrlFormat = repoUrlFormat;
+    }
+
+    public String getCommitUrlFormat() {
+        return commitUrlFormat;
+    }
+
+    public void setCommitUrlFormat(String commitUrlFormat) {
+        this.commitUrlFormat = commitUrlFormat;
     }
 
     public String getDownloadUrlFormat() {
@@ -175,6 +236,8 @@ public abstract class GitService extends AbstractDomain {
         map.put("repoHost", repoHost);
         map.put("repoOwner", repoOwner);
         map.put("repoName", repoName);
+        map.put("repoUrlFormat", repoUrlFormat);
+        map.put("commitUrlFormat", commitUrlFormat);
         map.put("downloadUrlFormat", downloadUrlFormat);
         map.put("releaseNotesUrlFormat", releaseNotesUrlFormat);
         map.put("latestReleaseUrlFormat", latestReleaseUrlFormat);

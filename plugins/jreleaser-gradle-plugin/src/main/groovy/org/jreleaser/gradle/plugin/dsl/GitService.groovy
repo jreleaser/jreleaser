@@ -34,6 +34,10 @@ interface GitService {
 
     Property<String> getRepoName()
 
+    Property<String> getRepoUrlFormat()
+
+    Property<String> getCommitUrlFormat()
+
     Property<String> getDownloadUrlFormat()
 
     Property<String> getReleaseNotesUrlFormat()

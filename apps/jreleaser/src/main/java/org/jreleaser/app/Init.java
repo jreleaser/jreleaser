@@ -17,6 +17,7 @@
  */
 package org.jreleaser.app;
 
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateUtils;
 import picocli.CommandLine;
 

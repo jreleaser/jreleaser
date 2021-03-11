@@ -17,23 +17,18 @@
  */
 package org.jreleaser.sdk.github;
 
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
+import org.jreleaser.model.releaser.ReleaseException;
+import org.jreleaser.util.Logger;
 import org.kohsuke.github.GHAsset;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHReleaseBuilder;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
-import org.kohsuke.github.extras.okhttp3.OkHttpConnector;
-import org.jreleaser.model.releaser.ReleaseException;
-import org.jreleaser.util.Logger;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -55,17 +50,9 @@ class Github {
         this.logger = logger;
 
         try {
-            Path githubCache = Paths.get(System.getProperty("user.home"))
-                .resolve(".jreleaser")
-                .resolve("caches")
-                .resolve("github");
-
             github = new GitHubBuilder()
                 .withEndpoint(endpoint)
                 .withOAuthToken(authorization)
-                .withConnector(new OkHttpConnector(new OkHttpClient.Builder()
-                    .cache(new Cache(Files.createDirectory(githubCache).toFile(), 10 * 1024 * 1024))
-                    .build()))
                 .build();
         } catch (IOException e) {
             throw new ReleaseException("Unexpected error setting up GitHub endpoint", e);

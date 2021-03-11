@@ -78,6 +78,7 @@ enforce {
             "org.opentest4j:opentest4j:1.2.0",
             "jakarta.activation:jakarta.activation-api:1.2.2",
             "org.yaml:snakeyaml:$snakeYamlVersion",
-            "info.picocli:picocli:$picocliVersion"
+            "info.picocli:picocli:$picocliVersion",
+            "com.google.guava:guava:$guavaVersion"
     }
 }

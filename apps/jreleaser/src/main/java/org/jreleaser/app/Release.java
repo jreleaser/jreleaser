@@ -17,10 +17,12 @@
  */
 package org.jreleaser.app;
 
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.releaser.ReleaseException;
 import org.jreleaser.model.releaser.Releaser;
 import org.jreleaser.releaser.Releasers;
+import org.jreleaser.tools.Checksums;
 import picocli.CommandLine;
 
 import java.nio.file.Path;
@@ -32,18 +34,28 @@ import java.nio.file.Path;
 @CommandLine.Command(name = "release",
     description = "Create or update a release")
 public class Release extends AbstractModelCommand {
-    Path outputDirectory;
-
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
-        outputDirectory = actualBasedir.resolve("out");
+        Checksums.collectAndWriteChecksums(logger, jreleaserModel, getChecksumsDirectory());
 
         try {
             Releaser releaser = Releasers.findReleaser(logger, jreleaserModel)
-                .buildFromModel(basedir, jreleaserModel);
+                .configureWith(actualBasedir, jreleaserModel)
+                .addReleaseAsset(getChecksumsDirectory().resolve("checksums.txt"))
+                .build();
             releaser.release();
         } catch (ReleaseException e) {
             throw new JReleaserException("Unexpected error when creating release " + actualConfigFile.toAbsolutePath(), e);
         }
+    }
+
+    protected Path getOutputDirectory() {
+        return actualBasedir.resolve("out");
+    }
+
+    protected Path getChecksumsDirectory() {
+        return getOutputDirectory()
+            .resolve("jreleaser")
+            .resolve("checksums");
     }
 }

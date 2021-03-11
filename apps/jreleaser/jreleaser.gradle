@@ -30,7 +30,6 @@ dependencies {
     api project(':jreleaser-releaser')
     api project(':jreleaser-templates')
     api project(':jreleaser-config-yaml')
-    api('com.google.guava:guava:30.0-jre') { transitive = false }
 
     annotationProcessor "info.picocli:picocli-codegen:$picocliVersion"
     api "info.picocli:picocli:$picocliVersion"

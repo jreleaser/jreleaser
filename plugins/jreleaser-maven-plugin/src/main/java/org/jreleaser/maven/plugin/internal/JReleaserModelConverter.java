@@ -114,6 +114,8 @@ public final class JReleaserModelConverter {
     private static void convertGitService(GitService service, org.jreleaser.model.GitService s) {
         s.setRepoOwner(service.getRepoOwner());
         s.setRepoName(service.getReleaseNotesUrlFormat());
+        s.setRepoUrlFormat(service.getRepoUrlFormat());
+        s.setCommitUrlFormat(service.getCommitUrlFormat());
         s.setDownloadUrlFormat(service.getDownloadUrlFormat());
         s.setReleaseNotesUrlFormat(service.getReleaseNotesUrlFormat());
         s.setLatestReleaseUrlFormat(service.getLatestReleaseUrlFormat());
