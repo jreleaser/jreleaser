@@ -1,17 +1,12 @@
-name: Build
+name: "Early Access"
 
-on: [ push, pull_request ]
+on: [push]
 
 jobs:
-  build:
-    name: Build
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-    runs-on: ${{ matrix.os }}
-    env:
-      CI: true
+  earlyaccess:
+    name: "Early Access"
+    if: github.event_name == 'push' && github.repository == 'kordamp/jreleaser' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
 
@@ -37,9 +32,12 @@ jobs:
       - name: Build
         run: ./gradlew build -S
 
-      - name: Show Reports
-        uses: actions/upload-artifact@v1
-        if: failure()
+      - name: 'Release early-access artifacts'
+        uses: marvinpinto/action-automatic-releases@latest
         with:
-          name: reports-${{ runner.os }}
-          path: build/
+          automatic_release_tag: 'early-access'
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          title: "JReleaser Early-Access"
+          files: |
+            apps/jreleaser-tool-provider/build/libs/*.jar
