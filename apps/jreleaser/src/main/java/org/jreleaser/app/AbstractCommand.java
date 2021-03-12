@@ -61,19 +61,21 @@ abstract class AbstractCommand implements Callable<Integer> {
     public Integer call() {
         Banner.display();
 
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
+
         ColorizedJReleaserLoggerAdapter.Level level = ColorizedJReleaserLoggerAdapter.Level.WARN;
         if (debug) {
             level = ColorizedJReleaserLoggerAdapter.Level.DEBUG;
-            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
+            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "debug");
         } else if (info) {
             level = ColorizedJReleaserLoggerAdapter.Level.INFO;
-            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
+            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "info");
         } else if (warn) {
             level = ColorizedJReleaserLoggerAdapter.Level.WARN;
-            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "warn");
+            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "warn");
         } else if (quiet) {
             level = ColorizedJReleaserLoggerAdapter.Level.ERROR;
-            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
+            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "error");
         }
 
         logger = new ColorizedJReleaserLoggerAdapter(parent().out, level);

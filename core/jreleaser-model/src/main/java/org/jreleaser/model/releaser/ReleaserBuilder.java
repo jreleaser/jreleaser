@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model.releaser;
 
-import org.jreleaser.model.Changelog;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.Logger;
 
@@ -35,21 +34,7 @@ public interface ReleaserBuilder<R extends Releaser, B extends ReleaserBuilder<R
 
     B logger(Logger logger);
 
-    B repo(String repo);
-
-    B authorization(String authorization);
-
-    B tagName(String tagName);
-
-    B releaseName(String releaseName);
-
-    B changelog(Changelog changelog);
-
-    B overwrite(boolean overwrite);
-
-    B allowUploadToExisting(boolean allowUploadToExisting);
-
-    B commitsUrl(String commitsUrl);
+    B model(JReleaserModel model);
 
     B addReleaseAsset(Path asset);
 

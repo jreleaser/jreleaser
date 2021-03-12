@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -174,6 +175,14 @@ public abstract class GitService extends AbstractDomain {
         this.issueTrackerUrlFormat = issueTrackerUrlFormat;
     }
 
+    public String getResolvedAuthorization() {
+        if (isNotBlank(authorization)) {
+            return authorization;
+        }
+        String tokenName = getClass().getSimpleName().toUpperCase() + "_TOKEN";
+        return System.getenv(tokenName);
+    }
+
     public String getAuthorization() {
         return authorization;
     }
@@ -242,7 +251,6 @@ public abstract class GitService extends AbstractDomain {
         map.put("releaseNotesUrlFormat", releaseNotesUrlFormat);
         map.put("latestReleaseUrlFormat", latestReleaseUrlFormat);
         map.put("issueTrackerUrlFormat", issueTrackerUrlFormat);
-        map.put("authorization", authorization);
         map.put("tagName", tagName);
         map.put("releaseName", releaseName);
         map.put("overwrite", overwrite);

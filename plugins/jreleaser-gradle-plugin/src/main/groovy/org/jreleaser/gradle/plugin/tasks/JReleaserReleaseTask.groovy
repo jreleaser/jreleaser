@@ -22,9 +22,11 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.JReleaserModel
 import org.jreleaser.releaser.Releasers
@@ -42,6 +44,9 @@ abstract class JReleaserReleaseTask extends DefaultTask {
     @Internal
     final Property<JReleaserModel> jreleaserModel
 
+    @Input
+    final Property<Boolean> dryRun
+
     @OutputDirectory
     final DirectoryProperty checksumDirectory
 
@@ -49,6 +54,12 @@ abstract class JReleaserReleaseTask extends DefaultTask {
     JReleaserReleaseTask(ObjectFactory objects) {
         jreleaserModel = objects.property(JReleaserModel)
         checksumDirectory = objects.directoryProperty()
+        dryRun = objects.property(Boolean).convention(false)
+    }
+
+    @Option(option = 'dryrun', description = 'Skips network operations (OPTIONAL).')
+    void setDryRun(boolean dryRun) {
+        this.dryRun.set(dryRun)
     }
 
     @TaskAction
@@ -60,6 +71,6 @@ abstract class JReleaserReleaseTask extends DefaultTask {
         Releasers.findReleaser(new JReleaserLoggerAdapter(project.logger), jreleaserModel.get())
             .configureWith(project.projectDir.toPath(), jreleaserModel.get())
             .build()
-            .release()
+            .release(dryRun.get())
     }
 }

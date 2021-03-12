@@ -43,6 +43,9 @@ public class ReleaseMojo extends AbstractJReleaserMojo {
     @Parameter(property = "jreleaser.release.skip")
     private boolean skip;
 
+    @Parameter(property = "jreleaser.release.dryrun")
+    private boolean dryrun;
+
     @Parameter(required = true)
     private Jreleaser jreleaser;
 
@@ -52,6 +55,7 @@ public class ReleaseMojo extends AbstractJReleaserMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
+        if (skip) return;
 
         JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser);
         JReleaserModelConfigurer.configure(jreleaserModel, project);
@@ -73,7 +77,7 @@ public class ReleaseMojo extends AbstractJReleaserMojo {
             Releaser releaser = Releasers.findReleaser(getLogger(), jreleaserModel)
                 .configureWith(project.getBasedir().toPath(), jreleaserModel)
                 .build();
-            releaser.release();
+            releaser.release(dryrun);
         } catch (ReleaseException e) {
             throw new MojoExecutionException("Unexpected error", e);
         }

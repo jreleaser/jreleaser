@@ -22,5 +22,5 @@ package org.jreleaser.model.releaser;
  * @since 0.1.0
  */
 public interface Releaser {
-    void release() throws ReleaseException;
+    void release(boolean dryRun) throws ReleaseException;
 }

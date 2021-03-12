@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+import static org.jreleaser.util.StringUtils.isBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -49,6 +51,10 @@ class Github {
     Github(Logger logger, String endpoint, String authorization) throws ReleaseException {
         this.logger = logger;
 
+        if (isBlank(endpoint)) {
+            endpoint = ENDPOINT;
+        }
+        
         try {
             github = new GitHubBuilder()
                 .withEndpoint(endpoint)

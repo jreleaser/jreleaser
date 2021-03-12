@@ -34,6 +34,10 @@ import java.nio.file.Path;
 @CommandLine.Command(name = "release",
     description = "Create or update a release")
 public class Release extends AbstractModelCommand {
+    @CommandLine.Option(names = {"-y", "--dryrun"},
+        description = "Skips remote operations.")
+    boolean dryRun;
+
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
         Checksums.collectAndWriteChecksums(logger, jreleaserModel, getChecksumsDirectory());
@@ -43,7 +47,7 @@ public class Release extends AbstractModelCommand {
                 .configureWith(actualBasedir, jreleaserModel)
                 .addReleaseAsset(getChecksumsDirectory().resolve("checksums.txt"))
                 .build();
-            releaser.release();
+            releaser.release(dryRun);
         } catch (ReleaseException e) {
             throw new JReleaserException("Unexpected error when creating release " + actualConfigFile.toAbsolutePath(), e);
         }

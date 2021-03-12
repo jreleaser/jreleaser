@@ -201,7 +201,6 @@ public abstract class GitService extends AbstractDomain {
         map.put("releaseNotesUrlFormat", releaseNotesUrlFormat);
         map.put("latestReleaseUrlFormat", latestReleaseUrlFormat);
         map.put("issueTrackerUrlFormat", issueTrackerUrlFormat);
-        map.put("authorization", authorization);
         map.put("tagName", tagName);
         map.put("releaseName", releaseName);
         map.put("overwrite", overwrite);

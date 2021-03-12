@@ -21,9 +21,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.maven.plugin.internal.JReleaserModelPrinter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
+import org.jreleaser.maven.plugin.internal.JReleaserModelPrinter;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserModelValidator;
 
@@ -32,12 +32,19 @@ import java.util.List;
 
 @Mojo(name = "config")
 public class ConfigMojo extends AbstractJReleaserMojo {
+    /**
+     * Skip execution.
+     */
+    @Parameter(property = "jreleaser.config.skip")
+    private boolean skip;
+
     @Parameter(required = true)
     private Jreleaser jreleaser;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
+        if (skip) return;
 
         JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser);
         JReleaserModelConfigurer.configure(jreleaserModel, project);
