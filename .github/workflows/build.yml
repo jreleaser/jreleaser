@@ -13,26 +13,30 @@ jobs:
     env:
       CI: true
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
+
       - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v1.4.3
         with:
           java-version: 1.8
-      - uses: actions/cache@v1
+
+      - uses: actions/cache@v2.1.4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/cache@v1
+
+      - uses: actions/cache@v2.1.4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradlew') }}
           restore-keys: |
             ${{ runner.os }}-gradlew-
-      - uses: eskatos/gradle-command-action@v1
-        with:
-          arguments: build -S
+
+      - name: Build
+        run: ./gradlew build -S
+
       - name: Show Reports
         uses: actions/upload-artifact@v1
         if: failure()
@@ -40,32 +44,35 @@ jobs:
           name: reports-${{ runner.os }}
           path: build/
 
-  release:
-    name: 'Release'
-    needs: build
+  earlyaccess:
+    name: 'Early Access'
     if: github.event_name == 'push' && github.repository == 'kordamp/jreleaser' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.3.4
+
       - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v1.4.3
         with:
           java-version: 1.8
-      - uses: actions/cache@v1
+
+      - uses: actions/cache@v2.1.4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - uses: actions/cache@v1
+
+      - uses: actions/cache@v2.1.4
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradlew') }}
           restore-keys: |
             ${{ runner.os }}-gradlew-
-      - uses: eskatos/gradle-command-action@v1
-        with:
-          arguments: build -S
+
+      - name: Build
+        run: ./gradlew build -S
+
       - name: 'Release early-access artifacts'
         uses: marvinpinto/action-automatic-releases@latest
         with:

@@ -54,7 +54,7 @@ class Github {
         if (isBlank(endpoint)) {
             endpoint = ENDPOINT;
         }
-        
+
         try {
             github = new GitHubBuilder()
                 .withEndpoint(endpoint)
