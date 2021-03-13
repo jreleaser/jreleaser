@@ -102,16 +102,16 @@ public final class JReleaserModelValidator {
     private static void validateTwitter(Logger logger, Path basedir, JReleaserModel model, Twitter twitter, List<String> errors) {
         if (!twitter.isEnabled()) return;
 
-        if (!checkEnvSetting(logger, errors, twitter.getConsumerKey(), "TWITTER_CONSUMER_KEY", "twitter.consumerKey")) {
+        if (!checkEnvSetting(logger, errors, twitter.getConsumerKey(), "TWITTER_CONSUMER_KEY", "consumerKey")) {
             return;
         }
-        if (!checkEnvSetting(logger, errors, twitter.getConsumerSecret(), "TWITTER_CONSUMER_SECRET", "twitter.consumerSecret")) {
+        if (!checkEnvSetting(logger, errors, twitter.getConsumerSecret(), "TWITTER_CONSUMER_SECRET", "consumerSecret")) {
             return;
         }
-        if (!checkEnvSetting(logger, errors, twitter.getAccessToken(), "TWITTER_ACCESS_TOKEN", "twitter.accessToken")) {
+        if (!checkEnvSetting(logger, errors, twitter.getAccessToken(), "TWITTER_ACCESS_TOKEN", "accessToken")) {
             return;
         }
-        if (!checkEnvSetting(logger, errors, twitter.getAccessTokenSecret(), "TWITTER_ACCESS_TOKEN_SECRET", "twitter.accessTokenSecret")) {
+        if (!checkEnvSetting(logger, errors, twitter.getAccessTokenSecret(), "TWITTER_ACCESS_TOKEN_SECRET", "accessTokenSecret")) {
             return;
         }
         if (isBlank(twitter.getStatus())) {
@@ -121,9 +121,9 @@ public final class JReleaserModelValidator {
 
     private static boolean checkEnvSetting(Logger logger, List<String> errors, String value, String key, String property) {
         if (isBlank(value)) {
-            logger.warn("twitter.consumerKey is not explicitly defined. Checking environment for {}", key);
+            logger.warn("twitter.{} is not explicitly defined. Checking environment for {}", property, key);
             if (isBlank(System.getenv(key))) {
-                errors.add("twitter.consumerKey must not be blank. Alternatively define a " + key + " environment variable.");
+                errors.add("twitter." + property + " must not be blank. Alternatively define a " + key + " environment variable.");
                 return false;
             }
         }
@@ -132,17 +132,17 @@ public final class JReleaserModelValidator {
 
     private static void validateGitService(Logger logger, Path basedir, Project project, GitService service, List<String> errors) {
         if (isBlank(service.getRepoOwner())) {
-            errors.add("service.repoOwner must not be blank");
+            errors.add(service.getName() + ".repoOwner must not be blank");
         }
         if (isBlank(service.getRepoName())) {
             service.setRepoName(project.getName());
         }
 
         if (isBlank(service.getAuthorization())) {
-            String tokenName = service.getClass().getSimpleName().toUpperCase() + "_TOKEN";
-            logger.warn("service.auhorization is not explicitly defined. Checking environment for {}", tokenName);
+            String tokenName = service.getName().toUpperCase() + "_TOKEN";
+            logger.warn("{}.auhorization is not explicitly defined. Checking environment for {}", service.getName(), tokenName);
             if (isBlank(System.getenv(tokenName))) {
-                errors.add("service.authorization must not be blank. Alternatively define a " + tokenName + " environment variable.");
+                errors.add(service.getName() + ".authorization must not be blank. Alternatively define a " + tokenName + " environment variable.");
             }
             return;
         }

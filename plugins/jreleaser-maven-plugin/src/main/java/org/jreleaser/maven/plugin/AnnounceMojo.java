@@ -30,7 +30,7 @@ import org.jreleaser.model.announcer.spi.AnnouncerBuilder;
 
 import java.util.List;
 
-@Mojo(name = "release")
+@Mojo(name = "announce")
 public class AnnounceMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
