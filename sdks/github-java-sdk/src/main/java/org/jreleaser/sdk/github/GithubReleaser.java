@@ -90,7 +90,7 @@ public class GithubReleaser implements Releaser {
 
         GHRelease release = api.createRelease(github.getCanonicalRepoName(), github.getTagName())
             .commitish(github.getTargetCommitish())
-            .name("Release " + model.getProject().getVersion())
+            .name(github.getReleaseName())
             .draft(github.isDraft())
             .prerelease(github.isPrerelease())
             .body(changelog)

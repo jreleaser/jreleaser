@@ -144,10 +144,12 @@ public final class JReleaserModelValidator {
             if (isBlank(System.getenv(tokenName))) {
                 errors.add(service.getName() + ".authorization must not be blank. Alternatively define a " + tokenName + " environment variable.");
             }
-            return;
         }
         if (isBlank(service.getTagName())) {
             service.setTagName("v" + project.getVersion());
+        }
+        if (isBlank(service.getReleaseName())) {
+            service.setReleaseName("Release " + service.getTagName());
         }
         if (!service.getChangelog().isEnabledSet()) {
             service.getChangelog().setEnabled(true);

@@ -15,10 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-model')
+package org.jreleaser.sdk.twitter;
 
-    api "org.twitter4j:twitter4j-core:$twitter4jVersion"
-
-    testImplementation "com.github.tomakehurst:wiremock-jre8:$wiremockVersion"
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+public class ApiEndpoints {
+    public static final String UPDATE_STATUS_ENDPOINT = "/statuses/update";
 }

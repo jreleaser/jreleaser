@@ -19,7 +19,7 @@ package org.jreleaser.sdk.twitter;
 
 import org.jreleaser.util.Logger;
 import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
+import twitter4j.conf.ConfigurationBuilder;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -33,9 +33,10 @@ public class Twitter {
     private final twitter4j.Twitter twitter;
     private final boolean dryRun;
 
-    public Twitter(Logger logger, String consumerKey, String consumerToken,
+    public Twitter(Logger logger, String apiHost, String consumerKey, String consumerToken,
                    String accessToken, String accessTokenSecret, boolean dryRun) {
         requireNonNull(logger, "'logger' must not be blank");
+        requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(consumerKey, "'consumerKey' must not be blank");
         requireNonBlank(consumerToken, "'consumerToken' must not be blank");
         requireNonBlank(accessToken, "'accessToken' must not be blank");
@@ -43,9 +44,15 @@ public class Twitter {
 
         this.logger = logger;
         this.dryRun = dryRun;
-        this.twitter = TwitterFactory.getSingleton();
-        this.twitter.setOAuthConsumer(consumerKey, consumerToken);
-        this.twitter.setOAuthAccessToken(new AccessToken(accessToken, accessTokenSecret));
+        this.twitter = new TwitterFactory(
+            new ConfigurationBuilder()
+                .setRestBaseURL(apiHost)
+                .setOAuthConsumerKey(consumerKey)
+                .setOAuthConsumerSecret(consumerToken)
+                .setOAuthAccessToken(accessToken)
+                .setOAuthAccessTokenSecret(accessTokenSecret)
+                .build())
+            .getInstance();
 
         this.logger.info("Twitter dryRun set to {}", dryRun);
     }

@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Constants;
+
 import java.io.StringReader;
 import java.util.Map;
 
@@ -50,7 +52,9 @@ public class Twitter extends AbstractAnnouncer {
     }
 
     public String getResolvedStatus(JReleaserModel model) {
-        return applyTemplate(new StringReader(status), model.newContext());
+        Map<String, Object> context = model.newContext();
+        context.put(Constants.KEY_TAG_NAME, model.getRelease().getGitService().getTagName());
+        return applyTemplate(new StringReader(status), context);
     }
 
     public String getResolvedConsumerKey() {

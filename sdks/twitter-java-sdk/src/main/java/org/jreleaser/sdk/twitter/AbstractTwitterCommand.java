@@ -31,12 +31,13 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
     protected final Twitter twitter;
 
     protected AbstractTwitterCommand(Logger logger,
+                                     String apiHost,
                                      String consumerKey,
                                      String consumerToken,
                                      String accessToken,
                                      String accessTokenSecret,
                                      boolean dryRun) {
-        this.twitter = new Twitter(logger, consumerKey, consumerToken, accessToken, accessTokenSecret, dryRun);
+        this.twitter = new Twitter(logger, apiHost, consumerKey, consumerToken, accessToken, accessTokenSecret, dryRun);
         this.dryRun = dryRun;
     }
 
@@ -47,6 +48,7 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
         protected String consumerToken;
         protected String accessToken;
         protected String accessTokenSecret;
+        protected String apiHost = "https://api.twitter.com/1.1/";
 
         protected Builder(Logger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be blank");
@@ -61,39 +63,33 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
             return self();
         }
 
-        /**
-         * The SDK consumer key
-         */
         public S consumerKey(String consumerKey) {
             this.consumerKey = requireNonBlank(consumerKey, "'consumerKey' must not be blank").trim();
             return self();
         }
 
-        /**
-         * The SDK consumer token
-         */
         public S consumerToken(String consumerToken) {
             this.consumerToken = requireNonBlank(consumerToken, "'consumerToken' must not be blank").trim();
             return self();
         }
 
-        /**
-         * candidate identifier
-         */
         public S accessToken(String accessToken) {
             this.accessToken = requireNonBlank(accessToken, "'accessToken' must not be blank").trim();
             return self();
         }
 
-        /**
-         * candidate version
-         */
         public S accessTokenSecret(String accessTokenSecret) {
             this.accessTokenSecret = requireNonBlank(accessTokenSecret, "'accessTokenSecret' must not be blank").trim();
             return self();
         }
 
+        public S apiHost(String apiHost) {
+            this.apiHost = requireNonBlank(apiHost, "'apiHost' must not be blank").trim();
+            return self();
+        }
+
         protected void validate() {
+            requireNonBlank(apiHost, "'apiHost' must not be blank");
             requireNonBlank(consumerKey, "'consumerKey' must not be blank");
             requireNonBlank(consumerToken, "'consumerToken' must not be blank");
             requireNonBlank(accessToken, "'accessToken' must not be blank");

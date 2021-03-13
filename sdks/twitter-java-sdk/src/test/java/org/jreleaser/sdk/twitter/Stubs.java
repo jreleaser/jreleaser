@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.sdkman;
+package org.jreleaser.sdk.twitter;
 
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 
@@ -31,19 +31,19 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
  * @since 0.1.0
  */
 class Stubs {
-    static void verifyPost(String endpoint, String json) {
-        verifyRequest(postRequestedFor(urlEqualTo(endpoint)), json);
+    static void verifyPostContains(String endpoint, String maybeJson) {
+        verifyRequestContains(postRequestedFor(urlEqualTo(endpoint)), maybeJson);
     }
 
-    static void verifyPut(String endpoint, String json) {
-        verifyRequest(putRequestedFor(urlEqualTo(endpoint)), json);
+    private static void verifyRequest(RequestPatternBuilder builder, String maybeJson) {
+        verify(builder.withHeader("Content-Type", equalTo("application/x-www-form-urlencoded"))
+            .withHeader("Accept", equalTo("text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2"))
+            .withRequestBody(maybeJson.startsWith("{") ? equalToJson(maybeJson) : equalTo(maybeJson)));
     }
 
-    private static void verifyRequest(RequestPatternBuilder builder, String json) {
-        verify(builder.withHeader("Content-Type", equalTo("application/json"))
-            .withHeader("Accept", equalTo("application/json"))
-            .withHeader("Consumer-Key", equalTo("CONSUMER_KEY"))
-            .withHeader("Consumer-Token", equalTo("CONSUMER_TOKEN"))
-            .withRequestBody(equalToJson(json)));
+    private static void verifyRequestContains(RequestPatternBuilder builder, String maybeJson) {
+        verify(builder.withHeader("Content-Type", equalTo("application/x-www-form-urlencoded"))
+            .withHeader("Accept", equalTo("text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2"))
+            .withRequestBody(maybeJson.startsWith("{") ? containing(maybeJson.substring(1, maybeJson.length() - 1)) : containing(maybeJson)));
     }
 }
