@@ -15,14 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.model;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractDomain {
-    public abstract Map<String, Object> asMap();
+public class Announcers implements Domain {
+    private final Twitter twitter = new Twitter();
+
+    void setAll(Announcers packagers) {
+        setTwitter(packagers.twitter);
+    }
+
+    public Twitter getTwitter() {
+        return twitter;
+    }
+
+    public void setTwitter(Twitter twitter) {
+        this.twitter.setAll(twitter);
+    }
+
+    @Override
+    public Map<String, Object> asMap() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.putAll(twitter.asMap());
+        return map;
+    }
 }

@@ -19,7 +19,7 @@ package org.jreleaser.sdk.github;
 
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
-import org.jreleaser.model.releaser.ReleaseException;
+import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.util.Logger;
 import org.kohsuke.github.GHAsset;
 import org.kohsuke.github.GHRelease;

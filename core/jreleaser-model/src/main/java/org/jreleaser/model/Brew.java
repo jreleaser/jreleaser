@@ -25,12 +25,12 @@ import java.util.Map;
  * @since 0.1.0
  */
 public class Brew extends AbstractTool {
-    public static final String TOOL_NAME = "brew";
+    public static final String NAME = "brew";
 
     private final Map<String, String> dependencies = new LinkedHashMap<>();
 
     public Brew() {
-        super(TOOL_NAME);
+        super(NAME);
     }
 
     void setAll(Brew brew) {

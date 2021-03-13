@@ -19,9 +19,9 @@ package org.jreleaser.gradle.plugin.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.kordamp.gradle.plugin.base.ProjectConfigurationExtension
 import org.kordamp.gradle.plugin.base.model.License
-import org.jreleaser.gradle.plugin.JReleaserExtension
 
 /**
  *

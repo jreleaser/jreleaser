@@ -15,12 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.releaser;
+package org.jreleaser.maven.plugin;
+
+import java.io.Serializable;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Releaser {
-    void release(boolean dryRun) throws ReleaseException;
+public interface Releaser extends Domain {
+    boolean isEnabledSet();
+
+    Boolean isEnabled();
+
+    void setEnabled(Boolean enabled);
+
+    String getName();
 }

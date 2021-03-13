@@ -17,6 +17,7 @@
  */
 package org.jreleaser.maven.plugin.internal;
 
+import org.jreleaser.maven.plugin.Announcers;
 import org.jreleaser.maven.plugin.Artifact;
 import org.jreleaser.maven.plugin.Brew;
 import org.jreleaser.maven.plugin.Changelog;
@@ -34,6 +35,7 @@ import org.jreleaser.maven.plugin.Release;
 import org.jreleaser.maven.plugin.Scoop;
 import org.jreleaser.maven.plugin.Slot;
 import org.jreleaser.maven.plugin.Snap;
+import org.jreleaser.maven.plugin.Twitter;
 import org.jreleaser.model.JReleaserModel;
 
 import java.util.ArrayList;
@@ -55,6 +57,7 @@ public final class JReleaserModelConverter {
         jReleaserModel.setProject(convertProject(jreleaser.getProject()));
         jReleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
         jReleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
+        jReleaserModel.setAnnouncers(convertAnnouncers(jreleaser.getAnnouncers()));
         jReleaserModel.setDistributions(convertDistributions(jReleaserModel, jreleaser.getDistributions()));
         return jReleaserModel;
     }
@@ -76,7 +79,6 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Release convertRelease(Release release) {
         org.jreleaser.model.Release r = new org.jreleaser.model.Release();
-        if (release.isEnabledSet()) r.setEnabled(release.isEnabled());
         r.setGithub(convertGithub(release.getGithub()));
         r.setGitlab(convertGitlab(release.getGitlab()));
         r.setGitea(convertGitea(release.getGitea()));
@@ -144,6 +146,23 @@ public final class JReleaserModelConverter {
         if (packagers.getScoop().isSet()) p.setScoop(convertScoop(packagers.getScoop()));
         if (packagers.getSnap().isSet()) p.setSnap(convertSnap(packagers.getSnap()));
         return p;
+    }
+
+    private static org.jreleaser.model.Announcers convertAnnouncers(Announcers announcers) {
+        org.jreleaser.model.Announcers a = new org.jreleaser.model.Announcers();
+        if (announcers.getTwitter().isSet()) a.setTwitter(convertTwitter(announcers.getTwitter()));
+        return a;
+    }
+
+    private static org.jreleaser.model.Twitter convertTwitter(Twitter twitter) {
+        org.jreleaser.model.Twitter a = new org.jreleaser.model.Twitter();
+        if (twitter.isEnabledSet()) a.setEnabled(twitter.isEnabled());
+        a.setConsumerKey(twitter.getConsumerKey());
+        a.setConsumerSecret(twitter.getConsumerSecret());
+        a.setAccessToken(twitter.getAccessToken());
+        a.setAccessTokenSecret(twitter.getAccessTokenSecret());
+        a.setStatus(twitter.getStatus());
+        return a;
     }
 
     private static Map<String, org.jreleaser.model.Distribution> convertDistributions(JReleaserModel model, List<Distribution> distributions) {

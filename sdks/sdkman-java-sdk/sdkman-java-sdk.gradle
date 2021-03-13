@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 dependencies {
-    api project(':jreleaser-utils')
+    api project(':jreleaser-model')
 
     api "io.github.openfeign:feign-core:$feignVersion"
     api "io.github.openfeign:feign-jackson:$feignVersion"

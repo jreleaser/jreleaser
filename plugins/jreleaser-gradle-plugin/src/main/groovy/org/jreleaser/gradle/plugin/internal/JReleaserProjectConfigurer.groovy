@@ -23,14 +23,13 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
+import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
@@ -140,16 +139,31 @@ class JReleaserProjectConfigurer {
                 })
         }
 
-        jreleaserDeps << project.tasks.register('createRelease', JReleaserReleaseTask,
+        TaskProvider<JReleaserReleaseTask> createReleaseTask = project.tasks.register('createRelease', JReleaserReleaseTask,
             new Action<JReleaserReleaseTask>() {
                 @Override
                 void execute(JReleaserReleaseTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Creates or updates a release'
                     t.jreleaserModel.set(model)
+                    t.dryRun.set(extension.dryRun)
                     t.checksumDirectory.set(project.layout
                         .buildDirectory
                         .dir('jreleaser/checksums'))
+                }
+            })
+        jreleaserDeps << createReleaseTask
+
+        jreleaserDeps << project.tasks.register('announceRelease', JReleaserAnnounceTask,
+            new Action<JReleaserAnnounceTask>() {
+                @Override
+                void execute(JReleaserAnnounceTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Announces a release'
+                    t.dependsOn(createReleaseTask)
+                    t.mustRunAfter(createReleaseTask)
+                    t.jreleaserModel.set(model)
+                    t.dryRun.set(extension.dryRun)
                 }
             })
 

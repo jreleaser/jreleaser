@@ -17,20 +17,24 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Constants;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserModel extends AbstractDomain {
+public class JReleaserModel implements Domain {
     private final Project project = new Project();
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
+    private final Announcers announcers = new Announcers();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
 
     public Project getProject() {
@@ -55,6 +59,14 @@ public class JReleaserModel extends AbstractDomain {
 
     public void setPackagers(Packagers packagers) {
         this.packagers.setAll(packagers);
+    }
+
+    public Announcers getAnnouncers() {
+        return announcers;
+    }
+
+    public void setAnnouncers(Announcers announcers) {
+        this.announcers.setAll(announcers);
     }
 
     public Map<String, Distribution> getDistributions() {
@@ -95,10 +107,44 @@ public class JReleaserModel extends AbstractDomain {
         map.put("project", project.asMap());
         map.put("release", release.asMap());
         map.put("packagers", packagers.asMap());
+        map.put("announcers", announcers.asMap());
         map.put("distributions", distributions.values()
             .stream()
             .map(Distribution::asMap)
             .collect(Collectors.toList()));
         return map;
+    }
+
+    public Map<String, Object> newContext() {
+        Map<String, Object> context = new LinkedHashMap<>();
+        fillProjectProperties(context, project);
+        fillReleaseProperties(context, release);
+        return context;
+    }
+
+    private void fillProjectProperties(Map<String, Object> context, Project project) {
+        context.put(Constants.KEY_PROJECT_NAME, project.getName());
+        context.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
+        context.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
+        context.put(Constants.KEY_PROJECT_DESCRIPTION, project.getDescription());
+        context.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, project.getLongDescription());
+        context.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
+        context.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+        context.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
+        context.put(Constants.KEY_PROJECT_AUTHORS_BY_SPACE, String.join(" ", project.getAuthors()));
+        context.put(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));
+        context.put(Constants.KEY_PROJECT_TAGS_BY_SPACE, String.join(" ", project.getTags()));
+        context.put(Constants.KEY_PROJECT_TAGS_BY_COMMA, String.join(",", project.getTags()));
+        context.putAll(project.getExtraProperties());
+    }
+
+    private void fillReleaseProperties(Map<String, Object> context, Release release) {
+        GitService service = release.getGitService();
+        context.put(Constants.KEY_REPO_HOST, service.getRepoHost());
+        context.put(Constants.KEY_REPO_OWNER, service.getRepoOwner());
+        context.put(Constants.KEY_REPO_NAME, service.getRepoName());
+        context.put(Constants.KEY_CANONICAL_REPO_NAME, service.getCanonicalRepoName());
+        context.put(Constants.KEY_TAG_NAME, service.getTagName());
+        context.put(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl());
     }
 }

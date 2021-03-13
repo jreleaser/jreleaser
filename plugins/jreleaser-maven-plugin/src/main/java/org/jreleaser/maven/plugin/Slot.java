@@ -28,7 +28,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Slot extends AbstractDomain {
+public class Slot implements Domain {
     private final Map<String, String> attributes = new LinkedHashMap<>();
     private final List<String> reads = new ArrayList<>();
     private final List<String> writes = new ArrayList<>();

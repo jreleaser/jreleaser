@@ -33,6 +33,7 @@ dependencies {
     api project(':jreleaser-model')
     api project(':jreleaser-tools')
     api project(':jreleaser-releaser')
+    api project(':jreleaser-announce')
     api project(':jreleaser-templates')
     api "org.slf4j:slf4j-api:$slf4jVersion"
 

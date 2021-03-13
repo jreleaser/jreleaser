@@ -37,11 +37,14 @@ public interface Constants {
     String KEY_PROJECT_AUTHORS_BY_COMMA = "projectAuthorsByComma";
     String KEY_PROJECT_TAGS_BY_SPACE = "projectTagsBySpace";
     String KEY_PROJECT_TAGS_BY_COMMA = "projectTagsByComma";
+    String KEY_TAG_NAME = "tagName";
+    String KEY_LATEST_RELEASE_URL = "latestReleaseUrl";
 
     // Release
     String KEY_REPO_HOST = "repoHost";
     String KEY_REPO_OWNER = "repoOwner";
     String KEY_REPO_NAME = "repoName";
+    String KEY_CANONICAL_REPO_NAME = "repoCanonicalName";
 
     // Distribution
     String KEY_DISTRIBUTION_NAME = "distributionName";

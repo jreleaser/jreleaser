@@ -28,7 +28,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Changelog extends AbstractDomain {
+public class Changelog implements Domain {
     private Boolean enabled;
     private boolean enabledSet;
     private Sort sort = Sort.ASC;

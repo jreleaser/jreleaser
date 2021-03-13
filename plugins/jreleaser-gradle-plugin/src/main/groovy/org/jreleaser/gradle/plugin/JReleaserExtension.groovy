@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.Announcers
 import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
@@ -35,11 +36,15 @@ import org.jreleaser.gradle.plugin.dsl.Release
 interface JReleaserExtension {
     Property<Boolean> getEnabled()
 
+    Property<Boolean> getDryRun()
+
     Project getProject()
 
     Release getRelease()
 
     Packagers getPackagers()
+
+    Announcers getAnnouncers()
 
     NamedDomainObjectContainer<Distribution> getDistributions()
 
@@ -48,4 +53,6 @@ interface JReleaserExtension {
     void release(Action<? super Release> action)
 
     void packagers(Action<? super Packagers> action)
+
+    void announcers(Action<? super Announcers> action)
 }

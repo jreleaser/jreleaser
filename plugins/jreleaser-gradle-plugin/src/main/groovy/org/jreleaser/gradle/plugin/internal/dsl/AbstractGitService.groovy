@@ -33,6 +33,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class AbstractGitService implements GitService {
+    final Property<Boolean> enabled
     final Property<String> repoHost
     final Property<String> repoOwner
     final Property<String> repoName
@@ -51,6 +52,7 @@ abstract class AbstractGitService implements GitService {
 
     @Inject
     AbstractGitService(ObjectFactory objects) {
+        enabled = objects.property(Boolean).convention(Providers.notDefined())
         repoHost = objects.property(String).convention(Providers.notDefined())
         repoOwner = objects.property(String).convention(Providers.notDefined())
         repoName = objects.property(String).convention(Providers.notDefined())
@@ -71,7 +73,8 @@ abstract class AbstractGitService implements GitService {
 
     @Internal
     boolean isSet() {
-        repoHost.present ||
+        enabled.present ||
+            repoHost.present ||
             repoOwner.present ||
             repoName.present ||
             repoUrlFormat.present ||
@@ -89,6 +92,7 @@ abstract class AbstractGitService implements GitService {
     }
 
     protected void toModel(org.jreleaser.model.GitService service) {
+        if (enabled.present) service.enabled = enabled.get()
         service.repoHost = repoHost.orNull
         service.repoOwner = repoOwner.orNull
         service.repoName = repoName.orNull

@@ -29,6 +29,7 @@ public class Github extends GitService {
     private boolean prerelease;
 
     public Github() {
+        super("github");
         setRepoHost("github.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");
@@ -68,7 +69,7 @@ public class Github extends GitService {
     public void setPrerelease(boolean prerelease) {
         this.prerelease = prerelease;
     }
-    
+
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = super.asMap();

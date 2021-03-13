@@ -27,6 +27,7 @@ public class Gitlab extends GitService {
     private String ref = "main";
 
     public Gitlab() {
+        super("gitlab");
         setRepoHost("gitlab.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/commits");

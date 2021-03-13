@@ -29,7 +29,9 @@ import java.io.PrintWriter;
     description = "jreleaser",
     mixinStandardHelpOptions = true,
     versionProvider = Versions.class,
-    subcommands = {Init.class, Config.class, Template.class, Prepare.class, Package.class, Release.class})
+    subcommands = {Init.class, Config.class, Template.class,
+        Prepare.class, Package.class, Release.class,
+        Announce.class})
 public class Main implements Runnable {
     PrintWriter out;
     PrintWriter err;

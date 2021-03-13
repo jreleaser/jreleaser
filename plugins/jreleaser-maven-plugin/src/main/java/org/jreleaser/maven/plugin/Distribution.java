@@ -170,13 +170,13 @@ public class Distribution extends Packagers implements ExtraProperties {
 
     private <T extends Tool> T resolveTool(String name) {
         switch (name.toLowerCase().trim()) {
-            case Brew.TOOL_NAME:
+            case Brew.NAME:
                 return (T) getBrew();
-            case Chocolatey.TOOL_NAME:
+            case Chocolatey.NAME:
                 return (T) getChocolatey();
-            case Scoop.TOOL_NAME:
+            case Scoop.NAME:
                 return (T) getScoop();
-            case Snap.TOOL_NAME:
+            case Snap.NAME:
                 return (T) getSnap();
             default:
                 throw new IllegalArgumentException("Unsupported tool '" + name + "'");
@@ -203,10 +203,10 @@ public class Distribution extends Packagers implements ExtraProperties {
 
     public static Set<String> supportedTools() {
         Set<String> set = new LinkedHashSet<>();
-        set.add(Brew.TOOL_NAME);
-        set.add(Chocolatey.TOOL_NAME);
-        set.add(Scoop.TOOL_NAME);
-        set.add(Snap.TOOL_NAME);
+        set.add(Brew.NAME);
+        set.add(Chocolatey.NAME);
+        set.add(Scoop.NAME);
+        set.add(Snap.NAME);
         return Collections.unmodifiableSet(set);
     }
 

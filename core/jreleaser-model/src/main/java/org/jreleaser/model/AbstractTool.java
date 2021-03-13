@@ -26,15 +26,15 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractTool extends AbstractDomain implements Tool {
-    protected final String toolName;
+abstract class AbstractTool implements Tool {
+    protected final String name;
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected Boolean enabled;
     protected boolean enabledSet;
     protected Path templateDirectory;
 
-    protected AbstractTool(String toolName) {
-        this.toolName = toolName;
+    protected AbstractTool(String name) {
+        this.name = name;
     }
 
     void setAll(AbstractTool tool) {
@@ -61,8 +61,8 @@ abstract class AbstractTool extends AbstractDomain implements Tool {
     }
 
     @Override
-    public String getToolName() {
-        return toolName;
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -102,7 +102,7 @@ abstract class AbstractTool extends AbstractDomain implements Tool {
         props.put("extraProperties", extraProperties);
 
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put(getToolName(), props);
+        map.put(getName(), props);
         return map;
     }
 

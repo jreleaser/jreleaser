@@ -26,8 +26,8 @@ import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserModelValidator;
-import org.jreleaser.model.releaser.ReleaseException;
-import org.jreleaser.model.releaser.Releaser;
+import org.jreleaser.model.releaser.spi.ReleaseException;
+import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.releaser.Releasers;
 import org.jreleaser.tools.Checksums;
 

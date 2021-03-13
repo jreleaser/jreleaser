@@ -24,6 +24,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Changelog
+import org.jreleaser.model.Gitlab
 
 import javax.inject.Inject
 
@@ -56,8 +57,8 @@ class GitlabImpl extends AbstractGitService implements org.jreleaser.gradle.plug
             changelog.set
     }
 
-    org.jreleaser.model.Gitlab toModel() {
-        org.jreleaser.model.Gitlab service = new org.jreleaser.model.Gitlab()
+    Gitlab toModel() {
+        Gitlab service = new Gitlab()
         toModel(service)
         if (ref.present) service.ref = ref.get()
         if (changelog.set) service.changelog = changelog.toModel()

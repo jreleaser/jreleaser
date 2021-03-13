@@ -24,13 +24,13 @@ import java.util.Map;
  * @since 0.1.0
  */
 public class Scoop extends AbstractTool {
-    public static final String TOOL_NAME = "scoop";
+    public static final String NAME = "scoop";
 
     private String checkverUrl;
     private String autoupdateUrl;
 
     public Scoop() {
-        super(TOOL_NAME);
+        super(NAME);
     }
 
     void setAll(Scoop scoop) {

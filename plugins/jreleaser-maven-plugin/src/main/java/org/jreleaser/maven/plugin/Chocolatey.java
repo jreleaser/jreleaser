@@ -24,10 +24,10 @@ import java.util.Map;
  * @since 0.1.0
  */
 public class Chocolatey extends AbstractTool {
-    public static final String TOOL_NAME = "chocolatey";
+    public static final String NAME = "chocolatey";
 
     public Chocolatey() {
-        super(TOOL_NAME);
+        super(NAME);
     }
 
     @Override

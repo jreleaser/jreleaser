@@ -17,12 +17,12 @@
  */
 package org.jreleaser.config.yaml;
 
-import org.kordamp.jipsy.annotations.ServiceProviderFor;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Plug;
 import org.jreleaser.model.Slot;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;

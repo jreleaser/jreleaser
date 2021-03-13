@@ -18,7 +18,7 @@
 package org.jreleaser.releaser;
 
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.releaser.ReleaserBuilder;
+import org.jreleaser.model.releaser.spi.ReleaserBuilder;
 import org.jreleaser.sdk.github.GithubReleaser;
 import org.jreleaser.util.Logger;
 

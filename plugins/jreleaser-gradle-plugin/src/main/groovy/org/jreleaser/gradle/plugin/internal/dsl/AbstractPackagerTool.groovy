@@ -23,8 +23,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.model.Tool
 import org.jreleaser.gradle.plugin.dsl.PackagerTool
+import org.jreleaser.model.Tool
 
 import javax.inject.Inject
 

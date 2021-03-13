@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Plug extends AbstractDomain {
+public class Plug implements Domain {
     private final Map<String, String> attributes = new LinkedHashMap<>();
     private String name;
 

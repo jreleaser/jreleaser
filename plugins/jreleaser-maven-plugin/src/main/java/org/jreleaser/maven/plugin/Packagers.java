@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Packagers extends AbstractDomain {
+public class Packagers implements Domain {
     private final Brew brew = new Brew();
     private final Chocolatey chocolatey = new Chocolatey();
     private final Scoop scoop = new Scoop();

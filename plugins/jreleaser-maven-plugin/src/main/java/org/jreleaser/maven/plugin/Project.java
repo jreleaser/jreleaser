@@ -28,7 +28,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Project extends AbstractDomain implements ExtraProperties {
+public class Project implements Domain, ExtraProperties {
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();

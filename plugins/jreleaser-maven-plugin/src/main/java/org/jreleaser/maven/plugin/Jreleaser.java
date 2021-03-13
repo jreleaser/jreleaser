@@ -31,10 +31,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Jreleaser extends AbstractDomain {
+public class Jreleaser implements Domain {
     private final Project project = new Project();
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
+    private final Announcers announcers = new Announcers();
     private final List<Distribution> distributions = new ArrayList<>();
 
     public Project getProject() {
@@ -59,6 +60,14 @@ public class Jreleaser extends AbstractDomain {
 
     public void setPackagers(Packagers packagers) {
         this.packagers.setAll(packagers);
+    }
+
+    public Announcers getAnnouncers() {
+        return announcers;
+    }
+
+    public void setAnnouncers(Announcers announcers) {
+        this.announcers.setAll(announcers);
     }
 
     public List<Distribution> getDistributions() {
@@ -96,6 +105,7 @@ public class Jreleaser extends AbstractDomain {
         map.put("project", project.asMap());
         map.put("release", release.asMap());
         map.put("packagers", packagers.asMap());
+        map.put("announcers", announcers.asMap());
         map.put("distributions", distributions.stream()
             .map(Distribution::asMap)
             .collect(Collectors.toList()));

@@ -15,22 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.releaser;
+package org.jreleaser.model;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class ReleaseException extends Exception {
-    public ReleaseException(String message) {
-        super(message);
-    }
-
-    public ReleaseException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ReleaseException(Throwable cause) {
-        super(cause);
-    }
+interface Domain extends Serializable {
+    Map<String, Object> asMap();
 }

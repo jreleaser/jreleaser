@@ -18,9 +18,9 @@
 package org.jreleaser.sdk.github;
 
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.releaser.AbstractReleaserBuilder;
-import org.jreleaser.model.releaser.ReleaseException;
-import org.jreleaser.model.releaser.Releaser;
+import org.jreleaser.model.releaser.spi.AbstractReleaserBuilder;
+import org.jreleaser.model.releaser.spi.ReleaseException;
+import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.util.Logger;
 import org.kohsuke.github.GHRelease;
@@ -55,8 +55,8 @@ public class GithubReleaser implements Releaser {
         String tagName = github.getTagName();
 
         try {
-            logger.info("Looking up release with tag {} at repository {}", tagName, github.getCanonicalRepo());
-            GHRelease release = api.findReleaseByTag(github.getCanonicalRepo(), tagName);
+            logger.info("Looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
+            GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);
             if (null != release) {
                 logger.info("Release {} exists", tagName);
                 if (github.isOverwrite()) {
@@ -88,7 +88,7 @@ public class GithubReleaser implements Releaser {
         logger.info("changelog:{}{}", System.lineSeparator(), changelog);
         if (dryRun) return;
 
-        GHRelease release = api.createRelease(github.getCanonicalRepo(), github.getTagName())
+        GHRelease release = api.createRelease(github.getCanonicalRepoName(), github.getTagName())
             .commitish(github.getTargetCommitish())
             .name("Release " + model.getProject().getVersion())
             .draft(github.isDraft())

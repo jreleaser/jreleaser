@@ -15,30 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.releaser;
-
-import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.util.Logger;
-
-import java.nio.file.Path;
-import java.util.List;
+package org.jreleaser.model.announcer.spi;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface ReleaserBuilder<R extends Releaser, B extends ReleaserBuilder<R, B>> {
-    B configureWith(Path basedir, JReleaserModel model);
-
-    B basedir(Path basedir);
-
-    B logger(Logger logger);
-
-    B model(JReleaserModel model);
-
-    B addReleaseAsset(Path asset);
-
-    B setReleaseAssets(List<Path> assets);
-
-    R build();
+public interface Announcer {
+    void announce(boolean dryRun) throws AnnounceException;
 }

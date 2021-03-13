@@ -24,32 +24,15 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Release extends AbstractDomain {
-    private Boolean enabled;
-    private boolean enabledSet;
+public class Release implements Domain {
     private Github github;
     private Gitlab gitlab;
     private Gitea gitea;
 
     void setAll(Release release) {
-        this.enabled = release.enabled;
-        this.enabledSet = release.enabledSet;
         this.github = release.github;
         this.gitlab = release.gitlab;
         this.gitea = release.gitea;
-    }
-
-    public Boolean isEnabled() {
-        return enabled != null && enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabledSet = true;
-        this.enabled = enabled;
-    }
-
-    public boolean isEnabledSet() {
-        return enabledSet;
     }
 
     public Github getGithub() {
@@ -85,10 +68,9 @@ public class Release extends AbstractDomain {
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", isEnabled());
-        if (null != github) map.put("github", github);
-        if (null != gitlab) map.put("gitlab", gitlab);
-        if (null != gitea) map.put("gitea", gitea);
+        if (null != github) map.put("github", github.asMap());
+        if (null != gitlab) map.put("gitlab", gitlab.asMap());
+        if (null != gitea) map.put("gitea", gitea.asMap());
         return map;
     }
 }

@@ -47,11 +47,10 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.capitalize;
-import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -77,7 +76,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     @Override
     public String getToolName() {
-        return tool.getToolName();
+        return tool.getName();
     }
 
     @Override
@@ -148,11 +147,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     protected Map<String, Object> fillContext(Distribution distribution, Map<String, Object> context) throws ToolProcessingException {
-        Map<String, Object> newContext = new LinkedHashMap<>(context);
-        getLogger().debug("Filling project properties into context");
-        fillProjectProperties(newContext, model.getProject());
-        getLogger().debug("Filling release properties into context");
-        fillReleaseProperties(newContext, model.getRelease());
+        Map<String, Object> newContext = model.newContext();
         getLogger().debug("Filling distribution properties into context");
         fillDistributionProperties(newContext, distribution, model.getRelease());
         getLogger().debug("Filling artifact properties into context");
@@ -164,28 +159,6 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         fillToolProperties(newContext, distribution);
         newContext.putAll(tool.getExtraProperties());
         return newContext;
-    }
-
-    protected void fillProjectProperties(Map<String, Object> context, Project project) {
-        context.put(Constants.KEY_PROJECT_NAME, project.getName());
-        context.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
-        context.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
-        context.put(Constants.KEY_PROJECT_DESCRIPTION, project.getDescription());
-        context.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, project.getLongDescription());
-        context.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
-        context.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
-        context.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
-        context.put(Constants.KEY_PROJECT_AUTHORS_BY_SPACE, String.join(" ", project.getAuthors()));
-        context.put(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));
-        context.put(Constants.KEY_PROJECT_TAGS_BY_SPACE, String.join(" ", project.getTags()));
-        context.put(Constants.KEY_PROJECT_TAGS_BY_COMMA, String.join(",", project.getTags()));
-        context.putAll(project.getExtraProperties());
-    }
-
-    protected void fillReleaseProperties(Map<String, Object> context, Release release) {
-        context.put(Constants.KEY_REPO_HOST, release.getGitService().getRepoHost());
-        context.put(Constants.KEY_REPO_OWNER, release.getGitService().getRepoOwner());
-        context.put(Constants.KEY_REPO_NAME, release.getGitService().getRepoName());
     }
 
     protected void fillDistributionProperties(Map<String, Object> context, Distribution distribution, Release release) {
@@ -235,7 +208,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         if (artifacts.size() == 0) {
             // we can't proceed
             logger.warn("No suitable artifacts found in distribution {} to be packaged with {}",
-                distribution.getName(), capitalize(tool.getToolName()));
+                distribution.getName(), capitalize(tool.getName()));
             return false;
         }
 

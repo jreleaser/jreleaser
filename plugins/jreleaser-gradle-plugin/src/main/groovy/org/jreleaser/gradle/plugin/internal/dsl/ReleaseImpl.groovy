@@ -35,11 +35,9 @@ class ReleaseImpl implements org.jreleaser.gradle.plugin.dsl.Release {
     final GithubImpl github
     final GitlabImpl gitlab
     final GiteaImpl gitea
-    final Property<Boolean> enabled
 
     @Inject
     ReleaseImpl(ObjectFactory objects) {
-        enabled = objects.property(Boolean).convention(Providers.notDefined())
         github = objects.newInstance(GithubImpl, objects)
         gitlab = objects.newInstance(GitlabImpl, objects)
         gitea = objects.newInstance(GiteaImpl, objects)
@@ -62,7 +60,6 @@ class ReleaseImpl implements org.jreleaser.gradle.plugin.dsl.Release {
 
     org.jreleaser.model.Release toModel() {
         org.jreleaser.model.Release release = new org.jreleaser.model.Release()
-        if (enabled.present) release.enabled = enabled.get()
         if (github.set) release.github = github.toModel()
         if (gitlab.set) release.gitlab = gitlab.toModel()
         if (gitea.set) release.gitea = gitea.toModel()

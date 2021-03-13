@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Artifact extends AbstractDomain {
+public class Artifact implements Domain {
     private String path;
     private String hash;
     private String osClassifier;

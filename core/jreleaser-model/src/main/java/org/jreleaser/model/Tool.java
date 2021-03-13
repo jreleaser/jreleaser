@@ -17,21 +17,20 @@
  */
 package org.jreleaser.model;
 
-import java.io.Serializable;
 import java.nio.file.Path;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Tool extends Serializable, ExtraProperties {
+public interface Tool extends Domain, ExtraProperties {
     boolean isEnabledSet();
 
     Boolean isEnabled();
 
     void setEnabled(Boolean enabled);
 
-    String getToolName();
+    String getName();
 
     Path getTemplateDirectory();
 

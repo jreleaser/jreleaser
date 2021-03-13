@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.releaser;
+package org.jreleaser.model.releaser.spi;
 
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;

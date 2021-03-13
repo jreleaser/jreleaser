@@ -24,6 +24,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Changelog
+import org.jreleaser.model.Gitea
 
 import javax.inject.Inject
 
@@ -62,8 +63,8 @@ class GiteaImpl extends AbstractGitService implements org.jreleaser.gradle.plugi
             changelog.set
     }
 
-    org.jreleaser.model.Gitea toModel() {
-        org.jreleaser.model.Gitea service = new org.jreleaser.model.Gitea()
+    Gitea toModel() {
+        Gitea service = new Gitea()
         toModel(service)
         if (targetCommitish.present) service.targetCommitish = targetCommitish.get()
         if (draft.present) service.draft = draft.get()

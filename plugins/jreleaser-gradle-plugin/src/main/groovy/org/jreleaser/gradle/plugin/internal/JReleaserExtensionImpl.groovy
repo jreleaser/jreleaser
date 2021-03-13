@@ -27,9 +27,11 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.JReleaserExtension
+import org.jreleaser.gradle.plugin.dsl.Announcers
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
+import org.jreleaser.gradle.plugin.internal.dsl.AnnouncersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
@@ -48,9 +50,11 @@ import java.util.stream.Collectors
 @CompileStatic
 class JReleaserExtensionImpl implements JReleaserExtension {
     final Property<Boolean> enabled
+    final Property<Boolean> dryRun
     final ProjectImpl project
     final ReleaseImpl release
     final PackagersImpl packagers
+    final AnnouncersImpl announcers
     final NamedDomainObjectContainer<DistributionImpl> distributions
 
     @Inject
@@ -60,9 +64,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
                            Provider<String> versionProvider,
                            Provider<Directory> distributionsDirProvider) {
         enabled = objects.property(Boolean).convention(true)
+        dryRun = objects.property(Boolean).convention(false)
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)
         release = objects.newInstance(ReleaseImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)
+        announcers = objects.newInstance(AnnouncersImpl, objects)
         distributions = objects.domainObjectContainer(DistributionImpl, new NamedDomainObjectFactory<DistributionImpl>() {
             @Override
             DistributionImpl create(String name) {
@@ -88,12 +94,18 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         action.execute(packagers)
     }
 
+    @Override
+    void announcers(Action<? super Announcers> action) {
+        action.execute(announcers)
+    }
+
     @CompileDynamic
     JReleaserModel toModel() {
         JReleaserModel jreleaser = new JReleaserModel()
         jreleaser.project = project.toModel()
         jreleaser.release = release.toModel()
         jreleaser.packagers = packagers.toModel()
+        jreleaser.announcers = announcers.toModel()
         jreleaser.distributions = (distributions.toList().stream()
             .collect(Collectors.toMap(
                 { DistributionImpl d -> d.name },

@@ -28,6 +28,7 @@ config {
 dependencies {
     api project(':jreleaser-tools')
     api project(':jreleaser-releaser')
+    api project(':jreleaser-announce')
     api project(':jreleaser-templates')
     api project(':jreleaser-config-yaml')
 

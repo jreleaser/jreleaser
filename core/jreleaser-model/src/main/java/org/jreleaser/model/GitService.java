@@ -30,7 +30,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class GitService extends AbstractDomain {
+public abstract class GitService implements Releaser {
+    protected Boolean enabled;
+    protected boolean enabledSet;
     private String repoHost;
     private String repoOwner;
     private String repoName;
@@ -48,7 +50,20 @@ public abstract class GitService extends AbstractDomain {
     private boolean allowUploadToExisting;
     private String apiEndpoint;
 
+    private final String name;
+
+    protected GitService(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
     void setAll(GitService service) {
+        this.enabled = service.enabled;
+        this.enabledSet = service.enabledSet;
         this.repoHost = service.repoHost;
         this.repoOwner = service.repoOwner;
         this.repoName = service.repoName;
@@ -67,7 +82,7 @@ public abstract class GitService extends AbstractDomain {
         this.changelog.setAll(service.changelog);
     }
 
-    public String getCanonicalRepo() {
+    public String getCanonicalRepoName() {
         return repoOwner + "/" + repoName;
     }
 
@@ -76,6 +91,7 @@ public abstract class GitService extends AbstractDomain {
         context.put(Constants.KEY_REPO_HOST, repoHost);
         context.put(Constants.KEY_REPO_OWNER, repoOwner);
         context.put(Constants.KEY_REPO_NAME, repoName);
+        context.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         return context;
     }
 
@@ -101,6 +117,22 @@ public abstract class GitService extends AbstractDomain {
 
     public String getResolvedIssueTrackerUrl() {
         return applyTemplate(new StringReader(issueTrackerUrlFormat), createContext());
+    }
+
+    @Override
+    public Boolean isEnabled() {
+        return enabled != null && enabled;
+    }
+
+    @Override
+    public void setEnabled(Boolean enabled) {
+        this.enabledSet = true;
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isEnabledSet() {
+        return enabledSet;
     }
 
     public String getRepoHost() {
@@ -242,9 +274,11 @@ public abstract class GitService extends AbstractDomain {
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
+        map.put("enabled", isEnabled());
         map.put("repoHost", repoHost);
         map.put("repoOwner", repoOwner);
         map.put("repoName", repoName);
+        map.put("authorization", isNotBlank(getResolvedAuthorization()) ? "************" : "**unset**");
         map.put("repoUrlFormat", repoUrlFormat);
         map.put("commitUrlFormat", commitUrlFormat);
         map.put("downloadUrlFormat", downloadUrlFormat);

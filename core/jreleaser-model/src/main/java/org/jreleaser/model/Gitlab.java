@@ -27,6 +27,7 @@ public class Gitlab extends GitService {
     private String ref = "main";
 
     public Gitlab() {
+        super("gitlab");
         setRepoHost("gitlab.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/commits");
@@ -48,7 +49,7 @@ public class Gitlab extends GitService {
     public void setRef(String ref) {
         this.ref = ref;
     }
-    
+
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = super.asMap();

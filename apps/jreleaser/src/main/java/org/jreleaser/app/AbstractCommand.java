@@ -17,8 +17,8 @@
  */
 package org.jreleaser.app;
 
-import org.jreleaser.app.internal.Colorizer;
 import org.jreleaser.app.internal.ColorizedJReleaserLoggerAdapter;
+import org.jreleaser.app.internal.Colorizer;
 import org.jreleaser.util.Logger;
 import picocli.CommandLine;
 

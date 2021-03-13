@@ -28,7 +28,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Snap extends AbstractTool {
-    public static final String TOOL_NAME = "snap";
+    public static final String NAME = "snap";
 
     private final List<String> localPlugs = new ArrayList<>();
     private final List<Plug> plugs = new ArrayList<>();
@@ -39,7 +39,7 @@ public class Snap extends AbstractTool {
     private String exportedLogin;
 
     public Snap() {
-        super(TOOL_NAME);
+        super(NAME);
     }
 
     void setAll(Snap snap) {

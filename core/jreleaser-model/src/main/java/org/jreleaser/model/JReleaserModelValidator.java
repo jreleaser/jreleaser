@@ -50,6 +50,7 @@ public final class JReleaserModelValidator {
     private static void validateModel(Logger logger, Path basedir, JReleaserModel model, List<String> errors) {
         validateProject(logger, basedir, model.getProject(), errors);
         validateRelease(logger, basedir, model.getProject(), model.getRelease(), errors);
+        validateAnnouncers(logger, basedir, model, model.getAnnouncers(), errors);
         validateDistributions(logger, basedir, model, model.getDistributions(), errors);
     }
 
@@ -92,6 +93,41 @@ public final class JReleaserModelValidator {
         if (count > 1) {
             errors.add("Only one of release.github, release.gitlab, release.gitea can be defined");
         }
+    }
+
+    private static void validateAnnouncers(Logger logger, Path basedir, JReleaserModel model, Announcers announcers, List<String> errors) {
+        validateTwitter(logger, basedir, model, announcers.getTwitter(), errors);
+    }
+
+    private static void validateTwitter(Logger logger, Path basedir, JReleaserModel model, Twitter twitter, List<String> errors) {
+        if (!twitter.isEnabled()) return;
+
+        if (!checkEnvSetting(logger, errors, twitter.getConsumerKey(), "TWITTER_CONSUMER_KEY", "twitter.consumerKey")) {
+            return;
+        }
+        if (!checkEnvSetting(logger, errors, twitter.getConsumerSecret(), "TWITTER_CONSUMER_SECRET", "twitter.consumerSecret")) {
+            return;
+        }
+        if (!checkEnvSetting(logger, errors, twitter.getAccessToken(), "TWITTER_ACCESS_TOKEN", "twitter.accessToken")) {
+            return;
+        }
+        if (!checkEnvSetting(logger, errors, twitter.getAccessTokenSecret(), "TWITTER_ACCESS_TOKEN_SECRET", "twitter.accessTokenSecret")) {
+            return;
+        }
+        if (isBlank(twitter.getStatus())) {
+            errors.add("twitter.status must not be blank.");
+        }
+    }
+
+    private static boolean checkEnvSetting(Logger logger, List<String> errors, String value, String key, String property) {
+        if (isBlank(value)) {
+            logger.warn("twitter.consumerKey is not explicitly defined. Checking environment for {}", key);
+            if (isBlank(System.getenv(key))) {
+                errors.add("twitter.consumerKey must not be blank. Alternatively define a " + key + " environment variable.");
+                return false;
+            }
+        }
+        return true;
     }
 
     private static void validateGitService(Logger logger, Path basedir, Project project, GitService service, List<String> errors) {
@@ -246,9 +282,9 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
-        validateTemplate(logger, model, distribution, tool, tool.getToolName(), errors);
-        adjustExtraProperties(model.getPackagers().getBrew(), tool.getToolName());
-        adjustExtraProperties(tool, tool.getToolName());
+        validateTemplate(logger, model, distribution, tool, tool.getName(), errors);
+        adjustExtraProperties(model.getPackagers().getBrew(), tool.getName());
+        adjustExtraProperties(tool, tool.getName());
         mergeExtraProperties(tool, model.getPackagers().getBrew());
 
         Map<String, String> dependencies = new LinkedHashMap<>(model.getPackagers().getBrew().getDependencies());
@@ -263,9 +299,9 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
-        validateTemplate(logger, model, distribution, tool, tool.getToolName(), errors);
-        adjustExtraProperties(model.getPackagers().getChocolatey(), tool.getToolName());
-        adjustExtraProperties(tool, tool.getToolName());
+        validateTemplate(logger, model, distribution, tool, tool.getName(), errors);
+        adjustExtraProperties(model.getPackagers().getChocolatey(), tool.getName());
+        adjustExtraProperties(tool, tool.getName());
         mergeExtraProperties(tool, model.getPackagers().getChocolatey());
     }
 
@@ -275,10 +311,10 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
-        validateTemplate(logger, model, distribution, tool, tool.getToolName(), errors);
+        validateTemplate(logger, model, distribution, tool, tool.getName(), errors);
         Scoop commonScoop = model.getPackagers().getScoop();
-        adjustExtraProperties(commonScoop, tool.getToolName());
-        adjustExtraProperties(tool, tool.getToolName());
+        adjustExtraProperties(commonScoop, tool.getName());
+        adjustExtraProperties(tool, tool.getName());
         mergeExtraProperties(tool, model.getPackagers().getScoop());
 
         if (isBlank(tool.getCheckverUrl())) {
@@ -301,10 +337,10 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
-        validateTemplate(logger, model, distribution, tool, tool.getToolName(), errors);
+        validateTemplate(logger, model, distribution, tool, tool.getName(), errors);
         Snap commonSnap = model.getPackagers().getSnap();
-        adjustExtraProperties(commonSnap, tool.getToolName());
-        adjustExtraProperties(tool, tool.getToolName());
+        adjustExtraProperties(commonSnap, tool.getName());
+        adjustExtraProperties(tool, tool.getName());
         mergeExtraProperties(tool, model.getPackagers().getSnap());
         mergeSnapPlugs(tool, model.getPackagers().getSnap());
         mergeSnapSlots(tool, model.getPackagers().getSnap());

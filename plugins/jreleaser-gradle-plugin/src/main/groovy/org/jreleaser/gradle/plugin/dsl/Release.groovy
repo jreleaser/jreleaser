@@ -28,8 +28,6 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Release {
-    Property<Boolean> getEnabled()
-
     Github getGithub()
 
     Gitlab getGitlab()
