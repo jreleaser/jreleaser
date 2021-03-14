@@ -33,6 +33,7 @@ import org.jreleaser.maven.plugin.Plug;
 import org.jreleaser.maven.plugin.Project;
 import org.jreleaser.maven.plugin.Release;
 import org.jreleaser.maven.plugin.Scoop;
+import org.jreleaser.maven.plugin.Sign;
 import org.jreleaser.maven.plugin.Slot;
 import org.jreleaser.maven.plugin.Snap;
 import org.jreleaser.maven.plugin.Twitter;
@@ -59,6 +60,7 @@ public final class JReleaserModelConverter {
         jReleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
         jReleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
         jReleaserModel.setAnnouncers(convertAnnouncers(jreleaser.getAnnouncers()));
+        jReleaserModel.setSign(convertSign(jreleaser.getSign()));
         jReleaserModel.setDistributions(convertDistributions(jReleaserModel, jreleaser.getDistributions()));
         return jReleaserModel;
     }
@@ -176,6 +178,15 @@ public final class JReleaserModelConverter {
         a.setSubject(zulip.getSubject());
         a.setMessage(zulip.getMessage());
         return a;
+    }
+
+    private static org.jreleaser.model.Sign convertSign(Sign sign) {
+        org.jreleaser.model.Sign s = new org.jreleaser.model.Sign();
+        if (sign.isEnabledSet()) s.setEnabled(sign.isEnabled());
+        s.setArmored(sign.isArmored());
+        s.setKeyRingFile(sign.getKeyRingFile());
+        s.setPassphrase(sign.getPassphrase());
+        return s;
     }
 
     private static Map<String, org.jreleaser.model.Distribution> convertDistributions(JReleaserModel model, List<Distribution> distributions) {

@@ -33,6 +33,7 @@ public class Jreleaser {
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
     private final Announcers announcers = new Announcers();
+    private final Sign sign = new Sign();
     private final List<Distribution> distributions = new ArrayList<>();
 
     public Project getProject() {
@@ -65,6 +66,14 @@ public class Jreleaser {
 
     public void setAnnouncers(Announcers announcers) {
         this.announcers.setAll(announcers);
+    }
+
+    public Sign getSign() {
+        return sign;
+    }
+
+    public void setSign(Sign sign) {
+        this.sign.setAll(sign);
     }
 
     public List<Distribution> getDistributions() {

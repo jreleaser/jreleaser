@@ -51,6 +51,7 @@ public final class JReleaserModelValidator {
         validateProject(logger, basedir, model.getProject(), errors);
         validateRelease(logger, basedir, model.getProject(), model.getRelease(), errors);
         validateAnnouncers(logger, basedir, model, model.getAnnouncers(), errors);
+        validateSign(logger, basedir, model, model.getSign(), errors);
         validateDistributions(logger, basedir, model, model.getDistributions(), errors);
     }
 
@@ -127,12 +128,12 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void checkEnvSetting(Logger logger, List<String> errors, String value, String key, String property) {
-        if (isBlank(value)) {
-            logger.warn("{} is not explicitly defined. Checking environment for {}", property, key);
-            if (isBlank(System.getenv(key))) {
-                errors.add(property + " must not be blank. Alternatively define a " + key + " environment variable.");
-            }
+    private static void validateSign(Logger logger, Path basedir, JReleaserModel model, Sign sign, List<String> errors) {
+        if (!sign.isEnabled()) return;
+
+        checkEnvSetting(logger, errors, sign.getPassphrase(), "GPG_PASSPHRASE", "sign.passphrase");
+        if (isBlank(sign.getKeyRingFile())) {
+            errors.add("sign.keyRingFile must not be blank");
         }
     }
 
@@ -144,13 +145,10 @@ public final class JReleaserModelValidator {
             service.setRepoName(project.getName());
         }
 
-        if (isBlank(service.getAuthorization())) {
-            String tokenName = service.getName().toUpperCase() + "_TOKEN";
-            logger.warn("{}.auhorization is not explicitly defined. Checking environment for {}", service.getName(), tokenName);
-            if (isBlank(System.getenv(tokenName))) {
-                errors.add(service.getName() + ".authorization must not be blank. Alternatively define a " + tokenName + " environment variable.");
-            }
-        }
+        checkEnvSetting(logger, errors, service.getAuthorization(),
+            service.getName().toUpperCase() + "_TOKEN",
+            service.getName() + ".authorization");
+
         if (isBlank(service.getTagName())) {
             service.setTagName("v" + project.getVersion());
         }
@@ -431,6 +429,15 @@ public final class JReleaserModelValidator {
                     e -> prefix + capitalize(e.getKey()),
                     Map.Entry::getValue));
             extra.setExtraProperties(props);
+        }
+    }
+
+    private static void checkEnvSetting(Logger logger, List<String> errors, String value, String key, String property) {
+        if (isBlank(value)) {
+            logger.warn("{} is not explicitly defined. Checking environment for {}", property, key);
+            if (isBlank(System.getenv(key))) {
+                errors.add(property + " must not be blank. Alternatively define a " + key + " environment variable.");
+            }
         }
     }
 }

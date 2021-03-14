@@ -10,8 +10,9 @@ project:
   javaVersion: 8
 
 release:
-  repoType: GITHUB
-  repoOwner: acme
+  github:
+    repoOwner: joecool
+    repoName: acme
 
 distributions:
   awesomeApp:

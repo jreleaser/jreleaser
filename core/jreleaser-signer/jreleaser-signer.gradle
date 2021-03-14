@@ -17,5 +17,5 @@
  */
 dependencies {
     api project(':jreleaser-model')
-    api project(':github-java-sdk')
+    api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
 }

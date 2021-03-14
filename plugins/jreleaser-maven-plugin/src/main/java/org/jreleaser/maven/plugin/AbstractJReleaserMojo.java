@@ -18,10 +18,18 @@
 package org.jreleaser.maven.plugin;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
+import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
+import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
+import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserModelValidator;
 import org.jreleaser.util.Logger;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * @author Andres Almiray
@@ -34,7 +42,29 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
+    @Parameter(required = true)
+    protected Jreleaser jreleaser;
+
+    @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}/jreleaser")
+    protected File outputDirectory;
+
+    @Parameter(property = "jreleaser.dryrun")
+    protected boolean dryrun;
+
     protected Logger getLogger() {
         return new JReleaserLoggerAdapter(getLog());
+    }
+
+    protected JReleaserModel convertAndValidateModel() throws MojoExecutionException {
+        JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser);
+        JReleaserModelConfigurer.configure(jreleaserModel, project);
+        List<String> errors = JReleaserModelValidator.validate(getLogger(), project.getBasedir().toPath(), jreleaserModel);
+        if (!errors.isEmpty()) {
+            getLog().error("== JReleaser ==");
+            errors.forEach(getLog()::error);
+            throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.");
+        }
+
+        return jreleaserModel;
     }
 }

@@ -21,18 +21,15 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
-import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.JReleaserModelValidator;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.releaser.Releasers;
-import org.jreleaser.tools.Checksums;
+import org.jreleaser.util.Logger;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.util.List;
+
+import static org.jreleaser.maven.plugin.ChecksumsMojo.checksums;
+import static org.jreleaser.maven.plugin.SignMojo.sign;
 
 @Mojo(name = "release")
 public class ReleaseMojo extends AbstractJReleaserMojo {
@@ -42,41 +39,23 @@ public class ReleaseMojo extends AbstractJReleaserMojo {
     @Parameter(property = "jreleaser.release.skip")
     private boolean skip;
 
-    @Parameter(property = "jreleaser.release.dryrun")
-    private boolean dryrun;
-
-    @Parameter(required = true)
-    private Jreleaser jreleaser;
-
-    @Parameter(property = "jreleaser.checksum.directory", required = true)
-    private File checksumDirectory;
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser);
-        JReleaserModelConfigurer.configure(jreleaserModel, project);
-        List<String> errors = JReleaserModelValidator.validate(getLogger(), project.getBasedir().toPath(), jreleaserModel);
-        if (!errors.isEmpty()) {
-            getLog().error("== JReleaser ==");
-            errors.forEach(getLog()::error);
-            throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.");
-        }
+        JReleaserModel jreleaserModel = convertAndValidateModel();
+        checksums(getLogger(), jreleaserModel, outputDirectory);
+        sign(getLogger(), jreleaserModel, outputDirectory);
+        release(getLogger(), jreleaserModel, project.getBasedir(), outputDirectory, dryrun);
+    }
 
-        Path checksumsFilePath = checksumDirectory.toPath().resolve("checksums.txt");
+    static void release(Logger logger, JReleaserModel jreleaserModel, File basedir, File outputDirectory, boolean dryrun) throws MojoExecutionException {
         try {
-            Checksums.collectAndWriteChecksums(getLogger(), jreleaserModel, checksumDirectory.toPath());
-        } catch (JReleaserException e) {
-            throw new MojoExecutionException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
-        }
-
-        try {
-            Releasers.release(getLogger(),
+            Releasers.release(logger,
                 jreleaserModel,
-                project.getBasedir().toPath(),
-                checksumDirectory.toPath(),
+                basedir.toPath(),
+                outputDirectory.toPath(),
                 dryrun);
         } catch (ReleaseException e) {
             throw new MojoExecutionException("Unexpected error", e);

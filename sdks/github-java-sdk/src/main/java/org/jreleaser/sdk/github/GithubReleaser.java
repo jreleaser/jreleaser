@@ -86,7 +86,17 @@ public class GithubReleaser implements Releaser {
 
         String changelog = ChangelogProvider.getChangelog(basedir, github.getResolvedCommitUrl(), github.getChangelog());
         logger.info("changelog:{}{}", System.lineSeparator(), changelog);
-        if (dryrun) return;
+        if (dryrun) {
+            for (Path asset : assets) {
+                if (0 == asset.toFile().length()) {
+                    // do not upload empty files
+                    continue;
+                }
+
+                logger.debug("Uploading asset {}", asset.getFileName().toString());
+            }
+            return;
+        }
 
         GHRelease release = api.createRelease(github.getCanonicalRepoName(), github.getTagName())
             .commitish(github.getTargetCommitish())

@@ -80,19 +80,8 @@ public abstract class AbstractProcessorCommand extends AbstractModelCommand {
             .toolName(toolName)
             .checksumDirectory(getChecksumsDirectory())
             .outputDirectory(outputDirectory
-                .resolve("jreleaser")
                 .resolve(distribution.getName())
                 .resolve(toolName))
             .build();
-    }
-
-    protected Path getOutputDirectory() {
-        return actualBasedir.resolve("out");
-    }
-
-    protected Path getChecksumsDirectory() {
-        return getOutputDirectory()
-            .resolve("jreleaser")
-            .resolve("checksums");
     }
 }

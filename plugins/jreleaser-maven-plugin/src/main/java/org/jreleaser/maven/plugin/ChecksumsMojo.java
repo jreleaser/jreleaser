@@ -21,16 +21,20 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.announce.Announcers;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.announcer.spi.AnnounceException;
+import org.jreleaser.tools.Checksums;
+import org.jreleaser.util.Logger;
 
-@Mojo(name = "announce")
-public class AnnounceMojo extends AbstractJReleaserMojo {
+import java.io.File;
+import java.nio.file.Path;
+
+@Mojo(name = "checksums")
+public class ChecksumsMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.announce.skip")
+    @Parameter(property = "jreleaser.checksums.skip")
     private boolean skip;
 
     @Override
@@ -38,13 +42,16 @@ public class AnnounceMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserModel jreleaserModel = convertAndValidateModel();
+        checksums(getLogger(), convertAndValidateModel(), outputDirectory);
+    }
 
+    static void checksums(Logger logger, JReleaserModel jreleaserModel, File outputDirectory) throws MojoExecutionException {
+        Path checksumDirectory = outputDirectory.toPath().resolve("checksums");
+        Path checksumsFilePath = checksumDirectory.resolve("checksums.txt");
         try {
-            Announcers.announce(getLogger(), jreleaserModel, project.getBasedir().toPath(), dryrun);
-        } catch (AnnounceException e) {
-
-            throw new MojoExecutionException("Unexpected error", e);
+            Checksums.collectAndWriteChecksums(logger, jreleaserModel, checksumDirectory);
+        } catch (JReleaserException e) {
+            throw new MojoExecutionException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
         }
     }
 }

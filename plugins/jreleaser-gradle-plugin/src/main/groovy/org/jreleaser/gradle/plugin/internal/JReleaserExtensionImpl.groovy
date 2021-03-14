@@ -31,11 +31,13 @@ import org.jreleaser.gradle.plugin.dsl.Announcers
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
+import org.jreleaser.gradle.plugin.dsl.Sign
 import org.jreleaser.gradle.plugin.internal.dsl.AnnouncersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl
+import org.jreleaser.gradle.plugin.internal.dsl.SignImpl
 import org.jreleaser.model.Distribution
 import org.jreleaser.model.JReleaserModel
 
@@ -55,6 +57,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final ReleaseImpl release
     final PackagersImpl packagers
     final AnnouncersImpl announcers
+    final SignImpl sign
     final NamedDomainObjectContainer<DistributionImpl> distributions
 
     @Inject
@@ -69,6 +72,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         release = objects.newInstance(ReleaseImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)
         announcers = objects.newInstance(AnnouncersImpl, objects)
+        sign = objects.newInstance(SignImpl, objects)
         distributions = objects.domainObjectContainer(DistributionImpl, new NamedDomainObjectFactory<DistributionImpl>() {
             @Override
             DistributionImpl create(String name) {
@@ -99,6 +103,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         action.execute(announcers)
     }
 
+    @Override
+    void sign(Action<? super Sign> action) {
+        action.execute(sign)
+    }
+
     @CompileDynamic
     JReleaserModel toModel() {
         JReleaserModel jreleaser = new JReleaserModel()
@@ -106,6 +115,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.release = release.toModel()
         jreleaser.packagers = packagers.toModel()
         jreleaser.announcers = announcers.toModel()
+        jreleaser.sign = sign.toModel()
         jreleaser.distributions = (distributions.toList().stream()
             .collect(Collectors.toMap(
                 { DistributionImpl d -> d.name },

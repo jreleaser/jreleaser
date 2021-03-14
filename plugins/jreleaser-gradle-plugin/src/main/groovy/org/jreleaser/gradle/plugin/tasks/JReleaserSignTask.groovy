@@ -22,15 +22,14 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.JReleaserModel
-import org.jreleaser.releaser.Releasers
+import org.jreleaser.signer.Signer
 import org.jreleaser.tools.Checksums
+import org.jreleaser.util.Logger
 
 import javax.inject.Inject
 import java.nio.file.Path
@@ -41,40 +40,31 @@ import java.nio.file.Path
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserReleaseTask extends DefaultTask {
+abstract class JReleaserSignTask extends DefaultTask {
     @Internal
     final Property<JReleaserModel> jreleaserModel
-
-    @Input
-    final Property<Boolean> dryrun
 
     @OutputDirectory
     final DirectoryProperty outputDirectory
 
     @Inject
-    JReleaserReleaseTask(ObjectFactory objects) {
+    JReleaserSignTask(ObjectFactory objects) {
         jreleaserModel = objects.property(JReleaserModel)
         outputDirectory = objects.directoryProperty()
-        dryrun = objects.property(Boolean).convention(false)
-    }
-
-    @Option(option = 'dryrun', description = 'Skips network operations (OPTIONAL).')
-    void setDryrun(boolean dryrun) {
-        this.dryrun.set(dryrun)
     }
 
     @TaskAction
-    void createRelease() {
+    void signArtifacts() {
         Path checksumDirectory = outputDirectory.getAsFile().get().toPath().resolve("checksums")
 
-        Checksums.collectAndWriteChecksums(new JReleaserLoggerAdapter(project.logger),
+        Logger logger = new JReleaserLoggerAdapter(project.logger)
+
+        Checksums.collectAndWriteChecksums(logger,
             jreleaserModel.get(),
             checksumDirectory)
 
-        Releasers.release(new JReleaserLoggerAdapter(project.logger),
+        Signer.sign(logger,
             jreleaserModel.get(),
-            project.projectDir.toPath(),
-            outputDirectory.get().asFile.toPath(),
-            dryrun.get())
+            outputDirectory.getAsFile().get().toPath())
     }
 }

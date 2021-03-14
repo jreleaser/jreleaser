@@ -15,7 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-model')
-    api project(':github-java-sdk')
+package org.jreleaser.gradle.plugin.dsl
+
+import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+
+/**
+ *
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+@CompileStatic
+interface Sign {
+    Property<Boolean> getEnabled()
+
+    Property<Boolean> getArmored()
+
+    Property<String> getPassphrase()
+
+    RegularFileProperty getKeyRingFile()
 }

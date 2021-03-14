@@ -38,6 +38,8 @@ public interface ReleaserBuilder<R extends Releaser, B extends ReleaserBuilder<R
 
     B addReleaseAsset(Path asset);
 
+    B addReleaseAssets(Path assets);
+
     B setReleaseAssets(List<Path> assets);
 
     R build();

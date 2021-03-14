@@ -35,6 +35,7 @@ public class JReleaserModel implements Domain {
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
     private final Announcers announcers = new Announcers();
+    private final Sign sign = new Sign();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
 
     public Project getProject() {
@@ -67,6 +68,14 @@ public class JReleaserModel implements Domain {
 
     public void setAnnouncers(Announcers announcers) {
         this.announcers.setAll(announcers);
+    }
+
+    public Sign getSign() {
+        return sign;
+    }
+
+    public void setSign(Sign sign) {
+        this.sign.setAll(sign);
     }
 
     public Map<String, Distribution> getDistributions() {
@@ -108,6 +117,7 @@ public class JReleaserModel implements Domain {
         map.put("release", release.asMap());
         map.put("packagers", packagers.asMap());
         map.put("announcers", announcers.asMap());
+        map.put("sign", sign.asMap());
         map.put("distributions", distributions.values()
             .stream()
             .map(Distribution::asMap)

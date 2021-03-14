@@ -95,4 +95,13 @@ public abstract class AbstractModelCommand extends AbstractCommand {
             throw new JReleaserException("Unexpected error when parsing configuration from " + actualConfigFile.toAbsolutePath(), e);
         }
     }
+
+    protected Path getOutputDirectory() {
+        return actualBasedir.resolve("out").resolve("jreleaser");
+    }
+
+    protected Path getChecksumsDirectory() {
+        return getOutputDirectory()
+            .resolve("checksums");
+    }
 }

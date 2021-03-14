@@ -19,8 +19,6 @@ package org.jreleaser.app;
 
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.releaser.Releasers;
 import org.jreleaser.signer.Signer;
 import org.jreleaser.signer.SigningException;
 import org.jreleaser.tools.Checksums;
@@ -30,13 +28,9 @@ import picocli.CommandLine;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "release",
-    description = "Create or update a release")
-public class Release extends AbstractModelCommand {
-    @CommandLine.Option(names = {"-y", "--dryrun"},
-        description = "Skips remote operations.")
-    boolean dryrun;
-
+@CommandLine.Command(name = "sign",
+    description = "Sign release artifacts")
+public class Sign extends AbstractModelCommand {
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
         Checksums.collectAndWriteChecksums(logger, jreleaserModel, getChecksumsDirectory());
@@ -47,16 +41,6 @@ public class Release extends AbstractModelCommand {
                 getOutputDirectory());
         } catch (SigningException e) {
             throw new JReleaserException("Unexpected error when signing release " + actualConfigFile.toAbsolutePath(), e);
-        }
-
-        try {
-            Releasers.release(logger,
-                jreleaserModel,
-                actualBasedir,
-                getOutputDirectory(),
-                dryrun);
-        } catch (ReleaseException e) {
-            throw new JReleaserException("Unexpected error when creating release " + actualConfigFile.toAbsolutePath(), e);
         }
     }
 }

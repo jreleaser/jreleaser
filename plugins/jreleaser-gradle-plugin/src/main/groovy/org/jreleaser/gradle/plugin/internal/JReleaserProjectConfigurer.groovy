@@ -33,6 +33,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateGeneratorTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserToolPackagerTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserToolProcessorTask
@@ -120,6 +121,9 @@ class JReleaserProjectConfigurer {
                         t.group = JRELEASER_GROUP
                         t.description = 'Prepares all distributions'
                         t.dependsOn(prepareTasks)
+                        t.checksumDirectory.set(project.layout
+                            .buildDirectory
+                            .dir('checksums'))
                         if (hasDistributionPlugin) {
                             t.dependsOn('assembleDist')
                         }
@@ -139,6 +143,20 @@ class JReleaserProjectConfigurer {
                 })
         }
 
+        TaskProvider<JReleaserSignTask> signReleaseTask = project.tasks.register('signRelease', JReleaserSignTask,
+            new Action<JReleaserSignTask>() {
+                @Override
+                void execute(JReleaserSignTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Signs a release'
+                    t.jreleaserModel.set(model)
+                    t.outputDirectory.set(project.layout
+                        .buildDirectory
+                        .dir('jreleaser'))
+                }
+            })
+        jreleaserDeps << signReleaseTask
+
         TaskProvider<JReleaserReleaseTask> createReleaseTask = project.tasks.register('createRelease', JReleaserReleaseTask,
             new Action<JReleaserReleaseTask>() {
                 @Override
@@ -147,9 +165,9 @@ class JReleaserProjectConfigurer {
                     t.description = 'Creates or updates a release'
                     t.jreleaserModel.set(model)
                     t.dryrun.set(extension.dryrun)
-                    t.checksumDirectory.set(project.layout
+                    t.outputDirectory.set(project.layout
                         .buildDirectory
-                        .dir('jreleaser/checksums'))
+                        .dir('jreleaser'))
                 }
             })
         jreleaserDeps << createReleaseTask

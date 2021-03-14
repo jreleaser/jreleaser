@@ -30,10 +30,11 @@ import java.nio.file.Path;
  * @since 0.1.0
  */
 public class Releasers {
-    public static void release(Logger logger, JReleaserModel model, Path basedir, Path checksumsDirectory, boolean dryrun) throws ReleaseException {
+    public static void release(Logger logger, JReleaserModel model, Path basedir, Path outputDirectory, boolean dryrun) throws ReleaseException {
         Releasers.findReleaser(logger, model)
             .configureWith(basedir, model)
-            .addReleaseAsset(checksumsDirectory.resolve("checksums.txt"))
+            .addReleaseAsset(outputDirectory.resolve("checksums").resolve("checksums.txt"))
+            .addReleaseAssets(outputDirectory.resolve("signatures"))
             .build()
             .release(dryrun);
     }

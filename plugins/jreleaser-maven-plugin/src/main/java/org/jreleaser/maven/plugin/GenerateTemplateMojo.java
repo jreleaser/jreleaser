@@ -17,19 +17,29 @@
  */
 package org.jreleaser.maven.plugin;
 
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.templates.TemplateGenerationException;
 import org.jreleaser.templates.TemplateGenerator;
+import org.jreleaser.util.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Mojo(name = "generate-template")
-public class GenerateTemplateMojo extends AbstractJReleaserMojo {
+public class GenerateTemplateMojo extends AbstractMojo {
+    /**
+     * The project whose model will be checked.
+     */
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    protected MavenProject project;
+
     /**
      * Skip execution.
      */
@@ -87,5 +97,9 @@ public class GenerateTemplateMojo extends AbstractJReleaserMojo {
         } catch (TemplateGenerationException e) {
             throw new MojoExecutionException("Unexpected error", e);
         }
+    }
+
+    private Logger getLogger() {
+        return new JReleaserLoggerAdapter(getLog());
     }
 }

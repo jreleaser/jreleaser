@@ -22,6 +22,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.Logger;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -63,9 +64,20 @@ public abstract class AbstractReleaserBuilder<R extends Releaser, B extends Rele
 
     @Override
     public B addReleaseAsset(Path asset) {
-        if (null != asset) {
+        if (null != asset && asset.toFile().exists()) {
             this.assets.add(asset);
         }
+        return self();
+    }
+
+    @Override
+    public B addReleaseAssets(Path assets) {
+        if (assets.toFile().exists()) {
+            for (File asset : assets.toFile().listFiles()) {
+                addReleaseAsset(asset.toPath().toAbsolutePath());
+            }
+        }
+
         return self();
     }
 

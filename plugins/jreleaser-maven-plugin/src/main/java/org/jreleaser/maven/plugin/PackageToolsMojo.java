@@ -22,18 +22,14 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
-import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.JReleaserModelValidator;
 import org.jreleaser.tools.Checksums;
 import org.jreleaser.tools.DistributionProcessor;
 import org.jreleaser.tools.ToolProcessingException;
 import org.jreleaser.util.Logger;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,15 +42,6 @@ public class PackageToolsMojo extends AbstractJReleaserMojo {
     @Parameter(property = "jreleaser.tools.skip")
     private boolean skip;
 
-    @Parameter(required = true)
-    private Jreleaser jreleaser;
-
-    @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}")
-    private File outputDirectory;
-
-    @Parameter(property = "jreleaser.checksum.directory", required = true)
-    private File checksumDirectory;
-
     @Parameter(property = "jreleaser.tools.failfast", defaultValue = "true")
     private boolean failFast;
 
@@ -63,22 +50,14 @@ public class PackageToolsMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        Logger logger = getLogger();
-        JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser);
-        JReleaserModelConfigurer.configure(jreleaserModel, project);
-        List<String> errors = JReleaserModelValidator.validate(logger, project.getBasedir().toPath(), jreleaserModel);
-        if (!errors.isEmpty()) {
-            getLog().error("== JReleaser ==");
-            errors.forEach(getLog()::error);
-            throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.");
-        }
+        JReleaserModel jreleaserModel = convertAndValidateModel();
 
         List<Exception> exceptions = new ArrayList<>();
         for (Distribution distribution : jreleaserModel.getDistributions().values()) {
             for (String toolName : Distribution.supportedTools()) {
                 try {
                     DistributionProcessor processor = createDistributionProcessor(jreleaserModel,
-                        logger,
+                        getLogger(),
                         distribution,
                         toolName);
 
@@ -101,10 +80,11 @@ public class PackageToolsMojo extends AbstractJReleaserMojo {
             }
         }
 
+        Path checksumDirectory = outputDirectory.toPath().resolve("checksums");
         if (exceptions.isEmpty()) {
-            Path checksumsFilePath = checksumDirectory.toPath().resolve("checksums.txt");
+            Path checksumsFilePath = checksumDirectory.resolve("checksums.txt");
             try {
-                Checksums.collectAndWriteChecksums(logger, jreleaserModel, checksumDirectory.toPath());
+                Checksums.collectAndWriteChecksums(getLogger(), jreleaserModel, checksumDirectory);
             } catch (JReleaserException e) {
                 if (failFast) {
                     throw new MojoExecutionException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
@@ -128,9 +108,9 @@ public class PackageToolsMojo extends AbstractJReleaserMojo {
             .model(jreleaserModel)
             .distributionName(distribution.getName())
             .toolName(toolName)
-            .checksumDirectory(checksumDirectory.toPath())
+            .checksumDirectory(outputDirectory.toPath()
+                .resolve("checksums"))
             .outputDirectory(outputDirectory.toPath()
-                .resolve("jreleaser")
                 .resolve(distribution.getName())
                 .resolve(toolName))
             .build();
