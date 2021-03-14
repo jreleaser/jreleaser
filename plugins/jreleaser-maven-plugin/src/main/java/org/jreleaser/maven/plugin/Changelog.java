@@ -28,12 +28,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Changelog {
     private Boolean enabled;
     private boolean enabledSet;
+    private boolean links;
     private Sort sort = Sort.ASC;
     private File external;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
         this.enabledSet = changelog.enabledSet;
+        this.links = changelog.links;
         this.sort = changelog.sort;
         this.external = changelog.external;
     }
@@ -49,6 +51,14 @@ public class Changelog {
 
     public boolean isEnabledSet() {
         return enabledSet;
+    }
+
+    public boolean isLinks() {
+        return links;
+    }
+
+    public void setLinks(boolean links) {
+        this.links = links;
     }
 
     public Sort getSort() {

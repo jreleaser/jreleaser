@@ -31,12 +31,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Changelog implements Domain {
     private Boolean enabled;
     private boolean enabledSet;
+    private boolean links;
     private Sort sort = Sort.ASC;
     private File external;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
         this.enabledSet = changelog.enabledSet;
+        this.links = changelog.links;
         this.sort = changelog.sort;
         this.external = changelog.external;
     }
@@ -52,6 +54,14 @@ public class Changelog implements Domain {
 
     public boolean isEnabledSet() {
         return enabledSet;
+    }
+
+    public boolean isLinks() {
+        return links;
+    }
+
+    public void setLinks(boolean links) {
+        this.links = links;
     }
 
     public Sort getSort() {
@@ -81,6 +91,7 @@ public class Changelog implements Domain {
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
+        map.put("links", links);
         map.put("sort", sort);
         map.put("external", external);
         return map;

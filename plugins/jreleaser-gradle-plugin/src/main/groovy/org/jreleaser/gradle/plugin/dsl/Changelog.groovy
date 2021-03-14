@@ -32,6 +32,8 @@ interface Changelog {
 
     Property<Boolean> getEnabled()
 
+    Property<Boolean> getLinks()
+
     RegularFileProperty getExternal()
 
     void setSort(String sort)

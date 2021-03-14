@@ -55,7 +55,7 @@ public class ChangelogGenerator {
             return readChangelogFile(changelog.getExternal());
         }
 
-        return createChangelog(basedir, commitsUrl);
+        return createChangelog(basedir, commitsUrl, changelog);
     }
 
     private static String readChangelogFile(File file) throws IOException {
@@ -65,23 +65,29 @@ public class ChangelogGenerator {
             String.join(System.lineSeparator(), Files.readAllLines(file.toPath()));
     }
 
-    private static String createChangelog(Path basedir, String commitsUrl) throws IOException {
+    private static String createChangelog(Path basedir, String commitsUrl, Changelog changelog) throws IOException {
         try {
             Git git = Git.open(basedir.toFile());
             Iterable<RevCommit> commits = resolveCommits(git);
+
+            Comparator<RevCommit> revCommitComparator = Comparator.naturalOrder();
+            if (changelog.getSort() == Changelog.Sort.ASC) {
+                revCommitComparator = Comparator.reverseOrder();
+            }
 
             return "## Changelog" +
                 System.lineSeparator() +
                 System.lineSeparator() +
                 StreamSupport.stream(commits.spliterator(), false)
-                    .map(commit -> formatCommit(commit, commitsUrl))
+                    .sorted(revCommitComparator)
+                    .map(commit -> formatCommit(commit, commitsUrl, changelog))
                     .collect(Collectors.joining(System.lineSeparator()));
         } catch (GitAPIException e) {
             throw new IOException(e);
         }
     }
 
-    private static String formatCommit(RevCommit commit, String commitsUrl) {
+    private static String formatCommit(RevCommit commit, String commitsUrl, Changelog changelog) {
         String commitHash = commit.getId().name();
         String abbreviation = commit.getId().abbreviate(7).name();
         String[] input = commit.getFullMessage().trim().split(System.lineSeparator());
@@ -89,7 +95,11 @@ public class ChangelogGenerator {
         List<String> lines = new ArrayList<>();
         for (int i = 0; i < input.length; i++) {
             if (i == 0) {
-                lines.add("[" + abbreviation + "](" + commitsUrl + "/" + commitHash + ") " + input[i].trim());
+                if (changelog.isLinks()) {
+                    lines.add("[" + abbreviation + "](" + commitsUrl + "/" + commitHash + ") " + input[i].trim());
+                } else {
+                    lines.add(abbreviation + " " + input[i].trim());
+                }
             } else if (isNotBlank(input[i])) {
                 lines.add("         " + input[i].trim());
             }

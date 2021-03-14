@@ -35,12 +35,14 @@ import javax.inject.Inject
 @CompileStatic
 class ChangelogImpl implements Changelog {
     final Property<Boolean> enabled
+    final Property<Boolean> links
     final Property<org.jreleaser.model.Changelog.Sort> sort
     final RegularFileProperty external
 
     @Inject
     ChangelogImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
+        links = objects.property(Boolean).convention(Providers.notDefined())
         sort = objects.property(org.jreleaser.model.Changelog.Sort)
             .convention(org.jreleaser.model.Changelog.Sort.ASC)
         external = objects.fileProperty().convention(Providers.notDefined())
@@ -48,7 +50,9 @@ class ChangelogImpl implements Changelog {
 
     @Internal
     boolean isSet() {
-        enabled.present
+        enabled.present ||
+            links.present ||
+            external.present
     }
 
     @Override
@@ -59,6 +63,7 @@ class ChangelogImpl implements Changelog {
     org.jreleaser.model.Changelog toModel() {
         org.jreleaser.model.Changelog changelog = new org.jreleaser.model.Changelog()
         if (enabled.present) changelog.enabled = enabled.get()
+        if (links.present) changelog.links = links.get()
         if (sort.present) changelog.sort = sort.get()
         if (external.present) changelog.external = external.getAsFile().get()
         changelog
