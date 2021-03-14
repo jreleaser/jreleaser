@@ -50,7 +50,7 @@ import java.util.stream.Collectors
 @CompileStatic
 class JReleaserExtensionImpl implements JReleaserExtension {
     final Property<Boolean> enabled
-    final Property<Boolean> dryRun
+    final Property<Boolean> dryrun
     final ProjectImpl project
     final ReleaseImpl release
     final PackagersImpl packagers
@@ -64,7 +64,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
                            Provider<String> versionProvider,
                            Provider<Directory> distributionsDirProvider) {
         enabled = objects.property(Boolean).convention(true)
-        dryRun = objects.property(Boolean).convention(false)
+        dryrun = objects.property(Boolean).convention(false)
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)
         release = objects.newInstance(ReleaseImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)

@@ -18,16 +18,27 @@
 package org.jreleaser.releaser;
 
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.ReleaserBuilder;
 import org.jreleaser.sdk.github.GithubReleaser;
 import org.jreleaser.util.Logger;
+
+import java.nio.file.Path;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Releasers {
-    public static <RB extends ReleaserBuilder> RB findReleaser(Logger logger, JReleaserModel model) {
+    public static void release(Logger logger, JReleaserModel model, Path basedir, Path checksumsDirectory, boolean dryrun) throws ReleaseException {
+        Releasers.findReleaser(logger, model)
+            .configureWith(basedir, model)
+            .addReleaseAsset(checksumsDirectory.resolve("checksums.txt"))
+            .build()
+            .release(dryrun);
+    }
+
+    private static <RB extends ReleaserBuilder> RB findReleaser(Logger logger, JReleaserModel model) {
         if (null != model.getRelease().getGithub()) {
             return (RB) GithubReleaser.builder(logger);
         }

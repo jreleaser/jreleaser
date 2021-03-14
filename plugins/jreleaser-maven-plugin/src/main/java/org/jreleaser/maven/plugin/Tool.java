@@ -23,7 +23,7 @@ import java.nio.file.Path;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Tool extends Domain, ExtraProperties {
+public interface Tool extends ExtraProperties {
     boolean isEnabledSet();
 
     Boolean isEnabled();

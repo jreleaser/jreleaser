@@ -17,8 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.Map;
-
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -95,14 +93,5 @@ public class Twitter extends AbstractAnnouncer {
             isNotBlank(accessToken) ||
             isNotBlank(accessTokenSecret) ||
             isNotBlank(status);
-    }
-
-    @Override
-    protected void asMap(Map<String, Object> props) {
-        props.put("consumerKey", isNotBlank(consumerKey) ? "************" : "**unset**");
-        props.put("consumerSecret", isNotBlank(consumerSecret) ? "************" : "**unset**");
-        props.put("accessToken", isNotBlank(accessToken) ? "************" : "**unset**");
-        props.put("accessTokenSecret", isNotBlank(accessTokenSecret) ? "************" : "**unset**");
-        props.put("status", status);
     }
 }

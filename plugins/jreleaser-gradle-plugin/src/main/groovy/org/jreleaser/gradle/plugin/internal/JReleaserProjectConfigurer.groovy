@@ -146,7 +146,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Creates or updates a release'
                     t.jreleaserModel.set(model)
-                    t.dryRun.set(extension.dryRun)
+                    t.dryrun.set(extension.dryrun)
                     t.checksumDirectory.set(project.layout
                         .buildDirectory
                         .dir('jreleaser/checksums'))
@@ -163,7 +163,7 @@ class JReleaserProjectConfigurer {
                     t.dependsOn(createReleaseTask)
                     t.mustRunAfter(createReleaseTask)
                     t.jreleaserModel.set(model)
-                    t.dryRun.set(extension.dryRun)
+                    t.dryrun.set(extension.dryrun)
                 }
             })
 

@@ -17,14 +17,11 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Release implements Domain {
+public class Release {
     private Github github;
     private Gitlab gitlab;
     private Gitea gitea;
@@ -63,14 +60,5 @@ public class Release implements Domain {
         if (null != github) return github;
         if (null != gitlab) return gitlab;
         return gitea;
-    }
-
-    @Override
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        if (null != github) map.put("github", github.asMap());
-        if (null != gitlab) map.put("gitlab", gitlab.asMap());
-        if (null != gitea) map.put("gitea", gitea.asMap());
-        return map;
     }
 }

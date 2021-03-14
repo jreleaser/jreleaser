@@ -47,7 +47,7 @@ public class GithubReleaser implements Releaser {
         this.assets.addAll(assets);
     }
 
-    public void release(boolean dryRun) throws ReleaseException {
+    public void release(boolean dryrun) throws ReleaseException {
         org.jreleaser.model.Github github = model.getRelease().getGithub();
 
         Github api = new Github(logger, github.getApiEndpoint(), github.getResolvedAuthorization());
@@ -61,12 +61,12 @@ public class GithubReleaser implements Releaser {
                 logger.info("Release {} exists", tagName);
                 if (github.isOverwrite()) {
                     logger.info("Deleting release {}", tagName);
-                    if (!dryRun) release.delete();
+                    if (!dryrun) release.delete();
                     logger.info("Creating release {}", tagName);
-                    createRelease(api, dryRun);
+                    createRelease(api, dryrun);
                 } else if (github.isAllowUploadToExisting()) {
                     logger.info("Updating release {}", tagName);
-                    if (!dryRun) api.uploadAssets(release, assets);
+                    if (!dryrun) api.uploadAssets(release, assets);
                 } else {
                     throw new IllegalStateException("Github release failed because release " +
                         tagName + " already exists. overwrite = false; allowUploadToExisting = false");
@@ -74,19 +74,19 @@ public class GithubReleaser implements Releaser {
             } else {
                 logger.info("Release {} does not exist", tagName);
                 logger.info("Creating release {}", tagName);
-                createRelease(api, dryRun);
+                createRelease(api, dryrun);
             }
         } catch (IOException | IllegalStateException e) {
             throw new ReleaseException(e);
         }
     }
 
-    private void createRelease(Github api, boolean dryRun) throws IOException {
+    private void createRelease(Github api, boolean dryrun) throws IOException {
         org.jreleaser.model.Github github = model.getRelease().getGithub();
 
         String changelog = ChangelogProvider.getChangelog(basedir, github.getResolvedCommitUrl(), github.getChangelog());
         logger.info("changelog:{}{}", System.lineSeparator(), changelog);
-        if (dryRun) return;
+        if (dryrun) return;
 
         GHRelease release = api.createRelease(github.getCanonicalRepoName(), github.getTagName())
             .commitish(github.getTargetCommitish())

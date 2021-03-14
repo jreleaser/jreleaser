@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 abstract class AbstractSdkmanCommand implements SdkmanCommand {
-    protected final boolean dryRun;
+    protected final boolean dryrun;
     protected final String candidate;
     protected final String version;
     protected final Sdkman sdkman;
@@ -38,16 +38,16 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
                                     String consumerToken,
                                     String candidate,
                                     String version,
-                                    boolean dryRun) {
-        this.sdkman = new Sdkman(logger, apiHost, consumerKey, consumerToken, dryRun);
+                                    boolean dryrun) {
+        this.sdkman = new Sdkman(logger, apiHost, consumerKey, consumerToken, dryrun);
         this.candidate = candidate;
         this.version = version;
-        this.dryRun = dryRun;
+        this.dryrun = dryrun;
     }
 
     static class Builder<S extends Builder<S>> {
         protected final Logger logger;
-        protected boolean dryRun;
+        protected boolean dryrun;
         protected String consumerKey;
         protected String consumerToken;
         protected String candidate;
@@ -62,8 +62,8 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
             return (S) this;
         }
 
-        public S dryRun(boolean dryRun) {
-            this.dryRun = dryRun;
+        public S dryrun(boolean dryrun) {
+            this.dryrun = dryrun;
             return self();
         }
 

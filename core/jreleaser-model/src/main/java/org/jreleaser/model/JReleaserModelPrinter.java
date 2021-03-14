@@ -30,7 +30,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class JReleaserModelPrinter {
     private static final String SECRET_KEYWORDS = "password,secret,credential,token,apikey,login";
-    private static final String KEY_SECRET_KEYWORDS = "kordamp.secret.keywords";
+    private static final String KEY_SECRET_KEYWORDS = "jreleaser.secret.keywords";
     private final boolean showSecrets;
     private final PrintWriter out;
 

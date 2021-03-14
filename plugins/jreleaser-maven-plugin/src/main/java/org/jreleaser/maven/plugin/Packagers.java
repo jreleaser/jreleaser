@@ -17,14 +17,11 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Packagers implements Domain {
+public class Packagers {
     private final Brew brew = new Brew();
     private final Chocolatey chocolatey = new Chocolatey();
     private final Scoop scoop = new Scoop();
@@ -67,15 +64,5 @@ public class Packagers implements Domain {
 
     public void setSnap(Snap snap) {
         this.snap.setAll(snap);
-    }
-
-    @Override
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.putAll(brew.asMap());
-        map.putAll(chocolatey.asMap());
-        map.putAll(scoop.asMap());
-        map.putAll(snap.asMap());
-        return map;
     }
 }

@@ -17,8 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.Map;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -48,12 +46,5 @@ public class Gitlab extends GitService {
 
     public void setRef(String ref) {
         this.ref = ref;
-    }
-    
-    @Override
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = super.asMap();
-        map.put("ref", ref);
-        return map;
     }
 }

@@ -45,7 +45,7 @@ abstract class JReleaserReleaseTask extends DefaultTask {
     final Property<JReleaserModel> jreleaserModel
 
     @Input
-    final Property<Boolean> dryRun
+    final Property<Boolean> dryrun
 
     @OutputDirectory
     final DirectoryProperty checksumDirectory
@@ -54,12 +54,12 @@ abstract class JReleaserReleaseTask extends DefaultTask {
     JReleaserReleaseTask(ObjectFactory objects) {
         jreleaserModel = objects.property(JReleaserModel)
         checksumDirectory = objects.directoryProperty()
-        dryRun = objects.property(Boolean).convention(false)
+        dryrun = objects.property(Boolean).convention(false)
     }
 
     @Option(option = 'dryrun', description = 'Skips network operations (OPTIONAL).')
-    void setDryRun(boolean dryRun) {
-        this.dryRun.set(dryRun)
+    void setDryrun(boolean dryrun) {
+        this.dryrun.set(dryrun)
     }
 
     @TaskAction
@@ -68,9 +68,10 @@ abstract class JReleaserReleaseTask extends DefaultTask {
             jreleaserModel.get(),
             checksumDirectory.getAsFile().get().toPath())
 
-        Releasers.findReleaser(new JReleaserLoggerAdapter(project.logger), jreleaserModel.get())
-            .configureWith(project.projectDir.toPath(), jreleaserModel.get())
-            .build()
-            .release(dryRun.get())
+        Releasers.release(new JReleaserLoggerAdapter(project.logger),
+            jreleaserModel.get(),
+            project.projectDir.toPath(),
+            checksumDirectory.get().asFile.toPath(),
+            dryrun.get())
     }
 }

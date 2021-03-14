@@ -31,10 +31,10 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class Twitter {
     private final Logger logger;
     private final twitter4j.Twitter twitter;
-    private final boolean dryRun;
+    private final boolean dryrun;
 
     public Twitter(Logger logger, String apiHost, String consumerKey, String consumerToken,
-                   String accessToken, String accessTokenSecret, boolean dryRun) {
+                   String accessToken, String accessTokenSecret, boolean dryrun) {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(consumerKey, "'consumerKey' must not be blank");
@@ -43,7 +43,7 @@ public class Twitter {
         requireNonBlank(accessTokenSecret, "'accessTokenSecret' must not be blank");
 
         this.logger = logger;
-        this.dryRun = dryRun;
+        this.dryrun = dryrun;
         this.twitter = new TwitterFactory(
             new ConfigurationBuilder()
                 .setRestBaseURL(apiHost)
@@ -54,17 +54,16 @@ public class Twitter {
                 .build())
             .getInstance();
 
-        this.logger.info("Twitter dryRun set to {}", dryRun);
+        this.logger.info("Twitter dryrun set to {}", dryrun);
     }
 
     public void updateStatus(String status) throws TwitterException {
         wrap(() -> twitter.updateStatus(status));
     }
 
-
     private void wrap(TwitterOperation op) throws TwitterException {
         try {
-            if (!dryRun) op.execute();
+            if (!dryrun) op.execute();
         } catch (twitter4j.TwitterException e) {
             throw new TwitterException("Twitter operation failed", e);
         }

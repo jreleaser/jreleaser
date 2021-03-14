@@ -20,7 +20,6 @@ package org.jreleaser.app;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.releaser.Releasers;
 import org.jreleaser.tools.Checksums;
 import picocli.CommandLine;
@@ -36,18 +35,18 @@ import java.nio.file.Path;
 public class Release extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skips remote operations.")
-    boolean dryRun;
+    boolean dryrun;
 
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
         Checksums.collectAndWriteChecksums(logger, jreleaserModel, getChecksumsDirectory());
 
         try {
-            Releaser releaser = Releasers.findReleaser(logger, jreleaserModel)
-                .configureWith(actualBasedir, jreleaserModel)
-                .addReleaseAsset(getChecksumsDirectory().resolve("checksums.txt"))
-                .build();
-            releaser.release(dryRun);
+            Releasers.release(logger,
+                jreleaserModel,
+                actualBasedir,
+                getChecksumsDirectory(),
+                dryrun);
         } catch (ReleaseException e) {
             throw new JReleaserException("Unexpected error when creating release " + actualConfigFile.toAbsolutePath(), e);
         }

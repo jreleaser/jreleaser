@@ -28,7 +28,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Slot implements Domain {
+public class Slot {
     private final Map<String, String> attributes = new LinkedHashMap<>();
     private final List<String> reads = new ArrayList<>();
     private final List<String> writes = new ArrayList<>();
@@ -107,13 +107,5 @@ public class Slot implements Domain {
         if (isNotBlank(write)) {
             this.writes.remove(write.trim());
         }
-    }
-
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put(name, attributes);
-        map.put("read", reads);
-        map.put("write", writes);
-        return map;
     }
 }

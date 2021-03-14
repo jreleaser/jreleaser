@@ -97,37 +97,43 @@ public final class JReleaserModelValidator {
 
     private static void validateAnnouncers(Logger logger, Path basedir, JReleaserModel model, Announcers announcers, List<String> errors) {
         validateTwitter(logger, basedir, model, announcers.getTwitter(), errors);
+        validateZulip(logger, basedir, model, announcers.getZulip(), errors);
     }
 
     private static void validateTwitter(Logger logger, Path basedir, JReleaserModel model, Twitter twitter, List<String> errors) {
         if (!twitter.isEnabled()) return;
 
-        if (!checkEnvSetting(logger, errors, twitter.getConsumerKey(), "TWITTER_CONSUMER_KEY", "consumerKey")) {
-            return;
-        }
-        if (!checkEnvSetting(logger, errors, twitter.getConsumerSecret(), "TWITTER_CONSUMER_SECRET", "consumerSecret")) {
-            return;
-        }
-        if (!checkEnvSetting(logger, errors, twitter.getAccessToken(), "TWITTER_ACCESS_TOKEN", "accessToken")) {
-            return;
-        }
-        if (!checkEnvSetting(logger, errors, twitter.getAccessTokenSecret(), "TWITTER_ACCESS_TOKEN_SECRET", "accessTokenSecret")) {
-            return;
-        }
+        checkEnvSetting(logger, errors, twitter.getConsumerKey(), "TWITTER_CONSUMER_KEY", "twitter.consumerKey");
+        checkEnvSetting(logger, errors, twitter.getConsumerSecret(), "TWITTER_CONSUMER_SECRET", "twitter.consumerSecret");
+        checkEnvSetting(logger, errors, twitter.getAccessToken(), "TWITTER_ACCESS_TOKEN", "twitter.accessToken");
+        checkEnvSetting(logger, errors, twitter.getAccessTokenSecret(), "TWITTER_ACCESS_TOKEN_SECRET", "twitter.accessTokenSecret");
         if (isBlank(twitter.getStatus())) {
             errors.add("twitter.status must not be blank.");
         }
     }
 
-    private static boolean checkEnvSetting(Logger logger, List<String> errors, String value, String key, String property) {
+    private static void validateZulip(Logger logger, Path basedir, JReleaserModel model, Zulip zulip, List<String> errors) {
+        if (!zulip.isEnabled()) return;
+
+        if (isBlank(zulip.getAccount())) {
+            errors.add("zulip.account must not be blank.");
+        }
+        checkEnvSetting(logger, errors, zulip.getApiKey(), "ZULIP_API_KEY", "zulip.apiKey");
+        if (isBlank(zulip.getApiHost())) {
+            errors.add("zulip.apiHost must not be blank.");
+        }
+        if (isBlank(zulip.getChannel())) {
+            errors.add("zulip.channel must not be blank.");
+        }
+    }
+
+    private static void checkEnvSetting(Logger logger, List<String> errors, String value, String key, String property) {
         if (isBlank(value)) {
-            logger.warn("twitter.{} is not explicitly defined. Checking environment for {}", property, key);
+            logger.warn("{} is not explicitly defined. Checking environment for {}", property, key);
             if (isBlank(System.getenv(key))) {
-                errors.add("twitter." + property + " must not be blank. Alternatively define a " + key + " environment variable.");
-                return false;
+                errors.add(property + " must not be blank. Alternatively define a " + key + " environment variable.");
             }
         }
-        return true;
     }
 
     private static void validateGitService(Logger logger, Path basedir, Project project, GitService service, List<String> errors) {

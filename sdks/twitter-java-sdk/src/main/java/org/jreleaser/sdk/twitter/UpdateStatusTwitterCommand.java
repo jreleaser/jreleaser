@@ -34,9 +34,9 @@ public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
                                        String consumerToken,
                                        String accessToken,
                                        String accessTokenSecret,
-                                       boolean dryRun,
+                                       boolean dryrun,
                                        String status) {
-        super(logger, apiHost, consumerKey, consumerToken, accessToken, accessTokenSecret, dryRun);
+        super(logger, apiHost, consumerKey, consumerToken, accessToken, accessTokenSecret, dryrun);
         this.status = status;
     }
 
@@ -72,7 +72,7 @@ public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
                 consumerToken,
                 accessToken,
                 accessTokenSecret,
-                dryRun,
+                dryrun,
                 status);
         }
     }

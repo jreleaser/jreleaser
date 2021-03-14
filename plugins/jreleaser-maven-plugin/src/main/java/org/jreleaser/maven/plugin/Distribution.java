@@ -24,7 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -181,33 +180,6 @@ public class Distribution extends Packagers implements ExtraProperties {
             default:
                 throw new IllegalArgumentException("Unsupported tool '" + name + "'");
         }
-    }
-
-    @Override
-    public Map<String, Object> asMap() {
-        Map<String, Object> props = new LinkedHashMap<>();
-        props.put("type", type);
-        props.put("executable", executable);
-        props.put("javaVersion", javaVersion);
-        props.put("artifacts", artifacts.stream()
-            .map(Artifact::asMap)
-            .collect(Collectors.toList()));
-        props.put("tags", tags);
-        props.put("extraProperties", extraProperties);
-        props.putAll(super.asMap());
-
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put(name, props);
-        return map;
-    }
-
-    public static Set<String> supportedTools() {
-        Set<String> set = new LinkedHashSet<>();
-        set.add(Brew.NAME);
-        set.add(Chocolatey.NAME);
-        set.add(Scoop.NAME);
-        set.add(Snap.NAME);
-        return Collections.unmodifiableSet(set);
     }
 
     public enum DistributionType {

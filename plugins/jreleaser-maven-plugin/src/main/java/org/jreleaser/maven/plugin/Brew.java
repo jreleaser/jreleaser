@@ -64,9 +64,4 @@ public class Brew extends AbstractTool {
         return super.isSet() ||
             !dependencies.isEmpty();
     }
-
-    @Override
-    protected void asMap(Map<String, Object> props) {
-        props.put("dependencies", dependencies);
-    }
 }

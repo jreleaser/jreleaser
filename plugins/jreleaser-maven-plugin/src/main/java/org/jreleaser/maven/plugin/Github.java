@@ -17,8 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.Map;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -68,14 +66,5 @@ public class Github extends GitService {
 
     public void setPrerelease(boolean prerelease) {
         this.prerelease = prerelease;
-    }
-    
-    @Override
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = super.asMap();
-        map.put("targetCommitish", targetCommitish);
-        map.put("draft", draft);
-        map.put("prerelease", prerelease);
-        return map;
     }
 }

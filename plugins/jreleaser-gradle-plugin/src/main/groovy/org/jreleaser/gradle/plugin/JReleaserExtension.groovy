@@ -36,7 +36,7 @@ import org.jreleaser.gradle.plugin.dsl.Release
 interface JReleaserExtension {
     Property<Boolean> getEnabled()
 
-    Property<Boolean> getDryRun()
+    Property<Boolean> getDryrun()
 
     Project getProject()
 

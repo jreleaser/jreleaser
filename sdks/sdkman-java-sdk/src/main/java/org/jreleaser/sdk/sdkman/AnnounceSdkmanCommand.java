@@ -35,10 +35,10 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
                                   String consumerToken,
                                   String candidate,
                                   String version,
-                                  boolean dryRun,
+                                  boolean dryrun,
                                   String hashtag,
                                   String releaseNotesUrl) {
-        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryRun);
+        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryrun);
         this.hashtag = hashtag;
         this.releaseNotesUrl = releaseNotesUrl;
     }
@@ -90,7 +90,7 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
                 consumerToken,
                 candidate,
                 version,
-                dryRun,
+                dryrun,
                 hashtag,
                 releaseNotesUrl);
         }

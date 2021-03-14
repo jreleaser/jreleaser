@@ -17,8 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.Map;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -28,10 +26,5 @@ public class Chocolatey extends AbstractTool {
 
     public Chocolatey() {
         super(NAME);
-    }
-
-    @Override
-    protected void asMap(Map<String, Object> props) {
-        // empty
     }
 }

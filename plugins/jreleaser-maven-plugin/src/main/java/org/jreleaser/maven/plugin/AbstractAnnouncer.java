@@ -17,10 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -63,19 +59,4 @@ abstract class AbstractAnnouncer implements Announcer {
     public boolean isSet() {
         return enabledSet;
     }
-
-    @Override
-    public final Map<String, Object> asMap() {
-        if (!isEnabled()) return Collections.emptyMap();
-
-        Map<String, Object> props = new LinkedHashMap<>();
-        props.put("enabled", isEnabled());
-        asMap(props);
-
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put(getName(), props);
-        return map;
-    }
-
-    protected abstract void asMap(Map<String, Object> props);
 }

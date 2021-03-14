@@ -15,14 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
-
-import java.util.Map;
+package org.jreleaser.sdk.zulip;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-interface Domain {
-    Map<String, Object> asMap();
+public class ZulipException extends Exception {
+    public ZulipException(String message) {
+        super(message);
+    }
+
+    public ZulipException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ZulipException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -19,11 +19,8 @@ package org.jreleaser.maven.plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -31,7 +28,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Jreleaser implements Domain {
+public class Jreleaser {
     private final Project project = new Project();
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
@@ -98,17 +95,5 @@ public class Jreleaser implements Domain {
             .orElseThrow((Supplier<IllegalArgumentException>) () -> {
                 throw new IllegalArgumentException("Distribution '" + name + "' not found");
             });
-    }
-
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("project", project.asMap());
-        map.put("release", release.asMap());
-        map.put("packagers", packagers.asMap());
-        map.put("announcers", announcers.asMap());
-        map.put("distributions", distributions.stream()
-            .map(Distribution::asMap)
-            .collect(Collectors.toList()));
-        return map;
     }
 }

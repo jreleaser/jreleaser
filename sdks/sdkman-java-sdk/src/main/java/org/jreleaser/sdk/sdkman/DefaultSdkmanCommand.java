@@ -32,8 +32,8 @@ public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
                                  String consumerToken,
                                  String candidate,
                                  String version,
-                                 boolean dryRun) {
-        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryRun);
+                                 boolean dryrun) {
+        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryrun);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
                 consumerToken,
                 candidate,
                 version,
-                dryRun);
+                dryrun);
         }
     }
 }

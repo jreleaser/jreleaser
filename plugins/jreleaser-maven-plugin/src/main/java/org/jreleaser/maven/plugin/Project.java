@@ -28,7 +28,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Project implements Domain, ExtraProperties {
+public class Project implements ExtraProperties {
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
@@ -172,21 +172,5 @@ public class Project implements Domain, ExtraProperties {
         if (isNotBlank(tag)) {
             this.tags.remove(tag.trim());
         }
-    }
-
-    @Override
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("name", name);
-        map.put("version", version);
-        map.put("description", description);
-        map.put("longDescription", longDescription);
-        map.put("website", website);
-        map.put("license", license);
-        if (isNotBlank(javaVersion)) map.put("javaVersion", javaVersion);
-        map.put("authors", authors);
-        map.put("tags", tags);
-        map.put("extraProperties", extraProperties);
-        return map;
     }
 }

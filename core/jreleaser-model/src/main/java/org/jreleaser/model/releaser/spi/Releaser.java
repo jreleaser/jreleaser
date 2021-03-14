@@ -22,5 +22,5 @@ package org.jreleaser.model.releaser.spi;
  * @since 0.1.0
  */
 public interface Releaser {
-    void release(boolean dryRun) throws ReleaseException;
+    void release(boolean dryrun) throws ReleaseException;
 }

@@ -18,9 +18,6 @@
 package org.jreleaser.maven.plugin;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -28,7 +25,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Changelog implements Domain {
+public class Changelog {
     private Boolean enabled;
     private boolean enabledSet;
     private Sort sort = Sort.ASC;
@@ -74,16 +71,6 @@ public class Changelog implements Domain {
 
     public void setExternal(File external) {
         this.external = external;
-    }
-
-    public Map<String, Object> asMap() {
-        if (!isEnabled()) return Collections.emptyMap();
-
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", isEnabled());
-        map.put("sort", sort);
-        map.put("external", external);
-        return map;
     }
 
     public enum Sort {

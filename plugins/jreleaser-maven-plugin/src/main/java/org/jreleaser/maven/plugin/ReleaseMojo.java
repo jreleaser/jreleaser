@@ -27,7 +27,6 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserModelValidator;
 import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.releaser.Releasers;
 import org.jreleaser.tools.Checksums;
 
@@ -74,10 +73,11 @@ public class ReleaseMojo extends AbstractJReleaserMojo {
         }
 
         try {
-            Releaser releaser = Releasers.findReleaser(getLogger(), jreleaserModel)
-                .configureWith(project.getBasedir().toPath(), jreleaserModel)
-                .build();
-            releaser.release(dryrun);
+            Releasers.release(getLogger(),
+                jreleaserModel,
+                project.getBasedir().toPath(),
+                checksumDirectory.toPath(),
+                dryrun);
         } catch (ReleaseException e) {
             throw new MojoExecutionException("Unexpected error", e);
         }

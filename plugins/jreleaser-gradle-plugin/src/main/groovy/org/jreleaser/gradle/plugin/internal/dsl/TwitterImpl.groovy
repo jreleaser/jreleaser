@@ -22,6 +22,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.Twitter
 
 import javax.inject.Inject
 
@@ -31,7 +32,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class TwitterImpl extends AbstractAnnouncer implements org.jreleaser.gradle.plugin.dsl.Twitter {
+class TwitterImpl extends AbstractAnnouncer implements Twitter {
     final Property<String> consumerKey
     final Property<String> consumerSecret
     final Property<String> accessToken

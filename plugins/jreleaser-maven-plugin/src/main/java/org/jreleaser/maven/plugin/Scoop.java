@@ -17,8 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.Map;
-
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -62,11 +60,5 @@ public class Scoop extends AbstractTool {
         return super.isSet() ||
             isNotBlank(checkverUrl) ||
             isNotBlank(autoupdateUrl);
-    }
-
-    @Override
-    protected void asMap(Map<String, Object> props) {
-        props.put("checkverUrl", checkverUrl);
-        props.put("autoupdateUrl", autoupdateUrl);
     }
 }

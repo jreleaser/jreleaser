@@ -17,16 +17,12 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public abstract class GitService implements Releaser {
+    private final String name;
     protected Boolean enabled;
     protected boolean enabledSet;
     private String repoHost;
@@ -45,8 +41,6 @@ public abstract class GitService implements Releaser {
     private boolean overwrite;
     private boolean allowUploadToExisting;
     private String apiEndpoint;
-
-    private final String name;
 
     protected GitService(String name) {
         this.name = name;
@@ -220,28 +214,5 @@ public abstract class GitService implements Releaser {
 
     public void setApiEndpoint(String apiEndpoint) {
         this.apiEndpoint = apiEndpoint;
-    }
-
-    @Override
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", isEnabled());
-        map.put("repoHost", repoHost);
-        map.put("repoOwner", repoOwner);
-        map.put("repoName", repoName);
-        map.put("authorization", isNotBlank(authorization) ? "************" : "**unset**");
-        map.put("repoUrlFormat", repoUrlFormat);
-        map.put("commitUrlFormat", commitUrlFormat);
-        map.put("downloadUrlFormat", downloadUrlFormat);
-        map.put("releaseNotesUrlFormat", releaseNotesUrlFormat);
-        map.put("latestReleaseUrlFormat", latestReleaseUrlFormat);
-        map.put("issueTrackerUrlFormat", issueTrackerUrlFormat);
-        map.put("tagName", tagName);
-        map.put("releaseName", releaseName);
-        map.put("overwrite", overwrite);
-        map.put("allowUploadToExisting", allowUploadToExisting);
-        map.put("apiEndpoint", apiEndpoint);
-        map.put("changelog", changelog.asMap());
-        return map;
     }
 }

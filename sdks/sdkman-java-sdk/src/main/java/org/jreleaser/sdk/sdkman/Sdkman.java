@@ -41,16 +41,16 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class Sdkman {
     private final Logger logger;
     private final SdkmanAPI api;
-    private final boolean dryRun;
+    private final boolean dryrun;
 
-    public Sdkman(Logger logger, String apiHost, String consumerKey, String consumerToken, boolean dryRun) {
+    public Sdkman(Logger logger, String apiHost, String consumerKey, String consumerToken, boolean dryrun) {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(consumerKey, "'consumerKey' must not be blank");
         requireNonBlank(consumerToken, "'consumerToken' must not be blank");
 
         this.logger = logger;
-        this.dryRun = dryRun;
+        this.dryrun = dryrun;
         this.api = Feign.builder()
             .encoder(new JacksonEncoder())
             .decoder(new JacksonDecoder())
@@ -64,7 +64,7 @@ public class Sdkman {
             .options(new Request.Options(20, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
             .target(SdkmanAPI.class, apiHost);
 
-        this.logger.info("Sdkman dryRun set to {}", dryRun);
+        this.logger.info("Sdkman dryrun set to {}", dryrun);
     }
 
     public void announce(String candidate,
@@ -77,14 +77,14 @@ public class Sdkman {
                          String hashtag,
                          String releaseNotesUrl) throws SdkmanException {
         Announce payload = Announce.of(candidate, version, hashtag, releaseNotesUrl);
-        logger.info("sdkman.announce: " + payload.toString());
+        logger.debug("sdkman.announce: " + payload.toString());
         wrap(() -> api.announce(payload));
     }
 
     public void setDefault(String candidate,
                            String version) throws SdkmanException {
         Candidate payload = Candidate.of(candidate, version);
-        logger.info("sdkman.default: " + payload.toString());
+        logger.debug("sdkman.default: " + payload.toString());
         wrap(() -> api.setDefault(payload));
     }
 
@@ -110,7 +110,7 @@ public class Sdkman {
                         Map<String, String> platforms) throws SdkmanException {
         for (Map.Entry<String, String> entry : platforms.entrySet()) {
             Release payload = Release.of(candidate, version, entry.getKey(), entry.getValue());
-            logger.info("sdkman.release: " + payload.toString());
+            logger.debug("sdkman.release: " + payload.toString());
             wrap(() -> api.release(payload));
         }
     }
@@ -178,9 +178,9 @@ public class Sdkman {
 
     private void wrap(Runnable runnable) throws SdkmanException {
         try {
-            if (!dryRun) runnable.run();
+            if (!dryrun) runnable.run();
         } catch (RuntimeException e) {
-            throw new SdkmanException("Sdk vendor operation failed", e);
+            throw new SdkmanException("Sdkman vendor operation failed", e);
         }
     }
 }

@@ -17,18 +17,17 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Announcers implements Domain {
+public class Announcers {
     private final Twitter twitter = new Twitter();
+    private final Zulip zulip = new Zulip();
 
     void setAll(Announcers packagers) {
         setTwitter(packagers.twitter);
+        setZulip(packagers.zulip);
     }
 
     public Twitter getTwitter() {
@@ -39,10 +38,11 @@ public class Announcers implements Domain {
         this.twitter.setAll(twitter);
     }
 
-    @Override
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.putAll(twitter.asMap());
-        return map;
+    public Zulip getZulip() {
+        return zulip;
+    }
+
+    public void setZulip(Zulip zulip) {
+        this.zulip.setAll(zulip);
     }
 }

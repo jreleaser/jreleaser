@@ -39,9 +39,9 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
                                  String consumerToken,
                                  String candidate,
                                  String version,
-                                 boolean dryRun,
+                                 boolean dryrun,
                                  Map<String, String> platforms) {
-        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryRun);
+        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryrun);
         this.platforms.putAll(platforms);
     }
 
@@ -120,7 +120,7 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
                 consumerToken,
                 candidate,
                 version,
-                dryRun,
+                dryrun,
                 platforms);
         }
     }

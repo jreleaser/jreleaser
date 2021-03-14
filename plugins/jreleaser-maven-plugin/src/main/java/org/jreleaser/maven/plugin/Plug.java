@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Plug implements Domain {
+public class Plug {
     private final Map<String, String> attributes = new LinkedHashMap<>();
     private String name;
 
@@ -51,12 +51,6 @@ public class Plug implements Domain {
 
     public void addAttribute(String key, String value) {
         attributes.put(key, value);
-    }
-
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put(name, attributes);
-        return map;
     }
 
     public static Plug copyOf(Plug other) {

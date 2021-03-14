@@ -17,13 +17,11 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.io.Serializable;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Releaser extends Domain {
+public interface Releaser {
     boolean isEnabledSet();
 
     Boolean isEnabled();

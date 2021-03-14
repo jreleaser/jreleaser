@@ -21,7 +21,6 @@ import org.jreleaser.announce.Announcers;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.announcer.spi.AnnounceException;
-import org.jreleaser.model.announcer.spi.AnnouncerBuilder;
 import picocli.CommandLine;
 
 /**
@@ -33,16 +32,12 @@ import picocli.CommandLine;
 public class Announce extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skips remote operations.")
-    boolean dryRun;
+    boolean dryrun;
 
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
         try {
-            for (AnnouncerBuilder announcer : Announcers.findAnnouncers(logger, jreleaserModel)) {
-                announcer.configureWith(actualBasedir, jreleaserModel)
-                    .build()
-                    .announce(dryRun);
-            }
+            Announcers.announce(logger, jreleaserModel, actualBasedir, dryrun);
         } catch (AnnounceException e) {
             throw new JReleaserException("Unexpected error when announcing release " + actualConfigFile.toAbsolutePath(), e);
         }

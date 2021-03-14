@@ -21,12 +21,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.jreleaser.announce.Announcers;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserModelValidator;
 import org.jreleaser.model.announcer.spi.AnnounceException;
-import org.jreleaser.model.announcer.spi.AnnouncerBuilder;
 
 import java.util.List;
 
@@ -59,11 +59,7 @@ public class AnnounceMojo extends AbstractJReleaserMojo {
         }
 
         try {
-            for (AnnouncerBuilder announcer : org.jreleaser.announce.Announcers.findAnnouncers(getLogger(), jreleaserModel)) {
-                announcer.configureWith(project.getBasedir().toPath(), jreleaserModel)
-                    .build()
-                    .announce(dryrun);
-            }
+            Announcers.announce(getLogger(), jreleaserModel, project.getBasedir().toPath(), dryrun);
         } catch (AnnounceException e) {
 
             throw new MojoExecutionException("Unexpected error", e);

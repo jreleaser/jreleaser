@@ -26,9 +26,11 @@ import java.util.Map;
  */
 public class Announcers implements Domain {
     private final Twitter twitter = new Twitter();
+    private final Zulip zulip = new Zulip();
 
     void setAll(Announcers packagers) {
         setTwitter(packagers.twitter);
+        setZulip(packagers.zulip);
     }
 
     public Twitter getTwitter() {
@@ -39,10 +41,19 @@ public class Announcers implements Domain {
         this.twitter.setAll(twitter);
     }
 
+    public Zulip getZulip() {
+        return zulip;
+    }
+
+    public void setZulip(Zulip zulip) {
+        this.zulip.setAll(zulip);
+    }
+
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.putAll(twitter.asMap());
+        map.putAll(zulip.asMap());
         return map;
     }
 }

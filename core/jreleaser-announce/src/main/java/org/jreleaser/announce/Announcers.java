@@ -18,10 +18,13 @@
 package org.jreleaser.announce;
 
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.AnnouncerBuilder;
 import org.jreleaser.sdk.twitter.TwitterAnnouncer;
+import org.jreleaser.sdk.zulip.ZulipAnnouncer;
 import org.jreleaser.util.Logger;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,10 +34,21 @@ import java.util.List;
  * @since 0.1.0
  */
 public class Announcers {
-    public static <AB extends AnnouncerBuilder> Collection<AB> findAnnouncers(Logger logger, JReleaserModel model) {
+    public static void announce(Logger logger, JReleaserModel model, Path basedir, boolean dryrun) throws AnnounceException {
+        for (AnnouncerBuilder announcer : Announcers.findAnnouncers(logger, model)) {
+            announcer.configureWith(basedir, model)
+                .build()
+                .announce(dryrun);
+        }
+    }
+
+    private static <AB extends AnnouncerBuilder> Collection<AB> findAnnouncers(Logger logger, JReleaserModel model) {
         List<AB> announcers = new ArrayList<>();
         if (null != model.getAnnouncers().getTwitter() && model.getAnnouncers().getTwitter().isEnabled()) {
             announcers.add((AB) TwitterAnnouncer.builder(logger));
+        }
+        if (null != model.getAnnouncers().getZulip() && model.getAnnouncers().getZulip().isEnabled()) {
+            announcers.add((AB) ZulipAnnouncer.builder(logger));
         }
 
         if (announcers.isEmpty()) {

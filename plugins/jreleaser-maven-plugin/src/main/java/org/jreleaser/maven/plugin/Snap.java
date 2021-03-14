@@ -20,7 +20,6 @@ package org.jreleaser.maven.plugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -171,16 +170,5 @@ public class Snap extends AbstractTool {
             !localPlugs.isEmpty() ||
             !plugs.isEmpty() ||
             !slots.isEmpty();
-    }
-
-    @Override
-    protected void asMap(Map<String, Object> props) {
-        props.put("base", base);
-        props.put("grade", grade);
-        props.put("confinement", confinement);
-        props.put("exportedLogin", exportedLogin);
-        props.put("localPlugs", localPlugs);
-        props.put("plugs", plugs);
-        props.put("slots", slots);
     }
 }

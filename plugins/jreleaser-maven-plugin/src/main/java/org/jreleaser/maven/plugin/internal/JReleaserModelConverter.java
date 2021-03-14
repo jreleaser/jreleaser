@@ -36,6 +36,7 @@ import org.jreleaser.maven.plugin.Scoop;
 import org.jreleaser.maven.plugin.Slot;
 import org.jreleaser.maven.plugin.Snap;
 import org.jreleaser.maven.plugin.Twitter;
+import org.jreleaser.maven.plugin.Zulip;
 import org.jreleaser.model.JReleaserModel;
 
 import java.util.ArrayList;
@@ -151,6 +152,7 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Announcers convertAnnouncers(Announcers announcers) {
         org.jreleaser.model.Announcers a = new org.jreleaser.model.Announcers();
         if (announcers.getTwitter().isSet()) a.setTwitter(convertTwitter(announcers.getTwitter()));
+        if (announcers.getZulip().isSet()) a.setZulip(convertZulip(announcers.getZulip()));
         return a;
     }
 
@@ -162,6 +164,17 @@ public final class JReleaserModelConverter {
         a.setAccessToken(twitter.getAccessToken());
         a.setAccessTokenSecret(twitter.getAccessTokenSecret());
         a.setStatus(twitter.getStatus());
+        return a;
+    }
+
+    private static org.jreleaser.model.Zulip convertZulip(Zulip zulip) {
+        org.jreleaser.model.Zulip a = new org.jreleaser.model.Zulip();
+        if (zulip.isEnabledSet()) a.setEnabled(zulip.isEnabled());
+        a.setAccount(zulip.getAccount());
+        a.setApiKey(zulip.getApiKey());
+        a.setChannel(zulip.getChannel());
+        a.setSubject(zulip.getSubject());
+        a.setMessage(zulip.getMessage());
         return a;
     }
 

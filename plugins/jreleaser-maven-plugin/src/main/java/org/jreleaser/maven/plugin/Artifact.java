@@ -17,14 +17,11 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Artifact implements Domain {
+public class Artifact {
     private String path;
     private String hash;
     private String osClassifier;
@@ -60,14 +57,5 @@ public class Artifact implements Domain {
 
     public void setJavaVersion(String javaVersion) {
         this.javaVersion = javaVersion;
-    }
-
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("path", path);
-        map.put("hash", hash);
-        map.put("osClassifier", osClassifier);
-        map.put("javaVersion", javaVersion);
-        return map;
     }
 }

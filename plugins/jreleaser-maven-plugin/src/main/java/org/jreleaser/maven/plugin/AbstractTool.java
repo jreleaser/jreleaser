@@ -18,7 +18,6 @@
 package org.jreleaser.maven.plugin;
 
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -96,21 +95,4 @@ abstract class AbstractTool implements Tool {
             null != templateDirectory ||
             !extraProperties.isEmpty();
     }
-
-    @Override
-    public final Map<String, Object> asMap() {
-        if (!isSet()) return Collections.emptyMap();
-
-        Map<String, Object> props = new LinkedHashMap<>();
-        props.put("enabled", isEnabled());
-        props.put("templateDirectory", templateDirectory);
-        asMap(props);
-        props.put("extraProperties", extraProperties);
-
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put(getName(), props);
-        return map;
-    }
-
-    protected abstract void asMap(Map<String, Object> props);
 }

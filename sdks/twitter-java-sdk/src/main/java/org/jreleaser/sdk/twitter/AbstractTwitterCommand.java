@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 abstract class AbstractTwitterCommand implements TwitterCommand {
-    protected final boolean dryRun;
+    protected final boolean dryrun;
     protected final Twitter twitter;
 
     protected AbstractTwitterCommand(Logger logger,
@@ -36,14 +36,14 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
                                      String consumerToken,
                                      String accessToken,
                                      String accessTokenSecret,
-                                     boolean dryRun) {
-        this.twitter = new Twitter(logger, apiHost, consumerKey, consumerToken, accessToken, accessTokenSecret, dryRun);
-        this.dryRun = dryRun;
+                                     boolean dryrun) {
+        this.twitter = new Twitter(logger, apiHost, consumerKey, consumerToken, accessToken, accessTokenSecret, dryrun);
+        this.dryrun = dryrun;
     }
 
     static class Builder<S extends Builder<S>> {
         protected final Logger logger;
-        protected boolean dryRun;
+        protected boolean dryrun;
         protected String consumerKey;
         protected String consumerToken;
         protected String accessToken;
@@ -58,8 +58,8 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
             return (S) this;
         }
 
-        public S dryRun(boolean dryRun) {
-            this.dryRun = dryRun;
+        public S dryrun(boolean dryrun) {
+            this.dryrun = dryrun;
             return self();
         }
 

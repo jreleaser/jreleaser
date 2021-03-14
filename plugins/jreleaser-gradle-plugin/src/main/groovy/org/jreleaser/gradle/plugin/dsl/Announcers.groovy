@@ -29,5 +29,9 @@ import org.gradle.api.Action
 interface Announcers {
     Twitter getTwitter()
 
+    Zulip getZulip()
+
     void twitter(Action<? super Twitter> action)
+
+    void zulip(Action<? super Zulip> action)
 }

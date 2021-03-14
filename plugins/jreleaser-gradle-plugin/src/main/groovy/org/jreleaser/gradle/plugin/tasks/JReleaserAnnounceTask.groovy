@@ -28,7 +28,6 @@ import org.gradle.api.tasks.options.Option
 import org.jreleaser.announce.Announcers
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.JReleaserModel
-import org.jreleaser.model.announcer.spi.AnnouncerBuilder
 
 import javax.inject.Inject
 
@@ -43,25 +42,24 @@ abstract class JReleaserAnnounceTask extends DefaultTask {
     final Property<JReleaserModel> jreleaserModel
 
     @Input
-    final Property<Boolean> dryRun
+    final Property<Boolean> dryrun
 
     @Inject
     JReleaserAnnounceTask(ObjectFactory objects) {
         jreleaserModel = objects.property(JReleaserModel)
-        dryRun = objects.property(Boolean).convention(false)
+        dryrun = objects.property(Boolean).convention(false)
     }
 
     @Option(option = 'dryrun', description = 'Skips network operations (OPTIONAL).')
-    void setDryRun(boolean dryRun) {
-        this.dryRun.set(dryRun)
+    void setDryrun(boolean dryrun) {
+        this.dryrun.set(dryrun)
     }
 
     @TaskAction
     void announce() {
-        for (AnnouncerBuilder announcer : Announcers.findAnnouncers(new JReleaserLoggerAdapter(project.logger), jreleaserModel.get())) {
-            announcer.configureWith(project.projectDir.toPath(), jreleaserModel.get())
-                .build()
-                .announce(dryRun.get())
-        }
+        Announcers.announce(new JReleaserLoggerAdapter(project.logger),
+            jreleaserModel.get(),
+            project.projectDir.toPath(),
+            dryrun.get());
     }
 }

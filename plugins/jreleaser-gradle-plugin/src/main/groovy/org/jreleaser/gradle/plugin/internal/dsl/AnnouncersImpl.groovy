@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.jreleaser.gradle.plugin.dsl.Announcers
 import org.jreleaser.gradle.plugin.dsl.Twitter
+import org.jreleaser.gradle.plugin.dsl.Zulip
 
 import javax.inject.Inject
 
@@ -33,10 +34,12 @@ import javax.inject.Inject
 @CompileStatic
 class AnnouncersImpl implements Announcers {
     final TwitterImpl twitter
+    final ZulipImpl zulip
 
     @Inject
     AnnouncersImpl(ObjectFactory objects) {
         twitter = objects.newInstance(TwitterImpl, objects)
+        zulip = objects.newInstance(ZulipImpl, objects)
     }
 
     @Override
@@ -44,9 +47,15 @@ class AnnouncersImpl implements Announcers {
         action.execute(twitter)
     }
 
+    @Override
+    void zulip(Action<? super Zulip> action) {
+        action.execute(zulip)
+    }
+
     org.jreleaser.model.Announcers toModel() {
         org.jreleaser.model.Announcers announcers = new org.jreleaser.model.Announcers()
         if (twitter.set) announcers.twitter = twitter.toModel()
+        if (zulip.set) announcers.zulip = zulip.toModel()
         announcers
     }
 }
