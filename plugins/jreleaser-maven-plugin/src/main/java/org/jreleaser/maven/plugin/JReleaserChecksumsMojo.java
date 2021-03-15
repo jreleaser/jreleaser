@@ -21,22 +21,20 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.releaser.Releasers;
+import org.jreleaser.tools.Checksums;
 import org.jreleaser.util.Logger;
 
 import java.io.File;
+import java.nio.file.Path;
 
-import static org.jreleaser.maven.plugin.ChecksumsMojo.checksums;
-import static org.jreleaser.maven.plugin.SignMojo.sign;
-
-@Mojo(name = "release")
-public class ReleaseMojo extends AbstractJReleaserMojo {
+@Mojo(name = "checksums")
+public class JReleaserChecksumsMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.release.skip")
+    @Parameter(property = "jreleaser.checksums.skip")
     private boolean skip;
 
     @Override
@@ -44,21 +42,16 @@ public class ReleaseMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserModel jreleaserModel = convertAndValidateModel();
-        checksums(getLogger(), jreleaserModel, outputDirectory);
-        sign(getLogger(), jreleaserModel, outputDirectory);
-        release(getLogger(), jreleaserModel, project.getBasedir(), outputDirectory, dryrun);
+        checksums(getLogger(), convertAndValidateModel(), outputDirectory);
     }
 
-    static void release(Logger logger, JReleaserModel jreleaserModel, File basedir, File outputDirectory, boolean dryrun) throws MojoExecutionException {
+    static void checksums(Logger logger, JReleaserModel jreleaserModel, File outputDirectory) throws MojoExecutionException {
+        Path checksumDirectory = outputDirectory.toPath().resolve("checksums");
+        Path checksumsFilePath = checksumDirectory.resolve("checksums.txt");
         try {
-            Releasers.release(logger,
-                jreleaserModel,
-                basedir.toPath(),
-                outputDirectory.toPath(),
-                dryrun);
-        } catch (ReleaseException e) {
-            throw new MojoExecutionException("Unexpected error", e);
+            Checksums.collectAndWriteChecksums(logger, jreleaserModel, checksumDirectory);
+        } catch (JReleaserException e) {
+            throw new MojoExecutionException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
         }
     }
 }

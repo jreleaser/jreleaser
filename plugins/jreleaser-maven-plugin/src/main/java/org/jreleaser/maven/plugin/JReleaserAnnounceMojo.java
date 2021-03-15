@@ -21,20 +21,19 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.JReleaserException;
+import org.jreleaser.announce.Announcers;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.tools.Checksums;
+import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.util.Logger;
 
 import java.io.File;
-import java.nio.file.Path;
 
-@Mojo(name = "checksums")
-public class ChecksumsMojo extends AbstractJReleaserMojo {
+@Mojo(name = "announce")
+public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.checksums.skip")
+    @Parameter(property = "jreleaser.announce.skip")
     private boolean skip;
 
     @Override
@@ -42,16 +41,14 @@ public class ChecksumsMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        checksums(getLogger(), convertAndValidateModel(), outputDirectory);
+        announce(getLogger(), convertAndValidateModel(), project.getBasedir(), dryrun);
     }
 
-    static void checksums(Logger logger, JReleaserModel jreleaserModel, File outputDirectory) throws MojoExecutionException {
-        Path checksumDirectory = outputDirectory.toPath().resolve("checksums");
-        Path checksumsFilePath = checksumDirectory.resolve("checksums.txt");
+    static void announce(Logger logger, JReleaserModel jreleaserModel, File basedir, boolean dryrun) throws MojoExecutionException {
         try {
-            Checksums.collectAndWriteChecksums(logger, jreleaserModel, checksumDirectory);
-        } catch (JReleaserException e) {
-            throw new MojoExecutionException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
+            Announcers.announce(logger, jreleaserModel, basedir.toPath(), dryrun);
+        } catch (AnnounceException e) {
+            throw new MojoExecutionException("Unexpected error", e);
         }
     }
 }

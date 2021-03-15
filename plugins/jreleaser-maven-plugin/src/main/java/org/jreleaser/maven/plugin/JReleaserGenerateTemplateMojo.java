@@ -33,7 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Mojo(name = "generate-template")
-public class GenerateTemplateMojo extends AbstractMojo {
+public class JReleaserGenerateTemplateMojo extends AbstractMojo {
     /**
      * The project whose model will be checked.
      */

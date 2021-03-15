@@ -25,24 +25,23 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.tools.Checksums;
 import org.jreleaser.tools.DistributionProcessor;
 import org.jreleaser.tools.ToolProcessingException;
 import org.jreleaser.util.Logger;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mojo(name = "package-tools", defaultPhase = LifecyclePhase.PACKAGE)
-public class PackageToolsMojo extends AbstractJReleaserMojo {
+@Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE)
+public class JReleaserPackageMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.tools.skip")
+    @Parameter(property = "jreleaser.package.skip")
     private boolean skip;
 
-    @Parameter(property = "jreleaser.tools.failfast", defaultValue = "true")
+    @Parameter(property = "jreleaser.failfast", defaultValue = "true")
     private boolean failFast;
 
     @Override
@@ -50,47 +49,33 @@ public class PackageToolsMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserModel jreleaserModel = convertAndValidateModel();
+        packageTools(getLogger(), convertAndValidateModel(), outputDirectory, failFast);
+    }
 
+    static void packageTools(Logger logger,
+                             JReleaserModel jreleaserModel,
+                             File outputDirectory,
+                             boolean failFast) throws MojoExecutionException {
         List<Exception> exceptions = new ArrayList<>();
         for (Distribution distribution : jreleaserModel.getDistributions().values()) {
             for (String toolName : Distribution.supportedTools()) {
                 try {
-                    DistributionProcessor processor = createDistributionProcessor(jreleaserModel,
-                        getLogger(),
+                    DistributionProcessor processor = createDistributionProcessor(logger,
+                        jreleaserModel,
+                        outputDirectory,
                         distribution,
                         toolName);
-
-                    if (!processor.prepareDistribution()) {
-                        continue;
-                    }
-
-                    getLog().info("Prepared " + distribution.getName() + " distribution with tool " + toolName);
 
                     if (!processor.packageDistribution()) {
                         continue;
                     }
 
-                    getLog().info("Packaged " + distribution.getName() + " distribution with tool " + toolName);
+                    logger.info("Packaged " + distribution.getName() + " distribution with tool " + toolName);
                 } catch (JReleaserException | ToolProcessingException e) {
                     if (failFast) throw new MojoExecutionException("Unexpected error", e);
                     exceptions.add(e);
-                    getLog().warn(e);
+                    logger.warn("Unexpected error", e);
                 }
-            }
-        }
-
-        Path checksumDirectory = outputDirectory.toPath().resolve("checksums");
-        if (exceptions.isEmpty()) {
-            Path checksumsFilePath = checksumDirectory.resolve("checksums.txt");
-            try {
-                Checksums.collectAndWriteChecksums(getLogger(), jreleaserModel, checksumDirectory);
-            } catch (JReleaserException e) {
-                if (failFast) {
-                    throw new MojoExecutionException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
-                }
-                exceptions.add(e);
-                getLog().warn(e);
             }
         }
 
@@ -99,10 +84,11 @@ public class PackageToolsMojo extends AbstractJReleaserMojo {
         }
     }
 
-    private DistributionProcessor createDistributionProcessor(JReleaserModel jreleaserModel,
-                                                              Logger logger,
-                                                              Distribution distribution,
-                                                              String toolName) {
+    private static DistributionProcessor createDistributionProcessor(Logger logger,
+                                                                     JReleaserModel jreleaserModel,
+                                                                     File outputDirectory,
+                                                                     Distribution distribution,
+                                                                     String toolName) {
         return DistributionProcessor.builder()
             .logger(logger)
             .model(jreleaserModel)

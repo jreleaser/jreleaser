@@ -29,7 +29,7 @@ public class Changelog {
     private Boolean enabled;
     private boolean enabledSet;
     private boolean links;
-    private Sort sort = Sort.ASC;
+    private Sort sort = Sort.DESC;
     private File external;
 
     void setAll(Changelog changelog) {

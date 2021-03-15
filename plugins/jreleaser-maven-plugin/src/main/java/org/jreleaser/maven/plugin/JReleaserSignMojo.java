@@ -21,16 +21,21 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.announce.Announcers;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.announcer.spi.AnnounceException;
+import org.jreleaser.signer.Signer;
+import org.jreleaser.signer.SigningException;
+import org.jreleaser.util.Logger;
 
-@Mojo(name = "announce")
-public class AnnounceMojo extends AbstractJReleaserMojo {
+import java.io.File;
+
+import static org.jreleaser.maven.plugin.JReleaserChecksumsMojo.checksums;
+
+@Mojo(name = "sign")
+public class JReleaserSignMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.announce.skip")
+    @Parameter(property = "jreleaser.sign.skip")
     private boolean skip;
 
     @Override
@@ -39,12 +44,17 @@ public class AnnounceMojo extends AbstractJReleaserMojo {
         if (skip) return;
 
         JReleaserModel jreleaserModel = convertAndValidateModel();
+        checksums(getLogger(), jreleaserModel, outputDirectory);
+        sign(getLogger(), jreleaserModel, outputDirectory);
+    }
 
+    static void sign(Logger logger, JReleaserModel jreleaserModel, File outputDirectory) throws MojoExecutionException {
         try {
-            Announcers.announce(getLogger(), jreleaserModel, project.getBasedir().toPath(), dryrun);
-        } catch (AnnounceException e) {
-
-            throw new MojoExecutionException("Unexpected error", e);
+            Signer.sign(logger,
+                jreleaserModel,
+                outputDirectory.toPath());
+        } catch (SigningException e) {
+            throw new MojoExecutionException("Unexpected error when signing artifacts", e);
         }
     }
 }

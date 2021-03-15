@@ -22,12 +22,11 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelPrinter;
-import org.jreleaser.model.JReleaserModel;
 
 import java.io.PrintWriter;
 
 @Mojo(name = "config")
-public class ConfigMojo extends AbstractJReleaserMojo {
+public class JReleaserConfigMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
      */
@@ -39,8 +38,7 @@ public class ConfigMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserModel jreleaserModel = convertAndValidateModel();
-
-        new JReleaserModelPrinter(new PrintWriter(System.out, true)).print(jreleaserModel.asMap());
+        new JReleaserModelPrinter(new PrintWriter(System.out, true))
+            .print(convertAndValidateModel().asMap());
     }
 }

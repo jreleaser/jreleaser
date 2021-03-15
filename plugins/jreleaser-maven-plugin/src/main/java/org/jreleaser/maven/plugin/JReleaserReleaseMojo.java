@@ -22,20 +22,21 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.signer.Signer;
-import org.jreleaser.signer.SigningException;
+import org.jreleaser.model.releaser.spi.ReleaseException;
+import org.jreleaser.releaser.Releasers;
 import org.jreleaser.util.Logger;
 
 import java.io.File;
 
-import static org.jreleaser.maven.plugin.ChecksumsMojo.checksums;
+import static org.jreleaser.maven.plugin.JReleaserChecksumsMojo.checksums;
+import static org.jreleaser.maven.plugin.JReleaserSignMojo.sign;
 
-@Mojo(name = "sign")
-public class SignMojo extends AbstractJReleaserMojo {
+@Mojo(name = "release")
+public class JReleaserReleaseMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.sign.skip")
+    @Parameter(property = "jreleaser.release.skip")
     private boolean skip;
 
     @Override
@@ -46,15 +47,18 @@ public class SignMojo extends AbstractJReleaserMojo {
         JReleaserModel jreleaserModel = convertAndValidateModel();
         checksums(getLogger(), jreleaserModel, outputDirectory);
         sign(getLogger(), jreleaserModel, outputDirectory);
+        release(getLogger(), jreleaserModel, project.getBasedir(), outputDirectory, dryrun);
     }
 
-    static void sign(Logger logger, JReleaserModel jreleaserModel, File outputDirectory) throws MojoExecutionException {
+    static void release(Logger logger, JReleaserModel jreleaserModel, File basedir, File outputDirectory, boolean dryrun) throws MojoExecutionException {
         try {
-            Signer.sign(logger,
+            Releasers.release(logger,
                 jreleaserModel,
-                outputDirectory.toPath());
-        } catch (SigningException e) {
-            throw new MojoExecutionException("Unexpected error when signing artifacts", e);
+                basedir.toPath(),
+                outputDirectory.toPath(),
+                dryrun);
+        } catch (ReleaseException e) {
+            throw new MojoExecutionException("Unexpected error", e);
         }
     }
 }

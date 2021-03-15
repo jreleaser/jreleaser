@@ -44,7 +44,7 @@ class ChangelogImpl implements Changelog {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
         links = objects.property(Boolean).convention(Providers.notDefined())
         sort = objects.property(org.jreleaser.model.Changelog.Sort)
-            .convention(org.jreleaser.model.Changelog.Sort.ASC)
+            .convention(org.jreleaser.model.Changelog.Sort.DESC)
         external = objects.fileProperty().convention(Providers.notDefined())
     }
 
