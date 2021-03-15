@@ -18,21 +18,13 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
-import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
-import org.jreleaser.model.JReleaserModel
+import org.jreleaser.model.JReleaserContext
 import org.jreleaser.signer.Signer
 import org.jreleaser.tools.Checksums
-import org.jreleaser.util.Logger
 
 import javax.inject.Inject
-import java.nio.file.Path
 
 /**
  *
@@ -40,31 +32,17 @@ import java.nio.file.Path
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserSignTask extends DefaultTask {
-    @Internal
-    final Property<JReleaserModel> jreleaserModel
-
-    @OutputDirectory
-    final DirectoryProperty outputDirectory
-
+abstract class JReleaserSignTask extends AbstractJReleaserTask {
     @Inject
     JReleaserSignTask(ObjectFactory objects) {
-        jreleaserModel = objects.property(JReleaserModel)
-        outputDirectory = objects.directoryProperty()
+        super(objects)
     }
 
     @TaskAction
     void signArtifacts() {
-        Path checksumDirectory = outputDirectory.getAsFile().get().toPath().resolve("checksums")
+        JReleaserContext context = createContext()
 
-        Logger logger = new JReleaserLoggerAdapter(project.logger)
-
-        Checksums.collectAndWriteChecksums(logger,
-            jreleaserModel.get(),
-            checksumDirectory)
-
-        Signer.sign(logger,
-            jreleaserModel.get(),
-            outputDirectory.getAsFile().get().toPath())
+        Checksums.collectAndWriteChecksums(context)
+        Signer.sign(context)
     }
 }

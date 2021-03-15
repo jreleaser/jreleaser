@@ -17,6 +17,7 @@
  */
 package org.jreleaser.announce;
 
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.AnnouncerBuilder;
@@ -24,7 +25,6 @@ import org.jreleaser.sdk.twitter.TwitterAnnouncer;
 import org.jreleaser.sdk.zulip.ZulipAnnouncer;
 import org.jreleaser.util.Logger;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,21 +34,21 @@ import java.util.List;
  * @since 0.1.0
  */
 public class Announcers {
-    public static void announce(Logger logger, JReleaserModel model, Path basedir, boolean dryrun) throws AnnounceException {
-        for (AnnouncerBuilder announcer : Announcers.findAnnouncers(logger, model)) {
-            announcer.configureWith(basedir, model)
+    public static void announce(JReleaserContext context) throws AnnounceException {
+        for (AnnouncerBuilder announcer : Announcers.findAnnouncers(context.getModel())) {
+            announcer.configureWith(context)
                 .build()
-                .announce(dryrun);
+                .announce(context.isDryrun());
         }
     }
 
-    private static <AB extends AnnouncerBuilder> Collection<AB> findAnnouncers(Logger logger, JReleaserModel model) {
+    private static <AB extends AnnouncerBuilder> Collection<AB> findAnnouncers(JReleaserModel model) {
         List<AB> announcers = new ArrayList<>();
         if (null != model.getAnnouncers().getTwitter() && model.getAnnouncers().getTwitter().isEnabled()) {
-            announcers.add((AB) TwitterAnnouncer.builder(logger));
+            announcers.add((AB) TwitterAnnouncer.builder());
         }
         if (null != model.getAnnouncers().getZulip() && model.getAnnouncers().getZulip().isEnabled()) {
-            announcers.add((AB) ZulipAnnouncer.builder(logger));
+            announcers.add((AB) ZulipAnnouncer.builder());
         }
 
         if (announcers.isEmpty()) {

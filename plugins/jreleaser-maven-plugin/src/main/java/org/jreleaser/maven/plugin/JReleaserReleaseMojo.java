@@ -21,14 +21,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.releaser.Releasers;
-import org.jreleaser.util.Logger;
 
-import java.io.File;
-
-import static org.jreleaser.maven.plugin.JReleaserChecksumsMojo.checksums;
+import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
 import static org.jreleaser.maven.plugin.JReleaserSignMojo.sign;
 
 @Mojo(name = "release")
@@ -44,19 +41,15 @@ public class JReleaserReleaseMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserModel jreleaserModel = convertAndValidateModel();
-        checksums(getLogger(), jreleaserModel, outputDirectory);
-        sign(getLogger(), jreleaserModel, outputDirectory);
-        release(getLogger(), jreleaserModel, project.getBasedir(), outputDirectory, dryrun);
+        JReleaserContext context = createContext();
+        checksum(context);
+        sign(context);
+        release(context);
     }
 
-    static void release(Logger logger, JReleaserModel jreleaserModel, File basedir, File outputDirectory, boolean dryrun) throws MojoExecutionException {
+    static void release(JReleaserContext context) throws MojoExecutionException {
         try {
-            Releasers.release(logger,
-                jreleaserModel,
-                basedir.toPath(),
-                outputDirectory.toPath(),
-                dryrun);
+            Releasers.release(context);
         } catch (ReleaseException e) {
             throw new MojoExecutionException("Unexpected error", e);
         }

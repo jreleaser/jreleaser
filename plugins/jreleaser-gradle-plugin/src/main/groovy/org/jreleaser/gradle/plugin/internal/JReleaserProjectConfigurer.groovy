@@ -30,17 +30,15 @@ import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserPackageTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateGeneratorTask
-import org.jreleaser.gradle.plugin.tasks.JReleaserToolPackagerTask
-import org.jreleaser.gradle.plugin.tasks.JReleaserToolProcessorTask
-import org.jreleaser.model.Distribution
 import org.jreleaser.model.JReleaserModel
 import org.jreleaser.model.JReleaserModelValidator
-import org.kordamp.gradle.util.StringUtils
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
 
@@ -102,67 +100,77 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        Set<TaskProvider<?>> prepareTasks = new LinkedHashSet<>()
-        Set<TaskProvider<?>> packageTasks = new LinkedHashSet<>()
-        model.distributions.values().each { distribution ->
-            List<TaskProvider<?>> tasks = configureDistribution(project, model, distribution)
-            if (tasks) {
-                prepareTasks << tasks[0]
-                packageTasks << tasks[1]
-            }
-        }
-
         Set<TaskProvider<?>> jreleaserDeps = new LinkedHashSet<>()
-        if (prepareTasks) {
-            jreleaserDeps << project.tasks.register('jreleaserPrepare', JReleaserPrepareTask,
-                new Action<JReleaserPrepareTask>() {
-                    @Override
-                    void execute(JReleaserPrepareTask t) {
-                        t.group = JRELEASER_GROUP
-                        t.description = 'Prepares all distributions'
-                        t.dependsOn(prepareTasks)
-                        t.checksumDirectory.set(project.layout
-                            .buildDirectory
-                            .dir('checksums'))
-                        if (hasDistributionPlugin) {
-                            t.dependsOn('assembleDist')
-                        }
-                    }
-                })
-        }
 
-        if (packageTasks) {
-            jreleaserDeps << project.tasks.register('jreleaserPackage', DefaultTask,
-                new Action<DefaultTask>() {
-                    @Override
-                    void execute(DefaultTask t) {
-                        t.group = JRELEASER_GROUP
-                        t.description = 'Packages all distributions'
-                        t.dependsOn(packageTasks)
-                    }
-                })
-        }
+        TaskProvider<JReleaserChecksumTask> checksumTask = project.tasks.register('jreleaserChecksum', JReleaserChecksumTask,
+            new Action<JReleaserChecksumTask>() {
+                @Override
+                void execute(JReleaserChecksumTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Calculate checksums'
+                    t.jreleaserModel.set(model)
+                    t.outputDirectory.set(project.layout
+                        .buildDirectory
+                        .dir('jreleaser'))
+                }
+            })
+        jreleaserDeps << checksumTask
 
-        TaskProvider<JReleaserSignTask> signReleaseTask = project.tasks.register('signRelease', JReleaserSignTask,
+        TaskProvider<JReleaserPrepareTask> prepareTask = project.tasks.register('jreleaserPrepare', JReleaserPrepareTask,
+            new Action<JReleaserPrepareTask>() {
+                @Override
+                void execute(JReleaserPrepareTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Prepares all distributions'
+                    t.dependsOn(checksumTask)
+                    t.jreleaserModel.set(model)
+                    t.outputDirectory.set(project.layout
+                        .buildDirectory
+                        .dir('jreleaser'))
+                    if (hasDistributionPlugin) {
+                        t.dependsOn('assembleDist')
+                    }
+                }
+            })
+        jreleaserDeps << prepareTask
+
+        TaskProvider<JReleaserPackageTask> packageTask = project.tasks.register('jreleaserPackage', JReleaserPackageTask,
+            new Action<JReleaserPackageTask>() {
+                @Override
+                void execute(JReleaserPackageTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Packages all distributions'
+                    t.dependsOn(prepareTask)
+                    t.jreleaserModel.set(model)
+                    t.outputDirectory.set(project.layout
+                        .buildDirectory
+                        .dir('jreleaser'))
+                }
+            })
+        jreleaserDeps << packageTask
+
+        TaskProvider<JReleaserSignTask> signTask = project.tasks.register('jreleaserSign', JReleaserSignTask,
             new Action<JReleaserSignTask>() {
                 @Override
                 void execute(JReleaserSignTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Signs a release'
+                    t.dependsOn(checksumTask)
                     t.jreleaserModel.set(model)
                     t.outputDirectory.set(project.layout
                         .buildDirectory
                         .dir('jreleaser'))
                 }
             })
-        jreleaserDeps << signReleaseTask
+        jreleaserDeps << signTask
 
-        TaskProvider<JReleaserReleaseTask> createReleaseTask = project.tasks.register('createRelease', JReleaserReleaseTask,
+        TaskProvider<JReleaserReleaseTask> releaseTask = project.tasks.register('jreleaserRelease', JReleaserReleaseTask,
             new Action<JReleaserReleaseTask>() {
                 @Override
                 void execute(JReleaserReleaseTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Creates or updates a release'
+                    t.dependsOn(signTask)
                     t.jreleaserModel.set(model)
                     t.dryrun.set(extension.dryrun)
                     t.outputDirectory.set(project.layout
@@ -170,20 +178,24 @@ class JReleaserProjectConfigurer {
                         .dir('jreleaser'))
                 }
             })
-        jreleaserDeps << createReleaseTask
+        jreleaserDeps << releaseTask
 
-        jreleaserDeps << project.tasks.register('announceRelease', JReleaserAnnounceTask,
+        TaskProvider<JReleaserAnnounceTask> announceTask = project.tasks.register('jreleaserAnnounce', JReleaserAnnounceTask,
             new Action<JReleaserAnnounceTask>() {
                 @Override
                 void execute(JReleaserAnnounceTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Announces a release'
-                    t.dependsOn(createReleaseTask)
-                    t.mustRunAfter(createReleaseTask)
+                    t.dependsOn(releaseTask)
+                    t.mustRunAfter(releaseTask)
                     t.jreleaserModel.set(model)
                     t.dryrun.set(extension.dryrun)
+                    t.outputDirectory.set(project.layout
+                        .buildDirectory
+                        .dir('jreleaser'))
                 }
             })
+        jreleaserDeps << announceTask
 
         if (jreleaserDeps) {
             project.tasks.register('jreleaser', DefaultTask,
@@ -234,110 +246,5 @@ class JReleaserProjectConfigurer {
         }
 
         return hasDistributionPlugin
-    }
-
-    private static List<TaskProvider<?>> configureDistribution(Project project,
-                                                               JReleaserModel model,
-                                                               Distribution distribution) {
-        Set<TaskProvider<JReleaserToolProcessorTask>> prepareTasks = new LinkedHashSet<>()
-        Set<TaskProvider<JReleaserToolPackagerTask>> packageTasks = new LinkedHashSet<>()
-
-        String distributionName = distribution.name
-        String normalizedDistributionName = StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName(distributionName)
-        String capitalizedDistributionName = normalizedDistributionName.capitalize()
-
-        for (String toolName : Distribution.supportedTools()) {
-            if (distribution.findTool(toolName)?.enabled) {
-                String taskName = "prepare${toolName.capitalize()}${capitalizedDistributionName}".toString()
-                TaskProvider<JReleaserToolProcessorTask> prt = createJReleaserToolProcessorTask(project, taskName, distributionName, toolName, model, distribution)
-                prepareTasks << prt
-                taskName = "package${toolName.capitalize()}${capitalizedDistributionName}".toString()
-                packageTasks << createJReleaserToolPackagerTask(project, taskName, distributionName, toolName, model, distribution, prt)
-            }
-        }
-
-        if (prepareTasks) {
-            TaskProvider<DefaultTask> prepareTask = project.tasks.register("prepare${capitalizedDistributionName}", DefaultTask,
-                new Action<DefaultTask>() {
-                    @Override
-                    void execute(DefaultTask t) {
-                        t.group = JRELEASER_GROUP
-                        t.description = "Prepares the ${distributionName} distribution"
-                        t.dependsOn(prepareTasks)
-                    }
-                })
-
-            TaskProvider<DefaultTask> packageTask = project.tasks.register("package${capitalizedDistributionName}", DefaultTask,
-                new Action<DefaultTask>() {
-                    @Override
-                    void execute(DefaultTask t) {
-                        t.group = JRELEASER_GROUP
-                        t.description = "Packages the ${distributionName} distribution"
-                        t.dependsOn(packageTasks)
-                    }
-                })
-
-            // pleasing the static compiler ... *grumble*
-            List<TaskProvider<?>> list = []
-            list.add(prepareTask)
-            list.add(packageTask)
-            return list
-        }
-
-        return []
-    }
-
-    private static TaskProvider<JReleaserToolProcessorTask> createJReleaserToolProcessorTask(Project project,
-                                                                                             String taskName,
-                                                                                             String distributionName,
-                                                                                             String toolName,
-                                                                                             JReleaserModel model,
-                                                                                             Distribution distribution) {
-        project.tasks.register(taskName, JReleaserToolProcessorTask,
-            new Action<JReleaserToolProcessorTask>() {
-                @Override
-                void execute(JReleaserToolProcessorTask t) {
-                    t.group = JRELEASER_GROUP
-                    t.description = "Prepares distribution ${distributionName} with ${toolName.capitalize()}".toString()
-                    t.distributionName.set(distributionName)
-                    t.toolName.set(toolName)
-                    t.jreleaserModel.set(model)
-                    t.artifacts.from(distribution.artifacts*.path)
-                    t.checksumDirectory.set(project.layout
-                        .buildDirectory
-                        .dir('jreleaser/checksums'))
-                    t.outputDirectory.set(project.layout
-                        .buildDirectory
-                        .dir("jreleaser/${distributionName}/${toolName}".toString()))
-                }
-            })
-    }
-
-    private static TaskProvider<JReleaserToolPackagerTask> createJReleaserToolPackagerTask(Project project,
-                                                                                           String taskName,
-                                                                                           String distributionName,
-                                                                                           String toolName,
-                                                                                           JReleaserModel model,
-                                                                                           Distribution distribution,
-                                                                                           TaskProvider<JReleaserToolProcessorTask> prt) {
-        project.tasks.register(taskName, JReleaserToolPackagerTask,
-            new Action<JReleaserToolPackagerTask>() {
-                @Override
-                void execute(JReleaserToolPackagerTask t) {
-                    t.group = JRELEASER_GROUP
-                    t.description = "Packages distribution ${distributionName} with ${toolName.capitalize()}".toString()
-                    t.dependsOn(prt)
-                    t.distributionName.set(distributionName)
-                    t.toolName.set(toolName)
-                    t.jreleaserModel.set(model)
-                    t.artifacts.from(distribution.artifacts*.path)
-                    t.checksumDirectory.set(project.layout
-                        .buildDirectory
-                        .dir('jreleaser/checksums'))
-                    t.outputDirectory.set(project.layout
-                        .buildDirectory
-                        .dir("jreleaser/${distributionName}/${toolName}".toString()))
-                }
-            })
     }
 }

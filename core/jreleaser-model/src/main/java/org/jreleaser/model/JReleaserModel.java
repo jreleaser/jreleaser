@@ -125,7 +125,7 @@ public class JReleaserModel implements Domain {
         return map;
     }
 
-    public Map<String, Object> newContext() {
+    public Map<String, Object> props() {
         Map<String, Object> context = new LinkedHashMap<>();
         fillProjectProperties(context, project);
         fillReleaseProperties(context, release);

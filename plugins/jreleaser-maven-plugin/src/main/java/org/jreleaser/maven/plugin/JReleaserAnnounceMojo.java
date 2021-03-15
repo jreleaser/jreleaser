@@ -22,11 +22,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.announce.Announcers;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.announcer.spi.AnnounceException;
-import org.jreleaser.util.Logger;
-
-import java.io.File;
 
 @Mojo(name = "announce")
 public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
@@ -41,12 +38,12 @@ public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        announce(getLogger(), convertAndValidateModel(), project.getBasedir(), dryrun);
+        announce(createContext());
     }
 
-    static void announce(Logger logger, JReleaserModel jreleaserModel, File basedir, boolean dryrun) throws MojoExecutionException {
+    static void announce(JReleaserContext context) throws MojoExecutionException {
         try {
-            Announcers.announce(logger, jreleaserModel, basedir.toPath(), dryrun);
+            Announcers.announce(context);
         } catch (AnnounceException e) {
             throw new MojoExecutionException("Unexpected error", e);
         }

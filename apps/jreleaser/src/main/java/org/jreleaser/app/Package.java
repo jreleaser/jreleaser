@@ -32,7 +32,7 @@ public class Package extends AbstractProcessorCommand {
     protected void consumeProcessor(DistributionProcessor processor) throws ToolProcessingException {
         if (processor.packageDistribution() && !quiet) {
             parent.out.println("Packaged " + processor.getDistributionName() +
-                " distribution with tool " + processor.getToolName());
+                " distribution with " + processor.getToolName());
         }
     }
 }

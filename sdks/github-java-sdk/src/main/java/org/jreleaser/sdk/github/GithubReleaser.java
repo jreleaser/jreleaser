@@ -17,12 +17,11 @@
  */
 package org.jreleaser.sdk.github;
 
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.AbstractReleaserBuilder;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.sdk.git.ChangelogProvider;
-import org.jreleaser.util.Logger;
 import org.kohsuke.github.GHRelease;
 
 import java.io.IOException;
@@ -35,46 +34,43 @@ import java.util.List;
  * @since 0.1.0
  */
 public class GithubReleaser implements Releaser {
-    private final Logger logger;
-    private final Path basedir;
-    private final JReleaserModel model;
+    private final JReleaserContext context;
     private final List<Path> assets = new ArrayList<>();
 
-    public GithubReleaser(Path basedir, Logger logger, JReleaserModel model, List<Path> assets) {
-        this.basedir = basedir;
-        this.logger = logger;
-        this.model = model;
+    public GithubReleaser(JReleaserContext context, List<Path> assets) {
+        this.context = context;
         this.assets.addAll(assets);
     }
 
-    public void release(boolean dryrun) throws ReleaseException {
-        org.jreleaser.model.Github github = model.getRelease().getGithub();
+    public void release() throws ReleaseException {
+        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
+        context.getLogger().info("Releasing to {}", github.getResolvedRepoUrl());
 
-        Github api = new Github(logger, github.getApiEndpoint(), github.getResolvedAuthorization());
+        Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedAuthorization());
 
         String tagName = github.getTagName();
 
         try {
-            logger.info("Looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
+            context.getLogger().info("Looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
             GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);
             if (null != release) {
-                logger.info("Release {} exists", tagName);
+                context.getLogger().info("Release {} exists", tagName);
                 if (github.isOverwrite()) {
-                    logger.info("Deleting release {}", tagName);
-                    if (!dryrun) release.delete();
-                    logger.info("Creating release {}", tagName);
-                    createRelease(api, dryrun);
+                    context.getLogger().info("Deleting release {}", tagName);
+                    if (!context.isDryrun()) release.delete();
+                    context.getLogger().info("Creating release {}", tagName);
+                    createRelease(api, context.isDryrun());
                 } else if (github.isAllowUploadToExisting()) {
-                    logger.info("Updating release {}", tagName);
-                    if (!dryrun) api.uploadAssets(release, assets);
+                    context.getLogger().info("Updating release {}", tagName);
+                    if (!context.isDryrun()) api.uploadAssets(release, assets);
                 } else {
                     throw new IllegalStateException("Github release failed because release " +
                         tagName + " already exists. overwrite = false; allowUploadToExisting = false");
                 }
             } else {
-                logger.info("Release {} does not exist", tagName);
-                logger.info("Creating release {}", tagName);
-                createRelease(api, dryrun);
+                context.getLogger().info("Release {} does not exist", tagName);
+                context.getLogger().info("Creating release {}", tagName);
+                createRelease(api, context.isDryrun());
             }
         } catch (IOException | IllegalStateException e) {
             throw new ReleaseException(e);
@@ -82,10 +78,10 @@ public class GithubReleaser implements Releaser {
     }
 
     private void createRelease(Github api, boolean dryrun) throws IOException {
-        org.jreleaser.model.Github github = model.getRelease().getGithub();
+        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
 
-        String changelog = ChangelogProvider.getChangelog(basedir, github.getResolvedCommitUrl(), github.getChangelog());
-        logger.info("changelog:{}{}", System.lineSeparator(), changelog);
+        String changelog = ChangelogProvider.getChangelog(context, github.getResolvedCommitUrl(), github.getChangelog());
+        context.getLogger().info("changelog:{}{}", System.lineSeparator(), changelog);
         if (dryrun) {
             for (Path asset : assets) {
                 if (0 == asset.toFile().length()) {
@@ -93,7 +89,7 @@ public class GithubReleaser implements Releaser {
                     continue;
                 }
 
-                logger.debug("Uploading asset {}", asset.getFileName().toString());
+                context.getLogger().debug("Uploading asset {}", asset.getFileName().toString());
             }
             return;
         }
@@ -108,10 +104,8 @@ public class GithubReleaser implements Releaser {
         api.uploadAssets(release, assets);
     }
 
-    public static Builder builder(Logger logger) {
-        Builder builder = new Builder();
-        builder.logger(logger);
-        return builder;
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder extends AbstractReleaserBuilder<GithubReleaser, Builder> {
@@ -119,7 +113,7 @@ public class GithubReleaser implements Releaser {
         public GithubReleaser build() {
             validate();
 
-            return new GithubReleaser(basedir, logger, model, assets);
+            return new GithubReleaser(context, assets);
         }
     }
 }

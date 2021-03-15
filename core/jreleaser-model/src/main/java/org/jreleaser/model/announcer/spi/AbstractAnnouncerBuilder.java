@@ -17,10 +17,7 @@
  */
 package org.jreleaser.model.announcer.spi;
 
-import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.util.Logger;
-
-import java.nio.file.Path;
+import org.jreleaser.model.JReleaserContext;
 
 import static java.util.Objects.requireNonNull;
 
@@ -29,42 +26,18 @@ import static java.util.Objects.requireNonNull;
  * @since 0.1.0
  */
 public abstract class AbstractAnnouncerBuilder<R extends Announcer, B extends AnnouncerBuilder<R, B>> implements AnnouncerBuilder<R, B> {
-    protected Logger logger;
-    protected Path basedir;
-    protected JReleaserModel model;
+    protected JReleaserContext context;
 
     protected final B self() {
         return (B) this;
     }
 
-    @Override
-    public B basedir(Path basedir) {
-        this.basedir = requireNonNull(basedir, "'basedir' must not be null");
-        return self();
-    }
-
-    @Override
-    public B logger(Logger logger) {
-        this.logger = requireNonNull(logger, "'logger' must not be null");
-        return self();
-    }
-
-    @Override
-    public B model(JReleaserModel model) {
-        this.model = requireNonNull(model, "'model' must not be null");
-        return self();
-    }
-
     protected void validate() {
-        requireNonNull(basedir, "'basedir' must not be null");
-        requireNonNull(logger, "'logger' must not be null");
-        requireNonNull(model, "'model' must not be null");
+        requireNonNull(context, "'context' must not be null");
     }
 
     @Override
-    public B configureWith(Path basedir, JReleaserModel model) {
-        basedir(basedir);
-        model(model);
+    public B configureWith(JReleaserContext context) {
         return self();
     }
 }

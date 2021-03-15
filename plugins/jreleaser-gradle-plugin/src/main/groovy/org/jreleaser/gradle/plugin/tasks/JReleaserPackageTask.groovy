@@ -37,7 +37,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserPrepareTask extends AbstractJReleaserTask {
+abstract class JReleaserPackageTask extends AbstractJReleaserTask {
     @Input
     final Property<Boolean> failFast
 
@@ -47,7 +47,7 @@ abstract class JReleaserPrepareTask extends AbstractJReleaserTask {
     }
 
     @Inject
-    JReleaserPrepareTask(ObjectFactory objects) {
+    JReleaserPackageTask(ObjectFactory objects) {
         super(objects)
         failFast = objects.property(Boolean).convention(false)
     }
@@ -64,8 +64,8 @@ abstract class JReleaserPrepareTask extends AbstractJReleaserTask {
                         distribution,
                         toolName);
 
-                    if (processor.prepareDistribution()) {
-                        context.logger.info('Prepared ' + processor.distributionName +
+                    if (processor.packageDistribution()) {
+                        context.logger.info('Packaged ' + processor.distributionName +
                             ' distribution with ' + processor.toolName)
                     }
                 } catch (JReleaserException | ToolProcessingException e) {

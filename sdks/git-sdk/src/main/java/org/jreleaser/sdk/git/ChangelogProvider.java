@@ -18,28 +18,39 @@
 package org.jreleaser.sdk.git;
 
 import org.jreleaser.model.Changelog;
+import org.jreleaser.model.JReleaserContext;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class ChangelogProvider {
-    public static String getChangelog(Path basedir, String commitsUrl, Changelog changelog) throws IOException {
-        File externalChangelog = changelog.getExternal();
-
-        if (null != externalChangelog) {
-            if (!externalChangelog.exists()) {
-                throw new IllegalStateException("Changelog " + basedir.resolve(externalChangelog.toPath()) + " does not exist");
-            }
-
-            return new String(Files.readAllBytes(basedir.resolve(externalChangelog.toPath())));
+    public static String getChangelog(JReleaserContext context, String commitsUrl, Changelog changelog) throws IOException {
+        if (!changelog.isEnabled()) {
+            return "";
         }
 
-        return ChangelogGenerator.generate(basedir, commitsUrl, changelog);
+        String externalChangelog = changelog.getExternal();
+
+        if (isNotBlank(externalChangelog)) {
+            Path externalChangelogPath = context.getBasedir().resolve(Paths.get(externalChangelog));
+            File externalChangelogFile = externalChangelogPath.toFile();
+            if (!externalChangelogFile.exists()) {
+                throw new IllegalStateException("Changelog " + context.getBasedir().relativize(externalChangelogPath) + " does not exist");
+            }
+
+            context.getLogger().info("Reading changelog from {}",context.getBasedir().relativize(externalChangelogPath));
+            return new String(Files.readAllBytes(externalChangelogPath));
+        }
+
+        return ChangelogGenerator.generate(context, commitsUrl, changelog);
     }
 }

@@ -52,7 +52,7 @@ public class Twitter extends AbstractAnnouncer {
     }
 
     public String getResolvedStatus(JReleaserModel model) {
-        Map<String, Object> context = model.newContext();
+        Map<String, Object> context = model.props();
         context.put(Constants.KEY_TAG_NAME, model.getRelease().getGitService().getTagName());
         return applyTemplate(new StringReader(status), context);
     }

@@ -24,6 +24,7 @@ import org.apache.maven.project.MavenProject;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserModelValidator;
 import org.jreleaser.util.Logger;
@@ -66,5 +67,14 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
         }
 
         return jreleaserModel;
+    }
+
+    protected JReleaserContext createContext() throws MojoExecutionException {
+        return new JReleaserContext(
+            getLogger(),
+            convertAndValidateModel(),
+            project.getBasedir().toPath(),
+            outputDirectory.toPath(),
+            dryrun);
     }
 }

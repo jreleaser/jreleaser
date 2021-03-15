@@ -30,7 +30,7 @@ public class Changelog {
     private boolean enabledSet;
     private boolean links;
     private Sort sort = Sort.DESC;
-    private File external;
+    private String external;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
@@ -75,11 +75,11 @@ public class Changelog {
         }
     }
 
-    public File getExternal() {
+    public String getExternal() {
         return external;
     }
 
-    public void setExternal(File external) {
+    public void setExternal(String external) {
         this.external = external;
     }
 

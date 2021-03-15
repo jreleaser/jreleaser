@@ -19,12 +19,11 @@ package org.jreleaser.tools;
 
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Release;
 import org.jreleaser.model.Tool;
 import org.jreleaser.util.Constants;
-import org.jreleaser.util.Logger;
 import org.zeroturnaround.exec.ProcessExecutor;
 
 import java.io.ByteArrayOutputStream;
@@ -59,13 +58,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T> {
-    private final Logger logger;
-    private final JReleaserModel model;
-    private final T tool;
+    protected final JReleaserContext context;
+    protected final T tool;
 
-    protected AbstractToolProcessor(Logger logger, JReleaserModel model, T tool) {
-        this.logger = logger;
-        this.model = model;
+    protected AbstractToolProcessor(JReleaserContext context, T tool) {
+        this.context = context;
         this.tool = tool;
     }
 
@@ -80,34 +77,24 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     @Override
-    public Logger getLogger() {
-        return logger;
-    }
-
-    @Override
-    public JReleaserModel getModel() {
-        return model;
-    }
-
-    @Override
-    public boolean prepareDistribution(Distribution distribution, Map<String, Object> context) throws ToolProcessingException {
+    public boolean prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Tool tool = distribution.getTool(getToolName());
 
         try {
             String distributionName = distribution.getName();
-            getLogger().debug("Creating context for {}/{}", distributionName, getToolName());
-            Map<String, Object> newContext = fillContext(distribution, context);
-            if (newContext.isEmpty()) {
-                logger.warn("Skipping {} tool for {} distribution", getToolName(), distributionName);
+            context.getLogger().debug("Creating props for {}/{}", distributionName, getToolName());
+            Map<String, Object> newProps = fillProps(distribution, props);
+            if (newProps.isEmpty()) {
+                context.getLogger().warn("Skipping {} tool for {} distribution", getToolName(), distributionName);
                 return false;
             }
-            getLogger().debug("Resolving templates for {}/{}", distributionName, getToolName());
-            Map<String, Reader> templates = resolveAndMergeTemplates(logger, distribution.getType(), getToolName(), tool.getTemplateDirectory());
+            context.getLogger().debug("Resolving templates for {}/{}", distributionName, getToolName());
+            Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(), distribution.getType(), getToolName(), tool.getTemplateDirectory());
             for (Map.Entry<String, Reader> entry : templates.entrySet()) {
-                getLogger().debug("Evaluating template {} for {}/{}", entry.getKey(), distributionName, getToolName());
-                String content = applyTemplate(entry.getValue(), newContext);
-                getLogger().debug("Writing template {} for {}/{}", entry.getKey(), distributionName, getToolName());
-                writeFile(model.getProject(), distribution, content, context, entry.getKey());
+                context.getLogger().debug("Evaluating template {} for {}/{}", entry.getKey(), distributionName, getToolName());
+                String content = applyTemplate(entry.getValue(), newProps);
+                context.getLogger().debug("Writing template {} for {}/{}", entry.getKey(), distributionName, getToolName());
+                writeFile(context.getModel().getProject(), distribution, content, props, entry.getKey());
             }
         } catch (IllegalArgumentException e) {
             throw new ToolProcessingException(e);
@@ -117,24 +104,24 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     @Override
-    public boolean packageDistribution(Distribution distribution, Map<String, Object> context) throws ToolProcessingException {
+    public boolean packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
-            getLogger().debug("Creating context for {}/{}", distributionName, getToolName());
-            Map<String, Object> newContext = fillContext(distribution, context);
-            if (newContext.isEmpty()) {
-                logger.warn("Skipping {} tool for {} distribution", getToolName(), distributionName);
+            context.getLogger().debug("Creating props for {}/{}", distributionName, getToolName());
+            Map<String, Object> newProps = fillProps(distribution, props);
+            if (newProps.isEmpty()) {
+                context.getLogger().warn("Skipping {} tool for {} distribution", getToolName(), distributionName);
                 return false;
             }
-            return doPackageDistribution(distribution, newContext);
+            return doPackageDistribution(distribution, newProps);
         } catch (IllegalArgumentException e) {
             throw new ToolProcessingException(e);
         }
     }
 
-    protected abstract boolean doPackageDistribution(Distribution distribution, Map<String, Object> context) throws ToolProcessingException;
+    protected abstract boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
-    protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> context, String fileName) throws ToolProcessingException;
+    protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName) throws ToolProcessingException;
 
     protected void writeFile(String content, Path outputFile) throws ToolProcessingException {
         try {
@@ -146,19 +133,19 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         }
     }
 
-    protected Map<String, Object> fillContext(Distribution distribution, Map<String, Object> context) throws ToolProcessingException {
-        Map<String, Object> newContext = model.newContext();
-        getLogger().debug("Filling distribution properties into context");
-        fillDistributionProperties(newContext, distribution, model.getRelease());
-        getLogger().debug("Filling artifact properties into context");
-        if (!verifyAndAddArtifacts(newContext, distribution)) {
+    protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        Map<String, Object> newProps = context.getModel().props();
+        context.getLogger().debug("Filling distribution properties into props");
+        fillDistributionProperties(newProps, distribution, context.getModel().getRelease());
+        context.getLogger().debug("Filling artifact properties into props");
+        if (!verifyAndAddArtifacts(newProps, distribution)) {
             // we can't continue with this tool
             return Collections.emptyMap();
         }
-        getLogger().debug("Filling tool properties into context");
-        fillToolProperties(newContext, distribution);
-        newContext.putAll(tool.getExtraProperties());
-        return newContext;
+        context.getLogger().debug("Filling tool properties into props");
+        fillToolProperties(newProps, distribution);
+        newProps.putAll(tool.getExtraProperties());
+        return newProps;
     }
 
     protected void fillDistributionProperties(Map<String, Object> context, Distribution distribution, Release release) {
@@ -198,7 +185,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         }
     }
 
-    private boolean verifyAndAddArtifacts(Map<String, Object> context,
+    private boolean verifyAndAddArtifacts(Map<String, Object> props,
                                           Distribution distribution) throws ToolProcessingException {
         Set<String> fileExtensions = resolveByExtensionsFor(distribution.getType());
         List<Artifact> artifacts = distribution.getArtifacts().stream()
@@ -207,7 +194,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
         if (artifacts.size() == 0) {
             // we can't proceed
-            logger.warn("No suitable artifacts found in distribution {} to be packaged with {}",
+            context.getLogger().warn("No suitable artifacts found in distribution {} to be packaged with {}",
                 distribution.getName(), capitalize(tool.getName()));
             return false;
         }
@@ -216,19 +203,19 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             Artifact artifact = artifacts.get(i);
             String classifier = isNotBlank(artifact.getOsClassifier()) ? capitalize(artifact.getOsClassifier()) : "";
             String artifactFileName = Paths.get(artifact.getPath()).getFileName().toString();
-            context.put("artifact" + classifier + "JavaVersion", artifact.getJavaVersion());
-            context.put("artifact" + classifier + "FileName", artifactFileName);
-            context.put("artifact" + classifier + "Hash", artifact.getHash());
-            Map<String, Object> newContext = new LinkedHashMap<>(context);
-            newContext.put("artifactFileName", artifactFileName);
-            String artifactUrl = applyTemplate(new StringReader(model.getRelease().getGitService().getDownloadUrlFormat()), newContext, "downloadUrl");
-            context.put("artifact" + classifier + "Url", artifactUrl);
+            props.put("artifact" + classifier + "JavaVersion", artifact.getJavaVersion());
+            props.put("artifact" + classifier + "FileName", artifactFileName);
+            props.put("artifact" + classifier + "Hash", artifact.getHash());
+            Map<String, Object> newProps = new LinkedHashMap<>(props);
+            newProps.put("artifactFileName", artifactFileName);
+            String artifactUrl = applyTemplate(new StringReader(context.getModel().getRelease().getGitService().getDownloadUrlFormat()), newProps, "downloadUrl");
+            props.put("artifact" + classifier + "Url", artifactUrl);
 
             if (0 == i) {
-                context.put(Constants.KEY_DISTRIBUTION_URL, artifactUrl);
-                context.put(Constants.KEY_DISTRIBUTION_SHA_256, artifact.getHash());
-                context.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, artifact.getJavaVersion());
-                context.put(Constants.KEY_DISTRIBUTION_FILE_NAME, artifactFileName);
+                props.put(Constants.KEY_DISTRIBUTION_URL, artifactUrl);
+                props.put(Constants.KEY_DISTRIBUTION_SHA_256, artifact.getHash());
+                props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, artifact.getJavaVersion());
+                props.put(Constants.KEY_DISTRIBUTION_FILE_NAME, artifactFileName);
             }
         }
 
@@ -238,11 +225,11 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     protected abstract Set<String> resolveByExtensionsFor(Distribution.DistributionType type);
 
     protected void info(ByteArrayOutputStream out) {
-        log(out, logger::info);
+        log(out, context.getLogger()::info);
     }
 
     protected void error(ByteArrayOutputStream err) {
-        log(err, logger::error);
+        log(err, context.getLogger()::error);
     }
 
     private void log(ByteArrayOutputStream stream, Consumer<? super String> consumer) {

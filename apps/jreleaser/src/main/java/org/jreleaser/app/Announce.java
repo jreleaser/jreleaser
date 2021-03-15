@@ -37,9 +37,14 @@ public class Announce extends AbstractModelCommand {
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
         try {
-            Announcers.announce(logger, jreleaserModel, actualBasedir, dryrun);
+            Announcers.announce(createContext(jreleaserModel));
         } catch (AnnounceException e) {
             throw new JReleaserException("Unexpected error when announcing release " + actualConfigFile.toAbsolutePath(), e);
         }
+    }
+
+    @Override
+    protected boolean dryrun() {
+        return dryrun;
     }
 }

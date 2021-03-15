@@ -22,19 +22,17 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.tools.DistributionProcessor;
 import org.jreleaser.tools.ToolProcessingException;
-import org.jreleaser.util.Logger;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jreleaser.maven.plugin.JReleaserChecksumsMojo.checksums;
+import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
 
-@Mojo(name = "repare")
+@Mojo(name = "prepare")
 public class JReleaserPrepareMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
@@ -42,6 +40,9 @@ public class JReleaserPrepareMojo extends AbstractJReleaserMojo {
     @Parameter(property = "jreleaser.prepare.skip")
     private boolean skip;
 
+    /**
+     * Stops on the first error.
+     */
     @Parameter(property = "jreleaser.failfast", defaultValue = "true")
     private boolean failFast;
 
@@ -50,22 +51,17 @@ public class JReleaserPrepareMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserModel jreleaserModel = convertAndValidateModel();
-        prepare(getLogger(), jreleaserModel, outputDirectory, failFast);
-        checksums(getLogger(), jreleaserModel, outputDirectory);
+        JReleaserContext context = createContext();
+        checksum(context);
+        prepare(context, failFast);
     }
 
-    static void prepare(Logger logger,
-                        JReleaserModel jreleaserModel,
-                        File outputDirectory,
-                        boolean failFast) throws MojoExecutionException {
+    static void prepare(JReleaserContext context, boolean failFast) throws MojoExecutionException {
         List<Exception> exceptions = new ArrayList<>();
-        for (Distribution distribution : jreleaserModel.getDistributions().values()) {
+        for (Distribution distribution : context.getModel().getDistributions().values()) {
             for (String toolName : Distribution.supportedTools()) {
                 try {
-                    DistributionProcessor processor = createDistributionProcessor(logger,
-                        jreleaserModel,
-                        outputDirectory,
+                    DistributionProcessor processor = createDistributionProcessor(context,
                         distribution,
                         toolName);
 
@@ -73,11 +69,11 @@ public class JReleaserPrepareMojo extends AbstractJReleaserMojo {
                         continue;
                     }
 
-                    logger.info("Prepared " + distribution.getName() + " distribution with tool " + toolName);
+                    context.getLogger().info("Prepared " + distribution.getName() + " distribution with " + toolName);
                 } catch (JReleaserException | ToolProcessingException e) {
                     if (failFast) throw new MojoExecutionException("Unexpected error", e);
                     exceptions.add(e);
-                    logger.warn("Unexpected error", e);
+                    context.getLogger().warn("Unexpected error", e);
                 }
             }
         }
@@ -87,21 +83,13 @@ public class JReleaserPrepareMojo extends AbstractJReleaserMojo {
         }
     }
 
-    private static DistributionProcessor createDistributionProcessor(Logger logger,
-                                                                     JReleaserModel jreleaserModel,
-                                                                     File outputDirectory,
+    private static DistributionProcessor createDistributionProcessor(JReleaserContext context,
                                                                      Distribution distribution,
                                                                      String toolName) {
         return DistributionProcessor.builder()
-            .logger(logger)
-            .model(jreleaserModel)
+            .context(context)
             .distributionName(distribution.getName())
             .toolName(toolName)
-            .checksumDirectory(outputDirectory.toPath()
-                .resolve("checksums"))
-            .outputDirectory(outputDirectory.toPath()
-                .resolve(distribution.getName())
-                .resolve(toolName))
             .build();
     }
 }

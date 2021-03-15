@@ -15,25 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.releaser.spi;
+package org.jreleaser.gradle.plugin.tasks
 
-import org.jreleaser.model.JReleaserContext;
+import groovy.transform.CompileStatic
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.tasks.TaskAction
+import org.jreleaser.tools.Checksums
 
-import java.nio.file.Path;
-import java.util.List;
+import javax.inject.Inject
 
 /**
+ *
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface ReleaserBuilder<R extends Releaser, B extends ReleaserBuilder<R, B>> {
-    B configureWith(JReleaserContext context);
+@CompileStatic
+abstract class JReleaserChecksumTask extends AbstractJReleaserTask {
+    @Inject
+    JReleaserChecksumTask(ObjectFactory objects) {
+        super(objects)
+    }
 
-    B addReleaseAsset(Path asset);
-
-    B addReleaseAssets(Path assets);
-
-    B setReleaseAssets(List<Path> assets);
-
-    R build();
+    @TaskAction
+    void signArtifacts() {
+        Checksums.collectAndWriteChecksums(createContext())
+    }
 }

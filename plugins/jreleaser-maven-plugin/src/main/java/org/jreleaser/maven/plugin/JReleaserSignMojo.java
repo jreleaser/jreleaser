@@ -21,14 +21,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.signer.Signer;
 import org.jreleaser.signer.SigningException;
-import org.jreleaser.util.Logger;
 
-import java.io.File;
-
-import static org.jreleaser.maven.plugin.JReleaserChecksumsMojo.checksums;
+import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
 
 @Mojo(name = "sign")
 public class JReleaserSignMojo extends AbstractJReleaserMojo {
@@ -43,16 +40,14 @@ public class JReleaserSignMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserModel jreleaserModel = convertAndValidateModel();
-        checksums(getLogger(), jreleaserModel, outputDirectory);
-        sign(getLogger(), jreleaserModel, outputDirectory);
+        JReleaserContext context = createContext();
+        checksum(context);
+        sign(context);
     }
 
-    static void sign(Logger logger, JReleaserModel jreleaserModel, File outputDirectory) throws MojoExecutionException {
+    static void sign(JReleaserContext context) throws MojoExecutionException {
         try {
-            Signer.sign(logger,
-                jreleaserModel,
-                outputDirectory.toPath());
+            Signer.sign(context);
         } catch (SigningException e) {
             throw new MojoExecutionException("Unexpected error when signing artifacts", e);
         }

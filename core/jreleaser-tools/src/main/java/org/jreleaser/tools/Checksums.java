@@ -21,9 +21,8 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.util.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,52 +36,56 @@ import java.util.List;
  * @since 0.1.0
  */
 public class Checksums {
-    public static void collectAndWriteChecksums(Logger logger, JReleaserModel model, Path checksumsDirectory) throws JReleaserException {
+    public static void collectAndWriteChecksums(JReleaserContext context) throws JReleaserException {
         List<String> checksums = new ArrayList<>();
-        for (Distribution distribution : model.getDistributions().values()) {
+        for (Distribution distribution : context.getModel().getDistributions().values()) {
             for (Artifact artifact : distribution.getArtifacts()) {
-                readHash(logger, distribution.getName(), artifact, checksumsDirectory);
+                readHash(context, distribution.getName(), artifact);
                 checksums.add(artifact.getHash() + " " + distribution.getName() + "/" +
                     Paths.get(artifact.getPath()).getFileName());
             }
         }
 
-        Path checksumsFilePath = checksumsDirectory.resolve("checksums.txt");
+        Path checksumsFilePath = context.getChecksumsDirectory().resolve("checksums.txt");
         try {
-            Files.createDirectories(checksumsDirectory);
+            Files.createDirectories(context.getChecksumsDirectory());
             Files.write(checksumsFilePath, String.join(System.lineSeparator(), checksums).getBytes());
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
         }
     }
 
-    public static void readHash(Logger logger, String distributionName, Artifact artifact, Path checksumDirectory) throws JReleaserException {
-        Path artifactPath = Paths.get(artifact.getPath());
-        Path checksumPath = checksumDirectory.resolve(distributionName).resolve(artifactPath.getFileName() + ".sha256");
+    public static void readHash(JReleaserContext context, String distributionName, Artifact artifact) throws JReleaserException {
+        Path artifactPath = context.getBasedir().resolve(Paths.get(artifact.getPath()));
+        Path checksumPath = context.getChecksumsDirectory().resolve(distributionName).resolve(artifactPath.getFileName() + ".sha256");
 
         if (!artifactPath.toFile().exists()) {
-            throw new JReleaserException("Artifact does not exist. " + artifactPath.toAbsolutePath());
+            throw new JReleaserException("Artifact does not exist. " + context.getBasedir().relativize(artifactPath));
         }
 
         if (!checksumPath.toFile().exists()) {
-            logger.info("Artifact checksum does not exist. " + checksumPath.toAbsolutePath());
-            calculateHash(logger, artifactPath, checksumPath);
+            context.getLogger().info("Artifact checksum does not exist. {}", context.getBasedir().relativize(checksumPath));
+            calculateHash(context, artifactPath, checksumPath);
         } else if (artifactPath.toFile().lastModified() > checksumPath.toFile().lastModified()) {
-            logger.info("Artifact {} is newer than {}", artifactPath.toAbsolutePath(), checksumPath.toAbsolutePath());
-            calculateHash(logger, artifactPath, checksumPath);
+            context.getLogger().info("Artifact {} is newer than {}",
+                context.getBasedir().relativize(artifactPath),
+                context.getBasedir().relativize(checksumPath));
+            calculateHash(context, artifactPath, checksumPath);
         }
 
         try {
-            logger.debug("Reading checksum for {} from {}", artifactPath.toAbsolutePath(), checksumPath.toAbsolutePath());
+            context.getLogger().debug("Reading checksum for {} from {}",
+                context.getBasedir().relativize(artifactPath),
+                context.getBasedir().relativize(checksumPath));
             artifact.setHash(new String(Files.readAllBytes(checksumPath)));
         } catch (IOException e) {
-            throw new JReleaserException("Unexpected error when reading hash from " + checksumPath.toAbsolutePath(), e);
+            throw new JReleaserException("Unexpected error when reading hash from " + context.getBasedir().relativize(checksumPath), e);
         }
     }
 
-    public static String calculateHash(Logger logger, Path input, Path output) throws JReleaserException {
+    public static String calculateHash(JReleaserContext context, Path input, Path output) throws JReleaserException {
         try {
-            logger.info("Calculating checksum for " + input.toAbsolutePath());
+            context.getLogger().info("Calculating checksum for {}", context.getBasedir().relativize(input));
             HashCode hashCode = com.google.common.io.Files.asByteSource(input.toFile()).hash(Hashing.sha256());
             output.toFile().getParentFile().mkdirs();
             com.google.common.io.Files.write(hashCode.toString().getBytes(), output.toFile());

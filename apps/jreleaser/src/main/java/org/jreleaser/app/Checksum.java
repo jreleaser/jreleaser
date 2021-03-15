@@ -15,25 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.releaser.spi;
+package org.jreleaser.app;
 
-import org.jreleaser.model.JReleaserContext;
-
-import java.nio.file.Path;
-import java.util.List;
+import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.tools.Checksums;
+import picocli.CommandLine;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface ReleaserBuilder<R extends Releaser, B extends ReleaserBuilder<R, B>> {
-    B configureWith(JReleaserContext context);
-
-    B addReleaseAsset(Path asset);
-
-    B addReleaseAssets(Path assets);
-
-    B setReleaseAssets(List<Path> assets);
-
-    R build();
+@CommandLine.Command(name = "checksum",
+    description = "Calculates checksums")
+public class Checksum extends AbstractModelCommand {
+    @Override
+    protected void consumeModel(JReleaserModel jreleaserModel) {
+        Checksums.collectAndWriteChecksums(createContext(jreleaserModel));
+    }
 }

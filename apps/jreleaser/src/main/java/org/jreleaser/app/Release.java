@@ -17,6 +17,7 @@
  */
 package org.jreleaser.app;
 
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.releaser.spi.ReleaseException;
@@ -39,24 +40,19 @@ public class Release extends AbstractModelCommand {
 
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
-        Checksums.collectAndWriteChecksums(logger, jreleaserModel, getChecksumsDirectory());
-
         try {
-            Signer.sign(logger,
-                jreleaserModel,
-                getOutputDirectory());
-        } catch (SigningException e) {
-            throw new JReleaserException("Unexpected error when signing release " + actualConfigFile.toAbsolutePath(), e);
-        }
+            JReleaserContext context = createContext(jreleaserModel);
 
-        try {
-            Releasers.release(logger,
-                jreleaserModel,
-                actualBasedir,
-                getOutputDirectory(),
-                dryrun);
-        } catch (ReleaseException e) {
+            Checksums.collectAndWriteChecksums(context);
+            Signer.sign(context);
+            Releasers.release(context);
+        } catch (SigningException | ReleaseException e) {
             throw new JReleaserException("Unexpected error when creating release " + actualConfigFile.toAbsolutePath(), e);
         }
+    }
+
+    @Override
+    protected boolean dryrun() {
+        return dryrun;
     }
 }

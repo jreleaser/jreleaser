@@ -19,6 +19,7 @@ package org.jreleaser.tools;
 
 import org.jreleaser.model.Chocolatey;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
 import org.jreleaser.util.Constants;
@@ -37,14 +38,14 @@ import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
  * @since 0.1.0
  */
 public class ChocolateyToolProcessor extends AbstractToolProcessor<Chocolatey> {
-    public ChocolateyToolProcessor(Logger logger, JReleaserModel model, Chocolatey tool) {
-        super(logger, model, tool);
+    public ChocolateyToolProcessor(JReleaserContext context, Chocolatey tool) {
+        super(context, tool);
     }
 
     @Override
-    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> context) throws ToolProcessingException {
+    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         if (!OsUtils.isWindows()) {
-            getLogger().debug("Tool {} must run on Windows", getToolName());
+            context.getLogger().debug("Tool {} must run on Windows", getToolName());
             return false;
         }
 
@@ -59,16 +60,16 @@ public class ChocolateyToolProcessor extends AbstractToolProcessor<Chocolatey> {
     }
 
     @Override
-    protected void fillToolProperties(Map<String, Object> context, Distribution distribution) throws ToolProcessingException {
+    protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         // noop
     }
 
     @Override
-    protected void writeFile(Project project, Distribution distribution, String content, Map<String, Object> context, String fileName)
+    protected void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName)
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) context.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
         Path outputFile = "binary.nuspec".equals(fileName) ?
             outputDirectory.resolve(distribution.getExecutable().concat(".nuspec")) :
             outputDirectory.resolve(fileName);

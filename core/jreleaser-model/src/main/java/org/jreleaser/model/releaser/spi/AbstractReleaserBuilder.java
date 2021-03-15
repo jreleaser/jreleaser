@@ -19,8 +19,7 @@ package org.jreleaser.model.releaser.spi;
 
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
-import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.util.Logger;
+import org.jreleaser.model.JReleaserContext;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -36,30 +35,10 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class AbstractReleaserBuilder<R extends Releaser, B extends ReleaserBuilder<R, B>> implements ReleaserBuilder<R, B> {
     protected final List<Path> assets = new ArrayList<>();
-    protected Logger logger;
-    protected Path basedir;
-    protected JReleaserModel model;
+    protected JReleaserContext context;
 
     protected final B self() {
         return (B) this;
-    }
-
-    @Override
-    public B basedir(Path basedir) {
-        this.basedir = requireNonNull(basedir, "'basedir' must not be null");
-        return self();
-    }
-
-    @Override
-    public B logger(Logger logger) {
-        this.logger = requireNonNull(logger, "'logger' must not be null");
-        return self();
-    }
-
-    @Override
-    public B model(JReleaserModel model) {
-        this.model = requireNonNull(model, "'model' must not be null");
-        return self();
     }
 
     @Override
@@ -90,24 +69,24 @@ public abstract class AbstractReleaserBuilder<R extends Releaser, B extends Rele
     }
 
     protected void validate() {
-        requireNonNull(basedir, "'basedir' must not be null");
-        requireNonNull(logger, "'logger' must not be null");
-        requireNonNull(model, "'model' must not be null");
+        requireNonNull(context, "'context' must not be null");
         if (assets.isEmpty()) {
             throw new IllegalArgumentException("'assets must not be empty");
         }
     }
 
     @Override
-    public B configureWith(Path basedir, JReleaserModel model) {
-        basedir(basedir);
-        model(model);
+    public B configureWith(JReleaserContext context) {
+        this.context = context;
 
-        for (Distribution distribution : model.getDistributions().values()) {
+        for (Distribution distribution : context.getModel().getDistributions().values()) {
             for (Artifact artifact : distribution.getArtifacts()) {
-                addReleaseAsset(basedir.resolve(Paths.get(artifact.getPath())));
+                addReleaseAsset(context.getBasedir().resolve(Paths.get(artifact.getPath())));
             }
         }
+
+        addReleaseAsset(context.getChecksumsDirectory().resolve("checksums.txt"));
+        addReleaseAssets(context.getSignaturesDirectory());
 
         return self();
     }

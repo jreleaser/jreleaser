@@ -19,10 +19,9 @@ package org.jreleaser.tools;
 
 import org.jreleaser.model.Brew;
 import org.jreleaser.model.Distribution;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.util.Constants;
-import org.jreleaser.util.Logger;
 
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
@@ -38,13 +37,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class BrewToolProcessor extends AbstractToolProcessor<Brew> {
-    public BrewToolProcessor(Logger logger, JReleaserModel model, Brew brew) {
-        super(logger, model, brew);
+    public BrewToolProcessor(JReleaserContext context, Brew brew) {
+        super(context, brew);
     }
 
     @Override
-    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> context) throws ToolProcessingException {
-        getLogger().debug("Tool {} does not require additional packaging", getToolName());
+    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        context.getLogger().debug("Tool {} does not require additional packaging", getToolName());
         return true;
     }
 
@@ -56,23 +55,23 @@ public class BrewToolProcessor extends AbstractToolProcessor<Brew> {
     }
 
     @Override
-    protected void fillToolProperties(Map<String, Object> context, Distribution distribution) throws ToolProcessingException {
+    protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         if (!getTool().getDependencies().containsKey(Constants.KEY_JAVA_VERSION)) {
-            getTool().getDependencies().put(":java", (String) context.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
+            getTool().getDependencies().put(":java", (String) props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
         }
 
-        context.put(Constants.KEY_BREW_DEPENDENCIES, getTool().getDependencies()
+        props.put(Constants.KEY_BREW_DEPENDENCIES, getTool().getDependencies()
             .entrySet().stream()
             .map(entry -> new Dependency(entry.getKey(), entry.getValue()))
             .collect(Collectors.toList()));
     }
 
     @Override
-    protected void writeFile(Project project, Distribution distribution, String content, Map<String, Object> context, String fileName)
+    protected void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName)
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) context.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
         Path outputFile = "formula.rb".equals(fileName) ?
             outputDirectory.resolve("Formula").resolve(distribution.getExecutable().concat(".rb")) :
             outputDirectory.resolve(fileName);

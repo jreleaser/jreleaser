@@ -18,12 +18,12 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.jreleaser.model.JReleaserModel
-import org.kordamp.gradle.plugin.base.tasks.AbstractSettingsTask
 
 import javax.inject.Inject
 
@@ -33,7 +33,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserConfigTask extends AbstractSettingsTask {
+abstract class JReleaserConfigTask extends DefaultTask {
     @Internal
     final Property<JReleaserModel> jreleaserModel
 
@@ -45,6 +45,22 @@ abstract class JReleaserConfigTask extends AbstractSettingsTask {
     @TaskAction
     void displayConfig() {
         println '== JReleaser =='
-        doPrintMap(jreleaserModel.get().asMap(), 0)
+        new JReleaserModelPrinter(new PrintWriter(System.out, true))
+            .print(jreleaserModel.get().asMap())
+    }
+
+    private static class JReleaserModelPrinter extends org.jreleaser.model.JReleaserModelPrinter {
+        JReleaserModelPrinter(PrintWriter out) {
+            super(out)
+        }
+
+        JReleaserModelPrinter(PrintWriter out, boolean showSecrets) {
+            super(out, showSecrets)
+        }
+
+        @Override
+        protected String color(String color, String input) {
+            return input
+        }
     }
 }

@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class Changelog implements Domain {
     private boolean enabledSet;
     private boolean links;
     private Sort sort = Sort.DESC;
-    private File external;
+    private String external;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
@@ -78,11 +77,11 @@ public class Changelog implements Domain {
         }
     }
 
-    public File getExternal() {
+    public String getExternal() {
         return external;
     }
 
-    public void setExternal(File external) {
+    public void setExternal(String external) {
         this.external = external;
     }
 

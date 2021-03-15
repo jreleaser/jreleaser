@@ -32,15 +32,15 @@ import picocli.CommandLine;
 public class Prepare extends AbstractProcessorCommand {
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
+        Checksums.collectAndWriteChecksums(createContext(jreleaserModel));
         super.consumeModel(jreleaserModel);
-        Checksums.collectAndWriteChecksums(logger, jreleaserModel, getChecksumsDirectory());
     }
 
     @Override
     protected void consumeProcessor(DistributionProcessor processor) throws ToolProcessingException {
         if (processor.prepareDistribution()) {
             parent.out.println("Prepared " + processor.getDistributionName() +
-                " distribution with tool " + processor.getToolName());
+                " distribution with " + processor.getToolName());
         }
     }
 }

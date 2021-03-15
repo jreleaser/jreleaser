@@ -18,6 +18,7 @@
 package org.jreleaser.tools;
 
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Scoop;
@@ -39,13 +40,13 @@ import static org.jreleaser.util.MustacheUtils.applyTemplate;
  * @since 0.1.0
  */
 public class ScoopToolProcessor extends AbstractToolProcessor<Scoop> {
-    public ScoopToolProcessor(Logger logger, JReleaserModel model, Scoop scoop) {
-        super(logger, model, scoop);
+    public ScoopToolProcessor(JReleaserContext context, Scoop scoop) {
+        super(context, scoop);
     }
 
     @Override
-    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> context) throws ToolProcessingException {
-        getLogger().debug("Tool {} does not require additional packaging", getToolName());
+    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        context.getLogger().debug("Tool {} does not require additional packaging", getToolName());
         return true;
     }
 
@@ -57,33 +58,33 @@ public class ScoopToolProcessor extends AbstractToolProcessor<Scoop> {
     }
 
     @Override
-    protected void fillToolProperties(Map<String, Object> context, Distribution distribution) throws ToolProcessingException {
-        context.put(Constants.KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(context));
-        context.put(Constants.KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(context));
+    protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
+        props.put(Constants.KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));
+        props.put(Constants.KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(props));
     }
 
-    private Object resolveCheckverUrl(Map<String, Object> context) {
+    private Object resolveCheckverUrl(Map<String, Object> props) {
         if (!getTool().getCheckverUrl().contains("{{")) {
             return getTool().getCheckverUrl();
         }
-        return applyTemplate(new StringReader(getTool().getCheckverUrl()), context);
+        return applyTemplate(new StringReader(getTool().getCheckverUrl()), props);
     }
 
-    private Object resolveAutoupdateUrl(Map<String, Object> context) {
+    private Object resolveAutoupdateUrl(Map<String, Object> props) {
         if (!getTool().getAutoupdateUrl().contains("{{")) {
             return getTool().getAutoupdateUrl();
         }
 
-        Map<String, Object> copy = new LinkedHashMap<>(context);
+        Map<String, Object> copy = new LinkedHashMap<>(props);
         copy.put(Constants.KEY_PROJECT_VERSION, "$version");
         copy.put(Constants.KEY_ARTIFACT_FILE_NAME, copy.get("projectName") + "-$version.zip");
         return applyTemplate(new StringReader(getTool().getAutoupdateUrl()), copy);
     }
 
     @Override
-    protected void writeFile(Project project, Distribution distribution, String content, Map<String, Object> context, String fileName)
+    protected void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName)
         throws ToolProcessingException {
-        Path outputDirectory = (Path) context.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
         Path outputFile = outputDirectory.resolve(trimTplExtension(fileName));
 
         writeFile(content, outputFile);

@@ -18,16 +18,9 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
-import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
 import org.jreleaser.announce.Announcers
-import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
-import org.jreleaser.model.JReleaserModel
 
 import javax.inject.Inject
 
@@ -37,29 +30,14 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserAnnounceTask extends DefaultTask {
-    @Internal
-    final Property<JReleaserModel> jreleaserModel
-
-    @Input
-    final Property<Boolean> dryrun
-
+abstract class JReleaserAnnounceTask extends AbstractJReleaserTask {
     @Inject
     JReleaserAnnounceTask(ObjectFactory objects) {
-        jreleaserModel = objects.property(JReleaserModel)
-        dryrun = objects.property(Boolean).convention(false)
-    }
-
-    @Option(option = 'dryrun', description = 'Skips network operations (OPTIONAL).')
-    void setDryrun(boolean dryrun) {
-        this.dryrun.set(dryrun)
+        super(objects)
     }
 
     @TaskAction
     void announce() {
-        Announcers.announce(new JReleaserLoggerAdapter(project.logger),
-            jreleaserModel.get(),
-            project.projectDir.toPath(),
-            dryrun.get());
+        Announcers.announce(createContext())
     }
 }

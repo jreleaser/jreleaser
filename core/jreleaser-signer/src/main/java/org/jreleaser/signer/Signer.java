@@ -36,9 +36,8 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Sign;
-import org.jreleaser.util.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,15 +65,15 @@ public class Signer {
         }
     }
 
-    public static void sign(Logger logger, JReleaserModel model, Path outputDirectory) throws SigningException {
-        if (!model.getSign().isEnabled()) {
-            logger.info("Signing is not enabled");
+    public static void sign(JReleaserContext context) throws SigningException {
+        if (!context.getModel().getSign().isEnabled()) {
+            context.getLogger().info("Signing is not enabled");
             return;
         }
 
-        PGPSignatureGenerator signatureGenerator = initSignatureGenerator(model.getSign());
-        List<Path> paths = collectArtifactsForSigning(model, outputDirectory);
-        sign(logger, signatureGenerator, paths, model.getSign(), outputDirectory.resolve("signatures"));
+        PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSign());
+        List<Path> paths = collectArtifactsForSigning(context);
+        sign(context, signatureGenerator, paths);
     }
 
     private static PGPSignatureGenerator initSignatureGenerator(Sign sign) throws SigningException {
@@ -86,7 +85,7 @@ public class Signer {
         try {
             PGPSecretKey pgpSec = readSecretKey(new FileInputStream(keyRingFile));
             PGPPrivateKey privateKey = pgpSec.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder()
-                .setProvider("BC")
+                .setProvider(BouncyCastleProvider.PROVIDER_NAME)
                 .build(sign.getResolvedPassphrase().toCharArray()));
             PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(
                 new JcaPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), PGPUtil.SHA256)
@@ -133,15 +132,15 @@ public class Signer {
         throw new SigningException("Can't find signing key in sign.keyRingFile");
     }
 
-    private static List<Path> collectArtifactsForSigning(JReleaserModel model, Path outputDirectory) {
+    private static List<Path> collectArtifactsForSigning(JReleaserContext context) {
         List<Path> paths = new ArrayList<>();
 
-        for (Distribution distribution : model.getDistributions().values()) {
+        for (Distribution distribution : context.getModel().getDistributions().values()) {
             for (Artifact artifact : distribution.getArtifacts()) {
-                paths.add(Paths.get(artifact.getPath()));
+                paths.add(context.getBasedir().resolve(Paths.get(artifact.getPath())).normalize());
             }
         }
-        Path checksums = outputDirectory.resolve("checksums").resolve("checksums.txt");
+        Path checksums = context.getChecksumsDirectory().resolve("checksums.txt");
         if (checksums.toFile().exists()) {
             paths.add(checksums);
         }
@@ -149,17 +148,19 @@ public class Signer {
         return paths;
     }
 
-    private static void sign(Logger logger, PGPSignatureGenerator signatureGenerator, List<Path> paths, Sign sign, Path outputDirectory) throws SigningException {
+    private static void sign(JReleaserContext context, PGPSignatureGenerator signatureGenerator, List<Path> paths) throws SigningException {
+        Path signaturesDirectory = context.getSignaturesDirectory();
+
         try {
-            deleteDirectory(outputDirectory);
-            Files.createDirectories(outputDirectory);
+            deleteDirectory(signaturesDirectory);
+            Files.createDirectories(signaturesDirectory);
         } catch (IOException e) {
             throw new SigningException("Could not create signatures directory", e);
         }
 
-        logger.debug("Signing {} files into {}", paths.size(), outputDirectory.toAbsolutePath());
+        context.getLogger().debug("Signing {} files into {}", paths.size(), context.getBasedir().relativize(signaturesDirectory));
         for (Path input : paths) {
-            sign(logger, signatureGenerator, input, outputDirectory.resolve(input.getFileName()), sign.isArmored());
+            sign(context, signatureGenerator, input, signaturesDirectory.resolve(input.getFileName()));
         }
     }
 
@@ -172,10 +173,13 @@ public class Signer {
         dir.delete();
     }
 
-    private static void sign(Logger logger, PGPSignatureGenerator signatureGenerator, Path input, Path output, boolean armored) throws SigningException {
+    private static void sign(JReleaserContext context, PGPSignatureGenerator signatureGenerator, Path input, Path output) throws SigningException {
         try {
+            boolean armored = context.getModel().getSign().isArmored();
             String extension = armored ? ".asc" : ".bpg";
-            logger.debug("Signing {} into {}", input.toAbsolutePath(), output.toAbsolutePath() + extension);
+            context.getLogger().debug("Signing {} into {}",
+                context.getBasedir().relativize(input),
+                context.getBasedir().relativize(output) + extension);
 
             OutputStream out = new FileOutputStream(output.toFile() + extension);
             if (armored) {

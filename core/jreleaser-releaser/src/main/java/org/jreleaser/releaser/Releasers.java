@@ -17,31 +17,26 @@
  */
 package org.jreleaser.releaser;
 
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.ReleaserBuilder;
 import org.jreleaser.sdk.github.GithubReleaser;
-import org.jreleaser.util.Logger;
-
-import java.nio.file.Path;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Releasers {
-    public static void release(Logger logger, JReleaserModel model, Path basedir, Path outputDirectory, boolean dryrun) throws ReleaseException {
-        Releasers.findReleaser(logger, model)
-            .configureWith(basedir, model)
-            .addReleaseAsset(outputDirectory.resolve("checksums").resolve("checksums.txt"))
-            .addReleaseAssets(outputDirectory.resolve("signatures"))
+    public static void release(JReleaserContext context) throws ReleaseException {
+        Releasers.findReleaser(context)
+            .configureWith(context)
             .build()
-            .release(dryrun);
+            .release();
     }
 
-    private static <RB extends ReleaserBuilder> RB findReleaser(Logger logger, JReleaserModel model) {
-        if (null != model.getRelease().getGithub()) {
-            return (RB) GithubReleaser.builder(logger);
+    private static <RB extends ReleaserBuilder> RB findReleaser(JReleaserContext context) {
+        if (null != context.getModel().getRelease().getGithub()) {
+            return (RB) GithubReleaser.builder();
         }
         // if(null != model.getRelease().getGitlab()) {
         //     return (RB) GitlabReleaser.builder();

@@ -17,39 +17,36 @@
  */
 package org.jreleaser.sdk.twitter;
 
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Twitter;
 import org.jreleaser.model.announcer.spi.AbstractAnnouncerBuilder;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
-import org.jreleaser.util.Logger;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class TwitterAnnouncer implements Announcer {
-    private final Logger logger;
-    private final JReleaserModel model;
+    private final JReleaserContext context;
 
-    private TwitterAnnouncer(Logger logger, JReleaserModel model) {
-        this.logger = logger;
-        this.model = model;
+    private TwitterAnnouncer(JReleaserContext context) {
+        this.context = context;
     }
 
     @Override
     public void announce(boolean dryrun) throws AnnounceException {
-        Twitter twitter = model.getAnnouncers().getTwitter();
+        Twitter twitter = context.getModel().getAnnouncers().getTwitter();
         if (!twitter.isEnabled()) {
-            logger.info("Twitter announcer is disabled");
+            context.getLogger().info("Twitter announcer is disabled");
             return;
         }
 
-        String status = twitter.getResolvedStatus(model);
-        logger.info("Announcing on Twitter: {}", status);
+        String status = twitter.getResolvedStatus(context.getModel());
+        context.getLogger().info("Announcing on Twitter: {}", status);
 
         try {
-            UpdateStatusTwitterCommand.builder(logger)
+            UpdateStatusTwitterCommand.builder(context.getLogger())
                 .consumerKey(twitter.getResolvedConsumerKey())
                 .consumerToken(twitter.getResolvedConsumerSecret())
                 .accessToken(twitter.getResolvedAccessToken())
@@ -63,10 +60,8 @@ public class TwitterAnnouncer implements Announcer {
         }
     }
 
-    public static Builder builder(Logger logger) {
-        Builder builder = new Builder();
-        builder.logger(logger);
-        return builder;
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder extends AbstractAnnouncerBuilder<TwitterAnnouncer, Builder> {
@@ -74,7 +69,7 @@ public class TwitterAnnouncer implements Announcer {
         public TwitterAnnouncer build() {
             validate();
 
-            return new TwitterAnnouncer(logger, model);
+            return new TwitterAnnouncer(context);
         }
     }
 }

@@ -19,19 +19,16 @@ package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
+import org.jreleaser.model.JReleaserContext
 import org.jreleaser.model.JReleaserModel
-import org.jreleaser.tools.DistributionProcessor
 
 import javax.inject.Inject
 
@@ -41,50 +38,34 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserToolPackagerTask extends DefaultTask {
+abstract class AbstractJReleaserTask extends DefaultTask {
     @Internal
     final Property<JReleaserModel> jreleaserModel
-
-    @Input
-    final Property<String> distributionName
-
-    @Input
-    final Property<String> toolName
-
-    @InputFiles
-    final ConfigurableFileCollection artifacts
-
-    @InputDirectory
-    final DirectoryProperty checksumDirectory
 
     @OutputDirectory
     final DirectoryProperty outputDirectory
 
-    @Inject
-    JReleaserToolPackagerTask(ObjectFactory objects) {
-        jreleaserModel = objects.property(JReleaserModel)
-        distributionName = objects.property(String)
-        toolName = objects.property(String)
-        artifacts = objects.fileCollection()
-        checksumDirectory = objects.directoryProperty()
+    @Input
+    final Property<Boolean> dryrun
 
+    @Inject
+    AbstractJReleaserTask(ObjectFactory objects) {
+        jreleaserModel = objects.property(JReleaserModel)
         outputDirectory = objects.directoryProperty()
+        dryrun = objects.property(Boolean).convention(false)
     }
 
-    @TaskAction
-    void packageTool() {
-        boolean result = DistributionProcessor.builder()
-            .logger(new JReleaserLoggerAdapter(project.logger))
-            .model(jreleaserModel.get())
-            .distributionName(distributionName.get())
-            .toolName(toolName.get())
-            .checksumDirectory(checksumDirectory.get().asFile.toPath())
-            .outputDirectory(outputDirectory.get().asFile.toPath())
-            .build()
-            .packageDistribution()
+    @Option(option = 'dryrun', description = 'Skips network operations (OPTIONAL).')
+    void setDryrun(boolean dryrun) {
+        this.dryrun.set(dryrun)
+    }
 
-        if (result) {
-            println("Packaged ${distributionName.get()} distribution with tool ${toolName.get()}")
-        }
+    protected JReleaserContext createContext() {
+        new JReleaserContext(
+            new JReleaserLoggerAdapter(project.logger),
+            jreleaserModel.get(),
+            project.projectDir.toPath(),
+            outputDirectory.get().asFile.toPath(),
+            dryrun.get())
     }
 }

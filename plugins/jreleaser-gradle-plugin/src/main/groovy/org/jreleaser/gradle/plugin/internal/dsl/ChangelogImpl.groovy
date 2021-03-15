@@ -65,7 +65,7 @@ class ChangelogImpl implements Changelog {
         if (enabled.present) changelog.enabled = enabled.get()
         if (links.present) changelog.links = links.get()
         if (sort.present) changelog.sort = sort.get()
-        if (external.present) changelog.external = external.getAsFile().get()
+        if (external.present) changelog.external = external.getAsFile().get().toPath()
         changelog
     }
 }

@@ -18,9 +18,7 @@
 package org.jreleaser.tools;
 
 import org.jreleaser.model.Distribution;
-import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Tool;
-import org.jreleaser.util.Logger;
 
 import java.util.Map;
 
@@ -33,11 +31,7 @@ public interface ToolProcessor<T extends Tool> {
 
     String getToolName();
 
-    Logger getLogger();
+    boolean prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
-    JReleaserModel getModel();
-
-    boolean prepareDistribution(Distribution distribution, Map<String, Object> context) throws ToolProcessingException;
-
-    boolean packageDistribution(Distribution distribution, Map<String, Object> context) throws ToolProcessingException;
+    boolean packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 }

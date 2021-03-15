@@ -19,26 +19,25 @@ package org.jreleaser.tools;
 
 import org.jreleaser.model.Brew;
 import org.jreleaser.model.Chocolatey;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Scoop;
 import org.jreleaser.model.Snap;
 import org.jreleaser.model.Tool;
-import org.jreleaser.util.Logger;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class ToolProcessors {
-    public static <T extends Tool> ToolProcessor<T> findProcessor(Logger logger, JReleaserModel model, T tool) {
+    public static <T extends Tool> ToolProcessor<T> findProcessor(JReleaserContext context, T tool) {
         if (tool instanceof Brew) {
-            return (ToolProcessor<T>) new BrewToolProcessor(logger, model, (Brew) tool);
+            return (ToolProcessor<T>) new BrewToolProcessor(context, (Brew) tool);
         } else if (tool instanceof Chocolatey) {
-            return (ToolProcessor<T>) new ChocolateyToolProcessor(logger, model, (Chocolatey) tool);
+            return (ToolProcessor<T>) new ChocolateyToolProcessor(context, (Chocolatey) tool);
         } else if (tool instanceof Scoop) {
-            return (ToolProcessor<T>) new ScoopToolProcessor(logger, model, (Scoop) tool);
+            return (ToolProcessor<T>) new ScoopToolProcessor(context, (Scoop) tool);
         } else if (tool instanceof Snap) {
-            return (ToolProcessor<T>) new SnapToolProcessor(logger, model, (Snap) tool);
+            return (ToolProcessor<T>) new SnapToolProcessor(context, (Snap) tool);
         }
 
         throw new IllegalArgumentException("Unsupported tool " + tool);

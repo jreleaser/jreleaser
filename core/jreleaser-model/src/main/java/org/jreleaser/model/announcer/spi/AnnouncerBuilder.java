@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.announcer.spi;
 
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.Logger;
 
@@ -27,13 +28,7 @@ import java.nio.file.Path;
  * @since 0.1.0
  */
 public interface AnnouncerBuilder<A extends Announcer, B extends AnnouncerBuilder<A, B>> {
-    B configureWith(Path basedir, JReleaserModel model);
-
-    B basedir(Path basedir);
-
-    B logger(Logger logger);
-
-    B model(JReleaserModel model);
+    B configureWith(JReleaserContext context);
 
     A build();
 }

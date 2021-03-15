@@ -17,40 +17,37 @@
  */
 package org.jreleaser.sdk.zulip;
 
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Zulip;
 import org.jreleaser.model.announcer.spi.AbstractAnnouncerBuilder;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
-import org.jreleaser.util.Logger;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class ZulipAnnouncer implements Announcer {
-    private final Logger logger;
-    private final JReleaserModel model;
+    private final JReleaserContext context;
 
-    private ZulipAnnouncer(Logger logger, JReleaserModel model) {
-        this.logger = logger;
-        this.model = model;
+    private ZulipAnnouncer(JReleaserContext context) {
+        this.context = context;
     }
 
     @Override
     public void announce(boolean dryrun) throws AnnounceException {
-        Zulip zulip = model.getAnnouncers().getZulip();
+        Zulip zulip = context.getModel().getAnnouncers().getZulip();
         if (!zulip.isEnabled()) {
-            logger.info("Zulip announcer is disabled");
+            context.getLogger().info("Zulip announcer is disabled");
             return;
         }
 
-        String subject = zulip.getResolvedSubject(model);
-        String message = zulip.getResolvedMessage(model);
-        logger.info("Announcing on Zulip: {}{}{}", subject, System.lineSeparator(), message);
+        String subject = zulip.getResolvedSubject(context.getModel());
+        String message = zulip.getResolvedMessage(context.getModel());
+        context.getLogger().info("Announcing on Zulip: {}{}{}", subject, System.lineSeparator(), message);
 
         try {
-            MessageZulipCommand.builder(logger)
+            MessageZulipCommand.builder(context.getLogger())
                 .account(zulip.getAccount())
                 .apiKey(zulip.getResolvedApiKey())
                 .apiHost(zulip.getApiHost())
@@ -65,10 +62,8 @@ public class ZulipAnnouncer implements Announcer {
         }
     }
 
-    public static Builder builder(Logger logger) {
-        Builder builder = new Builder();
-        builder.logger(logger);
-        return builder;
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder extends AbstractAnnouncerBuilder<ZulipAnnouncer, Builder> {
@@ -76,7 +71,7 @@ public class ZulipAnnouncer implements Announcer {
         public ZulipAnnouncer build() {
             validate();
 
-            return new ZulipAnnouncer(logger, model);
+            return new ZulipAnnouncer(context);
         }
     }
 }

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.app;
 
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.signer.Signer;
@@ -33,12 +34,11 @@ import picocli.CommandLine;
 public class Sign extends AbstractModelCommand {
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
-        Checksums.collectAndWriteChecksums(logger, jreleaserModel, getChecksumsDirectory());
-
         try {
-            Signer.sign(logger,
-                jreleaserModel,
-                getOutputDirectory());
+            JReleaserContext context = createContext(jreleaserModel);
+
+            Checksums.collectAndWriteChecksums(context);
+            Signer.sign(context);
         } catch (SigningException e) {
             throw new JReleaserException("Unexpected error when signing release " + actualConfigFile.toAbsolutePath(), e);
         }

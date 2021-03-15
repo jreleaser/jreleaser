@@ -18,13 +18,13 @@
 package org.jreleaser.app;
 
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.tools.DistributionProcessor;
 import org.jreleaser.tools.ToolProcessingException;
 import picocli.CommandLine;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,18 +38,15 @@ public abstract class AbstractProcessorCommand extends AbstractModelCommand {
         description = "Fail fast")
     boolean failFast = true;
 
-    Path outputDirectory;
-
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
-        outputDirectory = getOutputDirectory();
+        JReleaserContext context = createContext(jreleaserModel);
 
         List<Exception> exceptions = new ArrayList<>();
         for (Distribution distribution : jreleaserModel.getDistributions().values()) {
             for (String toolName : Distribution.supportedTools()) {
                 try {
-                    DistributionProcessor processor = createDistributionProcessor(jreleaserModel,
-                        outputDirectory,
+                    DistributionProcessor processor = createDistributionProcessor(context,
                         distribution,
                         toolName);
 
@@ -69,19 +66,13 @@ public abstract class AbstractProcessorCommand extends AbstractModelCommand {
 
     protected abstract void consumeProcessor(DistributionProcessor processor) throws ToolProcessingException;
 
-    private DistributionProcessor createDistributionProcessor(JReleaserModel jreleaserModel,
-                                                              Path outputDirectory,
+    private DistributionProcessor createDistributionProcessor(JReleaserContext context,
                                                               Distribution distribution,
                                                               String toolName) {
         return DistributionProcessor.builder()
-            .logger(logger)
-            .model(jreleaserModel)
+            .context(context)
             .distributionName(distribution.getName())
             .toolName(toolName)
-            .checksumDirectory(getChecksumsDirectory())
-            .outputDirectory(outputDirectory
-                .resolve(distribution.getName())
-                .resolve(toolName))
             .build();
     }
 }

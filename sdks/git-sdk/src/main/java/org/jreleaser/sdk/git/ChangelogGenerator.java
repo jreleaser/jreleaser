@@ -24,10 +24,9 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.jreleaser.model.Changelog;
+import org.jreleaser.model.JReleaserContext;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -45,35 +44,25 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class ChangelogGenerator {
     private static final String REFS_TAGS = "refs/tags/";
 
-    public static String generate(Path basedir, String commitsUrl,
-                                  Changelog changelog) throws IOException {
+    public static String generate(JReleaserContext context, String commitsUrl, Changelog changelog) throws IOException {
         if (!changelog.isEnabled()) {
             return "";
         }
 
-        if (null != changelog.getExternal() && changelog.getExternal().exists()) {
-            return readChangelogFile(changelog.getExternal());
-        }
-
-        return createChangelog(basedir, commitsUrl, changelog);
+        return createChangelog(context, commitsUrl, changelog);
     }
 
-    private static String readChangelogFile(File file) throws IOException {
-        return "## Changelog" +
-            System.lineSeparator() +
-            System.lineSeparator() +
-            String.join(System.lineSeparator(), Files.readAllLines(file.toPath()));
-    }
-
-    private static String createChangelog(Path basedir, String commitsUrl, Changelog changelog) throws IOException {
+    private static String createChangelog(JReleaserContext context, String commitsUrl, Changelog changelog) throws IOException {
         try {
-            Git git = Git.open(basedir.toFile());
+            Git git = Git.open(context.getBasedir().toFile());
+            context.getLogger().debug("Resolving commits");
             Iterable<RevCommit> commits = resolveCommits(git);
 
             Comparator<RevCommit> revCommitComparator = Comparator.naturalOrder();
             if (changelog.getSort() == Changelog.Sort.ASC) {
                 revCommitComparator = Comparator.reverseOrder();
             }
+            context.getLogger().debug("Sorting commits {}",changelog.getSort());
 
             return "## Changelog" +
                 System.lineSeparator() +

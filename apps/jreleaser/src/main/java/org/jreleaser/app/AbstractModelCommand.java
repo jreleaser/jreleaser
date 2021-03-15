@@ -19,6 +19,7 @@ package org.jreleaser.app;
 
 import org.jreleaser.app.internal.ColorizedJReleaserLoggerAdapter;
 import org.jreleaser.config.JReleaserConfigLoader;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserModelValidator;
@@ -54,6 +55,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
     protected void execute() {
         resolveConfigFile();
         resolveBasedir();
+        logger.info("basedir set to {}", actualBasedir.toAbsolutePath());
         consumeModel(resolveModel());
     }
 
@@ -100,8 +102,16 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         return actualBasedir.resolve("out").resolve("jreleaser");
     }
 
-    protected Path getChecksumsDirectory() {
-        return getOutputDirectory()
-            .resolve("checksums");
+    protected JReleaserContext createContext(JReleaserModel jreleaserModel) {
+        return new JReleaserContext(
+            logger,
+            jreleaserModel,
+            actualBasedir,
+            getOutputDirectory(),
+            dryrun());
+    }
+
+    protected boolean dryrun() {
+        return false;
     }
 }
