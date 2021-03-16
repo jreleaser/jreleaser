@@ -24,7 +24,7 @@ package org.jreleaser.maven.plugin;
 public class Artifact {
     private String path;
     private String hash;
-    private String osClassifier;
+    private String platform;
     private String javaVersion;
 
     public String getPath() {
@@ -43,12 +43,12 @@ public class Artifact {
         this.hash = hash;
     }
 
-    public String getOsClassifier() {
-        return osClassifier;
+    public String getPlatform() {
+        return platform;
     }
 
-    public void setOsClassifier(String osClassifier) {
-        this.osClassifier = osClassifier;
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
     public String getJavaVersion() {

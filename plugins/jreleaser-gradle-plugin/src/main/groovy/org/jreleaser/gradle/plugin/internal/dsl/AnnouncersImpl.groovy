@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.jreleaser.gradle.plugin.dsl.Announcers
+import org.jreleaser.gradle.plugin.dsl.Sdkman
 import org.jreleaser.gradle.plugin.dsl.Twitter
 import org.jreleaser.gradle.plugin.dsl.Zulip
 
@@ -33,13 +34,20 @@ import javax.inject.Inject
  */
 @CompileStatic
 class AnnouncersImpl implements Announcers {
+    final SdkmanImpl sdkman
     final TwitterImpl twitter
     final ZulipImpl zulip
 
     @Inject
     AnnouncersImpl(ObjectFactory objects) {
+        sdkman = objects.newInstance(SdkmanImpl, objects)
         twitter = objects.newInstance(TwitterImpl, objects)
         zulip = objects.newInstance(ZulipImpl, objects)
+    }
+
+    @Override
+    void sdkman(Action<? super Sdkman> action) {
+        action.execute(sdkman)
     }
 
     @Override
@@ -54,6 +62,7 @@ class AnnouncersImpl implements Announcers {
 
     org.jreleaser.model.Announcers toModel() {
         org.jreleaser.model.Announcers announcers = new org.jreleaser.model.Announcers()
+        if (sdkman.set) announcers.sdkman = sdkman.toModel()
         if (twitter.set) announcers.twitter = twitter.toModel()
         if (zulip.set) announcers.zulip = zulip.toModel()
         announcers

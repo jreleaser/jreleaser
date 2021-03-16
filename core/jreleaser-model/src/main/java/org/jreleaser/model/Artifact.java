@@ -27,7 +27,7 @@ import java.util.Map;
 public class Artifact implements Domain {
     private String path;
     private String hash;
-    private String osClassifier;
+    private String platform;
     private String javaVersion;
 
     public String getPath() {
@@ -46,12 +46,12 @@ public class Artifact implements Domain {
         this.hash = hash;
     }
 
-    public String getOsClassifier() {
-        return osClassifier;
+    public String getPlatform() {
+        return platform;
     }
 
-    public void setOsClassifier(String osClassifier) {
-        this.osClassifier = osClassifier;
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
     public String getJavaVersion() {
@@ -66,7 +66,7 @@ public class Artifact implements Domain {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("path", path);
         map.put("hash", hash);
-        map.put("osClassifier", osClassifier);
+        map.put("platform", platform);
         map.put("javaVersion", javaVersion);
         return map;
     }

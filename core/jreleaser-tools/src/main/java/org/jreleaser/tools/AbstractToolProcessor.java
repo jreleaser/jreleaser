@@ -23,6 +23,8 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Release;
 import org.jreleaser.model.Tool;
+import org.jreleaser.model.tool.spi.ToolProcessingException;
+import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.util.Constants;
 import org.zeroturnaround.exec.ProcessExecutor;
 
@@ -201,7 +203,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
         for (int i = 0; i < artifacts.size(); i++) {
             Artifact artifact = artifacts.get(i);
-            String classifier = isNotBlank(artifact.getOsClassifier()) ? capitalize(artifact.getOsClassifier()) : "";
+            String classifier = isNotBlank(artifact.getPlatform()) ? capitalize(artifact.getPlatform()) : "";
             String artifactFileName = Paths.get(artifact.getPath()).getFileName().toString();
             props.put("artifact" + classifier + "JavaVersion", artifact.getJavaVersion());
             props.put("artifact" + classifier + "FileName", artifactFileName);

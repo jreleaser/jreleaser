@@ -22,12 +22,22 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public class Announcers {
+    private final Sdkman sdkman = new Sdkman();
     private final Twitter twitter = new Twitter();
     private final Zulip zulip = new Zulip();
 
-    void setAll(Announcers packagers) {
-        setTwitter(packagers.twitter);
-        setZulip(packagers.zulip);
+    void setAll(Announcers announcers) {
+        setSdkman(announcers.sdkman);
+        setTwitter(announcers.twitter);
+        setZulip(announcers.zulip);
+    }
+
+    public Sdkman getSdkman() {
+        return sdkman;
+    }
+
+    public void setSdkman(Sdkman sdkman) {
+        this.sdkman.setAll(sdkman);
     }
 
     public Twitter getTwitter() {

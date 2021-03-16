@@ -15,23 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.tools;
+package org.jreleaser.gradle.plugin.dsl
 
-import org.jreleaser.model.Distribution;
-import org.jreleaser.model.Tool;
-
-import java.util.Map;
+import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
 
 /**
+ *
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface ToolProcessor<T extends Tool> {
-    T getTool();
+@CompileStatic
+interface Sdkman extends Announcer {
+    Property<String> getConsumerKey()
 
-    String getToolName();
+    Property<String> getConsumerToken()
 
-    boolean prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
+    Property<String> getCandidate()
 
-    boolean packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
+    Property<Boolean> getMajor()
 }

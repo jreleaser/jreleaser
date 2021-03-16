@@ -17,6 +17,7 @@
  */
 dependencies {
     api project(':jreleaser-model')
+    api project(':sdkman-java-sdk')
     api project(':twitter-java-sdk')
     api project(':zulip-java-sdk')
 }

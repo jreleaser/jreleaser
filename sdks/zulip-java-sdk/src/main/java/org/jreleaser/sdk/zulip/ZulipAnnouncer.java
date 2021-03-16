@@ -35,7 +35,7 @@ public class ZulipAnnouncer implements Announcer {
     }
 
     @Override
-    public void announce(boolean dryrun) throws AnnounceException {
+    public void announce() throws AnnounceException {
         Zulip zulip = context.getModel().getAnnouncers().getZulip();
         if (!zulip.isEnabled()) {
             context.getLogger().info("Zulip announcer is disabled");
@@ -54,7 +54,7 @@ public class ZulipAnnouncer implements Announcer {
                 .channel(zulip.getChannel())
                 .subject(subject)
                 .message(message)
-                .dryrun(dryrun)
+                .dryrun(context.isDryrun())
                 .build()
                 .execute();
         } catch (ZulipException e) {

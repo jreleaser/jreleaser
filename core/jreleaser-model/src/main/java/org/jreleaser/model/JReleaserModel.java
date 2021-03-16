@@ -126,35 +126,35 @@ public class JReleaserModel implements Domain {
     }
 
     public Map<String, Object> props() {
-        Map<String, Object> context = new LinkedHashMap<>();
-        fillProjectProperties(context, project);
-        fillReleaseProperties(context, release);
-        return context;
+        Map<String, Object> props = new LinkedHashMap<>();
+        fillProjectProperties(props, project);
+        fillReleaseProperties(props, release);
+        return props;
     }
 
-    private void fillProjectProperties(Map<String, Object> context, Project project) {
-        context.put(Constants.KEY_PROJECT_NAME, project.getName());
-        context.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
-        context.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
-        context.put(Constants.KEY_PROJECT_DESCRIPTION, project.getDescription());
-        context.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, project.getLongDescription());
-        context.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
-        context.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
-        context.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
-        context.put(Constants.KEY_PROJECT_AUTHORS_BY_SPACE, String.join(" ", project.getAuthors()));
-        context.put(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));
-        context.put(Constants.KEY_PROJECT_TAGS_BY_SPACE, String.join(" ", project.getTags()));
-        context.put(Constants.KEY_PROJECT_TAGS_BY_COMMA, String.join(",", project.getTags()));
-        context.putAll(project.getExtraProperties());
+    private void fillProjectProperties(Map<String, Object> props, Project project) {
+        props.put(Constants.KEY_PROJECT_NAME, project.getName());
+        props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
+        props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
+        props.put(Constants.KEY_PROJECT_DESCRIPTION, project.getDescription());
+        props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, project.getLongDescription());
+        props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
+        props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+        props.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
+        props.put(Constants.KEY_PROJECT_AUTHORS_BY_SPACE, String.join(" ", project.getAuthors()));
+        props.put(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));
+        props.put(Constants.KEY_PROJECT_TAGS_BY_SPACE, String.join(" ", project.getTags()));
+        props.put(Constants.KEY_PROJECT_TAGS_BY_COMMA, String.join(",", project.getTags()));
+        props.putAll(project.getExtraProperties());
     }
 
-    private void fillReleaseProperties(Map<String, Object> context, Release release) {
+    private void fillReleaseProperties(Map<String, Object> props, Release release) {
         GitService service = release.getGitService();
-        context.put(Constants.KEY_REPO_HOST, service.getRepoHost());
-        context.put(Constants.KEY_REPO_OWNER, service.getRepoOwner());
-        context.put(Constants.KEY_REPO_NAME, service.getRepoName());
-        context.put(Constants.KEY_CANONICAL_REPO_NAME, service.getCanonicalRepoName());
-        context.put(Constants.KEY_TAG_NAME, service.getTagName());
-        context.put(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl());
+        props.put(Constants.KEY_REPO_HOST, service.getRepoHost());
+        props.put(Constants.KEY_REPO_OWNER, service.getRepoOwner());
+        props.put(Constants.KEY_REPO_NAME, service.getRepoName());
+        props.put(Constants.KEY_CANONICAL_REPO_NAME, service.getCanonicalRepoName());
+        props.put(Constants.KEY_TAG_NAME, service.getTagName());
+        props.put(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(project));
     }
 }

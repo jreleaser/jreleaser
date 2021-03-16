@@ -23,6 +23,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Scoop;
 import org.jreleaser.model.Snap;
 import org.jreleaser.model.Tool;
+import org.jreleaser.model.tool.spi.ToolProcessor;
 
 /**
  * @author Andres Almiray

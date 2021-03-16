@@ -74,7 +74,7 @@ public class Init extends AbstractCommand {
             }
 
             if (!quiet) {
-                parent.out.println("JReleaser initialized at " + outputDirectory.toAbsolutePath());
+                logger.info("JReleaser initialized at " + outputDirectory.toAbsolutePath());
             }
         } catch (IllegalStateException | IOException e) {
             throw new JReleaserException("Unexpected error", e);

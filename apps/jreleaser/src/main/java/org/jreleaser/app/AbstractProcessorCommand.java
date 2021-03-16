@@ -22,7 +22,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.tools.DistributionProcessor;
-import org.jreleaser.tools.ToolProcessingException;
+import org.jreleaser.model.tool.spi.ToolProcessingException;
 import picocli.CommandLine;
 
 import java.util.ArrayList;

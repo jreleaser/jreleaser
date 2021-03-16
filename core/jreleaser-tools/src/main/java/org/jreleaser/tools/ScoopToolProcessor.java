@@ -19,11 +19,10 @@ package org.jreleaser.tools;
 
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Scoop;
+import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
-import org.jreleaser.util.Logger;
 
 import java.io.StringReader;
 import java.nio.file.Path;

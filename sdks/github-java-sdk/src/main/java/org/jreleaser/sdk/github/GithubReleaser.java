@@ -44,7 +44,7 @@ public class GithubReleaser implements Releaser {
 
     public void release() throws ReleaseException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
-        context.getLogger().info("Releasing to {}", github.getResolvedRepoUrl());
+        context.getLogger().info("Releasing to {}", github.getResolvedRepoUrl(context.getModel().getProject()));
 
         Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedAuthorization());
 
@@ -80,7 +80,7 @@ public class GithubReleaser implements Releaser {
     private void createRelease(Github api, boolean dryrun) throws IOException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
 
-        String changelog = ChangelogProvider.getChangelog(context, github.getResolvedCommitUrl(), github.getChangelog());
+        String changelog = ChangelogProvider.getChangelog(context, github.getResolvedCommitUrl(context.getModel().getProject()), github.getChangelog());
         context.getLogger().info("changelog:{}{}", System.lineSeparator(), changelog);
         if (dryrun) {
             for (Path asset : assets) {

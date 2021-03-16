@@ -21,6 +21,8 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Tool;
+import org.jreleaser.model.tool.spi.ToolProcessingException;
+import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.util.Constants;
 
 import java.nio.file.Path;
@@ -63,7 +65,7 @@ public class DistributionProcessor {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
-            context.getLogger().warn("Skipping {} tool for {} distribution", toolName, distributionName);
+            context.getLogger().debug("Skipping {} tool for {} distribution", toolName, distributionName);
             return false;
         }
 
@@ -88,7 +90,7 @@ public class DistributionProcessor {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
-            context.getLogger().warn("Skipping {} tool for {} distribution", toolName, distributionName);
+            context.getLogger().debug("Skipping {} tool for {} distribution", toolName, distributionName);
             return false;
         }
 

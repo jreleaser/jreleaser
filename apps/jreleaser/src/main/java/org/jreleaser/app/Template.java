@@ -84,7 +84,7 @@ public class Template extends AbstractCommand {
                 .generate();
 
             if (result && !quiet) {
-                parent.out.println("Template generated at " +
+                logger.info("Template generated at " +
                     outputDirectory.resolve(distributionName).resolve(toolName)
                         .normalize().toAbsolutePath());
             }

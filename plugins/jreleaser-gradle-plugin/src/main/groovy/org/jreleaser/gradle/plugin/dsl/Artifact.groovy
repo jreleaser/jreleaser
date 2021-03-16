@@ -30,5 +30,5 @@ import org.gradle.api.provider.Property
 interface Artifact {
     RegularFileProperty getPath()
 
-    Property<String> getOsClassifier()
+    Property<String> getPlatform()
 }

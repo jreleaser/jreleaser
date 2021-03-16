@@ -19,12 +19,18 @@ package org.jreleaser.util;
 
 import kr.motd.maven.os.Detector;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -32,17 +38,79 @@ import java.util.Set;
  */
 public final class OsUtils {
     private static final OsDetector OS_DETECTOR = new OsDetector();
+    private static final List<String> OS_NAMES = new ArrayList<>();
+    private static final List<String> OS_ARCHS = new ArrayList<>();
+
+    static {
+        OS_NAMES.addAll(Arrays.asList(
+            "aix",
+            "hpux",
+            "os400",
+            "linux",
+            "osx",
+            "freebsd",
+            "openbsd",
+            "netbsd",
+            "sunos",
+            "windows",
+            "zos"));
+        OS_NAMES.sort(Comparator.naturalOrder());
+
+        OS_ARCHS.addAll(Arrays.asList(
+            "x86_64",
+            "x86_32",
+            "itanium_64",
+            "itanium_32",
+            "sparc_32",
+            "sparc_64",
+            "arm_32",
+            "aarch_64",
+            "mips_32",
+            "mipsel_32",
+            "mips_64",
+            "mipsel_64",
+            "ppc_32",
+            "ppcle_32",
+            "ppc_64",
+            "ppcle_64",
+            "s390_32",
+            "s390_64",
+            "riscv"));
+        OS_ARCHS.sort(Comparator.naturalOrder());
+    }
 
     private OsUtils() {
         //noop
     }
 
+    public static List<String> getSupportedOsNames() {
+        return Collections.unmodifiableList(OS_NAMES);
+    }
+
+    public static List<String> getSupportedOsArchs() {
+        return Collections.unmodifiableList(OS_ARCHS);
+    }
+
+    public static boolean isSupported(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        switch (parts.length) {
+            case 1:
+                return OS_NAMES.contains(parts[0]);
+            case 2:
+                return OS_NAMES.contains(parts[0]) && OS_ARCHS.contains(parts[1]);
+            default:
+                return false;
+        }
+    }
+
     public static boolean isWindows() {
-        return "windows".equals(OS_DETECTOR.get("os.detected.name"));
+        return "windows".equals(OS_DETECTOR.get(Detector.DETECTED_NAME));
     }
 
     public static boolean isMac() {
-        return "osx".equals(OS_DETECTOR.get("os.detected.name"));
+        return "osx".equals(OS_DETECTOR.get(Detector.DETECTED_NAME));
     }
 
     public static String getValue(String key) {

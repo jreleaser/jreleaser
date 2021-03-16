@@ -35,7 +35,7 @@ public class TwitterAnnouncer implements Announcer {
     }
 
     @Override
-    public void announce(boolean dryrun) throws AnnounceException {
+    public void announce() throws AnnounceException {
         Twitter twitter = context.getModel().getAnnouncers().getTwitter();
         if (!twitter.isEnabled()) {
             context.getLogger().info("Twitter announcer is disabled");
@@ -52,7 +52,7 @@ public class TwitterAnnouncer implements Announcer {
                 .accessToken(twitter.getResolvedAccessToken())
                 .accessTokenSecret(twitter.getResolvedAccessTokenSecret())
                 .status(status)
-                .dryrun(dryrun)
+                .dryrun(context.isDryrun())
                 .build()
                 .execute();
         } catch (TwitterException e) {

@@ -33,6 +33,7 @@ import org.jreleaser.maven.plugin.Plug;
 import org.jreleaser.maven.plugin.Project;
 import org.jreleaser.maven.plugin.Release;
 import org.jreleaser.maven.plugin.Scoop;
+import org.jreleaser.maven.plugin.Sdkman;
 import org.jreleaser.maven.plugin.Sign;
 import org.jreleaser.maven.plugin.Slot;
 import org.jreleaser.maven.plugin.Snap;
@@ -153,8 +154,19 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Announcers convertAnnouncers(Announcers announcers) {
         org.jreleaser.model.Announcers a = new org.jreleaser.model.Announcers();
+        if (announcers.getSdkman().isSet()) a.setSdkman(convertSdkman(announcers.getSdkman()));
         if (announcers.getTwitter().isSet()) a.setTwitter(convertTwitter(announcers.getTwitter()));
         if (announcers.getZulip().isSet()) a.setZulip(convertZulip(announcers.getZulip()));
+        return a;
+    }
+
+    private static org.jreleaser.model.Sdkman convertSdkman(Sdkman sdkman) {
+        org.jreleaser.model.Sdkman a = new org.jreleaser.model.Sdkman();
+        if (sdkman.isEnabledSet()) a.setEnabled(sdkman.isEnabled());
+        a.setConsumerKey(sdkman.getConsumerKey());
+        a.setConsumerToken(sdkman.getConsumerToken());
+        a.setCandidate(sdkman.getCandidate());
+        a.setMajor(sdkman.isMajor());
         return a;
     }
 
@@ -227,7 +239,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Artifact a = new org.jreleaser.model.Artifact();
         a.setPath(artifact.getPath());
         a.setHash(artifact.getHash());
-        a.setOsClassifier(artifact.getOsClassifier());
+        a.setPlatform(artifact.getPlatform());
         a.setJavaVersion(artifact.getJavaVersion());
         return a;
     }

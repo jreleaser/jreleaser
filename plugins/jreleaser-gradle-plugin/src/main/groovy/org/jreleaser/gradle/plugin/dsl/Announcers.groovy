@@ -27,9 +27,13 @@ import org.gradle.api.Action
  */
 @CompileStatic
 interface Announcers {
+    Sdkman getSdkman()
+
     Twitter getTwitter()
 
     Zulip getZulip()
+
+    void sdkman(Action<? super Sdkman> action)
 
     void twitter(Action<? super Twitter> action)
 

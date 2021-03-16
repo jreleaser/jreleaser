@@ -18,7 +18,7 @@
 package org.jreleaser.app;
 
 import org.jreleaser.tools.DistributionProcessor;
-import org.jreleaser.tools.ToolProcessingException;
+import org.jreleaser.model.tool.spi.ToolProcessingException;
 import picocli.CommandLine;
 
 /**
@@ -31,7 +31,7 @@ public class Package extends AbstractProcessorCommand {
     @Override
     protected void consumeProcessor(DistributionProcessor processor) throws ToolProcessingException {
         if (processor.packageDistribution() && !quiet) {
-            parent.out.println("Packaged " + processor.getDistributionName() +
+            logger.info("Packaged " + processor.getDistributionName() +
                 " distribution with " + processor.getToolName());
         }
     }

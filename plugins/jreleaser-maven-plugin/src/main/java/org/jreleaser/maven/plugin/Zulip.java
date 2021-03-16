@@ -120,4 +120,15 @@ public class Zulip extends AbstractAnnouncer {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    @Override
+    public boolean isSet() {
+        return super.isSet() ||
+            isNotBlank(account) ||
+            isNotBlank(apiHost) ||
+            isNotBlank(apiKey) ||
+            isNotBlank(channel) ||
+            isNotBlank(subject) ||
+            isNotBlank(message);
+    }
 }

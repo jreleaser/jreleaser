@@ -35,18 +35,18 @@ import javax.inject.Inject
 class ArtifactImpl implements Artifact {
     String name
     final RegularFileProperty path
-    final Property<String> osClassifier
+    final Property<String> platform
 
     @Inject
     ArtifactImpl(ObjectFactory objects) {
         path = objects.fileProperty().convention(Providers.notDefined())
-        osClassifier = objects.property(String).convention(Providers.notDefined())
+        platform = objects.property(String).convention(Providers.notDefined())
     }
 
     org.jreleaser.model.Artifact toModel() {
         org.jreleaser.model.Artifact artifact = new org.jreleaser.model.Artifact()
         artifact.path = path.asFile.get().absolutePath
-        artifact.osClassifier = osClassifier.orNull
+        artifact.platform = platform.orNull
         artifact
     }
 }

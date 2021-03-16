@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -86,37 +87,41 @@ public abstract class GitService implements Releaser {
         return repoOwner + "/" + repoName;
     }
 
-    private Map<String, Object> createContext() {
-        Map<String, Object> context = new LinkedHashMap<>();
-        context.put(Constants.KEY_REPO_HOST, repoHost);
-        context.put(Constants.KEY_REPO_OWNER, repoOwner);
-        context.put(Constants.KEY_REPO_NAME, repoName);
-        context.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        return context;
+    private Map<String, Object> createContext(Project project) {
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.put(Constants.KEY_PROJECT_NAME, project.getName());
+        props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
+        props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
+        props.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
+        props.put(Constants.KEY_REPO_HOST, repoHost);
+        props.put(Constants.KEY_REPO_OWNER, repoOwner);
+        props.put(Constants.KEY_REPO_NAME, repoName);
+        props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
+        return props;
     }
 
-    public String getResolvedRepoUrl() {
-        return applyTemplate(new StringReader(repoUrlFormat), createContext());
+    public String getResolvedRepoUrl(Project project) {
+        return applyTemplate(new StringReader(repoUrlFormat), createContext(project));
     }
 
-    public String getResolvedCommitUrl() {
-        return applyTemplate(new StringReader(commitUrlFormat), createContext());
+    public String getResolvedCommitUrl(Project project) {
+        return applyTemplate(new StringReader(commitUrlFormat), createContext(project));
     }
 
-    public String getResolvedDownloadUrl() {
-        return applyTemplate(new StringReader(downloadUrlFormat), createContext());
+    public String getResolvedDownloadUrl(Project project) {
+        return applyTemplate(new StringReader(downloadUrlFormat), createContext(project));
     }
 
-    public String getResolvedReleaseNotesUrl() {
-        return applyTemplate(new StringReader(releaseNotesUrlFormat), createContext());
+    public String getResolvedReleaseNotesUrl(Project project) {
+        return applyTemplate(new StringReader(releaseNotesUrlFormat), createContext(project));
     }
 
-    public String getResolvedLatestReleaseUrl() {
-        return applyTemplate(new StringReader(latestReleaseUrlFormat), createContext());
+    public String getResolvedLatestReleaseUrl(Project project) {
+        return applyTemplate(new StringReader(latestReleaseUrlFormat), createContext(project));
     }
 
-    public String getResolvedIssueTrackerUrl() {
-        return applyTemplate(new StringReader(issueTrackerUrlFormat), createContext());
+    public String getResolvedIssueTrackerUrl(Project project) {
+        return applyTemplate(new StringReader(issueTrackerUrlFormat), createContext(project));
     }
 
     @Override

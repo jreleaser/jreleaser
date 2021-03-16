@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.Logger;
+import org.jreleaser.util.OsUtils;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getFilenameExtension;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -97,8 +99,16 @@ public final class JReleaserModelValidator {
     }
 
     private static void validateAnnouncers(Logger logger, Path basedir, JReleaserModel model, Announcers announcers, List<String> errors) {
+        validateSdkman(logger, basedir, model, announcers.getSdkman(), errors);
         validateTwitter(logger, basedir, model, announcers.getTwitter(), errors);
         validateZulip(logger, basedir, model, announcers.getZulip(), errors);
+    }
+
+    private static void validateSdkman(Logger logger, Path basedir, JReleaserModel model, Sdkman sdkman, List<String> errors) {
+        if (!sdkman.isEnabled()) return;
+
+        checkEnvSetting(logger, errors, sdkman.getConsumerKey(), "SDKMAN_CONSUMER_KEY", "sdkman.consumerKey");
+        checkEnvSetting(logger, errors, sdkman.getConsumerToken(), "SDKMAN_CONSUMER_TOKEN", "sdkman.consumerToken");
     }
 
     private static void validateTwitter(Logger logger, Path basedir, JReleaserModel model, Twitter twitter, List<String> errors) {
@@ -244,19 +254,19 @@ public final class JReleaserModelValidator {
         for (int i = 0; i < distribution.getArtifacts().size(); i++) {
             validateArtifact(logger, basedir, model, distribution, distribution.getArtifacts().get(i), i, errors);
         }
-        // validate artifact.osClassifier is unique
-        Map<String, List<Artifact>> byClassifier = distribution.getArtifacts().stream()
-            .collect(groupingBy(artifact -> isBlank(artifact.getOsClassifier()) ? "<nil>" : artifact.getOsClassifier()));
-        // check classifiers by extension
-        byClassifier.entrySet().forEach(c -> {
-            String classifier = "<nil>".equals(c.getKey()) ? "no" : c.getKey();
-            c.getValue().stream()
+        // validate artifact.platform is unique
+        Map<String, List<Artifact>> byPlatform = distribution.getArtifacts().stream()
+            .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? "<nil>" : artifact.getPlatform()));
+        // check platforms by extension
+        byPlatform.entrySet().forEach(p -> {
+            String platform = "<nil>".equals(p.getKey()) ? "no" : p.getKey();
+            p.getValue().stream()
                 .collect(groupingBy(artifact -> getFilenameExtension(artifact.getPath())))
                 .entrySet().forEach(e -> {
                 if (e.getValue().size() > 1) {
                     errors.add("distribution." + distribution.getName() +
-                        " has more than one artifact with " + classifier +
-                        " classifier for extension " + e.getValue());
+                        " has more than one artifact with " + platform +
+                        " platform for extension " + e.getValue());
                 }
             });
         });
@@ -279,6 +289,11 @@ public final class JReleaserModelValidator {
         }
         if (isBlank(artifact.getJavaVersion())) {
             artifact.setJavaVersion(distribution.getJavaVersion());
+        }
+        if (isNotBlank(artifact.getPlatform()) && !OsUtils.isSupported(artifact.getPlatform().trim())) {
+            logger.warn("distribution.{}.artifact[{}].platform ({}) is not supported. Please use `${name}` or `${name}-${arch}` from{}       name = {}{}       arch = {}",
+                distribution.getName(), index, artifact.getPlatform(), System.lineSeparator(),
+                OsUtils.getSupportedOsNames(), System.lineSeparator(), OsUtils.getSupportedOsArchs());
         }
     }
 

@@ -15,30 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.announcer.spi;
+package org.jreleaser.model.tool.spi;
 
-import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Distribution;
+import org.jreleaser.model.Tool;
 
-import static java.util.Objects.requireNonNull;
+import java.util.Map;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractAnnouncerBuilder<R extends Announcer, B extends AnnouncerBuilder<R, B>> implements AnnouncerBuilder<R, B> {
-    protected JReleaserContext context;
+public interface ToolProcessor<T extends Tool> {
+    T getTool();
 
-    protected final B self() {
-        return (B) this;
-    }
+    String getToolName();
 
-    protected void validate() {
-        requireNonNull(context, "'context' must not be null");
-    }
+    boolean prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
-    @Override
-    public B configureWith(JReleaserContext context) {
-        this.context = requireNonNull(context, "'context' must not be null");
-        return self();
-    }
+    boolean packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 }

@@ -22,5 +22,5 @@ package org.jreleaser.model.announcer.spi;
  * @since 0.1.0
  */
 public interface Announcer {
-    void announce(boolean dryrun) throws AnnounceException;
+    void announce() throws AnnounceException;
 }
