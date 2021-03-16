@@ -48,6 +48,8 @@ public class ChocolateyToolProcessor extends AbstractToolProcessor<Chocolatey> {
             return false;
         }
 
+        copyPreparedFiles(distribution, props);
+
         return true;
     }
 

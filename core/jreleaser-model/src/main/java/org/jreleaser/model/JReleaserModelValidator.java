@@ -21,6 +21,7 @@ import org.jreleaser.util.Logger;
 import org.jreleaser.util.OsUtils;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -303,7 +304,7 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
-        validateTemplate(logger, model, distribution, tool, tool.getName(), errors);
+        validateTemplate(logger, model, distribution, tool, errors);
         adjustExtraProperties(model.getPackagers().getBrew(), tool.getName());
         adjustExtraProperties(tool, tool.getName());
         mergeExtraProperties(tool, model.getPackagers().getBrew());
@@ -320,7 +321,7 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
-        validateTemplate(logger, model, distribution, tool, tool.getName(), errors);
+        validateTemplate(logger, model, distribution, tool, errors);
         adjustExtraProperties(model.getPackagers().getChocolatey(), tool.getName());
         adjustExtraProperties(tool, tool.getName());
         mergeExtraProperties(tool, model.getPackagers().getChocolatey());
@@ -332,7 +333,7 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
-        validateTemplate(logger, model, distribution, tool, tool.getName(), errors);
+        validateTemplate(logger, model, distribution, tool, errors);
         Scoop commonScoop = model.getPackagers().getScoop();
         adjustExtraProperties(commonScoop, tool.getName());
         adjustExtraProperties(tool, tool.getName());
@@ -358,7 +359,7 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
-        validateTemplate(logger, model, distribution, tool, tool.getName(), errors);
+        validateTemplate(logger, model, distribution, tool, errors);
         Snap commonSnap = model.getPackagers().getSnap();
         adjustExtraProperties(commonSnap, tool.getName());
         adjustExtraProperties(tool, tool.getName());
@@ -430,9 +431,11 @@ public final class JReleaserModelValidator {
         tool.setSlots(new ArrayList<>(commonSlots.values()));
     }
 
-    private static void validateTemplate(Logger logger, JReleaserModel model, Distribution distribution, Tool tool, String toolName, List<String> errors) {
+    private static void validateTemplate(Logger logger, JReleaserModel model, Distribution distribution, Tool tool, List<String> errors) {
         if (null != tool.getTemplateDirectory() && !tool.getTemplateDirectory().toFile().exists()) {
-            errors.add("distribution." + distribution.getName() + "." + toolName + ".template does not exist. " + tool.getTemplateDirectory());
+            errors.add("distribution." + distribution.getName() + "." + tool.getName() + ".template does not exist. " + tool.getTemplateDirectory());
+        } else {
+            tool.setTemplateDirectory(Paths.get("src/distributions/" + distribution.getName() + "/" + tool.getName()));
         }
     }
 

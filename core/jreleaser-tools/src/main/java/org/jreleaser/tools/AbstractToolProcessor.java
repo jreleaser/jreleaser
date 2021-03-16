@@ -26,6 +26,7 @@ import org.jreleaser.model.Tool;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.FileUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
 
 import java.io.ByteArrayOutputStream;
@@ -137,6 +138,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Map<String, Object> newProps = context.getModel().props();
+        newProps.putAll(props);
         context.getLogger().debug("Filling distribution properties into props");
         fillDistributionProperties(newProps, distribution, context.getModel().getRelease());
         context.getLogger().debug("Filling artifact properties into props");
@@ -184,6 +186,18 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 throw (ToolProcessingException) e;
             }
             throw new ToolProcessingException("Unexpected error", e);
+        }
+    }
+
+    protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+        try {
+            FileUtils.copyFiles(context.getLogger(), prepareDirectory, packageDirectory);
+        } catch (IOException e) {
+            throw new ToolProcessingException("Unexpected error when copying files from " +
+                context.getBasedir().relativize(prepareDirectory) + " to " +
+                context.getBasedir().relativize(packageDirectory), e);
         }
     }
 

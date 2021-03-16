@@ -30,6 +30,7 @@ import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
@@ -69,16 +70,35 @@ public final class FileUtils {
         return copier.isSuccessful();
     }
 
+    public static boolean copyFiles(Logger logger, Path source, Path target, Predicate<Path> filter) throws IOException {
+        FileTreeCopy copier = new FileTreeCopy(logger, source, target, filter);
+        Files.walkFileTree(source, copier);
+        return copier.isSuccessful();
+    }
+
     private static class FileTreeCopy implements FileVisitor<Path> {
         private final Logger logger;
         private final Path source;
         private final Path target;
+        private final Predicate<Path> filter;
         private boolean success = true;
 
         FileTreeCopy(Logger logger, Path source, Path target) {
+            this(logger, source, target, null);
+        }
+
+        FileTreeCopy(Logger logger, Path source, Path target, Predicate<Path> filter) {
             this.logger = logger;
             this.source = source;
             this.target = target;
+            this.filter = filter;
+        }
+
+        private boolean filtered(Path path) {
+            if (null != filter) {
+                return filter.test(path);
+            }
+            return false;
         }
 
         public boolean isSuccessful() {
@@ -87,6 +107,8 @@ public final class FileUtils {
 
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+            if (filtered(dir)) return SKIP_SUBTREE;
+
             Path newdir = target.resolve(source.relativize(dir));
             try {
                 Files.copy(dir, newdir);
@@ -103,6 +125,8 @@ public final class FileUtils {
 
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+            if (filtered(file)) return CONTINUE;
+
             try {
                 Path newfile = target.resolve(source.relativize(file));
                 Files.copy(file, newfile, REPLACE_EXISTING);
@@ -116,6 +140,8 @@ public final class FileUtils {
 
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+            if (filtered(dir)) return CONTINUE;
+
             if (exc == null) {
                 Path newdir = target.resolve(source.relativize(dir));
                 try {

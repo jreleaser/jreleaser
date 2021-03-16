@@ -45,7 +45,7 @@ public class ScoopToolProcessor extends AbstractToolProcessor<Scoop> {
 
     @Override
     protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        context.getLogger().debug("Tool {} does not require additional packaging", getToolName());
+        copyPreparedFiles(distribution, props);
         return true;
     }
 
