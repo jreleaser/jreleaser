@@ -15,15 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.app;
+package org.jreleaser.ant.tasks;
+
+import org.jreleaser.util.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
@@ -38,32 +41,33 @@ final class Banner {
     private final String productId = bundle.getString("product.id");
     private final String productName = bundle.getString("product.name");
     private final String banner = MessageFormat.format(bundle.getString("product.banner"), productName, productVersion);
+    private final List<String> visited = new ArrayList<>();
 
     private Banner() {
         // nooop
     }
 
-    public static void display(PrintWriter out) {
+    public static void display(Logger logger) {
         try {
-            File parent = new File(System.getProperty("user.home"), "/.jreleaser/caches");
+            File parent = new File(System.getProperty("user.home"), "/.ant/caches");
             File markerFile = getMarkerFile(parent, b);
             if (!markerFile.exists()) {
-                out.println(b.banner);
+                logger.info(b.banner);
                 markerFile.getParentFile().mkdirs();
-                PrintStream fout = new PrintStream(new FileOutputStream(markerFile));
-                fout.println("1");
-                fout.close();
+                PrintStream out = new PrintStream(new FileOutputStream(markerFile));
+                out.println("1");
+                out.close();
                 writeQuietly(markerFile, "1");
             } else {
                 try {
                     int count = Integer.parseInt(readQuietly(markerFile));
                     if (count < 3) {
-                        out.println(b.banner);
+                        logger.info(b.banner);
                     }
                     writeQuietly(markerFile, (count + 1) + "");
                 } catch (NumberFormatException e) {
                     writeQuietly(markerFile, "1");
-                    out.println(b.banner);
+                    logger.info(b.banner);
                 }
             }
         } catch (IOException ignored) {

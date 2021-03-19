@@ -41,7 +41,7 @@ public class Main implements Runnable {
     CommandLine.Model.CommandSpec spec;
 
     public void run() {
-        Banner.display();
+        Banner.display(out);
 
         spec.commandLine().usage(out);
     }

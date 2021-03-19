@@ -15,48 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.ant.tasks;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.releaser.Releasers;
 
-import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
-import static org.jreleaser.maven.plugin.JReleaserSignMojo.sign;
+import static org.jreleaser.ant.tasks.JReleaserChecksumTask.checksum;
+import static org.jreleaser.ant.tasks.JReleaserSignTask.sign;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "release")
-public class JReleaserReleaseMojo extends AbstractJReleaserMojo {
-    /**
-     * Skip execution.
-     */
-    @Parameter(property = "jreleaser.release.skip")
-    private boolean skip;
-
+public class JReleaserReleaseTask extends AbstractJReleaserTask {
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) return;
-
-        JReleaserContext context = createContext();
-        context.getLogger().info("dryrun set to {}", dryrun);
+    protected void consumeModel(JReleaserModel jreleaserModel) {
+        JReleaserContext context = createContext(jreleaserModel);
         checksum(context);
         sign(context);
         release(context);
     }
 
-    static void release(JReleaserContext context) throws MojoExecutionException {
+    static void release(JReleaserContext context) {
         try {
             Releasers.release(context);
         } catch (ReleaseException e) {
-            throw new MojoExecutionException("Unexpected error", e);
+            throw new JReleaserException("Unexpected error when creating release.", e);
         }
     }
 }

@@ -15,11 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.ant.tasks;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
@@ -34,15 +31,14 @@ import java.util.stream.Collectors;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractJReleaserProcessorMojo extends AbstractJReleaserMojo {
-    /**
-     * Stops on the first error.
-     */
-    @Parameter(property = "jreleaser.failfast", defaultValue = "true")
+abstract class AbstractJReleaserProcessorTask extends AbstractJReleaserTask {
     protected boolean failFast;
 
-    protected static void processContext(JReleaserContext context, boolean failFast, String action, ToolProcessingFunction function)
-        throws MojoExecutionException, MojoFailureException {
+    public void setFailFast(boolean failFast) {
+        this.failFast = failFast;
+    }
+
+    protected static void processContext(JReleaserContext context, boolean failFast, String action, ToolProcessingFunction function) {
         context.getLogger().info("{} distributions", action);
         List<Exception> exceptions = new ArrayList<>();
         for (Distribution distribution : context.getModel().getDistributions().values()) {
@@ -54,7 +50,7 @@ abstract class AbstractJReleaserProcessorMojo extends AbstractJReleaserMojo {
 
                     function.consume(processor);
                 } catch (JReleaserException | ToolProcessingException e) {
-                    if (failFast) throw new MojoExecutionException("Unexpected error", e);
+                    if (failFast) throw new JReleaserException("Unexpected error", e);
                     exceptions.add(e);
                     context.getLogger().warn("Unexpected error", e);
                 }
@@ -62,7 +58,7 @@ abstract class AbstractJReleaserProcessorMojo extends AbstractJReleaserMojo {
         }
 
         if (!exceptions.isEmpty()) {
-            throw new MojoExecutionException("There were " + exceptions.size() + " failure(s)" +
+            throw new JReleaserException("There were " + exceptions.size() + " failure(s)" +
                 System.lineSeparator() +
                 exceptions.stream()
                     .map(Exception::getMessage)

@@ -22,16 +22,19 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.releaser.Releasers;
 
 import static org.jreleaser.maven.plugin.JReleaserAnnounceMojo.announce;
 import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
 import static org.jreleaser.maven.plugin.JReleaserPackageMojo.packageTools;
 import static org.jreleaser.maven.plugin.JReleaserPrepareMojo.prepare;
+import static org.jreleaser.maven.plugin.JReleaserReleaseMojo.release;
 import static org.jreleaser.maven.plugin.JReleaserSignMojo.sign;
 import static org.jreleaser.maven.plugin.JReleaserUploadMojo.upload;
 
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
 @Mojo(name = "full-release")
 public class JReleaserFullReleaseMojo extends AbstractJReleaserMojo {
     /**
@@ -54,13 +57,5 @@ public class JReleaserFullReleaseMojo extends AbstractJReleaserMojo {
         packageTools(context, true);
         upload(context, true);
         announce(context);
-    }
-
-    static void release(JReleaserContext context) throws MojoExecutionException {
-        try {
-            Releasers.release(context);
-        } catch (ReleaseException e) {
-            throw new MojoExecutionException("Unexpected error", e);
-        }
     }
 }

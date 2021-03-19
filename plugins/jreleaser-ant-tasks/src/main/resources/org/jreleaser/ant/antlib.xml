@@ -1,0 +1,75 @@
+<!--
+
+    SPDX-License-Identifier: Apache-2.0
+
+    Copyright 2020-2021 Andres Almiray.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<antlib>
+    <taskdef
+            name="announce"
+            classname="org.jreleaser.ant.tasks.JReleaserAnnounceTask"
+            onerror="ignore"/>
+
+    <taskdef
+            name="checksum"
+            classname="org.jreleaser.ant.tasks.JReleaserChecksumTask"
+            onerror="ignore"/>
+
+    <taskdef
+            name="config"
+            classname="org.jreleaser.ant.tasks.JReleaserConfigTask"
+            onerror="ignore"/>
+
+    <taskdef
+            name="full-release"
+            classname="org.jreleaser.ant.tasks.JReleaserFullReleaseTask"
+            onerror="ignore"/>
+
+    <taskdef
+            name="template"
+            classname="org.jreleaser.ant.tasks.JReleaserGenerateTemplateTask"
+            onerror="ignore"/>
+
+    <taskdef
+            name="init"
+            classname="org.jreleaser.ant.tasks.JReleaserInitTask"
+            onerror="ignore"/>
+
+    <taskdef
+            name="package"
+            classname="org.jreleaser.ant.tasks.JReleaserPackageTask"
+            onerror="ignore"/>
+
+    <taskdef
+            name="prepare"
+            classname="org.jreleaser.ant.tasks.JReleaserPrepareTask"
+            onerror="ignore"/>
+
+    <taskdef
+            name="release"
+            classname="org.jreleaser.ant.tasks.JReleaserReleaseTask"
+            onerror="ignore"/>
+
+    <taskdef
+            name="sign"
+            classname="org.jreleaser.ant.tasks.JReleaserSignTask"
+            onerror="ignore"/>
+
+    <taskdef
+            name="upload"
+            classname="org.jreleaser.ant.tasks.JReleaserUploadTask"
+            onerror="ignore"/>
+</antlib>

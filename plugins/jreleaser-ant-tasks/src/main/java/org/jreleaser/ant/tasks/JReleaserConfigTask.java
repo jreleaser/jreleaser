@@ -15,13 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.ant.tasks;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.maven.plugin.internal.JReleaserModelPrinter;
+import org.jreleaser.ant.tasks.internal.JReleaserModelPrinter;
+import org.jreleaser.model.JReleaserModel;
 
 import java.io.PrintWriter;
 
@@ -29,20 +26,10 @@ import java.io.PrintWriter;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "config")
-public class JReleaserConfigMojo extends AbstractJReleaserMojo {
-    /**
-     * Skip execution.
-     */
-    @Parameter(property = "jreleaser.config.skip")
-    private boolean skip;
-
+public class JReleaserConfigTask extends AbstractJReleaserTask {
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) return;
-
+    protected void consumeModel(JReleaserModel jreleaserModel) {
         new JReleaserModelPrinter(new PrintWriter(System.out, true))
-            .print(convertAndValidateModel().asMap());
+            .print(jreleaserModel.asMap());
     }
 }

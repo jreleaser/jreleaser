@@ -15,45 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.ant.tasks;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.signer.Signer;
 import org.jreleaser.signer.SigningException;
 
-import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
+import static org.jreleaser.ant.tasks.JReleaserChecksumTask.checksum;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "sign")
-public class JReleaserSignMojo extends AbstractJReleaserMojo {
-    /**
-     * Skip execution.
-     */
-    @Parameter(property = "jreleaser.sign.skip")
-    private boolean skip;
-
+public class JReleaserSignTask extends AbstractJReleaserTask {
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) return;
-
-        JReleaserContext context = createContext();
+    protected void consumeModel(JReleaserModel jreleaserModel) {
+        JReleaserContext context = createContext(jreleaserModel);
         checksum(context);
         sign(context);
     }
 
-    static void sign(JReleaserContext context) throws MojoExecutionException {
+    static void sign(JReleaserContext context) {
         try {
             Signer.sign(context);
         } catch (SigningException e) {
-            throw new MojoExecutionException("Unexpected error when signing artifacts", e);
+            throw new JReleaserException("Unexpected error when signing release.", e);
         }
     }
 }

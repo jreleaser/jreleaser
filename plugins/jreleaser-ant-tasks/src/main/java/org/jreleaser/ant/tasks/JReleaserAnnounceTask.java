@@ -15,41 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.ant.tasks;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.announce.Announcers;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "announce")
-public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
-    /**
-     * Skip execution.
-     */
-    @Parameter(property = "jreleaser.announce.skip")
-    private boolean skip;
-
+public class JReleaserAnnounceTask extends AbstractJReleaserTask {
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) return;
-
-        announce(createContext());
+    protected void consumeModel(JReleaserModel jreleaserModel) {
+        announce(createContext(jreleaserModel));
     }
 
-    static void announce(JReleaserContext context) throws MojoExecutionException {
+    static void announce(JReleaserContext context) {
         try {
             Announcers.announce(context);
         } catch (AnnounceException e) {
-            throw new MojoExecutionException("Unexpected error", e);
+            throw new JReleaserException("Unexpected error when announcing release.", e);
         }
     }
 }

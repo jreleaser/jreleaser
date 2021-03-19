@@ -59,7 +59,7 @@ abstract class AbstractCommand implements Callable<Integer> {
     protected abstract Main parent();
 
     public Integer call() {
-        Banner.display();
+        Banner.display(parent().out);
 
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
 

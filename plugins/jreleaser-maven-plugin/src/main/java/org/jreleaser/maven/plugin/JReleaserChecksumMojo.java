@@ -25,6 +25,10 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.tools.Checksums;
 
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
 @Mojo(name = "checksum")
 public class JReleaserChecksumMojo extends AbstractJReleaserMojo {
     /**

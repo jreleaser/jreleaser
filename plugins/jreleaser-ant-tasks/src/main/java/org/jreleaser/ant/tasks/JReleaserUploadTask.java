@@ -15,38 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.ant.tasks;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserModel;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "upload")
-public class JReleaserUploadMojo extends AbstractJReleaserProcessorMojo {
-    /**
-     * Skip execution.
-     */
-    @Parameter(property = "jreleaser.upload.skip")
-    private boolean skip;
-
+public class JReleaserUploadTask extends AbstractJReleaserProcessorTask {
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) return;
-
-        JReleaserContext context = createContext();
-        context.getLogger().info("dryrun set to {}", dryrun);
-        upload(context, failFast);
+    protected void consumeModel(JReleaserModel jreleaserModel) {
+        upload(createContext(jreleaserModel), failFast);
     }
 
-    static void upload(JReleaserContext context, boolean failFast)
-        throws MojoExecutionException, MojoFailureException {
+    static void upload(JReleaserContext context, boolean failFast) {
         processContext(context, failFast, "Uploading", processor -> {
             if (processor.prepareDistribution()) {
                 context.getLogger().info("Uploaded " + processor.getDistributionName() +
