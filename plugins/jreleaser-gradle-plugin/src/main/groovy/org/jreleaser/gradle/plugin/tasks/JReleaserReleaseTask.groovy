@@ -22,9 +22,11 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
 import org.jreleaser.model.JReleaserContext
 import org.jreleaser.releaser.Releasers
-import org.jreleaser.tools.Checksums
 
 import javax.inject.Inject
+
+import static org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask.checksum
+import static org.jreleaser.gradle.plugin.tasks.JReleaserSignTask.sign
 
 /**
  *
@@ -41,8 +43,14 @@ abstract class JReleaserReleaseTask extends AbstractJReleaserTask {
     @TaskAction
     void createRelease() {
         JReleaserContext context = createContext()
+        context.logger.info('dryrun set to {}', dryrun.get())
 
-        Checksums.collectAndWriteChecksums(context)
+        checksum(context)
+        sign(context)
+        release(context)
+    }
+
+    static void release(JReleaserContext context) {
         Releasers.release(context)
     }
 }

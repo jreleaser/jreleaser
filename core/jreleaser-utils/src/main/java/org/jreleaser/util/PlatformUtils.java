@@ -36,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class OsUtils {
+public final class PlatformUtils {
     private static final OsDetector OS_DETECTOR = new OsDetector();
     private static final List<String> OS_NAMES = new ArrayList<>();
     private static final List<String> OS_ARCHS = new ArrayList<>();
@@ -79,7 +79,7 @@ public final class OsUtils {
         OS_ARCHS.sort(Comparator.naturalOrder());
     }
 
-    private OsUtils() {
+    private PlatformUtils() {
         //noop
     }
 
@@ -100,6 +100,47 @@ public final class OsUtils {
                 return OS_NAMES.contains(parts[0]);
             case 2:
                 return OS_NAMES.contains(parts[0]) && OS_ARCHS.contains(parts[1]);
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isWindows(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        switch (parts.length) {
+            case 1:
+            case 2:
+                return "windows".equalsIgnoreCase(osNameOrClassifier);
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isMac(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        switch (parts.length) {
+            case 1:
+            case 2:
+                return "osx".equalsIgnoreCase(osNameOrClassifier);
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isUnix(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        switch (parts.length) {
+            case 1:
+            case 2:
+                return OS_NAMES.contains(parts[0]) &&
+                    !"osx".equalsIgnoreCase(osNameOrClassifier) &&
+                    !"windows".equalsIgnoreCase(osNameOrClassifier);
             default:
                 return false;
         }

@@ -75,7 +75,7 @@ abstract class AbstractTool implements Tool {
     protected abstract String toolName()
 
     protected <T extends org.jreleaser.model.Tool> void fillToolProperties(T tool) {
-        tool.enabled = enabled.getOrElse(isSet())
+        tool.enabled = enabled.orElse(isSet())
         if (templateDirectory.present) {
             tool.templateDirectory = templateDirectory.get().asFile.toPath()
         } else if (localTemplate.asFile.get().exists()) {

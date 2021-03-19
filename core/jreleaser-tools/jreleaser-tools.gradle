@@ -18,6 +18,7 @@
 dependencies {
     api project(':jreleaser-model')
     api project(':jreleaser-templates')
+    api project(':jreleaser-releaser')
     api("com.google.guava:guava:$guavaVersion") { transitive = false }
     api "org.zeroturnaround:zt-exec:$ztexecVersion"
 }

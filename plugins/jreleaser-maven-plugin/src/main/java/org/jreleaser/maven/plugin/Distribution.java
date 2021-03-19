@@ -184,7 +184,7 @@ public class Distribution extends Packagers implements ExtraProperties {
 
     public enum DistributionType {
         BINARY,
-        SINGLE_JAR
+        JLINK
         // NATIVE_IMAGE,
     }
 }

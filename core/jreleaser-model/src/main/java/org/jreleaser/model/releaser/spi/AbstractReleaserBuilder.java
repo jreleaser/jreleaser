@@ -79,6 +79,10 @@ public abstract class AbstractReleaserBuilder<R extends Releaser, B extends Rele
     public B configureWith(JReleaserContext context) {
         this.context = context;
 
+        for (Artifact artifact : context.getModel().getFiles()) {
+            addReleaseAsset(context.getBasedir().resolve(Paths.get(artifact.getPath())));
+        }
+
         for (Distribution distribution : context.getModel().getDistributions().values()) {
             for (Artifact artifact : distribution.getArtifacts()) {
                 addReleaseAsset(context.getBasedir().resolve(Paths.get(artifact.getPath())));

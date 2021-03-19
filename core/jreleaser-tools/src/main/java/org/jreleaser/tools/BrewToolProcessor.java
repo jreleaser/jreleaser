@@ -38,6 +38,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class BrewToolProcessor extends AbstractToolProcessor<Brew> {
+
     public BrewToolProcessor(JReleaserContext context, Brew brew) {
         super(context, brew);
     }
@@ -46,6 +47,11 @@ public class BrewToolProcessor extends AbstractToolProcessor<Brew> {
     protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         copyPreparedFiles(distribution, props);
         return true;
+    }
+
+    @Override
+    protected String getUploadRepositoryName(Distribution distribution) {
+        return "homebrew-tap";
     }
 
     @Override

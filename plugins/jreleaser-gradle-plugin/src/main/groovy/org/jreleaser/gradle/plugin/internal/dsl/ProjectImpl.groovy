@@ -24,6 +24,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jreleaser.gradle.plugin.dsl.Project
 
 import javax.inject.Inject
 
@@ -35,10 +36,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class ProjectImpl implements org.jreleaser.gradle.plugin.dsl.Project {
+class ProjectImpl implements Project {
     final Property<String> name
     final Property<String> version
     final Property<String> description
+    final Property<String> longDescription
     final Property<String> website
     final Property<String> license
     final ListProperty<String> authors
@@ -53,6 +55,7 @@ class ProjectImpl implements org.jreleaser.gradle.plugin.dsl.Project {
         name = objects.property(String).convention(nameProvider)
         version = objects.property(String).convention(versionProvider)
         description = objects.property(String).convention(descriptionProvider)
+        longDescription = objects.property(String).convention(descriptionProvider)
         website = objects.property(String).convention(Providers.notDefined())
         license = objects.property(String).convention(Providers.notDefined())
         authors = objects.listProperty(String).convention(Providers.notDefined())
@@ -78,9 +81,10 @@ class ProjectImpl implements org.jreleaser.gradle.plugin.dsl.Project {
         org.jreleaser.model.Project project = new org.jreleaser.model.Project()
         project.name = name.get()
         project.version = version.get()
-        project.description = description.orNull
-        project.website = website.orNull
-        project.license = license.orNull
+        if (description.present) project.description = description.get()
+        if (longDescription.present) project.longDescription = longDescription.get()
+        if (website.present) project.website = website.get()
+        if (license.present) project.license = license.get()
         project.authors = (List<String>) authors.getOrElse([])
         project.tags = (List<String>) tags.getOrElse([])
         if (extraProperties.present) project.extraProperties.putAll(extraProperties.get())

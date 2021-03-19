@@ -24,6 +24,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.Scoop
 
 import javax.inject.Inject
 
@@ -33,7 +34,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class ScoopImpl extends AbstractTool implements org.jreleaser.gradle.plugin.dsl.Scoop {
+class ScoopImpl extends AbstractTool implements Scoop {
     final Property<String> checkverUrl
     final Property<String> autoupdateUrl
 
@@ -50,16 +51,16 @@ class ScoopImpl extends AbstractTool implements org.jreleaser.gradle.plugin.dsl.
     @Override
     @Internal
     boolean isSet() {
-        return super.isSet() ||
-                checkverUrl.present ||
-                autoupdateUrl.present
+        super.isSet() ||
+            checkverUrl.present ||
+            autoupdateUrl.present
     }
 
     org.jreleaser.model.Scoop toModel() {
         org.jreleaser.model.Scoop tool = new org.jreleaser.model.Scoop()
         fillToolProperties(tool)
-        tool.checkverUrl = checkverUrl.orNull
-        tool.autoupdateUrl = autoupdateUrl.orNull
+        if (checkverUrl.present) tool.checkverUrl = checkverUrl.get()
+        if (autoupdateUrl.present) tool.autoupdateUrl = autoupdateUrl.get()
         tool
     }
 }

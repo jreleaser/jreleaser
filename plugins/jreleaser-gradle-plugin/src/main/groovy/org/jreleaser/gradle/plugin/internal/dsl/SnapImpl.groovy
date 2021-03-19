@@ -28,6 +28,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.Snap
 import org.jreleaser.model.Plug
 import org.jreleaser.model.Slot
 
@@ -41,11 +42,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class SnapImpl extends AbstractTool implements org.jreleaser.gradle.plugin.dsl.Snap {
+class SnapImpl extends AbstractTool implements Snap {
     final Property<String> base
     final Property<String> grade
     final Property<String> confinement
     final RegularFileProperty exportedLogin
+    final Property<Boolean> remoteBuild
     final ListProperty<String> localPlugs
     final NamedDomainObjectContainer<PlugImpl> plugs
     final NamedDomainObjectContainer<SlotImpl> slots
@@ -57,6 +59,7 @@ class SnapImpl extends AbstractTool implements org.jreleaser.gradle.plugin.dsl.S
         grade = objects.property(String).convention(Providers.notDefined())
         confinement = objects.property(String).convention(Providers.notDefined())
         exportedLogin = objects.fileProperty().convention(Providers.notDefined())
+        remoteBuild = objects.property(Boolean).convention(Providers.notDefined())
         localPlugs = objects.listProperty(String).convention(Providers.notDefined())
 
         plugs = objects.domainObjectContainer(PlugImpl, new NamedDomainObjectFactory<PlugImpl>() {
@@ -91,11 +94,12 @@ class SnapImpl extends AbstractTool implements org.jreleaser.gradle.plugin.dsl.S
     @Override
     @Internal
     boolean isSet() {
-        return super.isSet() ||
+        super.isSet() ||
             base.present ||
             grade.present ||
             confinement.present ||
             exportedLogin.present ||
+            remoteBuild.present ||
             localPlugs.present ||
             plugs.size() ||
             slots.size()
@@ -104,12 +108,13 @@ class SnapImpl extends AbstractTool implements org.jreleaser.gradle.plugin.dsl.S
     org.jreleaser.model.Snap toModel() {
         org.jreleaser.model.Snap tool = new org.jreleaser.model.Snap()
         fillToolProperties(tool)
-        tool.base = base.orNull
-        tool.grade = grade.orNull
-        tool.confinement = confinement.orNull
+        if (base.present) tool.base = base.get()
+        if (grade.present) tool.grade = grade.get()
+        if (confinement.present) tool.confinement = confinement.get()
         if (exportedLogin.present) {
             tool.exportedLogin = exportedLogin.get().asFile.absolutePath
         }
+        tool.remoteBuild = remoteBuild.getOrElse(false)
         tool.localPlugs = (List<String>) localPlugs.getOrElse([])
         tool.plugs.addAll(plugs.collect([]) { PlugImpl plug ->
             plug.toModel()

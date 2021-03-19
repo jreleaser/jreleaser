@@ -30,8 +30,9 @@ import java.io.PrintWriter;
     mixinStandardHelpOptions = true,
     versionProvider = Versions.class,
     subcommands = {Init.class, Config.class, Template.class,
-        Checksum.class, Prepare.class, Package.class, Sign.class,
-        Release.class, Announce.class})
+        Checksum.class, Sign.class, Release.class,
+        Prepare.class, Package.class, Upload.class,
+        Announce.class, FullRelease.class})
 public class Main implements Runnable {
     PrintWriter out;
     PrintWriter err;

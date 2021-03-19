@@ -50,7 +50,7 @@ public class SdkmanAnnouncer implements Announcer {
         Sdkman sdkman = context.getModel().getAnnouncers().getSdkman();
 
         if (!sdkman.isEnabled()) {
-            context.getLogger().info("Sdkman announcer is disabled");
+            context.getLogger().debug("Sdkman announcer is disabled");
             return;
         }
 

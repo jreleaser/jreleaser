@@ -18,7 +18,7 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.Logger;
-import org.jreleaser.util.OsUtils;
+import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -135,7 +135,7 @@ public final class JReleaserModelValidator {
             errors.add("zulip.apiHost must not be blank.");
         }
         if (isBlank(zulip.getChannel())) {
-            errors.add("zulip.channel must not be blank.");
+            zulip.setChannel("announce");
         }
     }
 
@@ -155,10 +155,13 @@ public final class JReleaserModelValidator {
         if (isBlank(service.getRepoName())) {
             service.setRepoName(project.getName());
         }
+        if (isBlank(service.getUsername())) {
+            service.setUsername(service.getRepoOwner());
+        }
 
-        checkEnvSetting(logger, errors, service.getAuthorization(),
+        checkEnvSetting(logger, errors, service.getPassword(),
             service.getName().toUpperCase() + "_TOKEN",
-            service.getName() + ".authorization");
+            service.getName() + ".password");
 
         if (isBlank(service.getTagName())) {
             service.setTagName("v" + project.getVersion());
@@ -168,6 +171,9 @@ public final class JReleaserModelValidator {
         }
         if (!service.getChangelog().isEnabledSet()) {
             service.getChangelog().setEnabled(true);
+        }
+        if (service.isSign() && isBlank(service.getSigningKey())) {
+            errors.add(service.getName() + ".signingKey must not be blank if sign is set to `true`");
         }
     }
 
@@ -291,10 +297,10 @@ public final class JReleaserModelValidator {
         if (isBlank(artifact.getJavaVersion())) {
             artifact.setJavaVersion(distribution.getJavaVersion());
         }
-        if (isNotBlank(artifact.getPlatform()) && !OsUtils.isSupported(artifact.getPlatform().trim())) {
+        if (isNotBlank(artifact.getPlatform()) && !PlatformUtils.isSupported(artifact.getPlatform().trim())) {
             logger.warn("distribution.{}.artifact[{}].platform ({}) is not supported. Please use `${name}` or `${name}-${arch}` from{}       name = {}{}       arch = {}",
                 distribution.getName(), index, artifact.getPlatform(), System.lineSeparator(),
-                OsUtils.getSupportedOsNames(), System.lineSeparator(), OsUtils.getSupportedOsArchs());
+                PlatformUtils.getSupportedOsNames(), System.lineSeparator(), PlatformUtils.getSupportedOsArchs());
         }
     }
 
@@ -325,6 +331,13 @@ public final class JReleaserModelValidator {
         adjustExtraProperties(model.getPackagers().getChocolatey(), tool.getName());
         adjustExtraProperties(tool, tool.getName());
         mergeExtraProperties(tool, model.getPackagers().getChocolatey());
+
+        if (isBlank(tool.getUsername())) {
+            tool.setUsername(model.getRelease().getGitService().getRepoOwner());
+        }
+        if (!tool.isRemoteBuildSet() && model.getPackagers().getChocolatey().isRemoteBuildSet()) {
+            tool.setRemoteBuild(model.getPackagers().getChocolatey().isRemoteBuild());
+        }
     }
 
     private static void validateScoop(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Scoop tool, List<String> errors) {
@@ -385,7 +398,10 @@ public final class JReleaserModelValidator {
                 errors.add("distribution." + distribution.getName() + ".snap.confinement must not be blank");
             }
         }
-        if (isBlank(tool.getExportedLogin())) {
+        if (!tool.isRemoteBuildSet() && model.getPackagers().getSnap().isRemoteBuildSet()) {
+            tool.setRemoteBuild(model.getPackagers().getSnap().isRemoteBuild());
+        }
+        if (!tool.isRemoteBuild() && isBlank(tool.getExportedLogin())) {
             tool.setExportedLogin(commonSnap.getExportedLogin());
             if (isBlank(tool.getExportedLogin())) {
                 errors.add("distribution." + distribution.getName() + ".snap.exportedLogin must not be empty");

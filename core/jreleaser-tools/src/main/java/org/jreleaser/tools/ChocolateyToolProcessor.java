@@ -23,7 +23,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
-import org.jreleaser.util.OsUtils;
+import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
@@ -43,14 +43,33 @@ public class ChocolateyToolProcessor extends AbstractToolProcessor<Chocolatey> {
 
     @Override
     protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        if (!OsUtils.isWindows()) {
+        if (tool.isRemoteBuild()) {
+            // copy from prepare to package
+            copyPreparedFiles(distribution, props);
+            return true;
+        }
+
+        if (!PlatformUtils.isWindows()) {
             context.getLogger().debug("Tool {} must run on Windows", getToolName());
             return false;
         }
 
         copyPreparedFiles(distribution, props);
 
-        return true;
+        return createChocolateyPackage(distribution, props);
+    }
+
+    @Override
+    protected boolean doUploadDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        if (tool.isRemoteBuild()) {
+            super.doUploadDistribution(distribution, props);
+        }
+        return uploadChocolateyPackage(distribution, props);
+    }
+
+    @Override
+    protected String getUploadRepositoryName(Distribution distribution) {
+        return null;
     }
 
     @Override
@@ -62,7 +81,7 @@ public class ChocolateyToolProcessor extends AbstractToolProcessor<Chocolatey> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
-        // noop
+        props.put(Constants.KEY_CHOCOLATEY_USERNAME, getTool().getUsername());
     }
 
     @Override
@@ -76,5 +95,15 @@ public class ChocolateyToolProcessor extends AbstractToolProcessor<Chocolatey> {
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
+    }
+
+    private boolean createChocolateyPackage(Distribution distribution, Map<String, Object> props) {
+        context.getLogger().warn("Local build of chocolatey packages is not yet supported.");
+        return false;
+    }
+
+    private boolean uploadChocolateyPackage(Distribution distribution, Map<String, Object> props) {
+        context.getLogger().warn("Local publication of chocolatey packages is not yet supported.");
+        return false;
     }
 }

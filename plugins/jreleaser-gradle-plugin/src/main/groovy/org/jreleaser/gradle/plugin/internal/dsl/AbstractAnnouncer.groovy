@@ -23,7 +23,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Announcer
-import org.jreleaser.model.Tool
 
 import javax.inject.Inject
 
@@ -46,7 +45,7 @@ abstract class AbstractAnnouncer implements Announcer {
         enabled.present
     }
 
-    protected <T extends Tool> void fillToolProperties(T tool) {
-        if (enabled.present) tool.enabled = enabled.get()
+    protected <A extends org.jreleaser.model.Announcer> void fillProperties(A announcer) {
+        if (enabled.present) announcer.enabled = enabled.get()
     }
 }

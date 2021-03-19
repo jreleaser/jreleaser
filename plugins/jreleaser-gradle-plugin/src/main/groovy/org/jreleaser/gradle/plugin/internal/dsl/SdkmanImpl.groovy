@@ -50,7 +50,7 @@ class SdkmanImpl extends AbstractAnnouncer implements Sdkman {
     @Override
     @Internal
     boolean isSet() {
-        return super.isSet() ||
+        super.isSet() ||
             consumerKey.present ||
             consumerToken.present ||
             candidate.present ||
@@ -59,11 +59,11 @@ class SdkmanImpl extends AbstractAnnouncer implements Sdkman {
 
     org.jreleaser.model.Sdkman toModel() {
         org.jreleaser.model.Sdkman sdkman = new org.jreleaser.model.Sdkman()
-        sdkman.enabled = enabled.getOrElse(isSet())
-        sdkman.consumerKey = consumerKey.orNull
-        sdkman.consumerToken = consumerToken.orNull
-        sdkman.candidate = candidate.orNull
-        sdkman.major = major.orElse(true)
+        fillProperties(sdkman)
+        if (consumerKey.present) sdkman.consumerKey = consumerKey.get()
+        if (consumerToken.present) sdkman.consumerToken = consumerToken.get()
+        if (candidate.present) sdkman.candidate = candidate.get()
+        sdkman.major = major.getOrElse(true)
         sdkman
     }
 }

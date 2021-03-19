@@ -20,7 +20,9 @@ package org.jreleaser.model;
 import org.jreleaser.util.Constants;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
@@ -36,6 +38,7 @@ public class JReleaserModel implements Domain {
     private final Packagers packagers = new Packagers();
     private final Announcers announcers = new Announcers();
     private final Sign sign = new Sign();
+    private final Set<Artifact> files = new LinkedHashSet<>();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
 
     public Project getProject() {
@@ -78,6 +81,25 @@ public class JReleaserModel implements Domain {
         this.sign.setAll(sign);
     }
 
+    public Set<Artifact> getFiles() {
+        return files;
+    }
+
+    public void setFiles(Set<Artifact> files) {
+        this.files.clear();
+        this.files.addAll(files);
+    }
+
+    public void addFiles(Set<Artifact> files) {
+        this.files.addAll(files);
+    }
+
+    public void addFiles(Artifact artifact) {
+        if (null != artifact) {
+            this.files.add(artifact);
+        }
+    }
+
     public Map<String, Distribution> getDistributions() {
         return distributions;
     }
@@ -118,6 +140,9 @@ public class JReleaserModel implements Domain {
         map.put("packagers", packagers.asMap());
         map.put("announcers", announcers.asMap());
         map.put("sign", sign.asMap());
+        map.put("files", files.stream()
+            .map(Artifact::asMap)
+            .collect(Collectors.toList()));
         map.put("distributions", distributions.values()
             .stream()
             .map(Distribution::asMap)

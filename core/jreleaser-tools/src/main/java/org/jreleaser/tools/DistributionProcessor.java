@@ -22,7 +22,6 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Tool;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
-import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.util.Constants;
 
 import java.nio.file.Path;
@@ -62,19 +61,13 @@ public class DistributionProcessor {
     }
 
     public boolean prepareDistribution() throws ToolProcessingException {
+        context.getLogger().debug("Preparing {} distribution with {}", distributionName, toolName);
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
-            context.getLogger().debug("Skipping {} tool for {} distribution", toolName, distributionName);
+            context.getLogger().debug("Skipping {} for {} distribution", toolName, distributionName);
             return false;
         }
-
-        context.getLogger().info("Preparing {} distribution with tool {}", distributionName, toolName);
-
-        Map<String, Object> props = new LinkedHashMap<>();
-        props.put(Constants.KEY_CHECKSUM_DIRECTORY, context.getChecksumsDirectory());
-        props.put(Constants.KEY_OUTPUT_DIRECTORY, outputDirectory);
-        props.put(Constants.KEY_PREPARE_DIRECTORY, outputDirectory.resolve("prepare"));
 
         context.getLogger().debug("Reading checksums for {} distribution", distributionName);
         for (int i = 0; i < distribution.getArtifacts().size(); i++) {
@@ -82,27 +75,46 @@ public class DistributionProcessor {
             Checksums.readHash(context, distributionName, artifact);
         }
 
-        ToolProcessor<?> toolProcessor = ToolProcessors.findProcessor(context, tool);
-        return toolProcessor.prepareDistribution(distribution, props);
+        return ToolProcessors.findProcessor(context, tool)
+            .prepareDistribution(distribution, initProps());
     }
 
     public boolean packageDistribution() throws ToolProcessingException {
+        context.getLogger().debug("Packaging {} distribution with {}", distributionName, toolName);
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
-            context.getLogger().debug("Skipping {} tool for {} distribution", toolName, distributionName);
+            context.getLogger().debug("Skipping {} for {} distribution", toolName, distributionName);
             return false;
         }
 
-        context.getLogger().info("Packaging {} distribution with tool {}", distributionName, toolName);
+        return ToolProcessors.findProcessor(context, tool)
+            .packageDistribution(distribution, initProps());
+    }
 
+    public boolean uploadDistribution() throws ToolProcessingException {
+        context.getLogger().debug("Uploading {} distribution with {}", distributionName, toolName);
+        Distribution distribution = context.getModel().findDistribution(distributionName);
+        Tool tool = distribution.getTool(toolName);
+        if (!tool.isEnabled()) {
+            context.getLogger().debug("Skipping {} for {} distribution", toolName, distributionName);
+            return false;
+        }
+
+
+        return ToolProcessors.findProcessor(context, tool)
+            .uploadDistribution(distribution, initProps());
+    }
+
+    private Map<String, Object> initProps() {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put(Constants.KEY_OUTPUT_DIRECTORY, outputDirectory);
         props.put(Constants.KEY_PREPARE_DIRECTORY, outputDirectory.resolve("prepare"));
         props.put(Constants.KEY_PACKAGE_DIRECTORY, outputDirectory.resolve("package"));
-
-        ToolProcessor<?> toolProcessor = ToolProcessors.findProcessor(context, tool);
-        return toolProcessor.packageDistribution(distribution, props);
+        props.put(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, context.getBasedir().relativize(outputDirectory.resolve("prepare")));
+        props.put(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, context.getBasedir().relativize(outputDirectory.resolve("package")));
+        props.put(Constants.KEY_CHECKSUM_DIRECTORY, context.getChecksumsDirectory());
+        return props;
     }
 
     public static DistributionProcessorBuilder builder() {

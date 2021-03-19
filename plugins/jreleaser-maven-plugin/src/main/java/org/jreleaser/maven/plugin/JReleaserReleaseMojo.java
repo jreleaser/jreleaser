@@ -42,6 +42,7 @@ public class JReleaserReleaseMojo extends AbstractJReleaserMojo {
         if (skip) return;
 
         JReleaserContext context = createContext();
+        context.getLogger().info("dryrun set to {}", dryrun);
         checksum(context);
         sign(context);
         release(context);

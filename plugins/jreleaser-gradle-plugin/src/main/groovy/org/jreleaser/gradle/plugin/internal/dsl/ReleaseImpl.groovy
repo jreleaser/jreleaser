@@ -19,9 +19,11 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.Gitea
+import org.jreleaser.gradle.plugin.dsl.Github
+import org.jreleaser.gradle.plugin.dsl.Gitlab
+import org.jreleaser.gradle.plugin.dsl.Release
 
 import javax.inject.Inject
 
@@ -31,7 +33,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class ReleaseImpl implements org.jreleaser.gradle.plugin.dsl.Release {
+class ReleaseImpl implements Release {
     final GithubImpl github
     final GitlabImpl gitlab
     final GiteaImpl gitea
@@ -44,25 +46,25 @@ class ReleaseImpl implements org.jreleaser.gradle.plugin.dsl.Release {
     }
 
     @Override
-    void github(Action<? super org.jreleaser.gradle.plugin.dsl.Github> action) {
+    void github(Action<? super Github> action) {
         action.execute(github)
     }
 
     @Override
-    void gitlab(Action<? super org.jreleaser.gradle.plugin.dsl.Gitlab> action) {
+    void gitlab(Action<? super Gitlab> action) {
         action.execute(gitlab)
     }
 
     @Override
-    void gitea(Action<? super org.jreleaser.gradle.plugin.dsl.Gitea> action) {
+    void gitea(Action<? super Gitea> action) {
         action.execute(gitea)
     }
 
     org.jreleaser.model.Release toModel() {
         org.jreleaser.model.Release release = new org.jreleaser.model.Release()
-        if (github.set) release.github = github.toModel()
-        if (gitlab.set) release.gitlab = gitlab.toModel()
-        if (gitea.set) release.gitea = gitea.toModel()
+        if (github.isSet()) release.github = github.toModel()
+        if (gitlab.isSet()) release.gitlab = gitlab.toModel()
+        if (gitea.isSet()) release.gitea = gitea.toModel()
         release
     }
 }

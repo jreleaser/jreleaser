@@ -22,6 +22,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
+import org.jreleaser.gradle.plugin.dsl.Slot
 
 import javax.inject.Inject
 
@@ -33,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class SlotImpl implements org.jreleaser.gradle.plugin.dsl.Slot {
+class SlotImpl implements Slot {
     String name
     final MapProperty<String, String> attributes
     final ListProperty<String> reads

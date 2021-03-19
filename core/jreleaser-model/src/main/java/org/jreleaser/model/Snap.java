@@ -37,6 +37,8 @@ public class Snap extends AbstractTool {
     private String grade = "stable";
     private String confinement = "strict";
     private String exportedLogin;
+    private Boolean remoteBuild;
+    private boolean remoteBuildSet;
 
     public Snap() {
         super(NAME);
@@ -48,6 +50,8 @@ public class Snap extends AbstractTool {
         this.grade = snap.grade;
         this.confinement = snap.confinement;
         this.exportedLogin = snap.exportedLogin;
+        this.remoteBuild = snap.remoteBuild;
+        this.remoteBuildSet = snap.remoteBuildSet;
         setLocalPlugs(localPlugs);
         setPlugs(plugs);
         setSlots(slots);
@@ -151,6 +155,7 @@ public class Snap extends AbstractTool {
             this.slots.remove(slot);
         }
     }
+
     public String getExportedLogin() {
         return exportedLogin;
     }
@@ -159,12 +164,26 @@ public class Snap extends AbstractTool {
         this.exportedLogin = exportedLogin;
     }
 
+    public Boolean isRemoteBuild() {
+        return remoteBuild != null && remoteBuild;
+    }
+
+    public void setRemoteBuild(Boolean remoteBuild) {
+        this.remoteBuildSet = true;
+        this.remoteBuild = remoteBuild;
+    }
+
+    public boolean isRemoteBuildSet() {
+        return remoteBuildSet;
+    }
+
     @Override
     protected void asMap(Map<String, Object> props) {
         props.put("base", base);
         props.put("grade", grade);
         props.put("confinement", confinement);
         props.put("exportedLogin", exportedLogin);
+        props.put("remoteBuild", isRemoteBuild());
         props.put("localPlugs", localPlugs);
         props.put("plugs", plugs);
         props.put("slots", slots);

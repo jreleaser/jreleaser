@@ -56,6 +56,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         resolveConfigFile();
         resolveBasedir();
         logger.info("basedir set to {}", actualBasedir.toAbsolutePath());
+        logger.info("dryrun set to {}", dryrun());
         consumeModel(resolveModel());
     }
 
@@ -83,7 +84,9 @@ public abstract class AbstractModelCommand extends AbstractCommand {
 
     private JReleaserModel resolveModel() {
         try {
+            logger.info("Reading configuration");
             JReleaserModel jreleaserModel = JReleaserConfigLoader.loadConfig(actualConfigFile);
+            logger.info("Validating configuration");
             List<String> errors = JReleaserModelValidator.validate(logger, actualBasedir, jreleaserModel);
             if (!errors.isEmpty()) {
                 Logger logger = new ColorizedJReleaserLoggerAdapter(parent.out);

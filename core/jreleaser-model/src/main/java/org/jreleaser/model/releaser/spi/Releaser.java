@@ -17,10 +17,14 @@
  */
 package org.jreleaser.model.releaser.spi;
 
+import java.io.IOException;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public interface Releaser {
     void release() throws ReleaseException;
+
+    Repository maybeCreateRepository(String repo) throws IOException;
 }

@@ -19,15 +19,8 @@ package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.options.Option
-import org.jreleaser.model.Distribution
 import org.jreleaser.model.JReleaserContext
-import org.jreleaser.model.JReleaserException
-import org.jreleaser.tools.DistributionProcessor
-import org.jreleaser.model.tool.spi.ToolProcessingException
 
 import javax.inject.Inject
 
@@ -37,57 +30,25 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserPackageTask extends AbstractJReleaserTask {
-    @Input
-    final Property<Boolean> failFast
-
-    @Option(option = 'fail-fast', description = 'Stops on first error (OPTIONAL).')
-    void setFailFast(boolean failFast) {
-        this.failFast.set(failFast)
-    }
-
+abstract class JReleaserPackageTask extends AbstractJReleaserProcessorTask {
     @Inject
     JReleaserPackageTask(ObjectFactory objects) {
         super(objects)
-        failFast = objects.property(Boolean).convention(false)
     }
 
     @TaskAction
-    void packageTool() {
+    void packageDistributions() {
         JReleaserContext context = createContext()
-
-        List<Exception> exceptions = new ArrayList<>()
-        for (Distribution distribution : context.model.distributions.values()) {
-            for (String toolName : Distribution.supportedTools()) {
-                try {
-                    DistributionProcessor processor = createDistributionProcessor(context,
-                        distribution,
-                        toolName);
-
-                    if (processor.packageDistribution()) {
-                        context.logger.info('Packaged ' + processor.distributionName +
-                            ' distribution with ' + processor.toolName)
-                    }
-                } catch (JReleaserException | ToolProcessingException e) {
-                    if (failFast) throw new IllegalStateException('Unexpected error', e)
-                    exceptions.add(e)
-                    logger.warn('Unexpected error', e)
-                }
-            }
-        }
-
-        if (!exceptions.isEmpty()) {
-            throw new IllegalStateException('There were ' + exceptions.size() + ' failure(s)')
-        }
+        context.logger.info('dryrun set to {}', dryrun.get())
+        packageTools(context, failFast.get())
     }
 
-    private DistributionProcessor createDistributionProcessor(JReleaserContext context,
-                                                              Distribution distribution,
-                                                              String toolName) {
-        return DistributionProcessor.builder()
-            .context(context)
-            .distributionName(distribution.getName())
-            .toolName(toolName)
-            .build()
+    static void packageTools(JReleaserContext context, boolean failFast) {
+        processContext(context, failFast, 'Packaging', { processor ->
+            if (processor.packageDistribution()) {
+                context.logger.info('Packaged ' + processor.distributionName +
+                    ' distribution with ' + processor.toolName)
+            }
+        })
     }
 }

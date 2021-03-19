@@ -18,6 +18,7 @@
 package org.jreleaser.app;
 
 import org.jreleaser.announce.Announcers;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.announcer.spi.AnnounceException;
@@ -36,15 +37,19 @@ public class Announce extends AbstractModelCommand {
 
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
-        try {
-            Announcers.announce(createContext(jreleaserModel));
-        } catch (AnnounceException e) {
-            throw new JReleaserException("Unexpected error when announcing release " + actualConfigFile.toAbsolutePath(), e);
-        }
+        announce(createContext(jreleaserModel));
     }
 
     @Override
     protected boolean dryrun() {
         return dryrun;
+    }
+
+    static void announce(JReleaserContext context) {
+        try {
+            Announcers.announce(context);
+        } catch (AnnounceException e) {
+            throw new JReleaserException("Unexpected error when announcing release.", e);
+        }
     }
 }

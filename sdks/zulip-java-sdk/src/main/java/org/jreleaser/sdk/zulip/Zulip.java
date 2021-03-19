@@ -63,7 +63,7 @@ public class Zulip {
             .options(new Request.Options(20, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
             .target(ZulipAPI.class, apiHost);
 
-        this.logger.info("Zulip dryrun set to {}", dryrun);
+        this.logger.debug("Zulip dryrun set to {}", dryrun);
     }
 
     public void message(String channel,

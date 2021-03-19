@@ -35,6 +35,7 @@ import java.util.List;
  */
 public class Announcers {
     public static void announce(JReleaserContext context) throws AnnounceException {
+        context.getLogger().info("Announcing release");
         for (AnnouncerBuilder announcer : Announcers.findAnnouncers(context.getModel())) {
             announcer.configureWith(context)
                 .build()

@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Announcers
+import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
@@ -52,6 +53,8 @@ interface JReleaserExtension {
     NamedDomainObjectContainer<Distribution> getDistributions()
 
     void project(Action<? super Project> action)
+
+    void artifact(Action<? super Artifact> action)
 
     void release(Action<? super Release> action)
 

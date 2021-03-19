@@ -21,30 +21,17 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.tools.DistributionProcessor;
-import org.jreleaser.model.tool.spi.ToolProcessingException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
 
 @Mojo(name = "prepare")
-public class JReleaserPrepareMojo extends AbstractJReleaserMojo {
+public class JReleaserPrepareMojo extends AbstractJReleaserProcessorMojo {
     /**
      * Skip execution.
      */
     @Parameter(property = "jreleaser.prepare.skip")
     private boolean skip;
-
-    /**
-     * Stops on the first error.
-     */
-    @Parameter(property = "jreleaser.failfast", defaultValue = "true")
-    private boolean failFast;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -52,44 +39,18 @@ public class JReleaserPrepareMojo extends AbstractJReleaserMojo {
         if (skip) return;
 
         JReleaserContext context = createContext();
+        context.getLogger().info("dryrun set to {}", dryrun);
         checksum(context);
         prepare(context, failFast);
     }
 
-    static void prepare(JReleaserContext context, boolean failFast) throws MojoExecutionException {
-        List<Exception> exceptions = new ArrayList<>();
-        for (Distribution distribution : context.getModel().getDistributions().values()) {
-            for (String toolName : Distribution.supportedTools()) {
-                try {
-                    DistributionProcessor processor = createDistributionProcessor(context,
-                        distribution,
-                        toolName);
-
-                    if (!processor.prepareDistribution()) {
-                        continue;
-                    }
-
-                    context.getLogger().info("Prepared " + distribution.getName() + " distribution with " + toolName);
-                } catch (JReleaserException | ToolProcessingException e) {
-                    if (failFast) throw new MojoExecutionException("Unexpected error", e);
-                    exceptions.add(e);
-                    context.getLogger().warn("Unexpected error", e);
-                }
+    static void prepare(JReleaserContext context, boolean failFast)
+        throws MojoExecutionException, MojoFailureException {
+        processContext(context, failFast, "Preparing", processor -> {
+            if (processor.prepareDistribution()) {
+                context.getLogger().info("Prepared " + processor.getDistributionName() +
+                    " distribution with " + processor.getToolName());
             }
-        }
-
-        if (!exceptions.isEmpty()) {
-            throw new MojoExecutionException("There were " + exceptions.size() + " failure(s)");
-        }
-    }
-
-    private static DistributionProcessor createDistributionProcessor(JReleaserContext context,
-                                                                     Distribution distribution,
-                                                                     String toolName) {
-        return DistributionProcessor.builder()
-            .context(context)
-            .distributionName(distribution.getName())
-            .toolName(toolName)
-            .build();
+        });
     }
 }

@@ -62,7 +62,7 @@ class BrewPackagerImpl extends AbstractPackagerTool implements BrewPackager {
 
     @Override
     boolean isSet() {
-        return super.isSet() || dependencies.present
+        super.isSet() || dependencies.present
     }
 
     Brew toModel() {

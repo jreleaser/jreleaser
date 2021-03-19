@@ -43,8 +43,10 @@ import org.jreleaser.model.JReleaserModel;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -62,6 +64,7 @@ public final class JReleaserModelConverter {
         jReleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
         jReleaserModel.setAnnouncers(convertAnnouncers(jreleaser.getAnnouncers()));
         jReleaserModel.setSign(convertSign(jreleaser.getSign()));
+        jReleaserModel.setFiles(convertArtifacts(jreleaser.getFiles()));
         jReleaserModel.setDistributions(convertDistributions(jReleaserModel, jreleaser.getDistributions()));
         return jReleaserModel;
     }
@@ -119,16 +122,21 @@ public final class JReleaserModelConverter {
 
     private static void convertGitService(GitService service, org.jreleaser.model.GitService s) {
         s.setRepoOwner(service.getRepoOwner());
-        s.setRepoName(service.getReleaseNotesUrlFormat());
+        s.setRepoName(service.getRepoName());
         s.setRepoUrlFormat(service.getRepoUrlFormat());
         s.setCommitUrlFormat(service.getCommitUrlFormat());
         s.setDownloadUrlFormat(service.getDownloadUrlFormat());
         s.setReleaseNotesUrlFormat(service.getReleaseNotesUrlFormat());
         s.setLatestReleaseUrlFormat(service.getLatestReleaseUrlFormat());
         s.setIssueTrackerUrlFormat(service.getIssueTrackerUrlFormat());
-        s.setAuthorization(service.getAuthorization());
+        s.setUsername(service.getUsername());
+        s.setPassword(service.getPassword());
         s.setTagName(service.getTagName());
         s.setReleaseName(service.getReleaseName());
+        s.setCommitAuthorName(service.getCommitAuthorName());
+        s.setCommitAuthorEmail(service.getCommitAuthorEmail());
+        s.setSign(service.isSign());
+        s.setSigningKey(service.getSigningKey());
         s.setOverwrite(service.isOverwrite());
         s.setAllowUploadToExisting(service.isAllowUploadToExisting());
         s.setApiEndpoint(service.getApiEndpoint());
@@ -186,6 +194,7 @@ public final class JReleaserModelConverter {
         if (zulip.isEnabledSet()) a.setEnabled(zulip.isEnabled());
         a.setAccount(zulip.getAccount());
         a.setApiKey(zulip.getApiKey());
+        a.setApiHost(zulip.getApiHost());
         a.setChannel(zulip.getChannel());
         a.setSubject(zulip.getSubject());
         a.setMessage(zulip.getMessage());
@@ -230,12 +239,20 @@ public final class JReleaserModelConverter {
     private static List<org.jreleaser.model.Artifact> convertArtifacts(List<Artifact> artifacts) {
         List<org.jreleaser.model.Artifact> as = new ArrayList<>();
         for (Artifact artifact : artifacts) {
-            as.add(convertPlug(artifact));
+            as.add(convertArtifact(artifact));
         }
         return as;
     }
 
-    private static org.jreleaser.model.Artifact convertPlug(Artifact artifact) {
+    private static Set<org.jreleaser.model.Artifact> convertArtifacts(Set<Artifact> artifacts) {
+        Set<org.jreleaser.model.Artifact> as = new LinkedHashSet<>();
+        for (Artifact artifact : artifacts) {
+            as.add(convertArtifact(artifact));
+        }
+        return as;
+    }
+
+    private static org.jreleaser.model.Artifact convertArtifact(Artifact artifact) {
         org.jreleaser.model.Artifact a = new org.jreleaser.model.Artifact();
         a.setPath(artifact.getPath());
         a.setHash(artifact.getHash());
@@ -256,6 +273,8 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Chocolatey convertChocolatey(Chocolatey chocolatey) {
         org.jreleaser.model.Chocolatey t = new org.jreleaser.model.Chocolatey();
         if (chocolatey.isEnabledSet()) t.setEnabled(chocolatey.isEnabled());
+        t.setUsername(chocolatey.getUsername());
+        t.setRemoteBuild(chocolatey.isRemoteBuild());
         t.setTemplateDirectory(chocolatey.getTemplateDirectory());
         t.setExtraProperties(chocolatey.getExtraProperties());
         return t;
@@ -280,6 +299,7 @@ public final class JReleaserModelConverter {
         t.setGrade(snap.getGrade());
         t.setConfinement(snap.getConfinement());
         t.setExportedLogin(snap.getExportedLogin().getAbsolutePath());
+        t.setRemoteBuild(snap.isRemoteBuild());
         t.setLocalPlugs(snap.getLocalPlugs());
         t.setPlugs(convertPlugs(snap.getPlugs()));
         t.setSlots(convertSlots(snap.getSlots()));
@@ -289,12 +309,12 @@ public final class JReleaserModelConverter {
     private static List<org.jreleaser.model.Plug> convertPlugs(List<Plug> plugs) {
         List<org.jreleaser.model.Plug> ps = new ArrayList<>();
         for (Plug plug : plugs) {
-            ps.add(convertPlug(plug));
+            ps.add(convertArtifact(plug));
         }
         return ps;
     }
 
-    private static org.jreleaser.model.Plug convertPlug(Plug plug) {
+    private static org.jreleaser.model.Plug convertArtifact(Plug plug) {
         org.jreleaser.model.Plug p = new org.jreleaser.model.Plug();
         p.setName(plug.getName());
         p.setAttributes(plug.getAttributes());

@@ -29,6 +29,11 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.dsl.Artifact
+import org.jreleaser.gradle.plugin.dsl.Brew
+import org.jreleaser.gradle.plugin.dsl.Chocolatey
+import org.jreleaser.gradle.plugin.dsl.Distribution
+import org.jreleaser.gradle.plugin.dsl.Scoop
+import org.jreleaser.gradle.plugin.dsl.Snap
 import org.jreleaser.model.Distribution.DistributionType
 
 import javax.inject.Inject
@@ -41,7 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class DistributionImpl implements org.jreleaser.gradle.plugin.dsl.Distribution {
+class DistributionImpl implements Distribution {
     String name
     final Property<String> executable
     final Property<DistributionType> distributionType
@@ -108,39 +113,39 @@ class DistributionImpl implements org.jreleaser.gradle.plugin.dsl.Distribution {
     }
 
     @Override
-    void brew(Action<? super org.jreleaser.gradle.plugin.dsl.Brew> action) {
+    void brew(Action<? super Brew> action) {
         action.execute(brew)
     }
 
     @Override
-    void chocolatey(Action<? super org.jreleaser.gradle.plugin.dsl.Chocolatey> action) {
+    void chocolatey(Action<? super Chocolatey> action) {
         action.execute(chocolatey)
     }
 
     @Override
-    void scoop(Action<? super org.jreleaser.gradle.plugin.dsl.Scoop> action) {
+    void scoop(Action<? super Scoop> action) {
         action.execute(scoop)
     }
 
     @Override
-    void snap(Action<? super org.jreleaser.gradle.plugin.dsl.Snap> action) {
+    void snap(Action<? super Snap> action) {
         action.execute(snap)
     }
 
     org.jreleaser.model.Distribution toModel() {
         org.jreleaser.model.Distribution distribution = new org.jreleaser.model.Distribution()
         distribution.name = name
-        distribution.executable = executable.orNull
+        if (executable.present) distribution.executable = executable.get()
         distribution.type = distributionType.get()
         for (ArtifactImpl artifact : artifacts) {
             distribution.artifacts.add(artifact.toModel())
         }
         distribution.tags = (List<String>) tags.getOrElse([])
         if (extraProperties.present) distribution.extraProperties.putAll(extraProperties.get())
-        if (brew.set) distribution.brew = brew.toModel()
-        if (chocolatey.set) distribution.chocolatey = chocolatey.toModel()
-        if (scoop.set) distribution.scoop = scoop.toModel()
-        if (snap.set) distribution.snap = snap.toModel()
+        if (brew.isSet()) distribution.brew = brew.toModel()
+        if (chocolatey.isSet()) distribution.chocolatey = chocolatey.toModel()
+        if (scoop.isSet()) distribution.scoop = scoop.toModel()
+        if (snap.isSet()) distribution.snap = snap.toModel()
         distribution
     }
 }

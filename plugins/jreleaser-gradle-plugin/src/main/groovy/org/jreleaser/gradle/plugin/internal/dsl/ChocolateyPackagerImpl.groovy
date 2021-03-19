@@ -18,7 +18,9 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.ChocolateyPackager
 import org.jreleaser.model.Chocolatey
 
@@ -31,17 +33,31 @@ import javax.inject.Inject
  */
 @CompileStatic
 class ChocolateyPackagerImpl extends AbstractPackagerTool implements ChocolateyPackager {
+    final Property<String> username
+    final Property<Boolean> remoteBuild
+
     @Inject
     ChocolateyPackagerImpl(ObjectFactory objects) {
         super(objects)
+        username = objects.property(String).convention(Providers.notDefined())
+        remoteBuild = objects.property(Boolean).convention(Providers.notDefined())
     }
 
     @Override
     protected String toolName() { 'chocolatey' }
 
+    @Override
+    boolean isSet() {
+        super.isSet() ||
+            username.present ||
+            remoteBuild.present
+    }
+
     Chocolatey toModel() {
         Chocolatey tool = new Chocolatey()
         fillToolProperties(tool)
+        if (username.present) tool.username = username.get()
+        tool.remoteBuild = remoteBuild.getOrElse(false)
         tool
     }
 }

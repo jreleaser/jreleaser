@@ -28,11 +28,13 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Announcers
+import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
 import org.jreleaser.gradle.plugin.dsl.Sign
 import org.jreleaser.gradle.plugin.internal.dsl.AnnouncersImpl
+import org.jreleaser.gradle.plugin.internal.dsl.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
@@ -58,6 +60,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final PackagersImpl packagers
     final AnnouncersImpl announcers
     final SignImpl sign
+    final NamedDomainObjectContainer<ArtifactImpl> artifacts
     final NamedDomainObjectContainer<DistributionImpl> distributions
 
     @Inject
@@ -73,6 +76,14 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         packagers = objects.newInstance(PackagersImpl, objects)
         announcers = objects.newInstance(AnnouncersImpl, objects)
         sign = objects.newInstance(SignImpl, objects)
+        artifacts = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
+            @Override
+            ArtifactImpl create(String name) {
+                ArtifactImpl artifact = objects.newInstance(ArtifactImpl, objects)
+                artifact.name = name
+                artifact
+            }
+        })
         distributions = objects.domainObjectContainer(DistributionImpl, new NamedDomainObjectFactory<DistributionImpl>() {
             @Override
             DistributionImpl create(String name) {
@@ -86,6 +97,12 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     @Override
     void project(Action<? super Project> action) {
         action.execute(project)
+    }
+
+    @Override
+    void artifact(Action<? super Artifact> action) {
+        ArtifactImpl artifact = artifacts.maybeCreate("artifact-${artifacts.size()}".toString())
+        action.execute(artifact)
     }
 
     @Override
@@ -116,6 +133,9 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.packagers = packagers.toModel()
         jreleaser.announcers = announcers.toModel()
         jreleaser.sign = sign.toModel()
+        for (ArtifactImpl artifact : artifacts) {
+            jreleaser.artifacts.add(artifact.toModel())
+        }
         jreleaser.distributions = (distributions.toList().stream()
             .collect(Collectors.toMap(
                 { DistributionImpl d -> d.name },

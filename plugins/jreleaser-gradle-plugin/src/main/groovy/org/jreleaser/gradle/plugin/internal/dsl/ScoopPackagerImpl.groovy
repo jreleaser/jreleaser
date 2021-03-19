@@ -48,16 +48,16 @@ class ScoopPackagerImpl extends AbstractPackagerTool implements ScoopPackager {
 
     @Override
     boolean isSet() {
-        return super.isSet() ||
-                checkverUrl.present ||
-                autoupdateUrl.present
+        super.isSet() ||
+            checkverUrl.present ||
+            autoupdateUrl.present
     }
 
     Scoop toModel() {
         Scoop tool = new Scoop()
         fillToolProperties(tool)
-        tool.checkverUrl = checkverUrl.orNull
-        tool.autoupdateUrl = autoupdateUrl.orNull
+        if (checkverUrl.present) tool.checkverUrl = checkverUrl.get()
+        if (autoupdateUrl.present) tool.autoupdateUrl = autoupdateUrl.get()
         tool
     }
 }

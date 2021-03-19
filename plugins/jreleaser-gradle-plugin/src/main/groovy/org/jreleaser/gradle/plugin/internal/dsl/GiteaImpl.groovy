@@ -24,7 +24,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Changelog
-import org.jreleaser.model.Gitea
+import org.jreleaser.gradle.plugin.dsl.Gitea
 
 import javax.inject.Inject
 
@@ -34,7 +34,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class GiteaImpl extends AbstractGitService implements org.jreleaser.gradle.plugin.dsl.Gitea {
+class GiteaImpl extends AbstractGitService implements Gitea {
     final Property<String> targetCommitish
     final Property<Boolean> draft
     final Property<Boolean> prerelease
@@ -44,8 +44,8 @@ class GiteaImpl extends AbstractGitService implements org.jreleaser.gradle.plugi
     GiteaImpl(ObjectFactory objects) {
         super(objects)
         targetCommitish = objects.property(String).convention(Providers.notDefined())
-        draft = objects.property(Boolean).convention(false)
-        prerelease = objects.property(Boolean).convention(false)
+        draft = objects.property(Boolean).convention(Providers.notDefined())
+        prerelease = objects.property(Boolean).convention(Providers.notDefined())
         changelog = objects.newInstance(ChangelogImpl, objects)
     }
 
@@ -56,20 +56,20 @@ class GiteaImpl extends AbstractGitService implements org.jreleaser.gradle.plugi
 
     @Internal
     boolean isSet() {
-        super.set ||
+        super.isSet() ||
             targetCommitish.present ||
             draft.present ||
             prerelease.present ||
-            changelog.set
+            changelog.isSet()
     }
 
-    Gitea toModel() {
-        Gitea service = new Gitea()
+    org.jreleaser.model.Gitea toModel() {
+        org.jreleaser.model.Gitea service = new org.jreleaser.model.Gitea()
         toModel(service)
         if (targetCommitish.present) service.targetCommitish = targetCommitish.get()
-        if (draft.present) service.draft = draft.get()
-        if (prerelease.present) service.prerelease = prerelease.get()
-        if (changelog.set) service.changelog = changelog.toModel()
+        if (changelog.isSet()) service.changelog = changelog.toModel()
+        service.draft = draft.getOrElse(false)
+        service.prerelease = prerelease.getOrElse(false)
         service
     }
 }

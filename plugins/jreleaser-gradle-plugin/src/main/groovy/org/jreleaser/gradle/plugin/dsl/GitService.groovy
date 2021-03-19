@@ -46,15 +46,23 @@ interface GitService extends Releaser {
 
     Property<String> getIssueTrackerUrlFormat()
 
-    Property<String> getAuthorization()
+    Property<String> getUsername()
+
+    Property<String> getPassword()
 
     Property<String> getTagName()
 
     Property<String> getReleaseName()
 
-    Property<String> getApiEndpoint()
+    Property<String> getCommitAuthorName()
 
-    Property<Boolean> getOverwrite()
+    Property<String> getCommitAuthorEmail()
+
+    Property<Boolean> getSign()
+
+    Property<String> getSigningKey()
+
+    Property<String> getApiEndpoint()
 
     Property<Boolean> getAllowUploadToExisting()
 

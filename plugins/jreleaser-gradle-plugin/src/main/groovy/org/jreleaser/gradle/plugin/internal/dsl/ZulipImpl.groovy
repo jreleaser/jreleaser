@@ -54,7 +54,7 @@ class ZulipImpl extends AbstractAnnouncer implements Zulip {
     @Override
     @Internal
     boolean isSet() {
-        return super.isSet() ||
+        super.isSet() ||
             account.present ||
             apiKey.present ||
             apiHost.present ||
@@ -65,13 +65,13 @@ class ZulipImpl extends AbstractAnnouncer implements Zulip {
 
     org.jreleaser.model.Zulip toModel() {
         org.jreleaser.model.Zulip zulip = new org.jreleaser.model.Zulip()
-        zulip.enabled = enabled.getOrElse(isSet())
-        zulip.account = account.orNull
-        zulip.apiKey = apiKey.orNull
-        zulip.apiHost = apiHost.orNull
-        zulip.channel = channel.orNull
-        zulip.subject = subject.orNull
-        zulip.message = message.orNull
+        fillProperties(zulip)
+        if (account.present) zulip.account = account.get()
+        if (apiKey.present) zulip.apiKey = apiKey.get()
+        if (apiHost.present) zulip.apiHost = apiHost.get()
+        if (channel.present) zulip.channel = channel.get()
+        if (subject.present) zulip.subject = subject.get()
+        if (message.present) zulip.message = message.get()
         zulip
     }
 }

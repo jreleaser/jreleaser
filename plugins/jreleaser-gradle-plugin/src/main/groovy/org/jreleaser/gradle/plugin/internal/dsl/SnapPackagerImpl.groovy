@@ -45,6 +45,7 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
     final Property<String> grade
     final Property<String> confinement
     final RegularFileProperty exportedLogin
+    final Property<Boolean> remoteBuild
     final ListProperty<String> localPlugs
     final NamedDomainObjectContainer<PlugImpl> plugs
     final NamedDomainObjectContainer<SlotImpl> slots
@@ -56,6 +57,7 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
         grade = objects.property(String).convention(Providers.notDefined())
         confinement = objects.property(String).convention(Providers.notDefined())
         exportedLogin = objects.fileProperty().convention(Providers.notDefined())
+        remoteBuild = objects.property(Boolean).convention(Providers.notDefined())
         localPlugs = objects.listProperty(String).convention(Providers.notDefined())
 
         plugs = objects.domainObjectContainer(PlugImpl, new NamedDomainObjectFactory<PlugImpl>() {
@@ -89,11 +91,12 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
 
     @Override
     boolean isSet() {
-        return super.isSet() ||
+        super.isSet() ||
             base.present ||
             grade.present ||
             confinement.present ||
             exportedLogin.present ||
+            remoteBuild.present ||
             localPlugs.present ||
             plugs.size() ||
             slots.size()
@@ -102,12 +105,13 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
     Snap toModel() {
         Snap tool = new Snap()
         fillToolProperties(tool)
-        tool.base = base.orNull
-        tool.grade = grade.orNull
-        tool.confinement = confinement.orNull
+        if (base.present) tool.base = base.get()
+        if (grade.present) tool.grade = grade.get()
+        if (confinement.present) tool.confinement = confinement.get()
         if (exportedLogin.present) {
             tool.exportedLogin = exportedLogin.get().asFile.absolutePath
         }
+        tool.remoteBuild = remoteBuild.getOrElse(false)
         tool.localPlugs = (List<String>) localPlugs.getOrElse([])
         tool.plugs.addAll(plugs.collect([]) { PlugImpl plug ->
             plug.toModel()

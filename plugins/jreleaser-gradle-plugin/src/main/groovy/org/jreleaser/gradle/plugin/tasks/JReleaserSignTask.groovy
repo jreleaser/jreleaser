@@ -22,9 +22,10 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
 import org.jreleaser.model.JReleaserContext
 import org.jreleaser.signer.Signer
-import org.jreleaser.tools.Checksums
 
 import javax.inject.Inject
+
+import static org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask.checksum
 
 /**
  *
@@ -42,7 +43,11 @@ abstract class JReleaserSignTask extends AbstractJReleaserTask {
     void signArtifacts() {
         JReleaserContext context = createContext()
 
-        Checksums.collectAndWriteChecksums(context)
+        checksum(context)
+        sign(context)
+    }
+
+    static void sign(JReleaserContext context) {
         Signer.sign(context)
     }
 }

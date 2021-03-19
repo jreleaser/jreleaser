@@ -38,6 +38,8 @@ interface SnapPackager extends PackagerTool {
 
     RegularFileProperty getExportedLogin()
 
+    Property<Boolean> getRemoteBuild()
+
     ListProperty<String> getLocalPlugs()
 
     NamedDomainObjectContainer<Plug> getPlugs()

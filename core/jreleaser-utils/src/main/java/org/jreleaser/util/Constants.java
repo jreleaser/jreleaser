@@ -45,6 +45,10 @@ public interface Constants {
     String KEY_REPO_OWNER = "repoOwner";
     String KEY_REPO_NAME = "repoName";
     String KEY_CANONICAL_REPO_NAME = "repoCanonicalName";
+    String KEY_REPO_URL = "repoUrl";
+    String KEY_ISSUE_TRACKER_URL = "issueTrackerUrl";
+    String KEY_COMMIT_URL = "commitsUrl";
+    String KEY_RELEASE_NOTES_URL = "releaseNotesUrl";
 
     // Distribution
     String KEY_DISTRIBUTION_NAME = "distributionName";
@@ -69,6 +73,9 @@ public interface Constants {
     String KEY_SCOOP_CHECKVER_URL = "scoopCheckverUrl";
     String KEY_SCOOP_AUTOUPDATE_URL = "scoopAutoupdateUrl";
 
+    // Chocolatey
+    String KEY_CHOCOLATEY_USERNAME = "chocolateyUsername";
+
     // Snap
     String KEY_SNAP_BASE = "snapBase";
     String KEY_SNAP_GRADE = "snapGrade";
@@ -85,4 +92,6 @@ public interface Constants {
     String KEY_OUTPUT_DIRECTORY = "__OUTPUT_DIRECTORY__";
     String KEY_PREPARE_DIRECTORY = "__PREPARE_DIRECTORY__";
     String KEY_PACKAGE_DIRECTORY = "__PACKAGE_DIRECTORY__";
+    String KEY_DISTRIBUTION_PREPARE_DIRECTORY = "distributionPrepareDirectory";
+    String KEY_DISTRIBUTION_PACKAGE_DIRECTORY = "distributionPackageDirectory";
 }

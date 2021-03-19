@@ -106,7 +106,11 @@ public class Project implements Domain, ExtraProperties {
     }
 
     public void setJavaVersion(String javaVersion) {
-        this.javaVersion = javaVersion;
+        if (isNotBlank(javaVersion) && javaVersion.startsWith("1.8")) {
+            this.javaVersion = "8";
+        } else {
+            this.javaVersion = javaVersion;
+        }
     }
 
     @Override

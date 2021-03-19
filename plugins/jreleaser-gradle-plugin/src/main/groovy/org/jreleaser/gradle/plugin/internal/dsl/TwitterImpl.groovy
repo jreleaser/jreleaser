@@ -52,7 +52,7 @@ class TwitterImpl extends AbstractAnnouncer implements Twitter {
     @Override
     @Internal
     boolean isSet() {
-        return super.isSet() ||
+        super.isSet() ||
             consumerKey.present ||
             consumerSecret.present ||
             accessToken.present ||
@@ -62,12 +62,12 @@ class TwitterImpl extends AbstractAnnouncer implements Twitter {
 
     org.jreleaser.model.Twitter toModel() {
         org.jreleaser.model.Twitter twitter = new org.jreleaser.model.Twitter()
-        twitter.enabled = enabled.getOrElse(isSet())
-        twitter.consumerKey = consumerKey.orNull
-        twitter.consumerSecret = consumerSecret.orNull
-        twitter.accessToken = accessToken.orNull
-        twitter.accessTokenSecret = accessTokenSecret.orNull
-        twitter.status = status.orNull
+        fillProperties(twitter)
+        if (consumerKey.present) twitter.consumerKey = consumerKey.get()
+        if (consumerSecret.present) twitter.consumerSecret = consumerSecret.get()
+        if (accessToken.present) twitter.accessToken = accessToken.get()
+        if (accessTokenSecret.present) twitter.accessTokenSecret = accessTokenSecret.get()
+        if (status.present) twitter.status = status.get()
         twitter
     }
 }

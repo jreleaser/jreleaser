@@ -88,7 +88,11 @@ public class Distribution extends Packagers implements ExtraProperties {
     }
 
     public void setJavaVersion(String javaVersion) {
-        this.javaVersion = javaVersion;
+        if (isNotBlank(javaVersion) && javaVersion.startsWith("1.8")) {
+            this.javaVersion = "8";
+        } else {
+            this.javaVersion = javaVersion;
+        }
     }
 
     public List<Artifact> getArtifacts() {
@@ -212,7 +216,7 @@ public class Distribution extends Packagers implements ExtraProperties {
 
     public enum DistributionType {
         BINARY,
-        SINGLE_JAR
+        JLINK,
         // NATIVE_IMAGE,
     }
 }

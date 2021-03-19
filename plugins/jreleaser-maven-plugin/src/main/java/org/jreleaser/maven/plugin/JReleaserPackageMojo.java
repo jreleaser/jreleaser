@@ -19,74 +19,35 @@ package org.jreleaser.maven.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.tools.DistributionProcessor;
-import org.jreleaser.model.tool.spi.ToolProcessingException;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE)
-public class JReleaserPackageMojo extends AbstractJReleaserMojo {
+@Mojo(name = "package")
+public class JReleaserPackageMojo extends AbstractJReleaserProcessorMojo {
     /**
      * Skip execution.
      */
     @Parameter(property = "jreleaser.package.skip")
     private boolean skip;
 
-    /**
-     * Stops on the first error.
-     */
-    @Parameter(property = "jreleaser.failfast", defaultValue = "true")
-    private boolean failFast;
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
         if (skip) return;
 
-        packageTools(createContext(), failFast);
+        JReleaserContext context = createContext();
+        context.getLogger().info("dryrun set to {}", dryrun);
+        packageTools(context, failFast);
     }
 
-    static void packageTools(JReleaserContext context, boolean failFast) throws MojoExecutionException {
-        List<Exception> exceptions = new ArrayList<>();
-        for (Distribution distribution : context.getModel().getDistributions().values()) {
-            for (String toolName : Distribution.supportedTools()) {
-                try {
-                    DistributionProcessor processor = createDistributionProcessor(context,
-                        distribution,
-                        toolName);
-
-                    if (!processor.packageDistribution()) {
-                        continue;
-                    }
-
-                    context.getLogger().info("Packaged " + distribution.getName() + " distribution with " + toolName);
-                } catch (JReleaserException | ToolProcessingException e) {
-                    if (failFast) throw new MojoExecutionException("Unexpected error", e);
-                    exceptions.add(e);
-                    context.getLogger().warn("Unexpected error", e);
-                }
+    static void packageTools(JReleaserContext context, boolean failFast)
+        throws MojoExecutionException, MojoFailureException {
+        processContext(context, failFast, "Packaging", processor -> {
+            if (processor.packageDistribution()) {
+                context.getLogger().info("Packaged " + processor.getDistributionName() +
+                    " distribution with " + processor.getToolName());
             }
-        }
-
-        if (!exceptions.isEmpty()) {
-            throw new MojoExecutionException("There were " + exceptions.size() + " failure(s)");
-        }
-    }
-
-    private static DistributionProcessor createDistributionProcessor(JReleaserContext context,
-                                                                     Distribution distribution,
-                                                                     String toolName) {
-        return DistributionProcessor.builder()
-            .context(context)
-            .distributionName(distribution.getName())
-            .toolName(toolName)
-            .build();
+        });
     }
 }

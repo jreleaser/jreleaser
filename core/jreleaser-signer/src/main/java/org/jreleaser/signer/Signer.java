@@ -66,6 +66,7 @@ public class Signer {
     }
 
     public static void sign(JReleaserContext context) throws SigningException {
+        context.getLogger().info("Signing files");
         if (!context.getModel().getSign().isEnabled()) {
             context.getLogger().info("Signing is not enabled");
             return;
@@ -135,11 +136,16 @@ public class Signer {
     private static List<Path> collectArtifactsForSigning(JReleaserContext context) {
         List<Path> paths = new ArrayList<>();
 
+        for (Artifact artifact : context.getModel().getFiles()) {
+            paths.add(context.getBasedir().resolve(Paths.get(artifact.getPath())).normalize());
+        }
+
         for (Distribution distribution : context.getModel().getDistributions().values()) {
             for (Artifact artifact : distribution.getArtifacts()) {
                 paths.add(context.getBasedir().resolve(Paths.get(artifact.getPath())).normalize());
             }
         }
+
         Path checksums = context.getChecksumsDirectory().resolve("checksums.txt");
         if (checksums.toFile().exists()) {
             paths.add(checksums);

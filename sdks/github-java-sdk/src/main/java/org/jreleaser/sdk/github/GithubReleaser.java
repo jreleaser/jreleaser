@@ -21,8 +21,10 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.AbstractReleaserBuilder;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
+import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.kohsuke.github.GHRelease;
+import org.kohsuke.github.GHRepository;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -45,31 +47,30 @@ public class GithubReleaser implements Releaser {
     public void release() throws ReleaseException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
         context.getLogger().info("Releasing to {}", github.getResolvedRepoUrl(context.getModel().getProject()));
-
-        Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedAuthorization());
-
         String tagName = github.getTagName();
 
         try {
-            context.getLogger().info("Looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
+            Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedPassword());
+
+            context.getLogger().debug("Looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
             GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);
             if (null != release) {
-                context.getLogger().info("Release {} exists", tagName);
+                context.getLogger().debug("Release {} exists", tagName);
                 if (github.isOverwrite()) {
-                    context.getLogger().info("Deleting release {}", tagName);
+                    context.getLogger().debug("Deleting release {}", tagName);
                     if (!context.isDryrun()) release.delete();
-                    context.getLogger().info("Creating release {}", tagName);
+                    context.getLogger().debug("Creating release {}", tagName);
                     createRelease(api, context.isDryrun());
                 } else if (github.isAllowUploadToExisting()) {
-                    context.getLogger().info("Updating release {}", tagName);
+                    context.getLogger().debug("Updating release {}", tagName);
                     if (!context.isDryrun()) api.uploadAssets(release, assets);
                 } else {
                     throw new IllegalStateException("Github release failed because release " +
                         tagName + " already exists. overwrite = false; allowUploadToExisting = false");
                 }
             } else {
-                context.getLogger().info("Release {} does not exist", tagName);
-                context.getLogger().info("Creating release {}", tagName);
+                context.getLogger().debug("Release {} does not exist", tagName);
+                context.getLogger().debug("Creating release {}", tagName);
                 createRelease(api, context.isDryrun());
             }
         } catch (IOException | IllegalStateException e) {
@@ -77,11 +78,30 @@ public class GithubReleaser implements Releaser {
         }
     }
 
+    @Override
+    public Repository maybeCreateRepository(String repo) throws IOException {
+        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
+        context.getLogger().debug("Looking up {}/{}", github.getRepoOwner(), repo);
+
+        Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedPassword());
+        GHRepository repository = api.findRepository(github.getRepoOwner(), repo);
+        if (null == repository) {
+            repository = api.createRepository(github.getRepoOwner(), repo);
+        }
+
+        return new Repository(
+            github.getRepoOwner(),
+            repo,
+            repository.getUrl(),
+            repository.getGitTransportUrl(),
+            repository.getHttpTransportUrl());
+    }
+
     private void createRelease(Github api, boolean dryrun) throws IOException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
 
         String changelog = ChangelogProvider.getChangelog(context, github.getResolvedCommitUrl(context.getModel().getProject()), github.getChangelog());
-        context.getLogger().info("changelog:{}{}", System.lineSeparator(), changelog);
+        context.getLogger().debug("changelog:{}{}", System.lineSeparator(), changelog);
         if (dryrun) {
             for (Path asset : assets) {
                 if (0 == asset.toFile().length()) {
@@ -94,7 +114,7 @@ public class GithubReleaser implements Releaser {
             return;
         }
 
-        GHRelease release = api.createRelease(github.getCanonicalRepoName(), github.getTagName())
+        GHRelease release = api.createRelease(github.getRepoOwner(), github.getRepoName(), github.getTagName())
             .commitish(github.getTargetCommitish())
             .name(github.getReleaseName())
             .draft(github.isDraft())

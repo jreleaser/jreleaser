@@ -19,7 +19,9 @@ package org.jreleaser.maven.plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -34,6 +36,7 @@ public class Jreleaser {
     private final Packagers packagers = new Packagers();
     private final Announcers announcers = new Announcers();
     private final Sign sign = new Sign();
+    private final Set<Artifact> files = new LinkedHashSet<>();
     private final List<Distribution> distributions = new ArrayList<>();
 
     public Project getProject() {
@@ -74,6 +77,25 @@ public class Jreleaser {
 
     public void setSign(Sign sign) {
         this.sign.setAll(sign);
+    }
+
+    public Set<Artifact> getFiles() {
+        return files;
+    }
+
+    public void setFiles(Set<Artifact> files) {
+        this.files.clear();
+        this.files.addAll(files);
+    }
+
+    public void addFiles(Set<Artifact> files) {
+        this.files.addAll(files);
+    }
+
+    public void addFiles(Artifact artifact) {
+        if (null != artifact) {
+            this.files.add(artifact);
+        }
     }
 
     public List<Distribution> getDistributions() {

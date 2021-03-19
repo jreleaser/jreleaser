@@ -17,11 +17,11 @@
  */
 package org.jreleaser.app;
 
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.tools.Checksums;
-import org.jreleaser.tools.DistributionProcessor;
-import org.jreleaser.model.tool.spi.ToolProcessingException;
 import picocli.CommandLine;
+
+import static org.jreleaser.app.Checksum.checksum;
 
 /**
  * @author Andres Almiray
@@ -32,15 +32,17 @@ import picocli.CommandLine;
 public class Prepare extends AbstractProcessorCommand {
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
-        Checksums.collectAndWriteChecksums(createContext(jreleaserModel));
-        super.consumeModel(jreleaserModel);
+        JReleaserContext context = createContext(jreleaserModel);
+        checksum(context);
+        prepare(context, failFast);
     }
 
-    @Override
-    protected void consumeProcessor(DistributionProcessor processor) throws ToolProcessingException {
-        if (processor.prepareDistribution()) {
-            logger.info("Prepared " + processor.getDistributionName() +
-                " distribution with " + processor.getToolName());
-        }
+    static void prepare(JReleaserContext context, boolean failFast) {
+        processContext(context, failFast, "Preparing", processor -> {
+            if (processor.prepareDistribution()) {
+                context.getLogger().info("Prepared " + processor.getDistributionName() +
+                    " distribution with " + processor.getToolName());
+            }
+        });
     }
 }

@@ -19,6 +19,7 @@ package org.jreleaser.releaser;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.ReleaseException;
+import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.ReleaserBuilder;
 import org.jreleaser.sdk.github.GithubReleaser;
 
@@ -28,10 +29,13 @@ import org.jreleaser.sdk.github.GithubReleaser;
  */
 public class Releasers {
     public static void release(JReleaserContext context) throws ReleaseException {
-        Releasers.findReleaser(context)
+        releaser(context).release();
+    }
+
+    public static Releaser releaser(JReleaserContext context) {
+        return Releasers.findReleaser(context)
             .configureWith(context)
-            .build()
-            .release();
+            .build();
     }
 
     private static <RB extends ReleaserBuilder> RB findReleaser(JReleaserContext context) {

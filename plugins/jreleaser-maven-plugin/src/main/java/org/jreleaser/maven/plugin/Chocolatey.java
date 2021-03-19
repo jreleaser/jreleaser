@@ -17,6 +17,8 @@
  */
 package org.jreleaser.maven.plugin;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -24,7 +26,43 @@ package org.jreleaser.maven.plugin;
 public class Chocolatey extends AbstractTool {
     public static final String NAME = "chocolatey";
 
+    private String username;
+    private Boolean remoteBuild;
+
     public Chocolatey() {
         super(NAME);
+    }
+
+    void setAll(Chocolatey choco) {
+        super.setAll(choco);
+        this.username = choco.username;
+        this.remoteBuild = choco.remoteBuild;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Boolean getRemoteBuild() {
+        return remoteBuild;
+    }
+
+    public boolean isRemoteBuild() {
+        return remoteBuild != null && remoteBuild;
+    }
+
+    public void setRemoteBuild(Boolean remoteBuild) {
+        this.remoteBuild = remoteBuild;
+    }
+
+    @Override
+    public boolean isSet() {
+        return super.isSet() ||
+            isNotBlank(username) ||
+            null != remoteBuild;
     }
 }

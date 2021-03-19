@@ -64,7 +64,7 @@ public class Sdkman {
             .options(new Request.Options(20, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
             .target(SdkmanAPI.class, apiHost);
 
-        this.logger.info("Sdkman dryrun set to {}", dryrun);
+        this.logger.debug("Sdkman dryrun set to {}", dryrun);
     }
 
     public void announce(String candidate,

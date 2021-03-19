@@ -43,8 +43,7 @@ class ChangelogImpl implements Changelog {
     ChangelogImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
         links = objects.property(Boolean).convention(Providers.notDefined())
-        sort = objects.property(org.jreleaser.model.Changelog.Sort)
-            .convention(org.jreleaser.model.Changelog.Sort.DESC)
+        sort = objects.property(org.jreleaser.model.Changelog.Sort).convention(Providers.notDefined())
         external = objects.fileProperty().convention(Providers.notDefined())
     }
 
@@ -52,7 +51,8 @@ class ChangelogImpl implements Changelog {
     boolean isSet() {
         enabled.present ||
             links.present ||
-            external.present
+            external.present ||
+            sort.present
     }
 
     @Override

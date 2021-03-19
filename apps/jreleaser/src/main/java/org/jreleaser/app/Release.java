@@ -22,10 +22,10 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.releaser.Releasers;
-import org.jreleaser.signer.Signer;
-import org.jreleaser.signer.SigningException;
-import org.jreleaser.tools.Checksums;
 import picocli.CommandLine;
+
+import static org.jreleaser.app.Checksum.checksum;
+import static org.jreleaser.app.Sign.sign;
 
 /**
  * @author Andres Almiray
@@ -40,19 +40,22 @@ public class Release extends AbstractModelCommand {
 
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
-        try {
-            JReleaserContext context = createContext(jreleaserModel);
-
-            Checksums.collectAndWriteChecksums(context);
-            Signer.sign(context);
-            Releasers.release(context);
-        } catch (SigningException | ReleaseException e) {
-            throw new JReleaserException("Unexpected error when creating release " + actualConfigFile.toAbsolutePath(), e);
-        }
+        JReleaserContext context = createContext(jreleaserModel);
+        checksum(context);
+        sign(context);
+        release(context);
     }
 
     @Override
     protected boolean dryrun() {
         return dryrun;
+    }
+
+    static void release(JReleaserContext context) {
+        try {
+            Releasers.release(context);
+        } catch (ReleaseException e) {
+            throw new JReleaserException("Unexpected error when creating release.", e);
+        }
     }
 }

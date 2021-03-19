@@ -34,6 +34,8 @@ interface Project extends ExtraProperties {
 
     Property<String> getDescription()
 
+    Property<String> getLongDescription()
+
     Property<String> getWebsite()
 
     Property<String> getLicense()

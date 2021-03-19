@@ -24,7 +24,7 @@ import org.jreleaser.model.Snap;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
-import org.jreleaser.util.OsUtils;
+import org.jreleaser.util.PlatformUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,7 +50,13 @@ public class SnapToolProcessor extends AbstractToolProcessor<Snap> {
 
     @Override
     protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        if (OsUtils.isWindows()) {
+        if (tool.isRemoteBuild()) {
+            // copy from prepare to package
+            copyPreparedFiles(distribution, props);
+            return true;
+        }
+
+        if (PlatformUtils.isWindows()) {
             context.getLogger().debug("Tool {} must not run on Windows", getToolName());
             return false;
         }
@@ -66,13 +72,24 @@ public class SnapToolProcessor extends AbstractToolProcessor<Snap> {
     }
 
     @Override
+    protected boolean doUploadDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        if (tool.isRemoteBuild()) {
+            super.doUploadDistribution(distribution, props);
+        }
+        return false;
+    }
+
+    @Override
+    protected String getUploadRepositoryName(Distribution distribution) {
+        return distribution.getExecutable() + "-snap";
+    }
+
+    @Override
     protected Set<String> resolveByExtensionsFor(Distribution.DistributionType type) {
         Set<String> set = new LinkedHashSet<>();
-        if (type == Distribution.DistributionType.BINARY) {
+        if (type == Distribution.DistributionType.BINARY || type == Distribution.DistributionType.JLINK) {
             set.add(".tar.gz");
             set.add(".tar");
-        } else if (type == Distribution.DistributionType.SINGLE_JAR) {
-            set.add(".jar");
         }
         return set;
     }

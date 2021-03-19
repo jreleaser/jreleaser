@@ -54,7 +54,7 @@ public class Twitter {
                 .build())
             .getInstance();
 
-        this.logger.info("Twitter dryrun set to {}", dryrun);
+        this.logger.debug("Twitter dryrun set to {}", dryrun);
     }
 
     public void updateStatus(String status) throws TwitterException {

@@ -32,6 +32,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class GitService implements Releaser {
+    private final String name;
     protected Boolean enabled;
     protected boolean enabledSet;
     private String repoHost;
@@ -43,15 +44,18 @@ public abstract class GitService implements Releaser {
     private String releaseNotesUrlFormat;
     private String latestReleaseUrlFormat;
     private String issueTrackerUrlFormat;
-    private String authorization;
+    private String username;
+    private String password;
     private String tagName;
     private String releaseName;
+    private String commitAuthorName = "jreleaserbot";
+    private String commitAuthorEmail = "jrleaserbot@jreleaser.org";
+    private boolean sign;
+    private String signingKey;
     private Changelog changelog = new Changelog();
     private boolean overwrite;
     private boolean allowUploadToExisting;
     private String apiEndpoint;
-
-    private final String name;
 
     protected GitService(String name) {
         this.name = name;
@@ -74,9 +78,14 @@ public abstract class GitService implements Releaser {
         this.releaseNotesUrlFormat = service.releaseNotesUrlFormat;
         this.latestReleaseUrlFormat = service.latestReleaseUrlFormat;
         this.issueTrackerUrlFormat = service.issueTrackerUrlFormat;
-        this.authorization = service.authorization;
+        this.username = service.username;
+        this.password = service.password;
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
+        this.commitAuthorName = service.commitAuthorName;
+        this.commitAuthorEmail = service.commitAuthorEmail;
+        this.sign = service.sign;
+        this.signingKey = service.signingKey;
         this.overwrite = service.overwrite;
         this.allowUploadToExisting = service.allowUploadToExisting;
         this.apiEndpoint = service.apiEndpoint;
@@ -98,6 +107,17 @@ public abstract class GitService implements Releaser {
         props.put(Constants.KEY_REPO_NAME, repoName);
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         return props;
+    }
+
+    public void fillProps(Map<String, Object> props, Project project) {
+        props.put(Constants.KEY_REPO_HOST, repoHost);
+        props.put(Constants.KEY_REPO_OWNER, repoOwner);
+        props.put(Constants.KEY_REPO_NAME, repoName);
+        props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
+        props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(project));
+        props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(project));
+        props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(project));
+        props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(project));
     }
 
     public String getResolvedRepoUrl(Project project) {
@@ -212,20 +232,28 @@ public abstract class GitService implements Releaser {
         this.issueTrackerUrlFormat = issueTrackerUrlFormat;
     }
 
-    public String getResolvedAuthorization() {
-        if (isNotBlank(authorization)) {
-            return authorization;
+    public String getResolvedPassword() {
+        if (isNotBlank(password)) {
+            return password;
         }
         String tokenName = getClass().getSimpleName().toUpperCase() + "_TOKEN";
         return System.getenv(tokenName);
     }
 
-    public String getAuthorization() {
-        return authorization;
+    public String getUsername() {
+        return username;
     }
 
-    public void setAuthorization(String authorization) {
-        this.authorization = authorization;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getTagName() {
@@ -242,6 +270,38 @@ public abstract class GitService implements Releaser {
 
     public void setReleaseName(String releaseName) {
         this.releaseName = releaseName;
+    }
+
+    public String getCommitAuthorName() {
+        return commitAuthorName;
+    }
+
+    public void setCommitAuthorName(String commitAuthorName) {
+        this.commitAuthorName = commitAuthorName;
+    }
+
+    public String getCommitAuthorEmail() {
+        return commitAuthorEmail;
+    }
+
+    public void setCommitAuthorEmail(String commitAuthorEmail) {
+        this.commitAuthorEmail = commitAuthorEmail;
+    }
+
+    public boolean isSign() {
+        return sign;
+    }
+
+    public void setSign(boolean sign) {
+        this.sign = sign;
+    }
+
+    public String getSigningKey() {
+        return signingKey;
+    }
+
+    public void setSigningKey(String signingKey) {
+        this.signingKey = signingKey;
     }
 
     public Changelog getChangelog() {
@@ -283,7 +343,8 @@ public abstract class GitService implements Releaser {
         map.put("repoHost", repoHost);
         map.put("repoOwner", repoOwner);
         map.put("repoName", repoName);
-        map.put("authorization", isNotBlank(getResolvedAuthorization()) ? "************" : "**unset**");
+        map.put("username", username);
+        map.put("password", isNotBlank(getResolvedPassword()) ? "************" : "**unset**");
         map.put("repoUrlFormat", repoUrlFormat);
         map.put("commitUrlFormat", commitUrlFormat);
         map.put("downloadUrlFormat", downloadUrlFormat);
@@ -291,7 +352,10 @@ public abstract class GitService implements Releaser {
         map.put("latestReleaseUrlFormat", latestReleaseUrlFormat);
         map.put("issueTrackerUrlFormat", issueTrackerUrlFormat);
         map.put("tagName", tagName);
-        map.put("releaseName", releaseName);
+        map.put("commitAuthorName", commitAuthorName);
+        map.put("commitAuthorEmail", commitAuthorEmail);
+        map.put("sign", sign);
+        map.put("signingKey", isNotBlank(signingKey) ? "************" : "**unset**");
         map.put("overwrite", overwrite);
         map.put("allowUploadToExisting", allowUploadToExisting);
         map.put("apiEndpoint", apiEndpoint);

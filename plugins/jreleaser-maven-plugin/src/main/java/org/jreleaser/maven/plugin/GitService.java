@@ -34,9 +34,14 @@ public abstract class GitService implements Releaser {
     private String releaseNotesUrlFormat;
     private String latestReleaseUrlFormat;
     private String issueTrackerUrlFormat;
-    private String authorization;
+    private String username;
+    private String password;
     private String tagName;
     private String releaseName;
+    private String commitAuthorName;
+    private String commitAuthorEmail;
+    private boolean sign;
+    private String signingKey;
     private Changelog changelog = new Changelog();
     private boolean overwrite;
     private boolean allowUploadToExisting;
@@ -63,9 +68,14 @@ public abstract class GitService implements Releaser {
         this.releaseNotesUrlFormat = service.releaseNotesUrlFormat;
         this.latestReleaseUrlFormat = service.latestReleaseUrlFormat;
         this.issueTrackerUrlFormat = service.issueTrackerUrlFormat;
-        this.authorization = service.authorization;
+        this.username = service.username;
+        this.password = service.password;
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
+        this.commitAuthorName = service.commitAuthorName;
+        this.commitAuthorEmail = service.commitAuthorEmail;
+        this.sign = service.sign;
+        this.signingKey = service.signingKey;
         this.overwrite = service.overwrite;
         this.allowUploadToExisting = service.allowUploadToExisting;
         this.apiEndpoint = service.apiEndpoint;
@@ -160,12 +170,20 @@ public abstract class GitService implements Releaser {
         this.issueTrackerUrlFormat = issueTrackerUrlFormat;
     }
 
-    public String getAuthorization() {
-        return authorization;
+    public String getUsername() {
+        return username;
     }
 
-    public void setAuthorization(String authorization) {
-        this.authorization = authorization;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getTagName() {
@@ -182,6 +200,38 @@ public abstract class GitService implements Releaser {
 
     public void setReleaseName(String releaseName) {
         this.releaseName = releaseName;
+    }
+
+    public String getCommitAuthorName() {
+        return commitAuthorName;
+    }
+
+    public void setCommitAuthorName(String commitAuthorName) {
+        this.commitAuthorName = commitAuthorName;
+    }
+
+    public String getCommitAuthorEmail() {
+        return commitAuthorEmail;
+    }
+
+    public void setCommitAuthorEmail(String commitAuthorEmail) {
+        this.commitAuthorEmail = commitAuthorEmail;
+    }
+
+    public boolean isSign() {
+        return sign;
+    }
+
+    public void setSign(boolean sign) {
+        this.sign = sign;
+    }
+
+    public String getSigningKey() {
+        return signingKey;
+    }
+
+    public void setSigningKey(String signingKey) {
+        this.signingKey = signingKey;
     }
 
     public Changelog getChangelog() {

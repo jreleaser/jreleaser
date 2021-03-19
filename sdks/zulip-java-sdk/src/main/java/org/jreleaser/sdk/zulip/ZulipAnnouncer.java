@@ -38,7 +38,7 @@ public class ZulipAnnouncer implements Announcer {
     public void announce() throws AnnounceException {
         Zulip zulip = context.getModel().getAnnouncers().getZulip();
         if (!zulip.isEnabled()) {
-            context.getLogger().info("Zulip announcer is disabled");
+            context.getLogger().debug("Zulip announcer is disabled");
             return;
         }
 

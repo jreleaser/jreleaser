@@ -43,9 +43,14 @@ abstract class AbstractGitService implements GitService {
     final Property<String> releaseNotesUrlFormat
     final Property<String> latestReleaseUrlFormat
     final Property<String> issueTrackerUrlFormat
-    final Property<String> authorization
+    final Property<String> username
+    final Property<String> password
     final Property<String> tagName
     final Property<String> releaseName
+    final Property<String> commitAuthorName
+    final Property<String> commitAuthorEmail
+    final Property<Boolean> sign
+    final Property<String> signingKey
     final Property<String> apiEndpoint
     final Property<Boolean> overwrite
     final Property<Boolean> allowUploadToExisting
@@ -63,12 +68,17 @@ abstract class AbstractGitService implements GitService {
         latestReleaseUrlFormat = objects.property(String).convention(Providers.notDefined())
         issueTrackerUrlFormat = objects.property(String).convention(Providers.notDefined())
 
-        authorization = objects.property(String).convention(Providers.notDefined())
+        username = objects.property(String).convention(Providers.notDefined())
+        password = objects.property(String).convention(Providers.notDefined())
         tagName = objects.property(String).convention(Providers.notDefined())
         releaseName = objects.property(String).convention(Providers.notDefined())
+        commitAuthorName = objects.property(String).convention(Providers.notDefined())
+        commitAuthorEmail = objects.property(String).convention(Providers.notDefined())
+        sign = objects.property(Boolean).convention(Providers.notDefined())
+        signingKey = objects.property(String).convention(Providers.notDefined())
         apiEndpoint = objects.property(String).convention(Providers.notDefined())
-        overwrite = objects.property(Boolean).convention(false)
-        allowUploadToExisting = objects.property(Boolean).convention(false)
+        overwrite = objects.property(Boolean).convention(Providers.notDefined())
+        allowUploadToExisting = objects.property(Boolean).convention(Providers.notDefined())
     }
 
     @Internal
@@ -83,9 +93,14 @@ abstract class AbstractGitService implements GitService {
             releaseNotesUrlFormat.present ||
             latestReleaseUrlFormat.present ||
             issueTrackerUrlFormat.present ||
-            authorization.present ||
+            username.present ||
+            password.present ||
             tagName.present ||
             releaseName.present ||
+            commitAuthorName.present ||
+            commitAuthorEmail.present ||
+            sign.present ||
+            signingKey.present ||
             apiEndpoint.present ||
             overwrite.present ||
             allowUploadToExisting.present
@@ -93,20 +108,25 @@ abstract class AbstractGitService implements GitService {
 
     protected void toModel(org.jreleaser.model.GitService service) {
         if (enabled.present) service.enabled = enabled.get()
-        service.repoHost = repoHost.orNull
-        service.repoOwner = repoOwner.orNull
-        service.repoName = repoName.orNull
-        service.repoUrlFormat = repoUrlFormat.orNull
-        service.commitUrlFormat = commitUrlFormat.orNull
-        service.downloadUrlFormat = downloadUrlFormat.orNull
-        service.releaseNotesUrlFormat = releaseNotesUrlFormat.orNull
-        service.latestReleaseUrlFormat = latestReleaseUrlFormat.orNull
-        service.issueTrackerUrlFormat = issueTrackerUrlFormat.orNull
-        service.authorization = authorization.orNull
-        service.tagName = tagName.orNull
-        service.releaseName = releaseName.orNull
-        service.overwrite = overwrite.get()
-        service.allowUploadToExisting = allowUploadToExisting.get()
-        service.apiEndpoint = apiEndpoint.orNull
+        if (repoHost.present) service.repoHost = repoHost.get()
+        if (repoOwner.present) service.repoOwner = repoOwner.get()
+        if (repoName.present) service.repoName = repoName.get()
+        if (repoUrlFormat.present) service.repoUrlFormat = repoUrlFormat.get()
+        if (commitUrlFormat.present) service.commitUrlFormat = commitUrlFormat.get()
+        if (downloadUrlFormat.present) service.downloadUrlFormat = downloadUrlFormat.get()
+        if (releaseNotesUrlFormat.present) service.releaseNotesUrlFormat = releaseNotesUrlFormat.get()
+        if (latestReleaseUrlFormat.present) service.latestReleaseUrlFormat = latestReleaseUrlFormat.get()
+        if (issueTrackerUrlFormat.present) service.issueTrackerUrlFormat = issueTrackerUrlFormat.get()
+        if (username.present) service.username = username.get()
+        if (password.present) service.password = password.get()
+        if (tagName.present) service.tagName = tagName.get()
+        if (releaseName.present) service.releaseName = releaseName.get()
+        if (commitAuthorName.present) service.commitAuthorName = commitAuthorName.get()
+        if (commitAuthorEmail.present) service.commitAuthorEmail = commitAuthorEmail.get()
+        if (signingKey.present) service.signingKey = signingKey.get()
+        if (apiEndpoint.present) service.apiEndpoint = apiEndpoint.get()
+        service.sign = sign.getOrElse(false)
+        service.overwrite = overwrite.getOrElse(false)
+        service.allowUploadToExisting = allowUploadToExisting.getOrElse(false)
     }
 }

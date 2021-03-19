@@ -26,12 +26,45 @@ import java.util.Map;
 public class Chocolatey extends AbstractTool {
     public static final String NAME = "chocolatey";
 
+    private String username;
+    private Boolean remoteBuild;
+    private boolean remoteBuildSet;
+
     public Chocolatey() {
         super(NAME);
     }
 
+    void setAll(Chocolatey choco) {
+        super.setAll(choco);
+        this.username = choco.username;
+        this.remoteBuild = choco.remoteBuild;
+        this.remoteBuildSet = choco.remoteBuildSet;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Boolean isRemoteBuild() {
+        return remoteBuild != null && remoteBuild;
+    }
+
+    public void setRemoteBuild(Boolean remoteBuild) {
+        this.remoteBuildSet = true;
+        this.remoteBuild = remoteBuild;
+    }
+
+    public boolean isRemoteBuildSet() {
+        return remoteBuildSet;
+    }
+
     @Override
     protected void asMap(Map<String, Object> props) {
-        // empty
+        props.put("username", username);
+        props.put("remoteBuild", isRemoteBuild());
     }
 }

@@ -46,7 +46,7 @@ class ArtifactImpl implements Artifact {
     org.jreleaser.model.Artifact toModel() {
         org.jreleaser.model.Artifact artifact = new org.jreleaser.model.Artifact()
         artifact.path = path.asFile.get().absolutePath
-        artifact.platform = platform.orNull
+        if (platform.present) artifact.platform = platform.get()
         artifact
     }
 }

@@ -57,9 +57,9 @@ class SignImpl implements Sign {
 
     org.jreleaser.model.Sign toModel() {
         org.jreleaser.model.Sign sign = new org.jreleaser.model.Sign()
-        sign.enabled = enabled.getOrElse(isSet())
-        sign.armored = armored.orNull
-        sign.passphrase = passphrase.orNull
+        sign.enabled = enabled.orElse(isSet())
+        sign.armored = armored.getOrElse(false)
+        if (passphrase.present) sign.passphrase = passphrase.get()
         sign.keyRingFile = keyRingFile.present ? keyRingFile.getAsFile().get().absolutePath : null
         sign
     }

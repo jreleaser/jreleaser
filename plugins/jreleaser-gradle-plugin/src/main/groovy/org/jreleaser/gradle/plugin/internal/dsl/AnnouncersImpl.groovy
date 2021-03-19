@@ -62,9 +62,9 @@ class AnnouncersImpl implements Announcers {
 
     org.jreleaser.model.Announcers toModel() {
         org.jreleaser.model.Announcers announcers = new org.jreleaser.model.Announcers()
-        if (sdkman.set) announcers.sdkman = sdkman.toModel()
-        if (twitter.set) announcers.twitter = twitter.toModel()
-        if (zulip.set) announcers.zulip = zulip.toModel()
+        if (sdkman.isSet()) announcers.sdkman = sdkman.toModel()
+        if (twitter.isSet()) announcers.twitter = twitter.toModel()
+        if (zulip.isSet()) announcers.zulip = zulip.toModel()
         announcers
     }
 }

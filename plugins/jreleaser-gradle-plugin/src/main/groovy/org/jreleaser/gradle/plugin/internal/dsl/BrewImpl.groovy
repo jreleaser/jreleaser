@@ -24,6 +24,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.Brew
 
 import javax.inject.Inject
 
@@ -35,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class BrewImpl extends AbstractTool implements org.jreleaser.gradle.plugin.dsl.Brew {
+class BrewImpl extends AbstractTool implements Brew {
     final MapProperty<String, String> dependencies
 
     @Inject
@@ -64,7 +65,7 @@ class BrewImpl extends AbstractTool implements org.jreleaser.gradle.plugin.dsl.B
     @Override
     @Internal
     boolean isSet() {
-        return super.isSet() || dependencies.present
+        super.isSet() || dependencies.present
     }
 
     org.jreleaser.model.Brew toModel() {

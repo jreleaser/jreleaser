@@ -17,14 +17,21 @@
  */
 package org.jreleaser.tools;
 
+import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Release;
 import org.jreleaser.model.Tool;
+import org.jreleaser.model.releaser.spi.Releaser;
+import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.model.tool.spi.ToolProcessor;
+import org.jreleaser.releaser.Releasers;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
@@ -81,18 +88,16 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     @Override
     public boolean prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        Tool tool = distribution.getTool(getToolName());
-
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug("Creating props for {}/{}", distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
-                context.getLogger().warn("Skipping {} tool for {} distribution", getToolName(), distributionName);
+                context.getLogger().warn("Skipping {} for {} distribution", getToolName(), distributionName);
                 return false;
             }
             context.getLogger().debug("Resolving templates for {}/{}", distributionName, getToolName());
-            Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(), distribution.getType(), getToolName(), tool.getTemplateDirectory());
+            Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(), distribution.getType(), getToolName(), getTool().getTemplateDirectory());
             for (Map.Entry<String, Reader> entry : templates.entrySet()) {
                 context.getLogger().debug("Evaluating template {} for {}/{}", entry.getKey(), distributionName, getToolName());
                 String content = applyTemplate(entry.getValue(), newProps);
@@ -113,7 +118,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             context.getLogger().debug("Creating props for {}/{}", distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
-                context.getLogger().warn("Skipping {} tool for {} distribution", getToolName(), distributionName);
+                context.getLogger().warn("Skipping {} for {} distribution", getToolName(), distributionName);
                 return false;
             }
             return doPackageDistribution(distribution, newProps);
@@ -122,12 +127,94 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         }
     }
 
+    @Override
+    public boolean uploadDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        try {
+            String distributionName = distribution.getName();
+            context.getLogger().debug("Creating props for {}/{}", distributionName, getToolName());
+            Map<String, Object> newProps = fillProps(distribution, props);
+            if (newProps.isEmpty()) {
+                context.getLogger().warn("Skipping {} for {} distribution", getToolName(), distributionName);
+                return false;
+            }
+            return doUploadDistribution(distribution, newProps);
+        } catch (IllegalArgumentException e) {
+            throw new ToolProcessingException(e);
+        }
+    }
+
     protected abstract boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
+
+    protected boolean doUploadDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        return doUploadDistribution(distribution, props, getUploadRepositoryName(distribution));
+    }
+
+    protected boolean doUploadDistribution(Distribution distribution, Map<String, Object> props, String repositoryName) throws ToolProcessingException {
+        Releaser releaser = Releasers.releaser(context);
+        GitService gitService = context.getModel().getRelease().getGitService();
+
+        try {
+            // get the repository
+            context.getLogger().debug("Locating repository {}/{}", gitService.getRepoOwner(), repositoryName);
+            Repository repository = releaser.maybeCreateRepository(repositoryName);
+
+            // clone the repository
+            context.getLogger().debug("Clonning {}", repository.getHttpUrl());
+            Path directory = Files.createTempDirectory("jreleaser-" + repositoryName);
+            Git git = Git.cloneRepository()
+                .setBranch("HEAD")
+                .setDirectory(directory.toFile())
+                .setURI(repository.getHttpUrl())
+                .call();
+
+            // copy files over
+            Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+            context.getLogger().debug("Copying files from {}", context.getBasedir().relativize(packageDirectory));
+            FileUtils.copyFiles(context.getLogger(), packageDirectory, directory);
+
+            UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
+                gitService.getUsername(), gitService.getResolvedPassword());
+
+            // add everything
+            git.add()
+                .addFilepattern(".")
+                .call();
+
+            // setup commit
+            context.getLogger().debug("Setting up commit");
+            CommitCommand commitCommand = git.commit()
+                .setAll(true)
+                .setMessage(distribution.getExecutable() + " " + gitService.getTagName())
+                .setAuthor(gitService.getCommitAuthorName(), gitService.getCommitAuthorEmail());
+            commitCommand.setCredentialsProvider(credentialsProvider);
+            /*if (gitService.isSign()) {
+                commitCommand = commitCommand
+                    .setSign(true)
+                    .setSigningKey(gitService.getSigningKey());
+            }*/
+            commitCommand.call();
+
+            // push commit
+            context.getLogger().debug("Pushing commit to remote, dryrun = {}", context.isDryrun());
+            git.push()
+                .setDryRun(context.isDryrun())
+                .setPushAll()
+                .setCredentialsProvider(credentialsProvider)
+                .call();
+        } catch (Exception e) {
+            throw new ToolProcessingException("Unexpected error updating " + repositoryName, e);
+        }
+
+        return true;
+    }
+
+    protected abstract String getUploadRepositoryName(Distribution distribution);
 
     protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName) throws ToolProcessingException;
 
     protected void writeFile(String content, Path outputFile) throws ToolProcessingException {
         try {
+            System.out.println("outputFile = " + outputFile.toAbsolutePath());
             createDirectoriesWithFullAccess(outputFile.getParent());
             Files.write(outputFile, content.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
             grantFullAccess(outputFile);
@@ -141,6 +228,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         newProps.putAll(props);
         context.getLogger().debug("Filling distribution properties into props");
         fillDistributionProperties(newProps, distribution, context.getModel().getRelease());
+        context.getLogger().debug("Filling git properties into props");
+        context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel().getProject());
         context.getLogger().debug("Filling artifact properties into props");
         if (!verifyAndAddArtifacts(newProps, distribution)) {
             // we can't continue with this tool

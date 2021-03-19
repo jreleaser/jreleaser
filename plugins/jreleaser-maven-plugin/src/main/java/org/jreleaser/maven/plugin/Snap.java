@@ -37,6 +37,7 @@ public class Snap extends AbstractTool {
     private String grade;
     private String confinement;
     private File exportedLogin;
+    private Boolean remoteBuild;
 
     public Snap() {
         super(NAME);
@@ -48,6 +49,7 @@ public class Snap extends AbstractTool {
         this.grade = snap.grade;
         this.confinement = snap.confinement;
         this.exportedLogin = snap.exportedLogin;
+        this.remoteBuild = snap.remoteBuild;
         setLocalPlugs(localPlugs);
         setPlugs(plugs);
         setSlots(slots);
@@ -160,6 +162,18 @@ public class Snap extends AbstractTool {
         this.exportedLogin = exportedLogin;
     }
 
+    public Boolean getRemoteBuild() {
+        return remoteBuild;
+    }
+
+    public boolean isRemoteBuild() {
+        return remoteBuild != null && remoteBuild;
+    }
+
+    public void setRemoteBuild(Boolean remoteBuild) {
+        this.remoteBuild = remoteBuild;
+    }
+
     @Override
     public boolean isSet() {
         return super.isSet() ||
@@ -167,6 +181,7 @@ public class Snap extends AbstractTool {
             isNotBlank(grade) ||
             isNotBlank(confinement) ||
             null != exportedLogin ||
+            null != remoteBuild ||
             !localPlugs.isEmpty() ||
             !plugs.isEmpty() ||
             !slots.isEmpty();
