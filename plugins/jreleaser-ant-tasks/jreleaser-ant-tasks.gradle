@@ -45,6 +45,7 @@ processResources {
 distributions {
     main {
         contents {
+            from jar.archiveFile
             from configurations.runtimeClasspath
         }
     }

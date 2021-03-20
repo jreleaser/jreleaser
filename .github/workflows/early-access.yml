@@ -41,3 +41,5 @@ jobs:
           title: "JReleaser Early-Access"
           files: |
             apps/jreleaser-tool-provider/build/libs/*.jar
+            apps/jreleaser/build/distributions/*.zip
+            plugins/jreleaser-ant-tasks/build/distributions/*.zip
