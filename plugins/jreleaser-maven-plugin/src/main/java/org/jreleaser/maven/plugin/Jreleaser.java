@@ -34,7 +34,7 @@ public class Jreleaser {
     private final Project project = new Project();
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
-    private final Announcers announcers = new Announcers();
+    private final Announce announce = new Announce();
     private final Sign sign = new Sign();
     private final Set<Artifact> files = new LinkedHashSet<>();
     private final List<Distribution> distributions = new ArrayList<>();
@@ -63,12 +63,12 @@ public class Jreleaser {
         this.packagers.setAll(packagers);
     }
 
-    public Announcers getAnnouncers() {
-        return announcers;
+    public Announce getAnnounce() {
+        return announce;
     }
 
-    public void setAnnouncers(Announcers announcers) {
-        this.announcers.setAll(announcers);
+    public void setAnnounce(Announce announce) {
+        this.announce.setAll(announce);
     }
 
     public Sign getSign() {

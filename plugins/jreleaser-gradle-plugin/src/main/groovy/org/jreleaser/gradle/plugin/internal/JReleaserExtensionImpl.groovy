@@ -27,13 +27,13 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.JReleaserExtension
-import org.jreleaser.gradle.plugin.dsl.Announcers
+import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
 import org.jreleaser.gradle.plugin.dsl.Sign
-import org.jreleaser.gradle.plugin.internal.dsl.AnnouncersImpl
+import org.jreleaser.gradle.plugin.internal.dsl.AnnounceImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
@@ -58,7 +58,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final ProjectImpl project
     final ReleaseImpl release
     final PackagersImpl packagers
-    final AnnouncersImpl announcers
+    final AnnounceImpl announce
     final SignImpl sign
     final NamedDomainObjectContainer<ArtifactImpl> artifacts
     final NamedDomainObjectContainer<DistributionImpl> distributions
@@ -74,7 +74,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)
         release = objects.newInstance(ReleaseImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)
-        announcers = objects.newInstance(AnnouncersImpl, objects)
+        announce = objects.newInstance(AnnounceImpl, objects)
         sign = objects.newInstance(SignImpl, objects)
         artifacts = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
@@ -116,8 +116,8 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
-    void announcers(Action<? super Announcers> action) {
-        action.execute(announcers)
+    void announce(Action<? super Announce> action) {
+        action.execute(announce)
     }
 
     @Override
@@ -131,7 +131,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.project = project.toModel()
         jreleaser.release = release.toModel()
         jreleaser.packagers = packagers.toModel()
-        jreleaser.announcers = announcers.toModel()
+        jreleaser.announce = announce.toModel()
         jreleaser.sign = sign.toModel()
         for (ArtifactImpl artifact : artifacts) {
             jreleaser.artifacts.add(artifact.toModel())

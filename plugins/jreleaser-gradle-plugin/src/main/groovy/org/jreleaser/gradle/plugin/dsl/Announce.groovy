@@ -26,7 +26,7 @@ import org.gradle.api.Action
  * @since 0.1.0
  */
 @CompileStatic
-interface Announcers {
+interface Announce {
     Sdkman getSdkman()
 
     Twitter getTwitter()

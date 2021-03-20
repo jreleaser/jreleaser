@@ -53,7 +53,7 @@ public final class JReleaserModelValidator {
     private static void validateModel(Logger logger, Path basedir, JReleaserModel model, List<String> errors) {
         validateProject(logger, basedir, model.getProject(), errors);
         validateRelease(logger, basedir, model.getProject(), model.getRelease(), errors);
-        validateAnnouncers(logger, basedir, model, model.getAnnouncers(), errors);
+        validateAnnouncers(logger, basedir, model, model.getAnnounce(), errors);
         validateSign(logger, basedir, model, model.getSign(), errors);
         validateDistributions(logger, basedir, model, model.getDistributions(), errors);
     }
@@ -99,10 +99,10 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void validateAnnouncers(Logger logger, Path basedir, JReleaserModel model, Announcers announcers, List<String> errors) {
-        validateSdkman(logger, basedir, model, announcers.getSdkman(), errors);
-        validateTwitter(logger, basedir, model, announcers.getTwitter(), errors);
-        validateZulip(logger, basedir, model, announcers.getZulip(), errors);
+    private static void validateAnnouncers(Logger logger, Path basedir, JReleaserModel model, Announce announce, List<String> errors) {
+        validateSdkman(logger, basedir, model, announce.getSdkman(), errors);
+        validateTwitter(logger, basedir, model, announce.getTwitter(), errors);
+        validateZulip(logger, basedir, model, announce.getZulip(), errors);
     }
 
     private static void validateSdkman(Logger logger, Path basedir, JReleaserModel model, Sdkman sdkman, List<String> errors) {

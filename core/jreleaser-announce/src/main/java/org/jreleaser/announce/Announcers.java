@@ -45,13 +45,13 @@ public class Announcers {
 
     private static <AB extends AnnouncerBuilder> Collection<AB> findAnnouncers(JReleaserModel model) {
         List<AB> announcers = new ArrayList<>();
-        if (null != model.getAnnouncers().getSdkman() && model.getAnnouncers().getSdkman().isEnabled()) {
+        if (null != model.getAnnounce().getSdkman() && model.getAnnounce().getSdkman().isEnabled()) {
             announcers.add((AB) SdkmanAnnouncer.builder());
         }
-        if (null != model.getAnnouncers().getTwitter() && model.getAnnouncers().getTwitter().isEnabled()) {
+        if (null != model.getAnnounce().getTwitter() && model.getAnnounce().getTwitter().isEnabled()) {
             announcers.add((AB) TwitterAnnouncer.builder());
         }
-        if (null != model.getAnnouncers().getZulip() && model.getAnnouncers().getZulip().isEnabled()) {
+        if (null != model.getAnnounce().getZulip() && model.getAnnounce().getZulip().isEnabled()) {
             announcers.add((AB) ZulipAnnouncer.builder());
         }
 

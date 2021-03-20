@@ -47,7 +47,7 @@ public class SdkmanAnnouncer implements Announcer {
 
     @Override
     public void announce() throws AnnounceException {
-        Sdkman sdkman = context.getModel().getAnnouncers().getSdkman();
+        Sdkman sdkman = context.getModel().getAnnounce().getSdkman();
 
         if (!sdkman.isEnabled()) {
             context.getLogger().debug("Sdkman announcer is disabled");

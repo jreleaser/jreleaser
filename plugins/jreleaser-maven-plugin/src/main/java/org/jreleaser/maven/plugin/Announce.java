@@ -15,24 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+package org.jreleaser.maven.plugin;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Announcers implements Domain {
+public class Announce {
     private final Sdkman sdkman = new Sdkman();
     private final Twitter twitter = new Twitter();
     private final Zulip zulip = new Zulip();
 
-    void setAll(Announcers announcers) {
-        setSdkman(announcers.sdkman);
-        setTwitter(announcers.twitter);
-        setZulip(announcers.zulip);
+    void setAll(Announce announce) {
+        setSdkman(announce.sdkman);
+        setTwitter(announce.twitter);
+        setZulip(announce.zulip);
     }
 
     public Sdkman getSdkman() {
@@ -57,14 +54,5 @@ public class Announcers implements Domain {
 
     public void setZulip(Zulip zulip) {
         this.zulip.setAll(zulip);
-    }
-
-    @Override
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.putAll(sdkman.asMap());
-        map.putAll(twitter.asMap());
-        map.putAll(zulip.asMap());
-        return map;
     }
 }

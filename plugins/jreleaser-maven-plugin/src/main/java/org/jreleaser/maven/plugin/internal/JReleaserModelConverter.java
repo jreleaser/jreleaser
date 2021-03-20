@@ -17,7 +17,7 @@
  */
 package org.jreleaser.maven.plugin.internal;
 
-import org.jreleaser.maven.plugin.Announcers;
+import org.jreleaser.maven.plugin.Announce;
 import org.jreleaser.maven.plugin.Artifact;
 import org.jreleaser.maven.plugin.Brew;
 import org.jreleaser.maven.plugin.Changelog;
@@ -62,7 +62,7 @@ public final class JReleaserModelConverter {
         jReleaserModel.setProject(convertProject(jreleaser.getProject()));
         jReleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
         jReleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
-        jReleaserModel.setAnnouncers(convertAnnouncers(jreleaser.getAnnouncers()));
+        jReleaserModel.setAnnounce(convertAnnounce(jreleaser.getAnnounce()));
         jReleaserModel.setSign(convertSign(jreleaser.getSign()));
         jReleaserModel.setFiles(convertArtifacts(jreleaser.getFiles()));
         jReleaserModel.setDistributions(convertDistributions(jReleaserModel, jreleaser.getDistributions()));
@@ -160,11 +160,11 @@ public final class JReleaserModelConverter {
         return p;
     }
 
-    private static org.jreleaser.model.Announcers convertAnnouncers(Announcers announcers) {
-        org.jreleaser.model.Announcers a = new org.jreleaser.model.Announcers();
-        if (announcers.getSdkman().isSet()) a.setSdkman(convertSdkman(announcers.getSdkman()));
-        if (announcers.getTwitter().isSet()) a.setTwitter(convertTwitter(announcers.getTwitter()));
-        if (announcers.getZulip().isSet()) a.setZulip(convertZulip(announcers.getZulip()));
+    private static org.jreleaser.model.Announce convertAnnounce(Announce announce) {
+        org.jreleaser.model.Announce a = new org.jreleaser.model.Announce();
+        if (announce.getSdkman().isSet()) a.setSdkman(convertSdkman(announce.getSdkman()));
+        if (announce.getTwitter().isSet()) a.setTwitter(convertTwitter(announce.getTwitter()));
+        if (announce.getZulip().isSet()) a.setZulip(convertZulip(announce.getZulip()));
         return a;
     }
 

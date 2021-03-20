@@ -36,7 +36,7 @@ public class TwitterAnnouncer implements Announcer {
 
     @Override
     public void announce() throws AnnounceException {
-        Twitter twitter = context.getModel().getAnnouncers().getTwitter();
+        Twitter twitter = context.getModel().getAnnounce().getTwitter();
         if (!twitter.isEnabled()) {
             context.getLogger().debug("Twitter announcer is disabled");
             return;

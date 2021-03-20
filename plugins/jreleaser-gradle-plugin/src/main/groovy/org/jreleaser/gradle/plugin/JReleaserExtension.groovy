@@ -21,7 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
-import org.jreleaser.gradle.plugin.dsl.Announcers
+import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Packagers
@@ -46,7 +46,7 @@ interface JReleaserExtension {
 
     Packagers getPackagers()
 
-    Announcers getAnnouncers()
+    Announce getAnnounce()
 
     Sign getSign()
 
@@ -60,7 +60,7 @@ interface JReleaserExtension {
 
     void packagers(Action<? super Packagers> action)
 
-    void announcers(Action<? super Announcers> action)
+    void announce(Action<? super Announce> action)
 
     void sign(Action<? super Sign> action)
 }
