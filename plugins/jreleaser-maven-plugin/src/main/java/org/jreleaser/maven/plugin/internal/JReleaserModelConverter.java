@@ -58,15 +58,15 @@ public final class JReleaserModelConverter {
     }
 
     public static JReleaserModel convert(Jreleaser jreleaser) {
-        JReleaserModel jReleaserModel = new JReleaserModel();
-        jReleaserModel.setProject(convertProject(jreleaser.getProject()));
-        jReleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
-        jReleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
-        jReleaserModel.setAnnounce(convertAnnounce(jreleaser.getAnnounce()));
-        jReleaserModel.setSigning(convertSigning(jreleaser.getSigning()));
-        jReleaserModel.setFiles(convertArtifacts(jreleaser.getFiles()));
-        jReleaserModel.setDistributions(convertDistributions(jReleaserModel, jreleaser.getDistributions()));
-        return jReleaserModel;
+        JReleaserModel jreleaserModel = new JReleaserModel();
+        jreleaserModel.setProject(convertProject(jreleaser.getProject()));
+        jreleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
+        jreleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
+        jreleaserModel.setAnnounce(convertAnnounce(jreleaser.getAnnounce()));
+        jreleaserModel.setSigning(convertSigning(jreleaser.getSigning()));
+        jreleaserModel.setFiles(convertArtifacts(jreleaser.getFiles()));
+        jreleaserModel.setDistributions(convertDistributions(jreleaserModel, jreleaser.getDistributions()));
+        return jreleaserModel;
     }
 
     private static org.jreleaser.model.Project convertProject(Project project) {
