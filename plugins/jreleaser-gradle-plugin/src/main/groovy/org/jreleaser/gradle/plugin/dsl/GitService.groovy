@@ -28,11 +28,11 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface GitService extends Releaser {
-    Property<String> getRepoHost()
+    Property<String> getHost()
 
-    Property<String> getRepoOwner()
+    Property<String> getOwner()
 
-    Property<String> getRepoName()
+    Property<String> getName()
 
     Property<String> getRepoUrlFormat()
 

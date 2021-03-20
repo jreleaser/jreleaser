@@ -81,16 +81,16 @@ public class GithubReleaser implements Releaser {
     @Override
     public Repository maybeCreateRepository(String repo) throws IOException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
-        context.getLogger().debug("Looking up {}/{}", github.getRepoOwner(), repo);
+        context.getLogger().debug("Looking up {}/{}", github.getOwner(), repo);
 
         Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedPassword());
-        GHRepository repository = api.findRepository(github.getRepoOwner(), repo);
+        GHRepository repository = api.findRepository(github.getOwner(), repo);
         if (null == repository) {
-            repository = api.createRepository(github.getRepoOwner(), repo);
+            repository = api.createRepository(github.getOwner(), repo);
         }
 
         return new Repository(
-            github.getRepoOwner(),
+            github.getOwner(),
             repo,
             repository.getUrl(),
             repository.getGitTransportUrl(),

@@ -26,7 +26,7 @@ public class Gitlab extends GitService {
 
     public Gitlab() {
         super("gitlab");
-        setRepoHost("gitlab.com");
+        setHost("gitlab.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/commits");
         setDownloadUrlFormat("\"https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/archive/v{{projectVersion}}/{{artifactFileName}}");

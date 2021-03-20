@@ -175,9 +175,9 @@ public class JReleaserModel implements Domain {
 
     private void fillReleaseProperties(Map<String, Object> props, Release release) {
         GitService service = release.getGitService();
-        props.put(Constants.KEY_REPO_HOST, service.getRepoHost());
-        props.put(Constants.KEY_REPO_OWNER, service.getRepoOwner());
-        props.put(Constants.KEY_REPO_NAME, service.getRepoName());
+        props.put(Constants.KEY_REPO_HOST, service.getHost());
+        props.put(Constants.KEY_REPO_OWNER, service.getOwner());
+        props.put(Constants.KEY_REPO_NAME, service.getName());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, service.getCanonicalRepoName());
         props.put(Constants.KEY_TAG_NAME, service.getTagName());
         props.put(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(project));

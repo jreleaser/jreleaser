@@ -28,7 +28,7 @@ public class Github extends GitService {
 
     public Github() {
         super("githu ");
-        setRepoHost("github.com");
+        setHost("github.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");
         setDownloadUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/v{{projectVersion}}/{{artifactFileName}}");

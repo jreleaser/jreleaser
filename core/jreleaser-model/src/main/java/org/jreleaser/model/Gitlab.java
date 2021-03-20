@@ -28,12 +28,12 @@ public class Gitlab extends GitService {
 
     public Gitlab() {
         super("gitlab");
-        setRepoHost("gitlab.com");
+        setHost("gitlab.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/commits");
-        setDownloadUrlFormat("\"https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/archive/v{{projectVersion}}/{{artifactFileName}}");
-        setReleaseNotesUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/releases/v{{projectVersion}}");
-        setLatestReleaseUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/releases/v{{projectVersion}}");
+        setDownloadUrlFormat("\"https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/archive/{{tagName}}/{{artifactFileName}}");
+        setReleaseNotesUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/releases/{{tagName}}");
+        setLatestReleaseUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/releases/{{tagName}}");
         setIssueTrackerUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/issues");
     }
 

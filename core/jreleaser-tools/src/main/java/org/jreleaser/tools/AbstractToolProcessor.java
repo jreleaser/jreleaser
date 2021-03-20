@@ -155,7 +155,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
         try {
             // get the repository
-            context.getLogger().debug("Locating repository {}/{}", gitService.getRepoOwner(), repositoryName);
+            context.getLogger().debug("Locating repository {}/{}", gitService.getOwner(), repositoryName);
             Repository repository = releaser.maybeCreateRepository(repositoryName);
 
             // clone the repository
@@ -214,7 +214,6 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     protected void writeFile(String content, Path outputFile) throws ToolProcessingException {
         try {
-            System.out.println("outputFile = " + outputFile.toAbsolutePath());
             createDirectoriesWithFullAccess(outputFile.getParent());
             Files.write(outputFile, content.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
             grantFullAccess(outputFile);

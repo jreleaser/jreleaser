@@ -149,20 +149,21 @@ public final class JReleaserModelValidator {
     }
 
     private static void validateGitService(Logger logger, Path basedir, Project project, GitService service, List<String> errors) {
-        if (isBlank(service.getRepoOwner())) {
-            errors.add(service.getName() + ".repoOwner must not be blank");
+        if (isBlank(service.getOwner())) {
+            errors.add(service.getServiceName() + ".repoOwner must not be blank");
         }
-        if (isBlank(service.getRepoName())) {
-            service.setRepoName(project.getName());
+        if (isBlank(service.getName())) {
+            service.setName(project.getName());
         }
         if (isBlank(service.getUsername())) {
-            service.setUsername(service.getRepoOwner());
+            service.setUsername(service.getOwner());
         }
 
         checkEnvSetting(logger, errors, service.getPassword(),
-            service.getName().toUpperCase() + "_TOKEN",
-            service.getName() + ".password");
+            service.getServiceName().toUpperCase() + "_TOKEN",
+            service.getServiceName() + ".password");
 
+        service.setTagName(service.getResolvedTagName(project));
         if (isBlank(service.getTagName())) {
             service.setTagName("v" + project.getVersion());
         }
@@ -173,7 +174,7 @@ public final class JReleaserModelValidator {
             service.getChangelog().setEnabled(true);
         }
         if (service.isSign() && isBlank(service.getSigningKey())) {
-            errors.add(service.getName() + ".signingKey must not be blank if sign is set to `true`");
+            errors.add(service.getServiceName() + ".signingKey must not be blank if sign is set to `true`");
         }
     }
 
@@ -333,7 +334,7 @@ public final class JReleaserModelValidator {
         mergeExtraProperties(tool, model.getPackagers().getChocolatey());
 
         if (isBlank(tool.getUsername())) {
-            tool.setUsername(model.getRelease().getGitService().getRepoOwner());
+            tool.setUsername(model.getRelease().getGitService().getOwner());
         }
         if (!tool.isRemoteBuildSet() && model.getPackagers().getChocolatey().isRemoteBuildSet()) {
             tool.setRemoteBuild(model.getPackagers().getChocolatey().isRemoteBuild());
@@ -468,7 +469,6 @@ public final class JReleaserModelValidator {
 
     private static void checkEnvSetting(Logger logger, List<String> errors, String value, String key, String property) {
         if (isBlank(value)) {
-            logger.warn("{} is not explicitly defined. Checking environment for {}", property, key);
             if (isBlank(System.getenv(key))) {
                 errors.add(property + " must not be blank. Alternatively define a " + key + " environment variable.");
             }

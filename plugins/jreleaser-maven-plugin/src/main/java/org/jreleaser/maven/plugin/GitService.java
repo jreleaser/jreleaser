@@ -22,12 +22,12 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public abstract class GitService implements Releaser {
-    private final String name;
+    private final String serviceName;
     protected Boolean enabled;
     protected boolean enabledSet;
-    private String repoHost;
-    private String repoOwner;
-    private String repoName;
+    private String host;
+    private String owner;
+    private String name;
     private String repoUrlFormat;
     private String commitUrlFormat;
     private String downloadUrlFormat;
@@ -47,21 +47,21 @@ public abstract class GitService implements Releaser {
     private boolean allowUploadToExisting;
     private String apiEndpoint;
 
-    protected GitService(String name) {
-        this.name = name;
+    protected GitService(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getServiceName() {
+        return serviceName;
     }
 
     void setAll(GitService service) {
         this.enabled = service.enabled;
         this.enabledSet = service.enabledSet;
-        this.repoHost = service.repoHost;
-        this.repoOwner = service.repoOwner;
-        this.repoName = service.repoName;
+        this.host = service.host;
+        this.owner = service.owner;
+        this.name = service.name;
         this.repoUrlFormat = service.repoUrlFormat;
         this.commitUrlFormat = service.commitUrlFormat;
         this.downloadUrlFormat = service.downloadUrlFormat;
@@ -98,28 +98,28 @@ public abstract class GitService implements Releaser {
         return enabledSet;
     }
 
-    public String getRepoHost() {
-        return repoHost;
+    public String getHost() {
+        return host;
     }
 
-    public void setRepoHost(String repoHost) {
-        this.repoHost = repoHost;
+    public void setHost(String host) {
+        this.host = host;
     }
 
-    public String getRepoOwner() {
-        return repoOwner;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setRepoOwner(String repoOwner) {
-        this.repoOwner = repoOwner;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
-    public String getRepoName() {
-        return repoName;
+    public String getName() {
+        return name;
     }
 
-    public void setRepoName(String repoName) {
-        this.repoName = repoName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getRepoUrlFormat() {

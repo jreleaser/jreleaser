@@ -32,12 +32,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class GitService implements Releaser {
-    private final String name;
+    private final String serviceName;
     protected Boolean enabled;
     protected boolean enabledSet;
-    private String repoHost;
-    private String repoOwner;
-    private String repoName;
+    private String host;
+    private String owner;
+    private String name;
     private String repoUrlFormat;
     private String commitUrlFormat;
     private String downloadUrlFormat;
@@ -46,10 +46,10 @@ public abstract class GitService implements Releaser {
     private String issueTrackerUrlFormat;
     private String username;
     private String password;
-    private String tagName;
+    private String tagName = "v{{projectVersion}}";
     private String releaseName;
     private String commitAuthorName = "jreleaserbot";
-    private String commitAuthorEmail = "jrleaserbot@jreleaser.org";
+    private String commitAuthorEmail = "jreleaserbot@jreleaser.org";
     private boolean sign;
     private String signingKey;
     private Changelog changelog = new Changelog();
@@ -57,21 +57,21 @@ public abstract class GitService implements Releaser {
     private boolean allowUploadToExisting;
     private String apiEndpoint;
 
-    protected GitService(String name) {
-        this.name = name;
+    protected GitService(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getServiceName() {
+        return serviceName;
     }
 
     void setAll(GitService service) {
         this.enabled = service.enabled;
         this.enabledSet = service.enabledSet;
-        this.repoHost = service.repoHost;
-        this.repoOwner = service.repoOwner;
-        this.repoName = service.repoName;
+        this.host = service.host;
+        this.owner = service.owner;
+        this.name = service.name;
         this.repoUrlFormat = service.repoUrlFormat;
         this.commitUrlFormat = service.commitUrlFormat;
         this.downloadUrlFormat = service.downloadUrlFormat;
@@ -93,7 +93,7 @@ public abstract class GitService implements Releaser {
     }
 
     public String getCanonicalRepoName() {
-        return repoOwner + "/" + repoName;
+        return owner + "/" + name;
     }
 
     private Map<String, Object> createContext(Project project) {
@@ -102,22 +102,26 @@ public abstract class GitService implements Releaser {
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
         props.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
-        props.put(Constants.KEY_REPO_HOST, repoHost);
-        props.put(Constants.KEY_REPO_OWNER, repoOwner);
-        props.put(Constants.KEY_REPO_NAME, repoName);
+        props.put(Constants.KEY_REPO_HOST, host);
+        props.put(Constants.KEY_REPO_OWNER, owner);
+        props.put(Constants.KEY_REPO_NAME, name);
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         return props;
     }
 
     public void fillProps(Map<String, Object> props, Project project) {
-        props.put(Constants.KEY_REPO_HOST, repoHost);
-        props.put(Constants.KEY_REPO_OWNER, repoOwner);
-        props.put(Constants.KEY_REPO_NAME, repoName);
+        props.put(Constants.KEY_REPO_HOST, host);
+        props.put(Constants.KEY_REPO_OWNER, owner);
+        props.put(Constants.KEY_REPO_NAME, name);
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(project));
         props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(project));
         props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(project));
         props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(project));
+    }
+
+    public String getResolvedTagName(Project project) {
+        return applyTemplate(new StringReader(tagName), createContext(project));
     }
 
     public String getResolvedRepoUrl(Project project) {
@@ -160,28 +164,28 @@ public abstract class GitService implements Releaser {
         return enabledSet;
     }
 
-    public String getRepoHost() {
-        return repoHost;
+    public String getHost() {
+        return host;
     }
 
-    public void setRepoHost(String repoHost) {
-        this.repoHost = repoHost;
+    public void setHost(String host) {
+        this.host = host;
     }
 
-    public String getRepoOwner() {
-        return repoOwner;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setRepoOwner(String repoOwner) {
-        this.repoOwner = repoOwner;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
-    public String getRepoName() {
-        return repoName;
+    public String getName() {
+        return name;
     }
 
-    public void setRepoName(String repoName) {
-        this.repoName = repoName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getRepoUrlFormat() {
@@ -340,9 +344,9 @@ public abstract class GitService implements Releaser {
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
-        map.put("repoHost", repoHost);
-        map.put("repoOwner", repoOwner);
-        map.put("repoName", repoName);
+        map.put("host", host);
+        map.put("owner", owner);
+        map.put("name", name);
         map.put("username", username);
         map.put("password", isNotBlank(getResolvedPassword()) ? "************" : "**unset**");
         map.put("repoUrlFormat", repoUrlFormat);

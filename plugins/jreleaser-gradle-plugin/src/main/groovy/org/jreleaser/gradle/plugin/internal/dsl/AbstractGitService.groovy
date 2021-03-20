@@ -34,9 +34,9 @@ import javax.inject.Inject
 @CompileStatic
 abstract class AbstractGitService implements GitService {
     final Property<Boolean> enabled
-    final Property<String> repoHost
-    final Property<String> repoOwner
-    final Property<String> repoName
+    final Property<String> host
+    final Property<String> owner
+    final Property<String> name
     final Property<String> repoUrlFormat
     final Property<String> commitUrlFormat
     final Property<String> downloadUrlFormat
@@ -58,9 +58,9 @@ abstract class AbstractGitService implements GitService {
     @Inject
     AbstractGitService(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
-        repoHost = objects.property(String).convention(Providers.notDefined())
-        repoOwner = objects.property(String).convention(Providers.notDefined())
-        repoName = objects.property(String).convention(Providers.notDefined())
+        host = objects.property(String).convention(Providers.notDefined())
+        owner = objects.property(String).convention(Providers.notDefined())
+        name = objects.property(String).convention(Providers.notDefined())
         repoUrlFormat = objects.property(String).convention(Providers.notDefined())
         commitUrlFormat = objects.property(String).convention(Providers.notDefined())
         downloadUrlFormat = objects.property(String).convention(Providers.notDefined())
@@ -84,9 +84,9 @@ abstract class AbstractGitService implements GitService {
     @Internal
     boolean isSet() {
         enabled.present ||
-            repoHost.present ||
-            repoOwner.present ||
-            repoName.present ||
+            host.present ||
+            owner.present ||
+            name.present ||
             repoUrlFormat.present ||
             commitUrlFormat.present ||
             downloadUrlFormat.present ||
@@ -108,9 +108,9 @@ abstract class AbstractGitService implements GitService {
 
     protected void toModel(org.jreleaser.model.GitService service) {
         if (enabled.present) service.enabled = enabled.get()
-        if (repoHost.present) service.repoHost = repoHost.get()
-        if (repoOwner.present) service.repoOwner = repoOwner.get()
-        if (repoName.present) service.repoName = repoName.get()
+        if (host.present) service.host = host.get()
+        if (owner.present) service.owner = owner.get()
+        if (name.present) service.name = name.get()
         if (repoUrlFormat.present) service.repoUrlFormat = repoUrlFormat.get()
         if (commitUrlFormat.present) service.commitUrlFormat = commitUrlFormat.get()
         if (downloadUrlFormat.present) service.downloadUrlFormat = downloadUrlFormat.get()

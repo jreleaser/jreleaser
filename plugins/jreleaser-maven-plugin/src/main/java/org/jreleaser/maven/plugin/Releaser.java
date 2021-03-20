@@ -28,5 +28,5 @@ public interface Releaser {
 
     void setEnabled(Boolean enabled);
 
-    String getName();
+    String getServiceName();
 }

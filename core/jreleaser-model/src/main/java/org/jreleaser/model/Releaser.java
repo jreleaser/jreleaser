@@ -30,5 +30,5 @@ public interface Releaser extends Domain {
 
     void setEnabled(Boolean enabled);
 
-    String getName();
+    String getServiceName();
 }
