@@ -24,8 +24,8 @@
              classpathref="jreleaser.classpath"/>
 
     <property name="jreleaser.skip" value ="false"/>
-    <property name="jreleaser.dryrun" value ="true"/>
-    <property name="jreleaser.overwrite" value ="true"/>
+    <property name="jreleaser.dryrun" value ="false"/>
+    <property name="jreleaser.overwrite" value ="false"/>
 
     <target name="jreleaser-announce">
         <jreleaser:announce dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"/>

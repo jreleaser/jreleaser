@@ -92,8 +92,8 @@ class Github {
             .getReleaseByTagName(tagName);
     }
 
-    GHReleaseBuilder createRelease(String owner, String repo, String tagName) throws IOException {
-        logger.debug("Creating release on {}/{} with tag {}", owner, repo, tagName);
+    GHReleaseBuilder createRelease(String repo, String tagName) throws IOException {
+        logger.debug("Creating release on {} with tag {}", repo, tagName);
         return github.getRepository(repo)
             .createRelease(tagName);
     }

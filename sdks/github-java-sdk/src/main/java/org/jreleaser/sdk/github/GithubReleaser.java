@@ -114,7 +114,7 @@ public class GithubReleaser implements Releaser {
             return;
         }
 
-        GHRelease release = api.createRelease(github.getRepoOwner(), github.getRepoName(), github.getTagName())
+        GHRelease release = api.createRelease(github.getCanonicalRepoName(), github.getTagName())
             .commitish(github.getTargetCommitish())
             .name(github.getReleaseName())
             .draft(github.isDraft())
