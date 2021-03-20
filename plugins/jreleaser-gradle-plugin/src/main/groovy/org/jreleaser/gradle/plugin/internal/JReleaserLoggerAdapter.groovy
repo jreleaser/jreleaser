@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal
 
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.jreleaser.util.Logger
 import org.kordamp.gradle.util.AnsiConsole
@@ -26,6 +27,7 @@ import org.slf4j.helpers.MessageFormatter
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class JReleaserLoggerAdapter implements Logger {
     private final PrintWriter out
     private final Level level
@@ -163,7 +165,7 @@ class JReleaserLoggerAdapter implements Logger {
         return requested.ordinal() >= level.ordinal()
     }
 
-    private static class Colorizer extends PrintWriter {
+    private class Colorizer extends PrintWriter {
         Colorizer(PrintWriter delegate) {
             super(delegate, true)
         }

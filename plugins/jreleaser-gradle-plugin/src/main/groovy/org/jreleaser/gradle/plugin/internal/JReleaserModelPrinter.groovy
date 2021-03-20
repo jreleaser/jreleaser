@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal
 
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.kordamp.gradle.util.AnsiConsole
 
@@ -24,6 +25,7 @@ import org.kordamp.gradle.util.AnsiConsole
  * @author Andres Almiray
  * @since 0.1.0
  */
+@CompileStatic
 class JReleaserModelPrinter extends org.jreleaser.model.JReleaserModelPrinter {
     private final AnsiConsole console
 
