@@ -23,7 +23,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.Sign
+import org.jreleaser.gradle.plugin.dsl.Signing
 
 import javax.inject.Inject
 
@@ -33,14 +33,14 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class SignImpl implements Sign {
+class SigningImpl implements Signing {
     final Property<Boolean> enabled
     final Property<Boolean> armored
     final Property<String> passphrase
     final RegularFileProperty keyRingFile
 
     @Inject
-    SignImpl(ObjectFactory objects) {
+    SigningImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
         armored = objects.property(Boolean).convention(Providers.notDefined())
         passphrase = objects.property(String).convention(Providers.notDefined())
@@ -55,8 +55,8 @@ class SignImpl implements Sign {
             keyRingFile.present
     }
 
-    org.jreleaser.model.Sign toModel() {
-        org.jreleaser.model.Sign sign = new org.jreleaser.model.Sign()
+    org.jreleaser.model.Signing toModel() {
+        org.jreleaser.model.Signing sign = new org.jreleaser.model.Signing()
         sign.enabled = enabled.orElse(isSet())
         sign.armored = armored.getOrElse(false)
         if (passphrase.present) sign.passphrase = passphrase.get()

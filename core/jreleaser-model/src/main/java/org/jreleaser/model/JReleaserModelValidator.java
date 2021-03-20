@@ -139,11 +139,11 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void validateSign(Logger logger, Path basedir, JReleaserModel model, Sign sign, List<String> errors) {
-        if (!sign.isEnabled()) return;
+    private static void validateSign(Logger logger, Path basedir, JReleaserModel model, Signing signing, List<String> errors) {
+        if (!signing.isEnabled()) return;
 
-        checkEnvSetting(logger, errors, sign.getPassphrase(), "GPG_PASSPHRASE", "sign.passphrase");
-        if (isBlank(sign.getKeyRingFile())) {
+        checkEnvSetting(logger, errors, signing.getPassphrase(), "GPG_PASSPHRASE", "sign.passphrase");
+        if (isBlank(signing.getKeyRingFile())) {
             errors.add("sign.keyRingFile must not be blank");
         }
     }

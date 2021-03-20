@@ -15,31 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
+package org.jreleaser.maven.plugin;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Sign implements Domain {
+public class Signing {
     private Boolean enabled;
     private boolean enabledSet;
     private boolean armored;
     private String keyRingFile;
     private String passphrase;
 
-    void setAll(Sign sign) {
-        this.enabled = sign.enabled;
-        this.enabledSet = sign.enabledSet;
-        this.armored = sign.armored;
-        this.keyRingFile = sign.keyRingFile;
-        this.passphrase = sign.passphrase;
+    void setAll(Signing signing) {
+        this.enabled = signing.enabled;
+        this.enabledSet = signing.enabledSet;
+        this.armored = signing.armored;
+        this.keyRingFile = signing.keyRingFile;
+        this.passphrase = signing.passphrase;
     }
 
     public Boolean isEnabled() {
@@ -53,13 +47,6 @@ public class Sign implements Domain {
 
     public boolean isEnabledSet() {
         return enabledSet;
-    }
-
-    public String getResolvedPassphrase() {
-        if (isNotBlank(passphrase)) {
-            return passphrase;
-        }
-        return System.getenv("GPG_PASSPHRASE");
     }
 
     public boolean isArmored() {
@@ -84,18 +71,5 @@ public class Sign implements Domain {
 
     public void setPassphrase(String passphrase) {
         this.passphrase = passphrase;
-    }
-
-    @Override
-    public final Map<String, Object> asMap() {
-        if (!isEnabled()) return Collections.emptyMap();
-
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", isEnabled());
-        map.put("armored", armored);
-        map.put("keyRingFile", keyRingFile);
-        map.put("passphrase", isNotBlank(passphrase) ? "************" : "**unset**");
-
-        return map;
     }
 }

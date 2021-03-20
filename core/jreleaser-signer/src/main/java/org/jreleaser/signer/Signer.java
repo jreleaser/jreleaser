@@ -37,7 +37,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Sign;
+import org.jreleaser.model.Signing;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,8 +86,8 @@ public class Signer {
         sign(context, signatureGenerator, paths);
     }
 
-    private static PGPSignatureGenerator initSignatureGenerator(Sign sign) throws SigningException {
-        File keyRingFile = Paths.get(sign.getKeyRingFile()).toFile();
+    private static PGPSignatureGenerator initSignatureGenerator(Signing signing) throws SigningException {
+        File keyRingFile = Paths.get(signing.getKeyRingFile()).toFile();
         if (!keyRingFile.exists()) {
             throw new SigningException("sign.keyRingFile does not exist");
         }
@@ -96,7 +96,7 @@ public class Signer {
             PGPSecretKey pgpSec = readSecretKey(new FileInputStream(keyRingFile));
             PGPPrivateKey privateKey = pgpSec.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder()
                 .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                .build(sign.getResolvedPassphrase().toCharArray()));
+                .build(signing.getResolvedPassphrase().toCharArray()));
             PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(
                 new JcaPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), PGPUtil.SHA256)
                     .setProvider(BouncyCastleProvider.PROVIDER_NAME));

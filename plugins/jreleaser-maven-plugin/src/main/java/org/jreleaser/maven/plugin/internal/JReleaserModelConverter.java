@@ -34,7 +34,7 @@ import org.jreleaser.maven.plugin.Project;
 import org.jreleaser.maven.plugin.Release;
 import org.jreleaser.maven.plugin.Scoop;
 import org.jreleaser.maven.plugin.Sdkman;
-import org.jreleaser.maven.plugin.Sign;
+import org.jreleaser.maven.plugin.Signing;
 import org.jreleaser.maven.plugin.Slot;
 import org.jreleaser.maven.plugin.Snap;
 import org.jreleaser.maven.plugin.Twitter;
@@ -63,7 +63,7 @@ public final class JReleaserModelConverter {
         jReleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
         jReleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
         jReleaserModel.setAnnounce(convertAnnounce(jreleaser.getAnnounce()));
-        jReleaserModel.setSign(convertSign(jreleaser.getSign()));
+        jReleaserModel.setSigning(convertSigning(jreleaser.getSigning()));
         jReleaserModel.setFiles(convertArtifacts(jreleaser.getFiles()));
         jReleaserModel.setDistributions(convertDistributions(jReleaserModel, jreleaser.getDistributions()));
         return jReleaserModel;
@@ -201,12 +201,12 @@ public final class JReleaserModelConverter {
         return a;
     }
 
-    private static org.jreleaser.model.Sign convertSign(Sign sign) {
-        org.jreleaser.model.Sign s = new org.jreleaser.model.Sign();
-        if (sign.isEnabledSet()) s.setEnabled(sign.isEnabled());
-        s.setArmored(sign.isArmored());
-        s.setKeyRingFile(sign.getKeyRingFile());
-        s.setPassphrase(sign.getPassphrase());
+    private static org.jreleaser.model.Signing convertSigning(Signing signing) {
+        org.jreleaser.model.Signing s = new org.jreleaser.model.Signing();
+        if (signing.isEnabledSet()) s.setEnabled(signing.isEnabled());
+        s.setArmored(signing.isArmored());
+        s.setKeyRingFile(signing.getKeyRingFile());
+        s.setPassphrase(signing.getPassphrase());
         return s;
     }
 

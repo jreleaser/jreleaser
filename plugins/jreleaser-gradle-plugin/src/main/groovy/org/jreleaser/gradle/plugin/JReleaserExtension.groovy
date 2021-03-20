@@ -27,7 +27,7 @@ import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
-import org.jreleaser.gradle.plugin.dsl.Sign
+import org.jreleaser.gradle.plugin.dsl.Signing
 
 /**
  *
@@ -48,7 +48,7 @@ interface JReleaserExtension {
 
     Announce getAnnounce()
 
-    Sign getSign()
+    Signing getSigning()
 
     NamedDomainObjectContainer<Distribution> getDistributions()
 
@@ -62,5 +62,5 @@ interface JReleaserExtension {
 
     void announce(Action<? super Announce> action)
 
-    void sign(Action<? super Sign> action)
+    void signing(Action<? super Signing> action)
 }

@@ -37,7 +37,7 @@ public class JReleaserModel implements Domain {
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
     private final Announce announce = new Announce();
-    private final Sign sign = new Sign();
+    private final Signing signing = new Signing();
     private final Set<Artifact> files = new LinkedHashSet<>();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
 
@@ -73,12 +73,12 @@ public class JReleaserModel implements Domain {
         this.announce.setAll(announce);
     }
 
-    public Sign getSign() {
-        return sign;
+    public Signing getSign() {
+        return signing;
     }
 
-    public void setSign(Sign sign) {
-        this.sign.setAll(sign);
+    public void setSigning(Signing signing) {
+        this.signing.setAll(signing);
     }
 
     public Set<Artifact> getFiles() {
@@ -139,7 +139,7 @@ public class JReleaserModel implements Domain {
         map.put("release", release.asMap());
         map.put("packagers", packagers.asMap());
         map.put("announce", announce.asMap());
-        map.put("sign", sign.asMap());
+        map.put("signing", signing.asMap());
         map.put("files", files.stream()
             .map(Artifact::asMap)
             .collect(Collectors.toList()));

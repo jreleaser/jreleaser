@@ -32,14 +32,14 @@ import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
-import org.jreleaser.gradle.plugin.dsl.Sign
+import org.jreleaser.gradle.plugin.dsl.Signing
 import org.jreleaser.gradle.plugin.internal.dsl.AnnounceImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl
-import org.jreleaser.gradle.plugin.internal.dsl.SignImpl
+import org.jreleaser.gradle.plugin.internal.dsl.SigningImpl
 import org.jreleaser.model.Distribution
 import org.jreleaser.model.JReleaserModel
 
@@ -59,7 +59,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final ReleaseImpl release
     final PackagersImpl packagers
     final AnnounceImpl announce
-    final SignImpl sign
+    final SigningImpl signing
     final NamedDomainObjectContainer<ArtifactImpl> artifacts
     final NamedDomainObjectContainer<DistributionImpl> distributions
 
@@ -75,7 +75,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         release = objects.newInstance(ReleaseImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)
         announce = objects.newInstance(AnnounceImpl, objects)
-        sign = objects.newInstance(SignImpl, objects)
+        signing = objects.newInstance(SigningImpl, objects)
         artifacts = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
             ArtifactImpl create(String name) {
@@ -121,8 +121,8 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
-    void sign(Action<? super Sign> action) {
-        action.execute(sign)
+    void signing(Action<? super Signing> action) {
+        action.execute(signing)
     }
 
     @CompileDynamic
@@ -132,7 +132,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.release = release.toModel()
         jreleaser.packagers = packagers.toModel()
         jreleaser.announce = announce.toModel()
-        jreleaser.sign = sign.toModel()
+        jreleaser.signing = signing.toModel()
         for (ArtifactImpl artifact : artifacts) {
             jreleaser.artifacts.add(artifact.toModel())
         }
