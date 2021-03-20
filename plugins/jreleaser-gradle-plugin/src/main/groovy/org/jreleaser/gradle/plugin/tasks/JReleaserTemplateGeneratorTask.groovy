@@ -94,7 +94,7 @@ abstract class JReleaserTemplateGeneratorTask extends DefaultTask {
     @TaskAction
     void generateTemplate() {
         boolean result = TemplateGenerator.builder()
-            .logger(new JReleaserLoggerAdapter(project.logger))
+            .logger(new JReleaserLoggerAdapter(project))
             .distributionName(distributionName.get())
             .distributionType(distributionType.get())
             .toolName(toolName.get())

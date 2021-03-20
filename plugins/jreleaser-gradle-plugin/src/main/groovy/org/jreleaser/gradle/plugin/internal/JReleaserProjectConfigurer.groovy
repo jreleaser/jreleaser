@@ -72,7 +72,7 @@ class JReleaserProjectConfigurer {
 
         JReleaserModel model = extension.toModel()
         model.getProject().setJavaVersion(javaVersion)
-        JReleaserLoggerAdapter logger = new JReleaserLoggerAdapter(project.logger)
+        JReleaserLoggerAdapter logger = new JReleaserLoggerAdapter(project)
         List<String> errors = JReleaserModelValidator.validate(logger, project.projectDir.toPath(), model)
         if (errors) {
             project.logger.error('== JReleaser ==')
@@ -102,12 +102,11 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        Set<TaskProvider<?>> jreleaserDeps = new LinkedHashSet<>()
         Provider<Directory> outputDirectoryProvider = project.layout
             .buildDirectory
             .dir('jreleaser')
 
-        TaskProvider<JReleaserChecksumTask> checksumTask = project.tasks.register('jreleaserChecksum', JReleaserChecksumTask,
+        project.tasks.register('jreleaserChecksum', JReleaserChecksumTask,
             new Action<JReleaserChecksumTask>() {
                 @Override
                 void execute(JReleaserChecksumTask t) {
@@ -117,34 +116,29 @@ class JReleaserProjectConfigurer {
                     t.outputDirectory.set(outputDirectoryProvider)
                 }
             })
-        jreleaserDeps << checksumTask
 
-        TaskProvider<JReleaserSignTask> signTask = project.tasks.register('jreleaserSign', JReleaserSignTask,
+        project.tasks.register('jreleaserSign', JReleaserSignTask,
             new Action<JReleaserSignTask>() {
                 @Override
                 void execute(JReleaserSignTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Signs a release'
-                    t.dependsOn(checksumTask)
                     t.jreleaserModel.set(model)
                     t.outputDirectory.set(outputDirectoryProvider)
                 }
             })
-        jreleaserDeps << signTask
 
-        TaskProvider<JReleaserReleaseTask> releaseTask = project.tasks.register('jreleaserRelease', JReleaserReleaseTask,
+        project.tasks.register('jreleaserRelease', JReleaserReleaseTask,
             new Action<JReleaserReleaseTask>() {
                 @Override
                 void execute(JReleaserReleaseTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Creates or updates a release'
-                    t.dependsOn(signTask)
                     t.jreleaserModel.set(model)
                     t.dryrun.set(extension.dryrun)
                     t.outputDirectory.set(outputDirectoryProvider)
                 }
             })
-        jreleaserDeps << releaseTask
 
         TaskProvider<JReleaserPrepareTask> prepareTask = project.tasks.register('jreleaserPrepare', JReleaserPrepareTask,
             new Action<JReleaserPrepareTask>() {
@@ -152,7 +146,6 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserPrepareTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Prepares all distributions'
-                    t.dependsOn(checksumTask)
                     t.jreleaserModel.set(model)
                     t.outputDirectory.set(outputDirectoryProvider)
                     if (hasDistributionPlugin) {
@@ -160,7 +153,6 @@ class JReleaserProjectConfigurer {
                     }
                 }
             })
-        jreleaserDeps << prepareTask
 
         TaskProvider<JReleaserPackageTask> packageTask = project.tasks.register('jreleaserPackage', JReleaserPackageTask,
             new Action<JReleaserPackageTask>() {
@@ -173,36 +165,31 @@ class JReleaserProjectConfigurer {
                     t.outputDirectory.set(outputDirectoryProvider)
                 }
             })
-        jreleaserDeps << packageTask
 
-        TaskProvider<JReleaserUploadTask> uploadTask = project.tasks.register('jreleaserUpload', JReleaserUploadTask,
+        project.tasks.register('jreleaserUpload', JReleaserUploadTask,
             new Action<JReleaserUploadTask>() {
                 @Override
                 void execute(JReleaserUploadTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Uploads all distributions'
-                    t.dependsOn(prepareTask)
+                    t.dependsOn(packageTask)
                     t.jreleaserModel.set(model)
                     t.dryrun.set(extension.dryrun)
                     t.outputDirectory.set(outputDirectoryProvider)
                 }
             })
-        jreleaserDeps << uploadTask
 
-        TaskProvider<JReleaserAnnounceTask> announceTask = project.tasks.register('jreleaserAnnounce', JReleaserAnnounceTask,
+        project.tasks.register('jreleaserAnnounce', JReleaserAnnounceTask,
             new Action<JReleaserAnnounceTask>() {
                 @Override
                 void execute(JReleaserAnnounceTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Announces a release'
-                    t.dependsOn(releaseTask)
-                    t.mustRunAfter(releaseTask)
                     t.jreleaserModel.set(model)
                     t.dryrun.set(extension.dryrun)
                     t.outputDirectory.set(outputDirectoryProvider)
                 }
             })
-        jreleaserDeps << announceTask
 
         project.tasks.register('jreleaserFullRelease', JReleaserFullReleaseTask,
             new Action<JReleaserFullReleaseTask>() {
@@ -210,7 +197,6 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserFullReleaseTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Invokes JReleaser on all distributions'
-                    t.dependsOn(jreleaserDeps)
                     t.jreleaserModel.set(model)
                     t.dryrun.set(extension.dryrun)
                     t.outputDirectory.set(outputDirectoryProvider)

@@ -20,8 +20,17 @@ package org.jreleaser.gradle.plugin.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
+import org.jreleaser.model.JReleaserContext
 
 import javax.inject.Inject
+
+import static org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask.announce
+import static org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask.checksum
+import static org.jreleaser.gradle.plugin.tasks.JReleaserPackageTask.packageTools
+import static org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask.prepare
+import static org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask.release
+import static org.jreleaser.gradle.plugin.tasks.JReleaserSignTask.sign
+import static org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask.upload
 
 /**
  *
@@ -37,6 +46,15 @@ abstract class JReleaserFullReleaseTask extends AbstractJReleaserTask {
 
     @TaskAction
     void fullRelease() {
-        // noop
+        println "jreleaser.dryrun set to ${dryrun.get()}"
+        JReleaserContext context = createContext()
+
+        checksum(context)
+        sign(context)
+        release(context)
+        prepare(context, true)
+        packageTools(context, true)
+        upload(context, true)
+        announce(context)
     }
 }

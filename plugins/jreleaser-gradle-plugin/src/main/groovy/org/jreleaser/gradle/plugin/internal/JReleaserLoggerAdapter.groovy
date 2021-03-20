@@ -17,76 +17,177 @@
  */
 package org.jreleaser.gradle.plugin.internal
 
+import org.gradle.api.Project
 import org.jreleaser.util.Logger
+import org.kordamp.gradle.util.AnsiConsole
+import org.slf4j.helpers.MessageFormatter
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 class JReleaserLoggerAdapter implements Logger {
-    private final org.gradle.api.logging.Logger delegate
+    private final PrintWriter out
+    private final Level level
+    private final AnsiConsole console
 
-    JReleaserLoggerAdapter(org.gradle.api.logging.Logger delegate) {
-        this.delegate = delegate
+    JReleaserLoggerAdapter(Project project) {
+        this(project, new PrintWriter(System.out, true), Level.INFO)
+    }
+
+    JReleaserLoggerAdapter(Project project, PrintWriter out) {
+        this(project, out, Level.INFO)
+    }
+
+    JReleaserLoggerAdapter(Project project, PrintWriter out, Level level) {
+        this.out = out
+        this.level = level
+        this.console = new AnsiConsole(project)
     }
 
     @Override
     void debug(String message) {
-        delegate.debug(message)
+        if (isLevelEnabled(Level.DEBUG)) {
+            log(Level.DEBUG, message)
+        }
     }
 
     @Override
     void info(String message) {
-        delegate.info(message)
+        if (isLevelEnabled(Level.INFO)) {
+            log(Level.INFO, message)
+        }
     }
 
     @Override
     void warn(String message) {
-        delegate.warn(message)
+        if (isLevelEnabled(Level.WARN)) {
+            log(Level.WARN, message)
+        }
     }
 
     @Override
     void error(String message) {
-        delegate.error(message)
+        if (isLevelEnabled(Level.ERROR)) {
+            log(Level.ERROR, message)
+        }
     }
 
     @Override
     void debug(String message, Object... args) {
-        delegate.debug(message, args)
+        if (isLevelEnabled(Level.DEBUG)) {
+            log(Level.DEBUG, MessageFormatter.arrayFormat(message, args).getMessage())
+        }
     }
 
     @Override
     void info(String message, Object... args) {
-        delegate.info(message, args)
+        if (isLevelEnabled(Level.INFO)) {
+            log(Level.INFO, MessageFormatter.arrayFormat(message, args).getMessage())
+        }
     }
 
     @Override
     void warn(String message, Object... args) {
-        delegate.warn(message, args)
+        if (isLevelEnabled(Level.WARN)) {
+            log(Level.WARN, MessageFormatter.arrayFormat(message, args).getMessage())
+        }
     }
 
     @Override
     void error(String message, Object... args) {
-        delegate.error(message, args)
+        if (isLevelEnabled(Level.ERROR)) {
+            log(Level.ERROR, MessageFormatter.arrayFormat(message, args).getMessage())
+        }
     }
 
     @Override
     void debug(String message, Throwable throwable) {
-        delegate.debug(message, throwable)
+        if (isLevelEnabled(Level.DEBUG)) {
+            log(Level.DEBUG, message)
+            printThrowable(throwable)
+        }
     }
 
     @Override
     void info(String message, Throwable throwable) {
-        delegate.info(message, throwable)
+        if (isLevelEnabled(Level.INFO)) {
+            log(Level.INFO, message)
+            printThrowable(throwable)
+        }
     }
 
     @Override
     void warn(String message, Throwable throwable) {
-        delegate.warn(message, throwable)
+        if (isLevelEnabled(Level.WARN)) {
+            log(Level.WARN, message)
+            printThrowable(throwable)
+        }
     }
 
     @Override
     void error(String message, Throwable throwable) {
-        delegate.error(message, throwable)
+        if (isLevelEnabled(Level.ERROR)) {
+            log(Level.ERROR, message)
+            printThrowable(throwable)
+        }
+    }
+
+    private void log(Level level, String message) {
+        StringBuilder b = new StringBuilder('[')
+        switch (level.color()) {
+            case 'cyan':
+                b.append(console.cyan(level.name()))
+                break
+            case 'blue':
+                b.append(console.blue(level.name()))
+                break
+            case 'yellow':
+                b.append(console.yellow(level.name()))
+                break
+            case 'red':
+                b.append(console.red(level.name()))
+                break
+        }
+
+        out.println(b.append('] ').append(message))
+    }
+
+    private void printThrowable(Throwable throwable) {
+        if (null != throwable) {
+            throwable.printStackTrace(new Colorizer(out))
+        }
+    }
+
+    private boolean isLevelEnabled(Level requested) {
+        return requested.ordinal() >= level.ordinal()
+    }
+
+    private static class Colorizer extends PrintWriter {
+        Colorizer(PrintWriter delegate) {
+            super(delegate, true)
+        }
+
+        @Override
+        void print(String s) {
+            super.print(console.red(s))
+        }
+    }
+
+    enum Level {
+        DEBUG('cyan'),
+        INFO('blue'),
+        WARN('yellow'),
+        ERROR('red')
+
+        private final String color
+
+        Level(String color) {
+            this.color = color
+        }
+
+        String color() {
+            this.color
+        }
     }
 }

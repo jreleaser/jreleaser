@@ -23,6 +23,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.jreleaser.gradle.plugin.internal.JReleaserModelPrinter
 import org.jreleaser.model.JReleaserModel
 
 import javax.inject.Inject
@@ -45,22 +46,7 @@ abstract class JReleaserConfigTask extends DefaultTask {
     @TaskAction
     void displayConfig() {
         println '== JReleaser =='
-        new JReleaserModelPrinter(new PrintWriter(System.out, true))
+        new JReleaserModelPrinter(project)
             .print(jreleaserModel.get().asMap())
-    }
-
-    private static class JReleaserModelPrinter extends org.jreleaser.model.JReleaserModelPrinter {
-        JReleaserModelPrinter(PrintWriter out) {
-            super(out)
-        }
-
-        JReleaserModelPrinter(PrintWriter out, boolean showSecrets) {
-            super(out, showSecrets)
-        }
-
-        @Override
-        protected String color(String color, String input) {
-            return input
-        }
     }
 }

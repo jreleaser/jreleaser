@@ -48,6 +48,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Provider;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -62,6 +63,14 @@ public class Signer {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.setProperty("crypto.policy", "unlimited");
             Security.addProvider(new BouncyCastleProvider());
+        } else {
+            Provider[] providers = Security.getProviders();
+            for (int i = 0; i < providers.length; i++) {
+                if (providers[i].getName().equals(BouncyCastleProvider.PROVIDER_NAME)) {
+                    Security.insertProviderAt(new BouncyCastleProvider(), i);
+                    break;
+                }
+            }
         }
     }
 

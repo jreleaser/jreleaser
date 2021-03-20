@@ -42,8 +42,8 @@ abstract class JReleaserReleaseTask extends AbstractJReleaserTask {
 
     @TaskAction
     void createRelease() {
+        println "jreleaser.dryrun set to ${dryrun.get()}"
         JReleaserContext context = createContext()
-        context.logger.info('dryrun set to {}', dryrun.get())
 
         checksum(context)
         sign(context)

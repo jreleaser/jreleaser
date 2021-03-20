@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
 import org.jreleaser.announce.Announcers
+import org.jreleaser.model.JReleaserContext
 
 import javax.inject.Inject
 
@@ -38,6 +39,11 @@ abstract class JReleaserAnnounceTask extends AbstractJReleaserTask {
 
     @TaskAction
     void announce() {
+        println "jreleaser.dryrun set to ${dryrun.get()}"
         Announcers.announce(createContext())
+    }
+
+    static void announce(JReleaserContext context) {
+        Announcers.announce(context)
     }
 }

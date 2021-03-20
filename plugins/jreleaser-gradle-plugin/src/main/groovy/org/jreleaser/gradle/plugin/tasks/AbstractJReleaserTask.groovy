@@ -62,7 +62,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
 
     protected JReleaserContext createContext() {
         new JReleaserContext(
-            new JReleaserLoggerAdapter(project.logger),
+            new JReleaserLoggerAdapter(project),
             jreleaserModel.get(),
             project.projectDir.toPath(),
             outputDirectory.get().asFile.toPath(),
