@@ -58,6 +58,8 @@ shadowJar {
     configurations    = [project.configurations.uberjar]
     archiveBaseName   = project.name
     archiveClassifier = ''
+    exclude 'module-info.class'
+    exclude '**/module-info.class'
     exclude 'META-INF/maven/**'
     exclude 'META-INF/plexus/**'
     exclude 'META-INF/m2e/**'

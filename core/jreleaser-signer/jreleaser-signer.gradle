@@ -47,6 +47,8 @@ shadowJar {
     configurations    = [project.configurations.uberjar]
     archiveBaseName   = project.name
     archiveClassifier = ''
+    exclude 'module-info.class'
+    exclude '**/module-info.class'
     relocate 'org.bouncycastle', 'jreleaser.shadow.org.bouncycastle'
 }
 
