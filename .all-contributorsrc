@@ -18,6 +18,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "sormuras",
+      "name": "Christian Stein",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2319838?v=4",
+      "profile": "https://sormuras.github.io",
+      "contributions": [
+        "ideas",
+        "infra"
+      ]
     }
   ],
   "contributorsPerLine": 7,
