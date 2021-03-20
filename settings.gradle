@@ -23,11 +23,9 @@ buildscript {
     }
     dependencies {
         classpath "com.github.jengelman.gradle.plugins:shadow:$shadowPluginVersion"
-        classpath "org.ajoberstar:gradle-git-publish:$gitPluginVersion"
         classpath "org.kordamp.gradle:java-project-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:bintray-gradle-plugin:$kordampPluginVersion"
-        classpath "org.kordamp.gradle:guide-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:plugin-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:kordamp-parentbuild:$kordampBuildVersion"
         classpath "org.ow2.asm:asm:$asmVersion"
@@ -50,10 +48,6 @@ projects {
         path(':') {
             id 'org.kordamp.gradle.java-project'
             id 'org.kordamp.gradle.bintray'
-        }
-        path(':guide') {
-            id 'org.kordamp.gradle.guide'
-            id 'org.ajoberstar.git-publish'
         }
         dirs(['apps', 'core', 'sdks', 'plugins']) {
             id 'java-library'
