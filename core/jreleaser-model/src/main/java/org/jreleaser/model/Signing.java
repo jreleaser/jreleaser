@@ -30,7 +30,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Signing implements Domain {
     private Boolean enabled;
     private boolean enabledSet;
-    private boolean armored;
+    private Boolean armored;
+    private boolean armoredSet;
     private String keyRingFile;
     private String passphrase;
 
@@ -38,6 +39,7 @@ public class Signing implements Domain {
         this.enabled = signing.enabled;
         this.enabledSet = signing.enabledSet;
         this.armored = signing.armored;
+        this.armoredSet = signing.armoredSet;
         this.keyRingFile = signing.keyRingFile;
         this.passphrase = signing.passphrase;
     }
@@ -62,12 +64,17 @@ public class Signing implements Domain {
         return System.getenv("GPG_PASSPHRASE");
     }
 
-    public boolean isArmored() {
-        return armored;
+    public Boolean isArmored() {
+        return armored == null || armored;
     }
 
-    public void setArmored(boolean armored) {
+    public void setArmored(Boolean armored) {
+        this.armoredSet = true;
         this.armored = armored;
+    }
+
+    public boolean isArmoredSet() {
+        return armoredSet;
     }
 
     public String getKeyRingFile() {
@@ -92,7 +99,7 @@ public class Signing implements Domain {
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
-        map.put("armored", armored);
+        map.put("armored", isArmored());
         map.put("keyRingFile", keyRingFile);
         map.put("passphrase", isNotBlank(passphrase) ? "************" : "**unset**");
 
