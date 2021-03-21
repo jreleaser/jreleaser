@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.app.internal;
+package org.jreleaser.cli.internal;
 
 import org.jreleaser.util.Logger;
 import org.slf4j.helpers.MessageFormatter;

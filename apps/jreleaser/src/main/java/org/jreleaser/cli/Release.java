@@ -15,26 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.app;
+package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.releaser.spi.ReleaseException;
+import org.jreleaser.releaser.Releasers;
 import picocli.CommandLine;
+
+import static org.jreleaser.cli.Checksum.checksum;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "upload",
-    description = "Uploads all distributions")
-public class Upload extends AbstractProcessorCommand {
+@CommandLine.Command(name = "release",
+    description = "Create or update a release")
+public class Release extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skips remote operations.")
     boolean dryrun;
 
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
-        upload(createContext(jreleaserModel), failFast);
+        JReleaserContext context = createContext(jreleaserModel);
+        checksum(context);
+        Sign.sign(context);
+        release(context);
     }
 
     @Override
@@ -42,12 +50,11 @@ public class Upload extends AbstractProcessorCommand {
         return dryrun;
     }
 
-    static void upload(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Uploading", processor -> {
-            if (processor.prepareDistribution()) {
-                context.getLogger().info("Uploaded " + processor.getDistributionName() +
-                    " distribution with " + processor.getToolName());
-            }
-        });
+    static void release(JReleaserContext context) {
+        try {
+            Releasers.release(context);
+        } catch (ReleaseException e) {
+            throw new JReleaserException("Unexpected error when creating release.", e);
+        }
     }
 }

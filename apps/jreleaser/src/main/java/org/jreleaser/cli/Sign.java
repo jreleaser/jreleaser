@@ -15,21 +15,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.app;
+package org.jreleaser.cli;
 
-import org.jreleaser.app.internal.JReleaserModelPrinter;
+import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.signer.Signer;
+import org.jreleaser.signer.SigningException;
 import picocli.CommandLine;
+
+import static org.jreleaser.cli.Checksum.checksum;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "config",
-    description = "Displays current configuration")
-public class Config extends AbstractModelCommand {
+@CommandLine.Command(name = "sign",
+    description = "Sign release artifacts")
+public class Sign extends AbstractModelCommand {
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
-        new JReleaserModelPrinter(parent.out).print(jreleaserModel.asMap());
+        JReleaserContext context = createContext(jreleaserModel);
+        checksum(context);
+        sign(context);
+    }
+
+    static void sign(JReleaserContext context) {
+        try {
+            Signer.sign(context);
+        } catch (SigningException e) {
+            throw new JReleaserException("Unexpected error when signing release.", e);
+        }
     }
 }

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.app;
+package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
@@ -25,20 +25,28 @@ import picocli.CommandLine;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "package",
-    description = "Packages all distributions")
-public class Package extends AbstractProcessorCommand {
+@CommandLine.Command(name = "full-release",
+    description = "Performs a full release of all distributions")
+public class FullRelease extends AbstractModelCommand {
+    @CommandLine.Option(names = {"-y", "--dryrun"},
+        description = "Skips remote operations.")
+    boolean dryrun;
+
     @Override
     protected void consumeModel(JReleaserModel jreleaserModel) {
-        packageTools(createContext(jreleaserModel), failFast);
+        JReleaserContext context = createContext(jreleaserModel);
+
+        Checksum.checksum(context);
+        Sign.sign(context);
+        Release.release(context);
+        Prepare.prepare(context, true);
+        Package.packageTools(context, true);
+        Upload.upload(context, true);
+        Announce.announce(context);
     }
 
-    static void packageTools(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Packaging", processor -> {
-            if (processor.packageDistribution()) {
-                context.getLogger().info("Packaged " + processor.getDistributionName() +
-                    " distribution with " + processor.getToolName());
-            }
-        });
+    @Override
+    protected boolean dryrun() {
+        return dryrun;
     }
 }

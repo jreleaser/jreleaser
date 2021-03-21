@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.app;
+package org.jreleaser.cli;
 
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserException;

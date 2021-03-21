@@ -15,31 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.tool;
+package org.jreleaser.cli.internal;
 
-import org.jreleaser.cli.Main;
-import org.kordamp.jipsy.annotations.ServiceProviderFor;
+import picocli.CommandLine;
 
 import java.io.PrintWriter;
-import java.util.spi.ToolProvider;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@ServiceProviderFor(ToolProvider.class)
-public class JReleaser implements ToolProvider {
-    public String name() {
-        return "jreleaser";
+public class Colorizer extends PrintWriter {
+    public Colorizer(PrintWriter delegate) {
+        super(delegate, true);
     }
 
-    public int run(PrintWriter out, PrintWriter err, String... args) {
-        return Main.run(out, err, args);
-    }
-
-    public static void main(String[] args) {
-        PrintWriter out = new PrintWriter(System.out, true);
-        PrintWriter err = new PrintWriter(System.err, true);
-        Main.run(out, err, args);
+    @Override
+    public void print(String s) {
+        super.print(CommandLine.Help.Ansi.AUTO.text("@|red " + s + "|@"));
     }
 }

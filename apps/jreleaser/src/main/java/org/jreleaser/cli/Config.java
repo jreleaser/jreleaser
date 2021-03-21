@@ -15,27 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.app.internal;
+package org.jreleaser.cli;
 
+import org.jreleaser.cli.internal.JReleaserModelPrinter;
+import org.jreleaser.model.JReleaserModel;
 import picocli.CommandLine;
-
-import java.io.PrintWriter;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserModelPrinter extends org.jreleaser.model.JReleaserModelPrinter {
-    public JReleaserModelPrinter(PrintWriter out) {
-        super(out);
-    }
-
-    public JReleaserModelPrinter(PrintWriter out, boolean showSecrets) {
-        super(out, showSecrets);
-    }
-
+@CommandLine.Command(name = "config",
+    description = "Displays current configuration")
+public class Config extends AbstractModelCommand {
     @Override
-    protected String color(String color, String input) {
-        return CommandLine.Help.Ansi.AUTO.string("@|" + color + " " + input + "|@");
+    protected void consumeModel(JReleaserModel jreleaserModel) {
+        new JReleaserModelPrinter(parent.out).print(jreleaserModel.asMap());
     }
 }

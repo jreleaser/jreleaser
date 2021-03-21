@@ -15,9 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.app;
+package org.jreleaser.cli;
 
-import org.jreleaser.app.internal.ColorizedJReleaserLoggerAdapter;
+import org.jreleaser.cli.internal.ColorizedJReleaserLoggerAdapter;
 import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
