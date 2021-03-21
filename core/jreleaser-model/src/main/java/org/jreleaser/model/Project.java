@@ -53,6 +53,13 @@ public class Project implements Domain, ExtraProperties {
         setExtraProperties(project.extraProperties);
     }
 
+    public String getResolvedVersion() {
+        if (isNotBlank(version)) {
+            return version;
+        }
+        return System.getenv("JRELEASER_PROJECT_VERSION");
+    }
+
     public String getName() {
         return name;
     }
@@ -182,7 +189,7 @@ public class Project implements Domain, ExtraProperties {
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
-        map.put("version", version);
+        map.put("version", getResolvedVersion());
         map.put("description", description);
         map.put("longDescription", longDescription);
         map.put("website", website);

@@ -160,7 +160,7 @@ public class JReleaserModel implements Domain {
     private void fillProjectProperties(Map<String, Object> props, Project project) {
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
-        props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
+        props.put(Constants.KEY_PROJECT_VERSION, project.getResolvedVersion());
         props.put(Constants.KEY_PROJECT_DESCRIPTION, project.getDescription());
         props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, project.getLongDescription());
         props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());

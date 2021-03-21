@@ -61,9 +61,7 @@ public final class JReleaserModelValidator {
         if (isBlank(project.getName())) {
             errors.add("project.name must not be blank");
         }
-        if (isBlank(project.getVersion())) {
-            errors.add("project.version must not be blank");
-        }
+        checkEnvSetting(logger, errors, project.getVersion(), "JRELEASER_PROJECT_VERSION", "project.version");
         if (isBlank(project.getDescription())) {
             errors.add("project.description must not be blank");
         }
@@ -164,7 +162,7 @@ public final class JReleaserModelValidator {
 
         service.setTagName(service.getResolvedTagName(project));
         if (isBlank(service.getTagName())) {
-            service.setTagName("v" + project.getVersion());
+            service.setTagName("v" + project.getResolvedVersion());
         }
         if (isBlank(service.getReleaseName())) {
             service.setReleaseName("Release " + service.getTagName());

@@ -100,7 +100,7 @@ public abstract class GitService implements Releaser {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
-        props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
+        props.put(Constants.KEY_PROJECT_VERSION, project.getResolvedVersion());
         props.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
         props.put(Constants.KEY_REPO_HOST, host);
         props.put(Constants.KEY_REPO_OWNER, owner);
