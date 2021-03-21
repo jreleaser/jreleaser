@@ -483,5 +483,17 @@ public final class JReleaserModelValidator {
                 }
             }
         }
+
+        Map<String, Object> props = model.props();
+        int i = 0;
+        for (Artifact artifact : model.getFiles()) {
+            String path = artifact.getPath();
+            if (path.contains("{{")) {
+                String newpath = applyTemplate(new StringReader(path), props);
+                logger.debug("Adjusting files[{i}].path{}        from {}{}        to {}",
+                    i++, System.lineSeparator(), path, System.lineSeparator(), newpath);
+                artifact.setPath(newpath);
+            }
+        }
     }
 }
