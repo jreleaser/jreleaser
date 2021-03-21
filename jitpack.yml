@@ -21,4 +21,4 @@ before_install:
   - sdk use java 11.0.10-zulu
 
 install:
-  - ./gradlew -Prelease=true install
+  - ./gradlew -Prelease=true publishToMavenLocal
