@@ -170,7 +170,7 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));
         props.put(Constants.KEY_PROJECT_TAGS_BY_SPACE, String.join(" ", project.getTags()));
         props.put(Constants.KEY_PROJECT_TAGS_BY_COMMA, String.join(",", project.getTags()));
-        props.putAll(project.getExtraProperties());
+        props.putAll(project.getResolvedExtraProperties());
     }
 
     private void fillReleaseProperties(Map<String, Object> props, Release release) {

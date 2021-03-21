@@ -17,7 +17,10 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.StringUtils;
+
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -25,9 +28,26 @@ import java.util.Map;
  * @since 0.1.0
  */
 public interface ExtraProperties extends Serializable {
+    String getPrefix();
+
     Map<String, Object> getExtraProperties();
 
     void setExtraProperties(Map<String, Object> properties);
 
     void addExtraProperties(Map<String, Object> properties);
+
+    default Map<String, Object> getResolvedExtraProperties() {
+        Map<String, Object> props = new LinkedHashMap<>();
+
+        getExtraProperties().forEach((key, value) -> {
+            String prefix = getPrefix();
+            if (key.startsWith(prefix)) {
+                props.put(key, value);
+            } else {
+                props.put(prefix + StringUtils.capitalize(key), value);
+            }
+        });
+
+        return props;
+    }
 }

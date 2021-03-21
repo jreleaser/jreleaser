@@ -101,7 +101,6 @@ public class DistributionProcessor {
             return false;
         }
 
-
         return ToolProcessors.findProcessor(context, tool)
             .uploadDistribution(distribution, initProps());
     }

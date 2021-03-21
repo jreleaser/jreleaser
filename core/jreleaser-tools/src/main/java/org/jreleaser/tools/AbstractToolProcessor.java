@@ -237,19 +237,19 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         }
         context.getLogger().debug("Filling tool properties into props");
         fillToolProperties(newProps, distribution);
-        newProps.putAll(tool.getExtraProperties());
+        newProps.putAll(tool.getResolvedExtraProperties());
         return newProps;
     }
 
-    protected void fillDistributionProperties(Map<String, Object> context, Distribution distribution, Release release) {
-        context.put(Constants.KEY_DISTRIBUTION_NAME, distribution.getName());
-        context.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, distribution.getExecutable());
-        context.put(Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", distribution.getTags()));
-        context.put(Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", distribution.getTags()));
-        context.put(Constants.KEY_DISTRIBUTION_RELEASE_NOTES, applyTemplate(new StringReader(release.getGitService().getReleaseNotesUrlFormat()), context));
-        context.put(Constants.KEY_DISTRIBUTION_ISSUE_TRACKER, applyTemplate(new StringReader(release.getGitService().getIssueTrackerUrlFormat()), context));
-        context.put(Constants.KEY_DISTRIBUTION_LATEST_RELEASE, applyTemplate(new StringReader(release.getGitService().getLatestReleaseUrlFormat()), context));
-        context.putAll(distribution.getExtraProperties());
+    protected void fillDistributionProperties(Map<String, Object> props, Distribution distribution, Release release) {
+        props.put(Constants.KEY_DISTRIBUTION_NAME, distribution.getName());
+        props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, distribution.getExecutable());
+        props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", distribution.getTags()));
+        props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", distribution.getTags()));
+        props.put(Constants.KEY_DISTRIBUTION_RELEASE_NOTES, applyTemplate(new StringReader(release.getGitService().getReleaseNotesUrlFormat()), props));
+        props.put(Constants.KEY_DISTRIBUTION_ISSUE_TRACKER, applyTemplate(new StringReader(release.getGitService().getIssueTrackerUrlFormat()), props));
+        props.put(Constants.KEY_DISTRIBUTION_LATEST_RELEASE, applyTemplate(new StringReader(release.getGitService().getLatestReleaseUrlFormat()), props));
+        props.putAll(distribution.getResolvedExtraProperties());
     }
 
     protected abstract void fillToolProperties(Map<String, Object> context, Distribution distribution) throws ToolProcessingException;

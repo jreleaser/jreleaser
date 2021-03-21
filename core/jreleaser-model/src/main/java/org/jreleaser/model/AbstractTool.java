@@ -44,6 +44,11 @@ abstract class AbstractTool implements Tool {
     }
 
     @Override
+    public String getPrefix() {
+        return getName();
+    }
+
+    @Override
     public Boolean isEnabled() {
         return enabled != null && enabled;
     }
@@ -98,7 +103,7 @@ abstract class AbstractTool implements Tool {
         props.put("enabled", isEnabled());
         props.put("templateDirectory", templateDirectory);
         asMap(props);
-        props.put("extraProperties", extraProperties);
+        props.put("extraProperties", getResolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(getName(), props);

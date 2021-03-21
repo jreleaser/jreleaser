@@ -96,7 +96,7 @@ public abstract class GitService implements Releaser {
         return owner + "/" + name;
     }
 
-    private Map<String, Object> createContext(Project project) {
+    private Map<String, Object> props(Project project) {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
@@ -121,31 +121,31 @@ public abstract class GitService implements Releaser {
     }
 
     public String getResolvedTagName(Project project) {
-        return applyTemplate(new StringReader(tagName), createContext(project));
+        return applyTemplate(new StringReader(tagName), props(project));
     }
 
     public String getResolvedRepoUrl(Project project) {
-        return applyTemplate(new StringReader(repoUrlFormat), createContext(project));
+        return applyTemplate(new StringReader(repoUrlFormat), props(project));
     }
 
     public String getResolvedCommitUrl(Project project) {
-        return applyTemplate(new StringReader(commitUrlFormat), createContext(project));
+        return applyTemplate(new StringReader(commitUrlFormat), props(project));
     }
 
     public String getResolvedDownloadUrl(Project project) {
-        return applyTemplate(new StringReader(downloadUrlFormat), createContext(project));
+        return applyTemplate(new StringReader(downloadUrlFormat), props(project));
     }
 
     public String getResolvedReleaseNotesUrl(Project project) {
-        return applyTemplate(new StringReader(releaseNotesUrlFormat), createContext(project));
+        return applyTemplate(new StringReader(releaseNotesUrlFormat), props(project));
     }
 
     public String getResolvedLatestReleaseUrl(Project project) {
-        return applyTemplate(new StringReader(latestReleaseUrlFormat), createContext(project));
+        return applyTemplate(new StringReader(latestReleaseUrlFormat), props(project));
     }
 
     public String getResolvedIssueTrackerUrl(Project project) {
-        return applyTemplate(new StringReader(issueTrackerUrlFormat), createContext(project));
+        return applyTemplate(new StringReader(issueTrackerUrlFormat), props(project));
     }
 
     @Override

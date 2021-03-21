@@ -53,6 +53,11 @@ public class Distribution extends Packagers implements ExtraProperties {
         setArtifacts(distribution.artifacts);
     }
 
+    @Override
+    public String getPrefix() {
+        return "distribution";
+    }
+
     public DistributionType getType() {
         return type;
     }
@@ -197,7 +202,7 @@ public class Distribution extends Packagers implements ExtraProperties {
             .map(Artifact::asMap)
             .collect(Collectors.toList()));
         props.put("tags", tags);
-        props.put("extraProperties", extraProperties);
+        props.put("extraProperties", getResolvedExtraProperties());
         props.putAll(super.asMap());
 
         Map<String, Object> map = new LinkedHashMap<>();

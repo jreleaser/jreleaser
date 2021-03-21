@@ -17,9 +17,11 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Constants;
 import org.jreleaser.util.Logger;
 import org.jreleaser.util.PlatformUtils;
 
+import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
-import static org.jreleaser.util.StringUtils.capitalize;
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.getFilenameExtension;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -46,6 +48,7 @@ public final class JReleaserModelValidator {
     public static List<String> validate(Logger logger, Path basedir, JReleaserModel model) {
         List<String> errors = new ArrayList<>();
         validateModel(logger, basedir, model, errors);
+        resolveArtifactPaths(logger, model);
         return Collections.unmodifiableList(errors);
     }
 
@@ -77,8 +80,6 @@ public final class JReleaserModelValidator {
         if (project.getAuthors().isEmpty()) {
             errors.add("project.authors must not be empty");
         }
-
-        adjustExtraProperties(project, "project");
     }
 
     private static void validateRelease(Logger logger, Path basedir, Project project, Release release, List<String> errors) {
@@ -276,8 +277,6 @@ public final class JReleaserModelValidator {
             });
         });
 
-        adjustExtraProperties(distribution, "distribution");
-
         validateBrew(logger, basedir, model, distribution, distribution.getBrew(), errors);
         validateChocolatey(logger, basedir, model, distribution, distribution.getChocolatey(), errors);
         validateScoop(logger, basedir, model, distribution, distribution.getScoop(), errors);
@@ -309,8 +308,6 @@ public final class JReleaserModelValidator {
         if (!tool.isEnabled()) return;
 
         validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getBrew(), errors);
-        adjustExtraProperties(model.getPackagers().getBrew(), tool.getName());
-        adjustExtraProperties(tool, tool.getName());
         mergeExtraProperties(tool, model.getPackagers().getBrew());
 
         Map<String, String> dependencies = new LinkedHashMap<>(model.getPackagers().getBrew().getDependencies());
@@ -326,8 +323,6 @@ public final class JReleaserModelValidator {
         if (!tool.isEnabled()) return;
 
         validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getChocolatey(), errors);
-        adjustExtraProperties(model.getPackagers().getChocolatey(), tool.getName());
-        adjustExtraProperties(tool, tool.getName());
         mergeExtraProperties(tool, model.getPackagers().getChocolatey());
 
         if (isBlank(tool.getUsername())) {
@@ -346,8 +341,6 @@ public final class JReleaserModelValidator {
 
         validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getScoop(), errors);
         Scoop commonScoop = model.getPackagers().getScoop();
-        adjustExtraProperties(commonScoop, tool.getName());
-        adjustExtraProperties(tool, tool.getName());
         mergeExtraProperties(tool, model.getPackagers().getScoop());
 
         if (isBlank(tool.getCheckverUrl())) {
@@ -372,8 +365,6 @@ public final class JReleaserModelValidator {
 
         validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getSnap(), errors);
         Snap commonSnap = model.getPackagers().getSnap();
-        adjustExtraProperties(commonSnap, tool.getName());
-        adjustExtraProperties(tool, tool.getName());
         mergeExtraProperties(tool, model.getPackagers().getSnap());
         mergeSnapPlugs(tool, model.getPackagers().getSnap());
         mergeSnapSlots(tool, model.getPackagers().getSnap());
@@ -466,21 +457,30 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void adjustExtraProperties(ExtraProperties extra, String prefix) {
-        if (extra.getExtraProperties().size() > 0) {
-            Map<String, Object> props = extra.getExtraProperties()
-                .entrySet().stream()
-                .collect(Collectors.toMap(
-                    e -> prefix + capitalize(e.getKey()),
-                    Map.Entry::getValue));
-            extra.setExtraProperties(props);
-        }
-    }
-
     private static void checkEnvSetting(Logger logger, List<String> errors, String value, String key, String property) {
         if (isBlank(value)) {
             if (isBlank(System.getenv(key))) {
                 errors.add(property + " must not be blank. Alternatively define a " + key + " environment variable.");
+            }
+        }
+    }
+
+    private static void resolveArtifactPaths(Logger logger, JReleaserModel model) {
+        for (Distribution distribution : model.getDistributions().values()) {
+            Map<String, Object> props = model.props();
+            props.put(Constants.KEY_DISTRIBUTION_NAME, distribution.getName());
+            props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, distribution.getExecutable());
+            props.putAll(distribution.getResolvedExtraProperties());
+
+            for (int i = 0; i < distribution.getArtifacts().size(); i++) {
+                Artifact artifact = distribution.getArtifacts().get(i);
+                String path = artifact.getPath();
+                if (path.contains("{{")) {
+                    String newpath = applyTemplate(new StringReader(path), props);
+                    logger.debug("Adjusting distribution.artifact[{}].path{}        from {}{}        to {}",
+                        i, System.lineSeparator(), path, System.lineSeparator(), newpath);
+                    artifact.setPath(newpath);
+                }
             }
         }
     }

@@ -53,6 +53,11 @@ public class Project implements Domain, ExtraProperties {
         setExtraProperties(project.extraProperties);
     }
 
+    @Override
+    public String getPrefix() {
+        return "project";
+    }
+
     public String getResolvedVersion() {
         if (isNotBlank(version)) {
             return version;
@@ -197,7 +202,7 @@ public class Project implements Domain, ExtraProperties {
         if (isNotBlank(javaVersion)) map.put("javaVersion", javaVersion);
         map.put("authors", authors);
         map.put("tags", tags);
-        map.put("extraProperties", extraProperties);
+        map.put("extraProperties", getResolvedExtraProperties());
         return map;
     }
 }
