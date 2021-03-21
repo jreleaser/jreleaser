@@ -117,6 +117,7 @@ public class Slot implements Domain {
         return !writes.isEmpty();
     }
 
+    @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(name, attributes);

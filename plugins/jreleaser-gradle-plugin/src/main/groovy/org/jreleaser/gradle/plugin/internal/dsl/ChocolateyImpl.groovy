@@ -59,6 +59,7 @@ class ChocolateyImpl extends AbstractTool implements Chocolatey {
     org.jreleaser.model.Chocolatey toModel() {
         org.jreleaser.model.Chocolatey tool = new org.jreleaser.model.Chocolatey()
         fillToolProperties(tool)
+        if (tap.isSet()) tool.bucket = tap.toChocolateyBucket()
         if (username.present) tool.username = username.get()
         tool.remoteBuild = remoteBuild.getOrElse(false)
         tool

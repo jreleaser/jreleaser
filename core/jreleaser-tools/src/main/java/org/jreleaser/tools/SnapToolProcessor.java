@@ -80,11 +80,6 @@ public class SnapToolProcessor extends AbstractToolProcessor<Snap> {
     }
 
     @Override
-    protected String getUploadRepositoryName(Distribution distribution) {
-        return distribution.getExecutable() + "-snap";
-    }
-
-    @Override
     protected Set<String> resolveByExtensionsFor(Distribution.DistributionType type) {
         Set<String> set = new LinkedHashSet<>();
         if (type == Distribution.DistributionType.BINARY || type == Distribution.DistributionType.JLINK) {

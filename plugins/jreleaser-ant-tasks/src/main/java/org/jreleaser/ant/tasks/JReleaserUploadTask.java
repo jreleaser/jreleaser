@@ -32,7 +32,7 @@ public class JReleaserUploadTask extends AbstractJReleaserProcessorTask {
 
     static void upload(JReleaserContext context, boolean failFast) {
         processContext(context, failFast, "Uploading", processor -> {
-            if (processor.prepareDistribution()) {
+            if (processor.uploadDistribution()) {
                 context.getLogger().info("Uploaded " + processor.getDistributionName() +
                     " distribution with " + processor.getToolName());
             }

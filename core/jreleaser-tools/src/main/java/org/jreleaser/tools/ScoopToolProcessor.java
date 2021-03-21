@@ -50,11 +50,6 @@ public class ScoopToolProcessor extends AbstractToolProcessor<Scoop> {
     }
 
     @Override
-    protected String getUploadRepositoryName(Distribution distribution) {
-        return "scoop-bucket";
-    }
-
-    @Override
     protected Set<String> resolveByExtensionsFor(Distribution.DistributionType type) {
         Set<String> set = new LinkedHashSet<>();
         set.add(".zip");

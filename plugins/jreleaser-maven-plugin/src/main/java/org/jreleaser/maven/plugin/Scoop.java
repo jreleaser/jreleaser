@@ -28,6 +28,7 @@ public class Scoop extends AbstractTool {
 
     private String checkverUrl;
     private String autoupdateUrl;
+    private Bucket bucket;
 
     public Scoop() {
         super(NAME);
@@ -37,6 +38,7 @@ public class Scoop extends AbstractTool {
         super.setAll(scoop);
         this.checkverUrl = scoop.checkverUrl;
         this.autoupdateUrl = scoop.autoupdateUrl;
+        this.bucket.setAll(scoop.bucket);
     }
 
     public String getCheckverUrl() {
@@ -55,10 +57,19 @@ public class Scoop extends AbstractTool {
         this.autoupdateUrl = autoupdateUrl;
     }
 
+    public Bucket getBucket() {
+        return bucket;
+    }
+
+    public void setBucket(Bucket bucket) {
+        this.bucket = bucket;
+    }
+
     @Override
     public boolean isSet() {
         return super.isSet() ||
             isNotBlank(checkverUrl) ||
-            isNotBlank(autoupdateUrl);
+            isNotBlank(autoupdateUrl) ||
+            bucket.isSet();
     }
 }

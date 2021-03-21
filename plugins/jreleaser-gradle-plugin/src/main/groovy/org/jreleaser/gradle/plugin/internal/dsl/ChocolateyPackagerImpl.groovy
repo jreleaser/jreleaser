@@ -56,6 +56,7 @@ class ChocolateyPackagerImpl extends AbstractPackagerTool implements ChocolateyP
     Chocolatey toModel() {
         Chocolatey tool = new Chocolatey()
         fillToolProperties(tool)
+        if (tap.isSet()) tool.bucket = tap.toChocolateyBucket()
         if (username.present) tool.username = username.get()
         tool.remoteBuild = remoteBuild.getOrElse(false)
         tool

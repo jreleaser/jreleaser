@@ -39,6 +39,7 @@ public class Snap extends AbstractTool {
     private String exportedLogin;
     private Boolean remoteBuild;
     private boolean remoteBuildSet;
+    private SnapTap tap = new SnapTap();
 
     public Snap() {
         super(NAME);
@@ -55,6 +56,7 @@ public class Snap extends AbstractTool {
         setLocalPlugs(localPlugs);
         setPlugs(plugs);
         setSlots(slots);
+        this.tap.setAll(snap.tap);
     }
 
     public String getBase() {
@@ -177,6 +179,14 @@ public class Snap extends AbstractTool {
         return remoteBuildSet;
     }
 
+    public SnapTap getTap() {
+        return tap;
+    }
+
+    public void setTap(SnapTap tap) {
+        this.tap = tap;
+    }
+
     @Override
     protected void asMap(Map<String, Object> props) {
         props.put("base", base);
@@ -184,8 +194,14 @@ public class Snap extends AbstractTool {
         props.put("confinement", confinement);
         props.put("exportedLogin", exportedLogin);
         props.put("remoteBuild", isRemoteBuild());
+        props.put("tap", tap.asMap());
         props.put("localPlugs", localPlugs);
         props.put("plugs", plugs);
         props.put("slots", slots);
+    }
+
+    @Override
+    public RepositoryTap getRepositoryTap() {
+        return tap;
     }
 }

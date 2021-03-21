@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.provider.Property
 
 /**
@@ -30,4 +31,8 @@ interface ScoopPackager extends PackagerTool {
     Property<String> getCheckverUrl()
 
     Property<String> getAutoupdateUrl()
+
+    Tap getBucket()
+
+    void bucket(Action<? super Tap> tap)
 }

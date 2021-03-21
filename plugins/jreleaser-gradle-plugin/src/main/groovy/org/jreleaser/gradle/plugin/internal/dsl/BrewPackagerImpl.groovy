@@ -68,6 +68,7 @@ class BrewPackagerImpl extends AbstractPackagerTool implements BrewPackager {
     Brew toModel() {
         Brew tool = new Brew()
         fillToolProperties(tool)
+        if (tap.isSet()) tool.tap = tap.toHomebrewTap()
         if (dependencies.present) tool.dependencies.putAll(dependencies.get())
         tool
     }

@@ -28,6 +28,7 @@ public class Chocolatey extends AbstractTool {
 
     private String username;
     private Boolean remoteBuild;
+    private Bucket bucket;
 
     public Chocolatey() {
         super(NAME);
@@ -37,6 +38,7 @@ public class Chocolatey extends AbstractTool {
         super.setAll(choco);
         this.username = choco.username;
         this.remoteBuild = choco.remoteBuild;
+        this.bucket.setAll(choco.bucket);
     }
 
     public String getUsername() {
@@ -59,10 +61,19 @@ public class Chocolatey extends AbstractTool {
         this.remoteBuild = remoteBuild;
     }
 
+    public Bucket getBucket() {
+        return bucket;
+    }
+
+    public void setBucket(Bucket bucket) {
+        this.bucket = bucket;
+    }
+
     @Override
     public boolean isSet() {
         return super.isSet() ||
             isNotBlank(username) ||
-            null != remoteBuild;
+            null != remoteBuild ||
+            bucket.isSet();
     }
 }

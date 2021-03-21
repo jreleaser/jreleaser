@@ -18,7 +18,6 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
 import org.gradle.api.provider.Property
 
 /**
@@ -27,12 +26,12 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface ChocolateyPackager extends PackagerTool {
+interface Tap {
+    Property<String> getOwner()
+
+    Property<String> getName()
+
     Property<String> getUsername()
 
-    Property<Boolean> getRemoteBuild()
-
-    Tap getBucket()
-
-    void bucket(Action<? super Tap> tap)
+    Property<String> getToken()
 }

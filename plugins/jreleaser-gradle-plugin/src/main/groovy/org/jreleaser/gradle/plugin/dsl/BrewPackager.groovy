@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.provider.MapProperty
 
 /**
@@ -32,4 +33,8 @@ interface BrewPackager extends PackagerTool {
     void addDependency(String key, String value)
 
     void addDependency(String key)
+
+    Tap getTap()
+
+    void tap(Action<? super Tap> tap)
 }

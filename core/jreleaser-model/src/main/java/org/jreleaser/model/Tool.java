@@ -21,7 +21,7 @@ package org.jreleaser.model;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Tool extends Domain, ExtraProperties {
+public interface Tool extends Domain, ExtraProperties, CommitAuthorProvider {
     boolean isEnabledSet();
 
     Boolean isEnabled();
@@ -33,4 +33,6 @@ public interface Tool extends Domain, ExtraProperties {
     String getTemplateDirectory();
 
     void setTemplateDirectory(String templateDirectory);
+
+    RepositoryTap getRepositoryTap();
 }

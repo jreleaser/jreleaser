@@ -68,11 +68,6 @@ public class ChocolateyToolProcessor extends AbstractToolProcessor<Chocolatey> {
     }
 
     @Override
-    protected String getUploadRepositoryName(Distribution distribution) {
-        return null;
-    }
-
-    @Override
     protected Set<String> resolveByExtensionsFor(Distribution.DistributionType type) {
         Set<String> set = new LinkedHashSet<>();
         set.add(".zip");

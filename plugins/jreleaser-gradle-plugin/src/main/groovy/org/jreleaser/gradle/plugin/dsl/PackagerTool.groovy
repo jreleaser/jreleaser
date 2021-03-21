@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.provider.Property
 
 /**
@@ -28,4 +29,8 @@ import org.gradle.api.provider.Property
 @CompileStatic
 interface PackagerTool extends ExtraProperties {
     Property<Boolean> getEnabled()
+
+    CommitAuthor getCommitAuthor()
+
+    void commitAuthor(Action<? super CommitAuthor> action)
 }

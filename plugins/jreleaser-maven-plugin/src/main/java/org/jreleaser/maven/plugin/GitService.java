@@ -38,8 +38,7 @@ public abstract class GitService implements Releaser {
     private String password;
     private String tagName;
     private String releaseName;
-    private String commitAuthorName;
-    private String commitAuthorEmail;
+    private CommitAuthor commitAuthor = new CommitAuthor();
     private boolean sign;
     private String signingKey;
     private Changelog changelog = new Changelog();
@@ -72,8 +71,7 @@ public abstract class GitService implements Releaser {
         this.password = service.password;
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
-        this.commitAuthorName = service.commitAuthorName;
-        this.commitAuthorEmail = service.commitAuthorEmail;
+        this.commitAuthor.setAll(service.commitAuthor);
         this.sign = service.sign;
         this.signingKey = service.signingKey;
         this.overwrite = service.overwrite;
@@ -202,20 +200,12 @@ public abstract class GitService implements Releaser {
         this.releaseName = releaseName;
     }
 
-    public String getCommitAuthorName() {
-        return commitAuthorName;
+    public CommitAuthor getCommitAuthor() {
+        return commitAuthor;
     }
 
-    public void setCommitAuthorName(String commitAuthorName) {
-        this.commitAuthorName = commitAuthorName;
-    }
-
-    public String getCommitAuthorEmail() {
-        return commitAuthorEmail;
-    }
-
-    public void setCommitAuthorEmail(String commitAuthorEmail) {
-        this.commitAuthorEmail = commitAuthorEmail;
+    public void setCommitAuthor(CommitAuthor commitAuthor) {
+        this.commitAuthor = commitAuthor;
     }
 
     public boolean isSign() {

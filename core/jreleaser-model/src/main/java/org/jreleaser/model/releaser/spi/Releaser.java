@@ -26,5 +26,5 @@ import java.io.IOException;
 public interface Releaser {
     void release() throws ReleaseException;
 
-    Repository maybeCreateRepository(String repo) throws IOException;
+    Repository maybeCreateRepository(String owner, String repo, String password) throws IOException;
 }

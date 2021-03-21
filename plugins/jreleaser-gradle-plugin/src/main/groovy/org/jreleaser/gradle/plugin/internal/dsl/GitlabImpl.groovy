@@ -18,12 +18,10 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.Changelog
 import org.jreleaser.gradle.plugin.dsl.Gitlab
 
 import javax.inject.Inject
@@ -36,32 +34,23 @@ import javax.inject.Inject
 @CompileStatic
 class GitlabImpl extends AbstractGitService implements Gitlab {
     final Property<String> ref
-    final ChangelogImpl changelog
 
     @Inject
     GitlabImpl(ObjectFactory objects) {
         super(objects)
         ref = objects.property(String).convention(Providers.notDefined())
-        changelog = objects.newInstance(ChangelogImpl, objects)
-    }
-
-    @Override
-    void changelog(Action<? super Changelog> action) {
-        action.execute(changelog)
     }
 
     @Internal
     boolean isSet() {
         super.isSet() ||
-            ref.present ||
-            changelog.isSet()
+            ref.present
     }
 
     org.jreleaser.model.Gitlab toModel() {
         org.jreleaser.model.Gitlab service = new org.jreleaser.model.Gitlab()
         toModel(service)
         if (ref.present) service.ref = ref.get()
-        if (changelog.isSet()) service.changelog = changelog.toModel()
         service
     }
 }

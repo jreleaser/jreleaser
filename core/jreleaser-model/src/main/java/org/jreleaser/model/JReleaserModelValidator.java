@@ -55,6 +55,7 @@ public final class JReleaserModelValidator {
     private static void validateModel(Logger logger, Path basedir, JReleaserModel model, List<String> errors) {
         validateProject(logger, basedir, model.getProject(), errors);
         validateRelease(logger, basedir, model.getProject(), model.getRelease(), errors);
+        validatePackagers(logger, basedir, model, model.getPackagers(), errors);
         validateAnnouncers(logger, basedir, model, model.getAnnounce(), errors);
         validateSign(logger, basedir, model, model.getSign(), errors);
         validateDistributions(logger, basedir, model, model.getDistributions(), errors);
@@ -95,6 +96,20 @@ public final class JReleaserModelValidator {
         if (count > 1) {
             errors.add("Only one of release.github, release.gitlab, release.gitea can be defined");
         }
+    }
+
+    private static void validatePackagers(Logger logger, Path basedir, JReleaserModel model, Packagers packagers, List<String> errors) {
+        validateCommitAuthor(packagers.getBrew(), model.getRelease().getGitService());
+        validateOwner(packagers.getBrew().getTap(), model.getRelease().getGitService());
+
+        validateCommitAuthor(packagers.getChocolatey(), model.getRelease().getGitService());
+        validateOwner(packagers.getChocolatey().getBucket(), model.getRelease().getGitService());
+
+        validateCommitAuthor(packagers.getScoop(), model.getRelease().getGitService());
+        validateOwner(packagers.getScoop().getBucket(), model.getRelease().getGitService());
+
+        validateCommitAuthor(packagers.getSnap(), model.getRelease().getGitService());
+        validateOwner(packagers.getSnap().getTap(), model.getRelease().getGitService());
     }
 
     private static void validateAnnouncers(Logger logger, Path basedir, JReleaserModel model, Announce announce, List<String> errors) {
@@ -173,6 +188,12 @@ public final class JReleaserModelValidator {
         }
         if (service.isSign() && isBlank(service.getSigningKey())) {
             errors.add(service.getServiceName() + ".signingKey must not be blank if sign is set to `true`");
+        }
+        if (isBlank(service.getCommitAuthor().getName())) {
+            service.getCommitAuthor().setName("jreleaser-bot");
+        }
+        if (isBlank(service.getCommitAuthor().getEmail())) {
+            service.getCommitAuthor().setEmail("jreleaser-bot@jreleaser.org");
         }
     }
 
@@ -307,6 +328,8 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
+        validateCommitAuthor(tool, model.getPackagers().getBrew());
+        validateOwner(tool.getTap(), model.getPackagers().getBrew().getTap());
         validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getBrew(), errors);
         mergeExtraProperties(tool, model.getPackagers().getBrew());
 
@@ -314,6 +337,19 @@ public final class JReleaserModelValidator {
         dependencies.putAll(tool.getDependencies());
 
         tool.setDependencies(dependencies);
+
+        if (isBlank(tool.getTap().getOwner())) {
+            tool.getTap().setOwner(model.getPackagers().getBrew().getTap().getOwner());
+        }
+        if (isBlank(tool.getTap().getName())) {
+            tool.getTap().setName(model.getPackagers().getBrew().getTap().getName());
+        }
+        if (isBlank(tool.getTap().getUsername())) {
+            tool.getTap().setUsername(model.getPackagers().getBrew().getTap().getUsername());
+        }
+        if (isBlank(tool.getTap().getToken())) {
+            tool.getTap().setToken(model.getPackagers().getBrew().getTap().getToken());
+        }
     }
 
     private static void validateChocolatey(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Chocolatey tool, List<String> errors) {
@@ -322,6 +358,8 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
+        validateCommitAuthor(tool, model.getPackagers().getChocolatey());
+        validateOwner(tool.getBucket(), model.getPackagers().getChocolatey().getBucket());
         validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getChocolatey(), errors);
         mergeExtraProperties(tool, model.getPackagers().getChocolatey());
 
@@ -331,6 +369,20 @@ public final class JReleaserModelValidator {
         if (!tool.isRemoteBuildSet() && model.getPackagers().getChocolatey().isRemoteBuildSet()) {
             tool.setRemoteBuild(model.getPackagers().getChocolatey().isRemoteBuild());
         }
+
+        if (isBlank(tool.getBucket().getOwner())) {
+            tool.getBucket().setOwner(model.getPackagers().getChocolatey().getBucket().getOwner());
+        }
+        if (isBlank(tool.getBucket().getName())) {
+            tool.getBucket().setName(distribution.getName() + "-bucket");
+        }
+        tool.getBucket().setBasename(distribution.getName() + "-bucket");
+        if (isBlank(tool.getBucket().getUsername())) {
+            tool.getBucket().setUsername(model.getPackagers().getChocolatey().getBucket().getUsername());
+        }
+        if (isBlank(tool.getBucket().getToken())) {
+            tool.getBucket().setToken(model.getPackagers().getChocolatey().getBucket().getToken());
+        }
     }
 
     private static void validateScoop(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Scoop tool, List<String> errors) {
@@ -339,6 +391,8 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
+        validateCommitAuthor(tool, model.getPackagers().getScoop());
+        validateOwner(tool.getBucket(), model.getPackagers().getScoop().getBucket());
         validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getScoop(), errors);
         Scoop commonScoop = model.getPackagers().getScoop();
         mergeExtraProperties(tool, model.getPackagers().getScoop());
@@ -355,6 +409,19 @@ public final class JReleaserModelValidator {
                 tool.setAutoupdateUrl(model.getRelease().getGitService().getDownloadUrlFormat());
             }
         }
+
+        if (isBlank(tool.getBucket().getOwner())) {
+            tool.getBucket().setOwner(model.getPackagers().getScoop().getBucket().getOwner());
+        }
+        if (isBlank(tool.getBucket().getName())) {
+            tool.getBucket().setName(model.getPackagers().getScoop().getBucket().getName());
+        }
+        if (isBlank(tool.getBucket().getUsername())) {
+            tool.getBucket().setUsername(model.getPackagers().getScoop().getBucket().getUsername());
+        }
+        if (isBlank(tool.getBucket().getToken())) {
+            tool.getBucket().setToken(model.getPackagers().getScoop().getBucket().getToken());
+        }
     }
 
     private static void validateSnap(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Snap tool, List<String> errors) {
@@ -363,6 +430,8 @@ public final class JReleaserModelValidator {
         }
         if (!tool.isEnabled()) return;
 
+        validateCommitAuthor(tool, model.getPackagers().getSnap());
+        validateOwner(tool.getTap(), model.getPackagers().getSnap().getTap());
         validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getSnap(), errors);
         Snap commonSnap = model.getPackagers().getSnap();
         mergeExtraProperties(tool, model.getPackagers().getSnap());
@@ -397,6 +466,20 @@ public final class JReleaserModelValidator {
             } else if (!basedir.resolve(tool.getExportedLogin()).toFile().exists()) {
                 errors.add("distribution." + distribution.getName() + ".snap.exportedLogin does not exist. " + basedir.resolve(tool.getExportedLogin()));
             }
+        }
+
+        if (isBlank(tool.getTap().getOwner())) {
+            tool.getTap().setOwner(model.getPackagers().getSnap().getTap().getOwner());
+        }
+        if (isBlank(tool.getTap().getName())) {
+            tool.getTap().setName(distribution.getName() + "-snap");
+        }
+        tool.getTap().setBasename(distribution.getName() + "-snap");
+        if (isBlank(tool.getTap().getUsername())) {
+            tool.getTap().setUsername(model.getPackagers().getSnap().getTap().getUsername());
+        }
+        if (isBlank(tool.getTap().getToken())) {
+            tool.getTap().setToken(model.getPackagers().getSnap().getTap().getToken());
         }
     }
 
@@ -455,6 +538,19 @@ public final class JReleaserModelValidator {
         } else {
             tool.setTemplateDirectory("src/distributions/" + distribution.getName() + "/" + tool.getName());
         }
+    }
+
+    private static void validateOwner(OwnerProvider self, OwnerProvider other) {
+        if (isBlank(self.getOwner())) self.setOwner(other.getOwner());
+    }
+
+    private static void validateCommitAuthor(CommitAuthorProvider self, CommitAuthorProvider other) {
+        CommitAuthor author = new CommitAuthor();
+        author.setName(self.getCommitAuthor().getName());
+        author.setEmail(self.getCommitAuthor().getEmail());
+        if (isBlank(author.getName())) author.setName(other.getCommitAuthor().getName());
+        if (isBlank(author.getEmail())) author.setEmail(other.getCommitAuthor().getEmail());
+        self.setCommitAuthor(author);
     }
 
     private static void checkEnvSetting(Logger logger, List<String> errors, String value, String key, String property) {

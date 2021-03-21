@@ -15,24 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
-
-import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.provider.Property
+package org.jreleaser.model;
 
 /**
- *
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CompileStatic
-interface ChocolateyPackager extends PackagerTool {
-    Property<String> getUsername()
-
-    Property<Boolean> getRemoteBuild()
-
-    Tap getBucket()
-
-    void bucket(Action<? super Tap> tap)
+public class SnapTap extends AbstractRepositoryTap {
+    public SnapTap() {
+        super("snap");
+    }
 }

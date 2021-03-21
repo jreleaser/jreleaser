@@ -28,6 +28,7 @@ public class Scoop extends AbstractTool {
 
     private String checkverUrl;
     private String autoupdateUrl;
+    private ScoopBucket bucket = new ScoopBucket();
 
     public Scoop() {
         super(NAME);
@@ -37,6 +38,7 @@ public class Scoop extends AbstractTool {
         super.setAll(scoop);
         this.checkverUrl = scoop.checkverUrl;
         this.autoupdateUrl = scoop.autoupdateUrl;
+        this.bucket.setAll(scoop.bucket);
     }
 
     public String getCheckverUrl() {
@@ -55,9 +57,23 @@ public class Scoop extends AbstractTool {
         this.autoupdateUrl = autoupdateUrl;
     }
 
+    public ScoopBucket getBucket() {
+        return bucket;
+    }
+
+    public void setBucket(ScoopBucket bucket) {
+        this.bucket = bucket;
+    }
+
     @Override
     protected void asMap(Map<String, Object> props) {
         props.put("checkverUrl", checkverUrl);
         props.put("autoupdateUrl", autoupdateUrl);
+        props.put("bucket", bucket.asMap());
+    }
+
+    @Override
+    public RepositoryTap getRepositoryTap() {
+        return bucket;
     }
 }

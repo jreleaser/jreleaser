@@ -119,11 +119,6 @@ public class Project implements ExtraProperties {
         this.extraProperties.putAll(extraProperties);
     }
 
-    @Override
-    public void addExtraProperties(Map<String, Object> extraProperties) {
-        this.extraProperties.putAll(extraProperties);
-    }
-
     public List<String> getAuthors() {
         return authors;
     }

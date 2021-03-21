@@ -21,8 +21,8 @@ import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.jreleaser.gradle.plugin.dsl.ScoopPackager
-import org.jreleaser.model.Scoop
+import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 
 import javax.inject.Inject
 
@@ -32,33 +32,26 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class ScoopPackagerImpl extends AbstractPackagerTool implements ScoopPackager {
-    final Property<String> checkverUrl
-    final Property<String> autoupdateUrl
+class CommitAuthorImpl implements CommitAuthor {
+    final Property<String> name
+    final Property<String> email
 
     @Inject
-    ScoopPackagerImpl(ObjectFactory objects) {
-        super(objects)
-        checkverUrl = objects.property(String).convention(Providers.notDefined())
-        autoupdateUrl = objects.property(String).convention(Providers.notDefined())
+    CommitAuthorImpl(ObjectFactory objects) {
+        name = objects.property(String).convention(Providers.notDefined())
+        email = objects.property(String).convention(Providers.notDefined())
     }
 
-    @Override
-    protected String toolName() { 'scoop' }
-
-    @Override
+    @Internal
     boolean isSet() {
-        super.isSet() ||
-            checkverUrl.present ||
-            autoupdateUrl.present
+        name.present ||
+            email.present
     }
 
-    Scoop toModel() {
-        Scoop tool = new Scoop()
-        fillToolProperties(tool)
-        if (tap.isSet()) tool.bucket = tap.toScoopBucket()
-        if (checkverUrl.present) tool.checkverUrl = checkverUrl.get()
-        if (autoupdateUrl.present) tool.autoupdateUrl = autoupdateUrl.get()
-        tool
+    org.jreleaser.model.CommitAuthor toModel() {
+        org.jreleaser.model.CommitAuthor ca = new org.jreleaser.model.CommitAuthor()
+        if (name.present) ca.name = name.get()
+        if (email.present) ca.email = email.get()
+        ca
     }
 }

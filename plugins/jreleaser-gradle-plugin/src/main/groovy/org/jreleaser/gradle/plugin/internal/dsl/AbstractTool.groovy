@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Transformer
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -27,6 +28,8 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.CommitAuthor
+import org.jreleaser.gradle.plugin.dsl.Tap
 import org.jreleaser.gradle.plugin.dsl.Tool
 
 import javax.inject.Inject
@@ -40,8 +43,10 @@ import javax.inject.Inject
 abstract class AbstractTool implements Tool {
     final Property<Boolean> enabled
     final DirectoryProperty templateDirectory
+    final CommitAuthorImpl commitAuthor
     final MapProperty<String, Object> extraProperties
     final Property<String> distributionName
+    final TapImpl tap
 
     private final Provider<Directory> distributionsDirProvider
     private final DirectoryProperty localTemplate
@@ -52,8 +57,10 @@ abstract class AbstractTool implements Tool {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
         templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
         localTemplate = objects.directoryProperty()
+        commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
         distributionName = objects.property(String).convention(Providers.notDefined())
+        tap = objects.newInstance(TapImpl, objects)
 
         // FIXME: there's probable a better way to do this
         Provider<Directory> dd = distributionsDirProvider.flatMap(new Transformer<Provider<? extends Directory>, Directory>() {
@@ -72,6 +79,10 @@ abstract class AbstractTool implements Tool {
         localTemplate.set(td)
     }
 
+    Tap getBucket() {
+        tap
+    }
+
     protected abstract String toolName()
 
     protected <T extends org.jreleaser.model.Tool> void fillToolProperties(T tool) {
@@ -81,13 +92,29 @@ abstract class AbstractTool implements Tool {
         } else if (localTemplate.asFile.get().exists()) {
             tool.templateDirectory = localTemplate.asFile.get().toPath()
         }
+        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (extraProperties.present) tool.extraProperties.putAll(extraProperties.get())
     }
 
     @Internal
     boolean isSet() {
         enabled.present ||
-                templateDirectory.present ||
-                extraProperties.present
+            templateDirectory.present ||
+            extraProperties.present ||
+            commitAuthor.isSet() ||
+            tap.isSet()
+    }
+
+    void tap(Action<? super Tap> action) {
+        action.execute(tap)
+    }
+
+    void bucket(Action<? super Tap> action) {
+        action.execute(tap)
+    }
+
+    @Override
+    void commitAuthor(Action<? super CommitAuthor> action) {
+        action.execute(commitAuthor)
     }
 }

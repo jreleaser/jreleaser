@@ -18,12 +18,10 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.Changelog
 import org.jreleaser.gradle.plugin.dsl.Gitea
 
 import javax.inject.Inject
@@ -38,7 +36,6 @@ class GiteaImpl extends AbstractGitService implements Gitea {
     final Property<String> targetCommitish
     final Property<Boolean> draft
     final Property<Boolean> prerelease
-    final ChangelogImpl changelog
 
     @Inject
     GiteaImpl(ObjectFactory objects) {
@@ -46,12 +43,6 @@ class GiteaImpl extends AbstractGitService implements Gitea {
         targetCommitish = objects.property(String).convention(Providers.notDefined())
         draft = objects.property(Boolean).convention(Providers.notDefined())
         prerelease = objects.property(Boolean).convention(Providers.notDefined())
-        changelog = objects.newInstance(ChangelogImpl, objects)
-    }
-
-    @Override
-    void changelog(Action<? super Changelog> action) {
-        action.execute(changelog)
     }
 
     @Internal
@@ -59,15 +50,13 @@ class GiteaImpl extends AbstractGitService implements Gitea {
         super.isSet() ||
             targetCommitish.present ||
             draft.present ||
-            prerelease.present ||
-            changelog.isSet()
+            prerelease.present
     }
 
     org.jreleaser.model.Gitea toModel() {
         org.jreleaser.model.Gitea service = new org.jreleaser.model.Gitea()
         toModel(service)
         if (targetCommitish.present) service.targetCommitish = targetCommitish.get()
-        if (changelog.isSet()) service.changelog = changelog.toModel()
         service.draft = draft.getOrElse(false)
         service.prerelease = prerelease.getOrElse(false)
         service

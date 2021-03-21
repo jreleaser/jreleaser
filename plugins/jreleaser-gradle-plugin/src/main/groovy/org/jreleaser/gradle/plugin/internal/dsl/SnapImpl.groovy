@@ -108,6 +108,7 @@ class SnapImpl extends AbstractTool implements Snap {
     org.jreleaser.model.Snap toModel() {
         org.jreleaser.model.Snap tool = new org.jreleaser.model.Snap()
         fillToolProperties(tool)
+        if (tap.isSet()) tool.tap = tap.toSnapTap()
         if (base.present) tool.base = base.get()
         if (grade.present) tool.grade = grade.get()
         if (confinement.present) tool.confinement = confinement.get()

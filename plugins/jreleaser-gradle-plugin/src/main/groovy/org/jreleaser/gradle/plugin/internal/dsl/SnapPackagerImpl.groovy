@@ -105,6 +105,7 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
     Snap toModel() {
         Snap tool = new Snap()
         fillToolProperties(tool)
+        if (tap.isSet()) tool.tap = tap.toSnapTap()
         if (base.present) tool.base = base.get()
         if (grade.present) tool.grade = grade.get()
         if (confinement.present) tool.confinement = confinement.get()

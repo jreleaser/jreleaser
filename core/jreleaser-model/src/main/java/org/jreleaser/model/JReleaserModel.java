@@ -140,9 +140,11 @@ public class JReleaserModel implements Domain {
         map.put("packagers", packagers.asMap());
         map.put("announce", announce.asMap());
         map.put("signing", signing.asMap());
-        map.put("files", files.stream()
-            .map(Artifact::asMap)
-            .collect(Collectors.toList()));
+        if (files.size() > 0) {
+            map.put("files", files.stream()
+                .map(Artifact::asMap)
+                .collect(Collectors.toList()));
+        }
         map.put("distributions", distributions.values()
             .stream()
             .map(Distribution::asMap)

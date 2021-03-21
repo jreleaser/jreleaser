@@ -31,6 +31,7 @@ abstract class AbstractTool implements Tool {
     protected Boolean enabled;
     protected boolean enabledSet;
     protected String templateDirectory;
+    protected CommitAuthor commitAuthor = new CommitAuthor();
 
     protected AbstractTool(String name) {
         this.name = name;
@@ -40,6 +41,7 @@ abstract class AbstractTool implements Tool {
         this.enabled = tool.enabled;
         this.enabledSet = tool.enabledSet;
         this.templateDirectory = tool.templateDirectory;
+        this.commitAuthor.setAll(tool.commitAuthor);
         setExtraProperties(tool.extraProperties);
     }
 
@@ -80,6 +82,16 @@ abstract class AbstractTool implements Tool {
     }
 
     @Override
+    public CommitAuthor getCommitAuthor() {
+        return commitAuthor;
+    }
+
+    @Override
+    public void setCommitAuthor(CommitAuthor commitAuthor) {
+        this.commitAuthor = commitAuthor;
+    }
+
+    @Override
     public Map<String, Object> getExtraProperties() {
         return extraProperties;
     }
@@ -103,6 +115,7 @@ abstract class AbstractTool implements Tool {
         props.put("enabled", isEnabled());
         props.put("templateDirectory", templateDirectory);
         asMap(props);
+        props.put("commitAuthor", commitAuthor.asMap());
         props.put("extraProperties", getResolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();

@@ -71,6 +71,7 @@ class BrewImpl extends AbstractTool implements Brew {
     org.jreleaser.model.Brew toModel() {
         org.jreleaser.model.Brew tool = new org.jreleaser.model.Brew()
         fillToolProperties(tool)
+        if (tap.isSet()) tool.tap = tap.toHomebrewTap()
         if (dependencies.present) tool.dependencies.putAll(dependencies.get())
         tool
     }

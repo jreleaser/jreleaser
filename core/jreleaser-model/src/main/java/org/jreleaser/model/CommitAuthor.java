@@ -24,9 +24,14 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Plug implements Domain {
-    private final Map<String, String> attributes = new LinkedHashMap<>();
+public class CommitAuthor implements Domain {
+    private String email;
     private String name;
+
+    void setAll(CommitAuthor author) {
+        this.email = author.email;
+        this.name = author.name;
+    }
 
     public String getName() {
         return name;
@@ -36,34 +41,19 @@ public class Plug implements Domain {
         this.name = name;
     }
 
-    public Map<String, String> getAttributes() {
-        return attributes;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAttributes(Map<String, String> attributes) {
-        this.attributes.clear();
-        this.attributes.putAll(attributes);
-    }
-
-    public void addAttributes(Map<String, String> attributes) {
-        this.attributes.putAll(attributes);
-    }
-
-    public void addAttribute(String key, String value) {
-        attributes.put(key, value);
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put(name, attributes);
+        map.put("name", getName());
+        map.put("owner", getEmail());
         return map;
-    }
-
-    public static Plug copyOf(Plug other) {
-        Plug copy = new Plug();
-        copy.setName(other.getName());
-        copy.setAttributes(other.getAttributes());
-        return copy;
     }
 }

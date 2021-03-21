@@ -147,21 +147,20 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     protected abstract boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
     protected boolean doUploadDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        return doUploadDistribution(distribution, props, getUploadRepositoryName(distribution));
-    }
-
-    protected boolean doUploadDistribution(Distribution distribution, Map<String, Object> props, String repositoryName) throws ToolProcessingException {
         Releaser releaser = Releasers.releaser(context);
         GitService gitService = context.getModel().getRelease().getGitService();
 
         try {
             // get the repository
-            context.getLogger().debug("Locating repository {}/{}", gitService.getOwner(), repositoryName);
-            Repository repository = releaser.maybeCreateRepository(repositoryName);
+            context.getLogger().debug("Locating repository {}", tool.getRepositoryTap().getCanonicalRepoName());
+            Repository repository = releaser.maybeCreateRepository(
+                tool.getRepositoryTap().getOwner(),
+                tool.getRepositoryTap().getResolvedName(),
+                resolveGitToken(gitService));
 
             // clone the repository
             context.getLogger().debug("Clonning {}", repository.getHttpUrl());
-            Path directory = Files.createTempDirectory("jreleaser-" + repositoryName);
+            Path directory = Files.createTempDirectory("jreleaser-" + tool.getRepositoryTap().getResolvedName());
             Git git = Git.cloneRepository()
                 .setBranch("HEAD")
                 .setDirectory(directory.toFile())
@@ -174,7 +173,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             FileUtils.copyFiles(context.getLogger(), packageDirectory, directory);
 
             UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
-                gitService.getUsername(), gitService.getResolvedPassword());
+                resolveGitUsername(gitService),
+                resolveGitToken(gitService));
 
             // add everything
             git.add()
@@ -186,7 +186,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             CommitCommand commitCommand = git.commit()
                 .setAll(true)
                 .setMessage(distribution.getExecutable() + " " + gitService.getTagName())
-                .setAuthor(gitService.getCommitAuthorName(), gitService.getCommitAuthorEmail());
+                .setAuthor(tool.getCommitAuthor().getName(), tool.getCommitAuthor().getEmail());
             commitCommand.setCredentialsProvider(credentialsProvider);
             /*if (gitService.isSign()) {
                 commitCommand = commitCommand
@@ -203,13 +203,25 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 .setCredentialsProvider(credentialsProvider)
                 .call();
         } catch (Exception e) {
-            throw new ToolProcessingException("Unexpected error updating " + repositoryName, e);
+            throw new ToolProcessingException("Unexpected error updating " + tool.getRepositoryTap().getCanonicalRepoName(), e);
         }
 
         return true;
     }
 
-    protected abstract String getUploadRepositoryName(Distribution distribution);
+    protected String resolveGitUsername(GitService gitService) {
+        if (isNotBlank(tool.getRepositoryTap().getUsername())) {
+            return tool.getRepositoryTap().getUsername();
+        }
+        return gitService.getUsername();
+    }
+
+    protected String resolveGitToken(GitService gitService) {
+        if (isNotBlank(tool.getRepositoryTap().getResolvedToken(gitService))) {
+            return tool.getRepositoryTap().getResolvedToken(gitService);
+        }
+        return gitService.getResolvedPassword();
+    }
 
     protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName) throws ToolProcessingException;
 

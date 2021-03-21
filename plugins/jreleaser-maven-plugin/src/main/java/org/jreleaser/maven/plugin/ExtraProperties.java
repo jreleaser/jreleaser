@@ -27,6 +27,4 @@ public interface ExtraProperties {
     Map<String, Object> getExtraProperties();
 
     void setExtraProperties(Map<String, Object> properties);
-
-    void addExtraProperties(Map<String, Object> properties);
 }

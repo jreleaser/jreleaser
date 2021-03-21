@@ -26,8 +26,8 @@ import java.util.Map;
  */
 public class Brew extends AbstractTool {
     public static final String NAME = "brew";
-
     private final Map<String, String> dependencies = new LinkedHashMap<>();
+    private HomebrewTap tap = new HomebrewTap();
 
     public Brew() {
         super(NAME);
@@ -35,7 +35,16 @@ public class Brew extends AbstractTool {
 
     void setAll(Brew brew) {
         super.setAll(brew);
+        this.tap.setAll(brew.tap);
         setDependencies(brew.dependencies);
+    }
+
+    public HomebrewTap getTap() {
+        return tap;
+    }
+
+    public void setTap(HomebrewTap tap) {
+        this.tap = tap;
     }
 
     public Map<String, String> getDependencies() {
@@ -61,6 +70,12 @@ public class Brew extends AbstractTool {
 
     @Override
     protected void asMap(Map<String, Object> props) {
+        props.put("tap", tap.asMap());
         props.put("dependencies", dependencies);
+    }
+
+    @Override
+    public RepositoryTap getRepositoryTap() {
+        return tap;
     }
 }

@@ -59,6 +59,7 @@ class ScoopImpl extends AbstractTool implements Scoop {
     org.jreleaser.model.Scoop toModel() {
         org.jreleaser.model.Scoop tool = new org.jreleaser.model.Scoop()
         fillToolProperties(tool)
+        if (tap.isSet()) tool.bucket = tap.toScoopBucket()
         if (checkverUrl.present) tool.checkverUrl = checkverUrl.get()
         if (autoupdateUrl.present) tool.autoupdateUrl = autoupdateUrl.get()
         tool

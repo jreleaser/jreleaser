@@ -29,6 +29,7 @@ public class Chocolatey extends AbstractTool {
     private String username;
     private Boolean remoteBuild;
     private boolean remoteBuildSet;
+    private ChocolateyBucket bucket = new ChocolateyBucket();
 
     public Chocolatey() {
         super(NAME);
@@ -39,6 +40,7 @@ public class Chocolatey extends AbstractTool {
         this.username = choco.username;
         this.remoteBuild = choco.remoteBuild;
         this.remoteBuildSet = choco.remoteBuildSet;
+        this.bucket.setAll(choco.bucket);
     }
 
     public String getUsername() {
@@ -62,9 +64,23 @@ public class Chocolatey extends AbstractTool {
         return remoteBuildSet;
     }
 
+    public ChocolateyBucket getBucket() {
+        return bucket;
+    }
+
+    public void setBucket(ChocolateyBucket bucket) {
+        this.bucket = bucket;
+    }
+
     @Override
     protected void asMap(Map<String, Object> props) {
         props.put("username", username);
         props.put("remoteBuild", isRemoteBuild());
+        props.put("bucket", bucket.asMap());
+    }
+
+    @Override
+    public RepositoryTap getRepositoryTap() {
+        return bucket;
     }
 }

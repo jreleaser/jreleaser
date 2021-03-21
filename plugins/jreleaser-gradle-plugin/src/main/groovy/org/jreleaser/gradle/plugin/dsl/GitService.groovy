@@ -54,10 +54,6 @@ interface GitService extends Releaser {
 
     Property<String> getReleaseName()
 
-    Property<String> getCommitAuthorName()
-
-    Property<String> getCommitAuthorEmail()
-
     Property<Boolean> getSign()
 
     Property<String> getSigningKey()
@@ -69,4 +65,8 @@ interface GitService extends Releaser {
     Changelog getChangelog()
 
     void changelog(Action<? super Changelog> action)
+
+    CommitAuthor getCommitAuthor()
+
+    void commitAuthor(Action<? super CommitAuthor> action)
 }

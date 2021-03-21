@@ -20,8 +20,10 @@ package org.jreleaser.maven.plugin.internal;
 import org.jreleaser.maven.plugin.Announce;
 import org.jreleaser.maven.plugin.Artifact;
 import org.jreleaser.maven.plugin.Brew;
+import org.jreleaser.maven.plugin.Bucket;
 import org.jreleaser.maven.plugin.Changelog;
 import org.jreleaser.maven.plugin.Chocolatey;
+import org.jreleaser.maven.plugin.CommitAuthor;
 import org.jreleaser.maven.plugin.Distribution;
 import org.jreleaser.maven.plugin.GitService;
 import org.jreleaser.maven.plugin.Gitea;
@@ -37,9 +39,14 @@ import org.jreleaser.maven.plugin.Sdkman;
 import org.jreleaser.maven.plugin.Signing;
 import org.jreleaser.maven.plugin.Slot;
 import org.jreleaser.maven.plugin.Snap;
+import org.jreleaser.maven.plugin.Tap;
 import org.jreleaser.maven.plugin.Twitter;
 import org.jreleaser.maven.plugin.Zulip;
+import org.jreleaser.model.ChocolateyBucket;
+import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.ScoopBucket;
+import org.jreleaser.model.SnapTap;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -133,14 +140,20 @@ public final class JReleaserModelConverter {
         s.setPassword(service.getPassword());
         s.setTagName(service.getTagName());
         s.setReleaseName(service.getReleaseName());
-        s.setCommitAuthorName(service.getCommitAuthorName());
-        s.setCommitAuthorEmail(service.getCommitAuthorEmail());
+        s.setCommitAuthor(convertCommitAuthor(service.getCommitAuthor()));
         s.setSign(service.isSign());
         s.setSigningKey(service.getSigningKey());
         s.setOverwrite(service.isOverwrite());
         s.setAllowUploadToExisting(service.isAllowUploadToExisting());
         s.setApiEndpoint(service.getApiEndpoint());
         s.setChangelog(convertChangelog(service.getChangelog()));
+    }
+
+    private static org.jreleaser.model.CommitAuthor convertCommitAuthor(CommitAuthor commitAuthor) {
+        org.jreleaser.model.CommitAuthor ca = new org.jreleaser.model.CommitAuthor();
+        ca.setName(commitAuthor.getName());
+        ca.setEmail(commitAuthor.getEmail());
+        return ca;
     }
 
     private static org.jreleaser.model.Changelog convertChangelog(Changelog changelog) {
@@ -267,6 +280,17 @@ public final class JReleaserModelConverter {
         t.setTemplateDirectory(brew.getTemplateDirectory());
         t.setExtraProperties(brew.getExtraProperties());
         t.setDependencies(brew.getDependencies());
+        t.setTap(convertHomebrewTap(brew.getTap()));
+        t.setCommitAuthor(convertCommitAuthor(brew.getCommitAuthor()));
+        return t;
+    }
+
+    private static HomebrewTap convertHomebrewTap(Tap tap) {
+        HomebrewTap t = new HomebrewTap();
+        t.setOwner(tap.getOwner());
+        t.setName(tap.getName());
+        t.setUsername(tap.getUsername());
+        t.setToken(tap.getToken());
         return t;
     }
 
@@ -277,7 +301,18 @@ public final class JReleaserModelConverter {
         t.setRemoteBuild(chocolatey.isRemoteBuild());
         t.setTemplateDirectory(chocolatey.getTemplateDirectory());
         t.setExtraProperties(chocolatey.getExtraProperties());
+        t.setBucket(convertChocolateyBucket(chocolatey.getBucket()));
+        t.setCommitAuthor(convertCommitAuthor(chocolatey.getCommitAuthor()));
         return t;
+    }
+
+    private static ChocolateyBucket convertChocolateyBucket(Bucket bucket) {
+        ChocolateyBucket b = new ChocolateyBucket();
+        b.setOwner(bucket.getOwner());
+        b.setName(bucket.getName());
+        b.setUsername(bucket.getUsername());
+        b.setToken(bucket.getToken());
+        return b;
     }
 
     private static org.jreleaser.model.Scoop convertScoop(Scoop scoop) {
@@ -287,7 +322,18 @@ public final class JReleaserModelConverter {
         t.setExtraProperties(scoop.getExtraProperties());
         t.setCheckverUrl(scoop.getCheckverUrl());
         t.setAutoupdateUrl(scoop.getAutoupdateUrl());
+        t.setBucket(convertScoopBucket(scoop.getBucket()));
+        t.setCommitAuthor(convertCommitAuthor(scoop.getCommitAuthor()));
         return t;
+    }
+
+    private static ScoopBucket convertScoopBucket(Bucket bucket) {
+        ScoopBucket b = new ScoopBucket();
+        b.setOwner(bucket.getOwner());
+        b.setName(bucket.getName());
+        b.setUsername(bucket.getUsername());
+        b.setToken(bucket.getToken());
+        return b;
     }
 
     private static org.jreleaser.model.Snap convertSnap(Snap snap) {
@@ -303,6 +349,17 @@ public final class JReleaserModelConverter {
         t.setLocalPlugs(snap.getLocalPlugs());
         t.setPlugs(convertPlugs(snap.getPlugs()));
         t.setSlots(convertSlots(snap.getSlots()));
+        t.setTap(convertSnapTap(snap.getTap()));
+        t.setCommitAuthor(convertCommitAuthor(snap.getCommitAuthor()));
+        return t;
+    }
+
+    private static SnapTap convertSnapTap(Tap tap) {
+        SnapTap t = new SnapTap();
+        t.setOwner(tap.getOwner());
+        t.setName(tap.getName());
+        t.setUsername(tap.getUsername());
+        t.setToken(tap.getToken());
         return t;
     }
 

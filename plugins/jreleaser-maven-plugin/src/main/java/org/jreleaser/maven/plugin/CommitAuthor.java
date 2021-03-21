@@ -15,24 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.maven.plugin;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.provider.Property
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
- *
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CompileStatic
-interface ChocolateyPackager extends PackagerTool {
-    Property<String> getUsername()
+public class CommitAuthor {
+    private String email;
+    private String name;
 
-    Property<Boolean> getRemoteBuild()
+    void setAll(CommitAuthor author) {
+        this.email = author.email;
+        this.name = author.name;
+    }
 
-    Tap getBucket()
+    public String getEmail() {
+        return email;
+    }
 
-    void bucket(Action<? super Tap> tap)
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isSet() {
+        return isNotBlank(name) ||
+            isNotBlank(email);
+    }
 }

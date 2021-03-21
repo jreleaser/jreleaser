@@ -48,7 +48,7 @@ public class JReleaserUploadMojo extends AbstractJReleaserProcessorMojo {
     static void upload(JReleaserContext context, boolean failFast)
         throws MojoExecutionException, MojoFailureException {
         processContext(context, failFast, "Uploading", processor -> {
-            if (processor.prepareDistribution()) {
+            if (processor.uploadDistribution()) {
                 context.getLogger().info("Uploaded " + processor.getDistributionName() +
                     " distribution with " + processor.getToolName());
             }

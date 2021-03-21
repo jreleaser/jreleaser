@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class GitService implements Releaser {
+public abstract class GitService implements Releaser, CommitAuthorProvider, OwnerProvider {
     private final String serviceName;
     protected Boolean enabled;
     protected boolean enabledSet;
@@ -48,8 +48,7 @@ public abstract class GitService implements Releaser {
     private String password;
     private String tagName = "v{{projectVersion}}";
     private String releaseName;
-    private String commitAuthorName = "jreleaserbot";
-    private String commitAuthorEmail = "jreleaserbot@jreleaser.org";
+    private CommitAuthor commitAuthor = new CommitAuthor();
     private boolean sign;
     private String signingKey;
     private Changelog changelog = new Changelog();
@@ -82,13 +81,12 @@ public abstract class GitService implements Releaser {
         this.password = service.password;
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
-        this.commitAuthorName = service.commitAuthorName;
-        this.commitAuthorEmail = service.commitAuthorEmail;
         this.sign = service.sign;
         this.signingKey = service.signingKey;
         this.overwrite = service.overwrite;
         this.allowUploadToExisting = service.allowUploadToExisting;
         this.apiEndpoint = service.apiEndpoint;
+        this.commitAuthor.setAll(service.commitAuthor);
         this.changelog.setAll(service.changelog);
     }
 
@@ -172,10 +170,12 @@ public abstract class GitService implements Releaser {
         this.host = host;
     }
 
+    @Override
     public String getOwner() {
         return owner;
     }
 
+    @Override
     public void setOwner(String owner) {
         this.owner = owner;
     }
@@ -276,20 +276,14 @@ public abstract class GitService implements Releaser {
         this.releaseName = releaseName;
     }
 
-    public String getCommitAuthorName() {
-        return commitAuthorName;
+    @Override
+    public CommitAuthor getCommitAuthor() {
+        return commitAuthor;
     }
 
-    public void setCommitAuthorName(String commitAuthorName) {
-        this.commitAuthorName = commitAuthorName;
-    }
-
-    public String getCommitAuthorEmail() {
-        return commitAuthorEmail;
-    }
-
-    public void setCommitAuthorEmail(String commitAuthorEmail) {
-        this.commitAuthorEmail = commitAuthorEmail;
+    @Override
+    public void setCommitAuthor(CommitAuthor commitAuthor) {
+        this.commitAuthor = commitAuthor;
     }
 
     public boolean isSign() {
@@ -356,8 +350,7 @@ public abstract class GitService implements Releaser {
         map.put("latestReleaseUrlFormat", latestReleaseUrlFormat);
         map.put("issueTrackerUrlFormat", issueTrackerUrlFormat);
         map.put("tagName", tagName);
-        map.put("commitAuthorName", commitAuthorName);
-        map.put("commitAuthorEmail", commitAuthorEmail);
+        map.put("commitAuthor", commitAuthor.asMap());
         map.put("sign", sign);
         map.put("signingKey", isNotBlank(signingKey) ? "************" : "**unset**");
         map.put("overwrite", overwrite);

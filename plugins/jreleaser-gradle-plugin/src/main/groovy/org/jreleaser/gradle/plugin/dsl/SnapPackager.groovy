@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
@@ -47,4 +48,8 @@ interface SnapPackager extends PackagerTool {
     NamedDomainObjectContainer<Slot> getSlots()
 
     void addLocalPlug(String plug)
+
+    Tap getTap()
+
+    void tap(Action<? super Tap> tap)
 }
