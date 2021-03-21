@@ -36,7 +36,7 @@ import java.nio.file.Paths;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "generate-template")
+@Mojo(name = "template")
 public class JReleaserGenerateTemplateMojo extends AbstractMojo {
     /**
      * The project whose model will be checked.

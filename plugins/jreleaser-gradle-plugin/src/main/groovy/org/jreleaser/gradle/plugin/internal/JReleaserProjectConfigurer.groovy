@@ -90,12 +90,12 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        project.tasks.register('generateJReleaserTemplate', JReleaserTemplateGeneratorTask,
+        project.tasks.register('jeleaserTemplate', JReleaserTemplateGeneratorTask,
             new Action<JReleaserTemplateGeneratorTask>() {
                 @Override
                 void execute(JReleaserTemplateGeneratorTask t) {
                     t.group = JRELEASER_GROUP
-                    t.description = 'Generates a tool file template'
+                    t.description = 'Generates templates for a specific tool'
                     t.outputDirectory.set(project.layout
                         .projectDirectory
                         .dir('src/distributions'))

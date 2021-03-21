@@ -104,7 +104,7 @@ public class BrewToolProcessor extends AbstractToolProcessor<Brew> {
                     .append(key)
                     .append("\"");
             }
-            if (isNotBlank(value)) {
+            if (isNotBlank(value) && !"null".equalsIgnoreCase(value)) {
                 formatted.append(" => \"")
                     .append(value)
                     .append("\"");

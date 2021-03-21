@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model;
 
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,7 +30,7 @@ abstract class AbstractTool implements Tool {
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected Boolean enabled;
     protected boolean enabledSet;
-    protected Path templateDirectory;
+    protected String templateDirectory;
 
     protected AbstractTool(String name) {
         this.name = name;
@@ -66,12 +65,12 @@ abstract class AbstractTool implements Tool {
     }
 
     @Override
-    public Path getTemplateDirectory() {
+    public String getTemplateDirectory() {
         return templateDirectory;
     }
 
     @Override
-    public void setTemplateDirectory(Path templateDirectory) {
+    public void setTemplateDirectory(String templateDirectory) {
         this.templateDirectory = templateDirectory;
     }
 

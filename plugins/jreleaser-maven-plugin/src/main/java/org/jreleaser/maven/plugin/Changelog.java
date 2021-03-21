@@ -17,8 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.io.File;
-
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**

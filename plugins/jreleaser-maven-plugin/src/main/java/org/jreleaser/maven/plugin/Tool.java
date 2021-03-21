@@ -17,8 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.nio.file.Path;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -32,7 +30,7 @@ public interface Tool extends ExtraProperties {
 
     String getName();
 
-    Path getTemplateDirectory();
+    String getTemplateDirectory();
 
-    void setTemplateDirectory(Path templateDirectory);
+    void setTemplateDirectory(String templateDirectory);
 }

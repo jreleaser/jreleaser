@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model;
 
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;

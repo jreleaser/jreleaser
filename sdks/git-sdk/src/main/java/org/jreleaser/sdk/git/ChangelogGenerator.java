@@ -27,7 +27,6 @@ import org.jreleaser.model.Changelog;
 import org.jreleaser.model.JReleaserContext;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

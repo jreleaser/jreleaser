@@ -18,10 +18,6 @@
 package org.jreleaser.model.announcer.spi;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.util.Logger;
-
-import java.nio.file.Path;
 
 /**
  * @author Andres Almiray

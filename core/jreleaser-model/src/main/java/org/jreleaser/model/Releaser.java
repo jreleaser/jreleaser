@@ -17,8 +17,6 @@
  */
 package org.jreleaser.model;
 
-import java.io.Serializable;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0

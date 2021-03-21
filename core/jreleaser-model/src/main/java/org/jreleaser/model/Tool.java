@@ -17,8 +17,6 @@
  */
 package org.jreleaser.model;
 
-import java.nio.file.Path;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -32,7 +30,7 @@ public interface Tool extends Domain, ExtraProperties {
 
     String getName();
 
-    Path getTemplateDirectory();
+    String getTemplateDirectory();
 
-    void setTemplateDirectory(Path templateDirectory);
+    void setTemplateDirectory(String templateDirectory);
 }

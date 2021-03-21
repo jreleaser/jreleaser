@@ -97,7 +97,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 return false;
             }
             context.getLogger().debug("Resolving templates for {}/{}", distributionName, getToolName());
-            Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(), distribution.getType(), getToolName(), getTool().getTemplateDirectory());
+            Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(), distribution.getType(), getToolName(),
+                context.getBasedir().resolve(getTool().getTemplateDirectory()));
             for (Map.Entry<String, Reader> entry : templates.entrySet()) {
                 context.getLogger().debug("Evaluating template {} for {}/{}", entry.getKey(), distributionName, getToolName());
                 String content = applyTemplate(entry.getValue(), newProps);
