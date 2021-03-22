@@ -170,7 +170,11 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             // copy files over
             Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
             context.getLogger().debug("Copying files from {}", context.getBasedir().relativize(packageDirectory));
-            FileUtils.copyFiles(context.getLogger(), packageDirectory, directory);
+
+            if (!FileUtils.copyFiles(context.getLogger(), packageDirectory, directory)) {
+                throw new IOException("Could not copy files from " +
+                    context.getBasedir().relativize(packageDirectory));
+            }
 
             UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
                 resolveGitUsername(gitService),
@@ -294,7 +298,11 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
         Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
         try {
-            FileUtils.copyFiles(context.getLogger(), prepareDirectory, packageDirectory);
+            if (!FileUtils.copyFiles(context.getLogger(), prepareDirectory, packageDirectory)) {
+                throw new ToolProcessingException("Could not copy files from " +
+                    context.getBasedir().relativize(prepareDirectory) + " to " +
+                    context.getBasedir().relativize(packageDirectory));
+            }
         } catch (IOException e) {
             throw new ToolProcessingException("Unexpected error when copying files from " +
                 context.getBasedir().relativize(prepareDirectory) + " to " +
