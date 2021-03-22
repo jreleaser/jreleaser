@@ -38,6 +38,8 @@ class GithubImpl extends AbstractGitService implements Github {
     final Property<String> targetCommitish
     final Property<Boolean> draft
     final Property<Boolean> prerelease
+    final ChangelogImpl changelog
+    final CommitAuthorImpl commitAuthor
 
     @Inject
     GithubImpl(ObjectFactory objects) {
@@ -45,6 +47,9 @@ class GithubImpl extends AbstractGitService implements Github {
         targetCommitish = objects.property(String).convention(Providers.notDefined())
         draft = objects.property(Boolean).convention(Providers.notDefined())
         prerelease = objects.property(Boolean).convention(Providers.notDefined())
+
+        changelog = objects.newInstance(ChangelogImpl, objects)
+        commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
     @Internal
@@ -52,7 +57,9 @@ class GithubImpl extends AbstractGitService implements Github {
         super.isSet() ||
             targetCommitish.present ||
             draft.present ||
-            prerelease.present
+            prerelease.present ||
+            changelog.isSet() ||
+            commitAuthor.isSet()
     }
 
     org.jreleaser.model.Github toModel() {
@@ -61,6 +68,8 @@ class GithubImpl extends AbstractGitService implements Github {
         if (targetCommitish.present) service.targetCommitish = targetCommitish.get()
         service.draft = draft.getOrElse(false)
         service.prerelease = prerelease.getOrElse(false)
+        if (changelog.isSet()) service.changelog = changelog.toModel()
+        if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
         service
     }
 }

@@ -18,15 +18,12 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.PackagerTool
-import org.jreleaser.gradle.plugin.dsl.Tap
 import org.jreleaser.model.Tool
 
 import javax.inject.Inject
@@ -39,20 +36,12 @@ import javax.inject.Inject
 @CompileStatic
 abstract class AbstractPackagerTool implements PackagerTool {
     final Property<Boolean> enabled
-    final CommitAuthorImpl commitAuthor
-    final TapImpl tap
     final MapProperty<String, Object> extraProperties
 
     @Inject
     AbstractPackagerTool(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
-        commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
-        tap = objects.newInstance(TapImpl, objects)
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
-    }
-
-    Tap getBucket() {
-        tap
     }
 
     protected abstract String toolName()
@@ -60,27 +49,11 @@ abstract class AbstractPackagerTool implements PackagerTool {
     @Internal
     boolean isSet() {
         enabled.present ||
-            extraProperties.present ||
-            commitAuthor.isSet() ||
-            tap.isSet()
-    }
-
-    @Override
-    void commitAuthor(Action<? super CommitAuthor> action) {
-        action.execute(commitAuthor)
-    }
-
-    void tap(Action<? super Tap> action) {
-        action.execute(tap)
-    }
-
-    void bucket(Action<? super Tap> action) {
-        action.execute(tap)
+            extraProperties.present
     }
 
     protected <T extends Tool> void fillToolProperties(T tool) {
         if (enabled.present) tool.enabled = enabled.get()
-        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (extraProperties.present) tool.extraProperties.putAll(extraProperties.get())
     }
 }

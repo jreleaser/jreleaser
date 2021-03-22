@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.file.RegularFileProperty
@@ -25,7 +26,9 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.SnapPackager
+import org.jreleaser.gradle.plugin.dsl.Tap
 import org.jreleaser.model.Plug
 import org.jreleaser.model.Slot
 import org.jreleaser.model.Snap
@@ -46,6 +49,8 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
     final Property<String> confinement
     final RegularFileProperty exportedLogin
     final Property<Boolean> remoteBuild
+    final TapImpl tap
+    final CommitAuthorImpl commitAuthor
     final ListProperty<String> localPlugs
     final NamedDomainObjectContainer<PlugImpl> plugs
     final NamedDomainObjectContainer<SlotImpl> slots
@@ -59,6 +64,8 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
         exportedLogin = objects.fileProperty().convention(Providers.notDefined())
         remoteBuild = objects.property(Boolean).convention(Providers.notDefined())
         localPlugs = objects.listProperty(String).convention(Providers.notDefined())
+        tap = objects.newInstance(TapImpl, objects)
+        commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
 
         plugs = objects.domainObjectContainer(PlugImpl, new NamedDomainObjectFactory<PlugImpl>() {
             @Override
@@ -99,7 +106,19 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
             remoteBuild.present ||
             localPlugs.present ||
             plugs.size() ||
-            slots.size()
+            slots.size() ||
+            tap.isSet() ||
+            commitAuthor.isSet()
+    }
+
+    @Override
+    void tap(Action<? super Tap> action) {
+        action.execute(tap)
+    }
+
+    @Override
+    void commitAuthor(Action<? super CommitAuthor> action) {
+        action.execute(commitAuthor)
     }
 
     Snap toModel() {
@@ -109,6 +128,8 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
         if (base.present) tool.base = base.get()
         if (grade.present) tool.grade = grade.get()
         if (confinement.present) tool.confinement = confinement.get()
+        if (tap.isSet()) tool.tap = tap.toSnapTap()
+        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (exportedLogin.present) {
             tool.exportedLogin = exportedLogin.get().asFile.absolutePath
         }

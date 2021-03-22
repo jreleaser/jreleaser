@@ -34,23 +34,32 @@ import javax.inject.Inject
 @CompileStatic
 class GitlabImpl extends AbstractGitService implements Gitlab {
     final Property<String> ref
+    final ChangelogImpl changelog
+    final CommitAuthorImpl commitAuthor
 
     @Inject
     GitlabImpl(ObjectFactory objects) {
         super(objects)
         ref = objects.property(String).convention(Providers.notDefined())
+
+        changelog = objects.newInstance(ChangelogImpl, objects)
+        commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
     @Internal
     boolean isSet() {
         super.isSet() ||
-            ref.present
+            ref.present ||
+            changelog.isSet() ||
+            commitAuthor.isSet()
     }
 
     org.jreleaser.model.Gitlab toModel() {
         org.jreleaser.model.Gitlab service = new org.jreleaser.model.Gitlab()
         toModel(service)
         if (ref.present) service.ref = ref.get()
+        if (changelog.isSet()) service.changelog = changelog.toModel()
+        if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
         service
     }
 }

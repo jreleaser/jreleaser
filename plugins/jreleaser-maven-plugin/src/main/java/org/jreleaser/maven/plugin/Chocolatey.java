@@ -28,7 +28,7 @@ public class Chocolatey extends AbstractTool {
 
     private String username;
     private Boolean remoteBuild;
-    private Bucket bucket;
+    private Bucket bucket = new Bucket();
 
     public Chocolatey() {
         super(NAME);

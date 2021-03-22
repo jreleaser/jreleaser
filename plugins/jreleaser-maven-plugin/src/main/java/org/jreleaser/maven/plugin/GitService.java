@@ -36,7 +36,7 @@ public abstract class GitService implements Releaser {
     private String issueTrackerUrlFormat;
     private String username;
     private String password;
-    private String tagName;
+    private String tagName = "v{{projectVersion}}";
     private String releaseName;
     private CommitAuthor commitAuthor = new CommitAuthor();
     private boolean sign;

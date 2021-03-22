@@ -28,7 +28,7 @@ public class Scoop extends AbstractTool {
 
     private String checkverUrl;
     private String autoupdateUrl;
-    private Bucket bucket;
+    private Bucket bucket = new Bucket();
 
     public Scoop() {
         super(NAME);

@@ -55,8 +55,6 @@ abstract class AbstractGitService implements GitService {
     final Property<String> apiEndpoint
     final Property<Boolean> overwrite
     final Property<Boolean> allowUploadToExisting
-    final ChangelogImpl changelog
-    final CommitAuthorImpl commitAuthor
 
     @Inject
     AbstractGitService(ObjectFactory objects) {
@@ -80,9 +78,6 @@ abstract class AbstractGitService implements GitService {
         apiEndpoint = objects.property(String).convention(Providers.notDefined())
         overwrite = objects.property(Boolean).convention(Providers.notDefined())
         allowUploadToExisting = objects.property(Boolean).convention(Providers.notDefined())
-
-        changelog = objects.newInstance(ChangelogImpl, objects)
-        commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
     @Internal
@@ -105,9 +100,7 @@ abstract class AbstractGitService implements GitService {
             signingKey.present ||
             apiEndpoint.present ||
             overwrite.present ||
-            allowUploadToExisting.present ||
-            changelog.isSet() ||
-            commitAuthor.isSet()
+            allowUploadToExisting.present
     }
 
     @Override
@@ -137,8 +130,6 @@ abstract class AbstractGitService implements GitService {
         if (releaseName.present) service.releaseName = releaseName.get()
         if (signingKey.present) service.signingKey = signingKey.get()
         if (apiEndpoint.present) service.apiEndpoint = apiEndpoint.get()
-        if (changelog.isSet()) service.changelog = changelog.toModel()
-        if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
         service.sign = sign.getOrElse(false)
         service.overwrite = overwrite.getOrElse(false)
         service.allowUploadToExisting = allowUploadToExisting.getOrElse(false)

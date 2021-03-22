@@ -344,7 +344,7 @@ public final class JReleaserModelConverter {
         t.setBase(snap.getBase());
         t.setGrade(snap.getGrade());
         t.setConfinement(snap.getConfinement());
-        t.setExportedLogin(snap.getExportedLogin().getAbsolutePath());
+        if (null != snap.getExportedLogin()) t.setExportedLogin(snap.getExportedLogin().getAbsolutePath());
         t.setRemoteBuild(snap.isRemoteBuild());
         t.setLocalPlugs(snap.getLocalPlugs());
         t.setPlugs(convertPlugs(snap.getPlugs()));

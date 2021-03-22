@@ -163,7 +163,7 @@ public final class JReleaserModelValidator {
 
     private static void validateGitService(Logger logger, Path basedir, Project project, GitService service, List<String> errors) {
         if (isBlank(service.getOwner())) {
-            errors.add(service.getServiceName() + ".repoOwner must not be blank");
+            errors.add(service.getServiceName() + ".owner must not be blank");
         }
         if (isBlank(service.getName())) {
             service.setName(project.getName());

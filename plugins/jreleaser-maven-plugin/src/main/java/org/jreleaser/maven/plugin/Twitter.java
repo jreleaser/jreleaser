@@ -30,7 +30,7 @@ public class Twitter extends AbstractAnnouncer {
     private String consumerSecret;
     private String accessToken;
     private String accessTokenSecret;
-    private String status = "Version {{projectVersion}} of {{projectName}} has been released {{releaseUrl}}";
+    private String status = "\uD83D\uDE80 {{projectNameCapitalized}} {{tagName}} has been released! {{latestReleaseUrl}}";
 
     public Twitter() {
         super(NAME);

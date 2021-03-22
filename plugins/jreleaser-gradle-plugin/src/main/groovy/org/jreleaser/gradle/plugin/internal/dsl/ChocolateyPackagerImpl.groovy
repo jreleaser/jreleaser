@@ -18,10 +18,13 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.ChocolateyPackager
+import org.jreleaser.gradle.plugin.dsl.CommitAuthor
+import org.jreleaser.gradle.plugin.dsl.Tap
 import org.jreleaser.model.Chocolatey
 
 import javax.inject.Inject
@@ -35,12 +38,16 @@ import javax.inject.Inject
 class ChocolateyPackagerImpl extends AbstractPackagerTool implements ChocolateyPackager {
     final Property<String> username
     final Property<Boolean> remoteBuild
+    final CommitAuthorImpl commitAuthor
+    final TapImpl bucket
 
     @Inject
     ChocolateyPackagerImpl(ObjectFactory objects) {
         super(objects)
         username = objects.property(String).convention(Providers.notDefined())
         remoteBuild = objects.property(Boolean).convention(Providers.notDefined())
+        bucket = objects.newInstance(TapImpl, objects)
+        commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
     @Override
@@ -50,13 +57,26 @@ class ChocolateyPackagerImpl extends AbstractPackagerTool implements ChocolateyP
     boolean isSet() {
         super.isSet() ||
             username.present ||
-            remoteBuild.present
+            remoteBuild.present ||
+            bucket.isSet() ||
+            commitAuthor.isSet()
+    }
+
+    @Override
+    void bucket(Action<? super Tap> action) {
+        action.execute(bucket)
+    }
+
+    @Override
+    void commitAuthor(Action<? super CommitAuthor> action) {
+        action.execute(commitAuthor)
     }
 
     Chocolatey toModel() {
         Chocolatey tool = new Chocolatey()
         fillToolProperties(tool)
-        if (tap.isSet()) tool.bucket = tap.toChocolateyBucket()
+        if (bucket.isSet()) tool.bucket = bucket.toChocolateyBucket()
+        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (username.present) tool.username = username.get()
         tool.remoteBuild = remoteBuild.getOrElse(false)
         tool

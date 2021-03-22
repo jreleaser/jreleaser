@@ -18,13 +18,16 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.file.Directory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Scoop
+import org.jreleaser.gradle.plugin.dsl.Tap
 
 import javax.inject.Inject
 
@@ -37,12 +40,16 @@ import javax.inject.Inject
 class ScoopImpl extends AbstractTool implements Scoop {
     final Property<String> checkverUrl
     final Property<String> autoupdateUrl
+    final CommitAuthorImpl commitAuthor
+    final TapImpl bucket
 
     @Inject
     ScoopImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider) {
         super(objects, distributionsDirProvider)
         checkverUrl = objects.property(String).convention(Providers.notDefined())
         autoupdateUrl = objects.property(String).convention(Providers.notDefined())
+        bucket = objects.newInstance(TapImpl, objects)
+        commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
     @Override
@@ -53,13 +60,26 @@ class ScoopImpl extends AbstractTool implements Scoop {
     boolean isSet() {
         super.isSet() ||
             checkverUrl.present ||
-            autoupdateUrl.present
+            autoupdateUrl.present ||
+            bucket.isSet() ||
+            commitAuthor.isSet()
+    }
+
+    @Override
+    void bucket(Action<? super Tap> action) {
+        action.execute(bucket)
+    }
+
+    @Override
+    void commitAuthor(Action<? super CommitAuthor> action) {
+        action.execute(commitAuthor)
     }
 
     org.jreleaser.model.Scoop toModel() {
         org.jreleaser.model.Scoop tool = new org.jreleaser.model.Scoop()
         fillToolProperties(tool)
-        if (tap.isSet()) tool.bucket = tap.toScoopBucket()
+        if (bucket.isSet()) tool.bucket = bucket.toScoopBucket()
+        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (checkverUrl.present) tool.checkverUrl = checkverUrl.get()
         if (autoupdateUrl.present) tool.autoupdateUrl = autoupdateUrl.get()
         tool

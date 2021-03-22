@@ -33,12 +33,12 @@ public class Snap extends AbstractTool {
     private final List<String> localPlugs = new ArrayList<>();
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
-    private String base;
-    private String grade;
-    private String confinement;
+    private String base = "core18";
+    private String grade = "stable";
+    private String confinement = "strict";
     private File exportedLogin;
     private Boolean remoteBuild;
-    private Tap tap;
+    private Tap tap = new Tap();
 
     public Snap() {
         super(NAME);

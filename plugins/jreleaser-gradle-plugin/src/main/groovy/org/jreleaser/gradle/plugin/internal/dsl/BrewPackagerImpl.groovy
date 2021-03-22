@@ -18,10 +18,13 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.jreleaser.gradle.plugin.dsl.BrewPackager
+import org.jreleaser.gradle.plugin.dsl.CommitAuthor
+import org.jreleaser.gradle.plugin.dsl.Tap
 import org.jreleaser.model.Brew
 
 import javax.inject.Inject
@@ -35,11 +38,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  */
 @CompileStatic
 class BrewPackagerImpl extends AbstractPackagerTool implements BrewPackager {
+    final CommitAuthorImpl commitAuthor
+    final TapImpl tap
     final MapProperty<String, String> dependencies
 
     @Inject
     BrewPackagerImpl(ObjectFactory objects) {
         super(objects)
+        tap = objects.newInstance(TapImpl, objects)
+        commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
         dependencies = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
@@ -62,13 +69,27 @@ class BrewPackagerImpl extends AbstractPackagerTool implements BrewPackager {
 
     @Override
     boolean isSet() {
-        super.isSet() || dependencies.present
+        super.isSet() ||
+            dependencies.present ||
+            tap.isSet() ||
+            commitAuthor.isSet()
+    }
+
+    @Override
+    void tap(Action<? super Tap> action) {
+        action.execute(tap)
+    }
+
+    @Override
+    void commitAuthor(Action<? super CommitAuthor> action) {
+        action.execute(commitAuthor)
     }
 
     Brew toModel() {
         Brew tool = new Brew()
         fillToolProperties(tool)
         if (tap.isSet()) tool.tap = tap.toHomebrewTap()
+        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (dependencies.present) tool.dependencies.putAll(dependencies.get())
         tool
     }
