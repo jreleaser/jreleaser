@@ -31,8 +31,10 @@ import org.gradle.api.tasks.options.OptionValues
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.Distribution
 import org.jreleaser.templates.TemplateGenerator
+import org.jreleaser.util.Logger
 
 import javax.inject.Inject
+import java.nio.file.Path
 
 /**
  *
@@ -56,12 +58,16 @@ abstract class JReleaserTemplateGeneratorTask extends DefaultTask {
     @Input
     final Property<Boolean> overwrite
 
+    @Input
+    final Property<Boolean> snapshot
+
     @Inject
     JReleaserTemplateGeneratorTask(ObjectFactory objects) {
         distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.BINARY)
         distributionName = objects.property(String)
         toolName = objects.property(String)
         overwrite = objects.property(Boolean).convention(false)
+        snapshot = objects.property(Boolean).convention(false)
 
         outputDirectory = objects.directoryProperty()
     }
@@ -69,6 +75,11 @@ abstract class JReleaserTemplateGeneratorTask extends DefaultTask {
     @Option(option = 'overwrite', description = 'Overwrite existing files (OPTIONAL).')
     void setOverwrite(boolean overwrite) {
         this.overwrite.set(overwrite)
+    }
+
+    @Option(option = 'snapshot', description = 'Use snapshot template (OPTIONAL).')
+    void setSnapshot(boolean snapshot) {
+        this.snapshot.set(snapshot)
     }
 
     @Option(option = 'distribution-name', description = 'The name of the distribution (REQUIRED).')
@@ -93,21 +104,21 @@ abstract class JReleaserTemplateGeneratorTask extends DefaultTask {
 
     @TaskAction
     void generateTemplate() {
-        boolean result = TemplateGenerator.builder()
-            .logger(new JReleaserLoggerAdapter(project))
+        Logger logger = new JReleaserLoggerAdapter(project)
+
+        Path output = TemplateGenerator.builder()
+            .logger(logger)
             .distributionName(distributionName.get())
             .distributionType(distributionType.get())
             .toolName(toolName.get())
             .outputDirectory(outputDirectory.get().asFile.toPath())
             .overwrite(overwrite.get())
+            .snapshot(snapshot.get())
             .build()
             .generate()
 
-        if (result) {
-            println('Template generated at ' +
-                outputDirectory.get().asFile.toPath()
-                    .resolve(distributionName.get())
-                    .resolve(toolName.get()))
+        if (output) {
+            logger.info('Template generated at {}', output.toAbsolutePath())
         }
     }
 }

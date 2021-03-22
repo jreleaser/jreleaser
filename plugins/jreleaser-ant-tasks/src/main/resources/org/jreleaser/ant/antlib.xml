@@ -20,56 +20,45 @@
 <antlib>
     <taskdef
             name="announce"
-            classname="org.jreleaser.ant.tasks.JReleaserAnnounceTask"
-            onerror="ignore"/>
+            classname="org.jreleaser.ant.tasks.JReleaserAnnounceTask"/>
 
     <taskdef
             name="checksum"
-            classname="org.jreleaser.ant.tasks.JReleaserChecksumTask"
-            onerror="ignore"/>
+            classname="org.jreleaser.ant.tasks.JReleaserChecksumTask"/>
 
     <taskdef
             name="config"
-            classname="org.jreleaser.ant.tasks.JReleaserConfigTask"
-            onerror="ignore"/>
+            classname="org.jreleaser.ant.tasks.JReleaserConfigTask"/>
 
     <taskdef
             name="full-release"
-            classname="org.jreleaser.ant.tasks.JReleaserFullReleaseTask"
-            onerror="ignore"/>
+            classname="org.jreleaser.ant.tasks.JReleaserFullReleaseTask"/>
 
     <taskdef
             name="template"
-            classname="org.jreleaser.ant.tasks.JReleaserGenerateTemplateTask"
-            onerror="ignore"/>
+            classname="org.jreleaser.ant.tasks.JReleaserGenerateTemplateTask"/>
 
     <taskdef
             name="init"
-            classname="org.jreleaser.ant.tasks.JReleaserInitTask"
-            onerror="ignore"/>
+            classname="org.jreleaser.ant.tasks.JReleaserInitTask"/>
 
     <taskdef
             name="package"
-            classname="org.jreleaser.ant.tasks.JReleaserPackageTask"
-            onerror="ignore"/>
+            classname="org.jreleaser.ant.tasks.JReleaserPackageTask"/>
 
     <taskdef
             name="prepare"
-            classname="org.jreleaser.ant.tasks.JReleaserPrepareTask"
-            onerror="ignore"/>
+            classname="org.jreleaser.ant.tasks.JReleaserPrepareTask"/>
 
     <taskdef
             name="release"
-            classname="org.jreleaser.ant.tasks.JReleaserReleaseTask"
-            onerror="ignore"/>
+            classname="org.jreleaser.ant.tasks.JReleaserReleaseTask"/>
 
     <taskdef
             name="sign"
-            classname="org.jreleaser.ant.tasks.JReleaserSignTask"
-            onerror="ignore"/>
+            classname="org.jreleaser.ant.tasks.JReleaserSignTask"/>
 
     <taskdef
             name="upload"
-            classname="org.jreleaser.ant.tasks.JReleaserUploadTask"
-            onerror="ignore"/>
+            classname="org.jreleaser.ant.tasks.JReleaserUploadTask"/>
 </antlib>

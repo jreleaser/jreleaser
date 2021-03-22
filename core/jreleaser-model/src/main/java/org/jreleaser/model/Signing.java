@@ -28,6 +28,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Signing implements Domain {
+    public static final String GPG_PASSPHRASE = "GPG_PASSPHRASE";
+
     private Boolean enabled;
     private boolean enabledSet;
     private Boolean armored;
@@ -61,7 +63,7 @@ public class Signing implements Domain {
         if (isNotBlank(passphrase)) {
             return passphrase;
         }
-        return System.getenv("GPG_PASSPHRASE");
+        return System.getenv(GPG_PASSPHRASE);
     }
 
     public Boolean isArmored() {

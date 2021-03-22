@@ -74,6 +74,12 @@ public class JReleaserGenerateTemplateMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.template.overwrite")
     private boolean overwrite;
 
+    /**
+     * Use snapshot templates.
+     */
+    @Parameter(property = "jreleaser.template.snapshot")
+    private boolean snapshot;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
@@ -84,19 +90,19 @@ public class JReleaserGenerateTemplateMojo extends AbstractMojo {
                 .resolve("src")
                 .resolve("distributions");
 
-            boolean result = TemplateGenerator.builder()
+            Path output = TemplateGenerator.builder()
                 .logger(getLogger())
                 .distributionName(distributionName)
                 .distributionType(distributionType)
                 .toolName(toolName)
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)
+                .snapshot(snapshot)
                 .build()
                 .generate();
 
-            if (result) {
-                getLog().info("Template generated at " +
-                    outputDirectory.resolve(distributionName).resolve(toolName));
+            if (null != output) {
+                getLogger().info("Template generated at {}", output.toAbsolutePath());
             }
         } catch (TemplateGenerationException e) {
             throw new MojoExecutionException("Unexpected error", e);

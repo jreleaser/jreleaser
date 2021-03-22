@@ -27,6 +27,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Sdkman extends AbstractAnnouncer {
     public static final String NAME = "sdkman";
+    public static final String SDKMAN_CONSUMER_KEY = "SDKMAN_CONSUMER_KEY";
+    public static final String SDKMAN_CONSUMER_TOKEN = "SDKMAN_CONSUMER_TOKEN";
 
     private String consumerKey;
     private String consumerToken;
@@ -49,14 +51,14 @@ public class Sdkman extends AbstractAnnouncer {
         if (isNotBlank(consumerKey)) {
             return consumerKey;
         }
-        return System.getenv("SDKMAN_CONSUMER_KEY");
+        return System.getenv(SDKMAN_CONSUMER_KEY);
     }
 
     public String getResolvedConsumerToken() {
         if (isNotBlank(consumerToken)) {
             return consumerToken;
         }
-        return System.getenv("SDKMAN_CONSUMER_TOKEN");
+        return System.getenv(SDKMAN_CONSUMER_TOKEN);
     }
 
     public String getConsumerKey() {

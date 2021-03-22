@@ -19,11 +19,13 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Sdkman
 import org.jreleaser.gradle.plugin.dsl.Twitter
 import org.jreleaser.gradle.plugin.dsl.Zulip
-import org.jreleaser.model.Announce
 
 import javax.inject.Inject
 
@@ -33,13 +35,15 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class AnnounceImpl implements org.jreleaser.gradle.plugin.dsl.Announce {
+class AnnounceImpl implements Announce {
+    final Property<Boolean> enabled
     final SdkmanImpl sdkman
     final TwitterImpl twitter
     final ZulipImpl zulip
 
     @Inject
     AnnounceImpl(ObjectFactory objects) {
+        enabled = objects.property(Boolean).convention(Providers.notDefined())
         sdkman = objects.newInstance(SdkmanImpl, objects)
         twitter = objects.newInstance(TwitterImpl, objects)
         zulip = objects.newInstance(ZulipImpl, objects)
@@ -60,11 +64,12 @@ class AnnounceImpl implements org.jreleaser.gradle.plugin.dsl.Announce {
         action.execute(zulip)
     }
 
-    Announce toModel() {
-        Announce announcers = new Announce()
-        if (sdkman.isSet()) announcers.sdkman = sdkman.toModel()
-        if (twitter.isSet()) announcers.twitter = twitter.toModel()
-        if (zulip.isSet()) announcers.zulip = zulip.toModel()
-        announcers
+    org.jreleaser.model.Announce toModel() {
+        org.jreleaser.model.Announce announce = new org.jreleaser.model.Announce()
+        if (enabled.present) announce.enabled = enabled.get()
+        if (sdkman.isSet()) announce.sdkman = sdkman.toModel()
+        if (twitter.isSet()) announce.twitter = twitter.toModel()
+        if (zulip.isSet()) announce.zulip = zulip.toModel()
+        announce
     }
 }

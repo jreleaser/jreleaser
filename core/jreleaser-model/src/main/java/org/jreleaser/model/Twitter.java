@@ -31,6 +31,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Twitter extends AbstractAnnouncer {
     public static final String NAME = "twitter";
+    public static final String TWITTER_CONSUMER_KEY = "TWITTER_CONSUMER_KEY";
+    public static final String TWITTER_CONSUMER_SECRET = "TWITTER_CONSUMER_SECRET";
+    public static final String TWITTER_ACCESS_TOKEN = "TWITTER_ACCESS_TOKEN";
+    public static final String TWITTER_ACCESS_TOKEN_SECRET = "TWITTER_ACCESS_TOKEN_SECRET";
 
     private String consumerKey;
     private String consumerSecret;
@@ -61,28 +65,28 @@ public class Twitter extends AbstractAnnouncer {
         if (isNotBlank(consumerKey)) {
             return consumerKey;
         }
-        return System.getenv("TWITTER_CONSUMER_KEY");
+        return System.getenv(TWITTER_CONSUMER_KEY);
     }
 
     public String getResolvedConsumerSecret() {
         if (isNotBlank(consumerSecret)) {
             return consumerSecret;
         }
-        return System.getenv("TWITTER_CONSUMER_SECRET");
+        return System.getenv(TWITTER_CONSUMER_SECRET);
     }
 
     public String getResolvedAccessToken() {
         if (isNotBlank(accessToken)) {
             return accessToken;
         }
-        return System.getenv("TWITTER_ACCESS_TOKEN");
+        return System.getenv(TWITTER_ACCESS_TOKEN);
     }
 
     public String getResolvedAccessTokenSecret() {
         if (isNotBlank(accessTokenSecret)) {
             return accessTokenSecret;
         }
-        return System.getenv("TWITTER_ACCESS_TOKEN_SECRET");
+        return System.getenv(TWITTER_ACCESS_TOKEN_SECRET);
     }
 
     public String getConsumerKey() {

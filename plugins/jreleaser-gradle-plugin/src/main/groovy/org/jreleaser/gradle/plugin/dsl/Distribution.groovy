@@ -32,6 +32,12 @@ import org.jreleaser.model.Distribution.DistributionType
 interface Distribution extends ExtraProperties {
     Property<DistributionType> getDistributionType()
 
+    Property<String> getGroupId()
+
+    Property<String> getArtifactId()
+
+    Property<String> getMainClass()
+
     Property<String> getExecutable()
 
     ListProperty<String> getTags()
@@ -46,6 +52,8 @@ interface Distribution extends ExtraProperties {
 
     Chocolatey getChocolatey()
 
+    Jbang getJbang()
+
     Scoop getScoop()
 
     Snap getSnap()
@@ -53,6 +61,8 @@ interface Distribution extends ExtraProperties {
     void brew(Action<? super Brew> action)
 
     void chocolatey(Action<? super Chocolatey> action)
+
+    void jbang(Action<? super Jbang> action)
 
     void scoop(Action<? super Scoop> action)
 

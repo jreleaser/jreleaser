@@ -25,11 +25,28 @@ public class Announce {
     private final Sdkman sdkman = new Sdkman();
     private final Twitter twitter = new Twitter();
     private final Zulip zulip = new Zulip();
+    private Boolean enabled;
+    private boolean enabledSet;
 
     void setAll(Announce announce) {
+        this.enabled = announce.enabled;
+        this.enabledSet = announce.enabledSet;
         setSdkman(announce.sdkman);
         setTwitter(announce.twitter);
         setZulip(announce.zulip);
+    }
+
+    public Boolean isEnabled() {
+        return enabled != null && enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabledSet = true;
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabledSet() {
+        return enabledSet;
     }
 
     public Sdkman getSdkman() {

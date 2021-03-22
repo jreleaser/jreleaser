@@ -41,6 +41,9 @@ public class Distribution extends Packagers implements ExtraProperties {
     private DistributionType type = DistributionType.BINARY;
     private String executable;
     private String javaVersion;
+    private String groupId;
+    private String artifactId;
+    private String mainClass;
 
     void setAll(Distribution distribution) {
         super.setAll(distribution);
@@ -48,6 +51,9 @@ public class Distribution extends Packagers implements ExtraProperties {
         this.type = distribution.type;
         this.executable = distribution.executable;
         this.javaVersion = distribution.javaVersion;
+        this.groupId = distribution.groupId;
+        this.artifactId = distribution.artifactId;
+        this.mainClass = distribution.mainClass;
         setTags(distribution.tags);
         setExtraProperties(distribution.extraProperties);
         setArtifacts(distribution.artifacts);
@@ -144,6 +150,30 @@ public class Distribution extends Packagers implements ExtraProperties {
         }
     }
 
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
+    public String getMainClass() {
+        return mainClass;
+    }
+
+    public void setMainClass(String mainClass) {
+        this.mainClass = mainClass;
+    }
+
     @Override
     public Map<String, Object> getExtraProperties() {
         return extraProperties;
@@ -183,6 +213,8 @@ public class Distribution extends Packagers implements ExtraProperties {
                 return (T) getBrew();
             case Chocolatey.NAME:
                 return (T) getChocolatey();
+            case Jbang.NAME:
+                return (T) getJbang();
             case Scoop.NAME:
                 return (T) getScoop();
             case Snap.NAME:
@@ -196,6 +228,9 @@ public class Distribution extends Packagers implements ExtraProperties {
     public Map<String, Object> asMap() {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("type", type);
+        props.put("groupId", groupId);
+        props.put("artifactId", artifactId);
+        props.put("mainClass", mainClass);
         props.put("executable", executable);
         props.put("javaVersion", javaVersion);
         props.put("artifacts", artifacts.stream()
@@ -214,6 +249,7 @@ public class Distribution extends Packagers implements ExtraProperties {
         Set<String> set = new LinkedHashSet<>();
         set.add(Brew.NAME);
         set.add(Chocolatey.NAME);
+        set.add(Jbang.NAME);
         set.add(Scoop.NAME);
         set.add(Snap.NAME);
         return Collections.unmodifiableSet(set);

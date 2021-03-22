@@ -20,13 +20,9 @@ plugins {
 }
 
 dependencies {
-    api project(':jreleaser-tools')
-    api project(':jreleaser-releaser')
-    api project(':jreleaser-announce')
-    api project(':jreleaser-signer')
-    api project(':jreleaser-templates')
-    api project(':jreleaser-config-yaml')
-    api "org.slf4j:slf4j-api:$slf4jVersion"
+    api(project(':jreleaser')) {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
 
     compileOnly "org.apache.ant:ant:$antVersion"
 }

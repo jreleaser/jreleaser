@@ -21,6 +21,7 @@ import org.jreleaser.maven.plugin.Announce;
 import org.jreleaser.maven.plugin.Artifact;
 import org.jreleaser.maven.plugin.Brew;
 import org.jreleaser.maven.plugin.Bucket;
+import org.jreleaser.maven.plugin.Catalog;
 import org.jreleaser.maven.plugin.Changelog;
 import org.jreleaser.maven.plugin.Chocolatey;
 import org.jreleaser.maven.plugin.CommitAuthor;
@@ -29,6 +30,7 @@ import org.jreleaser.maven.plugin.GitService;
 import org.jreleaser.maven.plugin.Gitea;
 import org.jreleaser.maven.plugin.Github;
 import org.jreleaser.maven.plugin.Gitlab;
+import org.jreleaser.maven.plugin.Jbang;
 import org.jreleaser.maven.plugin.Jreleaser;
 import org.jreleaser.maven.plugin.Packagers;
 import org.jreleaser.maven.plugin.Plug;
@@ -45,6 +47,7 @@ import org.jreleaser.maven.plugin.Zulip;
 import org.jreleaser.model.ChocolateyBucket;
 import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JbangCatalog;
 import org.jreleaser.model.ScoopBucket;
 import org.jreleaser.model.SnapTap;
 
@@ -137,7 +140,7 @@ public final class JReleaserModelConverter {
         s.setLatestReleaseUrlFormat(service.getLatestReleaseUrlFormat());
         s.setIssueTrackerUrlFormat(service.getIssueTrackerUrlFormat());
         s.setUsername(service.getUsername());
-        s.setPassword(service.getPassword());
+        s.setToken(service.getToken());
         s.setTagName(service.getTagName());
         s.setReleaseName(service.getReleaseName());
         s.setCommitAuthor(convertCommitAuthor(service.getCommitAuthor()));
@@ -168,6 +171,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Packagers p = new org.jreleaser.model.Packagers();
         if (packagers.getBrew().isSet()) p.setBrew(convertBrew(packagers.getBrew()));
         if (packagers.getChocolatey().isSet()) p.setChocolatey(convertChocolatey(packagers.getChocolatey()));
+        if (packagers.getJbang().isSet()) p.setJbang(convertJbang(packagers.getJbang()));
         if (packagers.getScoop().isSet()) p.setScoop(convertScoop(packagers.getScoop()));
         if (packagers.getSnap().isSet()) p.setSnap(convertSnap(packagers.getSnap()));
         return p;
@@ -175,6 +179,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Announce convertAnnounce(Announce announce) {
         org.jreleaser.model.Announce a = new org.jreleaser.model.Announce();
+        if (announce.isEnabledSet()) a.setEnabled(announce.isEnabled());
         if (announce.getSdkman().isSet()) a.setSdkman(convertSdkman(announce.getSdkman()));
         if (announce.getTwitter().isSet()) a.setTwitter(convertTwitter(announce.getTwitter()));
         if (announce.getZulip().isSet()) a.setZulip(convertZulip(announce.getZulip()));
@@ -234,6 +239,9 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Distribution convertDistribution(JReleaserModel model, Distribution distribution) {
         org.jreleaser.model.Distribution d = new org.jreleaser.model.Distribution();
         d.setName(distribution.getName());
+        d.setGroupId(distribution.getGroupId());
+        d.setArtifactId(distribution.getArtifactId());
+        d.setMainClass(distribution.getMainClass());
         d.setType(distribution.getType().name());
         d.setExecutable(distribution.getExecutable());
         d.setJavaVersion(distribution.getJavaVersion());
@@ -243,6 +251,7 @@ public final class JReleaserModelConverter {
 
         if (distribution.getBrew().isSet()) d.setBrew(convertBrew(distribution.getBrew()));
         if (distribution.getChocolatey().isSet()) d.setChocolatey(convertChocolatey(distribution.getChocolatey()));
+        if (distribution.getJbang().isSet()) d.setJbang(convertJbang(distribution.getJbang()));
         if (distribution.getScoop().isSet()) d.setScoop(convertScoop(distribution.getScoop()));
         if (distribution.getSnap().isSet()) d.setSnap(convertSnap(distribution.getSnap()));
 
@@ -313,6 +322,25 @@ public final class JReleaserModelConverter {
         b.setUsername(bucket.getUsername());
         b.setToken(bucket.getToken());
         return b;
+    }
+
+    private static org.jreleaser.model.Jbang convertJbang(Jbang jbang) {
+        org.jreleaser.model.Jbang t = new org.jreleaser.model.Jbang();
+        if (jbang.isEnabledSet()) t.setEnabled(jbang.isEnabled());
+        t.setTemplateDirectory(jbang.getTemplateDirectory());
+        t.setExtraProperties(jbang.getExtraProperties());
+        t.setCatalog(convertJbangCatalog(jbang.getCatalog()));
+        t.setCommitAuthor(convertCommitAuthor(jbang.getCommitAuthor()));
+        return t;
+    }
+
+    private static JbangCatalog convertJbangCatalog(Catalog catalog) {
+        JbangCatalog t = new JbangCatalog();
+        t.setOwner(catalog.getOwner());
+        t.setName(catalog.getName());
+        t.setUsername(catalog.getUsername());
+        t.setToken(catalog.getToken());
+        return t;
     }
 
     private static org.jreleaser.model.Scoop convertScoop(Scoop scoop) {

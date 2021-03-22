@@ -97,13 +97,16 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 return false;
             }
             context.getLogger().debug("Resolving templates for {}/{}", distributionName, getToolName());
-            Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(), distribution.getType(), getToolName(),
+            Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
+                distribution.getType(),
+                getToolName(),
+                context.getModel().getProject().isSnapshot(),
                 context.getBasedir().resolve(getTool().getTemplateDirectory()));
             for (Map.Entry<String, Reader> entry : templates.entrySet()) {
                 context.getLogger().debug("Evaluating template {} for {}/{}", entry.getKey(), distributionName, getToolName());
                 String content = applyTemplate(entry.getValue(), newProps);
                 context.getLogger().debug("Writing template {} for {}/{}", entry.getKey(), distributionName, getToolName());
-                writeFile(context.getModel().getProject(), distribution, content, props, entry.getKey());
+                writeFile(context.getModel().getProject(), distribution, content, newProps, entry.getKey());
             }
         } catch (IllegalArgumentException e) {
             throw new ToolProcessingException(e);
@@ -167,14 +170,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 .setURI(repository.getHttpUrl())
                 .call();
 
-            // copy files over
-            Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
-            context.getLogger().debug("Copying files from {}", context.getBasedir().relativize(packageDirectory));
-
-            if (!FileUtils.copyFiles(context.getLogger(), packageDirectory, directory)) {
-                throw new IOException("Could not copy files from " +
-                    context.getBasedir().relativize(packageDirectory));
-            }
+            prepareWorkingCopy(props, directory);
 
             UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
                 resolveGitUsername(gitService),
@@ -213,6 +209,17 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         return true;
     }
 
+    protected void prepareWorkingCopy(Map<String, Object> props, Path directory) throws IOException {
+        // copy files over
+        Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+        context.getLogger().debug("Copying files from {}", context.getBasedir().relativize(packageDirectory));
+
+        if (!FileUtils.copyFiles(context.getLogger(), packageDirectory, directory)) {
+            throw new IOException("Could not copy files from " +
+                context.getBasedir().relativize(packageDirectory));
+        }
+    }
+
     protected String resolveGitUsername(GitService gitService) {
         if (isNotBlank(tool.getRepositoryTap().getUsername())) {
             return tool.getRepositoryTap().getUsername();
@@ -224,7 +231,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         if (isNotBlank(tool.getRepositoryTap().getResolvedToken(gitService))) {
             return tool.getRepositoryTap().getResolvedToken(gitService);
         }
-        return gitService.getResolvedPassword();
+        return gitService.getResolvedToken();
     }
 
     protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName) throws ToolProcessingException;
@@ -254,12 +261,19 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         context.getLogger().debug("Filling tool properties into props");
         fillToolProperties(newProps, distribution);
         newProps.putAll(tool.getResolvedExtraProperties());
+        if (isBlank(context.getModel().getRelease().getGitService().getReverseRepoHost())) {
+            newProps.put(Constants.KEY_REVERSE_REPO_HOST,
+                tool.getExtraProperties().get(Constants.KEY_REVERSE_REPO_HOST));
+        }
         return newProps;
     }
 
     protected void fillDistributionProperties(Map<String, Object> props, Distribution distribution, Release release) {
         props.put(Constants.KEY_DISTRIBUTION_NAME, distribution.getName());
         props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, distribution.getExecutable());
+        props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, distribution.getJavaVersion());
+        props.put(Constants.KEY_DISTRIBUTION_GROUP_ID, distribution.getGroupId());
+        props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_ID, distribution.getArtifactId());
         props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", distribution.getTags()));
         props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", distribution.getTags()));
         props.put(Constants.KEY_DISTRIBUTION_RELEASE_NOTES, applyTemplate(new StringReader(release.getGitService().getReleaseNotesUrlFormat()), props));
@@ -310,8 +324,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         }
     }
 
-    private boolean verifyAndAddArtifacts(Map<String, Object> props,
-                                          Distribution distribution) throws ToolProcessingException {
+    protected boolean verifyAndAddArtifacts(Map<String, Object> props,
+                                            Distribution distribution) throws ToolProcessingException {
         Set<String> fileExtensions = resolveByExtensionsFor(distribution.getType());
         List<Artifact> artifacts = distribution.getArtifacts().stream()
             .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))

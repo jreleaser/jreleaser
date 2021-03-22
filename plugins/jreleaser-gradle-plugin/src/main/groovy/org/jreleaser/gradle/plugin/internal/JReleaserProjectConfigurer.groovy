@@ -71,7 +71,10 @@ class JReleaserProjectConfigurer {
         }
 
         JReleaserModel model = extension.toModel()
-        model.getProject().setJavaVersion(javaVersion)
+        if (isBlank(model.project.javaVersion)) model.project.javaVersion = javaVersion
+        if (isBlank(model.project.artifactId)) model.project.artifactId = project.name
+        if (isBlank(model.project.groupId)) model.project.groupId = project.group.toString()
+
         JReleaserLoggerAdapter logger = new JReleaserLoggerAdapter(project)
         List<String> errors = JReleaserModelValidator.validate(logger, project.projectDir.toPath(), model)
         if (errors) {
@@ -114,6 +117,9 @@ class JReleaserProjectConfigurer {
                     t.description = 'Calculate checksums'
                     t.jreleaserModel.set(model)
                     t.outputDirectory.set(outputDirectoryProvider)
+                    if (hasDistributionPlugin) {
+                        t.dependsOn('assembleDist')
+                    }
                 }
             })
 
@@ -125,6 +131,9 @@ class JReleaserProjectConfigurer {
                     t.description = 'Signs a release'
                     t.jreleaserModel.set(model)
                     t.outputDirectory.set(outputDirectoryProvider)
+                    if (hasDistributionPlugin) {
+                        t.dependsOn('assembleDist')
+                    }
                 }
             })
 
@@ -137,6 +146,9 @@ class JReleaserProjectConfigurer {
                     t.jreleaserModel.set(model)
                     t.dryrun.set(extension.dryrun)
                     t.outputDirectory.set(outputDirectoryProvider)
+                    if (hasDistributionPlugin) {
+                        t.dependsOn('assembleDist')
+                    }
                 }
             })
 
@@ -163,6 +175,9 @@ class JReleaserProjectConfigurer {
                     t.dependsOn(prepareTask)
                     t.jreleaserModel.set(model)
                     t.outputDirectory.set(outputDirectoryProvider)
+                    if (hasDistributionPlugin) {
+                        t.dependsOn('assembleDist')
+                    }
                 }
             })
 
@@ -176,6 +191,9 @@ class JReleaserProjectConfigurer {
                     t.jreleaserModel.set(model)
                     t.dryrun.set(extension.dryrun)
                     t.outputDirectory.set(outputDirectoryProvider)
+                    if (hasDistributionPlugin) {
+                        t.dependsOn('assembleDist')
+                    }
                 }
             })
 
@@ -200,6 +218,9 @@ class JReleaserProjectConfigurer {
                     t.jreleaserModel.set(model)
                     t.dryrun.set(extension.dryrun)
                     t.outputDirectory.set(outputDirectoryProvider)
+                    if (hasDistributionPlugin) {
+                        t.dependsOn('assembleDist')
+                    }
                 }
             })
     }

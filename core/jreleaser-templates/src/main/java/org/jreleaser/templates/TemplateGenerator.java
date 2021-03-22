@@ -47,19 +47,22 @@ public class TemplateGenerator {
     private final String toolName;
     private final Path outputDirectory;
     private final boolean overwrite;
+    private final boolean snapshot;
 
     private TemplateGenerator(Logger logger,
                               String distributionName,
                               Distribution.DistributionType distributionType,
                               String toolName,
                               Path outputDirectory,
-                              boolean overwrite) {
+                              boolean overwrite,
+                              boolean snapshot) {
         this.logger = logger;
         this.distributionName = distributionName;
         this.distributionType = distributionType;
         this.toolName = toolName;
         this.outputDirectory = outputDirectory;
         this.overwrite = overwrite;
+        this.snapshot = snapshot;
     }
 
     public String getDistributionName() {
@@ -82,14 +85,14 @@ public class TemplateGenerator {
         return overwrite;
     }
 
-    public boolean generate() throws TemplateGenerationException {
+    public Path generate() throws TemplateGenerationException {
         if (!Distribution.supportedTools().contains(toolName)) {
             logger.error("Tool {} is not supported", toolName);
-            return false;
+            return null;
         }
 
         Path output = outputDirectory.resolve(distributionName)
-            .resolve(toolName);
+            .resolve(toolName + (snapshot ? "-snapshot" : "")).normalize();
 
         logger.info("Creating output directory {}", output.toAbsolutePath());
         try {
@@ -98,7 +101,7 @@ public class TemplateGenerator {
             throw fail(e);
         }
 
-        Map<String, Reader> templates = TemplateUtils.resolveTemplates(logger, distributionType, toolName);
+        Map<String, Reader> templates = TemplateUtils.resolveTemplates(logger, distributionType, toolName, snapshot);
         for (Map.Entry<String, Reader> template : templates.entrySet()) {
             Path outputFile = output.resolve(template.getKey());
             logger.info("Writing file " + outputFile.toAbsolutePath());
@@ -109,13 +112,13 @@ public class TemplateGenerator {
                 }
             } catch (FileAlreadyExistsException e) {
                 logger.error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());
-                return false;
+                return null;
             } catch (Exception e) {
                 throw fail(e);
             }
         }
 
-        return true;
+        return output;
     }
 
     private TemplateGenerationException fail(Exception e) throws TemplateGenerationException {
@@ -136,6 +139,7 @@ public class TemplateGenerator {
         private String toolName;
         private Path outputDirectory;
         private boolean overwrite;
+        private boolean snapshot;
 
         public TemplateGeneratorBuilder logger(Logger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be null");
@@ -167,13 +171,18 @@ public class TemplateGenerator {
             return this;
         }
 
+        public TemplateGeneratorBuilder snapshot(boolean snapshot) {
+            this.snapshot = snapshot;
+            return this;
+        }
+
         public TemplateGenerator build() {
             requireNonNull(logger, "'logger' must not be null");
             requireNonBlank(distributionName, "'distributionName' must not be blank");
             requireNonNull(distributionType, "'distributionType' must not be null");
             requireNonBlank(toolName, "'toolName' must not be blank");
             requireNonNull(outputDirectory, "'outputDirectory' must not be null");
-            return new TemplateGenerator(logger, distributionName, distributionType, toolName, outputDirectory, overwrite);
+            return new TemplateGenerator(logger, distributionName, distributionType, toolName, outputDirectory, overwrite, snapshot);
         }
     }
 }

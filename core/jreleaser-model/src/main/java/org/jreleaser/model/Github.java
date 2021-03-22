@@ -71,6 +71,16 @@ public class Github extends GitService {
     }
 
     @Override
+    public String getBranch() {
+        return getTargetCommitish();
+    }
+
+    @Override
+    public String getReverseRepoHost() {
+        return "com.github";
+    }
+
+    @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = super.asMap();
         map.put("targetCommitish", targetCommitish);

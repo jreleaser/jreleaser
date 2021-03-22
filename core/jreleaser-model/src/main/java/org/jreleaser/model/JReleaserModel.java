@@ -138,8 +138,8 @@ public class JReleaserModel implements Domain {
         map.put("project", project.asMap());
         map.put("release", release.asMap());
         map.put("packagers", packagers.asMap());
-        map.put("announce", announce.asMap());
-        map.put("signing", signing.asMap());
+        if (announce.isEnabled()) map.put("announce", announce.asMap());
+        if (signing.isEnabled()) map.put("signing", signing.asMap());
         if (files.size() > 0) {
             map.put("files", files.stream()
                 .map(Artifact::asMap)
@@ -162,6 +162,8 @@ public class JReleaserModel implements Domain {
     private void fillProjectProperties(Map<String, Object> props, Project project) {
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
+        props.put(Constants.KEY_GROUP_ID, project.getGroupId());
+        props.put(Constants.KEY_ARTIFACT_ID, project.getArtifactId());
         props.put(Constants.KEY_PROJECT_VERSION, project.getResolvedVersion());
         props.put(Constants.KEY_PROJECT_DESCRIPTION, project.getDescription());
         props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, project.getLongDescription());
@@ -180,6 +182,8 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_REPO_HOST, service.getHost());
         props.put(Constants.KEY_REPO_OWNER, service.getOwner());
         props.put(Constants.KEY_REPO_NAME, service.getName());
+        props.put(Constants.KEY_REPO_BRANCH, service.getBranch());
+        props.put(Constants.KEY_REVERSE_REPO_HOST, service.getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, service.getCanonicalRepoName());
         props.put(Constants.KEY_TAG_NAME, service.getTagName());
         props.put(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(project));

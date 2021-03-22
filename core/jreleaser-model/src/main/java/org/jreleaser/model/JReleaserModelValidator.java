@@ -31,6 +31,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.model.Project.JRELEASER_PROJECT_VERSION;
+import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
+import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
+import static org.jreleaser.model.Signing.GPG_PASSPHRASE;
+import static org.jreleaser.model.Twitter.TWITTER_ACCESS_TOKEN;
+import static org.jreleaser.model.Twitter.TWITTER_ACCESS_TOKEN_SECRET;
+import static org.jreleaser.model.Twitter.TWITTER_CONSUMER_KEY;
+import static org.jreleaser.model.Twitter.TWITTER_CONSUMER_SECRET;
+import static org.jreleaser.model.Zulip.ZULIP_API_KEY;
+import static org.jreleaser.util.Constants.KEY_REVERSE_REPO_HOST;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.getFilenameExtension;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -49,6 +59,8 @@ public final class JReleaserModelValidator {
         List<String> errors = new ArrayList<>();
         validateModel(logger, basedir, model, errors);
         resolveArtifactPaths(logger, model);
+        logger.info("Project version set to {}", model.getProject().getResolvedVersion());
+        logger.info("Release is{}snapshot", model.getProject().isSnapshot() ? " " : " not ");
         return Collections.unmodifiableList(errors);
     }
 
@@ -65,7 +77,16 @@ public final class JReleaserModelValidator {
         if (isBlank(project.getName())) {
             errors.add("project.name must not be blank");
         }
-        checkEnvSetting(logger, errors, project.getVersion(), "JRELEASER_PROJECT_VERSION", "project.version");
+        checkEnvSetting(logger, errors, project.getVersion(), JRELEASER_PROJECT_VERSION, "project.version");
+        if (isBlank(project.getArtifactId())) {
+            project.setArtifactId(project.getName());
+        }
+        if (isBlank(project.getGroupId())) {
+            errors.add("project.groupId must not be blank");
+        }
+        if (isBlank(project.getArtifactId())) {
+            errors.add("project.artifactId must not be blank");
+        }
         if (isBlank(project.getDescription())) {
             errors.add("project.description must not be blank");
         }
@@ -105,6 +126,9 @@ public final class JReleaserModelValidator {
         validateCommitAuthor(packagers.getChocolatey(), model.getRelease().getGitService());
         validateOwner(packagers.getChocolatey().getBucket(), model.getRelease().getGitService());
 
+        validateCommitAuthor(packagers.getJbang(), model.getRelease().getGitService());
+        validateOwner(packagers.getJbang().getCatalog(), model.getRelease().getGitService());
+
         validateCommitAuthor(packagers.getScoop(), model.getRelease().getGitService());
         validateOwner(packagers.getScoop().getBucket(), model.getRelease().getGitService());
 
@@ -116,22 +140,29 @@ public final class JReleaserModelValidator {
         validateSdkman(logger, basedir, model, announce.getSdkman(), errors);
         validateTwitter(logger, basedir, model, announce.getTwitter(), errors);
         validateZulip(logger, basedir, model, announce.getZulip(), errors);
+
+        boolean enabled = announce.getSdkman().isEnabled() ||
+            announce.getTwitter().isEnabled() ||
+            announce.getZulip().isEnabled();
+        if (!announce.isEnabledSet()) {
+            announce.setEnabled(enabled);
+        }
     }
 
     private static void validateSdkman(Logger logger, Path basedir, JReleaserModel model, Sdkman sdkman, List<String> errors) {
         if (!sdkman.isEnabled()) return;
 
-        checkEnvSetting(logger, errors, sdkman.getConsumerKey(), "SDKMAN_CONSUMER_KEY", "sdkman.consumerKey");
-        checkEnvSetting(logger, errors, sdkman.getConsumerToken(), "SDKMAN_CONSUMER_TOKEN", "sdkman.consumerToken");
+        checkEnvSetting(logger, errors, sdkman.getConsumerKey(), SDKMAN_CONSUMER_KEY, "sdkman.consumerKey");
+        checkEnvSetting(logger, errors, sdkman.getConsumerToken(), SDKMAN_CONSUMER_TOKEN, "sdkman.consumerToken");
     }
 
     private static void validateTwitter(Logger logger, Path basedir, JReleaserModel model, Twitter twitter, List<String> errors) {
         if (!twitter.isEnabled()) return;
 
-        checkEnvSetting(logger, errors, twitter.getConsumerKey(), "TWITTER_CONSUMER_KEY", "twitter.consumerKey");
-        checkEnvSetting(logger, errors, twitter.getConsumerSecret(), "TWITTER_CONSUMER_SECRET", "twitter.consumerSecret");
-        checkEnvSetting(logger, errors, twitter.getAccessToken(), "TWITTER_ACCESS_TOKEN", "twitter.accessToken");
-        checkEnvSetting(logger, errors, twitter.getAccessTokenSecret(), "TWITTER_ACCESS_TOKEN_SECRET", "twitter.accessTokenSecret");
+        checkEnvSetting(logger, errors, twitter.getConsumerKey(), TWITTER_CONSUMER_KEY, "twitter.consumerKey");
+        checkEnvSetting(logger, errors, twitter.getConsumerSecret(), TWITTER_CONSUMER_SECRET, "twitter.consumerSecret");
+        checkEnvSetting(logger, errors, twitter.getAccessToken(), TWITTER_ACCESS_TOKEN, "twitter.accessToken");
+        checkEnvSetting(logger, errors, twitter.getAccessTokenSecret(), TWITTER_ACCESS_TOKEN_SECRET, "twitter.accessTokenSecret");
         if (isBlank(twitter.getStatus())) {
             errors.add("twitter.status must not be blank.");
         }
@@ -143,7 +174,7 @@ public final class JReleaserModelValidator {
         if (isBlank(zulip.getAccount())) {
             errors.add("zulip.account must not be blank.");
         }
-        checkEnvSetting(logger, errors, zulip.getApiKey(), "ZULIP_API_KEY", "zulip.apiKey");
+        checkEnvSetting(logger, errors, zulip.getApiKey(), ZULIP_API_KEY, "zulip.apiKey");
         if (isBlank(zulip.getApiHost())) {
             errors.add("zulip.apiHost must not be blank.");
         }
@@ -155,7 +186,7 @@ public final class JReleaserModelValidator {
     private static void validateSign(Logger logger, Path basedir, JReleaserModel model, Signing signing, List<String> errors) {
         if (!signing.isEnabled()) return;
 
-        checkEnvSetting(logger, errors, signing.getPassphrase(), "GPG_PASSPHRASE", "sign.passphrase");
+        checkEnvSetting(logger, errors, signing.getPassphrase(), GPG_PASSPHRASE, "sign.passphrase");
         if (isBlank(signing.getKeyRingFile())) {
             errors.add("sign.keyRingFile must not be blank");
         }
@@ -172,7 +203,7 @@ public final class JReleaserModelValidator {
             service.setUsername(service.getOwner());
         }
 
-        checkEnvSetting(logger, errors, service.getPassword(),
+        checkEnvSetting(logger, errors, service.getToken(),
             service.getServiceName().toUpperCase() + "_TOKEN",
             service.getServiceName() + ".password");
 
@@ -262,6 +293,12 @@ public final class JReleaserModelValidator {
             errors.add("distribution." + distribution.getName() + ".type must not be null");
             return;
         }
+        if (isBlank(distribution.getGroupId())) {
+            distribution.setGroupId(model.getProject().getGroupId());
+        }
+        if (isBlank(distribution.getArtifactId())) {
+            distribution.setArtifactId(model.getProject().getArtifactId());
+        }
         if (isBlank(distribution.getExecutable())) {
             distribution.setExecutable(distribution.getName());
         }
@@ -300,6 +337,7 @@ public final class JReleaserModelValidator {
 
         validateBrew(logger, basedir, model, distribution, distribution.getBrew(), errors);
         validateChocolatey(logger, basedir, model, distribution, distribution.getChocolatey(), errors);
+        validateJbang(logger, basedir, model, distribution, distribution.getJbang(), errors);
         validateScoop(logger, basedir, model, distribution, distribution.getScoop(), errors);
         validateSnap(logger, basedir, model, distribution, distribution.getSnap(), errors);
     }
@@ -338,9 +376,6 @@ public final class JReleaserModelValidator {
 
         tool.setDependencies(dependencies);
 
-        if (isBlank(tool.getTap().getOwner())) {
-            tool.getTap().setOwner(model.getPackagers().getBrew().getTap().getOwner());
-        }
         if (isBlank(tool.getTap().getName())) {
             tool.getTap().setName(model.getPackagers().getBrew().getTap().getName());
         }
@@ -370,9 +405,6 @@ public final class JReleaserModelValidator {
             tool.setRemoteBuild(model.getPackagers().getChocolatey().isRemoteBuild());
         }
 
-        if (isBlank(tool.getBucket().getOwner())) {
-            tool.getBucket().setOwner(model.getPackagers().getChocolatey().getBucket().getOwner());
-        }
         if (isBlank(tool.getBucket().getName())) {
             tool.getBucket().setName(distribution.getName() + "-bucket");
         }
@@ -382,6 +414,40 @@ public final class JReleaserModelValidator {
         }
         if (isBlank(tool.getBucket().getToken())) {
             tool.getBucket().setToken(model.getPackagers().getChocolatey().getBucket().getToken());
+        }
+    }
+
+    private static void validateJbang(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Jbang tool, List<String> errors) {
+        if (!tool.isEnabledSet() && model.getPackagers().getJbang().isEnabledSet()) {
+            tool.setEnabled(model.getPackagers().getJbang().isEnabled());
+        }
+        if (!tool.isEnabled()) return;
+
+        validateCommitAuthor(tool, model.getPackagers().getJbang());
+        validateOwner(tool.getCatalog(), model.getPackagers().getJbang().getCatalog());
+        validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getJbang(), errors);
+        mergeExtraProperties(tool, model.getPackagers().getJbang());
+
+        if (isBlank(tool.getCatalog().getName())) {
+            tool.getCatalog().setName(model.getPackagers().getJbang().getCatalog().getName());
+        }
+        if (isBlank(tool.getCatalog().getUsername())) {
+            tool.getCatalog().setUsername(model.getPackagers().getJbang().getCatalog().getUsername());
+        }
+        if (isBlank(tool.getCatalog().getToken())) {
+            tool.getCatalog().setToken(model.getPackagers().getJbang().getCatalog().getToken());
+        }
+
+        if (!tool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
+            model.getPackagers().getJbang().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
+            tool.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
+                model.getPackagers().getJbang().getExtraProperties().get(KEY_REVERSE_REPO_HOST));
+        }
+        if (isBlank(model.getRelease().getGitService().getReverseRepoHost()) &&
+            !tool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
+            errors.add("distribution." + distribution.getName() +
+                ".jbang must define an extra property named '" +
+                KEY_REVERSE_REPO_HOST + "'");
         }
     }
 
@@ -410,9 +476,6 @@ public final class JReleaserModelValidator {
             }
         }
 
-        if (isBlank(tool.getBucket().getOwner())) {
-            tool.getBucket().setOwner(model.getPackagers().getScoop().getBucket().getOwner());
-        }
         if (isBlank(tool.getBucket().getName())) {
             tool.getBucket().setName(model.getPackagers().getScoop().getBucket().getName());
         }
@@ -468,9 +531,6 @@ public final class JReleaserModelValidator {
             }
         }
 
-        if (isBlank(tool.getTap().getOwner())) {
-            tool.getTap().setOwner(model.getPackagers().getSnap().getTap().getOwner());
-        }
         if (isBlank(tool.getTap().getName())) {
             tool.getTap().setName(distribution.getName() + "-snap");
         }

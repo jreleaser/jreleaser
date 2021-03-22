@@ -38,6 +38,7 @@ public class JReleaserGenerateTemplateTask extends Task {
     private Distribution.DistributionType distributionType = Distribution.DistributionType.BINARY;
     private String toolName;
     private boolean overwrite;
+    private boolean snapshot;
 
     public void setSkip(boolean skip) {
         this.skip = skip;
@@ -59,6 +60,10 @@ public class JReleaserGenerateTemplateTask extends Task {
         this.overwrite = overwrite;
     }
 
+    public void setSnapshot(boolean snapshot) {
+        this.snapshot = snapshot;
+    }
+
     @Override
     public void execute() throws BuildException {
         Banner.display(getLogger());
@@ -69,19 +74,19 @@ public class JReleaserGenerateTemplateTask extends Task {
                 .resolve("src")
                 .resolve("distributions");
 
-            boolean result = TemplateGenerator.builder()
+            Path output = TemplateGenerator.builder()
                 .logger(getLogger())
                 .distributionName(distributionName)
                 .distributionType(distributionType)
                 .toolName(toolName)
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)
+                .snapshot(snapshot)
                 .build()
                 .generate();
 
-            if (result) {
-                getLogger().info("Template generated at " +
-                    outputDirectory.resolve(distributionName).resolve(toolName));
+            if (null != output) {
+                getLogger().info("Template generated at {}", output.toAbsolutePath());
             }
         } catch (TemplateGenerationException e) {
             throw new JReleaserException("Unexpected error", e);

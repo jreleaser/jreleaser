@@ -20,6 +20,8 @@ package org.jreleaser.ant.tasks;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.jreleaser.ant.tasks.internal.JReleaserLoggerAdapter;
+import org.jreleaser.cli.Main;
+import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateUtils;
 import org.jreleaser.util.Logger;
@@ -30,7 +32,10 @@ import java.io.Writer;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashSet;
 import java.util.Scanner;
+import java.util.ServiceLoader;
+import java.util.Set;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
@@ -43,19 +48,29 @@ import static java.nio.file.StandardOpenOption.WRITE;
  */
 public class JReleaserInitTask extends Task {
     private boolean overwrite;
+    private String format;
 
     public void setOverwrite(boolean overwrite) {
         this.overwrite = overwrite;
     }
 
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
     @Override
     public void execute() throws BuildException {
         try {
-            Path outputDirectory = getProject().getBaseDir().toPath().normalize();
-            Path outputFile = outputDirectory.resolve(".jreleaser.yml");
+            if (!getSupportedConfigFormats().contains(format)) {
+                throw new BuildException("Unsupported file format. Must be one of [" +
+                    String.join("|", getSupportedConfigFormats()) + "]");
+            }
 
-            Reader template = TemplateUtils.resolveTemplate(getLogger(), JReleaserInitTask.class,
-                "META-INF/jreleaser/templates/jreleaser.yml.tpl");
+            Path outputDirectory = getProject().getBaseDir().toPath().normalize();
+            Path outputFile = outputDirectory.resolve(".jreleaser." + format);
+
+            Reader template = TemplateUtils.resolveTemplate(getLogger(), Main.class,
+                "META-INF/jreleaser/templates/jreleaser." + format + ".tpl");
 
             getLogger().info("Writing file " + outputFile.toAbsolutePath());
             try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
@@ -76,5 +91,18 @@ public class JReleaserInitTask extends Task {
 
     private Logger getLogger() {
         return new JReleaserLoggerAdapter(getProject());
+    }
+
+    private Set<String> getSupportedConfigFormats() {
+        Set<String> extensions = new LinkedHashSet<>();
+
+        ServiceLoader<JReleaserConfigParser> parsers = ServiceLoader.load(JReleaserConfigParser.class,
+            JReleaserConfigParser.class.getClassLoader());
+
+        for (JReleaserConfigParser parser : parsers) {
+            extensions.add(parser.getPreferredFileExtension());
+        }
+
+        return extensions;
     }
 }

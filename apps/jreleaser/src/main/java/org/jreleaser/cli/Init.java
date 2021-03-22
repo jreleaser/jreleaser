@@ -17,6 +17,7 @@
  */
 package org.jreleaser.cli;
 
+import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateUtils;
 import picocli.CommandLine;
@@ -28,7 +29,10 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashSet;
 import java.util.Scanner;
+import java.util.ServiceLoader;
+import java.util.Set;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
@@ -46,6 +50,10 @@ public class Init extends AbstractCommand {
         description = "Overwrite existing files")
     boolean overwrite;
 
+    @CommandLine.Option(names = {"--format"},
+        description = "Configuration file format")
+    String format;
+
     @CommandLine.ParentCommand
     Main parent;
 
@@ -56,11 +64,21 @@ public class Init extends AbstractCommand {
 
     protected void execute() {
         try {
+            if (!getSupportedConfigFormats().contains(format)) {
+                spec.commandLine().getErr()
+                    .println(spec.commandLine()
+                        .getColorScheme()
+                        .errorText("Unsupported file format. Must be one of [" +
+                            String.join("|", getSupportedConfigFormats()) + "]"));
+                spec.commandLine().usage(parent.out);
+                throw new HaltExecutionException();
+            }
+
             Path outputDirectory = null != basedir ? basedir : Paths.get(".").normalize();
-            Path outputFile = outputDirectory.resolve(".jreleaser.yml");
+            Path outputFile = outputDirectory.resolve(".jreleaser." + format);
 
             Reader template = TemplateUtils.resolveTemplate(logger, Init.class,
-                "META-INF/jreleaser/templates/jreleaser.yml.tpl");
+                "META-INF/jreleaser/templates/jreleaser." + format + ".tpl");
 
             logger.info("Writing file " + outputFile.toAbsolutePath());
             try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
@@ -79,5 +97,18 @@ public class Init extends AbstractCommand {
         } catch (IllegalStateException | IOException e) {
             throw new JReleaserException("Unexpected error", e);
         }
+    }
+
+    private Set<String> getSupportedConfigFormats() {
+        Set<String> extensions = new LinkedHashSet<>();
+
+        ServiceLoader<JReleaserConfigParser> parsers = ServiceLoader.load(JReleaserConfigParser.class,
+            JReleaserConfigParser.class.getClassLoader());
+
+        for (JReleaserConfigParser parser : parsers) {
+            extensions.add(parser.getPreferredFileExtension());
+        }
+
+        return extensions;
     }
 }

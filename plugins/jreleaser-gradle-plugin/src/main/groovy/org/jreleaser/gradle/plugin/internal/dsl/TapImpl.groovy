@@ -25,6 +25,7 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Tap
 import org.jreleaser.model.ChocolateyBucket
 import org.jreleaser.model.HomebrewTap
+import org.jreleaser.model.JbangCatalog
 import org.jreleaser.model.ScoopBucket
 import org.jreleaser.model.SnapTap
 
@@ -92,5 +93,14 @@ class TapImpl implements Tap {
         if (username.present) tap.name = username.get()
         if (token.present) tap.token = token.get()
         tap
+    }
+
+    JbangCatalog toJbangCatalog() {
+        JbangCatalog catalog = new JbangCatalog()
+        if (owner.present) catalog.owner = owner.get()
+        if (name.present) catalog.name = name.get()
+        if (username.present) catalog.name = username.get()
+        if (token.present) catalog.token = token.get()
+        catalog
     }
 }

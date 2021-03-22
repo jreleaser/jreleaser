@@ -40,6 +40,11 @@ import java.nio.file.Path;
 @ServiceProviderFor(JReleaserConfigParser.class)
 public class YamlJReleaserConfigParser implements JReleaserConfigParser {
     @Override
+    public String getPreferredFileExtension() {
+        return "yml";
+    }
+
+    @Override
     public boolean supports(Path configFile) {
         String fileName = configFile.getFileName().toString();
         return fileName.endsWith(".yml") || fileName.endsWith(".yaml");

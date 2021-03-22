@@ -27,12 +27,14 @@ import java.util.Map;
 public class Packagers implements Domain {
     private final Brew brew = new Brew();
     private final Chocolatey chocolatey = new Chocolatey();
+    private final Jbang jbang = new Jbang();
     private final Scoop scoop = new Scoop();
     private final Snap snap = new Snap();
 
     void setAll(Packagers packagers) {
         setBrew(packagers.brew);
         setChocolatey(packagers.chocolatey);
+        setJbang(packagers.jbang);
         setScoop(packagers.scoop);
         setSnap(packagers.snap);
     }
@@ -51,6 +53,14 @@ public class Packagers implements Domain {
 
     public void setChocolatey(Chocolatey chocolatey) {
         this.chocolatey.setAll(chocolatey);
+    }
+
+    public Jbang getJbang() {
+        return jbang;
+    }
+
+    public void setJbang(Jbang jbang) {
+        this.jbang.setAll(jbang);
     }
 
     public Scoop getScoop() {
@@ -74,6 +84,7 @@ public class Packagers implements Domain {
         Map<String, Object> map = new LinkedHashMap<>();
         map.putAll(brew.asMap());
         map.putAll(chocolatey.asMap());
+        map.putAll(jbang.asMap());
         map.putAll(scoop.asMap());
         map.putAll(snap.asMap());
         return map;

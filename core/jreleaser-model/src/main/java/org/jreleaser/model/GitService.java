@@ -45,7 +45,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private String latestReleaseUrlFormat;
     private String issueTrackerUrlFormat;
     private String username;
-    private String password;
+    private String token;
     private String tagName = "v{{projectVersion}}";
     private String releaseName;
     private CommitAuthor commitAuthor = new CommitAuthor();
@@ -78,7 +78,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.latestReleaseUrlFormat = service.latestReleaseUrlFormat;
         this.issueTrackerUrlFormat = service.issueTrackerUrlFormat;
         this.username = service.username;
-        this.password = service.password;
+        this.token = service.token;
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
         this.sign = service.sign;
@@ -94,15 +94,23 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         return owner + "/" + name;
     }
 
+    public abstract String getBranch();
+
+    public abstract String getReverseRepoHost();
+
     private Map<String, Object> props(Project project) {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
+        props.put(Constants.KEY_GROUP_ID, project.getGroupId());
+        props.put(Constants.KEY_ARTIFACT_ID, project.getArtifactId());
         props.put(Constants.KEY_PROJECT_VERSION, project.getResolvedVersion());
         props.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
         props.put(Constants.KEY_REPO_HOST, host);
         props.put(Constants.KEY_REPO_OWNER, owner);
         props.put(Constants.KEY_REPO_NAME, name);
+        props.put(Constants.KEY_REPO_BRANCH, getBranch());
+        props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         return props;
     }
@@ -111,6 +119,8 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         props.put(Constants.KEY_REPO_HOST, host);
         props.put(Constants.KEY_REPO_OWNER, owner);
         props.put(Constants.KEY_REPO_NAME, name);
+        props.put(Constants.KEY_REPO_BRANCH, getBranch());
+        props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(project));
         props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(project));
@@ -236,12 +246,11 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.issueTrackerUrlFormat = issueTrackerUrlFormat;
     }
 
-    public String getResolvedPassword() {
-        if (isNotBlank(password)) {
-            return password;
+    public String getResolvedToken() {
+        if (isNotBlank(token)) {
+            return token;
         }
-        String tokenName = getClass().getSimpleName().toUpperCase() + "_TOKEN";
-        return System.getenv(tokenName);
+        return System.getenv(getClass().getSimpleName().toUpperCase() + "_TOKEN");
     }
 
     public String getUsername() {
@@ -252,12 +261,12 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getToken() {
+        return token;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getTagName() {
@@ -342,7 +351,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("owner", owner);
         map.put("name", name);
         map.put("username", username);
-        map.put("password", isNotBlank(getResolvedPassword()) ? "************" : "**unset**");
+        map.put("token", isNotBlank(getResolvedToken()) ? "************" : "**unset**");
         map.put("repoUrlFormat", repoUrlFormat);
         map.put("commitUrlFormat", commitUrlFormat);
         map.put("downloadUrlFormat", downloadUrlFormat);

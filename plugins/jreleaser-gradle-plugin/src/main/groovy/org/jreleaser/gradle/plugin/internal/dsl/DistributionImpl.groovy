@@ -32,6 +32,7 @@ import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Brew
 import org.jreleaser.gradle.plugin.dsl.Chocolatey
 import org.jreleaser.gradle.plugin.dsl.Distribution
+import org.jreleaser.gradle.plugin.dsl.Jbang
 import org.jreleaser.gradle.plugin.dsl.Scoop
 import org.jreleaser.gradle.plugin.dsl.Snap
 import org.jreleaser.model.Distribution.DistributionType
@@ -49,11 +50,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class DistributionImpl implements Distribution {
     String name
     final Property<String> executable
+    final Property<String> groupId
+    final Property<String> artifactId
+    final Property<String> mainClass
     final Property<DistributionType> distributionType
     final ListProperty<String> tags
     final MapProperty<String, Object> extraProperties
     final BrewImpl brew
     final ChocolateyImpl chocolatey
+    final JbangImpl jbang
     final ScoopImpl scoop
     final SnapImpl snap
 
@@ -65,6 +70,9 @@ class DistributionImpl implements Distribution {
     DistributionImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider, PackagersImpl packagers) {
         this.packagers = packagers
         executable = objects.property(String).convention(Providers.notDefined())
+        groupId = objects.property(String).convention(Providers.notDefined())
+        artifactId = objects.property(String).convention(Providers.notDefined())
+        mainClass = objects.property(String).convention(Providers.notDefined())
         myName = objects.property(String).convention(Providers.notDefined())
         distributionType = objects.property(DistributionType).convention(DistributionType.BINARY)
         tags = objects.listProperty(String).convention(Providers.notDefined())
@@ -83,6 +91,8 @@ class DistributionImpl implements Distribution {
         brew.distributionName.set(myName)
         chocolatey = objects.newInstance(ChocolateyImpl, objects, distributionsDirProvider)
         chocolatey.distributionName.set(myName)
+        jbang = objects.newInstance(JbangImpl, objects, distributionsDirProvider)
+        jbang.distributionName.set(myName)
         scoop = objects.newInstance(ScoopImpl, objects, distributionsDirProvider)
         scoop.distributionName.set(myName)
         snap = objects.newInstance(SnapImpl, objects, distributionsDirProvider)
@@ -123,6 +133,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void jbang(Action<? super Jbang> action) {
+        action.execute(jbang)
+    }
+
+    @Override
     void scoop(Action<? super Scoop> action) {
         action.execute(scoop)
     }
@@ -136,6 +151,9 @@ class DistributionImpl implements Distribution {
         org.jreleaser.model.Distribution distribution = new org.jreleaser.model.Distribution()
         distribution.name = name
         if (executable.present) distribution.executable = executable.get()
+        if (groupId.present) distribution.groupId = groupId.get()
+        if (artifactId.present) distribution.artifactId = artifactId.get()
+        if (mainClass.present) distribution.mainClass = mainClass.get()
         distribution.type = distributionType.get()
         for (ArtifactImpl artifact : artifacts) {
             distribution.artifacts.add(artifact.toModel())
@@ -144,6 +162,7 @@ class DistributionImpl implements Distribution {
         if (extraProperties.present) distribution.extraProperties.putAll(extraProperties.get())
         if (brew.isSet()) distribution.brew = brew.toModel()
         if (chocolatey.isSet()) distribution.chocolatey = chocolatey.toModel()
+        if (jbang.isSet()) distribution.jbang = jbang.toModel()
         if (scoop.isSet()) distribution.scoop = scoop.toModel()
         if (snap.isSet()) distribution.snap = snap.toModel()
         distribution

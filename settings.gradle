@@ -39,7 +39,7 @@ apply plugin: 'org.kordamp.gradle.kordamp-parentbuild'
 rootProject.name = 'jreleaser'
 
 projects {
-    directories = ['apps', 'docs', 'core', 'sdks', 'plugins']
+    directories = ['apps', 'core', 'sdks', 'plugins']
 
     plugins {
         all {

@@ -27,11 +27,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 abstract class AbstractRepositoryTap implements RepositoryTap {
-    private String basename;
-    private String owner;
-    private String name;
-    private String username;
-    private String token;
+    protected String basename;
+    protected String owner;
+    protected String name;
+    protected String username;
+    protected String token;
 
     AbstractRepositoryTap(String basename) {
         this.basename = basename;

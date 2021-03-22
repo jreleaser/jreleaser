@@ -45,6 +45,9 @@ public final class JReleaserModelConfigurer {
     }
 
     private static void configureProject(Project project, MavenProject mavenProject) {
+        project.setGroupId(mavenProject.getGroupId());
+        project.setArtifactId(mavenProject.getArtifactId());
+
         if (isBlank(project.getName())) {
             project.setName(mavenProject.getArtifactId());
         }

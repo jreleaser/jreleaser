@@ -48,7 +48,7 @@ interface GitService extends Releaser {
 
     Property<String> getUsername()
 
-    Property<String> getPassword()
+    Property<String> getToken()
 
     Property<String> getTagName()
 

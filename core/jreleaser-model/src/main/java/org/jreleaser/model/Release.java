@@ -65,6 +65,7 @@ public class Release implements Domain {
         return gitea;
     }
 
+
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();

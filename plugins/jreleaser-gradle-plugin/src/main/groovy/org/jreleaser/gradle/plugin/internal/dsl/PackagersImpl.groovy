@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.jreleaser.gradle.plugin.dsl.BrewPackager
 import org.jreleaser.gradle.plugin.dsl.ChocolateyPackager
+import org.jreleaser.gradle.plugin.dsl.JbangPackager
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.ScoopPackager
 import org.jreleaser.gradle.plugin.dsl.SnapPackager
@@ -37,6 +38,7 @@ import javax.inject.Inject
 class PackagersImpl implements Packagers {
     final BrewPackagerImpl brew
     final ChocolateyPackagerImpl chocolatey
+    final JbangPackagerImpl jbang
     final ScoopPackagerImpl scoop
     final SnapPackagerImpl snap
 
@@ -44,6 +46,7 @@ class PackagersImpl implements Packagers {
     PackagersImpl(ObjectFactory objects) {
         brew = objects.newInstance(BrewPackagerImpl, objects)
         chocolatey = objects.newInstance(ChocolateyPackagerImpl, objects)
+        jbang = objects.newInstance(JbangPackagerImpl, objects)
         scoop = objects.newInstance(ScoopPackagerImpl, objects)
         snap = objects.newInstance(SnapPackagerImpl, objects)
     }
@@ -56,6 +59,11 @@ class PackagersImpl implements Packagers {
     @Override
     void chocolatey(Action<? super ChocolateyPackager> action) {
         action.execute(chocolatey)
+    }
+
+    @Override
+    void jbang(Action<? super JbangPackager> action) {
+        action.execute(jbang)
     }
 
     @Override
@@ -72,6 +80,7 @@ class PackagersImpl implements Packagers {
         org.jreleaser.model.Packagers packagers = new org.jreleaser.model.Packagers()
         if (brew.isSet()) packagers.brew = brew.toModel()
         if (chocolatey.isSet()) packagers.chocolatey = chocolatey.toModel()
+        if (jbang.isSet()) packagers.jbang = jbang.toModel()
         if (scoop.isSet()) packagers.scoop = scoop.toModel()
         if (snap.isSet()) packagers.snap = snap.toModel()
         packagers

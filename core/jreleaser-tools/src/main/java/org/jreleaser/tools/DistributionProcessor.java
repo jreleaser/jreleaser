@@ -61,13 +61,13 @@ public class DistributionProcessor {
     }
 
     public boolean prepareDistribution() throws ToolProcessingException {
-        context.getLogger().debug("Preparing {} distribution with {}", distributionName, toolName);
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
             context.getLogger().debug("Skipping {} for {} distribution", toolName, distributionName);
             return false;
         }
+        context.getLogger().info("Preparing {} distribution with {}", distributionName, toolName);
 
         context.getLogger().debug("Reading checksums for {} distribution", distributionName);
         for (int i = 0; i < distribution.getArtifacts().size(); i++) {
@@ -80,26 +80,30 @@ public class DistributionProcessor {
     }
 
     public boolean packageDistribution() throws ToolProcessingException {
-        context.getLogger().debug("Packaging {} distribution with {}", distributionName, toolName);
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
             context.getLogger().debug("Skipping {} for {} distribution", toolName, distributionName);
             return false;
         }
+        context.getLogger().info("Packaging {} distribution with {}", distributionName, toolName);
 
         return ToolProcessors.findProcessor(context, tool)
             .packageDistribution(distribution, initProps());
     }
 
     public boolean uploadDistribution() throws ToolProcessingException {
-        context.getLogger().debug("Uploading {} distribution with {}", distributionName, toolName);
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
             context.getLogger().debug("Skipping {} for {} distribution", toolName, distributionName);
             return false;
         }
+        if (context.getModel().getProject().isSnapshot() && !tool.isSnapshotAllowed()) {
+            context.getLogger().info("Skipping {} for {} distribution (snapshots not allowed)", toolName, distributionName);
+            return false;
+        }
+        context.getLogger().info("Uploading {} distribution with {}", distributionName, toolName);
 
         return ToolProcessors.findProcessor(context, tool)
             .uploadDistribution(distribution, initProps());

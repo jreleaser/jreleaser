@@ -20,6 +20,7 @@ package org.jreleaser.tools;
 import org.jreleaser.model.Brew;
 import org.jreleaser.model.Chocolatey;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Jbang;
 import org.jreleaser.model.Scoop;
 import org.jreleaser.model.Snap;
 import org.jreleaser.model.Tool;
@@ -35,6 +36,8 @@ public class ToolProcessors {
             return (ToolProcessor<T>) new BrewToolProcessor(context, (Brew) tool);
         } else if (tool instanceof Chocolatey) {
             return (ToolProcessor<T>) new ChocolateyToolProcessor(context, (Chocolatey) tool);
+        } if (tool instanceof Jbang) {
+            return (ToolProcessor<T>) new JbangToolProcessor(context, (Jbang) tool);
         } else if (tool instanceof Scoop) {
             return (ToolProcessor<T>) new ScoopToolProcessor(context, (Scoop) tool);
         } else if (tool instanceof Snap) {

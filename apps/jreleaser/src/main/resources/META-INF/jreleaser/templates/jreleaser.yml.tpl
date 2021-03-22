@@ -1,5 +1,6 @@
 project:
   name: app
+  groupId: com.acme
   version: 0.0.0-SNAPSHOT
   description: Awesome App
   longDescription: Awesome App

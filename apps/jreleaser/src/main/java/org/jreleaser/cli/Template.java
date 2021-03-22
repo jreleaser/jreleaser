@@ -52,6 +52,10 @@ public class Template extends AbstractCommand {
         description = "Overwrite existing files")
     boolean overwrite;
 
+    @CommandLine.Option(names = {"--snapshot"},
+        description = "Use snapshot templates")
+    boolean snapshot;
+
     @CommandLine.ParentCommand
     Main parent;
 
@@ -73,20 +77,19 @@ public class Template extends AbstractCommand {
                 .resolve("src")
                 .resolve("distributions");
 
-            boolean result = TemplateGenerator.builder()
+            Path output = TemplateGenerator.builder()
                 .logger(logger)
                 .distributionName(distributionName)
                 .distributionType(distributionType)
                 .toolName(toolName)
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)
+                .snapshot(snapshot)
                 .build()
                 .generate();
 
-            if (result && !quiet) {
-                logger.info("Template generated at " +
-                    outputDirectory.resolve(distributionName).resolve(toolName)
-                        .normalize().toAbsolutePath());
+            if (null != output && !quiet) {
+                logger.info("Template generated at {}", output.toAbsolutePath());
             }
         } catch (TemplateGenerationException e) {
             throw new JReleaserException("Unexpected error", e);

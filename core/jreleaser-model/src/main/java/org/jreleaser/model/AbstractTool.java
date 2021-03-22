@@ -124,4 +124,9 @@ abstract class AbstractTool implements Tool {
     }
 
     protected abstract void asMap(Map<String, Object> props);
+
+    @Override
+    public boolean isSnapshotAllowed() {
+        return false;
+    }
 }

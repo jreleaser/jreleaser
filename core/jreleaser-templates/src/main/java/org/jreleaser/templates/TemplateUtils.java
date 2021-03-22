@@ -54,22 +54,29 @@ public final class TemplateUtils {
         return str;
     }
 
-    public static Map<String, Reader> resolveAndMergeTemplates(Logger logger, Distribution.DistributionType distributionType, String toolName, Path templateDirectory) {
-        Map<String, Reader> templates = resolveTemplates(logger, distributionType, toolName);
+    public static Map<String, Reader> resolveAndMergeTemplates(Logger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot, Path templateDirectory) {
+        Map<String, Reader> templates = resolveTemplates(logger, distributionType, toolName, snapshot);
         if (null != templateDirectory && templateDirectory.toFile().exists()) {
-            templates.putAll(resolveTemplates(logger, distributionType, toolName, templateDirectory));
+            templates.putAll(resolveTemplates(logger, distributionType, toolName, snapshot, templateDirectory));
         }
         return templates;
     }
 
-    public static Map<String, Reader> resolveTemplates(Logger logger, Distribution.DistributionType distributionType, String toolName, Path templateDirectory) {
+    public static Map<String, Reader> resolveTemplates(Logger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot, Path templateDirectory) {
         Map<String, Reader> templates = new LinkedHashMap<>();
 
+        Path snapshotTemplateDirectory = templateDirectory.resolveSibling(templateDirectory.getFileName() + "-snapshot");
+        Path directory = templateDirectory;
+        if (snapshot && snapshotTemplateDirectory.toFile().exists()) {
+            directory = snapshotTemplateDirectory;
+        }
+        Path actualTemplateDirectory = directory;
+
         try {
-            Files.walkFileTree(templateDirectory, new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(actualTemplateDirectory, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    templates.put(templateDirectory.relativize(file).toString(),
+                    templates.put(actualTemplateDirectory.relativize(file).toString(),
                         Files.newBufferedReader(file));
                     return FileVisitResult.CONTINUE;
                 }
@@ -77,16 +84,14 @@ public final class TemplateUtils {
         } catch (IOException e) {
             String distributionTypeName = distributionType.name().toLowerCase().replace('_', '-');
             throw new IllegalStateException("Unexpected error reading templates for distribution " +
-                distributionTypeName + "/" + toolName + " from " + templateDirectory.toAbsolutePath());
+                distributionTypeName + "/" + toolName + " from " + actualTemplateDirectory.toAbsolutePath());
         }
 
         return templates;
     }
 
-    public static Map<String, Reader> resolveTemplates(Logger logger, Distribution.DistributionType distributionType, String toolName) {
+    public static Map<String, Reader> resolveTemplates(Logger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot) {
         String distributionTypeName = distributionType.name().toLowerCase().replace('_', '-');
-        String templatePrefix = "META-INF/jreleaser/templates/" +
-            distributionTypeName + "/" + toolName.toLowerCase();
 
         Map<String, Reader> templates = new LinkedHashMap<>();
 
@@ -99,18 +104,18 @@ public final class TemplateUtils {
         try {
             if ("file".equals(location.getProtocol())) {
                 boolean templateFound = false;
-                JarFile jarFile = new JarFile(new File(location.toURI()));
-                logger.debug("Searching for templates matching {}/*", templatePrefix);
-                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
-                    JarEntry entry = e.nextElement();
-                    if (entry.isDirectory() || !entry.getName().startsWith(templatePrefix)) {
-                        continue;
-                    }
 
-                    String templateName = entry.getName().substring(templatePrefix.length() + 1);
-                    templates.put(templateName, new InputStreamReader(jarFile.getInputStream(entry)));
-                    logger.debug("Found template {}", templateName);
-                    templateFound = true;
+                String templatePrefix = "META-INF/jreleaser/templates/" +
+                    distributionTypeName + "/" + toolName.toLowerCase();
+                JarFile jarFile = new JarFile(new File(location.toURI()));
+
+                if (snapshot) {
+                    templateFound = findTemplate(logger, jarFile, templatePrefix + "-snapshot", templates);
+                    if (!templateFound) {
+                        templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
+                    }
+                } else {
+                    templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
                 }
 
                 if (!templateFound) {
@@ -125,6 +130,25 @@ public final class TemplateUtils {
         }
 
         return templates;
+    }
+
+    private static boolean findTemplate(Logger logger, JarFile jarFile, String templatePrefix, Map<String, Reader> templates) throws IOException {
+        boolean templatesFound = false;
+
+        logger.debug("Searching for templates matching {}/*", templatePrefix);
+        for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
+            JarEntry entry = e.nextElement();
+            if (entry.isDirectory() || !entry.getName().startsWith(templatePrefix)) {
+                continue;
+            }
+
+            String templateName = entry.getName().substring(templatePrefix.length() + 1);
+            templates.put(templateName, new InputStreamReader(jarFile.getInputStream(entry)));
+            logger.debug("Found template {}", templateName);
+            templatesFound = true;
+        }
+
+        return templatesFound;
     }
 
     public static Reader resolveTemplate(Logger logger, Class<?> anchor, String templateKey) {

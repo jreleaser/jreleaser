@@ -30,6 +30,10 @@ import org.gradle.api.provider.Property
 interface Project extends ExtraProperties {
     Property<String> getName()
 
+    Property<String> getGroupId()
+
+    Property<String> getArtifactId()
+
     Property<String> getVersion()
 
     Property<String> getDescription()

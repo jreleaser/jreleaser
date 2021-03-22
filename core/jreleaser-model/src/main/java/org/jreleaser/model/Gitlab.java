@@ -51,6 +51,16 @@ public class Gitlab extends GitService {
     }
 
     @Override
+    public String getBranch() {
+        return getRef();
+    }
+
+    @Override
+    public String getReverseRepoHost() {
+        return "com.gitlab";
+    }
+
+    @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = super.asMap();
         map.put("ref", ref);

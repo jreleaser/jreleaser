@@ -31,6 +31,13 @@ import java.nio.file.Path;
  */
 public interface JReleaserConfigParser {
     /**
+     * Returns the preferred file extension supported by this parser.
+     *
+     * @return the preferred file extension supported by this parser, should never return {@code null}.
+     */
+    String getPreferredFileExtension();
+
+    /**
      * Whether the given config file format is supported or not.</p>
      * Implementors would typically look at the file extension.
      *

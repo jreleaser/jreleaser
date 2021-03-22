@@ -31,6 +31,8 @@ interface Packagers {
 
     ChocolateyPackager getChocolatey()
 
+    JbangPackager getJbang()
+
     ScoopPackager getScoop()
 
     SnapPackager getSnap()
@@ -38,6 +40,8 @@ interface Packagers {
     void brew(Action<? super BrewPackager> action)
 
     void chocolatey(Action<? super ChocolateyPackager> action)
+
+    void jbang(Action<? super JbangPackager> action)
 
     void scoop(Action<? super ScoopPackager> action)
 

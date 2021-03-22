@@ -35,7 +35,7 @@ public abstract class GitService implements Releaser {
     private String latestReleaseUrlFormat;
     private String issueTrackerUrlFormat;
     private String username;
-    private String password;
+    private String token;
     private String tagName = "v{{projectVersion}}";
     private String releaseName;
     private CommitAuthor commitAuthor = new CommitAuthor();
@@ -68,7 +68,7 @@ public abstract class GitService implements Releaser {
         this.latestReleaseUrlFormat = service.latestReleaseUrlFormat;
         this.issueTrackerUrlFormat = service.issueTrackerUrlFormat;
         this.username = service.username;
-        this.password = service.password;
+        this.token = service.token;
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
         this.commitAuthor.setAll(service.commitAuthor);
@@ -176,12 +176,12 @@ public abstract class GitService implements Releaser {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getToken() {
+        return token;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getTagName() {

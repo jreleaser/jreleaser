@@ -56,41 +56,39 @@ allprojects {
 }
 
 subprojects {
-    if (project.name != 'guide') {
-        config {
-            info {
-                description = project.project_description
-            }
-
-            bintray {
-                enabled = true
-                name    = project.name
-            }
+    config {
+        info {
+            description = project.project_description
         }
 
-        tasks.withType(JavaCompile) { JavaCompile c ->
-            c.sourceCompatibility = JavaVersion.VERSION_1_8
-            c.targetCompatibility = JavaVersion.VERSION_1_8
+        bintray {
+            enabled = true
+            name = project.name
         }
-        tasks.withType(GroovyCompile) { GroovyCompile c ->
-            c.sourceCompatibility = JavaVersion.VERSION_1_8
-            c.targetCompatibility = JavaVersion.VERSION_1_8
-        }
+    }
 
-        license {
-            exclude('build/**')
-            exclude('**/*.tpl')
-        }
+    tasks.withType(JavaCompile) { JavaCompile c ->
+        c.sourceCompatibility = JavaVersion.VERSION_1_8
+        c.targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    tasks.withType(GroovyCompile) { GroovyCompile c ->
+        c.sourceCompatibility = JavaVersion.VERSION_1_8
+        c.targetCompatibility = JavaVersion.VERSION_1_8
+    }
 
-        dependencies {
-            testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
-            testImplementation "org.hamcrest:hamcrest-library:$hamcrestVersion"
+    license {
+        exclude('build/**')
+        exclude('**/*.tpl')
+    }
 
-            testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-        }
+    dependencies {
+        testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+        testImplementation "org.hamcrest:hamcrest-library:$hamcrestVersion"
 
-        test {
-            useJUnitPlatform()
-        }
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }

@@ -69,7 +69,17 @@ public class Gitea extends GitService {
     public void setPrerelease(boolean prerelease) {
         this.prerelease = prerelease;
     }
-    
+
+    @Override
+    public String getBranch() {
+        return getTargetCommitish();
+    }
+
+    @Override
+    public String getReverseRepoHost() {
+        return null;
+    }
+
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = super.asMap();

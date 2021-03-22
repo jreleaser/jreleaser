@@ -23,12 +23,15 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Project implements Domain, ExtraProperties {
+    public static final String JRELEASER_PROJECT_VERSION = "JRELEASER_PROJECT_VERSION";
+
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
@@ -39,6 +42,8 @@ public class Project implements Domain, ExtraProperties {
     private String website;
     private String license;
     private String javaVersion;
+    private String groupId;
+    private String artifactId;
 
     void setAll(Project project) {
         this.name = project.name;
@@ -48,6 +53,8 @@ public class Project implements Domain, ExtraProperties {
         this.website = project.website;
         this.license = project.license;
         this.javaVersion = project.javaVersion;
+        this.groupId = project.groupId;
+        this.artifactId = project.artifactId;
         setAuthors(project.authors);
         setTags(project.tags);
         setExtraProperties(project.extraProperties);
@@ -58,11 +65,16 @@ public class Project implements Domain, ExtraProperties {
         return "project";
     }
 
+    public boolean isSnapshot() {
+        return requireNonBlank(getResolvedVersion(), "Project version cannot be blank")
+            .endsWith("-SNAPSHOT");
+    }
+
     public String getResolvedVersion() {
         if (isNotBlank(version)) {
             return version;
         }
-        return System.getenv("JRELEASER_PROJECT_VERSION");
+        return System.getenv(JRELEASER_PROJECT_VERSION);
     }
 
     public String getName() {
@@ -123,6 +135,22 @@ public class Project implements Domain, ExtraProperties {
         } else {
             this.javaVersion = javaVersion;
         }
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
     }
 
     @Override
@@ -195,6 +223,8 @@ public class Project implements Domain, ExtraProperties {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
         map.put("version", getResolvedVersion());
+        map.put("groupId", groupId);
+        map.put("artifactId", artifactId);
         map.put("description", description);
         map.put("longDescription", longDescription);
         map.put("website", website);

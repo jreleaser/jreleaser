@@ -24,6 +24,9 @@ package org.jreleaser.util;
 public interface Constants {
     // General
     String KEY_JAVA_VERSION = "javaVersion";
+    String KEY_MAIN_CLASS = "mainClass";
+    String KEY_GROUP_ID = "groupId";
+    String KEY_ARTIFACT_ID = "artifactId";
 
     // Project
     String KEY_PROJECT_NAME = "projectName";
@@ -44,11 +47,13 @@ public interface Constants {
     String KEY_REPO_HOST = "repoHost";
     String KEY_REPO_OWNER = "repoOwner";
     String KEY_REPO_NAME = "repoName";
+    String KEY_REPO_BRANCH = "repoBranch";
     String KEY_CANONICAL_REPO_NAME = "repoCanonicalName";
     String KEY_REPO_URL = "repoUrl";
     String KEY_ISSUE_TRACKER_URL = "issueTrackerUrl";
     String KEY_COMMIT_URL = "commitsUrl";
     String KEY_RELEASE_NOTES_URL = "releaseNotesUrl";
+    String KEY_REVERSE_REPO_HOST = "reverseRepoHost";
 
     // Distribution
     String KEY_DISTRIBUTION_NAME = "distributionName";
@@ -62,6 +67,8 @@ public interface Constants {
     String KEY_DISTRIBUTION_URL = "distributionUrl";
     String KEY_DISTRIBUTION_SHA_256 = "distributionSha256";
     String KEY_DISTRIBUTION_FILE_NAME = "distributionFileName";
+    String KEY_DISTRIBUTION_GROUP_ID = "distributionGroupId";
+    String KEY_DISTRIBUTION_ARTIFACT_ID = "distributionArtifactId";
 
     // Artifact
     String KEY_ARTIFACT_FILE_NAME = "artifactFileName";
@@ -75,6 +82,10 @@ public interface Constants {
 
     // Chocolatey
     String KEY_CHOCOLATEY_USERNAME = "chocolateyUsername";
+
+    // Jbang
+    String KEY_JBANG_ALIAS_NAME = "jbangAliasName";
+    String KEY_JBANG_ALIAS_CLASS_NAME = "jbangAliasClassName";
 
     // Snap
     String KEY_SNAP_BASE = "snapBase";

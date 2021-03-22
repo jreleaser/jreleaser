@@ -32,6 +32,7 @@ dependencies {
     api project(':jreleaser-signer')
     api project(':jreleaser-templates')
     api project(':jreleaser-config-yaml')
+    api project(':jreleaser-config-json')
 
     annotationProcessor "info.picocli:picocli-codegen:$picocliVersion"
     api "info.picocli:picocli:$picocliVersion"

@@ -19,6 +19,7 @@ package org.jreleaser.cli;
 
 import org.jreleaser.cli.internal.ColorizedJReleaserLoggerAdapter;
 import org.jreleaser.config.JReleaserConfigLoader;
+import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
@@ -29,7 +30,10 @@ import picocli.CommandLine;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ServiceLoader;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -55,16 +59,36 @@ public abstract class AbstractModelCommand extends AbstractCommand {
     protected void execute() {
         resolveConfigFile();
         resolveBasedir();
-        logger.info("basedir set to {}", actualBasedir.toAbsolutePath());
-        logger.info("dryrun set to {}", dryrun());
+        logger.info("Configuring with {}", actualConfigFile);
+        logger.info(" - basedir set to {}", actualBasedir.toAbsolutePath());
+        logger.info(" - dryrun set to {}", dryrun());
         consumeModel(resolveModel());
     }
 
-    protected void resolveConfigFile() {
-        actualConfigFile = null != configFile ? configFile : Paths.get(".").normalize().resolve(".jreleaser.yml");
-        if (!Files.exists(actualConfigFile)) {
+    private void resolveConfigFile() {
+        if (null != configFile) {
+            actualConfigFile = configFile;
+        } else {
+            ServiceLoader<JReleaserConfigParser> parsers = ServiceLoader.load(JReleaserConfigParser.class,
+                JReleaserConfigParser.class.getClassLoader());
+
+            for (JReleaserConfigParser parser : parsers) {
+                Path file = Paths.get(".").normalize()
+                    .resolve(".jreleaser." + parser.getPreferredFileExtension());
+                if (Files.exists(file)) {
+                    actualConfigFile = file;
+                    break;
+                }
+            }
+        }
+
+        if (null == actualConfigFile || !Files.exists(actualConfigFile)) {
             spec.commandLine().getErr()
-                .println(spec.commandLine().getColorScheme().errorText("Missing required option: '--config-file=<configFile>'"));
+                .println(spec.commandLine()
+                    .getColorScheme()
+                    .errorText("Missing required option: '--config-file=<configFile>' " +
+                        "or local file named .jreleaser[" +
+                        String.join("|", getSupportedConfigFormats()) + "]"));
             spec.commandLine().usage(parent.out);
             throw new HaltExecutionException();
         }
@@ -116,5 +140,18 @@ public abstract class AbstractModelCommand extends AbstractCommand {
 
     protected boolean dryrun() {
         return false;
+    }
+
+    private Set<String> getSupportedConfigFormats() {
+        Set<String> extensions = new LinkedHashSet<>();
+
+        ServiceLoader<JReleaserConfigParser> parsers = ServiceLoader.load(JReleaserConfigParser.class,
+            JReleaserConfigParser.class.getClassLoader());
+
+        for (JReleaserConfigParser parser : parsers) {
+            extensions.add("." + parser.getPreferredFileExtension());
+        }
+
+        return extensions;
     }
 }

@@ -23,9 +23,10 @@
              resource="org/jreleaser/ant/antlib.xml"
              classpathref="jreleaser.classpath"/>
 
-    <property name="jreleaser.skip" value ="false"/>
-    <property name="jreleaser.dryrun" value ="false"/>
-    <property name="jreleaser.overwrite" value ="false"/>
+    <property name="jreleaser.skip" value="false"/>
+    <property name="jreleaser.dryrun" value="false"/>
+    <property name="jreleaser.overwrite" value="false"/>
+    <property name="jreleaser.format" value="yml"/>
 
     <target name="jreleaser-announce">
         <jreleaser:announce dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"/>
@@ -44,7 +45,7 @@
     </target>
 
     <target name="jreleaser-init">
-        <jreleaser:init overwrite="${jreleaser.overwrite}"/>
+        <jreleaser:init overwrite="${jreleaser.overwrite}" format="${jreleaser.format}"/>
     </target>
 
     <target name="jreleaser-package">

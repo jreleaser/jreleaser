@@ -24,12 +24,14 @@ package org.jreleaser.maven.plugin;
 public class Packagers {
     private final Brew brew = new Brew();
     private final Chocolatey chocolatey = new Chocolatey();
+    private final Jbang jbang = new Jbang();
     private final Scoop scoop = new Scoop();
     private final Snap snap = new Snap();
 
     void setAll(Packagers packagers) {
         setBrew(packagers.brew);
         setChocolatey(packagers.chocolatey);
+        setJbang(packagers.jbang);
         setScoop(packagers.scoop);
         setSnap(packagers.snap);
     }
@@ -48,6 +50,14 @@ public class Packagers {
 
     public void setChocolatey(Chocolatey chocolatey) {
         this.chocolatey.setAll(chocolatey);
+    }
+
+    public Jbang getJbang() {
+        return jbang;
+    }
+
+    public void setJbang(Jbang jbang) {
+        this.jbang.setAll(jbang);
     }
 
     public Scoop getScoop() {

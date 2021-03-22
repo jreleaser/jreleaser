@@ -47,7 +47,7 @@ abstract class AbstractGitService implements GitService {
     final Property<String> latestReleaseUrlFormat
     final Property<String> issueTrackerUrlFormat
     final Property<String> username
-    final Property<String> password
+    final Property<String> token
     final Property<String> tagName
     final Property<String> releaseName
     final Property<Boolean> sign
@@ -70,7 +70,7 @@ abstract class AbstractGitService implements GitService {
         issueTrackerUrlFormat = objects.property(String).convention(Providers.notDefined())
 
         username = objects.property(String).convention(Providers.notDefined())
-        password = objects.property(String).convention(Providers.notDefined())
+        token = objects.property(String).convention(Providers.notDefined())
         tagName = objects.property(String).convention(Providers.notDefined())
         releaseName = objects.property(String).convention(Providers.notDefined())
         sign = objects.property(Boolean).convention(Providers.notDefined())
@@ -93,7 +93,7 @@ abstract class AbstractGitService implements GitService {
             latestReleaseUrlFormat.present ||
             issueTrackerUrlFormat.present ||
             username.present ||
-            password.present ||
+            token.present ||
             tagName.present ||
             releaseName.present ||
             sign.present ||
@@ -125,7 +125,7 @@ abstract class AbstractGitService implements GitService {
         if (latestReleaseUrlFormat.present) service.latestReleaseUrlFormat = latestReleaseUrlFormat.get()
         if (issueTrackerUrlFormat.present) service.issueTrackerUrlFormat = issueTrackerUrlFormat.get()
         if (username.present) service.username = username.get()
-        if (password.present) service.password = password.get()
+        if (token.present) service.token = token.get()
         if (tagName.present) service.tagName = tagName.get()
         if (releaseName.present) service.releaseName = releaseName.get()
         if (signingKey.present) service.signingKey = signingKey.get()

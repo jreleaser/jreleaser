@@ -35,4 +35,6 @@ public interface Tool extends Domain, ExtraProperties, CommitAuthorProvider {
     void setTemplateDirectory(String templateDirectory);
 
     RepositoryTap getRepositoryTap();
+
+    boolean isSnapshotAllowed();
 }

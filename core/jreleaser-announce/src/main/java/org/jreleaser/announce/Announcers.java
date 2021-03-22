@@ -35,15 +35,21 @@ import java.util.List;
  */
 public class Announcers {
     public static void announce(JReleaserContext context) throws AnnounceException {
+        if (!context.getModel().getAnnounce().isEnabled()) {
+            context.getLogger().info("Announcing is not enabled. Skipping.");
+        }
+
         context.getLogger().info("Announcing release");
-        for (AnnouncerBuilder announcer : Announcers.findAnnouncers(context.getModel())) {
+        for (AnnouncerBuilder announcer : Announcers.findAnnouncers(context)) {
             announcer.configureWith(context)
                 .build()
                 .announce();
         }
     }
 
-    private static <AB extends AnnouncerBuilder> Collection<AB> findAnnouncers(JReleaserModel model) {
+    private static <AB extends AnnouncerBuilder> Collection<AB> findAnnouncers(JReleaserContext context) {
+        JReleaserModel model = context.getModel();
+
         List<AB> announcers = new ArrayList<>();
         if (null != model.getAnnounce().getSdkman() && model.getAnnounce().getSdkman().isEnabled()) {
             announcers.add((AB) SdkmanAnnouncer.builder());
@@ -56,7 +62,7 @@ public class Announcers {
         }
 
         if (announcers.isEmpty()) {
-            throw new IllegalArgumentException("No suitable announcers have been configured");
+            context.getLogger().info("No announcers have been configured. Skipping.");
         }
 
         return announcers;

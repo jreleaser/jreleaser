@@ -31,6 +31,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Zulip extends AbstractAnnouncer {
     public static final String NAME = "zulip";
+    public static final String ZULIP_API_KEY = "ZULIP_API_KEY";
 
     private String account;
     private String apiKey;
@@ -69,7 +70,7 @@ public class Zulip extends AbstractAnnouncer {
         if (isNotBlank(apiKey)) {
             return apiKey;
         }
-        return System.getenv("ZULIP_API_KEY");
+        return System.getenv(ZULIP_API_KEY);
     }
 
     public String getAccount() {
