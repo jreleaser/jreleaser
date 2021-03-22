@@ -53,7 +53,7 @@ public class JsonUtilsTest {
 
         // then:
         assertThat(node3, notNullValue());
-        assertThat(node3.toPrettyString(), equalTo(input1));
+        assertThat(node3.toPrettyString(), equalTo(node1.toPrettyString()));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class JsonUtilsTest {
 
         // then:
         assertThat(node3, notNullValue());
-        assertThat(node3.toPrettyString(), equalTo(output));
+        assertThat(node3.toPrettyString(), equalTo(objectMapper.readTree(output).toPrettyString()));
     }
 
     @Test
@@ -132,6 +132,6 @@ public class JsonUtilsTest {
 
         // then:
         assertThat(node3, notNullValue());
-        assertThat(node3.toPrettyString(), equalTo(input2));
+        assertThat(node3.toPrettyString(), equalTo(node2.toPrettyString()));
     }
 }
