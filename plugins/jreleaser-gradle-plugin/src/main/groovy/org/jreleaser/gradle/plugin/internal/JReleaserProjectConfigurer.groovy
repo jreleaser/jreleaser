@@ -74,6 +74,9 @@ class JReleaserProjectConfigurer {
         if (isBlank(model.project.javaVersion)) model.project.javaVersion = javaVersion
         if (isBlank(model.project.artifactId)) model.project.artifactId = project.name
         if (isBlank(model.project.groupId)) model.project.groupId = project.group.toString()
+        if (!model.project.multiProjectSet) {
+            model.project.multiProject = project.rootProject.childProjects.size() > 0
+        }
 
         JReleaserLoggerAdapter logger = new JReleaserLoggerAdapter(project)
         List<String> errors = JReleaserModelValidator.validate(logger, project.projectDir.toPath(), model)

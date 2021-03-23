@@ -29,10 +29,6 @@ public class JReleaserModelPrinter extends org.jreleaser.model.JReleaserModelPri
         super(out);
     }
 
-    public JReleaserModelPrinter(PrintWriter out, boolean showSecrets) {
-        super(out, showSecrets);
-    }
-
     @Override
     protected String color(String color, String input) {
         return input;

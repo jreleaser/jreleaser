@@ -22,6 +22,11 @@ package org.jreleaser.util;
  * @since 0.1.0
  */
 public interface Logger {
+    String DEBUG_TAB = "        ";
+    String ERROR_TAB = "        ";
+    String INFO_TAB = "       ";
+    String WARN_TAB = "       ";
+
     void debug(String message);
 
     void info(String message);

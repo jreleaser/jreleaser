@@ -162,7 +162,7 @@ public class SimpleJReleaserLoggerAdapter implements Logger {
 
         @Override
         public String toString() {
-            return "[" + name() + "] ";
+            return "[" + name() + "] " + (name().length() == 4 ? " " : "");
         }
     }
 }

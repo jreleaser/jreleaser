@@ -27,36 +27,52 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Signing implements Domain {
+public class Signing implements Domain, EnabledProvider {
     public static final String GPG_PASSPHRASE = "GPG_PASSPHRASE";
+    public static final String GPG_PUBLIC_KEY = "GPG_PUBLIC_KEY";
+    public static final String GPG_SECRET_KEY = "GPG_SECRET_KEY";
 
     private Boolean enabled;
-    private boolean enabledSet;
     private Boolean armored;
-    private boolean armoredSet;
-    private String keyRingFile;
+    private String publicKey;
+    private String secretKey;
     private String passphrase;
 
     void setAll(Signing signing) {
         this.enabled = signing.enabled;
-        this.enabledSet = signing.enabledSet;
         this.armored = signing.armored;
-        this.armoredSet = signing.armoredSet;
-        this.keyRingFile = signing.keyRingFile;
+        this.publicKey = signing.publicKey;
+        this.secretKey = signing.secretKey;
         this.passphrase = signing.passphrase;
     }
 
+    @Override
     public Boolean isEnabled() {
         return enabled != null && enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
-        this.enabledSet = true;
         this.enabled = enabled;
     }
 
+    @Override
     public boolean isEnabledSet() {
-        return enabledSet;
+        return enabled != null;
+    }
+
+    public String getResolvedPublicKey() {
+        if (isNotBlank(publicKey)) {
+            return publicKey;
+        }
+        return System.getenv(GPG_PUBLIC_KEY);
+    }
+
+    public String getResolvedSecretKey() {
+        if (isNotBlank(secretKey)) {
+            return secretKey;
+        }
+        return System.getenv(GPG_SECRET_KEY);
     }
 
     public String getResolvedPassphrase() {
@@ -67,24 +83,31 @@ public class Signing implements Domain {
     }
 
     public Boolean isArmored() {
-        return armored == null || armored;
+        return armored != null && armored;
     }
 
     public void setArmored(Boolean armored) {
-        this.armoredSet = true;
         this.armored = armored;
     }
 
     public boolean isArmoredSet() {
-        return armoredSet;
+        return armored != null;
     }
 
-    public String getKeyRingFile() {
-        return keyRingFile;
+    public String getPublicKey() {
+        return publicKey;
     }
 
-    public void setKeyRingFile(String keyRingFile) {
-        this.keyRingFile = keyRingFile;
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 
     public String getPassphrase() {
@@ -102,7 +125,8 @@ public class Signing implements Domain {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("armored", isArmored());
-        map.put("keyRingFile", keyRingFile);
+        map.put("publicKey", isNotBlank(publicKey) ? "************" : "**unset**");
+        map.put("secretKey", isNotBlank(secretKey) ? "************" : "**unset**");
         map.put("passphrase", isNotBlank(passphrase) ? "************" : "**unset**");
 
         return map;

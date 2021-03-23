@@ -19,7 +19,9 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.BrewPackager
 import org.jreleaser.gradle.plugin.dsl.ChocolateyPackager
 import org.jreleaser.gradle.plugin.dsl.JbangPackager
@@ -36,6 +38,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 class PackagersImpl implements Packagers {
+    final Property<Boolean> enabled
     final BrewPackagerImpl brew
     final ChocolateyPackagerImpl chocolatey
     final JbangPackagerImpl jbang
@@ -44,6 +47,7 @@ class PackagersImpl implements Packagers {
 
     @Inject
     PackagersImpl(ObjectFactory objects) {
+        enabled = objects.property(Boolean).convention(Providers.notDefined())
         brew = objects.newInstance(BrewPackagerImpl, objects)
         chocolatey = objects.newInstance(ChocolateyPackagerImpl, objects)
         jbang = objects.newInstance(JbangPackagerImpl, objects)
@@ -78,6 +82,7 @@ class PackagersImpl implements Packagers {
 
     org.jreleaser.model.Packagers toModel() {
         org.jreleaser.model.Packagers packagers = new org.jreleaser.model.Packagers()
+        if (enabled.present) packagers.enabled = enabled.get()
         if (brew.isSet()) packagers.brew = brew.toModel()
         if (chocolatey.isSet()) packagers.chocolatey = chocolatey.toModel()
         if (jbang.isSet()) packagers.jbang = jbang.toModel()

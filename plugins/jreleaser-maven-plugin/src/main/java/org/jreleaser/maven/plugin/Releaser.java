@@ -21,12 +21,6 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Releaser {
-    boolean isEnabledSet();
-
-    Boolean isEnabled();
-
-    void setEnabled(Boolean enabled);
-
+public interface Releaser extends EnabledProvider {
     String getServiceName();
 }

@@ -58,6 +58,7 @@ shadowJar {
     configurations    = [project.configurations.uberjar]
     archiveBaseName   = project.name
     archiveClassifier = ''
+    mergeServiceFiles()
     exclude 'module-info.class'
     exclude '**/module-info.class'
     exclude 'META-INF/maven/**'

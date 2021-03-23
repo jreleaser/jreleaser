@@ -34,7 +34,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public abstract class GitService implements Releaser, CommitAuthorProvider, OwnerProvider {
     private final String serviceName;
     protected Boolean enabled;
-    protected boolean enabledSet;
     private String host;
     private String owner;
     private String name;
@@ -67,7 +66,6 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
 
     void setAll(GitService service) {
         this.enabled = service.enabled;
-        this.enabledSet = service.enabledSet;
         this.host = service.host;
         this.owner = service.owner;
         this.name = service.name;
@@ -158,18 +156,17 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
 
     @Override
     public Boolean isEnabled() {
-        return enabled == null || enabled;
+        return enabled != null && enabled;
     }
 
     @Override
     public void setEnabled(Boolean enabled) {
-        this.enabledSet = true;
         this.enabled = enabled;
     }
 
     @Override
     public boolean isEnabledSet() {
-        return enabledSet;
+        return enabled != null;
     }
 
     public String getHost() {

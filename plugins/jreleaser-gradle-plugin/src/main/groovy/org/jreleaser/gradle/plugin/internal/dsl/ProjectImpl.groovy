@@ -41,6 +41,7 @@ class ProjectImpl implements Project {
     final Property<String> groupId
     final Property<String> artifactId
     final Property<String> version
+    final Property<Boolean> multiProject
     final Property<String> description
     final Property<String> longDescription
     final Property<String> website
@@ -58,6 +59,7 @@ class ProjectImpl implements Project {
         version = objects.property(String).convention(versionProvider)
         groupId = objects.property(String).convention(Providers.notDefined())
         artifactId = objects.property(String).convention(Providers.notDefined())
+        multiProject = objects.property(Boolean).convention(Providers.notDefined())
         description = objects.property(String).convention(descriptionProvider)
         longDescription = objects.property(String).convention(descriptionProvider)
         website = objects.property(String).convention(Providers.notDefined())
@@ -87,6 +89,7 @@ class ProjectImpl implements Project {
         project.version = version.get()
         if (groupId.present) project.groupId = groupId.get()
         if (artifactId.present) project.artifactId = artifactId.get()
+        if (multiProject.present) project.multiProject = multiProject.get()
         if (description.present) project.description = description.get()
         if (longDescription.present) project.longDescription = longDescription.get()
         if (website.present) project.website = website.get()

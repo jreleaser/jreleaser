@@ -15,38 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
-
-import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.provider.Property
+package org.jreleaser.model;
 
 /**
- *
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CompileStatic
-interface Packagers {
-    Property<Boolean> getEnabled()
+public interface EnabledProvider {
+    Boolean isEnabled();
 
-    BrewPackager getBrew()
+    void setEnabled(Boolean enabled);
 
-    ChocolateyPackager getChocolatey()
-
-    JbangPackager getJbang()
-
-    ScoopPackager getScoop()
-
-    SnapPackager getSnap()
-
-    void brew(Action<? super BrewPackager> action)
-
-    void chocolatey(Action<? super ChocolateyPackager> action)
-
-    void jbang(Action<? super JbangPackager> action)
-
-    void scoop(Action<? super ScoopPackager> action)
-
-    void snap(Action<? super SnapPackager> action)
+    boolean isEnabledSet();
 }

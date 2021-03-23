@@ -44,6 +44,7 @@ public class Project implements Domain, ExtraProperties {
     private String javaVersion;
     private String groupId;
     private String artifactId;
+    private Boolean multiProject;
 
     void setAll(Project project) {
         this.name = project.name;
@@ -55,6 +56,7 @@ public class Project implements Domain, ExtraProperties {
         this.javaVersion = project.javaVersion;
         this.groupId = project.groupId;
         this.artifactId = project.artifactId;
+        this.multiProject = project.multiProject;
         setAuthors(project.authors);
         setTags(project.tags);
         setExtraProperties(project.extraProperties);
@@ -153,6 +155,18 @@ public class Project implements Domain, ExtraProperties {
         this.artifactId = artifactId;
     }
 
+    public boolean isMultiProject() {
+        return multiProject != null && multiProject;
+    }
+
+    public void setMultiProject(boolean multiProject) {
+        this.multiProject = multiProject;
+    }
+
+    public boolean isMultiProjectSet() {
+        return multiProject != null;
+    }
+
     @Override
     public Map<String, Object> getExtraProperties() {
         return extraProperties;
@@ -225,6 +239,7 @@ public class Project implements Domain, ExtraProperties {
         map.put("version", getResolvedVersion());
         map.put("groupId", groupId);
         map.put("artifactId", artifactId);
+        map.put("multiProject", isMultiProject());
         map.put("description", description);
         map.put("longDescription", longDescription);
         map.put("website", website);

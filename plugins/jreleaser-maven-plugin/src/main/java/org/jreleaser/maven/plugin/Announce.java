@@ -21,32 +21,32 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Announce {
+public class Announce implements EnabledProvider {
     private final Sdkman sdkman = new Sdkman();
     private final Twitter twitter = new Twitter();
     private final Zulip zulip = new Zulip();
     private Boolean enabled;
-    private boolean enabledSet;
 
     void setAll(Announce announce) {
         this.enabled = announce.enabled;
-        this.enabledSet = announce.enabledSet;
         setSdkman(announce.sdkman);
         setTwitter(announce.twitter);
         setZulip(announce.zulip);
     }
 
+    @Override
     public Boolean isEnabled() {
-        return enabled != null && enabled;
+        return enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
-        this.enabledSet = true;
         this.enabled = enabled;
     }
 
+    @Override
     public boolean isEnabledSet() {
-        return enabledSet;
+        return enabled != null;
     }
 
     public Sdkman getSdkman() {

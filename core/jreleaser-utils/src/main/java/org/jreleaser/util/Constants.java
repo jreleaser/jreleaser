@@ -86,6 +86,7 @@ public interface Constants {
     // Jbang
     String KEY_JBANG_ALIAS_NAME = "jbangAliasName";
     String KEY_JBANG_ALIAS_CLASS_NAME = "jbangAliasClassName";
+    String KEY_JBANG_DISTRIBUTION_GA = "jbangDistributionGA";
 
     // Snap
     String KEY_SNAP_BASE = "snapBase";

@@ -28,7 +28,6 @@ abstract class AbstractTool implements Tool {
     protected final String name;
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected Boolean enabled;
-    protected boolean enabledSet;
     protected String templateDirectory;
     protected CommitAuthor commitAuthor = new CommitAuthor();
 
@@ -38,7 +37,6 @@ abstract class AbstractTool implements Tool {
 
     void setAll(AbstractTool tool) {
         this.enabled = tool.enabled;
-        this.enabledSet = tool.enabledSet;
         this.templateDirectory = tool.templateDirectory;
         this.commitAuthor.setAll(tool.commitAuthor);
         setExtraProperties(tool.extraProperties);
@@ -46,18 +44,17 @@ abstract class AbstractTool implements Tool {
 
     @Override
     public Boolean isEnabled() {
-        return enabled != null && enabled;
+        return enabled;
     }
 
     @Override
     public void setEnabled(Boolean enabled) {
-        this.enabledSet = true;
         this.enabled = enabled;
     }
 
     @Override
     public boolean isEnabledSet() {
-        return enabledSet;
+        return enabled != null;
     }
 
     @Override
@@ -95,7 +92,7 @@ abstract class AbstractTool implements Tool {
     }
 
     public boolean isSet() {
-        return enabledSet ||
+        return null != enabled ||
             null != templateDirectory ||
             !extraProperties.isEmpty() ||
             commitAuthor.isSet();

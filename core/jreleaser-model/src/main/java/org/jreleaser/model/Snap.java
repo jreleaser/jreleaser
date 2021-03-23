@@ -38,7 +38,6 @@ public class Snap extends AbstractTool {
     private String confinement = "strict";
     private String exportedLogin;
     private Boolean remoteBuild;
-    private boolean remoteBuildSet;
     private SnapTap tap = new SnapTap();
 
     public Snap() {
@@ -52,7 +51,6 @@ public class Snap extends AbstractTool {
         this.confinement = snap.confinement;
         this.exportedLogin = snap.exportedLogin;
         this.remoteBuild = snap.remoteBuild;
-        this.remoteBuildSet = snap.remoteBuildSet;
         setLocalPlugs(localPlugs);
         setPlugs(plugs);
         setSlots(slots);
@@ -171,12 +169,11 @@ public class Snap extends AbstractTool {
     }
 
     public void setRemoteBuild(Boolean remoteBuild) {
-        this.remoteBuildSet = true;
         this.remoteBuild = remoteBuild;
     }
 
     public boolean isRemoteBuildSet() {
-        return remoteBuildSet;
+        return remoteBuild != null;
     }
 
     public SnapTap getTap() {

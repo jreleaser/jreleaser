@@ -19,37 +19,7 @@ plugins {
     id 'com.github.johnrengelman.shadow'
 }
 
-configurations {
-    uberjar
-}
-
 dependencies {
     api project(':jreleaser-model')
-    uberjar "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
+    api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
 }
-
-sourceSets {
-    main {
-        compileClasspath += configurations.uberjar
-        runtimeClasspath += compileClasspath
-    }
-}
-
-javadoc.classpath += configurations.uberjar
-
-idea {
-    module {
-        scopes.PROVIDED.plus += [configurations.uberjar]
-    }
-}
-
-shadowJar {
-    configurations    = [project.configurations.uberjar]
-    archiveBaseName   = project.name
-    archiveClassifier = ''
-    exclude 'module-info.class'
-    exclude '**/module-info.class'
-    relocate 'org.bouncycastle', 'jreleaser.shadow.org.bouncycastle'
-}
-
-jar.finalizedBy shadowJar

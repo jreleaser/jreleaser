@@ -29,18 +29,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class JReleaserModelPrinter {
-    private static final String SECRET_KEYWORDS = "password,secret,credential,token,apikey,login,authorization,passphrase,consumerkey";
-    private static final String KEY_SECRET_KEYWORDS = "jreleaser.secret.keywords";
-    private final boolean showSecrets;
+    private static final String SECRET_KEYWORDS = "password,secret,credential,token,apikey,login,authorization,passphrase,consumerkey,publickey";
+
     private final PrintWriter out;
 
     public JReleaserModelPrinter(PrintWriter out) {
-        this(out, false);
-    }
-
-    public JReleaserModelPrinter(PrintWriter out, boolean showSecrets) {
         this.out = out;
-        this.showSecrets = showSecrets;
     }
 
     public void print(Object value) {
@@ -205,7 +199,7 @@ public abstract class JReleaserModelPrinter {
             return cyan(String.valueOf(value));
         } else if (value != null) {
             String s = String.valueOf(value);
-            s = secret && !showSecrets ? multiply("*", 12) : s;
+            s = secret ? multiply("*", 12) : s;
 
             String r = parseAsBoolean(s);
             if (r != null) return r;
@@ -250,7 +244,7 @@ public abstract class JReleaserModelPrinter {
     private boolean isSecret(String key) {
         String lower = key.toLowerCase();
 
-        for (String keyword : System.getProperty(KEY_SECRET_KEYWORDS, SECRET_KEYWORDS).split(",")) {
+        for (String keyword : SECRET_KEYWORDS.split(",")) {
             if (lower.contains(keyword.trim().toLowerCase())) return true;
         }
 

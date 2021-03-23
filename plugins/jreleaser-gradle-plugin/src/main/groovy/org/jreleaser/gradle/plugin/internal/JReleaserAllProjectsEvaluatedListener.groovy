@@ -29,7 +29,7 @@ import javax.inject.Named
  * @since 0.1.0
  */
 @CompileStatic
-@DependsOn(['base','*'])
+@DependsOn(['base', '*'])
 @Named('jreleaser')
 class JReleaserAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
     Runnable runnable

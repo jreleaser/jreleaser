@@ -23,32 +23,32 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Changelog {
+public class Changelog implements EnabledProvider {
     private Boolean enabled;
-    private boolean enabledSet;
     private boolean links;
     private Sort sort = Sort.DESC;
     private String external;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
-        this.enabledSet = changelog.enabledSet;
         this.links = changelog.links;
         this.sort = changelog.sort;
         this.external = changelog.external;
     }
 
+    @Override
     public Boolean isEnabled() {
-        return enabled != null && enabled;
+        return enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
-        this.enabledSet = true;
         this.enabled = enabled;
     }
 
+    @Override
     public boolean isEnabledSet() {
-        return enabledSet;
+        return enabled != null;
     }
 
     public boolean isLinks() {

@@ -35,6 +35,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_REVERSE_REPO_HOST;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -77,6 +79,32 @@ public class JbangToolProcessor extends AbstractToolProcessor<Jbang> {
         props.put(Constants.KEY_ARTIFACT_ID, distribution.getArtifactId());
         props.put(Constants.KEY_JBANG_ALIAS_NAME, aliasName);
         props.put(Constants.KEY_JBANG_ALIAS_CLASS_NAME, aliasClassName);
+
+        String jbangDistributionGA = (String) tool.getResolvedExtraProperties().get(Constants.KEY_JBANG_DISTRIBUTION_GA);
+        if (isBlank(jbangDistributionGA)) {
+            // if single
+            // {{reverseRepoHost}}.{{repoOwner}}:{{distributionArtifactId}
+            // if multi-project
+            // {{reverseRepoHost}}.{{repoOwner}}.{{repoName}}:{{distributionArtifactId}
+
+            String reverseRepoHost = context.getModel().getRelease().getGitService().getReverseRepoHost();
+            if (isBlank(reverseRepoHost)) {
+                reverseRepoHost = (String) tool.getExtraProperties().get(KEY_REVERSE_REPO_HOST);
+            }
+
+            StringBuilder b = new StringBuilder(reverseRepoHost)
+                .append(".")
+                .append(context.getModel().getRelease().getGitService().getOwner());
+            if (context.getModel().getProject().isMultiProject()) {
+                b.append(".")
+                    .append(context.getModel().getRelease().getGitService().getName());
+            }
+            b.append(":")
+                .append(distribution.getArtifactId());
+
+            jbangDistributionGA = b.toString();
+        }
+        props.put(Constants.KEY_JBANG_DISTRIBUTION_GA, jbangDistributionGA);
     }
 
     @Override

@@ -41,7 +41,6 @@ final class Banner {
     private final String productId = bundle.getString("product.id");
     private final String productName = bundle.getString("product.name");
     private final String banner = MessageFormat.format(bundle.getString("product.banner"), productName, productVersion);
-    private final List<String> visited = new ArrayList<>();
 
     private Banner() {
         // nooop

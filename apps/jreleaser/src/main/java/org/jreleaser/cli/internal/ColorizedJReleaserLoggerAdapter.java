@@ -152,7 +152,7 @@ public class ColorizedJReleaserLoggerAdapter implements Logger {
 
         @Override
         public String toString() {
-            return "[" + colorize(name()) + "] ";
+            return "[" + colorize(name()) + "] " + (name().length() == 4 ? " " : "");
         }
 
         private String colorize(String input) {

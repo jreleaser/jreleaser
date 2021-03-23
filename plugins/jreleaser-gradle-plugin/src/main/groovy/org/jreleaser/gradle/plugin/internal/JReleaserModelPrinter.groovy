@@ -34,11 +34,7 @@ class JReleaserModelPrinter extends org.jreleaser.model.JReleaserModelPrinter {
     }
 
     JReleaserModelPrinter(Project project, PrintWriter out) {
-        this(project, out, false)
-    }
-
-    JReleaserModelPrinter(Project project, PrintWriter out, boolean showSecrets) {
-        super(out, showSecrets)
+        super(out)
         this.console = new AnsiConsole(project)
     }
 

@@ -18,7 +18,6 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -34,5 +33,7 @@ interface Signing {
 
     Property<String> getPassphrase()
 
-    RegularFileProperty getKeyRingFile()
+    Property<String> getPublicKey()
+
+    Property<String> getSecretKey()
 }

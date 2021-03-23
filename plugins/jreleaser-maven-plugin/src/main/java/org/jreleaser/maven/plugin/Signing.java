@@ -21,32 +21,34 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Signing {
+public class Signing implements EnabledProvider {
     private Boolean enabled;
-    private boolean enabledSet;
     private boolean armored;
-    private String keyRingFile;
+    private String publicKey;
+    private String secretKey;
     private String passphrase;
 
     void setAll(Signing signing) {
         this.enabled = signing.enabled;
-        this.enabledSet = signing.enabledSet;
         this.armored = signing.armored;
-        this.keyRingFile = signing.keyRingFile;
+        this.publicKey = signing.publicKey;
+        this.secretKey = signing.secretKey;
         this.passphrase = signing.passphrase;
     }
 
+    @Override
     public Boolean isEnabled() {
         return enabled != null && enabled;
     }
 
+    @Override
     public void setEnabled(Boolean enabled) {
-        this.enabledSet = true;
         this.enabled = enabled;
     }
 
+    @Override
     public boolean isEnabledSet() {
-        return enabledSet;
+        return enabled != null;
     }
 
     public boolean isArmored() {
@@ -57,12 +59,20 @@ public class Signing {
         this.armored = armored;
     }
 
-    public String getKeyRingFile() {
-        return keyRingFile;
+    public String getPublicKey() {
+        return publicKey;
     }
 
-    public void setKeyRingFile(String keyRingFile) {
-        this.keyRingFile = keyRingFile;
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 
     public String getPassphrase() {

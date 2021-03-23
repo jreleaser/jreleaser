@@ -53,6 +53,7 @@ class DistributionImpl implements Distribution {
     final Property<String> groupId
     final Property<String> artifactId
     final Property<String> mainClass
+    final Property<Boolean> enabled
     final Property<DistributionType> distributionType
     final ListProperty<String> tags
     final MapProperty<String, Object> extraProperties
@@ -69,6 +70,7 @@ class DistributionImpl implements Distribution {
     @Inject
     DistributionImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider, PackagersImpl packagers) {
         this.packagers = packagers
+        enabled = objects.property(Boolean).convention(Providers.notDefined())
         executable = objects.property(String).convention(Providers.notDefined())
         groupId = objects.property(String).convention(Providers.notDefined())
         artifactId = objects.property(String).convention(Providers.notDefined())
@@ -150,6 +152,7 @@ class DistributionImpl implements Distribution {
     org.jreleaser.model.Distribution toModel() {
         org.jreleaser.model.Distribution distribution = new org.jreleaser.model.Distribution()
         distribution.name = name
+        if (enabled.present) distribution.enabled = enabled.get()
         if (executable.present) distribution.executable = executable.get()
         if (groupId.present) distribution.groupId = groupId.get()
         if (artifactId.present) distribution.artifactId = artifactId.get()

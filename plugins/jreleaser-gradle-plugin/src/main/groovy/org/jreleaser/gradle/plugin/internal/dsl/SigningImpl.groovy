@@ -18,7 +18,6 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -37,14 +36,16 @@ class SigningImpl implements Signing {
     final Property<Boolean> enabled
     final Property<Boolean> armored
     final Property<String> passphrase
-    final RegularFileProperty keyRingFile
+    final Property<String> publicKey
+    final Property<String> secretKey
 
     @Inject
     SigningImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
         armored = objects.property(Boolean).convention(Providers.notDefined())
         passphrase = objects.property(String).convention(Providers.notDefined())
-        keyRingFile = objects.fileProperty().convention(Providers.notDefined())
+        publicKey = objects.property(String).convention(Providers.notDefined())
+        secretKey = objects.property(String).convention(Providers.notDefined())
     }
 
     @Internal
@@ -52,15 +53,17 @@ class SigningImpl implements Signing {
         return enabled.present ||
             armored.present ||
             passphrase.present ||
-            keyRingFile.present
+            publicKey.present ||
+            secretKey.present
     }
 
     org.jreleaser.model.Signing toModel() {
         org.jreleaser.model.Signing sign = new org.jreleaser.model.Signing()
-        sign.enabled = enabled.orElse(isSet())
-        sign.armored = armored.getOrElse(false)
+        if (enabled.present) sign.enabled = enabled.get()
+        if (armored.present) sign.armored = armored.get()
         if (passphrase.present) sign.passphrase = passphrase.get()
-        sign.keyRingFile = keyRingFile.present ? keyRingFile.getAsFile().get().absolutePath : null
+        if (publicKey.present) sign.publicKey = publicKey.get()
+        if (secretKey.present) sign.secretKey = secretKey.get()
         sign
     }
 }

@@ -35,6 +35,8 @@ import static org.jreleaser.model.Project.JRELEASER_PROJECT_VERSION;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
 import static org.jreleaser.model.Signing.GPG_PASSPHRASE;
+import static org.jreleaser.model.Signing.GPG_PUBLIC_KEY;
+import static org.jreleaser.model.Signing.GPG_SECRET_KEY;
 import static org.jreleaser.model.Twitter.TWITTER_ACCESS_TOKEN;
 import static org.jreleaser.model.Twitter.TWITTER_ACCESS_TOKEN_SECRET;
 import static org.jreleaser.model.Twitter.TWITTER_CONSUMER_KEY;
@@ -102,20 +104,23 @@ public final class JReleaserModelValidator {
         if (project.getAuthors().isEmpty()) {
             errors.add("project.authors must not be empty");
         }
+        if (!project.isMultiProjectSet()) {
+            project.setMultiProject(false);
+        }
     }
 
     private static void validateRelease(Logger logger, Path basedir, Project project, Release release, List<String> errors) {
         int count = 0;
-        count += validateGithub(logger, basedir, project, release.getGithub(), errors);
-        count += validateGitlab(logger, basedir, project, release.getGitlab(), errors);
-        count += validateGitea(logger, basedir, project, release.getGitea(), errors);
+        if (validateGithub(logger, basedir, project, release.getGithub(), errors)) count++;
+        if (validateGitlab(logger, basedir, project, release.getGitlab(), errors)) count++;
+        if (validateGitea(logger, basedir, project, release.getGitea(), errors)) count++;
 
         if (0 == count) {
-            errors.add("One of release.github, release.gitlab, release.gitea must be defined");
+            errors.add("No release provider has been configured");
             return;
         }
         if (count > 1) {
-            errors.add("Only one of release.github, release.gitlab, release.gitea can be defined");
+            errors.add("Only one of release.github, release.gitlab, release.gitea can be enabled");
         }
     }
 
@@ -134,6 +139,10 @@ public final class JReleaserModelValidator {
 
         validateCommitAuthor(packagers.getSnap(), model.getRelease().getGitService());
         validateOwner(packagers.getSnap().getTap(), model.getRelease().getGitService());
+
+        if (!packagers.isEnabledSet()) {
+            packagers.setEnabled(true);
+        }
     }
 
     private static void validateAnnouncers(Logger logger, Path basedir, JReleaserModel model, Announce announce, List<String> errors) {
@@ -186,13 +195,19 @@ public final class JReleaserModelValidator {
     private static void validateSign(Logger logger, Path basedir, JReleaserModel model, Signing signing, List<String> errors) {
         if (!signing.isEnabled()) return;
 
-        checkEnvSetting(logger, errors, signing.getPassphrase(), GPG_PASSPHRASE, "sign.passphrase");
-        if (isBlank(signing.getKeyRingFile())) {
-            errors.add("sign.keyRingFile must not be blank");
+        if (!signing.isArmoredSet()) {
+            signing.setArmored(true);
         }
+
+        checkEnvSetting(logger, errors, signing.getPassphrase(), GPG_PASSPHRASE, "signing.passphrase");
+        checkEnvSetting(logger, errors, signing.getPublicKey(), GPG_PUBLIC_KEY, "signing.publicKey");
+        checkEnvSetting(logger, errors, signing.getSecretKey(), GPG_SECRET_KEY, "signing.secretKey");
     }
 
     private static void validateGitService(Logger logger, Path basedir, Project project, GitService service, List<String> errors) {
+        if (!service.isEnabledSet()) {
+            service.setEnabled(true);
+        }
         if (isBlank(service.getOwner())) {
             errors.add(service.getServiceName() + ".owner must not be blank");
         }
@@ -228,8 +243,8 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static int validateGithub(Logger logger, Path basedir, Project project, Github github, List<String> errors) {
-        if (null == github) return 0;
+    private static boolean validateGithub(Logger logger, Path basedir, Project project, Github github, List<String> errors) {
+        if (null == github) return false;
 
         validateGitService(logger, basedir, project, github, errors);
 
@@ -237,11 +252,11 @@ public final class JReleaserModelValidator {
             github.setTargetCommitish("main");
         }
 
-        return 1;
+        return github.isEnabled();
     }
 
-    private static int validateGitlab(Logger logger, Path basedir, Project project, Gitlab gitlab, List<String> errors) {
-        if (null == gitlab) return 0;
+    private static boolean validateGitlab(Logger logger, Path basedir, Project project, Gitlab gitlab, List<String> errors) {
+        if (null == gitlab) return false;
 
         validateGitService(logger, basedir, project, gitlab, errors);
 
@@ -249,11 +264,11 @@ public final class JReleaserModelValidator {
             gitlab.setRef("main");
         }
 
-        return 1;
+        return gitlab.isEnabled();
     }
 
-    private static int validateGitea(Logger logger, Path basedir, Project project, Gitea gitea, List<String> errors) {
-        if (null == gitea) return 0;
+    private static boolean validateGitea(Logger logger, Path basedir, Project project, Gitea gitea, List<String> errors) {
+        if (null == gitea) return false;
 
         validateGitService(logger, basedir, project, gitea, errors);
 
@@ -261,7 +276,7 @@ public final class JReleaserModelValidator {
             gitea.setTargetCommitish("main");
         }
 
-        return 1;
+        return gitea.isEnabled();
     }
 
     private static void validateDistributions(Logger logger, Path basedir, JReleaserModel model, Map<String, Distribution> distributions, List<String> errors) {
@@ -285,6 +300,9 @@ public final class JReleaserModelValidator {
     }
 
     private static void validateDistribution(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, List<String> errors) {
+        if (!distribution.isEnabledSet()) {
+            distribution.setEnabled(true);
+        }
         if (isBlank(distribution.getName())) {
             errors.add("distribution.name must not be blank");
             return;
@@ -438,10 +456,21 @@ public final class JReleaserModelValidator {
             tool.getCatalog().setToken(model.getPackagers().getJbang().getCatalog().getToken());
         }
 
-        if (!tool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
-            model.getPackagers().getJbang().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
-            tool.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
+        if (model.getProject().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
+            !model.getPackagers().getJbang().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
+            model.getPackagers().getJbang().getExtraProperties().put(KEY_REVERSE_REPO_HOST,
+                model.getProject().getExtraProperties().get(KEY_REVERSE_REPO_HOST));
+        }
+        if (model.getPackagers().getJbang().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
+            !distribution.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
+            distribution.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
                 model.getPackagers().getJbang().getExtraProperties().get(KEY_REVERSE_REPO_HOST));
+        }
+
+        if (distribution.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
+            !tool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
+            tool.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
+                distribution.getExtraProperties().get(KEY_REVERSE_REPO_HOST));
         }
         if (isBlank(model.getRelease().getGitService().getReverseRepoHost()) &&
             !tool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {

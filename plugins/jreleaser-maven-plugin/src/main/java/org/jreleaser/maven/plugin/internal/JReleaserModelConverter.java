@@ -91,6 +91,7 @@ public final class JReleaserModelConverter {
         p.setTags(project.getTags());
         p.setAuthors(project.getAuthors());
         p.setExtraProperties(project.getExtraProperties());
+        if (project.isMultiProjectSet()) p.setMultiProject(project.isMultiProject());
         return p;
     }
 
@@ -169,6 +170,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Packagers convertPackagers(Packagers packagers) {
         org.jreleaser.model.Packagers p = new org.jreleaser.model.Packagers();
+        if (packagers.isEnabledSet()) p.setEnabled(packagers.isEnabled());
         if (packagers.getBrew().isSet()) p.setBrew(convertBrew(packagers.getBrew()));
         if (packagers.getChocolatey().isSet()) p.setChocolatey(convertChocolatey(packagers.getChocolatey()));
         if (packagers.getJbang().isSet()) p.setJbang(convertJbang(packagers.getJbang()));
@@ -223,7 +225,8 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Signing s = new org.jreleaser.model.Signing();
         if (signing.isEnabledSet()) s.setEnabled(signing.isEnabled());
         s.setArmored(signing.isArmored());
-        s.setKeyRingFile(signing.getKeyRingFile());
+        s.setPublicKey(signing.getPublicKey());
+        s.setSecretKey(signing.getSecretKey());
         s.setPassphrase(signing.getPassphrase());
         return s;
     }

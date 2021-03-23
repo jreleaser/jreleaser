@@ -28,8 +28,8 @@ config {
 
     plugins {
         plugin {
-            name                = project.pluginShortName
-            id                  = project.pluginId
+            name = project.pluginShortName
+            id = project.pluginId
             implementationClass = project.pluginImplementationClass
         }
     }

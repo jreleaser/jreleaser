@@ -17,6 +17,7 @@
  */
 package org.jreleaser.maven.plugin.internal;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
@@ -40,11 +41,11 @@ public final class JReleaserModelConfigurer {
         // noop
     }
 
-    public static void configure(JReleaserModel model, MavenProject mavenProject) {
-        configureProject(model.getProject(), mavenProject);
+    public static void configure(JReleaserModel model, MavenProject mavenProject, MavenSession session) {
+        configureProject(model.getProject(), mavenProject, session);
     }
 
-    private static void configureProject(Project project, MavenProject mavenProject) {
+    private static void configureProject(Project project, MavenProject mavenProject, MavenSession session) {
         project.setGroupId(mavenProject.getGroupId());
         project.setArtifactId(mavenProject.getArtifactId());
 
@@ -68,6 +69,9 @@ public final class JReleaserModelConfigurer {
         }
         if (isBlank(project.getJavaVersion())) {
             project.setJavaVersion(resolveJavaVersion(mavenProject));
+        }
+        if (!project.isMultiProjectSet()) {
+            project.setMultiProject(session.getAllProjects().size() > 1);
         }
     }
 

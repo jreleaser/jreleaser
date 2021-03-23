@@ -152,7 +152,9 @@ class JReleaserLoggerAdapter implements Logger {
                 break
         }
 
-        out.println(b.append('] ').append(message))
+        out.println(b.append('] ')
+            .append(level.name().length() == 4 ? ' ' : '')
+            .append(message))
     }
 
     private void printThrowable(Throwable throwable) {

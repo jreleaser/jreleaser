@@ -28,7 +28,6 @@ import java.util.Map;
 abstract class AbstractAnnouncer implements Announcer {
     protected final String name;
     protected Boolean enabled;
-    protected boolean enabledSet;
 
     protected AbstractAnnouncer(String name) {
         this.name = name;
@@ -36,7 +35,6 @@ abstract class AbstractAnnouncer implements Announcer {
 
     void setAll(AbstractAnnouncer announcer) {
         this.enabled = announcer.enabled;
-        this.enabledSet = announcer.enabledSet;
     }
 
     @Override
@@ -46,13 +44,12 @@ abstract class AbstractAnnouncer implements Announcer {
 
     @Override
     public void setEnabled(Boolean enabled) {
-        this.enabledSet = true;
         this.enabled = enabled;
     }
 
     @Override
     public boolean isEnabledSet() {
-        return enabledSet;
+        return enabled != null;
     }
 
     @Override

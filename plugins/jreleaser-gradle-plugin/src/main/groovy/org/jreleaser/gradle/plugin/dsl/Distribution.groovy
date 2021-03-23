@@ -30,6 +30,8 @@ import org.jreleaser.model.Distribution.DistributionType
  */
 @CompileStatic
 interface Distribution extends ExtraProperties {
+    Property<Boolean> getEnabled()
+
     Property<DistributionType> getDistributionType()
 
     Property<String> getGroupId()

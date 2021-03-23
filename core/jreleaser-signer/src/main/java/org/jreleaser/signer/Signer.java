@@ -20,25 +20,27 @@ package org.jreleaser.signer;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openpgp.PGPCompressedData;
+import org.bouncycastle.openpgp.PGPCompressedDataGenerator;
 import org.bouncycastle.openpgp.PGPException;
-import org.bouncycastle.openpgp.PGPLiteralData;
-import org.bouncycastle.openpgp.PGPLiteralDataGenerator;
+import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPPrivateKey;
+import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSecretKey;
-import org.bouncycastle.openpgp.PGPSecretKeyRing;
-import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureGenerator;
-import org.bouncycastle.openpgp.PGPSignatureSubpacketGenerator;
 import org.bouncycastle.openpgp.PGPUtil;
-import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
+import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
+import org.jreleaser.signer.internal.InMemoryKeyring;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,11 +50,12 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Provider;
 import java.security.Security;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
+import static org.bouncycastle.bcpg.CompressionAlgorithmTags.UNCOMPRESSED;
+import static org.jreleaser.util.Logger.DEBUG_TAB;
 
 /**
  * @author Andres Almiray
@@ -60,18 +63,10 @@ import java.util.List;
  */
 public class Signer {
     static {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.setProperty("crypto.policy", "unlimited");
-            Security.addProvider(new BouncyCastleProvider());
-        } else {
-            Provider[] providers = Security.getProviders();
-            for (int i = 0; i < providers.length; i++) {
-                if (providers[i].getName().equals(BouncyCastleProvider.PROVIDER_NAME)) {
-                    Security.insertProviderAt(new BouncyCastleProvider(), i);
-                    break;
-                }
-            }
-        }
+        // replace BC provider with our version
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        Security.setProperty("crypto.policy", "unlimited");
+        Security.addProvider(new BouncyCastleProvider());
     }
 
     public static void sign(JReleaserContext context) throws SigningException {
@@ -81,65 +76,158 @@ public class Signer {
             return;
         }
 
-        PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSign());
+        InMemoryKeyring keyring = createInMemoryKeyring(context.getModel().getSign());
+
         List<Path> paths = collectArtifactsForSigning(context);
-        sign(context, signatureGenerator, paths);
+        List<FilePair> files = sign(context, keyring, paths);
+        verify(context, keyring, files);
     }
 
-    private static PGPSignatureGenerator initSignatureGenerator(Signing signing) throws SigningException {
-        File keyRingFile = Paths.get(signing.getKeyRingFile()).toFile();
-        if (!keyRingFile.exists()) {
-            throw new SigningException("sign.keyRingFile does not exist");
-        }
-
+    private static InMemoryKeyring createInMemoryKeyring(Signing sign) throws SigningException {
         try {
-            PGPSecretKey pgpSec = readSecretKey(new FileInputStream(keyRingFile));
-            PGPPrivateKey privateKey = pgpSec.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder()
-                .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                .build(signing.getResolvedPassphrase().toCharArray()));
-            PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(
-                new JcaPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(), PGPUtil.SHA256)
-                    .setProvider(BouncyCastleProvider.PROVIDER_NAME));
-            signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, privateKey);
+            InMemoryKeyring keyring = new InMemoryKeyring();
+            keyring.addPublicKey(sign.getResolvedPublicKey().getBytes());
+            keyring.addSecretKey(sign.getResolvedSecretKey().getBytes());
+            return keyring;
+        } catch (IOException | PGPException e) {
+            throw new SigningException("Could not initialize keyring", e);
+        }
+    }
 
-            Iterator<String> userIds = pgpSec.getPublicKey().getUserIDs();
-            if (userIds.hasNext()) {
-                PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
-                spGen.addSignerUserID(false, userIds.next());
-                signatureGenerator.setHashedSubpackets(spGen.generate());
+    private static void verify(JReleaserContext context, InMemoryKeyring keyring, List<FilePair> files) throws SigningException {
+        context.getLogger().debug("Verifying {} signatures", files.size());
+
+        for (FilePair filePair : files) {
+            context.getLogger().debug("Verifying:{}{}{}{}{}{}",
+                System.lineSeparator(),
+                DEBUG_TAB, context.getBasedir().relativize(filePair.inputFile), System.lineSeparator(),
+                DEBUG_TAB, context.getBasedir().relativize(filePair.signatureFile));
+            if (!verify(context, keyring, filePair)) {
+                throw new SigningException("Could not verify file " +
+                    context.getBasedir().relativize(filePair.inputFile) + " with signature " +
+                    context.getBasedir().relativize(filePair.signatureFile));
+            }
+        }
+    }
+
+    private static boolean verify(JReleaserContext context, InMemoryKeyring keyring, FilePair filePair) throws SigningException {
+        try {
+            InputStream sigInputStream = PGPUtil.getDecoderStream(
+                new BufferedInputStream(
+                    new FileInputStream(filePair.signatureFile.toFile())));
+
+            PGPObjectFactory pgpObjFactory = new PGPObjectFactory(sigInputStream, keyring.getKeyFingerPrintCalculator());
+            Iterable<?> pgpSigList = null;
+
+            Object obj = pgpObjFactory.nextObject();
+            if (obj instanceof PGPCompressedData) {
+                PGPCompressedData c1 = (PGPCompressedData) obj;
+                pgpObjFactory = new PGPObjectFactory(c1.getDataStream(), keyring.getKeyFingerPrintCalculator());
+                pgpSigList = (Iterable<?>) pgpObjFactory.nextObject();
+            } else {
+                pgpSigList = (Iterable<?>) obj;
             }
 
-            return signatureGenerator;
+            InputStream fileInputStream = new BufferedInputStream(new FileInputStream(filePair.inputFile.toFile()));
+            PGPSignature sig = (PGPSignature) pgpSigList.iterator().next();
+            PGPPublicKey pubKey = keyring.readPublicKey();
+            sig.init(new JcaPGPContentVerifierBuilderProvider()
+                .setProvider(BouncyCastleProvider.PROVIDER_NAME), pubKey);
+
+            int ch;
+            while ((ch = fileInputStream.read()) >= 0) {
+                sig.update((byte) ch);
+            }
+
+            fileInputStream.close();
+            sigInputStream.close();
+
+            return sig.verify();
         } catch (IOException | PGPException e) {
+            throw new SigningException("Error when verifying signature of " +
+                context.getBasedir().relativize(filePair.inputFile), e);
+        }
+    }
+
+    private static List<FilePair> sign(JReleaserContext context, InMemoryKeyring keyring, List<Path> paths) throws SigningException {
+        Path signaturesDirectory = context.getSignaturesDirectory();
+
+        try {
+            deleteDirectory(signaturesDirectory);
+            Files.createDirectories(signaturesDirectory);
+        } catch (IOException e) {
+            throw new SigningException("Could not create signatures directory", e);
+        }
+
+        context.getLogger().debug("Signing {} files into {}",
+            paths.size(), context.getBasedir().relativize(signaturesDirectory));
+
+        PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSign(), keyring);
+
+        List<FilePair> files = new ArrayList<>();
+        String extension = context.getModel().getSign().isArmored() ? ".asc" : ".sig";
+        for (Path input : paths) {
+            Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
+            sign(context, signatureGenerator, input, output);
+            files.add(new FilePair(input, output));
+        }
+
+        return files;
+    }
+
+    private static PGPSignatureGenerator initSignatureGenerator(Signing signing, InMemoryKeyring keyring) throws SigningException {
+        try {
+            PGPSecretKey pgpSecretKey = keyring.getSecretKey();
+
+            PGPPrivateKey pgpPrivKey = pgpSecretKey.extractPrivateKey(
+                new JcePBESecretKeyDecryptorBuilder()
+                    .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                    .build(signing.getResolvedPassphrase().toCharArray()));
+
+            PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(
+                new JcaPGPContentSignerBuilder(pgpSecretKey.getPublicKey().getAlgorithm(), PGPUtil.SHA1)
+                    .setProvider(BouncyCastleProvider.PROVIDER_NAME));
+
+            signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
+
+            return signatureGenerator;
+        } catch (PGPException e) {
             throw new SigningException("Unexpected error when initializing signature generator", e);
         }
     }
 
-    private static PGPSecretKey readSecretKey(InputStream input) throws SigningException {
-        PGPSecretKeyRingCollection pgpSec = null;
+    private static void sign(JReleaserContext context, PGPSignatureGenerator signatureGenerator, Path input, Path output) throws SigningException {
         try {
-            pgpSec = new PGPSecretKeyRingCollection(
-                PGPUtil.getDecoderStream(input),
-                new JcaKeyFingerprintCalculator());
-        } catch (IOException | PGPException e) {
-            throw new SigningException("Unexpected error decoding sign.keyRingFile");
-        }
+            context.getLogger().debug("Signing:{}{}{}{}{}{}",
+                System.lineSeparator(),
+                DEBUG_TAB, context.getBasedir().relativize(input), System.lineSeparator(),
+                DEBUG_TAB, context.getBasedir().relativize(output));
 
-        Iterator<PGPSecretKeyRing> keyRingIter = pgpSec.getKeyRings();
-        while (keyRingIter.hasNext()) {
-            PGPSecretKeyRing keyRing = keyRingIter.next();
-
-            Iterator<PGPSecretKey> keyIter = keyRing.getSecretKeys();
-            while (keyIter.hasNext()) {
-                PGPSecretKey key = keyIter.next();
-
-                if (key.isSigningKey()) {
-                    return key;
-                }
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(output.toFile()));
+            if (context.getModel().getSign().isArmored()) {
+                out = new ArmoredOutputStream(out);
             }
-        }
 
-        throw new SigningException("Can't find signing key in sign.keyRingFile");
+            PGPCompressedDataGenerator compressionStreamGenerator = new PGPCompressedDataGenerator(UNCOMPRESSED);
+            BCPGOutputStream bOut = new BCPGOutputStream(compressionStreamGenerator.open(out));
+
+            FileInputStream in = new FileInputStream(input.toFile());
+
+            int ch;
+            while ((ch = in.read()) >= 0) {
+                signatureGenerator.update((byte) ch);
+            }
+
+            signatureGenerator.generate().encode(bOut);
+
+            compressionStreamGenerator.close();
+
+            in.close();
+            out.flush();
+            out.close();
+        } catch (IOException | PGPException e) {
+            throw new SigningException("Unexpected error when signing " + input.toAbsolutePath(), e);
+        }
     }
 
     private static List<Path> collectArtifactsForSigning(JReleaserContext context) {
@@ -163,23 +251,7 @@ public class Signer {
         return paths;
     }
 
-    private static void sign(JReleaserContext context, PGPSignatureGenerator signatureGenerator, List<Path> paths) throws SigningException {
-        Path signaturesDirectory = context.getSignaturesDirectory();
-
-        try {
-            deleteDirectory(signaturesDirectory);
-            Files.createDirectories(signaturesDirectory);
-        } catch (IOException e) {
-            throw new SigningException("Could not create signatures directory", e);
-        }
-
-        context.getLogger().debug("Signing {} files into {}", paths.size(), context.getBasedir().relativize(signaturesDirectory));
-        for (Path input : paths) {
-            sign(context, signatureGenerator, input, signaturesDirectory.resolve(input.getFileName()));
-        }
-    }
-
-    private static void deleteDirectory(Path outputDirectory) throws IOException {
+    private static void deleteDirectory(Path outputDirectory) {
         File dir = outputDirectory.toFile();
         if (!dir.exists()) return;
         for (File file : dir.listFiles()) {
@@ -188,37 +260,21 @@ public class Signer {
         dir.delete();
     }
 
-    private static void sign(JReleaserContext context, PGPSignatureGenerator signatureGenerator, Path input, Path output) throws SigningException {
-        try {
-            boolean armored = context.getModel().getSign().isArmored();
-            String extension = armored ? ".asc" : ".bpg";
-            context.getLogger().debug("Signing {} into {}",
-                context.getBasedir().relativize(input),
-                context.getBasedir().relativize(output) + extension);
+    private static class FilePair {
+        private final Path inputFile;
+        private final Path signatureFile;
 
-            OutputStream out = new FileOutputStream(output.toFile() + extension);
-            if (armored) {
-                out = new ArmoredOutputStream(out);
-            }
-            BCPGOutputStream bOut = new BCPGOutputStream(out);
+        private FilePair(Path inputFile, Path signatureFile) {
+            this.inputFile = inputFile;
+            this.signatureFile = signatureFile;
+        }
 
-            signatureGenerator.generateOnePassVersion(false).encode(bOut);
+        public Path getInputFile() {
+            return inputFile;
+        }
 
-            PGPLiteralDataGenerator literalDataGenerator = new PGPLiteralDataGenerator();
-            OutputStream lOut = literalDataGenerator.open(bOut, PGPLiteralData.BINARY, input.toFile());
-            FileInputStream in = new FileInputStream(input.toFile());
-
-            int ch;
-            while ((ch = in.read()) >= 0) {
-                lOut.write(ch);
-                signatureGenerator.update((byte) ch);
-            }
-
-            literalDataGenerator.close();
-            signatureGenerator.generate().encode(bOut);
-            out.close();
-        } catch (IOException | PGPException e) {
-            throw new SigningException("Unexpected error when signing " + input.toAbsolutePath(), e);
+        public Path getSignatureFile() {
+            return signatureFile;
         }
     }
 }

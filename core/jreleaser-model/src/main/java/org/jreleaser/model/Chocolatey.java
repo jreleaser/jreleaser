@@ -28,7 +28,6 @@ public class Chocolatey extends AbstractTool {
 
     private String username;
     private Boolean remoteBuild;
-    private boolean remoteBuildSet;
     private ChocolateyBucket bucket = new ChocolateyBucket();
 
     public Chocolatey() {
@@ -39,7 +38,6 @@ public class Chocolatey extends AbstractTool {
         super.setAll(choco);
         this.username = choco.username;
         this.remoteBuild = choco.remoteBuild;
-        this.remoteBuildSet = choco.remoteBuildSet;
         this.bucket.setAll(choco.bucket);
     }
 
@@ -56,12 +54,11 @@ public class Chocolatey extends AbstractTool {
     }
 
     public void setRemoteBuild(Boolean remoteBuild) {
-        this.remoteBuildSet = true;
         this.remoteBuild = remoteBuild;
     }
 
     public boolean isRemoteBuildSet() {
-        return remoteBuildSet;
+        return remoteBuild != null;
     }
 
     public ChocolateyBucket getBucket() {

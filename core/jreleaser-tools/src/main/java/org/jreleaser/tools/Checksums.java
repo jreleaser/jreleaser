@@ -31,6 +31,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jreleaser.util.Logger.DEBUG_TAB;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -83,7 +85,7 @@ public class Checksums {
         }
 
         if (!checksumPath.toFile().exists()) {
-            context.getLogger().debug("Artifact checksum does not exist. {}", context.getBasedir().relativize(checksumPath));
+            context.getLogger().debug("Artifact checksum does not exist: {}", context.getBasedir().relativize(checksumPath));
             calculateHash(context, artifactPath, checksumPath);
         } else if (artifactPath.toFile().lastModified() > checksumPath.toFile().lastModified()) {
             context.getLogger().debug("Artifact {} is newer than {}",
@@ -93,9 +95,10 @@ public class Checksums {
         }
 
         try {
-            context.getLogger().debug("Reading checksum for {} from {}",
-                context.getBasedir().relativize(artifactPath),
-                context.getBasedir().relativize(checksumPath));
+            context.getLogger().debug("Reading checksum:{}{}{}{}{}{}",
+                System.lineSeparator(),
+                DEBUG_TAB, context.getBasedir().relativize(artifactPath), System.lineSeparator(),
+                DEBUG_TAB, context.getBasedir().relativize(checksumPath));
             artifact.setHash(new String(Files.readAllBytes(checksumPath)));
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error when reading hash from " + context.getBasedir().relativize(checksumPath), e);

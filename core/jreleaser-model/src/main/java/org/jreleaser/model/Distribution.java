@@ -230,6 +230,7 @@ public class Distribution extends Packagers implements ExtraProperties {
         props.put("type", type);
         props.put("groupId", groupId);
         props.put("artifactId", artifactId);
+        props.put("enabled", isEnabled());
         props.put("mainClass", mainClass);
         props.put("executable", executable);
         props.put("javaVersion", javaVersion);

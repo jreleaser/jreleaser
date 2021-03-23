@@ -17,6 +17,7 @@
  */
 package org.jreleaser.maven.plugin;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -43,6 +44,9 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
+    @Parameter(defaultValue = "${session}", required = true)
+    private MavenSession session;
+
     @Parameter(required = true)
     protected Jreleaser jreleaser;
 
@@ -58,7 +62,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
 
     protected JReleaserModel convertAndValidateModel() throws MojoExecutionException {
         JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser);
-        JReleaserModelConfigurer.configure(jreleaserModel, project);
+        JReleaserModelConfigurer.configure(jreleaserModel, project, session);
         List<String> errors = JReleaserModelValidator.validate(getLogger(), project.getBasedir().toPath(), jreleaserModel);
         if (!errors.isEmpty()) {
             getLog().error("== JReleaser ==");

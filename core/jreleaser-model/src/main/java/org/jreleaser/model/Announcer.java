@@ -21,11 +21,7 @@ package org.jreleaser.model;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Announcer extends Domain {
-    boolean isEnabledSet();
-
-    Boolean isEnabled();
-
+public interface Announcer extends Domain, EnabledProvider {
     void setEnabled(Boolean enabled);
 
     String getName();
