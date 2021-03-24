@@ -22,6 +22,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.tools.DistributionProcessor;
 
 import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
 
@@ -50,11 +51,6 @@ public class JReleaserPrepareMojo extends AbstractJReleaserProcessorMojo {
 
     static void prepare(JReleaserContext context, boolean failFast)
         throws MojoExecutionException, MojoFailureException {
-        processContext(context, failFast, "Preparing", processor -> {
-            if (processor.prepareDistribution()) {
-                context.getLogger().info("Prepared " + processor.getDistributionName() +
-                    " distribution with " + processor.getToolName());
-            }
-        });
+        processContext(context, failFast, "Preparing", DistributionProcessor::prepareDistribution);
     }
 }

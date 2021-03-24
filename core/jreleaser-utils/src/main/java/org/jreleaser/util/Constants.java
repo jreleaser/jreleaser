@@ -40,19 +40,20 @@ public interface Constants {
     String KEY_PROJECT_AUTHORS_BY_COMMA = "projectAuthorsByComma";
     String KEY_PROJECT_TAGS_BY_SPACE = "projectTagsBySpace";
     String KEY_PROJECT_TAGS_BY_COMMA = "projectTagsByComma";
-    String KEY_TAG_NAME = "tagName";
-    String KEY_LATEST_RELEASE_URL = "latestReleaseUrl";
 
     // Release
     String KEY_REPO_HOST = "repoHost";
     String KEY_REPO_OWNER = "repoOwner";
     String KEY_REPO_NAME = "repoName";
     String KEY_REPO_BRANCH = "repoBranch";
+    String KEY_TAG_NAME = "tagName";
+    String KEY_RELEASE_NAME = "releaseName";
     String KEY_CANONICAL_REPO_NAME = "repoCanonicalName";
     String KEY_REPO_URL = "repoUrl";
-    String KEY_ISSUE_TRACKER_URL = "issueTrackerUrl";
     String KEY_COMMIT_URL = "commitsUrl";
     String KEY_RELEASE_NOTES_URL = "releaseNotesUrl";
+    String KEY_LATEST_RELEASE_URL = "latestReleaseUrl";
+    String KEY_ISSUE_TRACKER_URL = "issueTrackerUrl";
     String KEY_REVERSE_REPO_HOST = "reverseRepoHost";
 
     // Distribution

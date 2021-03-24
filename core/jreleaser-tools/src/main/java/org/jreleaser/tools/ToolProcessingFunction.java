@@ -15,23 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.ant.tasks;
+package org.jreleaser.tools;
 
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.tools.DistributionProcessor;
+import org.jreleaser.model.tool.spi.ToolProcessingException;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserUploadTask extends AbstractJReleaserProcessorTask {
-    @Override
-    protected void consumeModel(JReleaserModel jreleaserModel) {
-        upload(createContext(jreleaserModel), failFast);
-    }
-
-    static void upload(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Uploading", DistributionProcessor::uploadDistribution);
-    }
+public interface ToolProcessingFunction {
+    void consume(DistributionProcessor processor) throws ToolProcessingException;
 }

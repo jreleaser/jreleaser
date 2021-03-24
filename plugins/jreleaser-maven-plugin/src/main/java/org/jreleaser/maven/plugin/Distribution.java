@@ -26,7 +26,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Distribution extends Packagers implements ExtraProperties {
+public class Distribution extends Packagers implements ExtraProperties, EnabledProvider {
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final List<Artifact> artifacts = new ArrayList<>();
@@ -37,9 +37,11 @@ public class Distribution extends Packagers implements ExtraProperties {
     private String groupId;
     private String artifactId;
     private String mainClass;
+    private Boolean enabled;
 
     void setAll(Distribution distribution) {
         super.setAll(distribution);
+        this.enabled = distribution.enabled;
         this.name = distribution.name;
         this.type = distribution.type;
         this.executable = distribution.executable;
@@ -50,6 +52,21 @@ public class Distribution extends Packagers implements ExtraProperties {
         setTags(distribution.tags);
         setExtraProperties(distribution.extraProperties);
         setArtifacts(distribution.artifacts);
+    }
+
+    @Override
+    public Boolean isEnabled() {
+        return enabled != null && enabled;
+    }
+
+    @Override
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isEnabledSet() {
+        return enabled != null;
     }
 
     public DistributionType getType() {

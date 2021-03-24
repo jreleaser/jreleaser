@@ -35,16 +35,29 @@ public class ZulipAnnouncer implements Announcer {
     }
 
     @Override
+    public String getName() {
+        return "zulip";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return context.getModel().getAnnounce().getZulip().isEnabled();
+    }
+
+    @Override
+    public boolean isSnapshotSupported() {
+        return true;
+    }
+
+    @Override
     public void announce() throws AnnounceException {
         Zulip zulip = context.getModel().getAnnounce().getZulip();
-        if (!zulip.isEnabled()) {
-            context.getLogger().debug("Zulip announcer is disabled");
-            return;
-        }
 
         String subject = zulip.getResolvedSubject(context.getModel());
         String message = zulip.getResolvedMessage(context.getModel());
-        context.getLogger().info("Announcing on Zulip: {}{}{}", subject, System.lineSeparator(), message);
+        context.getLogger().info("channel: {}", zulip.getChannel());
+        context.getLogger().info("subject: {}", subject);
+        context.getLogger().info("message: {}", message);
 
         try {
             MessageZulipCommand.builder(context.getLogger())

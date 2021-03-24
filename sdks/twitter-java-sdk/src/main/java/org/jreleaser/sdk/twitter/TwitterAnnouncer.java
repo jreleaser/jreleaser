@@ -35,15 +35,26 @@ public class TwitterAnnouncer implements Announcer {
     }
 
     @Override
+    public String getName() {
+        return "twitter";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return context.getModel().getAnnounce().getTwitter().isEnabled();
+    }
+
+    @Override
+    public boolean isSnapshotSupported() {
+        return true;
+    }
+
+    @Override
     public void announce() throws AnnounceException {
         Twitter twitter = context.getModel().getAnnounce().getTwitter();
-        if (!twitter.isEnabled()) {
-            context.getLogger().debug("Twitter announcer is disabled");
-            return;
-        }
 
         String status = twitter.getResolvedStatus(context.getModel());
-        context.getLogger().info("Announcing on Twitter: {}", status);
+        context.getLogger().info("Tweeting: {}", status);
 
         try {
             UpdateStatusTwitterCommand.builder(context.getLogger())

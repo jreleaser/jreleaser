@@ -38,10 +38,10 @@ public final class MustacheUtils {
         //noop
     }
 
-    public static String applyTemplate(Reader reader, Map<String, Object> context, String toolName) {
+    public static String applyTemplate(Reader reader, Map<String, Object> context, String templateName) {
         StringWriter input = new StringWriter();
         MustacheFactory mf = new MyMustacheFactory();
-        Mustache mustache = mf.compile(reader, toolName);
+        Mustache mustache = mf.compile(reader, templateName);
         mustache.execute(input, context);
         input.flush();
         return input.toString();

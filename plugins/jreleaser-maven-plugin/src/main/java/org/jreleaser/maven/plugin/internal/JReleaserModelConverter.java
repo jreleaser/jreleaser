@@ -58,6 +58,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -142,8 +144,8 @@ public final class JReleaserModelConverter {
         s.setIssueTrackerUrlFormat(service.getIssueTrackerUrlFormat());
         s.setUsername(service.getUsername());
         s.setToken(service.getToken());
-        s.setTagName(service.getTagName());
-        s.setReleaseName(service.getReleaseName());
+        if (isNotBlank(service.getTagName())) s.setTagName(service.getTagName());
+        if (isNotBlank(service.getReleaseName())) s.setReleaseName(service.getReleaseName());
         s.setCommitAuthor(convertCommitAuthor(service.getCommitAuthor()));
         s.setSign(service.isSign());
         s.setSigningKey(service.getSigningKey());
@@ -170,7 +172,6 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Packagers convertPackagers(Packagers packagers) {
         org.jreleaser.model.Packagers p = new org.jreleaser.model.Packagers();
-        if (packagers.isEnabledSet()) p.setEnabled(packagers.isEnabled());
         if (packagers.getBrew().isSet()) p.setBrew(convertBrew(packagers.getBrew()));
         if (packagers.getChocolatey().isSet()) p.setChocolatey(convertChocolatey(packagers.getChocolatey()));
         if (packagers.getJbang().isSet()) p.setJbang(convertJbang(packagers.getJbang()));
@@ -241,6 +242,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Distribution convertDistribution(JReleaserModel model, Distribution distribution) {
         org.jreleaser.model.Distribution d = new org.jreleaser.model.Distribution();
+        if (distribution.isEnabledSet()) d.setEnabled(distribution.isEnabled());
         d.setName(distribution.getName());
         d.setGroupId(distribution.getGroupId());
         d.setArtifactId(distribution.getArtifactId());

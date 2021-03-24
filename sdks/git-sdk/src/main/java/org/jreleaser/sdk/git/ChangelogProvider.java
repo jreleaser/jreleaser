@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -34,6 +36,22 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class ChangelogProvider {
     public static String getChangelog(JReleaserContext context, String commitsUrl, Changelog changelog) throws IOException {
+        String content = resolveChangelog(context, commitsUrl, changelog);
+
+        Path changelogFile = context.getOutputDirectory()
+            .resolve("release")
+            .resolve("CHANGELOG.md");
+
+        context.getLogger().info(" - Generating changelog: {}", context.getBasedir().relativize(changelogFile));
+        context.getLogger().debug(content);
+
+        Files.createDirectories(changelogFile.getParent());
+        Files.write(changelogFile, content.getBytes(), CREATE, WRITE);
+
+        return content;
+    }
+
+    private static String resolveChangelog(JReleaserContext context, String commitsUrl, Changelog changelog) throws IOException {
         if (!changelog.isEnabled()) {
             return "";
         }
@@ -47,7 +65,7 @@ public class ChangelogProvider {
                 throw new IllegalStateException("Changelog " + context.getBasedir().relativize(externalChangelogPath) + " does not exist");
             }
 
-            context.getLogger().info("Reading changelog from {}",context.getBasedir().relativize(externalChangelogPath));
+            context.getLogger().info("Reading changelog from {}", context.getBasedir().relativize(externalChangelogPath));
             return new String(Files.readAllBytes(externalChangelogPath));
         }
 

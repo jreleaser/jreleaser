@@ -22,11 +22,9 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.options.Option
-import org.jreleaser.model.Distribution
 import org.jreleaser.model.JReleaserContext
-import org.jreleaser.model.JReleaserException
-import org.jreleaser.model.tool.spi.ToolProcessingException
-import org.jreleaser.tools.DistributionProcessor
+import org.jreleaser.tools.Distributions
+import org.jreleaser.tools.ToolProcessingFunction
 
 import javax.inject.Inject
 
@@ -52,48 +50,6 @@ abstract class AbstractJReleaserProcessorTask extends AbstractJReleaserTask {
     }
 
     protected static void processContext(JReleaserContext context, boolean failFast, String action, ToolProcessingFunction function) {
-        context.logger.info('{} distributions', action)
-        List<Exception> exceptions = []
-        for (Distribution distribution : context.model.distributions.values()) {
-            for (String toolName : Distribution.supportedTools()) {
-                try {
-                    DistributionProcessor processor = createDistributionProcessor(context,
-                        distribution,
-                        toolName)
-
-                    function.consume(processor)
-                } catch (ToolProcessingException e) {
-                    if (failFast) throw new JReleaserException('Unexpected error', e)
-                    exceptions.add(e)
-                    context.logger.warn('Unexpected error', e)
-                } catch (JReleaserException e) {
-                    if (failFast) throw e
-                    exceptions.add(e)
-                    context.logger.warn('Unexpected error', e)
-                }
-            }
-        }
-
-        if (!exceptions.isEmpty()) {
-            throw new JReleaserException('There were ' + exceptions.size() + ' failure(s)' +
-                System.lineSeparator() +
-                exceptions
-                    .collect({ e -> e.message })
-                    .join(System.lineSeparator()))
-        }
-    }
-
-    protected static DistributionProcessor createDistributionProcessor(JReleaserContext context,
-                                                                       Distribution distribution,
-                                                                       String toolName) {
-        return DistributionProcessor.builder()
-            .context(context)
-            .distributionName(distribution.getName())
-            .toolName(toolName)
-            .build()
-    }
-
-    interface ToolProcessingFunction {
-        void consume(DistributionProcessor processor) throws ToolProcessingException
+        Distributions.process(context, failFast, action, function)
     }
 }

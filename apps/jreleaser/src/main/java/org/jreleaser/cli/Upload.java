@@ -19,6 +19,7 @@ package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.tools.DistributionProcessor;
 import picocli.CommandLine;
 
 /**
@@ -43,11 +44,6 @@ public class Upload extends AbstractProcessorCommand {
     }
 
     static void upload(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Uploading", processor -> {
-            if (processor.uploadDistribution()) {
-                context.getLogger().info("Uploaded " + processor.getDistributionName() +
-                    " distribution with " + processor.getToolName());
-            }
-        });
+        processContext(context, failFast, "Uploading", DistributionProcessor::uploadDistribution);
     }
 }

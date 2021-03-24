@@ -48,10 +48,7 @@ abstract class JReleaserPrepareTask extends AbstractJReleaserProcessorTask {
 
     static void prepare(JReleaserContext context, boolean failFast) {
         processContext(context, failFast, 'Preparing', { processor ->
-            if (processor.prepareDistribution()) {
-                context.logger.info('Prepared ' + processor.distributionName +
-                    ' distribution with ' + processor.toolName)
-            }
+            processor.prepareDistribution()
         })
     }
 }

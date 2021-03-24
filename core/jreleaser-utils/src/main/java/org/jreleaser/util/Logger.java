@@ -27,6 +27,14 @@ public interface Logger {
     String INFO_TAB = "       ";
     String WARN_TAB = "       ";
 
+    void increaseIndent();
+
+    void decreaseIndent();
+
+    void setPrefix(String prefix);
+
+    void restorePrefix();
+
     void debug(String message);
 
     void info(String message);

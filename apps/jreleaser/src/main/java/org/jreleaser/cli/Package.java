@@ -19,6 +19,7 @@ package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.tools.DistributionProcessor;
 import picocli.CommandLine;
 
 /**
@@ -34,11 +35,6 @@ public class Package extends AbstractProcessorCommand {
     }
 
     static void packageTools(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Packaging", processor -> {
-            if (processor.packageDistribution()) {
-                context.getLogger().info("Packaged " + processor.getDistributionName() +
-                    " distribution with " + processor.getToolName());
-            }
-        });
+        processContext(context, failFast, "Packaging", DistributionProcessor::packageDistribution);
     }
 }

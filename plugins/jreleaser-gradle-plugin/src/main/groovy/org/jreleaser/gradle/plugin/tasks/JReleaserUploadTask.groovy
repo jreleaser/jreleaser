@@ -46,10 +46,7 @@ abstract class JReleaserUploadTask extends AbstractJReleaserProcessorTask {
 
     static void upload(JReleaserContext context, boolean failFast) {
         processContext(context, failFast, 'Uploading', { processor ->
-            if (processor.uploadDistribution()) {
-                context.logger.info('Uploaded ' + processor.distributionName +
-                    ' distribution with ' + processor.toolName)
-            }
+            processor.uploadDistribution()
         })
     }
 }

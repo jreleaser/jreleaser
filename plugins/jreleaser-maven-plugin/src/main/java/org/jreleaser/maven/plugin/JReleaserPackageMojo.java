@@ -22,6 +22,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.tools.DistributionProcessor;
 
 /**
  * @author Andres Almiray
@@ -47,11 +48,6 @@ public class JReleaserPackageMojo extends AbstractJReleaserProcessorMojo {
 
     static void packageTools(JReleaserContext context, boolean failFast)
         throws MojoExecutionException, MojoFailureException {
-        processContext(context, failFast, "Packaging", processor -> {
-            if (processor.packageDistribution()) {
-                context.getLogger().info("Packaged " + processor.getDistributionName() +
-                    " distribution with " + processor.getToolName());
-            }
-        });
+        processContext(context, failFast, "Packaging", DistributionProcessor::packageDistribution);
     }
 }

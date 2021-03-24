@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.Env;
 
 import java.io.StringReader;
 import java.util.LinkedHashMap;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -46,7 +48,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private String username;
     private String token;
     private String tagName = "v{{projectVersion}}";
-    private String releaseName;
+    private String releaseName = "Release {{tagName}}";
     private CommitAuthor commitAuthor = new CommitAuthor();
     private boolean sign;
     private String signingKey;
@@ -54,6 +56,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private boolean overwrite;
     private boolean allowUploadToExisting;
     private String apiEndpoint;
+    private String cachedTagName;
 
     protected GitService(String serviceName) {
         this.serviceName = serviceName;
@@ -88,6 +91,10 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.changelog.setAll(service.changelog);
     }
 
+    public void setCachedTagName(String cachedTagName) {
+        this.cachedTagName = cachedTagName;
+    }
+
     public String getCanonicalRepoName() {
         return owner + "/" + name;
     }
@@ -96,38 +103,18 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
 
     public abstract String getReverseRepoHost();
 
-    private Map<String, Object> props(Project project) {
-        Map<String, Object> props = new LinkedHashMap<>();
-        props.put(Constants.KEY_PROJECT_NAME, project.getName());
-        props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
-        props.put(Constants.KEY_GROUP_ID, project.getGroupId());
-        props.put(Constants.KEY_ARTIFACT_ID, project.getArtifactId());
-        props.put(Constants.KEY_PROJECT_VERSION, project.getResolvedVersion());
-        props.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
-        props.put(Constants.KEY_REPO_HOST, host);
-        props.put(Constants.KEY_REPO_OWNER, owner);
-        props.put(Constants.KEY_REPO_NAME, name);
-        props.put(Constants.KEY_REPO_BRANCH, getBranch());
-        props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
-        props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        return props;
-    }
-
-    public void fillProps(Map<String, Object> props, Project project) {
-        props.put(Constants.KEY_REPO_HOST, host);
-        props.put(Constants.KEY_REPO_OWNER, owner);
-        props.put(Constants.KEY_REPO_NAME, name);
-        props.put(Constants.KEY_REPO_BRANCH, getBranch());
-        props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
-        props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(project));
-        props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(project));
-        props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(project));
-        props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(project));
-    }
-
     public String getResolvedTagName(Project project) {
-        return applyTemplate(new StringReader(tagName), props(project));
+        if (isBlank(cachedTagName)) {
+            cachedTagName = applyTemplate(new StringReader(tagName), props(project));
+        }
+        return cachedTagName;
+    }
+
+    public String getResolvedReleaseName(Project project) {
+        if (isNotBlank(releaseName)) {
+            return applyTemplate(new StringReader(releaseName), props(project));
+        }
+        return "Release " + getResolvedTagName(project);
     }
 
     public String getResolvedRepoUrl(Project project) {
@@ -244,10 +231,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     }
 
     public String getResolvedToken() {
-        if (isNotBlank(token)) {
-            return token;
-        }
-        return System.getenv(getClass().getSimpleName().toUpperCase() + "_TOKEN");
+        return Env.resolve(getClass().getSimpleName().toUpperCase() + "_TOKEN", token);
     }
 
     public String getUsername() {
@@ -356,6 +340,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("latestReleaseUrlFormat", latestReleaseUrlFormat);
         map.put("issueTrackerUrlFormat", issueTrackerUrlFormat);
         map.put("tagName", tagName);
+        map.put("releaseName", releaseName);
         map.put("commitAuthor", commitAuthor.asMap());
         map.put("sign", sign);
         map.put("signingKey", isNotBlank(signingKey) ? "************" : "**unset**");
@@ -364,5 +349,45 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("apiEndpoint", apiEndpoint);
         map.put("changelog", changelog.asMap());
         return map;
+    }
+
+
+    private Map<String, Object> props(Project project) {
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.put(Constants.KEY_PROJECT_NAME, project.getName());
+        props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
+        props.put(Constants.KEY_GROUP_ID, project.getGroupId());
+        props.put(Constants.KEY_ARTIFACT_ID, project.getArtifactId());
+        props.put(Constants.KEY_PROJECT_VERSION, project.getResolvedVersion());
+        props.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
+        props.put(Constants.KEY_PROJECT_DESCRIPTION, project.getDescription());
+        props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, project.getLongDescription());
+        props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
+        props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+        props.putAll(project.getResolvedExtraProperties());
+        props.put(Constants.KEY_REPO_HOST, host);
+        props.put(Constants.KEY_REPO_OWNER, owner);
+        props.put(Constants.KEY_REPO_NAME, name);
+        props.put(Constants.KEY_REPO_BRANCH, getBranch());
+        props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
+        props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
+        props.put(Constants.KEY_TAG_NAME, cachedTagName);
+        return props;
+    }
+
+    public void fillProps(Map<String, Object> props, Project project) {
+        props.put(Constants.KEY_REPO_HOST, host);
+        props.put(Constants.KEY_REPO_OWNER, owner);
+        props.put(Constants.KEY_REPO_NAME, name);
+        props.put(Constants.KEY_REPO_BRANCH, getBranch());
+        props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
+        props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
+        props.put(Constants.KEY_TAG_NAME, getResolvedTagName(project));
+        props.put(Constants.KEY_RELEASE_NAME, getResolvedReleaseName(project));
+        props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(project));
+        props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(project));
+        props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(project));
+        props.put(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(project));
+        props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(project));
     }
 }

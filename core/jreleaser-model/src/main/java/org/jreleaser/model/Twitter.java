@@ -17,7 +17,7 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.Constants;
+import org.jreleaser.util.Env;
 
 import java.io.StringReader;
 import java.util.Map;
@@ -40,7 +40,7 @@ public class Twitter extends AbstractAnnouncer {
     private String consumerSecret;
     private String accessToken;
     private String accessTokenSecret;
-    private String status = "\uD83D\uDE80 {{projectNameCapitalized}} {{tagName}} has been released! {{latestReleaseUrl}}";
+    private String status = "\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}";
 
     public Twitter() {
         super(NAME);
@@ -56,37 +56,25 @@ public class Twitter extends AbstractAnnouncer {
     }
 
     public String getResolvedStatus(JReleaserModel model) {
-        Map<String, Object> context = model.props();
-        context.put(Constants.KEY_TAG_NAME, model.getRelease().getGitService().getTagName());
-        return applyTemplate(new StringReader(status), context);
+        Map<String, Object> props = model.props();
+        model.getRelease().getGitService().fillProps(props, model.getProject());
+        return applyTemplate(new StringReader(status), props);
     }
 
     public String getResolvedConsumerKey() {
-        if (isNotBlank(consumerKey)) {
-            return consumerKey;
-        }
-        return System.getenv(TWITTER_CONSUMER_KEY);
+        return Env.resolve(TWITTER_CONSUMER_KEY, consumerKey);
     }
 
     public String getResolvedConsumerSecret() {
-        if (isNotBlank(consumerSecret)) {
-            return consumerSecret;
-        }
-        return System.getenv(TWITTER_CONSUMER_SECRET);
+        return Env.resolve(TWITTER_CONSUMER_SECRET, consumerSecret);
     }
 
     public String getResolvedAccessToken() {
-        if (isNotBlank(accessToken)) {
-            return accessToken;
-        }
-        return System.getenv(TWITTER_ACCESS_TOKEN);
+        return Env.resolve(TWITTER_ACCESS_TOKEN, accessToken);
     }
 
     public String getResolvedAccessTokenSecret() {
-        if (isNotBlank(accessTokenSecret)) {
-            return accessTokenSecret;
-        }
-        return System.getenv(TWITTER_ACCESS_TOKEN_SECRET);
+        return Env.resolve(TWITTER_ACCESS_TOKEN_SECRET, accessTokenSecret);
     }
 
     public String getConsumerKey() {

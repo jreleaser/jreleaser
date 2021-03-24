@@ -24,36 +24,19 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Packagers implements Domain, EnabledProvider {
+public class Packagers implements Domain {
     private final Brew brew = new Brew();
     private final Chocolatey chocolatey = new Chocolatey();
     private final Jbang jbang = new Jbang();
     private final Scoop scoop = new Scoop();
     private final Snap snap = new Snap();
-    private Boolean enabled;
 
     void setAll(Packagers packagers) {
-        this.enabled = packagers.enabled;
         setBrew(packagers.brew);
         setChocolatey(packagers.chocolatey);
         setJbang(packagers.jbang);
         setScoop(packagers.scoop);
         setSnap(packagers.snap);
-    }
-
-    @Override
-    public Boolean isEnabled() {
-        return enabled != null && enabled;
-    }
-
-    @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
     }
 
     public Brew getBrew() {
@@ -99,7 +82,6 @@ public class Packagers implements Domain, EnabledProvider {
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", isEnabled());
         map.putAll(brew.asMap());
         map.putAll(chocolatey.asMap());
         map.putAll(jbang.asMap());

@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.Env;
 
 import java.io.StringReader;
 import java.util.Map;
@@ -37,8 +38,8 @@ public class Zulip extends AbstractAnnouncer {
     private String apiKey;
     private String apiHost;
     private String channel;
-    private String subject = "{{projectNameCapitalized}} {{tagName}}";
-    private String message = "\uD83D\uDE80 {{projectNameCapitalized}} {{tagName}} has been released! {{latestReleaseUrl}}";
+    private String subject = "{{projectNameCapitalized}} {{projectVersion}}";
+    private String message = "\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}";
 
     public Zulip() {
         super(NAME);
@@ -55,22 +56,18 @@ public class Zulip extends AbstractAnnouncer {
     }
 
     public String getResolvedSubject(JReleaserModel model) {
-        Map<String, Object> context = model.props();
-        context.put(Constants.KEY_TAG_NAME, model.getRelease().getGitService().getTagName());
-        return applyTemplate(new StringReader(subject), context);
+        Map<String, Object> props = model.props();
+        //model.getRelease().getGitService().fillProps(props, model.getProject());
+        return applyTemplate(new StringReader(subject), props);
     }
 
     public String getResolvedMessage(JReleaserModel model) {
-        Map<String, Object> context = model.props();
-        context.put(Constants.KEY_TAG_NAME, model.getRelease().getGitService().getTagName());
-        return applyTemplate(new StringReader(message), context);
+        Map<String, Object> props = model.props();
+        return applyTemplate(new StringReader(message), props);
     }
 
     public String getResolvedApiKey() {
-        if (isNotBlank(apiKey)) {
-            return apiKey;
-        }
-        return System.getenv(ZULIP_API_KEY);
+        return Env.resolve(ZULIP_API_KEY, apiKey);
     }
 
     public String getAccount() {

@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static org.jreleaser.sdk.git.GitSdk.extractTagName;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -41,8 +42,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class ChangelogGenerator {
-    private static final String REFS_TAGS = "refs/tags/";
-
     public static String generate(JReleaserContext context, String commitsUrl, Changelog changelog) throws IOException {
         if (!changelog.isEnabled()) {
             return "";
@@ -53,15 +52,15 @@ public class ChangelogGenerator {
 
     private static String createChangelog(JReleaserContext context, String commitsUrl, Changelog changelog) throws IOException {
         try {
-            Git git = Git.open(context.getBasedir().toFile());
+            Git git = GitSdk.of(context).open();
             context.getLogger().debug("Resolving commits");
-            Iterable<RevCommit> commits = resolveCommits(git);
+            Iterable<RevCommit> commits = resolveCommits(git, context);
 
-            Comparator<RevCommit> revCommitComparator = Comparator.naturalOrder();
+            Comparator<RevCommit> revCommitComparator = Comparator.comparing(RevCommit::getCommitTime).reversed();
             if (changelog.getSort() == Changelog.Sort.ASC) {
-                revCommitComparator = Comparator.reverseOrder();
+                revCommitComparator = Comparator.comparing(RevCommit::getCommitTime);
             }
-            context.getLogger().debug("Sorting commits {}",changelog.getSort());
+            context.getLogger().debug("Sorting commits {}", changelog.getSort());
 
             return "## Changelog" +
                 System.lineSeparator() +
@@ -96,37 +95,27 @@ public class ChangelogGenerator {
         return String.join(System.lineSeparator(), lines);
     }
 
-    private static Iterable<RevCommit> resolveCommits(Git git) throws GitAPIException, IOException {
+    private static Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
         List<Ref> tags = git.tagList().call();
-        tags.sort(new TagComparator().reversed());
+        tags.sort(new GitSdk.TagComparator().reversed());
+
+        String tagName = context.getModel().getRelease().getGitService().getTagName();
+        String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
+
+        context.getLogger().debug("Looking for tags that match '{}'", tagPattern);
 
         Optional<Ref> tag = tags.stream()
-            .filter(ref -> extractTagName(ref).startsWith("v"))
+            .filter(ref -> extractTagName(ref).matches(tagPattern))
             .findFirst();
 
         ObjectId head = git.getRepository().resolve(Constants.HEAD);
         if (tag.isPresent()) {
+            context.getLogger().debug("Found tag {}", extractTagName(tag.get()));
             Ref peeled = git.getRepository().getRefDatabase().peel(tag.get());
             ObjectId fromRef = peeled.getPeeledObjectId() != null ? peeled.getPeeledObjectId() : peeled.getObjectId();
             return git.log().addRange(fromRef, head).call();
         }
 
         return git.log().add(head).call();
-    }
-
-    private static String extractTagName(Ref tag) {
-        if (tag.getName().startsWith(REFS_TAGS)) {
-            return tag.getName().substring(REFS_TAGS.length());
-        }
-        return "";
-    }
-
-    private static class TagComparator implements Comparator<Ref> {
-        @Override
-        public int compare(Ref tag1, Ref tag2) {
-            String tagName1 = extractTagName(tag1);
-            String tagName2 = extractTagName(tag2);
-            return tagName1.compareTo(tagName2);
-        }
     }
 }

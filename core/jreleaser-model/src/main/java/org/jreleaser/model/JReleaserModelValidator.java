@@ -18,8 +18,10 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.Logger;
 import org.jreleaser.util.PlatformUtils;
+import org.jreleaser.util.StringUtils;
 
 import java.io.StringReader;
 import java.nio.file.Path;
@@ -31,7 +33,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
-import static org.jreleaser.model.Project.JRELEASER_PROJECT_VERSION;
+import static org.jreleaser.model.Project.PROJECT_VERSION;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
 import static org.jreleaser.model.Signing.GPG_PASSPHRASE;
@@ -79,7 +81,9 @@ public final class JReleaserModelValidator {
         if (isBlank(project.getName())) {
             errors.add("project.name must not be blank");
         }
-        checkEnvSetting(logger, errors, project.getVersion(), JRELEASER_PROJECT_VERSION, "project.version");
+
+        Env.check(PROJECT_VERSION, project.getVersion(), "project.version", errors);
+
         if (isBlank(project.getArtifactId())) {
             project.setArtifactId(project.getName());
         }
@@ -139,10 +143,6 @@ public final class JReleaserModelValidator {
 
         validateCommitAuthor(packagers.getSnap(), model.getRelease().getGitService());
         validateOwner(packagers.getSnap().getTap(), model.getRelease().getGitService());
-
-        if (!packagers.isEnabledSet()) {
-            packagers.setEnabled(true);
-        }
     }
 
     private static void validateAnnouncers(Logger logger, Path basedir, JReleaserModel model, Announce announce, List<String> errors) {
@@ -161,17 +161,18 @@ public final class JReleaserModelValidator {
     private static void validateSdkman(Logger logger, Path basedir, JReleaserModel model, Sdkman sdkman, List<String> errors) {
         if (!sdkman.isEnabled()) return;
 
-        checkEnvSetting(logger, errors, sdkman.getConsumerKey(), SDKMAN_CONSUMER_KEY, "sdkman.consumerKey");
-        checkEnvSetting(logger, errors, sdkman.getConsumerToken(), SDKMAN_CONSUMER_TOKEN, "sdkman.consumerToken");
+        Env.check(SDKMAN_CONSUMER_KEY, sdkman.getConsumerKey(), "sdkman.consumerKey", errors);
+        Env.check(SDKMAN_CONSUMER_TOKEN, sdkman.getConsumerToken(), "sdkman.consumerToken", errors);
     }
 
     private static void validateTwitter(Logger logger, Path basedir, JReleaserModel model, Twitter twitter, List<String> errors) {
         if (!twitter.isEnabled()) return;
 
-        checkEnvSetting(logger, errors, twitter.getConsumerKey(), TWITTER_CONSUMER_KEY, "twitter.consumerKey");
-        checkEnvSetting(logger, errors, twitter.getConsumerSecret(), TWITTER_CONSUMER_SECRET, "twitter.consumerSecret");
-        checkEnvSetting(logger, errors, twitter.getAccessToken(), TWITTER_ACCESS_TOKEN, "twitter.accessToken");
-        checkEnvSetting(logger, errors, twitter.getAccessTokenSecret(), TWITTER_ACCESS_TOKEN_SECRET, "twitter.accessTokenSecret");
+        Env.check(TWITTER_CONSUMER_KEY, twitter.getConsumerKey(), "twitter.consumerKey", errors);
+        Env.check(TWITTER_CONSUMER_SECRET, twitter.getConsumerSecret(), "twitter.consumerSecret", errors);
+        Env.check(TWITTER_ACCESS_TOKEN, twitter.getAccessToken(), "twitter.accessToken", errors);
+        Env.check(TWITTER_ACCESS_TOKEN_SECRET, twitter.getAccessTokenSecret(), "twitter.accessTokenSecret", errors);
+
         if (isBlank(twitter.getStatus())) {
             errors.add("twitter.status must not be blank.");
         }
@@ -183,7 +184,9 @@ public final class JReleaserModelValidator {
         if (isBlank(zulip.getAccount())) {
             errors.add("zulip.account must not be blank.");
         }
-        checkEnvSetting(logger, errors, zulip.getApiKey(), ZULIP_API_KEY, "zulip.apiKey");
+
+        Env.check(ZULIP_API_KEY, zulip.getApiKey(), "zulip.apiKey", errors);
+
         if (isBlank(zulip.getApiHost())) {
             errors.add("zulip.apiHost must not be blank.");
         }
@@ -199,9 +202,9 @@ public final class JReleaserModelValidator {
             signing.setArmored(true);
         }
 
-        checkEnvSetting(logger, errors, signing.getPassphrase(), GPG_PASSPHRASE, "signing.passphrase");
-        checkEnvSetting(logger, errors, signing.getPublicKey(), GPG_PUBLIC_KEY, "signing.publicKey");
-        checkEnvSetting(logger, errors, signing.getSecretKey(), GPG_SECRET_KEY, "signing.secretKey");
+        Env.check(GPG_PASSPHRASE, signing.getPassphrase(), "signing.passphrase", errors);
+        Env.check(GPG_PUBLIC_KEY, signing.getPublicKey(), "signing.publicKey", errors);
+        Env.check(GPG_SECRET_KEY, signing.getSecretKey(), "signing.secretKey", errors);
     }
 
     private static void validateGitService(Logger logger, Path basedir, Project project, GitService service, List<String> errors) {
@@ -218,16 +221,13 @@ public final class JReleaserModelValidator {
             service.setUsername(service.getOwner());
         }
 
-        checkEnvSetting(logger, errors, service.getToken(),
-            service.getServiceName().toUpperCase() + "_TOKEN",
-            service.getServiceName() + ".password");
+        Env.check(service.getServiceName().toUpperCase() + "_TOKEN",
+            service.getToken(),
+            service.getServiceName() + ".password",
+            errors);
 
-        service.setTagName(service.getResolvedTagName(project));
         if (isBlank(service.getTagName())) {
-            service.setTagName("v" + project.getResolvedVersion());
-        }
-        if (isBlank(service.getReleaseName())) {
-            service.setReleaseName("Release " + service.getTagName());
+            service.setTagName("v{{" + project.getResolvedVersion() + "}}");
         }
         if (!service.getChangelog().isEnabledSet()) {
             service.getChangelog().setEnabled(true);
@@ -241,6 +241,16 @@ public final class JReleaserModelValidator {
         if (isBlank(service.getCommitAuthor().getEmail())) {
             service.getCommitAuthor().setEmail("jreleaser-bot@jreleaser.org");
         }
+
+        if (project.isSnapshot()) {
+            service.setReleaseName(StringUtils.capitalize(project.getName()) + " Early-Access");
+            service.setTagName("early-access");
+            service.getChangelog().setExternal(null);
+            service.getChangelog().setSort(Changelog.Sort.DESC);
+            service.setOverwrite(true);
+        }
+
+        service.getResolvedTagName(project);
     }
 
     private static boolean validateGithub(Logger logger, Path basedir, Project project, Github github, List<String> errors) {
@@ -250,6 +260,10 @@ public final class JReleaserModelValidator {
 
         if (isBlank(github.getTargetCommitish())) {
             github.setTargetCommitish("main");
+        }
+
+        if (project.isSnapshot()) {
+            github.setPrerelease(true);
         }
 
         return github.isEnabled();
@@ -274,6 +288,10 @@ public final class JReleaserModelValidator {
 
         if (isBlank(gitea.getTargetCommitish())) {
             gitea.setTargetCommitish("main");
+        }
+
+        if (project.isSnapshot()) {
+            gitea.setPrerelease(true);
         }
 
         return gitea.isEnabled();
@@ -640,14 +658,6 @@ public final class JReleaserModelValidator {
         if (isBlank(author.getName())) author.setName(other.getCommitAuthor().getName());
         if (isBlank(author.getEmail())) author.setEmail(other.getCommitAuthor().getEmail());
         self.setCommitAuthor(author);
-    }
-
-    private static void checkEnvSetting(Logger logger, List<String> errors, String value, String key, String property) {
-        if (isBlank(value)) {
-            if (isBlank(System.getenv(key))) {
-                errors.add(property + " must not be blank. Alternatively define a " + key + " environment variable.");
-            }
-        }
     }
 
     private static void resolveArtifactPaths(Logger logger, JReleaserModel model) {

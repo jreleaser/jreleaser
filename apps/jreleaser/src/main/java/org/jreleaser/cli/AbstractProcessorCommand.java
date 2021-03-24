@@ -17,16 +17,10 @@
  */
 package org.jreleaser.cli;
 
-import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.tool.spi.ToolProcessingException;
-import org.jreleaser.tools.DistributionProcessor;
+import org.jreleaser.tools.Distributions;
+import org.jreleaser.tools.ToolProcessingFunction;
 import picocli.CommandLine;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Andres Almiray
@@ -39,48 +33,6 @@ public abstract class AbstractProcessorCommand extends AbstractModelCommand {
     boolean failFast = true;
 
     protected static void processContext(JReleaserContext context, boolean failFast, String action, ToolProcessingFunction function) {
-        context.getLogger().info("{} distributions", action);
-        List<Exception> exceptions = new ArrayList<>();
-        for (Distribution distribution : context.getModel().getDistributions().values()) {
-            for (String toolName : Distribution.supportedTools()) {
-                try {
-                    DistributionProcessor processor = createDistributionProcessor(context,
-                        distribution,
-                        toolName);
-
-                    function.consume(processor);
-                } catch (ToolProcessingException e) {
-                    if (failFast) throw new JReleaserException("Unexpected error", e);
-                    exceptions.add(e);
-                    context.getLogger().warn("Unexpected error", e);
-                } catch (JReleaserException e) {
-                    if (failFast) throw e;
-                    exceptions.add(e);
-                    context.getLogger().warn("Unexpected error", e);
-                }
-            }
-        }
-
-        if (!exceptions.isEmpty()) {
-            throw new JReleaserException("There were " + exceptions.size() + " failure(s)" +
-                System.lineSeparator() +
-                exceptions.stream()
-                    .map(Exception::getMessage)
-                    .collect(Collectors.joining(System.lineSeparator())));
-        }
-    }
-
-    protected static DistributionProcessor createDistributionProcessor(JReleaserContext context,
-                                                                       Distribution distribution,
-                                                                       String toolName) {
-        return DistributionProcessor.builder()
-            .context(context)
-            .distributionName(distribution.getName())
-            .toolName(toolName)
-            .build();
-    }
-
-    interface ToolProcessingFunction {
-        void consume(DistributionProcessor processor) throws ToolProcessingException;
+        Distributions.process(context, failFast, action, function);
     }
 }

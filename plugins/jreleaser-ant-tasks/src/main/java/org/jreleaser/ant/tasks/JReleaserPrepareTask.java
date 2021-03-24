@@ -19,6 +19,7 @@ package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.tools.DistributionProcessor;
 
 import static org.jreleaser.ant.tasks.JReleaserChecksumTask.checksum;
 
@@ -35,11 +36,6 @@ public class JReleaserPrepareTask extends AbstractJReleaserProcessorTask {
     }
 
     static void prepare(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Preparing", processor -> {
-            if (processor.prepareDistribution()) {
-                context.getLogger().info("Prepared " + processor.getDistributionName() +
-                    " distribution with " + processor.getToolName());
-            }
-        });
+        processContext(context, failFast, "Preparing", DistributionProcessor::prepareDistribution);
     }
 }

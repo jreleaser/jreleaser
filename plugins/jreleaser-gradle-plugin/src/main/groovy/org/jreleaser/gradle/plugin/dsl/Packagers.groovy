@@ -28,8 +28,6 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Packagers {
-    Property<Boolean> getEnabled()
-
     BrewPackager getBrew()
 
     ChocolateyPackager getChocolatey()

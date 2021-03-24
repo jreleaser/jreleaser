@@ -45,7 +45,16 @@ final class Banner {
 
     public static void display(PrintWriter out) {
         try {
-            File parent = new File(System.getProperty("user.home"), "/.jreleaser/caches");
+            File jreleaserDir = new File(System.getProperty("user.home"));
+            String envJreleaserDir = System.getenv("JRELEASER_DIR");
+            if (envJreleaserDir != null && !envJreleaserDir.isEmpty()) {
+                File dir = new File(envJreleaserDir);
+                if (dir.exists()) {
+                    jreleaserDir = dir;
+                }
+            }
+
+            File parent = new File(jreleaserDir, "/.jreleaser/caches");
             File markerFile = getMarkerFile(parent, b);
             if (!markerFile.exists()) {
                 out.println(b.banner);

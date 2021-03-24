@@ -185,7 +185,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             context.getLogger().debug("Setting up commit");
             CommitCommand commitCommand = git.commit()
                 .setAll(true)
-                .setMessage(distribution.getExecutable() + " " + gitService.getTagName())
+                .setMessage(distribution.getExecutable() + " " + gitService.getResolvedTagName(context.getModel().getProject()))
                 .setAuthor(tool.getCommitAuthor().getName(), tool.getCommitAuthor().getEmail());
             commitCommand.setCredentialsProvider(credentialsProvider);
             /*if (gitService.isSign()) {

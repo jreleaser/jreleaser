@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+import static org.jreleaser.sdk.git.GitSdk.REFS_TAGS;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -92,6 +93,13 @@ class Github {
             .getReleaseByTagName(tagName);
     }
 
+    void deleteTag(String repo, String tagName) throws IOException {
+        logger.debug("Deleting tag {} from {}", tagName, repo);
+        github.getRepository(repo)
+            .getRef(REFS_TAGS + tagName)
+            .delete();
+    }
+
     GHReleaseBuilder createRelease(String repo, String tagName) throws IOException {
         logger.debug("Creating release on {} with tag {}", repo, tagName);
         return github.getRepository(repo)
@@ -105,10 +113,10 @@ class Github {
                 continue;
             }
 
-            logger.debug("Uploading asset {}", asset.getFileName().toString());
+            logger.info(" - Uploading {}", asset.getFileName().toString());
             GHAsset ghasset = release.uploadAsset(asset.toFile(), MediaType.parse(tika.detect(asset)).toString());
             if (!"uploaded".equalsIgnoreCase(ghasset.getState())) {
-                logger.warn("Failed to upload " + asset.getFileName());
+                logger.warn(" x Failed to upload {}", asset.getFileName());
             }
         }
     }

@@ -20,6 +20,7 @@ package org.jreleaser.announce;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.announcer.spi.AnnounceException;
+import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.model.announcer.spi.AnnouncerBuilder;
 import org.jreleaser.sdk.sdkman.SdkmanAnnouncer;
 import org.jreleaser.sdk.twitter.TwitterAnnouncer;
@@ -40,10 +41,24 @@ public class Announcers {
         }
 
         context.getLogger().info("Announcing release");
-        for (AnnouncerBuilder announcer : Announcers.findAnnouncers(context)) {
-            announcer.configureWith(context)
-                .build()
-                .announce();
+        for (AnnouncerBuilder builder : Announcers.findAnnouncers(context)) {
+            Announcer announcer = builder.configureWith(context).build();
+
+            context.getLogger().increaseIndent();
+            context.getLogger().setPrefix(announcer.getName());
+
+            if (announcer.isEnabled()) {
+                if (context.getModel().getProject().isSnapshot() && !announcer.isSnapshotSupported()) {
+                    context.getLogger().info("snapshots are not supported. Skipping");
+                } else {
+                    announcer.announce();
+                }
+            } else {
+                context.getLogger().debug("not enabled");
+            }
+
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
         }
     }
 

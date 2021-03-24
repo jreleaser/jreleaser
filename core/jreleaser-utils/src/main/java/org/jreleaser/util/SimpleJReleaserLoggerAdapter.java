@@ -26,7 +26,7 @@ import java.io.PrintWriter;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class SimpleJReleaserLoggerAdapter implements Logger {
+public class SimpleJReleaserLoggerAdapter extends AbstractLogger {
     private final PrintWriter out;
     private final Level level;
 
@@ -58,63 +58,63 @@ public class SimpleJReleaserLoggerAdapter implements Logger {
     @Override
     public void debug(String message) {
         if (isLevelEnabled(Level.DEBUG)) {
-            out.println(Level.DEBUG + message);
+            out.println(Level.DEBUG + formatMessage(message));
         }
     }
 
     @Override
     public void info(String message) {
         if (isLevelEnabled(Level.INFO)) {
-            out.println(Level.INFO + message);
+            out.println(Level.INFO + formatMessage(message));
         }
     }
 
     @Override
     public void warn(String message) {
         if (isLevelEnabled(Level.WARN)) {
-            out.println(Level.WARN + message);
+            out.println(Level.WARN + formatMessage(message));
         }
     }
 
     @Override
     public void error(String message) {
         if (isLevelEnabled(Level.ERROR)) {
-            out.println(Level.ERROR + message);
+            out.println(Level.ERROR + formatMessage(message));
         }
     }
 
     @Override
     public void debug(String message, Object... args) {
         if (isLevelEnabled(Level.DEBUG)) {
-            out.println(Level.DEBUG + MessageFormatter.arrayFormat(message, args).getMessage());
+            out.println(Level.DEBUG + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
         }
     }
 
     @Override
     public void info(String message, Object... args) {
         if (isLevelEnabled(Level.INFO)) {
-            out.println(Level.INFO + MessageFormatter.arrayFormat(message, args).getMessage());
+            out.println(Level.INFO + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
         }
     }
 
     @Override
     public void warn(String message, Object... args) {
         if (isLevelEnabled(Level.WARN)) {
-            out.println(Level.WARN + MessageFormatter.arrayFormat(message, args).getMessage());
+            out.println(Level.WARN + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
         }
     }
 
     @Override
     public void error(String message, Object... args) {
         if (isLevelEnabled(Level.ERROR)) {
-            out.println(Level.ERROR + MessageFormatter.arrayFormat(message, args).getMessage());
+            out.println(Level.ERROR + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
         }
     }
 
     @Override
     public void debug(String message, Throwable throwable) {
         if (isLevelEnabled(Level.DEBUG)) {
-            out.println(Level.DEBUG + message);
+            out.println(Level.DEBUG + formatMessage(message));
             printThrowable(throwable);
         }
     }
@@ -122,7 +122,7 @@ public class SimpleJReleaserLoggerAdapter implements Logger {
     @Override
     public void info(String message, Throwable throwable) {
         if (isLevelEnabled(Level.INFO)) {
-            out.println(Level.INFO + message);
+            out.println(Level.INFO + formatMessage(message));
             printThrowable(throwable);
         }
     }
@@ -130,7 +130,7 @@ public class SimpleJReleaserLoggerAdapter implements Logger {
     @Override
     public void warn(String message, Throwable throwable) {
         if (isLevelEnabled(Level.WARN)) {
-            out.println(Level.WARN + message);
+            out.println(Level.WARN + formatMessage(message));
             printThrowable(throwable);
         }
     }
@@ -138,7 +138,7 @@ public class SimpleJReleaserLoggerAdapter implements Logger {
     @Override
     public void error(String message, Throwable throwable) {
         if (isLevelEnabled(Level.ERROR)) {
-            out.println(Level.ERROR + message);
+            out.println(Level.ERROR + formatMessage(message));
             printThrowable(throwable);
         }
     }

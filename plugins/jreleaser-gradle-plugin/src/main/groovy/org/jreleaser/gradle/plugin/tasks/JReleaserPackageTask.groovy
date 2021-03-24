@@ -45,10 +45,7 @@ abstract class JReleaserPackageTask extends AbstractJReleaserProcessorTask {
 
     static void packageTools(JReleaserContext context, boolean failFast) {
         processContext(context, failFast, 'Packaging', { processor ->
-            if (processor.packageDistribution()) {
-                context.logger.info('Packaged ' + processor.distributionName +
-                    ' distribution with ' + processor.toolName)
-            }
+            processor.packageDistribution()
         })
     }
 }

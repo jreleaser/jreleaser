@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Env;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -62,24 +64,15 @@ public class Signing implements Domain, EnabledProvider {
     }
 
     public String getResolvedPublicKey() {
-        if (isNotBlank(publicKey)) {
-            return publicKey;
-        }
-        return System.getenv(GPG_PUBLIC_KEY);
+        return Env.resolve(GPG_PUBLIC_KEY, publicKey);
     }
 
     public String getResolvedSecretKey() {
-        if (isNotBlank(secretKey)) {
-            return secretKey;
-        }
-        return System.getenv(GPG_SECRET_KEY);
+        return Env.resolve(GPG_SECRET_KEY, secretKey);
     }
 
     public String getResolvedPassphrase() {
-        if (isNotBlank(passphrase)) {
-            return passphrase;
-        }
-        return System.getenv(GPG_PASSPHRASE);
+        return Env.resolve(GPG_PASSPHRASE, passphrase);
     }
 
     public Boolean isArmored() {

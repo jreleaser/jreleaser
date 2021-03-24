@@ -18,14 +18,14 @@
 package org.jreleaser.ant.tasks.internal;
 
 import org.apache.tools.ant.Project;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.AbstractLogger;
 import org.slf4j.helpers.MessageFormatter;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserLoggerAdapter implements Logger {
+public class JReleaserLoggerAdapter extends AbstractLogger {
     private final Project delegate;
 
     public JReleaserLoggerAdapter(Project delegate) {
@@ -34,22 +34,22 @@ public class JReleaserLoggerAdapter implements Logger {
 
     @Override
     public void debug(String message) {
-        delegate.log(message, Project.MSG_DEBUG);
+        delegate.log(formatMessage(message), Project.MSG_DEBUG);
     }
 
     @Override
     public void info(String message) {
-        delegate.log(message, Project.MSG_INFO);
+        delegate.log(formatMessage(message), Project.MSG_INFO);
     }
 
     @Override
     public void warn(String message) {
-        delegate.log(message, Project.MSG_WARN);
+        delegate.log(formatMessage(message), Project.MSG_WARN);
     }
 
     @Override
     public void error(String message) {
-        delegate.log(message, Project.MSG_ERR);
+        delegate.log(formatMessage(message), Project.MSG_ERR);
     }
 
     @Override
@@ -74,21 +74,21 @@ public class JReleaserLoggerAdapter implements Logger {
 
     @Override
     public void debug(String message, Throwable throwable) {
-        delegate.log(message, throwable, Project.MSG_DEBUG);
+        delegate.log(formatMessage(message), throwable, Project.MSG_DEBUG);
     }
 
     @Override
     public void info(String message, Throwable throwable) {
-        delegate.log(message, throwable, Project.MSG_INFO);
+        delegate.log(formatMessage(message), throwable, Project.MSG_INFO);
     }
 
     @Override
     public void warn(String message, Throwable throwable) {
-        delegate.log(message, throwable, Project.MSG_WARN);
+        delegate.log(formatMessage(message), throwable, Project.MSG_WARN);
     }
 
     @Override
     public void error(String message, Throwable throwable) {
-        delegate.log(message, throwable, Project.MSG_ERR);
+        delegate.log(formatMessage(message), throwable, Project.MSG_ERR);
     }
 }

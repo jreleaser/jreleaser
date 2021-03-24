@@ -20,15 +20,9 @@ package org.jreleaser.maven.plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.tool.spi.ToolProcessingException;
-import org.jreleaser.tools.DistributionProcessor;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.jreleaser.tools.Distributions;
+import org.jreleaser.tools.ToolProcessingFunction;
 
 /**
  * @author Andres Almiray
@@ -43,44 +37,6 @@ abstract class AbstractJReleaserProcessorMojo extends AbstractJReleaserMojo {
 
     protected static void processContext(JReleaserContext context, boolean failFast, String action, ToolProcessingFunction function)
         throws MojoExecutionException, MojoFailureException {
-        context.getLogger().info("{} distributions", action);
-        List<Exception> exceptions = new ArrayList<>();
-        for (Distribution distribution : context.getModel().getDistributions().values()) {
-            for (String toolName : Distribution.supportedTools()) {
-                try {
-                    DistributionProcessor processor = createDistributionProcessor(context,
-                        distribution,
-                        toolName);
-
-                    function.consume(processor);
-                } catch (JReleaserException | ToolProcessingException e) {
-                    if (failFast) throw new MojoExecutionException("Unexpected error", e);
-                    exceptions.add(e);
-                    context.getLogger().warn("Unexpected error", e);
-                }
-            }
-        }
-
-        if (!exceptions.isEmpty()) {
-            throw new MojoExecutionException("There were " + exceptions.size() + " failure(s)" +
-                System.lineSeparator() +
-                exceptions.stream()
-                    .map(Exception::getMessage)
-                    .collect(Collectors.joining(System.lineSeparator())));
-        }
-    }
-
-    protected static DistributionProcessor createDistributionProcessor(JReleaserContext context,
-                                                                       Distribution distribution,
-                                                                       String toolName) {
-        return DistributionProcessor.builder()
-            .context(context)
-            .distributionName(distribution.getName())
-            .toolName(toolName)
-            .build();
-    }
-
-    interface ToolProcessingFunction {
-        void consume(DistributionProcessor processor) throws ToolProcessingException;
+        Distributions.process(context, failFast, action, function);
     }
 }

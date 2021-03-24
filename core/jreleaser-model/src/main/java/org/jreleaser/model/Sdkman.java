@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Env;
+
 import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -48,17 +50,11 @@ public class Sdkman extends AbstractAnnouncer {
     }
 
     public String getResolvedConsumerKey() {
-        if (isNotBlank(consumerKey)) {
-            return consumerKey;
-        }
-        return System.getenv(SDKMAN_CONSUMER_KEY);
+        return Env.resolve(SDKMAN_CONSUMER_KEY, consumerKey);
     }
 
     public String getResolvedConsumerToken() {
-        if (isNotBlank(consumerToken)) {
-            return consumerToken;
-        }
-        return System.getenv(SDKMAN_CONSUMER_TOKEN);
+        return Env.resolve(SDKMAN_CONSUMER_TOKEN, consumerToken);
     }
 
     public String getConsumerKey() {

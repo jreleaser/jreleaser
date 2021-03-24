@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Env;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -63,10 +65,9 @@ abstract class AbstractRepositoryTap implements RepositoryTap {
 
     @Override
     public String getResolvedToken(GitService service) {
-        if (isNotBlank(token)) {
-            return token;
-        }
-        return System.getenv(basename.toUpperCase().replaceAll("-", "_") + "_" + service.getName().toUpperCase() + "_TOKEN");
+        return Env.resolve(basename.toUpperCase()
+            .replaceAll("-", "_") + "_"
+            + service.getName().toUpperCase() + "_TOKEN", token);
     }
 
     @Override

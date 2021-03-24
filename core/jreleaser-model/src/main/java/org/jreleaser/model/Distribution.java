@@ -33,10 +33,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Distribution extends Packagers implements ExtraProperties {
+public class Distribution extends Packagers implements ExtraProperties, EnabledProvider {
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final List<Artifact> artifacts = new ArrayList<>();
+    private Boolean enabled;
     private String name;
     private DistributionType type = DistributionType.BINARY;
     private String executable;
@@ -47,6 +48,7 @@ public class Distribution extends Packagers implements ExtraProperties {
 
     void setAll(Distribution distribution) {
         super.setAll(distribution);
+        this.enabled = distribution.enabled;
         this.name = distribution.name;
         this.type = distribution.type;
         this.executable = distribution.executable;
@@ -57,6 +59,21 @@ public class Distribution extends Packagers implements ExtraProperties {
         setTags(distribution.tags);
         setExtraProperties(distribution.extraProperties);
         setArtifacts(distribution.artifacts);
+    }
+
+    @Override
+    public Boolean isEnabled() {
+        return enabled != null && enabled;
+    }
+
+    @Override
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isEnabledSet() {
+        return enabled != null;
     }
 
     @Override
@@ -227,10 +244,10 @@ public class Distribution extends Packagers implements ExtraProperties {
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> props = new LinkedHashMap<>();
+        props.put("enabled", isEnabled());
         props.put("type", type);
         props.put("groupId", groupId);
         props.put("artifactId", artifactId);
-        props.put("enabled", isEnabled());
         props.put("mainClass", mainClass);
         props.put("executable", executable);
         props.put("javaVersion", javaVersion);

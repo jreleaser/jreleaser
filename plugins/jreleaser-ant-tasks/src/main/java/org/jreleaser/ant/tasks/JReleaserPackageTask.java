@@ -19,6 +19,7 @@ package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.tools.DistributionProcessor;
 
 /**
  * @author Andres Almiray
@@ -31,11 +32,6 @@ public class JReleaserPackageTask extends AbstractJReleaserProcessorTask {
     }
 
     static void packageTools(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Packaging", processor -> {
-            if (processor.packageDistribution()) {
-                context.getLogger().info("Packaged " + processor.getDistributionName() +
-                    " distribution with " + processor.getToolName());
-            }
-        });
+        processContext(context, failFast, "Packaging", DistributionProcessor::packageDistribution);
     }
 }

@@ -22,5 +22,11 @@ package org.jreleaser.model.announcer.spi;
  * @since 0.1.0
  */
 public interface Announcer {
+    String getName();
+
+    boolean isEnabled();
+
+    boolean isSnapshotSupported();
+
     void announce() throws AnnounceException;
 }

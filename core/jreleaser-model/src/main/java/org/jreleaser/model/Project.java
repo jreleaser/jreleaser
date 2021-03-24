@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Env;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,7 +32,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class Project implements Domain, ExtraProperties {
-    public static final String JRELEASER_PROJECT_VERSION = "JRELEASER_PROJECT_VERSION";
+    public static final String PROJECT_VERSION = "PROJECT_VERSION";
 
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
@@ -73,10 +75,7 @@ public class Project implements Domain, ExtraProperties {
     }
 
     public String getResolvedVersion() {
-        if (isNotBlank(version)) {
-            return version;
-        }
-        return System.getenv(JRELEASER_PROJECT_VERSION);
+        return Env.resolve(PROJECT_VERSION, version);
     }
 
     public String getName() {

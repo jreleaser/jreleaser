@@ -60,8 +60,10 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         resolveConfigFile();
         resolveBasedir();
         logger.info("Configuring with {}", actualConfigFile);
-        logger.info(" - basedir set to {}", actualBasedir.toAbsolutePath());
-        logger.info(" - dryrun set to {}", dryrun());
+        logger.increaseIndent();
+        logger.info("- basedir set to {}", actualBasedir.toAbsolutePath());
+        logger.info("- dryrun set to {}", dryrun());
+        logger.decreaseIndent();
         consumeModel(resolveModel());
     }
 

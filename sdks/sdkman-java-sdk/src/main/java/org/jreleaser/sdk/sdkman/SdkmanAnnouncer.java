@@ -46,13 +46,23 @@ public class SdkmanAnnouncer implements Announcer {
     }
 
     @Override
+    public String getName() {
+        return "sdkman";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return context.getModel().getAnnounce().getSdkman().isEnabled();
+    }
+
+    @Override
+    public boolean isSnapshotSupported() {
+        return false;
+    }
+
+    @Override
     public void announce() throws AnnounceException {
         Sdkman sdkman = context.getModel().getAnnounce().getSdkman();
-
-        if (!sdkman.isEnabled()) {
-            context.getLogger().debug("Sdkman announcer is disabled");
-            return;
-        }
 
         Map<String, String> platforms = new LinkedHashMap<>();
         // collect artifacts by supported SDKMAN! platform
@@ -85,7 +95,7 @@ public class SdkmanAnnouncer implements Announcer {
             String releaseNotesUrl = context.getModel().getRelease().getGitService().getResolvedReleaseNotesUrl(context.getModel().getProject());
 
             if (sdkman.isMajor()) {
-                context.getLogger().info("Announcing major release on Sdkman: {}", candidate);
+                context.getLogger().info("Announcing major release of '{}' candidate", candidate);
                 MajorReleaseSdkmanCommand.builder(context.getLogger())
                     .consumerKey(sdkman.getResolvedConsumerKey())
                     .consumerToken(sdkman.getResolvedConsumerToken())
@@ -97,7 +107,7 @@ public class SdkmanAnnouncer implements Announcer {
                     .build()
                     .execute();
             } else {
-                context.getLogger().info("Announcing minor release on Sdkman: {}", candidate);
+                context.getLogger().info("Announcing minor release of '{}' candidate", candidate);
                 MinorReleaseSdkmanCommand.builder(context.getLogger())
                     .consumerKey(sdkman.getResolvedConsumerKey())
                     .consumerToken(sdkman.getResolvedConsumerToken())

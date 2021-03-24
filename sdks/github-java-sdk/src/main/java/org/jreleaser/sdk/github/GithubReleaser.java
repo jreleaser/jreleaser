@@ -23,6 +23,7 @@ import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.ChangelogProvider;
+import org.jreleaser.sdk.git.GitSdk;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHRepository;
 
@@ -47,9 +48,12 @@ public class GithubReleaser implements Releaser {
     public void release() throws ReleaseException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
         context.getLogger().info("Releasing to {}", github.getResolvedRepoUrl(context.getModel().getProject()));
-        String tagName = github.getTagName();
+        String tagName = github.getResolvedTagName(context.getModel().getProject());
 
         try {
+            String changelog = ChangelogProvider.getChangelog(context,
+                github.getResolvedCommitUrl(context.getModel().getProject()), github.getChangelog());
+
             Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedToken());
 
             context.getLogger().debug("Looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
@@ -58,9 +62,11 @@ public class GithubReleaser implements Releaser {
                 context.getLogger().debug("Release {} exists", tagName);
                 if (github.isOverwrite()) {
                     context.getLogger().debug("Deleting release {}", tagName);
-                    if (!context.isDryrun()) release.delete();
+                    if (!context.isDryrun()) {
+                        release.delete();
+                    }
                     context.getLogger().debug("Creating release {}", tagName);
-                    createRelease(api, context.isDryrun());
+                    createRelease(api, tagName, changelog, true);
                 } else if (github.isAllowUploadToExisting()) {
                     context.getLogger().debug("Updating release {}", tagName);
                     if (!context.isDryrun()) api.uploadAssets(release, assets);
@@ -71,7 +77,7 @@ public class GithubReleaser implements Releaser {
             } else {
                 context.getLogger().debug("Release {} does not exist", tagName);
                 context.getLogger().debug("Creating release {}", tagName);
-                createRelease(api, context.isDryrun());
+                createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
             }
         } catch (IOException | IllegalStateException e) {
             throw new ReleaseException(e);
@@ -97,12 +103,10 @@ public class GithubReleaser implements Releaser {
             repository.getHttpTransportUrl());
     }
 
-    private void createRelease(Github api, boolean dryrun) throws IOException {
+    private void createRelease(Github api, String tagName, String changelog, boolean deleteTags) throws IOException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
 
-        String changelog = ChangelogProvider.getChangelog(context, github.getResolvedCommitUrl(context.getModel().getProject()), github.getChangelog());
-        context.getLogger().debug("changelog:{}{}", System.lineSeparator(), changelog);
-        if (dryrun) {
+        if (context.isDryrun()) {
             for (Path asset : assets) {
                 if (0 == asset.toFile().length()) {
                     // do not upload empty files
@@ -114,14 +118,41 @@ public class GithubReleaser implements Releaser {
             return;
         }
 
-        GHRelease release = api.createRelease(github.getCanonicalRepoName(), github.getTagName())
+        if (deleteTags) {
+            deleteTags(api, github.getCanonicalRepoName(), tagName);
+        }
+
+        // local tag
+        context.getLogger().debug("Tagging local repository with {}", tagName);
+        GitSdk.of(context).tag(tagName);
+
+        // remote tag/release
+        GHRelease release = api.createRelease(github.getCanonicalRepoName(),
+            github.getResolvedTagName(context.getModel().getProject()))
             .commitish(github.getTargetCommitish())
-            .name(github.getReleaseName())
+            .name(github.getResolvedReleaseName(context.getModel().getProject()))
             .draft(github.isDraft())
             .prerelease(github.isPrerelease())
             .body(changelog)
             .create();
         api.uploadAssets(release, assets);
+    }
+
+    private void deleteTags(Github api, String repo, String tagName) {
+        // delete local tag
+        try {
+            context.getLogger().debug("Delete local tag {}", tagName);
+            GitSdk.of(context).deleteTag(tagName);
+        } catch (IOException ignored) {
+            //noop
+        }
+
+        // delete remote tag
+        try {
+            api.deleteTag(repo, tagName);
+        } catch (IOException ignored) {
+            //noop
+        }
     }
 
     public static Builder builder() {

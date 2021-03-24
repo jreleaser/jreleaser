@@ -183,9 +183,14 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_REPO_OWNER, service.getOwner());
         props.put(Constants.KEY_REPO_NAME, service.getName());
         props.put(Constants.KEY_REPO_BRANCH, service.getBranch());
+        props.put(Constants.KEY_RELEASE_NAME, service.getResolvedReleaseName(project));
+        props.put(Constants.KEY_TAG_NAME, service.getResolvedTagName(project));
         props.put(Constants.KEY_REVERSE_REPO_HOST, service.getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, service.getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, service.getTagName());
+        props.put(Constants.KEY_REPO_URL, service.getResolvedRepoUrl(project));
+        props.put(Constants.KEY_COMMIT_URL, service.getResolvedCommitUrl(project));
+        props.put(Constants.KEY_RELEASE_NOTES_URL, service.getResolvedReleaseNotesUrl(project));
         props.put(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(project));
+        props.put(Constants.KEY_ISSUE_TRACKER_URL, service.getResolvedIssueTrackerUrl(project));
     }
 }

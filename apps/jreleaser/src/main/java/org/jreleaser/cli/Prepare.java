@@ -19,6 +19,7 @@ package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.tools.DistributionProcessor;
 import picocli.CommandLine;
 
 import static org.jreleaser.cli.Checksum.checksum;
@@ -38,11 +39,6 @@ public class Prepare extends AbstractProcessorCommand {
     }
 
     static void prepare(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Preparing", processor -> {
-            if (processor.prepareDistribution()) {
-                context.getLogger().info("Prepared " + processor.getDistributionName() +
-                    " distribution with " + processor.getToolName());
-            }
-        });
+        processContext(context, failFast, "Preparing", DistributionProcessor::prepareDistribution);
     }
 }
