@@ -37,7 +37,8 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
-import org.jreleaser.signer.internal.InMemoryKeyring;
+import org.jreleaser.util.signing.InMemoryKeyring;
+import org.jreleaser.util.signing.SigningException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

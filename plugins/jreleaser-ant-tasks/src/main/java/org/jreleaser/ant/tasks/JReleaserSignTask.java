@@ -21,7 +21,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.signer.Signer;
-import org.jreleaser.signer.SigningException;
+import org.jreleaser.util.signing.SigningException;
 
 import static org.jreleaser.ant.tasks.JReleaserChecksumTask.checksum;
 

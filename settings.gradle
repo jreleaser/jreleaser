@@ -73,6 +73,8 @@ enforce {
             "jakarta.activation:jakarta.activation-api:1.2.2",
             "org.yaml:snakeyaml:$snakeYamlVersion",
             "info.picocli:picocli:$picocliVersion",
-            "com.google.guava:guava:$guavaVersion"
+            "com.google.guava:guava:$guavaVersion",
+            "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion",
+            "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion"
     }
 }

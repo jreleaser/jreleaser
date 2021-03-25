@@ -51,7 +51,6 @@ abstract class AbstractGitService implements GitService {
     final Property<String> tagName
     final Property<String> releaseName
     final Property<Boolean> sign
-    final Property<String> signingKey
     final Property<String> apiEndpoint
     final Property<Boolean> overwrite
     final Property<Boolean> allowUploadToExisting
@@ -74,7 +73,6 @@ abstract class AbstractGitService implements GitService {
         tagName = objects.property(String).convention(Providers.notDefined())
         releaseName = objects.property(String).convention(Providers.notDefined())
         sign = objects.property(Boolean).convention(Providers.notDefined())
-        signingKey = objects.property(String).convention(Providers.notDefined())
         apiEndpoint = objects.property(String).convention(Providers.notDefined())
         overwrite = objects.property(Boolean).convention(Providers.notDefined())
         allowUploadToExisting = objects.property(Boolean).convention(Providers.notDefined())
@@ -97,7 +95,6 @@ abstract class AbstractGitService implements GitService {
             tagName.present ||
             releaseName.present ||
             sign.present ||
-            signingKey.present ||
             apiEndpoint.present ||
             overwrite.present ||
             allowUploadToExisting.present
@@ -128,7 +125,6 @@ abstract class AbstractGitService implements GitService {
         if (token.present) service.token = token.get()
         if (tagName.present) service.tagName = tagName.get()
         if (releaseName.present) service.releaseName = releaseName.get()
-        if (signingKey.present) service.signingKey = signingKey.get()
         if (apiEndpoint.present) service.apiEndpoint = apiEndpoint.get()
         service.sign = sign.getOrElse(false)
         service.overwrite = overwrite.getOrElse(false)

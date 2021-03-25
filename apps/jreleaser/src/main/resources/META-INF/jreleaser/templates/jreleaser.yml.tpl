@@ -6,13 +6,13 @@ project:
   longDescription: Awesome App
   website: https://acme.com/app
   authors:
-    - Joe Cool
+    - Duke
   license: Apache-2
   javaVersion: 8
 
 release:
   github:
-    owner: joecool
+    owner: duke
 
 distributions:
   app:

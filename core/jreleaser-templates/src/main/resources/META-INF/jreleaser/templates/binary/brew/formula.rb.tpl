@@ -1,6 +1,7 @@
 class {{projectNameCapitalized}} < Formula
   desc "{{projectDescription}}"
   homepage "{{projectWebsite}}"
+  version "{{projectVersion}}"
   url "{{distributionUrl}}"
   sha256 "{{distributionSha256}}"
   license "{{projectLicense}}"

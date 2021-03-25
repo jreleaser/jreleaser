@@ -43,13 +43,17 @@ interface SnapPackager extends PackagerTool {
 
     ListProperty<String> getLocalPlugs()
 
+    ListProperty<String> getLocalSlots()
+
     NamedDomainObjectContainer<Plug> getPlugs()
 
     NamedDomainObjectContainer<Slot> getSlots()
 
     void addLocalPlug(String plug)
 
-    Tap getTap()
+    void addLocalSlot(String slot)
 
-    void tap(Action<? super Tap> tap)
+    Tap getSnap()
+
+    void snap(Action<? super Tap> tap)
 }

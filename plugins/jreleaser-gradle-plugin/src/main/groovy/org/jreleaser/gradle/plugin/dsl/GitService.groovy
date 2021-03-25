@@ -56,8 +56,6 @@ interface GitService extends Releaser {
 
     Property<Boolean> getSign()
 
-    Property<String> getSigningKey()
-
     Property<String> getApiEndpoint()
 
     Property<Boolean> getAllowUploadToExisting()

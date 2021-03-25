@@ -70,10 +70,10 @@ public final class JReleaserModelValidator {
 
     private static void validateModel(Logger logger, Path basedir, JReleaserModel model, List<String> errors) {
         validateProject(logger, basedir, model.getProject(), errors);
-        validateRelease(logger, basedir, model.getProject(), model.getRelease(), errors);
+        validateSign(logger, basedir, model, model.getSign(), errors);
+        validateRelease(logger, basedir, model, model.getRelease(), errors);
         validatePackagers(logger, basedir, model, model.getPackagers(), errors);
         validateAnnouncers(logger, basedir, model, model.getAnnounce(), errors);
-        validateSign(logger, basedir, model, model.getSign(), errors);
         validateDistributions(logger, basedir, model, model.getDistributions(), errors);
     }
 
@@ -113,11 +113,11 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void validateRelease(Logger logger, Path basedir, Project project, Release release, List<String> errors) {
+    private static void validateRelease(Logger logger, Path basedir, JReleaserModel model, Release release, List<String> errors) {
         int count = 0;
-        if (validateGithub(logger, basedir, project, release.getGithub(), errors)) count++;
-        if (validateGitlab(logger, basedir, project, release.getGitlab(), errors)) count++;
-        if (validateGitea(logger, basedir, project, release.getGitea(), errors)) count++;
+        if (validateGithub(logger, basedir, model, release.getGithub(), errors)) count++;
+        if (validateGitlab(logger, basedir, model, release.getGitlab(), errors)) count++;
+        if (validateGitea(logger, basedir, model, release.getGitea(), errors)) count++;
 
         if (0 == count) {
             errors.add("No release provider has been configured");
@@ -142,7 +142,7 @@ public final class JReleaserModelValidator {
         validateOwner(packagers.getScoop().getBucket(), model.getRelease().getGitService());
 
         validateCommitAuthor(packagers.getSnap(), model.getRelease().getGitService());
-        validateOwner(packagers.getSnap().getTap(), model.getRelease().getGitService());
+        validateOwner(packagers.getSnap().getSnap(), model.getRelease().getGitService());
     }
 
     private static void validateAnnouncers(Logger logger, Path basedir, JReleaserModel model, Announce announce, List<String> errors) {
@@ -207,7 +207,9 @@ public final class JReleaserModelValidator {
         Env.check(GPG_SECRET_KEY, signing.getSecretKey(), "signing.secretKey", errors);
     }
 
-    private static void validateGitService(Logger logger, Path basedir, Project project, GitService service, List<String> errors) {
+    private static void validateGitService(Logger logger, Path basedir, JReleaserModel model, GitService service, List<String> errors) {
+        Project project = model.getProject();
+
         if (!service.isEnabledSet()) {
             service.setEnabled(true);
         }
@@ -232,8 +234,8 @@ public final class JReleaserModelValidator {
         if (!service.getChangelog().isEnabledSet()) {
             service.getChangelog().setEnabled(true);
         }
-        if (service.isSign() && isBlank(service.getSigningKey())) {
-            errors.add(service.getServiceName() + ".signingKey must not be blank if sign is set to `true`");
+        if (service.isSign() && !model.getSign().isEnabled()) {
+            errors.add(service.getServiceName() + ".sign is set to `true` but signing is not enabled");
         }
         if (isBlank(service.getCommitAuthor().getName())) {
             service.getCommitAuthor().setName("jreleaser-bot");
@@ -244,35 +246,35 @@ public final class JReleaserModelValidator {
 
         if (project.isSnapshot()) {
             service.setReleaseName(StringUtils.capitalize(project.getName()) + " Early-Access");
-            service.setTagName("early-access");
             service.getChangelog().setExternal(null);
             service.getChangelog().setSort(Changelog.Sort.DESC);
             service.setOverwrite(true);
         }
 
-        service.getResolvedTagName(project);
+        // eager resolve
+        service.getEffectiveTagName(project);
     }
 
-    private static boolean validateGithub(Logger logger, Path basedir, Project project, Github github, List<String> errors) {
+    private static boolean validateGithub(Logger logger, Path basedir, JReleaserModel model, Github github, List<String> errors) {
         if (null == github) return false;
 
-        validateGitService(logger, basedir, project, github, errors);
+        validateGitService(logger, basedir, model, github, errors);
 
         if (isBlank(github.getTargetCommitish())) {
             github.setTargetCommitish("main");
         }
 
-        if (project.isSnapshot()) {
+        if (model.getProject().isSnapshot()) {
             github.setPrerelease(true);
         }
 
         return github.isEnabled();
     }
 
-    private static boolean validateGitlab(Logger logger, Path basedir, Project project, Gitlab gitlab, List<String> errors) {
+    private static boolean validateGitlab(Logger logger, Path basedir, JReleaserModel model, Gitlab gitlab, List<String> errors) {
         if (null == gitlab) return false;
 
-        validateGitService(logger, basedir, project, gitlab, errors);
+        validateGitService(logger, basedir, model, gitlab, errors);
 
         if (isBlank(gitlab.getRef())) {
             gitlab.setRef("main");
@@ -281,16 +283,16 @@ public final class JReleaserModelValidator {
         return gitlab.isEnabled();
     }
 
-    private static boolean validateGitea(Logger logger, Path basedir, Project project, Gitea gitea, List<String> errors) {
+    private static boolean validateGitea(Logger logger, Path basedir, JReleaserModel model, Gitea gitea, List<String> errors) {
         if (null == gitea) return false;
 
-        validateGitService(logger, basedir, project, gitea, errors);
+        validateGitService(logger, basedir, model, gitea, errors);
 
         if (isBlank(gitea.getTargetCommitish())) {
             gitea.setTargetCommitish("main");
         }
 
-        if (project.isSnapshot()) {
+        if (model.getProject().isSnapshot()) {
             gitea.setPrerelease(true);
         }
 
@@ -442,9 +444,9 @@ public final class JReleaserModelValidator {
         }
 
         if (isBlank(tool.getBucket().getName())) {
-            tool.getBucket().setName(distribution.getName() + "-bucket");
+            tool.getBucket().setName(distribution.getName() + "-chocolatey-bucket");
         }
-        tool.getBucket().setBasename(distribution.getName() + "-bucket");
+        tool.getBucket().setBasename(distribution.getName() + "-chocolatey-bucket");
         if (isBlank(tool.getBucket().getUsername())) {
             tool.getBucket().setUsername(model.getPackagers().getChocolatey().getBucket().getUsername());
         }
@@ -524,8 +526,9 @@ public final class JReleaserModelValidator {
         }
 
         if (isBlank(tool.getBucket().getName())) {
-            tool.getBucket().setName(model.getPackagers().getScoop().getBucket().getName());
+            tool.getBucket().setName(distribution.getName() + "-scoop-bucket");
         }
+        tool.getBucket().setBasename(distribution.getName() + "-scoop-bucket");
         if (isBlank(tool.getBucket().getUsername())) {
             tool.getBucket().setUsername(model.getPackagers().getScoop().getBucket().getUsername());
         }
@@ -541,7 +544,7 @@ public final class JReleaserModelValidator {
         if (!tool.isEnabled()) return;
 
         validateCommitAuthor(tool, model.getPackagers().getSnap());
-        validateOwner(tool.getTap(), model.getPackagers().getSnap().getTap());
+        validateOwner(tool.getSnap(), model.getPackagers().getSnap().getSnap());
         validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getSnap(), errors);
         Snap commonSnap = model.getPackagers().getSnap();
         mergeExtraProperties(tool, model.getPackagers().getSnap());
@@ -578,15 +581,15 @@ public final class JReleaserModelValidator {
             }
         }
 
-        if (isBlank(tool.getTap().getName())) {
-            tool.getTap().setName(distribution.getName() + "-snap");
+        if (isBlank(tool.getSnap().getName())) {
+            tool.getSnap().setName(distribution.getName() + "-snap");
         }
-        tool.getTap().setBasename(distribution.getName() + "-snap");
-        if (isBlank(tool.getTap().getUsername())) {
-            tool.getTap().setUsername(model.getPackagers().getSnap().getTap().getUsername());
+        tool.getSnap().setBasename(distribution.getName() + "-snap");
+        if (isBlank(tool.getSnap().getUsername())) {
+            tool.getSnap().setUsername(model.getPackagers().getSnap().getSnap().getUsername());
         }
-        if (isBlank(tool.getTap().getToken())) {
-            tool.getTap().setToken(model.getPackagers().getSnap().getTap().getToken());
+        if (isBlank(tool.getSnap().getToken())) {
+            tool.getSnap().setToken(model.getPackagers().getSnap().getSnap().getToken());
         }
     }
 

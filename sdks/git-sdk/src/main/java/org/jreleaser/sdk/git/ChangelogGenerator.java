@@ -99,7 +99,7 @@ public class ChangelogGenerator {
         List<Ref> tags = git.tagList().call();
         tags.sort(new GitSdk.TagComparator().reversed());
 
-        String tagName = context.getModel().getRelease().getGitService().getTagName();
+        String tagName = context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel().getProject());
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
 
         context.getLogger().debug("Looking for tags that match '{}'", tagPattern);

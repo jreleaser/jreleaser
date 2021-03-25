@@ -32,6 +32,7 @@ import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.releaser.Releasers;
+import org.jreleaser.sdk.git.InMemoryGpgSigner;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
@@ -93,22 +94,30 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             context.getLogger().debug("Creating props for {}/{}", distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
-                context.getLogger().warn("Skipping {} for {} distribution", getToolName(), distributionName);
+                context.getLogger().warn("Skipping {} distribution", distributionName);
                 return false;
             }
+
             context.getLogger().debug("Resolving templates for {}/{}", distributionName, getToolName());
             Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
                 distribution.getType(),
                 getToolName(),
                 context.getModel().getProject().isSnapshot(),
                 context.getBasedir().resolve(getTool().getTemplateDirectory()));
+
             for (Map.Entry<String, Reader> entry : templates.entrySet()) {
                 context.getLogger().debug("Evaluating template {} for {}/{}", entry.getKey(), distributionName, getToolName());
                 String content = applyTemplate(entry.getValue(), newProps);
                 context.getLogger().debug("Writing template {} for {}/{}", entry.getKey(), distributionName, getToolName());
                 writeFile(context.getModel().getProject(), distribution, content, newProps, entry.getKey());
             }
-        } catch (IllegalArgumentException e) {
+
+            context.getLogger().debug("Copying license files");
+            Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+            FileUtils.copyFiles(context.getLogger(),
+                context.getBasedir(),
+                outputDirectory, path -> path.getFileName().startsWith("LICENSE"));
+        } catch (IllegalArgumentException | IOException e) {
             throw new ToolProcessingException(e);
         }
 
@@ -122,7 +131,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             context.getLogger().debug("Creating props for {}/{}", distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
-                context.getLogger().warn("Skipping {} for {} distribution", getToolName(), distributionName);
+                context.getLogger().warn("Skipping {} distribution", distributionName);
                 return false;
             }
             return doPackageDistribution(distribution, newProps);
@@ -138,7 +147,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             context.getLogger().debug("Creating props for {}/{}", distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
-                context.getLogger().warn("Skipping {} for {} distribution", getToolName(), distributionName);
+                context.getLogger().warn("Skipping {} distribution", distributionName);
                 return false;
             }
             return doUploadDistribution(distribution, newProps);
@@ -188,11 +197,13 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 .setMessage(distribution.getExecutable() + " " + gitService.getResolvedTagName(context.getModel().getProject()))
                 .setAuthor(tool.getCommitAuthor().getName(), tool.getCommitAuthor().getEmail());
             commitCommand.setCredentialsProvider(credentialsProvider);
-            /*if (gitService.isSign()) {
+            if (gitService.isSign()) {
                 commitCommand = commitCommand
                     .setSign(true)
-                    .setSigningKey(gitService.getSigningKey());
-            }*/
+                    .setSigningKey("**********")
+                    .setGpgSigner(new InMemoryGpgSigner(context));
+            }
+
             commitCommand.call();
 
             // push commit
@@ -214,7 +225,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
         context.getLogger().debug("Copying files from {}", context.getBasedir().relativize(packageDirectory));
 
-        if (!FileUtils.copyFiles(context.getLogger(), packageDirectory, directory)) {
+        if (!FileUtils.copyFilesRecursive(context.getLogger(), packageDirectory, directory)) {
             throw new IOException("Could not copy files from " +
                 context.getBasedir().relativize(packageDirectory));
         }
@@ -276,9 +287,6 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_ID, distribution.getArtifactId());
         props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", distribution.getTags()));
         props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", distribution.getTags()));
-        props.put(Constants.KEY_DISTRIBUTION_RELEASE_NOTES, applyTemplate(new StringReader(release.getGitService().getReleaseNotesUrlFormat()), props));
-        props.put(Constants.KEY_DISTRIBUTION_ISSUE_TRACKER, applyTemplate(new StringReader(release.getGitService().getIssueTrackerUrlFormat()), props));
-        props.put(Constants.KEY_DISTRIBUTION_LATEST_RELEASE, applyTemplate(new StringReader(release.getGitService().getLatestReleaseUrlFormat()), props));
         props.putAll(distribution.getResolvedExtraProperties());
     }
 
@@ -312,7 +320,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
         Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
         try {
-            if (!FileUtils.copyFiles(context.getLogger(), prepareDirectory, packageDirectory)) {
+            if (!FileUtils.copyFilesRecursive(context.getLogger(), prepareDirectory, packageDirectory)) {
                 throw new ToolProcessingException("Could not copy files from " +
                     context.getBasedir().relativize(prepareDirectory) + " to " +
                     context.getBasedir().relativize(packageDirectory));
@@ -340,15 +348,15 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
         for (int i = 0; i < artifacts.size(); i++) {
             Artifact artifact = artifacts.get(i);
-            String classifier = isNotBlank(artifact.getPlatform()) ? capitalize(artifact.getPlatform()) : "";
+            String platform = isNotBlank(artifact.getPlatform()) ? capitalize(artifact.getPlatform()) : "";
             String artifactFileName = Paths.get(artifact.getPath()).getFileName().toString();
-            props.put("artifact" + classifier + "JavaVersion", artifact.getJavaVersion());
-            props.put("artifact" + classifier + "FileName", artifactFileName);
-            props.put("artifact" + classifier + "Hash", artifact.getHash());
+            props.put("artifact" + platform + "JavaVersion", artifact.getJavaVersion());
+            props.put("artifact" + platform + "FileName", artifactFileName);
+            props.put("artifact" + platform + "Hash", artifact.getHash());
             Map<String, Object> newProps = new LinkedHashMap<>(props);
             newProps.put("artifactFileName", artifactFileName);
             String artifactUrl = applyTemplate(new StringReader(context.getModel().getRelease().getGitService().getDownloadUrlFormat()), newProps, "downloadUrl");
-            props.put("artifact" + classifier + "Url", artifactUrl);
+            props.put("artifact" + platform + "Url", artifactUrl);
 
             if (0 == i) {
                 props.put(Constants.KEY_DISTRIBUTION_URL, artifactUrl);

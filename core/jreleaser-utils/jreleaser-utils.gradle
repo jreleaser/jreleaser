@@ -21,4 +21,5 @@ dependencies {
     api "org.slf4j:slf4j-api:$slf4jVersion"
     api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
 }

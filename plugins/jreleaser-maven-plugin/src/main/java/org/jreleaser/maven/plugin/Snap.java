@@ -31,6 +31,7 @@ public class Snap extends AbstractTool {
     public static final String NAME = "snap";
 
     private final List<String> localPlugs = new ArrayList<>();
+    private final List<String> localSlots = new ArrayList<>();
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
     private String base = "core18";
@@ -38,7 +39,7 @@ public class Snap extends AbstractTool {
     private String confinement = "strict";
     private File exportedLogin;
     private Boolean remoteBuild;
-    private Tap tap = new Tap();
+    private Tap snap = new Tap();
 
     public Snap() {
         super(NAME);
@@ -52,9 +53,10 @@ public class Snap extends AbstractTool {
         this.exportedLogin = snap.exportedLogin;
         this.remoteBuild = snap.remoteBuild;
         setLocalPlugs(localPlugs);
+        setLocalSlots(localSlots);
         setPlugs(plugs);
         setSlots(slots);
-        this.tap.setAll(snap.tap);
+        this.snap.setAll(snap.snap);
     }
 
     public String getBase() {
@@ -103,6 +105,31 @@ public class Snap extends AbstractTool {
     public void removeLocalPlug(String localPlug) {
         if (isNotBlank(localPlug)) {
             this.localPlugs.remove(localPlug.trim());
+        }
+    }
+
+    public List<String> getLocalSlots() {
+        return localSlots;
+    }
+
+    public void setLocalSlots(List<String> localSlots) {
+        this.localSlots.clear();
+        this.localSlots.addAll(localSlots);
+    }
+
+    public void addLocalSlots(List<String> localSlots) {
+        this.localSlots.addAll(localSlots);
+    }
+
+    public void addLocalSlot(String localSlot) {
+        if (isNotBlank(localSlot)) {
+            this.localSlots.add(localSlot.trim());
+        }
+    }
+
+    public void removeLocalSlot(String localSlot) {
+        if (isNotBlank(localSlot)) {
+            this.localSlots.remove(localSlot.trim());
         }
     }
 
@@ -176,12 +203,12 @@ public class Snap extends AbstractTool {
         this.remoteBuild = remoteBuild;
     }
 
-    public Tap getTap() {
-        return tap;
+    public Tap getSnap() {
+        return snap;
     }
 
-    public void setTap(Tap tap) {
-        this.tap = tap;
+    public void setSnap(Tap snap) {
+        this.snap = snap;
     }
 
     @Override
@@ -195,6 +222,6 @@ public class Snap extends AbstractTool {
             !localPlugs.isEmpty() ||
             !plugs.isEmpty() ||
             !slots.isEmpty() ||
-            tap.isSet();
+            snap.isSet();
     }
 }

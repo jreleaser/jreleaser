@@ -55,11 +55,16 @@ public class GitSdk {
     }
 
     public void tag(String tagName) throws IOException {
+        tag(tagName, false);
+    }
+
+    public void tag(String tagName, boolean force) throws IOException {
         Git git = open();
 
         try {
             git.tag()
                 .setName(tagName)
+                .setForceUpdate(force)
                 .call();
         } catch (GitAPIException e) {
             throw new IOException("Could not create tag " + tagName, e);

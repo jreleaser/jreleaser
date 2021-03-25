@@ -57,7 +57,6 @@ public class Zulip extends AbstractAnnouncer {
 
     public String getResolvedSubject(JReleaserModel model) {
         Map<String, Object> props = model.props();
-        //model.getRelease().getGitService().fillProps(props, model.getProject());
         return applyTemplate(new StringReader(subject), props);
     }
 

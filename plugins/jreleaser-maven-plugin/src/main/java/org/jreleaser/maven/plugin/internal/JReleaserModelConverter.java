@@ -148,7 +148,6 @@ public final class JReleaserModelConverter {
         if (isNotBlank(service.getReleaseName())) s.setReleaseName(service.getReleaseName());
         s.setCommitAuthor(convertCommitAuthor(service.getCommitAuthor()));
         s.setSign(service.isSign());
-        s.setSigningKey(service.getSigningKey());
         s.setOverwrite(service.isOverwrite());
         s.setAllowUploadToExisting(service.isAllowUploadToExisting());
         s.setApiEndpoint(service.getApiEndpoint());
@@ -380,9 +379,10 @@ public final class JReleaserModelConverter {
         if (null != snap.getExportedLogin()) t.setExportedLogin(snap.getExportedLogin().getAbsolutePath());
         t.setRemoteBuild(snap.isRemoteBuild());
         t.setLocalPlugs(snap.getLocalPlugs());
+        t.setLocalSlots(snap.getLocalSlots());
         t.setPlugs(convertPlugs(snap.getPlugs()));
         t.setSlots(convertSlots(snap.getSlots()));
-        t.setTap(convertSnapTap(snap.getTap()));
+        t.setSnap(convertSnapTap(snap.getSnap()));
         t.setCommitAuthor(convertCommitAuthor(snap.getCommitAuthor()));
         return t;
     }

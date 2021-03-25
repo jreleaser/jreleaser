@@ -23,7 +23,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.signer.Signer;
-import org.jreleaser.signer.SigningException;
+import org.jreleaser.util.signing.SigningException;
 
 import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
 

@@ -55,6 +55,7 @@ public class TwitterAnnouncer implements Announcer {
 
         String status = twitter.getResolvedStatus(context.getModel());
         context.getLogger().info("Tweeting: {}", status);
+        context.getLogger().debug("status is {} chars long", status.length());
 
         try {
             UpdateStatusTwitterCommand.builder(context.getLogger())

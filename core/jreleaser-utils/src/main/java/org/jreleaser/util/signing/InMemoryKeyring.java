@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.signer.internal;
+package org.jreleaser.util.signing;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -26,7 +26,6 @@ import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.operator.KeyFingerPrintCalculator;
 import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
-import org.jreleaser.signer.SigningException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

@@ -35,11 +35,10 @@ public abstract class GitService implements Releaser {
     private String issueTrackerUrlFormat;
     private String username;
     private String token;
-    private String tagName = "v{{projectVersion}}";
+    private String tagName;
     private String releaseName;
     private CommitAuthor commitAuthor = new CommitAuthor();
     private boolean sign;
-    private String signingKey;
     private Changelog changelog = new Changelog();
     private boolean overwrite;
     private boolean allowUploadToExisting;
@@ -71,7 +70,6 @@ public abstract class GitService implements Releaser {
         this.releaseName = service.releaseName;
         this.commitAuthor.setAll(service.commitAuthor);
         this.sign = service.sign;
-        this.signingKey = service.signingKey;
         this.overwrite = service.overwrite;
         this.allowUploadToExisting = service.allowUploadToExisting;
         this.apiEndpoint = service.apiEndpoint;
@@ -211,14 +209,6 @@ public abstract class GitService implements Releaser {
 
     public void setSign(boolean sign) {
         this.sign = sign;
-    }
-
-    public String getSigningKey() {
-        return signingKey;
-    }
-
-    public void setSigningKey(String signingKey) {
-        this.signingKey = signingKey;
     }
 
     public Changelog getChangelog() {

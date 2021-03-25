@@ -61,9 +61,6 @@ public interface Constants {
     String KEY_DISTRIBUTION_EXECUTABLE = "distributionExecutable";
     String KEY_DISTRIBUTION_TAGS_BY_SPACE = "distributionTagsBySpace";
     String KEY_DISTRIBUTION_TAGS_BY_COMMA = "distributionTagsByComma";
-    String KEY_DISTRIBUTION_RELEASE_NOTES = "distributionReleaseNotes";
-    String KEY_DISTRIBUTION_ISSUE_TRACKER = "distributionIssueTracker";
-    String KEY_DISTRIBUTION_LATEST_RELEASE = "distributionLatestRelease";
     String KEY_DISTRIBUTION_JAVA_VERSION = "distributionJavaVersion";
     String KEY_DISTRIBUTION_URL = "distributionUrl";
     String KEY_DISTRIBUTION_SHA_256 = "distributionSha256";
@@ -99,6 +96,8 @@ public interface Constants {
     String KEY_SNAP_SLOTS = "snapSlots";
     String KEY_SNAP_HAS_LOCAL_PLUGS = "snapHasLocalPlugs";
     String KEY_SNAP_LOCAL_PLUGS = "snapLocalPlugs";
+    String KEY_SNAP_HAS_LOCAL_SLOTS = "snapHasLocalSlots";
+    String KEY_SNAP_LOCAL_SLOTS = "snapLocalSlots";
 
     // ToolProcessor
     String KEY_CHECKSUM_DIRECTORY = "__CHECKSUM_DIRECTORY__";

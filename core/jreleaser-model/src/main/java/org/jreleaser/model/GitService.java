@@ -34,6 +34,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class GitService implements Releaser, CommitAuthorProvider, OwnerProvider {
+    private static final String TAG_EARLY_ACCESS = "early-access";
+
     private final String serviceName;
     protected Boolean enabled;
     private String host;
@@ -51,11 +53,11 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private String releaseName = "Release {{tagName}}";
     private CommitAuthor commitAuthor = new CommitAuthor();
     private boolean sign;
-    private String signingKey;
     private Changelog changelog = new Changelog();
     private boolean overwrite;
     private boolean allowUploadToExisting;
     private String apiEndpoint;
+
     private String cachedTagName;
 
     protected GitService(String serviceName) {
@@ -83,7 +85,6 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
         this.sign = service.sign;
-        this.signingKey = service.signingKey;
         this.overwrite = service.overwrite;
         this.allowUploadToExisting = service.allowUploadToExisting;
         this.apiEndpoint = service.apiEndpoint;
@@ -107,7 +108,16 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         if (isBlank(cachedTagName)) {
             cachedTagName = applyTemplate(new StringReader(tagName), props(project));
         }
+
         return cachedTagName;
+    }
+
+    public String getEffectiveTagName(Project project) {
+        if (project.isSnapshot()) {
+            return TAG_EARLY_ACCESS;
+        }
+
+        return getResolvedTagName(project);
     }
 
     public String getResolvedReleaseName(Project project) {
@@ -284,14 +294,6 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.sign = sign;
     }
 
-    public String getSigningKey() {
-        return signingKey;
-    }
-
-    public void setSigningKey(String signingKey) {
-        this.signingKey = signingKey;
-    }
-
     public Changelog getChangelog() {
         return changelog;
     }
@@ -343,7 +345,6 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("releaseName", releaseName);
         map.put("commitAuthor", commitAuthor.asMap());
         map.put("sign", sign);
-        map.put("signingKey", isNotBlank(signingKey) ? "************" : "**unset**");
         map.put("overwrite", overwrite);
         map.put("allowUploadToExisting", allowUploadToExisting);
         map.put("apiEndpoint", apiEndpoint);
@@ -353,6 +354,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
 
 
     private Map<String, Object> props(Project project) {
+        // duplicate from JReleaserModel to avoid endless recursion
         Map<String, Object> props = new LinkedHashMap<>();
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
@@ -371,7 +373,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         props.put(Constants.KEY_REPO_BRANCH, getBranch());
         props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, cachedTagName);
+        props.put(Constants.KEY_TAG_NAME, project.isSnapshot() ? TAG_EARLY_ACCESS : cachedTagName);
         return props;
     }
 
@@ -382,7 +384,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         props.put(Constants.KEY_REPO_BRANCH, getBranch());
         props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, getResolvedTagName(project));
+        props.put(Constants.KEY_TAG_NAME, getEffectiveTagName(project));
         props.put(Constants.KEY_RELEASE_NAME, getResolvedReleaseName(project));
         props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(project));
         props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(project));

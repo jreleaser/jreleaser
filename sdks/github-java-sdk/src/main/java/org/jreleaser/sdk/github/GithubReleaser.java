@@ -48,7 +48,7 @@ public class GithubReleaser implements Releaser {
     public void release() throws ReleaseException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
         context.getLogger().info("Releasing to {}", github.getResolvedRepoUrl(context.getModel().getProject()));
-        String tagName = github.getResolvedTagName(context.getModel().getProject());
+        String tagName = github.getEffectiveTagName(context.getModel().getProject());
 
         try {
             String changelog = ChangelogProvider.getChangelog(context,
@@ -124,11 +124,11 @@ public class GithubReleaser implements Releaser {
 
         // local tag
         context.getLogger().debug("Tagging local repository with {}", tagName);
-        GitSdk.of(context).tag(tagName);
+        GitSdk.of(context).tag(tagName, deleteTags);
 
         // remote tag/release
         GHRelease release = api.createRelease(github.getCanonicalRepoName(),
-            github.getResolvedTagName(context.getModel().getProject()))
+            github.getEffectiveTagName(context.getModel().getProject()))
             .commitish(github.getTargetCommitish())
             .name(github.getResolvedReleaseName(context.getModel().getProject()))
             .draft(github.isDraft())
@@ -140,12 +140,12 @@ public class GithubReleaser implements Releaser {
 
     private void deleteTags(Github api, String repo, String tagName) {
         // delete local tag
-        try {
-            context.getLogger().debug("Delete local tag {}", tagName);
-            GitSdk.of(context).deleteTag(tagName);
-        } catch (IOException ignored) {
-            //noop
-        }
+        // try {
+        //     context.getLogger().debug("Delete local tag {}", tagName);
+        //     GitSdk.of(context).deleteTag(tagName);
+        // } catch (IOException ignored) {
+        //     //noop
+        // }
 
         // delete remote tag
         try {

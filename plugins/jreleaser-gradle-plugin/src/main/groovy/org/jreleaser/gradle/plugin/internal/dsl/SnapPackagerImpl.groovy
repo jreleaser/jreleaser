@@ -49,9 +49,10 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
     final Property<String> confinement
     final RegularFileProperty exportedLogin
     final Property<Boolean> remoteBuild
-    final TapImpl tap
+    final TapImpl snap
     final CommitAuthorImpl commitAuthor
     final ListProperty<String> localPlugs
+    final ListProperty<String> localSlots
     final NamedDomainObjectContainer<PlugImpl> plugs
     final NamedDomainObjectContainer<SlotImpl> slots
 
@@ -64,7 +65,8 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
         exportedLogin = objects.fileProperty().convention(Providers.notDefined())
         remoteBuild = objects.property(Boolean).convention(Providers.notDefined())
         localPlugs = objects.listProperty(String).convention(Providers.notDefined())
-        tap = objects.newInstance(TapImpl, objects)
+        localSlots = objects.listProperty(String).convention(Providers.notDefined())
+        snap = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
 
         plugs = objects.domainObjectContainer(PlugImpl, new NamedDomainObjectFactory<PlugImpl>() {
@@ -97,6 +99,13 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
     }
 
     @Override
+    void addLocalSlot(String slot) {
+        if (isNotBlank(slot)) {
+            localSlots.add(slot.trim())
+        }
+    }
+
+    @Override
     boolean isSet() {
         super.isSet() ||
             base.present ||
@@ -105,15 +114,16 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
             exportedLogin.present ||
             remoteBuild.present ||
             localPlugs.present ||
+            localSlots.present ||
             plugs.size() ||
             slots.size() ||
-            tap.isSet() ||
+            snap.isSet() ||
             commitAuthor.isSet()
     }
 
     @Override
-    void tap(Action<? super Tap> action) {
-        action.execute(tap)
+    void snap(Action<? super Tap> action) {
+        action.execute(snap)
     }
 
     @Override
@@ -124,17 +134,18 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
     Snap toModel() {
         Snap tool = new Snap()
         fillToolProperties(tool)
-        if (tap.isSet()) tool.tap = tap.toSnapTap()
+        if (snap.isSet()) tool.snap = snap.toSnapTap()
         if (base.present) tool.base = base.get()
         if (grade.present) tool.grade = grade.get()
         if (confinement.present) tool.confinement = confinement.get()
-        if (tap.isSet()) tool.tap = tap.toSnapTap()
+        if (snap.isSet()) tool.snap = snap.toSnapTap()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (exportedLogin.present) {
             tool.exportedLogin = exportedLogin.get().asFile.absolutePath
         }
         tool.remoteBuild = remoteBuild.getOrElse(false)
         tool.localPlugs = (List<String>) localPlugs.getOrElse([])
+        tool.localSlots = (List<String>) localSlots.getOrElse([])
         tool.plugs.addAll(plugs.collect([]) { PlugImpl plug ->
             plug.toModel()
         } as Set<Plug>)

@@ -14,7 +14,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>{{distributionTagsBySpace}}</tags>
     <summary>{{projectDescription}}</summary>
-    <releaseNotes>{{distributionReleaseNotes}}</releaseNotes>
+    <releaseNotes>{{releaseNotesUrl}}</releaseNotes>
   </metadata>
   <files>
     <file src="tools\**" target="tools" />

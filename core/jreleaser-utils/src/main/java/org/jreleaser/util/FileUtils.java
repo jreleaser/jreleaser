@@ -64,13 +64,36 @@ public final class FileUtils {
         Files.setPosixFilePermissions(path, perms);
     }
 
-    public static boolean copyFiles(Logger logger, Path source, Path target) throws IOException {
-        FileTreeCopy copier = new FileTreeCopy(logger, source, target);
-        Files.walkFileTree(source, copier);
-        return copier.isSuccessful();
+    public static void copyFiles(Logger logger, Path source, Path target) throws IOException {
+        copyFiles(logger, source, target, null);
     }
 
-    public static boolean copyFiles(Logger logger, Path source, Path target, Predicate<Path> filter) throws IOException {
+    public static void copyFiles(Logger logger, Path source, Path target, Predicate<Path> filter) throws IOException {
+        Predicate<Path> actualFilter = filter != null ? filter : path -> true;
+        IOException[] thrown = new IOException[1];
+
+        Files.list(source)
+            .filter(Files::isRegularFile)
+            .filter(actualFilter)
+            .forEach(child -> {
+                try {
+                    Files.copy(child, target.resolve(child.getFileName()), REPLACE_EXISTING);
+                } catch (IOException e) {
+                    logger.error("Unable to copy: {}", child, e);
+                    if (null == thrown[0]) thrown[0] = e;
+                }
+            });
+
+        if (thrown[0] != null) {
+            throw thrown[0];
+        }
+    }
+
+    public static boolean copyFilesRecursive(Logger logger, Path source, Path target) throws IOException {
+        return copyFilesRecursive(logger, source, target, null);
+    }
+
+    public static boolean copyFilesRecursive(Logger logger, Path source, Path target, Predicate<Path> filter) throws IOException {
         FileTreeCopy copier = new FileTreeCopy(logger, source, target, filter);
         Files.walkFileTree(source, copier);
         return copier.isSuccessful();
@@ -82,10 +105,6 @@ public final class FileUtils {
         private final Path target;
         private final Predicate<Path> filter;
         private boolean success = true;
-
-        FileTreeCopy(Logger logger, Path source, Path target) {
-            this(logger, source, target, null);
-        }
 
         FileTreeCopy(Logger logger, Path source, Path target, Predicate<Path> filter) {
             this.logger = logger;

@@ -60,3 +60,9 @@ parts:
       - {{.}}
       {{/snapLocalPlugs}}
     {{/snapHasLocalPlugs}}
+    {{#snapHasLocalSlots}}
+    slots:
+      {{#snapLocalSlots}}
+      - {{.}}
+      {{/snapLocalSlots}}
+    {{/snapHasLocalSlots}}

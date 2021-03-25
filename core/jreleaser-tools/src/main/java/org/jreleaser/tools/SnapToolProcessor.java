@@ -100,6 +100,8 @@ public class SnapToolProcessor extends AbstractToolProcessor<Snap> {
         props.put(Constants.KEY_SNAP_SLOTS, getTool().getSlots());
         props.put(Constants.KEY_SNAP_HAS_LOCAL_PLUGS, !getTool().getLocalPlugs().isEmpty());
         props.put(Constants.KEY_SNAP_LOCAL_PLUGS, getTool().getLocalPlugs());
+        props.put(Constants.KEY_SNAP_HAS_LOCAL_SLOTS, !getTool().getLocalSlots().isEmpty());
+        props.put(Constants.KEY_SNAP_LOCAL_SLOTS, getTool().getLocalSlots());
     }
 
     @Override
@@ -121,7 +123,7 @@ public class SnapToolProcessor extends AbstractToolProcessor<Snap> {
             Path primeDirectory = packageDirectory.resolve("prime");
             Path metaDirectory = primeDirectory.resolve("meta");
             createDirectoriesWithFullAccess(metaDirectory);
-            if (FileUtils.copyFiles(context.getLogger(), snapDirectory, metaDirectory)) {
+            if (FileUtils.copyFilesRecursive(context.getLogger(), snapDirectory, metaDirectory)) {
                 Files.move(metaDirectory.resolve("snapcraft.yaml"),
                     metaDirectory.resolve("snap.yaml"),
                     REPLACE_EXISTING);
