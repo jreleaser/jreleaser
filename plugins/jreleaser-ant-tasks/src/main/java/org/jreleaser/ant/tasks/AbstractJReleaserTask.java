@@ -91,7 +91,7 @@ abstract class AbstractJReleaserTask extends Task {
 
             for (JReleaserConfigParser parser : parsers) {
                 Path file = Paths.get(".").normalize()
-                    .resolve(".jreleaser." + parser.getPreferredFileExtension());
+                    .resolve("jreleaser." + parser.getPreferredFileExtension());
                 if (Files.exists(file)) {
                     actualConfigFile = file;
                     break;

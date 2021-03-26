@@ -20,8 +20,6 @@ package org.jreleaser.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jreleaser.util.StringUtils.isNotBlank;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -30,7 +28,6 @@ public class Artifact implements Domain {
     private String path;
     private String hash;
     private String platform;
-    private String javaVersion;
 
     public String getPath() {
         return path;
@@ -56,24 +53,11 @@ public class Artifact implements Domain {
         this.platform = platform;
     }
 
-    public String getJavaVersion() {
-        return javaVersion;
-    }
-
-    public void setJavaVersion(String javaVersion) {
-        if (isNotBlank(javaVersion) && javaVersion.startsWith("1.8")) {
-            this.javaVersion = "8";
-        } else {
-            this.javaVersion = javaVersion;
-        }
-    }
-
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("path", path);
         map.put("hash", hash);
         map.put("platform", platform);
-        map.put("javaVersion", javaVersion);
         return map;
     }
 }

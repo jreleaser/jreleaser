@@ -358,14 +358,19 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         Map<String, Object> props = new LinkedHashMap<>();
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
-        props.put(Constants.KEY_GROUP_ID, project.getGroupId());
-        props.put(Constants.KEY_ARTIFACT_ID, project.getArtifactId());
         props.put(Constants.KEY_PROJECT_VERSION, project.getResolvedVersion());
-        props.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
         props.put(Constants.KEY_PROJECT_DESCRIPTION, project.getDescription());
         props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, project.getLongDescription());
         props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
         props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+
+        if (project.getJava().isEnabled()) {
+            props.put(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
+            props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
+            props.put(Constants.KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());
+            props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
+        }
+        
         props.putAll(project.getResolvedExtraProperties());
         props.put(Constants.KEY_REPO_HOST, host);
         props.put(Constants.KEY_REPO_OWNER, owner);

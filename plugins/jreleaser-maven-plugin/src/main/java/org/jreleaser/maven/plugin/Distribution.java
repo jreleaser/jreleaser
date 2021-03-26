@@ -31,13 +31,10 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final List<Artifact> artifacts = new ArrayList<>();
     private String name;
-    private DistributionType type = DistributionType.BINARY;
+    private DistributionType type = DistributionType.JAVA_BINARY;
     private String executable;
-    private String javaVersion;
-    private String groupId;
-    private String artifactId;
-    private String mainClass;
     private Boolean enabled;
+    private final Java java = new Java();
 
     void setAll(Distribution distribution) {
         super.setAll(distribution);
@@ -45,10 +42,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
         this.name = distribution.name;
         this.type = distribution.type;
         this.executable = distribution.executable;
-        this.javaVersion = distribution.javaVersion;
-        this.groupId = distribution.groupId;
-        this.artifactId = distribution.artifactId;
-        this.mainClass = distribution.mainClass;
+        this.java.setAll(distribution.java);
         setTags(distribution.tags);
         setExtraProperties(distribution.extraProperties);
         setArtifacts(distribution.artifacts);
@@ -99,36 +93,12 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
         this.executable = executable;
     }
 
-    public String getJavaVersion() {
-        return javaVersion;
+    public Java getJava() {
+        return java;
     }
 
-    public void setJavaVersion(String javaVersion) {
-        this.javaVersion = javaVersion;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-    }
-
-    public String getMainClass() {
-        return mainClass;
-    }
-
-    public void setMainClass(String mainClass) {
-        this.mainClass = mainClass;
+    public void setJava(Java java) {
+        this.java.setAll(java);
     }
 
     public List<Artifact> getArtifacts() {
@@ -162,7 +132,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     // --== TOOLs ==--
 
     public enum DistributionType {
-        BINARY,
+        JAVA_BINARY,
         JLINK
         // NATIVE_IMAGE,
     }

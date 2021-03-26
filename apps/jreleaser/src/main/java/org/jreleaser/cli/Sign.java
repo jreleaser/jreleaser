@@ -20,7 +20,7 @@ package org.jreleaser.cli;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.signer.Signer;
+import org.jreleaser.sign.Signer;
 import org.jreleaser.util.signing.SigningException;
 import picocli.CommandLine;
 

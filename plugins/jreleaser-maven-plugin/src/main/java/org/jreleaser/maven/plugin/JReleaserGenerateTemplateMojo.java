@@ -60,7 +60,7 @@ public class JReleaserGenerateTemplateMojo extends AbstractMojo {
      * The type of the distribution
      */
     @Parameter(property = "jreleaser.template.distributionType", defaultValue = "BINARY")
-    private final Distribution.DistributionType distributionType = Distribution.DistributionType.BINARY;
+    private final Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
 
     /**
      * The name of the distribution

@@ -43,10 +43,7 @@ public class Project implements Domain, ExtraProperties {
     private String longDescription;
     private String website;
     private String license;
-    private String javaVersion;
-    private String groupId;
-    private String artifactId;
-    private Boolean multiProject;
+    private final Java java = new Java();
 
     void setAll(Project project) {
         this.name = project.name;
@@ -55,10 +52,7 @@ public class Project implements Domain, ExtraProperties {
         this.longDescription = project.longDescription;
         this.website = project.website;
         this.license = project.license;
-        this.javaVersion = project.javaVersion;
-        this.groupId = project.groupId;
-        this.artifactId = project.artifactId;
-        this.multiProject = project.multiProject;
+        this.java.setAll(project.java);
         setAuthors(project.authors);
         setTags(project.tags);
         setExtraProperties(project.extraProperties);
@@ -126,44 +120,12 @@ public class Project implements Domain, ExtraProperties {
         this.license = license;
     }
 
-    public String getJavaVersion() {
-        return javaVersion;
+    public Java getJava() {
+        return java;
     }
 
-    public void setJavaVersion(String javaVersion) {
-        if (isNotBlank(javaVersion) && javaVersion.startsWith("1.8")) {
-            this.javaVersion = "8";
-        } else {
-            this.javaVersion = javaVersion;
-        }
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-    }
-
-    public boolean isMultiProject() {
-        return multiProject != null && multiProject;
-    }
-
-    public void setMultiProject(boolean multiProject) {
-        this.multiProject = multiProject;
-    }
-
-    public boolean isMultiProjectSet() {
-        return multiProject != null;
+    public void setJava(Java java) {
+        this.java.setAll(java);
     }
 
     @Override
@@ -236,17 +198,16 @@ public class Project implements Domain, ExtraProperties {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
         map.put("version", getResolvedVersion());
-        map.put("groupId", groupId);
-        map.put("artifactId", artifactId);
-        map.put("multiProject", isMultiProject());
         map.put("description", description);
         map.put("longDescription", longDescription);
         map.put("website", website);
         map.put("license", license);
-        if (isNotBlank(javaVersion)) map.put("javaVersion", javaVersion);
         map.put("authors", authors);
         map.put("tags", tags);
         map.put("extraProperties", getResolvedExtraProperties());
+        if (java.isEnabled()) {
+            map.put("java", java.asMap());
+        }
         return map;
     }
 }

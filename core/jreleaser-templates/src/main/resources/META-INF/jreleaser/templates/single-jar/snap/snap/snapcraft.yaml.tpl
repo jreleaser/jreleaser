@@ -51,9 +51,9 @@ parts:
     source: {{distributionUrl}}
     source-checksum: sha256/{{distributionSha256}}
     stage-packages:
-      - openjdk-{{javaVersion}}-jdk
+      - openjdk-{{distributionJavaVersion}}-jdk
     organize:
-      usr/lib/jvm/java-{{javaVersion}}-openjdk*: usr/lib/jvm/java
+      usr/lib/jvm/java-{{distributionJavaVersion}}-openjdk*: usr/lib/jvm/java
     {{#snapHasLocalPlugs}}
     plugs:
       {{#snapLocalPlugs}}

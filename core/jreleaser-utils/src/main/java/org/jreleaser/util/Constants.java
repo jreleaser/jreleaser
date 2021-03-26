@@ -24,9 +24,6 @@ package org.jreleaser.util;
 public interface Constants {
     // General
     String KEY_JAVA_VERSION = "javaVersion";
-    String KEY_MAIN_CLASS = "mainClass";
-    String KEY_GROUP_ID = "groupId";
-    String KEY_ARTIFACT_ID = "artifactId";
 
     // Project
     String KEY_PROJECT_NAME = "projectName";
@@ -40,6 +37,10 @@ public interface Constants {
     String KEY_PROJECT_AUTHORS_BY_COMMA = "projectAuthorsByComma";
     String KEY_PROJECT_TAGS_BY_SPACE = "projectTagsBySpace";
     String KEY_PROJECT_TAGS_BY_COMMA = "projectTagsByComma";
+    String KEY_PROJECT_JAVA_VERSION = "projectJavaVersion";
+    String KEY_PROJECT_JAVA_GROUP_ID = "projectJavaGroupId";
+    String KEY_PROJECT_JAVA_ARTIFACT_ID = "projectJavaArtifactId";
+    String KEY_PROJECT_JAVA_MAIN_CLASS = "projectJavaMainClass";
 
     // Release
     String KEY_REPO_HOST = "repoHost";
@@ -61,12 +62,13 @@ public interface Constants {
     String KEY_DISTRIBUTION_EXECUTABLE = "distributionExecutable";
     String KEY_DISTRIBUTION_TAGS_BY_SPACE = "distributionTagsBySpace";
     String KEY_DISTRIBUTION_TAGS_BY_COMMA = "distributionTagsByComma";
-    String KEY_DISTRIBUTION_JAVA_VERSION = "distributionJavaVersion";
     String KEY_DISTRIBUTION_URL = "distributionUrl";
     String KEY_DISTRIBUTION_SHA_256 = "distributionSha256";
     String KEY_DISTRIBUTION_FILE_NAME = "distributionFileName";
-    String KEY_DISTRIBUTION_GROUP_ID = "distributionGroupId";
-    String KEY_DISTRIBUTION_ARTIFACT_ID = "distributionArtifactId";
+    String KEY_DISTRIBUTION_JAVA_VERSION = "distributionJavaVersion";
+    String KEY_DISTRIBUTION_JAVA_GROUP_ID = "distributionJavaGroupId";
+    String KEY_DISTRIBUTION_JAVA_ARTIFACT_ID = "distributionJavaArtifactId";
+    String KEY_DISTRIBUTION_JAVA_MAIN_CLASS = "distributionJavaMainClass";
 
     // Artifact
     String KEY_ARTIFACT_FILE_NAME = "artifactFileName";

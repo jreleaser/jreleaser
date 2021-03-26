@@ -63,7 +63,7 @@ abstract class JReleaserTemplateGeneratorTask extends DefaultTask {
 
     @Inject
     JReleaserTemplateGeneratorTask(ObjectFactory objects) {
-        distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.BINARY)
+        distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.JAVA_BINARY)
         distributionName = objects.property(String)
         toolName = objects.property(String)
         overwrite = objects.property(Boolean).convention(false)

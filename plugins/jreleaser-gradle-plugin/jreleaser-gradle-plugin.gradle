@@ -39,11 +39,7 @@ dependencies {
     compileOnly gradleApi()
 
     api project(':jreleaser-model')
-    api project(':jreleaser-tools')
-    api project(':jreleaser-releaser')
-    api project(':jreleaser-announce')
-    api project(':jreleaser-signer')
-    api project(':jreleaser-templates')
+    api project(':jreleaser-engine')
     api "org.kordamp.gradle:base-gradle-plugin:$kordampPluginVersion"
 }
 

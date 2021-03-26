@@ -162,18 +162,23 @@ public class JReleaserModel implements Domain {
     private void fillProjectProperties(Map<String, Object> props, Project project) {
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
-        props.put(Constants.KEY_GROUP_ID, project.getGroupId());
-        props.put(Constants.KEY_ARTIFACT_ID, project.getArtifactId());
         props.put(Constants.KEY_PROJECT_VERSION, project.getResolvedVersion());
         props.put(Constants.KEY_PROJECT_DESCRIPTION, project.getDescription());
         props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, project.getLongDescription());
         props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
         props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
-        props.put(Constants.KEY_JAVA_VERSION, project.getJavaVersion());
         props.put(Constants.KEY_PROJECT_AUTHORS_BY_SPACE, String.join(" ", project.getAuthors()));
         props.put(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));
         props.put(Constants.KEY_PROJECT_TAGS_BY_SPACE, String.join(" ", project.getTags()));
         props.put(Constants.KEY_PROJECT_TAGS_BY_COMMA, String.join(",", project.getTags()));
+
+        if (project.getJava().isEnabled()) {
+            props.put(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
+            props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
+            props.put(Constants.KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());
+            props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
+        }
+
         props.putAll(project.getResolvedExtraProperties());
     }
 

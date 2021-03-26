@@ -135,7 +135,7 @@ public class TemplateGenerator {
     public static class TemplateGeneratorBuilder {
         private Logger logger;
         private String distributionName;
-        private Distribution.DistributionType distributionType = Distribution.DistributionType.BINARY;
+        private Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
         private String toolName;
         private Path outputDirectory;
         private boolean overwrite;

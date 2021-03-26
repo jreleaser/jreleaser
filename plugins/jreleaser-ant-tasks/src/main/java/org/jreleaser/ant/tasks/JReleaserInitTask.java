@@ -67,7 +67,7 @@ public class JReleaserInitTask extends Task {
             }
 
             Path outputDirectory = getProject().getBaseDir().toPath().normalize();
-            Path outputFile = outputDirectory.resolve(".jreleaser." + format);
+            Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
             Reader template = TemplateUtils.resolveTemplate(getLogger(), Main.class,
                 "META-INF/jreleaser/templates/jreleaser." + format + ".tpl");

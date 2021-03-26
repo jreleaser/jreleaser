@@ -38,8 +38,7 @@ public class Project implements ExtraProperties {
     private String longDescription;
     private String website;
     private String license;
-    private String javaVersion;
-    private Boolean multiProject;
+    private final Java java = new Java();
 
     void setAll(Project project) {
         this.name = project.name;
@@ -48,8 +47,7 @@ public class Project implements ExtraProperties {
         this.longDescription = project.longDescription;
         this.website = project.website;
         this.license = project.license;
-        this.javaVersion = project.javaVersion;
-        this.multiProject = project.multiProject;
+        this.java.setAll(project.java);
         setAuthors(project.authors);
         setTags(project.tags);
         setExtraProperties(project.extraProperties);
@@ -103,24 +101,12 @@ public class Project implements ExtraProperties {
         this.license = license;
     }
 
-    public String getJavaVersion() {
-        return javaVersion;
+    public Java getJava() {
+        return java;
     }
 
-    public void setJavaVersion(String javaVersion) {
-        this.javaVersion = javaVersion;
-    }
-
-    public Boolean isMultiProject() {
-        return multiProject != null && multiProject;
-    }
-
-    public void setMultiProject(boolean multiProject) {
-        this.multiProject = multiProject;
-    }
-
-    public boolean isMultiProjectSet() {
-        return multiProject != null;
+    public void setJava(Java java) {
+        this.java.setAll(java);
     }
 
     @Override

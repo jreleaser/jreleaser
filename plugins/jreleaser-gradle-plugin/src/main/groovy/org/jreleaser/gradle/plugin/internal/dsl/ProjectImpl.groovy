@@ -18,12 +18,14 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Project
 
 import javax.inject.Inject
@@ -38,10 +40,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class ProjectImpl implements Project {
     final Property<String> name
-    final Property<String> groupId
-    final Property<String> artifactId
     final Property<String> version
-    final Property<Boolean> multiProject
     final Property<String> description
     final Property<String> longDescription
     final Property<String> website
@@ -49,6 +48,7 @@ class ProjectImpl implements Project {
     final ListProperty<String> authors
     final ListProperty<String> tags
     final MapProperty<String, Object> extraProperties
+    final JavaImpl java
 
     @Inject
     ProjectImpl(ObjectFactory objects,
@@ -57,9 +57,6 @@ class ProjectImpl implements Project {
                 Provider<String> versionProvider) {
         name = objects.property(String).convention(nameProvider)
         version = objects.property(String).convention(versionProvider)
-        groupId = objects.property(String).convention(Providers.notDefined())
-        artifactId = objects.property(String).convention(Providers.notDefined())
-        multiProject = objects.property(Boolean).convention(Providers.notDefined())
         description = objects.property(String).convention(descriptionProvider)
         longDescription = objects.property(String).convention(descriptionProvider)
         website = objects.property(String).convention(Providers.notDefined())
@@ -67,6 +64,8 @@ class ProjectImpl implements Project {
         authors = objects.listProperty(String).convention(Providers.notDefined())
         tags = objects.listProperty(String).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+
+        java = objects.newInstance(JavaImpl, objects)
     }
 
     @Override
@@ -83,13 +82,15 @@ class ProjectImpl implements Project {
         }
     }
 
+    @Override
+    void java(Action<? super Java> action) {
+        action.execute(java)
+    }
+
     org.jreleaser.model.Project toModel() {
         org.jreleaser.model.Project project = new org.jreleaser.model.Project()
         project.name = name.get()
         project.version = version.get()
-        if (groupId.present) project.groupId = groupId.get()
-        if (artifactId.present) project.artifactId = artifactId.get()
-        if (multiProject.present) project.multiProject = multiProject.get()
         if (description.present) project.description = description.get()
         if (longDescription.present) project.longDescription = longDescription.get()
         if (website.present) project.website = website.get()
@@ -97,6 +98,7 @@ class ProjectImpl implements Project {
         project.authors = (List<String>) authors.getOrElse([])
         project.tags = (List<String>) tags.getOrElse([])
         if (extraProperties.present) project.extraProperties.putAll(extraProperties.get())
+        project.java = java.toModel()
         project
     }
 }

@@ -34,12 +34,6 @@ interface Distribution extends ExtraProperties {
 
     Property<DistributionType> getDistributionType()
 
-    Property<String> getGroupId()
-
-    Property<String> getArtifactId()
-
-    Property<String> getMainClass()
-
     Property<String> getExecutable()
 
     ListProperty<String> getTags()
@@ -59,6 +53,10 @@ interface Distribution extends ExtraProperties {
     Scoop getScoop()
 
     Snap getSnap()
+
+    Java getJava()
+
+    void java(Action<? super Java> action)
 
     void brew(Action<? super Brew> action)
 

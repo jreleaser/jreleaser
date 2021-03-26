@@ -23,6 +23,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Tar
@@ -71,11 +72,18 @@ class JReleaserProjectConfigurer {
         }
 
         JReleaserModel model = extension.toModel()
-        if (isBlank(model.project.javaVersion)) model.project.javaVersion = javaVersion
-        if (isBlank(model.project.artifactId)) model.project.artifactId = project.name
-        if (isBlank(model.project.groupId)) model.project.groupId = project.group.toString()
-        if (!model.project.multiProjectSet) {
-            model.project.multiProject = project.rootProject.childProjects.size() > 0
+        if (isBlank(model.project.java.version)) model.project.java.version = javaVersion
+        if (isBlank(model.project.java.artifactId)) model.project.java.artifactId = project.name
+        if (isBlank(model.project.java.groupId)) model.project.java.groupId = project.group.toString()
+        if (!model.project.java.multiProjectSet) {
+            model.project.java.multiProject = project.rootProject.childProjects.size() > 0
+        }
+
+        if (isBlank(model.project.java.mainClass)) {
+            JavaApplication application = (JavaApplication) project.extensions.findByType(JavaApplication)
+            if (application) {
+                model.project.java.mainClass = application.mainClass.orNull
+            }
         }
 
         JReleaserLoggerAdapter logger = new JReleaserLoggerAdapter(project)

@@ -25,7 +25,6 @@ public class Artifact {
     private String path;
     private String hash;
     private String platform;
-    private String javaVersion;
 
     public String getPath() {
         return path;
@@ -49,13 +48,5 @@ public class Artifact {
 
     public void setPlatform(String platform) {
         this.platform = platform;
-    }
-
-    public String getJavaVersion() {
-        return javaVersion;
-    }
-
-    public void setJavaVersion(String javaVersion) {
-        this.javaVersion = javaVersion;
     }
 }

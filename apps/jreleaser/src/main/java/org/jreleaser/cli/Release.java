@@ -21,7 +21,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.releaser.Releasers;
+import org.jreleaser.release.Releasers;
 import picocli.CommandLine;
 
 import static org.jreleaser.cli.Checksum.checksum;

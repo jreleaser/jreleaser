@@ -35,7 +35,7 @@ import java.nio.file.Path;
 public class JReleaserGenerateTemplateTask extends Task {
     private boolean skip;
     private String distributionName;
-    private Distribution.DistributionType distributionType = Distribution.DistributionType.BINARY;
+    private Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
     private String toolName;
     private boolean overwrite;
     private boolean snapshot;

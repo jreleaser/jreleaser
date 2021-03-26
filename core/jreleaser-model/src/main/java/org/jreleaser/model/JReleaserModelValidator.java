@@ -84,15 +84,6 @@ public final class JReleaserModelValidator {
 
         Env.check(PROJECT_VERSION, project.getVersion(), "project.version", errors);
 
-        if (isBlank(project.getArtifactId())) {
-            project.setArtifactId(project.getName());
-        }
-        if (isBlank(project.getGroupId())) {
-            errors.add("project.groupId must not be blank");
-        }
-        if (isBlank(project.getArtifactId())) {
-            errors.add("project.artifactId must not be blank");
-        }
         if (isBlank(project.getDescription())) {
             errors.add("project.description must not be blank");
         }
@@ -108,8 +99,26 @@ public final class JReleaserModelValidator {
         if (project.getAuthors().isEmpty()) {
             errors.add("project.authors must not be empty");
         }
-        if (!project.isMultiProjectSet()) {
-            project.setMultiProject(false);
+
+        validateJava(logger, basedir, project, errors);
+    }
+
+    private static void validateJava(Logger logger, Path basedir, Project project, List<String> errors) {
+        if (!project.getJava().isSet()) return;
+
+        project.getJava().setEnabled(true);
+
+        if (isBlank(project.getJava().getArtifactId())) {
+            project.getJava().setArtifactId(project.getName());
+        }
+        if (isBlank(project.getJava().getGroupId())) {
+            errors.add("project.java.groupId must not be blank");
+        }
+        if (isBlank(project.getJava().getArtifactId())) {
+            errors.add("project.java.artifactId must not be blank");
+        }
+        if (!project.getJava().isMultiProjectSet()) {
+            project.getJava().setMultiProject(false);
         }
     }
 
@@ -331,18 +340,22 @@ public final class JReleaserModelValidator {
             errors.add("distribution." + distribution.getName() + ".type must not be null");
             return;
         }
-        if (isBlank(distribution.getGroupId())) {
-            distribution.setGroupId(model.getProject().getGroupId());
-        }
-        if (isBlank(distribution.getArtifactId())) {
-            distribution.setArtifactId(model.getProject().getArtifactId());
-        }
         if (isBlank(distribution.getExecutable())) {
             distribution.setExecutable(distribution.getName());
         }
-        if (isBlank(distribution.getJavaVersion())) {
-            distribution.setJavaVersion(model.getProject().getJavaVersion());
+
+        if (!validateJava(logger, basedir, distribution, model.getProject(), errors)) {
+            return;
         }
+
+        // validate distribution type
+        if (!distribution.getJava().isEnabled() && Distribution.JAVA_DISTRIBUTION_TYPES.contains(distribution.getType())) {
+            errors.add("distribution." + distribution.getName() + ".type is set to " +
+                distribution.getType() + " but neither distribution." + distribution.getName() +
+                ".java nor project.java have been set");
+            return;
+        }
+
         if (null == distribution.getArtifacts() || distribution.getArtifacts().isEmpty()) {
             errors.add("distribution." + distribution.getName() + ".artifacts is empty");
             return;
@@ -380,6 +393,48 @@ public final class JReleaserModelValidator {
         validateSnap(logger, basedir, model, distribution, distribution.getSnap(), errors);
     }
 
+    private static boolean validateJava(Logger logger, Path basedir, Distribution distribution, Project project, List<String> errors) {
+        if (!distribution.getJava().isEnabledSet() && project.getJava().isEnabledSet()) {
+            distribution.getJava().setEnabled(project.getJava().isEnabled());
+        }
+        if(!distribution.getJava().isEnabledSet()) {
+            distribution.getJava().setEnabled(distribution.getJava().isSet());
+        }
+
+        if (!distribution.getJava().isEnabled()) return true;
+
+        if (isBlank(distribution.getJava().getArtifactId())) {
+            distribution.getJava().setArtifactId(distribution.getName());
+        }
+        if (isBlank(distribution.getJava().getGroupId())) {
+            distribution.getJava().setGroupId(project.getJava().getGroupId());
+        }
+        if (isBlank(distribution.getJava().getVersion())) {
+            distribution.getJava().setVersion(project.getJava().getVersion());
+        }
+        if (isBlank(distribution.getJava().getMainClass())) {
+            distribution.getJava().setMainClass(project.getJava().getMainClass());
+        }
+
+        if (isBlank(distribution.getJava().getGroupId())) {
+            errors.add("distribution." + distribution.getName() + ".java.groupId must not be blank");
+        }
+        if (!distribution.getJava().isMultiProjectSet()) {
+            distribution.getJava().setMultiProject(project.getJava().isMultiProject());
+        }
+
+        // validate distribution type
+        if (!Distribution.JAVA_DISTRIBUTION_TYPES.contains(distribution.getType())) {
+            errors.add("distribution." + distribution.getName() + ".type must be a valid Java distribution type," +
+                " one of [" + Distribution.JAVA_DISTRIBUTION_TYPES.stream()
+                .map(Distribution.DistributionType::name)
+                .collect(Collectors.joining(", ")) + "]");
+            return false;
+        }
+
+        return true;
+    }
+
     private static void validateArtifact(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Artifact artifact, int index, List<String> errors) {
         if (null == artifact) {
             errors.add("distribution." + distribution.getName() + ".artifact[" + index + "] is null");
@@ -387,9 +442,6 @@ public final class JReleaserModelValidator {
         }
         if (isBlank(artifact.getPath())) {
             errors.add("distribution." + distribution.getName() + ".artifact[" + index + "].path must not be null");
-        }
-        if (isBlank(artifact.getJavaVersion())) {
-            artifact.setJavaVersion(distribution.getJavaVersion());
         }
         if (isNotBlank(artifact.getPlatform()) && !PlatformUtils.isSupported(artifact.getPlatform().trim())) {
             logger.warn("distribution.{}.artifact[{}].platform ({}) is not supported. Please use `${name}` or `${name}-${arch}` from{}       name = {}{}       arch = {}",
@@ -497,6 +549,10 @@ public final class JReleaserModelValidator {
             errors.add("distribution." + distribution.getName() +
                 ".jbang must define an extra property named '" +
                 KEY_REVERSE_REPO_HOST + "'");
+        }
+
+        if (isBlank(distribution.getJava().getMainClass())) {
+            errors.add("distribution." + distribution.getName() + ".java.mainClass must not be blank, required by jbang");
         }
     }
 

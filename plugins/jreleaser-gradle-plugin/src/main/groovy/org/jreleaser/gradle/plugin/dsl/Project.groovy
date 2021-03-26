@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
@@ -30,13 +31,7 @@ import org.gradle.api.provider.Property
 interface Project extends ExtraProperties {
     Property<String> getName()
 
-    Property<String> getGroupId()
-
-    Property<String> getArtifactId()
-
     Property<String> getVersion()
-
-    Property<Boolean> getMultiProject()
 
     Property<String> getDescription()
 
@@ -53,4 +48,8 @@ interface Project extends ExtraProperties {
     void addAuthor(String name)
 
     void addTag(String tag)
+
+    Java getJava()
+
+    void java(Action<? super Java> action)
 }

@@ -46,9 +46,6 @@ public final class JReleaserModelConfigurer {
     }
 
     private static void configureProject(Project project, MavenProject mavenProject, MavenSession session) {
-        project.setGroupId(mavenProject.getGroupId());
-        project.setArtifactId(mavenProject.getArtifactId());
-
         if (isBlank(project.getName())) {
             project.setName(mavenProject.getArtifactId());
         }
@@ -67,11 +64,14 @@ public final class JReleaserModelConfigurer {
         if (isBlank(project.getLicense())) {
             project.setLicense(resolveLicense(mavenProject.getLicenses()));
         }
-        if (isBlank(project.getJavaVersion())) {
-            project.setJavaVersion(resolveJavaVersion(mavenProject));
+
+        project.getJava().setGroupId(mavenProject.getGroupId());
+        project.getJava().setArtifactId(mavenProject.getArtifactId());
+        if (isBlank(project.getJava().getVersion())) {
+            project.getJava().setVersion(resolveJavaVersion(mavenProject));
         }
-        if (!project.isMultiProjectSet()) {
-            project.setMultiProject(session.getAllProjects().size() > 1);
+        if (!project.getJava().isMultiProjectSet()) {
+            project.getJava().setMultiProject(session.getAllProjects().size() > 1);
         }
     }
 

@@ -19,6 +19,7 @@ package org.jreleaser.cli;
 
 import org.jreleaser.cli.internal.ColorizedJReleaserLoggerAdapter;
 import org.jreleaser.cli.internal.Colorizer;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.util.Logger;
 import picocli.CommandLine;
 
@@ -83,6 +84,9 @@ abstract class AbstractCommand implements Callable<Integer> {
         try {
             execute();
         } catch (HaltExecutionException e) {
+            return 1;
+        } catch (JReleaserException e) {
+            new Colorizer(parent().out).println(e.getMessage());
             return 1;
         } catch (Exception e) {
             e.printStackTrace(new Colorizer(parent().out));

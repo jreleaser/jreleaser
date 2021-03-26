@@ -75,7 +75,7 @@ public class Init extends AbstractCommand {
             }
 
             Path outputDirectory = null != basedir ? basedir : Paths.get(".").normalize();
-            Path outputFile = outputDirectory.resolve(".jreleaser." + format);
+            Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
             Reader template = TemplateUtils.resolveTemplate(logger, Init.class,
                 "META-INF/jreleaser/templates/jreleaser." + format + ".tpl");

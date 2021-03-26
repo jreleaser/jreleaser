@@ -19,6 +19,7 @@ package org.jreleaser.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,17 +35,19 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Distribution extends Packagers implements ExtraProperties, EnabledProvider {
+    public static final EnumSet<DistributionType> JAVA_DISTRIBUTION_TYPES = EnumSet.of(
+        DistributionType.JAVA_BINARY,
+        DistributionType.JLINK
+    );
+
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final List<Artifact> artifacts = new ArrayList<>();
+    private final Java java = new Java();
     private Boolean enabled;
     private String name;
-    private DistributionType type = DistributionType.BINARY;
+    private DistributionType type = DistributionType.JAVA_BINARY;
     private String executable;
-    private String javaVersion;
-    private String groupId;
-    private String artifactId;
-    private String mainClass;
 
     void setAll(Distribution distribution) {
         super.setAll(distribution);
@@ -52,10 +55,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
         this.name = distribution.name;
         this.type = distribution.type;
         this.executable = distribution.executable;
-        this.javaVersion = distribution.javaVersion;
-        this.groupId = distribution.groupId;
-        this.artifactId = distribution.artifactId;
-        this.mainClass = distribution.mainClass;
+        this.java.setAll(distribution.java);
         setTags(distribution.tags);
         setExtraProperties(distribution.extraProperties);
         setArtifacts(distribution.artifacts);
@@ -111,18 +111,6 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
         this.executable = executable;
     }
 
-    public String getJavaVersion() {
-        return javaVersion;
-    }
-
-    public void setJavaVersion(String javaVersion) {
-        if (isNotBlank(javaVersion) && javaVersion.startsWith("1.8")) {
-            this.javaVersion = "8";
-        } else {
-            this.javaVersion = javaVersion;
-        }
-    }
-
     public List<Artifact> getArtifacts() {
         return artifacts;
     }
@@ -167,28 +155,12 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
         }
     }
 
-    public String getGroupId() {
-        return groupId;
+    public Java getJava() {
+        return java;
     }
 
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
-    }
-
-    public String getMainClass() {
-        return mainClass;
-    }
-
-    public void setMainClass(String mainClass) {
-        this.mainClass = mainClass;
+    public void setJava(Java java) {
+        this.java.setAll(java);
     }
 
     @Override
@@ -201,12 +173,12 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
         this.extraProperties.putAll(extraProperties);
     }
 
+    // --== TOOLs ==--
+
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
-
-    // --== TOOLs ==--
 
     public <T extends Tool> T findTool(String name) {
         if (isBlank(name)) {
@@ -246,16 +218,15 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
         props.put("type", type);
-        props.put("groupId", groupId);
-        props.put("artifactId", artifactId);
-        props.put("mainClass", mainClass);
         props.put("executable", executable);
-        props.put("javaVersion", javaVersion);
         props.put("artifacts", artifacts.stream()
             .map(Artifact::asMap)
             .collect(Collectors.toList()));
         props.put("tags", tags);
         props.put("extraProperties", getResolvedExtraProperties());
+        if (java.isEnabled()) {
+            props.put("java", java.asMap());
+        }
         props.putAll(super.asMap());
 
         Map<String, Object> map = new LinkedHashMap<>();
@@ -274,7 +245,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     }
 
     public enum DistributionType {
-        BINARY,
+        JAVA_BINARY,
         JLINK,
         // NATIVE_IMAGE,
     }

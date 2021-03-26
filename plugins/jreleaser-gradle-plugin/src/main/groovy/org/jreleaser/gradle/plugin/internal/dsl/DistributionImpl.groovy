@@ -32,6 +32,7 @@ import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Brew
 import org.jreleaser.gradle.plugin.dsl.Chocolatey
 import org.jreleaser.gradle.plugin.dsl.Distribution
+import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Jbang
 import org.jreleaser.gradle.plugin.dsl.Scoop
 import org.jreleaser.gradle.plugin.dsl.Snap
@@ -52,7 +53,6 @@ class DistributionImpl implements Distribution {
     final Property<String> executable
     final Property<String> groupId
     final Property<String> artifactId
-    final Property<String> mainClass
     final Property<Boolean> enabled
     final Property<DistributionType> distributionType
     final ListProperty<String> tags
@@ -62,6 +62,7 @@ class DistributionImpl implements Distribution {
     final JbangImpl jbang
     final ScoopImpl scoop
     final SnapImpl snap
+    final JavaImpl java
 
     final NamedDomainObjectContainer<ArtifactImpl> artifacts
     private final Property<String> myName
@@ -74,9 +75,8 @@ class DistributionImpl implements Distribution {
         executable = objects.property(String).convention(Providers.notDefined())
         groupId = objects.property(String).convention(Providers.notDefined())
         artifactId = objects.property(String).convention(Providers.notDefined())
-        mainClass = objects.property(String).convention(Providers.notDefined())
         myName = objects.property(String).convention(Providers.notDefined())
-        distributionType = objects.property(DistributionType).convention(DistributionType.BINARY)
+        distributionType = objects.property(DistributionType).convention(DistributionType.JAVA_BINARY)
         tags = objects.listProperty(String).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
 
@@ -88,6 +88,8 @@ class DistributionImpl implements Distribution {
                 artifact
             }
         })
+
+        java = objects.newInstance(JavaImpl, objects)
 
         brew = objects.newInstance(BrewImpl, objects, distributionsDirProvider)
         brew.distributionName.set(myName)
@@ -125,6 +127,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void java(Action<? super Java> action) {
+        action.execute(java)
+    }
+
+    @Override
     void brew(Action<? super Brew> action) {
         action.execute(brew)
     }
@@ -154,10 +161,8 @@ class DistributionImpl implements Distribution {
         distribution.name = name
         if (enabled.present) distribution.enabled = enabled.get()
         if (executable.present) distribution.executable = executable.get()
-        if (groupId.present) distribution.groupId = groupId.get()
-        if (artifactId.present) distribution.artifactId = artifactId.get()
-        if (mainClass.present) distribution.mainClass = mainClass.get()
         distribution.type = distributionType.get()
+        distribution.java = java.toModel()
         for (ArtifactImpl artifact : artifacts) {
             distribution.artifacts.add(artifact.toModel())
         }

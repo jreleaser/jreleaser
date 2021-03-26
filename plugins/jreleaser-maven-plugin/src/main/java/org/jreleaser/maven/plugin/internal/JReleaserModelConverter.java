@@ -30,6 +30,7 @@ import org.jreleaser.maven.plugin.GitService;
 import org.jreleaser.maven.plugin.Gitea;
 import org.jreleaser.maven.plugin.Github;
 import org.jreleaser.maven.plugin.Gitlab;
+import org.jreleaser.maven.plugin.Java;
 import org.jreleaser.maven.plugin.Jbang;
 import org.jreleaser.maven.plugin.Jreleaser;
 import org.jreleaser.maven.plugin.Packagers;
@@ -89,12 +90,22 @@ public final class JReleaserModelConverter {
         p.setLongDescription(project.getLongDescription());
         p.setWebsite(project.getWebsite());
         p.setLicense(project.getLicense());
-        p.setJavaVersion(project.getJavaVersion());
         p.setTags(project.getTags());
         p.setAuthors(project.getAuthors());
         p.setExtraProperties(project.getExtraProperties());
-        if (project.isMultiProjectSet()) p.setMultiProject(project.isMultiProject());
+        p.setJava(convertJava(project.getJava()));
         return p;
+    }
+
+    private static org.jreleaser.model.Java convertJava(Java java) {
+        org.jreleaser.model.Java j = new org.jreleaser.model.Java();
+        j.setEnabled(true);
+        j.setGroupId(java.getGroupId());
+        j.setArtifactId(java.getArtifactId());
+        j.setVersion(java.getVersion());
+        j.setMainClass(java.getMainClass());
+        if (java.isMultiProjectSet()) j.setMultiProject(java.isMultiProject());
+        return j;
     }
 
     private static org.jreleaser.model.Release convertRelease(Release release) {
@@ -243,12 +254,9 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Distribution d = new org.jreleaser.model.Distribution();
         if (distribution.isEnabledSet()) d.setEnabled(distribution.isEnabled());
         d.setName(distribution.getName());
-        d.setGroupId(distribution.getGroupId());
-        d.setArtifactId(distribution.getArtifactId());
-        d.setMainClass(distribution.getMainClass());
         d.setType(distribution.getType().name());
         d.setExecutable(distribution.getExecutable());
-        d.setJavaVersion(distribution.getJavaVersion());
+        d.setJava(convertJava(distribution.getJava()));
         d.setTags(distribution.getTags());
         d.setExtraProperties(distribution.getExtraProperties());
         d.setArtifacts(convertArtifacts(distribution.getArtifacts()));
@@ -283,7 +291,6 @@ public final class JReleaserModelConverter {
         a.setPath(artifact.getPath());
         a.setHash(artifact.getHash());
         a.setPlatform(artifact.getPlatform());
-        a.setJavaVersion(artifact.getJavaVersion());
         return a;
     }
 
