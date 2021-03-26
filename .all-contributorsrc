@@ -38,6 +38,16 @@
         "ideas",
         "infra"
       ]
+    },
+    {
+      "login": "tastapod",
+      "name": "Daniel Terhorst-North",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3180?v=4",
+      "profile": "http://dannorth.net",
+      "contributions": [
+        "doc",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
