@@ -32,6 +32,15 @@ jobs:
       - name: Build
         run: ./gradlew build -S
 
+      - name: Rename artifacts
+        run: |
+          mkdir early-access
+          cp apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-*-SNAPSHOT.jar early-access/jreleaser-tool-provider-early-access.jar
+          cp apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-*-SNAPSHOT-sources.jar early-access/jreleaser-tool-provider-early-access-sources.jar
+          cp apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-*-SNAPSHOT-javadoc.jar early-access/jreleaser-tool-provider-early-access-javadoc.jar
+          cp apps/jreleaser/build/distributions/jreleaser-*-SNAPSHOT.zip early-access/jreleaser-early-access.zip
+          cp plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-*-SNAPSHOT.zip early-access/jreleaser-ant-tasks-early-access.zip
+
       - name: 'Release early-access artifacts'
         uses: marvinpinto/action-automatic-releases@latest
         with:
@@ -40,6 +49,4 @@ jobs:
           prerelease: true
           title: "JReleaser Early-Access"
           files: |
-            apps/jreleaser-tool-provider/build/libs/*.jar
-            apps/jreleaser/build/distributions/*.zip
-            plugins/jreleaser-ant-tasks/build/distributions/*.zip
+            early-access/*
