@@ -26,6 +26,7 @@ import org.jreleaser.maven.plugin.Changelog;
 import org.jreleaser.maven.plugin.Chocolatey;
 import org.jreleaser.maven.plugin.CommitAuthor;
 import org.jreleaser.maven.plugin.Distribution;
+import org.jreleaser.maven.plugin.File;
 import org.jreleaser.maven.plugin.GitService;
 import org.jreleaser.maven.plugin.Gitea;
 import org.jreleaser.maven.plugin.Github;
@@ -77,7 +78,7 @@ public final class JReleaserModelConverter {
         jreleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
         jreleaserModel.setAnnounce(convertAnnounce(jreleaser.getAnnounce()));
         jreleaserModel.setSigning(convertSigning(jreleaser.getSigning()));
-        jreleaserModel.setFiles(convertArtifacts(jreleaser.getFiles()));
+        jreleaserModel.setFiles(convertFiles(jreleaser.getFiles()));
         jreleaserModel.setDistributions(convertDistributions(jreleaserModel, jreleaser.getDistributions()));
         return jreleaserModel;
     }
@@ -268,6 +269,22 @@ public final class JReleaserModelConverter {
         if (distribution.getSnap().isSet()) d.setSnap(convertSnap(distribution.getSnap()));
 
         return d;
+    }
+
+    private static List<org.jreleaser.model.Artifact> convertFiles(List<File> files) {
+        List<org.jreleaser.model.Artifact> as = new ArrayList<>();
+        for (File file : files) {
+            as.add(convertArtifact(file));
+        }
+        return as;
+    }
+
+    private static Set<org.jreleaser.model.Artifact> convertFiles(Set<File> files) {
+        Set<org.jreleaser.model.Artifact> as = new LinkedHashSet<>();
+        for (File file : files) {
+            as.add(convertArtifact(file));
+        }
+        return as;
     }
 
     private static List<org.jreleaser.model.Artifact> convertArtifacts(List<Artifact> artifacts) {

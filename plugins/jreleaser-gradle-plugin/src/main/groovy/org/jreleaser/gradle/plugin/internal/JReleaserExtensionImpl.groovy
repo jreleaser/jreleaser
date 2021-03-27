@@ -60,7 +60,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final PackagersImpl packagers
     final AnnounceImpl announce
     final SigningImpl signing
-    final NamedDomainObjectContainer<ArtifactImpl> artifacts
+    final NamedDomainObjectContainer<ArtifactImpl> files
     final NamedDomainObjectContainer<DistributionImpl> distributions
 
     @Inject
@@ -76,7 +76,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         packagers = objects.newInstance(PackagersImpl, objects)
         announce = objects.newInstance(AnnounceImpl, objects)
         signing = objects.newInstance(SigningImpl, objects)
-        artifacts = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
+        files = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
             ArtifactImpl create(String name) {
                 ArtifactImpl artifact = objects.newInstance(ArtifactImpl, objects)
@@ -100,8 +100,8 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
-    void artifact(Action<? super Artifact> action) {
-        ArtifactImpl artifact = artifacts.maybeCreate("artifact-${artifacts.size()}".toString())
+    void file(Action<? super Artifact> action) {
+        ArtifactImpl artifact = files.maybeCreate("file-${files.size()}".toString())
         action.execute(artifact)
     }
 
@@ -133,8 +133,8 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.packagers = packagers.toModel()
         jreleaser.announce = announce.toModel()
         jreleaser.signing = signing.toModel()
-        for (ArtifactImpl artifact : artifacts) {
-            jreleaser.artifacts.add(artifact.toModel())
+        for (ArtifactImpl file : files) {
+            jreleaser.files.add(file.toModel())
         }
         jreleaser.distributions = (distributions.toList().stream()
             .collect(Collectors.toMap(

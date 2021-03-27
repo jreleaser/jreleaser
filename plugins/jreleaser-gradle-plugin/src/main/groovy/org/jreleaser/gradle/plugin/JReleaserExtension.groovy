@@ -54,7 +54,7 @@ interface JReleaserExtension {
 
     void project(Action<? super Project> action)
 
-    void artifact(Action<? super Artifact> action)
+    void file(Action<? super Artifact> action)
 
     void release(Action<? super Release> action)
 

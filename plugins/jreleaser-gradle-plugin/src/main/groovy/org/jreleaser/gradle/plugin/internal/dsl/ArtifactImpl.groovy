@@ -43,6 +43,10 @@ class ArtifactImpl implements Artifact {
         platform = objects.property(String).convention(Providers.notDefined())
     }
 
+    void setPath(String path){
+        this.path.set(new File(path))
+    }
+
     org.jreleaser.model.Artifact toModel() {
         org.jreleaser.model.Artifact artifact = new org.jreleaser.model.Artifact()
         artifact.path = path.asFile.get().absolutePath

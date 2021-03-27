@@ -1,8 +1,7 @@
 {
   "project": {
     "name": "app",
-    "groupId": "com.acme",
-    "version": "0.0.0-SNAPSHOT",
+    "version": "1.0.0-SNAPSHOT",
     "description": "Awesome App",
     "longDescription": "Awesome App",
     "website": "https://acme.com/app",
@@ -10,7 +9,10 @@
       "Duke"
     ],
     "license": "Apache-2",
-    "javaVersion': "8"
+    "java": {
+      "groupId": "com.acme",
+      "version": "8"
+    }
   },
 
   "release": {

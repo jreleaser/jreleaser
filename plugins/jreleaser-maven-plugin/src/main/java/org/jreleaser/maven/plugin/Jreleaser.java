@@ -36,7 +36,7 @@ public class Jreleaser {
     private final Packagers packagers = new Packagers();
     private final Announce announce = new Announce();
     private final Signing signing = new Signing();
-    private final Set<Artifact> files = new LinkedHashSet<>();
+    private final Set<File> files = new LinkedHashSet<>();
     private final List<Distribution> distributions = new ArrayList<>();
 
     public Project getProject() {
@@ -79,20 +79,20 @@ public class Jreleaser {
         this.signing.setAll(signing);
     }
 
-    public Set<Artifact> getFiles() {
+    public Set<File> getFiles() {
         return files;
     }
 
-    public void setFiles(Set<Artifact> files) {
+    public void setFiles(Set<File> files) {
         this.files.clear();
         this.files.addAll(files);
     }
 
-    public void addFiles(Set<Artifact> files) {
+    public void addFiles(Set<File> files) {
         this.files.addAll(files);
     }
 
-    public void addFiles(Artifact artifact) {
+    public void addFiles(File artifact) {
         if (null != artifact) {
             this.files.add(artifact);
         }
