@@ -59,6 +59,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -324,10 +325,16 @@ public final class JReleaserModelConverter {
         if (brew.isEnabledSet()) t.setEnabled(brew.isEnabled());
         t.setTemplateDirectory(brew.getTemplateDirectory());
         t.setExtraProperties(brew.getExtraProperties());
-        t.setDependencies(brew.getDependencies());
+        t.setDependencies(toMap(brew.getDependencies()));
         t.setTap(convertHomebrewTap(brew.getTap()));
         t.setCommitAuthor(convertCommitAuthor(brew.getCommitAuthor()));
         return t;
+    }
+
+    private static Map<String, String> toMap(Properties props) {
+        Map<String, String> map = new LinkedHashMap<>();
+        props.stringPropertyNames().forEach(key -> map.put(key, props.getProperty(key)));
+        return map;
     }
 
     private static HomebrewTap convertHomebrewTap(Tap tap) {

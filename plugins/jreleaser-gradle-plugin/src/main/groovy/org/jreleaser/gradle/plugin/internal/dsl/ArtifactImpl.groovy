@@ -51,7 +51,7 @@ class ArtifactImpl implements Artifact {
         org.jreleaser.model.Artifact artifact = new org.jreleaser.model.Artifact()
         if(path.present) {
             artifact.path = path.asFile.get().absolutePath
-        } else {    
+        } else {
             throw new IllegalArgumentException("Artifact ${name} requires a value for 'path'")
         }
         if (platform.present) artifact.platform = platform.get()
