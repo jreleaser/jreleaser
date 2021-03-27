@@ -9,7 +9,7 @@ class {{projectNameCapitalized}} < Formula
   bottle :unneeded
 
   {{#brewDependencies}}
-  depends_on {{formattedDependency}}
+  depends_on {{.}}
   {{/brewDependencies}}
 
   def install

@@ -90,7 +90,7 @@ class BrewPackagerImpl extends AbstractPackagerTool implements BrewPackager {
         fillToolProperties(tool)
         if (tap.isSet()) tool.tap = tap.toHomebrewTap()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
-        if (dependencies.present) tool.dependencies.putAll(dependencies.get())
+        if (dependencies.present) tool.dependencies = dependencies.get()
         tool
     }
 }

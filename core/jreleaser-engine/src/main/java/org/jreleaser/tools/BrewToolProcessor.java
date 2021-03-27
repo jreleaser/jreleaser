@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -57,13 +56,12 @@ public class BrewToolProcessor extends AbstractToolProcessor<Brew> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
-        if (!getTool().getDependencies().containsKey(Constants.KEY_JAVA_VERSION)) {
-            getTool().getDependencies().put(":java", (String) props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
-        }
+        getTool().addDependency(":java", (String) props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
 
-        props.put(Constants.KEY_BREW_DEPENDENCIES, getTool().getDependencies()
-            .entrySet().stream()
-            .map(entry -> new Dependency(entry.getKey(), entry.getValue()))
+        props.put(Constants.KEY_BREW_DEPENDENCIES, getTool().getDependenciesAsList()
+            .stream()
+            // prevent Mustache from converting quotes into &quot;
+            .map(dependency -> "!!" + dependency.toString() + "!!")
             .collect(Collectors.toList()));
     }
 
@@ -78,32 +76,5 @@ public class BrewToolProcessor extends AbstractToolProcessor<Brew> {
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
-    }
-
-    public static class Dependency {
-        private final String key;
-        private final String value;
-
-        public Dependency(String key, String value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        public String getFormattedDependency() {
-            StringBuilder formatted = new StringBuilder();
-            if (key.startsWith(":")) {
-                formatted.append(key);
-            } else {
-                formatted.append("\"")
-                    .append(key)
-                    .append("\"");
-            }
-            if (isNotBlank(value) && !"null".equalsIgnoreCase(value)) {
-                formatted.append(" => \"")
-                    .append(value)
-                    .append("\"");
-            }
-            return "!!" + formatted.toString() + "!!";
-        }
     }
 }

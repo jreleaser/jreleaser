@@ -30,14 +30,12 @@ jobs:
             ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: ./gradlew build -S
+        run: ./gradlew -Prelease=true build -S
 
       - name: Rename artifacts
         run: |
           mkdir early-access
           cp apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-*-SNAPSHOT.jar early-access/jreleaser-tool-provider-early-access.jar
-          cp apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-*-SNAPSHOT-sources.jar early-access/jreleaser-tool-provider-early-access-sources.jar
-          cp apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-*-SNAPSHOT-javadoc.jar early-access/jreleaser-tool-provider-early-access-javadoc.jar
           cp apps/jreleaser/build/distributions/jreleaser-*-SNAPSHOT.zip early-access/jreleaser-early-access.zip
           cp plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-*-SNAPSHOT.zip early-access/jreleaser-ant-tasks-early-access.zip
 

@@ -65,7 +65,7 @@ class BrewImpl extends AbstractTool implements Brew {
     @Override
     void addDependency(String key) {
         if (isNotBlank(key)) {
-            dependencies.put(key.trim(), '')
+            dependencies.put(key.trim(), 'null')
         }
     }
 
@@ -94,7 +94,7 @@ class BrewImpl extends AbstractTool implements Brew {
         fillToolProperties(tool)
         if (tap.isSet()) tool.tap = tap.toHomebrewTap()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
-        if (dependencies.present) tool.dependencies.putAll(dependencies.get())
+        if (dependencies.present) tool.dependencies = dependencies.get()
         tool
     }
 }

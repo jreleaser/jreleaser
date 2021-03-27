@@ -553,10 +553,9 @@ public final class JReleaserModelValidator {
         validateTemplate(context, distribution, tool, model.getPackagers().getBrew(), errors);
         mergeExtraProperties(tool, model.getPackagers().getBrew());
 
-        Map<String, String> dependencies = new LinkedHashMap<>(model.getPackagers().getBrew().getDependencies());
-        dependencies.putAll(tool.getDependencies());
-
-        tool.setDependencies(dependencies);
+        List<Brew.Dependency> dependencies = new ArrayList<>(model.getPackagers().getBrew().getDependenciesAsList());
+        dependencies.addAll(tool.getDependenciesAsList());
+        tool.setDependenciesAsList(dependencies);
 
         if (isBlank(tool.getTap().getName())) {
             tool.getTap().setName(model.getPackagers().getBrew().getTap().getName());

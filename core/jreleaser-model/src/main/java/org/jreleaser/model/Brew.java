@@ -17,8 +17,13 @@
  */
 package org.jreleaser.model;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -26,7 +31,7 @@ import java.util.Map;
  */
 public class Brew extends AbstractTool {
     public static final String NAME = "brew";
-    private final Map<String, String> dependencies = new LinkedHashMap<>();
+    private final List<Dependency> dependencies = new ArrayList<>();
     private HomebrewTap tap = new HomebrewTap();
 
     public Brew() {
@@ -36,7 +41,7 @@ public class Brew extends AbstractTool {
     void setAll(Brew brew) {
         super.setAll(brew);
         this.tap.setAll(brew.tap);
-        setDependencies(brew.dependencies);
+        setDependenciesAsList(brew.dependencies);
     }
 
     public HomebrewTap getTap() {
@@ -47,25 +52,39 @@ public class Brew extends AbstractTool {
         this.tap = tap;
     }
 
-    public Map<String, String> getDependencies() {
+    public void setDependencies(Map<String, String> dependencies) {
+        if (null == dependencies || dependencies.isEmpty()) {
+            return;
+        }
+        this.dependencies.clear();
+        dependencies.forEach(this::addDependency);
+    }
+
+    public List<Dependency> getDependenciesAsList() {
         return dependencies;
     }
 
-    public void setDependencies(Map<String, String> dependencies) {
+    public void setDependenciesAsList(List<Dependency> dependencies) {
+        if (null == dependencies || dependencies.isEmpty()) {
+            return;
+        }
         this.dependencies.clear();
-        this.dependencies.putAll(dependencies);
+        this.dependencies.addAll(dependencies);
     }
 
     public void addDependencies(Map<String, String> dependencies) {
-        this.dependencies.putAll(dependencies);
+        if (null == dependencies || dependencies.isEmpty()) {
+            return;
+        }
+        dependencies.forEach(this::addDependency);
     }
 
     public void addDependency(String key, String value) {
-        dependencies.put(key, value);
+        dependencies.add(new Dependency(key, value));
     }
 
     public void addDependency(String key) {
-        dependencies.put(key, "");
+        dependencies.add(new Dependency(key));
     }
 
     @Override
@@ -77,5 +96,58 @@ public class Brew extends AbstractTool {
     @Override
     public RepositoryTap getRepositoryTap() {
         return tap;
+    }
+
+    public static class Dependency {
+        private final String key;
+        private final String value;
+
+        private Dependency(String key) {
+            this(key, null);
+        }
+
+        private Dependency(String key, String value) {
+            this.key = key;
+            this.value = isBlank(value) || "null".equalsIgnoreCase(value) ? null : value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder formatted = new StringBuilder();
+            if (key.startsWith(":")) {
+                formatted.append(key);
+            } else {
+                formatted.append("\"")
+                    .append(key)
+                    .append("\"");
+            }
+            if (isNotBlank(value)) {
+                formatted.append(" => \"")
+                    .append(value)
+                    .append("\"");
+            }
+            return formatted.toString();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Dependency that = (Dependency) o;
+            return key.equals(that.key);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(key);
+        }
     }
 }

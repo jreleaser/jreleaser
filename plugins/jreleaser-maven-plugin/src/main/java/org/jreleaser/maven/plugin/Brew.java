@@ -19,9 +19,8 @@ package org.jreleaser.maven.plugin;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Andres Almiray
@@ -30,7 +29,7 @@ import java.util.Properties;
 public class Brew extends AbstractTool {
     public static final String NAME = "brew";
     @Parameter(property = "dependencies")
-    private final Properties dependencies = new Properties();
+    private final List<Dependency> dependencies = new ArrayList<>();
     private Tap tap = new Tap();
 
     public Brew() {
@@ -51,13 +50,13 @@ public class Brew extends AbstractTool {
         this.tap = tap;
     }
 
-    public Properties getDependencies() {
+    public List<Dependency> getDependencies() {
         return dependencies;
     }
 
-    public void setDependencies(Properties dependencies) {
+    public void setDependencies(List<Dependency> dependencies) {
         this.dependencies.clear();
-        this.dependencies.putAll(dependencies);
+        this.dependencies.addAll(dependencies);
     }
 
     @Override

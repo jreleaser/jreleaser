@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -144,7 +145,7 @@ public class JReleaserModel implements Domain {
 
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("environment", environment.asMap());
+        if (isNotBlank(environment.getVariables())) map.put("environment", environment.asMap());
         map.put("project", project.asMap());
         map.put("release", release.asMap());
         map.put("packagers", packagers.asMap());
