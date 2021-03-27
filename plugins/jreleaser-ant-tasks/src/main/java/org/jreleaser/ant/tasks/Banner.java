@@ -17,7 +17,7 @@
  */
 package org.jreleaser.ant.tasks;
 
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,8 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
@@ -46,7 +44,7 @@ final class Banner {
         // nooop
     }
 
-    public static void display(Logger logger) {
+    public static void display(JReleaserLogger logger) {
         try {
             File parent = new File(System.getProperty("user.home"), "/.ant/caches");
             File markerFile = getMarkerFile(parent, b);

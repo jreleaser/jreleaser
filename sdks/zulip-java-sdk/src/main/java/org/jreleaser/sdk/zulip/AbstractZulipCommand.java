@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.zulip;
 
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -30,7 +30,7 @@ abstract class AbstractZulipCommand implements ZulipCommand {
     protected final boolean dryrun;
     protected final Zulip zulip;
 
-    protected AbstractZulipCommand(Logger logger,
+    protected AbstractZulipCommand(JReleaserLogger logger,
                                    String apiHost,
                                    String account,
                                    String apiKey,
@@ -40,13 +40,13 @@ abstract class AbstractZulipCommand implements ZulipCommand {
     }
 
     static class Builder<S extends Builder<S>> {
-        protected final Logger logger;
+        protected final JReleaserLogger logger;
         protected boolean dryrun;
         protected String account;
         protected String apiKey;
         protected String apiHost;
 
-        protected Builder(Logger logger) {
+        protected Builder(JReleaserLogger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be blank");
         }
 

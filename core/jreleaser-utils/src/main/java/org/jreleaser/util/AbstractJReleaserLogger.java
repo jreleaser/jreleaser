@@ -21,7 +21,7 @@ package org.jreleaser.util;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractLogger implements Logger {
+public abstract class AbstractJReleaserLogger implements JReleaserLogger {
     private String indent = "";
     private String prefix = null;
     private String previousPrefix = null;

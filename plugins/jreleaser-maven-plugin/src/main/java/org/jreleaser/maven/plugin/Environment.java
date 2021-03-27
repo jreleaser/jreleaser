@@ -15,31 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.tasks
-
-import groovy.transform.CompileStatic
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.TaskAction
-import org.jreleaser.gradle.plugin.internal.JReleaserModelPrinter
-
-import javax.inject.Inject
+package org.jreleaser.maven.plugin;
 
 /**
- *
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CompileStatic
-abstract class JReleaserConfigTask extends AbstractJReleaserTask {
-    @Inject
-    JReleaserConfigTask(ObjectFactory objects) {
-        super(objects)
+public class Environment {
+    private String variables;
+
+    void setAll(Environment signing) {
+        this.variables = signing.variables;
     }
 
-    @TaskAction
-    void displayConfig() {
-        println '== JReleaser =='
-        new JReleaserModelPrinter(project)
-            .print(context.get().model.asMap())
+    public String getVariables() {
+        return variables;
+    }
+
+    public void setVariables(String variables) {
+        this.variables = variables;
     }
 }

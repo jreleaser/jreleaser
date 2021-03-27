@@ -33,6 +33,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public class JReleaserModel implements Domain {
+    private final Environment environment = new Environment();
     private final Project project = new Project();
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
@@ -40,6 +41,14 @@ public class JReleaserModel implements Domain {
     private final Signing signing = new Signing();
     private final Set<Artifact> files = new LinkedHashSet<>();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
+
+    public Environment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Environment environment) {
+        this.environment.setAll(environment);
+    }
 
     public Project getProject() {
         return project;
@@ -135,6 +144,7 @@ public class JReleaserModel implements Domain {
 
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
+        map.put("environment", environment.asMap());
         map.put("project", project.asMap());
         map.put("release", release.asMap());
         map.put("packagers", packagers.asMap());

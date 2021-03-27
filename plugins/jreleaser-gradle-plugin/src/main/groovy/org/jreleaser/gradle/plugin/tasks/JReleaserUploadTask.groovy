@@ -38,10 +38,10 @@ abstract class JReleaserUploadTask extends AbstractJReleaserProcessorTask {
 
     @TaskAction
     void packageDistributions() {
-        println "jreleaser.dryrun set to ${dryrun.get()}"
-        JReleaserContext context = createContext()
+        JReleaserContext ctx = context.get()
+        println "jreleaser.dryrun set to ${ctx.dryrun}"
 
-        upload(context, failFast.get())
+        upload(ctx, failFast.get())
     }
 
     static void upload(JReleaserContext context, boolean failFast) {

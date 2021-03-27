@@ -39,8 +39,10 @@ abstract class JReleaserAnnounceTask extends AbstractJReleaserTask {
 
     @TaskAction
     void announce() {
-        println "jreleaser.dryrun set to ${dryrun.get()}"
-        Announcers.announce(createContext())
+        JReleaserContext ctx = context.get()
+        println "jreleaser.dryrun set to ${ctx.dryrun}"
+
+        Announcers.announce(ctx)
     }
 
     static void announce(JReleaserContext context) {

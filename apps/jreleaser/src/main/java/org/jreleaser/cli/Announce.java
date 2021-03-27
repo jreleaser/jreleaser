@@ -20,7 +20,6 @@ package org.jreleaser.cli;
 import org.jreleaser.announce.Announcers;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import picocli.CommandLine;
 
@@ -36,8 +35,8 @@ public class Announce extends AbstractModelCommand {
     boolean dryrun;
 
     @Override
-    protected void consumeModel(JReleaserModel jreleaserModel) {
-        announce(createContext(jreleaserModel));
+    protected void doExecute(JReleaserContext context) {
+        announce(context);
     }
 
     @Override

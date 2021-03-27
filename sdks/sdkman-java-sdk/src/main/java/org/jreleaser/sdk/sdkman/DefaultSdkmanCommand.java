@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
@@ -26,7 +26,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
-    private DefaultSdkmanCommand(Logger logger,
+    private DefaultSdkmanCommand(JReleaserLogger logger,
                                  String apiHost,
                                  String consumerKey,
                                  String consumerToken,
@@ -41,12 +41,12 @@ public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
         sdkman.setDefault(candidate, version);
     }
 
-    public static Builder builder(Logger logger) {
+    public static Builder builder(JReleaserLogger logger) {
         return new Builder(logger);
     }
 
     public static class Builder extends AbstractSdkmanCommand.Builder<Builder> {
-        protected Builder(Logger logger) {
+        protected Builder(JReleaserLogger logger) {
             super(logger);
         }
 

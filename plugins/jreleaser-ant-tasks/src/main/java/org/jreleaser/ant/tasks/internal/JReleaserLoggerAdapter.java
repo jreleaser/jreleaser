@@ -18,14 +18,14 @@
 package org.jreleaser.ant.tasks.internal;
 
 import org.apache.tools.ant.Project;
-import org.jreleaser.util.AbstractLogger;
+import org.jreleaser.util.AbstractJReleaserLogger;
 import org.slf4j.helpers.MessageFormatter;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserLoggerAdapter extends AbstractLogger {
+public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     private final Project delegate;
 
     public JReleaserLoggerAdapter(Project delegate) {

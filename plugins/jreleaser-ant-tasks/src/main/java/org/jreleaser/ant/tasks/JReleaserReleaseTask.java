@@ -19,7 +19,6 @@ package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.release.Releasers;
 
@@ -32,8 +31,7 @@ import static org.jreleaser.ant.tasks.JReleaserSignTask.sign;
  */
 public class JReleaserReleaseTask extends AbstractJReleaserTask {
     @Override
-    protected void consumeModel(JReleaserModel jreleaserModel) {
-        JReleaserContext context = createContext(jreleaserModel);
+    protected void doExecute(JReleaserContext context) {
         checksum(context);
         sign(context);
         release(context);

@@ -21,7 +21,7 @@ package org.jreleaser.util;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Logger {
+public interface JReleaserLogger {
     String DEBUG_TAB = "        ";
     String ERROR_TAB = "        ";
     String INFO_TAB = "       ";

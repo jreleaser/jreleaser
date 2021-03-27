@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -32,7 +32,7 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
     protected final String version;
     protected final Sdkman sdkman;
 
-    protected AbstractSdkmanCommand(Logger logger,
+    protected AbstractSdkmanCommand(JReleaserLogger logger,
                                     String apiHost,
                                     String consumerKey,
                                     String consumerToken,
@@ -46,7 +46,7 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
     }
 
     static class Builder<S extends Builder<S>> {
-        protected final Logger logger;
+        protected final JReleaserLogger logger;
         protected boolean dryrun;
         protected String consumerKey;
         protected String consumerToken;
@@ -54,7 +54,7 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
         protected String version;
         protected String apiHost = "https://vendors.sdkman.io";
 
-        protected Builder(Logger logger) {
+        protected Builder(JReleaserLogger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be blank");
         }
 

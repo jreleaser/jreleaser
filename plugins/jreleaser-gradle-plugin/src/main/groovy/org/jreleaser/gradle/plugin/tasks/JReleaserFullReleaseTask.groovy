@@ -46,15 +46,15 @@ abstract class JReleaserFullReleaseTask extends AbstractJReleaserTask {
 
     @TaskAction
     void fullRelease() {
-        println "jreleaser.dryrun set to ${dryrun.get()}"
-        JReleaserContext context = createContext()
+        JReleaserContext ctx = context.get()
+        println "jreleaser.dryrun set to ${ctx.dryrun}"
 
-        checksum(context)
-        sign(context)
-        release(context)
-        prepare(context, true)
-        packageTools(context, true)
-        upload(context, true)
-        announce(context)
+        checksum(ctx)
+        sign(ctx)
+        release(ctx)
+        prepare(ctx, true)
+        packageTools(ctx, true)
+        upload(ctx, true)
+        announce(ctx)
     }
 }

@@ -29,19 +29,29 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Env {
     private static final String JRELEASER_PREFIX = "JRELEASER_";
 
+    public static String prefix(String key) {
+        if (!key.startsWith(JRELEASER_PREFIX)) {
+            return JRELEASER_PREFIX + key;
+        }
+        return key;
+    }
+
     public static String resolve(String key, String value) {
         if (isNotBlank(value)) {
             return value;
         }
-        return System.getenv(JRELEASER_PREFIX + key);
+        return System.getenv(prefix(key));
     }
 
-    public static void check(String key, String value, String property, List<String> errors) {
+    public static String check(String key, String value, String property, List<String> errors) {
         if (isBlank(value)) {
-            String prefixedKey = JRELEASER_PREFIX + key;
-            if (isBlank(System.getenv(prefixedKey))) {
+            String prefixedKey = prefix(key);
+            value = System.getenv(prefixedKey);
+            if (isBlank(value)) {
                 errors.add(property + " must not be blank. Alternatively define a " + prefixedKey + " environment variable.");
             }
         }
+
+        return value;
     }
 }

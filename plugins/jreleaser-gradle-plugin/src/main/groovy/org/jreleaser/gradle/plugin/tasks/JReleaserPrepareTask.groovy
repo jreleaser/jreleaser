@@ -40,10 +40,11 @@ abstract class JReleaserPrepareTask extends AbstractJReleaserProcessorTask {
 
     @TaskAction
     void prepareDistributions() {
-        JReleaserContext context = createContext()
-        context.logger.info('dryrun set to {}', dryrun.get())
-        checksum(context)
-        prepare(context, failFast.get())
+        JReleaserContext ctx = context.get()
+        println "jreleaser.dryrun set to ${ctx.dryrun}"
+
+        checksum(ctx)
+        prepare(ctx, failFast.get())
     }
 
     static void prepare(JReleaserContext context, boolean failFast) {

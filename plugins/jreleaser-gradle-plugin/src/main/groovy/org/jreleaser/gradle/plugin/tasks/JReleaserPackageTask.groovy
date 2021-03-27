@@ -38,9 +38,10 @@ abstract class JReleaserPackageTask extends AbstractJReleaserProcessorTask {
 
     @TaskAction
     void packageDistributions() {
-        JReleaserContext context = createContext()
-        context.logger.info('dryrun set to {}', dryrun.get())
-        packageTools(context, failFast.get())
+        JReleaserContext ctx = context.get()
+        println "jreleaser.dryrun set to ${ctx.dryrun}"
+
+        packageTools(ctx, failFast.get())
     }
 
     static void packageTools(JReleaserContext context, boolean failFast) {

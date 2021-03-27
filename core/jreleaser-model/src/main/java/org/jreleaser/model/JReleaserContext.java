@@ -17,30 +17,49 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class JReleaserContext {
-    private final Logger logger;
+    private final JReleaserLogger logger;
     private final JReleaserModel model;
     private final Path basedir;
     private final Path outputDirectory;
     private final boolean dryrun;
+    private final List<String> errors = new ArrayList<>();
 
-    public JReleaserContext(Logger logger, JReleaserModel model, Path basedir, Path outputDirectory, boolean dryrun) {
+    public JReleaserContext(JReleaserLogger logger, JReleaserModel model, Path basedir, Path outputDirectory, boolean dryrun) {
         this.logger = logger;
         this.model = model;
         this.basedir = basedir;
         this.outputDirectory = outputDirectory;
         this.dryrun = dryrun;
+
+        this.model.getEnvironment().initProps(this);
     }
 
-    public Logger getLogger() {
+    public List<String> validateModel() {
+        if (!errors.isEmpty()) return errors;
+
+        logger.info("Validating configuration");
+        errors.addAll(JReleaserModelValidator.validate(this));
+        if (!errors.isEmpty()) {
+            logger.error("== JReleaser ==");
+            errors.forEach(logger::error);
+
+        }
+
+        return errors;
+    }
+
+    public JReleaserLogger getLogger() {
         return logger;
     }
 

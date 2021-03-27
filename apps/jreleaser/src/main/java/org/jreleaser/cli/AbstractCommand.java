@@ -20,7 +20,7 @@ package org.jreleaser.cli;
 import org.jreleaser.cli.internal.ColorizedJReleaserLoggerAdapter;
 import org.jreleaser.cli.internal.Colorizer;
 import org.jreleaser.model.JReleaserException;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 import picocli.CommandLine;
 
 import java.nio.file.Path;
@@ -32,7 +32,7 @@ import java.util.concurrent.Callable;
  */
 @CommandLine.Command
 abstract class AbstractCommand implements Callable<Integer> {
-    protected Logger logger;
+    protected JReleaserLogger logger;
 
     @CommandLine.Option(names = {"-d", "--debug"},
         description = "Set log level to debug.")

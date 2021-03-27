@@ -39,7 +39,7 @@ abstract class JReleaserChecksumTask extends AbstractJReleaserTask {
 
     @TaskAction
     void checkumArtifacts() {
-        checksum(createContext())
+        checksum(context.get())
     }
 
     static void checksum(JReleaserContext context) {

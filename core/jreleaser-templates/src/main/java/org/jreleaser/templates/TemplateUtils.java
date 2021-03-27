@@ -18,7 +18,7 @@
 package org.jreleaser.templates;
 
 import org.jreleaser.model.Distribution;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public final class TemplateUtils {
         return str;
     }
 
-    public static Map<String, Reader> resolveAndMergeTemplates(Logger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot, Path templateDirectory) {
+    public static Map<String, Reader> resolveAndMergeTemplates(JReleaserLogger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot, Path templateDirectory) {
         Map<String, Reader> templates = resolveTemplates(logger, distributionType, toolName, snapshot);
         if (null != templateDirectory && templateDirectory.toFile().exists()) {
             templates.putAll(resolveTemplates(logger, distributionType, toolName, snapshot, templateDirectory));
@@ -62,7 +62,7 @@ public final class TemplateUtils {
         return templates;
     }
 
-    public static Map<String, Reader> resolveTemplates(Logger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot, Path templateDirectory) {
+    public static Map<String, Reader> resolveTemplates(JReleaserLogger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot, Path templateDirectory) {
         Map<String, Reader> templates = new LinkedHashMap<>();
 
         Path snapshotTemplateDirectory = templateDirectory.resolveSibling(templateDirectory.getFileName() + "-snapshot");
@@ -90,7 +90,7 @@ public final class TemplateUtils {
         return templates;
     }
 
-    public static Map<String, Reader> resolveTemplates(Logger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot) {
+    public static Map<String, Reader> resolveTemplates(JReleaserLogger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot) {
         String distributionTypeName = distributionType.name().toLowerCase().replace('_', '-');
 
         Map<String, Reader> templates = new LinkedHashMap<>();
@@ -132,7 +132,7 @@ public final class TemplateUtils {
         return templates;
     }
 
-    private static boolean findTemplate(Logger logger, JarFile jarFile, String templatePrefix, Map<String, Reader> templates) throws IOException {
+    private static boolean findTemplate(JReleaserLogger logger, JarFile jarFile, String templatePrefix, Map<String, Reader> templates) throws IOException {
         boolean templatesFound = false;
 
         logger.debug("Searching for templates matching {}/*", templatePrefix);
@@ -151,7 +151,7 @@ public final class TemplateUtils {
         return templatesFound;
     }
 
-    public static Reader resolveTemplate(Logger logger, Class<?> anchor, String templateKey) {
+    public static Reader resolveTemplate(JReleaserLogger logger, Class<?> anchor, String templateKey) {
         logger.debug("Resolving template from classpath for {}@{}", anchor.getName(), templateKey);
         URL location = resolveLocation(anchor);
         if (null == location) {

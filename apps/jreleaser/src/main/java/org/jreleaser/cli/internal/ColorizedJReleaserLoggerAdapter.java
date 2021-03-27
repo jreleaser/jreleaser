@@ -17,7 +17,7 @@
  */
 package org.jreleaser.cli.internal;
 
-import org.jreleaser.util.AbstractLogger;
+import org.jreleaser.util.AbstractJReleaserLogger;
 import org.slf4j.helpers.MessageFormatter;
 import picocli.CommandLine;
 
@@ -27,7 +27,7 @@ import java.io.PrintWriter;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class ColorizedJReleaserLoggerAdapter extends AbstractLogger {
+public class ColorizedJReleaserLoggerAdapter extends AbstractJReleaserLogger {
     private final PrintWriter out;
     private final Level level;
 

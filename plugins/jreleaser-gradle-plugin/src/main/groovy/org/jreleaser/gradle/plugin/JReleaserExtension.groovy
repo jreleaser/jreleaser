@@ -24,6 +24,7 @@ import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Distribution
+import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
@@ -40,6 +41,8 @@ interface JReleaserExtension {
 
     Property<Boolean> getDryrun()
 
+    Environment getEnvironment()
+
     Project getProject()
 
     Release getRelease()
@@ -51,6 +54,8 @@ interface JReleaserExtension {
     Signing getSigning()
 
     NamedDomainObjectContainer<Distribution> getDistributions()
+
+    void environment(Action<? super Environment> action)
 
     void project(Action<? super Project> action)
 

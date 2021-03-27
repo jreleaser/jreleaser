@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.twitter;
 
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -30,7 +30,7 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
     protected final boolean dryrun;
     protected final Twitter twitter;
 
-    protected AbstractTwitterCommand(Logger logger,
+    protected AbstractTwitterCommand(JReleaserLogger logger,
                                      String apiHost,
                                      String consumerKey,
                                      String consumerToken,
@@ -42,7 +42,7 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
     }
 
     static class Builder<S extends Builder<S>> {
-        protected final Logger logger;
+        protected final JReleaserLogger logger;
         protected boolean dryrun;
         protected String consumerKey;
         protected String consumerToken;
@@ -50,7 +50,7 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
         protected String accessTokenSecret;
         protected String apiHost = "https://api.twitter.com/1.1/";
 
-        protected Builder(Logger logger) {
+        protected Builder(JReleaserLogger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be blank");
         }
 

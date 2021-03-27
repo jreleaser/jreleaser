@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.twitter;
 
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -29,11 +29,11 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class Twitter {
-    private final Logger logger;
+    private final JReleaserLogger logger;
     private final twitter4j.Twitter twitter;
     private final boolean dryrun;
 
-    public Twitter(Logger logger, String apiHost, String consumerKey, String consumerToken,
+    public Twitter(JReleaserLogger logger, String apiHost, String consumerKey, String consumerToken,
                    String accessToken, String accessTokenSecret, boolean dryrun) {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(apiHost, "'apiHost' must not be blank");

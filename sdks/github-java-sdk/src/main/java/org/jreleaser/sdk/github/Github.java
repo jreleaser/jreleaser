@@ -19,7 +19,7 @@ package org.jreleaser.sdk.github;
 
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 import org.kohsuke.github.GHAsset;
 import org.kohsuke.github.GHFileNotFoundException;
 import org.kohsuke.github.GHOrganization;
@@ -44,14 +44,14 @@ class Github {
     static final String ENDPOINT = "https://api.github.com";
     private final Tika tika = new Tika();
 
-    private final Logger logger;
+    private final JReleaserLogger logger;
     private final GitHub github;
 
-    Github(Logger logger, String username, String password) throws IOException {
+    Github(JReleaserLogger logger, String username, String password) throws IOException {
         this(logger, ENDPOINT, username, password);
     }
 
-    Github(Logger logger, String endpoint, String username, String password) throws IOException {
+    Github(JReleaserLogger logger, String endpoint, String username, String password) throws IOException {
         this.logger = logger;
 
         if (isBlank(endpoint)) {

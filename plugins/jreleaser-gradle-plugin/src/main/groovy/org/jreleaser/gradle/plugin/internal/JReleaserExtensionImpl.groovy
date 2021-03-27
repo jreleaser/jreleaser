@@ -29,6 +29,7 @@ import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Artifact
+import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
@@ -36,6 +37,7 @@ import org.jreleaser.gradle.plugin.dsl.Signing
 import org.jreleaser.gradle.plugin.internal.dsl.AnnounceImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
+import org.jreleaser.gradle.plugin.internal.dsl.EnvironmentImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl
@@ -55,6 +57,7 @@ import java.util.stream.Collectors
 class JReleaserExtensionImpl implements JReleaserExtension {
     final Property<Boolean> enabled
     final Property<Boolean> dryrun
+    final EnvironmentImpl environment
     final ProjectImpl project
     final ReleaseImpl release
     final PackagersImpl packagers
@@ -71,6 +74,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
                            Provider<Directory> distributionsDirProvider) {
         enabled = objects.property(Boolean).convention(true)
         dryrun = objects.property(Boolean).convention(false)
+        environment = objects.newInstance(EnvironmentImpl, objects)
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)
         release = objects.newInstance(ReleaseImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)
@@ -92,6 +96,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
                 return distribution
             }
         })
+    }
+
+    @Override
+    void environment(Action<? super Environment> action) {
+        action.execute(environment)
     }
 
     @Override
@@ -128,6 +137,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     @CompileDynamic
     JReleaserModel toModel() {
         JReleaserModel jreleaser = new JReleaserModel()
+        jreleaser.environment = environment.toModel()
         jreleaser.project = project.toModel()
         jreleaser.release = release.toModel()
         jreleaser.packagers = packagers.toModel()

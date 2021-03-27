@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
     private final Map<String, String> platforms = new LinkedHashMap<>();
 
-    private ReleaseSdkmanCommand(Logger logger,
+    private ReleaseSdkmanCommand(JReleaserLogger logger,
                                  String apiHost,
                                  String consumerKey,
                                  String consumerToken,
@@ -50,7 +50,7 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
         sdkman.release(candidate, version, platforms);
     }
 
-    public static Builder builder(Logger logger) {
+    public static Builder builder(JReleaserLogger logger) {
         return new Builder(logger);
     }
 
@@ -58,7 +58,7 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
         private final Map<String, String> platforms = new LinkedHashMap<>();
         private String url;
 
-        protected Builder(Logger logger) {
+        protected Builder(JReleaserLogger logger) {
             super(logger);
         }
 

@@ -19,12 +19,11 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 
 import java.io.StringReader;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -33,6 +32,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.model.GitService.TAG_NAME;
 import static org.jreleaser.model.Project.PROJECT_VERSION;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
@@ -59,30 +59,42 @@ public final class JReleaserModelValidator {
         // noop
     }
 
-    public static List<String> validate(Logger logger, Path basedir, JReleaserModel model) {
+    public static List<String> validate(JReleaserContext context) {
         List<String> errors = new ArrayList<>();
-        validateModel(logger, basedir, model, errors);
-        resolveArtifactPaths(logger, model);
-        logger.info("Project version set to {}", model.getProject().getResolvedVersion());
-        logger.info("Release is{}snapshot", model.getProject().isSnapshot() ? " " : " not ");
+        validateModel(context, errors);
+        resolveArtifactPaths(context);
+        context.getLogger().info("Project version set to {}", context.getModel().getProject().getResolvedVersion());
+        context.getLogger().info("Release is{}snapshot", context.getModel().getProject().isSnapshot() ? " " : " not ");
         return Collections.unmodifiableList(errors);
     }
 
-    private static void validateModel(Logger logger, Path basedir, JReleaserModel model, List<String> errors) {
-        validateProject(logger, basedir, model.getProject(), errors);
-        validateSign(logger, basedir, model, model.getSign(), errors);
-        validateRelease(logger, basedir, model, model.getRelease(), errors);
-        validatePackagers(logger, basedir, model, model.getPackagers(), errors);
-        validateAnnouncers(logger, basedir, model, model.getAnnounce(), errors);
-        validateDistributions(logger, basedir, model, model.getDistributions(), errors);
+    private static void validateModel(JReleaserContext context, List<String> errors) {
+        validateProject(context, errors);
+        validateSign(context, errors);
+        validateRelease(context, errors);
+        validatePackagers(context, errors);
+        validateAnnouncers(context, errors);
+        validateDistributions(context, errors);
     }
 
-    private static void validateProject(Logger logger, Path basedir, Project project, List<String> errors) {
+    private static String checkProperty(Environment environment, String key, String property, String value, List<String> errors) {
+        if (isNotBlank(value)) return value;
+        return Env.check(key, environment.getVariable(key), property, errors);
+    }
+
+    private static void validateProject(JReleaserContext context, List<String> errors) {
+        Project project = context.getModel().getProject();
+
         if (isBlank(project.getName())) {
             errors.add("project.name must not be blank");
         }
 
-        Env.check(PROJECT_VERSION, project.getVersion(), "project.version", errors);
+        project.setVersion(
+            checkProperty(context.getModel().getEnvironment(),
+                PROJECT_VERSION,
+                "project.version",
+                project.getVersion(),
+                errors));
 
         if (isBlank(project.getDescription())) {
             errors.add("project.description must not be blank");
@@ -100,10 +112,10 @@ public final class JReleaserModelValidator {
             errors.add("project.authors must not be empty");
         }
 
-        validateJava(logger, basedir, project, errors);
+        validateJava(context, project, errors);
     }
 
-    private static void validateJava(Logger logger, Path basedir, Project project, List<String> errors) {
+    private static void validateJava(JReleaserContext context, Project project, List<String> errors) {
         if (!project.getJava().isSet()) return;
 
         project.getJava().setEnabled(true);
@@ -122,11 +134,13 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void validateRelease(Logger logger, Path basedir, JReleaserModel model, Release release, List<String> errors) {
+    private static void validateRelease(JReleaserContext context, List<String> errors) {
+        Release release = context.getModel().getRelease();
+
         int count = 0;
-        if (validateGithub(logger, basedir, model, release.getGithub(), errors)) count++;
-        if (validateGitlab(logger, basedir, model, release.getGitlab(), errors)) count++;
-        if (validateGitea(logger, basedir, model, release.getGitea(), errors)) count++;
+        if (validateGithub(context, release.getGithub(), errors)) count++;
+        if (validateGitlab(context, release.getGitlab(), errors)) count++;
+        if (validateGitea(context, release.getGitea(), errors)) count++;
 
         if (0 == count) {
             errors.add("No release provider has been configured");
@@ -137,7 +151,10 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void validatePackagers(Logger logger, Path basedir, JReleaserModel model, Packagers packagers, List<String> errors) {
+    private static void validatePackagers(JReleaserContext context, List<String> errors) {
+        JReleaserModel model = context.getModel();
+        Packagers packagers = model.getPackagers();
+
         validateCommitAuthor(packagers.getBrew(), model.getRelease().getGitService());
         validateOwner(packagers.getBrew().getTap(), model.getRelease().getGitService());
 
@@ -154,10 +171,11 @@ public final class JReleaserModelValidator {
         validateOwner(packagers.getSnap().getSnap(), model.getRelease().getGitService());
     }
 
-    private static void validateAnnouncers(Logger logger, Path basedir, JReleaserModel model, Announce announce, List<String> errors) {
-        validateSdkman(logger, basedir, model, announce.getSdkman(), errors);
-        validateTwitter(logger, basedir, model, announce.getTwitter(), errors);
-        validateZulip(logger, basedir, model, announce.getZulip(), errors);
+    private static void validateAnnouncers(JReleaserContext context, List<String> errors) {
+        Announce announce = context.getModel().getAnnounce();
+        validateSdkman(context, announce.getSdkman(), errors);
+        validateTwitter(context, announce.getTwitter(), errors);
+        validateZulip(context, announce.getZulip(), errors);
 
         boolean enabled = announce.getSdkman().isEnabled() ||
             announce.getTwitter().isEnabled() ||
@@ -167,34 +185,73 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void validateSdkman(Logger logger, Path basedir, JReleaserModel model, Sdkman sdkman, List<String> errors) {
+    private static void validateSdkman(JReleaserContext context, Sdkman sdkman, List<String> errors) {
         if (!sdkman.isEnabled()) return;
 
-        Env.check(SDKMAN_CONSUMER_KEY, sdkman.getConsumerKey(), "sdkman.consumerKey", errors);
-        Env.check(SDKMAN_CONSUMER_TOKEN, sdkman.getConsumerToken(), "sdkman.consumerToken", errors);
+        sdkman.setConsumerKey(
+            checkProperty(context.getModel().getEnvironment(),
+                SDKMAN_CONSUMER_KEY,
+                "sdkman.consumerKey",
+                sdkman.getConsumerKey(),
+                errors));
+
+        sdkman.setConsumerToken(
+            checkProperty(context.getModel().getEnvironment(),
+                SDKMAN_CONSUMER_TOKEN,
+                "sdkman.consumerToken",
+                sdkman.getConsumerToken(),
+                errors));
     }
 
-    private static void validateTwitter(Logger logger, Path basedir, JReleaserModel model, Twitter twitter, List<String> errors) {
+    private static void validateTwitter(JReleaserContext context, Twitter twitter, List<String> errors) {
         if (!twitter.isEnabled()) return;
 
-        Env.check(TWITTER_CONSUMER_KEY, twitter.getConsumerKey(), "twitter.consumerKey", errors);
-        Env.check(TWITTER_CONSUMER_SECRET, twitter.getConsumerSecret(), "twitter.consumerSecret", errors);
-        Env.check(TWITTER_ACCESS_TOKEN, twitter.getAccessToken(), "twitter.accessToken", errors);
-        Env.check(TWITTER_ACCESS_TOKEN_SECRET, twitter.getAccessTokenSecret(), "twitter.accessTokenSecret", errors);
+        twitter.setConsumerKey(
+            checkProperty(context.getModel().getEnvironment(),
+                TWITTER_CONSUMER_KEY,
+                "twitter.consumerKey",
+                twitter.getConsumerKey(),
+                errors));
+
+        twitter.setConsumerSecret(
+            checkProperty(context.getModel().getEnvironment(),
+                TWITTER_CONSUMER_SECRET,
+                "twitter.consumerSecret",
+                twitter.getConsumerSecret(),
+                errors));
+
+        twitter.setAccessToken(
+            checkProperty(context.getModel().getEnvironment(),
+                TWITTER_ACCESS_TOKEN,
+                "twitter.accessToken",
+                twitter.getAccessToken(),
+                errors));
+
+        twitter.setAccessTokenSecret(
+            checkProperty(context.getModel().getEnvironment(),
+                TWITTER_ACCESS_TOKEN_SECRET,
+                "twitter.accessTokenSecret",
+                twitter.getAccessTokenSecret(),
+                errors));
 
         if (isBlank(twitter.getStatus())) {
             errors.add("twitter.status must not be blank.");
         }
     }
 
-    private static void validateZulip(Logger logger, Path basedir, JReleaserModel model, Zulip zulip, List<String> errors) {
+    private static void validateZulip(JReleaserContext context, Zulip zulip, List<String> errors) {
         if (!zulip.isEnabled()) return;
 
         if (isBlank(zulip.getAccount())) {
             errors.add("zulip.account must not be blank.");
         }
 
-        Env.check(ZULIP_API_KEY, zulip.getApiKey(), "zulip.apiKey", errors);
+        zulip.setApiKey(
+            checkProperty(context.getModel().getEnvironment(),
+                ZULIP_API_KEY,
+                "zulip.apiKey",
+                zulip.getApiKey(),
+                errors));
 
         if (isBlank(zulip.getApiHost())) {
             errors.add("zulip.apiHost must not be blank.");
@@ -204,19 +261,39 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void validateSign(Logger logger, Path basedir, JReleaserModel model, Signing signing, List<String> errors) {
+    private static void validateSign(JReleaserContext context, List<String> errors) {
+        Signing signing = context.getModel().getSign();
+
         if (!signing.isEnabled()) return;
 
         if (!signing.isArmoredSet()) {
             signing.setArmored(true);
         }
 
-        Env.check(GPG_PASSPHRASE, signing.getPassphrase(), "signing.passphrase", errors);
-        Env.check(GPG_PUBLIC_KEY, signing.getPublicKey(), "signing.publicKey", errors);
-        Env.check(GPG_SECRET_KEY, signing.getSecretKey(), "signing.secretKey", errors);
+        signing.setPassphrase(
+            checkProperty(context.getModel().getEnvironment(),
+                GPG_PASSPHRASE,
+                "signing.secretKey",
+                signing.getPassphrase(),
+                errors));
+
+        signing.setPublicKey(
+            checkProperty(context.getModel().getEnvironment(),
+                GPG_PUBLIC_KEY,
+                "signing.secretKey",
+                signing.getPublicKey(),
+                errors));
+
+        signing.setSecretKey(
+            checkProperty(context.getModel().getEnvironment(),
+                GPG_SECRET_KEY,
+                "signing.secretKey",
+                signing.getSecretKey(),
+                errors));
     }
 
-    private static void validateGitService(Logger logger, Path basedir, JReleaserModel model, GitService service, List<String> errors) {
+    private static void validateGitService(JReleaserContext context, GitService service, List<String> errors) {
+        JReleaserModel model = context.getModel();
         Project project = model.getProject();
 
         if (!service.isEnabledSet()) {
@@ -232,10 +309,19 @@ public final class JReleaserModelValidator {
             service.setUsername(service.getOwner());
         }
 
-        Env.check(service.getServiceName().toUpperCase() + "_TOKEN",
-            service.getToken(),
-            service.getServiceName() + ".password",
-            errors);
+        service.setToken(
+            checkProperty(context.getModel().getEnvironment(),
+                service.getServiceName().toUpperCase() + "_TOKEN",
+                service.getServiceName() + ".token",
+                service.getToken(),
+                errors));
+
+        service.setTagName(
+            checkProperty(context.getModel().getEnvironment(),
+                TAG_NAME,
+                service.getServiceName() + ".tagName",
+                service.getTagName(),
+                errors));
 
         if (isBlank(service.getTagName())) {
             service.setTagName("v{{" + project.getResolvedVersion() + "}}");
@@ -264,26 +350,26 @@ public final class JReleaserModelValidator {
         service.getEffectiveTagName(project);
     }
 
-    private static boolean validateGithub(Logger logger, Path basedir, JReleaserModel model, Github github, List<String> errors) {
+    private static boolean validateGithub(JReleaserContext context, Github github, List<String> errors) {
         if (null == github) return false;
 
-        validateGitService(logger, basedir, model, github, errors);
+        validateGitService(context, github, errors);
 
         if (isBlank(github.getTargetCommitish())) {
             github.setTargetCommitish("main");
         }
 
-        if (model.getProject().isSnapshot()) {
+        if (context.getModel().getProject().isSnapshot()) {
             github.setPrerelease(true);
         }
 
         return github.isEnabled();
     }
 
-    private static boolean validateGitlab(Logger logger, Path basedir, JReleaserModel model, Gitlab gitlab, List<String> errors) {
+    private static boolean validateGitlab(JReleaserContext context, Gitlab gitlab, List<String> errors) {
         if (null == gitlab) return false;
 
-        validateGitService(logger, basedir, model, gitlab, errors);
+        validateGitService(context, gitlab, errors);
 
         if (isBlank(gitlab.getRef())) {
             gitlab.setRef("main");
@@ -292,23 +378,25 @@ public final class JReleaserModelValidator {
         return gitlab.isEnabled();
     }
 
-    private static boolean validateGitea(Logger logger, Path basedir, JReleaserModel model, Gitea gitea, List<String> errors) {
+    private static boolean validateGitea(JReleaserContext context, Gitea gitea, List<String> errors) {
         if (null == gitea) return false;
 
-        validateGitService(logger, basedir, model, gitea, errors);
+        validateGitService(context, gitea, errors);
 
         if (isBlank(gitea.getTargetCommitish())) {
             gitea.setTargetCommitish("main");
         }
 
-        if (model.getProject().isSnapshot()) {
+        if (context.getModel().getProject().isSnapshot()) {
             gitea.setPrerelease(true);
         }
 
         return gitea.isEnabled();
     }
 
-    private static void validateDistributions(Logger logger, Path basedir, JReleaserModel model, Map<String, Distribution> distributions, List<String> errors) {
+    private static void validateDistributions(JReleaserContext context, List<String> errors) {
+        Map<String, Distribution> distributions = context.getModel().getDistributions();
+
         if (distributions.isEmpty()) {
             errors.add("Missing distributions configuration");
             return;
@@ -316,7 +404,7 @@ public final class JReleaserModelValidator {
 
         if (distributions.size() == 1) {
             distributions.values().stream()
-                .findFirst().ifPresent(distribution -> distribution.setName(model.getProject().getName()));
+                .findFirst().ifPresent(distribution -> distribution.setName(context.getModel().getProject().getName()));
         }
 
         for (Map.Entry<String, Distribution> e : distributions.entrySet()) {
@@ -324,11 +412,11 @@ public final class JReleaserModelValidator {
             if (isBlank(distribution.getName())) {
                 distribution.setName(e.getKey());
             }
-            validateDistribution(logger, basedir, model, distribution, errors);
+            validateDistribution(context, distribution, errors);
         }
     }
 
-    private static void validateDistribution(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, List<String> errors) {
+    private static void validateDistribution(JReleaserContext context, Distribution distribution, List<String> errors) {
         if (!distribution.isEnabledSet()) {
             distribution.setEnabled(true);
         }
@@ -344,7 +432,7 @@ public final class JReleaserModelValidator {
             distribution.setExecutable(distribution.getName());
         }
 
-        if (!validateJava(logger, basedir, distribution, model.getProject(), errors)) {
+        if (!validateJava(context, distribution, errors)) {
             return;
         }
 
@@ -362,12 +450,12 @@ public final class JReleaserModelValidator {
         }
 
         List<String> tags = new ArrayList<>();
-        tags.addAll(model.getProject().getTags());
+        tags.addAll(context.getModel().getProject().getTags());
         tags.addAll(distribution.getTags());
         distribution.setTags(tags);
 
         for (int i = 0; i < distribution.getArtifacts().size(); i++) {
-            validateArtifact(logger, basedir, model, distribution, distribution.getArtifacts().get(i), i, errors);
+            validateArtifact(context, distribution, distribution.getArtifacts().get(i), i, errors);
         }
         // validate artifact.platform is unique
         Map<String, List<Artifact>> byPlatform = distribution.getArtifacts().stream()
@@ -386,18 +474,20 @@ public final class JReleaserModelValidator {
             });
         });
 
-        validateBrew(logger, basedir, model, distribution, distribution.getBrew(), errors);
-        validateChocolatey(logger, basedir, model, distribution, distribution.getChocolatey(), errors);
-        validateJbang(logger, basedir, model, distribution, distribution.getJbang(), errors);
-        validateScoop(logger, basedir, model, distribution, distribution.getScoop(), errors);
-        validateSnap(logger, basedir, model, distribution, distribution.getSnap(), errors);
+        validateBrew(context, distribution, distribution.getBrew(), errors);
+        validateChocolatey(context, distribution, distribution.getChocolatey(), errors);
+        validateJbang(context, distribution, distribution.getJbang(), errors);
+        validateScoop(context, distribution, distribution.getScoop(), errors);
+        validateSnap(context, distribution, distribution.getSnap(), errors);
     }
 
-    private static boolean validateJava(Logger logger, Path basedir, Distribution distribution, Project project, List<String> errors) {
+    private static boolean validateJava(JReleaserContext context, Distribution distribution, List<String> errors) {
+        Project project = context.getModel().getProject();
+
         if (!distribution.getJava().isEnabledSet() && project.getJava().isEnabledSet()) {
             distribution.getJava().setEnabled(project.getJava().isEnabled());
         }
-        if(!distribution.getJava().isEnabledSet()) {
+        if (!distribution.getJava().isEnabledSet()) {
             distribution.getJava().setEnabled(distribution.getJava().isSet());
         }
 
@@ -435,7 +525,7 @@ public final class JReleaserModelValidator {
         return true;
     }
 
-    private static void validateArtifact(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Artifact artifact, int index, List<String> errors) {
+    private static void validateArtifact(JReleaserContext context, Distribution distribution, Artifact artifact, int index, List<String> errors) {
         if (null == artifact) {
             errors.add("distribution." + distribution.getName() + ".artifact[" + index + "] is null");
             return;
@@ -444,13 +534,15 @@ public final class JReleaserModelValidator {
             errors.add("distribution." + distribution.getName() + ".artifact[" + index + "].path must not be null");
         }
         if (isNotBlank(artifact.getPlatform()) && !PlatformUtils.isSupported(artifact.getPlatform().trim())) {
-            logger.warn("distribution.{}.artifact[{}].platform ({}) is not supported. Please use `${name}` or `${name}-${arch}` from{}       name = {}{}       arch = {}",
+            context.getLogger().warn("distribution.{}.artifact[{}].platform ({}) is not supported. Please use `${name}` or `${name}-${arch}` from{}       name = {}{}       arch = {}",
                 distribution.getName(), index, artifact.getPlatform(), System.lineSeparator(),
                 PlatformUtils.getSupportedOsNames(), System.lineSeparator(), PlatformUtils.getSupportedOsArchs());
         }
     }
 
-    private static void validateBrew(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Brew tool, List<String> errors) {
+    private static void validateBrew(JReleaserContext context, Distribution distribution, Brew tool, List<String> errors) {
+        JReleaserModel model = context.getModel();
+
         if (!tool.isEnabledSet() && model.getPackagers().getBrew().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getBrew().isEnabled());
         }
@@ -458,7 +550,7 @@ public final class JReleaserModelValidator {
 
         validateCommitAuthor(tool, model.getPackagers().getBrew());
         validateOwner(tool.getTap(), model.getPackagers().getBrew().getTap());
-        validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getBrew(), errors);
+        validateTemplate(context, distribution, tool, model.getPackagers().getBrew(), errors);
         mergeExtraProperties(tool, model.getPackagers().getBrew());
 
         Map<String, String> dependencies = new LinkedHashMap<>(model.getPackagers().getBrew().getDependencies());
@@ -477,7 +569,9 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void validateChocolatey(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Chocolatey tool, List<String> errors) {
+    private static void validateChocolatey(JReleaserContext context, Distribution distribution, Chocolatey tool, List<String> errors) {
+        JReleaserModel model = context.getModel();
+
         if (!tool.isEnabledSet() && model.getPackagers().getChocolatey().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getChocolatey().isEnabled());
         }
@@ -485,7 +579,7 @@ public final class JReleaserModelValidator {
 
         validateCommitAuthor(tool, model.getPackagers().getChocolatey());
         validateOwner(tool.getBucket(), model.getPackagers().getChocolatey().getBucket());
-        validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getChocolatey(), errors);
+        validateTemplate(context, distribution, tool, model.getPackagers().getChocolatey(), errors);
         mergeExtraProperties(tool, model.getPackagers().getChocolatey());
 
         if (isBlank(tool.getUsername())) {
@@ -507,7 +601,9 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void validateJbang(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Jbang tool, List<String> errors) {
+    private static void validateJbang(JReleaserContext context, Distribution distribution, Jbang tool, List<String> errors) {
+        JReleaserModel model = context.getModel();
+
         if (!tool.isEnabledSet() && model.getPackagers().getJbang().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getJbang().isEnabled());
         }
@@ -515,7 +611,7 @@ public final class JReleaserModelValidator {
 
         validateCommitAuthor(tool, model.getPackagers().getJbang());
         validateOwner(tool.getCatalog(), model.getPackagers().getJbang().getCatalog());
-        validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getJbang(), errors);
+        validateTemplate(context, distribution, tool, model.getPackagers().getJbang(), errors);
         mergeExtraProperties(tool, model.getPackagers().getJbang());
 
         if (isBlank(tool.getCatalog().getName())) {
@@ -556,7 +652,9 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void validateScoop(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Scoop tool, List<String> errors) {
+    private static void validateScoop(JReleaserContext context, Distribution distribution, Scoop tool, List<String> errors) {
+        JReleaserModel model = context.getModel();
+
         if (!tool.isEnabledSet() && model.getPackagers().getScoop().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getScoop().isEnabled());
         }
@@ -564,7 +662,7 @@ public final class JReleaserModelValidator {
 
         validateCommitAuthor(tool, model.getPackagers().getScoop());
         validateOwner(tool.getBucket(), model.getPackagers().getScoop().getBucket());
-        validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getScoop(), errors);
+        validateTemplate(context, distribution, tool, model.getPackagers().getScoop(), errors);
         Scoop commonScoop = model.getPackagers().getScoop();
         mergeExtraProperties(tool, model.getPackagers().getScoop());
 
@@ -593,7 +691,9 @@ public final class JReleaserModelValidator {
         }
     }
 
-    private static void validateSnap(Logger logger, Path basedir, JReleaserModel model, Distribution distribution, Snap tool, List<String> errors) {
+    private static void validateSnap(JReleaserContext context, Distribution distribution, Snap tool, List<String> errors) {
+        JReleaserModel model = context.getModel();
+
         if (!tool.isEnabledSet() && model.getPackagers().getSnap().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getSnap().isEnabled());
         }
@@ -601,7 +701,7 @@ public final class JReleaserModelValidator {
 
         validateCommitAuthor(tool, model.getPackagers().getSnap());
         validateOwner(tool.getSnap(), model.getPackagers().getSnap().getSnap());
-        validateTemplate(logger, basedir, model, distribution, tool, model.getPackagers().getSnap(), errors);
+        validateTemplate(context, distribution, tool, model.getPackagers().getSnap(), errors);
         Snap commonSnap = model.getPackagers().getSnap();
         mergeExtraProperties(tool, model.getPackagers().getSnap());
         mergeSnapPlugs(tool, model.getPackagers().getSnap());
@@ -632,8 +732,9 @@ public final class JReleaserModelValidator {
             tool.setExportedLogin(commonSnap.getExportedLogin());
             if (isBlank(tool.getExportedLogin())) {
                 errors.add("distribution." + distribution.getName() + ".snap.exportedLogin must not be empty");
-            } else if (!basedir.resolve(tool.getExportedLogin()).toFile().exists()) {
-                errors.add("distribution." + distribution.getName() + ".snap.exportedLogin does not exist. " + basedir.resolve(tool.getExportedLogin()));
+            } else if (!context.getBasedir().resolve(tool.getExportedLogin()).toFile().exists()) {
+                errors.add("distribution." + distribution.getName() + ".snap.exportedLogin does not exist. " +
+                    context.getBasedir().resolve(tool.getExportedLogin()));
             }
         }
 
@@ -685,12 +786,12 @@ public final class JReleaserModelValidator {
         tool.setSlots(new ArrayList<>(commonSlots.values()));
     }
 
-    private static void validateTemplate(Logger logger, Path basedir, JReleaserModel model, Distribution distribution,
+    private static void validateTemplate(JReleaserContext context, Distribution distribution,
                                          Tool tool, Tool parentTool, List<String> errors) {
         if (isBlank(tool.getTemplateDirectory())) {
             tool.setTemplateDirectory(parentTool.getTemplateDirectory());
             if (isNotBlank(tool.getTemplateDirectory()) &&
-                !(basedir.resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
+                !(context.getBasedir().resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
                 errors.add("distribution." + distribution.getName() + "." + tool.getName() + ".template does not exist. " + tool.getTemplateDirectory());
             } else {
                 tool.setTemplateDirectory("src/distributions/" + distribution.getName() + "/" + tool.getName());
@@ -699,7 +800,7 @@ public final class JReleaserModelValidator {
         }
 
         if (isNotBlank(tool.getTemplateDirectory()) &&
-            !(basedir.resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
+            !(context.getBasedir().resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
             errors.add("distribution." + distribution.getName() + "." + tool.getName() + ".template does not exist. " + tool.getTemplateDirectory());
         } else {
             tool.setTemplateDirectory("src/distributions/" + distribution.getName() + "/" + tool.getName());
@@ -719,7 +820,10 @@ public final class JReleaserModelValidator {
         self.setCommitAuthor(author);
     }
 
-    private static void resolveArtifactPaths(Logger logger, JReleaserModel model) {
+    private static void resolveArtifactPaths(JReleaserContext context) {
+        JReleaserLogger logger = context.getLogger();
+        JReleaserModel model = context.getModel();
+
         for (Distribution distribution : model.getDistributions().values()) {
             Map<String, Object> props = model.props();
             props.put(Constants.KEY_DISTRIBUTION_NAME, distribution.getName());

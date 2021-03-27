@@ -34,6 +34,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class GitService implements Releaser, CommitAuthorProvider, OwnerProvider {
+    public static final String TAG_NAME = "tagName";
+
     private static final String TAG_EARLY_ACCESS = "early-access";
 
     private final String serviceName;
@@ -105,6 +107,10 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     public abstract String getReverseRepoHost();
 
     public String getResolvedTagName(Project project) {
+        if (isBlank(cachedTagName)) {
+            cachedTagName = Env.resolve(TAG_NAME, cachedTagName);
+        }
+
         if (isBlank(cachedTagName)) {
             cachedTagName = applyTemplate(new StringReader(tagName), props(project));
         }
@@ -370,7 +376,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
             props.put(Constants.KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());
             props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
         }
-        
+
         props.putAll(project.getResolvedExtraProperties());
         props.put(Constants.KEY_REPO_HOST, host);
         props.put(Constants.KEY_REPO_OWNER, owner);

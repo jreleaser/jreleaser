@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
@@ -29,7 +29,7 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
     private final String hashtag;
     private final String releaseNotesUrl;
 
-    private AnnounceSdkmanCommand(Logger logger,
+    private AnnounceSdkmanCommand(JReleaserLogger logger,
                                   String apiHost,
                                   String consumerKey,
                                   String consumerToken,
@@ -48,7 +48,7 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
         sdkman.announce(candidate, version, hashtag, releaseNotesUrl);
     }
 
-    public static Builder builder(Logger logger) {
+    public static Builder builder(JReleaserLogger logger) {
         return new Builder(logger);
     }
 
@@ -56,7 +56,7 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
         private String hashtag;
         private String releaseNotesUrl;
 
-        protected Builder(Logger logger) {
+        protected Builder(JReleaserLogger logger) {
             super(logger);
         }
 

@@ -15,14 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.tasks
+package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.TaskAction
-import org.jreleaser.gradle.plugin.internal.JReleaserModelPrinter
-
-import javax.inject.Inject
+import org.gradle.api.file.RegularFileProperty
 
 /**
  *
@@ -30,16 +26,6 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserConfigTask extends AbstractJReleaserTask {
-    @Inject
-    JReleaserConfigTask(ObjectFactory objects) {
-        super(objects)
-    }
-
-    @TaskAction
-    void displayConfig() {
-        println '== JReleaser =='
-        new JReleaserModelPrinter(project)
-            .print(context.get().model.asMap())
-    }
+interface Environment {
+    RegularFileProperty getVariables()
 }

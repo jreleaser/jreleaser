@@ -18,6 +18,7 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.cli.internal.JReleaserModelPrinter;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import picocli.CommandLine;
 
@@ -29,7 +30,7 @@ import picocli.CommandLine;
     description = "Displays current configuration")
 public class Config extends AbstractModelCommand {
     @Override
-    protected void consumeModel(JReleaserModel jreleaserModel) {
-        new JReleaserModelPrinter(parent.out).print(jreleaserModel.asMap());
+    protected void doExecute(JReleaserContext context) {
+        new JReleaserModelPrinter(parent.out).print(context.getModel().asMap());
     }
 }

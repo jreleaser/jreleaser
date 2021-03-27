@@ -25,7 +25,7 @@ import org.jreleaser.sdk.sdkman.api.Announce;
 import org.jreleaser.sdk.sdkman.api.Candidate;
 import org.jreleaser.sdk.sdkman.api.Release;
 import org.jreleaser.sdk.sdkman.api.SdkmanAPI;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,11 +39,11 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class Sdkman {
-    private final Logger logger;
+    private final JReleaserLogger logger;
     private final SdkmanAPI api;
     private final boolean dryrun;
 
-    public Sdkman(Logger logger, String apiHost, String consumerKey, String consumerToken, boolean dryrun) {
+    public Sdkman(JReleaserLogger logger, String apiHost, String consumerKey, String consumerToken, boolean dryrun) {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(consumerKey, "'consumerKey' must not be blank");

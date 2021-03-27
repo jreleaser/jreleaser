@@ -31,6 +31,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public class Jreleaser {
+    private final Environment environment = new Environment();
     private final Project project = new Project();
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
@@ -38,6 +39,14 @@ public class Jreleaser {
     private final Signing signing = new Signing();
     private final Set<File> files = new LinkedHashSet<>();
     private final List<Distribution> distributions = new ArrayList<>();
+
+    public Environment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Environment environment) {
+        this.environment.setAll(environment);
+    }
 
     public Project getProject() {
         return project;

@@ -26,7 +26,7 @@ import java.io.PrintWriter;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class SimpleJReleaserLoggerAdapter extends AbstractLogger {
+public class SimpleJReleaserLoggerAdapter extends AbstractJReleaserLogger {
     private final PrintWriter out;
     private final Level level;
 

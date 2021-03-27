@@ -18,7 +18,6 @@
 package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.tools.DistributionProcessor;
 
 /**
@@ -27,8 +26,8 @@ import org.jreleaser.tools.DistributionProcessor;
  */
 public class JReleaserPackageTask extends AbstractJReleaserProcessorTask {
     @Override
-    protected void consumeModel(JReleaserModel jreleaserModel) {
-        packageTools(createContext(jreleaserModel), failFast);
+    protected void doExecute(JReleaserContext context) {
+        packageTools(context, failFast);
     }
 
     static void packageTools(JReleaserContext context, boolean failFast) {

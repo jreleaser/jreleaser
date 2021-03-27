@@ -18,7 +18,6 @@
 package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.tools.DistributionProcessor;
 
 import static org.jreleaser.ant.tasks.JReleaserChecksumTask.checksum;
@@ -29,8 +28,7 @@ import static org.jreleaser.ant.tasks.JReleaserChecksumTask.checksum;
  */
 public class JReleaserPrepareTask extends AbstractJReleaserProcessorTask {
     @Override
-    protected void consumeModel(JReleaserModel jreleaserModel) {
-        JReleaserContext context = createContext(jreleaserModel);
+    protected void doExecute(JReleaserContext context) {
         checksum(context);
         prepare(context, failFast);
     }

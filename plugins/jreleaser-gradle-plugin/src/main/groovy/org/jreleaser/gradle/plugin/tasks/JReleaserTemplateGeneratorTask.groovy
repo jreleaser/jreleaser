@@ -31,7 +31,7 @@ import org.gradle.api.tasks.options.OptionValues
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.Distribution
 import org.jreleaser.templates.TemplateGenerator
-import org.jreleaser.util.Logger
+import org.jreleaser.util.JReleaserLogger
 
 import javax.inject.Inject
 import java.nio.file.Path
@@ -104,7 +104,7 @@ abstract class JReleaserTemplateGeneratorTask extends DefaultTask {
 
     @TaskAction
     void generateTemplate() {
-        Logger logger = new JReleaserLoggerAdapter(project)
+        JReleaserLogger logger = new JReleaserLoggerAdapter(project)
 
         Path output = TemplateGenerator.builder()
             .logger(logger)

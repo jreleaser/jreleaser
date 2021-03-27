@@ -27,11 +27,9 @@ import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.JReleaserModelValidator;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * @author Andres Almiray
@@ -44,9 +42,6 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
-    @Parameter(defaultValue = "${session}", required = true)
-    private MavenSession session;
-
     @Parameter(required = true)
     protected Jreleaser jreleaser;
 
@@ -56,29 +51,31 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.dryrun")
     protected boolean dryrun;
 
-    protected Logger getLogger() {
+    @Parameter(defaultValue = "${session}", required = true)
+    private MavenSession session;
+
+    protected JReleaserLogger getLogger() {
         return new JReleaserLoggerAdapter(getLog());
     }
 
-    protected JReleaserModel convertAndValidateModel() throws MojoExecutionException {
+    protected JReleaserModel convertModel() {
         JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser);
         JReleaserModelConfigurer.configure(jreleaserModel, project, session);
-        List<String> errors = JReleaserModelValidator.validate(getLogger(), project.getBasedir().toPath(), jreleaserModel);
-        if (!errors.isEmpty()) {
-            getLog().error("== JReleaser ==");
-            errors.forEach(getLog()::error);
-            throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.");
-        }
-
         return jreleaserModel;
     }
 
     protected JReleaserContext createContext() throws MojoExecutionException {
-        return new JReleaserContext(
+        JReleaserContext context = new JReleaserContext(
             getLogger(),
-            convertAndValidateModel(),
+            convertModel(),
             project.getBasedir().toPath(),
             outputDirectory.toPath(),
             dryrun);
+
+        if (!context.validateModel().isEmpty()) {
+            throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.");
+        }
+
+        return context;
     }
 }

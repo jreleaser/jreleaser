@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.twitter;
 
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
@@ -28,7 +28,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
     private final String status;
 
-    private UpdateStatusTwitterCommand(Logger logger,
+    private UpdateStatusTwitterCommand(JReleaserLogger logger,
                                        String apiHost,
                                        String consumerKey,
                                        String consumerToken,
@@ -45,14 +45,14 @@ public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
         twitter.updateStatus(status);
     }
 
-    public static Builder builder(Logger logger) {
+    public static Builder builder(JReleaserLogger logger) {
         return new Builder(logger);
     }
 
     public static class Builder extends AbstractTwitterCommand.Builder<Builder> {
         private String status;
 
-        protected Builder(Logger logger) {
+        protected Builder(JReleaserLogger logger) {
             super(logger);
         }
 

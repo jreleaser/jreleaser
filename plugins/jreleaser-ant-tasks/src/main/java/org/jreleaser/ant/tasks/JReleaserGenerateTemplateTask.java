@@ -24,7 +24,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateGenerationException;
 import org.jreleaser.templates.TemplateGenerator;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.nio.file.Path;
 
@@ -93,7 +93,7 @@ public class JReleaserGenerateTemplateTask extends Task {
         }
     }
 
-    private Logger getLogger() {
+    private JReleaserLogger getLogger() {
         return new JReleaserLoggerAdapter(getProject());
     }
 }

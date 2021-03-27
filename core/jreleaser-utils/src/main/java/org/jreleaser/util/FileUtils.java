@@ -64,11 +64,11 @@ public final class FileUtils {
         Files.setPosixFilePermissions(path, perms);
     }
 
-    public static void copyFiles(Logger logger, Path source, Path target) throws IOException {
+    public static void copyFiles(JReleaserLogger logger, Path source, Path target) throws IOException {
         copyFiles(logger, source, target, null);
     }
 
-    public static void copyFiles(Logger logger, Path source, Path target, Predicate<Path> filter) throws IOException {
+    public static void copyFiles(JReleaserLogger logger, Path source, Path target, Predicate<Path> filter) throws IOException {
         Predicate<Path> actualFilter = filter != null ? filter : path -> true;
         IOException[] thrown = new IOException[1];
 
@@ -89,24 +89,24 @@ public final class FileUtils {
         }
     }
 
-    public static boolean copyFilesRecursive(Logger logger, Path source, Path target) throws IOException {
+    public static boolean copyFilesRecursive(JReleaserLogger logger, Path source, Path target) throws IOException {
         return copyFilesRecursive(logger, source, target, null);
     }
 
-    public static boolean copyFilesRecursive(Logger logger, Path source, Path target, Predicate<Path> filter) throws IOException {
+    public static boolean copyFilesRecursive(JReleaserLogger logger, Path source, Path target, Predicate<Path> filter) throws IOException {
         FileTreeCopy copier = new FileTreeCopy(logger, source, target, filter);
         Files.walkFileTree(source, copier);
         return copier.isSuccessful();
     }
 
     private static class FileTreeCopy implements FileVisitor<Path> {
-        private final Logger logger;
+        private final JReleaserLogger logger;
         private final Path source;
         private final Path target;
         private final Predicate<Path> filter;
         private boolean success = true;
 
-        FileTreeCopy(Logger logger, Path source, Path target, Predicate<Path> filter) {
+        FileTreeCopy(JReleaserLogger logger, Path source, Path target, Predicate<Path> filter) {
             this.logger = logger;
             this.source = source;
             this.target = target;

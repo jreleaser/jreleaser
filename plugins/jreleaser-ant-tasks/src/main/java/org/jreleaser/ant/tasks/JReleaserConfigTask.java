@@ -18,7 +18,7 @@
 package org.jreleaser.ant.tasks;
 
 import org.jreleaser.ant.tasks.internal.JReleaserModelPrinter;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserContext;
 
 import java.io.PrintWriter;
 
@@ -28,8 +28,8 @@ import java.io.PrintWriter;
  */
 public class JReleaserConfigTask extends AbstractJReleaserTask {
     @Override
-    protected void consumeModel(JReleaserModel jreleaserModel) {
+    protected void doExecute(JReleaserContext context) {
         new JReleaserModelPrinter(new PrintWriter(System.out, true))
-            .print(jreleaserModel.asMap());
+            .print(context.getModel().asMap());
     }
 }

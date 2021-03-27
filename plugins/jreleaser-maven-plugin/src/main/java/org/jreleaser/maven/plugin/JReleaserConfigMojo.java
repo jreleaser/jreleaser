@@ -43,6 +43,6 @@ public class JReleaserConfigMojo extends AbstractJReleaserMojo {
         if (skip) return;
 
         new JReleaserModelPrinter(new PrintWriter(System.out, true))
-            .print(convertAndValidateModel().asMap());
+            .print(createContext().getModel().asMap());
     }
 }

@@ -18,7 +18,6 @@
 package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
 
 import static org.jreleaser.ant.tasks.JReleaserAnnounceTask.announce;
 import static org.jreleaser.ant.tasks.JReleaserChecksumTask.checksum;
@@ -34,9 +33,7 @@ import static org.jreleaser.ant.tasks.JReleaserUploadTask.upload;
  */
 public class JReleaserFullReleaseTask extends AbstractJReleaserTask {
     @Override
-    protected void consumeModel(JReleaserModel jreleaserModel) {
-        JReleaserContext context = createContext(jreleaserModel);
-
+    protected void doExecute(JReleaserContext context) {
         checksum(context);
         sign(context);
         release(context);

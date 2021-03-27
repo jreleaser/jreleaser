@@ -15,12 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.tasks
+package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.TaskAction
-import org.jreleaser.gradle.plugin.internal.JReleaserModelPrinter
+import org.jreleaser.gradle.plugin.dsl.Environment
 
 import javax.inject.Inject
 
@@ -30,16 +31,21 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserConfigTask extends AbstractJReleaserTask {
+class EnvironmentImpl implements Environment {
+    final RegularFileProperty variables
+
     @Inject
-    JReleaserConfigTask(ObjectFactory objects) {
-        super(objects)
+    EnvironmentImpl(ObjectFactory objects) {
+        variables = objects.fileProperty().convention(Providers.notDefined())
     }
 
-    @TaskAction
-    void displayConfig() {
-        println '== JReleaser =='
-        new JReleaserModelPrinter(project)
-            .print(context.get().model.asMap())
+    void setVariables(String variables) {
+        this.variables.set(new File(variables))
+    }
+
+    org.jreleaser.model.Environment toModel() {
+        org.jreleaser.model.Environment environment = new org.jreleaser.model.Environment()
+        if (variables.present) environment.variables = variables.asFile.get().absolutePath
+        environment
     }
 }

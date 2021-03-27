@@ -18,7 +18,6 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.tools.DistributionProcessor;
 import picocli.CommandLine;
 
@@ -34,8 +33,8 @@ public class Upload extends AbstractProcessorCommand {
     boolean dryrun;
 
     @Override
-    protected void consumeModel(JReleaserModel jreleaserModel) {
-        upload(createContext(jreleaserModel), failFast);
+    protected void doExecute(JReleaserContext context) {
+        upload(context, failFast);
     }
 
     @Override

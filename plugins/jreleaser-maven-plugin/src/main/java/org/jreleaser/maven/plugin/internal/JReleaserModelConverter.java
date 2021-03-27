@@ -26,6 +26,7 @@ import org.jreleaser.maven.plugin.Changelog;
 import org.jreleaser.maven.plugin.Chocolatey;
 import org.jreleaser.maven.plugin.CommitAuthor;
 import org.jreleaser.maven.plugin.Distribution;
+import org.jreleaser.maven.plugin.Environment;
 import org.jreleaser.maven.plugin.File;
 import org.jreleaser.maven.plugin.GitService;
 import org.jreleaser.maven.plugin.Gitea;
@@ -73,6 +74,7 @@ public final class JReleaserModelConverter {
 
     public static JReleaserModel convert(Jreleaser jreleaser) {
         JReleaserModel jreleaserModel = new JReleaserModel();
+        jreleaserModel.setEnvironment(convertEnvironment(jreleaser.getEnvironment()));
         jreleaserModel.setProject(convertProject(jreleaser.getProject()));
         jreleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
         jreleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
@@ -81,6 +83,12 @@ public final class JReleaserModelConverter {
         jreleaserModel.setFiles(convertFiles(jreleaser.getFiles()));
         jreleaserModel.setDistributions(convertDistributions(jreleaserModel, jreleaser.getDistributions()));
         return jreleaserModel;
+    }
+
+    private static org.jreleaser.model.Environment convertEnvironment(Environment environment) {
+        org.jreleaser.model.Environment e = new org.jreleaser.model.Environment();
+        e.setVariables(environment.getVariables());
+        return e;
     }
 
     private static org.jreleaser.model.Project convertProject(Project project) {

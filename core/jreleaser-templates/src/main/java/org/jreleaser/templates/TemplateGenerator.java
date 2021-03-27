@@ -18,7 +18,7 @@
 package org.jreleaser.templates;
 
 import org.jreleaser.model.Distribution;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -41,7 +41,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class TemplateGenerator {
-    private final Logger logger;
+    private final JReleaserLogger logger;
     private final String distributionName;
     private final Distribution.DistributionType distributionType;
     private final String toolName;
@@ -49,7 +49,7 @@ public class TemplateGenerator {
     private final boolean overwrite;
     private final boolean snapshot;
 
-    private TemplateGenerator(Logger logger,
+    private TemplateGenerator(JReleaserLogger logger,
                               String distributionName,
                               Distribution.DistributionType distributionType,
                               String toolName,
@@ -133,7 +133,7 @@ public class TemplateGenerator {
     }
 
     public static class TemplateGeneratorBuilder {
-        private Logger logger;
+        private JReleaserLogger logger;
         private String distributionName;
         private Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
         private String toolName;
@@ -141,7 +141,7 @@ public class TemplateGenerator {
         private boolean overwrite;
         private boolean snapshot;
 
-        public TemplateGeneratorBuilder logger(Logger logger) {
+        public TemplateGeneratorBuilder logger(JReleaserLogger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be null");
             return this;
         }

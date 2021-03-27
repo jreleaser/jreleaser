@@ -18,7 +18,6 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.tools.Checksums;
 import picocli.CommandLine;
 
@@ -30,8 +29,8 @@ import picocli.CommandLine;
     description = "Calculates checksums")
 public class Checksum extends AbstractModelCommand {
     @Override
-    protected void consumeModel(JReleaserModel jreleaserModel) {
-        checksum(createContext(jreleaserModel));
+    protected void doExecute(JReleaserContext context) {
+        checksum(context);
     }
 
     static void checksum(JReleaserContext context) {

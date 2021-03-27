@@ -18,7 +18,6 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
 import picocli.CommandLine;
 
 /**
@@ -33,9 +32,7 @@ public class FullRelease extends AbstractModelCommand {
     boolean dryrun;
 
     @Override
-    protected void consumeModel(JReleaserModel jreleaserModel) {
-        JReleaserContext context = createContext(jreleaserModel);
-
+    protected void doExecute(JReleaserContext context) {
         Checksum.checksum(context);
         Sign.sign(context);
         Release.release(context);

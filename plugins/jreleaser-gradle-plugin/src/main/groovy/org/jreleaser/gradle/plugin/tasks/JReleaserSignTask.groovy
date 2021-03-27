@@ -41,10 +41,10 @@ abstract class JReleaserSignTask extends AbstractJReleaserTask {
 
     @TaskAction
     void signArtifacts() {
-        JReleaserContext context = createContext()
+        JReleaserContext ctx = context.get()
 
-        checksum(context)
-        sign(context)
+        checksum(ctx)
+        sign(ctx)
     }
 
     static void sign(JReleaserContext context) {

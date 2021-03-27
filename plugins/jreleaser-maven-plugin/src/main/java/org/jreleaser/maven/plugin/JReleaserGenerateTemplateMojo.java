@@ -27,7 +27,7 @@ import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.templates.TemplateGenerationException;
 import org.jreleaser.templates.TemplateGenerator;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -109,7 +109,7 @@ public class JReleaserGenerateTemplateMojo extends AbstractMojo {
         }
     }
 
-    private Logger getLogger() {
+    private JReleaserLogger getLogger() {
         return new JReleaserLoggerAdapter(getLog());
     }
 }

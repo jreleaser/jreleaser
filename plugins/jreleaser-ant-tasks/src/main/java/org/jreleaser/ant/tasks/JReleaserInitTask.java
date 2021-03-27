@@ -24,7 +24,7 @@ import org.jreleaser.cli.Main;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateUtils;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -89,7 +89,7 @@ public class JReleaserInitTask extends Task {
         }
     }
 
-    private Logger getLogger() {
+    private JReleaserLogger getLogger() {
         return new JReleaserLoggerAdapter(getProject());
     }
 

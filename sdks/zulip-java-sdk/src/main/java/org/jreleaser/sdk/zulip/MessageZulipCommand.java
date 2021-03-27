@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.zulip;
 
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
@@ -30,7 +30,7 @@ public class MessageZulipCommand extends AbstractZulipCommand {
     private final String subject;
     private final String message;
 
-    private MessageZulipCommand(Logger logger,
+    private MessageZulipCommand(JReleaserLogger logger,
                                 String apiHost,
                                 String account,
                                 String apiKey,
@@ -49,7 +49,7 @@ public class MessageZulipCommand extends AbstractZulipCommand {
         zulip.message(channel, subject, message);
     }
 
-    public static Builder builder(Logger logger) {
+    public static Builder builder(JReleaserLogger logger) {
         return new Builder(logger);
     }
 
@@ -58,7 +58,7 @@ public class MessageZulipCommand extends AbstractZulipCommand {
         private String subject;
         private String message;
 
-        protected Builder(Logger logger) {
+        protected Builder(JReleaserLogger logger) {
             super(logger);
         }
 

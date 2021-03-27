@@ -25,7 +25,7 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.sdk.zulip.api.Message;
 import org.jreleaser.sdk.zulip.api.ZulipAPI;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,11 +37,11 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class Zulip {
-    private final Logger logger;
+    private final JReleaserLogger logger;
     private final ZulipAPI api;
     private final boolean dryrun;
 
-    public Zulip(Logger logger, String apiHost, String account, String apiKey, boolean dryrun) {
+    public Zulip(JReleaserLogger logger, String apiHost, String account, String apiKey, boolean dryrun) {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(account, "'account' must not be blank");

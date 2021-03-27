@@ -17,21 +17,17 @@
  */
 package org.jreleaser.cli;
 
-import org.jreleaser.cli.internal.ColorizedJReleaserLoggerAdapter;
 import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.JReleaserModelValidator;
-import org.jreleaser.util.Logger;
 import picocli.CommandLine;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -64,7 +60,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         logger.info("- basedir set to {}", actualBasedir.toAbsolutePath());
         logger.info("- dryrun set to {}", dryrun());
         logger.decreaseIndent();
-        consumeModel(resolveModel());
+        doExecute(createContext());
     }
 
     private void resolveConfigFile() {
@@ -106,22 +102,27 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         }
     }
 
-    protected abstract void consumeModel(JReleaserModel jreleaserModel);
+    protected abstract void doExecute(JReleaserContext context);
+
+    protected JReleaserContext createContext() {
+        JReleaserContext context = new JReleaserContext(
+            logger,
+            resolveModel(),
+            actualBasedir,
+            getOutputDirectory(),
+            dryrun());
+
+        if (!context.validateModel().isEmpty()) {
+            throw new JReleaserException("JReleaser with " + actualConfigFile.toAbsolutePath() + " has not been properly configured.");
+        }
+
+        return context;
+    }
 
     private JReleaserModel resolveModel() {
         try {
             logger.info("Reading configuration");
-            JReleaserModel jreleaserModel = JReleaserConfigLoader.loadConfig(actualConfigFile);
-            logger.info("Validating configuration");
-            List<String> errors = JReleaserModelValidator.validate(logger, actualBasedir, jreleaserModel);
-            if (!errors.isEmpty()) {
-                Logger logger = new ColorizedJReleaserLoggerAdapter(parent.out);
-                logger.error("== JReleaser ==");
-                errors.forEach(logger::error);
-                throw new JReleaserException("JReleaser with " + actualConfigFile.toAbsolutePath() + " has not been properly configured.");
-            }
-
-            return jreleaserModel;
+            return JReleaserConfigLoader.loadConfig(actualConfigFile);
         } catch (IllegalArgumentException e) {
             throw new JReleaserException("Unexpected error when parsing configuration from " + actualConfigFile.toAbsolutePath(), e);
         }
@@ -129,15 +130,6 @@ public abstract class AbstractModelCommand extends AbstractCommand {
 
     protected Path getOutputDirectory() {
         return actualBasedir.resolve("out").resolve("jreleaser");
-    }
-
-    protected JReleaserContext createContext(JReleaserModel jreleaserModel) {
-        return new JReleaserContext(
-            logger,
-            jreleaserModel,
-            actualBasedir,
-            getOutputDirectory(),
-            dryrun());
     }
 
     protected boolean dryrun() {

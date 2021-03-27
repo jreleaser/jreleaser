@@ -31,7 +31,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jreleaser.util.Logger.DEBUG_TAB;
+import static org.jreleaser.util.JReleaserLogger.DEBUG_TAB;
 
 /**
  * @author Andres Almiray

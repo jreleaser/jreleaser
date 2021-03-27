@@ -25,15 +25,13 @@ import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.JReleaserModelValidator;
-import org.jreleaser.util.Logger;
+import org.jreleaser.util.JReleaserLogger;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -46,7 +44,7 @@ abstract class AbstractJReleaserTask extends Task {
     protected boolean dryrun;
     protected boolean skip;
 
-    protected Logger logger;
+    protected JReleaserLogger logger;
     protected Path actualConfigFile;
     protected Path actualBasedir;
 
@@ -62,7 +60,7 @@ abstract class AbstractJReleaserTask extends Task {
         this.skip = skip;
     }
 
-    protected Logger getLogger() {
+    protected JReleaserLogger getLogger() {
         if (null == logger) {
             logger = new JReleaserLoggerAdapter(getProject());
         }
@@ -79,7 +77,7 @@ abstract class AbstractJReleaserTask extends Task {
         logger.info("Configuring with {}", actualConfigFile);
         logger.info(" - basedir set to {}", actualBasedir.toAbsolutePath());
         logger.info(" - dryrun set to {}", dryrun);
-        consumeModel(resolveModel());
+        doExecute(createContext());
     }
 
     private void resolveConfigFile() {
@@ -110,37 +108,34 @@ abstract class AbstractJReleaserTask extends Task {
         actualBasedir = actualConfigFile.toAbsolutePath().getParent();
     }
 
-    protected abstract void consumeModel(JReleaserModel jreleaserModel);
-
-    private JReleaserModel resolveModel() {
-        try {
-            getLogger().info("Reading configuration");
-            JReleaserModel jreleaserModel = JReleaserConfigLoader.loadConfig(actualConfigFile);
-            getLogger().info("Validating configuration");
-            List<String> errors = JReleaserModelValidator.validate(logger, actualBasedir, jreleaserModel);
-            if (!errors.isEmpty()) {
-                getLogger().error("== JReleaser ==");
-                errors.forEach(logger::error);
-                throw new JReleaserException("JReleaser with " + actualConfigFile.toAbsolutePath() + " has not been properly configured.");
-            }
-
-            return jreleaserModel;
-        } catch (IllegalArgumentException e) {
-            throw new JReleaserException("Unexpected error when parsing configuration from " + actualConfigFile.toAbsolutePath(), e);
-        }
-    }
+    protected abstract void doExecute(JReleaserContext context);
 
     protected Path getOutputDirectory() {
         return actualBasedir.resolve("out").resolve("jreleaser");
     }
 
-    protected JReleaserContext createContext(JReleaserModel jreleaserModel) {
-        return new JReleaserContext(
+    protected JReleaserContext createContext() {
+        JReleaserContext context = new JReleaserContext(
             logger,
-            jreleaserModel,
+            resolveModel(),
             actualBasedir,
             getOutputDirectory(),
             dryrun);
+
+        if (!context.validateModel().isEmpty()) {
+            throw new JReleaserException("JReleaser with " + actualConfigFile.toAbsolutePath() + " has not been properly configured.");
+        }
+
+        return context;
+    }
+
+    private JReleaserModel resolveModel() {
+        try {
+            logger.info("Reading configuration");
+            return JReleaserConfigLoader.loadConfig(actualConfigFile);
+        } catch (IllegalArgumentException e) {
+            throw new JReleaserException("Unexpected error when parsing configuration from " + actualConfigFile.toAbsolutePath(), e);
+        }
     }
 
     private Set<String> getSupportedConfigFormats() {

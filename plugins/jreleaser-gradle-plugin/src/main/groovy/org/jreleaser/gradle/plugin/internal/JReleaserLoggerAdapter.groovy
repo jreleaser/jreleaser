@@ -19,7 +19,7 @@ package org.jreleaser.gradle.plugin.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
-import org.jreleaser.util.AbstractLogger
+import org.jreleaser.util.AbstractJReleaserLogger
 import org.kordamp.gradle.util.AnsiConsole
 import org.slf4j.helpers.MessageFormatter
 
@@ -28,7 +28,7 @@ import org.slf4j.helpers.MessageFormatter
  * @since 0.1.0
  */
 @CompileStatic
-class JReleaserLoggerAdapter extends AbstractLogger {
+class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     private final PrintWriter out
     private final Level level
     private final AnsiConsole console
