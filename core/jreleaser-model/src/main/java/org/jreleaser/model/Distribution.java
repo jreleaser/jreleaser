@@ -219,9 +219,13 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
         props.put("enabled", isEnabled());
         props.put("type", type);
         props.put("executable", executable);
-        props.put("artifacts", artifacts.stream()
-            .map(Artifact::asMap)
-            .collect(Collectors.toList()));
+
+        Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
+        for (int i = 0; i < artifacts.size(); i++) {
+            mappedArtifacts.put("artifact " + i, artifacts.get(i).asMap());
+        }
+        props.put("artifacts", mappedArtifacts);
+
         props.put("tags", tags);
         props.put("extraProperties", getResolvedExtraProperties());
         if (java.isEnabled()) {

@@ -37,6 +37,7 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
+import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.util.signing.InMemoryKeyring;
 import org.jreleaser.util.signing.SigningException;
 
@@ -50,7 +51,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +77,7 @@ public class Signer {
             return;
         }
 
-        List<Path> paths = collectArtifactsForSigning(context);
+        List<Path> paths = collectArtifacts(context);
         if (paths.isEmpty()) {
             context.getLogger().info("No files configured for signing. Skipping");
             return;
@@ -235,16 +235,16 @@ public class Signer {
         }
     }
 
-    private static List<Path> collectArtifactsForSigning(JReleaserContext context) {
+    private static List<Path> collectArtifacts(JReleaserContext context) {
         List<Path> paths = new ArrayList<>();
 
-        for (Artifact artifact : context.getModel().getFiles()) {
-            paths.add(context.getBasedir().resolve(Paths.get(artifact.getPath())).normalize());
+        for (Artifact artifact : Artifacts.resolveFiles(context)) {
+            paths.add(artifact.getResolvedPath(context));
         }
 
         for (Distribution distribution : context.getModel().getDistributions().values()) {
             for (Artifact artifact : distribution.getArtifacts()) {
-                paths.add(context.getBasedir().resolve(Paths.get(artifact.getPath())).normalize());
+                paths.add(artifact.getResolvedPath(context, distribution));
             }
         }
 

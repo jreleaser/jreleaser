@@ -20,10 +20,10 @@ package org.jreleaser.model.releaser.spi;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.util.Artifacts;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,13 +76,13 @@ public abstract class AbstractReleaserBuilder<R extends Releaser, B extends Rele
     public B configureWith(JReleaserContext context) {
         this.context = context;
 
-        for (Artifact artifact : context.getModel().getFiles()) {
-            addReleaseAsset(context.getBasedir().resolve(Paths.get(artifact.getPath())));
+        for (Artifact artifact : Artifacts.resolveFiles(context)) {
+            addReleaseAsset(artifact.getResolvedPath(context));
         }
 
         for (Distribution distribution : context.getModel().getDistributions().values()) {
             for (Artifact artifact : distribution.getArtifacts()) {
-                addReleaseAsset(context.getBasedir().resolve(Paths.get(artifact.getPath())));
+                addReleaseAsset(artifact.getResolvedPath(context, distribution));
             }
         }
 

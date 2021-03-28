@@ -26,7 +26,6 @@ import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 
 import java.io.StringReader;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -72,12 +71,12 @@ public class SdkmanAnnouncer implements Announcer {
                 // only zips are supported
                 if (!artifact.getPath().endsWith(".zip")) {
                     context.getLogger().debug("Artifact {} is not suitable for Sdkman publication. Skipping.",
-                        Paths.get(artifact.getPath()).getFileName());
+                        artifact.getResolvedPath(context, distribution).getFileName());
                     continue;
                 }
 
                 String platform = mapPlatform(artifact.getPlatform());
-                String url = artifactUrl(artifact);
+                String url = artifactUrl(distribution, artifact);
                 if (platforms.containsKey(platform)) {
                     context.getLogger().warn("Platform {}: {} will replace {}", platform, url, platforms.get(platform));
                 }
@@ -159,9 +158,9 @@ public class SdkmanAnnouncer implements Announcer {
         return null;
     }
 
-    private String artifactUrl(Artifact artifact) {
+    private String artifactUrl(Distribution distribution, Artifact artifact) {
         Map<String, Object> newProps = context.getModel().props();
-        newProps.put("artifactFileName", Paths.get(artifact.getPath()).getFileName().toString());
+        newProps.put("artifactFileName", artifact.getResolvedPath(context, distribution).getFileName().toString());
         return applyTemplate(new StringReader(context.getModel().getRelease().getGitService().getDownloadUrlFormat()), newProps, "downloadUrl");
     }
 

@@ -27,11 +27,12 @@ import org.jreleaser.maven.plugin.Chocolatey;
 import org.jreleaser.maven.plugin.CommitAuthor;
 import org.jreleaser.maven.plugin.Distribution;
 import org.jreleaser.maven.plugin.Environment;
-import org.jreleaser.maven.plugin.File;
+import org.jreleaser.maven.plugin.Files;
 import org.jreleaser.maven.plugin.GitService;
 import org.jreleaser.maven.plugin.Gitea;
 import org.jreleaser.maven.plugin.Github;
 import org.jreleaser.maven.plugin.Gitlab;
+import org.jreleaser.maven.plugin.Glob;
 import org.jreleaser.maven.plugin.Java;
 import org.jreleaser.maven.plugin.Jbang;
 import org.jreleaser.maven.plugin.Jreleaser;
@@ -56,10 +57,8 @@ import org.jreleaser.model.SnapTap;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -280,32 +279,15 @@ public final class JReleaserModelConverter {
         return d;
     }
 
-    private static List<org.jreleaser.model.Artifact> convertFiles(List<File> files) {
-        List<org.jreleaser.model.Artifact> as = new ArrayList<>();
-        for (File file : files) {
-            as.add(convertArtifact(file));
-        }
-        return as;
-    }
-
-    private static Set<org.jreleaser.model.Artifact> convertFiles(Set<File> files) {
-        Set<org.jreleaser.model.Artifact> as = new LinkedHashSet<>();
-        for (File file : files) {
-            as.add(convertArtifact(file));
-        }
-        return as;
+    private static org.jreleaser.model.Files convertFiles(Files files) {
+        org.jreleaser.model.Files fs = new org.jreleaser.model.Files();
+        fs.setArtifacts(convertArtifacts(files.getArtifacts()));
+        fs.setGlobs(convertGlobs(files.getGlobs()));
+        return fs;
     }
 
     private static List<org.jreleaser.model.Artifact> convertArtifacts(List<Artifact> artifacts) {
         List<org.jreleaser.model.Artifact> as = new ArrayList<>();
-        for (Artifact artifact : artifacts) {
-            as.add(convertArtifact(artifact));
-        }
-        return as;
-    }
-
-    private static Set<org.jreleaser.model.Artifact> convertArtifacts(Set<Artifact> artifacts) {
-        Set<org.jreleaser.model.Artifact> as = new LinkedHashSet<>();
         for (Artifact artifact : artifacts) {
             as.add(convertArtifact(artifact));
         }
@@ -318,6 +300,22 @@ public final class JReleaserModelConverter {
         a.setHash(artifact.getHash());
         a.setPlatform(artifact.getPlatform());
         return a;
+    }
+
+    private static List<org.jreleaser.model.Glob> convertGlobs(List<Glob> globs) {
+        List<org.jreleaser.model.Glob> gs = new ArrayList<>();
+        for (Glob glob : globs) {
+            gs.add(convertGlob(glob));
+        }
+        return gs;
+    }
+
+    private static org.jreleaser.model.Glob convertGlob(Glob glob) {
+        org.jreleaser.model.Glob g = new org.jreleaser.model.Glob();
+        g.setDirectory(glob.getDirectory());
+        g.setPattern(glob.getPattern());
+        if (glob.isRecursiveSet()) g.setRecursive(glob.isRecursive());
+        return g;
     }
 
     private static org.jreleaser.model.Brew convertBrew(Brew brew) {

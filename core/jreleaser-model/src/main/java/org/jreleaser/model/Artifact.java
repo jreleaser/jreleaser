@@ -17,8 +17,16 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Constants;
+
+import java.io.StringReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static java.nio.file.Files.exists;
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
 
 /**
  * @author Andres Almiray
@@ -28,6 +36,44 @@ public class Artifact implements Domain {
     private String path;
     private String hash;
     private String platform;
+    private Path filePath;
+
+    public Path getResolvedPath(JReleaserContext context) {
+        if (null == filePath) {
+            if (path.contains("{{")) {
+                path = applyTemplate(new StringReader(path), context.getModel().props());
+            }
+            filePath = context.getBasedir().resolve(Paths.get(path)).normalize();
+            if (!exists(filePath)) {
+                throw new JReleaserException("Path does not exist. " + context.getBasedir().relativize(filePath));
+            }
+        }
+        return filePath;
+    }
+
+    public Path getResolvedPath(JReleaserContext context, Distribution distribution) {
+        if (null == filePath) {
+            if (path.contains("{{")) {
+                Map<String, Object> props = context.getModel().props();
+                props.put(Constants.KEY_DISTRIBUTION_NAME, distribution.getName());
+                props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, distribution.getExecutable());
+                props.put(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, distribution.getJava().getGroupId());
+                props.put(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, distribution.getJava().getArtifactId());
+                props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, distribution.getJava().getVersion());
+                props.putAll(distribution.getResolvedExtraProperties());
+                path = applyTemplate(new StringReader(path), props);
+            }
+            filePath = context.getBasedir().resolve(Paths.get(path)).normalize();
+            if (!exists(filePath)) {
+                throw new JReleaserException("Artifact does not exist. " + context.getBasedir().relativize(filePath));
+            }
+        }
+        return filePath;
+    }
+
+    public Path getFilePath() {
+        return filePath;
+    }
 
     public String getPath() {
         return path;
@@ -59,5 +105,12 @@ public class Artifact implements Domain {
         map.put("hash", hash);
         map.put("platform", platform);
         return map;
+    }
+
+    public static Artifact of(Path filePath) {
+        Artifact artifact = new Artifact();
+        artifact.path = filePath.toAbsolutePath().toString();
+        artifact.filePath = filePath;
+        return artifact;
     }
 }

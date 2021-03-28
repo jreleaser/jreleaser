@@ -15,11 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.gradle.plugin.dsl
+
+import groovy.transform.CompileStatic
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
 
 /**
+ *
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class File extends Artifact {
+@CompileStatic
+interface Glob {
+    DirectoryProperty getDirectory()
+
+    Property<String> getPattern()
+
+    Property<Boolean> getRecursive()
 }

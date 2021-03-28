@@ -23,11 +23,11 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.util.Artifacts;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,16 +43,16 @@ public class Checksum {
 
         List<String> checksums = new ArrayList<>();
 
-        for (Artifact artifact : context.getModel().getFiles()) {
+        for (Artifact artifact : Artifacts.resolveFiles(context)) {
             readHash(context, artifact);
-            checksums.add(artifact.getHash() + " " + Paths.get(artifact.getPath()).getFileName());
+            checksums.add(artifact.getHash() + " " + artifact.getFilePath().getFileName());
         }
 
         for (Distribution distribution : context.getModel().getDistributions().values()) {
             for (Artifact artifact : distribution.getArtifacts()) {
-                readHash(context, distribution.getName(), artifact);
+                readHash(context, distribution, artifact);
                 checksums.add(artifact.getHash() + " " + distribution.getName() + "/" +
-                    Paths.get(artifact.getPath()).getFileName());
+                    artifact.getFilePath().getFileName());
             }
         }
 
@@ -70,22 +70,22 @@ public class Checksum {
         }
     }
 
-    public static void readHash(JReleaserContext context, String distributionName, Artifact artifact) throws JReleaserException {
-        Path artifactPath = context.getBasedir().resolve(Paths.get(artifact.getPath()));
-        Path checksumPath = context.getChecksumsDirectory().resolve(distributionName).resolve(artifactPath.getFileName() + ".sha256");
+    public static void readHash(JReleaserContext context, Distribution distribution, Artifact artifact) throws JReleaserException {
+        Path artifactPath = artifact.getResolvedPath(context, distribution);
+        Path checksumPath = context.getChecksumsDirectory().resolve(distribution.getName()).resolve(artifactPath.getFileName() + ".sha256");
 
         readHash(context, artifact, artifactPath, checksumPath);
     }
 
     public static void readHash(JReleaserContext context, Artifact artifact) throws JReleaserException {
-        Path artifactPath = context.getBasedir().resolve(Paths.get(artifact.getPath()));
+        Path artifactPath = artifact.getResolvedPath(context);
         Path checksumPath = context.getChecksumsDirectory().resolve(artifactPath.getFileName() + ".sha256");
 
         readHash(context, artifact, artifactPath, checksumPath);
     }
 
     private static void readHash(JReleaserContext context, Artifact artifact, Path artifactPath, Path checksumPath) throws JReleaserException {
-        if (!artifactPath.toFile().exists()) {
+        if (!Files.exists(artifactPath)) {
             throw new JReleaserException("Artifact does not exist. " + context.getBasedir().relativize(artifactPath));
         }
 

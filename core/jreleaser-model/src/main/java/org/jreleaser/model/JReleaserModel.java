@@ -23,14 +23,12 @@ import org.jreleaser.util.Constants;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -43,7 +41,7 @@ public class JReleaserModel implements Domain {
     private final Packagers packagers = new Packagers();
     private final Announce announce = new Announce();
     private final Signing signing = new Signing();
-    private final Set<Artifact> files = new LinkedHashSet<>();
+    private final Files files = new Files();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
 
     private final String timestamp;
@@ -113,23 +111,12 @@ public class JReleaserModel implements Domain {
         this.signing.setAll(signing);
     }
 
-    public Set<Artifact> getFiles() {
+    public Files getFiles() {
         return files;
     }
 
-    public void setFiles(Set<Artifact> files) {
-        this.files.clear();
-        this.files.addAll(files);
-    }
-
-    public void addFiles(Set<Artifact> files) {
-        this.files.addAll(files);
-    }
-
-    public void addFiles(Artifact artifact) {
-        if (null != artifact) {
-            this.files.add(artifact);
-        }
+    public void setFiles(Files files) {
+        this.files.setAll(files);
     }
 
     public Map<String, Distribution> getDistributions() {
@@ -167,21 +154,19 @@ public class JReleaserModel implements Domain {
 
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
-        if (isNotBlank(environment.getVariables())) map.put("environment", environment.asMap());
+        if (!environment.isEmpty()) map.put("environment", environment.asMap());
         map.put("project", project.asMap());
         map.put("release", release.asMap());
-        map.put("packagers", packagers.asMap());
-        if (announce.isEnabled()) map.put("announce", announce.asMap());
         if (signing.isEnabled()) map.put("signing", signing.asMap());
-        if (files.size() > 0) {
-            map.put("files", files.stream()
-                .map(Artifact::asMap)
-                .collect(Collectors.toList()));
-        }
-        map.put("distributions", distributions.values()
+        if (announce.isEnabled()) map.put("announce", announce.asMap());
+        if (!files.isEmpty()) map.put("files", files.asMap());
+        if (packagers.hasEnabledPackagers()) map.put("packagers", packagers.asMap());
+
+        List<Map<String, Object>> distributions = this.distributions.values()
             .stream()
             .map(Distribution::asMap)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList());
+        if (!distributions.isEmpty()) map.put("distributions", distributions);
         return map;
     }
 

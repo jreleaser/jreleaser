@@ -350,7 +350,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         for (int i = 0; i < artifacts.size(); i++) {
             Artifact artifact = artifacts.get(i);
             String platform = isNotBlank(artifact.getPlatform()) ? capitalize(artifact.getPlatform()) : "";
-            String artifactFileName = Paths.get(artifact.getPath()).getFileName().toString();
+            String artifactFileName = artifact.getResolvedPath(context).getFileName().toString();
             props.put("artifact" + platform + "FileName", artifactFileName);
             props.put("artifact" + platform + "Hash", artifact.getHash());
             Map<String, Object> newProps = new LinkedHashMap<>(props);

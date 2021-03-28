@@ -19,12 +19,7 @@ package org.jreleaser.maven.plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
-
-import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -37,7 +32,7 @@ public class Jreleaser {
     private final Packagers packagers = new Packagers();
     private final Announce announce = new Announce();
     private final Signing signing = new Signing();
-    private final Set<File> files = new LinkedHashSet<>();
+    private final Files files = new Files();
     private final List<Distribution> distributions = new ArrayList<>();
 
     public Environment getEnvironment() {
@@ -88,23 +83,12 @@ public class Jreleaser {
         this.signing.setAll(signing);
     }
 
-    public Set<File> getFiles() {
+    public Files getFiles() {
         return files;
     }
 
-    public void setFiles(Set<File> files) {
-        this.files.clear();
-        this.files.addAll(files);
-    }
-
-    public void addFiles(Set<File> files) {
-        this.files.addAll(files);
-    }
-
-    public void addFiles(File artifact) {
-        if (null != artifact) {
-            this.files.add(artifact);
-        }
+    public void setFiles(Files files) {
+        this.files.setAll(files);
     }
 
     public List<Distribution> getDistributions() {
@@ -114,26 +98,5 @@ public class Jreleaser {
     public void setDistributions(Collection<Distribution> distributions) {
         this.distributions.clear();
         this.distributions.addAll(distributions);
-    }
-
-    public void addDistributions(Collection<Distribution> distributions) {
-        this.distributions.addAll(distributions);
-    }
-
-    public Distribution findDistribution(String name) {
-        if (isBlank(name)) {
-            throw new IllegalArgumentException("Distribution name must not be blank");
-        }
-
-        if (distributions.isEmpty()) {
-            throw new IllegalArgumentException("No distributions have been configured");
-        }
-
-        return distributions.stream()
-            .filter(d -> name.equals(d.getName()))
-            .findFirst()
-            .orElseThrow((Supplier<IllegalArgumentException>) () -> {
-                throw new IllegalArgumentException("Distribution '" + name + "' not found");
-            });
     }
 }

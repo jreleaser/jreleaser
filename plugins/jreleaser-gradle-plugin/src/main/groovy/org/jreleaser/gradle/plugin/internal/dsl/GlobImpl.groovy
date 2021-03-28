@@ -18,11 +18,11 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.jreleaser.gradle.plugin.dsl.Artifact
+import org.jreleaser.gradle.plugin.dsl.Glob
 
 import javax.inject.Inject
 
@@ -32,29 +32,30 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class ArtifactImpl implements Artifact {
+class GlobImpl implements Glob {
     String name
-    final RegularFileProperty path
-    final Property<String> platform
+    final DirectoryProperty directory
+    final Property<String> pattern
+    final Property<Boolean> recursive
 
     @Inject
-    ArtifactImpl(ObjectFactory objects) {
-        path = objects.fileProperty().convention(Providers.notDefined())
-        platform = objects.property(String).convention(Providers.notDefined())
+    GlobImpl(ObjectFactory objects) {
+        directory = objects.directoryProperty().convention(Providers.notDefined())
+        pattern = objects.property(String).convention(Providers.notDefined())
+        recursive = objects.property(Boolean).convention(Providers.notDefined())
     }
 
-    void setPath(String path) {
-        this.path.set(new File(path))
+    void setDirectory(String path) {
+        this.directory.set(new File(path))
     }
 
-    org.jreleaser.model.Artifact toModel() {
-        org.jreleaser.model.Artifact artifact = new org.jreleaser.model.Artifact()
-        if (path.present) {
-            artifact.path = path.asFile.get().absolutePath
-        } else {
-            throw new IllegalArgumentException("Artifact ${name} requires a value for 'path'")
+    org.jreleaser.model.Glob toModel() {
+        org.jreleaser.model.Glob glob = new org.jreleaser.model.Glob()
+        if (directory.present) {
+            glob.directory = directory.asFile.get().absolutePath
         }
-        if (platform.present) artifact.platform = platform.get()
-        artifact
+        if (pattern.present) glob.pattern = pattern.get()
+        if (recursive.present) glob.recursive = recursive.get()
+        glob
     }
 }

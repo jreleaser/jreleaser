@@ -17,13 +17,10 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
-import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -47,7 +44,6 @@ import static org.jreleaser.model.Twitter.TWITTER_CONSUMER_KEY;
 import static org.jreleaser.model.Twitter.TWITTER_CONSUMER_SECRET;
 import static org.jreleaser.model.Zulip.ZULIP_API_KEY;
 import static org.jreleaser.util.Constants.KEY_REVERSE_REPO_HOST;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.getFilenameExtension;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -64,7 +60,6 @@ public final class JReleaserModelValidator {
     public static List<String> validate(JReleaserContext context) {
         List<String> errors = new ArrayList<>();
         validateModel(context, errors);
-        resolveArtifactPaths(context);
         return Collections.unmodifiableList(errors);
     }
 
@@ -74,6 +69,7 @@ public final class JReleaserModelValidator {
         validateRelease(context, errors);
         validatePackagers(context, errors);
         validateAnnouncers(context, errors);
+        validateFiles(context, errors);
         validateDistributions(context, errors);
     }
 
@@ -406,6 +402,15 @@ public final class JReleaserModelValidator {
         }
 
         return gitea.isEnabled();
+    }
+
+    private static void validateFiles(JReleaserContext context, List<String> errors) {
+        int i = 0;
+        for (Glob glob : context.getModel().getFiles().getGlobs()) {
+            if (isBlank(glob.getPattern())) {
+                errors.add("files.glob[" + i + "] must define a pattern");
+            }
+        }
     }
 
     private static void validateDistributions(JReleaserContext context, List<String> errors) {
@@ -826,40 +831,5 @@ public final class JReleaserModelValidator {
         if (isBlank(author.getName())) author.setName(other.getCommitAuthor().getName());
         if (isBlank(author.getEmail())) author.setEmail(other.getCommitAuthor().getEmail());
         self.setCommitAuthor(author);
-    }
-
-    private static void resolveArtifactPaths(JReleaserContext context) {
-        JReleaserLogger logger = context.getLogger();
-        JReleaserModel model = context.getModel();
-
-        for (Distribution distribution : model.getDistributions().values()) {
-            Map<String, Object> props = model.props();
-            props.put(Constants.KEY_DISTRIBUTION_NAME, distribution.getName());
-            props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, distribution.getExecutable());
-            props.putAll(distribution.getResolvedExtraProperties());
-
-            for (int i = 0; i < distribution.getArtifacts().size(); i++) {
-                Artifact artifact = distribution.getArtifacts().get(i);
-                String path = artifact.getPath();
-                if (path.contains("{{")) {
-                    String newpath = applyTemplate(new StringReader(path), props);
-                    logger.debug("Adjusting distribution.artifact[{}].path{}        from {}{}        to {}",
-                        i, System.lineSeparator(), path, System.lineSeparator(), newpath);
-                    artifact.setPath(newpath);
-                }
-            }
-        }
-
-        Map<String, Object> props = model.props();
-        int i = 0;
-        for (Artifact artifact : model.getFiles()) {
-            String path = artifact.getPath();
-            if (path.contains("{{")) {
-                String newpath = applyTemplate(new StringReader(path), props);
-                logger.debug("Adjusting files[{i}].path{}        from {}{}        to {}",
-                    i++, System.lineSeparator(), path, System.lineSeparator(), newpath);
-                artifact.setPath(newpath);
-            }
-        }
     }
 }

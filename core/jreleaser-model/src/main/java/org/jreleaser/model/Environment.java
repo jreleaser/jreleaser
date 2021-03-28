@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -37,6 +38,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Environment implements Domain {
     private String variables;
     private Properties props;
+
+    public boolean isEmpty() {
+        return isBlank(variables);
+    }
 
     void setAll(Environment environment) {
         this.variables = environment.variables;

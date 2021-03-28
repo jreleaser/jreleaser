@@ -31,6 +31,14 @@ public class Packagers implements Domain {
     private final Scoop scoop = new Scoop();
     private final Snap snap = new Snap();
 
+    public boolean hasEnabledPackagers() {
+        return brew.isEnabled() ||
+            chocolatey.isEnabled() ||
+            jbang.isEnabled() ||
+            scoop.isEnabled() ||
+            snap.isEnabled();
+    }
+
     void setAll(Packagers packagers) {
         setBrew(packagers.brew);
         setChocolatey(packagers.chocolatey);

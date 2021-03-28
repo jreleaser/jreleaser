@@ -73,7 +73,7 @@ public class DistributionProcessor {
         context.getLogger().debug("Reading checksums for {} distribution", distributionName);
         for (int i = 0; i < distribution.getArtifacts().size(); i++) {
             Artifact artifact = distribution.getArtifacts().get(i);
-            Checksum.readHash(context, distributionName, artifact);
+            Checksum.readHash(context, distribution, artifact);
         }
 
         return ToolProcessors.findProcessor(context, tool)
