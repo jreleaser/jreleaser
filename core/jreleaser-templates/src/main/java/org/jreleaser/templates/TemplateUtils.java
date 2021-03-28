@@ -106,12 +106,15 @@ public final class TemplateUtils {
                 boolean templateFound = false;
 
                 String templatePrefix = "META-INF/jreleaser/templates/" +
-                    distributionTypeName + "/" + toolName.toLowerCase();
+                    distributionTypeName + "/" + toolName.toLowerCase() +
+                    (snapshot ? "-snapshot/" : "") + "/";
                 JarFile jarFile = new JarFile(new File(location.toURI()));
 
                 if (snapshot) {
-                    templateFound = findTemplate(logger, jarFile, templatePrefix + "-snapshot", templates);
+                    templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
                     if (!templateFound) {
+                        templatePrefix = "META-INF/jreleaser/templates/" +
+                            distributionTypeName + "/" + toolName.toLowerCase() + "/";
                         templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
                     }
                 } else {
@@ -142,7 +145,7 @@ public final class TemplateUtils {
                 continue;
             }
 
-            String templateName = entry.getName().substring(templatePrefix.length() + 1);
+            String templateName = entry.getName().substring(templatePrefix.length());
             templates.put(templateName, new InputStreamReader(jarFile.getInputStream(entry)));
             logger.debug("Found template {}", templateName);
             templatesFound = true;
@@ -172,7 +175,7 @@ public final class TemplateUtils {
                     return new InputStreamReader(jarFile.getInputStream(entry));
                 }
                 throw new IllegalStateException("Template for " +
-                    anchor.getName() + "@" + templateKey + " were not found");
+                    anchor.getName() + "@" + templateKey + " was not found");
             } else {
                 throw new IllegalStateException("Could not find location of classpath templates");
             }
