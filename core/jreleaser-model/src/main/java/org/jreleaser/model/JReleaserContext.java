@@ -35,7 +35,11 @@ public class JReleaserContext {
     private final boolean dryrun;
     private final List<String> errors = new ArrayList<>();
 
-    public JReleaserContext(JReleaserLogger logger, JReleaserModel model, Path basedir, Path outputDirectory, boolean dryrun) {
+    public JReleaserContext(JReleaserLogger logger,
+                            JReleaserModel model,
+                            Path basedir,
+                            Path outputDirectory,
+                            boolean dryrun) {
         this.logger = logger;
         this.model = model;
         this.basedir = basedir;

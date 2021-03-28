@@ -17,11 +17,9 @@
  */
 package org.jreleaser.cli;
 
-import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.config.JReleaserConfigParser;
+import org.jreleaser.context.ContextCreator;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.JReleaserModel;
 import picocli.CommandLine;
 
 import java.nio.file.Files;
@@ -105,27 +103,12 @@ public abstract class AbstractModelCommand extends AbstractCommand {
     protected abstract void doExecute(JReleaserContext context);
 
     protected JReleaserContext createContext() {
-        JReleaserContext context = new JReleaserContext(
+        return ContextCreator.create(
             logger,
-            resolveModel(),
+            actualConfigFile,
             actualBasedir,
             getOutputDirectory(),
             dryrun());
-
-        if (!context.validateModel().isEmpty()) {
-            throw new JReleaserException("JReleaser with " + actualConfigFile.toAbsolutePath() + " has not been properly configured.");
-        }
-
-        return context;
-    }
-
-    private JReleaserModel resolveModel() {
-        try {
-            logger.info("Reading configuration");
-            return JReleaserConfigLoader.loadConfig(actualConfigFile);
-        } catch (IllegalArgumentException e) {
-            throw new JReleaserException("Unexpected error when parsing configuration from " + actualConfigFile.toAbsolutePath(), e);
-        }
     }
 
     protected Path getOutputDirectory() {

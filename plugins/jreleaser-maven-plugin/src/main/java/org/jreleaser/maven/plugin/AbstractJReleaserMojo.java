@@ -22,10 +22,12 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.jreleaser.context.ContextCreator;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.JReleaserLogger;
 
@@ -65,17 +67,15 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     protected JReleaserContext createContext() throws MojoExecutionException {
-        JReleaserContext context = new JReleaserContext(
-            getLogger(),
-            convertModel(),
-            project.getBasedir().toPath(),
-            outputDirectory.toPath(),
-            dryrun);
-
-        if (!context.validateModel().isEmpty()) {
-            throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.");
+        try {
+            return ContextCreator.create(
+                getLogger(),
+                convertModel(),
+                project.getBasedir().toPath(),
+                outputDirectory.toPath(),
+                dryrun);
+        } catch (JReleaserException e) {
+            throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.", e);
         }
-
-        return context;
     }
 }

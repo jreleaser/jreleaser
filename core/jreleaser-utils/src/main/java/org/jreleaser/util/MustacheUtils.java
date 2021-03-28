@@ -35,21 +35,21 @@ import java.util.UUID;
  * @since 0.1.0
  */
 public final class MustacheUtils {
-    private static final Map<String, String> ENV_VARS = new LinkedHashMap<>();
-
-    static {
-        System.getenv().forEach((k, v) -> ENV_VARS.put("Env." + k, v));
-    }
-
     private MustacheUtils() {
         //noop
+    }
+
+    private static Map<String, String> envVars() {
+        Map<String, String> vars = new LinkedHashMap<>();
+        System.getenv().forEach((k, v) -> vars.put("Env." + k, v));
+        return vars;
     }
 
     public static String applyTemplate(Reader reader, Map<String, Object> context, String templateName) {
         StringWriter input = new StringWriter();
         MustacheFactory mf = new MyMustacheFactory();
         Mustache mustache = mf.compile(reader, templateName);
-        context.putAll(ENV_VARS);
+        context.putAll(envVars());
         mustache.execute(input, context);
         input.flush();
         return input.toString();

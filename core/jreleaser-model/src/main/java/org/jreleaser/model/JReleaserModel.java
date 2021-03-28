@@ -17,8 +17,11 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.util.Constants;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -42,6 +45,25 @@ public class JReleaserModel implements Domain {
     private final Signing signing = new Signing();
     private final Set<Artifact> files = new LinkedHashSet<>();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
+
+    private final String timestamp;
+    private Commit commit;
+
+    public JReleaserModel() {
+        this.timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"));
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public Commit getCommit() {
+        return commit;
+    }
+
+    public void setCommit(Commit commit) {
+        this.commit = commit;
+    }
 
     public Environment getEnvironment() {
         return environment;
@@ -83,7 +105,7 @@ public class JReleaserModel implements Domain {
         this.announce.setAll(announce);
     }
 
-    public Signing getSign() {
+    public Signing getSigning() {
         return signing;
     }
 
@@ -171,6 +193,9 @@ public class JReleaserModel implements Domain {
     }
 
     private void fillProjectProperties(Map<String, Object> props, Project project) {
+        props.put(Constants.KEY_TIMESTAMP, timestamp);
+        props.put(Constants.KEY_COMMIT_SHORT_HASH, commit.getShortHash());
+        props.put(Constants.KEY_COMMIT_FULL_HASH, commit.getFullHash());
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getResolvedVersion());

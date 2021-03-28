@@ -65,8 +65,6 @@ public final class JReleaserModelValidator {
         List<String> errors = new ArrayList<>();
         validateModel(context, errors);
         resolveArtifactPaths(context);
-        context.getLogger().info("Project version set to {}", context.getModel().getProject().getResolvedVersion());
-        context.getLogger().info("Release is{}snapshot", context.getModel().getProject().isSnapshot() ? " " : " not ");
         return Collections.unmodifiableList(errors);
     }
 
@@ -278,7 +276,7 @@ public final class JReleaserModelValidator {
     }
 
     private static void validateSign(JReleaserContext context, List<String> errors) {
-        Signing signing = context.getModel().getSign();
+        Signing signing = context.getModel().getSigning();
 
         if (!signing.isEnabled()) return;
 
@@ -345,7 +343,7 @@ public final class JReleaserModelValidator {
         if (!service.getChangelog().isEnabledSet()) {
             service.getChangelog().setEnabled(true);
         }
-        if (service.isSign() && !model.getSign().isEnabled()) {
+        if (service.isSign() && !model.getSigning().isEnabled()) {
             errors.add(service.getServiceName() + ".sign is set to `true` but signing is not enabled");
         }
         if (isBlank(service.getCommitAuthor().getName())) {

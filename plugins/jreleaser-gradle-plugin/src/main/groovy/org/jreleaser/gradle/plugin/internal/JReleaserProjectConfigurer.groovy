@@ -19,13 +19,13 @@ package org.jreleaser.gradle.plugin.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.GradleException
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
+import org.jreleaser.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
@@ -84,17 +84,13 @@ class JReleaserProjectConfigurer {
             }
         }
 
-        JReleaserContext context = new JReleaserContext(
+        JReleaserContext context = ContextCreator.create(
             new JReleaserLoggerAdapter(project),
             model,
             project.projectDir.toPath(),
             project.layout.buildDirectory
                 .dir('jreleaser').get().asFile.toPath(),
             extension.dryrun.get())
-
-        if (!context.validateModel().isEmpty()) {
-            throw new GradleException("JReleaser for project ${project.name} has not been properly configured.")
-        }
 
         project.tasks.register('jreleaserConfig', JReleaserConfigTask,
             new Action<JReleaserConfigTask>() {

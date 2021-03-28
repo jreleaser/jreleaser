@@ -17,6 +17,7 @@
  */
 dependencies {
     api project(':jreleaser-model')
+    api project(':jreleaser-config')
 
     // tools
     api project(':jreleaser-templates')

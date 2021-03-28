@@ -19,10 +19,16 @@ package org.jreleaser.sdk.git;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.releaser.spi.Commit;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Comparator;
 
 /**
@@ -40,6 +46,18 @@ public class GitSdk {
 
     public Git open() throws IOException {
         return Git.open(context.getBasedir().toFile());
+    }
+
+    public Commit head() throws IOException {
+        Git git = open();
+
+        RevWalk walk = new RevWalk(git.getRepository());
+        ObjectId head = git.getRepository().resolve(Constants.HEAD);
+        RevCommit commit = walk.parseCommit(head);
+
+        return new Commit(
+            commit.getId().abbreviate(7).name(),
+            commit.getId().name());
     }
 
     public void deleteTag(String tagName) throws IOException {
@@ -73,6 +91,18 @@ public class GitSdk {
 
     public static GitSdk of(JReleaserContext context) {
         return new GitSdk(context);
+    }
+
+    public static Commit head(Path basedir) throws IOException {
+        Git git = Git.open(basedir.toFile());
+
+        RevWalk walk = new RevWalk(git.getRepository());
+        ObjectId head = git.getRepository().resolve(Constants.HEAD);
+        RevCommit commit = walk.parseCommit(head);
+
+        return new Commit(
+            commit.getId().abbreviate(7).name(),
+            commit.getId().name());
     }
 
     public static String extractTagName(Ref tag) {

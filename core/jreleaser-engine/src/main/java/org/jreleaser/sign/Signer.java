@@ -72,12 +72,12 @@ public class Signer {
 
     public static void sign(JReleaserContext context) throws SigningException {
         context.getLogger().info("Signing files");
-        if (!context.getModel().getSign().isEnabled()) {
+        if (!context.getModel().getSigning().isEnabled()) {
             context.getLogger().info("Signing is not enabled");
             return;
         }
 
-        InMemoryKeyring keyring = createInMemoryKeyring(context.getModel().getSign());
+        InMemoryKeyring keyring = createInMemoryKeyring(context.getModel().getSigning());
 
         List<Path> paths = collectArtifactsForSigning(context);
         List<FilePair> files = sign(context, keyring, paths);
@@ -163,10 +163,10 @@ public class Signer {
         context.getLogger().debug("Signing {} files into {}",
             paths.size(), context.getBasedir().relativize(signaturesDirectory));
 
-        PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSign(), keyring);
+        PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);
 
         List<FilePair> files = new ArrayList<>();
-        String extension = context.getModel().getSign().isArmored() ? ".asc" : ".sig";
+        String extension = context.getModel().getSigning().isArmored() ? ".asc" : ".sig";
         for (Path input : paths) {
             Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
             sign(context, signatureGenerator, input, output);
@@ -205,7 +205,7 @@ public class Signer {
                 DEBUG_TAB, context.getBasedir().relativize(output));
 
             OutputStream out = new BufferedOutputStream(new FileOutputStream(output.toFile()));
-            if (context.getModel().getSign().isArmored()) {
+            if (context.getModel().getSigning().isArmored()) {
                 out = new ArmoredOutputStream(out);
             }
 

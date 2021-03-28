@@ -23,7 +23,9 @@ package org.jreleaser.util;
  */
 public interface Constants {
     // General
-    String KEY_JAVA_VERSION = "javaVersion";
+    String KEY_TIMESTAMP = "timestamp";
+    String KEY_COMMIT_SHORT_HASH = "commitShortHash";
+    String KEY_COMMIT_FULL_HASH = "commitFullHash";
 
     // Project
     String KEY_PROJECT_NAME = "projectName";

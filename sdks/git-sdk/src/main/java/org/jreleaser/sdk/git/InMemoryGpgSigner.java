@@ -75,13 +75,13 @@ public class InMemoryGpgSigner extends GpgSigner implements GpgObjectSigner {
     @Override
     public boolean canLocateSigningKey(String gpgSigningKey, PersonIdent committer, CredentialsProvider credentialsProvider, GpgConfig config)
         throws CanceledException, UnsupportedSigningFormatException {
-        return context.getModel().getSign().isEnabled();
+        return context.getModel().getSigning().isEnabled();
     }
 
     @Override
     public boolean canLocateSigningKey(String gpgSigningKey, PersonIdent committer, CredentialsProvider credentialsProvider)
         throws CanceledException {
-        return context.getModel().getSign().isEnabled();
+        return context.getModel().getSigning().isEnabled();
     }
 
     @Override
@@ -98,8 +98,8 @@ public class InMemoryGpgSigner extends GpgSigner implements GpgObjectSigner {
     public void signObject(ObjectBuilder object, String gpgSigningKey, PersonIdent committer, CredentialsProvider credentialsProvider, GpgConfig config)
         throws CanceledException, UnsupportedSigningFormatException {
         try {
-            InMemoryKeyring keyring = createInMemoryKeyring(context.getModel().getSign());
-            PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSign(), keyring);
+            InMemoryKeyring keyring = createInMemoryKeyring(context.getModel().getSigning());
+            PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);
             adjustCommiterId(signatureGenerator, committer, keyring);
             signObject(signatureGenerator, object);
         } catch (SigningException e) {
