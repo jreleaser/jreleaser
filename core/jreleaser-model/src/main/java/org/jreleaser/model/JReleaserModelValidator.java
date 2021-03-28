@@ -33,7 +33,9 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.GitService.TAG_NAME;
+import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Project.PROJECT_VERSION;
+import static org.jreleaser.model.Project.SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
 import static org.jreleaser.model.Signing.GPG_PASSPHRASE;
@@ -82,6 +84,13 @@ public final class JReleaserModelValidator {
         return Env.check(key, environment.getVariable(key), property, errors);
     }
 
+    private static String checkProperty(Environment environment, String key, String property, String value, String defaultValue) {
+        if (isNotBlank(value)) return value;
+        List<String> errors = new ArrayList<>();
+        String result = Env.check(key, environment.getVariable(key), property, errors);
+        return errors.isEmpty() ? result : defaultValue;
+    }
+
     private static void validateProject(JReleaserContext context, List<String> errors) {
         Project project = context.getModel().getProject();
 
@@ -95,6 +104,13 @@ public final class JReleaserModelValidator {
                 "project.version",
                 project.getVersion(),
                 errors));
+
+        project.setSnapshotPattern(
+            checkProperty(context.getModel().getEnvironment(),
+                SNAPSHOT_PATTERN,
+                "project.snapshotPattern",
+                project.getSnapshotPattern(),
+                DEFAULT_SNAPSHOT_PATTERN));
 
         if (isBlank(project.getDescription())) {
             errors.add("project.description must not be blank");

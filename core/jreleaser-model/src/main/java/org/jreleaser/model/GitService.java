@@ -130,7 +130,8 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         if (isNotBlank(releaseName)) {
             return applyTemplate(new StringReader(releaseName), props(project));
         }
-        return "Release " + getResolvedTagName(project);
+        releaseName = "Release " + getResolvedTagName(project);
+        return releaseName;
     }
 
     public String getResolvedRepoUrl(Project project) {

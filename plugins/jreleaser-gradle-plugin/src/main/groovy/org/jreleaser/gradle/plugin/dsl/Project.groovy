@@ -33,6 +33,8 @@ interface Project extends ExtraProperties {
 
     Property<String> getVersion()
 
+    Property<String> getSnapshotPattern()
+
     Property<String> getDescription()
 
     Property<String> getLongDescription()

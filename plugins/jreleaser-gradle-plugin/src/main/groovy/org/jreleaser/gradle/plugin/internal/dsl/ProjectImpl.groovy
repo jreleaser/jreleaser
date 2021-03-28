@@ -41,6 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class ProjectImpl implements Project {
     final Property<String> name
     final Property<String> version
+    final Property<String> snapshotPattern
     final Property<String> description
     final Property<String> longDescription
     final Property<String> website
@@ -57,6 +58,7 @@ class ProjectImpl implements Project {
                 Provider<String> versionProvider) {
         name = objects.property(String).convention(nameProvider)
         version = objects.property(String).convention(versionProvider)
+        snapshotPattern = objects.property(String).convention(Providers.notDefined())
         description = objects.property(String).convention(descriptionProvider)
         longDescription = objects.property(String).convention(descriptionProvider)
         website = objects.property(String).convention(Providers.notDefined())
@@ -91,6 +93,7 @@ class ProjectImpl implements Project {
         org.jreleaser.model.Project project = new org.jreleaser.model.Project()
         project.name = name.get()
         project.version = version.get()
+        if (snapshotPattern.present) project.snapshotPattern = snapshotPattern.get()
         if (description.present) project.description = description.get()
         if (longDescription.present) project.longDescription = longDescription.get()
         if (website.present) project.website = website.get()

@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
@@ -33,21 +34,26 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  */
 public class Project implements Domain, ExtraProperties {
     public static final String PROJECT_VERSION = "PROJECT_VERSION";
+    public static final String SNAPSHOT_PATTERN = "SNAPSHOT_PATTERN";
+    public static final String DEFAULT_SNAPSHOT_PATTERN = ".*-SNAPSHOT";
 
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final Java java = new Java();
     private String name;
     private String version;
     private String description;
     private String longDescription;
     private String website;
     private String license;
-    private final Java java = new Java();
+    private String snapshotPattern;
+    private Boolean snapshot;
 
     void setAll(Project project) {
         this.name = project.name;
         this.version = project.version;
+        this.snapshotPattern = project.snapshotPattern;
         this.description = project.description;
         this.longDescription = project.longDescription;
         this.website = project.website;
@@ -64,12 +70,24 @@ public class Project implements Domain, ExtraProperties {
     }
 
     public boolean isSnapshot() {
-        return requireNonBlank(getResolvedVersion(), "Project version cannot be blank")
-            .endsWith("-SNAPSHOT");
+        if (null == snapshot) {
+            String resolvedVersion = getResolvedVersion();
+            requireNonBlank(resolvedVersion, "Project version cannot be blank");
+            snapshot = resolvedVersion.matches(getResolvedSnapshotPattern());
+        }
+        return snapshot;
     }
 
     public String getResolvedVersion() {
         return Env.resolve(PROJECT_VERSION, version);
+    }
+
+    public String getResolvedSnapshotPattern() {
+        snapshotPattern = Env.resolve(SNAPSHOT_PATTERN, snapshotPattern);
+        if (isBlank(snapshotPattern)) {
+            snapshotPattern = DEFAULT_SNAPSHOT_PATTERN;
+        }
+        return snapshotPattern;
     }
 
     public String getName() {
@@ -86,6 +104,14 @@ public class Project implements Domain, ExtraProperties {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getSnapshotPattern() {
+        return snapshotPattern;
+    }
+
+    public void setSnapshotPattern(String snapshotPattern) {
+        this.snapshotPattern = snapshotPattern;
     }
 
     public String getDescription() {
@@ -198,6 +224,8 @@ public class Project implements Domain, ExtraProperties {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
         map.put("version", getResolvedVersion());
+        map.put("snapshotPattern", getResolvedSnapshotPattern());
+        map.put("snapshot", isSnapshot());
         map.put("description", description);
         map.put("longDescription", longDescription);
         map.put("website", website);

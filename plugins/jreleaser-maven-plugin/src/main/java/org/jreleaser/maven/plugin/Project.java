@@ -34,6 +34,7 @@ public class Project implements ExtraProperties {
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private String name;
     private String version;
+    private String snapshotPattern;
     private String description;
     private String longDescription;
     private String website;
@@ -43,6 +44,7 @@ public class Project implements ExtraProperties {
     void setAll(Project project) {
         this.name = project.name;
         this.version = project.version;
+        this.snapshotPattern = project.snapshotPattern;
         this.description = project.description;
         this.longDescription = project.longDescription;
         this.website = project.website;
@@ -67,6 +69,14 @@ public class Project implements ExtraProperties {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getSnapshotPattern() {
+        return snapshotPattern;
+    }
+
+    public void setSnapshotPattern(String snapshotPattern) {
+        this.snapshotPattern = snapshotPattern;
     }
 
     public String getDescription() {
