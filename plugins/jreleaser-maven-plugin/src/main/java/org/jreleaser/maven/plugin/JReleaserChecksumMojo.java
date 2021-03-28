@@ -23,7 +23,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
-import org.jreleaser.tools.Checksums;
+import org.jreleaser.checksum.Checksum;
 
 /**
  * @author Andres Almiray
@@ -47,7 +47,7 @@ public class JReleaserChecksumMojo extends AbstractJReleaserMojo {
 
     static void checksum(JReleaserContext context) throws MojoExecutionException {
         try {
-            Checksums.collectAndWriteChecksums(context);
+            Checksum.collectAndWriteChecksums(context);
         } catch (JReleaserException e) {
             throw new MojoExecutionException("Unexpected error writing checksums", e);
         }

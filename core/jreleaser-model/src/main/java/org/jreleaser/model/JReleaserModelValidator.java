@@ -411,11 +411,6 @@ public final class JReleaserModelValidator {
     private static void validateDistributions(JReleaserContext context, List<String> errors) {
         Map<String, Distribution> distributions = context.getModel().getDistributions();
 
-        if (distributions.isEmpty()) {
-            errors.add("Missing distributions configuration");
-            return;
-        }
-
         if (distributions.size() == 1) {
             distributions.values().stream()
                 .findFirst().ifPresent(distribution -> distribution.setName(context.getModel().getProject().getName()));

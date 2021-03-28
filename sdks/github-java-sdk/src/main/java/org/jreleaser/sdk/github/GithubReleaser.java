@@ -28,6 +28,7 @@ import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHRepository;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,8 +109,8 @@ public class GithubReleaser implements Releaser {
 
         if (context.isDryrun()) {
             for (Path asset : assets) {
-                if (0 == asset.toFile().length()) {
-                    // do not upload empty files
+                if (0 == asset.toFile().length() || !Files.exists(asset)) {
+                    // do not upload empty or non existent files
                     continue;
                 }
 

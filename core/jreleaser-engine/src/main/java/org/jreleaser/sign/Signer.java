@@ -73,13 +73,17 @@ public class Signer {
     public static void sign(JReleaserContext context) throws SigningException {
         context.getLogger().info("Signing files");
         if (!context.getModel().getSigning().isEnabled()) {
-            context.getLogger().info("Signing is not enabled");
+            context.getLogger().info("Signing is not enabled. Skipping");
+            return;
+        }
+
+        List<Path> paths = collectArtifactsForSigning(context);
+        if (paths.isEmpty()) {
+            context.getLogger().info("No files configured for signing. Skipping");
             return;
         }
 
         InMemoryKeyring keyring = createInMemoryKeyring(context.getModel().getSigning());
-
-        List<Path> paths = collectArtifactsForSigning(context);
         List<FilePair> files = sign(context, keyring, paths);
         verify(context, keyring, files);
     }

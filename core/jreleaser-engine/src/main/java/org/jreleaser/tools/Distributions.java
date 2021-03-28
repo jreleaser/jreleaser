@@ -32,6 +32,11 @@ import java.util.stream.Collectors;
  */
 public class Distributions {
     public static void process(JReleaserContext context, boolean failFast, String action, ToolProcessingFunction function) {
+        if (context.getModel().getDistributions().isEmpty()) {
+            context.getLogger().debug("No configured distributions [" + action.toLowerCase() + "]. Skipping");
+            return;
+        }
+
         context.getLogger().info("{} distributions", action);
         List<Exception> exceptions = new ArrayList<>();
         for (Distribution distribution : context.getModel().getDistributions().values()) {

@@ -30,6 +30,7 @@ import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -108,8 +109,8 @@ class Github {
 
     void uploadAssets(GHRelease release, List<Path> assets) throws IOException {
         for (Path asset : assets) {
-            if (0 == asset.toFile().length()) {
-                // do not upload empty files
+            if (0 == asset.toFile().length() || !Files.exists(asset)) {
+                // do not upload empty or non existent files
                 continue;
             }
 

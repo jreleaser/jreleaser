@@ -70,9 +70,6 @@ public abstract class AbstractReleaserBuilder<R extends Releaser, B extends Rele
 
     protected void validate() {
         requireNonNull(context, "'context' must not be null");
-        if (assets.isEmpty()) {
-            throw new IllegalArgumentException("'assets must not be empty");
-        }
     }
 
     @Override

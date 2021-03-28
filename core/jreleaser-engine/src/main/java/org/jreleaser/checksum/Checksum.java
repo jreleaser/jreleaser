@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.tools;
+package org.jreleaser.checksum;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
@@ -37,7 +37,7 @@ import static org.jreleaser.util.JReleaserLogger.DEBUG_TAB;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Checksums {
+public class Checksum {
     public static void collectAndWriteChecksums(JReleaserContext context) throws JReleaserException {
         context.getLogger().info("Calculating checksums");
 
@@ -54,6 +54,11 @@ public class Checksums {
                 checksums.add(artifact.getHash() + " " + distribution.getName() + "/" +
                     Paths.get(artifact.getPath()).getFileName());
             }
+        }
+
+        if (checksums.isEmpty()) {
+            context.getLogger().info("No files configured for checksum. Skipping");
+            return;
         }
 
         Path checksumsFilePath = context.getChecksumsDirectory().resolve("checksums.txt");
