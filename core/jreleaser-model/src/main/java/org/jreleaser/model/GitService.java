@@ -55,6 +55,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private String releaseName = "Release {{tagName}}";
     private CommitAuthor commitAuthor = new CommitAuthor();
     private boolean sign;
+    private boolean skipTagging;
     private Changelog changelog = new Changelog();
     private boolean overwrite;
     private boolean allowUploadToExisting;
@@ -87,6 +88,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
         this.sign = service.sign;
+        this.skipTagging = service.skipTagging;
         this.overwrite = service.overwrite;
         this.allowUploadToExisting = service.allowUploadToExisting;
         this.apiEndpoint = service.apiEndpoint;
@@ -301,6 +303,14 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.sign = sign;
     }
 
+    public boolean isSkipTagging() {
+        return skipTagging;
+    }
+
+    public void setSkipTagging(boolean skipTagging) {
+        this.skipTagging = skipTagging;
+    }
+
     public Changelog getChangelog() {
         return changelog;
     }
@@ -352,6 +362,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("releaseName", releaseName);
         map.put("commitAuthor", commitAuthor.asMap());
         map.put("sign", sign);
+        map.put("skipTagging", skipTagging);
         map.put("overwrite", overwrite);
         map.put("allowUploadToExisting", allowUploadToExisting);
         map.put("apiEndpoint", apiEndpoint);

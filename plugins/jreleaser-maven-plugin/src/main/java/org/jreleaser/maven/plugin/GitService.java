@@ -39,6 +39,7 @@ public abstract class GitService implements Releaser {
     private String releaseName;
     private CommitAuthor commitAuthor = new CommitAuthor();
     private boolean sign;
+    private boolean skipTagging;
     private Changelog changelog = new Changelog();
     private boolean overwrite;
     private boolean allowUploadToExisting;
@@ -70,6 +71,7 @@ public abstract class GitService implements Releaser {
         this.releaseName = service.releaseName;
         this.commitAuthor.setAll(service.commitAuthor);
         this.sign = service.sign;
+        this.skipTagging = service.skipTagging;
         this.overwrite = service.overwrite;
         this.allowUploadToExisting = service.allowUploadToExisting;
         this.apiEndpoint = service.apiEndpoint;
@@ -209,6 +211,14 @@ public abstract class GitService implements Releaser {
 
     public void setSign(boolean sign) {
         this.sign = sign;
+    }
+
+    public boolean isSkipTagging() {
+        return skipTagging;
+    }
+
+    public void setSkipTagging(boolean skipTagging) {
+        this.skipTagging = skipTagging;
     }
 
     public Changelog getChangelog() {

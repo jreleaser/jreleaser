@@ -67,7 +67,7 @@ public class GithubReleaser implements Releaser {
                         release.delete();
                     }
                     context.getLogger().debug("Creating release {}", tagName);
-                    createRelease(api, tagName, changelog, true);
+                    createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
                 } else if (github.isAllowUploadToExisting()) {
                     context.getLogger().debug("Updating release {}", tagName);
                     if (!context.isDryrun()) api.uploadAssets(release, assets);
@@ -124,8 +124,10 @@ public class GithubReleaser implements Releaser {
         }
 
         // local tag
-        context.getLogger().debug("Tagging local repository with {}", tagName);
-        GitSdk.of(context).tag(tagName, deleteTags);
+        if (deleteTags || !context.getModel().getRelease().getGitService().isSkipTagging()) {
+            context.getLogger().debug("Tagging local repository with {}", tagName);
+            GitSdk.of(context).tag(tagName, true);
+        }
 
         // remote tag/release
         GHRelease release = api.createRelease(github.getCanonicalRepoName(),
@@ -140,14 +142,6 @@ public class GithubReleaser implements Releaser {
     }
 
     private void deleteTags(Github api, String repo, String tagName) {
-        // delete local tag
-        // try {
-        //     context.getLogger().debug("Delete local tag {}", tagName);
-        //     GitSdk.of(context).deleteTag(tagName);
-        // } catch (IOException ignored) {
-        //     //noop
-        // }
-
         // delete remote tag
         try {
             api.deleteTag(repo, tagName);
