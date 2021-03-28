@@ -36,11 +36,12 @@ import java.util.List;
  */
 public class Announcers {
     public static void announce(JReleaserContext context) throws AnnounceException {
+        context.getLogger().info("Announcing release");
         if (!context.getModel().getAnnounce().isEnabled()) {
             context.getLogger().info("Announcing is not enabled. Skipping.");
+            return;
         }
 
-        context.getLogger().info("Announcing release");
         for (AnnouncerBuilder builder : Announcers.findAnnouncers(context)) {
             Announcer announcer = builder.configureWith(context).build();
 
