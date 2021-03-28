@@ -35,13 +35,15 @@ import javax.inject.Inject
 class GlobImpl implements Glob {
     String name
     final DirectoryProperty directory
-    final Property<String> pattern
+    final Property<String> include
+    final Property<String> exclude
     final Property<Boolean> recursive
 
     @Inject
     GlobImpl(ObjectFactory objects) {
         directory = objects.directoryProperty().convention(Providers.notDefined())
-        pattern = objects.property(String).convention(Providers.notDefined())
+        include = objects.property(String).convention(Providers.notDefined())
+        exclude = objects.property(String).convention(Providers.notDefined())
         recursive = objects.property(Boolean).convention(Providers.notDefined())
     }
 
@@ -54,7 +56,8 @@ class GlobImpl implements Glob {
         if (directory.present) {
             glob.directory = directory.asFile.get().absolutePath
         }
-        if (pattern.present) glob.pattern = pattern.get()
+        if (include.present) glob.include = include.get()
+        if (exclude.present) glob.exclude = exclude.get()
         if (recursive.present) glob.recursive = recursive.get()
         glob
     }

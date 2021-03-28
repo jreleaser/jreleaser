@@ -407,8 +407,23 @@ public final class JReleaserModelValidator {
     private static void validateFiles(JReleaserContext context, List<String> errors) {
         int i = 0;
         for (Glob glob : context.getModel().getFiles().getGlobs()) {
-            if (isBlank(glob.getPattern())) {
-                errors.add("files.glob[" + i + "] must define a pattern");
+            boolean isBaseDir = false;
+
+            if (isBlank(glob.getDirectory())) {
+                glob.setDirectory(".");
+                isBaseDir = true;
+            }
+
+            boolean includeAll = false;
+            if (isBlank(glob.getInclude())) {
+                glob.setInclude("*");
+                includeAll = true;
+            }
+
+            if (isBlank(glob.getExclude()) &&
+                includeAll && isBaseDir) {
+                // too broad!
+                errors.add("files.glob[" + i + "] must define either a directory or an include/exclude pattern");
             }
         }
     }

@@ -23,7 +23,8 @@ package org.jreleaser.maven.plugin;
  */
 public class Glob {
     private String directory;
-    private String pattern;
+    private String include;
+    private String exclude;
     private Boolean recursive;
 
     public String getDirectory() {
@@ -34,12 +35,20 @@ public class Glob {
         this.directory = directory;
     }
 
-    public String getPattern() {
-        return pattern;
+    public String getInclude() {
+        return include;
     }
 
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
+    public void setInclude(String include) {
+        this.include = include;
+    }
+
+    public String getExclude() {
+        return exclude;
+    }
+
+    public void setExclude(String exclude) {
+        this.exclude = exclude;
     }
 
     public Boolean isRecursive() {

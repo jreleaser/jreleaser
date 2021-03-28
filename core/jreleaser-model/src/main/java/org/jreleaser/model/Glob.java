@@ -44,7 +44,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Glob implements Domain {
     private String directory;
-    private String pattern;
+    private String include;
+    private String exclude;
     private Boolean recursive;
     private Set<Path> paths;
 
@@ -62,15 +63,15 @@ public class Glob implements Domain {
                 }
             }
 
-            FileCollector fileCollector = new FileCollector(context, pattern, path, isRecursive());
+            FileCollector fileCollector = new FileCollector(context, include, exclude, path, isRecursive());
             try {
                 java.nio.file.Files.walkFileTree(path, fileCollector);
             } catch (IOException e) {
-                throw new JReleaserException("Unnexpected error resolving glob " + pattern);
+                throw new JReleaserException("Unnexpected error resolving glob " + this.asMap());
             }
 
             if (fileCollector.failed) {
-                throw new JReleaserException("Could not resolve glob " + pattern);
+                throw new JReleaserException("Could not resolve glob " + this.asMap());
             }
 
             paths = fileCollector.getFiles();
@@ -86,12 +87,20 @@ public class Glob implements Domain {
         this.directory = directory;
     }
 
-    public String getPattern() {
-        return pattern;
+    public String getInclude() {
+        return include;
     }
 
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
+    public void setInclude(String include) {
+        this.include = include;
+    }
+
+    public String getExclude() {
+        return exclude;
+    }
+
+    public void setExclude(String exclude) {
+        this.exclude = exclude;
     }
 
     public Boolean isRecursive() {
@@ -109,38 +118,56 @@ public class Glob implements Domain {
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("directory", directory);
-        map.put("pattern", pattern);
+        map.put("include", include);
+        map.put("exclude", exclude);
         map.put("recursive", isRecursive());
         return map;
     }
 
     public static class FileCollector extends SimpleFileVisitor<Path> {
-        private final PathMatcher matcher;
+        private final PathMatcher includeMatcher;
         private final Set<Path> files = new LinkedHashSet<>();
         private final JReleaserContext context;
         private final boolean recursive;
         private final Path start;
+
+        private PathMatcher excludeMatcher;
         private boolean failed;
 
-        FileCollector(JReleaserContext context, String pattern, Path start, boolean recursive) {
+        FileCollector(JReleaserContext context, String include, String exclude, Path start, boolean recursive) {
             this.context = context;
             this.start = start;
             this.recursive = recursive;
 
-            if (pattern.startsWith("regex:") || pattern.startsWith("glob:")) {
-                matcher = FileSystems.getDefault()
-                    .getPathMatcher(pattern);
+            if (include.startsWith("regex:") || include.startsWith("glob:")) {
+                includeMatcher = FileSystems.getDefault()
+                    .getPathMatcher(include);
             } else {
-                matcher = FileSystems.getDefault()
-                    .getPathMatcher("glob:" + pattern);
+                includeMatcher = FileSystems.getDefault()
+                    .getPathMatcher("glob:" + include);
+            }
+
+            if (isNotBlank(exclude)) {
+                if (exclude.startsWith("regex:") || exclude.startsWith("glob:")) {
+                    excludeMatcher = FileSystems.getDefault()
+                        .getPathMatcher(exclude);
+                } else {
+                    excludeMatcher = FileSystems.getDefault()
+                        .getPathMatcher("glob:" + exclude);
+                }
             }
         }
 
-        private void match(Path file) {
-            Path name = file.getFileName();
-            if (name != null && matcher.matches(name)) {
+        private boolean match(Path file) {
+            Path fileName = file.getFileName();
+
+            if (null != fileName && includeMatcher.matches(fileName)) {
+                if (null != excludeMatcher && excludeMatcher.matches(fileName)) {
+                    return false;
+                }
                 files.add(file);
             }
+            return null == excludeMatcher || !excludeMatcher.matches(fileName);
         }
 
         public Set<Path> getFiles() {
@@ -155,12 +182,8 @@ public class Glob implements Domain {
 
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-            if (recursive) {
-                match(dir);
-                return CONTINUE;
-            } else if (dir.equals(start)) {
-                match(dir);
-                return CONTINUE;
+            if (recursive || dir.equals(start)) {
+                return match(dir) ? CONTINUE : SKIP_SUBTREE;
             }
             return SKIP_SUBTREE;
         }

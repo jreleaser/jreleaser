@@ -30,7 +30,9 @@ import org.gradle.api.provider.Property
 interface Glob {
     DirectoryProperty getDirectory()
 
-    Property<String> getPattern()
+    Property<String> getInclude()
+
+    Property<String> getExclude()
 
     Property<Boolean> getRecursive()
 }
