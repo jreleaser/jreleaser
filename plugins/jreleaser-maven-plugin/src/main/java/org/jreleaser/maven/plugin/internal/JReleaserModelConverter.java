@@ -371,6 +371,7 @@ public final class JReleaserModelConverter {
         if (jbang.isEnabledSet()) t.setEnabled(jbang.isEnabled());
         t.setTemplateDirectory(jbang.getTemplateDirectory());
         t.setExtraProperties(jbang.getExtraProperties());
+        t.setAlias(jbang.getAlias());
         t.setCatalog(convertJbangCatalog(jbang.getCatalog()));
         t.setCommitAuthor(convertCommitAuthor(jbang.getCommitAuthor()));
         return t;

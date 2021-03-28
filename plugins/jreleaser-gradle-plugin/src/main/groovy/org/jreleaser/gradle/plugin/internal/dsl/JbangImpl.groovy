@@ -20,7 +20,9 @@ package org.jreleaser.gradle.plugin.internal.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.file.Directory
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
@@ -36,12 +38,14 @@ import javax.inject.Inject
  */
 @CompileStatic
 class JbangImpl extends AbstractTool implements Jbang {
+    final Property<String> alias
     final CommitAuthorImpl commitAuthor
     final TapImpl catalog
 
     @Inject
     JbangImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider) {
         super(objects, distributionsDirProvider)
+        alias = objects.property(String).convention(Providers.notDefined())
         catalog = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
@@ -71,6 +75,7 @@ class JbangImpl extends AbstractTool implements Jbang {
     org.jreleaser.model.Jbang toModel() {
         org.jreleaser.model.Jbang tool = new org.jreleaser.model.Jbang()
         fillToolProperties(tool)
+        if (alias.present) tool.alias = alias.get()
         if (catalog.isSet()) tool.catalog = catalog.toJbangCatalog()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         tool

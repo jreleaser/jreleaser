@@ -66,9 +66,8 @@ public class JbangToolProcessor extends AbstractToolProcessor<Jbang> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
-        String distributionName = distribution.getName();
-        String aliasName = distributionName;
-        String aliasClassName = distributionName;
+        String aliasName = tool.getAlias();
+        String aliasClassName = aliasName;
         if (context.getModel().getProject().isSnapshot()) {
             aliasName += "-snapshot";
             aliasClassName += "_snapshot";

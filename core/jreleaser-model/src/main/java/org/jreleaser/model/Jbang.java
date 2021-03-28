@@ -26,6 +26,7 @@ import java.util.Map;
 public class Jbang extends AbstractTool {
     public static final String NAME = "jbang";
 
+    private String alias;
     private JbangCatalog catalog = new JbangCatalog();
 
     public Jbang() {
@@ -34,7 +35,16 @@ public class Jbang extends AbstractTool {
 
     void setAll(Jbang jbang) {
         super.setAll(jbang);
+        this.alias = jbang.alias;
         this.catalog.setAll(jbang.catalog);
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public JbangCatalog getCatalog() {
@@ -47,6 +57,7 @@ public class Jbang extends AbstractTool {
 
     @Override
     protected void asMap(Map<String, Object> props) {
+        props.put("alias", alias);
         props.put("catalog", catalog.asMap());
     }
 

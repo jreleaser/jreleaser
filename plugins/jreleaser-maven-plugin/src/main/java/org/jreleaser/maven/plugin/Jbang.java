@@ -23,15 +23,26 @@ package org.jreleaser.maven.plugin;
  */
 public class Jbang extends AbstractTool {
     public static final String NAME = "catalog";
+
+    private String alias;
     private Catalog catalog = new Catalog();
 
     public Jbang() {
         super(NAME);
     }
 
-    void setAll(Jbang brew) {
-        super.setAll(brew);
-        this.catalog.setAll(brew.catalog);
+    void setAll(Jbang jbang) {
+        super.setAll(jbang);
+        this.alias = jbang.alias;
+        this.catalog.setAll(jbang.catalog);
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public Catalog getCatalog() {

@@ -642,6 +642,9 @@ public final class JReleaserModelValidator {
         validateTemplate(context, distribution, tool, model.getPackagers().getJbang(), errors);
         mergeExtraProperties(tool, model.getPackagers().getJbang());
 
+        if (isBlank(tool.getAlias())) {
+            tool.setAlias(distribution.getName());
+        }
         if (isBlank(tool.getCatalog().getName())) {
             tool.getCatalog().setName(model.getPackagers().getJbang().getCatalog().getName());
         }

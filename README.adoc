@@ -1,6 +1,6 @@
 = JReleaser
 :linkattrs:
-:project-owner:   kordamp
+:project-owner:   jreleaser
 :project-name:    jreleaser
 :project-group:   org.jreleaser
 :project-version: 0.1.0
