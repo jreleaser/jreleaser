@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,6 +35,12 @@ import java.util.UUID;
  * @since 0.1.0
  */
 public final class MustacheUtils {
+    private static final Map<String, String> ENV_VARS = new LinkedHashMap<>();
+
+    static {
+        System.getenv().forEach((k, v) -> ENV_VARS.put("Env." + k, v));
+    }
+
     private MustacheUtils() {
         //noop
     }
@@ -42,6 +49,7 @@ public final class MustacheUtils {
         StringWriter input = new StringWriter();
         MustacheFactory mf = new MyMustacheFactory();
         Mustache mustache = mf.compile(reader, templateName);
+        context.putAll(ENV_VARS);
         mustache.execute(input, context);
         input.flush();
         return input.toString();
