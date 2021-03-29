@@ -45,12 +45,12 @@ public class JReleaserContext {
         this.basedir = basedir;
         this.outputDirectory = outputDirectory;
         this.dryrun = dryrun;
-
-        this.model.getEnvironment().initProps(this);
     }
 
     public List<String> validateModel() {
         if (!errors.isEmpty()) return errors;
+
+        this.model.getEnvironment().initProps(this);
 
         logger.info("Validating configuration");
         errors.addAll(JReleaserModelValidator.validate(this));
