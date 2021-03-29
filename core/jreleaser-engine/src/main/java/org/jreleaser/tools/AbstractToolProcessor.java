@@ -88,6 +88,11 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     @Override
+    public boolean supportsDistribution(Distribution distribution) {
+        return true;
+    }
+
+    @Override
     public boolean prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();

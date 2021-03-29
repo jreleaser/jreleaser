@@ -48,6 +48,11 @@ public class JbangToolProcessor extends AbstractToolProcessor<Jbang> {
     }
 
     @Override
+    public boolean supportsDistribution(Distribution distribution) {
+        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY;
+    }
+
+    @Override
     protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         copyPreparedFiles(distribution, props);
         return true;

@@ -31,6 +31,8 @@ public interface ToolProcessor<T extends Tool> {
 
     String getToolName();
 
+    boolean supportsDistribution(Distribution distribution);
+
     boolean prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
     boolean packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
