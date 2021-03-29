@@ -39,7 +39,7 @@ abstract class AbstractRepositoryTap implements RepositoryTap {
         this.basename = basename;
     }
 
-    void setBasename(String basename) {
+    public void setBasename(String basename) {
         this.basename = basename;
     }
 
