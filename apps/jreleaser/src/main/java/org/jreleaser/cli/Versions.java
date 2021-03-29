@@ -54,18 +54,18 @@ public class Versions implements CommandLine.IVersionProvider {
             String buildRevision = manifest.getMainAttributes().getValue("Build-Revision");
             boolean additionalInfo = isNotBlank(buildDate) || isNotBlank(buildTime) || isNotBlank(buildRevision);
 
-            out.println("------------------------------------------------------------");
-            out.println("jreleaser " + version);
-            out.println("------------------------------------------------------------");
+            out.printf("------------------------------------------------------------%n");
+            out.printf("jreleaser %s%n", version);
+            out.printf("------------------------------------------------------------%n");
             if (additionalInfo) {
                 if (isNotBlank(buildDate) && isNotBlank(buildTime)) {
-                    out.println("Build time:   " + buildDate + " " + buildTime);
+                    out.printf("Build time:   %s %s%n", buildDate, buildTime);
                 }
                 if (isNotBlank(buildRevision)) out.println("Revision:     " + buildRevision);
-                out.println("------------------------------------------------------------");
+                out.printf("------------------------------------------------------------%n");
             }
         } else {
-            out.println("jreleaser " + JRELEASER_VERSION);
+            out.printf("jreleaser %s%n", JRELEASER_VERSION);
         }
     }
 
