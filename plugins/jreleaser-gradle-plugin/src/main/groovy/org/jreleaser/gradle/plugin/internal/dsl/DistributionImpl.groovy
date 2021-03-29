@@ -64,7 +64,7 @@ class DistributionImpl implements Distribution {
     final SnapImpl snap
     final JavaImpl java
 
-    private final NamedDomainObjectContainer<ArtifactImpl> artifacts
+    final NamedDomainObjectContainer<ArtifactImpl> artifacts
     private final Property<String> myName
     private final PackagersImpl packagers
 

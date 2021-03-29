@@ -20,6 +20,7 @@ package org.jreleaser.workflow;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.Constants;
 
 import java.io.FileOutputStream;
@@ -88,7 +89,7 @@ class WorkflowImpl implements Workflow {
         try (FileOutputStream out = new FileOutputStream(output.toFile())) {
             context.getLogger().info("Writing output properties to {}",
                 context.getBasedir().relativize(output));
-            props.store(out, "JReleaser");
+            props.store(out, "JReleaser " + JReleaserVersion.getPlainVersion());
         } catch (IOException ignored) {
             context.getLogger().warn("Could not write output properties to {}",
                 context.getBasedir().relativize(output));

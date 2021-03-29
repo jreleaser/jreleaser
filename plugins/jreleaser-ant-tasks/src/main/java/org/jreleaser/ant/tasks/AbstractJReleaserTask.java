@@ -23,6 +23,7 @@ import org.jreleaser.ant.tasks.internal.JReleaserLoggerAdapter;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.context.ContextCreator;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.File;
@@ -72,6 +73,7 @@ abstract class AbstractJReleaserTask extends Task {
 
         resolveConfigFile();
         resolveBasedir();
+        logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
         logger.info("Configuring with {}", actualConfigFile);
         logger.info(" - basedir set to {}", actualBasedir.toAbsolutePath());
         doExecute(createContext());

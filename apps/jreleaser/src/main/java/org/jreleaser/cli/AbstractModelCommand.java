@@ -20,6 +20,7 @@ package org.jreleaser.cli;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.context.ContextCreator;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserVersion;
 import picocli.CommandLine;
 
 import java.nio.file.Files;
@@ -53,6 +54,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
     protected void execute() {
         resolveConfigFile();
         resolveBasedir();
+        logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
         logger.info("Configuring with {}", actualConfigFile);
         logger.increaseIndent();
         logger.info("- basedir set to {}", actualBasedir.toAbsolutePath());
