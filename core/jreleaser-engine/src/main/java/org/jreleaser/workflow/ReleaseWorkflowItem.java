@@ -28,7 +28,7 @@ import org.jreleaser.util.signing.SigningException;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class ReleaseWorkflowItem implements WorkflowItem {
+class ReleaseWorkflowItem implements WorkflowItem {
     @Override
     public void invoke(JReleaserContext context) {
         try {

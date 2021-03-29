@@ -26,7 +26,7 @@ import org.jreleaser.model.announcer.spi.AnnounceException;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class AnnounceWorkflowItem implements WorkflowItem {
+class AnnounceWorkflowItem implements WorkflowItem {
     @Override
     public void invoke(JReleaserContext context) {
         try {

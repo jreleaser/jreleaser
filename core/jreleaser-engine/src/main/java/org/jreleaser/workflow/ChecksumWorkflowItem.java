@@ -24,7 +24,7 @@ import org.jreleaser.model.JReleaserContext;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class ChecksumWorkflowItem implements WorkflowItem {
+class ChecksumWorkflowItem implements WorkflowItem {
     @Override
     public void invoke(JReleaserContext context) {
         Checksum.collectAndWriteChecksums(context);

@@ -25,7 +25,7 @@ import org.jreleaser.tools.Distributions;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class UploadWorkflowItem implements WorkflowItem {
+class UploadWorkflowItem implements WorkflowItem {
     @Override
     public void invoke(JReleaserContext context) {
         Distributions.process(context, "Uploading", DistributionProcessor::uploadDistribution);

@@ -18,14 +18,9 @@
 package org.jreleaser.workflow;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Andres Almiray
@@ -88,42 +83,5 @@ public class Workflows {
             new UploadWorkflowItem(),
             new AnnounceWorkflowItem()
         ));
-    }
-
-    private static class WorkflowImpl implements Workflow {
-        private final JReleaserContext context;
-        private final List<WorkflowItem> items = new ArrayList<>();
-
-        public WorkflowImpl(JReleaserContext context, List<WorkflowItem> items) {
-            this.context = context;
-            this.items.addAll(items);
-        }
-
-        public void execute() {
-            JReleaserException exception = null;
-
-            Instant start = Instant.now();
-            context.getLogger().info("dryrun set to {}", context.isDryrun());
-
-            for (WorkflowItem item : items) {
-                try {
-                    item.invoke(context);
-                } catch (JReleaserException e) {
-                    // terminate
-                    exception = e;
-                    break;
-                }
-            }
-            Instant end = Instant.now();
-
-            double duration = Duration.between(start, end).toMillis() / 1000d;
-
-            if (null == exception) {
-                context.getLogger().info("JReleaser succeeded after {}s", String.format("%.3f", duration));
-            } else {
-                context.getLogger().error("JReleaser failed after {}s", String.format("%.3f", duration));
-                throw exception;
-            }
-        }
     }
 }
