@@ -19,11 +19,17 @@ package org.jreleaser.workflow;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.util.Constants;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author Andres Almiray
@@ -59,9 +65,33 @@ class WorkflowImpl implements Workflow {
 
         if (null == exception) {
             context.getLogger().info("JReleaser succeeded after {}s", String.format("%.3f", duration));
+            report(context);
         } else {
             context.getLogger().error("JReleaser failed after {}s", String.format("%.3f", duration));
+            report(context);
             throw exception;
+        }
+    }
+
+    private void report(JReleaserContext context) {
+        JReleaserModel model = context.getModel();
+
+        Properties props = new Properties();
+        props.put(Constants.KEY_TIMESTAMP, model.getTimestamp());
+        props.put(Constants.KEY_COMMIT_SHORT_HASH, model.getCommit().getShortHash());
+        props.put(Constants.KEY_COMMIT_FULL_HASH, model.getCommit().getFullHash());
+        props.put(Constants.KEY_PROJECT_VERSION, model.getProject().getResolvedVersion());
+        props.put(Constants.KEY_TAG_NAME, model.getRelease().getGitService().getResolvedTagName(model.getProject()));
+
+        Path output = context.getOutputDirectory().resolve("output.properties");
+
+        try (FileOutputStream out = new FileOutputStream(output.toFile())) {
+            context.getLogger().info("Writing output properties to {}",
+                context.getBasedir().relativize(output));
+            props.store(out, "JReleaser");
+        } catch (IOException ignored) {
+            context.getLogger().warn("Could not write output properties to {}",
+                context.getBasedir().relativize(output));
         }
     }
 }
