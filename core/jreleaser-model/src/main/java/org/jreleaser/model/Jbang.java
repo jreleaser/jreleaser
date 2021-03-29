@@ -17,7 +17,9 @@
  */
 package org.jreleaser.model;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -31,6 +33,11 @@ public class Jbang extends AbstractTool {
 
     public Jbang() {
         super(NAME);
+    }
+
+    @Override
+    public Set<String> getSupportedExtensions() {
+        return Collections.emptySet();
     }
 
     void setAll(Jbang jbang) {
@@ -68,6 +75,11 @@ public class Jbang extends AbstractTool {
 
     @Override
     public boolean isSnapshotAllowed() {
+        return true;
+    }
+
+    @Override
+    public boolean supportsPlatform(String platform) {
         return true;
     }
 }

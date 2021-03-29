@@ -19,7 +19,9 @@ package org.jreleaser.model;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -41,6 +43,13 @@ abstract class AbstractTool implements Tool {
         this.templateDirectory = tool.templateDirectory;
         this.commitAuthor.setAll(tool.commitAuthor);
         setExtraProperties(tool.extraProperties);
+    }
+
+    @Override
+    public Set<String> getSupportedExtensions() {
+        Set<String> set = new LinkedHashSet<>();
+        set.add(".zip");
+        return set;
     }
 
     @Override

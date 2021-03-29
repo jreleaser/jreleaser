@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 
 import java.io.StringReader;

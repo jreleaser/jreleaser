@@ -48,13 +48,6 @@ public class BrewToolProcessor extends AbstractToolProcessor<Brew> {
     }
 
     @Override
-    protected Set<String> resolveByExtensionsFor(Distribution.DistributionType type) {
-        Set<String> set = new LinkedHashSet<>();
-        set.add(".zip");
-        return set;
-    }
-
-    @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY) {
             getTool().addDependency(":java", (String) props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));

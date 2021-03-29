@@ -30,9 +30,7 @@ import org.jreleaser.util.JsonUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_REVERSE_REPO_HOST;
@@ -62,11 +60,6 @@ public class JbangToolProcessor extends AbstractToolProcessor<Jbang> {
     protected boolean verifyAndAddArtifacts(Map<String, Object> props,
                                             Distribution distribution) throws ToolProcessingException {
         return true;
-    }
-
-    @Override
-    protected Set<String> resolveByExtensionsFor(Distribution.DistributionType type) {
-        return Collections.emptySet();
     }
 
     @Override

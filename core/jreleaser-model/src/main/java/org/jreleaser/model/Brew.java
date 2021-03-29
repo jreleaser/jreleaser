@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.PlatformUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +98,11 @@ public class Brew extends AbstractTool {
     @Override
     public RepositoryTap getRepositoryTap() {
         return tap;
+    }
+
+    @Override
+    public boolean supportsPlatform(String platform) {
+        return isBlank(platform) || PlatformUtils.isMac(platform);
     }
 
     public static class Dependency {

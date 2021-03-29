@@ -17,10 +17,15 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.PlatformUtils;
+
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -43,6 +48,14 @@ public class Snap extends AbstractTool {
 
     public Snap() {
         super(NAME);
+    }
+
+    @Override
+    public Set<String> getSupportedExtensions() {
+        Set<String> set = new LinkedHashSet<>();
+        set.add(".tar.gz");
+        set.add(".tar");
+        return set;
     }
 
     void setAll(Snap snap) {
@@ -228,5 +241,10 @@ public class Snap extends AbstractTool {
     @Override
     public RepositoryTap getRepositoryTap() {
         return snap;
+    }
+
+    @Override
+    public boolean supportsPlatform(String platform) {
+        return isBlank(platform) || PlatformUtils.isUnix(platform);
     }
 }

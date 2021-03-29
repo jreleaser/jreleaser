@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -31,4 +33,8 @@ public interface Tool extends Domain, ExtraProperties, CommitAuthorProvider, Ena
     RepositoryTap getRepositoryTap();
 
     boolean isSnapshotAllowed();
+
+    Set<String> getSupportedExtensions();
+
+    boolean supportsPlatform(String platform);
 }

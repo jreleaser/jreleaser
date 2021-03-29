@@ -26,9 +26,7 @@ import org.jreleaser.util.Constants;
 import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 
@@ -65,13 +63,6 @@ public class ChocolateyToolProcessor extends AbstractToolProcessor<Chocolatey> {
             super.doUploadDistribution(distribution, props);
         }
         return uploadChocolateyPackage(distribution, props);
-    }
-
-    @Override
-    protected Set<String> resolveByExtensionsFor(Distribution.DistributionType type) {
-        Set<String> set = new LinkedHashSet<>();
-        set.add(".zip");
-        return set;
     }
 
     @Override

@@ -43,7 +43,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -340,7 +339,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     protected boolean verifyAndAddArtifacts(Map<String, Object> props,
                                             Distribution distribution) throws ToolProcessingException {
-        Set<String> fileExtensions = resolveByExtensionsFor(distribution.getType());
+        Set<String> fileExtensions = tool.getSupportedExtensions();
         List<Artifact> artifacts = distribution.getArtifacts().stream()
             .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
             .collect(Collectors.toList());
@@ -372,8 +371,6 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
         return true;
     }
-
-    protected abstract Set<String> resolveByExtensionsFor(Distribution.DistributionType type);
 
     protected void info(ByteArrayOutputStream out) {
         log(out, context.getLogger()::info);

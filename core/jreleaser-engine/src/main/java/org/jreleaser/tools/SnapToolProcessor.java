@@ -30,10 +30,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
@@ -77,16 +75,6 @@ public class SnapToolProcessor extends AbstractToolProcessor<Snap> {
             super.doUploadDistribution(distribution, props);
         }
         return false;
-    }
-
-    @Override
-    protected Set<String> resolveByExtensionsFor(Distribution.DistributionType type) {
-        Set<String> set = new LinkedHashSet<>();
-        if (type == Distribution.DistributionType.JAVA_BINARY || type == Distribution.DistributionType.JLINK) {
-            set.add(".tar.gz");
-            set.add(".tar");
-        }
-        return set;
     }
 
     @Override

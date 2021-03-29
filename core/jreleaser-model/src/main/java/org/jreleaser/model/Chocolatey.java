@@ -17,7 +17,11 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.PlatformUtils;
+
 import java.util.Map;
+
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -79,5 +83,10 @@ public class Chocolatey extends AbstractTool {
     @Override
     public RepositoryTap getRepositoryTap() {
         return bucket;
+    }
+
+    @Override
+    public boolean supportsPlatform(String platform) {
+        return isBlank(platform) || PlatformUtils.isWindows(platform);
     }
 }
