@@ -56,7 +56,9 @@ public class BrewToolProcessor extends AbstractToolProcessor<Brew> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
-        getTool().addDependency(":java", (String) props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
+        if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY) {
+            getTool().addDependency(":java", (String) props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
+        }
 
         props.put(Constants.KEY_BREW_DEPENDENCIES, getTool().getDependenciesAsList()
             .stream()

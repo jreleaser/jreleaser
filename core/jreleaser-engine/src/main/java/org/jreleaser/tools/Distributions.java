@@ -17,6 +17,7 @@
  */
 package org.jreleaser.tools;
 
+import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
@@ -25,6 +26,8 @@ import org.jreleaser.model.tool.spi.ToolProcessingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.jreleaser.checksum.Checksum.readHash;
 
 /**
  * @author Andres Almiray
@@ -42,6 +45,13 @@ public class Distributions {
         for (Distribution distribution : context.getModel().getDistributions().values()) {
             context.getLogger().increaseIndent();
             context.getLogger().info("- {} {} distribution", action, distribution.getName());
+
+            context.getLogger().debug("Reading checksums for {} distribution", distribution.getName());
+            for (int i = 0; i < distribution.getArtifacts().size(); i++) {
+                Artifact artifact = distribution.getArtifacts().get(i);
+                readHash(context, distribution, artifact);
+            }
+
             for (String toolName : Distribution.supportedTools()) {
                 context.getLogger().increaseIndent();
                 context.getLogger().setPrefix(toolName);

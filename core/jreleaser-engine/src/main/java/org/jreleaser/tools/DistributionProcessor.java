@@ -17,7 +17,6 @@
  */
 package org.jreleaser.tools;
 
-import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Tool;
@@ -30,7 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
-import static org.jreleaser.checksum.Checksum.readHash;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -72,17 +70,11 @@ public class DistributionProcessor {
 
         ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
         if (!toolProcessor.supportsDistribution(distribution)) {
-            context.getLogger().debug("Distribution {} with typ {} is not supported", distributionName, distribution.getType());
+            context.getLogger().info("Distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
             return false;
         }
 
         context.getLogger().info("Preparing {} distribution", distributionName);
-
-        context.getLogger().debug("Reading checksums for {} distribution", distributionName);
-        for (int i = 0; i < distribution.getArtifacts().size(); i++) {
-            Artifact artifact = distribution.getArtifacts().get(i);
-            readHash(context, distribution, artifact);
-        }
 
         return toolProcessor.prepareDistribution(distribution, initProps());
     }
@@ -97,7 +89,7 @@ public class DistributionProcessor {
 
         ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
         if (!toolProcessor.supportsDistribution(distribution)) {
-            context.getLogger().debug("Distribution {} with typ {} is not supported", distributionName, distribution.getType());
+            context.getLogger().info("Distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
             return false;
         }
 
@@ -120,7 +112,7 @@ public class DistributionProcessor {
 
         ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
         if (!toolProcessor.supportsDistribution(distribution)) {
-            context.getLogger().debug("Distribution {} with typ {} is not supported", distributionName, distribution.getType());
+            context.getLogger().info("Distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
             return false;
         }
 
