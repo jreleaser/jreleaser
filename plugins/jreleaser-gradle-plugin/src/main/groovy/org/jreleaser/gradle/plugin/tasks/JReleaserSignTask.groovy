@@ -20,12 +20,9 @@ package org.jreleaser.gradle.plugin.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
-import org.jreleaser.model.JReleaserContext
-import org.jreleaser.sign.Signer
+import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
-
-import static org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask.checksum
 
 /**
  *
@@ -40,14 +37,7 @@ abstract class JReleaserSignTask extends AbstractJReleaserTask {
     }
 
     @TaskAction
-    void signArtifacts() {
-        JReleaserContext ctx = context.get()
-
-        checksum(ctx)
-        sign(ctx)
-    }
-
-    static void sign(JReleaserContext context) {
-        Signer.sign(context)
+    void performAction() {
+        Workflows.sign(context.get()).execute()
     }
 }

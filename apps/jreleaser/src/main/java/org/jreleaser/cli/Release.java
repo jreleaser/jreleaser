@@ -18,12 +18,8 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.release.Releasers;
+import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
-
-import static org.jreleaser.cli.Checksum.checksum;
 
 /**
  * @author Andres Almiray
@@ -38,21 +34,11 @@ public class Release extends AbstractModelCommand {
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        checksum(context);
-        Sign.sign(context);
-        release(context);
+        Workflows.release(context).execute();
     }
 
     @Override
     protected boolean dryrun() {
         return dryrun;
-    }
-
-    static void release(JReleaserContext context) {
-        try {
-            Releasers.release(context);
-        } catch (ReleaseException e) {
-            throw new JReleaserException("Unexpected error when creating release.", e);
-        }
     }
 }

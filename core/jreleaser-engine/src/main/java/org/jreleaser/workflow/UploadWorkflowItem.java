@@ -15,18 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.ant.tasks;
+package org.jreleaser.workflow;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.workflow.Workflows;
+import org.jreleaser.tools.DistributionProcessor;
+import org.jreleaser.tools.Distributions;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserUploadTask extends AbstractJReleaserTask {
+public class UploadWorkflowItem implements WorkflowItem {
     @Override
-    protected void doExecute(JReleaserContext context) {
-        Workflows.upload(createContext()).execute();
+    public void invoke(JReleaserContext context) {
+        Distributions.process(context, "Uploading", DistributionProcessor::uploadDistribution);
     }
 }

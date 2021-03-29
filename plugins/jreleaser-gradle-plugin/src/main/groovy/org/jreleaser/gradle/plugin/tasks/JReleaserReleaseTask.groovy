@@ -20,13 +20,9 @@ package org.jreleaser.gradle.plugin.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
-import org.jreleaser.model.JReleaserContext
-import org.jreleaser.release.Releasers
+import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
-
-import static org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask.checksum
-import static org.jreleaser.gradle.plugin.tasks.JReleaserSignTask.sign
 
 /**
  *
@@ -41,16 +37,7 @@ abstract class JReleaserReleaseTask extends AbstractJReleaserTask {
     }
 
     @TaskAction
-    void createRelease() {
-        JReleaserContext ctx = context.get()
-        println "jreleaser.dryrun set to ${ctx.dryrun}"
-
-        checksum(ctx)
-        sign(ctx)
-        release(ctx)
-    }
-
-    static void release(JReleaserContext context) {
-        Releasers.release(context)
+    void performAction() {
+        Workflows.release(context.get()).execute()
     }
 }

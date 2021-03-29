@@ -23,10 +23,6 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static org.jreleaser.checksum.Checksum.readHash;
 
 /**
@@ -34,14 +30,13 @@ import static org.jreleaser.checksum.Checksum.readHash;
  * @since 0.1.0
  */
 public class Distributions {
-    public static void process(JReleaserContext context, boolean failFast, String action, ToolProcessingFunction function) {
+    public static void process(JReleaserContext context, String action, ToolProcessingFunction function) {
         if (context.getModel().getDistributions().isEmpty()) {
             context.getLogger().debug("No configured distributions [" + action.toLowerCase() + "]. Skipping");
             return;
         }
 
         context.getLogger().info("{} distributions", action);
-        List<Exception> exceptions = new ArrayList<>();
         for (Distribution distribution : context.getModel().getDistributions().values()) {
             context.getLogger().increaseIndent();
             context.getLogger().info("- {} {} distribution", action, distribution.getName());
@@ -62,26 +57,12 @@ public class Distributions {
 
                     function.consume(processor);
                 } catch (ToolProcessingException e) {
-                    if (failFast) throw new JReleaserException("Unexpected error", e);
-                    exceptions.add(e);
-                    context.getLogger().warn("Unexpected error", e);
-                } catch (JReleaserException e) {
-                    if (failFast) throw e;
-                    exceptions.add(e);
-                    context.getLogger().warn("Unexpected error", e);
+                    throw new JReleaserException("Unexpected error", e);
                 }
                 context.getLogger().restorePrefix();
                 context.getLogger().decreaseIndent();
             }
             context.getLogger().decreaseIndent();
-        }
-
-        if (!exceptions.isEmpty()) {
-            throw new JReleaserException("There were " + exceptions.size() + " failure(s)" +
-                System.lineSeparator() +
-                exceptions.stream()
-                    .map(Exception::getMessage)
-                    .collect(Collectors.joining(System.lineSeparator())));
         }
     }
 

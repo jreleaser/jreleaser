@@ -18,6 +18,7 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
 /**
@@ -29,10 +30,6 @@ import picocli.CommandLine;
 public class Checksum extends AbstractModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {
-        checksum(context);
-    }
-
-    static void checksum(JReleaserContext context) {
-        org.jreleaser.checksum.Checksum.collectAndWriteChecksums(context);
+        Workflows.checksum(context).execute();
     }
 }

@@ -20,8 +20,7 @@ package org.jreleaser.gradle.plugin.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
-import org.jreleaser.model.JReleaserContext
-import org.jreleaser.checksum.Checksum
+import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
 
@@ -38,11 +37,7 @@ abstract class JReleaserChecksumTask extends AbstractJReleaserTask {
     }
 
     @TaskAction
-    void checkumArtifacts() {
-        checksum(context.get())
-    }
-
-    static void checksum(JReleaserContext context) {
-        Checksum.collectAndWriteChecksums(context)
+    void performAction() {
+        Workflows.checksum(context.get()).execute()
     }
 }

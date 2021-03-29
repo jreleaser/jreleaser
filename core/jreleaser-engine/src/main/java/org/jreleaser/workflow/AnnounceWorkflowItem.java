@@ -15,18 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.ant.tasks;
+package org.jreleaser.workflow;
 
+import org.jreleaser.announce.Announcers;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.workflow.Workflows;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.announcer.spi.AnnounceException;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserUploadTask extends AbstractJReleaserTask {
+public class AnnounceWorkflowItem implements WorkflowItem {
     @Override
-    protected void doExecute(JReleaserContext context) {
-        Workflows.upload(createContext()).execute();
+    public void invoke(JReleaserContext context) {
+        try {
+            Announcers.announce(context);
+        } catch (AnnounceException e) {
+            throw new JReleaserException("Unexpected error when announcing release.", e);
+        }
     }
 }

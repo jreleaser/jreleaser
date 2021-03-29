@@ -21,12 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.release.Releasers;
-
-import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
-import static org.jreleaser.maven.plugin.JReleaserSignMojo.sign;
+import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
@@ -45,18 +40,6 @@ public class JReleaserReleaseMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserContext context = createContext();
-        context.getLogger().info("dryrun set to {}", dryrun);
-        checksum(context);
-        sign(context);
-        release(context);
-    }
-
-    static void release(JReleaserContext context) throws MojoExecutionException {
-        try {
-            Releasers.release(context);
-        } catch (ReleaseException e) {
-            throw new MojoExecutionException("Unexpected error", e);
-        }
+        Workflows.release(createContext()).execute();
     }
 }

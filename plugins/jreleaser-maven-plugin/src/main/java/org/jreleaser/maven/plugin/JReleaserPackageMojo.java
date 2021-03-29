@@ -21,15 +21,14 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.tools.DistributionProcessor;
+import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @Mojo(name = "package")
-public class JReleaserPackageMojo extends AbstractJReleaserProcessorMojo {
+public class JReleaserPackageMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
      */
@@ -41,13 +40,6 @@ public class JReleaserPackageMojo extends AbstractJReleaserProcessorMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserContext context = createContext();
-        context.getLogger().info("dryrun set to {}", dryrun);
-        packageTools(context, failFast);
-    }
-
-    static void packageTools(JReleaserContext context, boolean failFast)
-        throws MojoExecutionException, MojoFailureException {
-        processContext(context, failFast, "Packaging", DistributionProcessor::packageDistribution);
+        Workflows.packageRelease(createContext()).execute();
     }
 }

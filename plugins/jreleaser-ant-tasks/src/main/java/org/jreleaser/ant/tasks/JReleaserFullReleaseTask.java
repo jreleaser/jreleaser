@@ -18,14 +18,7 @@
 package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
-
-import static org.jreleaser.ant.tasks.JReleaserAnnounceTask.announce;
-import static org.jreleaser.ant.tasks.JReleaserChecksumTask.checksum;
-import static org.jreleaser.ant.tasks.JReleaserPackageTask.packageTools;
-import static org.jreleaser.ant.tasks.JReleaserPrepareTask.prepare;
-import static org.jreleaser.ant.tasks.JReleaserReleaseTask.release;
-import static org.jreleaser.ant.tasks.JReleaserSignTask.sign;
-import static org.jreleaser.ant.tasks.JReleaserUploadTask.upload;
+import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
@@ -34,12 +27,6 @@ import static org.jreleaser.ant.tasks.JReleaserUploadTask.upload;
 public class JReleaserFullReleaseTask extends AbstractJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        checksum(context);
-        sign(context);
-        release(context);
-        prepare(context, true);
-        packageTools(context, true);
-        upload(context, true);
-        announce(context);
+        Workflows.fullRelease(createContext()).execute();
     }
 }

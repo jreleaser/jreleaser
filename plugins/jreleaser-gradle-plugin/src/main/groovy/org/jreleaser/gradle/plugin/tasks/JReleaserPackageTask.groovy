@@ -20,7 +20,7 @@ package org.jreleaser.gradle.plugin.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
-import org.jreleaser.model.JReleaserContext
+import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
 
@@ -30,23 +30,14 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserPackageTask extends AbstractJReleaserProcessorTask {
+abstract class JReleaserPackageTask extends AbstractJReleaserTask {
     @Inject
     JReleaserPackageTask(ObjectFactory objects) {
         super(objects)
     }
 
     @TaskAction
-    void packageDistributions() {
-        JReleaserContext ctx = context.get()
-        println "jreleaser.dryrun set to ${ctx.dryrun}"
-
-        packageTools(ctx, failFast.get())
-    }
-
-    static void packageTools(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, 'Packaging', { processor ->
-            processor.packageDistribution()
-        })
+    void performAction() {
+        Workflows.packageRelease(context.get()).execute()
     }
 }

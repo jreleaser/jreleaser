@@ -18,10 +18,8 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.tools.DistributionProcessor;
+import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
-
-import static org.jreleaser.cli.Checksum.checksum;
 
 /**
  * @author Andres Almiray
@@ -29,14 +27,9 @@ import static org.jreleaser.cli.Checksum.checksum;
  */
 @CommandLine.Command(name = "prepare",
     description = "Prepares all distributions")
-public class Prepare extends AbstractProcessorCommand {
+public class Prepare extends AbstractModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {
-        checksum(context);
-        prepare(context, failFast);
-    }
-
-    static void prepare(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Preparing", DistributionProcessor::prepareDistribution);
+        Workflows.prepare(context).execute();
     }
 }

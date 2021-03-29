@@ -15,18 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.ant.tasks;
+package org.jreleaser.workflow;
 
+import org.jreleaser.checksum.Checksum;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.workflow.Workflows;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.sign.Signer;
+import org.jreleaser.util.signing.SigningException;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserUploadTask extends AbstractJReleaserTask {
+public class SignWorkflowItem implements WorkflowItem {
     @Override
-    protected void doExecute(JReleaserContext context) {
-        Workflows.upload(createContext()).execute();
+    public void invoke(JReleaserContext context) {
+        try {
+            Signer.sign(context);
+        } catch (SigningException e) {
+            throw new JReleaserException("Unexpected error when signing release.", e);
+        }
     }
 }

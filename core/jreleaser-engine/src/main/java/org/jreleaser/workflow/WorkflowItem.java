@@ -15,18 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.ant.tasks;
+package org.jreleaser.workflow;
 
+import org.jreleaser.checksum.Checksum;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserUploadTask extends AbstractJReleaserTask {
-    @Override
-    protected void doExecute(JReleaserContext context) {
-        Workflows.upload(createContext()).execute();
-    }
+public interface WorkflowItem {
+     void invoke(JReleaserContext context);
 }

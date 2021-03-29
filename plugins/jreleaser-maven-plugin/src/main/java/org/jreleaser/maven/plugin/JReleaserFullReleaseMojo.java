@@ -21,15 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.JReleaserContext;
-
-import static org.jreleaser.maven.plugin.JReleaserAnnounceMojo.announce;
-import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
-import static org.jreleaser.maven.plugin.JReleaserPackageMojo.packageTools;
-import static org.jreleaser.maven.plugin.JReleaserPrepareMojo.prepare;
-import static org.jreleaser.maven.plugin.JReleaserReleaseMojo.release;
-import static org.jreleaser.maven.plugin.JReleaserSignMojo.sign;
-import static org.jreleaser.maven.plugin.JReleaserUploadMojo.upload;
+import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
@@ -48,14 +40,6 @@ public class JReleaserFullReleaseMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserContext context = createContext();
-        context.getLogger().info("dryrun set to {}", dryrun);
-        checksum(context);
-        sign(context);
-        release(context);
-        prepare(context, true);
-        packageTools(context, true);
-        upload(context, true);
-        announce(context);
+        Workflows.fullRelease(createContext()).execute();
     }
 }

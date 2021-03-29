@@ -21,9 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.checksum.Checksum;
+import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
@@ -42,14 +40,6 @@ public class JReleaserChecksumMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        checksum(createContext());
-    }
-
-    static void checksum(JReleaserContext context) throws MojoExecutionException {
-        try {
-            Checksum.collectAndWriteChecksums(context);
-        } catch (JReleaserException e) {
-            throw new MojoExecutionException("Unexpected error writing checksums", e);
-        }
+        Workflows.checksum(createContext()).execute();
     }
 }

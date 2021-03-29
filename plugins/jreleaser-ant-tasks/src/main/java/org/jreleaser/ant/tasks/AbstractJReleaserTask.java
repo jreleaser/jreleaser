@@ -74,7 +74,6 @@ abstract class AbstractJReleaserTask extends Task {
         resolveBasedir();
         logger.info("Configuring with {}", actualConfigFile);
         logger.info(" - basedir set to {}", actualBasedir.toAbsolutePath());
-        logger.info(" - dryrun set to {}", dryrun);
         doExecute(createContext());
     }
 

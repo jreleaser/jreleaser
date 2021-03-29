@@ -18,22 +18,15 @@
 package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.tools.DistributionProcessor;
-
-import static org.jreleaser.ant.tasks.JReleaserChecksumTask.checksum;
+import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserPrepareTask extends AbstractJReleaserProcessorTask {
+public class JReleaserPrepareTask extends AbstractJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        checksum(context);
-        prepare(context, failFast);
-    }
-
-    static void prepare(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Preparing", DistributionProcessor::prepareDistribution);
+        Workflows.prepare(createContext()).execute();
     }
 }

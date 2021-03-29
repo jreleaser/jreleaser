@@ -56,7 +56,6 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         logger.info("Configuring with {}", actualConfigFile);
         logger.increaseIndent();
         logger.info("- basedir set to {}", actualBasedir.toAbsolutePath());
-        logger.info("- dryrun set to {}", dryrun());
         logger.decreaseIndent();
         doExecute(createContext());
     }

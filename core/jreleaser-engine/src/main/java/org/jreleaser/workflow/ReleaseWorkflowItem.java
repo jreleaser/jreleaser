@@ -15,24 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.ant.tasks;
+package org.jreleaser.workflow;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.tools.Distributions;
-import org.jreleaser.tools.ToolProcessingFunction;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.releaser.spi.ReleaseException;
+import org.jreleaser.release.Releasers;
+import org.jreleaser.sign.Signer;
+import org.jreleaser.util.signing.SigningException;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractJReleaserProcessorTask extends AbstractJReleaserTask {
-    protected boolean failFast;
-
-    public void setFailFast(boolean failFast) {
-        this.failFast = failFast;
-    }
-
-    protected static void processContext(JReleaserContext context, boolean failFast, String action, ToolProcessingFunction function) {
-        Distributions.process(context, failFast, action, function);
+public class ReleaseWorkflowItem implements WorkflowItem {
+    @Override
+    public void invoke(JReleaserContext context) {
+        try {
+            Releasers.release(context);
+        } catch (ReleaseException e) {
+            throw new JReleaserException("Unexpected error when creating release.", e);
+        }
     }
 }

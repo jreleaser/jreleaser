@@ -18,7 +18,7 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.tools.DistributionProcessor;
+import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
 /**
@@ -27,22 +27,18 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "upload",
     description = "Uploads all distributions")
-public class Upload extends AbstractProcessorCommand {
+public class Upload extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skips remote operations.")
     boolean dryrun;
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        upload(context, failFast);
+        Workflows.upload(context).execute();
     }
 
     @Override
     protected boolean dryrun() {
         return dryrun;
-    }
-
-    static void upload(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Uploading", DistributionProcessor::uploadDistribution);
     }
 }

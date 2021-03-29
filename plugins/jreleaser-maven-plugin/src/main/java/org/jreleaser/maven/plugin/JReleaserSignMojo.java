@@ -21,11 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.sign.Signer;
-import org.jreleaser.util.signing.SigningException;
-
-import static org.jreleaser.maven.plugin.JReleaserChecksumMojo.checksum;
+import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
@@ -44,16 +40,6 @@ public class JReleaserSignMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        JReleaserContext context = createContext();
-        checksum(context);
-        sign(context);
-    }
-
-    static void sign(JReleaserContext context) throws MojoExecutionException {
-        try {
-            Signer.sign(context);
-        } catch (SigningException e) {
-            throw new MojoExecutionException("Unexpected error when signing artifacts", e);
-        }
+        Workflows.sign(createContext()).execute();
     }
 }

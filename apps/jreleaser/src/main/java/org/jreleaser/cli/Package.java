@@ -18,7 +18,7 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.tools.DistributionProcessor;
+import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
 /**
@@ -27,13 +27,18 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "package",
     description = "Packages all distributions")
-public class Package extends AbstractProcessorCommand {
+public class Package extends AbstractModelCommand {
+    @CommandLine.Option(names = {"-y", "--dryrun"},
+        description = "Skips remote operations.")
+    boolean dryrun;
+
     @Override
     protected void doExecute(JReleaserContext context) {
-        packageTools(context, failFast);
+        Workflows.packageRelease(context).execute();
     }
 
-    static void packageTools(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Packaging", DistributionProcessor::packageDistribution);
+    @Override
+    protected boolean dryrun() {
+        return dryrun;
     }
 }

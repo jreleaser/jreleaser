@@ -18,6 +18,7 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
 /**
@@ -33,13 +34,7 @@ public class FullRelease extends AbstractModelCommand {
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        Checksum.checksum(context);
-        Sign.sign(context);
-        Release.release(context);
-        Prepare.prepare(context, true);
-        Package.packageTools(context, true);
-        Upload.upload(context, true);
-        Announce.announce(context);
+        Workflows.fullRelease(context).execute();
     }
 
     @Override

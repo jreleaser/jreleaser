@@ -17,10 +17,8 @@
  */
 package org.jreleaser.cli;
 
-import org.jreleaser.announce.Announcers;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.announcer.spi.AnnounceException;
+import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
 /**
@@ -36,19 +34,11 @@ public class Announce extends AbstractModelCommand {
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        announce(context);
+        Workflows.announce(context).execute();
     }
 
     @Override
     protected boolean dryrun() {
         return dryrun;
-    }
-
-    static void announce(JReleaserContext context) {
-        try {
-            Announcers.announce(context);
-        } catch (AnnounceException e) {
-            throw new JReleaserException("Unexpected error when announcing release.", e);
-        }
     }
 }

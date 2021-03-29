@@ -18,12 +18,7 @@
 package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.release.Releasers;
-
-import static org.jreleaser.ant.tasks.JReleaserChecksumTask.checksum;
-import static org.jreleaser.ant.tasks.JReleaserSignTask.sign;
+import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
@@ -32,16 +27,6 @@ import static org.jreleaser.ant.tasks.JReleaserSignTask.sign;
 public class JReleaserReleaseTask extends AbstractJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        checksum(context);
-        sign(context);
-        release(context);
-    }
-
-    static void release(JReleaserContext context) {
-        try {
-            Releasers.release(context);
-        } catch (ReleaseException e) {
-            throw new JReleaserException("Unexpected error when creating release.", e);
-        }
+        Workflows.release(createContext()).execute();
     }
 }

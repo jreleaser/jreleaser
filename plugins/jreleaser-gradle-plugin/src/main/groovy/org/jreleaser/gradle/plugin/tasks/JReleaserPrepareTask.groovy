@@ -20,11 +20,9 @@ package org.jreleaser.gradle.plugin.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
-import org.jreleaser.model.JReleaserContext
+import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
-
-import static org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask.checksum
 
 /**
  *
@@ -32,24 +30,14 @@ import static org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask.checksum
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserPrepareTask extends AbstractJReleaserProcessorTask {
+abstract class JReleaserPrepareTask extends AbstractJReleaserTask {
     @Inject
     JReleaserPrepareTask(ObjectFactory objects) {
         super(objects)
     }
 
     @TaskAction
-    void prepareDistributions() {
-        JReleaserContext ctx = context.get()
-        println "jreleaser.dryrun set to ${ctx.dryrun}"
-
-        checksum(ctx)
-        prepare(ctx, failFast.get())
-    }
-
-    static void prepare(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, 'Preparing', { processor ->
-            processor.prepareDistribution()
-        })
+    void performAction() {
+        Workflows.prepare(context.get()).execute()
     }
 }

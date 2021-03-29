@@ -17,10 +17,8 @@
  */
 package org.jreleaser.ant.tasks;
 
-import org.jreleaser.announce.Announcers;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.announcer.spi.AnnounceException;
+import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
@@ -29,14 +27,6 @@ import org.jreleaser.model.announcer.spi.AnnounceException;
 public class JReleaserAnnounceTask extends AbstractJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        announce(context);
-    }
-
-    static void announce(JReleaserContext context) {
-        try {
-            Announcers.announce(context);
-        } catch (AnnounceException e) {
-            throw new JReleaserException("Unexpected error when announcing release.", e);
-        }
+        Workflows.announce(createContext()).execute();
     }
 }

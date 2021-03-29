@@ -18,7 +18,7 @@
 package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.checksum.Checksum;
+import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
@@ -27,10 +27,6 @@ import org.jreleaser.checksum.Checksum;
 public class JReleaserChecksumTask extends AbstractJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        checksum(context);
-    }
-
-    static void checksum(JReleaserContext context) {
-        Checksum.collectAndWriteChecksums(context);
+        Workflows.checksum(createContext()).execute();
     }
 }

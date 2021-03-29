@@ -18,12 +18,8 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.sign.Signer;
-import org.jreleaser.util.signing.SigningException;
+import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
-
-import static org.jreleaser.cli.Checksum.checksum;
 
 /**
  * @author Andres Almiray
@@ -34,15 +30,6 @@ import static org.jreleaser.cli.Checksum.checksum;
 public class Sign extends AbstractModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {
-        checksum(context);
-        sign(context);
-    }
-
-    static void sign(JReleaserContext context) {
-        try {
-            Signer.sign(context);
-        } catch (SigningException e) {
-            throw new JReleaserException("Unexpected error when signing release.", e);
-        }
+        Workflows.sign(context).execute();
     }
 }

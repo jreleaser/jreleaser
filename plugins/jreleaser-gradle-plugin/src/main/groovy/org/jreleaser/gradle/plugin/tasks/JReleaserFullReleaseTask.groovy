@@ -20,17 +20,9 @@ package org.jreleaser.gradle.plugin.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
-import org.jreleaser.model.JReleaserContext
+import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
-
-import static org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask.announce
-import static org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask.checksum
-import static org.jreleaser.gradle.plugin.tasks.JReleaserPackageTask.packageTools
-import static org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask.prepare
-import static org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask.release
-import static org.jreleaser.gradle.plugin.tasks.JReleaserSignTask.sign
-import static org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask.upload
 
 /**
  *
@@ -45,16 +37,7 @@ abstract class JReleaserFullReleaseTask extends AbstractJReleaserTask {
     }
 
     @TaskAction
-    void fullRelease() {
-        JReleaserContext ctx = context.get()
-        println "jreleaser.dryrun set to ${ctx.dryrun}"
-
-        checksum(ctx)
-        sign(ctx)
-        release(ctx)
-        prepare(ctx, true)
-        packageTools(ctx, true)
-        upload(ctx, true)
-        announce(ctx)
+    void performAction() {
+        Workflows.fullRelease(context.get()).execute()
     }
 }

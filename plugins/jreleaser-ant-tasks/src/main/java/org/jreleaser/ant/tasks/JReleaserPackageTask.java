@@ -18,19 +18,15 @@
 package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.tools.DistributionProcessor;
+import org.jreleaser.workflow.Workflows;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserPackageTask extends AbstractJReleaserProcessorTask {
+public class JReleaserPackageTask extends AbstractJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        packageTools(context, failFast);
-    }
-
-    static void packageTools(JReleaserContext context, boolean failFast) {
-        processContext(context, failFast, "Packaging", DistributionProcessor::packageDistribution);
+        Workflows.packageRelease(createContext()).execute();
     }
 }
