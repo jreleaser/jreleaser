@@ -65,7 +65,7 @@ public abstract class TwitterValidator extends Validator {
                 errors));
 
         if (isBlank(twitter.getStatus())) {
-            errors.add("twitter.status must not be blank.");
+            twitter.setStatus("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
         }
     }
 }

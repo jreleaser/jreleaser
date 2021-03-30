@@ -22,12 +22,7 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 abstract class AbstractAnnouncer implements Announcer {
-    protected final String name;
     protected Boolean enabled;
-
-    protected AbstractAnnouncer(String name) {
-        this.name = name;
-    }
 
     void setAll(AbstractAnnouncer announcer) {
         this.enabled = announcer.enabled;
@@ -46,11 +41,6 @@ abstract class AbstractAnnouncer implements Announcer {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     public boolean isSet() {

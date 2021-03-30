@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Announcer
 
@@ -39,4 +40,6 @@ interface Zulip extends Announcer {
     Property<String> getSubject()
 
     Property<String> getMessage()
+
+    RegularFileProperty getMessageTemplate()
 }

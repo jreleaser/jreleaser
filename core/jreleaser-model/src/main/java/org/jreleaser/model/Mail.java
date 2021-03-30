@@ -50,7 +50,7 @@ public class Mail extends AbstractAnnouncer {
     private String to;
     private String cc;
     private String bcc;
-    private String subject = "{{projectNameCapitalized}} {{projectVersion}} released!";
+    private String subject;
     private String message;
     private String messageTemplate;
     private MimeType mimeType;

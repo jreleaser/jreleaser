@@ -24,16 +24,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Sdkman extends AbstractAnnouncer {
-    public static final String NAME = "sdkman";
-
     private String consumerKey;
     private String consumerToken;
     private String candidate;
     private boolean major = true;
-
-    public Sdkman() {
-        super(NAME);
-    }
 
     void setAll(Sdkman sdkman) {
         super.setAll(sdkman);

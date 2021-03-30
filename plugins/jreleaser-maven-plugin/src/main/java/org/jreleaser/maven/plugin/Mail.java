@@ -27,7 +27,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Mail extends AbstractAnnouncer {
-    public static final String NAME = "mail";
     private final Map<String, String> properties = new LinkedHashMap<>();
 
     private Transport transport = Transport.SMTP;
@@ -44,10 +43,6 @@ public class Mail extends AbstractAnnouncer {
     private String message;
     private String messageTemplate;
     private MimeType mimeType = MimeType.TEXT;
-
-    public Mail() {
-        super(NAME);
-    }
 
     void setAll(Mail mail) {
         super.setAll(mail);

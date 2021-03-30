@@ -20,6 +20,7 @@ package org.jreleaser.model.validation;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Mail;
 
+import java.nio.file.Files;
 import java.util.List;
 
 import static org.jreleaser.model.Mail.MAIL_PASSWORD;
@@ -86,7 +87,7 @@ public abstract class MailValidator extends Validator {
         }
 
         if (isNotBlank(mail.getMessageTemplate()) &&
-            !(context.getBasedir().resolve(mail.getMessageTemplate().trim()).toFile().exists())) {
+            !Files.exists(context.getBasedir().resolve(mail.getMessageTemplate().trim()))) {
             errors.add("mail.messageTemplate does not exist. " + mail.getMessageTemplate());
         }
     }

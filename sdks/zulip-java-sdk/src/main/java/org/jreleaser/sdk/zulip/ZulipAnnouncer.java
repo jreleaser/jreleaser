@@ -21,6 +21,12 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Zulip;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
+import org.jreleaser.util.Constants;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -52,11 +58,20 @@ public class ZulipAnnouncer implements Announcer {
     public void announce() throws AnnounceException {
         Zulip zulip = context.getModel().getAnnounce().getZulip();
 
+        String message = "";
+        if (isNotBlank(zulip.getMessage())) {
+            message = zulip.getResolvedMessage(context.getModel());
+        } else {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put(Constants.KEY_CHANGELOG, context.getChangelog());
+            context.getModel().getRelease().getGitService().fillProps(props, context.getModel().getProject());
+            message = zulip.getResolvedMessageTemplate(context, props);
+        }
+
         String subject = zulip.getResolvedSubject(context.getModel());
-        String message = zulip.getResolvedMessage(context.getModel());
         context.getLogger().info("channel: {}", zulip.getChannel());
         context.getLogger().info("subject: {}", subject);
-        context.getLogger().info("message: {}", message);
+        context.getLogger().debug("message: {}", message);
 
         try {
             MessageZulipCommand.builder(context.getLogger())

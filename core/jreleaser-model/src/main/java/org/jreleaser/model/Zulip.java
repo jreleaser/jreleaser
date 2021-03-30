@@ -17,9 +17,13 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
+import java.nio.file.Path;
 import java.util.Map;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
@@ -37,8 +41,9 @@ public class Zulip extends AbstractAnnouncer {
     private String apiKey;
     private String apiHost;
     private String channel;
-    private String subject = "{{projectNameCapitalized}} {{projectVersion}}";
-    private String message = "\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}";
+    private String subject;
+    private String message;
+    private String messageTemplate;
 
     public Zulip() {
         super(NAME);
@@ -52,6 +57,7 @@ public class Zulip extends AbstractAnnouncer {
         this.channel = zulip.channel;
         this.subject = zulip.subject;
         this.message = zulip.message;
+        this.messageTemplate = zulip.messageTemplate;
     }
 
     public String getResolvedSubject(JReleaserModel model) {
@@ -62,6 +68,22 @@ public class Zulip extends AbstractAnnouncer {
     public String getResolvedMessage(JReleaserModel model) {
         Map<String, Object> props = model.props();
         return applyTemplate(new StringReader(message), props);
+    }
+
+    public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
+        Map<String, Object> props = context.getModel().props();
+        props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService()
+            .getEffectiveTagName(context.getModel().getProject()));
+        props.putAll(extraProps);
+
+        Path templatePath = context.getBasedir().resolve(messageTemplate);
+        try {
+            Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
+            return applyTemplate(reader, props);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unexpected error reading template " +
+                context.getBasedir().relativize(templatePath));
+        }
     }
 
     public String getResolvedApiKey() {
@@ -116,6 +138,14 @@ public class Zulip extends AbstractAnnouncer {
         this.message = message;
     }
 
+    public String getMessageTemplate() {
+        return messageTemplate;
+    }
+
+    public void setMessageTemplate(String messageTemplate) {
+        this.messageTemplate = messageTemplate;
+    }
+
     @Override
     protected void asMap(Map<String, Object> props) {
         props.put("account", account);
@@ -124,5 +154,6 @@ public class Zulip extends AbstractAnnouncer {
         props.put("channel", channel);
         props.put("subject", subject);
         props.put("message", message);
+        props.put("messageTemplate", messageTemplate);
     }
 }

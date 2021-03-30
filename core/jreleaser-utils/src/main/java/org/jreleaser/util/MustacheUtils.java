@@ -56,7 +56,7 @@ public final class MustacheUtils {
     }
 
     public static String applyTemplate(Reader reader, Map<String, Object> context) {
-        return applyTemplate(reader, context, UUID.randomUUID().toString());
+        return applyTemplate(reader, context, UUID.randomUUID().toString()).trim();
     }
 
     private static class MyMustacheFactory extends DefaultMustacheFactory {

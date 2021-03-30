@@ -17,13 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.util.Constants;
-
-import java.io.StringReader;
-import java.util.Map;
-
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -31,18 +24,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Zulip extends AbstractAnnouncer {
-    public static final String NAME = "zulip";
-
     private String account;
     private String apiKey;
     private String apiHost;
     private String channel;
-    private String subject = "{{projectNameCapitalized}} {{tagName}}";
-    private String message = "\uD83D\uDE80 {{projectNameCapitalized}} {{tagName}} has been released! {{latestReleaseUrl}}";
-
-    public Zulip() {
-        super(NAME);
-    }
+    private String subject;
+    private String message;
+    private String messageTemplate;
 
     void setAll(Zulip zulip) {
         super.setAll(zulip);
@@ -52,25 +40,7 @@ public class Zulip extends AbstractAnnouncer {
         this.channel = zulip.channel;
         this.subject = zulip.subject;
         this.message = zulip.message;
-    }
-
-    public String getResolvedSubject(JReleaserModel model) {
-        Map<String, Object> context = model.props();
-        context.put(Constants.KEY_TAG_NAME, model.getRelease().getGitService().getEffectiveTagName(model.getProject()));
-        return applyTemplate(new StringReader(subject), context);
-    }
-
-    public String getResolvedMessage(JReleaserModel model) {
-        Map<String, Object> context = model.props();
-        context.put(Constants.KEY_TAG_NAME, model.getRelease().getGitService().getEffectiveTagName(model.getProject()));
-        return applyTemplate(new StringReader(message), context);
-    }
-
-    public String getResolvedApiKey() {
-        if (isNotBlank(apiKey)) {
-            return apiKey;
-        }
-        return System.getenv("ZULIP_API_KEY");
+        this.messageTemplate = zulip.messageTemplate;
     }
 
     public String getAccount() {
@@ -121,6 +91,14 @@ public class Zulip extends AbstractAnnouncer {
         this.message = message;
     }
 
+    public String getMessageTemplate() {
+        return messageTemplate;
+    }
+
+    public void setMessageTemplate(String messageTemplate) {
+        this.messageTemplate = messageTemplate;
+    }
+
     @Override
     public boolean isSet() {
         return super.isSet() ||
@@ -129,6 +107,7 @@ public class Zulip extends AbstractAnnouncer {
             isNotBlank(apiKey) ||
             isNotBlank(channel) ||
             isNotBlank(subject) ||
-            isNotBlank(message);
+            isNotBlank(message) ||
+            isNotBlank(messageTemplate);
     }
 }

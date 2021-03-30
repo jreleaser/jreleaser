@@ -260,6 +260,7 @@ public final class JReleaserModelConverter {
         a.setChannel(zulip.getChannel());
         a.setSubject(zulip.getSubject());
         a.setMessage(zulip.getMessage());
+        a.setMessageTemplate(zulip.getMessageTemplate());
         return a;
     }
 

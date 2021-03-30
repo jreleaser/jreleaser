@@ -70,6 +70,7 @@ public class MailAnnouncer implements Announcer {
 
         String subject = mail.getResolvedSubject(context.getModel());
         context.getLogger().info("subject: {}", subject);
+        context.getLogger().debug("message: {}", message);
 
         try {
             MessageMailCommand.builder(context.getLogger())

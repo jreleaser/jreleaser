@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -39,6 +40,7 @@ class ZulipImpl extends AbstractAnnouncer implements Zulip {
     final Property<String> channel
     final Property<String> subject
     final Property<String> message
+    final RegularFileProperty messageTemplate
 
     @Inject
     ZulipImpl(ObjectFactory objects) {
@@ -49,6 +51,7 @@ class ZulipImpl extends AbstractAnnouncer implements Zulip {
         channel = objects.property(String).convention(Providers.notDefined())
         subject = objects.property(String).convention(Providers.notDefined())
         message = objects.property(String).convention(Providers.notDefined())
+        messageTemplate = objects.fileProperty().convention(Providers.notDefined())
     }
 
     @Override
@@ -60,7 +63,8 @@ class ZulipImpl extends AbstractAnnouncer implements Zulip {
             apiHost.present ||
             channel.present ||
             subject.present ||
-            message.present
+            message.present ||
+            messageTemplate.present
     }
 
     org.jreleaser.model.Zulip toModel() {
@@ -72,6 +76,9 @@ class ZulipImpl extends AbstractAnnouncer implements Zulip {
         if (channel.present) zulip.channel = channel.get()
         if (subject.present) zulip.subject = subject.get()
         if (message.present) zulip.message = message.get()
+        if (messageTemplate.present) {
+            zulip.messageTemplate = messageTemplate.asFile.get().absolutePath
+        }
         zulip
     }
 }

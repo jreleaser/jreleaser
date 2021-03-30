@@ -40,7 +40,7 @@ public class Twitter extends AbstractAnnouncer {
     private String consumerSecret;
     private String accessToken;
     private String accessTokenSecret;
-    private String status = "\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}";
+    private String status;
 
     public Twitter() {
         super(NAME);

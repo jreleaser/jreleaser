@@ -24,17 +24,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Twitter extends AbstractAnnouncer {
-    public static final String NAME = "twitter";
-
     private String consumerKey;
     private String consumerSecret;
     private String accessToken;
     private String accessTokenSecret;
-    private String status = "\uD83D\uDE80 {{projectNameCapitalized}} {{tagName}} has been released! {{latestReleaseUrl}}";
-
-    public Twitter() {
-        super(NAME);
-    }
+    private String status;
 
     void setAll(Twitter twitter) {
         super.setAll(twitter);
