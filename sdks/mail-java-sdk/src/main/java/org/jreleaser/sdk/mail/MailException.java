@@ -15,34 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
-
-import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.provider.Property
+package org.jreleaser.sdk.mail;
 
 /**
- *
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CompileStatic
-interface Announce {
-    Property<Boolean> getEnabled()
+public class MailException extends Exception {
+    public MailException(String message) {
+        super(message);
+    }
 
-    Mail getMail()
+    public MailException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    Sdkman getSdkman()
-
-    Twitter getTwitter()
-
-    Zulip getZulip()
-
-    void mail(Action<? super Mail> action)
-
-    void sdkman(Action<? super Sdkman> action)
-
-    void twitter(Action<? super Twitter> action)
-
-    void zulip(Action<? super Zulip> action)
+    public MailException(Throwable cause) {
+        super(cause);
+    }
 }

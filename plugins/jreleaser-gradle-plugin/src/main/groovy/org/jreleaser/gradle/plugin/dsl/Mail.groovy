@@ -18,8 +18,10 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.Announcer
 
 /**
  *
@@ -27,22 +29,38 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface Announce {
-    Property<Boolean> getEnabled()
+interface Mail extends Announcer {
+    Property<org.jreleaser.model.Mail.Transport> getTransport()
 
-    Mail getMail()
+    Property<org.jreleaser.model.Mail.MimeType> getMimeType()
 
-    Sdkman getSdkman()
+    void setTransport(String transport)
 
-    Twitter getTwitter()
+    void setMimeType(String mimeType)
 
-    Zulip getZulip()
+    Property<Integer> getPort()
 
-    void mail(Action<? super Mail> action)
+    Property<Boolean> getAuth()
 
-    void sdkman(Action<? super Sdkman> action)
+    Property<String> getHost()
 
-    void twitter(Action<? super Twitter> action)
+    Property<String> getUsername()
 
-    void zulip(Action<? super Zulip> action)
+    Property<String> getPassword()
+
+    Property<String> getFrom()
+
+    Property<String> getTo()
+
+    Property<String> getCc()
+
+    Property<String> getBcc()
+
+    Property<String> getSubject()
+
+    Property<String> getMessage()
+
+    RegularFileProperty getMessageTemplate()
+
+    MapProperty<String, String> getProperties()
 }

@@ -25,6 +25,7 @@ dependencies {
     api "org.zeroturnaround:zt-exec:$ztexecVersion"
 
     // announce
+    api project(':mail-java-sdk')
     api project(':sdkman-java-sdk')
     api project(':twitter-java-sdk')
     api project(':zulip-java-sdk')

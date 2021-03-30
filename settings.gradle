@@ -75,6 +75,8 @@ enforce {
             "info.picocli:picocli:$picocliVersion",
             "com.google.guava:guava:$guavaVersion",
             "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion",
-            "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion"
+            "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion",
+            "junit:junit:4.13.1",
+            "org.hamcrest:hamcrest:2.2"
     }
 }

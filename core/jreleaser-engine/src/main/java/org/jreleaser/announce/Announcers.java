@@ -22,6 +22,7 @@ import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.model.announcer.spi.AnnouncerBuilder;
+import org.jreleaser.sdk.mail.MailAnnouncer;
 import org.jreleaser.sdk.sdkman.SdkmanAnnouncer;
 import org.jreleaser.sdk.twitter.TwitterAnnouncer;
 import org.jreleaser.sdk.zulip.ZulipAnnouncer;
@@ -52,7 +53,11 @@ public class Announcers {
                 if (context.getModel().getProject().isSnapshot() && !announcer.isSnapshotSupported()) {
                     context.getLogger().info("snapshots are not supported. Skipping");
                 } else {
-                    announcer.announce();
+                    try {
+                        announcer.announce();
+                    } catch (AnnounceException e) {
+                        context.getLogger().warn(e.getMessage().trim());
+                    }
                 }
             } else {
                 context.getLogger().debug("not enabled");
@@ -67,6 +72,9 @@ public class Announcers {
         JReleaserModel model = context.getModel();
 
         List<AB> announcers = new ArrayList<>();
+        if (null != model.getAnnounce().getMail() && model.getAnnounce().getMail().isEnabled()) {
+            announcers.add((AB) MailAnnouncer.builder());
+        }
         if (null != model.getAnnounce().getSdkman() && model.getAnnounce().getSdkman().isEnabled()) {
             announcers.add((AB) SdkmanAnnouncer.builder());
         }

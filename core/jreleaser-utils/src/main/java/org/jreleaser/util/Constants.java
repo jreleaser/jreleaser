@@ -58,6 +58,7 @@ public interface Constants {
     String KEY_LATEST_RELEASE_URL = "latestReleaseUrl";
     String KEY_ISSUE_TRACKER_URL = "issueTrackerUrl";
     String KEY_REVERSE_REPO_HOST = "reverseRepoHost";
+    String KEY_CHANGELOG = "changelog";
 
     // Distribution
     String KEY_DISTRIBUTION_NAME = "distributionName";

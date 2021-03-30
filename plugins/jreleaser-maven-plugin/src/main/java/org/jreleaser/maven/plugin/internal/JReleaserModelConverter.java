@@ -36,6 +36,7 @@ import org.jreleaser.maven.plugin.Glob;
 import org.jreleaser.maven.plugin.Java;
 import org.jreleaser.maven.plugin.Jbang;
 import org.jreleaser.maven.plugin.Jreleaser;
+import org.jreleaser.maven.plugin.Mail;
 import org.jreleaser.maven.plugin.Packagers;
 import org.jreleaser.maven.plugin.Plug;
 import org.jreleaser.maven.plugin.Project;
@@ -203,9 +204,29 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Announce convertAnnounce(Announce announce) {
         org.jreleaser.model.Announce a = new org.jreleaser.model.Announce();
         if (announce.isEnabledSet()) a.setEnabled(announce.isEnabled());
+        if (announce.getMail().isSet()) a.setMail(convertMail(announce.getMail()));
         if (announce.getSdkman().isSet()) a.setSdkman(convertSdkman(announce.getSdkman()));
         if (announce.getTwitter().isSet()) a.setTwitter(convertTwitter(announce.getTwitter()));
         if (announce.getZulip().isSet()) a.setZulip(convertZulip(announce.getZulip()));
+        return a;
+    }
+
+    private static org.jreleaser.model.Mail convertMail(Mail mail) {
+        org.jreleaser.model.Mail a = new org.jreleaser.model.Mail();
+        if (mail.isEnabledSet()) a.setEnabled(mail.isEnabled());
+        if (mail.isAuthSet()) a.setAuth(mail.isAuth());
+        a.setTransport(mail.getTransport().name());
+        a.setMimeType(mail.getMimeType().name());
+        a.setPort(mail.getPort());
+        a.setUsername(mail.getUsername());
+        a.setPassword(mail.getPassword());
+        a.setFrom(mail.getFrom());
+        a.setTo(mail.getTo());
+        a.setCc(mail.getCc());
+        a.setBcc(mail.getBcc());
+        a.setSubject(mail.getSubject());
+        a.setMessage(mail.getMessage());
+        a.setMessageTemplate(mail.getMessageTemplate());
         return a;
     }
 

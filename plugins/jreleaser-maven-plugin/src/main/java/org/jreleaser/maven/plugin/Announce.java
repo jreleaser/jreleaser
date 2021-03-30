@@ -22,6 +22,7 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public class Announce implements EnabledProvider {
+    private final Mail mail = new Mail();
     private final Sdkman sdkman = new Sdkman();
     private final Twitter twitter = new Twitter();
     private final Zulip zulip = new Zulip();
@@ -29,6 +30,7 @@ public class Announce implements EnabledProvider {
 
     void setAll(Announce announce) {
         this.enabled = announce.enabled;
+        setMail(announce.mail);
         setSdkman(announce.sdkman);
         setTwitter(announce.twitter);
         setZulip(announce.zulip);
@@ -47,6 +49,14 @@ public class Announce implements EnabledProvider {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
+    }
+
+    public Mail getMail() {
+        return mail;
+    }
+
+    public void setMail(Mail mail) {
+        this.mail.setAll(mail);
     }
 
     public Sdkman getSdkman() {

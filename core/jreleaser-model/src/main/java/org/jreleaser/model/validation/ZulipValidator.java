@@ -47,6 +47,9 @@ public abstract class ZulipValidator extends Validator {
         if (isBlank(zulip.getApiHost())) {
             errors.add("zulip.apiHost must not be blank.");
         }
+        if (isBlank(zulip.getSubject())) {
+            zulip.setSubject("{{projectNameCapitalized}} {{projectVersion}}");
+        }
         if (isBlank(zulip.getChannel())) {
             zulip.setChannel("announce");
         }
