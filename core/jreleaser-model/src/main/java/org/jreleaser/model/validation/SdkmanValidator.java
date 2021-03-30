@@ -46,5 +46,10 @@ public abstract class SdkmanValidator extends Validator {
                 "sdkman.consumerToken",
                 sdkman.getConsumerToken(),
                 errors));
+
+        if (context.getModel().getDistributions().isEmpty()) {
+            context.getLogger().warn("There are no configured distributions. Disabling Sdkman announcement");
+            sdkman.setEnabled(false);
+        }
     }
 }

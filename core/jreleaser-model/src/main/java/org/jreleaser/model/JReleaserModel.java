@@ -148,10 +148,6 @@ public class JReleaserModel implements Domain {
             throw new IllegalArgumentException("Distribution name must not be blank");
         }
 
-        if (distributions.isEmpty()) {
-            throw new IllegalArgumentException("No distributions have been configured");
-        }
-
         if (distributions.containsKey(name)) {
             return distributions.get(name);
         }
