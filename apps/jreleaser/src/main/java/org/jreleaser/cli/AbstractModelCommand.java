@@ -84,7 +84,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
                 .println(spec.commandLine()
                     .getColorScheme()
                     .errorText("Missing required option: '--config-file=<configFile>' " +
-                        "or local file named .jreleaser[" +
+                        "or local file named jreleaser[" +
                         String.join("|", getSupportedConfigFormats()) + "]"));
             spec.commandLine().usage(parent.out);
             throw new HaltExecutionException();

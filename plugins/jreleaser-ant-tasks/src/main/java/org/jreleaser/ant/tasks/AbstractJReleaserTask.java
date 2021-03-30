@@ -98,7 +98,7 @@ abstract class AbstractJReleaserTask extends Task {
 
         if (null == actualConfigFile || !Files.exists(actualConfigFile)) {
             throw new BuildException("Missing required option 'configFile' " +
-                "or local file named .jreleaser[" +
+                "or local file named jreleaser[" +
                 String.join("|", getSupportedConfigFormats()) + "]");
         }
     }
