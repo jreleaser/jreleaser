@@ -22,11 +22,13 @@ import org.jreleaser.util.Constants;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -48,7 +50,12 @@ public class JReleaserModel implements Domain {
     private Commit commit;
 
     public JReleaserModel() {
-        this.timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX"));
+        this.timestamp = ZonedDateTime.now().format(new DateTimeFormatterBuilder()
+            .append(ISO_LOCAL_DATE_TIME)
+            .optionalStart()
+            .appendOffset("+HH:MM", "Z")
+            .optionalEnd()
+            .toFormatter());
     }
 
     public String getTimestamp() {
