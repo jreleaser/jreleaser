@@ -26,6 +26,7 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "announce",
+    mixinStandardHelpOptions = true,
     description = "Announce a release")
 public class Announce extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},

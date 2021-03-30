@@ -26,7 +26,8 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "full-release",
-    description = "Performs a full release of all distributions")
+    mixinStandardHelpOptions = true,
+    description = "Perform a full release")
 public class FullRelease extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skips remote operations.")

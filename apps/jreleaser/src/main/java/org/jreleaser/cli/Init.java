@@ -44,7 +44,8 @@ import static java.nio.file.StandardOpenOption.WRITE;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "init",
-    description = "Creates a jrelaser config file")
+    mixinStandardHelpOptions = true,
+    description = "Create a jreleaser config file")
 public class Init extends AbstractCommand {
     @CommandLine.Option(names = {"--overwrite"},
         description = "Overwrite existing files")

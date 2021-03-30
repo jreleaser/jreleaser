@@ -26,7 +26,8 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "prepare",
-    description = "Prepares all distributions")
+    mixinStandardHelpOptions = true,
+    description = "Prepare all distributions")
 public class Prepare extends AbstractModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {

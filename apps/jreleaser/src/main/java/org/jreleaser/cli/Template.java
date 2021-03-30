@@ -30,7 +30,8 @@ import java.nio.file.Path;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "template",
-    description = "Generates a tool template")
+    mixinStandardHelpOptions = true,
+    description = "Generate a tool template")
 public class Template extends AbstractCommand {
     @CommandLine.Option(names = {"--distribution-name"},
         description = "The name of the distribution",

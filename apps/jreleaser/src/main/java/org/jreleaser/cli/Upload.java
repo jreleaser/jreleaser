@@ -26,7 +26,8 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "upload",
-    description = "Uploads all distributions")
+    mixinStandardHelpOptions = true,
+    description = "Upload all distributions")
 public class Upload extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skips remote operations.")

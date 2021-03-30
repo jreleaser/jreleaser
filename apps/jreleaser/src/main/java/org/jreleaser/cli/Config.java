@@ -26,7 +26,8 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "config",
-    description = "Displays current configuration")
+    mixinStandardHelpOptions = true,
+    description = "Display current configuration")
 public class Config extends AbstractModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {

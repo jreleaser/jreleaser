@@ -26,7 +26,8 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "package",
-    description = "Packages all distributions")
+    mixinStandardHelpOptions = true,
+    description = "Package all distributions")
 public class Package extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skips remote operations.")

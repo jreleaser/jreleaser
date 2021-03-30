@@ -26,7 +26,8 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "changelog",
-    description = "Calculates the changelog")
+    mixinStandardHelpOptions = true,
+    description = "Calculate the changelog")
 public class Changelog extends AbstractModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {
