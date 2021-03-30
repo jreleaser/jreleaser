@@ -32,6 +32,10 @@
         <jreleaser:announce dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"/>
     </target>
 
+    <target name="jreleaser-changelog">
+        <jreleaser:changelog dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"/>
+    </target>
+
     <target name="jreleaser-checksum">
         <jreleaser:checksum dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"/>
     </target>

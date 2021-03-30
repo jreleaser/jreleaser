@@ -23,6 +23,10 @@
             classname="org.jreleaser.ant.tasks.JReleaserAnnounceTask"/>
 
     <taskdef
+            name="changelog"
+            classname="org.jreleaser.ant.tasks.JReleaserChangelogTask"/>
+
+    <taskdef
             name="checksum"
             classname="org.jreleaser.ant.tasks.JReleaserChecksumTask"/>
 

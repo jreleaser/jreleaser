@@ -30,6 +30,7 @@ import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserChangelogTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserFullReleaseTask
@@ -111,6 +112,16 @@ class JReleaserProjectConfigurer {
                     t.outputDirectory.set(project.layout
                         .projectDirectory
                         .dir('src/jreleaser/distributions'))
+                }
+            })
+
+        project.tasks.register('jreleaserChangelog', JReleaserChangelogTask,
+            new Action<JReleaserChangelogTask>() {
+                @Override
+                void execute(JReleaserChangelogTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Calculate changelogs'
+                    t.context.set(context)
                 }
             })
 

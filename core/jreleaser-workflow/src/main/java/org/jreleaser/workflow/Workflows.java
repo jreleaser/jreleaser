@@ -20,12 +20,19 @@ package org.jreleaser.workflow;
 import org.jreleaser.model.JReleaserContext;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Workflows {
+    public static Workflow changelog(JReleaserContext context) {
+        return new WorkflowImpl(context, Collections.singletonList(
+            new ChangelogWorkflowItem()
+        ));
+    }
+
     public static Workflow checksum(JReleaserContext context) {
         return new WorkflowImpl(context, Arrays.asList(
             new ChangelogWorkflowItem(),
