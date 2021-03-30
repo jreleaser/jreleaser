@@ -75,6 +75,7 @@ public class Template extends AbstractCommand {
 
             Path outputDirectory = basedir
                 .resolve("src")
+                .resolve("jreleaser")
                 .resolve("distributions");
 
             Path output = TemplateGenerator.builder()

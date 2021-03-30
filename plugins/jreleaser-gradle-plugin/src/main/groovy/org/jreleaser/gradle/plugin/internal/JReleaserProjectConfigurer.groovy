@@ -110,7 +110,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Generates templates for a specific tool'
                     t.outputDirectory.set(project.layout
                         .projectDirectory
-                        .dir('src/distributions'))
+                        .dir('src/jreleaser/distributions'))
                 }
             })
 

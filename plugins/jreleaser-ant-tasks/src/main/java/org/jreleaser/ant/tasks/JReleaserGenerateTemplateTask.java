@@ -72,6 +72,7 @@ public class JReleaserGenerateTemplateTask extends Task {
         try {
             Path outputDirectory = getProject().getBaseDir().toPath()
                 .resolve("src")
+                .resolve("jreleaser")
                 .resolve("distributions");
 
             Path output = TemplateGenerator.builder()

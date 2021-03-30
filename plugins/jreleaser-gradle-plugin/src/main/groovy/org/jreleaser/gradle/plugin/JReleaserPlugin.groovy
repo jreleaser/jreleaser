@@ -42,7 +42,7 @@ class JReleaserPlugin implements Plugin<Project> {
         Provider<String> descriptionProvider = project.provider({ -> project.description })
         Provider<String> versionProvider = project.provider({ -> String.valueOf(project.version) })
         Provider<Directory> distributionsDirProvider = project.provider({ ->
-            project.layout.projectDirectory.dir('src/distributions')
+            project.layout.projectDirectory.dir('src/jreleaser/distributions')
         })
         project.extensions.create(JReleaserExtension, 'jreleaser', JReleaserExtensionImpl,
             project.objects, nameProvider, descriptionProvider, versionProvider, distributionsDirProvider)

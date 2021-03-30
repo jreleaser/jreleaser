@@ -39,7 +39,7 @@ public abstract class TemplateValidator extends Validator {
                 !(context.getBasedir().resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
                 errors.add("distribution." + distribution.getName() + "." + tool.getName() + ".template does not exist. " + tool.getTemplateDirectory());
             } else {
-                tool.setTemplateDirectory("src/distributions/" + distribution.getName() + "/" + tool.getName());
+                tool.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + tool.getName());
             }
             return;
         }
@@ -48,7 +48,7 @@ public abstract class TemplateValidator extends Validator {
             !(context.getBasedir().resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
             errors.add("distribution." + distribution.getName() + "." + tool.getName() + ".template does not exist. " + tool.getTemplateDirectory());
         } else {
-            tool.setTemplateDirectory("src/distributions/" + distribution.getName() + "/" + tool.getName());
+            tool.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + tool.getName());
         }
     }
 }

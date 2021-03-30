@@ -88,6 +88,7 @@ public class JReleaserGenerateTemplateMojo extends AbstractMojo {
         try {
             Path outputDirectory = Paths.get(project.getBasedir().getAbsolutePath())
                 .resolve("src")
+                .resolve("jreleaser")
                 .resolve("distributions");
 
             Path output = TemplateGenerator.builder()
