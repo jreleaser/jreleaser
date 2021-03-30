@@ -18,21 +18,11 @@
 dependencies {
     api project(':jreleaser-model')
     api project(':jreleaser-config')
+    api project(':git-sdk')
 
-    // tools
-    api project(':jreleaser-templates')
+    // checksum
     api("com.google.guava:guava:$guavaVersion") { transitive = false }
-    api "org.zeroturnaround:zt-exec:$ztexecVersion"
-
-    // announce
-    api project(':mail-java-sdk')
-    api project(':sdkman-java-sdk')
-    api project(':twitter-java-sdk')
-    api project(':zulip-java-sdk')
 
     // sign
     api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
-
-    // release
-    api project(':github-java-sdk')
 }

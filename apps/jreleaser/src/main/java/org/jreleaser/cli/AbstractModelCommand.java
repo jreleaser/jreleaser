@@ -18,7 +18,7 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.config.JReleaserConfigParser;
-import org.jreleaser.context.ContextCreator;
+import org.jreleaser.engine.context.ContextCreator;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserVersion;
 import picocli.CommandLine;

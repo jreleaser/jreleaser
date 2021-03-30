@@ -22,7 +22,6 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public abstract class GitService implements Releaser {
-    private final String serviceName;
     protected Boolean enabled;
     private String host;
     private String owner;
@@ -44,15 +43,6 @@ public abstract class GitService implements Releaser {
     private boolean overwrite;
     private boolean allowUploadToExisting;
     private String apiEndpoint;
-
-    protected GitService(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    @Override
-    public String getServiceName() {
-        return serviceName;
-    }
 
     void setAll(GitService service) {
         this.enabled = service.enabled;

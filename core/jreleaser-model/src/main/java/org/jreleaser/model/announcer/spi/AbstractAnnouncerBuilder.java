@@ -25,20 +25,16 @@ import static java.util.Objects.requireNonNull;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractAnnouncerBuilder<R extends Announcer, B extends AnnouncerBuilder<R, B>> implements AnnouncerBuilder<R, B> {
+public abstract class AbstractAnnouncerBuilder<A extends Announcer> implements AnnouncerBuilder<A> {
     protected JReleaserContext context;
-
-    protected final B self() {
-        return (B) this;
-    }
 
     protected void validate() {
         requireNonNull(context, "'context' must not be null");
     }
 
     @Override
-    public B configureWith(JReleaserContext context) {
+    public AnnouncerBuilder<A> configureWith(JReleaserContext context) {
         this.context = requireNonNull(context, "'context' must not be null");
-        return self();
+        return this;
     }
 }

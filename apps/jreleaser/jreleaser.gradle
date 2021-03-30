@@ -26,7 +26,8 @@ config {
 }
 
 dependencies {
-    api project(':jreleaser-engine')
+    api project(':jreleaser-workflow')
+    //config
     api project(':jreleaser-config-yaml')
     api project(':jreleaser-config-json')
 

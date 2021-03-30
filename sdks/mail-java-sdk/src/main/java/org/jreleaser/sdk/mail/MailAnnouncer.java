@@ -19,14 +19,10 @@ package org.jreleaser.sdk.mail;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Mail;
-import org.jreleaser.model.announcer.spi.AbstractAnnouncerBuilder;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.util.Constants;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -39,13 +35,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class MailAnnouncer implements Announcer {
     private final JReleaserContext context;
 
-    private MailAnnouncer(JReleaserContext context) {
+    MailAnnouncer(JReleaserContext context) {
         this.context = context;
     }
 
     @Override
     public String getName() {
-        return "mail";
+        return org.jreleaser.model.Mail.NAME;
     }
 
     @Override
@@ -62,21 +58,22 @@ public class MailAnnouncer implements Announcer {
     public void announce() throws AnnounceException {
         Mail mail = context.getModel().getAnnounce().getMail();
 
-        String subject = mail.getResolvedSubject(context.getModel());
         String message = "";
         if (isNotBlank(mail.getMessage())) {
             message = mail.getResolvedMessage(context.getModel());
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, readChangelog(context));
+            props.put(Constants.KEY_CHANGELOG, context.getChangelog());
             context.getModel().getRelease().getGitService().fillProps(props, context.getModel().getProject());
             message = mail.getResolvedMessageTemplate(context, props);
         }
+
+        String subject = mail.getResolvedSubject(context.getModel());
         context.getLogger().info("subject: {}", subject);
 
         try {
             MessageMailCommand.builder(context.getLogger())
-                .dryrun(false)//context.isDryrun())
+                .dryrun(context.isDryrun())
                 .transport(mail.getTransport())
                 .host(mail.getHost())
                 .port(mail.getPort())
@@ -94,36 +91,6 @@ public class MailAnnouncer implements Announcer {
                 .execute();
         } catch (MailException e) {
             throw new AnnounceException(e);
-        }
-    }
-
-    private String readChangelog(JReleaserContext context) {
-        Path changelogFile = context.getOutputDirectory()
-            .resolve("release")
-            .resolve("CHANGELOG.md");
-
-        if (Files.exists(changelogFile)) {
-            try {
-                return new String(Files.readAllBytes(changelogFile)).trim();
-            } catch (IOException e) {
-                context.getLogger().warn("Could not read changelog from {}",
-                    context.getBasedir().relativize(changelogFile));
-            }
-        }
-
-        return "";
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder extends AbstractAnnouncerBuilder<MailAnnouncer, Builder> {
-        @Override
-        public MailAnnouncer build() {
-            validate();
-
-            return new MailAnnouncer(context);
         }
     }
 }

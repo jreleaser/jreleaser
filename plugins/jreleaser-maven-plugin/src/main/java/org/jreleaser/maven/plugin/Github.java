@@ -27,7 +27,6 @@ public class Github extends GitService {
     private boolean prerelease;
 
     public Github() {
-        super("githu ");
         setHost("github.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");

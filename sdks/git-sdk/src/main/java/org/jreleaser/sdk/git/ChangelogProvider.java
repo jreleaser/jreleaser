@@ -42,7 +42,7 @@ public class ChangelogProvider {
             .resolve("release")
             .resolve("CHANGELOG.md");
 
-        context.getLogger().info(" - Generating changelog: {}", context.getBasedir().relativize(changelogFile));
+        context.getLogger().info("Generating changelog: {}", context.getBasedir().relativize(changelogFile));
         context.getLogger().debug(content);
 
         Files.createDirectories(changelogFile.getParent());

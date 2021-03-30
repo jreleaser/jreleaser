@@ -25,7 +25,7 @@ import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
-import org.jreleaser.context.ContextCreator
+import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl

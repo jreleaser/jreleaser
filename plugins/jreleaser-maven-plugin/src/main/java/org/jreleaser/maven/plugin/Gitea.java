@@ -27,7 +27,6 @@ public class Gitea extends GitService {
     private boolean prerelease;
 
     public Gitea() {
-        super("gitea");
         setHost("try.gitea.io");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");

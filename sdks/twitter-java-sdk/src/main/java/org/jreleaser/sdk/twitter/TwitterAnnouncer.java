@@ -19,7 +19,6 @@ package org.jreleaser.sdk.twitter;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Twitter;
-import org.jreleaser.model.announcer.spi.AbstractAnnouncerBuilder;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 
@@ -30,13 +29,13 @@ import org.jreleaser.model.announcer.spi.Announcer;
 public class TwitterAnnouncer implements Announcer {
     private final JReleaserContext context;
 
-    private TwitterAnnouncer(JReleaserContext context) {
+    TwitterAnnouncer(JReleaserContext context) {
         this.context = context;
     }
 
     @Override
     public String getName() {
-        return "twitter";
+        return org.jreleaser.model.Twitter.NAME;
     }
 
     @Override
@@ -69,19 +68,6 @@ public class TwitterAnnouncer implements Announcer {
                 .execute();
         } catch (TwitterException e) {
             throw new AnnounceException(e);
-        }
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder extends AbstractAnnouncerBuilder<TwitterAnnouncer, Builder> {
-        @Override
-        public TwitterAnnouncer build() {
-            validate();
-
-            return new TwitterAnnouncer(context);
         }
     }
 }

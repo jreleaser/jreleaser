@@ -24,12 +24,14 @@ import java.util.Map;
  * @since 0.1.0
  */
 public class Github extends GitService {
+    public static final String NAME = "github";
+
     private String targetCommitish = "main";
     private boolean draft;
     private boolean prerelease;
 
     public Github() {
-        super("github");
+        super(NAME);
         setHost("github.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");

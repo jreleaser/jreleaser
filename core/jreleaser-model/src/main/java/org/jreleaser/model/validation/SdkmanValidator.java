@@ -48,7 +48,7 @@ public abstract class SdkmanValidator extends Validator {
                 errors));
 
         if (context.getModel().getDistributions().isEmpty()) {
-            context.getLogger().warn("There are no configured distributions. Disabling Sdkman announcement");
+            context.getLogger().warn("There are no configured distributions. Disabling Sdkman announcer");
             sdkman.setEnabled(false);
         }
     }

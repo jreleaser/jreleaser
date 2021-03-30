@@ -18,11 +18,9 @@
 package org.jreleaser.sdk.github;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.releaser.spi.AbstractReleaserBuilder;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
-import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHRepository;
@@ -41,7 +39,7 @@ public class GithubReleaser implements Releaser {
     private final JReleaserContext context;
     private final List<Path> assets = new ArrayList<>();
 
-    public GithubReleaser(JReleaserContext context, List<Path> assets) {
+    GithubReleaser(JReleaserContext context, List<Path> assets) {
         this.context = context;
         this.assets.addAll(assets);
     }
@@ -52,8 +50,7 @@ public class GithubReleaser implements Releaser {
         String tagName = github.getEffectiveTagName(context.getModel().getProject());
 
         try {
-            String changelog = ChangelogProvider.getChangelog(context,
-                github.getResolvedCommitUrl(context.getModel().getProject()), github.getChangelog());
+            String changelog = context.getChangelog();
 
             Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedToken());
 
@@ -147,19 +144,6 @@ public class GithubReleaser implements Releaser {
             api.deleteTag(repo, tagName);
         } catch (IOException ignored) {
             //noop
-        }
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder extends AbstractReleaserBuilder<GithubReleaser, Builder> {
-        @Override
-        public GithubReleaser build() {
-            validate();
-
-            return new GithubReleaser(context, assets);
         }
     }
 }

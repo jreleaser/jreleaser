@@ -33,39 +33,35 @@ import static java.util.Objects.requireNonNull;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractReleaserBuilder<R extends Releaser, B extends ReleaserBuilder<R, B>> implements ReleaserBuilder<R, B> {
+public abstract class AbstractReleaserBuilder<R extends Releaser> implements ReleaserBuilder<R> {
     protected final List<Path> assets = new ArrayList<>();
     protected JReleaserContext context;
 
-    protected final B self() {
-        return (B) this;
-    }
-
     @Override
-    public B addReleaseAsset(Path asset) {
+    public ReleaserBuilder<R> addReleaseAsset(Path asset) {
         if (null != asset && asset.toFile().exists()) {
             this.assets.add(asset);
         }
-        return self();
+        return this;
     }
 
     @Override
-    public B addReleaseAssets(Path assets) {
+    public ReleaserBuilder<R> addReleaseAssets(Path assets) {
         if (assets.toFile().exists()) {
             for (File asset : assets.toFile().listFiles()) {
                 addReleaseAsset(asset.toPath().toAbsolutePath());
             }
         }
 
-        return self();
+        return this;
     }
 
     @Override
-    public B setReleaseAssets(List<Path> assets) {
+    public ReleaserBuilder<R> setReleaseAssets(List<Path> assets) {
         if (null != assets) {
             this.assets.addAll(assets);
         }
-        return self();
+        return this;
     }
 
     protected void validate() {
@@ -73,7 +69,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser, B extends Rele
     }
 
     @Override
-    public B configureWith(JReleaserContext context) {
+    public ReleaserBuilder<R> configureWith(JReleaserContext context) {
         this.context = context;
 
         for (Artifact artifact : Artifacts.resolveFiles(context)) {
@@ -89,6 +85,6 @@ public abstract class AbstractReleaserBuilder<R extends Releaser, B extends Rele
         addReleaseAsset(context.getChecksumsDirectory().resolve("checksums.txt"));
         addReleaseAssets(context.getSignaturesDirectory());
 
-        return self();
+        return this;
     }
 }

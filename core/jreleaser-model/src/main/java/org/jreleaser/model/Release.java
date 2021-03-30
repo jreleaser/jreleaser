@@ -65,13 +65,12 @@ public class Release implements Domain {
         return gitea;
     }
 
-
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
-        if (null != github) map.put("github", github.asMap());
-        if (null != gitlab) map.put("gitlab", gitlab.asMap());
-        if (null != gitea) map.put("gitea", gitea.asMap());
+        if (null != github) map.put(Github.NAME, github.asMap());
+        if (null != gitlab) map.put(Gitlab.NAME, gitlab.asMap());
+        if (null != gitea) map.put(Gitea.NAME, gitea.asMap());
         return map;
     }
 }

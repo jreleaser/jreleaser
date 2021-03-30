@@ -19,7 +19,6 @@ package org.jreleaser.sdk.zulip;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Zulip;
-import org.jreleaser.model.announcer.spi.AbstractAnnouncerBuilder;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 
@@ -30,13 +29,13 @@ import org.jreleaser.model.announcer.spi.Announcer;
 public class ZulipAnnouncer implements Announcer {
     private final JReleaserContext context;
 
-    private ZulipAnnouncer(JReleaserContext context) {
+    ZulipAnnouncer(JReleaserContext context) {
         this.context = context;
     }
 
     @Override
     public String getName() {
-        return "zulip";
+        return org.jreleaser.model.Zulip.NAME;
     }
 
     @Override
@@ -72,19 +71,6 @@ public class ZulipAnnouncer implements Announcer {
                 .execute();
         } catch (ZulipException e) {
             throw new AnnounceException(e);
-        }
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder extends AbstractAnnouncerBuilder<ZulipAnnouncer, Builder> {
-        @Override
-        public ZulipAnnouncer build() {
-            validate();
-
-            return new ZulipAnnouncer(context);
         }
     }
 }

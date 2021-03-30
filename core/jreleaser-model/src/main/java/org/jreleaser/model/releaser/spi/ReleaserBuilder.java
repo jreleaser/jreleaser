@@ -26,14 +26,14 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface ReleaserBuilder<R extends Releaser, B extends ReleaserBuilder<R, B>> {
-    B configureWith(JReleaserContext context);
+public interface ReleaserBuilder<R extends Releaser> {
+    ReleaserBuilder<R> configureWith(JReleaserContext context);
 
-    B addReleaseAsset(Path asset);
+    ReleaserBuilder<R> addReleaseAsset(Path asset);
 
-    B addReleaseAssets(Path assets);
+    ReleaserBuilder<R> addReleaseAssets(Path assets);
 
-    B setReleaseAssets(List<Path> assets);
+    ReleaserBuilder<R> setReleaseAssets(List<Path> assets);
 
     R build();
 }

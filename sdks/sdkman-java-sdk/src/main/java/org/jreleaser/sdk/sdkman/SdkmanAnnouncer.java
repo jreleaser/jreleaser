@@ -21,7 +21,6 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Sdkman;
-import org.jreleaser.model.announcer.spi.AbstractAnnouncerBuilder;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 
@@ -40,13 +39,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class SdkmanAnnouncer implements Announcer {
     private final JReleaserContext context;
 
-    private SdkmanAnnouncer(JReleaserContext context) {
+    SdkmanAnnouncer(JReleaserContext context) {
         this.context = context;
     }
 
     @Override
     public String getName() {
-        return "sdkman";
+        return org.jreleaser.model.Sdkman.NAME;
     }
 
     @Override
@@ -162,18 +161,5 @@ public class SdkmanAnnouncer implements Announcer {
         Map<String, Object> newProps = context.getModel().props();
         newProps.put("artifactFileName", artifact.getResolvedPath(context, distribution).getFileName().toString());
         return applyTemplate(new StringReader(context.getModel().getRelease().getGitService().getDownloadUrlFormat()), newProps, "downloadUrl");
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder extends AbstractAnnouncerBuilder<SdkmanAnnouncer, Builder> {
-        @Override
-        public SdkmanAnnouncer build() {
-            validate();
-
-            return new SdkmanAnnouncer(context);
-        }
     }
 }

@@ -19,6 +19,7 @@ package org.jreleaser.model.tool.spi;
 
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Tool;
+import org.jreleaser.model.releaser.spi.Releaser;
 
 import java.util.Map;
 
@@ -29,6 +30,8 @@ import java.util.Map;
 public interface ToolProcessor<T extends Tool> {
     T getTool();
 
+    void setTool(T tool);
+
     String getToolName();
 
     boolean supportsDistribution(Distribution distribution);
@@ -37,5 +40,5 @@ public interface ToolProcessor<T extends Tool> {
 
     boolean packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
-    boolean uploadDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
+    boolean uploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
 }

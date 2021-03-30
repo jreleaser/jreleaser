@@ -22,5 +22,4 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public interface Releaser extends EnabledProvider {
-    String getServiceName();
 }

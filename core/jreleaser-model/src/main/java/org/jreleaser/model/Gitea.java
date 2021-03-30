@@ -24,12 +24,14 @@ import java.util.Map;
  * @since 0.1.0
  */
 public class Gitea extends GitService {
+    public static final String NAME = "gitea";
+
     private String targetCommitish = "main";
     private boolean draft;
     private boolean prerelease;
 
     public Gitea() {
-        super("gitea");
+        super(NAME);
         setHost("try.gitea.io");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");

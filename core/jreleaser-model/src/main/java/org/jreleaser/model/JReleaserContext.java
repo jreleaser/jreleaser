@@ -35,6 +35,8 @@ public class JReleaserContext {
     private final boolean dryrun;
     private final List<String> errors = new ArrayList<>();
 
+    private String changelog;
+
     public JReleaserContext(JReleaserLogger logger,
                             JReleaserModel model,
                             Path basedir,
@@ -89,6 +91,14 @@ public class JReleaserContext {
 
     public boolean isDryrun() {
         return dryrun;
+    }
+
+    public String getChangelog() {
+        return changelog;
+    }
+
+    public void setChangelog(String changelog) {
+        this.changelog = changelog;
     }
 
     @Override

@@ -16,6 +16,9 @@
  * limitations under the License.
  */
 dependencies {
+    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
+    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+
     api project(':jreleaser-model')
     api project(':git-sdk')
 

@@ -23,8 +23,8 @@ import org.jreleaser.model.JReleaserContext;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface AnnouncerBuilder<A extends Announcer, B extends AnnouncerBuilder<A, B>> {
-    B configureWith(JReleaserContext context);
+public interface AnnouncerBuilder<A extends Announcer> {
+    AnnouncerBuilder<A> configureWith(JReleaserContext context);
 
     A build();
 }

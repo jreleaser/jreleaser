@@ -19,7 +19,6 @@ package org.jreleaser.cli;
 
 import org.jreleaser.cli.internal.JReleaserModelPrinter;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
 import picocli.CommandLine;
 
 /**

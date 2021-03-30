@@ -24,10 +24,12 @@ import java.util.Map;
  * @since 0.1.0
  */
 public class Gitlab extends GitService {
+    public static final String NAME = "gitlab";
+
     private String ref = "main";
 
     public Gitlab() {
-        super("gitlab");
+        super(NAME);
         setHost("gitlab.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/commits");

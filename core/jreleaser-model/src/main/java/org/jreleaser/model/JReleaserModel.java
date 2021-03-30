@@ -21,7 +21,6 @@ import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.util.Constants;
 
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.LinkedHashMap;
 import java.util.List;
