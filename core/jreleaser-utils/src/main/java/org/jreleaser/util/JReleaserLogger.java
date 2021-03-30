@@ -27,6 +27,8 @@ public interface JReleaserLogger {
     String INFO_TAB = "       ";
     String WARN_TAB = "       ";
 
+    void reset();
+
     void increaseIndent();
 
     void decreaseIndent();

@@ -27,6 +27,12 @@ public abstract class AbstractJReleaserLogger implements JReleaserLogger {
     private String previousPrefix = null;
 
     @Override
+    public void reset() {
+        this.prefix = this.previousPrefix = null;
+        this.indent = "";
+    }
+
+    @Override
     public void setPrefix(String prefix) {
         this.previousPrefix = this.prefix;
         this.prefix = prefix;

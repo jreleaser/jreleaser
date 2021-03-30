@@ -64,11 +64,13 @@ class WorkflowImpl implements Workflow {
 
         double duration = Duration.between(start, end).toMillis() / 1000d;
 
+        context.getLogger().reset();
         if (null == exception) {
             context.getLogger().info("JReleaser succeeded after {}s", String.format("%.3f", duration));
             report(context);
         } else {
             context.getLogger().error("JReleaser failed after {}s", String.format("%.3f", duration));
+            context.getLogger().error(exception.getMessage(), exception);
             report(context);
             throw exception;
         }
