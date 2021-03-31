@@ -28,9 +28,7 @@ import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.model.announcer.spi.AnnouncerBuilder;
 import org.jreleaser.model.announcer.spi.AnnouncerBuilderFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
@@ -48,50 +46,65 @@ public class Announcers {
             return;
         }
 
-        for (AnnouncerBuilder builder : Announcers.findAnnouncers(context)) {
-            Announcer announcer = builder.configureWith(context).build();
+        if (context.hasAnnouncerName()) {
+            Announcer announcer = Announcers.findAnnouncers(context)
+                .get(context.getAnnouncerName());
 
-            context.getLogger().increaseIndent();
-            context.getLogger().setPrefix(announcer.getName());
-
-            if (announcer.isEnabled()) {
-                if (context.getModel().getProject().isSnapshot() && !announcer.isSnapshotSupported()) {
-                    context.getLogger().info("snapshots are not supported. Skipping");
-                } else {
-                    try {
-                        announcer.announce();
-                    } catch (AnnounceException e) {
-                        context.getLogger().warn(e.getMessage().trim());
-                    }
-                }
-            } else {
-                context.getLogger().debug("not enabled");
+            if (null == announcer) {
+                context.getLogger().warn("Announcer [{}] not found. Skipping.", context.getAnnouncerName());
+                return;
             }
 
-            context.getLogger().restorePrefix();
-            context.getLogger().decreaseIndent();
+            announce(context, announcer);
+            return;
+        }
+
+        for (Map.Entry<String, Announcer> entry : Announcers.findAnnouncers(context).entrySet()) {
+            announce(context, entry.getValue());
         }
     }
 
-    private static <AB extends AnnouncerBuilder> Collection<AB> findAnnouncers(JReleaserContext context) {
+    private static void announce(JReleaserContext context, Announcer announcer) {
+        context.getLogger().increaseIndent();
+        context.getLogger().setPrefix(announcer.getName());
+
+        if (announcer.isEnabled()) {
+            if (context.getModel().getProject().isSnapshot() && !announcer.isSnapshotSupported()) {
+                context.getLogger().info("snapshots are not supported. Skipping");
+            } else {
+                try {
+                    announcer.announce();
+                } catch (AnnounceException e) {
+                    context.getLogger().warn(e.getMessage().trim());
+                }
+            }
+        } else {
+            context.getLogger().debug("not enabled");
+        }
+
+        context.getLogger().restorePrefix();
+        context.getLogger().decreaseIndent();
+    }
+
+    private static Map<String, Announcer> findAnnouncers(JReleaserContext context) {
         JReleaserModel model = context.getModel();
 
         Map<String, AnnouncerBuilder> builders = StreamSupport.stream(ServiceLoader.load(AnnouncerBuilderFactory.class,
             Announcers.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(AnnouncerBuilderFactory::getName, AnnouncerBuilderFactory::getBuilder));
 
-        List<AB> announcers = new ArrayList<>();
+        Map<String, Announcer> announcers = new LinkedHashMap<>();
         if (null != model.getAnnounce().getMail() && model.getAnnounce().getMail().isEnabled()) {
-            announcers.add((AB) builders.get(Mail.NAME));
+            announcers.put(Mail.NAME, builders.get(Mail.NAME).configureWith(context).build());
         }
         if (null != model.getAnnounce().getSdkman() && model.getAnnounce().getSdkman().isEnabled()) {
-            announcers.add((AB) builders.get(Sdkman.NAME));
+            announcers.put(Sdkman.NAME, builders.get(Sdkman.NAME).configureWith(context).build());
         }
         if (null != model.getAnnounce().getTwitter() && model.getAnnounce().getTwitter().isEnabled()) {
-            announcers.add((AB) builders.get(Twitter.NAME));
+            announcers.put(Twitter.NAME, builders.get(Twitter.NAME).configureWith(context).build());
         }
         if (null != model.getAnnounce().getZulip() && model.getAnnounce().getZulip().isEnabled()) {
-            announcers.add((AB) builders.get(Zulip.NAME));
+            announcers.put(Zulip.NAME, builders.get(Zulip.NAME).configureWith(context).build());
         }
 
         if (announcers.isEmpty()) {

@@ -39,6 +39,7 @@ public class JReleaserContext {
 
     private String distributionName;
     private String toolName;
+    private String announcerName;
     private String changelog;
 
     public JReleaserContext(JReleaserLogger logger,
@@ -113,6 +114,10 @@ public class JReleaserContext {
         return isNotBlank(toolName);
     }
 
+    public boolean hasAnnouncerName() {
+        return isNotBlank(announcerName);
+    }
+
     public String getDistributionName() {
         return distributionName;
     }
@@ -127,6 +132,14 @@ public class JReleaserContext {
 
     public void setToolName(String toolName) {
         this.toolName = toolName;
+    }
+
+    public String getAnnouncerName() {
+        return announcerName;
+    }
+
+    public void setAnnouncerName(String announcerName) {
+        this.announcerName = announcerName;
     }
 
     @Override

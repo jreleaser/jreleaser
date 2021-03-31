@@ -25,8 +25,15 @@ import org.jreleaser.workflow.Workflows;
  * @since 0.1.0
  */
 public class JReleaserAnnounceTask extends AbstractJReleaserTask {
+    private String announcerName;
+
+    public void setAnnouncerName(String announcerName) {
+        this.announcerName = announcerName;
+    }
+
     @Override
     protected void doExecute(JReleaserContext context) {
+        context.setAnnouncerName(announcerName);
         Workflows.announce(context).execute();
     }
 }

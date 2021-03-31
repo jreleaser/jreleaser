@@ -33,8 +33,13 @@ public class Announce extends AbstractModelCommand {
         description = "Skips remote operations.")
     boolean dryrun;
 
+    @CommandLine.Option(names = {"-an", "--announcer-name"},
+        description = "The name of the announcer")
+    String announcerName;
+
     @Override
     protected void doExecute(JReleaserContext context) {
+        context.setAnnouncerName(announcerName);
         Workflows.announce(context).execute();
     }
 

@@ -21,6 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
 /**
@@ -29,6 +30,12 @@ import org.jreleaser.workflow.Workflows;
  */
 @Mojo(name = "announce")
 public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
+    /**
+     * The name of the distribution
+     */
+    @Parameter(property = "jreleaser.announcer.name")
+    private String announcerName;
+
     /**
      * Skip execution.
      */
@@ -40,6 +47,8 @@ public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        Workflows.announce(createContext()).execute();
+        JReleaserContext context = createContext();
+        context.setAnnouncerName(announcerName);
+        Workflows.announce(context).execute();
     }
 }

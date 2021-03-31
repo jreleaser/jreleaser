@@ -30,6 +30,7 @@
     <property name="jreleaser.distribution.name" value=""/>
     <property name="jreleaser.distribution.type" value="JAVA_BINARY"/>
     <property name="jreleaser.tool.name" value=""/>
+    <property name="jreleaser.announcer.name" value=""/>
     <property name="jreleaser.overwrite" value="false"/>
     <property name="jreleaser.snapshot" value="false"/>
 
@@ -43,7 +44,8 @@
     </target>
 
     <target name="jreleaser-announce">
-        <jreleaser:announce dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"/>
+        <jreleaser:announce dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"
+                            announcerName="${jreleaser.announcer.name}"/>
     </target>
 
     <target name="jreleaser-changelog">
