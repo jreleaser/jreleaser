@@ -61,7 +61,7 @@ public class ChocolateyToolProcessor extends AbstractToolProcessor<Chocolatey> {
     @Override
     protected boolean doUploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         if (tool.isRemoteBuild()) {
-            super.doUploadDistribution(distribution, releaser, props);
+            return super.doUploadDistribution(distribution, releaser, props);
         }
         return uploadChocolateyPackage(distribution, props);
     }

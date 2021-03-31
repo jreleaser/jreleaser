@@ -49,10 +49,14 @@ public class SnapToolProcessor extends AbstractToolProcessor<Snap> {
 
     @Override
     protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        copyPreparedFiles(distribution, props);
+        return true;
+    }
+
+    @Override
+    protected boolean doUploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         if (tool.isRemoteBuild()) {
-            // copy from prepare to package
-            copyPreparedFiles(distribution, props);
-            return true;
+            return super.doUploadDistribution(distribution, releaser, props);
         }
 
         if (PlatformUtils.isWindows()) {
@@ -68,14 +72,6 @@ public class SnapToolProcessor extends AbstractToolProcessor<Snap> {
         }
 
         return createSnap(distribution, props, primeDirectory);
-    }
-
-    @Override
-    protected boolean doUploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
-        if (tool.isRemoteBuild()) {
-            super.doUploadDistribution(distribution, releaser, props);
-        }
-        return false;
     }
 
     @Override
