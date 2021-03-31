@@ -48,6 +48,15 @@ public class Workflows {
         ));
     }
 
+    public static Workflow release(JReleaserContext context) {
+        return new WorkflowImpl(context, Arrays.asList(
+            new ChangelogWorkflowItem(),
+            new ChecksumWorkflowItem(),
+            new SignWorkflowItem(),
+            new ReleaseWorkflowItem()
+        ));
+    }
+
     public static Workflow prepare(JReleaserContext context) {
         return new WorkflowImpl(context, Arrays.asList(
             new ChangelogWorkflowItem(),
@@ -60,22 +69,17 @@ public class Workflows {
         return new WorkflowImpl(context, Arrays.asList(
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
+            new PrepareWorkflowItem(),
             new PackageWorkflowItem()
-        ));
-    }
-
-    public static Workflow release(JReleaserContext context) {
-        return new WorkflowImpl(context, Arrays.asList(
-            new ChangelogWorkflowItem(),
-            new ChecksumWorkflowItem(),
-            new SignWorkflowItem(),
-            new ReleaseWorkflowItem()
         ));
     }
 
     public static Workflow upload(JReleaserContext context) {
         return new WorkflowImpl(context, Arrays.asList(
             new ChangelogWorkflowItem(),
+            new ChecksumWorkflowItem(),
+            new PrepareWorkflowItem(),
+            new PackageWorkflowItem(),
             new UploadWorkflowItem()
         ));
     }
