@@ -30,7 +30,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserUploadTask extends AbstractJReleaserTask {
+abstract class JReleaserUploadTask extends AbstractJReleaserDistributionTask {
     @Inject
     JReleaserUploadTask(ObjectFactory objects) {
         super(objects)
@@ -38,6 +38,6 @@ abstract class JReleaserUploadTask extends AbstractJReleaserTask {
 
     @TaskAction
     void performAction() {
-        Workflows.upload(context.get()).execute()
+        Workflows.prepare(setupContext()).execute()
     }
 }

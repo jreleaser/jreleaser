@@ -19,6 +19,7 @@ package org.jreleaser.engine.release;
 
 import org.jreleaser.model.Github;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.ReleaserBuilder;
@@ -53,6 +54,6 @@ public class Releasers {
             return (RB) builders.get(Github.NAME);
         }
 
-        throw new IllegalArgumentException("No suitable git releaser has been configured");
+        throw new JReleaserException("No suitable git releaser has been configured");
     }
 }

@@ -38,7 +38,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserPackageTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
-import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateGeneratorTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
 import org.jreleaser.model.JReleaserContext
 import org.jreleaser.model.JReleaserModel
@@ -103,10 +103,10 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        project.tasks.register('jeleaserTemplate', JReleaserTemplateGeneratorTask,
-            new Action<JReleaserTemplateGeneratorTask>() {
+        project.tasks.register('jeleaserTemplate', JReleaserTemplateTask,
+            new Action<JReleaserTemplateTask>() {
                 @Override
-                void execute(JReleaserTemplateGeneratorTask t) {
+                void execute(JReleaserTemplateTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Generates templates for a specific tool'
                     t.outputDirectory.set(project.layout

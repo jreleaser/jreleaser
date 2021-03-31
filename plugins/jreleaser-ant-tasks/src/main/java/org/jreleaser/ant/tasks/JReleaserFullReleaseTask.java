@@ -27,6 +27,6 @@ import org.jreleaser.workflow.Workflows;
 public class JReleaserFullReleaseTask extends AbstractJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        Workflows.fullRelease(createContext()).execute();
+        Workflows.fullRelease(context).execute();
     }
 }

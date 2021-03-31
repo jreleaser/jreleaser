@@ -181,7 +181,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
 
     public <T extends Tool> T findTool(String name) {
         if (isBlank(name)) {
-            throw new IllegalArgumentException("Tool name must not be blank");
+            throw new JReleaserException("Tool name must not be blank");
         }
 
         return resolveTool(name);
@@ -192,7 +192,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
         if (null != tool) {
             return tool;
         }
-        throw new IllegalArgumentException("Tool '" + name + "' has not been configured");
+        throw new JReleaserException("Tool '" + name + "' has not been configured");
     }
 
     private <T extends Tool> T resolveTool(String name) {
@@ -208,7 +208,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
             case Snap.NAME:
                 return (T) getSnap();
             default:
-                throw new IllegalArgumentException("Unsupported tool '" + name + "'");
+                throw new JReleaserException("Unsupported tool '" + name + "'");
         }
     }
 

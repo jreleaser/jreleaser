@@ -33,34 +33,69 @@ public class Distributions {
             return;
         }
 
+        if (context.hasDistributionName()) {
+            Distribution distribution = context.getModel().findDistribution(context.getDistributionName());
+
+            if (null == distribution) {
+                context.getLogger().error("Distribution {} does not exist", context.getDistributionName());
+                return;
+            }
+
+            if (context.hasToolName()) {
+                processDistribution(context, action, distribution, context.getToolName(), function);
+            } else {
+                processDistribution(context, action, distribution, function);
+            }
+            return;
+        } else if (context.hasToolName()) {
+            context.getLogger().info("{} distributions", action);
+            for (Distribution distribution : context.getModel().getDistributions().values()) {
+                processDistribution(context, action, distribution, context.getToolName(), function);
+            }
+            return;
+        }
+
+        // process all
         context.getLogger().info("{} distributions", action);
         for (Distribution distribution : context.getModel().getDistributions().values()) {
-            context.getLogger().increaseIndent();
-            context.getLogger().info("- {} {} distribution", action, distribution.getName());
-
-            // context.getLogger().debug("Reading checksums for {} distribution", distribution.getName());
-            // for (int i = 0; i < distribution.getArtifacts().size(); i++) {
-            //     Artifact artifact = distribution.getArtifacts().get(i);
-            //     readHash(context, distribution, artifact);
-            // }
-
-            for (String toolName : Distribution.supportedTools()) {
-                context.getLogger().increaseIndent();
-                context.getLogger().setPrefix(toolName);
-                try {
-                    DistributionProcessor processor = createDistributionProcessor(context,
-                        distribution,
-                        toolName);
-
-                    function.consume(processor);
-                } catch (ToolProcessingException e) {
-                    throw new JReleaserException("Unexpected error", e);
-                }
-                context.getLogger().restorePrefix();
-                context.getLogger().decreaseIndent();
-            }
-            context.getLogger().decreaseIndent();
+            processDistribution(context, action, distribution, function);
         }
+    }
+
+    private static void processDistribution(JReleaserContext context, String action, Distribution distribution, ToolProcessingFunction function) {
+        context.getLogger().increaseIndent();
+        context.getLogger().info("- {} {} distribution", action, distribution.getName());
+
+        for (String toolName : Distribution.supportedTools()) {
+            processTool(context, distribution, toolName, function);
+        }
+
+        context.getLogger().decreaseIndent();
+    }
+
+    private static void processDistribution(JReleaserContext context, String action, Distribution distribution, String toolName, ToolProcessingFunction function) {
+        context.getLogger().increaseIndent();
+        context.getLogger().info("- {} {} distribution", action, distribution.getName());
+
+        processTool(context, distribution, toolName, function);
+
+        context.getLogger().decreaseIndent();
+    }
+
+    private static void processTool(JReleaserContext context, Distribution distribution, String toolName, ToolProcessingFunction function) {
+        context.getLogger().increaseIndent();
+        context.getLogger().setPrefix(toolName);
+        try {
+            DistributionProcessor processor = createDistributionProcessor(context,
+                distribution,
+                toolName);
+
+            function.consume(processor);
+        } catch (ToolProcessingException e) {
+            throw new JReleaserException("Unexpected error", e);
+        }
+        context.getLogger().restorePrefix();
+        context.getLogger().decreaseIndent();
     }
 
     private static DistributionProcessor createDistributionProcessor(JReleaserContext context,

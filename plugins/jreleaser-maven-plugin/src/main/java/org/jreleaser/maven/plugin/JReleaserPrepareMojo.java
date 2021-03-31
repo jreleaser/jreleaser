@@ -21,6 +21,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.jreleaser.model.Distribution;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
 /**
@@ -29,6 +31,18 @@ import org.jreleaser.workflow.Workflows;
  */
 @Mojo(name = "prepare")
 public class JReleaserPrepareMojo extends AbstractJReleaserMojo {
+    /**
+     * The name of the distribution
+     */
+    @Parameter(property = "jreleaser.distribution.name")
+    private String distributionName;
+
+    /**
+     * The name of the distribution
+     */
+    @Parameter(property = "jreleaser.tool.name")
+    private String toolName;
+
     /**
      * Skip execution.
      */
@@ -40,6 +54,9 @@ public class JReleaserPrepareMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        Workflows.prepare(createContext()).execute();
+        JReleaserContext context = createContext();
+        context.setDistributionName(distributionName);
+        context.setToolName(toolName);
+        Workflows.prepare(context).execute();
     }
 }

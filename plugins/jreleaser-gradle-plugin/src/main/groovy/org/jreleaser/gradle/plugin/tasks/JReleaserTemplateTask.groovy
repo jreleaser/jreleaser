@@ -42,7 +42,7 @@ import java.nio.file.Path
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserTemplateGeneratorTask extends DefaultTask {
+abstract class JReleaserTemplateTask extends DefaultTask {
     @Internal
     final Property<Distribution.DistributionType> distributionType
 
@@ -62,7 +62,7 @@ abstract class JReleaserTemplateGeneratorTask extends DefaultTask {
     final Property<Boolean> snapshot
 
     @Inject
-    JReleaserTemplateGeneratorTask(ObjectFactory objects) {
+    JReleaserTemplateTask(ObjectFactory objects) {
         distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.JAVA_BINARY)
         distributionName = objects.property(String)
         toolName = objects.property(String)

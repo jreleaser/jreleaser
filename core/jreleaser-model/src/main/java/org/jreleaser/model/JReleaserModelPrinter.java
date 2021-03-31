@@ -278,7 +278,7 @@ public abstract class JReleaserModelPrinter {
         if (size == 0) {
             return "";
         } else if (size < 0) {
-            throw new IllegalArgumentException("multiply() should be called with a number of 0 or greater not: " + size);
+            throw new JReleaserException("multiply() should be called with a number of 0 or greater not: " + size);
         } else {
             StringBuilder answer = new StringBuilder(self);
 

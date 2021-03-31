@@ -25,8 +25,21 @@ import org.jreleaser.workflow.Workflows;
  * @since 0.1.0
  */
 public class JReleaserPackageTask extends AbstractJReleaserTask {
+    private String distributionName;
+    private String toolName;
+
+    public void setDistributionName(String distributionName) {
+        this.distributionName = distributionName;
+    }
+
+    public void setToolName(String toolName) {
+        this.toolName = toolName;
+    }
+
     @Override
     protected void doExecute(JReleaserContext context) {
-        Workflows.packageRelease(createContext()).execute();
+        context.setDistributionName(distributionName);
+        context.setToolName(toolName);
+        Workflows.packageRelease(context).execute();
     }
 }

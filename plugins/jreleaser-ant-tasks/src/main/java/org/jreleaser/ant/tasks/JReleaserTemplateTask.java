@@ -15,78 +15,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.ant.tasks;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.jreleaser.ant.tasks.internal.JReleaserLoggerAdapter;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateGenerationException;
 import org.jreleaser.templates.TemplateGenerator;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "template")
-public class JReleaserGenerateTemplateMojo extends AbstractMojo {
-    /**
-     * The project whose model will be checked.
-     */
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    protected MavenProject project;
-
-    /**
-     * Skip execution.
-     */
-    @Parameter(property = "jreleaser.template.skip")
+public class JReleaserTemplateTask extends Task {
     private boolean skip;
-
-    /**
-     * The name of the distribution
-     */
-    @Parameter(property = "jreleaser.template.distributionName", required = true)
     private String distributionName;
-
-    /**
-     * The type of the distribution
-     */
-    @Parameter(property = "jreleaser.template.distributionType", defaultValue = "BINARY")
-    private final Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
-
-    /**
-     * The name of the distribution
-     */
-    @Parameter(property = "jreleaser.template.toolName", required = true)
+    private Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
     private String toolName;
-
-    /**
-     * Overwrite existing files.
-     */
-    @Parameter(property = "jreleaser.template.overwrite")
     private boolean overwrite;
-
-    /**
-     * Use snapshot templates.
-     */
-    @Parameter(property = "jreleaser.template.snapshot")
     private boolean snapshot;
 
+    public void setSkip(boolean skip) {
+        this.skip = skip;
+    }
+
+    public void setDistributionName(String distributionName) {
+        this.distributionName = distributionName;
+    }
+
+    public void setDistributionType(Distribution.DistributionType distributionType) {
+        this.distributionType = distributionType;
+    }
+
+    public void setToolName(String toolName) {
+        this.toolName = toolName;
+    }
+
+    public void setOverwrite(boolean overwrite) {
+        this.overwrite = overwrite;
+    }
+
+    public void setSnapshot(boolean snapshot) {
+        this.snapshot = snapshot;
+    }
+
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
+    public void execute() throws BuildException {
+        Banner.display(getLogger());
         if (skip) return;
 
         try {
-            Path outputDirectory = Paths.get(project.getBasedir().getAbsolutePath())
+            Path outputDirectory = getProject().getBaseDir().toPath()
                 .resolve("src")
                 .resolve("jreleaser")
                 .resolve("distributions");
@@ -106,11 +90,11 @@ public class JReleaserGenerateTemplateMojo extends AbstractMojo {
                 getLogger().info("Template generated at {}", output.toAbsolutePath());
             }
         } catch (TemplateGenerationException e) {
-            throw new MojoExecutionException("Unexpected error", e);
+            throw new JReleaserException("Unexpected error", e);
         }
     }
 
     private JReleaserLogger getLogger() {
-        return new JReleaserLoggerAdapter(getLog());
+        return new JReleaserLoggerAdapter(getProject());
     }
 }

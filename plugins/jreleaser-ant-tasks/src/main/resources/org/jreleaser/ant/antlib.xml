@@ -40,7 +40,7 @@
 
     <taskdef
             name="template"
-            classname="org.jreleaser.ant.tasks.JReleaserGenerateTemplateTask"/>
+            classname="org.jreleaser.ant.tasks.JReleaserTemplateTask"/>
 
     <taskdef
             name="init"

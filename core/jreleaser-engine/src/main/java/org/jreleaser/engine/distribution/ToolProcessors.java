@@ -18,6 +18,7 @@
 package org.jreleaser.engine.distribution;
 
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Tool;
 import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.model.tool.spi.ToolProcessorFactory;
@@ -43,6 +44,6 @@ public class ToolProcessors {
             return toolProcessor;
         }
 
-        throw new IllegalArgumentException("Unsupported tool " + tool);
+        throw new JReleaserException("Unsupported tool " + tool);
     }
 }

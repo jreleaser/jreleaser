@@ -27,6 +27,6 @@ import org.jreleaser.workflow.Workflows;
 public class JReleaserAnnounceTask extends AbstractJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        Workflows.announce(createContext()).execute();
+        Workflows.announce(context).execute();
     }
 }

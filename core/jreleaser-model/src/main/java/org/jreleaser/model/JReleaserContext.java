@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -35,6 +37,8 @@ public class JReleaserContext {
     private final boolean dryrun;
     private final List<String> errors = new ArrayList<>();
 
+    private String distributionName;
+    private String toolName;
     private String changelog;
 
     public JReleaserContext(JReleaserLogger logger,
@@ -99,6 +103,30 @@ public class JReleaserContext {
 
     public void setChangelog(String changelog) {
         this.changelog = changelog;
+    }
+
+    public boolean hasDistributionName() {
+        return isNotBlank(distributionName);
+    }
+
+    public boolean hasToolName() {
+        return isNotBlank(toolName);
+    }
+
+    public String getDistributionName() {
+        return distributionName;
+    }
+
+    public void setDistributionName(String distributionName) {
+        this.distributionName = distributionName;
+    }
+
+    public String getToolName() {
+        return toolName;
+    }
+
+    public void setToolName(String toolName) {
+        this.toolName = toolName;
     }
 
     @Override

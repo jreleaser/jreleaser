@@ -101,7 +101,7 @@ public class Mail extends AbstractAnnouncer {
             Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
             return applyTemplate(reader, props);
         } catch (IOException e) {
-            throw new IllegalStateException("Unexpected error reading template " +
+            throw new JReleaserException("Unexpected error reading template " +
                 context.getBasedir().relativize(templatePath));
         }
     }

@@ -29,8 +29,18 @@ import picocli.CommandLine;
     mixinStandardHelpOptions = true,
     description = "Prepare all distributions")
 public class Prepare extends AbstractModelCommand {
+    @CommandLine.Option(names = {"-dn", "--distribution-name"},
+        description = "The name of the distribution")
+    String distributionName;
+
+    @CommandLine.Option(names = {"-tn", "--tool-name"},
+        description = "The name of the tool")
+    String toolName;
+
     @Override
     protected void doExecute(JReleaserContext context) {
+        context.setDistributionName(distributionName);
+        context.setToolName(toolName);
         Workflows.prepare(context).execute();
     }
 }

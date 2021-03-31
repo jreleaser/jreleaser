@@ -144,14 +144,14 @@ public class JReleaserModel implements Domain {
 
     public Distribution findDistribution(String name) {
         if (isBlank(name)) {
-            throw new IllegalArgumentException("Distribution name must not be blank");
+            throw new JReleaserException("Distribution name must not be blank");
         }
 
         if (distributions.containsKey(name)) {
             return distributions.get(name);
         }
 
-        throw new IllegalArgumentException("Distribution '" + name + "' not found");
+        throw new JReleaserException("Distribution '" + name + "' not found");
     }
 
     public Map<String, Object> asMap() {

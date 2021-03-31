@@ -27,6 +27,6 @@ import org.jreleaser.workflow.Workflows;
 public class JReleaserSignTask extends AbstractJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        Workflows.sign(createContext()).execute();
+        Workflows.sign(context).execute();
     }
 }

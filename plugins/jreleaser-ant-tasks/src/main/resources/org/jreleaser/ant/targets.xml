@@ -27,6 +27,20 @@
     <property name="jreleaser.dryrun" value="false"/>
     <property name="jreleaser.overwrite" value="false"/>
     <property name="jreleaser.format" value="yml"/>
+    <property name="jreleaser.distribution.name" value=""/>
+    <property name="jreleaser.distribution.type" value="JAVA_BINARY"/>
+    <property name="jreleaser.tool.name" value=""/>
+    <property name="jreleaser.overwrite" value="false"/>
+    <property name="jreleaser.snapshot" value="false"/>
+
+    <target name="jreleaser-template">
+        <jreleaser:template skip="${jreleaser.skip}"
+                            distributionName="${jreleaser.distribution.name}"
+                            toolName="${jreleaser.tool.name}"
+                            distributionType="${jreleaser.distribution.type}"
+                            overwrite="${jreleaser.overwrite}"
+                            snapshot="${jreleaser.snapshot}"/>
+    </target>
 
     <target name="jreleaser-announce">
         <jreleaser:announce dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"/>
@@ -53,11 +67,17 @@
     </target>
 
     <target name="jreleaser-package">
-        <jreleaser:package dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"/>
+        <jreleaser:package dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"
+                           distributionName="${jreleaser.distribution.name}"
+                           toolName="${jreleaser.tool.name}"/>
     </target>
 
     <target name="jreleaser-prepare">
-        <jreleaser:prepare dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"/>
+        <echo message="${jreleaser.distribution.name}"/>
+        <echo message="${jreleaser.tool.name}"/>
+        <jreleaser:prepare dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"
+                           distributionName="${jreleaser.distribution.name}"
+                           toolName="${jreleaser.tool.name}"/>
     </target>
 
     <target name="jreleaser-release">
@@ -69,6 +89,8 @@
     </target>
 
     <target name="jreleaser-upload">
-        <jreleaser:upload dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"/>
+        <jreleaser:upload dryrun="${jreleaser.dryrun}" skip="${jreleaser.skip}"
+                          distributionName="${jreleaser.distribution.name}"
+                          toolName="${jreleaser.tool.name}"/>
     </target>
 </project>

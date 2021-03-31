@@ -19,8 +19,8 @@ package org.jreleaser.workflow;
 
 import org.jreleaser.model.JReleaserContext;
 
-import java.util.Arrays;
-import java.util.Collections;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 /**
  * @author Andres Almiray
@@ -28,20 +28,20 @@ import java.util.Collections;
  */
 public class Workflows {
     public static Workflow changelog(JReleaserContext context) {
-        return new WorkflowImpl(context, Collections.singletonList(
+        return new WorkflowImpl(context, singletonList(
             new ChangelogWorkflowItem()
         ));
     }
 
     public static Workflow checksum(JReleaserContext context) {
-        return new WorkflowImpl(context, Arrays.asList(
+        return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem()
         ));
     }
 
     public static Workflow sign(JReleaserContext context) {
-        return new WorkflowImpl(context, Arrays.asList(
+        return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem()
@@ -49,7 +49,7 @@ public class Workflows {
     }
 
     public static Workflow release(JReleaserContext context) {
-        return new WorkflowImpl(context, Arrays.asList(
+        return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem(),
@@ -58,7 +58,7 @@ public class Workflows {
     }
 
     public static Workflow prepare(JReleaserContext context) {
-        return new WorkflowImpl(context, Arrays.asList(
+        return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new PrepareWorkflowItem()
@@ -66,7 +66,7 @@ public class Workflows {
     }
 
     public static Workflow packageRelease(JReleaserContext context) {
-        return new WorkflowImpl(context, Arrays.asList(
+        return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new PrepareWorkflowItem(),
@@ -75,7 +75,7 @@ public class Workflows {
     }
 
     public static Workflow upload(JReleaserContext context) {
-        return new WorkflowImpl(context, Arrays.asList(
+        return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new PrepareWorkflowItem(),
@@ -85,14 +85,14 @@ public class Workflows {
     }
 
     public static Workflow announce(JReleaserContext context) {
-        return new WorkflowImpl(context, Arrays.asList(
+        return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new AnnounceWorkflowItem()
         ));
     }
 
     public static Workflow fullRelease(JReleaserContext context) {
-        return new WorkflowImpl(context, Arrays.asList(
+        return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem(),

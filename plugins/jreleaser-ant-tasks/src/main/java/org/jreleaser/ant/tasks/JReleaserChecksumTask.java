@@ -27,6 +27,6 @@ import org.jreleaser.workflow.Workflows;
 public class JReleaserChecksumTask extends AbstractJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        Workflows.checksum(createContext()).execute();
+        Workflows.checksum(context).execute();
     }
 }

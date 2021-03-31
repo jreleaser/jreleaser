@@ -33,27 +33,27 @@ import java.nio.file.Path;
     mixinStandardHelpOptions = true,
     description = "Generate a tool template")
 public class Template extends AbstractCommand {
-    @CommandLine.Option(names = {"--distribution-name"},
+    @CommandLine.Option(names = {"-dn", "--distribution-name"},
         description = "The name of the distribution",
         required = true)
     String distributionName;
 
-    @CommandLine.Option(names = {"--tool-name"},
+    @CommandLine.Option(names = {"-tn", "--tool-name"},
         description = "The name of the tool",
         required = true)
     String toolName;
 
-    @CommandLine.Option(names = {"--distribution-type"},
+    @CommandLine.Option(names = {"-dt", "--distribution-type"},
         description = "The type of the distribution",
         required = true,
         defaultValue = "BINARY")
     Distribution.DistributionType distributionType;
 
-    @CommandLine.Option(names = {"--overwrite"},
+    @CommandLine.Option(names = {"-o", "--overwrite"},
         description = "Overwrite existing files")
     boolean overwrite;
 
-    @CommandLine.Option(names = {"--snapshot"},
+    @CommandLine.Option(names = {"-s", "--snapshot"},
         description = "Use snapshot templates")
     boolean snapshot;
 

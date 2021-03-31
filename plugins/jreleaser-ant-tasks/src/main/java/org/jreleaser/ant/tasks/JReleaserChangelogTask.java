@@ -27,6 +27,6 @@ import org.jreleaser.workflow.Workflows;
 public class JReleaserChangelogTask extends AbstractJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        Workflows.changelog(createContext()).execute();
+        Workflows.changelog(context).execute();
     }
 }

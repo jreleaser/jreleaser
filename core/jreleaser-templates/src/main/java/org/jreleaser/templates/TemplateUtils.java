@@ -18,6 +18,7 @@
 package org.jreleaser.templates;
 
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.File;
@@ -83,7 +84,7 @@ public final class TemplateUtils {
             });
         } catch (IOException e) {
             String distributionTypeName = distributionType.name().toLowerCase().replace('_', '-');
-            throw new IllegalStateException("Unexpected error reading templates for distribution " +
+            throw new JReleaserException("Unexpected error reading templates for distribution " +
                 distributionTypeName + "/" + toolName + " from " + actualTemplateDirectory.toAbsolutePath());
         }
 
@@ -98,7 +99,7 @@ public final class TemplateUtils {
         logger.debug("Resolving templates from classpath");
         URL location = resolveLocation(TemplateUtils.class);
         if (null == location) {
-            throw new IllegalStateException("Could not find location of classpath templates");
+            throw new JReleaserException("Could not find location of classpath templates");
         }
 
         try {
@@ -125,10 +126,10 @@ public final class TemplateUtils {
                     logger.error("Templates for {}/{} were not found", distributionTypeName, toolName);
                 }
             } else {
-                throw new IllegalStateException("Could not find location of classpath templates");
+                throw new JReleaserException("Could not find location of classpath templates");
             }
         } catch (URISyntaxException | IOException e) {
-            throw new IllegalStateException("Unexpected error reading templates for distribution " +
+            throw new JReleaserException("Unexpected error reading templates for distribution " +
                 distributionTypeName + "/" + toolName + " from classpath.");
         }
 
@@ -158,7 +159,7 @@ public final class TemplateUtils {
         logger.debug("Resolving template from classpath for {}@{}", anchor.getName(), templateKey);
         URL location = resolveLocation(anchor);
         if (null == location) {
-            throw new IllegalStateException("Could not find location of classpath templates");
+            throw new JReleaserException("Could not find location of classpath templates");
         }
 
         try {
@@ -174,13 +175,13 @@ public final class TemplateUtils {
                     logger.debug("Found template {}", templateKey);
                     return new InputStreamReader(jarFile.getInputStream(entry));
                 }
-                throw new IllegalStateException("Template for " +
+                throw new JReleaserException("Template for " +
                     anchor.getName() + "@" + templateKey + " was not found");
             } else {
-                throw new IllegalStateException("Could not find location of classpath templates");
+                throw new JReleaserException("Could not find location of classpath templates");
             }
         } catch (URISyntaxException | IOException e) {
-            throw new IllegalStateException("Unexpected error reading template for " +
+            throw new JReleaserException("Unexpected error reading template for " +
                 anchor.getName() + "@" + templateKey + " from classpath.");
         }
     }

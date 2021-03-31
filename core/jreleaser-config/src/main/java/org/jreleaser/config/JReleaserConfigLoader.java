@@ -17,6 +17,7 @@
  */
 package org.jreleaser.config;
 
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 
 import java.io.IOException;
@@ -37,10 +38,10 @@ public class JReleaserConfigLoader {
                 try (InputStream inputStream = configFile.toUri().toURL().openStream()) {
                     return parser.parse(inputStream);
                 } catch (IOException e) {
-                    throw new IllegalArgumentException("Unexpected error parsing config file. " + configFile, e);
+                    throw new JReleaserException("Unexpected error parsing config file. " + configFile, e);
                 }
             }
         }
-        throw new IllegalArgumentException("Unsupported config format. " + configFile);
+        throw new JReleaserException("Unsupported config format. " + configFile);
     }
 }
