@@ -20,6 +20,7 @@ package org.jreleaser.util;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -510,5 +511,30 @@ public class StringUtils {
         }
 
         return Character.toLowerCase(str.charAt(0)) + str.substring(1);
+    }
+
+    public static Object splitValue(String value) {
+        if (isBlank(value) || value.length() == 1) return value;
+        char splitter = value.charAt(value.length() - 1);
+        return Arrays.asList(value.substring(0, value.length() - 1).split(escape(splitter)));
+    }
+
+    private static String escape(char character) {
+        switch (character) {
+            case '$':
+            case '(':
+            case ')':
+            case '.':
+            case '[':
+            case '\\':
+            case ']':
+            case '^':
+            case '{':
+            case '|':
+            case '}':
+                return "\\" + character;
+            default:
+                return "" + character;
+        }
     }
 }

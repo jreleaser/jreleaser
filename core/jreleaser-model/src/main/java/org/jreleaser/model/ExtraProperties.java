@@ -23,6 +23,8 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jreleaser.util.StringUtils.splitValue;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -30,21 +32,31 @@ import java.util.Map;
 public interface ExtraProperties extends Serializable {
     String getPrefix();
 
-    Map<String, Object> getExtraProperties();
+    Map<String, String> getExtraProperties();
 
-    void setExtraProperties(Map<String, Object> properties);
+    void setExtraProperties(Map<String, String> properties);
 
-    void addExtraProperties(Map<String, Object> properties);
+    void addExtraProperties(Map<String, String> properties);
 
     default Map<String, Object> getResolvedExtraProperties() {
         Map<String, Object> props = new LinkedHashMap<>();
 
         getExtraProperties().forEach((key, value) -> {
             String prefix = getPrefix();
+
+            boolean split = key.endsWith("_split");
+            String k = key;
+            Object v = value;
+
+            if (split) {
+                k = key.substring(0, key.length() - "_split".length());
+                v = splitValue(value);
+            }
+
             if (key.startsWith(prefix)) {
-                props.put(key, value);
+                props.put(k, v);
             } else {
-                props.put(prefix + StringUtils.capitalize(key), value);
+                props.put(prefix + StringUtils.capitalize(k), v);
             }
         });
 

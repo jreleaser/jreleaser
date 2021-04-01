@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Project implements ExtraProperties {
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private String name;
     private String version;
     private String snapshotPattern;
@@ -120,12 +120,12 @@ public class Project implements ExtraProperties {
     }
 
     @Override
-    public Map<String, Object> getExtraProperties() {
+    public Map<String, String> getExtraProperties() {
         return extraProperties;
     }
 
     @Override
-    public void setExtraProperties(Map<String, Object> extraProperties) {
+    public void setExtraProperties(Map<String, String> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
 

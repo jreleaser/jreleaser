@@ -40,7 +40,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     );
 
     private final List<String> tags = new ArrayList<>();
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private final List<Artifact> artifacts = new ArrayList<>();
     private final Java java = new Java();
     private Boolean enabled;
@@ -163,19 +163,19 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     }
 
     @Override
-    public Map<String, Object> getExtraProperties() {
+    public Map<String, String> getExtraProperties() {
         return extraProperties;
     }
 
     @Override
-    public void setExtraProperties(Map<String, Object> extraProperties) {
+    public void setExtraProperties(Map<String, String> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
 
     // --== TOOLs ==--
 
     @Override
-    public void addExtraProperties(Map<String, Object> extraProperties) {
+    public void addExtraProperties(Map<String, String> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
 

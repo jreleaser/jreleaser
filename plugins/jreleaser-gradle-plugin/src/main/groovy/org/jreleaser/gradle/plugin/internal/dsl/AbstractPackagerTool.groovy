@@ -36,12 +36,12 @@ import javax.inject.Inject
 @CompileStatic
 abstract class AbstractPackagerTool implements PackagerTool {
     final Property<Boolean> enabled
-    final MapProperty<String, Object> extraProperties
+    final MapProperty<String, String> extraProperties
 
     @Inject
     AbstractPackagerTool(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
-        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+        extraProperties = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
     protected abstract String toolName()

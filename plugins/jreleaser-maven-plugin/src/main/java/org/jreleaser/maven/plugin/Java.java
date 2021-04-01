@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Java implements ExtraProperties {
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final Map<String, String> extraProperties = new LinkedHashMap<>();
 
     private String version;
     private String groupId;
@@ -93,12 +93,12 @@ public class Java implements ExtraProperties {
     }
 
     @Override
-    public Map<String, Object> getExtraProperties() {
+    public Map<String, String> getExtraProperties() {
         return extraProperties;
     }
 
     @Override
-    public void setExtraProperties(Map<String, Object> extraProperties) {
+    public void setExtraProperties(Map<String, String> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
 }

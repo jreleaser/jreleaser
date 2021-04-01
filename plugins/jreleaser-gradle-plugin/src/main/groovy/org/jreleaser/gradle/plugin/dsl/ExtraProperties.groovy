@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl;
+package org.jreleaser.gradle.plugin.dsl
 
-import org.gradle.api.provider.MapProperty;
+import org.gradle.api.provider.MapProperty
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface ExtraProperties {
-    MapProperty<String, Object> getExtraProperties();
+interface ExtraProperties {
+    MapProperty<String, Object> getExtraProperties()
 }

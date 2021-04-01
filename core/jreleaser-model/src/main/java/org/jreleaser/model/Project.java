@@ -39,7 +39,7 @@ public class Project implements Domain, ExtraProperties {
 
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private final Java java = new Java();
     private String name;
     private String version;
@@ -155,17 +155,17 @@ public class Project implements Domain, ExtraProperties {
     }
 
     @Override
-    public Map<String, Object> getExtraProperties() {
+    public Map<String, String> getExtraProperties() {
         return extraProperties;
     }
 
     @Override
-    public void setExtraProperties(Map<String, Object> extraProperties) {
+    public void setExtraProperties(Map<String, String> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
-    public void addExtraProperties(Map<String, Object> extraProperties) {
+    public void addExtraProperties(Map<String, String> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
 

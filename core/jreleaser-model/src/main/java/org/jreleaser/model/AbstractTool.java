@@ -29,7 +29,7 @@ import java.util.Set;
  */
 abstract class AbstractTool implements Tool {
     protected final String name;
-    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    protected final Map<String, String> extraProperties = new LinkedHashMap<>();
     protected Boolean enabled;
     protected String templateDirectory;
     protected CommitAuthor commitAuthor = new CommitAuthor();
@@ -98,18 +98,18 @@ abstract class AbstractTool implements Tool {
     }
 
     @Override
-    public Map<String, Object> getExtraProperties() {
+    public Map<String, String> getExtraProperties() {
         return extraProperties;
     }
 
     @Override
-    public void setExtraProperties(Map<String, Object> extraProperties) {
+    public void setExtraProperties(Map<String, String> extraProperties) {
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
-    public void addExtraProperties(Map<String, Object> extraProperties) {
+    public void addExtraProperties(Map<String, String> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
 

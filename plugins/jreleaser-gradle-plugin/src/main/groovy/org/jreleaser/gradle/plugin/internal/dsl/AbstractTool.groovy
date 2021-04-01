@@ -40,7 +40,7 @@ import javax.inject.Inject
 abstract class AbstractTool implements Tool {
     final Property<Boolean> enabled
     final DirectoryProperty templateDirectory
-    final MapProperty<String, Object> extraProperties
+    final MapProperty<String, String> extraProperties
     final Property<String> distributionName
 
     private final Provider<Directory> distributionsDirProvider
@@ -52,7 +52,7 @@ abstract class AbstractTool implements Tool {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
         templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
         localTemplate = objects.directoryProperty()
-        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+        extraProperties = objects.mapProperty(String, String).convention(Providers.notDefined())
         distributionName = objects.property(String).convention(Providers.notDefined())
 
         // FIXME: there's probable a better way to do this

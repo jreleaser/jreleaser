@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class Distribution extends Packagers implements ExtraProperties, EnabledProvider {
     private final List<String> tags = new ArrayList<>();
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private final List<Artifact> artifacts = new ArrayList<>();
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;
@@ -120,12 +120,12 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     }
 
     @Override
-    public Map<String, Object> getExtraProperties() {
+    public Map<String, String> getExtraProperties() {
         return extraProperties;
     }
 
     @Override
-    public void setExtraProperties(Map<String, Object> extraProperties) {
+    public void setExtraProperties(Map<String, String> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
 

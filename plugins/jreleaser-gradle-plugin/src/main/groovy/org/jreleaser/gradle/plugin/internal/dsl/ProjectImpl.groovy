@@ -48,7 +48,7 @@ class ProjectImpl implements Project {
     final Property<String> license
     final ListProperty<String> authors
     final ListProperty<String> tags
-    final MapProperty<String, Object> extraProperties
+    final MapProperty<String, String> extraProperties
     final JavaImpl java
 
     @Inject
@@ -65,7 +65,7 @@ class ProjectImpl implements Project {
         license = objects.property(String).convention(Providers.notDefined())
         authors = objects.listProperty(String).convention(Providers.notDefined())
         tags = objects.listProperty(String).convention(Providers.notDefined())
-        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+        extraProperties = objects.mapProperty(String, String).convention(Providers.notDefined())
 
         java = objects.newInstance(JavaImpl, objects)
     }
