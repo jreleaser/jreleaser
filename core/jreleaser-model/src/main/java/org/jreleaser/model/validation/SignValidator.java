@@ -50,7 +50,7 @@ public abstract class SignValidator extends Validator {
         signing.setPublicKey(
             checkProperty(context.getModel().getEnvironment(),
                 GPG_PUBLIC_KEY,
-                "signing.secretKey",
+                "signing.publicKey",
                 signing.getPublicKey(),
                 errors));
 

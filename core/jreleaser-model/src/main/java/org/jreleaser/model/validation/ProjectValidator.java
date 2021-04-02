@@ -69,7 +69,10 @@ public abstract class ProjectValidator extends Validator {
             errors.add("project.authors must not be empty");
         }
 
-        validateJava(context, project, errors);
+        // validate only if there are distributions
+        if (context.getModel().getDistributions().size() > 0) {
+            validateJava(context, project, errors);
+        }
     }
 
     private static void validateJava(JReleaserContext context, Project project, List<String> errors) {
