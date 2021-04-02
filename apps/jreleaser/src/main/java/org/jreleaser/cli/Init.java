@@ -47,11 +47,11 @@ import static java.nio.file.StandardOpenOption.WRITE;
     mixinStandardHelpOptions = true,
     description = "Create a jreleaser config file")
 public class Init extends AbstractCommand {
-    @CommandLine.Option(names = {"--overwrite"},
+    @CommandLine.Option(names = {"-o", "--overwrite"},
         description = "Overwrite existing files")
     boolean overwrite;
 
-    @CommandLine.Option(names = {"--format"},
+    @CommandLine.Option(names = {"-f", "--format"},
         description = "Configuration file format")
     String format;
 

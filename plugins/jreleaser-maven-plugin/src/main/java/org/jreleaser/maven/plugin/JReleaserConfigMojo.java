@@ -26,6 +26,8 @@ import org.jreleaser.maven.plugin.internal.JReleaserModelPrinter;
 import java.io.PrintWriter;
 
 /**
+ * Display current configuration.
+ *
  * @author Andres Almiray
  * @since 0.1.0
  */

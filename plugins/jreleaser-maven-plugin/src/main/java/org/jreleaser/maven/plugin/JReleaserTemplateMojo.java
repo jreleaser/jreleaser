@@ -33,6 +33,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
+ * Generate a tool template.
+ *
  * @author Andres Almiray
  * @since 0.1.0
  */
@@ -59,7 +61,7 @@ public class JReleaserTemplateMojo extends AbstractMojo {
     /**
      * The type of the distribution
      */
-    @Parameter(property = "jreleaser.template.distribution.yype", defaultValue = "BINARY")
+    @Parameter(property = "jreleaser.template.distribution.type", defaultValue = "JAVA_BINARY")
     private final Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
 
     /**

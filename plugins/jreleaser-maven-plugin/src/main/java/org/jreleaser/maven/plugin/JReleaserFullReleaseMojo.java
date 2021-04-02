@@ -24,6 +24,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.workflow.Workflows;
 
 /**
+ * Perform a full release.
+ *
  * @author Andres Almiray
  * @since 0.1.0
  */

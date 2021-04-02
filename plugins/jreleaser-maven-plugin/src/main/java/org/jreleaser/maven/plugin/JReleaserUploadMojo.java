@@ -25,6 +25,8 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
 /**
+ * Upload all distributions.
+ *
  * @author Andres Almiray
  * @since 0.1.0
  */

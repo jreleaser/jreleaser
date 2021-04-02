@@ -36,7 +36,7 @@ import java.util.Set;
  */
 @CommandLine.Command
 public abstract class AbstractModelCommand extends AbstractCommand {
-    @CommandLine.Option(names = {"--config-file"},
+    @CommandLine.Option(names = {"-c", "--config-file"},
         description = "The config file")
     Path configFile;
 

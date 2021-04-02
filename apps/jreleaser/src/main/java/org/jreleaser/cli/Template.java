@@ -46,7 +46,7 @@ public class Template extends AbstractCommand {
     @CommandLine.Option(names = {"-dt", "--distribution-type"},
         description = "The type of the distribution",
         required = true,
-        defaultValue = "BINARY")
+        defaultValue = "JAVA_BINARY")
     Distribution.DistributionType distributionType;
 
     @CommandLine.Option(names = {"-o", "--overwrite"},
