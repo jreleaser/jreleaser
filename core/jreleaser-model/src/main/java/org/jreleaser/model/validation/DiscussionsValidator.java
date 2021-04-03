@@ -32,6 +32,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class DiscussionsValidator extends Validator {
+    private static final String DEFAULT_DISCUSSIONS_TPL = "src/jreleaser/templates/discussions.tpl";
+
     public static void validateDiscussions(JReleaserContext context, Discussions discussions, List<String> errors) {
         if (!discussions.isEnabled()) return;
 
@@ -55,6 +57,14 @@ public abstract class DiscussionsValidator extends Validator {
 
         if (isBlank(discussions.getMessage()) && isBlank(discussions.getMessageTemplate())) {
             discussions.setMessageTemplate("src/jreleaser/templates/discussions.tpl");
+        }
+
+        if (isBlank(discussions.getMessage()) && isBlank(discussions.getMessageTemplate())) {
+            if (Files.exists(context.getBasedir().resolve(DEFAULT_DISCUSSIONS_TPL))) {
+                discussions.setMessageTemplate(DEFAULT_DISCUSSIONS_TPL);
+            } else {
+                discussions.setMessage("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
+            }
         }
 
         if (isNotBlank(discussions.getMessageTemplate()) &&
