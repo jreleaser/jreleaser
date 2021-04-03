@@ -21,11 +21,14 @@ import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.jreleaser.util.JReleaserLogger;
 import org.kohsuke.github.GHAsset;
+import org.kohsuke.github.GHDiscussion;
+import org.kohsuke.github.GHException;
 import org.kohsuke.github.GHFileNotFoundException;
 import org.kohsuke.github.GHOrganization;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHReleaseBuilder;
 import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHTeam;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 
@@ -33,6 +36,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 import static org.jreleaser.sdk.git.GitSdk.REFS_TAGS;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -122,6 +127,30 @@ class Github {
         }
     }
 
+    Optional<GHDiscussion> findDiscussion(String organization, String team, String title) throws IOException {
+        GHTeam ghTeam = resolveTeam(organization, team);
+
+        try {
+            return StreamSupport.stream(ghTeam.listDiscussions().spliterator(), false)
+                .filter(d -> title.equals(d.getTitle()))
+                .findFirst();
+        } catch (GHException ghe) {
+            if (ghe.getCause() instanceof GHFileNotFoundException) {
+                // OK
+                return Optional.empty();
+            }
+            throw ghe;
+        }
+    }
+
+    GHDiscussion createDiscussion(String organization, String team, String title, String message) throws IOException {
+        GHTeam ghTeam = resolveTeam(organization, team);
+
+        return ghTeam.createDiscussion(title)
+            .body(message)
+            .done();
+    }
+
     private GHOrganization resolveOrganization(String name) throws IOException {
         try {
             return github.getOrganization(name);
@@ -129,5 +158,29 @@ class Github {
             // OK, means the organization does not exist
             return null;
         }
+    }
+
+    private GHTeam resolveTeam(String organization, String team) throws IOException {
+        GHOrganization ghOrganization = null;
+
+        try {
+            ghOrganization = github.getOrganization(organization);
+        } catch (GHFileNotFoundException e) {
+            throw new IllegalStateException("Organization '" + organization + "' does not exist");
+        }
+
+        GHTeam ghTeam = null;
+
+        try {
+            ghTeam = ghOrganization.getTeamByName(team);
+        } catch (IOException e) {
+            throw new IllegalStateException("Team '" + team + "' does not exist");
+        }
+
+        if (null == ghTeam) {
+            throw new IllegalStateException("Team '" + team + "' does not exist");
+        }
+
+        return ghTeam;
     }
 }

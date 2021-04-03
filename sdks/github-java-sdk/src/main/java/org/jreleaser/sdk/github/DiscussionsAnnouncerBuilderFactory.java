@@ -15,14 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
-    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+package org.jreleaser.sdk.github;
 
-    api project(':jreleaser-model')
-    api project(':git-sdk')
+import org.jreleaser.model.announcer.spi.AnnouncerBuilderFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
-    api "org.apache.tika:tika-core:$tikaVersion"
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+@ServiceProviderFor(AnnouncerBuilderFactory.class)
+public class DiscussionsAnnouncerBuilderFactory implements AnnouncerBuilderFactory<DiscussionsAnnouncer, DiscussionsAnnouncerBuilder> {
+    @Override
+    public String getName() {
+        return org.jreleaser.model.Discussions.NAME;
+    }
 
-    api "org.kohsuke:github-api:$githubVersion"
+    @Override
+    public DiscussionsAnnouncerBuilder getBuilder() {
+        return new DiscussionsAnnouncerBuilder();
+    }
 }

@@ -25,6 +25,7 @@ import org.jreleaser.maven.plugin.Catalog;
 import org.jreleaser.maven.plugin.Changelog;
 import org.jreleaser.maven.plugin.Chocolatey;
 import org.jreleaser.maven.plugin.CommitAuthor;
+import org.jreleaser.maven.plugin.Discussions;
 import org.jreleaser.maven.plugin.Distribution;
 import org.jreleaser.maven.plugin.Environment;
 import org.jreleaser.maven.plugin.Files;
@@ -204,10 +205,22 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Announce convertAnnounce(Announce announce) {
         org.jreleaser.model.Announce a = new org.jreleaser.model.Announce();
         if (announce.isEnabledSet()) a.setEnabled(announce.isEnabled());
+        if (announce.getDiscussions().isSet()) a.setDiscussions(convertDiscussions(announce.getDiscussions()));
         if (announce.getMail().isSet()) a.setMail(convertMail(announce.getMail()));
         if (announce.getSdkman().isSet()) a.setSdkman(convertSdkman(announce.getSdkman()));
         if (announce.getTwitter().isSet()) a.setTwitter(convertTwitter(announce.getTwitter()));
         if (announce.getZulip().isSet()) a.setZulip(convertZulip(announce.getZulip()));
+        return a;
+    }
+
+    private static org.jreleaser.model.Discussions convertDiscussions(Discussions discussions) {
+        org.jreleaser.model.Discussions a = new org.jreleaser.model.Discussions();
+        if (discussions.isEnabledSet()) a.setEnabled(discussions.isEnabled());
+        a.setOrganization(discussions.getOrganization());
+        a.setTeam(discussions.getTeam());
+        a.setTitle(discussions.getTitle());
+        a.setMessage(discussions.getMessage());
+        a.setMessageTemplate(discussions.getMessageTemplate());
         return a;
     }
 

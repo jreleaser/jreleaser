@@ -22,6 +22,7 @@ import org.jreleaser.model.JReleaserContext;
 
 import java.util.List;
 
+import static org.jreleaser.model.validation.DiscussionsValidator.validateDiscussions;
 import static org.jreleaser.model.validation.MailValidator.validateMail;
 import static org.jreleaser.model.validation.SdkmanValidator.validateSdkman;
 import static org.jreleaser.model.validation.TwitterValidator.validateTwitter;
@@ -34,17 +35,18 @@ import static org.jreleaser.model.validation.ZulipValidator.validateZulip;
 public abstract class AnnouncersValidator extends Validator {
     public static void validateAnnouncers(JReleaserContext context, List<String> errors) {
         Announce announce = context.getModel().getAnnounce();
+        validateDiscussions(context, announce.getDiscussions(), errors);
         validateMail(context, announce.getMail(), errors);
         validateSdkman(context, announce.getSdkman(), errors);
         validateTwitter(context, announce.getTwitter(), errors);
         validateZulip(context, announce.getZulip(), errors);
 
-        boolean enabled = announce.getMail().isEnabled() ||
-            announce.getSdkman().isEnabled() ||
-            announce.getTwitter().isEnabled() ||
-            announce.getZulip().isEnabled();
         if (!announce.isEnabledSet()) {
-            announce.setEnabled(enabled);
+            announce.setEnabled(announce.getDiscussions().isEnabled() ||
+                announce.getMail().isEnabled() ||
+                announce.getSdkman().isEnabled() ||
+                announce.getTwitter().isEnabled() ||
+                announce.getZulip().isEnabled());
         }
     }
 }

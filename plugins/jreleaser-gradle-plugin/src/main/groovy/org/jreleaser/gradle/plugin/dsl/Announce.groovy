@@ -30,6 +30,8 @@ import org.gradle.api.provider.Property
 interface Announce {
     Property<Boolean> getEnabled()
 
+    Discussions getDiscussions()
+
     Mail getMail()
 
     Sdkman getSdkman()
@@ -37,6 +39,8 @@ interface Announce {
     Twitter getTwitter()
 
     Zulip getZulip()
+
+    void discussions(Action<? super Discussions> action)
 
     void mail(Action<? super Mail> action)
 

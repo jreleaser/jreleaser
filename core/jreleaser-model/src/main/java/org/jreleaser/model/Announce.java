@@ -25,6 +25,7 @@ import java.util.Map;
  * @since 0.1.0
  */
 public class Announce implements Domain, EnabledProvider {
+    private final Discussions discussions = new Discussions();
     private final Mail mail = new Mail();
     private final Sdkman sdkman = new Sdkman();
     private final Twitter twitter = new Twitter();
@@ -33,6 +34,7 @@ public class Announce implements Domain, EnabledProvider {
 
     void setAll(Announce announce) {
         this.enabled = announce.enabled;
+        setDiscussions(announce.discussions);
         setMail(announce.mail);
         setSdkman(announce.sdkman);
         setTwitter(announce.twitter);
@@ -52,6 +54,14 @@ public class Announce implements Domain, EnabledProvider {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
+    }
+
+    public Discussions getDiscussions() {
+        return discussions;
+    }
+
+    public void setDiscussions(Discussions discussions) {
+        this.discussions.setAll(discussions);
     }
 
     public Mail getMail() {
@@ -90,6 +100,7 @@ public class Announce implements Domain, EnabledProvider {
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
+        map.putAll(discussions.asMap());
         map.putAll(mail.asMap());
         map.putAll(sdkman.asMap());
         map.putAll(twitter.asMap());

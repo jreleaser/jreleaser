@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.announce;
 
+import org.jreleaser.model.Discussions;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Mail;
@@ -94,6 +95,9 @@ public class Announcers {
             .collect(Collectors.toMap(AnnouncerBuilderFactory::getName, AnnouncerBuilderFactory::getBuilder));
 
         Map<String, Announcer> announcers = new LinkedHashMap<>();
+        if (null != model.getAnnounce().getDiscussions() && model.getAnnounce().getDiscussions().isEnabled()) {
+            announcers.put(Discussions.NAME, builders.get(Discussions.NAME).configureWith(context).build());
+        }
         if (null != model.getAnnounce().getMail() && model.getAnnounce().getMail().isEnabled()) {
             announcers.put(Mail.NAME, builders.get(Mail.NAME).configureWith(context).build());
         }

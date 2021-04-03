@@ -15,14 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
-    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+package org.jreleaser.gradle.plugin.dsl
 
-    api project(':jreleaser-model')
-    api project(':git-sdk')
+import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.Announcer
 
-    api "org.apache.tika:tika-core:$tikaVersion"
+/**
+ *
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+@CompileStatic
+interface Discussions extends Announcer {
+    Property<String> getOrganization()
 
-    api "org.kohsuke:github-api:$githubVersion"
+    Property<String> getTeam()
+
+    Property<String> getTitle()
+
+    Property<String> getMessage()
+
+    RegularFileProperty getMessageTemplate()
 }
