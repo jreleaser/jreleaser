@@ -28,6 +28,7 @@ public class Announce implements Domain, EnabledProvider {
     private final Discussions discussions = new Discussions();
     private final Mail mail = new Mail();
     private final Sdkman sdkman = new Sdkman();
+    private final Slack slack = new Slack();
     private final Twitter twitter = new Twitter();
     private final Zulip zulip = new Zulip();
     private Boolean enabled;
@@ -37,6 +38,7 @@ public class Announce implements Domain, EnabledProvider {
         setDiscussions(announce.discussions);
         setMail(announce.mail);
         setSdkman(announce.sdkman);
+        setSlack(announce.slack);
         setTwitter(announce.twitter);
         setZulip(announce.zulip);
     }
@@ -80,6 +82,14 @@ public class Announce implements Domain, EnabledProvider {
         this.sdkman.setAll(sdkman);
     }
 
+    public Slack getSlack() {
+        return slack;
+    }
+
+    public void setSlack(Slack slack) {
+        this.slack.setAll(slack);
+    }
+
     public Twitter getTwitter() {
         return twitter;
     }
@@ -103,6 +113,7 @@ public class Announce implements Domain, EnabledProvider {
         map.putAll(discussions.asMap());
         map.putAll(mail.asMap());
         map.putAll(sdkman.asMap());
+        map.putAll(slack.asMap());
         map.putAll(twitter.asMap());
         map.putAll(zulip.asMap());
         return map;

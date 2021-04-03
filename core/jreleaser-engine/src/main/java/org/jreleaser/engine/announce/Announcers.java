@@ -22,6 +22,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Mail;
 import org.jreleaser.model.Sdkman;
+import org.jreleaser.model.Slack;
 import org.jreleaser.model.Twitter;
 import org.jreleaser.model.Zulip;
 import org.jreleaser.model.announcer.spi.AnnounceException;
@@ -103,6 +104,9 @@ public class Announcers {
         }
         if (null != model.getAnnounce().getSdkman() && model.getAnnounce().getSdkman().isEnabled()) {
             announcers.put(Sdkman.NAME, builders.get(Sdkman.NAME).configureWith(context).build());
+        }
+        if (null != model.getAnnounce().getSlack() && model.getAnnounce().getSlack().isEnabled()) {
+            announcers.put(Slack.NAME, builders.get(Slack.NAME).configureWith(context).build());
         }
         if (null != model.getAnnounce().getTwitter() && model.getAnnounce().getTwitter().isEnabled()) {
             announcers.put(Twitter.NAME, builders.get(Twitter.NAME).configureWith(context).build());

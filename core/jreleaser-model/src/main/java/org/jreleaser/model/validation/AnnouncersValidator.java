@@ -25,6 +25,7 @@ import java.util.List;
 import static org.jreleaser.model.validation.DiscussionsValidator.validateDiscussions;
 import static org.jreleaser.model.validation.MailValidator.validateMail;
 import static org.jreleaser.model.validation.SdkmanValidator.validateSdkman;
+import static org.jreleaser.model.validation.SlackValidator.validateSlack;
 import static org.jreleaser.model.validation.TwitterValidator.validateTwitter;
 import static org.jreleaser.model.validation.ZulipValidator.validateZulip;
 
@@ -38,6 +39,7 @@ public abstract class AnnouncersValidator extends Validator {
         validateDiscussions(context, announce.getDiscussions(), errors);
         validateMail(context, announce.getMail(), errors);
         validateSdkman(context, announce.getSdkman(), errors);
+        validateSlack(context, announce.getSlack(), errors);
         validateTwitter(context, announce.getTwitter(), errors);
         validateZulip(context, announce.getZulip(), errors);
 
@@ -45,6 +47,7 @@ public abstract class AnnouncersValidator extends Validator {
             announce.setEnabled(announce.getDiscussions().isEnabled() ||
                 announce.getMail().isEnabled() ||
                 announce.getSdkman().isEnabled() ||
+                announce.getSlack().isEnabled() ||
                 announce.getTwitter().isEnabled() ||
                 announce.getZulip().isEnabled());
         }

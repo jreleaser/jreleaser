@@ -45,6 +45,7 @@ import org.jreleaser.maven.plugin.Release;
 import org.jreleaser.maven.plugin.Scoop;
 import org.jreleaser.maven.plugin.Sdkman;
 import org.jreleaser.maven.plugin.Signing;
+import org.jreleaser.maven.plugin.Slack;
 import org.jreleaser.maven.plugin.Slot;
 import org.jreleaser.maven.plugin.Snap;
 import org.jreleaser.maven.plugin.Tap;
@@ -208,6 +209,7 @@ public final class JReleaserModelConverter {
         if (announce.getDiscussions().isSet()) a.setDiscussions(convertDiscussions(announce.getDiscussions()));
         if (announce.getMail().isSet()) a.setMail(convertMail(announce.getMail()));
         if (announce.getSdkman().isSet()) a.setSdkman(convertSdkman(announce.getSdkman()));
+        if (announce.getSlack().isSet()) a.setSlack(convertSlack(announce.getSlack()));
         if (announce.getTwitter().isSet()) a.setTwitter(convertTwitter(announce.getTwitter()));
         if (announce.getZulip().isSet()) a.setZulip(convertZulip(announce.getZulip()));
         return a;
@@ -250,6 +252,16 @@ public final class JReleaserModelConverter {
         a.setConsumerToken(sdkman.getConsumerToken());
         a.setCandidate(sdkman.getCandidate());
         a.setMajor(sdkman.isMajor());
+        return a;
+    }
+
+    private static org.jreleaser.model.Slack convertSlack(Slack slack) {
+        org.jreleaser.model.Slack a = new org.jreleaser.model.Slack();
+        if (slack.isEnabledSet()) a.setEnabled(slack.isEnabled());
+        a.setToken(slack.getToken());
+        a.setChannel(slack.getChannel());
+        a.setMessage(slack.getMessage());
+        a.setMessageTemplate(slack.getMessageTemplate());
         return a;
     }
 

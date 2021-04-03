@@ -26,6 +26,7 @@ import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Discussions
 import org.jreleaser.gradle.plugin.dsl.Mail
 import org.jreleaser.gradle.plugin.dsl.Sdkman
+import org.jreleaser.gradle.plugin.dsl.Slack
 import org.jreleaser.gradle.plugin.dsl.Twitter
 import org.jreleaser.gradle.plugin.dsl.Zulip
 
@@ -42,6 +43,7 @@ class AnnounceImpl implements Announce {
     final DiscussionsImpl discussions
     final MailImpl mail
     final SdkmanImpl sdkman
+    final SlackImpl slack
     final TwitterImpl twitter
     final ZulipImpl zulip
 
@@ -51,6 +53,7 @@ class AnnounceImpl implements Announce {
         discussions = objects.newInstance(DiscussionsImpl, objects)
         mail = objects.newInstance(MailImpl, objects)
         sdkman = objects.newInstance(SdkmanImpl, objects)
+        slack = objects.newInstance(SlackImpl, objects)
         twitter = objects.newInstance(TwitterImpl, objects)
         zulip = objects.newInstance(ZulipImpl, objects)
     }
@@ -71,6 +74,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void slack(Action<? super Slack> action) {
+        action.execute(slack)
+    }
+
+    @Override
     void twitter(Action<? super Twitter> action) {
         action.execute(twitter)
     }
@@ -86,6 +94,7 @@ class AnnounceImpl implements Announce {
         if (discussions.isSet()) announce.discussions = discussions.toModel()
         if (mail.isSet()) announce.mail = mail.toModel()
         if (sdkman.isSet()) announce.sdkman = sdkman.toModel()
+        if (slack.isSet()) announce.slack = slack.toModel()
         if (twitter.isSet()) announce.twitter = twitter.toModel()
         if (zulip.isSet()) announce.zulip = zulip.toModel()
         announce

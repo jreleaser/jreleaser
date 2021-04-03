@@ -15,64 +15,74 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.zulip;
+package org.jreleaser.sdk.slack;
 
 import feign.Feign;
 import feign.Request;
-import feign.auth.BasicAuthRequestInterceptor;
 import feign.form.FormEncoder;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
-import org.jreleaser.sdk.zulip.api.Message;
-import org.jreleaser.sdk.zulip.api.ZulipAPI;
+import org.jreleaser.sdk.slack.api.Message;
+import org.jreleaser.sdk.slack.api.SlackAPI;
+import org.jreleaser.sdk.slack.api.SlackResponse;
 import org.jreleaser.util.JReleaserLogger;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNull;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Zulip {
+public class Slack {
     private final JReleaserLogger logger;
-    private final ZulipAPI api;
+    private final SlackAPI api;
     private final boolean dryrun;
 
-    public Zulip(JReleaserLogger logger, String apiHost, String account, String apiKey, boolean dryrun) {
+    public Slack(JReleaserLogger logger, String token, String apiHost, boolean dryrun) {
         requireNonNull(logger, "'logger' must not be blank");
-        requireNonBlank(apiHost, "'apiHost' must not be blank");
-        requireNonBlank(account, "'account' must not be blank");
-        requireNonBlank(apiKey, "'apiKey' must not be blank");
+        requireNonBlank(token, "'token' must not be blank");
 
         this.logger = logger;
         this.dryrun = dryrun;
         this.api = Feign.builder()
             .encoder(new FormEncoder(new JacksonEncoder()))
             .decoder(new JacksonDecoder())
-            .requestInterceptor(new BasicAuthRequestInterceptor(account, apiKey))
+            .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", token)))
             .errorDecoder((methodKey, response) -> new IllegalStateException("Server returned error " + response.reason()))
             .options(new Request.Options(20, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
-            .target(ZulipAPI.class, apiHost);
+            .target(SlackAPI.class, apiHost);
 
-        this.logger.debug("Zulip dryrun set to {}", dryrun);
+        this.logger.debug("Slack dryrun set to {}", dryrun);
     }
 
     public void message(String channel,
-                        String subject,
-                        String message) throws ZulipException {
-        Message payload = Message.of(channel, subject, message);
-        logger.debug("zulip.message: " + payload.toString());
-        wrap(() -> api.message(payload));
+                        String message) throws SlackException {
+        Message payload = Message.of(channel, message);
+        logger.debug("slack.message: " + payload.toString());
+        decode(wrap(() -> {
+            SlackResponse response = api.message(payload);
+            return response.getError();
+        }));
     }
 
-    private void wrap(Runnable runnable) throws ZulipException {
-        try {
-            if (!dryrun) runnable.run();
-        } catch (RuntimeException e) {
-            throw new ZulipException("Zulip operation failed", e);
+    private void decode(String error) throws SlackException {
+        if (isNotBlank(error) && !"null".equals(error)) {
+            throw new SlackException(error);
         }
+    }
+
+    private String wrap(Callable<String> runnable) throws SlackException {
+        try {
+            if (!dryrun) return runnable.call();
+        } catch (Exception e) {
+            throw new SlackException("Slack operation failed", e);
+        }
+
+        return null;
     }
 }

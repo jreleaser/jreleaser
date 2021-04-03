@@ -15,16 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-engine')
-    // announce
-    api project(':mail-java-sdk')
-    api project(':sdkman-java-sdk')
-    api project(':slack-java-sdk')
-    api project(':twitter-java-sdk')
-    api project(':zulip-java-sdk')
-    // release
-    api project(':github-java-sdk')
-    // tools
-    api project(':jreleaser-tools')
+package org.jreleaser.gradle.plugin.dsl
+
+import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.Announcer
+
+/**
+ *
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+@CompileStatic
+interface Slack extends Announcer {
+    Property<String> getToken()
+
+    Property<String> getChannel()
+
+    Property<String> getMessage()
+
+    RegularFileProperty getMessageTemplate()
 }

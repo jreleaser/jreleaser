@@ -25,6 +25,7 @@ public class Announce implements EnabledProvider {
     private final Discussions discussions = new Discussions();
     private final Mail mail = new Mail();
     private final Sdkman sdkman = new Sdkman();
+    private final Slack slack = new Slack();
     private final Twitter twitter = new Twitter();
     private final Zulip zulip = new Zulip();
     private Boolean enabled;
@@ -34,6 +35,7 @@ public class Announce implements EnabledProvider {
         setDiscussions(announce.discussions);
         setMail(announce.mail);
         setSdkman(announce.sdkman);
+        setSlack(announce.slack);
         setTwitter(announce.twitter);
         setZulip(announce.zulip);
     }
@@ -75,6 +77,14 @@ public class Announce implements EnabledProvider {
 
     public void setSdkman(Sdkman sdkman) {
         this.sdkman.setAll(sdkman);
+    }
+
+    public Slack getSlack() {
+        return slack;
+    }
+
+    public void setSlack(Slack slack) {
+        this.slack.setAll(slack);
     }
 
     public Twitter getTwitter() {
