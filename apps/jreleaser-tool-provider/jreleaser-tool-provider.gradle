@@ -86,3 +86,11 @@ java {
         languageVersion = JavaLanguageVersion.of(9)
     }
 }
+
+task versionFile {
+    doLast {
+        project.layout.buildDirectory.file('VERSION').get().asFile.text = project.version
+    }
+}
+
+classes.dependsOn(versionFile)
