@@ -21,6 +21,18 @@ config {
         inceptionYear = '2020'
         tags = ['release']
 
+        links {
+            website      = "https://github.com/jreleaser/${project.rootProject.name}"
+            issueTracker = "https://github.com/jreleaser/${project.rootProject.name}/issues"
+            scm          = "https://github.com/jreleaser/${project.rootProject.name}.git"
+        }
+
+        scm {
+            url                 = "https://github.com/jreleaser/${project.rootProject.name}"
+            connection          = "scm:git:https://github.com/jreleaser/${project.rootProject.name}.git"
+            developerConnection = "scm:git:git@github.com:jreleaser/${project.rootProject.name}.git"
+        }
+
         specification {
             enabled = true
         }
