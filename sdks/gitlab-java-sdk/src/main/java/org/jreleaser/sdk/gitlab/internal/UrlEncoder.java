@@ -15,17 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-engine')
-    // announce
-    api project(':mail-java-sdk')
-    api project(':sdkman-java-sdk')
-    api project(':slack-java-sdk')
-    api project(':twitter-java-sdk')
-    api project(':zulip-java-sdk')
-    // release
-    api project(':github-java-sdk')
-    api project(':gitlab-java-sdk')
-    // tools
-    api project(':jreleaser-tools')
+package org.jreleaser.sdk.gitlab.internal;
+
+import org.jreleaser.sdk.gitlab.GitlabException;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+public class UrlEncoder {
+    public static String urlEncode(String s) throws GitlabException {
+        try {
+            return URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new GitlabException(e);
+        }
+    }
 }

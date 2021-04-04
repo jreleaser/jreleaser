@@ -15,17 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-engine')
-    // announce
-    api project(':mail-java-sdk')
-    api project(':sdkman-java-sdk')
-    api project(':slack-java-sdk')
-    api project(':twitter-java-sdk')
-    api project(':zulip-java-sdk')
-    // release
-    api project(':github-java-sdk')
-    api project(':gitlab-java-sdk')
-    // tools
-    api project(':jreleaser-tools')
+package org.jreleaser.sdk.gitlab;
+
+import org.jreleaser.model.releaser.spi.ReleaserBuilderFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
+
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+@ServiceProviderFor(ReleaserBuilderFactory.class)
+public class GitlabReleaserBuilderFactory implements ReleaserBuilderFactory<GitlabReleaser, GitlabReleaserBuilder> {
+    @Override
+    public String getName() {
+        return org.jreleaser.model.Gitlab.NAME;
+    }
+
+    @Override
+    public GitlabReleaserBuilder getBuilder() {
+        return new GitlabReleaserBuilder();
+    }
 }

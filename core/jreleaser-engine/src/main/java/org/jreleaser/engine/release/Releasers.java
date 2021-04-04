@@ -18,6 +18,7 @@
 package org.jreleaser.engine.release;
 
 import org.jreleaser.model.Github;
+import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.releaser.spi.ReleaseException;
@@ -52,6 +53,9 @@ public class Releasers {
 
         if (null != context.getModel().getRelease().getGithub()) {
             return (RB) builders.get(Github.NAME);
+        }
+        if (null != context.getModel().getRelease().getGitlab()) {
+            return (RB) builders.get(Gitlab.NAME);
         }
 
         throw new JReleaserException("No suitable git releaser has been configured");

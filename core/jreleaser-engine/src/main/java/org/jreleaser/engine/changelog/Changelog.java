@@ -17,7 +17,6 @@
  */
 package org.jreleaser.engine.changelog;
 
-import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.sdk.git.ChangelogProvider;
@@ -33,10 +32,7 @@ import java.nio.file.Path;
 public class Changelog {
     public static String createChangelog(JReleaserContext context) {
         try {
-            GitService gitService = context.getModel().getRelease().getGitService();
-            return ChangelogProvider.getChangelog(context,
-                gitService.getResolvedCommitUrl(context.getModel().getProject()), gitService.getChangelog())
-                .trim();
+            return ChangelogProvider.getChangelog(context).trim();
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error when creating changelog.", e);
         }

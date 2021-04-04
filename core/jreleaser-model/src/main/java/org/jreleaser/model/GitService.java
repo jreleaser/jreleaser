@@ -108,6 +108,10 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
 
     public abstract String getReverseRepoHost();
 
+    public String getConfiguredTagName() {
+        return Env.resolve(TAG_NAME, tagName);
+    }
+
     public String getResolvedTagName(Project project) {
         if (isBlank(cachedTagName)) {
             cachedTagName = Env.resolve(TAG_NAME, cachedTagName);

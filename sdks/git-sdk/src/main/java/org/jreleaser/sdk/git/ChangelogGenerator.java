@@ -24,6 +24,8 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.jreleaser.model.Changelog;
+import org.jreleaser.model.GitService;
+import org.jreleaser.model.Github;
 import org.jreleaser.model.JReleaserContext;
 
 import java.io.IOException;
@@ -42,15 +44,25 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class ChangelogGenerator {
-    public static String generate(JReleaserContext context, String commitsUrl, Changelog changelog) throws IOException {
-        if (!changelog.isEnabled()) {
+    public static String generate(JReleaserContext context) throws IOException {
+        if (!context.getModel().getRelease().getGitService().getChangelog().isEnabled()) {
             return "";
         }
 
-        return createChangelog(context, commitsUrl, changelog);
+        return createChangelog(context);
     }
 
-    private static String createChangelog(JReleaserContext context, String commitsUrl, Changelog changelog) throws IOException {
+    private static String createChangelog(JReleaserContext context) throws IOException {
+        GitService gitService = context.getModel().getRelease().getGitService();
+        Changelog changelog = gitService.getChangelog();
+        String commitsUrl = gitService.getResolvedCommitUrl(context.getModel().getProject());
+
+        String separator = System.lineSeparator();
+        if (!Github.NAME.equals(gitService.getServiceName())) {
+            separator += System.lineSeparator();
+        }
+        String commitSeparator = separator;
+
         try {
             Git git = GitSdk.of(context).open();
             context.getLogger().debug("Resolving commits");
@@ -67,14 +79,14 @@ public class ChangelogGenerator {
                 System.lineSeparator() +
                 StreamSupport.stream(commits.spliterator(), false)
                     .sorted(revCommitComparator)
-                    .map(commit -> formatCommit(commit, commitsUrl, changelog))
-                    .collect(Collectors.joining(System.lineSeparator()));
+                    .map(commit -> formatCommit(commit, commitsUrl, changelog, commitSeparator))
+                    .collect(Collectors.joining(commitSeparator));
         } catch (GitAPIException e) {
             throw new IOException(e);
         }
     }
 
-    private static String formatCommit(RevCommit commit, String commitsUrl, Changelog changelog) {
+    private static String formatCommit(RevCommit commit, String commitsUrl, Changelog changelog, String commitSeparator) {
         String commitHash = commit.getId().name();
         String abbreviation = commit.getId().abbreviate(7).name();
         String[] input = commit.getFullMessage().trim().split(System.lineSeparator());
@@ -92,19 +104,22 @@ public class ChangelogGenerator {
             }
         }
 
-        return String.join(System.lineSeparator(), lines);
+        return String.join(commitSeparator, lines);
     }
 
     private static Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
         List<Ref> tags = git.tagList().call();
         tags.sort(new GitSdk.TagComparator().reversed());
 
-        String tagName = context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel().getProject());
+        GitService gitService = context.getModel().getRelease().getGitService();
+        String effectiveTagName = gitService.getEffectiveTagName(context.getModel().getProject());
+        String tagName = gitService.getConfiguredTagName();
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
 
-        context.getLogger().debug("Looking for tags that match '{}'", tagPattern);
+        context.getLogger().debug("Looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
 
         Optional<Ref> tag = tags.stream()
+            .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
             .filter(ref -> extractTagName(ref).matches(tagPattern))
             .findFirst();
 

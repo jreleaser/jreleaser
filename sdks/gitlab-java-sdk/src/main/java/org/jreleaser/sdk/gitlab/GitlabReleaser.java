@@ -15,15 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.github;
+package org.jreleaser.sdk.gitlab;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
-import org.kohsuke.github.GHRelease;
-import org.kohsuke.github.GHRepository;
+import org.jreleaser.sdk.gitlab.api.FileUpload;
+import org.jreleaser.sdk.gitlab.api.GitlabAPIException;
+import org.jreleaser.sdk.gitlab.api.Project;
+import org.jreleaser.sdk.gitlab.api.Release;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,41 +37,44 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class GithubReleaser implements Releaser {
+public class GitlabReleaser implements Releaser {
     private final JReleaserContext context;
     private final List<Path> assets = new ArrayList<>();
 
-    GithubReleaser(JReleaserContext context, List<Path> assets) {
+    GitlabReleaser(JReleaserContext context, List<Path> assets) {
         this.context = context;
         this.assets.addAll(assets);
     }
 
     public void release() throws ReleaseException {
-        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
-        context.getLogger().info("Releasing to {}", github.getResolvedRepoUrl(context.getModel().getProject()));
-        String tagName = github.getEffectiveTagName(context.getModel().getProject());
+        org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
+        context.getLogger().info("Releasing to {}", gitlab.getResolvedRepoUrl(context.getModel().getProject()));
+        String tagName = gitlab.getEffectiveTagName(context.getModel().getProject());
 
         try {
             String changelog = context.getChangelog();
 
-            Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedToken());
+            Gitlab api = new Gitlab(context.getLogger(), gitlab.getApiEndpoint(), gitlab.getResolvedToken());
 
-            context.getLogger().debug("Looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
-            GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);
+            context.getLogger().debug("Looking up release with tag {} at repository {}", tagName, gitlab.getCanonicalRepoName());
+            Release release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), tagName);
             if (null != release) {
                 context.getLogger().debug("Release {} exists", tagName);
-                if (github.isOverwrite()) {
+                if (gitlab.isOverwrite()) {
                     context.getLogger().debug("Deleting release {}", tagName);
                     if (!context.isDryrun()) {
-                        release.delete();
+                        api.deleteRelease(gitlab.getOwner(), gitlab.getName(), tagName);
                     }
                     context.getLogger().debug("Creating release {}", tagName);
                     createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
-                } else if (github.isAllowUploadToExisting()) {
+                } else if (gitlab.isAllowUploadToExisting()) {
                     context.getLogger().debug("Updating release {}", tagName);
-                    if (!context.isDryrun()) api.uploadAssets(release, assets);
+                    if (!context.isDryrun()) {
+                        List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), assets);
+                        api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, uploads);
+                    }
                 } else {
-                    throw new IllegalStateException("Github release failed because release " +
+                    throw new IllegalStateException("Gitlab release failed because release " +
                         tagName + " already exists. overwrite = false; allowUploadToExisting = false");
                 }
             } else {
@@ -84,24 +89,33 @@ public class GithubReleaser implements Releaser {
 
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
-        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
+        org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
         context.getLogger().debug("Looking up {}/{}", owner, repo);
 
-        Github api = new Github(context.getLogger(), github.getApiEndpoint(), password);
-        GHRepository repository = api.findRepository(owner, repo);
-        if (null == repository) {
-            repository = api.createRepository(owner, repo);
+        Gitlab api = new Gitlab(context.getLogger(), gitlab.getApiEndpoint(), password);
+        Project project = null;
+
+        try {
+            project = api.findProject(repo);
+        } catch (GitlabAPIException e) {
+            if (!e.isNotFound()) {
+                throw e;
+            }
+        }
+
+        if (null == project) {
+            project = api.createProject(owner, repo);
         }
 
         return new Repository(
             owner,
             repo,
-            repository.getUrl().toExternalForm(),
-            repository.getHttpTransportUrl());
+            project.getWebUrl(),
+            project.getHttpUrlToRepo());
     }
 
-    private void createRelease(Github api, String tagName, String changelog, boolean deleteTags) throws IOException {
-        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
+    private void createRelease(Gitlab api, String tagName, String changelog, boolean deleteTags) throws IOException {
+        org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
 
         if (context.isDryrun()) {
             for (Path asset : assets) {
@@ -116,7 +130,7 @@ public class GithubReleaser implements Releaser {
         }
 
         if (deleteTags) {
-            deleteTags(api, github.getCanonicalRepoName(), tagName);
+            deleteTags(api, gitlab.getOwner(), gitlab.getName(), tagName);
         }
 
         // local tag
@@ -125,23 +139,25 @@ public class GithubReleaser implements Releaser {
             GitSdk.of(context).tag(tagName, true);
         }
 
+
+        List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), assets);
+
+        Release release = new Release();
+        release.setName(gitlab.getResolvedReleaseName(context.getModel().getProject()));
+        release.setTagName(gitlab.getEffectiveTagName(context.getModel().getProject()));
+        release.setRef(gitlab.getRef());
+        release.setDescription(changelog);
+
         // remote tag/release
-        GHRelease release = api.createRelease(github.getCanonicalRepoName(),
-            github.getEffectiveTagName(context.getModel().getProject()))
-            .commitish(github.getTargetCommitish())
-            .name(github.getResolvedReleaseName(context.getModel().getProject()))
-            .draft(github.isDraft())
-            .prerelease(github.isPrerelease())
-            .body(changelog)
-            .create();
-        api.uploadAssets(release, assets);
+        api.createRelease(gitlab.getOwner(), gitlab.getName(), release);
+        api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, uploads);
     }
 
-    private void deleteTags(Github api, String repo, String tagName) {
+    private void deleteTags(Gitlab api, String owner, String repo, String tagName) {
         // delete remote tag
         try {
-            api.deleteTag(repo, tagName);
-        } catch (IOException ignored) {
+            api.deleteTag(owner, repo, tagName);
+        } catch (GitlabAPIException ignored) {
             //noop
         }
     }

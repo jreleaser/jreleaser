@@ -27,15 +27,13 @@ import java.util.Objects;
 public class Repository {
     private final String owner;
     private final String name;
-    private final URL url;
-    private final String gitUrl;
+    private final String url;
     private final String httpUrl;
 
-    public Repository(String owner, String name, URL url, String gitUrl, String httpUrl) {
+    public Repository(String owner, String name, String url, String httpUrl) {
         this.owner = owner;
         this.name = name;
         this.url = url;
-        this.gitUrl = gitUrl;
         this.httpUrl = httpUrl;
     }
 
@@ -47,12 +45,8 @@ public class Repository {
         return name;
     }
 
-    public URL getUrl() {
+    public String getUrl() {
         return url;
-    }
-
-    public String getGitUrl() {
-        return gitUrl;
     }
 
     public String getHttpUrl() {
@@ -65,7 +59,6 @@ public class Repository {
             "owner='" + owner + '\'' +
             ", name='" + name + '\'' +
             ", url=" + url +
-            ", gitUrl=" + gitUrl +
             ", httpUrl=" + httpUrl +
             "]";
     }
@@ -78,12 +71,11 @@ public class Repository {
         return owner.equals(that.owner) &&
             name.equals(that.name) &&
             url.equals(that.url) &&
-            gitUrl.equals(that.gitUrl) &&
             httpUrl.equals(that.httpUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(owner, name, url, gitUrl, httpUrl);
+        return Objects.hash(owner, name, url, httpUrl);
     }
 }

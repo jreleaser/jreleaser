@@ -176,20 +176,21 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 tool.getRepositoryTap().getResolvedName(),
                 resolveGitToken(gitService));
 
+            UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
+                resolveGitUsername(gitService),
+                resolveGitToken(gitService));
+
             // clone the repository
             context.getLogger().debug("Clonning {}", repository.getHttpUrl());
             Path directory = Files.createTempDirectory("jreleaser-" + tool.getRepositoryTap().getResolvedName());
             Git git = Git.cloneRepository()
+                .setCredentialsProvider(credentialsProvider)
                 .setBranch("HEAD")
                 .setDirectory(directory.toFile())
                 .setURI(repository.getHttpUrl())
                 .call();
 
             prepareWorkingCopy(props, directory);
-
-            UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
-                resolveGitUsername(gitService),
-                resolveGitToken(gitService));
 
             // add everything
             git.add()

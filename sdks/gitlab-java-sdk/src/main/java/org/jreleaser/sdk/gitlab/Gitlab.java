@@ -1,0 +1,240 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2020-2021 Andres Almiray.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jreleaser.sdk.gitlab;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import feign.Feign;
+import feign.Request;
+import feign.form.FormData;
+import feign.form.FormEncoder;
+import feign.jackson.JacksonDecoder;
+import feign.jackson.JacksonEncoder;
+import org.apache.tika.Tika;
+import org.apache.tika.mime.MediaType;
+import org.jreleaser.sdk.gitlab.api.FileUpload;
+import org.jreleaser.sdk.gitlab.api.GitlabAPI;
+import org.jreleaser.sdk.gitlab.api.GitlabAPIException;
+import org.jreleaser.sdk.gitlab.api.Project;
+import org.jreleaser.sdk.gitlab.api.Release;
+import org.jreleaser.sdk.gitlab.api.User;
+import org.jreleaser.util.CollectionUtils;
+import org.jreleaser.util.JReleaserLogger;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.Objects.requireNonNull;
+import static org.jreleaser.sdk.gitlab.internal.UrlEncoder.urlEncode;
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.requireNonBlank;
+
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+class Gitlab {
+    static final String ENDPOINT = "https://gitlab.com/api/v4";
+    private static final String API_V_4 = "/api/v4";
+    private final Tika tika = new Tika();
+
+    private final JReleaserLogger logger;
+    private final GitlabAPI api;
+    private final String apiHost;
+
+    private User user;
+    private Project project;
+
+    Gitlab(JReleaserLogger logger, String endpoint, String token) throws IOException {
+        requireNonNull(logger, "'logger' must not be blank");
+        requireNonBlank(token, "'token' must not be blank");
+
+        if (isBlank(endpoint)) {
+            endpoint = ENDPOINT;
+        }
+
+        if (!endpoint.endsWith(API_V_4)) {
+            if (endpoint.endsWith("/")) {
+                endpoint = endpoint.substring(0, endpoint.length() - 1);
+            }
+            endpoint += API_V_4;
+        }
+
+        apiHost = endpoint.substring(0, endpoint.length() - API_V_4.length());
+
+        ObjectMapper objectMapper = new ObjectMapper()
+            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(SerializationFeature.INDENT_OUTPUT, true);
+
+        this.logger = logger;
+        this.api = Feign.builder()
+            .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
+            .decoder(new JacksonDecoder(objectMapper))
+            .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", token)))
+            .errorDecoder((methodKey, response) -> new GitlabAPIException(response.status(), response.reason(), response.headers()))
+            .options(new Request.Options(20, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
+            .target(GitlabAPI.class, endpoint);
+    }
+
+    Project findProject(String projectName) throws GitlabAPIException {
+        User u = getCurrentUser();
+
+        logger.debug("Fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
+        List<Project> projects = api.getProject(u.getId(), CollectionUtils.<String, Object>map()
+            .e("search", projectName));
+
+        if (projects == null || projects.isEmpty()) {
+            throw new GitlabAPIException(404, "Project " + projectName + " does not exist or it's not visible");
+        }
+
+        return projects.get(0);
+    }
+
+    Project createProject(String owner, String repo) throws IOException {
+        logger.debug("Creating project {}/{}", owner, repo);
+
+        return api.createProject(repo, "public");
+    }
+
+    User getCurrentUser() throws GitlabAPIException {
+        if (null == user) {
+            logger.debug("Fetching current user");
+            user = api.getCurrentUser();
+        }
+
+        return user;
+    }
+
+    Project getProject(String projectName) throws GitlabAPIException {
+        User u = getCurrentUser();
+
+        if (null == project) {
+            logger.debug("Fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
+            List<Project> projects = api.getProject(u.getId(), CollectionUtils.<String, Object>map()
+                .e("search", projectName));
+
+            if (projects == null || projects.isEmpty()) {
+                throw new GitlabAPIException(404, "Project " + projectName + " does not exist or it's not visible");
+            }
+
+            project = projects.get(0);
+        }
+
+        return project;
+    }
+
+    Release findReleaseByTag(String owner, String repoName, String tagName) throws GitlabAPIException {
+        logger.debug("Fetching release on {}/{} with tag {}", owner, repoName, tagName);
+
+        Project project = getProject(repoName);
+
+        try {
+            return api.getRelease(project.getId(), urlEncode(tagName));
+        } catch (GitlabAPIException e) {
+            if (e.isNotFound() || e.isForbidden()) {
+                // ok
+                return null;
+            }
+            throw e;
+        }
+    }
+
+    void deleteTag(String owner, String repoName, String tagName) throws GitlabAPIException {
+        logger.debug("Deleting tag {} from {}/{}", tagName, owner, repoName);
+
+        Project project = getProject(repoName);
+
+        api.deleteTag(project.getId(), urlEncode(tagName));
+    }
+
+    void deleteRelease(String owner, String repoName, String tagName) throws GitlabAPIException {
+        logger.debug("Deleting release {} from {}/{}", tagName, owner, repoName);
+
+        Project project = getProject(repoName);
+
+        api.deleteRelease(project.getId(), urlEncode(tagName));
+    }
+
+    void createRelease(String owner, String repoName, Release release) throws GitlabAPIException {
+        logger.debug("Creating release on {}/{} with tag {}", owner, repoName, release.getTagName());
+
+        Project project = getProject(repoName);
+
+        api.createRelease(release, project.getId());
+    }
+
+    List<FileUpload> uploadAssets(String owner, String repoName, List<Path> assets) throws IOException, GitlabAPIException {
+        logger.debug("Uploading assets to {}/{}", owner, repoName);
+
+        List<FileUpload> uploads = new ArrayList<>();
+
+        Project project = getProject(repoName);
+
+        for (Path asset : assets) {
+            if (0 == asset.toFile().length() || !Files.exists(asset)) {
+                // do not upload empty or non existent files
+                continue;
+            }
+
+            logger.info(" - Uploading {}", asset.getFileName().toString());
+            try {
+                FileUpload upload = api.uploadFile(project.getId(), toFormData(asset));
+                upload.setName(asset.getFileName().toString());
+                uploads.add(upload);
+            } catch (IOException | GitlabAPIException e) {
+                logger.error(" x Failed to upload {}", asset.getFileName());
+                throw e;
+            }
+        }
+
+        return uploads;
+    }
+
+    void linkAssets(String owner, String repoName, Release release, List<FileUpload> uploads) throws IOException, GitlabAPIException {
+        logger.debug("Linking assets to {}/{} with tag {}", owner, repoName, release.getTagName());
+
+        Project project = getProject(repoName);
+
+        for (FileUpload upload : uploads) {
+            logger.debug(" - Linking {}", upload.getName());
+            try {
+                api.linkAsset(upload.toLinkRequest(apiHost), project.getId(), release.getTagName());
+            } catch (GitlabAPIException e) {
+                logger.error(" x Failed to link {}", upload.getName());
+                throw e;
+            }
+        }
+    }
+
+    private FormData toFormData(Path asset) throws IOException {
+        return FormData.builder()
+            .fileName(asset.getFileName().toString())
+            .contentType(MediaType.parse(new Tika().detect(asset)).toString())
+            .data(Files.readAllBytes(asset))
+            .build();
+    }
+}
