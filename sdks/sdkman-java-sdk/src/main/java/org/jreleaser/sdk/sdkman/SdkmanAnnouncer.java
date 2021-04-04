@@ -123,7 +123,8 @@ public class SdkmanAnnouncer implements Announcer {
     }
 
     private boolean isDistributionSupported(Distribution distribution) {
-        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY;
+        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY &&
+            !distribution.getExtraProperties().containsKey("sdkmanSkip");
     }
 
     private String mapPlatform(String platform) {
