@@ -40,6 +40,6 @@ public class JReleaser implements ToolProvider {
     public static void main(String[] args) {
         PrintWriter out = new PrintWriter(System.out, true);
         PrintWriter err = new PrintWriter(System.err, true);
-        Main.run(out, err, args);
+        System.exit(Main.run(out, err, args));
     }
 }
