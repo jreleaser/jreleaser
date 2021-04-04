@@ -1,4 +1,4 @@
-# Homebrew Formulas
+# Homebrew Formulae
 
 ## How do I install these formulae?
 Invoke either of the following commands if the formula is hosted at GitHub

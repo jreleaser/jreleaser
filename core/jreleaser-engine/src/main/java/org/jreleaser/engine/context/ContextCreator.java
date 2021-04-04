@@ -51,7 +51,11 @@ public class ContextCreator {
             throw new JReleaserException("Could not determine git HEAD", e);
         }
 
-        if (!context.validateModel().isEmpty()) {
+        try {
+            if (!context.validateModel().isEmpty()) {
+                throw new JReleaserException("JReleaser with " + configFile.toAbsolutePath() + " has not been properly configured.");
+            }
+        } catch (IllegalArgumentException e) {
             throw new JReleaserException("JReleaser with " + configFile.toAbsolutePath() + " has not been properly configured.");
         }
 
@@ -79,7 +83,11 @@ public class ContextCreator {
             throw new JReleaserException("Could not determine git HEAD", e);
         }
 
-        if (!context.validateModel().isEmpty()) {
+        try {
+            if (!context.validateModel().isEmpty()) {
+                throw new JReleaserException("JReleaser has not been properly configured.");
+            }
+        } catch (IllegalArgumentException e) {
             throw new JReleaserException("JReleaser has not been properly configured.");
         }
 
