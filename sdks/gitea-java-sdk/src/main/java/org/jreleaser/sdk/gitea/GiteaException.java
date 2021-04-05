@@ -15,17 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
-    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+package org.jreleaser.sdk.gitea;
 
-    api project(':jreleaser-model')
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+public class GiteaException extends RuntimeException {
+    public GiteaException(String message) {
+        super(message);
+    }
 
-    api "io.github.openfeign:feign-core:$feignVersion"
-    api "io.github.openfeign:feign-jackson:$feignVersion"
-    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    api "io.github.openfeign.form:feign-form:$feignFormVersion"
+    public GiteaException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    testImplementation "com.github.tomakehurst:wiremock-jre8:$wiremockVersion"
+    public GiteaException(Throwable cause) {
+        super(cause);
+    }
 }

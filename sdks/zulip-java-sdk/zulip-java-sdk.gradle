@@ -25,7 +25,7 @@ dependencies {
     api "io.github.openfeign:feign-jackson:$feignVersion"
     api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    api 'io.github.openfeign.form:feign-form:3.8.0'
+    api "io.github.openfeign.form:feign-form:$feignFormVersion"
 
     testImplementation "com.github.tomakehurst:wiremock-jre8:$wiremockVersion"
 }

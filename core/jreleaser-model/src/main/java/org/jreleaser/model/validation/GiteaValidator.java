@@ -34,6 +34,10 @@ public abstract class GiteaValidator extends GitServiceValidator {
 
         validateGitService(context, gitea, errors);
 
+        if (isBlank(gitea.getApiEndpoint())) {
+            errors.add("gitea.apiEndpoint must not be blank");
+        }
+
         if (isBlank(gitea.getTargetCommitish())) {
             gitea.setTargetCommitish("main");
         }

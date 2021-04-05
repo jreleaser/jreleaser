@@ -57,7 +57,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  */
 class Gitlab {
     static final String ENDPOINT = "https://gitlab.com/api/v4";
-    private static final String API_V_4 = "/api/v4";
+    private static final String API_V4 = "/api/v4";
     private final Tika tika = new Tika();
 
     private final JReleaserLogger logger;
@@ -75,14 +75,14 @@ class Gitlab {
             endpoint = ENDPOINT;
         }
 
-        if (!endpoint.endsWith(API_V_4)) {
+        if (!endpoint.endsWith(API_V4)) {
             if (endpoint.endsWith("/")) {
                 endpoint = endpoint.substring(0, endpoint.length() - 1);
             }
-            endpoint += API_V_4;
+            endpoint += API_V4;
         }
 
-        apiHost = endpoint.substring(0, endpoint.length() - API_V_4.length());
+        apiHost = endpoint.substring(0, endpoint.length() - API_V4.length());
 
         ObjectMapper objectMapper = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
@@ -233,7 +233,7 @@ class Gitlab {
     private FormData toFormData(Path asset) throws IOException {
         return FormData.builder()
             .fileName(asset.getFileName().toString())
-            .contentType(MediaType.parse(new Tika().detect(asset)).toString())
+            .contentType(MediaType.parse(tika.detect(asset)).toString())
             .data(Files.readAllBytes(asset))
             .build();
     }

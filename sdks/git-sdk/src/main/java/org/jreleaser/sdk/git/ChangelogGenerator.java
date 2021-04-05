@@ -25,7 +25,7 @@ import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.jreleaser.model.Changelog;
 import org.jreleaser.model.GitService;
-import org.jreleaser.model.Github;
+import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
 
 import java.io.IOException;
@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -58,7 +57,7 @@ public class ChangelogGenerator {
         String commitsUrl = gitService.getResolvedCommitUrl(context.getModel().getProject());
 
         String separator = System.lineSeparator();
-        if (!Github.NAME.equals(gitService.getServiceName())) {
+        if (Gitlab.NAME.equals(gitService.getServiceName())) {
             separator += System.lineSeparator();
         }
         String commitSeparator = separator;
@@ -92,16 +91,11 @@ public class ChangelogGenerator {
         String[] input = commit.getFullMessage().trim().split(System.lineSeparator());
 
         List<String> lines = new ArrayList<>();
-        for (int i = 0; i < input.length; i++) {
-            if (i == 0) {
-                if (changelog.isLinks()) {
-                    lines.add("[" + abbreviation + "](" + commitsUrl + "/" + commitHash + ") " + input[i].trim());
-                } else {
-                    lines.add(abbreviation + " " + input[i].trim());
-                }
-            } else if (isNotBlank(input[i])) {
-                lines.add("         " + input[i].trim());
-            }
+
+        if (changelog.isLinks()) {
+            lines.add("[" + abbreviation + "](" + commitsUrl + "/" + commitHash + ") " + input[0].trim());
+        } else {
+            lines.add(abbreviation + " " + input[0].trim());
         }
 
         return String.join(commitSeparator, lines);

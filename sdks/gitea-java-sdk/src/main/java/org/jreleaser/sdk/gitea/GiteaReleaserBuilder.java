@@ -15,17 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
-    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+package org.jreleaser.sdk.gitea;
 
-    api project(':jreleaser-model')
+import org.jreleaser.model.releaser.spi.AbstractReleaserBuilder;
 
-    api "io.github.openfeign:feign-core:$feignVersion"
-    api "io.github.openfeign:feign-jackson:$feignVersion"
-    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    api "io.github.openfeign.form:feign-form:$feignFormVersion"
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+public class GiteaReleaserBuilder extends AbstractReleaserBuilder<GiteaReleaser> {
+    @Override
+    public GiteaReleaser build() {
+        validate();
 
-    testImplementation "com.github.tomakehurst:wiremock-jre8:$wiremockVersion"
+        return new GiteaReleaser(context, assets);
+    }
 }

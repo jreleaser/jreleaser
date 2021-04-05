@@ -26,6 +26,7 @@ dependencies {
     // release
     api project(':github-java-sdk')
     api project(':gitlab-java-sdk')
+    api project(':gitea-java-sdk')
     // tools
     api project(':jreleaser-tools')
 }

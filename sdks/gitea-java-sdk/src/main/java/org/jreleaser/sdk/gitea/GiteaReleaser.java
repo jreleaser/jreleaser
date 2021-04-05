@@ -15,17 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.gitlab;
+package org.jreleaser.sdk.gitea;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
-import org.jreleaser.sdk.gitlab.api.FileUpload;
-import org.jreleaser.sdk.gitlab.api.GitlabAPIException;
-import org.jreleaser.sdk.gitlab.api.Project;
-import org.jreleaser.sdk.gitlab.api.Release;
+import org.jreleaser.sdk.gitea.api.GiteaAPIException;
+import org.jreleaser.sdk.gitea.api.GtRelease;
+import org.jreleaser.sdk.gitea.api.GtRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,44 +36,43 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class GitlabReleaser implements Releaser {
+public class GiteaReleaser implements Releaser {
     private final JReleaserContext context;
     private final List<Path> assets = new ArrayList<>();
 
-    GitlabReleaser(JReleaserContext context, List<Path> assets) {
+    GiteaReleaser(JReleaserContext context, List<Path> assets) {
         this.context = context;
         this.assets.addAll(assets);
     }
 
     public void release() throws ReleaseException {
-        org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
-        context.getLogger().info("Releasing to {}", gitlab.getResolvedRepoUrl(context.getModel().getProject()));
-        String tagName = gitlab.getEffectiveTagName(context.getModel().getProject());
+        org.jreleaser.model.Gitea gitea = context.getModel().getRelease().getGitea();
+        context.getLogger().info("Releasing to {}", gitea.getResolvedRepoUrl(context.getModel().getProject()));
+        String tagName = gitea.getEffectiveTagName(context.getModel().getProject());
 
         try {
             String changelog = context.getChangelog();
 
-            Gitlab api = new Gitlab(context.getLogger(), gitlab.getApiEndpoint(), gitlab.getResolvedToken());
+            Gitea api = new Gitea(context.getLogger(), gitea.getApiEndpoint(), gitea.getResolvedToken());
 
-            context.getLogger().debug("Looking up release with tag {} at repository {}", tagName, gitlab.getCanonicalRepoName());
-            Release release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), tagName);
+            context.getLogger().debug("Looking up release with tag {} at repository {}", tagName, gitea.getCanonicalRepoName());
+            GtRelease release = api.findReleaseByTag(gitea.getOwner(), gitea.getName(), tagName);
             if (null != release) {
                 context.getLogger().debug("Release {} exists", tagName);
-                if (gitlab.isOverwrite()) {
+                if (gitea.isOverwrite()) {
                     context.getLogger().debug("Deleting release {}", tagName);
                     if (!context.isDryrun()) {
-                        api.deleteRelease(gitlab.getOwner(), gitlab.getName(), tagName);
+                        api.deleteRelease(gitea.getOwner(), gitea.getName(), tagName, release.getId());
                     }
                     context.getLogger().debug("Creating release {}", tagName);
                     createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
-                } else if (gitlab.isAllowUploadToExisting()) {
+                } else if (gitea.isAllowUploadToExisting()) {
                     context.getLogger().debug("Updating release {}", tagName);
                     if (!context.isDryrun()) {
-                        List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), assets);
-                        api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, uploads);
+                        api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);
                     }
                 } else {
-                    throw new IllegalStateException("Gitlab release failed because release " +
+                    throw new IllegalStateException("Gitea release failed because release " +
                         tagName + " already exists. overwrite = false; allowUploadToExisting = false");
                 }
             } else {
@@ -89,33 +87,24 @@ public class GitlabReleaser implements Releaser {
 
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
-        org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
+        org.jreleaser.model.Gitea gitea = context.getModel().getRelease().getGitea();
         context.getLogger().debug("Looking up {}/{}", owner, repo);
 
-        Gitlab api = new Gitlab(context.getLogger(), gitlab.getApiEndpoint(), password);
-        Project project = null;
-
-        try {
-            project = api.findProject(repo);
-        } catch (GitlabAPIException e) {
-            if (!e.isNotFound()) {
-                throw e;
-            }
-        }
-
-        if (null == project) {
-            project = api.createProject(owner, repo);
+        Gitea api = new Gitea(context.getLogger(), gitea.getApiEndpoint(), password);
+        GtRepository repository = api.findRepository(owner, repo);
+        if (null == repository) {
+            repository = api.createRepository(owner, repo);
         }
 
         return new Repository(
             owner,
             repo,
-            project.getWebUrl(),
-            project.getHttpUrlToRepo());
+            repository.getHtmlUrl(),
+            repository.getCloneUrl());
     }
 
-    private void createRelease(Gitlab api, String tagName, String changelog, boolean deleteTags) throws IOException {
-        org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
+    private void createRelease(Gitea api, String tagName, String changelog, boolean deleteTags) throws IOException {
+        org.jreleaser.model.Gitea gitea = context.getModel().getRelease().getGitea();
 
         if (context.isDryrun()) {
             for (Path asset : assets) {
@@ -130,7 +119,7 @@ public class GitlabReleaser implements Releaser {
         }
 
         if (deleteTags) {
-            deleteTags(api, gitlab.getOwner(), gitlab.getName(), tagName);
+            deleteTags(api, gitea.getOwner(), gitea.getName(), tagName);
         }
 
         // local tag
@@ -139,24 +128,22 @@ public class GitlabReleaser implements Releaser {
             GitSdk.of(context).tag(tagName, true);
         }
 
-        List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), assets);
-
-        Release release = new Release();
-        release.setName(gitlab.getResolvedReleaseName(context.getModel().getProject()));
-        release.setTagName(gitlab.getEffectiveTagName(context.getModel().getProject()));
-        release.setRef(gitlab.getRef());
-        release.setDescription(changelog);
-
         // remote tag/release
-        api.createRelease(gitlab.getOwner(), gitlab.getName(), release);
-        api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, uploads);
+        GtRelease release = new GtRelease();
+        release.setName(gitea.getResolvedReleaseName(context.getModel().getProject()));
+        release.setTagName(gitea.getEffectiveTagName(context.getModel().getProject()));
+        release.setTargetCommitish(gitea.getTargetCommitish());
+        release.setBody(changelog);
+
+        release = api.createRelease(gitea.getOwner(), gitea.getName(), release);
+        api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);
     }
 
-    private void deleteTags(Gitlab api, String owner, String repo, String tagName) {
+    private void deleteTags(Gitea api, String owner, String repo, String tagName) {
         // delete remote tag
         try {
             api.deleteTag(owner, repo, tagName);
-        } catch (GitlabAPIException ignored) {
+        } catch (GiteaAPIException ignored) {
             //noop
         }
     }
