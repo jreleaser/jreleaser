@@ -40,6 +40,8 @@ import static org.jreleaser.util.JReleaserLogger.DEBUG_TAB;
 public class Checksum {
     public static void collectAndWriteChecksums(JReleaserContext context) throws JReleaserException {
         context.getLogger().info("Calculating checksums");
+        context.getLogger().increaseIndent();
+        context.getLogger().setPrefix("checksum");
 
         List<String> checksums = new ArrayList<>();
 
@@ -58,6 +60,8 @@ public class Checksum {
 
         if (checksums.isEmpty()) {
             context.getLogger().info("No files configured for checksum. Skipping");
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
             return;
         }
 
@@ -68,6 +72,9 @@ public class Checksum {
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
         }
+
+        context.getLogger().restorePrefix();
+        context.getLogger().decreaseIndent();
     }
 
     public static void readHash(JReleaserContext context, Distribution distribution, Artifact artifact) throws JReleaserException {
@@ -112,7 +119,7 @@ public class Checksum {
 
     public static String calculateHash(JReleaserContext context, Path input, Path output) throws JReleaserException {
         try {
-            context.getLogger().debug("Calculating checksum for {}", context.getBasedir().relativize(input));
+            context.getLogger().info("{}", context.getBasedir().relativize(input));
             HashCode hashCode = com.google.common.io.Files.asByteSource(input.toFile()).hash(Hashing.sha256());
             output.toFile().getParentFile().mkdirs();
             com.google.common.io.Files.write(hashCode.toString().getBytes(), output.toFile());
