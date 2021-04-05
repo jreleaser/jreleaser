@@ -54,6 +54,7 @@ import java.nio.file.Path;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.bouncycastle.bcpg.CompressionAlgorithmTags.UNCOMPRESSED;
 
@@ -76,17 +77,29 @@ public class Signer {
             return;
         }
 
-        List<Path> paths = collectArtifacts(context);
-        if (paths.isEmpty()) {
+        context.getLogger().increaseIndent();
+        context.getLogger().setPrefix("sign");
+
+        InMemoryKeyring keyring = createInMemoryKeyring(context.getModel().getSigning());
+
+        List<FilePair> files = collectArtifacts(context, keyring);
+        if (files.isEmpty()) {
             context.getLogger().info("No files configured for signing. Skipping");
             return;
         }
 
-        InMemoryKeyring keyring = createInMemoryKeyring(context.getModel().getSigning());
-        context.getLogger().increaseIndent();
-        context.getLogger().setPrefix("sign");
-        List<FilePair> files = sign(context, keyring, paths);
+        files = files.stream()
+            .filter(FilePair::isInvalid)
+            .collect(Collectors.toList());
+
+        if (files.isEmpty()) {
+            context.getLogger().info("All signatures are up-to-date and valid. Skipping");
+            return;
+        }
+
+        sign(context, keyring, files);
         verify(context, keyring, files);
+
         context.getLogger().restorePrefix();
         context.getLogger().decreaseIndent();
     }
@@ -105,22 +118,24 @@ public class Signer {
     private static void verify(JReleaserContext context, InMemoryKeyring keyring, List<FilePair> files) throws SigningException {
         context.getLogger().debug("Verifying {} signatures", files.size());
 
-        for (FilePair filePair : files) {
-            context.getLogger().debug("Verifying:{}{}{}{}",
-                System.lineSeparator(),
-                context.getBasedir().relativize(filePair.inputFile),
-                System.lineSeparator(),
-                context.getBasedir().relativize(filePair.signatureFile));
-            if (!verify(context, keyring, filePair)) {
+        for (FilePair pair : files) {
+            pair.setValid(verify(context, keyring, pair));
+
+            if (!pair.isValid()) {
                 throw new SigningException("Could not verify file " +
-                    context.getBasedir().relativize(filePair.inputFile) + " with signature " +
-                    context.getBasedir().relativize(filePair.signatureFile));
+                    context.getBasedir().relativize(pair.inputFile) + " with signature " +
+                    context.getBasedir().relativize(pair.signatureFile));
             }
         }
     }
 
     private static boolean verify(JReleaserContext context, InMemoryKeyring keyring, FilePair filePair) throws SigningException {
+        context.getLogger().setPrefix("verify");
+
         try {
+            context.getLogger().debug("{}",
+                context.getBasedir().relativize(filePair.signatureFile));
+
             InputStream sigInputStream = PGPUtil.getDecoderStream(
                 new BufferedInputStream(
                     new FileInputStream(filePair.signatureFile.toFile())));
@@ -155,33 +170,28 @@ public class Signer {
         } catch (IOException | PGPException e) {
             throw new SigningException("Error when verifying signature of " +
                 context.getBasedir().relativize(filePair.inputFile), e);
+        } finally {
+            context.getLogger().restorePrefix();
         }
     }
 
-    private static List<FilePair> sign(JReleaserContext context, InMemoryKeyring keyring, List<Path> paths) throws SigningException {
+    private static void sign(JReleaserContext context, InMemoryKeyring keyring, List<FilePair> files) throws SigningException {
         Path signaturesDirectory = context.getSignaturesDirectory();
 
         try {
-            deleteDirectory(signaturesDirectory);
             Files.createDirectories(signaturesDirectory);
         } catch (IOException e) {
             throw new SigningException("Could not create signatures directory", e);
         }
 
         context.getLogger().debug("Signing {} files into {}",
-            paths.size(), context.getBasedir().relativize(signaturesDirectory));
+            files.size(), context.getBasedir().relativize(signaturesDirectory));
 
         PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);
 
-        List<FilePair> files = new ArrayList<>();
-        String extension = context.getModel().getSigning().isArmored() ? ".asc" : ".sig";
-        for (Path input : paths) {
-            Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
-            sign(context, signatureGenerator, input, output);
-            files.add(new FilePair(input, output));
+        for (FilePair pair : files) {
+            sign(context, signatureGenerator, pair.inputFile, pair.signatureFile);
         }
-
-        return files;
     }
 
     private static PGPSignatureGenerator initSignatureGenerator(Signing signing, InMemoryKeyring keyring) throws SigningException {
@@ -236,25 +246,60 @@ public class Signer {
         }
     }
 
-    private static List<Path> collectArtifacts(JReleaserContext context) {
-        List<Path> paths = new ArrayList<>();
+    private static List<FilePair> collectArtifacts(JReleaserContext context, InMemoryKeyring keyring) {
+        List<FilePair> files = new ArrayList<>();
+
+        Path signaturesDirectory = context.getSignaturesDirectory();
+        String extension = context.getModel().getSigning().isArmored() ? ".asc" : ".sig";
 
         for (Artifact artifact : Artifacts.resolveFiles(context)) {
-            paths.add(artifact.getResolvedPath(context));
+            Path input = artifact.getResolvedPath(context);
+            Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
+            FilePair pair = new FilePair(input, output);
+            pair.setValid(isValid(context, keyring, pair));
+            files.add(pair);
         }
 
         for (Distribution distribution : context.getModel().getDistributions().values()) {
             for (Artifact artifact : distribution.getArtifacts()) {
-                paths.add(artifact.getResolvedPath(context, distribution));
+                Path input = artifact.getResolvedPath(context, distribution);
+                Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
+                FilePair pair = new FilePair(input, output);
+                pair.setValid(isValid(context, keyring, pair));
+                files.add(pair);
             }
         }
 
         Path checksums = context.getChecksumsDirectory().resolve("checksums.txt");
         if (checksums.toFile().exists()) {
-            paths.add(checksums);
+            Path output = signaturesDirectory.resolve(checksums.getFileName().toString().concat(extension));
+            FilePair pair = new FilePair(checksums, output);
+            pair.setValid(isValid(context, keyring, pair));
+            files.add(pair);
         }
 
-        return paths;
+        return files;
+    }
+
+    private static boolean isValid(JReleaserContext context, InMemoryKeyring keyring, FilePair pair) {
+        if (Files.notExists(pair.getSignatureFile())) {
+            context.getLogger().debug("Signature file does not exist: {}",
+                context.getBasedir().relativize(pair.getSignatureFile()));
+            return false;
+        }
+
+        if (pair.inputFile.toFile().lastModified() > pair.signatureFile.toFile().lastModified()) {
+            context.getLogger().debug("File {} is newer than {}",
+                context.getBasedir().relativize(pair.inputFile),
+                context.getBasedir().relativize(pair.signatureFile));
+            return false;
+        }
+
+        try {
+            return verify(context, keyring, pair);
+        } catch (SigningException e) {
+            return false;
+        }
     }
 
     private static void deleteDirectory(Path outputDirectory) {
@@ -269,6 +314,7 @@ public class Signer {
     private static class FilePair {
         private final Path inputFile;
         private final Path signatureFile;
+        private boolean valid;
 
         private FilePair(Path inputFile, Path signatureFile) {
             this.inputFile = inputFile;
@@ -281,6 +327,18 @@ public class Signer {
 
         public Path getSignatureFile() {
             return signatureFile;
+        }
+
+        public boolean isValid() {
+            return valid;
+        }
+
+        public void setValid(boolean valid) {
+            this.valid = valid;
+        }
+
+        public boolean isInvalid() {
+            return !valid;
         }
     }
 }

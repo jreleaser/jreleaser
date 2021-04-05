@@ -64,9 +64,25 @@ public class Checksum {
         }
 
         Path checksumsFilePath = context.getChecksumsDirectory().resolve("checksums.txt");
+        String newContent = String.join(System.lineSeparator(), checksums) + System.lineSeparator();
+
+        try {
+            if (Files.exists(checksumsFilePath)) {
+                String oldContent = new String(Files.readAllBytes(checksumsFilePath));
+                if (newContent.equals(oldContent)) {
+                    // no need to write down the same content
+                    context.getLogger().restorePrefix();
+                    context.getLogger().decreaseIndent();
+                    return;
+                }
+            }
+        } catch (IOException ignored) {
+            // OK
+        }
+
         try {
             Files.createDirectories(context.getChecksumsDirectory());
-            Files.write(checksumsFilePath, (String.join(System.lineSeparator(), checksums) + System.lineSeparator()).getBytes());
+            Files.write(checksumsFilePath, newContent.getBytes());
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
         }
@@ -105,10 +121,7 @@ public class Checksum {
         }
 
         try {
-            context.getLogger().debug("Reading checksum:{}{}{}{}",
-                System.lineSeparator(),
-                context.getBasedir().relativize(artifactPath),
-                System.lineSeparator(),
+            context.getLogger().debug("Reading checksum: {}",
                 context.getBasedir().relativize(checksumPath));
             artifact.setHash(new String(Files.readAllBytes(checksumPath)));
         } catch (IOException e) {
