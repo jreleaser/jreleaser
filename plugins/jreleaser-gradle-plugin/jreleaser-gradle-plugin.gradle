@@ -22,10 +22,6 @@ plugins {
 }
 
 config {
-    bintray {
-        enabled = true
-    }
-
     plugins {
         plugin {
             name = project.pluginShortName

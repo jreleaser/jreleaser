@@ -49,10 +49,6 @@ config {
             }
         }
     }
-
-    bintray {
-        enabled = false
-    }
 }
 
 allprojects {
@@ -71,11 +67,6 @@ subprojects {
     config {
         info {
             description = project.project_description
-        }
-
-        bintray {
-            enabled = true
-            name = project.name
         }
     }
 
