@@ -31,6 +31,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public abstract class GithubValidator extends GitServiceValidator {
     public static boolean validateGithub(JReleaserContext context, Github github, List<String> errors) {
         if (null == github) return false;
+        context.getLogger().debug("release.github");
 
         validateGitService(context, github, errors);
 

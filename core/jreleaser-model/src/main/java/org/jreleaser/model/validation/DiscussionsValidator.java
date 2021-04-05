@@ -36,6 +36,7 @@ public abstract class DiscussionsValidator extends Validator {
 
     public static void validateDiscussions(JReleaserContext context, Discussions discussions, List<String> errors) {
         if (!discussions.isEnabled()) return;
+        context.getLogger().debug("announce.discussions");
 
         if (!Github.NAME.equals(context.getModel().getRelease().getGitService().getServiceName())) {
             errors.add("discussions may only be used when releasing to GitHub");

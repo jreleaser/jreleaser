@@ -35,6 +35,8 @@ import static org.jreleaser.model.validation.ZulipValidator.validateZulip;
  */
 public abstract class AnnouncersValidator extends Validator {
     public static void validateAnnouncers(JReleaserContext context, List<String> errors) {
+        context.getLogger().debug("announce");
+
         Announce announce = context.getModel().getAnnounce();
         validateDiscussions(context, announce.getDiscussions(), errors);
         validateMail(context, announce.getMail(), errors);

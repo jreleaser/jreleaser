@@ -31,6 +31,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public abstract class GiteaValidator extends GitServiceValidator {
     public static boolean validateGitea(JReleaserContext context, Gitea gitea, List<String> errors) {
         if (null == gitea) return false;
+        context.getLogger().debug("release.gitea");
 
         validateGitService(context, gitea, errors);
 

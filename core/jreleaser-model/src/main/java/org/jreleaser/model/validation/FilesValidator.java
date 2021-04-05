@@ -30,6 +30,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class FilesValidator extends Validator {
     public static void validateFiles(JReleaserContext context, List<String> errors) {
+        context.getLogger().debug("files");
+
         int i = 0;
         for (Glob glob : context.getModel().getFiles().getGlobs()) {
             boolean isBaseDir = false;

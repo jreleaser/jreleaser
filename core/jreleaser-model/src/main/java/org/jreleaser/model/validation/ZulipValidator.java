@@ -36,6 +36,7 @@ public abstract class ZulipValidator extends Validator {
 
     public static void validateZulip(JReleaserContext context, Zulip zulip, List<String> errors) {
         if (!zulip.isEnabled()) return;
+        context.getLogger().debug("announce.zulip");
 
         if (isBlank(zulip.getAccount())) {
             errors.add("zulip.account must not be blank.");

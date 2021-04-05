@@ -60,11 +60,16 @@ public class JReleaserContext {
         this.model.getEnvironment().initProps(this);
 
         logger.info("Validating configuration");
-        errors.addAll(JReleaserModelValidator.validate(this));
+
+        try {
+            JReleaserModelValidator.validate(this, errors);
+        } catch (IllegalArgumentException e) {
+            errors.add(e.getMessage());
+        }
+
         if (!errors.isEmpty()) {
             logger.error("== JReleaser ==");
             errors.forEach(logger::error);
-
         }
 
         return errors;

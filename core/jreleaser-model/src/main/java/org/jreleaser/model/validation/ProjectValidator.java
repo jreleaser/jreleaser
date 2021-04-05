@@ -33,6 +33,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class ProjectValidator extends Validator {
     public static void validateProject(JReleaserContext context, List<String> errors) {
+        context.getLogger().debug("project");
         Project project = context.getModel().getProject();
 
         if (isBlank(project.getName())) {
@@ -76,6 +77,7 @@ public abstract class ProjectValidator extends Validator {
     }
 
     private static void validateJava(JReleaserContext context, Project project, List<String> errors) {
+        context.getLogger().debug("project.java");
         if (!project.getJava().isSet()) return;
 
         project.getJava().setEnabled(true);

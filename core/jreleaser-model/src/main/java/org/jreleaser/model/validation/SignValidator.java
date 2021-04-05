@@ -32,6 +32,7 @@ import static org.jreleaser.model.Signing.GPG_SECRET_KEY;
  */
 public abstract class SignValidator extends Validator {
     public static void validateSign(JReleaserContext context, List<String> errors) {
+        context.getLogger().debug("sign");
         Signing signing = context.getModel().getSigning();
 
         if (!signing.isEnabled()) return;

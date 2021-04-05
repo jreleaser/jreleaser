@@ -31,6 +31,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public abstract class GitlabValidator extends GitServiceValidator {
     public static boolean validateGitlab(JReleaserContext context, Gitlab gitlab, List<String> errors) {
         if (null == gitlab) return false;
+        context.getLogger().debug("release.gitlab");
 
         validateGitService(context, gitlab, errors);
 

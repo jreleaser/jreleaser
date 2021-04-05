@@ -45,6 +45,7 @@ public abstract class BrewValidator extends Validator {
             tool.setEnabled(model.getPackagers().getBrew().isEnabled());
         }
         if (!tool.isEnabled()) return;
+        context.getLogger().debug("distribution.{}.brew", distribution.getName());
 
         validateCommitAuthor(tool, model.getPackagers().getBrew());
         validateOwner(tool.getTap(), model.getPackagers().getBrew().getTap());

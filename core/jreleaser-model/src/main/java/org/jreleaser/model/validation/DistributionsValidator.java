@@ -44,6 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class DistributionsValidator extends Validator {
     public static void validateDistributions(JReleaserContext context, List<String> errors) {
+        context.getLogger().debug("distributions");
         Map<String, Distribution> distributions = context.getModel().getDistributions();
 
         if (distributions.size() == 1) {
@@ -61,6 +62,8 @@ public abstract class DistributionsValidator extends Validator {
     }
 
     private static void validateDistribution(JReleaserContext context, Distribution distribution, List<String> errors) {
+        context.getLogger().debug("distribution.{}", distribution.getName());
+
         if (!distribution.isEnabledSet()) {
             distribution.setEnabled(true);
         }
@@ -76,6 +79,7 @@ public abstract class DistributionsValidator extends Validator {
             distribution.setExecutable(distribution.getName());
         }
 
+        context.getLogger().debug("distribution.{}.java", distribution.getName());
         if (!validateJava(context, distribution, errors)) {
             return;
         }

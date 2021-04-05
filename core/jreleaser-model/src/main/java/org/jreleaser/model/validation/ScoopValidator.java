@@ -44,6 +44,7 @@ public abstract class ScoopValidator extends Validator {
             tool.setEnabled(model.getPackagers().getScoop().isEnabled());
         }
         if (!tool.isEnabled()) return;
+        context.getLogger().debug("distribution.{}.scoop", distribution.getName());
 
         validateCommitAuthor(tool, model.getPackagers().getScoop());
         validateOwner(tool.getBucket(), model.getPackagers().getScoop().getBucket());

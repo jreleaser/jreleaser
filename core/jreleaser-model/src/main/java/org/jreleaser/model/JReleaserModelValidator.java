@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,10 +37,16 @@ public final class JReleaserModelValidator {
         // noop
     }
 
-    public static List<String> validate(JReleaserContext context) {
-        List<String> errors = new ArrayList<>();
-        validateModel(context, errors);
-        return Collections.unmodifiableList(errors);
+    public static List<String> validate(JReleaserContext context, List<String> errors) {
+        context.getLogger().increaseIndent();
+        context.getLogger().setPrefix("validation");
+        try {
+            validateModel(context, errors);
+            return Collections.unmodifiableList(errors);
+        } finally {
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
+        }
     }
 
     private static void validateModel(JReleaserContext context, List<String> errors) {

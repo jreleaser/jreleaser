@@ -44,6 +44,7 @@ public abstract class ChocolateyValidator extends Validator {
             tool.setEnabled(model.getPackagers().getChocolatey().isEnabled());
         }
         if (!tool.isEnabled()) return;
+        context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
 
         validateCommitAuthor(tool, model.getPackagers().getChocolatey());
         validateOwner(tool.getBucket(), model.getPackagers().getChocolatey().getBucket());

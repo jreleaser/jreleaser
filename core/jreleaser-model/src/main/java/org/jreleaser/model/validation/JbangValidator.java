@@ -41,6 +41,7 @@ public abstract class JbangValidator extends Validator {
             tool.setEnabled(model.getPackagers().getJbang().isEnabled());
         }
         if (!tool.isEnabled()) return;
+        context.getLogger().debug("distribution.{}.jbang", distribution.getName());
 
         validateCommitAuthor(tool, model.getPackagers().getJbang());
         validateOwner(tool.getCatalog(), model.getPackagers().getJbang().getCatalog());

@@ -36,6 +36,7 @@ public abstract class SlackValidator extends Validator {
 
     public static void validateSlack(JReleaserContext context, Slack slack, List<String> errors) {
         if (!slack.isEnabled()) return;
+        context.getLogger().debug("announce.slack");
 
         slack.setToken(
             checkProperty(context.getModel().getEnvironment(),

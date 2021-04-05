@@ -29,6 +29,8 @@ import java.util.List;
  */
 public abstract class PackagersValidator extends Validator {
     public static void validatePackagers(JReleaserContext context, List<String> errors) {
+        context.getLogger().debug("packagers");
+
         JReleaserModel model = context.getModel();
         Packagers packagers = model.getPackagers();
 

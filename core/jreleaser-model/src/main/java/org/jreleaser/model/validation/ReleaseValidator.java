@@ -32,6 +32,7 @@ import static org.jreleaser.model.validation.GitlabValidator.validateGitlab;
  */
 public abstract class ReleaseValidator extends Validator {
     public static void validateRelease(JReleaserContext context, List<String> errors) {
+        context.getLogger().debug("release");
         Release release = context.getModel().getRelease();
 
         int count = 0;
