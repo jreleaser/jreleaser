@@ -1,0 +1,54 @@
+project:
+  name: jreleaser
+  description: Release Java projects quickly and easily with JReleaser
+  longDescription: Release Java projects quickly and easily with JReleaser
+  website: https://jreleaser.org
+  authors:
+    - Andres Almiray
+  license: Apache-2.0
+  java:
+    groupId: org.jreleaser
+    version: 11
+
+release:
+  github:
+    owner: jreleaser
+    username: aalmiray
+    overwrite: true
+    sign: true
+    changelog:
+      enabled: false
+
+signing:
+  enabled: true
+  armored: true
+
+announce:
+  twitter:
+    enabled: true
+  sdkman:
+    enabled: true
+
+distributions:
+  jreleaser:
+    java:
+      mainClass: org.jreleaser.cli.Main
+    brew:
+      enabled: true
+    scoop:
+      enabled: true
+    jbang:
+      enabled: true
+    artifacts:
+      - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
+
+  jreleaser-ant-tasks:
+    extraProperties:
+      sdkmanSkip: true
+    artifacts:
+      - path: plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
+
+files:
+  artifacts:
+    - path: apps/jreleaser-tool-provider/build/VERSION
+    - path: apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-{{projectVersion}}.jar
