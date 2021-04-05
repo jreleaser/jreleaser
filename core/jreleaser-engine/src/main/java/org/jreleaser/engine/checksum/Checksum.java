@@ -31,8 +31,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jreleaser.util.JReleaserLogger.DEBUG_TAB;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -59,9 +57,9 @@ public class Checksum {
         }
 
         if (checksums.isEmpty()) {
-            context.getLogger().info("No files configured for checksum. Skipping");
             context.getLogger().restorePrefix();
             context.getLogger().decreaseIndent();
+            context.getLogger().info("No files configured for checksum. Skipping");
             return;
         }
 
@@ -107,10 +105,11 @@ public class Checksum {
         }
 
         try {
-            context.getLogger().debug("Reading checksum:{}{}{}{}{}{}",
+            context.getLogger().debug("Reading checksum:{}{}{}{}",
                 System.lineSeparator(),
-                DEBUG_TAB, context.getBasedir().relativize(artifactPath), System.lineSeparator(),
-                DEBUG_TAB, context.getBasedir().relativize(checksumPath));
+                context.getBasedir().relativize(artifactPath),
+                System.lineSeparator(),
+                context.getBasedir().relativize(checksumPath));
             artifact.setHash(new String(Files.readAllBytes(checksumPath)));
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error when reading hash from " + context.getBasedir().relativize(checksumPath), e);

@@ -56,7 +56,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.bouncycastle.bcpg.CompressionAlgorithmTags.UNCOMPRESSED;
-import static org.jreleaser.util.JReleaserLogger.DEBUG_TAB;
 
 /**
  * @author Andres Almiray
@@ -84,8 +83,12 @@ public class Signer {
         }
 
         InMemoryKeyring keyring = createInMemoryKeyring(context.getModel().getSigning());
+        context.getLogger().increaseIndent();
+        context.getLogger().setPrefix("sign");
         List<FilePair> files = sign(context, keyring, paths);
         verify(context, keyring, files);
+        context.getLogger().restorePrefix();
+        context.getLogger().decreaseIndent();
     }
 
     private static InMemoryKeyring createInMemoryKeyring(Signing sign) throws SigningException {
@@ -103,10 +106,11 @@ public class Signer {
         context.getLogger().debug("Verifying {} signatures", files.size());
 
         for (FilePair filePair : files) {
-            context.getLogger().debug("Verifying:{}{}{}{}{}{}",
+            context.getLogger().debug("Verifying:{}{}{}{}",
                 System.lineSeparator(),
-                DEBUG_TAB, context.getBasedir().relativize(filePair.inputFile), System.lineSeparator(),
-                DEBUG_TAB, context.getBasedir().relativize(filePair.signatureFile));
+                context.getBasedir().relativize(filePair.inputFile),
+                System.lineSeparator(),
+                context.getBasedir().relativize(filePair.signatureFile));
             if (!verify(context, keyring, filePair)) {
                 throw new SigningException("Could not verify file " +
                     context.getBasedir().relativize(filePair.inputFile) + " with signature " +
@@ -203,10 +207,7 @@ public class Signer {
 
     private static void sign(JReleaserContext context, PGPSignatureGenerator signatureGenerator, Path input, Path output) throws SigningException {
         try {
-            context.getLogger().debug("Signing:{}{}{}{}{}{}",
-                System.lineSeparator(),
-                DEBUG_TAB, context.getBasedir().relativize(input), System.lineSeparator(),
-                DEBUG_TAB, context.getBasedir().relativize(output));
+            context.getLogger().info("{}", context.getBasedir().relativize(input));
 
             OutputStream out = new BufferedOutputStream(new FileOutputStream(output.toFile()));
             if (context.getModel().getSigning().isArmored()) {
