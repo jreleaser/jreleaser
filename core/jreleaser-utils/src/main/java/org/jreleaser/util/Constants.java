@@ -27,10 +27,17 @@ public interface Constants {
     String KEY_COMMIT_SHORT_HASH = "commitShortHash";
     String KEY_COMMIT_FULL_HASH = "commitFullHash";
 
+    String KEY_VERSION_MAJOR = "versionMajor";
+    String KEY_VERSION_MINOR = "versionMinor";
+    String KEY_VERSION_PATCH = "versionPatch";
+    String KEY_VERSION_TAG = "versionTag";
+    String KEY_VERSION_BUILD = "versionBuild";
+
     // Project
     String KEY_PROJECT_NAME = "projectName";
     String KEY_PROJECT_NAME_CAPITALIZED = "projectNameCapitalized";
     String KEY_PROJECT_VERSION = "projectVersion";
+    String KEY_PROJECT_SNAPSHOT = "projectSnapshot";
     String KEY_PROJECT_DESCRIPTION = "projectDescription";
     String KEY_PROJECT_LONG_DESCRIPTION = "projectLongDescription";
     String KEY_PROJECT_WEBSITE = "projectWebsite";

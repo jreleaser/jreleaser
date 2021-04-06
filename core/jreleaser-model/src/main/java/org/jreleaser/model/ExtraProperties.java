@@ -23,6 +23,8 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.splitValue;
 
 /**
@@ -38,10 +40,18 @@ public interface ExtraProperties extends Serializable {
 
     void addExtraProperties(Map<String, String> properties);
 
+    default void addExtraProperty(String key, String value) {
+        if (isNotBlank(value)) {
+            getExtraProperties().put(key, value);
+        }
+    }
+
     default Map<String, Object> getResolvedExtraProperties() {
         Map<String, Object> props = new LinkedHashMap<>();
 
         getExtraProperties().forEach((key, value) -> {
+            if (isBlank(value)) return;
+
             String prefix = getPrefix();
 
             boolean split = key.endsWith("_split");

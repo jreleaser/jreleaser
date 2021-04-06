@@ -21,7 +21,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
-import org.jreleaser.util.Constants;
+import org.jreleaser.model.Project;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,7 +30,21 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+
+import static org.jreleaser.util.Constants.KEY_COMMIT_FULL_HASH;
+import static org.jreleaser.util.Constants.KEY_COMMIT_SHORT_HASH;
+import static org.jreleaser.util.Constants.KEY_PROJECT_SNAPSHOT;
+import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
+import static org.jreleaser.util.Constants.KEY_TAG_NAME;
+import static org.jreleaser.util.Constants.KEY_TIMESTAMP;
+import static org.jreleaser.util.Constants.KEY_VERSION_BUILD;
+import static org.jreleaser.util.Constants.KEY_VERSION_MAJOR;
+import static org.jreleaser.util.Constants.KEY_VERSION_MINOR;
+import static org.jreleaser.util.Constants.KEY_VERSION_PATCH;
+import static org.jreleaser.util.Constants.KEY_VERSION_TAG;
+import static org.jreleaser.util.StringUtils.capitalize;
 
 /**
  * @author Andres Almiray
@@ -78,13 +92,22 @@ class WorkflowImpl implements Workflow {
 
     private void report(JReleaserContext context) {
         JReleaserModel model = context.getModel();
+        Project project = model.getProject();
 
         Properties props = new Properties();
-        props.put(Constants.KEY_TIMESTAMP, model.getTimestamp());
-        props.put(Constants.KEY_COMMIT_SHORT_HASH, model.getCommit().getShortHash());
-        props.put(Constants.KEY_COMMIT_FULL_HASH, model.getCommit().getFullHash());
-        props.put(Constants.KEY_PROJECT_VERSION, model.getProject().getResolvedVersion());
-        props.put(Constants.KEY_TAG_NAME, model.getRelease().getGitService().getResolvedTagName(model.getProject()));
+        props.put(KEY_TIMESTAMP, model.getTimestamp());
+        props.put(KEY_COMMIT_SHORT_HASH, model.getCommit().getShortHash());
+        props.put(KEY_COMMIT_FULL_HASH, model.getCommit().getFullHash());
+        props.put(KEY_PROJECT_VERSION, project.getResolvedVersion());
+        props.put(KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
+        props.put(KEY_TAG_NAME, model.getRelease().getGitService().getResolvedTagName(project));
+
+        Map<String, Object> resolvedExtraProperties = project.getResolvedExtraProperties();
+        safePut("project" + capitalize(KEY_VERSION_MAJOR), resolvedExtraProperties, props);
+        safePut("project" + capitalize(KEY_VERSION_MINOR), resolvedExtraProperties, props);
+        safePut("project" + capitalize(KEY_VERSION_PATCH), resolvedExtraProperties, props);
+        safePut("project" + capitalize(KEY_VERSION_TAG), resolvedExtraProperties, props);
+        safePut("project" + capitalize(KEY_VERSION_BUILD), resolvedExtraProperties, props);
 
         Path output = context.getOutputDirectory().resolve("output.properties");
 
@@ -95,6 +118,12 @@ class WorkflowImpl implements Workflow {
         } catch (IOException ignored) {
             context.getLogger().warn("Could not write output properties to {}",
                 context.getBasedir().relativize(output));
+        }
+    }
+
+    private void safePut(String key, Map<String, Object> src, Properties props) {
+        if (src.containsKey(key)) {
+            props.put(key, src.get(key));
         }
     }
 }

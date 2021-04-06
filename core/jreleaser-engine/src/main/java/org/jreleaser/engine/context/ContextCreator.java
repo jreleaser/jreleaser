@@ -21,17 +21,25 @@ import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.Project;
 import org.jreleaser.sdk.git.GitSdk;
+import org.jreleaser.util.Constants;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class ContextCreator {
+    private static final Pattern FULL_SEMVER_PATTERN = Pattern.compile("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:[\\.\\-]((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
+    private static final Pattern MAJOR_MINOR_PATTERN = Pattern.compile("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:[\\.\\-]((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
+    private static final Pattern MAJOR_PATTERN = Pattern.compile("^(0|[1-9]\\d*)(?:[\\.\\-]((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
+
     public static JReleaserContext create(JReleaserLogger logger,
                                           Path configFile,
                                           Path basedir,
@@ -106,9 +114,41 @@ public class ContextCreator {
     }
 
     private static void report(JReleaserContext context) {
-        context.getLogger().info("Project version set to {}", context.getModel().getProject().getResolvedVersion());
+        String version = context.getModel().getProject().getResolvedVersion();
+        parseVersion(version, context.getModel().getProject());
+
+        context.getLogger().info("Project version set to {}", version);
         context.getLogger().info("Release is{}snapshot", context.getModel().getProject().isSnapshot() ? " " : " not ");
         context.getLogger().info("Timestamp is {}", context.getModel().getTimestamp());
         context.getLogger().info("HEAD is at {}", context.getModel().getCommit().getShortHash());
+    }
+
+    private static void parseVersion(String version, Project project) {
+        Matcher m = FULL_SEMVER_PATTERN.matcher(version);
+
+        if (m.matches()) {
+            project.addExtraProperty(Constants.KEY_VERSION_MAJOR, m.group(1));
+            project.addExtraProperty(Constants.KEY_VERSION_MINOR, m.group(2));
+            project.addExtraProperty(Constants.KEY_VERSION_PATCH, m.group(3));
+            project.addExtraProperty(Constants.KEY_VERSION_TAG, m.group(4));
+            project.addExtraProperty(Constants.KEY_VERSION_BUILD, m.group(5));
+            return;
+        }
+
+        m = MAJOR_MINOR_PATTERN.matcher(version);
+        if (m.matches()) {
+            project.addExtraProperty(Constants.KEY_VERSION_MAJOR, m.group(1));
+            project.addExtraProperty(Constants.KEY_VERSION_MINOR, m.group(2));
+            project.addExtraProperty(Constants.KEY_VERSION_TAG, m.group(3));
+            project.addExtraProperty(Constants.KEY_VERSION_BUILD, m.group(4));
+            return;
+        }
+
+        m = MAJOR_PATTERN.matcher(version);
+        if (m.matches()) {
+            project.addExtraProperty(Constants.KEY_VERSION_MAJOR, m.group(1));
+            project.addExtraProperty(Constants.KEY_VERSION_TAG, m.group(2));
+            project.addExtraProperty(Constants.KEY_VERSION_BUILD, m.group(3));
+        }
     }
 }
