@@ -8,7 +8,7 @@ project:
   license: Apache-2.0
   java:
     groupId: org.jreleaser
-    version: 11
+    version: 8
 
 release:
   github:
