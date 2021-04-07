@@ -19,6 +19,7 @@ package org.jreleaser.maven.plugin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class Docker extends AbstractTool {
     public static final String NAME = "docker";
 
     private final Map<String, String> labels = new LinkedHashMap<>();
-    private final Set<String> imageNames = new LinkedList<>();
+    private final Set<String> imageNames = new LinkedHashSet<>();
     private final List<String> buildArgs = new ArrayList<>();
 
     private String baseImage;
