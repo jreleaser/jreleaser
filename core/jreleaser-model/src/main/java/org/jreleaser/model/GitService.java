@@ -34,7 +34,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class GitService implements Releaser, CommitAuthorProvider, OwnerProvider {
-    public static final String TAG_NAME = "tagName";
+    public static final String TAG_NAME = "TAG_NAME";
+    public static final String RELEASE_NAME = "RELEASE_NAME";
 
     private static final String TAG_EARLY_ACCESS = "early-access";
 
@@ -62,6 +63,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private String apiEndpoint;
 
     private String cachedTagName;
+    private String cachedReleaseName;
 
     protected GitService(String serviceName) {
         this.serviceName = serviceName;
@@ -100,6 +102,10 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.cachedTagName = cachedTagName;
     }
 
+    public void setCachedReleaseName(String cachedReleaseName) {
+        this.cachedReleaseName = cachedReleaseName;
+    }
+
     public String getCanonicalRepoName() {
         return owner + "/" + name;
     }
@@ -133,11 +139,15 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     }
 
     public String getResolvedReleaseName(Project project) {
-        if (isNotBlank(releaseName)) {
-            return applyTemplate(new StringReader(releaseName), props(project));
+        if (isBlank(cachedReleaseName)) {
+            cachedReleaseName = Env.resolve(RELEASE_NAME, cachedReleaseName);
         }
-        releaseName = "Release " + getResolvedTagName(project);
-        return releaseName;
+
+        if (isBlank(cachedReleaseName)) {
+            cachedReleaseName = applyTemplate(new StringReader(releaseName), props(project));
+        }
+
+        return cachedReleaseName;
     }
 
     public String getResolvedRepoUrl(Project project) {
@@ -401,6 +411,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         props.put(Constants.KEY_TAG_NAME, project.isSnapshot() ? TAG_EARLY_ACCESS : cachedTagName);
+        props.put(Constants.KEY_RELEASE_NAME, cachedReleaseName);
         return props;
     }
 

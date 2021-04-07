@@ -37,6 +37,7 @@ import static org.jreleaser.util.Constants.KEY_COMMIT_FULL_HASH;
 import static org.jreleaser.util.Constants.KEY_COMMIT_SHORT_HASH;
 import static org.jreleaser.util.Constants.KEY_PROJECT_SNAPSHOT;
 import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
+import static org.jreleaser.util.Constants.KEY_RELEASE_NAME;
 import static org.jreleaser.util.Constants.KEY_TAG_NAME;
 import static org.jreleaser.util.Constants.KEY_TIMESTAMP;
 import static org.jreleaser.util.Constants.KEY_VERSION_BUILD;
@@ -100,7 +101,8 @@ class WorkflowImpl implements Workflow {
         props.put(KEY_COMMIT_FULL_HASH, model.getCommit().getFullHash());
         props.put(KEY_PROJECT_VERSION, project.getResolvedVersion());
         props.put(KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
-        props.put(KEY_TAG_NAME, model.getRelease().getGitService().getResolvedTagName(project));
+        props.put(KEY_TAG_NAME, model.getRelease().getGitService().getEffectiveTagName(project));
+        props.put(KEY_RELEASE_NAME, model.getRelease().getGitService().getResolvedReleaseName(project));
 
         Map<String, Object> resolvedExtraProperties = project.getResolvedExtraProperties();
         safePut("project" + capitalize(KEY_VERSION_MAJOR), resolvedExtraProperties, props);

@@ -26,6 +26,7 @@ import org.jreleaser.util.StringUtils;
 
 import java.util.List;
 
+import static org.jreleaser.model.GitService.RELEASE_NAME;
 import static org.jreleaser.model.GitService.TAG_NAME;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -65,8 +66,18 @@ public abstract class GitServiceValidator extends Validator {
                 service.getTagName(),
                 errors));
 
+        service.setReleaseName(
+            checkProperty(context.getModel().getEnvironment(),
+                RELEASE_NAME,
+                service.getServiceName() + ".releaseName",
+                service.getReleaseName(),
+                errors));
+
         if (isBlank(service.getTagName())) {
-            service.setTagName("v{{" + project.getResolvedVersion() + "}}");
+            service.setTagName("v" + project.getResolvedVersion());
+        }
+        if (isBlank(service.getReleaseName())) {
+            service.setReleaseName("Release {{ tagName }}");
         }
         if (!service.getChangelog().isEnabledSet()) {
             service.getChangelog().setEnabled(true);
@@ -81,14 +92,15 @@ public abstract class GitServiceValidator extends Validator {
             service.getCommitAuthor().setEmail("jreleaser-bot@jreleaser.org");
         }
 
+        // eager resolve
+        service.getResolvedTagName(project);
+        service.getResolvedReleaseName(project);
+
         if (project.isSnapshot()) {
             service.setReleaseName(StringUtils.capitalize(project.getName()) + " Early-Access");
             service.getChangelog().setExternal(null);
             service.getChangelog().setSort(Changelog.Sort.DESC);
             service.setOverwrite(true);
         }
-
-        // eager resolve
-        service.getEffectiveTagName(project);
     }
 }
