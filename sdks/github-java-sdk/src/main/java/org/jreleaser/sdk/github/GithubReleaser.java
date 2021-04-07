@@ -22,6 +22,7 @@ import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
+import org.kohsuke.github.GHMilestone;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHRepository;
 
@@ -30,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Andres Almiray
@@ -120,7 +122,7 @@ public class GithubReleaser implements Releaser {
         }
 
         // local tag
-        if (deleteTags || !context.getModel().getRelease().getGitService().isSkipTagging()) {
+        if (deleteTags || !github.isSkipTagging()) {
             context.getLogger().debug("Tagging local repository with {}", tagName);
             GitSdk.of(context).tag(tagName, true);
         }
@@ -129,12 +131,22 @@ public class GithubReleaser implements Releaser {
         GHRelease release = api.createRelease(github.getCanonicalRepoName(),
             github.getEffectiveTagName(context.getModel().getProject()))
             .commitish(github.getTargetCommitish())
-            .name(github.getResolvedReleaseName(context.getModel().getProject()))
+            .name(github.getEffectiveReleaseName())
             .draft(github.isDraft())
             .prerelease(github.isPrerelease())
             .body(changelog)
             .create();
         api.uploadAssets(release, assets);
+
+        Optional<GHMilestone> milestone = api.findMilestoneByName(
+            github.getOwner(),
+            github.getName(),
+            github.getMilestone().getEffectiveName());
+        if (milestone.isPresent()) {
+            api.closeMilestone(github.getOwner(),
+                github.getName(),
+                milestone.get());
+        }
     }
 
     private void deleteTags(Github api, String repo, String tagName) {

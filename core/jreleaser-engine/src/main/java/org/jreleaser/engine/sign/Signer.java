@@ -85,6 +85,8 @@ public class Signer {
         List<FilePair> files = collectArtifacts(context, keyring);
         if (files.isEmpty()) {
             context.getLogger().info("No files configured for signing. Skipping");
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
             return;
         }
 
@@ -94,6 +96,8 @@ public class Signer {
 
         if (files.isEmpty()) {
             context.getLogger().info("All signatures are up-to-date and valid. Skipping");
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
             return;
         }
 

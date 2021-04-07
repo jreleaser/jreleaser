@@ -24,6 +24,7 @@ import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
 import org.jreleaser.sdk.gitlab.api.GitlabAPIException;
+import org.jreleaser.sdk.gitlab.api.Milestone;
 import org.jreleaser.sdk.gitlab.api.Project;
 import org.jreleaser.sdk.gitlab.api.Release;
 
@@ -32,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Andres Almiray
@@ -134,7 +136,7 @@ public class GitlabReleaser implements Releaser {
         }
 
         // local tag
-        if (deleteTags || !context.getModel().getRelease().getGitService().isSkipTagging()) {
+        if (deleteTags || !gitlab.isSkipTagging()) {
             context.getLogger().debug("Tagging local repository with {}", tagName);
             GitSdk.of(context).tag(tagName, true);
         }
@@ -142,7 +144,7 @@ public class GitlabReleaser implements Releaser {
         List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), assets);
 
         Release release = new Release();
-        release.setName(gitlab.getResolvedReleaseName(context.getModel().getProject()));
+        release.setName(gitlab.getEffectiveReleaseName());
         release.setTagName(gitlab.getEffectiveTagName(context.getModel().getProject()));
         release.setRef(gitlab.getRef());
         release.setDescription(changelog);
@@ -150,6 +152,16 @@ public class GitlabReleaser implements Releaser {
         // remote tag/release
         api.createRelease(gitlab.getOwner(), gitlab.getName(), release);
         api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, uploads);
+
+        Optional<Milestone> milestone = api.findMilestoneByName(
+            gitlab.getOwner(),
+            gitlab.getName(),
+            gitlab.getMilestone().getEffectiveName());
+        if (milestone.isPresent()) {
+            api.closeMilestone(gitlab.getOwner(),
+                gitlab.getName(),
+                milestone.get());
+        }
     }
 
     private void deleteTags(Gitlab api, String owner, String repo, String tagName) {

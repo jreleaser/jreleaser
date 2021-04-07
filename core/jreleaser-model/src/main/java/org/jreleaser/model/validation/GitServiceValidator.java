@@ -28,6 +28,7 @@ import java.util.List;
 
 import static org.jreleaser.model.GitService.RELEASE_NAME;
 import static org.jreleaser.model.GitService.TAG_NAME;
+import static org.jreleaser.model.Milestone.MILESTONE_NAME;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -92,9 +93,22 @@ public abstract class GitServiceValidator extends Validator {
             service.getCommitAuthor().setEmail("jreleaser-bot@jreleaser.org");
         }
 
+        // milestone
+        service.getMilestone().setName(
+            checkProperty(context.getModel().getEnvironment(),
+                MILESTONE_NAME,
+                service.getServiceName() + ".milestone.name",
+                service.getMilestone().getName(),
+                errors));
+
+        if (isBlank(service.getMilestone().getName())) {
+            service.getMilestone().setName("{{ tagName }}");
+        }
+
         // eager resolve
         service.getResolvedTagName(project);
         service.getResolvedReleaseName(project);
+        service.getMilestone().getResolvedName(service.props(project));
 
         if (project.isSnapshot()) {
             service.setReleaseName(StringUtils.capitalize(project.getName()) + " Early-Access");

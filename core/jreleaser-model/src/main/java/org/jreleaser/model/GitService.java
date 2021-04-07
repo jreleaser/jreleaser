@@ -40,6 +40,9 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private static final String TAG_EARLY_ACCESS = "early-access";
 
     private final String serviceName;
+    private final Changelog changelog = new Changelog();
+    private final Milestone milestone = new Milestone();
+    private final CommitAuthor commitAuthor = new CommitAuthor();
     protected Boolean enabled;
     private String host;
     private String owner;
@@ -54,10 +57,8 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private String token;
     private String tagName = "v{{projectVersion}}";
     private String releaseName = "Release {{tagName}}";
-    private CommitAuthor commitAuthor = new CommitAuthor();
     private boolean sign;
     private boolean skipTagging;
-    private Changelog changelog = new Changelog();
     private boolean overwrite;
     private boolean allowUploadToExisting;
     private String apiEndpoint;
@@ -94,16 +95,9 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.overwrite = service.overwrite;
         this.allowUploadToExisting = service.allowUploadToExisting;
         this.apiEndpoint = service.apiEndpoint;
-        this.commitAuthor.setAll(service.commitAuthor);
-        this.changelog.setAll(service.changelog);
-    }
-
-    public void setCachedTagName(String cachedTagName) {
-        this.cachedTagName = cachedTagName;
-    }
-
-    public void setCachedReleaseName(String cachedReleaseName) {
-        this.cachedReleaseName = cachedReleaseName;
+        setCommitAuthor(service.commitAuthor);
+        setChangelog(service.changelog);
+        setMilestone(service.milestone);
     }
 
     public String getCanonicalRepoName() {
@@ -125,6 +119,8 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
 
         if (isBlank(cachedTagName)) {
             cachedTagName = applyTemplate(new StringReader(tagName), props(project));
+        } else if (cachedTagName.contains("{{")) {
+            cachedTagName = applyTemplate(new StringReader(cachedTagName), props(project));
         }
 
         return cachedTagName;
@@ -135,7 +131,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
             return TAG_EARLY_ACCESS;
         }
 
-        return getResolvedTagName(project);
+        return cachedTagName;
     }
 
     public String getResolvedReleaseName(Project project) {
@@ -145,8 +141,14 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
 
         if (isBlank(cachedReleaseName)) {
             cachedReleaseName = applyTemplate(new StringReader(releaseName), props(project));
+        } else if (cachedReleaseName.contains("{{")) {
+            cachedReleaseName = applyTemplate(new StringReader(cachedReleaseName), props(project));
         }
 
+        return cachedReleaseName;
+    }
+
+    public String getEffectiveReleaseName() {
         return cachedReleaseName;
     }
 
@@ -306,7 +308,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
 
     @Override
     public void setCommitAuthor(CommitAuthor commitAuthor) {
-        this.commitAuthor = commitAuthor;
+        this.commitAuthor.setAll(commitAuthor);
     }
 
     public boolean isSign() {
@@ -330,7 +332,15 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     }
 
     public void setChangelog(Changelog changelog) {
-        this.changelog = changelog;
+        this.changelog.setAll(changelog);
+    }
+
+    public Milestone getMilestone() {
+        return milestone;
+    }
+
+    public void setMilestone(Milestone milestone) {
+        this.milestone.setAll(milestone);
     }
 
     public boolean isOverwrite() {
@@ -381,11 +391,11 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("allowUploadToExisting", allowUploadToExisting);
         map.put("apiEndpoint", apiEndpoint);
         map.put("changelog", changelog.asMap());
+        map.put("milestone", milestone.asMap());
         return map;
     }
 
-
-    private Map<String, Object> props(Project project) {
+    public Map<String, Object> props(Project project) {
         // duplicate from JReleaserModel to avoid endless recursion
         Map<String, Object> props = new LinkedHashMap<>();
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
@@ -412,6 +422,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         props.put(Constants.KEY_TAG_NAME, project.isSnapshot() ? TAG_EARLY_ACCESS : cachedTagName);
         props.put(Constants.KEY_RELEASE_NAME, cachedReleaseName);
+        props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
         return props;
     }
 
@@ -423,7 +434,8 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         props.put(Constants.KEY_TAG_NAME, getEffectiveTagName(project));
-        props.put(Constants.KEY_RELEASE_NAME, getResolvedReleaseName(project));
+        props.put(Constants.KEY_RELEASE_NAME, getEffectiveReleaseName());
+        props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
         props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(project));
         props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(project));
         props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(project));

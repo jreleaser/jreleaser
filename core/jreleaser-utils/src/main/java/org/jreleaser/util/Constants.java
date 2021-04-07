@@ -58,6 +58,7 @@ public interface Constants {
     String KEY_REPO_BRANCH = "repoBranch";
     String KEY_TAG_NAME = "tagName";
     String KEY_RELEASE_NAME = "releaseName";
+    String KEY_MILESTONE_NAME = "milestoneName";
     String KEY_CANONICAL_REPO_NAME = "repoCanonicalName";
     String KEY_REPO_URL = "repoUrl";
     String KEY_COMMIT_URL = "commitsUrl";

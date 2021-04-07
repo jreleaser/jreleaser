@@ -26,6 +26,7 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Changelog
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.GitService
+import org.jreleaser.gradle.plugin.dsl.Milestone
 
 import javax.inject.Inject
 
@@ -106,6 +107,11 @@ abstract class AbstractGitService implements GitService {
     @Override
     void changelog(Action<? super Changelog> action) {
         action.execute(changelog)
+    }
+
+    @Override
+    void milestone(Action<? super Milestone> action) {
+        action.execute(milestone)
     }
 
     @Override

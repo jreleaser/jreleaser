@@ -61,4 +61,11 @@ public interface GitlabAPI {
     @RequestLine("POST /projects/{projectId}/releases/{tagName}/assets/links")
     @Headers("Content-Type: multipart/form-data")
     Link linkAsset(LinkRequest link, @Param("projectId") Integer projectId, @Param("tagName") String tagName);
+
+    @RequestLine("GET /projects/{projectId}/milestones")
+    List<Milestone> findMilestoneByTitle(@Param("projectId") Integer projectId, @QueryMap Map<String, Object> queryMap);
+
+    @RequestLine("PUT /projects/{projectId}/milestones/{milestoneId}")
+    @Headers("Content-Type: application/json")
+    void updateMilestone(Map<String, Object> params, @Param("projectId") Integer projectId, @Param("milestoneId") Integer milestoneId);
 }

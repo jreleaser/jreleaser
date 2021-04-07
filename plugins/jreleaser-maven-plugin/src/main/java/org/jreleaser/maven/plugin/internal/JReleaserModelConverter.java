@@ -38,6 +38,7 @@ import org.jreleaser.maven.plugin.Java;
 import org.jreleaser.maven.plugin.Jbang;
 import org.jreleaser.maven.plugin.Jreleaser;
 import org.jreleaser.maven.plugin.Mail;
+import org.jreleaser.maven.plugin.Milestone;
 import org.jreleaser.maven.plugin.Packagers;
 import org.jreleaser.maven.plugin.Plug;
 import org.jreleaser.maven.plugin.Project;
@@ -176,6 +177,7 @@ public final class JReleaserModelConverter {
         s.setAllowUploadToExisting(service.isAllowUploadToExisting());
         s.setApiEndpoint(service.getApiEndpoint());
         s.setChangelog(convertChangelog(service.getChangelog()));
+        s.setMilestone(convertMilestone(service.getMilestone()));
     }
 
     private static org.jreleaser.model.CommitAuthor convertCommitAuthor(CommitAuthor commitAuthor) {
@@ -191,6 +193,13 @@ public final class JReleaserModelConverter {
         c.setSort(changelog.getSort().name());
         c.setExternal(changelog.getExternal());
         return c;
+    }
+
+    private static org.jreleaser.model.Milestone convertMilestone(Milestone milestone) {
+        org.jreleaser.model.Milestone m = new org.jreleaser.model.Milestone();
+        m.setClose(milestone.isClose());
+        m.setName(milestone.getName());
+        return m;
     }
 
     private static org.jreleaser.model.Packagers convertPackagers(Packagers packagers) {

@@ -26,12 +26,14 @@ import feign.Feign;
 import feign.Request;
 import feign.form.FormData;
 import feign.form.FormEncoder;
+import feign.httpclient.ApacheHttpClient;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.jreleaser.sdk.gitea.api.GiteaAPI;
 import org.jreleaser.sdk.gitea.api.GiteaAPIException;
+import org.jreleaser.sdk.gitea.api.GtMilestone;
 import org.jreleaser.sdk.gitea.api.GtOrganization;
 import org.jreleaser.sdk.gitea.api.GtRelease;
 import org.jreleaser.sdk.gitea.api.GtRepository;
@@ -43,10 +45,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNull;
-import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -80,6 +82,7 @@ class Gitea {
 
         this.logger = logger;
         this.api = Feign.builder()
+            .client(new ApacheHttpClient())
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new JacksonDecoder(objectMapper))
             .requestInterceptor(template -> template.header("Authorization", String.format("token %s", token)))
@@ -99,6 +102,33 @@ class Gitea {
             }
             throw e;
         }
+    }
+
+    Optional<GtMilestone> findMilestoneByName(String owner, String repo, String milestoneName) {
+        logger.debug("Lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
+
+        try {
+            GtMilestone milestone = api.findMilestoneByTitle(owner, repo, milestoneName);
+
+            if (milestone == null) {
+                return Optional.empty();
+            }
+
+            return "open".equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
+        } catch (GiteaAPIException e) {
+            if (e.isNotFound()) {
+                // ok
+                return Optional.empty();
+            }
+            throw e;
+        }
+    }
+
+    void closeMilestone(String owner, String repo, GtMilestone milestone) throws IOException {
+        logger.debug("Closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
+
+        api.updateMilestone(CollectionUtils.<String, Object>map()
+            .e("state", "closed"), owner, repo, milestone.getId());
     }
 
     GtRepository createRepository(String owner, String repo) {

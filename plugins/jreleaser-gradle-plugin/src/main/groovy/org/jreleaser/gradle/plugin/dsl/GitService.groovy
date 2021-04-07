@@ -66,6 +66,10 @@ interface GitService extends Releaser {
 
     void changelog(Action<? super Changelog> action)
 
+    Milestone getMilestone()
+
+    void milestone(Action<? super Milestone> action)
+
     CommitAuthor getCommitAuthor()
 
     void commitAuthor(Action<? super CommitAuthor> action)

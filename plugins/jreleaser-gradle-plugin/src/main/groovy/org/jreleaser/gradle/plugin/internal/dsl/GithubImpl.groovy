@@ -37,6 +37,7 @@ class GithubImpl extends AbstractGitService implements Github {
     final Property<Boolean> draft
     final Property<Boolean> prerelease
     final ChangelogImpl changelog
+    final MilestoneImpl milestone
     final CommitAuthorImpl commitAuthor
 
     @Inject
@@ -47,6 +48,7 @@ class GithubImpl extends AbstractGitService implements Github {
         prerelease = objects.property(Boolean).convention(Providers.notDefined())
 
         changelog = objects.newInstance(ChangelogImpl, objects)
+        milestone = objects.newInstance(MilestoneImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
@@ -57,6 +59,7 @@ class GithubImpl extends AbstractGitService implements Github {
             draft.present ||
             prerelease.present ||
             changelog.isSet() ||
+            milestone.isSet() ||
             commitAuthor.isSet()
     }
 
@@ -67,6 +70,7 @@ class GithubImpl extends AbstractGitService implements Github {
         service.draft = draft.getOrElse(false)
         service.prerelease = prerelease.getOrElse(false)
         if (changelog.isSet()) service.changelog = changelog.toModel()
+        if (milestone.isSet()) service.milestone = milestone.toModel()
         if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
         service
     }

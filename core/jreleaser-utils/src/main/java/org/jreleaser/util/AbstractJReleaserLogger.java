@@ -17,30 +17,32 @@
  */
 package org.jreleaser.util;
 
+import java.util.Stack;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public abstract class AbstractJReleaserLogger implements JReleaserLogger {
+    private final Stack<String> prefix = new Stack<>();
     private String indent = "";
-    private String prefix = null;
-    private String previousPrefix = null;
 
     @Override
     public void reset() {
-        this.prefix = this.previousPrefix = null;
+        this.prefix.clear();
         this.indent = "";
     }
 
     @Override
     public void setPrefix(String prefix) {
-        this.previousPrefix = this.prefix;
-        this.prefix = prefix;
+        this.prefix.push(prefix);
     }
 
     @Override
     public void restorePrefix() {
-        this.prefix = this.previousPrefix;
+        if (!this.prefix.isEmpty()) {
+            this.prefix.pop();
+        }
     }
 
     @Override
@@ -56,6 +58,6 @@ public abstract class AbstractJReleaserLogger implements JReleaserLogger {
     }
 
     protected String formatMessage(String message) {
-        return indent + (prefix != null ? "[" + prefix + "] " : "") + message;
+        return indent + (!prefix.isEmpty() ? "[" + prefix.peek() + "] " : "") + message;
     }
 }

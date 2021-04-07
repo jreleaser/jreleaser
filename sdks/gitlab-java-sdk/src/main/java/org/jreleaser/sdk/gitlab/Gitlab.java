@@ -33,6 +33,7 @@ import org.apache.tika.mime.MediaType;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
 import org.jreleaser.sdk.gitlab.api.GitlabAPI;
 import org.jreleaser.sdk.gitlab.api.GitlabAPIException;
+import org.jreleaser.sdk.gitlab.api.Milestone;
 import org.jreleaser.sdk.gitlab.api.Project;
 import org.jreleaser.sdk.gitlab.api.Release;
 import org.jreleaser.sdk.gitlab.api.User;
@@ -44,6 +45,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNull;
@@ -112,6 +114,40 @@ class Gitlab {
         }
 
         return projects.get(0);
+    }
+
+    Optional<Milestone> findMilestoneByName(String owner, String repo, String milestoneName) throws IOException {
+        logger.debug("Lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
+
+        Project project = getProject(repo);
+
+        try {
+            List<Milestone> milestones = api.findMilestoneByTitle(project.getId(), CollectionUtils.<String, Object>map()
+                .e("title", milestoneName));
+
+            if (milestones == null || milestones.isEmpty()) {
+                return Optional.empty();
+            }
+
+            Milestone milestone = milestones.get(0);
+            return "active".equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
+        } catch (GitlabAPIException e) {
+            if (e.isNotFound() || e.isForbidden()) {
+                // ok
+                return Optional.empty();
+            }
+            throw e;
+        }
+    }
+
+    void closeMilestone(String owner, String repo, Milestone milestone) throws IOException {
+        logger.debug("Closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
+
+        Project project = getProject(repo);
+
+        api.updateMilestone(CollectionUtils.<String, Object>map()
+                .e("state_event", "close"),
+            project.getId(), milestone.getId());
     }
 
     Project createProject(String owner, String repo) throws IOException {

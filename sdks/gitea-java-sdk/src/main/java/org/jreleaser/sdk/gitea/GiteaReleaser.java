@@ -23,6 +23,7 @@ import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.gitea.api.GiteaAPIException;
+import org.jreleaser.sdk.gitea.api.GtMilestone;
 import org.jreleaser.sdk.gitea.api.GtRelease;
 import org.jreleaser.sdk.gitea.api.GtRepository;
 
@@ -31,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Andres Almiray
@@ -123,20 +125,30 @@ public class GiteaReleaser implements Releaser {
         }
 
         // local tag
-        if (deleteTags || !context.getModel().getRelease().getGitService().isSkipTagging()) {
+        if (deleteTags || !gitea.isSkipTagging()) {
             context.getLogger().debug("Tagging local repository with {}", tagName);
             GitSdk.of(context).tag(tagName, true);
         }
 
         // remote tag/release
         GtRelease release = new GtRelease();
-        release.setName(gitea.getResolvedReleaseName(context.getModel().getProject()));
+        release.setName(gitea.getEffectiveReleaseName());
         release.setTagName(gitea.getEffectiveTagName(context.getModel().getProject()));
         release.setTargetCommitish(gitea.getTargetCommitish());
         release.setBody(changelog);
 
         release = api.createRelease(gitea.getOwner(), gitea.getName(), release);
         api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);
+
+        Optional<GtMilestone> milestone = api.findMilestoneByName(
+            gitea.getOwner(),
+            gitea.getName(),
+            gitea.getMilestone().getEffectiveName());
+        if (milestone.isPresent()) {
+            api.closeMilestone(gitea.getOwner(),
+                gitea.getName(),
+                milestone.get());
+        }
     }
 
     private void deleteTags(Gitea api, String owner, String repo, String tagName) {

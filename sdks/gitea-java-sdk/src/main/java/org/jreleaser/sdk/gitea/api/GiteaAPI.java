@@ -37,11 +37,11 @@ public interface GiteaAPI {
 
     @RequestLine("POST /orgs/{org}/repos")
     @Headers("Content-Type: application/json")
-    GtRepository createRepository(Map<String,Object> data, @Param("org") String org);
+    GtRepository createRepository(Map<String, Object> data, @Param("org") String org);
 
     @RequestLine("POST /user/repos")
     @Headers("Content-Type: application/json")
-    GtRepository createRepository(Map<String,Object> data);
+    GtRepository createRepository(Map<String, Object> data);
 
     @RequestLine("GET /repos/{owner}/{repo}/releases/tags/{tag}")
     GtRelease getReleaseByTagName(@Param("owner") String owner, @Param("repo") String repo, @Param("tag") String tag);
@@ -59,4 +59,11 @@ public interface GiteaAPI {
     @RequestLine("POST /repos/{owner}/{repo}/releases/{id}/assets")
     @Headers("Content-Type: multipart/form-data")
     GtAttachment uploadAsset(@Param("owner") String owner, @Param("repo") String repo, @Param("id") Integer id, @Param("attachment") FormData file);
+
+    @RequestLine("GET /repos/{owner}/{repo}/milestones/{milestoneName}")
+    GtMilestone findMilestoneByTitle(@Param("owner") String owner, @Param("repo") String repo, @Param("milestoneName") String milestoneName);
+
+    @RequestLine("PATCH /repos/{owner}/{repo}/milestones/{id}")
+    @Headers("Content-Type: application/json")
+    void updateMilestone(Map<String, Object> params, @Param("owner") String owner, @Param("repo") String repo, @Param("id") Integer id);
 }

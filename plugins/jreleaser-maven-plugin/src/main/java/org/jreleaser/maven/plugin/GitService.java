@@ -22,6 +22,9 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public abstract class GitService implements Releaser {
+    private final CommitAuthor commitAuthor = new CommitAuthor();
+    private final Changelog changelog = new Changelog();
+    private final Milestone milestone = new Milestone();
     protected Boolean enabled;
     private String host;
     private String owner;
@@ -36,10 +39,8 @@ public abstract class GitService implements Releaser {
     private String token;
     private String tagName;
     private String releaseName;
-    private CommitAuthor commitAuthor = new CommitAuthor();
     private boolean sign;
     private boolean skipTagging;
-    private Changelog changelog = new Changelog();
     private boolean overwrite;
     private boolean allowUploadToExisting;
     private String apiEndpoint;
@@ -59,13 +60,14 @@ public abstract class GitService implements Releaser {
         this.token = service.token;
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
-        this.commitAuthor.setAll(service.commitAuthor);
         this.sign = service.sign;
         this.skipTagging = service.skipTagging;
         this.overwrite = service.overwrite;
         this.allowUploadToExisting = service.allowUploadToExisting;
         this.apiEndpoint = service.apiEndpoint;
-        this.changelog.setAll(service.changelog);
+        setCommitAuthor(service.commitAuthor);
+        setChangelog(service.changelog);
+        setMilestone(service.milestone);
     }
 
     @Override
@@ -192,7 +194,7 @@ public abstract class GitService implements Releaser {
     }
 
     public void setCommitAuthor(CommitAuthor commitAuthor) {
-        this.commitAuthor = commitAuthor;
+        this.commitAuthor.setAll(commitAuthor);
     }
 
     public boolean isSign() {
@@ -216,7 +218,15 @@ public abstract class GitService implements Releaser {
     }
 
     public void setChangelog(Changelog changelog) {
-        this.changelog = changelog;
+        this.changelog.setAll(changelog);
+    }
+
+    public Milestone getMilestone() {
+        return milestone;
+    }
+
+    public void setMilestone(Milestone milestone) {
+        this.milestone.setAll(milestone);
     }
 
     public boolean isOverwrite() {

@@ -24,6 +24,8 @@ import org.kohsuke.github.GHAsset;
 import org.kohsuke.github.GHDiscussion;
 import org.kohsuke.github.GHException;
 import org.kohsuke.github.GHFileNotFoundException;
+import org.kohsuke.github.GHIssueState;
+import org.kohsuke.github.GHMilestone;
 import org.kohsuke.github.GHOrganization;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHReleaseBuilder;
@@ -31,6 +33,7 @@ import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHTeam;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
+import org.kohsuke.github.PagedIterable;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -91,6 +94,22 @@ class Github {
 
         return github.createRepository(repo)
             .create();
+    }
+
+    Optional<GHMilestone> findMilestoneByName(String owner, String repo, String milestoneName) throws IOException {
+        logger.debug("Lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
+
+        GHRepository repository = findRepository(owner, repo);
+        PagedIterable<GHMilestone> milestones = repository.listMilestones(GHIssueState.OPEN);
+        return StreamSupport.stream(milestones.spliterator(), false)
+            .filter(m -> milestoneName.equals(m.getTitle()))
+            .findFirst();
+    }
+
+    void closeMilestone(String owner, String repo, GHMilestone milestone) throws IOException {
+        logger.debug("Closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
+
+        milestone.close();
     }
 
     GHRelease findReleaseByTag(String repo, String tagName) throws IOException {
