@@ -17,8 +17,7 @@
  */
 package org.jreleaser.engine.checksum;
 
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
@@ -132,10 +131,10 @@ public class Checksum {
     public static String calculateHash(JReleaserContext context, Path input, Path output) throws JReleaserException {
         try {
             context.getLogger().info("{}", context.getBasedir().relativize(input));
-            HashCode hashCode = com.google.common.io.Files.asByteSource(input.toFile()).hash(Hashing.sha256());
+            String hashcode = DigestUtils.sha256Hex(Files.readAllBytes(input));
             output.toFile().getParentFile().mkdirs();
-            com.google.common.io.Files.write(hashCode.toString().getBytes(), output.toFile());
-            return hashCode.toString();
+            Files.write(output, hashcode.getBytes());
+            return hashcode;
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error calculating checksum for " + input, e);
         }
