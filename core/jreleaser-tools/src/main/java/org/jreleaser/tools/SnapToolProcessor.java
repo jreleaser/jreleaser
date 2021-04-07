@@ -42,7 +42,7 @@ import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class SnapToolProcessor extends AbstractToolProcessor<Snap> {
+public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
     public SnapToolProcessor(JReleaserContext context) {
         super(context);
     }

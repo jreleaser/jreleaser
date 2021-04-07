@@ -26,6 +26,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.SnapPackager
 import org.jreleaser.gradle.plugin.dsl.Tap
@@ -43,7 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
+class SnapPackagerImpl extends AbstractPackagerRepositoryTool implements SnapPackager {
     final Property<String> base
     final Property<String> grade
     final Property<String> confinement
@@ -106,6 +107,7 @@ class SnapPackagerImpl extends AbstractPackagerTool implements SnapPackager {
     }
 
     @Override
+    @Internal
     boolean isSet() {
         super.isSet() ||
             base.present ||

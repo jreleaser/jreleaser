@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.ChocolateyPackager
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Tap
@@ -35,7 +36,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class ChocolateyPackagerImpl extends AbstractPackagerTool implements ChocolateyPackager {
+class ChocolateyPackagerImpl extends AbstractPackagerRepositoryTool implements ChocolateyPackager {
     final Property<String> username
     final Property<Boolean> remoteBuild
     final CommitAuthorImpl commitAuthor
@@ -54,6 +55,7 @@ class ChocolateyPackagerImpl extends AbstractPackagerTool implements ChocolateyP
     protected String toolName() { 'chocolatey' }
 
     @Override
+    @Internal
     boolean isSet() {
         super.isSet() ||
             username.present ||

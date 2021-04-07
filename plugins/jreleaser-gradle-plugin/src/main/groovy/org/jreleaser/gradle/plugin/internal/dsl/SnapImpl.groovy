@@ -45,7 +45,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class SnapImpl extends AbstractTool implements Snap {
+class SnapImpl extends AbstractRepositoryTool implements Snap {
     final Property<String> base
     final Property<String> grade
     final Property<String> confinement

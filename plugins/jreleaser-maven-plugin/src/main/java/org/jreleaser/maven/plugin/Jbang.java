@@ -17,11 +17,13 @@
  */
 package org.jreleaser.maven.plugin;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Jbang extends AbstractTool {
+public class Jbang extends AbstractRepositoryTool {
     public static final String NAME = "catalog";
 
     private String alias;
@@ -56,6 +58,7 @@ public class Jbang extends AbstractTool {
     @Override
     public boolean isSet() {
         return super.isSet() ||
+            isNotBlank(alias) ||
             catalog.isSet();
     }
 }

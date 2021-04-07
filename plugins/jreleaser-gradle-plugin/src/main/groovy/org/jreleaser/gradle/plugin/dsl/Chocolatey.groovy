@@ -25,5 +25,5 @@ import groovy.transform.CompileStatic
  * @since 0.1.0
  */
 @CompileStatic
-interface Chocolatey extends ChocolateyPackager, Tool {
+interface Chocolatey extends ChocolateyPackager, RepositoryTool {
 }

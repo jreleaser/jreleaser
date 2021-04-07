@@ -39,7 +39,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class BrewImpl extends AbstractTool implements Brew {
+class BrewImpl extends AbstractRepositoryTool implements Brew {
     final CommitAuthorImpl commitAuthor
     final TapImpl tap
     final MapProperty<String, String> dependencies
@@ -82,7 +82,6 @@ class BrewImpl extends AbstractTool implements Brew {
     void tap(Action<? super Tap> action) {
         action.execute(tap)
     }
-
 
     @Override
     void commitAuthor(Action<? super CommitAuthor> action) {

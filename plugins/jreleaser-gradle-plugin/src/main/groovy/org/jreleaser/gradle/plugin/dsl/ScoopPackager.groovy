@@ -27,7 +27,7 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface ScoopPackager extends PackagerTool {
+interface ScoopPackager extends PackagerRepositoryTool {
     Property<String> getCheckverUrl()
 
     Property<String> getAutoupdateUrl()

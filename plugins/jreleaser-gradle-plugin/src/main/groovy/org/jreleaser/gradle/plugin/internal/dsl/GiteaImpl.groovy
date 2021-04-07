@@ -52,6 +52,7 @@ class GiteaImpl extends AbstractGitService implements Gitea {
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||

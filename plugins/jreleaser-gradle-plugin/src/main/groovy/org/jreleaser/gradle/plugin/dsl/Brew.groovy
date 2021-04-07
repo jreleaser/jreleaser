@@ -25,5 +25,5 @@ import groovy.transform.CompileStatic
  * @since 0.1.0
  */
 @CompileStatic
-interface Brew extends BrewPackager, Tool {
+interface Brew extends BrewPackager, RepositoryTool {
 }

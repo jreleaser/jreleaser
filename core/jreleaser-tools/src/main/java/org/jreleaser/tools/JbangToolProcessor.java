@@ -40,7 +40,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JbangToolProcessor extends AbstractToolProcessor<Jbang> {
+public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
     public JbangToolProcessor(JReleaserContext context) {
         super(context);
     }

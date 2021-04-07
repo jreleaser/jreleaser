@@ -25,5 +25,5 @@ import groovy.transform.CompileStatic
  * @since 0.1.0
  */
 @CompileStatic
-interface Snap extends SnapPackager, Tool {
+interface Snap extends SnapPackager, RepositoryTool {
 }

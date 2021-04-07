@@ -27,6 +27,7 @@ import org.jreleaser.maven.plugin.Chocolatey;
 import org.jreleaser.maven.plugin.CommitAuthor;
 import org.jreleaser.maven.plugin.Discussions;
 import org.jreleaser.maven.plugin.Distribution;
+import org.jreleaser.maven.plugin.Docker;
 import org.jreleaser.maven.plugin.Environment;
 import org.jreleaser.maven.plugin.Files;
 import org.jreleaser.maven.plugin.GitService;
@@ -206,6 +207,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Packagers p = new org.jreleaser.model.Packagers();
         if (packagers.getBrew().isSet()) p.setBrew(convertBrew(packagers.getBrew()));
         if (packagers.getChocolatey().isSet()) p.setChocolatey(convertChocolatey(packagers.getChocolatey()));
+        if (packagers.getDocker().isSet()) p.setDocker(convertDocker(packagers.getDocker()));
         if (packagers.getJbang().isSet()) p.setJbang(convertJbang(packagers.getJbang()));
         if (packagers.getScoop().isSet()) p.setScoop(convertScoop(packagers.getScoop()));
         if (packagers.getSnap().isSet()) p.setSnap(convertSnap(packagers.getSnap()));
@@ -329,6 +331,7 @@ public final class JReleaserModelConverter {
 
         if (distribution.getBrew().isSet()) d.setBrew(convertBrew(distribution.getBrew()));
         if (distribution.getChocolatey().isSet()) d.setChocolatey(convertChocolatey(distribution.getChocolatey()));
+        if (distribution.getDocker().isSet()) d.setDocker(convertDocker(distribution.getDocker()));
         if (distribution.getJbang().isSet()) d.setJbang(convertJbang(distribution.getJbang()));
         if (distribution.getScoop().isSet()) d.setScoop(convertScoop(distribution.getScoop()));
         if (distribution.getSnap().isSet()) d.setSnap(convertSnap(distribution.getSnap()));
@@ -411,6 +414,18 @@ public final class JReleaserModelConverter {
         t.setExtraProperties(chocolatey.getExtraProperties());
         t.setBucket(convertChocolateyBucket(chocolatey.getBucket()));
         t.setCommitAuthor(convertCommitAuthor(chocolatey.getCommitAuthor()));
+        return t;
+    }
+
+    private static org.jreleaser.model.Docker convertDocker(Docker docker) {
+        org.jreleaser.model.Docker t = new org.jreleaser.model.Docker();
+        if (docker.isEnabledSet()) t.setEnabled(docker.isEnabled());
+        t.setTemplateDirectory(docker.getTemplateDirectory());
+        t.setExtraProperties(docker.getExtraProperties());
+        t.setBaseImage(docker.getBaseImage());
+        t.setImageNames(docker.getImageNames());
+        t.setBuildArgs(docker.getBuildArgs());
+        t.setLabels(docker.getLabels());
         return t;
     }
 

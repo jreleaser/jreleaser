@@ -30,7 +30,7 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface SnapPackager extends PackagerTool {
+interface SnapPackager extends PackagerRepositoryTool {
     Property<String> getBase()
 
     Property<String> getGrade()

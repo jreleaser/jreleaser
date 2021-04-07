@@ -34,7 +34,7 @@ import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class BrewToolProcessor extends AbstractToolProcessor<Brew> {
+public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
     public BrewToolProcessor(JReleaserContext context) {
         super(context);
     }

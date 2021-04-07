@@ -24,6 +24,7 @@ package org.jreleaser.maven.plugin;
 public class Packagers {
     private final Brew brew = new Brew();
     private final Chocolatey chocolatey = new Chocolatey();
+    private final Docker docker = new Docker();
     private final Jbang jbang = new Jbang();
     private final Scoop scoop = new Scoop();
     private final Snap snap = new Snap();
@@ -31,6 +32,7 @@ public class Packagers {
     void setAll(Packagers packagers) {
         setBrew(packagers.brew);
         setChocolatey(packagers.chocolatey);
+        setDocker(packagers.docker);
         setJbang(packagers.jbang);
         setScoop(packagers.scoop);
         setSnap(packagers.snap);
@@ -50,6 +52,14 @@ public class Packagers {
 
     public void setChocolatey(Chocolatey chocolatey) {
         this.chocolatey.setAll(chocolatey);
+    }
+
+    public Docker getDocker() {
+        return docker;
+    }
+
+    public void setDocker(Docker docker) {
+        this.docker.setAll(docker);
     }
 
     public Jbang getJbang() {

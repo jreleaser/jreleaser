@@ -37,7 +37,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class ScoopImpl extends AbstractTool implements Scoop {
+class ScoopImpl extends AbstractRepositoryTool implements Scoop {
     final Property<String> checkverUrl
     final Property<String> autoupdateUrl
     final CommitAuthorImpl commitAuthor

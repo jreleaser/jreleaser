@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Snap extends AbstractTool {
+public class Snap extends AbstractRepositoryTool {
     public static final String NAME = "snap";
 
     private final List<String> localPlugs = new ArrayList<>();

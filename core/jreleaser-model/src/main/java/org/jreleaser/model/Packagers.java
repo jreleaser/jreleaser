@@ -27,6 +27,7 @@ import java.util.Map;
 public class Packagers implements Domain {
     private final Brew brew = new Brew();
     private final Chocolatey chocolatey = new Chocolatey();
+    private final Docker docker = new Docker();
     private final Jbang jbang = new Jbang();
     private final Scoop scoop = new Scoop();
     private final Snap snap = new Snap();
@@ -34,6 +35,7 @@ public class Packagers implements Domain {
     public boolean hasEnabledPackagers() {
         return brew.isEnabled() ||
             chocolatey.isEnabled() ||
+            docker.isEnabled() ||
             jbang.isEnabled() ||
             scoop.isEnabled() ||
             snap.isEnabled();
@@ -42,6 +44,7 @@ public class Packagers implements Domain {
     void setAll(Packagers packagers) {
         setBrew(packagers.brew);
         setChocolatey(packagers.chocolatey);
+        setDocker(packagers.docker);
         setJbang(packagers.jbang);
         setScoop(packagers.scoop);
         setSnap(packagers.snap);
@@ -61,6 +64,14 @@ public class Packagers implements Domain {
 
     public void setChocolatey(Chocolatey chocolatey) {
         this.chocolatey.setAll(chocolatey);
+    }
+
+    public Docker getDocker() {
+        return docker;
+    }
+
+    public void setDocker(Docker docker) {
+        this.docker.setAll(docker);
     }
 
     public Jbang getJbang() {
@@ -92,6 +103,7 @@ public class Packagers implements Domain {
         Map<String, Object> map = new LinkedHashMap<>();
         map.putAll(brew.asMap());
         map.putAll(chocolatey.asMap());
+        map.putAll(docker.asMap());
         map.putAll(jbang.asMap());
         map.putAll(scoop.asMap());
         map.putAll(snap.asMap());

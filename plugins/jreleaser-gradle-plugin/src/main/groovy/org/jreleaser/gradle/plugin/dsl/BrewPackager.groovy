@@ -27,7 +27,7 @@ import org.gradle.api.provider.MapProperty
  * @since 0.1.0
  */
 @CompileStatic
-interface BrewPackager extends PackagerTool {
+interface BrewPackager extends PackagerRepositoryTool {
     MapProperty<String, String> getDependencies()
 
     void addDependency(String key, String value)

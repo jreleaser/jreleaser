@@ -32,7 +32,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Snap extends AbstractTool {
+public class Snap extends AbstractRepositoryTool {
     public static final String NAME = "snap";
 
     private final List<String> localPlugs = new ArrayList<>();
@@ -226,6 +226,7 @@ public class Snap extends AbstractTool {
 
     @Override
     protected void asMap(Map<String, Object> props) {
+        super.asMap(props);
         props.put("base", base);
         props.put("grade", grade);
         props.put("confinement", confinement);

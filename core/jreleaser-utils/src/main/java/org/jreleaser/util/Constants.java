@@ -87,6 +87,10 @@ public interface Constants {
     // Brew
     String KEY_BREW_DEPENDENCIES = "brewDependencies";
 
+    // Docker
+    String KEY_DOCKER_BASE_IMAGE = "dockerBaseImage";
+    String KEY_DOCKER_LABELS = "dockerLabels";
+
     // Scoop
     String KEY_SCOOP_CHECKVER_URL = "scoopCheckverUrl";
     String KEY_SCOOP_AUTOUPDATE_URL = "scoopAutoupdateUrl";

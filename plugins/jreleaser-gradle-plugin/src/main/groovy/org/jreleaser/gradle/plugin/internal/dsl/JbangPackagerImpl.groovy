@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.JbangPackager
 import org.jreleaser.gradle.plugin.dsl.Tap
@@ -35,7 +36,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class JbangPackagerImpl extends AbstractPackagerTool implements JbangPackager {
+class JbangPackagerImpl extends AbstractPackagerRepositoryTool implements JbangPackager {
     final Property<String> alias
     final CommitAuthorImpl commitAuthor
     final TapImpl catalog
@@ -52,6 +53,7 @@ class JbangPackagerImpl extends AbstractPackagerTool implements JbangPackager {
     protected String toolName() { 'jbang' }
 
     @Override
+    @Internal
     boolean isSet() {
         super.isSet() ||
             catalog.isSet() ||

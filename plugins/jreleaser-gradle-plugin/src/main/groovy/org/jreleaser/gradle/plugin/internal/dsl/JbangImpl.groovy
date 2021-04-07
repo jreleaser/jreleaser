@@ -37,7 +37,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class JbangImpl extends AbstractTool implements Jbang {
+class JbangImpl extends AbstractRepositoryTool implements Jbang {
     final Property<String> alias
     final CommitAuthorImpl commitAuthor
     final TapImpl catalog

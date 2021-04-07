@@ -21,16 +21,19 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
+import org.jreleaser.model.Tool;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.validation.BrewValidator.validateBrew;
 import static org.jreleaser.model.validation.ChocolateyValidator.validateChocolatey;
+import static org.jreleaser.model.validation.DockerValidator.validateDocker;
 import static org.jreleaser.model.validation.JbangValidator.validateJbang;
 import static org.jreleaser.model.validation.ScoopValidator.validateScoop;
 import static org.jreleaser.model.validation.SnapValidator.validateSnap;
@@ -125,6 +128,7 @@ public abstract class DistributionsValidator extends Validator {
 
         validateBrew(context, distribution, distribution.getBrew(), errors);
         validateChocolatey(context, distribution, distribution.getChocolatey(), errors);
+        validateDocker(context, distribution, distribution.getDocker(), errors);
         validateJbang(context, distribution, distribution.getJbang(), errors);
         validateScoop(context, distribution, distribution.getScoop(), errors);
         validateSnap(context, distribution, distribution.getSnap(), errors);
@@ -186,6 +190,25 @@ public abstract class DistributionsValidator extends Validator {
             context.getLogger().warn("distribution.{}.artifact[{}].platform ({}) is not supported. Please use `${name}` or `${name}-${arch}` from{}       name = {}{}       arch = {}",
                 distribution.getName(), index, artifact.getPlatform(), System.lineSeparator(),
                 PlatformUtils.getSupportedOsNames(), System.lineSeparator(), PlatformUtils.getSupportedOsArchs());
+        }
+    }
+
+    public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Tool tool, List<String> errors) {
+        // validate distribution type
+        if (distribution.getType() != Distribution.DistributionType.JAVA_BINARY) {
+            // ensure all artifacts define a platform
+
+            Set<String> fileExtensions = tool.getSupportedExtensions();
+            String noPlatform = "<nil>";
+            Map<String, List<Artifact>> byPlatform = distribution.getArtifacts().stream()
+                .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
+                .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? noPlatform : artifact.getPlatform()));
+
+            if (byPlatform.containsKey(noPlatform)) {
+                errors.add("distribution." + distribution.getName() +
+                    " is of type " + distribution.getType() + " and " + tool.getName() +
+                    " requires a explicit platform on each artifact");
+            }
         }
     }
 }

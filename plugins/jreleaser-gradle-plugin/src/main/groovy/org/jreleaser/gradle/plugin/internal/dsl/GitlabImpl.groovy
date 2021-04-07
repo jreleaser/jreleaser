@@ -48,6 +48,7 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||

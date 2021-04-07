@@ -31,6 +31,8 @@ interface Packagers {
 
     ChocolateyPackager getChocolatey()
 
+    DockerPackager getDocker()
+
     JbangPackager getJbang()
 
     ScoopPackager getScoop()
@@ -40,6 +42,8 @@ interface Packagers {
     void brew(Action<? super BrewPackager> action)
 
     void chocolatey(Action<? super ChocolateyPackager> action)
+
+    void docker(Action<? super DockerPackager> action)
 
     void jbang(Action<? super JbangPackager> action)
 

@@ -23,14 +23,12 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Tool extends Domain, ExtraProperties, CommitAuthorProvider, EnabledProvider {
+public interface Tool extends Domain, ExtraProperties, EnabledProvider {
     String getName();
 
     String getTemplateDirectory();
 
     void setTemplateDirectory(String templateDirectory);
-
-    RepositoryTap getRepositoryTap();
 
     boolean isSnapshotAllowed();
 

@@ -27,7 +27,7 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface ChocolateyPackager extends PackagerTool {
+interface ChocolateyPackager extends PackagerRepositoryTool {
     Property<String> getUsername()
 
     Property<Boolean> getRemoteBuild()

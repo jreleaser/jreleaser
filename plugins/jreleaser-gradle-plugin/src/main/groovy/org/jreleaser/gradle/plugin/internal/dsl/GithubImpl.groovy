@@ -52,6 +52,7 @@ class GithubImpl extends AbstractGitService implements Github {
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||

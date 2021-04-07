@@ -25,5 +25,5 @@ import groovy.transform.CompileStatic
  * @since 0.1.0
  */
 @CompileStatic
-interface Scoop extends ScoopPackager, Tool {
+interface Scoop extends ScoopPackager, RepositoryTool {
 }

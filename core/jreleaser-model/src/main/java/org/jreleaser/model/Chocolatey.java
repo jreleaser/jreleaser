@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Chocolatey extends AbstractTool {
+public class Chocolatey extends AbstractRepositoryTool {
     public static final String NAME = "chocolatey";
 
     private String username;
@@ -75,6 +75,7 @@ public class Chocolatey extends AbstractTool {
 
     @Override
     protected void asMap(Map<String, Object> props) {
+        super.asMap(props);
         props.put("username", username);
         props.put("remoteBuild", isRemoteBuild());
         props.put("bucket", bucket.asMap());

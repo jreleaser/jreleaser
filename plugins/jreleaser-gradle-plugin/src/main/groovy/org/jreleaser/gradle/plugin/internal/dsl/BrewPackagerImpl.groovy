@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
+import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.BrewPackager
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Tap
@@ -37,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class BrewPackagerImpl extends AbstractPackagerTool implements BrewPackager {
+class BrewPackagerImpl extends AbstractPackagerRepositoryTool implements BrewPackager {
     final CommitAuthorImpl commitAuthor
     final TapImpl tap
     final MapProperty<String, String> dependencies
@@ -63,11 +64,12 @@ class BrewPackagerImpl extends AbstractPackagerTool implements BrewPackager {
     @Override
     void addDependency(String key) {
         if (isNotBlank(key)) {
-            dependencies.put(key.trim(), '')
+            dependencies.put(key.trim(), 'null')
         }
     }
 
     @Override
+    @Internal
     boolean isSet() {
         super.isSet() ||
             dependencies.present ||

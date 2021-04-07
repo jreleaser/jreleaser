@@ -35,7 +35,7 @@ import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class ChocolateyToolProcessor extends AbstractToolProcessor<Chocolatey> {
+public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Chocolatey> {
     public ChocolateyToolProcessor(JReleaserContext context) {
         super(context);
     }

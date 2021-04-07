@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.ScoopPackager
 import org.jreleaser.gradle.plugin.dsl.Tap
@@ -35,7 +36,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class ScoopPackagerImpl extends AbstractPackagerTool implements ScoopPackager {
+class ScoopPackagerImpl extends AbstractPackagerRepositoryTool implements ScoopPackager {
     final Property<String> checkverUrl
     final Property<String> autoupdateUrl
     final CommitAuthorImpl commitAuthor
@@ -54,6 +55,7 @@ class ScoopPackagerImpl extends AbstractPackagerTool implements ScoopPackager {
     protected String toolName() { 'scoop' }
 
     @Override
+    @Internal
     boolean isSet() {
         super.isSet() ||
             checkverUrl.present ||

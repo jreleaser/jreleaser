@@ -48,6 +48,8 @@ interface Distribution extends ExtraProperties {
 
     Chocolatey getChocolatey()
 
+    Docker getDocker()
+
     Jbang getJbang()
 
     Scoop getScoop()
@@ -61,6 +63,8 @@ interface Distribution extends ExtraProperties {
     void brew(Action<? super Brew> action)
 
     void chocolatey(Action<? super Chocolatey> action)
+
+    void docker(Action<? super Docker> action)
 
     void jbang(Action<? super Jbang> action)
 

@@ -25,5 +25,5 @@ import groovy.transform.CompileStatic
  * @since 0.1.0
  */
 @CompileStatic
-interface Jbang extends JbangPackager, Tool {
+interface Jbang extends JbangPackager, RepositoryTool {
 }

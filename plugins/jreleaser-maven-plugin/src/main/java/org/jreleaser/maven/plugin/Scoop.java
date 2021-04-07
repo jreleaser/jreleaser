@@ -23,7 +23,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Scoop extends AbstractTool {
+public class Scoop extends AbstractRepositoryTool {
     public static final String NAME = "scoop";
 
     private String checkverUrl;

@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model.validation;
 
-import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Brew;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
@@ -25,10 +24,8 @@ import org.jreleaser.model.JReleaserModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -66,21 +63,6 @@ public abstract class BrewValidator extends Validator {
             tool.getTap().setToken(model.getPackagers().getBrew().getTap().getToken());
         }
 
-        // validate distribution type
-        if (distribution.getType() != Distribution.DistributionType.JAVA_BINARY) {
-            // ensure all artifacts define a platform
-
-            Set<String> fileExtensions = tool.getSupportedExtensions();
-            String noPlatform = "<nil>";
-            Map<String, List<Artifact>> byPlatform = distribution.getArtifacts().stream()
-                .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
-                .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? noPlatform : artifact.getPlatform()));
-
-            if (byPlatform.containsKey(noPlatform)) {
-                errors.add("distribution." + distribution.getName() +
-                    " is of type " + distribution.getType() + " and " + tool.getName() +
-                    " requires a explicit platform on each artifact");
-            }
-        }
+        validateArtifactPlatforms(context, distribution, tool, errors);
     }
 }

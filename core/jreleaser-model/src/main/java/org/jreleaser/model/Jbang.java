@@ -25,7 +25,7 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Jbang extends AbstractTool {
+public class Jbang extends AbstractRepositoryTool {
     public static final String NAME = "jbang";
 
     private String alias;
@@ -64,6 +64,7 @@ public class Jbang extends AbstractTool {
 
     @Override
     protected void asMap(Map<String, Object> props) {
+        super.asMap(props);
         props.put("alias", alias);
         props.put("catalog", catalog.asMap());
     }

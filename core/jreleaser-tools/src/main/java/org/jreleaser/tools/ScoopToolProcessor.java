@@ -36,7 +36,7 @@ import static org.jreleaser.util.MustacheUtils.applyTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class ScoopToolProcessor extends AbstractToolProcessor<Scoop> {
+public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
     public ScoopToolProcessor(JReleaserContext context) {
         super(context);
     }

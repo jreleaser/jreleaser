@@ -201,6 +201,8 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
                 return (T) getBrew();
             case Chocolatey.NAME:
                 return (T) getChocolatey();
+            case Docker.NAME:
+                return (T) getDocker();
             case Jbang.NAME:
                 return (T) getJbang();
             case Scoop.NAME:
@@ -241,6 +243,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
         Set<String> set = new LinkedHashSet<>();
         set.add(Brew.NAME);
         set.add(Chocolatey.NAME);
+        set.add(Docker.NAME);
         set.add(Jbang.NAME);
         set.add(Scoop.NAME);
         set.add(Snap.NAME);

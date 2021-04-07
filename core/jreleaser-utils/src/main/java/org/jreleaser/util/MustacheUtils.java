@@ -41,7 +41,11 @@ public final class MustacheUtils {
 
     private static Map<String, String> envVars() {
         Map<String, String> vars = new LinkedHashMap<>();
-        System.getenv().forEach((k, v) -> vars.put("Env." + k, v));
+        System.getenv().forEach((k, v) -> {
+            if (!k.startsWith("JRELEASER_")) {
+                vars.put("Env." + k, v);
+            }
+        });
         return vars;
     }
 

@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Brew extends AbstractTool {
+public class Brew extends AbstractRepositoryTool {
     public static final String NAME = "brew";
     private final List<Dependency> dependencies = new ArrayList<>();
     private HomebrewTap tap = new HomebrewTap();
@@ -91,6 +91,7 @@ public class Brew extends AbstractTool {
 
     @Override
     protected void asMap(Map<String, Object> props) {
+        super.asMap(props);
         props.put("tap", tap.asMap());
         props.put("dependencies", dependencies);
     }

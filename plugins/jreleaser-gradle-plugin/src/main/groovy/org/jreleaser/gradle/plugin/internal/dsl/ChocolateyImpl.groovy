@@ -37,7 +37,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class ChocolateyImpl extends AbstractTool implements Chocolatey {
+class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
     final Property<String> username
     final Property<Boolean> remoteBuild
     final CommitAuthorImpl commitAuthor

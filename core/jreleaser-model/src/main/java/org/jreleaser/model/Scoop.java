@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Scoop extends AbstractTool {
+public class Scoop extends AbstractRepositoryTool {
     public static final String NAME = "scoop";
 
     private String checkverUrl;
@@ -71,6 +71,7 @@ public class Scoop extends AbstractTool {
 
     @Override
     protected void asMap(Map<String, Object> props) {
+        super.asMap(props);
         props.put("checkverUrl", checkverUrl);
         props.put("autoupdateUrl", autoupdateUrl);
         props.put("bucket", bucket.asMap());

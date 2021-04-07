@@ -32,6 +32,7 @@ import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Brew
 import org.jreleaser.gradle.plugin.dsl.Chocolatey
 import org.jreleaser.gradle.plugin.dsl.Distribution
+import org.jreleaser.gradle.plugin.dsl.Docker
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Jbang
 import org.jreleaser.gradle.plugin.dsl.Scoop
@@ -59,6 +60,7 @@ class DistributionImpl implements Distribution {
     final MapProperty<String, String> extraProperties
     final BrewImpl brew
     final ChocolateyImpl chocolatey
+    final DockerImpl docker
     final JbangImpl jbang
     final ScoopImpl scoop
     final SnapImpl snap
@@ -95,6 +97,8 @@ class DistributionImpl implements Distribution {
         brew.distributionName.set(myName)
         chocolatey = objects.newInstance(ChocolateyImpl, objects, distributionsDirProvider)
         chocolatey.distributionName.set(myName)
+        docker = objects.newInstance(DockerImpl, objects, distributionsDirProvider)
+        docker.distributionName.set(myName)
         jbang = objects.newInstance(JbangImpl, objects, distributionsDirProvider)
         jbang.distributionName.set(myName)
         scoop = objects.newInstance(ScoopImpl, objects, distributionsDirProvider)
@@ -142,6 +146,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void docker(Action<? super Docker> action) {
+        action.execute(docker)
+    }
+
+    @Override
     void jbang(Action<? super Jbang> action) {
         action.execute(jbang)
     }
@@ -170,6 +179,7 @@ class DistributionImpl implements Distribution {
         if (extraProperties.present) distribution.extraProperties.putAll(extraProperties.get())
         if (brew.isSet()) distribution.brew = brew.toModel()
         if (chocolatey.isSet()) distribution.chocolatey = chocolatey.toModel()
+        if (docker.isSet()) distribution.docker = docker.toModel()
         if (jbang.isSet()) distribution.jbang = jbang.toModel()
         if (scoop.isSet()) distribution.scoop = scoop.toModel()
         if (snap.isSet()) distribution.snap = snap.toModel()

@@ -17,21 +17,15 @@
  */
 package org.jreleaser.tools;
 
-import org.eclipse.jgit.api.CommitCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
-import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Release;
 import org.jreleaser.model.Tool;
 import org.jreleaser.model.releaser.spi.Releaser;
-import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.model.tool.spi.ToolProcessor;
-import org.jreleaser.sdk.git.InMemoryGpgSigner;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
@@ -165,92 +159,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     protected abstract boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
-    protected boolean doUploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
-        GitService gitService = context.getModel().getRelease().getGitService();
-
-        try {
-            // get the repository
-            context.getLogger().debug("Locating repository {}", tool.getRepositoryTap().getCanonicalRepoName());
-            Repository repository = releaser.maybeCreateRepository(
-                tool.getRepositoryTap().getOwner(),
-                tool.getRepositoryTap().getResolvedName(),
-                resolveGitToken(gitService));
-
-            UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
-                resolveGitUsername(gitService),
-                resolveGitToken(gitService));
-
-            // clone the repository
-            context.getLogger().debug("Clonning {}", repository.getHttpUrl());
-            Path directory = Files.createTempDirectory("jreleaser-" + tool.getRepositoryTap().getResolvedName());
-            Git git = Git.cloneRepository()
-                .setCredentialsProvider(credentialsProvider)
-                .setBranch("HEAD")
-                .setDirectory(directory.toFile())
-                .setURI(repository.getHttpUrl())
-                .call();
-
-            prepareWorkingCopy(props, directory);
-
-            // add everything
-            git.add()
-                .addFilepattern(".")
-                .call();
-
-            // setup commit
-            context.getLogger().debug("Setting up commit");
-            CommitCommand commitCommand = git.commit()
-                .setAll(true)
-                .setMessage(distribution.getExecutable() + " " + gitService.getResolvedTagName(context.getModel().getProject()))
-                .setAuthor(tool.getCommitAuthor().getName(), tool.getCommitAuthor().getEmail());
-            commitCommand.setCredentialsProvider(credentialsProvider);
-            if (gitService.isSign()) {
-                commitCommand = commitCommand
-                    .setSign(true)
-                    .setSigningKey("**********")
-                    .setGpgSigner(new InMemoryGpgSigner(context));
-            }
-
-            commitCommand.call();
-
-            // push commit
-            context.getLogger().debug("Pushing commit to remote, dryrun = {}", context.isDryrun());
-            git.push()
-                .setDryRun(context.isDryrun())
-                .setPushAll()
-                .setCredentialsProvider(credentialsProvider)
-                .call();
-        } catch (Exception e) {
-            throw new ToolProcessingException("Unexpected error updating " + tool.getRepositoryTap().getCanonicalRepoName(), e);
-        }
-
-        return true;
-    }
-
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory) throws IOException {
-        // copy files over
-        Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
-        context.getLogger().debug("Copying files from {}", context.getBasedir().relativize(packageDirectory));
-
-        if (!FileUtils.copyFilesRecursive(context.getLogger(), packageDirectory, directory)) {
-            throw new IOException("Could not copy files from " +
-                context.getBasedir().relativize(packageDirectory));
-        }
-    }
-
-    protected String resolveGitUsername(GitService gitService) {
-        if (isNotBlank(tool.getRepositoryTap().getUsername())) {
-            return tool.getRepositoryTap().getUsername();
-        }
-        return gitService.getUsername();
-    }
-
-    protected String resolveGitToken(GitService gitService) {
-        if (isNotBlank(tool.getRepositoryTap().getResolvedToken(gitService))) {
-            return tool.getRepositoryTap().getResolvedToken(gitService);
-        }
-        return gitService.getResolvedToken();
-    }
+    protected abstract boolean doUploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
 
     protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName) throws ToolProcessingException;
 
@@ -325,18 +234,22 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
         Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+        copyPreparedFiles(distribution, props, packageDirectory);
+    }
+
+    protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props, Path outputDirectory) throws ToolProcessingException {
+        Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
         try {
-            if (!FileUtils.copyFilesRecursive(context.getLogger(), prepareDirectory, packageDirectory)) {
+            if (!FileUtils.copyFilesRecursive(context.getLogger(), prepareDirectory, outputDirectory)) {
                 throw new ToolProcessingException("Could not copy files from " +
                     context.getBasedir().relativize(prepareDirectory) + " to " +
-                    context.getBasedir().relativize(packageDirectory));
+                    context.getBasedir().relativize(outputDirectory));
             }
         } catch (IOException e) {
             throw new ToolProcessingException("Unexpected error when copying files from " +
                 context.getBasedir().relativize(prepareDirectory) + " to " +
-                context.getBasedir().relativize(packageDirectory), e);
+                context.getBasedir().relativize(outputDirectory), e);
         }
     }
 

@@ -23,7 +23,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Chocolatey extends AbstractTool {
+public class Chocolatey extends AbstractRepositoryTool {
     public static final String NAME = "chocolatey";
 
     private String username;

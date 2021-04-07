@@ -26,7 +26,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Brew extends AbstractTool {
+public class Brew extends AbstractRepositoryTool {
     public static final String NAME = "brew";
     @Parameter(property = "dependencies")
     private final List<Dependency> dependencies = new ArrayList<>();
