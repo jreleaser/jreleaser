@@ -21,10 +21,13 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.Registry;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jreleaser.model.Docker.LABEL_OCI_IMAGE_DESCRIPTION;
 import static org.jreleaser.model.Docker.LABEL_OCI_IMAGE_LICENSES;
@@ -98,5 +101,37 @@ public abstract class DockerValidator extends Validator {
         }
 
         validateArtifactPlatforms(context, distribution, tool, errors);
+
+        Set<Registry> registries = new LinkedHashSet<>();
+        registries.addAll(tool.getRegistries());
+        registries.addAll(model.getPackagers().getDocker().getRegistries());
+        tool.setRegistries(registries);
+
+        if (registries.isEmpty()) {
+            context.getLogger().warn("distribution." + distribution.getName() + "." + tool.getName() +
+                " does not define any registries. Image publication will be disabled");
+            return;
+        }
+
+        for (Registry registry : registries) {
+            if (isBlank(registry.getUsername())) {
+                registry.setUsername(model.getRelease().getGitService().getUsername());
+            }
+            if (isBlank(registry.getRepositoryName())) {
+                registry.setRepositoryName(model.getRelease().getGitService().getOwner());
+            }
+
+            if (isBlank(registry.getUsername())) {
+                errors.add("distribution." + distribution.getName() + "." + tool.getName() +
+                    ".registry." + registry.getServerName() + ".username must not be blank");
+            }
+
+            registry.setPassword(
+                checkProperty(context.getModel().getEnvironment(),
+                    "DOCKER_" + registry.getServerName() + "_PASSWORD",
+                    "registry." + registry.getServerName() + ".password",
+                    registry.getPassword(),
+                    errors));
+        }
     }
 }

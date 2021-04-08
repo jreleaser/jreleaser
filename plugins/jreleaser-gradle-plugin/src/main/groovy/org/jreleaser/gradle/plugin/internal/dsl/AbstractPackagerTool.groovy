@@ -53,7 +53,7 @@ abstract class AbstractPackagerTool implements PackagerTool {
     }
 
     protected <T extends Tool> void fillToolProperties(T tool) {
-        if (enabled.present) tool.enabled = enabled.get()
+        tool.enabled = enabled.orElse(isSet())
         if (extraProperties.present) tool.extraProperties.putAll(extraProperties.get())
     }
 }

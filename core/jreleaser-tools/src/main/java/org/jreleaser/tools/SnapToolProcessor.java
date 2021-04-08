@@ -64,6 +64,11 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
             return false;
         }
 
+        if (context.isDryrun()) {
+            context.getLogger().error("dryun is set to true. Skipping");
+            return true;
+        }
+
         Path primeDirectory = createPackage(props);
 
         if (!login(distribution, props)) {

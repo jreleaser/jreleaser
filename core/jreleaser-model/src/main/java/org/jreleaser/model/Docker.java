@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -45,6 +46,7 @@ public class Docker extends AbstractTool {
     private final Map<String, String> labels = new LinkedHashMap<>();
     private final Set<String> imageNames = new LinkedHashSet<>();
     private final List<String> buildArgs = new ArrayList<>();
+    private final Set<Registry> registries = new LinkedHashSet<>();
 
     private String baseImage;
 
@@ -58,6 +60,7 @@ public class Docker extends AbstractTool {
         setImageNames(docker.imageNames);
         setBuildArgs(docker.buildArgs);
         setLabels(docker.labels);
+        setRegistries(docker.registries);
     }
 
     public String getBaseImage() {
@@ -121,12 +124,35 @@ public class Docker extends AbstractTool {
         }
     }
 
+    public Set<Registry> getRegistries() {
+        return registries;
+    }
+
+    public void setRegistries(Set<Registry> registries) {
+        if (registries != null) {
+            this.registries.clear();
+            this.registries.addAll(registries);
+        }
+    }
+
+    public void addRegistry(Registry registry) {
+        if (null != registry) {
+            this.registries.add(registry);
+        }
+    }
+
     @Override
     protected void asMap(Map<String, Object> props) {
         props.put("baseImage", baseImage);
         props.put("imageNames", imageNames);
         props.put("buildArgs", buildArgs);
         props.put("labels", labels);
+
+        List<Map<String, Object>> repos = this.registries
+            .stream()
+            .map(Registry::asMap)
+            .collect(Collectors.toList());
+        if (!repos.isEmpty()) props.put("registries", repos);
     }
 
     @Override

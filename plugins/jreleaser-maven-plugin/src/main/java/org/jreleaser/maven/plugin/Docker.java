@@ -20,7 +20,6 @@ package org.jreleaser.maven.plugin;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +36,7 @@ public class Docker extends AbstractTool {
     private final Map<String, String> labels = new LinkedHashMap<>();
     private final Set<String> imageNames = new LinkedHashSet<>();
     private final List<String> buildArgs = new ArrayList<>();
+    private final Set<Registry> registries = new LinkedHashSet<>();
 
     private String baseImage;
 
@@ -50,6 +50,7 @@ public class Docker extends AbstractTool {
         setImageNames(docker.imageNames);
         setBuildArgs(docker.buildArgs);
         setLabels(docker.labels);
+        setRegistries(docker.registries);
     }
 
     public String getBaseImage() {
@@ -91,11 +92,29 @@ public class Docker extends AbstractTool {
         }
     }
 
+    public Set<Registry> getRegistries() {
+        return registries;
+    }
+
+    public void setRegistries(Set<Registry> registries) {
+        if (registries != null) {
+            this.registries.clear();
+            this.registries.addAll(registries);
+        }
+    }
+
+    public void addRegistry(Registry registry) {
+        if (null != registry) {
+            this.registries.add(registry);
+        }
+    }
+
     public boolean isSet() {
         return super.isSet() ||
             isNotBlank(baseImage) ||
             !imageNames.isEmpty() ||
             !buildArgs.isEmpty() ||
-            !labels.isEmpty();
+            !labels.isEmpty() ||
+            !registries.isEmpty();
     }
 }

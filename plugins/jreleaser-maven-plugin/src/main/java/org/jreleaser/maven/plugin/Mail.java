@@ -29,7 +29,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Mail extends AbstractAnnouncer {
     private final Map<String, String> properties = new LinkedHashMap<>();
 
-    private Transport transport = Transport.SMTP;
+    private Transport transport;
     private String host;
     private Integer port;
     private Boolean auth;
@@ -42,7 +42,7 @@ public class Mail extends AbstractAnnouncer {
     private String subject;
     private String message;
     private String messageTemplate;
-    private MimeType mimeType = MimeType.TEXT;
+    private MimeType mimeType;
 
     void setAll(Mail mail) {
         super.setAll(mail);

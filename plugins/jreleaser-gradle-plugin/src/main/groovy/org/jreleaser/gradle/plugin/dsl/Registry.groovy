@@ -18,11 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.SetProperty
 
 /**
  *
@@ -30,20 +26,12 @@ import org.gradle.api.provider.SetProperty
  * @since 0.1.0
  */
 @CompileStatic
-interface DockerPackager extends PackagerTool {
-    Property<String> getBaseImage()
+interface Registry {
+    Property<String> getServer()
 
-    SetProperty<String> getImageNames()
+    Property<String> getRepositoryName()
 
-    ListProperty<String> getBuildArgs()
+    Property<String> getUsername()
 
-    MapProperty<String, String> getLabels()
-
-    void addImageName(String imageName)
-
-    void addBuildArg(String buildArg)
-
-    void addLabel(String key, String value)
-
-    NamedDomainObjectContainer<Registry> getRegistries()
+    Property<String> getPassword()
 }

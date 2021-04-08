@@ -43,8 +43,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends AbstractToolProcessor<T> {
-    protected T tool;
-
     protected AbstractRepositoryToolProcessor(JReleaserContext context) {
         super(context);
     }

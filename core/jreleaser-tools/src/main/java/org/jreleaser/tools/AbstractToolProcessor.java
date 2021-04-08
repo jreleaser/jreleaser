@@ -29,6 +29,7 @@ import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.ProcessInitException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -225,6 +226,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
             if (exitValue == 0) return true;
             throw new ToolProcessingException("Command execution error. exitValue = " + exitValue);
+        } catch (ProcessInitException e) {
+            throw new ToolProcessingException("Unexpected error", e.getCause());
         } catch (Exception e) {
             if (e instanceof ToolProcessingException) {
                 throw (ToolProcessingException) e;

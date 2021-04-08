@@ -43,6 +43,7 @@ import org.jreleaser.maven.plugin.Milestone;
 import org.jreleaser.maven.plugin.Packagers;
 import org.jreleaser.maven.plugin.Plug;
 import org.jreleaser.maven.plugin.Project;
+import org.jreleaser.maven.plugin.Registry;
 import org.jreleaser.maven.plugin.Release;
 import org.jreleaser.maven.plugin.Scoop;
 import org.jreleaser.maven.plugin.Sdkman;
@@ -62,8 +63,10 @@ import org.jreleaser.model.SnapTap;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -199,7 +202,7 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Milestone convertMilestone(Milestone milestone) {
         org.jreleaser.model.Milestone m = new org.jreleaser.model.Milestone();
         m.setClose(milestone.isClose());
-        m.setName(milestone.getName());
+        if (isNotBlank(milestone.getName())) m.setName(milestone.getName());
         return m;
     }
 
@@ -228,7 +231,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Discussions convertDiscussions(Discussions discussions) {
         org.jreleaser.model.Discussions a = new org.jreleaser.model.Discussions();
-        if (discussions.isEnabledSet()) a.setEnabled(discussions.isEnabled());
+        a.setEnabled(discussions.isEnabledSet() ? discussions.isEnabled() : discussions.isSet());
         a.setOrganization(discussions.getOrganization());
         a.setTeam(discussions.getTeam());
         a.setTitle(discussions.getTitle());
@@ -239,10 +242,10 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Mail convertMail(Mail mail) {
         org.jreleaser.model.Mail a = new org.jreleaser.model.Mail();
-        if (mail.isEnabledSet()) a.setEnabled(mail.isEnabled());
+        a.setEnabled(mail.isEnabledSet() ? mail.isEnabled() : mail.isSet());
         if (mail.isAuthSet()) a.setAuth(mail.isAuth());
-        a.setTransport(mail.getTransport().name());
-        a.setMimeType(mail.getMimeType().name());
+        if (null != mail.getTransport()) a.setTransport(mail.getTransport().name());
+        if (null != mail.getMimeType()) a.setMimeType(mail.getMimeType().name());
         a.setPort(mail.getPort());
         a.setUsername(mail.getUsername());
         a.setPassword(mail.getPassword());
@@ -258,7 +261,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Sdkman convertSdkman(Sdkman sdkman) {
         org.jreleaser.model.Sdkman a = new org.jreleaser.model.Sdkman();
-        if (sdkman.isEnabledSet()) a.setEnabled(sdkman.isEnabled());
+        a.setEnabled(sdkman.isEnabledSet() ? sdkman.isEnabled() : sdkman.isSet());
         a.setConsumerKey(sdkman.getConsumerKey());
         a.setConsumerToken(sdkman.getConsumerToken());
         a.setCandidate(sdkman.getCandidate());
@@ -268,7 +271,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Slack convertSlack(Slack slack) {
         org.jreleaser.model.Slack a = new org.jreleaser.model.Slack();
-        if (slack.isEnabledSet()) a.setEnabled(slack.isEnabled());
+        a.setEnabled(slack.isEnabledSet() ? slack.isEnabled() : slack.isSet());
         a.setToken(slack.getToken());
         a.setChannel(slack.getChannel());
         a.setMessage(slack.getMessage());
@@ -278,7 +281,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Twitter convertTwitter(Twitter twitter) {
         org.jreleaser.model.Twitter a = new org.jreleaser.model.Twitter();
-        if (twitter.isEnabledSet()) a.setEnabled(twitter.isEnabled());
+        a.setEnabled(twitter.isEnabledSet() ? twitter.isEnabled() : twitter.isSet());
         a.setConsumerKey(twitter.getConsumerKey());
         a.setConsumerSecret(twitter.getConsumerSecret());
         a.setAccessToken(twitter.getAccessToken());
@@ -289,7 +292,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Zulip convertZulip(Zulip zulip) {
         org.jreleaser.model.Zulip a = new org.jreleaser.model.Zulip();
-        if (zulip.isEnabledSet()) a.setEnabled(zulip.isEnabled());
+        a.setEnabled(zulip.isEnabledSet() ? zulip.isEnabled() : zulip.isSet());
         a.setAccount(zulip.getAccount());
         a.setApiKey(zulip.getApiKey());
         a.setApiHost(zulip.getApiHost());
@@ -381,7 +384,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Brew convertBrew(Brew brew) {
         org.jreleaser.model.Brew t = new org.jreleaser.model.Brew();
-        if (brew.isEnabledSet()) t.setEnabled(brew.isEnabled());
+        t.setEnabled(brew.isEnabledSet() ? brew.isEnabled() : brew.isSet());
         t.setTemplateDirectory(brew.getTemplateDirectory());
         t.setExtraProperties(brew.getExtraProperties());
         t.setTap(convertHomebrewTap(brew.getTap()));
@@ -407,7 +410,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Chocolatey convertChocolatey(Chocolatey chocolatey) {
         org.jreleaser.model.Chocolatey t = new org.jreleaser.model.Chocolatey();
-        if (chocolatey.isEnabledSet()) t.setEnabled(chocolatey.isEnabled());
+        t.setEnabled(chocolatey.isEnabledSet() ? chocolatey.isEnabled() : chocolatey.isSet());
         t.setUsername(chocolatey.getUsername());
         t.setRemoteBuild(chocolatey.isRemoteBuild());
         t.setTemplateDirectory(chocolatey.getTemplateDirectory());
@@ -419,14 +422,33 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Docker convertDocker(Docker docker) {
         org.jreleaser.model.Docker t = new org.jreleaser.model.Docker();
-        if (docker.isEnabledSet()) t.setEnabled(docker.isEnabled());
+        t.setEnabled(docker.isEnabledSet() ? docker.isEnabled() : docker.isSet());
         t.setTemplateDirectory(docker.getTemplateDirectory());
         t.setExtraProperties(docker.getExtraProperties());
         t.setBaseImage(docker.getBaseImage());
         t.setImageNames(docker.getImageNames());
         t.setBuildArgs(docker.getBuildArgs());
         t.setLabels(docker.getLabels());
+        t.setRegistries(convertRegistries(docker.getRegistries()));
         return t;
+    }
+
+    private static Set<org.jreleaser.model.Registry> convertRegistries(Set<Registry> repositories) {
+        Set<org.jreleaser.model.Registry> set = new LinkedHashSet<>();
+        for (Registry registry : repositories) {
+            set.add(convertRegistry(registry));
+        }
+        return set;
+    }
+
+    private static org.jreleaser.model.Registry convertRegistry(Registry registry) {
+        org.jreleaser.model.Registry r = new org.jreleaser.model.Registry();
+        if (isNotBlank(registry.getServerName())) r.setServerName(registry.getServerName());
+        r.setServer(registry.getServer());
+        r.setRepositoryName(registry.getRepositoryName());
+        r.setUsername(registry.getUsername());
+        r.setPassword(registry.getPassword());
+        return r;
     }
 
     private static ChocolateyBucket convertChocolateyBucket(Bucket bucket) {
@@ -440,7 +462,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Jbang convertJbang(Jbang jbang) {
         org.jreleaser.model.Jbang t = new org.jreleaser.model.Jbang();
-        if (jbang.isEnabledSet()) t.setEnabled(jbang.isEnabled());
+        t.setEnabled(jbang.isEnabledSet() ? jbang.isEnabled() : jbang.isSet());
         t.setTemplateDirectory(jbang.getTemplateDirectory());
         t.setExtraProperties(jbang.getExtraProperties());
         t.setAlias(jbang.getAlias());
@@ -460,7 +482,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Scoop convertScoop(Scoop scoop) {
         org.jreleaser.model.Scoop t = new org.jreleaser.model.Scoop();
-        if (scoop.isEnabledSet()) t.setEnabled(scoop.isEnabled());
+        t.setEnabled(scoop.isEnabledSet() ? scoop.isEnabled() : scoop.isSet());
         t.setTemplateDirectory(scoop.getTemplateDirectory());
         t.setExtraProperties(scoop.getExtraProperties());
         t.setCheckverUrl(scoop.getCheckverUrl());
@@ -481,12 +503,12 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Snap convertSnap(Snap snap) {
         org.jreleaser.model.Snap t = new org.jreleaser.model.Snap();
-        if (snap.isEnabledSet()) t.setEnabled(snap.isEnabled());
+        t.setEnabled(snap.isEnabledSet() ? snap.isEnabled() : snap.isSet());
         t.setTemplateDirectory(snap.getTemplateDirectory());
         t.setExtraProperties(snap.getExtraProperties());
-        t.setBase(snap.getBase());
-        t.setGrade(snap.getGrade());
-        t.setConfinement(snap.getConfinement());
+        if (isNotBlank(snap.getBase())) t.setBase(snap.getBase());
+        if (isNotBlank(snap.getGrade())) t.setGrade(snap.getGrade());
+        if (isNotBlank(snap.getConfinement())) t.setConfinement(snap.getConfinement());
         if (null != snap.getExportedLogin()) t.setExportedLogin(snap.getExportedLogin().getAbsolutePath());
         t.setRemoteBuild(snap.isRemoteBuild());
         t.setLocalPlugs(snap.getLocalPlugs());

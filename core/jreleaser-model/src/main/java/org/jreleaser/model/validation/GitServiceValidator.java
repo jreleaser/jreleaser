@@ -101,10 +101,6 @@ public abstract class GitServiceValidator extends Validator {
                 service.getMilestone().getName(),
                 errors));
 
-        if (isBlank(service.getMilestone().getName())) {
-            service.getMilestone().setName("{{ tagName }}");
-        }
-
         // eager resolve
         service.getResolvedTagName(project);
         service.getResolvedReleaseName(project);

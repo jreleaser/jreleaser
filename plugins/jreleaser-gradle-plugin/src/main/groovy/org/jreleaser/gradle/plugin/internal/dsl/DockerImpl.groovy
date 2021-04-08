@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.Directory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
@@ -45,6 +46,8 @@ class DockerImpl extends AbstractTool implements Docker {
     final ListProperty<String> buildArgs
     final MapProperty<String, String> labels
 
+    final NamedDomainObjectContainer<RegistryImpl> registries
+
     @Inject
     DockerImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider) {
         super(objects, distributionsDirProvider)
@@ -52,6 +55,8 @@ class DockerImpl extends AbstractTool implements Docker {
         imageNames = objects.setProperty(String).convention(Providers.notDefined())
         buildArgs = objects.listProperty(String).convention(Providers.notDefined())
         labels = objects.mapProperty(String, String).convention(Providers.notDefined())
+
+        registries = objects.domainObjectContainer(RegistryImpl)
     }
 
     @Override
@@ -85,7 +90,8 @@ class DockerImpl extends AbstractTool implements Docker {
             baseImage.present ||
             imageNames.present ||
             buildArgs.present ||
-            labels.present
+            labels.present ||
+            registries.size()
     }
 
     org.jreleaser.model.Docker toModel() {
@@ -95,6 +101,9 @@ class DockerImpl extends AbstractTool implements Docker {
         if (imageNames.present) tool.imageNames.addAll(imageNames.get())
         if (buildArgs.present) tool.buildArgs.addAll(buildArgs.get())
         if (labels.present) tool.labels.putAll(labels.get())
+        for (RegistryImpl registry : registries) {
+            tool.addRegistry(registry.toModel())
+        }
         tool
     }
 }

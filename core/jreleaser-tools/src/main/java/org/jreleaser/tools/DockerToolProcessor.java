@@ -20,6 +20,7 @@ package org.jreleaser.tools;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
+import org.jreleaser.model.Registry;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.releaser.spi.Releaser;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -61,7 +63,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
                 imageName = applyTemplate(new StringReader(imageName), props, "image" + (i++));
 
                 // command line
-                List<String> cmd = createCommand(props);
+                List<String> cmd = createBuildCommand(props);
                 if (!cmd.contains("-q") && !cmd.contains("--quiet")) {
                     cmd.add("-q");
                 }
@@ -72,7 +74,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
                 cmd.add(workingDirectory.toAbsolutePath().toString());
                 context.getLogger().debug(String.join(" ", cmd));
 
-                context.getLogger().info(" - " + imageName);
+                context.getLogger().info(" - {}", imageName);
                 // execute
                 executeCommand(cmd);
             }
@@ -102,12 +104,8 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         return workingDirectory;
     }
 
-    private List<String> createCommand(Map<String, Object> props) {
-        List<String> cmd = new ArrayList<>();
-        cmd.add("docker" + (PlatformUtils.isWindows() ? ".exe" : ""));
-        cmd.add("-l");
-        cmd.add("error");
-        cmd.add("build");
+    private List<String> createBuildCommand(Map<String, Object> props) {
+        List<String> cmd = createCommand("build");
         for (int i = 0; i < getTool().getBuildArgs().size(); i++) {
             String arg = getTool().getBuildArgs().get(i);
             if (arg.contains("{{")) {
@@ -119,15 +117,100 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         return cmd;
     }
 
+    private List<String> createCommand(String name) {
+        List<String> cmd = new ArrayList<>();
+        cmd.add("docker" + (PlatformUtils.isWindows() ? ".exe" : ""));
+        cmd.add("-l");
+        cmd.add("error");
+        cmd.add(name);
+        return cmd;
+    }
+
     @Override
     public boolean uploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
-        context.getLogger().warn("Publication of docker images is not yet supported.");
-        return false;
+        if (tool.getRegistries().isEmpty()) {
+            context.getLogger().info("No configured registries. Skipping");
+            return false;
+        }
+        return super.uploadDistribution(distribution, releaser, props);
     }
 
     @Override
     protected boolean doUploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
-        return false;
+        for (Registry registry : getTool().getRegistries()) {
+            login(registry);
+            int i = 0;
+            for (String imageName : getTool().getImageNames()) {
+                publish(registry, imageName, props, i++);
+            }
+            logout(registry);
+        }
+
+        return true;
+    }
+
+    private void login(Registry registry) throws ToolProcessingException {
+        List<String> cmd = createCommand("login");
+        cmd.add("-u");
+        cmd.add(registry.getUsername());
+        cmd.add("-p");
+        cmd.add(registry.getResolvedPassword());
+        if (isNotBlank(registry.getServer())) {
+            cmd.add(registry.getServerName());
+        }
+
+        context.getLogger().debug("login into {}{}",
+            registry.getServerName(),
+            (isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : ""));
+        if (!context.isDryrun()) executeCommand(cmd);
+    }
+
+    private void publish(Registry registry, String imageName, Map<String, Object> props, int index) throws ToolProcessingException {
+        imageName = applyTemplate(new StringReader(imageName), props, "image" + index);
+
+        String tag = imageName;
+        String registryName = registry.getRepositoryName();
+
+        if (!tag.startsWith(registryName)) {
+            int pos = tag.indexOf("/");
+            if (pos < 0) {
+                tag = registryName + "/" + tag;
+            } else {
+                tag = registryName + tag.substring(pos);
+            }
+        }
+
+        if (!tag.equals(imageName)) {
+            List<String> cmd = createCommand("tag");
+            cmd.add(imageName);
+            cmd.add(tag);
+
+            context.getLogger().debug("tagging {} as {}", imageName, tag);
+            if (!context.isDryrun()) executeCommand(cmd);
+        }
+
+        List<String> cmd = createCommand("push");
+        cmd.add("-q");
+        cmd.add(tag);
+
+        context.getLogger().info(" - {}", tag);
+        context.getLogger().debug("pushing {} to {}{}",
+            tag,
+            registry.getServerName(),
+            (isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : ""));
+        if (!context.isDryrun()) executeCommand(cmd);
+    }
+
+    private void logout(Registry registry) throws ToolProcessingException {
+        List<String> cmd = createCommand("logout");
+        if (isNotBlank(registry.getServer())) {
+            cmd.add(registry.getServerName());
+        }
+
+        context.getLogger().debug("logout from {}{}",
+            registry.getServerName(),
+            (isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : ""));
+        executeCommand(cmd);
     }
 
     @Override

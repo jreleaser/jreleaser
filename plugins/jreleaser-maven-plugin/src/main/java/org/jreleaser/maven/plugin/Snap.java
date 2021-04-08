@@ -34,9 +34,9 @@ public class Snap extends AbstractRepositoryTool {
     private final List<String> localSlots = new ArrayList<>();
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
-    private String base = "core18";
-    private String grade = "stable";
-    private String confinement = "strict";
+    private String base;
+    private String grade;
+    private String confinement;
     private File exportedLogin;
     private Boolean remoteBuild;
     private Tap snap = new Tap();
