@@ -61,6 +61,7 @@ public interface Constants {
     String KEY_MILESTONE_NAME = "milestoneName";
     String KEY_CANONICAL_REPO_NAME = "repoCanonicalName";
     String KEY_REPO_URL = "repoUrl";
+    String KEY_REPO_CLONE_URL = "repoCloneUrl";
     String KEY_COMMIT_URL = "commitsUrl";
     String KEY_RELEASE_NOTES_URL = "releaseNotesUrl";
     String KEY_LATEST_RELEASE_URL = "latestReleaseUrl";
@@ -86,6 +87,8 @@ public interface Constants {
 
     // Brew
     String KEY_BREW_DEPENDENCIES = "brewDependencies";
+    String KEY_HOMEBREW_TAP_REPO_URL = "brewTapRepoUrl";
+    String KEY_HOMEBREW_TAP_REPO_CLONE_URL = "brewTapRepoCloneUrl";
 
     // Docker
     String KEY_DOCKER_BASE_IMAGE = "dockerBaseImage";
@@ -94,14 +97,20 @@ public interface Constants {
     // Scoop
     String KEY_SCOOP_CHECKVER_URL = "scoopCheckverUrl";
     String KEY_SCOOP_AUTOUPDATE_URL = "scoopAutoupdateUrl";
+    String KEY_SCOOP_BUCKET_REPO_URL = "scoopBucketRepoUrl";
+    String KEY_SCOOP_BUCKET_REPO_CLONE_URL = "scoopBucketRepoCloneUrl";
 
     // Chocolatey
     String KEY_CHOCOLATEY_USERNAME = "chocolateyUsername";
+    String KEY_CHOCOLATEY_BUCKET_REPO_URL = "chocolateyBucketRepoUrl";
+    String KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL = "chocolateyBucketRepoCloneUrl";
 
     // Jbang
     String KEY_JBANG_ALIAS_NAME = "jbangAliasName";
     String KEY_JBANG_ALIAS_CLASS_NAME = "jbangAliasClassName";
     String KEY_JBANG_DISTRIBUTION_GA = "jbangDistributionGA";
+    String KEY_JBANG_CATALOG_REPO_URL = "jbangCatalogRepoUrl";
+    String KEY_JBANG_CATALOG_REPO_CLONE_URL = "jbangCatalogRepoCloneUrl";
 
     // Snap
     String KEY_SNAP_BASE = "snapBase";
@@ -115,6 +124,8 @@ public interface Constants {
     String KEY_SNAP_LOCAL_PLUGS = "snapLocalPlugs";
     String KEY_SNAP_HAS_LOCAL_SLOTS = "snapHasLocalSlots";
     String KEY_SNAP_LOCAL_SLOTS = "snapLocalSlots";
+    String KEY_SNAP_REPO_URL = "snapRepoUrl";
+    String KEY_SNAP_REPO_CLONE_URL = "snapRepoCloneUrl";
 
     // ToolProcessor
     String KEY_CHECKSUM_DIRECTORY = "__CHECKSUM_DIRECTORY__";

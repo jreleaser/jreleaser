@@ -105,7 +105,7 @@ class Gitlab {
     Project findProject(String projectName) throws GitlabAPIException {
         User u = getCurrentUser();
 
-        logger.debug("Fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
+        logger.debug("fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
         List<Project> projects = api.getProject(u.getId(), CollectionUtils.<String, Object>map()
             .e("search", projectName));
 
@@ -117,7 +117,7 @@ class Gitlab {
     }
 
     Optional<Milestone> findMilestoneByName(String owner, String repo, String milestoneName) throws IOException {
-        logger.debug("Lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
+        logger.debug("Llookup milestone '{}' on {}/{}", milestoneName, owner, repo);
 
         Project project = getProject(repo);
 
@@ -141,7 +141,7 @@ class Gitlab {
     }
 
     void closeMilestone(String owner, String repo, Milestone milestone) throws IOException {
-        logger.debug("Closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
+        logger.debug("closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
 
         Project project = getProject(repo);
 
@@ -151,14 +151,14 @@ class Gitlab {
     }
 
     Project createProject(String owner, String repo) throws IOException {
-        logger.debug("Creating project {}/{}", owner, repo);
+        logger.debug("creating project {}/{}", owner, repo);
 
         return api.createProject(repo, "public");
     }
 
     User getCurrentUser() throws GitlabAPIException {
         if (null == user) {
-            logger.debug("Fetching current user");
+            logger.debug("fetching current user");
             user = api.getCurrentUser();
         }
 
@@ -169,7 +169,7 @@ class Gitlab {
         User u = getCurrentUser();
 
         if (null == project) {
-            logger.debug("Fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
+            logger.debug("fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
             List<Project> projects = api.getProject(u.getId(), CollectionUtils.<String, Object>map()
                 .e("search", projectName));
 
@@ -184,7 +184,7 @@ class Gitlab {
     }
 
     Release findReleaseByTag(String owner, String repoName, String tagName) throws GitlabAPIException {
-        logger.debug("Fetching release on {}/{} with tag {}", owner, repoName, tagName);
+        logger.debug("fetching release on {}/{} with tag {}", owner, repoName, tagName);
 
         Project project = getProject(repoName);
 
@@ -200,7 +200,7 @@ class Gitlab {
     }
 
     void deleteTag(String owner, String repoName, String tagName) throws GitlabAPIException {
-        logger.debug("Deleting tag {} from {}/{}", tagName, owner, repoName);
+        logger.debug("deleting tag {} from {}/{}", tagName, owner, repoName);
 
         Project project = getProject(repoName);
 
@@ -208,7 +208,7 @@ class Gitlab {
     }
 
     void deleteRelease(String owner, String repoName, String tagName) throws GitlabAPIException {
-        logger.debug("Deleting release {} from {}/{}", tagName, owner, repoName);
+        logger.debug("deleting release {} from {}/{}", tagName, owner, repoName);
 
         Project project = getProject(repoName);
 
@@ -216,7 +216,7 @@ class Gitlab {
     }
 
     void createRelease(String owner, String repoName, Release release) throws GitlabAPIException {
-        logger.debug("Creating release on {}/{} with tag {}", owner, repoName, release.getTagName());
+        logger.debug("creating release on {}/{} with tag {}", owner, repoName, release.getTagName());
 
         Project project = getProject(repoName);
 
@@ -224,7 +224,7 @@ class Gitlab {
     }
 
     List<FileUpload> uploadAssets(String owner, String repoName, List<Path> assets) throws IOException, GitlabAPIException {
-        logger.debug("Uploading assets to {}/{}", owner, repoName);
+        logger.debug("uploading assets to {}/{}", owner, repoName);
 
         List<FileUpload> uploads = new ArrayList<>();
 
@@ -236,7 +236,7 @@ class Gitlab {
                 continue;
             }
 
-            logger.info(" - Uploading {}", asset.getFileName().toString());
+            logger.info(" - uploading {}", asset.getFileName().toString());
             try {
                 FileUpload upload = api.uploadFile(project.getId(), toFormData(asset));
                 upload.setName(asset.getFileName().toString());
@@ -251,16 +251,16 @@ class Gitlab {
     }
 
     void linkAssets(String owner, String repoName, Release release, List<FileUpload> uploads) throws IOException, GitlabAPIException {
-        logger.debug("Linking assets to {}/{} with tag {}", owner, repoName, release.getTagName());
+        logger.debug("linking assets to {}/{} with tag {}", owner, repoName, release.getTagName());
 
         Project project = getProject(repoName);
 
         for (FileUpload upload : uploads) {
-            logger.debug(" - Linking {}", upload.getName());
+            logger.debug(" - linking {}", upload.getName());
             try {
                 api.linkAsset(upload.toLinkRequest(apiHost), project.getId(), release.getTagName());
             } catch (GitlabAPIException e) {
-                logger.error(" x Failed to link {}", upload.getName());
+                logger.error(" x failed to link {}", upload.getName());
                 throw e;
             }
         }

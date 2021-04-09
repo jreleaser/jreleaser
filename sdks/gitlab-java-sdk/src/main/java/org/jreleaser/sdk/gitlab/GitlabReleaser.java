@@ -58,19 +58,19 @@ public class GitlabReleaser implements Releaser {
 
             Gitlab api = new Gitlab(context.getLogger(), gitlab.getApiEndpoint(), gitlab.getResolvedToken());
 
-            context.getLogger().debug("Looking up release with tag {} at repository {}", tagName, gitlab.getCanonicalRepoName());
+            context.getLogger().debug("looking up release with tag {} at repository {}", tagName, gitlab.getCanonicalRepoName());
             Release release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), tagName);
             if (null != release) {
-                context.getLogger().debug("Release {} exists", tagName);
+                context.getLogger().debug("release {} exists", tagName);
                 if (gitlab.isOverwrite()) {
-                    context.getLogger().debug("Deleting release {}", tagName);
+                    context.getLogger().debug("deleting release {}", tagName);
                     if (!context.isDryrun()) {
                         api.deleteRelease(gitlab.getOwner(), gitlab.getName(), tagName);
                     }
-                    context.getLogger().debug("Creating release {}", tagName);
+                    context.getLogger().debug("creating release {}", tagName);
                     createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
                 } else if (gitlab.isAllowUploadToExisting()) {
-                    context.getLogger().debug("Updating release {}", tagName);
+                    context.getLogger().debug("updating release {}", tagName);
                     if (!context.isDryrun()) {
                         List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), assets);
                         api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, uploads);
@@ -80,8 +80,8 @@ public class GitlabReleaser implements Releaser {
                         tagName + " already exists. overwrite = false; allowUploadToExisting = false");
                 }
             } else {
-                context.getLogger().debug("Release {} does not exist", tagName);
-                context.getLogger().debug("Creating release {}", tagName);
+                context.getLogger().debug("release {} does not exist", tagName);
+                context.getLogger().debug("creating release {}", tagName);
                 createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
             }
         } catch (IOException | IllegalStateException e) {
@@ -92,7 +92,7 @@ public class GitlabReleaser implements Releaser {
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
         org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
-        context.getLogger().debug("Looking up {}/{}", owner, repo);
+        context.getLogger().debug("looking up {}/{}", owner, repo);
 
         Gitlab api = new Gitlab(context.getLogger(), gitlab.getApiEndpoint(), password);
         Project project = null;
@@ -126,7 +126,7 @@ public class GitlabReleaser implements Releaser {
                     continue;
                 }
 
-                context.getLogger().debug(" - Uploading asset {}", asset.getFileName().toString());
+                context.getLogger().info(" - uploading {}", asset.getFileName().toString());
             }
             return;
         }
@@ -137,7 +137,7 @@ public class GitlabReleaser implements Releaser {
 
         // local tag
         if (deleteTags || !gitlab.isSkipTagging()) {
-            context.getLogger().debug("Tagging local repository with {}", tagName);
+            context.getLogger().debug("tagging local repository with {}", tagName);
             GitSdk.of(context).tag(tagName, true);
         }
 

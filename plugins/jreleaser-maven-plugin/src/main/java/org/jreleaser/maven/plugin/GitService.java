@@ -30,6 +30,7 @@ public abstract class GitService implements Releaser {
     private String owner;
     private String name;
     private String repoUrlFormat;
+    private String repoCloneUrlFormat;
     private String commitUrlFormat;
     private String downloadUrlFormat;
     private String releaseNotesUrlFormat;
@@ -51,6 +52,7 @@ public abstract class GitService implements Releaser {
         this.owner = service.owner;
         this.name = service.name;
         this.repoUrlFormat = service.repoUrlFormat;
+        this.repoCloneUrlFormat = service.repoCloneUrlFormat;
         this.commitUrlFormat = service.commitUrlFormat;
         this.downloadUrlFormat = service.downloadUrlFormat;
         this.releaseNotesUrlFormat = service.releaseNotesUrlFormat;
@@ -115,6 +117,14 @@ public abstract class GitService implements Releaser {
 
     public void setRepoUrlFormat(String repoUrlFormat) {
         this.repoUrlFormat = repoUrlFormat;
+    }
+
+    public String getRepoCloneUrlFormat() {
+        return repoCloneUrlFormat;
+    }
+
+    public void setRepoCloneUrlFormat(String repoCloneUrlFormat) {
+        this.repoCloneUrlFormat = repoCloneUrlFormat;
     }
 
     public String getCommitUrlFormat() {

@@ -165,6 +165,7 @@ public final class JReleaserModelConverter {
         s.setOwner(service.getOwner());
         s.setName(service.getName());
         s.setRepoUrlFormat(service.getRepoUrlFormat());
+        s.setRepoCloneUrlFormat(service.getRepoCloneUrlFormat());
         s.setCommitUrlFormat(service.getCommitUrlFormat());
         s.setDownloadUrlFormat(service.getDownloadUrlFormat());
         s.setReleaseNotesUrlFormat(service.getReleaseNotesUrlFormat());

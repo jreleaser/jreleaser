@@ -56,27 +56,27 @@ public class GithubReleaser implements Releaser {
 
             Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedToken());
 
-            context.getLogger().debug("Looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
+            context.getLogger().debug("looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
             GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);
             if (null != release) {
-                context.getLogger().debug("Release {} exists", tagName);
+                context.getLogger().debug("release {} exists", tagName);
                 if (github.isOverwrite()) {
-                    context.getLogger().debug("Deleting release {}", tagName);
+                    context.getLogger().debug("deleting release {}", tagName);
                     if (!context.isDryrun()) {
                         release.delete();
                     }
-                    context.getLogger().debug("Creating release {}", tagName);
+                    context.getLogger().debug("creating release {}", tagName);
                     createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
                 } else if (github.isAllowUploadToExisting()) {
-                    context.getLogger().debug("Updating release {}", tagName);
+                    context.getLogger().debug("updating release {}", tagName);
                     if (!context.isDryrun()) api.uploadAssets(release, assets);
                 } else {
                     throw new IllegalStateException("Github release failed because release " +
                         tagName + " already exists. overwrite = false; allowUploadToExisting = false");
                 }
             } else {
-                context.getLogger().debug("Release {} does not exist", tagName);
-                context.getLogger().debug("Creating release {}", tagName);
+                context.getLogger().debug("release {} does not exist", tagName);
+                context.getLogger().debug("creating release {}", tagName);
                 createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
             }
         } catch (IOException | IllegalStateException e) {
@@ -87,7 +87,7 @@ public class GithubReleaser implements Releaser {
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
-        context.getLogger().debug("Looking up {}/{}", owner, repo);
+        context.getLogger().debug("looking up {}/{}", owner, repo);
 
         Github api = new Github(context.getLogger(), github.getApiEndpoint(), password);
         GHRepository repository = api.findRepository(owner, repo);
@@ -112,7 +112,7 @@ public class GithubReleaser implements Releaser {
                     continue;
                 }
 
-                context.getLogger().debug(" - Uploading asset {}", asset.getFileName().toString());
+                context.getLogger().info(" - uploading {}", asset.getFileName().toString());
             }
             return;
         }
@@ -123,7 +123,7 @@ public class GithubReleaser implements Releaser {
 
         // local tag
         if (deleteTags || !github.isSkipTagging()) {
-            context.getLogger().debug("Tagging local repository with {}", tagName);
+            context.getLogger().debug("tagging local repository with {}", tagName);
             GitSdk.of(context).tag(tagName, true);
         }
 

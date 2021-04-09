@@ -18,6 +18,7 @@
 package org.jreleaser.tools;
 
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Snap;
@@ -81,6 +82,14 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
+        Project project = context.getModel().getProject();
+        GitService gitService = context.getModel().getRelease().getGitService();
+
+        props.put(Constants.KEY_SNAP_REPO_URL,
+            gitService.getResolvedRepoUrl(project, tool.getSnap().getOwner(), tool.getSnap().getName()));
+        props.put(Constants.KEY_SNAP_REPO_CLONE_URL,
+            gitService.getResolvedRepoCloneUrl(project, tool.getSnap().getOwner(), tool.getSnap().getName()));
+
         props.put(Constants.KEY_SNAP_BASE, getTool().getBase());
         props.put(Constants.KEY_SNAP_GRADE, getTool().getGrade());
         props.put(Constants.KEY_SNAP_CONFINEMENT, getTool().getConfinement());

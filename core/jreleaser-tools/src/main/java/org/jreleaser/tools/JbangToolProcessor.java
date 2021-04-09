@@ -20,6 +20,7 @@ package org.jreleaser.tools;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jbang;
 import org.jreleaser.model.Project;
@@ -64,6 +65,14 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
+        Project project = context.getModel().getProject();
+        GitService gitService = context.getModel().getRelease().getGitService();
+
+        props.put(Constants.KEY_JBANG_CATALOG_REPO_URL,
+            gitService.getResolvedRepoUrl(project, tool.getCatalog().getOwner(), tool.getCatalog().getName()));
+        props.put(Constants.KEY_JBANG_CATALOG_REPO_CLONE_URL,
+            gitService.getResolvedRepoCloneUrl(project, tool.getCatalog().getOwner(), tool.getCatalog().getName()));
+
         String aliasName = tool.getAlias();
         String aliasClassName = aliasName;
         if (context.getModel().getProject().isSnapshot()) {
@@ -82,17 +91,17 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
                 // if multi-project
                 // {{reverseRepoHost}}.{{repoOwner}}.{{repoName}}:{{distributionArtifactId}
 
-                String reverseRepoHost = context.getModel().getRelease().getGitService().getReverseRepoHost();
+                String reverseRepoHost = gitService.getReverseRepoHost();
                 if (isBlank(reverseRepoHost)) {
-                    reverseRepoHost = (String) tool.getExtraProperties().get(KEY_REVERSE_REPO_HOST);
+                    reverseRepoHost = tool.getExtraProperties().get(KEY_REVERSE_REPO_HOST);
                 }
 
                 StringBuilder b = new StringBuilder(reverseRepoHost)
                     .append(".")
-                    .append(context.getModel().getRelease().getGitService().getOwner());
+                    .append(gitService.getOwner());
                 if (distribution.getJava().isMultiProject()) {
                     b.append(".")
-                        .append(context.getModel().getRelease().getGitService().getName());
+                        .append(gitService.getName());
                 }
                 b.append(":")
                     .append(distribution.getJava().getArtifactId());

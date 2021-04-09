@@ -36,6 +36,8 @@ interface GitService extends Releaser {
 
     Property<String> getRepoUrlFormat()
 
+    Property<String> getRepoCloneUrlFormat()
+
     Property<String> getCommitUrlFormat()
 
     Property<String> getDownloadUrlFormat()

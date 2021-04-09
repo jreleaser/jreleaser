@@ -19,6 +19,7 @@ package org.jreleaser.tools;
 
 import org.jreleaser.model.Brew;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
@@ -47,8 +48,16 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
+        Project project = context.getModel().getProject();
+        GitService gitService = context.getModel().getRelease().getGitService();
+
+        props.put(Constants.KEY_HOMEBREW_TAP_REPO_URL,
+            gitService.getResolvedRepoUrl(project, tool.getTap().getOwner(), tool.getTap().getName()));
+        props.put(Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL,
+            gitService.getResolvedRepoCloneUrl(project, tool.getTap().getOwner(), tool.getTap().getName()));
+
         if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY) {
-            getTool().addDependency("openjdk@"+ props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
+            getTool().addDependency("openjdk@" + props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
         }
 
         props.put(Constants.KEY_BREW_DEPENDENCIES, getTool().getDependenciesAsList()

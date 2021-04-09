@@ -23,6 +23,8 @@ import org.jreleaser.model.Packagers;
 
 import java.util.List;
 
+import static org.jreleaser.util.StringUtils.isBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -45,6 +47,11 @@ public abstract class PackagersValidator extends Validator {
 
         validateCommitAuthor(packagers.getScoop(), model.getRelease().getGitService());
         validateOwner(packagers.getScoop().getBucket(), model.getRelease().getGitService());
+
+        if (isBlank(packagers.getScoop().getBucket().getName())) {
+            packagers.getScoop().getBucket().setName("scoop-" + model.getRelease().getGitService().getOwner());
+        }
+        packagers.getScoop().getBucket().setBasename("scoop-" + model.getRelease().getGitService().getOwner());
 
         validateCommitAuthor(packagers.getSnap(), model.getRelease().getGitService());
         validateOwner(packagers.getSnap().getSnap(), model.getRelease().getGitService());

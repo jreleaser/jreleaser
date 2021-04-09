@@ -63,9 +63,10 @@ public abstract class ScoopValidator extends Validator {
         }
 
         if (isBlank(tool.getBucket().getName())) {
-            tool.getBucket().setName("scoop-bucket");
+            tool.getBucket().setName(model.getPackagers().getScoop().getBucket().getName());
         }
-        tool.getBucket().setBasename("scoop-bucket");
+        tool.getBucket().setBasename(model.getPackagers().getScoop().getBucket().getBasename());
+
         if (isBlank(tool.getBucket().getUsername())) {
             tool.getBucket().setUsername(model.getPackagers().getScoop().getBucket().getUsername());
         }

@@ -48,6 +48,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private String owner;
     private String name;
     private String repoUrlFormat;
+    private String repoCloneUrlFormat;
     private String commitUrlFormat;
     private String downloadUrlFormat;
     private String releaseNotesUrlFormat;
@@ -81,6 +82,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.owner = service.owner;
         this.name = service.name;
         this.repoUrlFormat = service.repoUrlFormat;
+        this.repoCloneUrlFormat = service.repoCloneUrlFormat;
         this.commitUrlFormat = service.commitUrlFormat;
         this.downloadUrlFormat = service.downloadUrlFormat;
         this.releaseNotesUrlFormat = service.releaseNotesUrlFormat;
@@ -156,6 +158,24 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         return applyTemplate(new StringReader(repoUrlFormat), props(project));
     }
 
+    public String getResolvedRepoCloneUrl(Project project) {
+        return applyTemplate(new StringReader(repoCloneUrlFormat), props(project));
+    }
+
+    public String getResolvedRepoUrl(Project project, String repoOwner, String repoName) {
+        Map<String, Object> props = props(project);
+        props.put(Constants.KEY_REPO_OWNER, repoOwner);
+        props.put(Constants.KEY_REPO_NAME, repoName);
+        return applyTemplate(new StringReader(repoUrlFormat), props);
+    }
+
+    public String getResolvedRepoCloneUrl(Project project, String repoOwner, String repoName) {
+        Map<String, Object> props = props(project);
+        props.put(Constants.KEY_REPO_OWNER, repoOwner);
+        props.put(Constants.KEY_REPO_NAME, repoName);
+        return applyTemplate(new StringReader(repoCloneUrlFormat), props);
+    }
+
     public String getResolvedCommitUrl(Project project) {
         return applyTemplate(new StringReader(commitUrlFormat), props(project));
     }
@@ -223,6 +243,14 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
 
     public void setRepoUrlFormat(String repoUrlFormat) {
         this.repoUrlFormat = repoUrlFormat;
+    }
+
+    public String getRepoCloneUrlFormat() {
+        return repoCloneUrlFormat;
+    }
+
+    public void setRepoCloneUrlFormat(String repoCloneUrlFormat) {
+        this.repoCloneUrlFormat = repoCloneUrlFormat;
     }
 
     public String getCommitUrlFormat() {
@@ -377,6 +405,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("username", username);
         map.put("token", isNotBlank(getResolvedToken()) ? "************" : "**unset**");
         map.put("repoUrlFormat", repoUrlFormat);
+        map.put("repoCloneUrlFormat", repoCloneUrlFormat);
         map.put("commitUrlFormat", commitUrlFormat);
         map.put("downloadUrlFormat", downloadUrlFormat);
         map.put("releaseNotesUrlFormat", releaseNotesUrlFormat);
@@ -437,6 +466,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         props.put(Constants.KEY_RELEASE_NAME, getEffectiveReleaseName());
         props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
         props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(project));
+        props.put(Constants.KEY_REPO_CLONE_URL, getResolvedRepoCloneUrl(project));
         props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(project));
         props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(project));
         props.put(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(project));

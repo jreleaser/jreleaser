@@ -92,7 +92,7 @@ class Gitea {
     }
 
     GtRepository findRepository(String owner, String repo) {
-        logger.debug("Lookup repository {}/{}", owner, repo);
+        logger.debug("lookup repository {}/{}", owner, repo);
         try {
             return api.getRepository(owner, repo);
         } catch (GiteaAPIException e) {
@@ -105,7 +105,7 @@ class Gitea {
     }
 
     Optional<GtMilestone> findMilestoneByName(String owner, String repo, String milestoneName) {
-        logger.debug("Lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
+        logger.debug("lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
 
         try {
             GtMilestone milestone = api.findMilestoneByTitle(owner, repo, milestoneName);
@@ -125,14 +125,14 @@ class Gitea {
     }
 
     void closeMilestone(String owner, String repo, GtMilestone milestone) throws IOException {
-        logger.debug("Closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
+        logger.debug("closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
 
         api.updateMilestone(CollectionUtils.<String, Object>map()
             .e("state", "closed"), owner, repo, milestone.getId());
     }
 
     GtRepository createRepository(String owner, String repo) {
-        logger.debug("Creating repository {}/{}", owner, repo);
+        logger.debug("creating repository {}/{}", owner, repo);
 
         Map<String, Object> params = CollectionUtils.<String, Object>map()
             .e("name", repo)
@@ -159,7 +159,7 @@ class Gitea {
     }
 
     GtRelease findReleaseByTag(String owner, String repo, String tagName) {
-        logger.debug("Fetching release on {}/{} with tag {}", owner, repo, tagName);
+        logger.debug("fetching release on {}/{} with tag {}", owner, repo, tagName);
 
         try {
             return api.getReleaseByTagName(owner, repo, tagName);
@@ -173,7 +173,7 @@ class Gitea {
     }
 
     void deleteRelease(String owner, String repo, String tagName, Integer id) throws GiteaAPIException {
-        logger.debug("Deleting release {} from {}/{} ({})", tagName, owner, repo, id);
+        logger.debug("deleting release {} from {}/{} ({})", tagName, owner, repo, id);
 
         try {
             api.deleteRelease(owner, repo, id);
@@ -188,13 +188,13 @@ class Gitea {
     }
 
     void deleteTag(String owner, String repo, String tagName) throws GiteaAPIException {
-        logger.debug("Deleting tag {} from {}/{}", tagName, owner, repo);
+        logger.debug("deleting tag {} from {}/{}", tagName, owner, repo);
 
         api.deleteTag(owner, repo, tagName);
     }
 
     GtRelease createRelease(String owner, String repo, GtRelease release) throws GiteaAPIException {
-        logger.debug("Creating release on {}/{} with tag {}", owner, repo, release.getTagName());
+        logger.debug("creating release on {}/{} with tag {}", owner, repo, release.getTagName());
 
         return api.createRelease(release, owner, repo);
     }
@@ -206,11 +206,11 @@ class Gitea {
                 continue;
             }
 
-            logger.info(" - Uploading {}", asset.getFileName().toString());
+            logger.info(" - uploading {}", asset.getFileName().toString());
             try {
                 api.uploadAsset(owner, repo, release.getId(), toFormData(asset));
             } catch (GiteaAPIException e) {
-                logger.error(" x Failed to upload {}", asset.getFileName());
+                logger.error(" x failed to upload {}", asset.getFileName());
                 throw e;
             }
         }

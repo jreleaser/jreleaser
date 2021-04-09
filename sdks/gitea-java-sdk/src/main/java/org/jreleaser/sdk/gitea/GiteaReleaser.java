@@ -57,19 +57,19 @@ public class GiteaReleaser implements Releaser {
 
             Gitea api = new Gitea(context.getLogger(), gitea.getApiEndpoint(), gitea.getResolvedToken());
 
-            context.getLogger().debug("Looking up release with tag {} at repository {}", tagName, gitea.getCanonicalRepoName());
+            context.getLogger().debug("looking up release with tag {} at repository {}", tagName, gitea.getCanonicalRepoName());
             GtRelease release = api.findReleaseByTag(gitea.getOwner(), gitea.getName(), tagName);
             if (null != release) {
-                context.getLogger().debug("Release {} exists", tagName);
+                context.getLogger().debug("release {} exists", tagName);
                 if (gitea.isOverwrite()) {
-                    context.getLogger().debug("Deleting release {}", tagName);
+                    context.getLogger().debug("deleting release {}", tagName);
                     if (!context.isDryrun()) {
                         api.deleteRelease(gitea.getOwner(), gitea.getName(), tagName, release.getId());
                     }
-                    context.getLogger().debug("Creating release {}", tagName);
+                    context.getLogger().debug("creating release {}", tagName);
                     createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
                 } else if (gitea.isAllowUploadToExisting()) {
-                    context.getLogger().debug("Updating release {}", tagName);
+                    context.getLogger().debug("updating release {}", tagName);
                     if (!context.isDryrun()) {
                         api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);
                     }
@@ -78,8 +78,8 @@ public class GiteaReleaser implements Releaser {
                         tagName + " already exists. overwrite = false; allowUploadToExisting = false");
                 }
             } else {
-                context.getLogger().debug("Release {} does not exist", tagName);
-                context.getLogger().debug("Creating release {}", tagName);
+                context.getLogger().debug("release {} does not exist", tagName);
+                context.getLogger().debug("creating release {}", tagName);
                 createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
             }
         } catch (IOException | IllegalStateException e) {
@@ -90,7 +90,7 @@ public class GiteaReleaser implements Releaser {
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
         org.jreleaser.model.Gitea gitea = context.getModel().getRelease().getGitea();
-        context.getLogger().debug("Looking up {}/{}", owner, repo);
+        context.getLogger().debug("looking up {}/{}", owner, repo);
 
         Gitea api = new Gitea(context.getLogger(), gitea.getApiEndpoint(), password);
         GtRepository repository = api.findRepository(owner, repo);
@@ -115,7 +115,7 @@ public class GiteaReleaser implements Releaser {
                     continue;
                 }
 
-                context.getLogger().debug(" - Uploading asset {}", asset.getFileName().toString());
+                context.getLogger().info(" - uploading {}", asset.getFileName().toString());
             }
             return;
         }
@@ -126,7 +126,7 @@ public class GiteaReleaser implements Releaser {
 
         // local tag
         if (deleteTags || !gitea.isSkipTagging()) {
-            context.getLogger().debug("Tagging local repository with {}", tagName);
+            context.getLogger().debug("tagging local repository with {}", tagName);
             GitSdk.of(context).tag(tagName, true);
         }
 

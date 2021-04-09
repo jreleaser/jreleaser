@@ -74,7 +74,7 @@ class Github {
     }
 
     GHRepository findRepository(String owner, String repo) throws IOException {
-        logger.debug("Lookup repository {}/{}", owner, repo);
+        logger.debug("lookup repository {}/{}", owner, repo);
         try {
             return github.getRepository(owner + "/" + repo);
         } catch (GHFileNotFoundException e) {
@@ -84,7 +84,7 @@ class Github {
     }
 
     GHRepository createRepository(String owner, String repo) throws IOException {
-        logger.debug("Creating repository {}/{}", owner, repo);
+        logger.debug("creating repository {}/{}", owner, repo);
 
         GHOrganization organization = resolveOrganization(owner);
         if (null != organization) {
@@ -97,7 +97,7 @@ class Github {
     }
 
     Optional<GHMilestone> findMilestoneByName(String owner, String repo, String milestoneName) throws IOException {
-        logger.debug("Lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
+        logger.debug("lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
 
         GHRepository repository = findRepository(owner, repo);
         PagedIterable<GHMilestone> milestones = repository.listMilestones(GHIssueState.OPEN);
@@ -107,26 +107,26 @@ class Github {
     }
 
     void closeMilestone(String owner, String repo, GHMilestone milestone) throws IOException {
-        logger.debug("Closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
+        logger.debug("closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
 
         milestone.close();
     }
 
     GHRelease findReleaseByTag(String repo, String tagName) throws IOException {
-        logger.debug("Fetching release on {} with tag {}", repo, tagName);
+        logger.debug("fetching release on {} with tag {}", repo, tagName);
         return github.getRepository(repo)
             .getReleaseByTagName(tagName);
     }
 
     void deleteTag(String repo, String tagName) throws IOException {
-        logger.debug("Deleting tag {} from {}", tagName, repo);
+        logger.debug("deleting tag {} from {}", tagName, repo);
         github.getRepository(repo)
             .getRef(REFS_TAGS + tagName)
             .delete();
     }
 
     GHReleaseBuilder createRelease(String repo, String tagName) throws IOException {
-        logger.debug("Creating release on {} with tag {}", repo, tagName);
+        logger.debug("creating release on {} with tag {}", repo, tagName);
         return github.getRepository(repo)
             .createRelease(tagName);
     }
@@ -138,10 +138,10 @@ class Github {
                 continue;
             }
 
-            logger.info(" - Uploading {}", asset.getFileName().toString());
+            logger.info(" - uploading {}", asset.getFileName().toString());
             GHAsset ghasset = release.uploadAsset(asset.toFile(), MediaType.parse(tika.detect(asset)).toString());
             if (!"uploaded".equalsIgnoreCase(ghasset.getState())) {
-                logger.warn(" x Failed to upload {}", asset.getFileName());
+                logger.warn(" x failed to upload {}", asset.getFileName());
             }
         }
     }

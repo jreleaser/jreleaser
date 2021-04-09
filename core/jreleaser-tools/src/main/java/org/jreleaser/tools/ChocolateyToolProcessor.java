@@ -19,6 +19,7 @@ package org.jreleaser.tools;
 
 import org.jreleaser.model.Chocolatey;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.releaser.spi.Releaser;
@@ -74,6 +75,14 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
+        Project project = context.getModel().getProject();
+        GitService gitService = context.getModel().getRelease().getGitService();
+
+        props.put(Constants.KEY_CHOCOLATEY_BUCKET_REPO_URL,
+            gitService.getResolvedRepoUrl(project, tool.getBucket().getOwner(), tool.getBucket().getName()));
+        props.put(Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL,
+            gitService.getResolvedRepoCloneUrl(project, tool.getBucket().getOwner(), tool.getBucket().getName()));
+
         props.put(Constants.KEY_CHOCOLATEY_USERNAME, getTool().getUsername());
     }
 

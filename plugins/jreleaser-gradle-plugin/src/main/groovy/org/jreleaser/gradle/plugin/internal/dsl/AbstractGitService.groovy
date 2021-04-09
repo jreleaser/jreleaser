@@ -42,6 +42,7 @@ abstract class AbstractGitService implements GitService {
     final Property<String> owner
     final Property<String> name
     final Property<String> repoUrlFormat
+    final Property<String> repoCloneUrlFormat
     final Property<String> commitUrlFormat
     final Property<String> downloadUrlFormat
     final Property<String> releaseNotesUrlFormat
@@ -64,6 +65,7 @@ abstract class AbstractGitService implements GitService {
         owner = objects.property(String).convention(Providers.notDefined())
         name = objects.property(String).convention(Providers.notDefined())
         repoUrlFormat = objects.property(String).convention(Providers.notDefined())
+        repoCloneUrlFormat = objects.property(String).convention(Providers.notDefined())
         commitUrlFormat = objects.property(String).convention(Providers.notDefined())
         downloadUrlFormat = objects.property(String).convention(Providers.notDefined())
         releaseNotesUrlFormat = objects.property(String).convention(Providers.notDefined())
@@ -88,6 +90,7 @@ abstract class AbstractGitService implements GitService {
             owner.present ||
             name.present ||
             repoUrlFormat.present ||
+            repoCloneUrlFormat.present ||
             commitUrlFormat.present ||
             downloadUrlFormat.present ||
             releaseNotesUrlFormat.present ||
@@ -125,6 +128,7 @@ abstract class AbstractGitService implements GitService {
         if (owner.present) service.owner = owner.get()
         if (name.present) service.name = name.get()
         if (repoUrlFormat.present) service.repoUrlFormat = repoUrlFormat.get()
+        if (repoCloneUrlFormat.present) service.repoCloneUrlFormat = repoCloneUrlFormat.get()
         if (commitUrlFormat.present) service.commitUrlFormat = commitUrlFormat.get()
         if (downloadUrlFormat.present) service.downloadUrlFormat = downloadUrlFormat.get()
         if (releaseNotesUrlFormat.present) service.releaseNotesUrlFormat = releaseNotesUrlFormat.get()

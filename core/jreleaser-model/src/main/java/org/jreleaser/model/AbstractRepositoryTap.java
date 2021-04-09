@@ -39,6 +39,10 @@ abstract class AbstractRepositoryTap implements RepositoryTap {
         this.basename = basename;
     }
 
+    public String getBasename() {
+        return basename;
+    }
+
     public void setBasename(String basename) {
         this.basename = basename;
     }

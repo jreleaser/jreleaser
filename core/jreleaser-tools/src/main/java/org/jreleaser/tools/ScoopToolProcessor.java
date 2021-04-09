@@ -18,13 +18,13 @@
 package org.jreleaser.tools;
 
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Scoop;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
@@ -49,12 +49,15 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
     }
 
     @Override
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
-        super.prepareWorkingCopy(props, directory.resolve(distribution.getName()), distribution);
-    }
-
-    @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
+        Project project = context.getModel().getProject();
+        GitService gitService = context.getModel().getRelease().getGitService();
+
+        props.put(Constants.KEY_SCOOP_BUCKET_REPO_URL,
+            gitService.getResolvedRepoUrl(project, tool.getBucket().getOwner(), tool.getBucket().getName()));
+        props.put(Constants.KEY_SCOOP_BUCKET_REPO_CLONE_URL,
+            gitService.getResolvedRepoCloneUrl(project, tool.getBucket().getOwner(), tool.getBucket().getName()));
+
         props.put(Constants.KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));
         props.put(Constants.KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(props));
     }
@@ -80,8 +83,12 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
     @Override
     protected void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName)
         throws ToolProcessingException {
+        fileName = trimTplExtension(fileName);
+
         Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
-        Path outputFile = outputDirectory.resolve(trimTplExtension(fileName));
+        Path outputFile = "manifest.json".equals(fileName) ?
+            outputDirectory.resolve("bucket").resolve(distribution.getExecutable().concat(".json")) :
+            outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
     }
