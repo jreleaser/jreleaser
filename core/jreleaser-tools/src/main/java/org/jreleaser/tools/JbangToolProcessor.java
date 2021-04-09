@@ -124,7 +124,7 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
     }
 
     @Override
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory) throws IOException {
+    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
         Path catalog = directory.resolve("jbang-catalog.json");
 
         if (catalog.toFile().exists()) {
@@ -133,7 +133,7 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
             JsonNode previous = objectMapper.readTree(Files.readAllBytes(catalog));
 
             // copy all files
-            super.prepareWorkingCopy(props, directory);
+            super.prepareWorkingCopy(props, directory, distribution);
 
             // read current catalog
             JsonNode current = objectMapper.readTree(Files.readAllBytes(catalog));
@@ -145,7 +145,7 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
             Files.write(catalog, merged.toPrettyString().getBytes());
         } else {
             // copy all files
-            super.prepareWorkingCopy(props, directory);
+            super.prepareWorkingCopy(props, directory, distribution);
         }
     }
 }

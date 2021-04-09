@@ -55,13 +55,20 @@ public class Main implements Runnable {
         CommandLine commandLine = new CommandLine(cmd);
         cmd.out = commandLine.getOut();
         cmd.err = commandLine.getErr();
-        return commandLine.execute(args);
+        return execute(commandLine, args);
     }
 
     public static int run(PrintWriter out, PrintWriter err, String... args) {
         Main cmd = new Main();
+        CommandLine commandLine = new CommandLine(cmd);
+        commandLine.setOut(out);
+        commandLine.setErr(err);
         cmd.out = out;
         cmd.err = err;
-        return new CommandLine(cmd).execute(args);
+        return execute(commandLine, args);
+    }
+
+    private static int execute(CommandLine commandLine, String[] args) {
+        return commandLine.execute(args);
     }
 }

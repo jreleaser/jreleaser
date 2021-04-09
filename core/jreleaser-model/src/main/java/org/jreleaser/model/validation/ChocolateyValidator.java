@@ -56,9 +56,9 @@ public abstract class ChocolateyValidator extends Validator {
         }
 
         if (isBlank(tool.getBucket().getName())) {
-            tool.getBucket().setName(distribution.getName() + "-chocolatey-bucket");
+            tool.getBucket().setName("chocolatey-bucket");
         }
-        tool.getBucket().setBasename(distribution.getName() + "-chocolatey-bucket");
+        tool.getBucket().setBasename("chocolatey-bucket");
         if (isBlank(tool.getBucket().getUsername())) {
             tool.getBucket().setUsername(model.getPackagers().getChocolatey().getBucket().getUsername());
         }

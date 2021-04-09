@@ -24,6 +24,7 @@ import org.jreleaser.model.Scoop;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
@@ -45,6 +46,11 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
     protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         copyPreparedFiles(distribution, props);
         return true;
+    }
+
+    @Override
+    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
+        super.prepareWorkingCopy(props, directory.resolve(distribution.getName()), distribution);
     }
 
     @Override

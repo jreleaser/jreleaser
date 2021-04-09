@@ -52,7 +52,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
 
         try {
             // get the repository
-            context.getLogger().debug("Locating repository {}", tool.getRepositoryTap().getCanonicalRepoName());
+            context.getLogger().debug("locating repository {}", tool.getRepositoryTap().getCanonicalRepoName());
             Repository repository = releaser.maybeCreateRepository(
                 tool.getRepositoryTap().getOwner(),
                 tool.getRepositoryTap().getResolvedName(),
@@ -63,7 +63,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 resolveGitToken(gitService));
 
             // clone the repository
-            context.getLogger().debug("Clonning {}", repository.getHttpUrl());
+            context.getLogger().debug("clonning {}", repository.getHttpUrl());
             Path directory = Files.createTempDirectory("jreleaser-" + tool.getRepositoryTap().getResolvedName());
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
@@ -72,7 +72,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 .setURI(repository.getHttpUrl())
                 .call();
 
-            prepareWorkingCopy(props, directory);
+            prepareWorkingCopy(props, directory, distribution);
 
             // add everything
             git.add()
@@ -80,7 +80,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 .call();
 
             // setup commit
-            context.getLogger().debug("Setting up commit");
+            context.getLogger().debug("setting up commit");
             CommitCommand commitCommand = git.commit()
                 .setAll(true)
                 .setMessage(distribution.getExecutable() + " " + gitService.getResolvedTagName(context.getModel().getProject()))
@@ -95,8 +95,9 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
 
             commitCommand.call();
 
+            context.getLogger().info("pushing to {}", tool.getRepositoryTap().getCanonicalRepoName());
             // push commit
-            context.getLogger().debug("Pushing commit to remote, dryrun = {}", context.isDryrun());
+            context.getLogger().debug("pushing commit to remote, dryrun = {}", context.isDryrun());
             git.push()
                 .setDryRun(context.isDryrun())
                 .setPushAll()
@@ -109,7 +110,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
         return true;
     }
 
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory) throws IOException {
+    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
         // copy files over
         Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
         context.getLogger().debug("Copying files from {}", context.getBasedir().relativize(packageDirectory));

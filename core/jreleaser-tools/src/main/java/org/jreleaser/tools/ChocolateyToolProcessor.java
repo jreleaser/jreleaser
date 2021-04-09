@@ -26,6 +26,7 @@ import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.PlatformUtils;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -56,6 +57,11 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
         copyPreparedFiles(distribution, props);
 
         return createChocolateyPackage(distribution, props);
+    }
+
+    @Override
+    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
+        super.prepareWorkingCopy(props, directory.resolve(distribution.getName()), distribution);
     }
 
     @Override

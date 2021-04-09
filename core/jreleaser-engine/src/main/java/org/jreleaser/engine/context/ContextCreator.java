@@ -45,7 +45,6 @@ public class ContextCreator {
                                           Path basedir,
                                           Path outputDirectory,
                                           boolean dryrun) {
-
         JReleaserContext context = new JReleaserContext(
             logger,
             resolveModel(logger, configFile),
