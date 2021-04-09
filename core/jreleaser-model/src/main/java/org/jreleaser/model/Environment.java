@@ -19,7 +19,6 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.Env;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -56,12 +55,12 @@ public class Environment implements Domain {
         if (null == props) {
             props = new Properties();
 
-            String home = System.getenv("JRELEASER_HOME");
+            String home = System.getenv("JRELEASER_USER_HOME");
             if (isBlank(home)) {
-                home = System.getProperty("user.home") + File.separator + ".jreleaser";
+                home = System.getProperty("user.home");
             }
 
-            Path defaultPath = Paths.get(home).resolve("config.properties");
+            Path defaultPath = Paths.get(home).resolve(".jreleaser").resolve("config.properties");
             Path path = isNotBlank(variables) ? context.getBasedir().resolve(variables.trim()) : defaultPath;
             if (!Files.exists(path)) path = defaultPath;
             context.getLogger().debug("Properties path: {}", path.toAbsolutePath());
