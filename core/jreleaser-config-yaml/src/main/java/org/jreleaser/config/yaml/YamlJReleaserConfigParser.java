@@ -17,17 +17,10 @@
  */
 package org.jreleaser.config.yaml;
 
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.jreleaser.config.JReleaserConfigParser;
-import org.jreleaser.model.Artifact;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.Plug;
-import org.jreleaser.model.Slot;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.introspector.Property;
-import org.yaml.snakeyaml.introspector.PropertyUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,25 +45,7 @@ public class YamlJReleaserConfigParser implements JReleaserConfigParser {
 
     @Override
     public JReleaserModel parse(InputStream inputStream) throws IOException {
-        Constructor c = new Constructor(JReleaserModel.class);
-        TypeDescription td = new TypeDescription(JReleaserModel.class);
-        td.addPropertyParameters("artifacts", Artifact.class);
-        td.addPropertyParameters("plugs", Plug.class);
-        td.addPropertyParameters("slots", Slot.class);
-        c.addTypeDescription(td);
-
-        c.setPropertyUtils(new PropertyUtils() {
-            @Override
-            public Property getProperty(Class<? extends Object> type, String name) {
-                if (name.equals("class")) {
-                    name = "clazz";
-                }
-                return super.getProperty(type, name);
-            }
-        });
-
-        Yaml yaml = new Yaml(c);
-
-        return yaml.load(inputStream);
+        YAMLMapper mapper = YAMLMapper.builder().build();
+        return mapper.readValue(inputStream, JReleaserModel.class);
     }
 }
