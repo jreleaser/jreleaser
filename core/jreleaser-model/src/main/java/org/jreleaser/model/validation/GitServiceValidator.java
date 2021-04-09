@@ -65,14 +65,14 @@ public abstract class GitServiceValidator extends Validator {
                 TAG_NAME,
                 service.getServiceName() + ".tagName",
                 service.getTagName(),
-                errors));
+                "v{{projectVersion}}"));
 
         service.setReleaseName(
             checkProperty(context.getModel().getEnvironment(),
                 RELEASE_NAME,
                 service.getServiceName() + ".releaseName",
                 service.getReleaseName(),
-                errors));
+                "Release {{tagName}}"));
 
         if (isBlank(service.getTagName())) {
             service.setTagName("v" + project.getResolvedVersion());
@@ -99,7 +99,7 @@ public abstract class GitServiceValidator extends Validator {
                 MILESTONE_NAME,
                 service.getServiceName() + ".milestone.name",
                 service.getMilestone().getName(),
-                errors));
+                "{{tagName}}"));
 
         // eager resolve
         service.getResolvedTagName(project);

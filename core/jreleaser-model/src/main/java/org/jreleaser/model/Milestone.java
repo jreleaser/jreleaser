@@ -34,7 +34,7 @@ public class Milestone implements Domain {
     public static final String MILESTONE_NAME = "MILESTONE_NAME";
 
     private Boolean close;
-    private String name = "{{ tagName }}";
+    private String name;
 
     private String cachedName;
 

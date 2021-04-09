@@ -55,8 +55,8 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private String issueTrackerUrlFormat;
     private String username;
     private String token;
-    private String tagName = "v{{projectVersion}}";
-    private String releaseName = "Release {{tagName}}";
+    private String tagName;
+    private String releaseName;
     private boolean sign;
     private boolean skipTagging;
     private boolean overwrite;
