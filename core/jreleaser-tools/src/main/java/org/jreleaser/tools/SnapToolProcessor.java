@@ -26,14 +26,17 @@ import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
+import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
@@ -84,6 +87,13 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         Project project = context.getModel().getProject();
         GitService gitService = context.getModel().getRelease().getGitService();
+
+        String desc = context.getModel().getProject().getLongDescription();
+        desc = Arrays.stream(desc.split(System.lineSeparator()))
+            .map(line -> "  " + line)
+            .collect(Collectors.joining(System.lineSeparator()));
+        props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION,
+            MustacheUtils.passThrough("|" + System.lineSeparator() + desc));
 
         props.put(Constants.KEY_SNAP_REPO_URL,
             gitService.getResolvedRepoUrl(project, tool.getSnap().getOwner(), tool.getSnap().getName()));
