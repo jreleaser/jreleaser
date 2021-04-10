@@ -24,6 +24,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.MustacheUtils;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         props.put(Constants.KEY_BREW_DEPENDENCIES, getTool().getDependenciesAsList()
             .stream()
             // prevent Mustache from converting quotes into &quot;
-            .map(dependency -> "!!" + dependency.toString() + "!!")
+            .map(dependency -> MustacheUtils.passThrough(dependency.toString()))
             .collect(Collectors.toList()));
     }
 

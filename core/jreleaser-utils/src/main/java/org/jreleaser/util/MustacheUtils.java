@@ -30,6 +30,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -61,6 +63,10 @@ public final class MustacheUtils {
 
     public static String applyTemplate(Reader reader, Map<String, Object> context) {
         return applyTemplate(reader, context, UUID.randomUUID().toString()).trim();
+    }
+
+    public static String passThrough(String str) {
+        return isNotBlank(str) ? "!!" + str + "!!" : str;
     }
 
     private static class MyMustacheFactory extends DefaultMustacheFactory {

@@ -26,6 +26,7 @@ import org.jreleaser.model.Project;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.IOException;
@@ -219,8 +220,8 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
             applyTemplate(new StringReader(getTool().getBaseImage()), props, "baseImage"));
 
         List<String> labels = new ArrayList<>();
-        getTool().getLabels().forEach((label, value) -> labels.add("!!\"" + label + "\"=\"" +
-            applyTemplate(new StringReader(value), props, label) + "\"!!"));
+        getTool().getLabels().forEach((label, value) -> labels.add(MustacheUtils.passThrough("\"" + label + "\"=\"" +
+            applyTemplate(new StringReader(value), props, label) + "\"")));
         props.put(Constants.KEY_DOCKER_LABELS, labels);
     }
 

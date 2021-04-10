@@ -19,6 +19,7 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
+import org.jreleaser.util.MustacheUtils;
 
 import java.io.StringReader;
 import java.util.LinkedHashMap;
@@ -430,8 +431,8 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getResolvedVersion());
-        props.put(Constants.KEY_PROJECT_DESCRIPTION, project.getDescription());
-        props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, project.getLongDescription());
+        props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
+        props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
         props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
         props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
 
