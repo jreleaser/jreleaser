@@ -105,6 +105,13 @@ public class TemplateGenerator {
         for (Map.Entry<String, Reader> template : templates.entrySet()) {
             Path outputFile = output.resolve(template.getKey());
             logger.info("Writing file " + outputFile.toAbsolutePath());
+
+            try {
+                Files.createDire    ctories(outputFile.getParent());
+            } catch (IOException e) {
+                throw fail(e);
+            }
+
             try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
                  Scanner scanner = new Scanner(template.getValue())) {
                 while (scanner.hasNextLine()) {
