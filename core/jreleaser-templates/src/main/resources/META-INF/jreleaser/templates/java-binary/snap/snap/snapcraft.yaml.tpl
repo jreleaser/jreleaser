@@ -6,14 +6,26 @@ grade: {{snapGrade}}
 type: app
 confinement: {{snapConfinement}}
 summary: {{projectDescription}}
-description: |
-{{projectLongDescription}}
+description: {{projectLongDescription}}
 
 apps:
   {{distributionExecutable}}:
-    command: bin/{{distributionExecutable}}
+    command: $SNAP/bin/{{distributionExecutable}}
     environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java
+      JAVA_HOME: "$SNAP/usr/lib/jvm/java/jre/"
+      PATH: "$SNAP/bin:$PATH:$SNAP/usr/lib/jvm/java/jre/bin"
+    {{#snapHasLocalPlugs}}
+    plugs:
+      {{#snapLocalPlugs}}
+      - {{.}}
+      {{/snapLocalPlugs}}
+    {{/snapHasLocalPlugs}}
+    {{#snapHasLocalSlots}}
+    slots:
+      {{#snapLocalSlots}}
+      - {{.}}
+      {{/snapLocalSlots}}
+    {{/snapHasLocalSlots}}
 
 {{#snapHasPlugs}}
 plugs:
@@ -51,18 +63,11 @@ parts:
     source: {{distributionUrl}}
     source-checksum: sha256/{{distributionSha256}}
     stage-packages:
-      - openjdk-{{distributionJavaVersion}}-jdk
+      - openjdk-{{distributionJavaVersion}}-jre
+      - ca-certificates
+      - ca-certificates-java
     organize:
-      usr/lib/jvm/java-{{distributionJavaVersion}}-openjdk*: usr/lib/jvm/java
-    {{#snapHasLocalPlugs}}
-    plugs:
-      {{#snapLocalPlugs}}
-      - {{.}}
-      {{/snapLocalPlugs}}
-    {{/snapHasLocalPlugs}}
-    {{#snapHasLocalSlots}}
-    slots:
-      {{#snapLocalSlots}}
-      - {{.}}
-      {{/snapLocalSlots}}
-    {{/snapHasLocalSlots}}
+      'usr/lib/jvm/java-{{distributionJavaVersion}}-openjdk*': 'usr/lib/jvm/java'
+    prime:
+      - -usr/lib/jvm/java/lib/security/cacerts
+      - -usr/lib/jvm/java/jre/lib/security/cacerts

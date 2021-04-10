@@ -6,12 +6,23 @@ grade: {{snapGrade}}
 type: app
 confinement: {{snapConfinement}}
 summary: {{projectDescription}}
-description: |
-{{projectLongDescription}}
+description: {{projectLongDescription}}
 
 apps:
   {{distributionExecutable}}:
-    command: bin/{{distributionExecutable}}
+    command: $SNAP/bin/{{distributionExecutable}}
+    {{#snapHasLocalPlugs}}
+    plugs:
+      {{#snapLocalPlugs}}
+      - {{.}}
+      {{/snapLocalPlugs}}
+    {{/snapHasLocalPlugs}}
+    {{#snapHasLocalSlots}}
+    slots:
+      {{#snapLocalSlots}}
+      - {{.}}
+      {{/snapLocalSlots}}
+    {{/snapHasLocalSlots}}
 
 {{#snapHasPlugs}}
 plugs:
@@ -48,15 +59,3 @@ parts:
     plugin: dump
     source: {{distributionUrl}}
     source-checksum: sha256/{{distributionSha256}}
-    {{#snapHasLocalPlugs}}
-    plugs:
-      {{#snapLocalPlugs}}
-      - {{.}}
-      {{/snapLocalPlugs}}
-    {{/snapHasLocalPlugs}}
-    {{#snapHasLocalSlots}}
-    slots:
-      {{#snapLocalSlots}}
-      - {{.}}
-      {{/snapLocalSlots}}
-    {{/snapHasLocalSlots}}
