@@ -6,7 +6,8 @@ grade: {{snapGrade}}
 type: app
 confinement: {{snapConfinement}}
 summary: {{projectDescription}}
-description: {{projectLongDescription}}
+description: |
+{{projectLongDescription}}
 
 apps:
   {{distributionExecutable}}:

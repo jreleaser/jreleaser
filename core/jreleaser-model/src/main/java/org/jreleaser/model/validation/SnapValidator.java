@@ -25,8 +25,10 @@ import org.jreleaser.model.Slot;
 import org.jreleaser.model.Snap;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
@@ -102,6 +104,11 @@ public abstract class SnapValidator extends Validator {
     }
 
     private static void mergeSnapPlugs(Snap tool, Snap common) {
+        Set<String> localPlugs = new LinkedHashSet<>();
+        localPlugs.addAll(tool.getLocalPlugs());
+        localPlugs.addAll(common.getLocalPlugs());
+        tool.setLocalPlugs(localPlugs);
+
         Map<String, Plug> commonPlugs = common.getPlugs().stream()
             .collect(Collectors.toMap(Plug::getName, Plug::copyOf));
         Map<String, Plug> toolPlugs = tool.getPlugs().stream()
@@ -117,6 +124,11 @@ public abstract class SnapValidator extends Validator {
     }
 
     private static void mergeSnapSlots(Snap tool, Snap common) {
+        Set<String> localSlots = new LinkedHashSet<>();
+        localSlots.addAll(tool.getLocalSlots());
+        localSlots.addAll(common.getLocalSlots());
+        tool.setLocalSlots(localSlots);
+
         Map<String, Slot> commonSlots = common.getSlots().stream()
             .collect(Collectors.toMap(Slot::getName, Slot::copyOf));
         Map<String, Slot> toolSlots = tool.getSlots().stream()

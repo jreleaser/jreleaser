@@ -21,8 +21,8 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
  *
@@ -41,9 +41,9 @@ interface SnapPackager extends PackagerRepositoryTool {
 
     Property<Boolean> getRemoteBuild()
 
-    ListProperty<String> getLocalPlugs()
+    SetProperty<String> getLocalPlugs()
 
-    ListProperty<String> getLocalSlots()
+    SetProperty<String> getLocalSlots()
 
     NamedDomainObjectContainer<Plug> getPlugs()
 

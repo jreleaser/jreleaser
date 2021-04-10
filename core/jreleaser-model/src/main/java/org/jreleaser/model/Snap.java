@@ -35,8 +35,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Snap extends AbstractRepositoryTool {
     public static final String NAME = "snap";
 
-    private final List<String> localPlugs = new ArrayList<>();
-    private final List<String> localSlots = new ArrayList<>();
+    private final Set<String> localPlugs = new LinkedHashSet<>();
+    private final Set<String> localSlots = new LinkedHashSet<>();
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
     private String base = "core18";
@@ -65,10 +65,10 @@ public class Snap extends AbstractRepositoryTool {
         this.confinement = snap.confinement;
         this.exportedLogin = snap.exportedLogin;
         this.remoteBuild = snap.remoteBuild;
-        setLocalPlugs(localPlugs);
-        setLocalSlots(localSlots);
-        setPlugs(plugs);
-        setSlots(slots);
+        setLocalPlugs(snap.localPlugs);
+        setLocalSlots(snap.localSlots);
+        setPlugs(snap.plugs);
+        setSlots(snap.slots);
         this.snap.setAll(snap.snap);
     }
 
@@ -96,16 +96,16 @@ public class Snap extends AbstractRepositoryTool {
         this.confinement = confinement;
     }
 
-    public List<String> getLocalPlugs() {
+    public Set<String> getLocalPlugs() {
         return localPlugs;
     }
 
-    public void setLocalPlugs(List<String> localPlugs) {
+    public void setLocalPlugs(Set<String> localPlugs) {
         this.localPlugs.clear();
         this.localPlugs.addAll(localPlugs);
     }
 
-    public void addLocalPlugs(List<String> localPlugs) {
+    public void addLocalPlugs(Set<String> localPlugs) {
         this.localPlugs.addAll(localPlugs);
     }
 
@@ -121,16 +121,16 @@ public class Snap extends AbstractRepositoryTool {
         }
     }
 
-    public List<String> getLocalSlots() {
+    public Set<String> getLocalSlots() {
         return localSlots;
     }
 
-    public void setLocalSlots(List<String> localSlots) {
+    public void setLocalSlots(Set<String> localSlots) {
         this.localSlots.clear();
         this.localSlots.addAll(localSlots);
     }
 
-    public void addLocalSlots(List<String> localSlots) {
+    public void addLocalSlots(Set<String> localSlots) {
         this.localSlots.addAll(localSlots);
     }
 

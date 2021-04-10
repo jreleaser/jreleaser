@@ -25,9 +25,9 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Snap
@@ -53,8 +53,8 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     final Property<Boolean> remoteBuild
     final TapImpl snap
     final CommitAuthorImpl commitAuthor
-    final ListProperty<String> localPlugs
-    final ListProperty<String> localSlots
+    final SetProperty<String> localPlugs
+    final SetProperty<String> localSlots
     final NamedDomainObjectContainer<PlugImpl> plugs
     final NamedDomainObjectContainer<SlotImpl> slots
 
@@ -66,8 +66,8 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
         confinement = objects.property(String).convention(Providers.notDefined())
         exportedLogin = objects.fileProperty().convention(Providers.notDefined())
         remoteBuild = objects.property(Boolean).convention(Providers.notDefined())
-        localPlugs = objects.listProperty(String).convention(Providers.notDefined())
-        localSlots = objects.listProperty(String).convention(Providers.notDefined())
+        localPlugs = objects.setProperty(String).convention(Providers.notDefined())
+        localSlots = objects.setProperty(String).convention(Providers.notDefined())
         snap = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
 
@@ -147,8 +147,8 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
             tool.exportedLogin = exportedLogin.get().asFile.absolutePath
         }
         tool.remoteBuild = remoteBuild.getOrElse(false)
-        tool.localPlugs = (List<String>) localPlugs.getOrElse([])
-        tool.localSlots = (List<String>) localSlots.getOrElse([])
+        tool.localPlugs = (Set<String>) localPlugs.getOrElse([] as Set<String>)
+        tool.localSlots = (Set<String>) localSlots.getOrElse([] as Set<String>)
         tool.plugs.addAll(plugs.collect([]) { PlugImpl plug ->
             plug.toModel()
         } as Set<Plug>)

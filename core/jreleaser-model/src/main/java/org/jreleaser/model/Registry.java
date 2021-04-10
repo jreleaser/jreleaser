@@ -36,12 +36,12 @@ public class Registry implements Domain, Comparable<Registry> {
     protected String username;
     protected String password;
 
-    void setAll(Registry repository) {
-        this.server = repository.server;
-        this.serverName = repository.serverName;
-        this.repositoryName = repository.repositoryName;
-        this.username = repository.username;
-        this.password = repository.password;
+    void setAll(Registry registry) {
+        this.server = registry.server;
+        this.serverName = registry.serverName;
+        this.repositoryName = registry.repositoryName;
+        this.username = registry.username;
+        this.password = registry.password;
     }
 
     public String getResolvedPassword() {
