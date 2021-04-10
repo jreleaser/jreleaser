@@ -107,7 +107,7 @@ public class TemplateGenerator {
             logger.info("Writing file " + outputFile.toAbsolutePath());
 
             try {
-                Files.createDire    ctories(outputFile.getParent());
+                Files.createDirectories(outputFile.getParent());
             } catch (IOException e) {
                 throw fail(e);
             }
