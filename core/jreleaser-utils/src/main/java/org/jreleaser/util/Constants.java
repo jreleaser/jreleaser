@@ -47,6 +47,11 @@ public interface Constants {
     String KEY_PROJECT_TAGS_BY_SPACE = "projectTagsBySpace";
     String KEY_PROJECT_TAGS_BY_COMMA = "projectTagsByComma";
     String KEY_PROJECT_JAVA_VERSION = "projectJavaVersion";
+    String KEY_PROJECT_JAVA_VERSION_MAJOR = "projectJavaVersionMajor";
+    String KEY_PROJECT_JAVA_VERSION_MINOR = "projectJavaVersionMinor";
+    String KEY_PROJECT_JAVA_VERSION_PATCH = "projectJavaVersionPatch";
+    String KEY_PROJECT_JAVA_VERSION_TAG = "projectJavaVersionTag";
+    String KEY_PROJECT_JAVA_VERSION_BUILD = "projectJavaVersionBuild";
     String KEY_PROJECT_JAVA_GROUP_ID = "projectJavaGroupId";
     String KEY_PROJECT_JAVA_ARTIFACT_ID = "projectJavaArtifactId";
     String KEY_PROJECT_JAVA_MAIN_CLASS = "projectJavaMainClass";

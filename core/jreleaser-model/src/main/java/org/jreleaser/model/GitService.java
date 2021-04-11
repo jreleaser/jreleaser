@@ -20,6 +20,7 @@ package org.jreleaser.model;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.MustacheUtils;
+import org.jreleaser.util.Version;
 
 import java.io.StringReader;
 import java.util.LinkedHashMap;
@@ -441,6 +442,12 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
             props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
             props.put(Constants.KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());
             props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
+            Version jv = Version.of(project.getJava().getVersion());
+            props.put(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
+            if (jv.hasMinor()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
+            if (jv.hasPatch()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
+            if (jv.hasTag()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
+            if (jv.hasBuild()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
         }
 
         props.putAll(project.getResolvedExtraProperties());

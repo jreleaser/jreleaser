@@ -26,21 +26,16 @@ import org.jreleaser.model.Project;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.Version;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class ContextCreator {
-    private static final Pattern FULL_SEMVER_PATTERN = Pattern.compile("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:[\\.\\-]((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
-    private static final Pattern MAJOR_MINOR_PATTERN = Pattern.compile("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:[\\.\\-]((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
-    private static final Pattern MAJOR_PATTERN = Pattern.compile("^(0|[1-9]\\d*)(?:[\\.\\-]((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
-
     public static JReleaserContext create(JReleaserLogger logger,
                                           Path configFile,
                                           Path basedir,
@@ -141,31 +136,12 @@ public class ContextCreator {
     }
 
     private static void parseVersion(String version, Project project) {
-        Matcher m = FULL_SEMVER_PATTERN.matcher(version);
+        Version parsedVersion = Version.of(version);
 
-        if (m.matches()) {
-            project.addExtraProperty(Constants.KEY_VERSION_MAJOR, m.group(1));
-            project.addExtraProperty(Constants.KEY_VERSION_MINOR, m.group(2));
-            project.addExtraProperty(Constants.KEY_VERSION_PATCH, m.group(3));
-            project.addExtraProperty(Constants.KEY_VERSION_TAG, m.group(4));
-            project.addExtraProperty(Constants.KEY_VERSION_BUILD, m.group(5));
-            return;
-        }
-
-        m = MAJOR_MINOR_PATTERN.matcher(version);
-        if (m.matches()) {
-            project.addExtraProperty(Constants.KEY_VERSION_MAJOR, m.group(1));
-            project.addExtraProperty(Constants.KEY_VERSION_MINOR, m.group(2));
-            project.addExtraProperty(Constants.KEY_VERSION_TAG, m.group(3));
-            project.addExtraProperty(Constants.KEY_VERSION_BUILD, m.group(4));
-            return;
-        }
-
-        m = MAJOR_PATTERN.matcher(version);
-        if (m.matches()) {
-            project.addExtraProperty(Constants.KEY_VERSION_MAJOR, m.group(1));
-            project.addExtraProperty(Constants.KEY_VERSION_TAG, m.group(2));
-            project.addExtraProperty(Constants.KEY_VERSION_BUILD, m.group(3));
-        }
+        project.addExtraProperty(Constants.KEY_VERSION_MAJOR, parsedVersion.getMajor());
+        if (parsedVersion.hasMinor()) project.addExtraProperty(Constants.KEY_VERSION_MINOR, parsedVersion.getMinor());
+        if (parsedVersion.hasPatch()) project.addExtraProperty(Constants.KEY_VERSION_PATCH, parsedVersion.getPatch());
+        if (parsedVersion.hasTag()) project.addExtraProperty(Constants.KEY_VERSION_TAG, parsedVersion.getTag());
+        if (parsedVersion.hasBuild()) project.addExtraProperty(Constants.KEY_VERSION_BUILD, parsedVersion.getBuild());
     }
 }
