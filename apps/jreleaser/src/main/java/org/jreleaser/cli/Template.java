@@ -74,6 +74,8 @@ public class Template extends AbstractCommand {
                 throw new HaltExecutionException();
             }
 
+            initLogger();
+
             Path outputDirectory = basedir
                 .resolve("src")
                 .resolve("jreleaser")
