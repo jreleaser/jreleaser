@@ -29,6 +29,10 @@ import org.jreleaser.templates.TemplateGenerationException;
 import org.jreleaser.templates.TemplateGenerator;
 import org.jreleaser.util.JReleaserLogger;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -82,6 +86,9 @@ public class JReleaserTemplateMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.template.snapshot")
     private boolean snapshot;
 
+    @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}/jreleaser")
+    protected File outputDirectory;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
@@ -112,7 +119,16 @@ public class JReleaserTemplateMojo extends AbstractMojo {
         }
     }
 
-    private JReleaserLogger getLogger() {
-        return new JReleaserLoggerAdapter(getLog());
+    protected JReleaserLogger getLogger() throws MojoExecutionException {
+        return new JReleaserLoggerAdapter(createTracer(), getLog());
+    }
+
+    protected PrintWriter createTracer() throws MojoExecutionException {
+        try {
+            java.nio.file.Files.createDirectories(outputDirectory.toPath());
+            return new PrintWriter(new FileOutputStream(outputDirectory.toPath().resolve("trace.log").toFile()));
+        } catch (IOException e) {
+            throw new MojoExecutionException("Could not initialize trace file", e);
+        }
     }
 }

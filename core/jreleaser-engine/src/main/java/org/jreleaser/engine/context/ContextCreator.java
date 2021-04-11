@@ -21,6 +21,7 @@ import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserModelPrinter;
 import org.jreleaser.model.Project;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.Constants;
@@ -55,6 +56,7 @@ public class ContextCreator {
         try {
             context.getModel().setCommit(GitSdk.head(basedir));
         } catch (IOException e) {
+            context.getLogger().trace(e);
             throw new JReleaserException("Could not determine git HEAD", e);
         }
 
@@ -62,7 +64,13 @@ public class ContextCreator {
             if (!context.validateModel().isEmpty()) {
                 throw new JReleaserException("JReleaser with " + configFile.toAbsolutePath() + " has not been properly configured.");
             }
-        } catch (IllegalArgumentException e) {
+            new JReleaserModelPrinter.Plain(context.getLogger().getTracer())
+                .print(context.getModel().asMap());
+        } catch (JReleaserException e) {
+            context.getLogger().trace(e);
+            throw e;
+        } catch (Exception e) {
+            context.getLogger().trace(e);
             throw new JReleaserException("JReleaser with " + configFile.toAbsolutePath() + " has not been properly configured.");
         }
 
@@ -76,7 +84,6 @@ public class ContextCreator {
                                           Path basedir,
                                           Path outputDirectory,
                                           boolean dryrun) {
-
         JReleaserContext context = new JReleaserContext(
             logger,
             model,
@@ -87,6 +94,7 @@ public class ContextCreator {
         try {
             context.getModel().setCommit(GitSdk.head(basedir));
         } catch (IOException e) {
+            context.getLogger().trace(e);
             throw new JReleaserException("Could not determine git HEAD", e);
         }
 
@@ -94,7 +102,13 @@ public class ContextCreator {
             if (!context.validateModel().isEmpty()) {
                 throw new JReleaserException("JReleaser has not been properly configured.");
             }
-        } catch (IllegalArgumentException e) {
+            new JReleaserModelPrinter.Plain(context.getLogger().getTracer())
+                .print(context.getModel().asMap());
+        } catch (JReleaserException e) {
+            context.getLogger().trace(e);
+            throw e;
+        } catch (Exception e) {
+            context.getLogger().trace(e);
             throw new JReleaserException("JReleaser has not been properly configured.");
         }
 
@@ -107,7 +121,11 @@ public class ContextCreator {
         try {
             logger.info("Reading configuration");
             return JReleaserConfigLoader.loadConfig(configFile);
-        } catch (IllegalArgumentException e) {
+        } catch (JReleaserException e) {
+            logger.trace(e);
+            throw e;
+        } catch (Exception e) {
+            logger.trace(e);
             throw new JReleaserException("Unexpected error when parsing configuration from " + configFile.toAbsolutePath(), e);
         }
     }

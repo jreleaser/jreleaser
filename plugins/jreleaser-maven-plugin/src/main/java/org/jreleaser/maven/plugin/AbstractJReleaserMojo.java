@@ -32,6 +32,9 @@ import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * @author Andres Almiray
@@ -56,8 +59,18 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(defaultValue = "${session}", required = true)
     private MavenSession session;
 
-    protected JReleaserLogger getLogger() {
-        return new JReleaserLoggerAdapter(getLog());
+    protected JReleaserLogger getLogger() throws MojoExecutionException {
+        return new JReleaserLoggerAdapter(createTracer(), getLog());
+    }
+
+    protected PrintWriter createTracer() throws MojoExecutionException {
+        try {
+            java.nio.file.Files.createDirectories(outputDirectory.toPath());
+            return new PrintWriter(new FileOutputStream(
+                outputDirectory.toPath().resolve("trace.log").toFile()));
+        } catch (IOException e) {
+            throw new MojoExecutionException("Could not initialize trace file", e);
+        }
     }
 
     protected JReleaserModel convertModel() {

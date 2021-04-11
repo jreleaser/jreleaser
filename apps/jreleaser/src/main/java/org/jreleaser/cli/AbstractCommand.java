@@ -23,6 +23,10 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
 import picocli.CommandLine;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
@@ -64,23 +68,6 @@ abstract class AbstractCommand implements Callable<Integer> {
 
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
 
-        ColorizedJReleaserLoggerAdapter.Level level = ColorizedJReleaserLoggerAdapter.Level.INFO;
-        if (debug) {
-            level = ColorizedJReleaserLoggerAdapter.Level.DEBUG;
-            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "debug");
-        } else if (info) {
-            level = ColorizedJReleaserLoggerAdapter.Level.INFO;
-            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "info");
-        } else if (warn) {
-            level = ColorizedJReleaserLoggerAdapter.Level.WARN;
-            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "warn");
-        } else if (quiet) {
-            level = ColorizedJReleaserLoggerAdapter.Level.ERROR;
-            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "error");
-        }
-
-        logger = new ColorizedJReleaserLoggerAdapter(parent().out, level);
-
         try {
             execute();
         } catch (HaltExecutionException e) {
@@ -99,6 +86,37 @@ abstract class AbstractCommand implements Callable<Integer> {
 
         return 0;
     }
+
+    protected void initLogger() {
+        ColorizedJReleaserLoggerAdapter.Level level = ColorizedJReleaserLoggerAdapter.Level.INFO;
+        if (debug) {
+            level = ColorizedJReleaserLoggerAdapter.Level.DEBUG;
+            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "debug");
+        } else if (info) {
+            level = ColorizedJReleaserLoggerAdapter.Level.INFO;
+            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "info");
+        } else if (warn) {
+            level = ColorizedJReleaserLoggerAdapter.Level.WARN;
+            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "warn");
+        } else if (quiet) {
+            level = ColorizedJReleaserLoggerAdapter.Level.ERROR;
+            System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "error");
+        }
+
+        logger = new ColorizedJReleaserLoggerAdapter(createTracer(), parent().out, level);
+    }
+
+    protected PrintWriter createTracer() {
+        try {
+            Files.createDirectories(getOutputDirectory());
+            return new PrintWriter(new FileOutputStream(
+                getOutputDirectory().resolve("trace.log").toFile()));
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not initialize trace file", e);
+        }
+    }
+
+    protected abstract Path getOutputDirectory();
 
     protected abstract void execute();
 }

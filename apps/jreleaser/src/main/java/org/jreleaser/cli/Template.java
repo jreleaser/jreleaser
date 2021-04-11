@@ -97,4 +97,11 @@ public class Template extends AbstractCommand {
             throw new JReleaserException("Unexpected error", e);
         }
     }
+
+    @Override
+    protected Path getOutputDirectory() {
+        return basedir
+            .resolve("out")
+            .resolve("jreleaser");
+    }
 }

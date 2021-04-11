@@ -21,6 +21,8 @@ import org.apache.maven.plugin.logging.Log;
 import org.jreleaser.util.AbstractJReleaserLogger;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.io.PrintWriter;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -28,67 +30,92 @@ import org.slf4j.helpers.MessageFormatter;
 public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     private final Log delegate;
 
-    public JReleaserLoggerAdapter(Log delegate) {
+    public JReleaserLoggerAdapter(PrintWriter tracer, Log delegate) {
+        super(tracer);
         this.delegate = delegate;
     }
 
     @Override
     public void debug(String message) {
-        delegate.debug(formatMessage(message));
+        String msg = formatMessage(message);
+        delegate.debug(msg);
+        trace(msg);
     }
 
     @Override
     public void info(String message) {
-        delegate.info(formatMessage(message));
+        String msg = formatMessage(message);
+        delegate.info(msg);
+        trace(msg);
     }
 
     @Override
     public void warn(String message) {
-        delegate.warn(formatMessage(message));
+        String msg = formatMessage(message);
+        delegate.warn(msg);
+        trace(msg);
     }
 
     @Override
     public void error(String message) {
-        delegate.error(formatMessage(message));
+        String msg = formatMessage(message);
+        delegate.error(msg);
+        trace(msg);
     }
 
     @Override
     public void debug(String message, Object... args) {
-        delegate.debug(formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+        String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
+        delegate.debug(msg);
+        trace(msg);
     }
 
     @Override
     public void info(String message, Object... args) {
-        delegate.info(formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+        String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
+        delegate.info(msg);
+        trace(msg);
     }
 
     @Override
     public void warn(String message, Object... args) {
-        delegate.warn(formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+        String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
+        delegate.warn(msg);
+        trace(msg);
     }
 
     @Override
     public void error(String message, Object... args) {
-        delegate.error(formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+        String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
+        delegate.error(msg);
+        trace(msg);
     }
 
     @Override
     public void debug(String message, Throwable throwable) {
-        delegate.debug(formatMessage(message), throwable);
+        String msg = formatMessage(message);
+        delegate.debug(msg, throwable);
+        trace(msg, throwable);
     }
 
     @Override
     public void info(String message, Throwable throwable) {
-        delegate.info(formatMessage(message), throwable);
+        String msg = formatMessage(message);
+        delegate.info(msg, throwable);
+        trace(msg, throwable);
     }
 
     @Override
     public void warn(String message, Throwable throwable) {
-        delegate.warn(formatMessage(message), throwable);
+        String msg = formatMessage(message);
+        delegate.warn(msg, throwable);
+        trace(msg, throwable);
     }
 
     @Override
     public void error(String message, Throwable throwable) {
-        delegate.error(formatMessage(message), throwable);
+        String msg = formatMessage(message);
+        delegate.error(msg, throwable);
+        trace(msg, throwable);
     }
 }

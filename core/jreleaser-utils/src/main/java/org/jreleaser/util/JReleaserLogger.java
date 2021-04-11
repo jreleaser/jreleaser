@@ -17,15 +17,14 @@
  */
 package org.jreleaser.util;
 
+import java.io.PrintWriter;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public interface JReleaserLogger {
-    String DEBUG_TAB = "        ";
-    String ERROR_TAB = "        ";
-    String INFO_TAB = "       ";
-    String WARN_TAB = "       ";
+    PrintWriter getTracer();
 
     void reset();
 
@@ -45,6 +44,8 @@ public interface JReleaserLogger {
 
     void error(String message);
 
+    void trace(String message);
+
     void debug(String message, Object... args);
 
     void info(String message, Object... args);
@@ -60,4 +61,8 @@ public interface JReleaserLogger {
     void warn(String message, Throwable throwable);
 
     void error(String message, Throwable throwable);
+
+    void trace(String message, Throwable throwable);
+
+    void trace(Throwable throwable);
 }

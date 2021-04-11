@@ -289,4 +289,15 @@ public abstract class JReleaserModelPrinter {
             return answer.toString();
         }
     }
+
+    public static class Plain extends JReleaserModelPrinter {
+        public Plain(PrintWriter out) {
+            super(out);
+        }
+
+        @Override
+        protected String color(String color, String input) {
+            return input;
+        }
+    }
 }

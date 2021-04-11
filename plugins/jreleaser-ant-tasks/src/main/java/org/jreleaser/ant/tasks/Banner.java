@@ -17,13 +17,12 @@
  */
 package org.jreleaser.ant.tasks;
 
-import org.jreleaser.util.JReleaserLogger;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -44,12 +43,12 @@ final class Banner {
         // nooop
     }
 
-    public static void display(JReleaserLogger logger) {
+    public static void display(PrintWriter writer) {
         try {
             File parent = new File(System.getProperty("user.home"), "/.ant/caches");
             File markerFile = getMarkerFile(parent, b);
             if (!markerFile.exists()) {
-                logger.info(b.banner);
+                writer.println(b.banner);
                 markerFile.getParentFile().mkdirs();
                 PrintStream out = new PrintStream(new FileOutputStream(markerFile));
                 out.println("1");
@@ -59,12 +58,12 @@ final class Banner {
                 try {
                     int count = Integer.parseInt(readQuietly(markerFile));
                     if (count < 3) {
-                        logger.info(b.banner);
+                        writer.println(b.banner);
                     }
                     writeQuietly(markerFile, (count + 1) + "");
                 } catch (NumberFormatException e) {
                     writeQuietly(markerFile, "1");
-                    logger.info(b.banner);
+                    writer.println(b.banner);
                 }
             }
         } catch (IOException ignored) {

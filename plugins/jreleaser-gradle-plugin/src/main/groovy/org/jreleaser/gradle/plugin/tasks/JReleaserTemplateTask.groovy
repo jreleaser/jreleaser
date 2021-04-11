@@ -18,7 +18,6 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
-import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -28,10 +27,8 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.options.OptionValues
-import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.Distribution
 import org.jreleaser.templates.TemplateGenerator
-import org.jreleaser.util.JReleaserLogger
 
 import javax.inject.Inject
 import java.nio.file.Path
@@ -42,7 +39,7 @@ import java.nio.file.Path
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserTemplateTask extends DefaultTask {
+abstract class JReleaserTemplateTask extends AbstractJReleaserTask {
     @Internal
     final Property<Distribution.DistributionType> distributionType
 
@@ -63,6 +60,7 @@ abstract class JReleaserTemplateTask extends DefaultTask {
 
     @Inject
     JReleaserTemplateTask(ObjectFactory objects) {
+        super(objects)
         distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.JAVA_BINARY)
         distributionName = objects.property(String)
         toolName = objects.property(String)
@@ -104,10 +102,8 @@ abstract class JReleaserTemplateTask extends DefaultTask {
 
     @TaskAction
     void generateTemplate() {
-        JReleaserLogger logger = new JReleaserLoggerAdapter(project)
-
         Path output = TemplateGenerator.builder()
-            .logger(logger)
+            .logger(context.get().logger)
             .distributionName(distributionName.get())
             .distributionType(distributionType.get())
             .toolName(toolName.get())

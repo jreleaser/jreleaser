@@ -17,6 +17,7 @@
  */
 package org.jreleaser.util;
 
+import java.io.PrintWriter;
 import java.util.Stack;
 
 /**
@@ -25,7 +26,17 @@ import java.util.Stack;
  */
 public abstract class AbstractJReleaserLogger implements JReleaserLogger {
     private final Stack<String> prefix = new Stack<>();
+    private final PrintWriter tracer;
     private String indent = "";
+
+    protected AbstractJReleaserLogger(PrintWriter tracer) {
+        this.tracer = tracer;
+    }
+
+    @Override
+    public PrintWriter getTracer() {
+        return tracer;
+    }
 
     @Override
     public void reset() {
@@ -59,5 +70,30 @@ public abstract class AbstractJReleaserLogger implements JReleaserLogger {
 
     protected String formatMessage(String message) {
         return indent + (!prefix.isEmpty() ? "[" + prefix.peek() + "] " : "") + message;
+    }
+
+    @Override
+    public void trace(String message) {
+        tracer.println(message);
+        tracer.flush();
+    }
+
+    @Override
+    public void trace(String message, Throwable throwable) {
+        tracer.println(message);
+        printThrowable(throwable);
+        tracer.flush();
+    }
+
+    @Override
+    public void trace(Throwable throwable) {
+        printThrowable(throwable);
+    }
+
+    private void printThrowable(Throwable throwable) {
+        if (null != throwable) {
+            throwable.printStackTrace(tracer);
+            tracer.flush();
+        }
     }
 }

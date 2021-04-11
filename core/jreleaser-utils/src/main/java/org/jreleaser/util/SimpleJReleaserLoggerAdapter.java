@@ -51,6 +51,7 @@ public class SimpleJReleaserLoggerAdapter extends AbstractJReleaserLogger {
     }
 
     public SimpleJReleaserLoggerAdapter(PrintWriter out, Level level) {
+        super(new PrintWriter(System.err));
         this.out = out;
         this.level = level;
     }
@@ -58,88 +59,112 @@ public class SimpleJReleaserLoggerAdapter extends AbstractJReleaserLogger {
     @Override
     public void debug(String message) {
         if (isLevelEnabled(Level.DEBUG)) {
-            out.println(Level.DEBUG + formatMessage(message));
+            String msg = Level.DEBUG + formatMessage(message);
+            out.println(msg);
+            trace(msg);
         }
     }
 
     @Override
     public void info(String message) {
         if (isLevelEnabled(Level.INFO)) {
-            out.println(Level.INFO + formatMessage(message));
+            String msg = Level.INFO + formatMessage(message);
+            out.println(msg);
+            trace(msg);
         }
     }
 
     @Override
     public void warn(String message) {
         if (isLevelEnabled(Level.WARN)) {
-            out.println(Level.WARN + formatMessage(message));
+            String msg = Level.WARN + formatMessage(message);
+            out.println(msg);
+            trace(msg);
         }
     }
 
     @Override
     public void error(String message) {
         if (isLevelEnabled(Level.ERROR)) {
-            out.println(Level.ERROR + formatMessage(message));
+            String msg = Level.ERROR + formatMessage(message);
+            out.println(msg);
+            trace(msg);
         }
     }
 
     @Override
     public void debug(String message, Object... args) {
         if (isLevelEnabled(Level.DEBUG)) {
-            out.println(Level.DEBUG + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+            String msg = Level.DEBUG + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
+            out.println(msg);
+            trace(msg);
         }
     }
 
     @Override
     public void info(String message, Object... args) {
         if (isLevelEnabled(Level.INFO)) {
-            out.println(Level.INFO + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+            String msg = Level.INFO + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
+            out.println(msg);
+            trace(msg);
         }
     }
 
     @Override
     public void warn(String message, Object... args) {
         if (isLevelEnabled(Level.WARN)) {
-            out.println(Level.WARN + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+            String msg = Level.WARN + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
+            out.println(msg);
+            trace(msg);
         }
     }
 
     @Override
     public void error(String message, Object... args) {
         if (isLevelEnabled(Level.ERROR)) {
-            out.println(Level.ERROR + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+            String msg = Level.ERROR + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
+            out.println(msg);
+            trace(msg);
         }
     }
 
     @Override
     public void debug(String message, Throwable throwable) {
         if (isLevelEnabled(Level.DEBUG)) {
-            out.println(Level.DEBUG + formatMessage(message));
+            String msg = Level.DEBUG + formatMessage(message);
+            out.println(msg);
             printThrowable(throwable);
+            trace(msg, throwable);
         }
     }
 
     @Override
     public void info(String message, Throwable throwable) {
         if (isLevelEnabled(Level.INFO)) {
-            out.println(Level.INFO + formatMessage(message));
+            String msg = Level.INFO + formatMessage(message);
+            out.println(msg);
             printThrowable(throwable);
+            trace(msg, throwable);
         }
     }
 
     @Override
     public void warn(String message, Throwable throwable) {
         if (isLevelEnabled(Level.WARN)) {
-            out.println(Level.WARN + formatMessage(message));
+            String msg = Level.WARN + formatMessage(message);
+            out.println(msg);
             printThrowable(throwable);
+            trace(msg, throwable);
         }
     }
 
     @Override
     public void error(String message, Throwable throwable) {
         if (isLevelEnabled(Level.ERROR)) {
-            out.println(Level.ERROR + formatMessage(message));
+            String msg = Level.ERROR + formatMessage(message);
+            out.println(msg);
             printThrowable(throwable);
+            trace(msg, throwable);
         }
     }
 

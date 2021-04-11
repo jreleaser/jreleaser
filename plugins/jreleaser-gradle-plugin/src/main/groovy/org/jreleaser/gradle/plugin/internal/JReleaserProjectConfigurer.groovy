@@ -43,6 +43,8 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
 import org.jreleaser.model.JReleaserContext
 import org.jreleaser.model.JReleaserModel
 
+import java.nio.file.Path
+
 import static org.kordamp.gradle.util.StringUtils.isBlank
 
 /**
@@ -85,12 +87,15 @@ class JReleaserProjectConfigurer {
             }
         }
 
+        Path outputDirectory = project.layout.buildDirectory
+            .dir('jreleaser').get().asFile.toPath()
+        PrintWriter tracer = new PrintWriter(new FileOutputStream(outputDirectory.resolve('trace.log').toFile()))
+
         JReleaserContext context = ContextCreator.create(
-            new JReleaserLoggerAdapter(project),
+            new JReleaserLoggerAdapter(project, tracer),
             model,
             project.projectDir.toPath(),
-            project.layout.buildDirectory
-                .dir('jreleaser').get().asFile.toPath(),
+            outputDirectory,
             extension.dryrun.get())
 
         project.tasks.register('jreleaserConfig', JReleaserConfigTask,

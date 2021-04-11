@@ -26,6 +26,10 @@ import org.jreleaser.templates.TemplateGenerationException;
 import org.jreleaser.templates.TemplateGenerator;
 import org.jreleaser.util.JReleaserLogger;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -39,6 +43,7 @@ public class JReleaserTemplateTask extends Task {
     private String toolName;
     private boolean overwrite;
     private boolean snapshot;
+    private JReleaserLogger logger;
 
     public void setSkip(boolean skip) {
         this.skip = skip;
@@ -66,17 +71,19 @@ public class JReleaserTemplateTask extends Task {
 
     @Override
     public void execute() throws BuildException {
-        Banner.display(getLogger());
+        Banner.display(new PrintWriter(System.out, true));
         if (skip) return;
 
         try {
-            Path outputDirectory = getProject().getBaseDir().toPath()
+            initLogger();
+
+            Path outputDirectory = getOutputDirectory()
                 .resolve("src")
                 .resolve("jreleaser")
                 .resolve("distributions");
 
             Path output = TemplateGenerator.builder()
-                .logger(getLogger())
+                .logger(logger)
                 .distributionName(distributionName)
                 .distributionType(distributionType)
                 .toolName(toolName)
@@ -87,14 +94,35 @@ public class JReleaserTemplateTask extends Task {
                 .generate();
 
             if (null != output) {
-                getLogger().info("Template generated at {}", output.toAbsolutePath());
+                logger.info("Template generated at {}", output.toAbsolutePath());
             }
         } catch (TemplateGenerationException e) {
+            logger.trace(e);
             throw new JReleaserException("Unexpected error", e);
         }
     }
 
-    private JReleaserLogger getLogger() {
-        return new JReleaserLoggerAdapter(getProject());
+    private Path getOutputDirectory() {
+        return getProject().getBaseDir().toPath().normalize();
+    }
+
+    private JReleaserLogger initLogger() {
+        if (null == logger) {
+            logger = new JReleaserLoggerAdapter(createTracer(), getProject());
+        }
+        return logger;
+    }
+
+    private PrintWriter createTracer() {
+        try {
+            Path outputDirectory = getOutputDirectory().resolve("out")
+                .resolve("jreleaser");
+            Files.createDirectories(outputDirectory);
+            return new PrintWriter(new FileOutputStream(
+                outputDirectory
+                    .resolve("trace.log").toFile()));
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not initialize trace file", e);
+        }
     }
 }

@@ -33,15 +33,16 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     private final Level level
     private final AnsiConsole console
 
-    JReleaserLoggerAdapter(Project project) {
-        this(project, new PrintWriter(System.out, true), Level.INFO)
+    JReleaserLoggerAdapter(Project project, PrintWriter tracer) {
+        this(project, tracer, new PrintWriter(System.out, true), Level.INFO)
     }
 
-    JReleaserLoggerAdapter(Project project, PrintWriter out) {
-        this(project, out, Level.INFO)
+    JReleaserLoggerAdapter(Project project, PrintWriter tracer, PrintWriter out) {
+        this(project, tracer, out, Level.INFO)
     }
 
-    JReleaserLoggerAdapter(Project project, PrintWriter out, Level level) {
+    JReleaserLoggerAdapter(Project project, PrintWriter tracer, PrintWriter out, Level level) {
+        super(tracer)
         this.out = out
         this.level = level
         this.console = new AnsiConsole(project)
@@ -52,6 +53,7 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
         if (isLevelEnabled(Level.DEBUG)) {
             log(Level.DEBUG, message)
         }
+        trace(Level.DEBUG, message)
     }
 
     @Override
@@ -59,6 +61,7 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
         if (isLevelEnabled(Level.INFO)) {
             log(Level.INFO, message)
         }
+        trace(Level.INFO, message)
     }
 
     @Override
@@ -66,6 +69,7 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
         if (isLevelEnabled(Level.WARN)) {
             log(Level.WARN, message)
         }
+        trace(Level.WARN, message)
     }
 
     @Override
@@ -73,69 +77,82 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
         if (isLevelEnabled(Level.ERROR)) {
             log(Level.ERROR, message)
         }
+        trace(Level.ERROR, message)
     }
 
     @Override
     void debug(String message, Object... args) {
+        String msg = MessageFormatter.arrayFormat(message, args).getMessage()
         if (isLevelEnabled(Level.DEBUG)) {
-            log(Level.DEBUG, MessageFormatter.arrayFormat(message, args).getMessage())
+            log(Level.DEBUG, msg)
         }
+        trace(Level.DEBUG, msg)
     }
 
     @Override
     void info(String message, Object... args) {
+        String msg = MessageFormatter.arrayFormat(message, args).getMessage()
         if (isLevelEnabled(Level.INFO)) {
-            log(Level.INFO, MessageFormatter.arrayFormat(message, args).getMessage())
+            log(Level.INFO, msg)
         }
+        trace(Level.INFO, msg)
     }
 
     @Override
     void warn(String message, Object... args) {
+        String msg = MessageFormatter.arrayFormat(message, args).getMessage()
         if (isLevelEnabled(Level.WARN)) {
-            log(Level.WARN, MessageFormatter.arrayFormat(message, args).getMessage())
+            log(Level.WARN, msg)
         }
+        trace(Level.WARN, msg)
     }
 
     @Override
     void error(String message, Object... args) {
+        String msg = MessageFormatter.arrayFormat(message, args).getMessage()
         if (isLevelEnabled(Level.ERROR)) {
-            log(Level.ERROR, MessageFormatter.arrayFormat(message, args).getMessage())
+            log(Level.ERROR, msg)
         }
+        trace(Level.ERROR, msg)
     }
 
     @Override
     void debug(String message, Throwable throwable) {
         if (isLevelEnabled(Level.DEBUG)) {
-            log(Level.DEBUG, message)
-            printThrowable(throwable)
+            log(Level.DEBUG, message, throwable)
         }
+        trace(Level.DEBUG, message, throwable)
     }
 
     @Override
     void info(String message, Throwable throwable) {
         if (isLevelEnabled(Level.INFO)) {
-            log(Level.INFO, message)
-            printThrowable(throwable)
+            log(Level.INFO, message, throwable)
         }
+        trace(Level.INFO, message, throwable)
     }
 
     @Override
     void warn(String message, Throwable throwable) {
         if (isLevelEnabled(Level.WARN)) {
-            log(Level.WARN, message)
-            printThrowable(throwable)
+            log(Level.WARN, message, throwable)
         }
+        trace(Level.WARN, message, throwable)
     }
 
     @Override
     void error(String message, Throwable throwable) {
         if (isLevelEnabled(Level.ERROR)) {
-            log(Level.ERROR, message)
-            printThrowable(throwable)
+            log(Level.ERROR, message, throwable)
         }
+        trace(Level.ERROR, message, throwable)
     }
 
     private void log(Level level, String message) {
+        log(level, message, null)
+    }
+
+    private void log(Level level, String message, Throwable throwable) {
         StringBuilder b = new StringBuilder('[')
         switch (level.color()) {
             case 'cyan':
@@ -155,6 +172,24 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
         out.println(b.append('] ')
             .append(level.name().length() == 4 ? ' ' : '')
             .append(formatMessage(message)))
+        if (throwable) printThrowable(throwable)
+    }
+
+    private void trace(Level level, String message) {
+        trace(level, message, null)
+    }
+
+    private void trace(Level level, String message, Throwable throwable) {
+        StringBuilder b = new StringBuilder('[')
+            .append(level.name())
+            .append('] ')
+            .append(level.name().length() == 4 ? ' ' : '')
+            .append(formatMessage(message))
+        if (throwable) {
+            trace(b.toString(), throwable)
+        } else {
+            trace(b.toString())
+        }
     }
 
     private void printThrowable(Throwable throwable) {

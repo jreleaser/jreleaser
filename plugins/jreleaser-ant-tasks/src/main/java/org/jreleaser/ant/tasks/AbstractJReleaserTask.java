@@ -27,6 +27,9 @@ import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -59,20 +62,14 @@ abstract class AbstractJReleaserTask extends Task {
         this.skip = skip;
     }
 
-    protected JReleaserLogger getLogger() {
-        if (null == logger) {
-            logger = new JReleaserLoggerAdapter(getProject());
-        }
-        return logger;
-    }
-
     @Override
     public void execute() throws BuildException {
-        Banner.display(getLogger());
+        Banner.display(new PrintWriter(System.out, true));
         if (skip) return;
 
         resolveConfigFile();
         resolveBasedir();
+        initLogger();
         logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
         logger.info("Configuring with {}", actualConfigFile);
         logger.info(" - basedir set to {}", actualBasedir.toAbsolutePath());
@@ -108,6 +105,23 @@ abstract class AbstractJReleaserTask extends Task {
     }
 
     protected abstract void doExecute(JReleaserContext context);
+
+    protected JReleaserLogger initLogger() {
+        if (null == logger) {
+            logger = new JReleaserLoggerAdapter(createTracer(), getProject());
+        }
+        return logger;
+    }
+
+    protected PrintWriter createTracer() {
+        try {
+            Files.createDirectories(getOutputDirectory());
+            return new PrintWriter(new FileOutputStream(
+                getOutputDirectory().resolve("trace.log").toFile()));
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not initialize trace file", e);
+        }
+    }
 
     protected Path getOutputDirectory() {
         return actualBasedir.resolve("out").resolve("jreleaser");

@@ -26,7 +26,9 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateUtils;
 import org.jreleaser.util.JReleaserLogger;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.FileAlreadyExistsException;
@@ -49,6 +51,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
 public class JReleaserInitTask extends Task {
     private boolean overwrite;
     private String format;
+    private JReleaserLogger logger;
 
     public void setOverwrite(boolean overwrite) {
         this.overwrite = overwrite;
@@ -60,37 +63,62 @@ public class JReleaserInitTask extends Task {
 
     @Override
     public void execute() throws BuildException {
+        Banner.display(new PrintWriter(System.out, true));
+
         try {
+            initLogger();
+
             if (!getSupportedConfigFormats().contains(format)) {
                 throw new BuildException("Unsupported file format. Must be one of [" +
                     String.join("|", getSupportedConfigFormats()) + "]");
             }
 
-            Path outputDirectory = getProject().getBaseDir().toPath().normalize();
+            Path outputDirectory = getOutputDirectory();
             Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
-            Reader template = TemplateUtils.resolveTemplate(getLogger(), Main.class,
+            Reader template = TemplateUtils.resolveTemplate(logger, Main.class,
                 "META-INF/jreleaser/templates/jreleaser." + format + ".tpl");
 
-            getLogger().info("Writing file " + outputFile.toAbsolutePath());
+            logger.info("Writing file " + outputFile.toAbsolutePath());
             try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
                  Scanner scanner = new Scanner(template)) {
                 while (scanner.hasNextLine()) {
                     writer.write(scanner.nextLine() + System.lineSeparator());
                 }
             } catch (FileAlreadyExistsException e) {
-                getLogger().error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());
+                logger.error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());
                 return;
             }
 
-            getLogger().info("JReleaser initialized at " + outputDirectory.toAbsolutePath());
+            logger.info("JReleaser initialized at " + outputDirectory.toAbsolutePath());
         } catch (IllegalStateException | IOException e) {
+            logger.trace(e);
             throw new JReleaserException("Unexpected error", e);
         }
     }
 
-    private JReleaserLogger getLogger() {
-        return new JReleaserLoggerAdapter(getProject());
+    private PrintWriter createTracer() {
+        try {
+            Path outputDirectory = getOutputDirectory()
+                .resolve("out")
+                .resolve("jreleaser");
+            Files.createDirectories(outputDirectory);
+            return new PrintWriter(new FileOutputStream(
+                outputDirectory.resolve("trace.log").toFile()));
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not initialize trace file", e);
+        }
+    }
+
+    private Path getOutputDirectory() {
+        return getProject().getBaseDir().toPath().normalize();
+    }
+
+    private JReleaserLogger initLogger() {
+        if (null == logger) {
+            logger = new JReleaserLoggerAdapter(createTracer(), getProject());
+        }
+        return logger;
     }
 
     private Set<String> getSupportedConfigFormats() {

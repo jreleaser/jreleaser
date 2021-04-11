@@ -31,101 +31,126 @@ public class ColorizedJReleaserLoggerAdapter extends AbstractJReleaserLogger {
     private final PrintWriter out;
     private final Level level;
 
-    public ColorizedJReleaserLoggerAdapter(PrintWriter out) {
-        this(out, Level.WARN);
+    public ColorizedJReleaserLoggerAdapter(PrintWriter tracer, PrintWriter out) {
+        this(tracer, out, Level.WARN);
     }
 
-    public ColorizedJReleaserLoggerAdapter(PrintWriter out, Level level) {
+    public ColorizedJReleaserLoggerAdapter(PrintWriter tracer, PrintWriter out, Level level) {
+        super(tracer);
         this.out = out;
         this.level = level;
     }
 
     @Override
     public void debug(String message) {
+        String msg = formatMessage(message);
         if (isLevelEnabled(Level.DEBUG)) {
-            out.println(Level.DEBUG + formatMessage(message));
+            out.println(Level.DEBUG + msg);
         }
+        trace(Level.DEBUG.asString() + msg);
     }
 
     @Override
     public void info(String message) {
+        String msg = formatMessage(message);
         if (isLevelEnabled(Level.INFO)) {
-            out.println(Level.INFO + formatMessage(message));
+            out.println(Level.INFO + msg);
         }
+        trace(Level.INFO.asString() + msg);
     }
 
     @Override
     public void warn(String message) {
+        String msg = formatMessage(message);
         if (isLevelEnabled(Level.WARN)) {
-            out.println(Level.WARN + formatMessage(message));
+            out.println(Level.WARN + msg);
         }
+        trace(Level.WARN.asString() + msg);
     }
 
     @Override
     public void error(String message) {
+        String msg = formatMessage(message);
         if (isLevelEnabled(Level.ERROR)) {
-            out.println(Level.ERROR + formatMessage(message));
+            out.println(Level.ERROR + msg);
         }
+        trace(Level.ERROR.asString() + msg);
     }
 
     @Override
     public void debug(String message, Object... args) {
+        String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
         if (isLevelEnabled(Level.DEBUG)) {
-            out.println(Level.DEBUG + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+            out.println(Level.DEBUG + msg);
         }
+        trace(Level.DEBUG.asString() + msg);
     }
 
     @Override
     public void info(String message, Object... args) {
+        String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
         if (isLevelEnabled(Level.INFO)) {
-            out.println(Level.INFO + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+            out.println(Level.INFO + msg);
         }
+        trace(Level.INFO.asString() + msg);
     }
 
     @Override
     public void warn(String message, Object... args) {
+        String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
         if (isLevelEnabled(Level.WARN)) {
-            out.println(Level.WARN + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+            out.println(Level.WARN + msg);
         }
+        trace(Level.WARN.asString() + msg);
     }
 
     @Override
     public void error(String message, Object... args) {
+        String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
         if (isLevelEnabled(Level.ERROR)) {
-            out.println(Level.ERROR + formatMessage(MessageFormatter.arrayFormat(message, args).getMessage()));
+            out.println(Level.ERROR + msg);
         }
+        trace(Level.ERROR.asString() + msg);
     }
 
     @Override
     public void debug(String message, Throwable throwable) {
+        String msg = formatMessage(message);
         if (isLevelEnabled(Level.DEBUG)) {
-            out.println(Level.DEBUG + formatMessage(message));
+            out.println(Level.DEBUG + msg);
             printThrowable(throwable);
         }
+        trace(Level.DEBUG.asString() + msg, throwable);
     }
 
     @Override
     public void info(String message, Throwable throwable) {
+        String msg = formatMessage(message);
         if (isLevelEnabled(Level.INFO)) {
-            out.println(Level.INFO + formatMessage(message));
+            out.println(Level.INFO + msg);
             printThrowable(throwable);
         }
+        trace(Level.INFO.asString() + msg, throwable);
     }
 
     @Override
     public void warn(String message, Throwable throwable) {
+        String msg = formatMessage(message);
         if (isLevelEnabled(Level.WARN)) {
-            out.println(Level.WARN + formatMessage(message));
+            out.println(Level.WARN + msg);
             printThrowable(throwable);
         }
+        trace(Level.WARN.asString() + msg, throwable);
     }
 
     @Override
     public void error(String message, Throwable throwable) {
+        String msg = formatMessage(message);
         if (isLevelEnabled(Level.ERROR)) {
-            out.println(Level.ERROR + formatMessage(message));
+            out.println(Level.ERROR + msg);
             printThrowable(throwable);
         }
+        trace(Level.ERROR.asString() + msg, throwable);
     }
 
     private void printThrowable(Throwable throwable) {
@@ -153,6 +178,10 @@ public class ColorizedJReleaserLoggerAdapter extends AbstractJReleaserLogger {
         @Override
         public String toString() {
             return "[" + colorize(name()) + "] " + (name().length() == 4 ? " " : "");
+        }
+
+        public String asString() {
+            return "[" + name() + "] " + (name().length() == 4 ? " " : "");
         }
 
         private String colorize(String input) {

@@ -23,6 +23,9 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserVersion;
 import picocli.CommandLine;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,6 +57,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
     protected void execute() {
         resolveConfigFile();
         resolveBasedir();
+        initLogger();
         logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
         logger.info("Configuring with {}", actualConfigFile);
         logger.increaseIndent();

@@ -58,6 +58,8 @@ public class Init extends AbstractCommand {
     @CommandLine.ParentCommand
     Main parent;
 
+    private Path outputDirectory;
+
     @Override
     protected Main parent() {
         return parent;
@@ -65,6 +67,9 @@ public class Init extends AbstractCommand {
 
     protected void execute() {
         try {
+            outputDirectory = null != basedir ? basedir : Paths.get(".").normalize();
+            initLogger();
+
             if (!getSupportedConfigFormats().contains(format)) {
                 spec.commandLine().getErr()
                     .println(spec.commandLine()
@@ -75,7 +80,6 @@ public class Init extends AbstractCommand {
                 throw new HaltExecutionException();
             }
 
-            Path outputDirectory = null != basedir ? basedir : Paths.get(".").normalize();
             Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
             Reader template = TemplateUtils.resolveTemplate(logger, Init.class,
@@ -111,5 +115,10 @@ public class Init extends AbstractCommand {
         }
 
         return extensions;
+    }
+
+    @Override
+    protected Path getOutputDirectory() {
+        return outputDirectory;
     }
 }

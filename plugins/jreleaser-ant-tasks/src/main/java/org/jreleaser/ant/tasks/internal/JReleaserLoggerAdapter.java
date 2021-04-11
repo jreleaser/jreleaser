@@ -21,6 +21,8 @@ import org.apache.tools.ant.Project;
 import org.jreleaser.util.AbstractJReleaserLogger;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.io.PrintWriter;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -28,7 +30,8 @@ import org.slf4j.helpers.MessageFormatter;
 public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     private final Project delegate;
 
-    public JReleaserLoggerAdapter(Project delegate) {
+    public JReleaserLoggerAdapter(PrintWriter tracer, Project delegate) {
+        super(tracer);
         this.delegate = delegate;
     }
 
