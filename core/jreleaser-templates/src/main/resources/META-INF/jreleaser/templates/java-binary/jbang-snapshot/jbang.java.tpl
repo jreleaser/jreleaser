@@ -5,6 +5,6 @@
 
 public class {{jbangAliasClassName}} {
     public static void main(String... args) throws Exception {
-        {{distributionMainClass}}.main(args);
+        {{distributionJavaMainClass}}.main(args);
     }
 }
