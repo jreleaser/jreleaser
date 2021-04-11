@@ -83,6 +83,11 @@ public interface Constants {
     String KEY_DISTRIBUTION_SHA_256 = "distributionSha256";
     String KEY_DISTRIBUTION_FILE_NAME = "distributionFileName";
     String KEY_DISTRIBUTION_JAVA_VERSION = "distributionJavaVersion";
+    String KEY_DISTRIBUTION_JAVA_VERSION_MAJOR = "distributionJavaVersionMajor";
+    String KEY_DISTRIBUTION_JAVA_VERSION_MINOR = "distributionJavaVersionMinor";
+    String KEY_DISTRIBUTION_JAVA_VERSION_PATCH = "distributionJavaVersionPatch";
+    String KEY_DISTRIBUTION_JAVA_VERSION_TAG = "distributionJavaVersionTag";
+    String KEY_DISTRIBUTION_JAVA_VERSION_BUILD = "distributionJavaVersionBuild";
     String KEY_DISTRIBUTION_JAVA_GROUP_ID = "distributionJavaGroupId";
     String KEY_DISTRIBUTION_JAVA_ARTIFACT_ID = "distributionJavaArtifactId";
     String KEY_DISTRIBUTION_JAVA_MAIN_CLASS = "distributionJavaMainClass";

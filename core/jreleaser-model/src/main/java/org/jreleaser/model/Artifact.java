@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.Version;
 
 import java.io.StringReader;
 import java.nio.file.Path;
@@ -60,6 +61,12 @@ public class Artifact implements Domain {
                 props.put(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, distribution.getJava().getGroupId());
                 props.put(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, distribution.getJava().getArtifactId());
                 props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, distribution.getJava().getVersion());
+                Version jv = Version.of(distribution.getJava().getVersion());
+                props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor());
+                if (jv.hasMinor()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor());
+                if (jv.hasPatch()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch());
+                if (jv.hasTag()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag());
+                if (jv.hasBuild()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild());
                 props.putAll(distribution.getResolvedExtraProperties());
                 path = applyTemplate(new StringReader(path), props);
             }
