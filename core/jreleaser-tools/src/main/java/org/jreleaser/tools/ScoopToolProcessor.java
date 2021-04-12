@@ -74,9 +74,16 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
             return getTool().getAutoupdateUrl();
         }
 
+        String artifactFilename = (String) props.get(Constants.KEY_ARTIFACT_FILE_NAME);
+        String projectVersion = (String) props.get(Constants.KEY_PROJECT_VERSION);
+        String tagName = (String) props.get(Constants.KEY_TAG_NAME);
+        artifactFilename= artifactFilename.replace(projectVersion, "$version");
+        tagName= tagName.replace(projectVersion, "$version");
+
         Map<String, Object> copy = new LinkedHashMap<>(props);
         copy.put(Constants.KEY_PROJECT_VERSION, "$version");
-        copy.put(Constants.KEY_ARTIFACT_FILE_NAME, copy.get("projectName") + "-$version.zip");
+        copy.put(Constants.KEY_TAG_NAME, tagName);
+        copy.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFilename);
         return applyTemplate(new StringReader(getTool().getAutoupdateUrl()), copy);
     }
 

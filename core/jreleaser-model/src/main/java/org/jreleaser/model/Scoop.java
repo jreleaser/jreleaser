@@ -20,6 +20,7 @@ package org.jreleaser.model;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.Map;
+import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -88,7 +89,9 @@ public class Scoop extends AbstractRepositoryTool {
     }
 
     @Override
-    public boolean supportsDistribution(Distribution distribution) {
-        return distribution.getType() != Distribution.DistributionType.SINGLE_JAR;
+    public Set<String> getSupportedExtensions() {
+        Set<String> extensions = super.getSupportedExtensions();
+        extensions.add(".jar");
+        return extensions;
     }
 }
