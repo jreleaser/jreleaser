@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.model.validation.BrewValidator.postValidateBrew;
 import static org.jreleaser.model.validation.BrewValidator.validateBrew;
 import static org.jreleaser.model.validation.ChocolateyValidator.validateChocolatey;
 import static org.jreleaser.model.validation.DockerValidator.validateDocker;
@@ -62,6 +63,8 @@ public abstract class DistributionsValidator extends Validator {
             }
             validateDistribution(context, distribution, errors);
         }
+
+        postValidateBrew(context, errors);
     }
 
     private static void validateDistribution(JReleaserContext context, Distribution distribution, List<String> errors) {

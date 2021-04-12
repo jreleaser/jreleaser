@@ -1,4 +1,4 @@
-class {{projectNameCapitalized}} < Formula
+class {{brewFormulaName}} < Formula
   desc "{{projectDescription}}"
   homepage "{{projectWebsite}}"
   version "{{projectVersion}}"

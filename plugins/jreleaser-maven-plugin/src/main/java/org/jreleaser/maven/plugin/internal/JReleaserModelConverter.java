@@ -389,6 +389,7 @@ public final class JReleaserModelConverter {
         t.setTemplateDirectory(brew.getTemplateDirectory());
         t.setExtraProperties(brew.getExtraProperties());
         t.setTap(convertHomebrewTap(brew.getTap()));
+        t.setFormulaName(brew.getFormulaName());
         t.setCommitAuthor(convertCommitAuthor(brew.getCommitAuthor()));
         brew.getDependencies().forEach(dependency -> {
             if (isNotBlank(dependency.getValue())) {

@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
 
 /**
  *
@@ -26,4 +27,5 @@ import groovy.transform.CompileStatic
  */
 @CompileStatic
 interface Brew extends BrewPackager, RepositoryTool {
+    Property<String> getFormulaName()
 }

@@ -32,14 +32,25 @@ public class Brew extends AbstractRepositoryTool {
     private final List<Dependency> dependencies = new ArrayList<>();
     private Tap tap = new Tap();
 
+    private String formulaName;
+
     public Brew() {
         super(NAME);
     }
 
     void setAll(Brew brew) {
         super.setAll(brew);
+        this.formulaName = brew.formulaName;
         this.tap.setAll(brew.tap);
         setDependencies(brew.dependencies);
+    }
+
+    public String getFormulaName() {
+        return formulaName;
+    }
+
+    public void setFormulaName(String formulaName) {
+        this.formulaName = formulaName;
     }
 
     public Tap getTap() {

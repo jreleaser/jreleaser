@@ -96,6 +96,7 @@ public interface Constants {
     String KEY_ARTIFACT_FILE_NAME = "artifactFileName";
 
     // Brew
+    String KEY_BREW_FORMULA_NAME = "brewFormulaName";
     String KEY_BREW_DEPENDENCIES = "brewDependencies";
     String KEY_HOMEBREW_TAP_REPO_URL = "brewTapRepoUrl";
     String KEY_HOMEBREW_TAP_REPO_CLONE_URL = "brewTapRepoCloneUrl";

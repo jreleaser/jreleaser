@@ -19,12 +19,15 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.PlatformUtils;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -37,14 +40,53 @@ public class Brew extends AbstractRepositoryTool {
     private final List<Dependency> dependencies = new ArrayList<>();
     private HomebrewTap tap = new HomebrewTap();
 
+    private String formulaName;
+    private String cachedFormulaName;
+
     public Brew() {
         super(NAME);
     }
 
     void setAll(Brew brew) {
         super.setAll(brew);
+        this.formulaName = brew.formulaName;
         this.tap.setAll(brew.tap);
         setDependenciesAsList(brew.dependencies);
+    }
+
+    public String getResolvedFormulaName(JReleaserContext context) {
+        if (isBlank(cachedFormulaName)) {
+            if (formulaName.contains("{{")) {
+                cachedFormulaName = applyTemplate(new StringReader(formulaName), context.getModel().props());
+            } else {
+                cachedFormulaName = formulaName;
+            }
+            cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
+        }
+        return cachedFormulaName;
+    }
+
+    public String getResolvedFormulaName(Map<String, Object> props) {
+        if (isBlank(cachedFormulaName)) {
+            if (formulaName.contains("{{")) {
+                cachedFormulaName = applyTemplate(new StringReader(formulaName), props);
+            } else {
+                cachedFormulaName = formulaName;
+            }
+            cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
+        } else if (cachedFormulaName.contains("{{")) {
+            cachedFormulaName = applyTemplate(new StringReader(cachedFormulaName), props);
+            cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
+        }
+        return cachedFormulaName;
+    }
+
+    public String getFormulaName() {
+        return formulaName;
+    }
+
+    public void setFormulaName(String formulaName) {
+        this.formulaName = formulaName;
     }
 
     public HomebrewTap getTap() {
@@ -93,6 +135,7 @@ public class Brew extends AbstractRepositoryTool {
     @Override
     protected void asMap(Map<String, Object> props) {
         super.asMap(props);
+        props.put("formulaName", formulaName);
         props.put("tap", tap.asMap());
         props.put("dependencies", dependencies);
     }

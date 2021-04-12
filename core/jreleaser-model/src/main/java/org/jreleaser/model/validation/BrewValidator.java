@@ -24,10 +24,14 @@ import org.jreleaser.model.JReleaserModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
+import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -56,6 +60,10 @@ public abstract class BrewValidator extends Validator {
         dependencies.addAll(tool.getDependenciesAsList());
         tool.setDependenciesAsList(dependencies);
 
+        if (isBlank(tool.getFormulaName())) {
+            tool.setFormulaName(model.getProject().getName());
+        }
+
         if (isBlank(tool.getTap().getName())) {
             tool.getTap().setName(model.getPackagers().getBrew().getTap().getName());
         }
@@ -67,5 +75,18 @@ public abstract class BrewValidator extends Validator {
         }
 
         validateArtifactPlatforms(context, distribution, tool, errors);
+    }
+
+    public static void postValidateBrew(JReleaserContext context, List<String> errors) {
+        Map<String, List<Distribution>> map = context.getModel().getDistributions().values().stream()
+            .filter(d -> d.getBrew().isEnabled())
+            .collect(groupingBy(d -> d.getBrew().getResolvedFormulaName(context)));
+
+        map.forEach((formulaName, distributions) -> {
+            if (distributions.size() > 1) {
+                errors.add("brew.formulaName '" + formulaName + "' is defined for more than one distribution: " +
+                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", ")));
+            }
+        });
     }
 }
