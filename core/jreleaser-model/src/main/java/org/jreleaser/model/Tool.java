@@ -35,4 +35,6 @@ public interface Tool extends Domain, ExtraProperties, EnabledProvider {
     Set<String> getSupportedExtensions();
 
     boolean supportsPlatform(String platform);
+
+    boolean supportsDistribution(Distribution distribution);
 }

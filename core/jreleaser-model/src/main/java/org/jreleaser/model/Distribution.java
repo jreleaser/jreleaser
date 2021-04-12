@@ -36,7 +36,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Distribution extends Packagers implements ExtraProperties, EnabledProvider {
     public static final EnumSet<DistributionType> JAVA_DISTRIBUTION_TYPES = EnumSet.of(
         DistributionType.JAVA_BINARY,
-        DistributionType.JLINK
+        DistributionType.JLINK,
+        DistributionType.SINGLE_JAR
     );
 
     private final List<String> tags = new ArrayList<>();
@@ -253,6 +254,6 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     public enum DistributionType {
         JAVA_BINARY,
         JLINK,
-        // NATIVE_IMAGE,
+        SINGLE_JAR
     }
 }

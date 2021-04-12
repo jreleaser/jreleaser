@@ -48,7 +48,7 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
-        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY;
+        return distribution.getType() != Distribution.DistributionType.JLINK;
     }
 
     @Override

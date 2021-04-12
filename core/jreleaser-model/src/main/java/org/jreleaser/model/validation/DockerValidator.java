@@ -51,6 +51,9 @@ public abstract class DockerValidator extends Validator {
         if (!tool.isEnabledSet() && model.getPackagers().getDocker().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getDocker().isEnabled());
         }
+        if (!tool.supportsDistribution(distribution)) {
+            tool.setEnabled(false);
+        }
         if (!tool.isEnabled()) return;
         context.getLogger().debug("distribution.{}.docker", distribution.getName());
 
@@ -61,7 +64,7 @@ public abstract class DockerValidator extends Validator {
             tool.setBaseImage(model.getPackagers().getDocker().getBaseImage());
         }
         if (isBlank(tool.getBaseImage())) {
-            if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY) {
+            if (distribution.getType() != Distribution.DistributionType.JLINK) {
                 int version = Integer.parseInt(distribution.getJava().getVersion());
                 boolean ltsmts = version == 8 || version % 2 == 1;
                 tool.setBaseImage("azul/zulu-openjdk-alpine:{{distributionJavaVersion}}" + (ltsmts ? "-jre" : ""));

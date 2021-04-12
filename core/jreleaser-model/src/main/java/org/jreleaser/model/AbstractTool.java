@@ -122,4 +122,9 @@ abstract class AbstractTool implements Tool {
     public boolean isSnapshotAllowed() {
         return false;
     }
+
+    @Override
+    public boolean supportsDistribution(Distribution distribution) {
+        return true;
+    }
 }

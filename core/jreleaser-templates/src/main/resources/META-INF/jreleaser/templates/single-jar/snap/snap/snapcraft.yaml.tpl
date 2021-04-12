@@ -10,9 +10,22 @@ description: {{projectLongDescription}}
 
 apps:
   {{distributionExecutable}}:
-    command: ${JAVA_HOME}/bin/java -jar $SNAP/{{distributionFileName}}
+    command: ${JAVA_HOME}/bin/java -jar $SNAP/{{artifactFileName}}
     environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java
+      JAVA_HOME: "$SNAP/usr/lib/jvm/java/jre/"
+      PATH: "$PATH:$SNAP/usr/lib/jvm/java/jre/bin"
+    {{#snapHasLocalPlugs}}
+    plugs:
+      {{#snapLocalPlugs}}
+      - {{.}}
+      {{/snapLocalPlugs}}
+    {{/snapHasLocalPlugs}}
+    {{#snapHasLocalSlots}}
+    slots:
+      {{#snapLocalSlots}}
+      - {{.}}
+      {{/snapLocalSlots}}
+    {{/snapHasLocalSlots}}
 
 {{#snapHasPlugs}}
 plugs:
@@ -44,25 +57,20 @@ slots:
     {{/hasWrites}}
   {{/snapSlots }}
 {{/snapHasSlots}}
-
 parts:
   {{distributionExecutable}}:
     plugin: nil
-    source: {{distributionUrl}}
-    source-checksum: sha256/{{distributionSha256}}
+    override-build: |
+      wget -O $SNAPCRAFT_PART_INSTALL/{{artifactFileName}} {{distributionUrl}}
+      snapcraftctl set-version "{{projectVersion}}"
+    build-packages:
+      - wget
     stage-packages:
-      - openjdk-{{distributionJavaVersion}}-jdk
+      - openjdk-{{distributionJavaVersion}}-jre
+      - ca-certificates
+      - ca-certificates-java
     organize:
-      usr/lib/jvm/java-{{distributionJavaVersion}}-openjdk*: usr/lib/jvm/java
-    {{#snapHasLocalPlugs}}
-    plugs:
-      {{#snapLocalPlugs}}
-      - {{.}}
-      {{/snapLocalPlugs}}
-    {{/snapHasLocalPlugs}}
-    {{#snapHasLocalSlots}}
-    slots:
-      {{#snapLocalSlots}}
-      - {{.}}
-      {{/snapLocalSlots}}
-    {{/snapHasLocalSlots}}
+      'usr/lib/jvm/java-{{distributionJavaVersion}}-openjdk*': 'usr/lib/jvm/java'
+    prime:
+      - -usr/lib/jvm/java/lib/security/cacerts
+      - -usr/lib/jvm/java/jre/lib/security/cacerts

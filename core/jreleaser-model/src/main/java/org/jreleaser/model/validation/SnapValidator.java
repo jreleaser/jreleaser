@@ -47,6 +47,9 @@ public abstract class SnapValidator extends Validator {
         if (!tool.isEnabledSet() && model.getPackagers().getSnap().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getSnap().isEnabled());
         }
+        if (!tool.supportsDistribution(distribution)) {
+            tool.setEnabled(false);
+        }
         if (!tool.isEnabled()) return;
         context.getLogger().debug("distribution.{}.snap", distribution.getName());
 

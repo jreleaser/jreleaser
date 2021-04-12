@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -104,6 +105,13 @@ public class Brew extends AbstractRepositoryTool {
     @Override
     public boolean supportsPlatform(String platform) {
         return isBlank(platform) || PlatformUtils.isMac(platform);
+    }
+
+    @Override
+    public Set<String> getSupportedExtensions() {
+        Set<String> extensions = super.getSupportedExtensions();
+        extensions.add(".jar");
+        return extensions;
     }
 
     public static class Dependency {

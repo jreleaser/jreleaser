@@ -129,11 +129,9 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
         this.extraProperties.putAll(extraProperties);
     }
 
-    // --== TOOLs ==--
-
     public enum DistributionType {
         JAVA_BINARY,
-        JLINK
-        // NATIVE_IMAGE,
+        JLINK,
+        SINGLE_JAR,
     }
 }

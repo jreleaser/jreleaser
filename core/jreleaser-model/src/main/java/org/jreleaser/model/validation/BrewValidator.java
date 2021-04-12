@@ -41,6 +41,9 @@ public abstract class BrewValidator extends Validator {
         if (!tool.isEnabledSet() && model.getPackagers().getBrew().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getBrew().isEnabled());
         }
+        if (!tool.supportsDistribution(distribution)) {
+            tool.setEnabled(false);
+        }
         if (!tool.isEnabled()) return;
         context.getLogger().debug("distribution.{}.brew", distribution.getName());
 

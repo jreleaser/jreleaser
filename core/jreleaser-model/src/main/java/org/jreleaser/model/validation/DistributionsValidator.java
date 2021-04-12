@@ -195,7 +195,7 @@ public abstract class DistributionsValidator extends Validator {
 
     public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Tool tool, List<String> errors) {
         // validate distribution type
-        if (distribution.getType() != Distribution.DistributionType.JAVA_BINARY) {
+        if (distribution.getType() == Distribution.DistributionType.JLINK) {
             // ensure all artifacts define a platform
 
             Set<String> fileExtensions = tool.getSupportedExtensions();

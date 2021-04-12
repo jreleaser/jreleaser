@@ -86,4 +86,9 @@ public class Scoop extends AbstractRepositoryTool {
     public boolean supportsPlatform(String platform) {
         return isBlank(platform) || PlatformUtils.isWindows(platform);
     }
+
+    @Override
+    public boolean supportsDistribution(Distribution distribution) {
+        return distribution.getType() != Distribution.DistributionType.SINGLE_JAR;
+    }
 }

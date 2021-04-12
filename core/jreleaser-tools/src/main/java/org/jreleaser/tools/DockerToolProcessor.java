@@ -20,12 +20,13 @@ package org.jreleaser.tools;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
-import org.jreleaser.model.Registry;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
+import org.jreleaser.model.Registry;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
 
@@ -100,6 +101,19 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         for (Artifact artifact : artifacts) {
             Path artifactPath = artifact.getResolvedPath(context);
             Files.copy(artifactPath, assemblyDirectory.resolve(artifactPath.getFileName()), REPLACE_EXISTING);
+        }
+
+        Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path preparedAssemblyDirectory = prepareDirectory.resolve("assembly");
+        try {
+            if (Files.exists(preparedAssemblyDirectory) &&
+                !FileUtils.copyFilesRecursive(context.getLogger(), preparedAssemblyDirectory, assemblyDirectory)) {
+                throw new ToolProcessingException("Could not copy files from " +
+                    context.getBasedir().relativize(preparedAssemblyDirectory));
+            }
+        } catch (IOException e) {
+            throw new ToolProcessingException("Unexpected error when copying files from " +
+                context.getBasedir().relativize(preparedAssemblyDirectory), e);
         }
 
         return workingDirectory;
@@ -231,7 +245,9 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         fileName = trimTplExtension(fileName);
 
         Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
-        Path outputFile = outputDirectory.resolve(fileName);
+        Path outputFile = "app.tpl".equals(fileName) ?
+            outputDirectory.resolve(distribution.getExecutable()) :
+            outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
     }

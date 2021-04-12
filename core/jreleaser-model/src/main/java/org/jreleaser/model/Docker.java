@@ -159,4 +159,11 @@ public class Docker extends AbstractTool {
     public boolean supportsPlatform(String platform) {
         return isBlank(platform) || !PlatformUtils.isMac(platform);
     }
+
+    @Override
+    public Set<String> getSupportedExtensions() {
+        Set<String> extensions = super.getSupportedExtensions();
+        extensions.add(".jar");
+        return extensions;
+    }
 }

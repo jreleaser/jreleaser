@@ -40,6 +40,9 @@ public abstract class ChocolateyValidator extends Validator {
         if (!tool.isEnabledSet() && model.getPackagers().getChocolatey().isEnabledSet()) {
             tool.setEnabled(model.getPackagers().getChocolatey().isEnabled());
         }
+        if (!tool.supportsDistribution(distribution)) {
+            tool.setEnabled(false);
+        }
         if (!tool.isEnabled()) return;
         context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
 

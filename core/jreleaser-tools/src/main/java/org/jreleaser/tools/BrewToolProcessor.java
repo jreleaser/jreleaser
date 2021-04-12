@@ -57,7 +57,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         props.put(Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(project, tool.getTap().getOwner(), tool.getTap().getName()));
 
-        if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY) {
+        if (distribution.getType() != Distribution.DistributionType.JLINK) {
             getTool().addDependency("openjdk@" + props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
         }
 
