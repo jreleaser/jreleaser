@@ -62,7 +62,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     }
 
     @Override
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled != null && enabled;
     }
 

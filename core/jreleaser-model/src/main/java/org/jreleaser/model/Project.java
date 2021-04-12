@@ -33,6 +33,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class Project implements Domain, ExtraProperties {
+    public static final String PROJECT_NAME = "PROJECT_NAME";
     public static final String PROJECT_VERSION = "PROJECT_VERSION";
     public static final String SNAPSHOT_PATTERN = "SNAPSHOT_PATTERN";
     public static final String DEFAULT_SNAPSHOT_PATTERN = ".*-SNAPSHOT";
@@ -71,11 +72,13 @@ public class Project implements Domain, ExtraProperties {
 
     public boolean isSnapshot() {
         if (null == snapshot) {
-            String resolvedVersion = getResolvedVersion();
-            requireNonBlank(resolvedVersion, "Project version cannot be blank");
-            snapshot = resolvedVersion.matches(getResolvedSnapshotPattern());
+            snapshot = version.matches(getResolvedSnapshotPattern());
         }
         return snapshot;
+    }
+
+    public String getResolvedName() {
+        return Env.resolve(PROJECT_NAME, name);
     }
 
     public String getResolvedVersion() {
@@ -223,8 +226,8 @@ public class Project implements Domain, ExtraProperties {
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
-        map.put("version", getResolvedVersion());
-        map.put("snapshotPattern", getResolvedSnapshotPattern());
+        map.put("version", version);
+        map.put("snapshotPattern", snapshotPattern);
         map.put("snapshot", isSnapshot());
         map.put("description", description);
         map.put("longDescription", longDescription);

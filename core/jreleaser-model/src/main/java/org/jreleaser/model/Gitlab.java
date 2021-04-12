@@ -26,7 +26,7 @@ import java.util.Map;
 public class Gitlab extends GitService {
     public static final String NAME = "gitlab";
 
-    private String ref = "main";
+    private String ref;
 
     public Gitlab() {
         super(NAME);

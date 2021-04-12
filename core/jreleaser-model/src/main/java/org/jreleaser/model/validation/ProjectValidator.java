@@ -23,6 +23,7 @@ import org.jreleaser.model.Project;
 import java.util.List;
 
 import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_PATTERN;
+import static org.jreleaser.model.Project.PROJECT_NAME;
 import static org.jreleaser.model.Project.PROJECT_VERSION;
 import static org.jreleaser.model.Project.SNAPSHOT_PATTERN;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -36,9 +37,12 @@ public abstract class ProjectValidator extends Validator {
         context.getLogger().debug("project");
         Project project = context.getModel().getProject();
 
-        if (isBlank(project.getName())) {
-            errors.add("project.name must not be blank");
-        }
+        project.setName(
+            checkProperty(context.getModel().getEnvironment(),
+                PROJECT_NAME,
+                "project.name",
+                project.getName(),
+                errors));
 
         project.setVersion(
             checkProperty(context.getModel().getEnvironment(),

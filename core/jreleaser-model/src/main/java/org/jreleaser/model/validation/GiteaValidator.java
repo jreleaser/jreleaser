@@ -22,6 +22,8 @@ import org.jreleaser.model.JReleaserContext;
 
 import java.util.List;
 
+import static org.jreleaser.model.GitService.BRANCH;
+import static org.jreleaser.model.GitService.PRERELEASE;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -39,12 +41,24 @@ public abstract class GiteaValidator extends GitServiceValidator {
             errors.add("gitea.apiEndpoint must not be blank");
         }
 
-        if (isBlank(gitea.getTargetCommitish())) {
-            gitea.setTargetCommitish("main");
-        }
+        gitea.setTargetCommitish(
+            checkProperty(context.getModel().getEnvironment(),
+                BRANCH,
+                "gitea.targetCommitish",
+                gitea.getTargetCommitish(),
+                "main"));
 
         if (context.getModel().getProject().isSnapshot()) {
             gitea.setPrerelease(true);
+        }
+
+        if (!gitea.isPrereleaseSet()) {
+            gitea.setPrerelease(
+                checkProperty(context.getModel().getEnvironment(),
+                    PRERELEASE,
+                    "gitea.prerelease",
+                    null,
+                    false));
         }
 
         return gitea.isEnabled();

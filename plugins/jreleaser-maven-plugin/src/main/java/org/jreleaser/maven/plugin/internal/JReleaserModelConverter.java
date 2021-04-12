@@ -137,9 +137,9 @@ public final class JReleaserModelConverter {
         if (null == github) return null;
         org.jreleaser.model.Github g = new org.jreleaser.model.Github();
         convertGitService(github, g);
-        g.setTargetCommitish(github.getTargetCommitish());
+        if (isNotBlank(github.getTargetCommitish())) g.setTargetCommitish(github.getTargetCommitish());
         g.setDraft(github.isDraft());
-        g.setPrerelease(github.isPrerelease());
+        if (github.isPrereleaseSet()) g.setPrerelease(github.isPrerelease());
         return g;
     }
 
@@ -147,7 +147,7 @@ public final class JReleaserModelConverter {
         if (null == gitlab) return null;
         org.jreleaser.model.Gitlab g = new org.jreleaser.model.Gitlab();
         convertGitService(gitlab, g);
-        g.setRef(gitlab.getRef());
+        if (isNotBlank(gitlab.getRef())) g.setRef(gitlab.getRef());
         return g;
     }
 
@@ -155,9 +155,9 @@ public final class JReleaserModelConverter {
         if (null == gitea) return null;
         org.jreleaser.model.Gitea g = new org.jreleaser.model.Gitea();
         convertGitService(gitea, g);
-        g.setTargetCommitish(gitea.getTargetCommitish());
+        if (isNotBlank(gitea.getTargetCommitish())) g.setTargetCommitish(gitea.getTargetCommitish());
         g.setDraft(gitea.isDraft());
-        g.setPrerelease(gitea.isPrerelease());
+        if (gitea.isPrereleaseSet()) g.setPrerelease(gitea.isPrerelease());
         return g;
     }
 
@@ -177,9 +177,9 @@ public final class JReleaserModelConverter {
         if (isNotBlank(service.getReleaseName())) s.setReleaseName(service.getReleaseName());
         s.setCommitAuthor(convertCommitAuthor(service.getCommitAuthor()));
         s.setSign(service.isSign());
-        s.setSkipTag(service.isSkipTag());
-        s.setOverwrite(service.isOverwrite());
-        s.setUpdate(service.isUpdate());
+        if (service.isSkipTagSet()) s.setSkipTag(service.isSkipTag());
+        if (service.isOverwriteSet()) s.setOverwrite(service.isOverwrite());
+        if (service.isUpdateSet()) s.setUpdate(service.isUpdate());
         s.setApiEndpoint(service.getApiEndpoint());
         s.setChangelog(convertChangelog(service.getChangelog()));
         s.setMilestone(convertMilestone(service.getMilestone()));

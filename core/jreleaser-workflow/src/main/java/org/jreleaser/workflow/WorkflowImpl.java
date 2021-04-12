@@ -100,7 +100,7 @@ class WorkflowImpl implements Workflow {
         props.put(KEY_TIMESTAMP, model.getTimestamp());
         props.put(KEY_COMMIT_SHORT_HASH, model.getCommit().getShortHash());
         props.put(KEY_COMMIT_FULL_HASH, model.getCommit().getFullHash());
-        props.put(KEY_PROJECT_VERSION, project.getResolvedVersion());
+        props.put(KEY_PROJECT_VERSION, project.getVersion());
         props.put(KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
         props.put(KEY_TAG_NAME, model.getRelease().getGitService().getEffectiveTagName(project));
         props.put(KEY_RELEASE_NAME, model.getRelease().getGitService().getEffectiveReleaseName());

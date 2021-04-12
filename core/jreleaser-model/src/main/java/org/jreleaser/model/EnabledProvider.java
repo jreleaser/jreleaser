@@ -22,7 +22,7 @@ package org.jreleaser.model;
  * @since 0.1.0
  */
 public interface EnabledProvider {
-    Boolean isEnabled();
+    boolean isEnabled();
 
     void setEnabled(Boolean enabled);
 

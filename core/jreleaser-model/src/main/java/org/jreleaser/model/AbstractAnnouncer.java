@@ -38,7 +38,7 @@ abstract class AbstractAnnouncer implements Announcer {
     }
 
     @Override
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled != null && enabled;
     }
 

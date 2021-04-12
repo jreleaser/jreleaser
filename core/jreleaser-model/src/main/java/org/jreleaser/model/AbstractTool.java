@@ -56,7 +56,7 @@ abstract class AbstractTool implements Tool {
     }
 
     @Override
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled != null && enabled;
     }
 

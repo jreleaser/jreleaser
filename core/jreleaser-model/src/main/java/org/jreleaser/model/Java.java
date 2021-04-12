@@ -47,7 +47,7 @@ public class Java implements Domain, ExtraProperties, EnabledProvider {
     }
 
     @Override
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled != null && enabled;
     }
 

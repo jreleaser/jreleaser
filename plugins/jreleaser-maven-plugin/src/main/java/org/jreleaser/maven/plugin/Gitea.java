@@ -22,9 +22,9 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public class Gitea extends GitService {
-    private String targetCommitish = "main";
+    private String targetCommitish;
     private boolean draft;
-    private boolean prerelease;
+    private Boolean prerelease;
 
     public Gitea() {
         setHost("try.gitea.io");
@@ -61,10 +61,14 @@ public class Gitea extends GitService {
     }
 
     public boolean isPrerelease() {
-        return prerelease;
+        return prerelease != null && prerelease;
     }
 
-    public void setPrerelease(boolean prerelease) {
+    public void setPrerelease(Boolean prerelease) {
         this.prerelease = prerelease;
+    }
+
+    public boolean isPrereleaseSet() {
+        return prerelease != null;
     }
 }

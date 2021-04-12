@@ -26,9 +26,9 @@ import java.util.Map;
 public class Gitea extends GitService {
     public static final String NAME = "gitea";
 
-    private String targetCommitish = "main";
+    private String targetCommitish;
     private boolean draft;
-    private boolean prerelease;
+    private Boolean prerelease;
 
     public Gitea() {
         super(NAME);
@@ -65,11 +65,15 @@ public class Gitea extends GitService {
     }
 
     public boolean isPrerelease() {
-        return prerelease;
+        return prerelease != null && prerelease;
     }
 
-    public void setPrerelease(boolean prerelease) {
+    public void setPrerelease(Boolean prerelease) {
         this.prerelease = prerelease;
+    }
+
+    public boolean isPrereleaseSet() {
+        return prerelease != null;
     }
 
     @Override
@@ -87,7 +91,7 @@ public class Gitea extends GitService {
         Map<String, Object> map = super.asMap();
         map.put("targetCommitish", targetCommitish);
         map.put("draft", draft);
-        map.put("prerelease", prerelease);
+        map.put("prerelease", isPrerelease());
         return map;
     }
 }

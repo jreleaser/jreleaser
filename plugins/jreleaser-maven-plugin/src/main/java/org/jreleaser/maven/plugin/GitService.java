@@ -41,9 +41,9 @@ public abstract class GitService implements Releaser {
     private String tagName;
     private String releaseName;
     private boolean sign;
-    private boolean skipTag;
-    private boolean overwrite;
-    private boolean update;
+    private Boolean skipTag;
+    private Boolean overwrite;
+    private Boolean update;
     private String apiEndpoint;
 
     void setAll(GitService service) {
@@ -215,14 +215,6 @@ public abstract class GitService implements Releaser {
         this.sign = sign;
     }
 
-    public boolean isSkipTag() {
-        return skipTag;
-    }
-
-    public void setSkipTag(boolean skipTag) {
-        this.skipTag = skipTag;
-    }
-
     public Changelog getChangelog() {
         return changelog;
     }
@@ -239,20 +231,40 @@ public abstract class GitService implements Releaser {
         this.milestone.setAll(milestone);
     }
 
-    public boolean isOverwrite() {
-        return overwrite;
+    public boolean isSkipTag() {
+        return skipTag != null && skipTag;
     }
 
-    public void setOverwrite(boolean overwrite) {
+    public void setSkipTag(Boolean skipTag) {
+        this.skipTag = skipTag;
+    }
+
+    public boolean isSkipTagSet() {
+        return skipTag != null;
+    }
+
+    public boolean isOverwrite() {
+        return overwrite != null && overwrite;
+    }
+
+    public void setOverwrite(Boolean overwrite) {
         this.overwrite = overwrite;
     }
 
-    public boolean isUpdate() {
-        return update;
+    public boolean isOverwriteSet() {
+        return overwrite != null;
     }
 
-    public void setUpdate(boolean update) {
+    public boolean isUpdate() {
+        return update != null && update;
+    }
+
+    public void setUpdate(Boolean update) {
         this.update = update;
+    }
+
+    public boolean isUpdateSet() {
+        return update != null;
     }
 
     public String getApiEndpoint() {

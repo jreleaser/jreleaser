@@ -41,7 +41,7 @@ public class Changelog implements Domain, EnabledProvider {
     }
 
     @Override
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
 

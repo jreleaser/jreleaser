@@ -22,7 +22,7 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public class Gitlab extends GitService {
-    private String ref = "main";
+    private String ref;
 
     public Gitlab() {
         setHost("gitlab.com");

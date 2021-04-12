@@ -26,8 +26,11 @@ import org.jreleaser.util.StringUtils;
 
 import java.util.List;
 
+import static org.jreleaser.model.GitService.OVERWRITE;
 import static org.jreleaser.model.GitService.RELEASE_NAME;
+import static org.jreleaser.model.GitService.SKIP_TAG;
 import static org.jreleaser.model.GitService.TAG_NAME;
+import static org.jreleaser.model.GitService.UPDATE;
 import static org.jreleaser.model.Milestone.MILESTONE_NAME;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -74,8 +77,35 @@ public abstract class GitServiceValidator extends Validator {
                 service.getReleaseName(),
                 "Release {{tagName}}"));
 
+        if (!service.isOverwriteSet()) {
+            service.setOverwrite(
+                checkProperty(context.getModel().getEnvironment(),
+                    OVERWRITE,
+                    service.getServiceName() + ".overwrite",
+                    null,
+                    false));
+        }
+
+        if (!service.isUpdateSet()) {
+            service.setUpdate(
+                checkProperty(context.getModel().getEnvironment(),
+                    UPDATE,
+                    service.getServiceName() + ".update",
+                    null,
+                    false));
+        }
+
+        if (!service.isSkipTagSet()) {
+            service.setSkipTag(
+                checkProperty(context.getModel().getEnvironment(),
+                    SKIP_TAG,
+                    service.getServiceName() + ".skipTag",
+                    null,
+                    false));
+        }
+
         if (isBlank(service.getTagName())) {
-            service.setTagName("v" + project.getResolvedVersion());
+            service.setTagName("v" + project.getVersion());
         }
         if (isBlank(service.getReleaseName())) {
             service.setReleaseName("Release {{ tagName }}");

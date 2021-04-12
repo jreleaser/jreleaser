@@ -44,7 +44,7 @@ public class Announce implements Domain, EnabledProvider {
     }
 
     @Override
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled != null && enabled;
     }
 

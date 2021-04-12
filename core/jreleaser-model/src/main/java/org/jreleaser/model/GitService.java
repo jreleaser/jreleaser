@@ -38,6 +38,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public abstract class GitService implements Releaser, CommitAuthorProvider, OwnerProvider {
     public static final String TAG_NAME = "TAG_NAME";
     public static final String RELEASE_NAME = "RELEASE_NAME";
+    public static final String OVERWRITE = "OVERWRITE";
+    public static final String UPDATE = "UPDATE";
+    public static final String PRERELEASE = "PRERELEASE";
+    public static final String SKIP_TAG = "SKIP_TAG";
+    public static final String BRANCH = "BRANCH";
 
     private static final String TAG_EARLY_ACCESS = "early-access";
 
@@ -61,9 +66,9 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private String tagName;
     private String releaseName;
     private boolean sign;
-    private boolean skipTag;
-    private boolean overwrite;
-    private boolean update;
+    private Boolean skipTag;
+    private Boolean overwrite;
+    private Boolean update;
     private String apiEndpoint;
 
     private String cachedTagName;
@@ -199,7 +204,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     }
 
     @Override
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled != null && enabled;
     }
 
@@ -349,14 +354,6 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.sign = sign;
     }
 
-    public boolean isSkipTag() {
-        return skipTag;
-    }
-
-    public void setSkipTag(boolean skipTag) {
-        this.skipTag = skipTag;
-    }
-
     public Changelog getChangelog() {
         return changelog;
     }
@@ -373,20 +370,40 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.milestone.setAll(milestone);
     }
 
-    public boolean isOverwrite() {
-        return overwrite;
+    public boolean isSkipTag() {
+        return skipTag != null && skipTag;
     }
 
-    public void setOverwrite(boolean overwrite) {
+    public void setSkipTag(Boolean skipTag) {
+        this.skipTag = skipTag;
+    }
+
+    public boolean isSkipTagSet() {
+        return skipTag != null;
+    }
+
+    public boolean isOverwrite() {
+        return overwrite != null && overwrite;
+    }
+
+    public void setOverwrite(Boolean overwrite) {
         this.overwrite = overwrite;
     }
 
-    public boolean isUpdate() {
-        return update;
+    public boolean isOverwriteSet() {
+        return overwrite != null;
     }
 
-    public void setUpdate(boolean update) {
+    public boolean isUpdate() {
+        return update != null && update;
+    }
+
+    public void setUpdate(Boolean update) {
         this.update = update;
+    }
+
+    public boolean isUpdateSet() {
+        return update != null;
     }
 
     public String getApiEndpoint() {
@@ -417,9 +434,9 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("releaseName", releaseName);
         map.put("commitAuthor", commitAuthor.asMap());
         map.put("sign", sign);
-        map.put("skipTag", skipTag);
-        map.put("overwrite", overwrite);
-        map.put("update", update);
+        map.put("skipTag", isSkipTag());
+        map.put("overwrite", isOverwrite());
+        map.put("update", isUpdate());
         map.put("apiEndpoint", apiEndpoint);
         map.put("changelog", changelog.asMap());
         map.put("milestone", milestone.asMap());
@@ -431,7 +448,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         Map<String, Object> props = new LinkedHashMap<>();
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
-        props.put(Constants.KEY_PROJECT_VERSION, project.getResolvedVersion());
+        props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
         props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
         props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
         props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());

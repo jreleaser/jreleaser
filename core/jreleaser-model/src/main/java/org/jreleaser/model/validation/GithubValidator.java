@@ -22,6 +22,8 @@ import org.jreleaser.model.JReleaserContext;
 
 import java.util.List;
 
+import static org.jreleaser.model.GitService.BRANCH;
+import static org.jreleaser.model.GitService.PRERELEASE;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -35,12 +37,24 @@ public abstract class GithubValidator extends GitServiceValidator {
 
         validateGitService(context, github, errors);
 
-        if (isBlank(github.getTargetCommitish())) {
-            github.setTargetCommitish("main");
-        }
+        github.setTargetCommitish(
+            checkProperty(context.getModel().getEnvironment(),
+                BRANCH,
+                "github.targetCommitish",
+                github.getTargetCommitish(),
+                "main"));
 
         if (context.getModel().getProject().isSnapshot()) {
             github.setPrerelease(true);
+        }
+
+        if (!github.isPrereleaseSet()) {
+            github.setPrerelease(
+                checkProperty(context.getModel().getEnvironment(),
+                    PRERELEASE,
+                    "github.prerelease",
+                    null,
+                    false));
         }
 
         return github.isEnabled();

@@ -22,7 +22,7 @@ import org.jreleaser.model.JReleaserContext;
 
 import java.util.List;
 
-import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.model.GitService.BRANCH;
 
 /**
  * @author Andres Almiray
@@ -35,9 +35,12 @@ public abstract class GitlabValidator extends GitServiceValidator {
 
         validateGitService(context, gitlab, errors);
 
-        if (isBlank(gitlab.getRef())) {
-            gitlab.setRef("main");
-        }
+        gitlab.setRef(
+            checkProperty(context.getModel().getEnvironment(),
+                BRANCH,
+                "gitlab.ref",
+                gitlab.getRef(),
+                "main"));
 
         return gitlab.isEnabled();
     }

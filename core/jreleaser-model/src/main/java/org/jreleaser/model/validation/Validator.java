@@ -46,6 +46,13 @@ class Validator {
         return errors.isEmpty() ? result : defaultValue;
     }
 
+    static boolean checkProperty(Environment environment, String key, String property, Boolean value, boolean defaultValue) {
+        if (null != value) return value;
+        List<String> errors = new ArrayList<>();
+        String result = Env.check(key, environment.getVariable(key), property, errors);
+        return errors.isEmpty() ? Boolean.parseBoolean(result) : defaultValue;
+    }
+
     static void validateOwner(OwnerProvider self, OwnerProvider other) {
         if (isBlank(self.getOwner())) self.setOwner(other.getOwner());
     }

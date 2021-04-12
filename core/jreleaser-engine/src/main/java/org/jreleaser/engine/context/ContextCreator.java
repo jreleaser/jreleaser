@@ -126,7 +126,7 @@ public class ContextCreator {
     }
 
     private static void report(JReleaserContext context) {
-        String version = context.getModel().getProject().getResolvedVersion();
+        String version = context.getModel().getProject().getVersion ();
         parseVersion(version, context.getModel().getProject());
 
         context.getLogger().info("Project version set to {}", version);
