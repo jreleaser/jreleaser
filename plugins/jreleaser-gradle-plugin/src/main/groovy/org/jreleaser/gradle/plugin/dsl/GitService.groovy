@@ -62,7 +62,9 @@ interface GitService extends Releaser {
 
     Property<String> getApiEndpoint()
 
-    Property<Boolean> getAllowUploadToExisting()
+    Property<Boolean> getOverwrite()
+
+    Property<Boolean> getUpdate()
 
     Changelog getChangelog()
 

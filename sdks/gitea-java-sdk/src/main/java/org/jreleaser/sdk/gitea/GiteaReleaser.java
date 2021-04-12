@@ -68,14 +68,14 @@ public class GiteaReleaser implements Releaser {
                     }
                     context.getLogger().debug("creating release {}", tagName);
                     createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
-                } else if (gitea.isAllowUploadToExisting()) {
+                } else if (gitea.isUpdate()) {
                     context.getLogger().debug("updating release {}", tagName);
                     if (!context.isDryrun()) {
                         api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);
                     }
                 } else {
                     throw new IllegalStateException("Gitea release failed because release " +
-                        tagName + " already exists. overwrite = false; allowUploadToExisting = false");
+                        tagName + " already exists. overwrite = false; update = false");
                 }
             } else {
                 context.getLogger().debug("release {} does not exist", tagName);

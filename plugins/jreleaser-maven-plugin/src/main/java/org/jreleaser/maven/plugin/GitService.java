@@ -43,7 +43,7 @@ public abstract class GitService implements Releaser {
     private boolean sign;
     private boolean skipTagging;
     private boolean overwrite;
-    private boolean allowUploadToExisting;
+    private boolean update;
     private String apiEndpoint;
 
     void setAll(GitService service) {
@@ -65,7 +65,7 @@ public abstract class GitService implements Releaser {
         this.sign = service.sign;
         this.skipTagging = service.skipTagging;
         this.overwrite = service.overwrite;
-        this.allowUploadToExisting = service.allowUploadToExisting;
+        this.update = service.update;
         this.apiEndpoint = service.apiEndpoint;
         setCommitAuthor(service.commitAuthor);
         setChangelog(service.changelog);
@@ -247,12 +247,12 @@ public abstract class GitService implements Releaser {
         this.overwrite = overwrite;
     }
 
-    public boolean isAllowUploadToExisting() {
-        return allowUploadToExisting;
+    public boolean isUpdate() {
+        return update;
     }
 
-    public void setAllowUploadToExisting(boolean allowUploadToExisting) {
-        this.allowUploadToExisting = allowUploadToExisting;
+    public void setUpdate(boolean update) {
+        this.update = update;
     }
 
     public String getApiEndpoint() {

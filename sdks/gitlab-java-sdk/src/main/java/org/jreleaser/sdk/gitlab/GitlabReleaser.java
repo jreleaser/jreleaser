@@ -69,7 +69,7 @@ public class GitlabReleaser implements Releaser {
                     }
                     context.getLogger().debug("creating release {}", tagName);
                     createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
-                } else if (gitlab.isAllowUploadToExisting()) {
+                } else if (gitlab.isUpdate()) {
                     context.getLogger().debug("updating release {}", tagName);
                     if (!context.isDryrun()) {
                         List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), assets);
@@ -77,7 +77,7 @@ public class GitlabReleaser implements Releaser {
                     }
                 } else {
                     throw new IllegalStateException("Gitlab release failed because release " +
-                        tagName + " already exists. overwrite = false; allowUploadToExisting = false");
+                        tagName + " already exists. overwrite = false; update = false");
                 }
             } else {
                 context.getLogger().debug("release {} does not exist", tagName);

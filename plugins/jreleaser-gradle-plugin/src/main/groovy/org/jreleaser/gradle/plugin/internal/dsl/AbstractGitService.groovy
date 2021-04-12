@@ -56,7 +56,7 @@ abstract class AbstractGitService implements GitService {
     final Property<Boolean> skipTagging
     final Property<String> apiEndpoint
     final Property<Boolean> overwrite
-    final Property<Boolean> allowUploadToExisting
+    final Property<Boolean> update
 
     @Inject
     AbstractGitService(ObjectFactory objects) {
@@ -80,7 +80,7 @@ abstract class AbstractGitService implements GitService {
         skipTagging = objects.property(Boolean).convention(Providers.notDefined())
         apiEndpoint = objects.property(String).convention(Providers.notDefined())
         overwrite = objects.property(Boolean).convention(Providers.notDefined())
-        allowUploadToExisting = objects.property(Boolean).convention(Providers.notDefined())
+        update = objects.property(Boolean).convention(Providers.notDefined())
     }
 
     @Internal
@@ -104,7 +104,7 @@ abstract class AbstractGitService implements GitService {
             skipTagging.present ||
             apiEndpoint.present ||
             overwrite.present ||
-            allowUploadToExisting.present
+            update.present
     }
 
     @Override
@@ -142,6 +142,6 @@ abstract class AbstractGitService implements GitService {
         service.sign = sign.getOrElse(false)
         service.skipTagging = skipTagging.getOrElse(false)
         service.overwrite = overwrite.getOrElse(false)
-        service.allowUploadToExisting = allowUploadToExisting.getOrElse(false)
+        service.update = update.getOrElse(false)
     }
 }

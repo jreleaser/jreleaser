@@ -63,7 +63,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private boolean sign;
     private boolean skipTagging;
     private boolean overwrite;
-    private boolean allowUploadToExisting;
+    private boolean update;
     private String apiEndpoint;
 
     private String cachedTagName;
@@ -97,7 +97,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.sign = service.sign;
         this.skipTagging = service.skipTagging;
         this.overwrite = service.overwrite;
-        this.allowUploadToExisting = service.allowUploadToExisting;
+        this.update = service.update;
         this.apiEndpoint = service.apiEndpoint;
         setCommitAuthor(service.commitAuthor);
         setChangelog(service.changelog);
@@ -381,12 +381,12 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.overwrite = overwrite;
     }
 
-    public boolean isAllowUploadToExisting() {
-        return allowUploadToExisting;
+    public boolean isUpdate() {
+        return update;
     }
 
-    public void setAllowUploadToExisting(boolean allowUploadToExisting) {
-        this.allowUploadToExisting = allowUploadToExisting;
+    public void setUpdate(boolean update) {
+        this.update = update;
     }
 
     public String getApiEndpoint() {
@@ -419,7 +419,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("sign", sign);
         map.put("skipTagging", skipTagging);
         map.put("overwrite", overwrite);
-        map.put("allowUploadToExisting", allowUploadToExisting);
+        map.put("update", update);
         map.put("apiEndpoint", apiEndpoint);
         map.put("changelog", changelog.asMap());
         map.put("milestone", milestone.asMap());

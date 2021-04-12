@@ -179,7 +179,7 @@ public final class JReleaserModelConverter {
         s.setSign(service.isSign());
         s.setSkipTagging(service.isSkipTagging());
         s.setOverwrite(service.isOverwrite());
-        s.setAllowUploadToExisting(service.isAllowUploadToExisting());
+        s.setUpdate(service.isUpdate());
         s.setApiEndpoint(service.getApiEndpoint());
         s.setChangelog(convertChangelog(service.getChangelog()));
         s.setMilestone(convertMilestone(service.getMilestone()));
