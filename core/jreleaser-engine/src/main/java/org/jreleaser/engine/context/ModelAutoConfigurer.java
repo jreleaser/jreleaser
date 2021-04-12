@@ -26,9 +26,11 @@ import org.jreleaser.model.JReleaserModelPrinter;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
+import org.jreleaser.util.Env;
 
 import java.io.IOException;
 
+import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -90,7 +92,7 @@ public class ModelAutoConfigurer {
                 context.getLogger().warn("Auto configure detected github but project has " +
                     service.getServiceName() + " configured");
 
-                if (isBlank(service.getBranch())) {
+                if (isBlank(Env.resolve(BRANCH, service.getBranch()))) {
                     service.setBranch(context.getModel().getCommit().getRefName());
                 }
                 return;
@@ -114,7 +116,7 @@ public class ModelAutoConfigurer {
                 context.getLogger().warn("Auto configure detected gitlab but project has " +
                     service.getServiceName() + " configured");
 
-                if (isBlank(service.getBranch())) {
+                if (isBlank(Env.resolve(BRANCH, service.getBranch()))) {
                     service.setBranch(context.getModel().getCommit().getRefName());
                 }
                 return;
@@ -136,7 +138,7 @@ public class ModelAutoConfigurer {
         if (isBlank(service.getName())) {
             service.setName(repository.getName());
         }
-        if (isBlank(service.getBranch())) {
+        if (isBlank(Env.resolve(BRANCH, service.getBranch()))) {
             service.setBranch(head.getRefName());
         }
     }

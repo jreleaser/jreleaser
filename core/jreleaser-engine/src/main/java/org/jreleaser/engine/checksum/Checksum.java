@@ -30,6 +30,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -56,9 +58,9 @@ public class Checksum {
         }
 
         if (checksums.isEmpty()) {
+            context.getLogger().info("No files configured for checksum. Skipping");
             context.getLogger().restorePrefix();
             context.getLogger().decreaseIndent();
-            context.getLogger().info("No files configured for checksum. Skipping");
             return;
         }
 
@@ -80,8 +82,12 @@ public class Checksum {
         }
 
         try {
-            Files.createDirectories(context.getChecksumsDirectory());
-            Files.write(checksumsFilePath, newContent.getBytes());
+            if (isNotBlank(newContent)) {
+                Files.createDirectories(context.getChecksumsDirectory());
+                Files.write(checksumsFilePath, newContent.getBytes());
+            } else {
+                Files.deleteIfExists(checksumsFilePath);
+            }
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
         }

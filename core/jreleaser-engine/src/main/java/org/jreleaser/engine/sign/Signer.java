@@ -275,7 +275,7 @@ public class Signer {
         }
 
         Path checksums = context.getChecksumsDirectory().resolve("checksums.txt");
-        if (checksums.toFile().exists()) {
+        if (Files.exists(checksums)) {
             Path output = signaturesDirectory.resolve(checksums.getFileName().toString().concat(extension));
             FilePair pair = new FilePair(checksums, output);
             pair.setValid(isValid(context, keyring, pair));

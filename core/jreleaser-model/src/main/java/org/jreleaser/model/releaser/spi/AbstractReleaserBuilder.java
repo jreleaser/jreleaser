@@ -23,6 +23,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.util.Artifacts;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +83,10 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
             }
         }
 
-        addReleaseAsset(context.getChecksumsDirectory().resolve("checksums.txt"));
+        Path checksums = context.getChecksumsDirectory().resolve("checksums.txt");
+        if (Files.exists(checksums)) {
+            addReleaseAsset(checksums);
+        }
         addReleaseAssets(context.getSignaturesDirectory());
 
         return this;
