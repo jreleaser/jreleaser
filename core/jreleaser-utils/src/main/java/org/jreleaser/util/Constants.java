@@ -118,7 +118,7 @@ public interface Constants {
 
     // Jbang
     String KEY_JBANG_ALIAS_NAME = "jbangAliasName";
-    String KEY_JBANG_ALIAS_CLASS_NAME = "jbangAliasClassName";
+    String KEY_JBANG_SCRIPT_NAME = "jbangScriptName";
     String KEY_JBANG_DISTRIBUTION_GA = "jbangDistributionGA";
     String KEY_JBANG_CATALOG_REPO_URL = "jbangCatalogRepoUrl";
     String KEY_JBANG_CATALOG_REPO_CLONE_URL = "jbangCatalogRepoCloneUrl";

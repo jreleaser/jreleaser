@@ -23,7 +23,10 @@ import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Jbang;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.Constants.KEY_REVERSE_REPO_HOST;
@@ -52,7 +55,7 @@ public abstract class JbangValidator extends Validator {
         mergeExtraProperties(tool, model.getPackagers().getJbang());
 
         if (isBlank(tool.getAlias())) {
-            tool.setAlias(distribution.getName());
+            tool.setAlias(distribution.getExecutable());
         }
         if (isBlank(tool.getCatalog().getName())) {
             tool.getCatalog().setName(model.getPackagers().getJbang().getCatalog().getName());
@@ -90,5 +93,18 @@ public abstract class JbangValidator extends Validator {
         if (isBlank(distribution.getJava().getMainClass())) {
             errors.add("distribution." + distribution.getName() + ".java.mainClass must not be blank, required by jbang");
         }
+    }
+
+    public static void postValidateJBang(JReleaserContext context, List<String> errors) {
+        Map<String, List<Distribution>> map = context.getModel().getDistributions().values().stream()
+            .filter(d -> d.getJbang().isEnabled())
+            .collect(groupingBy(d -> d.getJbang().getAlias()));
+
+        map.forEach((alias, distributions) -> {
+            if (distributions.size() > 1) {
+                errors.add("jbang.alias '" + alias + "' is defined for more than one distribution: " +
+                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", ")));
+            }
+        });
     }
 }

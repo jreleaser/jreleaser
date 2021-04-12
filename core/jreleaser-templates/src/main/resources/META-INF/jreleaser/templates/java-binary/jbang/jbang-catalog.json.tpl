@@ -1,7 +1,7 @@
 {
   "aliases": {
     "{{jbangAliasName}}": {
-      "script-ref": "{{jbangAliasClassName}}.java",
+      "script-ref": "{{jbangScriptName}}.java",
       "description": "{{projectDescription}}"
     }
   }

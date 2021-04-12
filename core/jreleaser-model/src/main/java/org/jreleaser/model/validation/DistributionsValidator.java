@@ -35,6 +35,7 @@ import static org.jreleaser.model.validation.BrewValidator.postValidateBrew;
 import static org.jreleaser.model.validation.BrewValidator.validateBrew;
 import static org.jreleaser.model.validation.ChocolateyValidator.validateChocolatey;
 import static org.jreleaser.model.validation.DockerValidator.validateDocker;
+import static org.jreleaser.model.validation.JbangValidator.postValidateJBang;
 import static org.jreleaser.model.validation.JbangValidator.validateJbang;
 import static org.jreleaser.model.validation.ScoopValidator.validateScoop;
 import static org.jreleaser.model.validation.SnapValidator.validateSnap;
@@ -65,6 +66,7 @@ public abstract class DistributionsValidator extends Validator {
         }
 
         postValidateBrew(context, errors);
+        postValidateJBang(context, errors);
     }
 
     private static void validateDistribution(JReleaserContext context, Distribution distribution, List<String> errors) {
@@ -150,7 +152,7 @@ public abstract class DistributionsValidator extends Validator {
         if (!distribution.getJava().isEnabled()) return true;
 
         if (isBlank(distribution.getJava().getArtifactId())) {
-            distribution.getJava().setArtifactId(distribution.getName());
+            distribution.getJava().setArtifactId(project.getJava().getArtifactId());
         }
         if (isBlank(distribution.getJava().getGroupId())) {
             distribution.getJava().setGroupId(project.getJava().getGroupId());

@@ -3,7 +3,7 @@
 //REPOS jitpack
 //DEPS {{jbangDistributionGA}}:{{repoBranch}}-SNAPSHOT
 
-public class {{jbangAliasClassName}} {
+public class {{jbangScriptName}} {
     public static void main(String... args) throws Exception {
         {{distributionJavaMainClass}}.main(args);
     }

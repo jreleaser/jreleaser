@@ -73,23 +73,24 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
         props.put(Constants.KEY_JBANG_CATALOG_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(project, tool.getCatalog().getOwner(), tool.getCatalog().getName()));
 
-        String aliasName = tool.getAlias();
-        String aliasClassName = aliasName;
+        String aliasName = sanitizeAlias(tool.getAlias());
+        String scriptName = aliasName;
         if (context.getModel().getProject().isSnapshot()) {
             aliasName += "-snapshot";
-            aliasClassName += "_snapshot";
+            scriptName += "_snapshot";
         }
+        scriptName = sanitizeScriptName(scriptName);
 
         props.put(Constants.KEY_JBANG_ALIAS_NAME, aliasName);
-        props.put(Constants.KEY_JBANG_ALIAS_CLASS_NAME, aliasClassName);
+        props.put(Constants.KEY_JBANG_SCRIPT_NAME, scriptName);
 
         String jbangDistributionGA = (String) tool.getResolvedExtraProperties().get(Constants.KEY_JBANG_DISTRIBUTION_GA);
         if (isBlank(jbangDistributionGA)) {
             if (context.getModel().getProject().isSnapshot()) {
                 // if single
-                // {{reverseRepoHost}}.{{repoOwner}}:{{distributionArtifactId}
+                // {{reverseRepoHost}}.{{repoOwner}}:{{distributionArtifactId}}
                 // if multi-project
-                // {{reverseRepoHost}}.{{repoOwner}}.{{repoName}}:{{distributionArtifactId}
+                // {{reverseRepoHost}}.{{repoOwner}}.{{repoName}}:{{distributionArtifactId}}
 
                 String reverseRepoHost = gitService.getReverseRepoHost();
                 if (isBlank(reverseRepoHost)) {
@@ -118,15 +119,38 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
         props.put(Constants.KEY_JBANG_DISTRIBUTION_GA, jbangDistributionGA);
     }
 
+    private String sanitizeAlias(String alias) {
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < alias.length(); i++) {
+            char ch = alias.charAt(i);
+            if (Character.isJavaIdentifierPart(ch) || ch == '-') {
+                b.append(ch);
+            }
+        }
+        return b.toString();
+    }
+
+    private String sanitizeScriptName(String scriptName) {
+        scriptName = scriptName.replaceAll("-", "_");
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < scriptName.length(); i++) {
+            char ch = scriptName.charAt(i);
+            if (Character.isJavaIdentifierPart(ch)) {
+                b.append(ch);
+            }
+        }
+        return b.toString();
+    }
+
     @Override
     protected void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName)
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
         Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
-        String aliasClassName = (String) props.get(Constants.KEY_JBANG_ALIAS_CLASS_NAME);
+        String scriptName = (String) props.get(Constants.KEY_JBANG_SCRIPT_NAME);
         Path outputFile = "jbang.java".equals(fileName) ?
-            outputDirectory.resolve(aliasClassName.concat(".java")) :
+            outputDirectory.resolve(scriptName.concat(".java")) :
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
