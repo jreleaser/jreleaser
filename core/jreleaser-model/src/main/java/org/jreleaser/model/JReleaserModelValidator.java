@@ -24,6 +24,7 @@ import static org.jreleaser.model.validation.AnnouncersValidator.validateAnnounc
 import static org.jreleaser.model.validation.DistributionsValidator.validateDistributions;
 import static org.jreleaser.model.validation.FilesValidator.validateFiles;
 import static org.jreleaser.model.validation.PackagersValidator.validatePackagers;
+import static org.jreleaser.model.validation.ProjectValidator.postValidateProject;
 import static org.jreleaser.model.validation.ProjectValidator.validateProject;
 import static org.jreleaser.model.validation.ReleaseValidator.validateRelease;
 import static org.jreleaser.model.validation.SignValidator.validateSign;
@@ -57,5 +58,6 @@ public final class JReleaserModelValidator {
         validateAnnouncers(context, errors);
         validateFiles(context, errors);
         validateDistributions(context, errors);
+        postValidateProject(context, errors);
     }
 }

@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -188,10 +189,18 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
-        props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
-        props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
-        props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
-        props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+        if (isNotBlank(project.getDescription())) {
+            props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
+        }
+        if (isNotBlank(project.getLongDescription())) {
+            props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
+        }
+        if (isNotBlank(project.getWebsite())) {
+            props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
+        }
+        if (isNotBlank(project.getLicense())) {
+            props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+        }
         props.put(Constants.KEY_PROJECT_AUTHORS_BY_SPACE, String.join(" ", project.getAuthors()));
         props.put(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));
         props.put(Constants.KEY_PROJECT_TAGS_BY_SPACE, String.join(" ", project.getTags()));

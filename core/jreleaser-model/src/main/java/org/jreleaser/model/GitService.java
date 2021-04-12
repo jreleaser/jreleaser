@@ -449,10 +449,18 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
-        props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
-        props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
-        props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
-        props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+        if (isNotBlank(project.getDescription())) {
+            props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
+        }
+        if (isNotBlank(project.getLongDescription())) {
+            props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
+        }
+        if (isNotBlank(project.getWebsite())) {
+            props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
+        }
+        if (isNotBlank(project.getLicense())) {
+            props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+        }
 
         if (project.getJava().isEnabled()) {
             props.put(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());

@@ -58,6 +58,21 @@ public abstract class ProjectValidator extends Validator {
                 project.getSnapshotPattern(),
                 DEFAULT_SNAPSHOT_PATTERN));
 
+        // validate only if there are distributions
+        if (!context.getModel().getDistributions().isEmpty()) {
+            validateJava(context, project, errors);
+        }
+    }
+
+    public static void postValidateProject(JReleaserContext context, List<String> errors) {
+        context.getLogger().debug("project");
+        Project project = context.getModel().getProject();
+
+        if (context.getModel().getDistributions().isEmpty() &&
+            !context.getModel().getAnnounce().isEnabled()) {
+            return;
+        }
+
         if (isBlank(project.getDescription())) {
             errors.add("project.description must not be blank");
         }
@@ -72,11 +87,6 @@ public abstract class ProjectValidator extends Validator {
         }
         if (project.getAuthors().isEmpty()) {
             errors.add("project.authors must not be empty");
-        }
-
-        // validate only if there are distributions
-        if (context.getModel().getDistributions().size() > 0) {
-            validateJava(context, project, errors);
         }
     }
 
