@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 
@@ -58,8 +59,10 @@ public abstract class ProjectValidator extends Validator {
                 project.getSnapshotPattern(),
                 DEFAULT_SNAPSHOT_PATTERN));
 
-        // validate only if there are distributions
-        if (!context.getModel().getDistributions().isEmpty()) {
+        // validate only if there are Java distributions
+        if (context.getModel().getDistributions().values().stream()
+            .map(Distribution::getType)
+            .anyMatch(type -> type != Distribution.DistributionType.JLINK)) {
             validateJava(context, project, errors);
         }
     }
