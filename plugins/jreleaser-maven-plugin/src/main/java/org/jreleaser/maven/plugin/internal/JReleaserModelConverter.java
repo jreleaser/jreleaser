@@ -177,7 +177,7 @@ public final class JReleaserModelConverter {
         if (isNotBlank(service.getReleaseName())) s.setReleaseName(service.getReleaseName());
         s.setCommitAuthor(convertCommitAuthor(service.getCommitAuthor()));
         s.setSign(service.isSign());
-        s.setSkipTagging(service.isSkipTagging());
+        s.setSkipTag(service.isSkipTag());
         s.setOverwrite(service.isOverwrite());
         s.setUpdate(service.isUpdate());
         s.setApiEndpoint(service.getApiEndpoint());

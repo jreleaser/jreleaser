@@ -136,7 +136,7 @@ public class GitlabReleaser implements Releaser {
         }
 
         // local tag
-        if (deleteTags || !gitlab.isSkipTagging()) {
+        if (deleteTags || !gitlab.isSkipTag()) {
             context.getLogger().debug("tagging local repository with {}", tagName);
             GitSdk.of(context).tag(tagName, true);
         }

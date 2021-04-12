@@ -125,7 +125,7 @@ public class GiteaReleaser implements Releaser {
         }
 
         // local tag
-        if (deleteTags || !gitea.isSkipTagging()) {
+        if (deleteTags || !gitea.isSkipTag()) {
             context.getLogger().debug("tagging local repository with {}", tagName);
             GitSdk.of(context).tag(tagName, true);
         }

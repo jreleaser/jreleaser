@@ -61,7 +61,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private String tagName;
     private String releaseName;
     private boolean sign;
-    private boolean skipTagging;
+    private boolean skipTag;
     private boolean overwrite;
     private boolean update;
     private String apiEndpoint;
@@ -95,7 +95,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
         this.sign = service.sign;
-        this.skipTagging = service.skipTagging;
+        this.skipTag = service.skipTag;
         this.overwrite = service.overwrite;
         this.update = service.update;
         this.apiEndpoint = service.apiEndpoint;
@@ -349,12 +349,12 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.sign = sign;
     }
 
-    public boolean isSkipTagging() {
-        return skipTagging;
+    public boolean isSkipTag() {
+        return skipTag;
     }
 
-    public void setSkipTagging(boolean skipTagging) {
-        this.skipTagging = skipTagging;
+    public void setSkipTag(boolean skipTag) {
+        this.skipTag = skipTag;
     }
 
     public Changelog getChangelog() {
@@ -417,7 +417,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("releaseName", releaseName);
         map.put("commitAuthor", commitAuthor.asMap());
         map.put("sign", sign);
-        map.put("skipTagging", skipTagging);
+        map.put("skipTag", skipTag);
         map.put("overwrite", overwrite);
         map.put("update", update);
         map.put("apiEndpoint", apiEndpoint);

@@ -58,7 +58,7 @@ interface GitService extends Releaser {
 
     Property<Boolean> getSign()
 
-    Property<Boolean> getSkipTagging()
+    Property<Boolean> getSkipTag()
 
     Property<String> getApiEndpoint()
 
