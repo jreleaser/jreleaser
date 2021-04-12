@@ -21,14 +21,11 @@ import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.JReleaserModelPrinter;
 import org.jreleaser.model.Project;
-import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.Version;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -41,37 +38,11 @@ public class ContextCreator {
                                           Path basedir,
                                           Path outputDirectory,
                                           boolean dryrun) {
-        JReleaserContext context = new JReleaserContext(
-            logger,
+        return create(logger,
             resolveModel(logger, configFile),
             basedir,
             outputDirectory,
             dryrun);
-
-        try {
-            context.getModel().setCommit(GitSdk.head(basedir));
-        } catch (IOException e) {
-            context.getLogger().trace(e);
-            throw new JReleaserException("Could not determine git HEAD", e);
-        }
-
-        try {
-            if (!context.validateModel().isEmpty()) {
-                throw new JReleaserException("JReleaser with " + configFile.toAbsolutePath() + " has not been properly configured.");
-            }
-            new JReleaserModelPrinter.Plain(context.getLogger().getTracer())
-                .print(context.getModel().asMap());
-        } catch (JReleaserException e) {
-            context.getLogger().trace(e);
-            throw e;
-        } catch (Exception e) {
-            context.getLogger().trace(e);
-            throw new JReleaserException("JReleaser with " + configFile.toAbsolutePath() + " has not been properly configured.");
-        }
-
-        report(context);
-
-        return context;
     }
 
     public static JReleaserContext create(JReleaserLogger logger,
@@ -86,26 +57,7 @@ public class ContextCreator {
             outputDirectory,
             dryrun);
 
-        try {
-            context.getModel().setCommit(GitSdk.head(basedir));
-        } catch (IOException e) {
-            context.getLogger().trace(e);
-            throw new JReleaserException("Could not determine git HEAD", e);
-        }
-
-        try {
-            if (!context.validateModel().isEmpty()) {
-                throw new JReleaserException("JReleaser has not been properly configured.");
-            }
-            new JReleaserModelPrinter.Plain(context.getLogger().getTracer())
-                .print(context.getModel().asMap());
-        } catch (JReleaserException e) {
-            context.getLogger().trace(e);
-            throw e;
-        } catch (Exception e) {
-            context.getLogger().trace(e);
-            throw new JReleaserException("JReleaser has not been properly configured.");
-        }
+        ModelAutoConfigurer.autoConfigure(context);
 
         report(context);
 
@@ -126,7 +78,7 @@ public class ContextCreator {
     }
 
     private static void report(JReleaserContext context) {
-        String version = context.getModel().getProject().getVersion ();
+        String version = context.getModel().getProject().getVersion();
         parseVersion(version, context.getModel().getProject());
 
         context.getLogger().info("Project version set to {}", version);

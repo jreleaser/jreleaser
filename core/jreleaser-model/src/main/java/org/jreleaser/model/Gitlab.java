@@ -59,6 +59,11 @@ public class Gitlab extends GitService {
     }
 
     @Override
+    public void setBranch(String branch) {
+        setRef(branch);
+    }
+
+    @Override
     public String getReverseRepoHost() {
         return "com.gitlab";
     }

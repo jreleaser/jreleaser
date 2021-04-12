@@ -99,6 +99,7 @@ public class GiteaReleaser implements Releaser {
         }
 
         return new Repository(
+            Repository.Kind.OTHER,
             owner,
             repo,
             repository.getHtmlUrl(),

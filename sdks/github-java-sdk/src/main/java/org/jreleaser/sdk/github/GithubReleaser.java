@@ -96,6 +96,7 @@ public class GithubReleaser implements Releaser {
         }
 
         return new Repository(
+            Repository.Kind.GITHUB,
             owner,
             repo,
             repository.getUrl().toExternalForm(),

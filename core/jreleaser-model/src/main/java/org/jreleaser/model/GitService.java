@@ -115,6 +115,8 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
 
     public abstract String getBranch();
 
+    public abstract void setBranch(String branch);
+
     public abstract String getReverseRepoHost();
 
     public String getConfiguredTagName() {

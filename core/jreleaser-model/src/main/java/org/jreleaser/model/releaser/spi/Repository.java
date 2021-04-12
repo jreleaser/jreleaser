@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model.releaser.spi;
 
-import java.net.URL;
 import java.util.Objects;
 
 /**
@@ -29,12 +28,18 @@ public class Repository {
     private final String name;
     private final String url;
     private final String httpUrl;
+    private final Kind kind;
 
-    public Repository(String owner, String name, String url, String httpUrl) {
+    public Repository(Kind kind, String owner, String name, String url, String httpUrl) {
+        this.kind = kind;
         this.owner = owner;
         this.name = name;
         this.url = url;
         this.httpUrl = httpUrl;
+    }
+
+    public Kind getKind() {
+        return kind;
     }
 
     public String getOwner() {
@@ -56,7 +61,8 @@ public class Repository {
     @Override
     public String toString() {
         return "Repository[" +
-            "owner='" + owner + '\'' +
+            "kind='" + kind + '\'' +
+            ", owner='" + owner + '\'' +
             ", name='" + name + '\'' +
             ", url=" + url +
             ", httpUrl=" + httpUrl +
@@ -68,14 +74,20 @@ public class Repository {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Repository that = (Repository) o;
-        return owner.equals(that.owner) &&
+        return kind.equals(that.kind) &&
+            owner.equals(that.owner) &&
             name.equals(that.name) &&
-            url.equals(that.url) &&
             httpUrl.equals(that.httpUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(owner, name, url, httpUrl);
+        return Objects.hash(kind, owner, name, httpUrl);
+    }
+
+    public enum Kind {
+        GITHUB,
+        GITLAB,
+        OTHER
     }
 }

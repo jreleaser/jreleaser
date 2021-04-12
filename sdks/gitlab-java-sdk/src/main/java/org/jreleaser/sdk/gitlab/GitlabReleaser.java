@@ -110,6 +110,7 @@ public class GitlabReleaser implements Releaser {
         }
 
         return new Repository(
+            Repository.Kind.GITLAB,
             owner,
             repo,
             project.getWebUrl(),

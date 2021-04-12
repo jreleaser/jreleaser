@@ -24,12 +24,16 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.transport.RemoteConfig;
+import org.eclipse.jgit.transport.URIish;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.Commit;
+import org.jreleaser.model.releaser.spi.Repository;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * @author Andres Almiray
@@ -37,6 +41,7 @@ import java.util.Comparator;
  */
 public class GitSdk {
     public static final String REFS_TAGS = "refs/tags/";
+    public static final String REFS_HEADS = "refs/heads/";
 
     private final JReleaserContext context;
 
@@ -48,16 +53,62 @@ public class GitSdk {
         return Git.open(context.getBasedir().toFile());
     }
 
+    public Repository getRemote() throws IOException {
+        Git git = open();
+
+        try {
+            RemoteConfig remoteConfig = git.remoteList().call().stream()
+                .filter(rc -> "origin".equals(rc.getName()))
+                .findFirst()
+                .orElseThrow(() -> new IOException("repository doesn't have an 'origin' remote"));
+
+            List<URIish> uris = remoteConfig.getURIs();
+            if (uris.isEmpty()) {
+                // better be safe than sorry
+                throw new IOException("'origin' remote does not have a configured URL");
+            }
+
+            // grab the first one
+            URIish uri = uris.get(0);
+
+            Repository.Kind kind = Repository.Kind.OTHER;
+            if (uri.getHost().equals("github.com")) {
+                kind = Repository.Kind.GITHUB;
+            } else if (uri.getHost().equals("gitlab.com")) {
+                kind = Repository.Kind.GITLAB;
+            }
+
+            String[] parts = uri.getPath().split("/");
+            if (parts.length < 2) {
+                throw new IOException("Unparseable remote URL " + uri.getPath());
+            }
+
+            String owner = parts[parts.length - 2];
+            String name = parts[parts.length - 1].replace(".git", "");
+
+            return new Repository(
+                kind,
+                owner,
+                name,
+                null,
+                uri.toString());
+        } catch (GitAPIException e) {
+            throw new IOException("Could not determine 'origin' remote", e);
+        }
+    }
+
     public Commit head() throws IOException {
         Git git = open();
 
         RevWalk walk = new RevWalk(git.getRepository());
         ObjectId head = git.getRepository().resolve(Constants.HEAD);
         RevCommit commit = walk.parseCommit(head);
+        Ref ref = git.getRepository().findRef(Constants.HEAD);
 
         return new Commit(
             commit.getId().abbreviate(7).name(),
-            commit.getId().name());
+            commit.getId().name(),
+            extractHeadName(ref));
     }
 
     public void deleteTag(String tagName) throws IOException {
@@ -99,15 +150,24 @@ public class GitSdk {
         RevWalk walk = new RevWalk(git.getRepository());
         ObjectId head = git.getRepository().resolve(Constants.HEAD);
         RevCommit commit = walk.parseCommit(head);
+        Ref ref = git.getRepository().findRef(Constants.HEAD);
 
         return new Commit(
             commit.getId().abbreviate(7).name(),
-            commit.getId().name());
+            commit.getId().name(),
+            extractHeadName(ref));
     }
 
     public static String extractTagName(Ref tag) {
         if (tag.getName().startsWith(REFS_TAGS)) {
             return tag.getName().substring(REFS_TAGS.length());
+        }
+        return "";
+    }
+
+    public static String extractHeadName(Ref ref) {
+        if (ref.getName().startsWith(REFS_HEADS)) {
+            return ref.getName().substring(REFS_HEADS.length());
         }
         return "";
     }

@@ -82,6 +82,11 @@ public class Gitea extends GitService {
     }
 
     @Override
+    public void setBranch(String branch) {
+        setTargetCommitish(branch);
+    }
+
+    @Override
     public String getReverseRepoHost() {
         return null;
     }

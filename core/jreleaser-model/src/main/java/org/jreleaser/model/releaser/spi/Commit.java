@@ -26,10 +26,12 @@ import java.util.Objects;
 public class Commit {
     private final String shortHash;
     private final String fullHash;
+    private final String refName;
 
-    public Commit(String shortHash, String fullHash) {
+    public Commit(String shortHash, String fullHash, String refName) {
         this.shortHash = shortHash;
         this.fullHash = fullHash;
+        this.refName = refName;
     }
 
     public String getShortHash() {
@@ -40,11 +42,16 @@ public class Commit {
         return fullHash;
     }
 
+    public String getRefName() {
+        return refName;
+    }
+
     @Override
     public String toString() {
         return "Commit[" +
             "shortHash='" + shortHash + '\'' +
             ", fullHash='" + fullHash + '\'' +
+            ", refName='" + refName + '\'' +
             "]";
     }
 
@@ -54,11 +61,12 @@ public class Commit {
         if (o == null || getClass() != o.getClass()) return false;
         Commit that = (Commit) o;
         return shortHash.equals(that.shortHash) &&
-            fullHash.equals(that.fullHash);
+            fullHash.equals(that.fullHash) &&
+            refName.equals(that.refName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(shortHash, fullHash);
+        return Objects.hash(shortHash, fullHash, refName);
     }
 }
