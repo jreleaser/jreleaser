@@ -53,7 +53,7 @@ public class CommitAuthor implements Domain {
     public Map<String, Object> asMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", getName());
-        map.put("owner", getEmail());
+        map.put("email", getEmail());
         return map;
     }
 }

@@ -30,6 +30,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.model.releaser.spi.Repository;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -43,14 +44,14 @@ public class GitSdk {
     public static final String REFS_TAGS = "refs/tags/";
     public static final String REFS_HEADS = "refs/heads/";
 
-    private final JReleaserContext context;
+    private final File basedir;
 
-    private GitSdk(JReleaserContext context) {
-        this.context = context;
+    private GitSdk(File basedir) {
+        this.basedir = basedir;
     }
 
     public Git open() throws IOException {
-        return Git.open(context.getBasedir().toFile());
+        return Git.open(basedir);
     }
 
     public Repository getRemote() throws IOException {
@@ -141,7 +142,15 @@ public class GitSdk {
     }
 
     public static GitSdk of(JReleaserContext context) {
-        return new GitSdk(context);
+        return new GitSdk(context.getBasedir().toFile());
+    }
+
+    public static GitSdk of(Path basedir) {
+        return new GitSdk(basedir.toFile());
+    }
+
+    public static GitSdk of(File basedir) {
+        return new GitSdk(basedir);
     }
 
     public static Commit head(Path basedir) throws IOException {
