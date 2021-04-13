@@ -81,7 +81,8 @@ public class Milestone implements Domain {
         this.name = name;
     }
 
-    public Map<String, Object> asMap() {
+    @Override
+    public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
         map.put("close", isClose());

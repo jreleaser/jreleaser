@@ -51,7 +51,7 @@ public abstract class DockerValidator extends Validator {
         if (!tool.isActiveSet() && model.getPackagers().getDocker().isActiveSet()) {
             tool.setActive(model.getPackagers().getDocker().getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(),distribution)) return;
+        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
         context.getLogger().debug("distribution.{}.docker", distribution.getName());
 
         validateTemplate(context, distribution, tool, model.getPackagers().getDocker(), errors);

@@ -107,15 +107,15 @@ public class Announce implements Domain, EnabledProvider {
     }
 
     @Override
-    public Map<String, Object> asMap() {
+    public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
-        map.putAll(discussions.asMap());
-        map.putAll(mail.asMap());
-        map.putAll(sdkman.asMap());
-        map.putAll(slack.asMap());
-        map.putAll(twitter.asMap());
-        map.putAll(zulip.asMap());
+        map.putAll(discussions.asMap(full));
+        map.putAll(mail.asMap(full));
+        map.putAll(sdkman.asMap(full));
+        map.putAll(slack.asMap(full));
+        map.putAll(twitter.asMap(full));
+        map.putAll(zulip.asMap(full));
         return map;
     }
 }

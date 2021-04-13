@@ -31,7 +31,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
-import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -45,7 +44,7 @@ public abstract class BrewValidator extends Validator {
         if (!tool.isActiveSet() && model.getPackagers().getBrew().isActiveSet()) {
             tool.setActive(model.getPackagers().getBrew().getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(),distribution)) return;
+        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
         context.getLogger().debug("distribution.{}.brew", distribution.getName());
 
         validateCommitAuthor(tool, model.getPackagers().getBrew());

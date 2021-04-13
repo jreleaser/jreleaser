@@ -19,7 +19,9 @@ package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
 import org.jreleaser.gradle.plugin.internal.JReleaserModelPrinter
 
 import javax.inject.Inject
@@ -31,15 +33,23 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class JReleaserConfigTask extends AbstractJReleaserTask {
+    final Property<Boolean> full
+
     @Inject
     JReleaserConfigTask(ObjectFactory objects) {
         super(objects)
+        full = objects.property(Boolean).convention(false)
+    }
+
+    @Option(option = 'full', description = 'Display full configuration (OPTIONAL).')
+    void full(boolean full) {
+        this.full.set(full)
     }
 
     @TaskAction
     void displayConfig() {
         println '== JReleaser =='
         new JReleaserModelPrinter(project)
-            .print(context.get().model.asMap())
+            .print(context.get().model.asMap(full.get()))
     }
 }

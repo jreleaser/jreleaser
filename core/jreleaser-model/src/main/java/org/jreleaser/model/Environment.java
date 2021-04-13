@@ -85,7 +85,7 @@ public class Environment implements Domain {
     }
 
     @Override
-    public final Map<String, Object> asMap() {
+    public final Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("variables", variables);
 

@@ -34,6 +34,7 @@
     <property name="jreleaser.announcer.name" value=""/>
     <property name="jreleaser.overwrite" value="false"/>
     <property name="jreleaser.snapshot" value="false"/>
+    <property name="jreleaser.full" value="false"/>
 
     <target name="jreleaser-template">
         <jreleaser:template skip="${jreleaser.skip}"
@@ -65,7 +66,7 @@
     </target>
 
     <target name="jreleaser-config">
-        <jreleaser:config dryrun="${jreleaser.dryrun}"
+        <jreleaser:config full="${jreleaser.full}"
                           configFile="${jreleaser.config.file}"/>
     </target>
 

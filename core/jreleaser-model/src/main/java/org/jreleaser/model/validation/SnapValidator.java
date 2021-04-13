@@ -47,7 +47,7 @@ public abstract class SnapValidator extends Validator {
         if (!tool.isActiveSet() && model.getPackagers().getSnap().isActiveSet()) {
             tool.setActive(model.getPackagers().getSnap().getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(),distribution)) return;
+        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
         context.getLogger().debug("distribution.{}.snap", distribution.getName());
 
         validateCommitAuthor(tool, model.getPackagers().getSnap());

@@ -38,6 +38,11 @@ public class JReleaserConfigMojo extends AbstractJReleaserMojo {
      */
     @Parameter(property = "jreleaser.config.skip")
     private boolean skip;
+    /**
+     * Display full configuration.
+     */
+    @Parameter(property = "jreleaser.config.full")
+    private boolean full;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -45,6 +50,6 @@ public class JReleaserConfigMojo extends AbstractJReleaserMojo {
         if (skip) return;
 
         new JReleaserModelPrinter(new PrintWriter(System.out, true))
-            .print(createContext().getModel().asMap());
+            .print(createContext().getModel().asMap(full));
     }
 }

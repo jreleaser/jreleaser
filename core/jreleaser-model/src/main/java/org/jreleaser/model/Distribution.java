@@ -239,24 +239,27 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     }
 
     @Override
-    public Map<String, Object> asMap() {
+    public Map<String, Object> asMap(boolean full) {
+        if (!full && !isEnabled()) return Collections.emptyMap();
+
         Map<String, Object> props = new LinkedHashMap<>();
+        props.put("enabled", isEnabled());
         props.put("active", active);
         props.put("type", type);
         props.put("executable", executable);
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         for (int i = 0; i < artifacts.size(); i++) {
-            mappedArtifacts.put("artifact " + i, artifacts.get(i).asMap());
+            mappedArtifacts.put("artifact " + i, artifacts.get(i).asMap(full));
         }
         props.put("artifacts", mappedArtifacts);
 
         props.put("tags", tags);
         props.put("extraProperties", getResolvedExtraProperties());
         if (java.isEnabled()) {
-            props.put("java", java.asMap());
+            props.put("java", java.asMap(full));
         }
-        props.putAll(super.asMap());
+        props.putAll(super.asMap(full));
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(name, props);

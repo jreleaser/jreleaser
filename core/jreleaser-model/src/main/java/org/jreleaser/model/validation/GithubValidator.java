@@ -24,7 +24,6 @@ import java.util.List;
 
 import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.model.GitService.PRERELEASE;
-import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray

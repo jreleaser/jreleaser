@@ -133,10 +133,10 @@ public class Brew extends AbstractRepositoryTool {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
-        super.asMap(props);
+    protected void asMap(boolean full, Map<String, Object> props) {
+        super.asMap(full, props);
         props.put("formulaName", formulaName);
-        props.put("tap", tap.asMap());
+        props.put("tap", tap.asMap(full));
         props.put("dependencies", dependencies);
     }
 

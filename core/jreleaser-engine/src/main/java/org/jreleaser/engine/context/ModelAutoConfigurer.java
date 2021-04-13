@@ -72,7 +72,7 @@ public class ModelAutoConfigurer {
                 throw new JReleaserException("JReleaser has not been properly configured.");
             }
             new JReleaserModelPrinter.Plain(context.getLogger().getTracer())
-                .print(context.getModel().asMap());
+                .print(context.getModel().asMap(true));
         } catch (JReleaserException e) {
             context.getLogger().trace(e);
             throw e;

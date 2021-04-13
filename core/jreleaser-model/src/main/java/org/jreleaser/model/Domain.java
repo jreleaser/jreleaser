@@ -25,5 +25,5 @@ import java.util.Map;
  * @since 0.1.0
  */
 interface Domain extends Serializable {
-    Map<String, Object> asMap();
+    Map<String, Object> asMap(boolean full);
 }

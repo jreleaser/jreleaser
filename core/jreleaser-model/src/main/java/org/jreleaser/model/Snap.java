@@ -225,14 +225,14 @@ public class Snap extends AbstractRepositoryTool {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
-        super.asMap(props);
+    protected void asMap(boolean full, Map<String, Object> props) {
+        super.asMap(full, props);
         props.put("base", base);
         props.put("grade", grade);
         props.put("confinement", confinement);
         props.put("exportedLogin", exportedLogin);
         props.put("remoteBuild", isRemoteBuild());
-        props.put("snap", snap.asMap());
+        props.put("snap", snap.asMap(full));
         props.put("localPlugs", localPlugs);
         props.put("localSlots", localSlots);
         props.put("plugs", plugs);

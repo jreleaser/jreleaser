@@ -29,8 +29,12 @@ import picocli.CommandLine;
     mixinStandardHelpOptions = true,
     description = "Display current configuration")
 public class Config extends AbstractModelCommand {
+    @CommandLine.Option(names = {"-f", "--full"},
+        description = "Display full configuration")
+    boolean full;
+
     @Override
     protected void doExecute(JReleaserContext context) {
-        new JReleaserModelPrinter(parent.out).print(context.getModel().asMap());
+        new JReleaserModelPrinter(parent.out).print(context.getModel().asMap(full));
     }
 }

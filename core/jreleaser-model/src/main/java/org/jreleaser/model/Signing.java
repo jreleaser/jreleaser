@@ -137,10 +137,11 @@ public class Signing implements Domain, Activatable {
     }
 
     @Override
-    public final Map<String, Object> asMap() {
-        if (!isEnabled()) return Collections.emptyMap();
+    public final Map<String, Object> asMap(boolean full) {
+        if (!full && !isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> map = new LinkedHashMap<>();
+        map.put("enabled", isEnabled());
         map.put("active", active);
         map.put("armored", isArmored());
         map.put("publicKey", isNotBlank(publicKey) ? "************" : "**unset**");

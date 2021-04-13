@@ -27,9 +27,15 @@ import java.io.PrintWriter;
  * @since 0.1.0
  */
 public class JReleaserConfigTask extends AbstractJReleaserTask {
+    private boolean full;
+
+    public void setFull(boolean full) {
+        this.full = full;
+    }
+
     @Override
     protected void doExecute(JReleaserContext context) {
         new JReleaserModelPrinter(new PrintWriter(System.out, true))
-            .print(context.getModel().asMap());
+            .print(context.getModel().asMap(full));
     }
 }

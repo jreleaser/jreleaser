@@ -26,7 +26,6 @@ import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
-import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray
@@ -227,7 +226,7 @@ public class Project implements Domain, ExtraProperties {
     }
 
     @Override
-    public Map<String, Object> asMap() {
+    public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
         map.put("version", version);
@@ -241,7 +240,7 @@ public class Project implements Domain, ExtraProperties {
         map.put("tags", tags);
         map.put("extraProperties", getResolvedExtraProperties());
         if (java.isEnabled()) {
-            map.put("java", java.asMap());
+            map.put("java", java.asMap(full));
         }
         return map;
     }

@@ -140,10 +140,11 @@ public class Java implements Domain, ExtraProperties, EnabledProvider {
     }
 
     @Override
-    public Map<String, Object> asMap() {
-        if (!isEnabled()) return Collections.emptyMap();
+    public Map<String, Object> asMap(boolean full) {
+        if (!full && !isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> map = new LinkedHashMap<>();
+        map.put("enabled", isEnabled());
         map.put("version", version);
         map.put("groupId", groupId);
         map.put("artifactId", artifactId);

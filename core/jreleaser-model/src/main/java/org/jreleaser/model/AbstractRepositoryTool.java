@@ -45,7 +45,8 @@ public abstract class AbstractRepositoryTool extends AbstractTool implements Rep
         this.commitAuthor = commitAuthor;
     }
 
-    protected void asMap(Map<String, Object> props) {
-        props.put("commitAuthor", commitAuthor.asMap());
+    @Override
+    protected void asMap(boolean full, Map<String, Object> props) {
+        props.put("commitAuthor", commitAuthor.asMap(full));
     }
 }

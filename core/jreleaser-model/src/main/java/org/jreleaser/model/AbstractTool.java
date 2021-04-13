@@ -138,13 +138,14 @@ public abstract class AbstractTool implements Tool {
     }
 
     @Override
-    public final Map<String, Object> asMap() {
-        if (!isEnabled()) return Collections.emptyMap();
+    public final Map<String, Object> asMap(boolean full) {
+        if (!full && !isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> props = new LinkedHashMap<>();
+        props.put("enabled", isEnabled());
         props.put("active", active);
         props.put("templateDirectory", templateDirectory);
-        asMap(props);
+        asMap(full, props);
         props.put("extraProperties", getResolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
@@ -152,7 +153,7 @@ public abstract class AbstractTool implements Tool {
         return map;
     }
 
-    protected abstract void asMap(Map<String, Object> props);
+    protected abstract void asMap(boolean full, Map<String, Object> props);
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {

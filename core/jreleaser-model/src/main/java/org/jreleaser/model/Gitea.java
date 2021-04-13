@@ -92,8 +92,8 @@ public class Gitea extends GitService {
     }
 
     @Override
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = super.asMap();
+    public Map<String, Object> asMap(boolean full) {
+        Map<String, Object> map = super.asMap(full);
         map.put("targetCommitish", targetCommitish);
         map.put("draft", draft);
         map.put("prerelease", isPrerelease());

@@ -23,6 +23,6 @@ package org.jreleaser.model;
  */
 public interface Announcer extends Domain, Activatable {
     String getName();
-    
+
     boolean isSnapshotSupported();
 }

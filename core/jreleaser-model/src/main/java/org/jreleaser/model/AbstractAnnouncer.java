@@ -91,10 +91,11 @@ abstract class AbstractAnnouncer implements Announcer {
     }
 
     @Override
-    public final Map<String, Object> asMap() {
-        if (!isEnabled()) return Collections.emptyMap();
+    public final Map<String, Object> asMap(boolean full) {
+        if (!full && !isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> props = new LinkedHashMap<>();
+        props.put("enabled", isEnabled());
         props.put("active", active);
         asMap(props);
 

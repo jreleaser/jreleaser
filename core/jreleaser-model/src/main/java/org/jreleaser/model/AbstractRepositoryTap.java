@@ -115,7 +115,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
     }
 
     @Override
-    public Map<String, Object> asMap() {
+    public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("owner", owner);
         map.put("name", getResolvedName());

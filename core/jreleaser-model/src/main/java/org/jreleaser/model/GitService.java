@@ -417,7 +417,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     }
 
     @Override
-    public Map<String, Object> asMap() {
+    public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("host", host);
@@ -434,14 +434,14 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("issueTrackerUrlFormat", issueTrackerUrlFormat);
         map.put("tagName", tagName);
         map.put("releaseName", releaseName);
-        map.put("commitAuthor", commitAuthor.asMap());
+        map.put("commitAuthor", commitAuthor.asMap(full));
         map.put("sign", sign);
         map.put("skipTag", isSkipTag());
         map.put("overwrite", isOverwrite());
         map.put("update", isUpdate());
         map.put("apiEndpoint", apiEndpoint);
-        map.put("changelog", changelog.asMap());
-        map.put("milestone", milestone.asMap());
+        map.put("changelog", changelog.asMap(full));
+        map.put("milestone", milestone.asMap(full));
         return map;
     }
 

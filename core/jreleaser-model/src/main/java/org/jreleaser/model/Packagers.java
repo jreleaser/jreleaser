@@ -99,14 +99,14 @@ public class Packagers implements Domain {
     }
 
     @Override
-    public Map<String, Object> asMap() {
+    public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.putAll(brew.asMap());
-        map.putAll(chocolatey.asMap());
-        map.putAll(docker.asMap());
-        map.putAll(jbang.asMap());
-        map.putAll(scoop.asMap());
-        map.putAll(snap.asMap());
+        map.putAll(brew.asMap(full));
+        map.putAll(chocolatey.asMap(full));
+        map.putAll(docker.asMap(full));
+        map.putAll(jbang.asMap(full));
+        map.putAll(scoop.asMap(full));
+        map.putAll(snap.asMap(full));
         return map;
     }
 }

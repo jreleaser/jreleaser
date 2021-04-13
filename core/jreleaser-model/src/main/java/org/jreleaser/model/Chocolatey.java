@@ -74,11 +74,11 @@ public class Chocolatey extends AbstractRepositoryTool {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
-        super.asMap(props);
+    protected void asMap(boolean full, Map<String, Object> props) {
+        super.asMap(full, props);
         props.put("username", username);
         props.put("remoteBuild", isRemoteBuild());
-        props.put("bucket", bucket.asMap());
+        props.put("bucket", bucket.asMap(full));
     }
 
     @Override

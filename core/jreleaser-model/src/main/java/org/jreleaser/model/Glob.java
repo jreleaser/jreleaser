@@ -67,11 +67,11 @@ public class Glob implements Domain {
             try {
                 java.nio.file.Files.walkFileTree(path, fileCollector);
             } catch (IOException e) {
-                throw new JReleaserException("Unnexpected error resolving glob " + this.asMap());
+                throw new JReleaserException("Unnexpected error resolving glob " + this.asMap(true));
             }
 
             if (fileCollector.failed) {
-                throw new JReleaserException("Could not resolve glob " + this.asMap());
+                throw new JReleaserException("Could not resolve glob " + this.asMap(true));
             }
 
             paths = fileCollector.getFiles();
@@ -115,7 +115,8 @@ public class Glob implements Domain {
         return recursive != null;
     }
 
-    public Map<String, Object> asMap() {
+    @Override
+    public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("directory", directory);
         map.put("include", include);

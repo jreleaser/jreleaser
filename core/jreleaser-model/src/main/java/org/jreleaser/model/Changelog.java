@@ -85,8 +85,9 @@ public class Changelog implements Domain, EnabledProvider {
         this.external = external;
     }
 
-    public Map<String, Object> asMap() {
-        if (!isEnabled()) return Collections.emptyMap();
+    @Override
+    public Map<String, Object> asMap(boolean full) {
+        if (!full && !isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());

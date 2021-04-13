@@ -75,9 +75,8 @@ public abstract class PackagersValidator extends Validator {
                                          AbstractRepositoryTool tool,
                                          OwnerProvider ownerProvider,
                                          List<String> errors) {
-        if (tool.resolveEnabled(context.getModel().getProject())) {
-            validateCommitAuthor(tool, context.getModel().getRelease().getGitService());
-            validateOwner(ownerProvider, context.getModel().getRelease().getGitService());
-        }
+        tool.resolveEnabled(context.getModel().getProject());
+        validateCommitAuthor(tool, context.getModel().getRelease().getGitService());
+        validateOwner(ownerProvider, context.getModel().getRelease().getGitService());
     }
 }

@@ -163,20 +163,20 @@ public class JReleaserModel implements Domain {
         throw new JReleaserException("Distribution '" + name + "' not found");
     }
 
-    public Map<String, Object> asMap() {
+    public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
-        if (!environment.isEmpty()) map.put("environment", environment.asMap());
-        map.put("project", project.asMap());
-        map.put("release", release.asMap());
-        if (signing.isEnabled()) map.put("signing", signing.asMap());
-        if (announce.isEnabled()) map.put("announce", announce.asMap());
-        if (!files.isEmpty()) map.put("files", files.asMap());
-        if (packagers.hasEnabledPackagers()) map.put("packagers", packagers.asMap());
+        if (!environment.isEmpty()) map.put("environment", environment.asMap(full));
+        map.put("project", project.asMap(full));
+        map.put("release", release.asMap(full));
+        if (full || signing.isEnabled()) map.put("signing", signing.asMap(full));
+        if (full || announce.isEnabled()) map.put("announce", announce.asMap(full));
+        if (!files.isEmpty()) map.put("files", files.asMap(full));
+        if (full || packagers.hasEnabledPackagers()) map.put("packagers", packagers.asMap(full));
 
         List<Map<String, Object>> distributions = this.distributions.values()
             .stream()
-            .filter(Distribution::isEnabled)
-            .map(Distribution::asMap)
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
             .collect(Collectors.toList());
         if (!distributions.isEmpty()) map.put("distributions", distributions);
         return map;

@@ -69,8 +69,8 @@ public class Gitlab extends GitService {
     }
 
     @Override
-    public Map<String, Object> asMap() {
-        Map<String, Object> map = super.asMap();
+    public Map<String, Object> asMap(boolean full) {
+        Map<String, Object> map = super.asMap(full);
         map.put("ref", ref);
         return map;
     }

@@ -97,18 +97,18 @@ public class Files implements Domain {
     }
 
     @Override
-    public Map<String, Object> asMap() {
+    public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         for (int i = 0; i < artifacts.size(); i++) {
-            mappedArtifacts.put("artifact " + i, artifacts.get(i).asMap());
+            mappedArtifacts.put("artifact " + i, artifacts.get(i).asMap(full));
         }
         map.put("artifacts", mappedArtifacts);
 
         Map<String, Map<String, Object>> mappedGlobs = new LinkedHashMap<>();
         for (int i = 0; i < globs.size(); i++) {
-            mappedGlobs.put("glob " + i, globs.get(i).asMap());
+            mappedGlobs.put("glob " + i, globs.get(i).asMap(full));
         }
         map.put("globs", mappedGlobs);
 

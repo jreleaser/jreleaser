@@ -63,10 +63,10 @@ public class Jbang extends AbstractRepositoryTool {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
-        super.asMap(props);
+    protected void asMap(boolean full, Map<String, Object> props) {
+        super.asMap(full, props);
         props.put("alias", alias);
-        props.put("catalog", catalog.asMap());
+        props.put("catalog", catalog.asMap(full));
     }
 
     @Override

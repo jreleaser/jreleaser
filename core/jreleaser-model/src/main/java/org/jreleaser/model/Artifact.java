@@ -106,7 +106,8 @@ public class Artifact implements Domain {
         this.platform = platform;
     }
 
-    public Map<String, Object> asMap() {
+    @Override
+    public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("path", path);
         map.put("hash", hash);

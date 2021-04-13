@@ -71,11 +71,11 @@ public class Scoop extends AbstractRepositoryTool {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
-        super.asMap(props);
+    protected void asMap(boolean full, Map<String, Object> props) {
+        super.asMap(full, props);
         props.put("checkverUrl", checkverUrl);
         props.put("autoupdateUrl", autoupdateUrl);
-        props.put("bucket", bucket.asMap());
+        props.put("bucket", bucket.asMap(full));
     }
 
     @Override

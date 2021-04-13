@@ -142,7 +142,7 @@ public class Docker extends AbstractTool {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
+    protected void asMap(boolean full, Map<String, Object> props) {
         props.put("baseImage", baseImage);
         props.put("imageNames", imageNames);
         props.put("buildArgs", buildArgs);
@@ -150,7 +150,7 @@ public class Docker extends AbstractTool {
 
         List<Map<String, Object>> repos = this.registries
             .stream()
-            .map(Registry::asMap)
+            .map(r -> r.asMap(full))
             .collect(Collectors.toList());
         if (!repos.isEmpty()) props.put("registries", repos);
     }
