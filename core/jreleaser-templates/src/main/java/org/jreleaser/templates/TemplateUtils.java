@@ -108,7 +108,7 @@ public final class TemplateUtils {
 
                 String templatePrefix = "META-INF/jreleaser/templates/" +
                     distributionTypeName + "/" + toolName.toLowerCase() +
-                    (snapshot ? "-snapshot/" : "") + "/";
+                    (snapshot ? "-snapshot" : "") + "/";
                 JarFile jarFile = new JarFile(new File(location.toURI()));
 
                 if (snapshot) {
@@ -139,7 +139,7 @@ public final class TemplateUtils {
     private static boolean findTemplate(JReleaserLogger logger, JarFile jarFile, String templatePrefix, Map<String, Reader> templates) throws IOException {
         boolean templatesFound = false;
 
-        logger.debug("Searching for templates matching {}/*", templatePrefix);
+        logger.debug("Searching for templates matching {}*", templatePrefix);
         for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
             JarEntry entry = e.nextElement();
             if (entry.isDirectory() || !entry.getName().startsWith(templatePrefix)) {
