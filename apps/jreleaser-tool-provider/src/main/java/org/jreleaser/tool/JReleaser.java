@@ -29,10 +29,12 @@ import java.util.spi.ToolProvider;
  */
 @ServiceProviderFor(ToolProvider.class)
 public class JReleaser implements ToolProvider {
+    @Override
     public String name() {
         return "jreleaser";
     }
 
+    @Override
     public int run(PrintWriter out, PrintWriter err, String... args) {
         return Main.run(out, err, args);
     }

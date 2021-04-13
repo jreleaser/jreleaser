@@ -49,7 +49,6 @@ public class ModelAutoConfigurer {
         Repository repository = null;
         try {
             repository = GitSdk.of(context).getRemote();
-
         } catch (IOException e) {
             context.getLogger().trace(e);
             throw new JReleaserException("Could not determine remote", e);

@@ -175,8 +175,8 @@ public class GitSdk {
     }
 
     public static String extractHeadName(Ref ref) {
-        if (ref.getName().startsWith(REFS_HEADS)) {
-            return ref.getName().substring(REFS_HEADS.length());
+        if (ref.getTarget().getName().startsWith(REFS_HEADS)) {
+            return ref.getTarget().getName().substring(REFS_HEADS.length());
         }
         return "";
     }

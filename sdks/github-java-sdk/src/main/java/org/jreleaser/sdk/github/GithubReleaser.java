@@ -129,8 +129,7 @@ public class GithubReleaser implements Releaser {
         }
 
         // remote tag/release
-        GHRelease release = api.createRelease(github.getCanonicalRepoName(),
-            github.getEffectiveTagName(context.getModel().getProject()))
+        GHRelease release = api.createRelease(github.getCanonicalRepoName(), tagName)
             .commitish(github.getTargetCommitish())
             .name(github.getEffectiveReleaseName())
             .draft(github.isDraft())

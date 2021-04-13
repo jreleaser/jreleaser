@@ -134,7 +134,7 @@ public class GiteaReleaser implements Releaser {
         // remote tag/release
         GtRelease release = new GtRelease();
         release.setName(gitea.getEffectiveReleaseName());
-        release.setTagName(gitea.getEffectiveTagName(context.getModel().getProject()));
+        release.setTagName(tagName);
         release.setTargetCommitish(gitea.getTargetCommitish());
         release.setBody(changelog);
 

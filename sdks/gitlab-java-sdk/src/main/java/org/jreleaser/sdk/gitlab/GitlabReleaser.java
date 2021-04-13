@@ -146,7 +146,7 @@ public class GitlabReleaser implements Releaser {
 
         Release release = new Release();
         release.setName(gitlab.getEffectiveReleaseName());
-        release.setTagName(gitlab.getEffectiveTagName(context.getModel().getProject()));
+        release.setTagName(tagName);
         release.setRef(gitlab.getRef());
         release.setDescription(changelog);
 
