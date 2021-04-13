@@ -84,6 +84,7 @@ public class DiscussionsAnnouncer implements Announcer {
 
             api.createDiscussion(discussions.getOrganization(), discussions.getTeam(), title, message);
         } catch (IOException | IllegalStateException e) {
+            context.getLogger().trace(e);
             throw new AnnounceException(e);
         }
     }

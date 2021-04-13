@@ -180,6 +180,7 @@ public class Sdkman {
         try {
             if (!dryrun) runnable.run();
         } catch (RuntimeException e) {
+            logger.trace(e);
             throw new SdkmanException("Sdkman vendor operation failed", e);
         }
     }

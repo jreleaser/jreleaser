@@ -85,6 +85,7 @@ public class GitlabReleaser implements Releaser {
                 createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
             }
         } catch (IOException | IllegalStateException e) {
+            context.getLogger().trace(e);
             throw new ReleaseException(e);
         }
     }

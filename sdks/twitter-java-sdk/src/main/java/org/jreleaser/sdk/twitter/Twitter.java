@@ -65,6 +65,7 @@ public class Twitter {
         try {
             if (!dryrun) op.execute();
         } catch (twitter4j.TwitterException e) {
+            logger.trace(e);
             throw new TwitterException("Twitter operation failed", e);
         }
     }

@@ -72,6 +72,7 @@ public class Zulip {
         try {
             if (!dryrun) runnable.run();
         } catch (RuntimeException e) {
+            logger.trace(e);
             throw new ZulipException("Zulip operation failed", e);
         }
     }

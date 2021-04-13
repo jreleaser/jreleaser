@@ -91,6 +91,7 @@ public class MailAnnouncer implements Announcer {
                 .build()
                 .execute();
         } catch (MailException e) {
+            context.getLogger().trace(e);
             throw new AnnounceException(e);
         }
     }

@@ -80,6 +80,7 @@ public class Slack {
         try {
             if (!dryrun) return runnable.call();
         } catch (Exception e) {
+            logger.trace(e);
             throw new SlackException("Slack operation failed", e);
         }
 
