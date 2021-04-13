@@ -26,19 +26,19 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Distribution extends Packagers implements ExtraProperties, EnabledProvider {
+public class Distribution extends Packagers implements ExtraProperties, Activatable {
     private final List<String> tags = new ArrayList<>();
     private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private final List<Artifact> artifacts = new ArrayList<>();
+    private final Java java = new Java();
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;
     private String executable;
-    private Boolean enabled;
-    private final Java java = new Java();
+    private Active active;
 
     void setAll(Distribution distribution) {
         super.setAll(distribution);
-        this.enabled = distribution.enabled;
+        this.active = distribution.active;
         this.name = distribution.name;
         this.type = distribution.type;
         this.executable = distribution.executable;
@@ -49,18 +49,18 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     }
 
     @Override
-    public Boolean isEnabled() {
-        return enabled != null && enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public String resolveActive() {
+        return active != null ? active.name() : null;
     }
 
     public DistributionType getType() {

@@ -37,13 +37,10 @@ public abstract class ScoopValidator extends Validator {
     public static void validateScoop(JReleaserContext context, Distribution distribution, Scoop tool, List<String> errors) {
         JReleaserModel model = context.getModel();
 
-        if (!tool.isEnabledSet() && model.getPackagers().getScoop().isEnabledSet()) {
-            tool.setEnabled(model.getPackagers().getScoop().isEnabled());
+        if (!tool.isActiveSet() && model.getPackagers().getScoop().isActiveSet()) {
+            tool.setActive(model.getPackagers().getScoop().getActive());
         }
-        if (!tool.supportsDistribution(distribution)) {
-            tool.setEnabled(false);
-        }
-        if (!tool.isEnabled()) return;
+        if (!tool.resolveEnabled(context.getModel().getProject(),distribution)) return;
         context.getLogger().debug("distribution.{}.scoop", distribution.getName());
 
         validateCommitAuthor(tool, model.getPackagers().getScoop());

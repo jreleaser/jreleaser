@@ -28,7 +28,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractRepositoryTap implements RepositoryTap {
+public abstract class AbstractRepositoryTap implements RepositoryTap {
     protected String basename;
     protected String owner;
     protected String name;

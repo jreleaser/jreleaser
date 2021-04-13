@@ -54,17 +54,12 @@ public class SdkmanAnnouncer implements Announcer {
     }
 
     @Override
-    public boolean isSnapshotSupported() {
-        return false;
-    }
-
-    @Override
     public void announce() throws AnnounceException {
         Sdkman sdkman = context.getModel().getAnnounce().getSdkman();
 
         Map<String, String> platforms = new LinkedHashMap<>();
         // collect artifacts by supported SDKMAN! platform
-        for (Distribution distribution : context.getModel().getDistributions().values()) {
+        for (Distribution distribution : context.getModel().getActiveDistributions()) {
             if (!isDistributionSupported(distribution)) continue;
             for (Artifact artifact : distribution.getArtifacts()) {
                 // only zips are supported

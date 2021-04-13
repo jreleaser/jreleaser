@@ -18,6 +18,7 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.engine.context.ContextCreator;
+import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Github;
@@ -198,7 +199,7 @@ public class Release extends AbstractModelCommand {
             throw halt(e.getMessage());
         }
 
-        model.getSigning().setEnabled(signing);
+        model.getSigning().setActive(Active.ALWAYS);
         model.getSigning().setArmored(armored);
 
         for (String file : files) {

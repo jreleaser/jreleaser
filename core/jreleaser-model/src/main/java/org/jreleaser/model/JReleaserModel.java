@@ -128,6 +128,12 @@ public class JReleaserModel implements Domain {
         this.files.setAll(files);
     }
 
+    public List<Distribution> getActiveDistributions() {
+        return distributions.values().stream()
+            .filter(Distribution::isEnabled)
+            .collect(Collectors.toList());
+    }
+
     public Map<String, Distribution> getDistributions() {
         return distributions;
     }
@@ -169,6 +175,7 @@ public class JReleaserModel implements Domain {
 
         List<Map<String, Object>> distributions = this.distributions.values()
             .stream()
+            .filter(Distribution::isEnabled)
             .map(Distribution::asMap)
             .collect(Collectors.toList());
         if (!distributions.isEmpty()) map.put("distributions", distributions);

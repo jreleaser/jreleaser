@@ -17,8 +17,10 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.AbstractRepositoryTool;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.OwnerProvider;
 import org.jreleaser.model.Packagers;
 
 import java.util.List;
@@ -36,24 +38,46 @@ public abstract class PackagersValidator extends Validator {
         JReleaserModel model = context.getModel();
         Packagers packagers = model.getPackagers();
 
-        validateCommitAuthor(packagers.getBrew(), model.getRelease().getGitService());
-        validateOwner(packagers.getBrew().getTap(), model.getRelease().getGitService());
+        validatePackager(context,
+            packagers.getBrew(),
+            packagers.getBrew().getTap(),
+            errors);
 
-        validateCommitAuthor(packagers.getChocolatey(), model.getRelease().getGitService());
-        validateOwner(packagers.getChocolatey().getBucket(), model.getRelease().getGitService());
+        validatePackager(context,
+            packagers.getChocolatey(),
+            packagers.getChocolatey().getBucket(),
+            errors);
 
-        validateCommitAuthor(packagers.getJbang(), model.getRelease().getGitService());
-        validateOwner(packagers.getJbang().getCatalog(), model.getRelease().getGitService());
+        packagers.getDocker().resolveEnabled(context.getModel().getProject());
 
-        validateCommitAuthor(packagers.getScoop(), model.getRelease().getGitService());
-        validateOwner(packagers.getScoop().getBucket(), model.getRelease().getGitService());
+        validatePackager(context,
+            packagers.getJbang(),
+            packagers.getJbang().getCatalog(),
+            errors);
+
+        validatePackager(context,
+            packagers.getScoop(),
+            packagers.getScoop().getBucket(),
+            errors);
 
         if (isBlank(packagers.getScoop().getBucket().getName())) {
             packagers.getScoop().getBucket().setName("scoop-" + model.getRelease().getGitService().getOwner());
         }
         packagers.getScoop().getBucket().setBasename("scoop-" + model.getRelease().getGitService().getOwner());
 
-        validateCommitAuthor(packagers.getSnap(), model.getRelease().getGitService());
-        validateOwner(packagers.getSnap().getSnap(), model.getRelease().getGitService());
+        validatePackager(context,
+            packagers.getSnap(),
+            packagers.getSnap().getSnap(),
+            errors);
+    }
+
+    private static void validatePackager(JReleaserContext context,
+                                         AbstractRepositoryTool tool,
+                                         OwnerProvider ownerProvider,
+                                         List<String> errors) {
+        if (tool.resolveEnabled(context.getModel().getProject())) {
+            validateCommitAuthor(tool, context.getModel().getRelease().getGitService());
+            validateOwner(ownerProvider, context.getModel().getRelease().getGitService());
+        }
     }
 }

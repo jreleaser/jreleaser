@@ -44,11 +44,6 @@ public class TwitterAnnouncer implements Announcer {
     }
 
     @Override
-    public boolean isSnapshotSupported() {
-        return true;
-    }
-
-    @Override
     public void announce() throws AnnounceException {
         Twitter twitter = context.getModel().getAnnounce().getTwitter();
 

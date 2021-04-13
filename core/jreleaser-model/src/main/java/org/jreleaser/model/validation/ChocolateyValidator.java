@@ -37,13 +37,10 @@ public abstract class ChocolateyValidator extends Validator {
     public static void validateChocolatey(JReleaserContext context, Distribution distribution, Chocolatey tool, List<String> errors) {
         JReleaserModel model = context.getModel();
 
-        if (!tool.isEnabledSet() && model.getPackagers().getChocolatey().isEnabledSet()) {
-            tool.setEnabled(model.getPackagers().getChocolatey().isEnabled());
+        if (!tool.isActiveSet() && model.getPackagers().getChocolatey().isActiveSet()) {
+            tool.setActive(model.getPackagers().getChocolatey().getActive());
         }
-        if (!tool.supportsDistribution(distribution)) {
-            tool.setEnabled(false);
-        }
-        if (!tool.isEnabled()) return;
+        if (!tool.resolveEnabled(context.getModel().getProject(),distribution)) return;
         context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
 
         validateCommitAuthor(tool, model.getPackagers().getChocolatey());

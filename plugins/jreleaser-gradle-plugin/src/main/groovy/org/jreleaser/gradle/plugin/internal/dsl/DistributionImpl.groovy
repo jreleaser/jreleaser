@@ -37,6 +37,7 @@ import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Jbang
 import org.jreleaser.gradle.plugin.dsl.Scoop
 import org.jreleaser.gradle.plugin.dsl.Snap
+import org.jreleaser.model.Active
 import org.jreleaser.model.Distribution.DistributionType
 
 import javax.inject.Inject
@@ -54,7 +55,7 @@ class DistributionImpl implements Distribution {
     final Property<String> executable
     final Property<String> groupId
     final Property<String> artifactId
-    final Property<Boolean> enabled
+    final Property<Active> active
     final Property<DistributionType> distributionType
     final ListProperty<String> tags
     final MapProperty<String, String> extraProperties
@@ -73,7 +74,7 @@ class DistributionImpl implements Distribution {
     @Inject
     DistributionImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider, PackagersImpl packagers) {
         this.packagers = packagers
-        enabled = objects.property(Boolean).convention(Providers.notDefined())
+        active = objects.property(Active).convention(Providers.notDefined())
         executable = objects.property(String).convention(Providers.notDefined())
         groupId = objects.property(String).convention(Providers.notDefined())
         artifactId = objects.property(String).convention(Providers.notDefined())
@@ -114,7 +115,7 @@ class DistributionImpl implements Distribution {
 
     @Override
     void setDistributionType(String distributionType) {
-        this.distributionType.set(DistributionType.valueOf(distributionType.toUpperCase()))
+        this.distributionType.set(DistributionType.of(distributionType))
     }
 
     @Override
@@ -165,10 +166,17 @@ class DistributionImpl implements Distribution {
         action.execute(snap)
     }
 
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
+    }
+
     org.jreleaser.model.Distribution toModel() {
         org.jreleaser.model.Distribution distribution = new org.jreleaser.model.Distribution()
         distribution.name = name
-        if (enabled.present) distribution.enabled = enabled.get()
+        if (active.present) distribution.active = active.get()
         if (executable.present) distribution.executable = executable.get()
         distribution.type = distributionType.get()
         distribution.java = java.toModel()

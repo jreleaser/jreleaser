@@ -71,8 +71,7 @@ public abstract class ProjectValidator extends Validator {
         context.getLogger().debug("project");
         Project project = context.getModel().getProject();
 
-        if (context.getModel().getDistributions().isEmpty() &&
-            !context.getModel().getAnnounce().isEnabled()) {
+        if (context.getModel().getActiveDistributions().isEmpty() || !context.getModel().getAnnounce().isEnabled()) {
             return;
         }
 

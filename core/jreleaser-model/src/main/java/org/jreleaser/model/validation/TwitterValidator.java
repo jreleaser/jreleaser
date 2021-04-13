@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class TwitterValidator extends Validator {
     public static void validateTwitter(JReleaserContext context, Twitter twitter, List<String> errors) {
-        if (!twitter.isEnabled()) return;
+        if (!twitter.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.twitter");
 
         twitter.setConsumerKey(

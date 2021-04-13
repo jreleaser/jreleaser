@@ -27,7 +27,7 @@ import java.util.Map;
 abstract class AbstractTool implements Tool {
     protected final String name;
     protected final Map<String, String> extraProperties = new LinkedHashMap<>();
-    protected Boolean enabled;
+    protected Active active;
     protected String templateDirectory;
 
     protected AbstractTool(String name) {
@@ -35,24 +35,24 @@ abstract class AbstractTool implements Tool {
     }
 
     void setAll(AbstractTool tool) {
-        this.enabled = tool.enabled;
+        this.active = tool.active;
         this.templateDirectory = tool.templateDirectory;
         setExtraProperties(tool.extraProperties);
     }
 
     @Override
-    public Boolean isEnabled() {
-        return enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public String resolveActive() {
+        return active != null ? active.name() : null;
     }
 
     @Override
@@ -82,7 +82,7 @@ abstract class AbstractTool implements Tool {
     }
 
     public boolean isSet() {
-        return null != enabled ||
+        return null != active ||
             null != templateDirectory ||
             !extraProperties.isEmpty();
     }

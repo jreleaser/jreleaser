@@ -26,7 +26,5 @@ public interface Announcer {
 
     boolean isEnabled();
 
-    boolean isSnapshotSupported();
-
     void announce() throws AnnounceException;
 }

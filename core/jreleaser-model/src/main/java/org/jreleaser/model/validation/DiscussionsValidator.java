@@ -35,12 +35,12 @@ public abstract class DiscussionsValidator extends Validator {
     private static final String DEFAULT_DISCUSSIONS_TPL = "src/jreleaser/templates/discussions.tpl";
 
     public static void validateDiscussions(JReleaserContext context, Discussions discussions, List<String> errors) {
-        if (!discussions.isEnabled()) return;
+        if (!discussions.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.discussions");
 
         if (!Github.NAME.equals(context.getModel().getRelease().getGitService().getServiceName())) {
             errors.add("discussions may only be used when releasing to GitHub");
-            discussions.setEnabled(false);
+            discussions.disable();
             return;
         }
 

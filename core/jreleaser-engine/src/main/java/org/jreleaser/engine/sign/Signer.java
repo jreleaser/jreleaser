@@ -264,7 +264,7 @@ public class Signer {
             files.add(pair);
         }
 
-        for (Distribution distribution : context.getModel().getDistributions().values()) {
+        for (Distribution distribution : context.getModel().getActiveDistributions()) {
             for (Artifact artifact : distribution.getArtifacts()) {
                 Path input = artifact.getResolvedPath(context, distribution);
                 Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));

@@ -106,10 +106,6 @@ public class DistributionProcessor {
             context.getLogger().debug("Skipping for {} distribution", distributionName);
             return false;
         }
-        if (context.getModel().getProject().isSnapshot() && !tool.isSnapshotAllowed()) {
-            context.getLogger().info("Skipping for {} distribution (snapshots not allowed)", distributionName);
-            return false;
-        }
 
         ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
         if (!toolProcessor.supportsDistribution(distribution)) {

@@ -50,11 +50,6 @@ public class MailAnnouncer implements Announcer {
     }
 
     @Override
-    public boolean isSnapshotSupported() {
-        return true;
-    }
-
-    @Override
     public void announce() throws AnnounceException {
         Mail mail = context.getModel().getAnnounce().getMail();
 

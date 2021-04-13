@@ -28,8 +28,11 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Tool
+import org.jreleaser.model.Active
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -38,7 +41,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class AbstractTool implements Tool {
-    final Property<Boolean> enabled
+    final Property<Active> active
     final DirectoryProperty templateDirectory
     final MapProperty<String, String> extraProperties
     final Property<String> distributionName
@@ -49,7 +52,7 @@ abstract class AbstractTool implements Tool {
     @Inject
     AbstractTool(ObjectFactory objects, Provider<Directory> distributionsDirProvider) {
         this.distributionsDirProvider = distributionsDirProvider
-        enabled = objects.property(Boolean).convention(Providers.notDefined())
+        active = objects.property(Active).convention(Providers.notDefined())
         templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
         localTemplate = objects.directoryProperty()
         extraProperties = objects.mapProperty(String, String).convention(Providers.notDefined())
@@ -72,22 +75,29 @@ abstract class AbstractTool implements Tool {
         localTemplate.set(td)
     }
 
+    @Internal
+    boolean isSet() {
+        active.present ||
+            templateDirectory.present ||
+            extraProperties.present
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
+    }
+
     protected abstract String toolName()
 
     protected <T extends org.jreleaser.model.Tool> void fillToolProperties(T tool) {
-        tool.enabled = enabled.orElse(isSet())
+        if (active.present) tool.active = active.get()
         if (templateDirectory.present) {
             tool.templateDirectory = templateDirectory.get().asFile.toPath()
         } else if (localTemplate.asFile.get().exists()) {
             tool.templateDirectory = localTemplate.asFile.get().toPath()
         }
         if (extraProperties.present) tool.extraProperties.putAll(extraProperties.get())
-    }
-
-    @Internal
-    boolean isSet() {
-        enabled.present ||
-            templateDirectory.present ||
-            extraProperties.present
     }
 }

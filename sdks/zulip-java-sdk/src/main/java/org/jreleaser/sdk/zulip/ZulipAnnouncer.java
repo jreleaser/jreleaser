@@ -50,11 +50,6 @@ public class ZulipAnnouncer implements Announcer {
     }
 
     @Override
-    public boolean isSnapshotSupported() {
-        return true;
-    }
-
-    @Override
     public void announce() throws AnnounceException {
         Zulip zulip = context.getModel().getAnnounce().getZulip();
 

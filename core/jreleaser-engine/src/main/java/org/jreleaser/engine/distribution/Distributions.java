@@ -22,14 +22,18 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Distributions {
     public static void process(JReleaserContext context, String action, ToolProcessingFunction function) {
-        if (context.getModel().getDistributions().isEmpty()) {
-            context.getLogger().debug("No configured distributions [" + action.toLowerCase() + "]. Skipping");
+        List<Distribution> activeDistributions = context.getModel().getActiveDistributions();
+
+        if (activeDistributions.isEmpty()) {
+            context.getLogger().debug("No active distributions [" + action.toLowerCase() + "]. Skipping");
             return;
         }
 
@@ -49,7 +53,7 @@ public class Distributions {
             return;
         } else if (context.hasToolName()) {
             context.getLogger().info("{} distributions", action);
-            for (Distribution distribution : context.getModel().getDistributions().values()) {
+            for (Distribution distribution : activeDistributions) {
                 processDistribution(context, action, distribution, context.getToolName(), function);
             }
             return;
@@ -57,7 +61,7 @@ public class Distributions {
 
         // process all
         context.getLogger().info("{} distributions", action);
-        for (Distribution distribution : context.getModel().getDistributions().values()) {
+        for (Distribution distribution : activeDistributions) {
             processDistribution(context, action, distribution, function);
         }
     }

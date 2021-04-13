@@ -35,7 +35,7 @@ public abstract class SignValidator extends Validator {
         context.getLogger().debug("sign");
         Signing signing = context.getModel().getSigning();
 
-        if (!signing.isEnabled()) return;
+        if (!signing.resolveEnabled(context.getModel().getProject())) return;
 
         if (!signing.isArmoredSet()) {
             signing.setArmored(true);

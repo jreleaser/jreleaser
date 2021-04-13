@@ -71,17 +71,13 @@ public class Announcers {
         context.getLogger().setPrefix(announcer.getName());
 
         if (announcer.isEnabled()) {
-            if (context.getModel().getProject().isSnapshot() && !announcer.isSnapshotSupported()) {
-                context.getLogger().info("snapshots are not supported. Skipping");
-            } else {
-                try {
-                    announcer.announce();
-                } catch (AnnounceException e) {
-                    context.getLogger().warn(e.getMessage().trim());
-                }
+            try {
+                announcer.announce();
+            } catch (AnnounceException e) {
+                context.getLogger().warn(e.getMessage().trim());
             }
         } else {
-            context.getLogger().debug("not enabled");
+            context.getLogger().debug("disabled. Skipping");
         }
 
         context.getLogger().restorePrefix();
@@ -96,22 +92,22 @@ public class Announcers {
             .collect(Collectors.toMap(AnnouncerBuilderFactory::getName, AnnouncerBuilderFactory::getBuilder));
 
         Map<String, Announcer> announcers = new LinkedHashMap<>();
-        if (null != model.getAnnounce().getDiscussions() && model.getAnnounce().getDiscussions().isEnabled()) {
+        if (null != model.getAnnounce().getDiscussions()) {
             announcers.put(Discussions.NAME, builders.get(Discussions.NAME).configureWith(context).build());
         }
-        if (null != model.getAnnounce().getMail() && model.getAnnounce().getMail().isEnabled()) {
+        if (null != model.getAnnounce().getMail()) {
             announcers.put(Mail.NAME, builders.get(Mail.NAME).configureWith(context).build());
         }
-        if (null != model.getAnnounce().getSdkman() && model.getAnnounce().getSdkman().isEnabled()) {
+        if (null != model.getAnnounce().getSdkman()) {
             announcers.put(Sdkman.NAME, builders.get(Sdkman.NAME).configureWith(context).build());
         }
-        if (null != model.getAnnounce().getSlack() && model.getAnnounce().getSlack().isEnabled()) {
+        if (null != model.getAnnounce().getSlack()) {
             announcers.put(Slack.NAME, builders.get(Slack.NAME).configureWith(context).build());
         }
-        if (null != model.getAnnounce().getTwitter() && model.getAnnounce().getTwitter().isEnabled()) {
+        if (null != model.getAnnounce().getTwitter()) {
             announcers.put(Twitter.NAME, builders.get(Twitter.NAME).configureWith(context).build());
         }
-        if (null != model.getAnnounce().getZulip() && model.getAnnounce().getZulip().isEnabled()) {
+        if (null != model.getAnnounce().getZulip()) {
             announcers.put(Zulip.NAME, builders.get(Zulip.NAME).configureWith(context).build());
         }
 

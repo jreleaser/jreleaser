@@ -17,12 +17,37 @@
  */
 package org.jreleaser.model;
 
+import java.util.function.Predicate;
+
+import static org.jreleaser.util.StringUtils.isBlank;
+
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.2.0
  */
-public interface Announcer extends Domain, Activatable {
-    String getName();
-    
-    boolean isSnapshotSupported();
+public enum Active {
+    ALWAYS(project -> true),
+    NEVER(project -> false),
+    RELEASE(Project::isRelease),
+    SNAPSHOT(Project::isSnapshot);
+
+    private final Predicate<Project> test;
+
+    Active(Predicate<Project> test) {
+        this.test = test;
+    }
+
+    boolean check(Project project) {
+        return test.test(project);
+    }
+
+    @Override
+    public String toString() {
+        return name().toLowerCase();
+    }
+
+    public static Active of(String str) {
+        if (isBlank(str)) return null;
+        return Active.valueOf(str.toUpperCase());
+    }
 }

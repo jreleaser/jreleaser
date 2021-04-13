@@ -27,29 +27,62 @@ import java.util.Map;
  */
 abstract class AbstractAnnouncer implements Announcer {
     protected final String name;
-    protected Boolean enabled;
+    protected boolean enabled;
+    protected Active active;
 
     protected AbstractAnnouncer(String name) {
         this.name = name;
     }
 
     void setAll(AbstractAnnouncer announcer) {
+        this.active = announcer.active;
         this.enabled = announcer.enabled;
     }
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return enabled;
+    }
+
+    public void disable() {
+        active = Active.NEVER;
+        enabled = false;
+    }
+
+    public boolean resolveEnabled(Project project) {
+        if (null == active) {
+            active = Active.NEVER;
+        }
+        enabled = active.check(project);
+        if (project.isSnapshot() && !isSnapshotSupported()) {
+            enabled = false;
+        }
+        return enabled;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public void setActive(String str) {
+        this.active = Active.of(str);
+    }
+
+    @Override
+    public boolean isActiveSet() {
+        return active != null;
+    }
+
+    @Override
+    public boolean isSnapshotSupported() {
+        return true;
     }
 
     @Override
@@ -62,7 +95,7 @@ abstract class AbstractAnnouncer implements Announcer {
         if (!isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> props = new LinkedHashMap<>();
-        props.put("enabled", isEnabled());
+        props.put("active", active);
         asMap(props);
 
         Map<String, Object> map = new LinkedHashMap<>();

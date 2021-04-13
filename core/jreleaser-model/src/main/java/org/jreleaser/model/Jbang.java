@@ -75,11 +75,6 @@ public class Jbang extends AbstractRepositoryTool {
     }
 
     @Override
-    public boolean isSnapshotAllowed() {
-        return true;
-    }
-
-    @Override
     public boolean supportsPlatform(String platform) {
         return true;
     }

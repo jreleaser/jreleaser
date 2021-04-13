@@ -51,11 +51,6 @@ public class DiscussionsAnnouncer implements Announcer {
     }
 
     @Override
-    public boolean isSnapshotSupported() {
-        return true;
-    }
-
-    @Override
     public void announce() throws AnnounceException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
         Discussions discussions = context.getModel().getAnnounce().getDiscussions();

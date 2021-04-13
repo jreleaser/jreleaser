@@ -35,7 +35,7 @@ public abstract class SlackValidator extends Validator {
     private static final String DEFAULT_SLACK_TPL = "src/jreleaser/templates/slack.tpl";
 
     public static void validateSlack(JReleaserContext context, Slack slack, List<String> errors) {
-        if (!slack.isEnabled()) return;
+        if (!slack.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.slack");
 
         slack.setToken(

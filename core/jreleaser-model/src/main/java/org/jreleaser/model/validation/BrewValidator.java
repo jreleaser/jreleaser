@@ -42,13 +42,10 @@ public abstract class BrewValidator extends Validator {
     public static void validateBrew(JReleaserContext context, Distribution distribution, Brew tool, List<String> errors) {
         JReleaserModel model = context.getModel();
 
-        if (!tool.isEnabledSet() && model.getPackagers().getBrew().isEnabledSet()) {
-            tool.setEnabled(model.getPackagers().getBrew().isEnabled());
+        if (!tool.isActiveSet() && model.getPackagers().getBrew().isActiveSet()) {
+            tool.setActive(model.getPackagers().getBrew().getActive());
         }
-        if (!tool.supportsDistribution(distribution)) {
-            tool.setEnabled(false);
-        }
-        if (!tool.isEnabled()) return;
+        if (!tool.resolveEnabled(context.getModel().getProject(),distribution)) return;
         context.getLogger().debug("distribution.{}.brew", distribution.getName());
 
         validateCommitAuthor(tool, model.getPackagers().getBrew());
@@ -79,7 +76,7 @@ public abstract class BrewValidator extends Validator {
 
     public static void postValidateBrew(JReleaserContext context, List<String> errors) {
         Map<String, List<Distribution>> map = context.getModel().getDistributions().values().stream()
-            .filter(d -> d.getBrew().isEnabled())
+            .filter(d -> d.isEnabled() && d.getBrew().isEnabled())
             .collect(groupingBy(d -> d.getBrew().getResolvedFormulaName(context)));
 
         map.forEach((formulaName, distributions) -> {

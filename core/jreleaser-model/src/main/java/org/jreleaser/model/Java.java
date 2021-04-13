@@ -61,7 +61,6 @@ public class Java implements Domain, ExtraProperties, EnabledProvider {
         return enabled != null;
     }
 
-
     @Override
     public String getPrefix() {
         return "java";

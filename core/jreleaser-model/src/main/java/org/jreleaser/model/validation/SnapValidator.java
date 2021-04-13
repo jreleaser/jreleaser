@@ -44,13 +44,10 @@ public abstract class SnapValidator extends Validator {
     public static void validateSnap(JReleaserContext context, Distribution distribution, Snap tool, List<String> errors) {
         JReleaserModel model = context.getModel();
 
-        if (!tool.isEnabledSet() && model.getPackagers().getSnap().isEnabledSet()) {
-            tool.setEnabled(model.getPackagers().getSnap().isEnabled());
+        if (!tool.isActiveSet() && model.getPackagers().getSnap().isActiveSet()) {
+            tool.setActive(model.getPackagers().getSnap().getActive());
         }
-        if (!tool.supportsDistribution(distribution)) {
-            tool.setEnabled(false);
-        }
-        if (!tool.isEnabled()) return;
+        if (!tool.resolveEnabled(context.getModel().getProject(),distribution)) return;
         context.getLogger().debug("distribution.{}.snap", distribution.getName());
 
         validateCommitAuthor(tool, model.getPackagers().getSnap());

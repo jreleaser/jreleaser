@@ -21,5 +21,5 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Announcer extends EnabledProvider {
+public interface Announcer extends Activatable {
 }

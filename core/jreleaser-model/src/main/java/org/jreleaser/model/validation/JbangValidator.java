@@ -40,13 +40,10 @@ public abstract class JbangValidator extends Validator {
     public static void validateJbang(JReleaserContext context, Distribution distribution, Jbang tool, List<String> errors) {
         JReleaserModel model = context.getModel();
 
-        if (!tool.isEnabledSet() && model.getPackagers().getJbang().isEnabledSet()) {
-            tool.setEnabled(model.getPackagers().getJbang().isEnabled());
+        if (!tool.isActiveSet() && model.getPackagers().getJbang().isActiveSet()) {
+            tool.setActive(model.getPackagers().getJbang().getActive());
         }
-        if (!tool.supportsDistribution(distribution)) {
-            tool.setEnabled(false);
-        }
-        if (!tool.isEnabled()) return;
+        if (!tool.resolveEnabled(context.getModel().getProject(),distribution)) return;
         context.getLogger().debug("distribution.{}.jbang", distribution.getName());
 
         validateCommitAuthor(tool, model.getPackagers().getJbang());
@@ -97,7 +94,7 @@ public abstract class JbangValidator extends Validator {
 
     public static void postValidateJBang(JReleaserContext context, List<String> errors) {
         Map<String, List<Distribution>> map = context.getModel().getDistributions().values().stream()
-            .filter(d -> d.getJbang().isEnabled())
+            .filter(d -> d.isEnabled() && d.getJbang().isEnabled())
             .collect(groupingBy(d -> d.getJbang().getAlias()));
 
         map.forEach((alias, distributions) -> {

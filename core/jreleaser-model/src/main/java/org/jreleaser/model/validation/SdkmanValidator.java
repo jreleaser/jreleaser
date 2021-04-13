@@ -31,7 +31,7 @@ import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
  */
 public abstract class SdkmanValidator extends Validator {
     public static void validateSdkman(JReleaserContext context, Sdkman sdkman, List<String> errors) {
-        if (!sdkman.isEnabled()) return;
+        if (!sdkman.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.sdkman");
 
         sdkman.setConsumerKey(
@@ -48,9 +48,9 @@ public abstract class SdkmanValidator extends Validator {
                 sdkman.getConsumerToken(),
                 errors));
 
-        if (context.getModel().getDistributions().isEmpty()) {
-            context.getLogger().warn("There are no configured distributions. Disabling Sdkman announcer");
-            sdkman.setEnabled(false);
+        if (context.getModel().getActiveDistributions().isEmpty()) {
+            context.getLogger().warn("There are no active distributions. Disabling Sdkman announcer");
+            sdkman.disable();
         }
     }
 }

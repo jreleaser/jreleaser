@@ -21,7 +21,7 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Tool extends ExtraProperties, EnabledProvider {
+public interface Tool extends ExtraProperties, Activatable {
     String getName();
 
     String getTemplateDirectory();

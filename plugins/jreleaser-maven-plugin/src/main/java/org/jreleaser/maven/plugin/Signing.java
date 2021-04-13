@@ -21,15 +21,15 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Signing implements EnabledProvider {
-    private Boolean enabled;
+public class Signing implements Activatable {
+    private Active active;
     private boolean armored;
     private String publicKey;
     private String secretKey;
     private String passphrase;
 
     void setAll(Signing signing) {
-        this.enabled = signing.enabled;
+        this.active = signing.active;
         this.armored = signing.armored;
         this.publicKey = signing.publicKey;
         this.secretKey = signing.secretKey;
@@ -37,18 +37,18 @@ public class Signing implements EnabledProvider {
     }
 
     @Override
-    public Boolean isEnabled() {
-        return enabled != null && enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public String resolveActive() {
+        return active != null ? active.name() : null;
     }
 
     public boolean isArmored() {

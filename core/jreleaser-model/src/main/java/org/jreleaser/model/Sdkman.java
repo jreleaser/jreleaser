@@ -49,6 +49,11 @@ public class Sdkman extends AbstractAnnouncer {
         this.major = sdkman.major;
     }
 
+    @Override
+    public boolean isSnapshotSupported() {
+        return false;
+    }
+
     public String getResolvedConsumerKey() {
         return Env.resolve(SDKMAN_CONSUMER_KEY, consumerKey);
     }

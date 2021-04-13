@@ -15,20 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
-
-import groovy.transform.CompileStatic
-import org.gradle.api.provider.Property
-import org.jreleaser.model.Active
+package org.jreleaser.model;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.2.0
  */
-@CompileStatic
-interface Announcer {
-    Property<Active> getActive()
+public interface Activatable {
+    Active getActive();
 
-    void setActive(String str)
+    void setActive(String str);
+
+    void setActive(Active active);
+
+    boolean isActiveSet();
+
+    boolean isEnabled();
 }

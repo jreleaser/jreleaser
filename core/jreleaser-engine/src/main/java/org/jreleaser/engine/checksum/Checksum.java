@@ -49,7 +49,7 @@ public class Checksum {
             checksums.add(artifact.getHash() + " " + artifact.getFilePath().getFileName());
         }
 
-        for (Distribution distribution : context.getModel().getDistributions().values()) {
+        for (Distribution distribution : context.getModel().getActiveDistributions()) {
             for (Artifact artifact : distribution.getArtifacts()) {
                 readHash(context, distribution, artifact);
                 checksums.add(artifact.getHash() + " " + distribution.getName() + "/" +

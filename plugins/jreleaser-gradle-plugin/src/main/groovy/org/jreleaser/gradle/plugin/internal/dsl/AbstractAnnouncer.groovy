@@ -23,8 +23,11 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Announcer
+import org.jreleaser.model.Active
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -33,19 +36,26 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class AbstractAnnouncer implements Announcer {
-    final Property<Boolean> enabled
+    final Property<Active> active
 
     @Inject
     AbstractAnnouncer(ObjectFactory objects) {
-        enabled = objects.property(Boolean).convention(Providers.notDefined())
+        active = objects.property(Active).convention(Providers.notDefined())
     }
 
     @Internal
     boolean isSet() {
-        enabled.present
+        active.present
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
     }
 
     protected <A extends org.jreleaser.model.Announcer> void fillProperties(A announcer) {
-        if (enabled.present) announcer.enabled = enabled.get()
+        if (active.present) announcer.active = active.get()
     }
 }

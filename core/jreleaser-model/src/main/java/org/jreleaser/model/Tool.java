@@ -23,14 +23,12 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Tool extends Domain, ExtraProperties, EnabledProvider {
+public interface Tool extends Domain, ExtraProperties, Activatable {
     String getName();
 
     String getTemplateDirectory();
 
     void setTemplateDirectory(String templateDirectory);
-
-    boolean isSnapshotAllowed();
 
     Set<String> getSupportedExtensions();
 

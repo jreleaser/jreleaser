@@ -33,7 +33,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Distribution extends Packagers implements ExtraProperties, EnabledProvider {
+public class Distribution extends Packagers implements ExtraProperties, Activatable {
     public static final EnumSet<DistributionType> JAVA_DISTRIBUTION_TYPES = EnumSet.of(
         DistributionType.JAVA_BINARY,
         DistributionType.JLINK,
@@ -44,13 +44,15 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     private final Map<String, String> extraProperties = new LinkedHashMap<>();
     private final List<Artifact> artifacts = new ArrayList<>();
     private final Java java = new Java();
-    private Boolean enabled;
+    private Active active;
+    private boolean enabled;
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;
     private String executable;
 
     void setAll(Distribution distribution) {
         super.setAll(distribution);
+        this.active = distribution.active;
         this.enabled = distribution.enabled;
         this.name = distribution.name;
         this.type = distribution.type;
@@ -63,22 +65,45 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return enabled;
+    }
+
+    public void disable() {
+        active = Active.NEVER;
+        enabled = false;
+    }
+
+    public boolean resolveEnabled(Project project) {
+        if (null == active) {
+            active = Active.NEVER;
+        }
+        enabled = active.check(project);
+        return enabled;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public void setActive(String str) {
+        this.active = Active.of(str);
     }
 
     @Override
     public String getPrefix() {
         return "distribution";
+    }
+
+    @Override
+    public boolean isActiveSet() {
+        return active != null;
     }
 
     public DistributionType getType() {
@@ -90,9 +115,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     }
 
     public void setType(String type) {
-        this.type = DistributionType.valueOf(type.replaceAll(" ", "_")
-            .replaceAll("-", "_")
-            .toUpperCase());
+        this.type = DistributionType.of(type);
     }
 
     public String getName() {
@@ -218,7 +241,7 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     @Override
     public Map<String, Object> asMap() {
         Map<String, Object> props = new LinkedHashMap<>();
-        props.put("enabled", isEnabled());
+        props.put("active", active);
         props.put("type", type);
         props.put("executable", executable);
 
@@ -254,6 +277,13 @@ public class Distribution extends Packagers implements ExtraProperties, EnabledP
     public enum DistributionType {
         JAVA_BINARY,
         JLINK,
-        SINGLE_JAR
+        SINGLE_JAR;
+
+        public static DistributionType of(String str) {
+            if (isBlank(str)) return null;
+            return DistributionType.valueOf(str.replaceAll(" ", "_")
+                .replaceAll("-", "_")
+                .toUpperCase());
+        }
     }
 }

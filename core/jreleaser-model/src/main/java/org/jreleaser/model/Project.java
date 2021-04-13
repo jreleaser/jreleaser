@@ -77,6 +77,10 @@ public class Project implements Domain, ExtraProperties {
         return snapshot;
     }
 
+    public boolean isRelease() {
+        return !isSnapshot();
+    }
+
     public String getResolvedName() {
         return Env.resolve(PROJECT_NAME, name);
     }

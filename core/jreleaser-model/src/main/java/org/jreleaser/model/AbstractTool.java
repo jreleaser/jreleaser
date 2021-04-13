@@ -27,10 +27,11 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractTool implements Tool {
+public abstract class AbstractTool implements Tool {
     protected final String name;
     protected final Map<String, String> extraProperties = new LinkedHashMap<>();
-    protected Boolean enabled;
+    protected boolean enabled;
+    protected Active active;
     protected String templateDirectory;
 
     protected AbstractTool(String name) {
@@ -38,6 +39,7 @@ abstract class AbstractTool implements Tool {
     }
 
     void setAll(AbstractTool tool) {
+        this.active = tool.active;
         this.enabled = tool.enabled;
         this.templateDirectory = tool.templateDirectory;
         setExtraProperties(tool.extraProperties);
@@ -57,17 +59,51 @@ abstract class AbstractTool implements Tool {
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return enabled;
+    }
+
+    public void disable() {
+        active = Active.NEVER;
+        enabled = false;
+    }
+
+    public boolean resolveEnabled(Project project) {
+        if (null == active) {
+            active = Active.NEVER;
+        }
+        enabled = active.check(project);
+        return enabled;
+    }
+
+    public boolean resolveEnabled(Project project, Distribution distribution) {
+        if (null == active) {
+            active = Active.NEVER;
+        }
+        enabled = active.check(project);
+        if (!supportsDistribution(distribution)) {
+            enabled = false;
+        }
+        return enabled;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public void setActive(String str) {
+        this.active = Active.of(str);
+    }
+
+    @Override
+    public boolean isActiveSet() {
+        return active != null;
     }
 
     @Override
@@ -106,7 +142,7 @@ abstract class AbstractTool implements Tool {
         if (!isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> props = new LinkedHashMap<>();
-        props.put("enabled", isEnabled());
+        props.put("active", active);
         props.put("templateDirectory", templateDirectory);
         asMap(props);
         props.put("extraProperties", getResolvedExtraProperties());
@@ -117,11 +153,6 @@ abstract class AbstractTool implements Tool {
     }
 
     protected abstract void asMap(Map<String, Object> props);
-
-    @Override
-    public boolean isSnapshotAllowed() {
-        return false;
-    }
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {

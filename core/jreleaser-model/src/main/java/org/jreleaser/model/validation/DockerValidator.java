@@ -48,13 +48,10 @@ public abstract class DockerValidator extends Validator {
     public static void validateDocker(JReleaserContext context, Distribution distribution, Docker tool, List<String> errors) {
         JReleaserModel model = context.getModel();
 
-        if (!tool.isEnabledSet() && model.getPackagers().getDocker().isEnabledSet()) {
-            tool.setEnabled(model.getPackagers().getDocker().isEnabled());
+        if (!tool.isActiveSet() && model.getPackagers().getDocker().isActiveSet()) {
+            tool.setActive(model.getPackagers().getDocker().getActive());
         }
-        if (!tool.supportsDistribution(distribution)) {
-            tool.setEnabled(false);
-        }
-        if (!tool.isEnabled()) return;
+        if (!tool.resolveEnabled(context.getModel().getProject(),distribution)) return;
         context.getLogger().debug("distribution.{}.docker", distribution.getName());
 
         validateTemplate(context, distribution, tool, model.getPackagers().getDocker(), errors);

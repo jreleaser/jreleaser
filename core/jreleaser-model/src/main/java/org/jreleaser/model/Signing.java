@@ -29,18 +29,20 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Signing implements Domain, EnabledProvider {
+public class Signing implements Domain, Activatable {
     public static final String GPG_PASSPHRASE = "GPG_PASSPHRASE";
     public static final String GPG_PUBLIC_KEY = "GPG_PUBLIC_KEY";
     public static final String GPG_SECRET_KEY = "GPG_SECRET_KEY";
 
-    private Boolean enabled;
+    private Active active;
+    private boolean enabled;
     private Boolean armored;
     private String publicKey;
     private String secretKey;
     private String passphrase;
 
     void setAll(Signing signing) {
+        this.active = signing.active;
         this.enabled = signing.enabled;
         this.armored = signing.armored;
         this.publicKey = signing.publicKey;
@@ -50,17 +52,40 @@ public class Signing implements Domain, EnabledProvider {
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return enabled;
+    }
+
+    public void disable() {
+        active = Active.NEVER;
+        enabled = false;
+    }
+
+    public boolean resolveEnabled(Project project) {
+        if (null == active) {
+            active = Active.NEVER;
+        }
+        enabled = active.check(project);
+        return enabled;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public void setActive(String str) {
+        this.active = Active.of(str);
+    }
+
+    @Override
+    public boolean isActiveSet() {
+        return active != null;
     }
 
     public String getResolvedPublicKey() {
@@ -116,7 +141,7 @@ public class Signing implements Domain, EnabledProvider {
         if (!isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", isEnabled());
+        map.put("active", active);
         map.put("armored", isArmored());
         map.put("publicKey", isNotBlank(publicKey) ? "************" : "**unset**");
         map.put("secretKey", isNotBlank(secretKey) ? "************" : "**unset**");

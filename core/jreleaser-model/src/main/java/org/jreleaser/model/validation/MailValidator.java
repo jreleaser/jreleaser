@@ -33,7 +33,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class MailValidator extends Validator {
     public static void validateMail(JReleaserContext context, Mail mail, List<String> errors) {
-        if (!mail.isEnabled()) return;
+        if (!mail.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.mail");
 
         if (null == mail.getTransport()) {

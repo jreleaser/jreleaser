@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractRepositoryTool extends AbstractTool implements RepositoryTool {
+public abstract class AbstractRepositoryTool extends AbstractTool implements RepositoryTool {
     protected CommitAuthor commitAuthor = new CommitAuthor();
 
     protected AbstractRepositoryTool(String name) {

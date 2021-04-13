@@ -24,9 +24,12 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.PackagerTool
+import org.jreleaser.model.Active
 import org.jreleaser.model.Tool
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -35,12 +38,12 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class AbstractPackagerTool implements PackagerTool {
-    final Property<Boolean> enabled
+    final Property<Active> active
     final MapProperty<String, String> extraProperties
 
     @Inject
     AbstractPackagerTool(ObjectFactory objects) {
-        enabled = objects.property(Boolean).convention(Providers.notDefined())
+        active = objects.property(Active).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
@@ -48,12 +51,19 @@ abstract class AbstractPackagerTool implements PackagerTool {
 
     @Internal
     boolean isSet() {
-        enabled.present ||
+        active.present ||
             extraProperties.present
     }
 
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
+    }
+
     protected <T extends Tool> void fillToolProperties(T tool) {
-        tool.enabled = enabled.orElse(isSet())
+        if (active.present) tool.active = active.get()
         if (extraProperties.present) tool.extraProperties.putAll(extraProperties.get())
     }
 }

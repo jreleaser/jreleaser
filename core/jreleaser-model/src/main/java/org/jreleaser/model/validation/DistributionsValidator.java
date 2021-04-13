@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
@@ -72,9 +73,11 @@ public abstract class DistributionsValidator extends Validator {
     private static void validateDistribution(JReleaserContext context, Distribution distribution, List<String> errors) {
         context.getLogger().debug("distribution.{}", distribution.getName());
 
-        if (!distribution.isEnabledSet()) {
-            distribution.setEnabled(true);
+        if (!distribution.isActiveSet()) {
+            distribution.setActive(Active.ALWAYS);
         }
+        if (!distribution.resolveEnabled(context.getModel().getProject())) return;
+
         if (isBlank(distribution.getName())) {
             errors.add("distribution.name must not be blank");
             return;

@@ -232,7 +232,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Discussions convertDiscussions(Discussions discussions) {
         org.jreleaser.model.Discussions a = new org.jreleaser.model.Discussions();
-        a.setEnabled(discussions.isEnabledSet() ? discussions.isEnabled() : discussions.isSet());
+        a.setActive(discussions.resolveActive());
         a.setOrganization(discussions.getOrganization());
         a.setTeam(discussions.getTeam());
         a.setTitle(discussions.getTitle());
@@ -243,7 +243,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Mail convertMail(Mail mail) {
         org.jreleaser.model.Mail a = new org.jreleaser.model.Mail();
-        a.setEnabled(mail.isEnabledSet() ? mail.isEnabled() : mail.isSet());
+        a.setActive(mail.resolveActive());
         if (mail.isAuthSet()) a.setAuth(mail.isAuth());
         if (null != mail.getTransport()) a.setTransport(mail.getTransport().name());
         if (null != mail.getMimeType()) a.setMimeType(mail.getMimeType().name());
@@ -262,7 +262,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Sdkman convertSdkman(Sdkman sdkman) {
         org.jreleaser.model.Sdkman a = new org.jreleaser.model.Sdkman();
-        a.setEnabled(sdkman.isEnabledSet() ? sdkman.isEnabled() : sdkman.isSet());
+        a.setActive(sdkman.resolveActive());
         a.setConsumerKey(sdkman.getConsumerKey());
         a.setConsumerToken(sdkman.getConsumerToken());
         a.setCandidate(sdkman.getCandidate());
@@ -272,7 +272,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Slack convertSlack(Slack slack) {
         org.jreleaser.model.Slack a = new org.jreleaser.model.Slack();
-        a.setEnabled(slack.isEnabledSet() ? slack.isEnabled() : slack.isSet());
+        a.setActive(slack.resolveActive());
         a.setToken(slack.getToken());
         a.setChannel(slack.getChannel());
         a.setMessage(slack.getMessage());
@@ -282,7 +282,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Twitter convertTwitter(Twitter twitter) {
         org.jreleaser.model.Twitter a = new org.jreleaser.model.Twitter();
-        a.setEnabled(twitter.isEnabledSet() ? twitter.isEnabled() : twitter.isSet());
+        a.setActive(twitter.resolveActive());
         a.setConsumerKey(twitter.getConsumerKey());
         a.setConsumerSecret(twitter.getConsumerSecret());
         a.setAccessToken(twitter.getAccessToken());
@@ -293,7 +293,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Zulip convertZulip(Zulip zulip) {
         org.jreleaser.model.Zulip a = new org.jreleaser.model.Zulip();
-        a.setEnabled(zulip.isEnabledSet() ? zulip.isEnabled() : zulip.isSet());
+        a.setActive(zulip.resolveActive());
         a.setAccount(zulip.getAccount());
         a.setApiKey(zulip.getApiKey());
         a.setApiHost(zulip.getApiHost());
@@ -306,7 +306,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Signing convertSigning(Signing signing) {
         org.jreleaser.model.Signing s = new org.jreleaser.model.Signing();
-        if (signing.isEnabledSet()) s.setEnabled(signing.isEnabled());
+        s.setActive(signing.resolveActive());
         s.setArmored(signing.isArmored());
         s.setPublicKey(signing.getPublicKey());
         s.setSecretKey(signing.getSecretKey());
@@ -324,7 +324,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Distribution convertDistribution(JReleaserModel model, Distribution distribution) {
         org.jreleaser.model.Distribution d = new org.jreleaser.model.Distribution();
-        if (distribution.isEnabledSet()) d.setEnabled(distribution.isEnabled());
+        d.setActive(distribution.resolveActive());
         d.setName(distribution.getName());
         d.setType(distribution.getType().name());
         d.setExecutable(distribution.getExecutable());
@@ -385,7 +385,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Brew convertBrew(Brew brew) {
         org.jreleaser.model.Brew t = new org.jreleaser.model.Brew();
-        t.setEnabled(brew.isEnabledSet() ? brew.isEnabled() : brew.isSet());
+        t.setActive(brew.resolveActive());
         t.setTemplateDirectory(brew.getTemplateDirectory());
         t.setExtraProperties(brew.getExtraProperties());
         t.setTap(convertHomebrewTap(brew.getTap()));
@@ -412,7 +412,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Chocolatey convertChocolatey(Chocolatey chocolatey) {
         org.jreleaser.model.Chocolatey t = new org.jreleaser.model.Chocolatey();
-        t.setEnabled(chocolatey.isEnabledSet() ? chocolatey.isEnabled() : chocolatey.isSet());
+        t.setActive(chocolatey.resolveActive());
         t.setUsername(chocolatey.getUsername());
         t.setRemoteBuild(chocolatey.isRemoteBuild());
         t.setTemplateDirectory(chocolatey.getTemplateDirectory());
@@ -424,7 +424,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Docker convertDocker(Docker docker) {
         org.jreleaser.model.Docker t = new org.jreleaser.model.Docker();
-        t.setEnabled(docker.isEnabledSet() ? docker.isEnabled() : docker.isSet());
+        t.setActive(docker.resolveActive());
         t.setTemplateDirectory(docker.getTemplateDirectory());
         t.setExtraProperties(docker.getExtraProperties());
         t.setBaseImage(docker.getBaseImage());
@@ -464,7 +464,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Jbang convertJbang(Jbang jbang) {
         org.jreleaser.model.Jbang t = new org.jreleaser.model.Jbang();
-        t.setEnabled(jbang.isEnabledSet() ? jbang.isEnabled() : jbang.isSet());
+        t.setActive(jbang.resolveActive());
         t.setTemplateDirectory(jbang.getTemplateDirectory());
         t.setExtraProperties(jbang.getExtraProperties());
         t.setAlias(jbang.getAlias());
@@ -484,7 +484,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Scoop convertScoop(Scoop scoop) {
         org.jreleaser.model.Scoop t = new org.jreleaser.model.Scoop();
-        t.setEnabled(scoop.isEnabledSet() ? scoop.isEnabled() : scoop.isSet());
+        t.setActive(scoop.resolveActive());
         t.setTemplateDirectory(scoop.getTemplateDirectory());
         t.setExtraProperties(scoop.getExtraProperties());
         t.setCheckverUrl(scoop.getCheckverUrl());
@@ -505,7 +505,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Snap convertSnap(Snap snap) {
         org.jreleaser.model.Snap t = new org.jreleaser.model.Snap();
-        t.setEnabled(snap.isEnabledSet() ? snap.isEnabled() : snap.isSet());
+        t.setActive(snap.resolveActive());
         t.setTemplateDirectory(snap.getTemplateDirectory());
         t.setExtraProperties(snap.getExtraProperties());
         if (isNotBlank(snap.getBase())) t.setBase(snap.getBase());

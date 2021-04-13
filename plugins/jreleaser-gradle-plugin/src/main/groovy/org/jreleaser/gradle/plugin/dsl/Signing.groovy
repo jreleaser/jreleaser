@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.jreleaser.model.Active
 
 /**
  *
@@ -27,7 +28,9 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Signing {
-    Property<Boolean> getEnabled()
+    Property<Active> getActive()
+
+    void setActive(String str)
 
     Property<Boolean> getArmored()
 
