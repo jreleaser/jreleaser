@@ -71,7 +71,7 @@ public class Project implements Domain, ExtraProperties {
 
     public boolean isSnapshot() {
         if (null == snapshot) {
-            snapshot = version.matches(getResolvedSnapshotPattern());
+            snapshot = getResolvedVersion().matches(getResolvedSnapshotPattern());
         }
         return snapshot;
     }

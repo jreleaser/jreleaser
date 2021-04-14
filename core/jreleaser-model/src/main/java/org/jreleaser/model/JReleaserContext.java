@@ -63,8 +63,9 @@ public class JReleaserContext {
 
         try {
             JReleaserModelValidator.validate(this, errors);
-        } catch (IllegalArgumentException e) {
-            errors.add(e.getMessage());
+        } catch (Exception e) {
+            logger.trace(e);
+            errors.add(e.toString());
         }
 
         if (!errors.isEmpty()) {

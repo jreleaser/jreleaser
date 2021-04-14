@@ -78,7 +78,7 @@ public class ModelAutoConfigurer {
             throw e;
         } catch (Exception e) {
             context.getLogger().trace(e);
-            throw new JReleaserException("JReleaser has not been properly configured.");
+            throw new JReleaserException("JReleaser has not been properly configured.", e);
         }
     }
 
