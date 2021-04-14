@@ -64,7 +64,7 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         }
 
         if (PlatformUtils.isWindows()) {
-            context.getLogger().debug("Tool {} must not run on Windows", getToolName());
+            context.getLogger().debug("must not run on Windows", getToolName());
             return false;
         }
 
@@ -76,7 +76,7 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         Path primeDirectory = createPackage(props);
 
         if (!login(distribution, props)) {
-            context.getLogger().error("Could not log into snapcraft store");
+            context.getLogger().error("could not log into snapcraft store");
             return false;
         }
 

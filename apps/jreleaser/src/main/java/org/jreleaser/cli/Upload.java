@@ -27,18 +27,18 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "upload",
     mixinStandardHelpOptions = true,
-    description = "Upload all distributions")
+    description = "Upload all distributions.")
 public class Upload extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skips remote operations.")
     boolean dryrun;
 
     @CommandLine.Option(names = {"-dn", "--distribution-name"},
-        description = "The name of the distribution")
+        description = "The name of the distribution.")
     String distributionName;
 
     @CommandLine.Option(names = {"-tn", "--tool-name"},
-        description = "The name of the tool")
+        description = "The name of the tool.")
     String toolName;
 
     @Override

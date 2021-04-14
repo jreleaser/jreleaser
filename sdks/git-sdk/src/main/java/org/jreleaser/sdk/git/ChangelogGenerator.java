@@ -64,14 +64,14 @@ public class ChangelogGenerator {
 
         try {
             Git git = GitSdk.of(context).open();
-            context.getLogger().debug("Resolving commits");
+            context.getLogger().debug("resolving commits");
             Iterable<RevCommit> commits = resolveCommits(git, context);
 
             Comparator<RevCommit> revCommitComparator = Comparator.comparing(RevCommit::getCommitTime).reversed();
             if (changelog.getSort() == Changelog.Sort.ASC) {
                 revCommitComparator = Comparator.comparing(RevCommit::getCommitTime);
             }
-            context.getLogger().debug("Sorting commits {}", changelog.getSort());
+            context.getLogger().debug("sorting commits {}", changelog.getSort());
 
             return "## Changelog" +
                 System.lineSeparator() +
@@ -110,7 +110,7 @@ public class ChangelogGenerator {
         String tagName = gitService.getConfiguredTagName();
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
 
-        context.getLogger().debug("Looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
+        context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
 
         Optional<Ref> tag = tags.stream()
             .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
@@ -119,7 +119,7 @@ public class ChangelogGenerator {
 
         ObjectId head = git.getRepository().resolve(Constants.HEAD);
         if (tag.isPresent()) {
-            context.getLogger().debug("Found tag {}", extractTagName(tag.get()));
+            context.getLogger().debug("found tag {}", extractTagName(tag.get()));
             Ref peeled = git.getRepository().getRefDatabase().peel(tag.get());
             ObjectId fromRef = peeled.getPeeledObjectId() != null ? peeled.getPeeledObjectId() : peeled.getObjectId();
             return git.log().addRange(fromRef, head).call();

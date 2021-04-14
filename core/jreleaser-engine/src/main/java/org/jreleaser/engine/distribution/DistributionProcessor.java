@@ -65,17 +65,17 @@ public class DistributionProcessor {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
-            context.getLogger().debug("Skipping for {} distribution", distributionName);
+            context.getLogger().debug("skipping for {} distribution", distributionName);
             return false;
         }
 
         ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
         if (!toolProcessor.supportsDistribution(distribution)) {
-            context.getLogger().info("Distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
+            context.getLogger().info("distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
             return false;
         }
 
-        context.getLogger().info("Preparing {} distribution", distributionName);
+        context.getLogger().info("preparing {} distribution", distributionName);
 
         return toolProcessor.prepareDistribution(distribution, initProps());
     }
@@ -84,17 +84,17 @@ public class DistributionProcessor {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
-            context.getLogger().debug("Skipping for {} distribution", distributionName);
+            context.getLogger().debug("skipping for {} distribution", distributionName);
             return false;
         }
 
         ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
         if (!toolProcessor.supportsDistribution(distribution)) {
-            context.getLogger().info("Distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
+            context.getLogger().info("distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
             return false;
         }
 
-        context.getLogger().info("Packaging {} distribution", distributionName);
+        context.getLogger().info("packaging {} distribution", distributionName);
 
         return toolProcessor.packageDistribution(distribution, initProps());
     }
@@ -103,17 +103,17 @@ public class DistributionProcessor {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
-            context.getLogger().debug("Skipping for {} distribution", distributionName);
+            context.getLogger().debug("skipping for {} distribution", distributionName);
             return false;
         }
 
         ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
         if (!toolProcessor.supportsDistribution(distribution)) {
-            context.getLogger().info("Distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
+            context.getLogger().info("distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
             return false;
         }
 
-        context.getLogger().info("Uploading {} distribution", distributionName);
+        context.getLogger().info("uploading {} distribution", distributionName);
 
         return toolProcessor.uploadDistribution(distribution, Releasers.releaserFor(context), initProps());
     }

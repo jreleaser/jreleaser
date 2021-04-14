@@ -27,18 +27,18 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "package",
     mixinStandardHelpOptions = true,
-    description = "Package all distributions")
+    description = "Package all distributions.")
 public class Package extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skips remote operations.")
     boolean dryrun;
 
     @CommandLine.Option(names = {"-dn", "--distribution-name"},
-        description = "The name of the distribution")
+        description = "The name of the distribution.")
     String distributionName;
 
     @CommandLine.Option(names = {"-tn", "--tool-name"},
-        description = "The name of the tool")
+        description = "The name of the tool.")
     String toolName;
 
     @Override

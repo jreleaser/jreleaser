@@ -43,74 +43,78 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 @CommandLine.Command(name = "release",
     mixinStandardHelpOptions = true,
-    description = "Create or update a release")
+    description = "Create or update a release..")
 public class Release extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skips remote operations.")
     boolean dryrun;
 
     @CommandLine.Option(names = {"--auto-config"},
-        description = "Model auto configuration")
+        description = "Model auto configuration..")
     boolean autoConfig;
 
     @CommandLine.Option(names = {"--project-name"},
-        description = "The project's name")
+        description = "The projects name.")
     String projectName;
 
     @CommandLine.Option(names = {"--project-version"},
-        description = "The project's version")
+        description = "The projects version.")
     String projectVersion;
 
     @CommandLine.Option(names = {"--tag-name"},
-        description = "The release tag")
+        description = "The release tag.")
     String tagName;
 
     @CommandLine.Option(names = {"--release-name"},
-        description = "The release name")
+        description = "The release name.")
     String releaseName;
 
     @CommandLine.Option(names = {"--milestone-name"},
-        description = "The milestone name")
+        description = "The milestone name.")
     String milestoneName;
 
     @CommandLine.Option(names = {"--prerelease"},
-        description = "If the release is a prerelease")
+        description = "If the release is a prerelease.")
     boolean prerelease;
 
     @CommandLine.Option(names = {"--overwrite"},
-        description = "Overwrite an existing release")
+        description = "Overwrite an existing release.")
     boolean overwrite;
 
     @CommandLine.Option(names = {"--update"},
-        description = "Update an existing release")
+        description = "Update an existing release.")
     boolean update;
 
     @CommandLine.Option(names = {"--skip-tag"},
-        description = "Skip tagging the release")
+        description = "Skip tagging the release.")
     boolean skipTag;
 
     @CommandLine.Option(names = {"--changelog"},
-        description = "Path to changelog file")
+        description = "Path to changelog file.")
     String changelog;
 
+    @CommandLine.Option(names = {"--username"},
+        description = "Git username.")
+    String username;
+
     @CommandLine.Option(names = {"--commit-author-name"},
-        description = "Commit author name")
+        description = "Commit author name.")
     String commitAuthorName;
 
     @CommandLine.Option(names = {"--commit-author-email"},
-        description = "Commit author e-mail")
+        description = "Commit author e-mail.")
     String commitAuthorEmail;
 
     @CommandLine.Option(names = {"--signing-enabled"},
-        description = "Sign files")
+        description = "Sign files.")
     boolean signing;
 
     @CommandLine.Option(names = {"--signing-armored"},
-        description = "Generate ascii armored signatures")
+        description = "Generate ascii armored signatures.")
     boolean armored;
 
     @CommandLine.Option(names = {"--file"},
-        description = "Input file(s) to be uploaded")
+        description = "Input file(s) to be uploaded.")
     String[] files;
 
     protected void execute() {
@@ -149,6 +153,7 @@ public class Release extends AbstractModelCommand {
     private void dumpAutoConfig() {
         if (isNotBlank(projectName)) logger.info("- project.name: {}", projectName);
         if (isNotBlank(projectVersion)) logger.info("- project.version: {}", projectVersion);
+        if (isNotBlank(username)) logger.info("- release.username: {}", username);
         if (isNotBlank(tagName)) logger.info("- release.tagName: {}", tagName);
         if (isNotBlank(releaseName)) logger.info("- release.releaseName: {}", releaseName);
         if (isNotBlank(milestoneName)) logger.info("- release.milestone.name: {}", milestoneName);
@@ -186,6 +191,7 @@ public class Release extends AbstractModelCommand {
                     throw halt("Auto configuration does not support " + repository.getHttpUrl());
             }
 
+            service.setUsername(username);
             service.setTagName(tagName);
             service.setReleaseName(releaseName);
             service.getMilestone().setName(milestoneName);

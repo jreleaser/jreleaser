@@ -94,14 +94,14 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     public boolean prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
-            context.getLogger().debug("Creating props for {}/{}", distributionName, getToolName());
+            context.getLogger().debug("creating props for {}/{}", distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
                 context.getLogger().warn("Skipping {} distribution", distributionName);
                 return false;
             }
 
-            context.getLogger().debug("Resolving templates for {}/{}", distributionName, getToolName());
+            context.getLogger().debug("resolving templates for {}/{}", distributionName, getToolName());
             Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
                 distribution.getType(),
                 getToolName(),
@@ -109,13 +109,13 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 context.getBasedir().resolve(getTool().getTemplateDirectory()));
 
             for (Map.Entry<String, Reader> entry : templates.entrySet()) {
-                context.getLogger().debug("Evaluating template {} for {}/{}", entry.getKey(), distributionName, getToolName());
+                context.getLogger().debug("evaluating template {} for {}/{}", entry.getKey(), distributionName, getToolName());
                 String content = applyTemplate(entry.getValue(), newProps);
-                context.getLogger().debug("Writing template {} for {}/{}", entry.getKey(), distributionName, getToolName());
+                context.getLogger().debug("writing template {} for {}/{}", entry.getKey(), distributionName, getToolName());
                 writeFile(context.getModel().getProject(), distribution, content, newProps, entry.getKey());
             }
 
-            context.getLogger().debug("Copying license files");
+            context.getLogger().debug("copying license files");
             Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
             FileUtils.copyFiles(context.getLogger(),
                 context.getBasedir(),
@@ -131,10 +131,10 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     public boolean packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
-            context.getLogger().debug("Creating props for {}/{}", distributionName, getToolName());
+            context.getLogger().debug("creating props for {}/{}", distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
-                context.getLogger().warn("Skipping {} distribution", distributionName);
+                context.getLogger().warn("skipping {} distribution", distributionName);
                 return false;
             }
             return doPackageDistribution(distribution, newProps);
@@ -147,10 +147,10 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     public boolean uploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
-            context.getLogger().debug("Creating props for {}/{}", distributionName, getToolName());
+            context.getLogger().debug("creating props for {}/{}", distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
-                context.getLogger().warn("Skipping {} distribution", distributionName);
+                context.getLogger().warn("skipping {} distribution", distributionName);
                 return false;
             }
             return doUploadDistribution(distribution, releaser, newProps);
@@ -178,16 +178,16 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Map<String, Object> newProps = context.getModel().props();
         newProps.putAll(props);
-        context.getLogger().debug("Filling distribution properties into props");
+        context.getLogger().debug("filling distribution properties into props");
         fillDistributionProperties(newProps, distribution, context.getModel().getRelease());
-        context.getLogger().debug("Filling git properties into props");
+        context.getLogger().debug("filling git properties into props");
         context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel().getProject());
-        context.getLogger().debug("Filling artifact properties into props");
+        context.getLogger().debug("filling artifact properties into props");
         if (!verifyAndAddArtifacts(newProps, distribution)) {
             // we can't continue with this tool
             return Collections.emptyMap();
         }
-        context.getLogger().debug("Filling tool properties into props");
+        context.getLogger().debug("filling tool properties into props");
         fillToolProperties(newProps, distribution);
         newProps.putAll(tool.getResolvedExtraProperties());
         if (isBlank(context.getModel().getRelease().getGitService().getReverseRepoHost())) {
@@ -272,7 +272,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
         if (artifacts.size() == 0) {
             // we can't proceed
-            context.getLogger().warn("No suitable artifacts found in distribution {} to be packaged with {}",
+            context.getLogger().warn("no suitable artifacts found in distribution {} to be packaged with {}",
                 distribution.getName(), capitalize(tool.getName()));
             return false;
         }

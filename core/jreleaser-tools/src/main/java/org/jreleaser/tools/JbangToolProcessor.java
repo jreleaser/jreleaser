@@ -109,11 +109,9 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
 
                 jbangDistributionGA = b.toString();
             } else {
-                StringBuilder b = new StringBuilder(distribution.getJava().getGroupId())
-                    .append(":")
-                    .append(distribution.getJava().getArtifactId());
-
-                jbangDistributionGA = b.toString();
+                jbangDistributionGA = distribution.getJava().getGroupId() +
+                    ":" +
+                    distribution.getJava().getArtifactId();
             }
         }
         props.put(Constants.KEY_JBANG_DISTRIBUTION_GA, jbangDistributionGA);

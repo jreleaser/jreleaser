@@ -96,10 +96,10 @@ public final class TemplateUtils {
 
         Map<String, Reader> templates = new LinkedHashMap<>();
 
-        logger.debug("Resolving templates from classpath");
+        logger.debug("resolving templates from classpath");
         URL location = resolveLocation(TemplateUtils.class);
         if (null == location) {
-            throw new JReleaserException("Could not find location of classpath templates");
+            throw new JReleaserException("could not find location of classpath templates");
         }
 
         try {
@@ -123,7 +123,7 @@ public final class TemplateUtils {
                 }
 
                 if (!templateFound) {
-                    logger.error("Templates for {}/{} were not found", distributionTypeName, toolName);
+                    logger.error("templates for {}/{} were not found", distributionTypeName, toolName);
                 }
             } else {
                 throw new JReleaserException("Could not find location of classpath templates");
@@ -139,7 +139,7 @@ public final class TemplateUtils {
     private static boolean findTemplate(JReleaserLogger logger, JarFile jarFile, String templatePrefix, Map<String, Reader> templates) throws IOException {
         boolean templatesFound = false;
 
-        logger.debug("Searching for templates matching {}*", templatePrefix);
+        logger.debug("searching for templates matching {}*", templatePrefix);
         for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
             JarEntry entry = e.nextElement();
             if (entry.isDirectory() || !entry.getName().startsWith(templatePrefix)) {
@@ -148,7 +148,7 @@ public final class TemplateUtils {
 
             String templateName = entry.getName().substring(templatePrefix.length());
             templates.put(templateName, new InputStreamReader(jarFile.getInputStream(entry)));
-            logger.debug("Found template {}", templateName);
+            logger.debug("found template {}", templateName);
             templatesFound = true;
         }
 
@@ -156,7 +156,7 @@ public final class TemplateUtils {
     }
 
     public static Reader resolveTemplate(JReleaserLogger logger, Class<?> anchor, String templateKey) {
-        logger.debug("Resolving template from classpath for {}@{}", anchor.getName(), templateKey);
+        logger.debug("resolving template from classpath for {}@{}", anchor.getName(), templateKey);
         URL location = resolveLocation(anchor);
         if (null == location) {
             throw new JReleaserException("Could not find location of classpath templates");
@@ -165,14 +165,14 @@ public final class TemplateUtils {
         try {
             if ("file".equals(location.getProtocol())) {
                 JarFile jarFile = new JarFile(new File(location.toURI()));
-                logger.debug("Searching for template matching {}", templateKey);
+                logger.debug("searching for template matching {}", templateKey);
                 for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
                     JarEntry entry = e.nextElement();
                     if (entry.isDirectory() || !entry.getName().equals(templateKey)) {
                         continue;
                     }
 
-                    logger.debug("Found template {}", templateKey);
+                    logger.debug("found template {}", templateKey);
                     return new InputStreamReader(jarFile.getInputStream(entry));
                 }
                 throw new JReleaserException("Template for " +

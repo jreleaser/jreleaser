@@ -31,30 +31,30 @@ import java.nio.file.Path;
  */
 @CommandLine.Command(name = "template",
     mixinStandardHelpOptions = true,
-    description = "Generate a tool template")
+    description = "Generate a tool template.")
 public class Template extends AbstractCommand {
     @CommandLine.Option(names = {"-dn", "--distribution-name"},
-        description = "The name of the distribution",
+        description = "The name of the distribution.",
         required = true)
     String distributionName;
 
     @CommandLine.Option(names = {"-tn", "--tool-name"},
-        description = "The name of the tool",
+        description = "The name of the tool.",
         required = true)
     String toolName;
 
     @CommandLine.Option(names = {"-dt", "--distribution-type"},
-        description = "The type of the distribution",
+        description = "The type of the distribution.",
         required = true,
         defaultValue = "JAVA_BINARY")
     Distribution.DistributionType distributionType;
 
     @CommandLine.Option(names = {"-o", "--overwrite"},
-        description = "Overwrite existing files")
+        description = "Overwrite existing files.")
     boolean overwrite;
 
     @CommandLine.Option(names = {"-s", "--snapshot"},
-        description = "Use snapshot templates")
+        description = "Use snapshot templates.")
     boolean snapshot;
 
     @CommandLine.ParentCommand

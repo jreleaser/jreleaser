@@ -45,14 +45,14 @@ import static java.nio.file.StandardOpenOption.WRITE;
  */
 @CommandLine.Command(name = "init",
     mixinStandardHelpOptions = true,
-    description = "Create a jreleaser config file")
+    description = "Create a jreleaser config file.")
 public class Init extends AbstractCommand {
     @CommandLine.Option(names = {"-o", "--overwrite"},
-        description = "Overwrite existing files")
+        description = "Overwrite existing files.")
     boolean overwrite;
 
     @CommandLine.Option(names = {"-f", "--format"},
-        description = "Configuration file format")
+        description = "Configuration file format.")
     String format;
 
     @CommandLine.ParentCommand

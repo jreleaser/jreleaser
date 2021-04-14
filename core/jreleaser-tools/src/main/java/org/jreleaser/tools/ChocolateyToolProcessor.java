@@ -51,7 +51,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
         }
 
         if (!PlatformUtils.isWindows()) {
-            context.getLogger().debug("Tool {} must run on Windows", getToolName());
+            context.getLogger().debug("must run on Windows", getToolName());
             return false;
         }
 
@@ -100,12 +100,12 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
     }
 
     private boolean createChocolateyPackage(Distribution distribution, Map<String, Object> props) {
-        context.getLogger().warn("Local build of chocolatey packages is not yet supported.");
+        context.getLogger().warn("local build is not yet supported.");
         return false;
     }
 
     private boolean uploadChocolateyPackage(Distribution distribution, Map<String, Object> props) {
-        context.getLogger().warn("Local publication of chocolatey packages is not yet supported.");
+        context.getLogger().warn("local publication is not yet supported.");
         return false;
     }
 }

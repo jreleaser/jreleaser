@@ -27,7 +27,7 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "sign",
     mixinStandardHelpOptions = true,
-    description = "Sign release artifacts")
+    description = "Sign release artifacts.")
 public class Sign extends AbstractModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {

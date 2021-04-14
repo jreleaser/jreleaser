@@ -27,14 +27,14 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "prepare",
     mixinStandardHelpOptions = true,
-    description = "Prepare all distributions")
+    description = "Prepare all distributions.")
 public class Prepare extends AbstractModelCommand {
     @CommandLine.Option(names = {"-dn", "--distribution-name"},
-        description = "The name of the distribution")
+        description = "The name of the distribution.")
     String distributionName;
 
     @CommandLine.Option(names = {"-tn", "--tool-name"},
-        description = "The name of the tool")
+        description = "The name of the tool.")
     String toolName;
 
     @Override

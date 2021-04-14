@@ -27,14 +27,14 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "announce",
     mixinStandardHelpOptions = true,
-    description = "Announce a release")
+    description = "Announce a release.")
 public class Announce extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skips remote operations.")
     boolean dryrun;
 
     @CommandLine.Option(names = {"-an", "--announcer-name"},
-        description = "The name of the announcer")
+        description = "The name of the announcer.")
     String announcerName;
 
     @Override

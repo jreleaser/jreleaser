@@ -144,7 +144,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
     @Override
     public boolean uploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         if (tool.getRegistries().isEmpty()) {
-            context.getLogger().info("No configured registries. Skipping");
+            context.getLogger().info("no configured registries. Skipping");
             return false;
         }
         return super.uploadDistribution(distribution, releaser, props);

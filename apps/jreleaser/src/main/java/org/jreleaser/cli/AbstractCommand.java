@@ -55,7 +55,7 @@ abstract class AbstractCommand implements Callable<Integer> {
     boolean quiet;
 
     @CommandLine.Option(names = {"-b", "--basedir"},
-        description = "Base directory")
+        description = "Base directory.")
     Path basedir;
 
     @CommandLine.Spec

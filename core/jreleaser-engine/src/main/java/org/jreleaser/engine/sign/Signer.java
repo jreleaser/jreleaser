@@ -120,7 +120,7 @@ public class Signer {
     }
 
     private static void verify(JReleaserContext context, InMemoryKeyring keyring, List<FilePair> files) throws SigningException {
-        context.getLogger().debug("Verifying {} signatures", files.size());
+        context.getLogger().debug("verifying {} signatures", files.size());
 
         for (FilePair pair : files) {
             pair.setValid(verify(context, keyring, pair));
@@ -188,7 +188,7 @@ public class Signer {
             throw new SigningException("Could not create signatures directory", e);
         }
 
-        context.getLogger().debug("Signing {} files into {}",
+        context.getLogger().debug("signing {} files into {}",
             files.size(), context.getBasedir().relativize(signaturesDirectory));
 
         PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);
@@ -287,13 +287,13 @@ public class Signer {
 
     private static boolean isValid(JReleaserContext context, InMemoryKeyring keyring, FilePair pair) {
         if (Files.notExists(pair.getSignatureFile())) {
-            context.getLogger().debug("Signature file does not exist: {}",
+            context.getLogger().debug("signature does not exist: {}",
                 context.getBasedir().relativize(pair.getSignatureFile()));
             return false;
         }
 
         if (pair.inputFile.toFile().lastModified() > pair.signatureFile.toFile().lastModified()) {
-            context.getLogger().debug("File {} is newer than {}",
+            context.getLogger().debug("{} is newer than {}",
                 context.getBasedir().relativize(pair.inputFile),
                 context.getBasedir().relativize(pair.signatureFile));
             return false;

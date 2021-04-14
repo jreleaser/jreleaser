@@ -27,10 +27,10 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "config",
     mixinStandardHelpOptions = true,
-    description = "Display current configuration")
+    description = "Display current configuration.")
 public class Config extends AbstractModelCommand {
     @CommandLine.Option(names = {"-f", "--full"},
-        description = "Display full configuration")
+        description = "Display full configuration.")
     boolean full;
 
     @Override

@@ -113,7 +113,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
     protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
         // copy files over
         Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
-        context.getLogger().debug("Copying files from {}", context.getBasedir().relativize(packageDirectory));
+        context.getLogger().debug("copying files from {}", context.getBasedir().relativize(packageDirectory));
 
         if (!FileUtils.copyFilesRecursive(context.getLogger(), packageDirectory, directory)) {
             throw new IOException("Could not copy files from " +

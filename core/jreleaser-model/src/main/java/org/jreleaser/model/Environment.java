@@ -63,7 +63,7 @@ public class Environment implements Domain {
             Path defaultPath = Paths.get(home).resolve(".jreleaser").resolve("config.properties");
             Path path = isNotBlank(variables) ? context.getBasedir().resolve(variables.trim()) : defaultPath;
             if (!Files.exists(path)) path = defaultPath;
-            context.getLogger().debug("Properties path: {}", path.toAbsolutePath());
+            context.getLogger().debug("properties path: {}", path.toAbsolutePath());
 
             if (Files.exists(path)) {
                 try {

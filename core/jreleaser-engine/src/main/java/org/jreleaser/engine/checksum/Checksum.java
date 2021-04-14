@@ -116,17 +116,17 @@ public class Checksum {
         }
 
         if (!checksumPath.toFile().exists()) {
-            context.getLogger().debug("Artifact checksum does not exist: {}", context.getBasedir().relativize(checksumPath));
+            context.getLogger().debug("checksum does not exist: {}", context.getBasedir().relativize(checksumPath));
             calculateHash(context, artifactPath, checksumPath);
         } else if (artifactPath.toFile().lastModified() > checksumPath.toFile().lastModified()) {
-            context.getLogger().debug("Artifact {} is newer than {}",
+            context.getLogger().debug("{} is newer than {}",
                 context.getBasedir().relativize(artifactPath),
                 context.getBasedir().relativize(checksumPath));
             calculateHash(context, artifactPath, checksumPath);
         }
 
         try {
-            context.getLogger().debug("Reading checksum: {}",
+            context.getLogger().debug("reading {}",
                 context.getBasedir().relativize(checksumPath));
             artifact.setHash(new String(Files.readAllBytes(checksumPath)));
         } catch (IOException e) {
