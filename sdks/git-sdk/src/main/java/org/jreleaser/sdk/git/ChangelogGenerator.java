@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static org.jreleaser.model.GitService.TAG_EARLY_ACCESS;
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
 
 /**
@@ -110,14 +111,25 @@ public class ChangelogGenerator {
         String tagName = gitService.getConfiguredTagName();
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
 
-        context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
+        Optional<Ref> tag = Optional.empty();
+        if (TAG_EARLY_ACCESS.equals(effectiveTagName)) {
+            context.getLogger().debug("looking for tags that match '{}'", effectiveTagName);
+            tag = tags.stream()
+                .filter(ref -> extractTagName(ref).equals(effectiveTagName))
+                .findFirst();
+        }
 
-        Optional<Ref> tag = tags.stream()
-            .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
-            .filter(ref -> extractTagName(ref).matches(tagPattern))
-            .findFirst();
+        if (!tag.isPresent()) {
+            context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
+
+            tag = tags.stream()
+                .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
+                .filter(ref -> extractTagName(ref).matches(tagPattern))
+                .findFirst();
+        }
 
         ObjectId head = git.getRepository().resolve(Constants.HEAD);
+
         if (tag.isPresent()) {
             context.getLogger().debug("found tag {}", extractTagName(tag.get()));
             Ref peeled = git.getRepository().getRefDatabase().peel(tag.get());

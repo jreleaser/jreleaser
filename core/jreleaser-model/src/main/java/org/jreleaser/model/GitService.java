@@ -44,7 +44,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     public static final String SKIP_TAG = "SKIP_TAG";
     public static final String BRANCH = "BRANCH";
 
-    private static final String TAG_EARLY_ACCESS = "early-access";
+    public static final String TAG_EARLY_ACCESS = "early-access";
 
     private final String serviceName;
     private final Changelog changelog = new Changelog();
