@@ -120,7 +120,7 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
         Map<String, Object> newProps = context.getModel().props();
         newProps.putAll(props);
         context.getLogger().debug("filling git properties into props");
-        context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel().getProject());
+        context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel());
         context.getLogger().debug("filling assembler properties into props");
         fillAssemblerProperties(newProps);
         return newProps;

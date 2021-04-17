@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public abstract class ExtraPropertiesValidator extends Validator {
     public static void mergeExtraProperties(Tool tool, Tool common) {
-        Map<String, String> extraProperties = new LinkedHashMap<>(common.getExtraProperties());
+        Map<String, Object> extraProperties = new LinkedHashMap<>(common.getExtraProperties());
         extraProperties.putAll(tool.getExtraProperties());
         tool.setExtraProperties(extraProperties);
     }

@@ -104,7 +104,7 @@ class WorkflowImpl implements Workflow {
         props.put(KEY_PROJECT_NAME, project.getName());
         props.put(KEY_PROJECT_VERSION, project.getVersion());
         props.put(KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
-        props.put(KEY_TAG_NAME, model.getRelease().getGitService().getEffectiveTagName(project));
+        props.put(KEY_TAG_NAME, model.getRelease().getGitService().getEffectiveTagName(context.getModel()));
         props.put(KEY_RELEASE_NAME, model.getRelease().getGitService().getEffectiveReleaseName());
         props.put(KEY_MILESTONE_NAME, model.getRelease().getGitService().getMilestone().getEffectiveName());
 

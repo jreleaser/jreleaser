@@ -36,15 +36,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Environment implements Domain {
+    private final Map<String, Object> properties = new LinkedHashMap<>();
     private String variables;
     private Properties props;
 
-    public boolean isEmpty() {
-        return isBlank(variables);
-    }
-
     void setAll(Environment environment) {
         this.variables = environment.variables;
+        setProperties(environment.properties);
     }
 
     public String getVariable(String key) {
@@ -76,6 +74,11 @@ public class Environment implements Domain {
         }
     }
 
+    public boolean isSet() {
+        return isNotBlank(variables) ||
+            !properties.isEmpty();
+    }
+
     public String getVariables() {
         return variables;
     }
@@ -84,10 +87,19 @@ public class Environment implements Domain {
         this.variables = variables;
     }
 
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties.putAll(properties);
+    }
+
     @Override
     public final Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("variables", variables);
+        map.put("properties", properties);
 
         return map;
     }

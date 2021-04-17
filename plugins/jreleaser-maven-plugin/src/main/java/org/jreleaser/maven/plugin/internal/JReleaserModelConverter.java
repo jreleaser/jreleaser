@@ -99,6 +99,7 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Environment convertEnvironment(Environment environment) {
         org.jreleaser.model.Environment e = new org.jreleaser.model.Environment();
         e.setVariables(environment.getVariables());
+        e.setProperties(environment.getProperties());
         return e;
     }
 

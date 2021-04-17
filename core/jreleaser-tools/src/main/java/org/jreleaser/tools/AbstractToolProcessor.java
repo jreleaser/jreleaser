@@ -181,7 +181,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         context.getLogger().debug("filling distribution properties into props");
         fillDistributionProperties(newProps, distribution);
         context.getLogger().debug("filling git properties into props");
-        context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel().getProject());
+        context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel());
         context.getLogger().debug("filling artifact properties into props");
         if (!verifyAndAddArtifacts(newProps, distribution)) {
             // we can't continue with this tool

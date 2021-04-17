@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.jreleaser.gradle.plugin.dsl.Environment
 
 import javax.inject.Inject
@@ -33,10 +34,12 @@ import javax.inject.Inject
 @CompileStatic
 class EnvironmentImpl implements Environment {
     final RegularFileProperty variables
+    final MapProperty<String, Object> properties
 
     @Inject
     EnvironmentImpl(ObjectFactory objects) {
         variables = objects.fileProperty().convention(Providers.notDefined())
+        properties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
     void setVariables(String variables) {
@@ -46,6 +49,7 @@ class EnvironmentImpl implements Environment {
     org.jreleaser.model.Environment toModel() {
         org.jreleaser.model.Environment environment = new org.jreleaser.model.Environment()
         if (variables.present) environment.variables = variables.asFile.get().absolutePath
+        if (properties.present) environment.properties.putAll(properties.get())
         environment
     }
 }

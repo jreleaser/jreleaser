@@ -38,7 +38,7 @@ class JavaImpl implements Java {
     final Property<String> groupId
     final Property<String> artifactId
     final Property<Boolean> multiProject
-    final MapProperty<String, String> extraProperties
+    final MapProperty<String, Object> extraProperties
 
     @Inject
     JavaImpl(ObjectFactory objects) {
@@ -46,7 +46,7 @@ class JavaImpl implements Java {
         groupId = objects.property(String).convention(Providers.notDefined())
         artifactId = objects.property(String).convention(Providers.notDefined())
         multiProject = objects.property(Boolean).convention(Providers.notDefined())
-        extraProperties = objects.mapProperty(String, String).convention(Providers.notDefined())
+        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
     @Internal

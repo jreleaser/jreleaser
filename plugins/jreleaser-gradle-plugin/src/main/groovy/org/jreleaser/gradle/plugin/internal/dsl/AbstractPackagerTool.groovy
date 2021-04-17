@@ -39,12 +39,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 abstract class AbstractPackagerTool implements PackagerTool {
     final Property<Active> active
-    final MapProperty<String, String> extraProperties
+    final MapProperty<String, Object> extraProperties
 
     @Inject
     AbstractPackagerTool(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
-        extraProperties = objects.mapProperty(String, String).convention(Providers.notDefined())
+        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
     protected abstract String toolName()

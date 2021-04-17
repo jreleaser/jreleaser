@@ -55,7 +55,7 @@ public class ChangelogGenerator {
     private static String createChangelog(JReleaserContext context) throws IOException {
         GitService gitService = context.getModel().getRelease().getGitService();
         Changelog changelog = gitService.getChangelog();
-        String commitsUrl = gitService.getResolvedCommitUrl(context.getModel().getProject());
+        String commitsUrl = gitService.getResolvedCommitUrl(context.getModel());
 
         String separator = System.lineSeparator();
         if (Gitlab.NAME.equals(gitService.getServiceName())) {
@@ -107,7 +107,7 @@ public class ChangelogGenerator {
         tags.sort(new GitSdk.TagComparator().reversed());
 
         GitService gitService = context.getModel().getRelease().getGitService();
-        String effectiveTagName = gitService.getEffectiveTagName(context.getModel().getProject());
+        String effectiveTagName = gitService.getEffectiveTagName(context.getModel());
         String tagName = gitService.getConfiguredTagName();
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
 

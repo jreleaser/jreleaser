@@ -24,7 +24,7 @@ import java.util.Map;
  * @since 0.1.0
  */
 public interface ExtraProperties {
-    Map<String, String> getExtraProperties();
+    Map<String, Object> getExtraProperties();
 
-    void setExtraProperties(Map<String, String> properties);
+    void setExtraProperties(Map<String, Object> properties);
 }

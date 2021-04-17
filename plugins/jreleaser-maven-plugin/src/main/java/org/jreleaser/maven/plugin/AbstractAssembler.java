@@ -28,7 +28,7 @@ import java.util.Set;
  */
 abstract class AbstractAssembler implements Assembler {
     protected final Set<Artifact> output = new LinkedHashSet<>();
-    private final Map<String, String> extraProperties = new LinkedHashMap<>();
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Java java = new Java();
     protected String name;
     protected boolean enabled;
@@ -121,12 +121,12 @@ abstract class AbstractAssembler implements Assembler {
     }
 
     @Override
-    public Map<String, String> getExtraProperties() {
+    public Map<String, Object> getExtraProperties() {
         return extraProperties;
     }
 
     @Override
-    public void setExtraProperties(Map<String, String> extraProperties) {
+    public void setExtraProperties(Map<String, Object> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
 }

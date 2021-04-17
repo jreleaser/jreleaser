@@ -75,13 +75,12 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
-        Project project = context.getModel().getProject();
         GitService gitService = context.getModel().getRelease().getGitService();
 
         props.put(Constants.KEY_CHOCOLATEY_BUCKET_REPO_URL,
-            gitService.getResolvedRepoUrl(project, tool.getBucket().getOwner(), tool.getBucket().getName()));
+            gitService.getResolvedRepoUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getName()));
         props.put(Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL,
-            gitService.getResolvedRepoCloneUrl(project, tool.getBucket().getOwner(), tool.getBucket().getName()));
+            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getName()));
 
         props.put(Constants.KEY_CHOCOLATEY_USERNAME, getTool().getUsername());
     }

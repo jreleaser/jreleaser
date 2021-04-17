@@ -174,7 +174,7 @@ public class JReleaserModel implements Domain {
 
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
-        if (!environment.isEmpty()) map.put("environment", environment.asMap(full));
+        if (environment.isSet()) map.put("environment", environment.asMap(full));
         map.put("project", project.asMap(full));
         map.put("release", release.asMap(full));
         if (full || signing.isEnabled()) map.put("signing", signing.asMap(full));
@@ -200,6 +200,7 @@ public class JReleaserModel implements Domain {
     }
 
     private void fillProjectProperties(Map<String, Object> props, Project project) {
+        props.putAll(environment.getProperties());
         props.put(Constants.KEY_TIMESTAMP, timestamp);
         props.put(Constants.KEY_COMMIT_SHORT_HASH, commit.getShortHash());
         props.put(Constants.KEY_COMMIT_FULL_HASH, commit.getFullHash());
@@ -246,16 +247,16 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_REPO_OWNER, service.getOwner());
         props.put(Constants.KEY_REPO_NAME, service.getName());
         props.put(Constants.KEY_REPO_BRANCH, service.getBranch());
-        props.put(Constants.KEY_TAG_NAME, service.getEffectiveTagName(project));
+        props.put(Constants.KEY_TAG_NAME, service.getEffectiveTagName(this));
         props.put(Constants.KEY_RELEASE_NAME, service.getEffectiveReleaseName());
         props.put(Constants.KEY_MILESTONE_NAME, service.getMilestone().getEffectiveName());
         props.put(Constants.KEY_REVERSE_REPO_HOST, service.getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, service.getCanonicalRepoName());
-        props.put(Constants.KEY_REPO_URL, service.getResolvedRepoUrl(project));
-        props.put(Constants.KEY_REPO_CLONE_URL, service.getResolvedRepoCloneUrl(project));
-        props.put(Constants.KEY_COMMIT_URL, service.getResolvedCommitUrl(project));
-        props.put(Constants.KEY_RELEASE_NOTES_URL, service.getResolvedReleaseNotesUrl(project));
-        props.put(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(project));
-        props.put(Constants.KEY_ISSUE_TRACKER_URL, service.getResolvedIssueTrackerUrl(project));
+        props.put(Constants.KEY_REPO_URL, service.getResolvedRepoUrl(this));
+        props.put(Constants.KEY_REPO_CLONE_URL, service.getResolvedRepoCloneUrl(this));
+        props.put(Constants.KEY_COMMIT_URL, service.getResolvedCommitUrl(this));
+        props.put(Constants.KEY_RELEASE_NOTES_URL, service.getResolvedReleaseNotesUrl(this));
+        props.put(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(this));
+        props.put(Constants.KEY_ISSUE_TRACKER_URL, service.getResolvedIssueTrackerUrl(this));
     }
 }

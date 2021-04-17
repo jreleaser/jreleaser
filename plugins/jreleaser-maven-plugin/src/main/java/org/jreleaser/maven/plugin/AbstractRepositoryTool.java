@@ -46,12 +46,12 @@ abstract class AbstractRepositoryTool extends AbstractTool implements Repository
     }
 
     @Override
-    public Map<String, String> getExtraProperties() {
+    public Map<String, Object> getExtraProperties() {
         return extraProperties;
     }
 
     @Override
-    public void setExtraProperties(Map<String, String> extraProperties) {
+    public void setExtraProperties(Map<String, Object> extraProperties) {
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }

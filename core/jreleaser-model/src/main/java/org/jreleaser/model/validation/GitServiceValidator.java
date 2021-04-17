@@ -128,9 +128,9 @@ public abstract class GitServiceValidator extends Validator {
                 "{{tagName}}"));
 
         // eager resolve
-        service.getResolvedTagName(project);
-        service.getResolvedReleaseName(project);
-        service.getMilestone().getResolvedName(service.props(project));
+        service.getResolvedTagName(context.getModel());
+        service.getResolvedReleaseName(context.getModel());
+        service.getMilestone().getResolvedName(service.props(context.getModel()));
 
         if (project.isSnapshot()) {
             service.setReleaseName(StringUtils.capitalize(project.getName()) + " Early-Access");

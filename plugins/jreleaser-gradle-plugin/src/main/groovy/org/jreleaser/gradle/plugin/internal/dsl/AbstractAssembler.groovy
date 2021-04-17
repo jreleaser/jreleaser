@@ -42,14 +42,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 abstract class AbstractAssembler implements Assembler {
     final Property<Active> active
     final Property<String> executable
-    final MapProperty<String, String> extraProperties
+    final MapProperty<String, Object> extraProperties
     final DirectoryProperty templateDirectory
 
     @Inject
     AbstractAssembler(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
         executable = objects.property(String).convention(Providers.notDefined())
-        extraProperties = objects.mapProperty(String, String).convention(Providers.notDefined())
+        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
         templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
     }
 

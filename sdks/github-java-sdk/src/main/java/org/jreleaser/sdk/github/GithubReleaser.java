@@ -48,8 +48,8 @@ public class GithubReleaser implements Releaser {
 
     public void release() throws ReleaseException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
-        context.getLogger().info("Releasing to {}", github.getResolvedRepoUrl(context.getModel().getProject()));
-        String tagName = github.getEffectiveTagName(context.getModel().getProject());
+        context.getLogger().info("Releasing to {}", github.getResolvedRepoUrl(context.getModel()));
+        String tagName = github.getEffectiveTagName(context.getModel());
 
         try {
             String changelog = context.getChangelog();

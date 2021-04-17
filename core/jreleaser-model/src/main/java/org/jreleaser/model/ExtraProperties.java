@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.splitValue;
 
@@ -34,14 +33,14 @@ import static org.jreleaser.util.StringUtils.splitValue;
 public interface ExtraProperties extends Serializable {
     String getPrefix();
 
-    Map<String, String> getExtraProperties();
+    Map<String, Object> getExtraProperties();
 
-    void setExtraProperties(Map<String, String> properties);
+    void setExtraProperties(Map<String, Object> properties);
 
-    void addExtraProperties(Map<String, String> properties);
+    void addExtraProperties(Map<String, Object> properties);
 
-    default void addExtraProperty(String key, String value) {
-        if (isNotBlank(value)) {
+    default void addExtraProperty(String key, Object value) {
+        if ((value instanceof CharSequence && isNotBlank(String.valueOf(value))) || null != value) {
             getExtraProperties().put(key, value);
         }
     }
@@ -50,7 +49,7 @@ public interface ExtraProperties extends Serializable {
         Map<String, Object> props = new LinkedHashMap<>();
 
         getExtraProperties().forEach((key, value) -> {
-            if (isBlank(value)) return;
+            if (null == value) return;
 
             String prefix = getPrefix();
 
@@ -60,7 +59,7 @@ public interface ExtraProperties extends Serializable {
 
             if (split) {
                 k = key.substring(0, key.length() - "_split".length());
-                v = splitValue(value);
+                v = splitValue(String.valueOf(value));
             }
 
             if (key.startsWith(prefix)) {

@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.MapProperty
 
 /**
  *
@@ -28,4 +29,6 @@ import org.gradle.api.file.RegularFileProperty
 @CompileStatic
 interface Environment {
     RegularFileProperty getVariables()
+
+    MapProperty<String, Object> getProperties()
 }

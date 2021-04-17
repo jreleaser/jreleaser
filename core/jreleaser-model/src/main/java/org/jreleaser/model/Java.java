@@ -28,7 +28,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Java implements Domain, ExtraProperties, EnabledProvider {
-    private final Map<String, String> extraProperties = new LinkedHashMap<>();
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
 
     protected Boolean enabled;
     private String version;
@@ -116,17 +116,17 @@ public class Java implements Domain, ExtraProperties, EnabledProvider {
     }
 
     @Override
-    public Map<String, String> getExtraProperties() {
+    public Map<String, Object> getExtraProperties() {
         return extraProperties;
     }
 
     @Override
-    public void setExtraProperties(Map<String, String> extraProperties) {
+    public void setExtraProperties(Map<String, Object> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
-    public void addExtraProperties(Map<String, String> extraProperties) {
+    public void addExtraProperties(Map<String, Object> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
 

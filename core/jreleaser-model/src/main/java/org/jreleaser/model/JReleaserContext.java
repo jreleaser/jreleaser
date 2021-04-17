@@ -111,7 +111,7 @@ public class JReleaserContext {
             distribution.setJava(assembler.getJava());
             distribution.setArtifacts(assembler.getOutputs());
 
-            Map<String, String> extraProperties = new LinkedHashMap<>(distribution.getExtraProperties());
+            Map<String, Object> extraProperties = new LinkedHashMap<>(distribution.getExtraProperties());
             extraProperties.putAll(assembler.getExtraProperties());
             distribution.setExtraProperties(extraProperties);
         }

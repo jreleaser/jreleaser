@@ -61,7 +61,7 @@ public class DiscussionsAnnouncer implements Announcer {
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put(Constants.KEY_CHANGELOG, context.getChangelog());
-            context.getModel().getRelease().getGitService().fillProps(props, context.getModel().getProject());
+            context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
             message = discussions.getResolvedMessageTemplate(context, props);
         }
 

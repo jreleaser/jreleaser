@@ -123,37 +123,37 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         return Env.resolve(TAG_NAME, tagName);
     }
 
-    public String getResolvedTagName(Project project) {
+    public String getResolvedTagName(JReleaserModel model) {
         if (isBlank(cachedTagName)) {
             cachedTagName = Env.resolve(TAG_NAME, cachedTagName);
         }
 
         if (isBlank(cachedTagName)) {
-            cachedTagName = applyTemplate(new StringReader(tagName), props(project));
+            cachedTagName = applyTemplate(new StringReader(tagName), props(model));
         } else if (cachedTagName.contains("{{")) {
-            cachedTagName = applyTemplate(new StringReader(cachedTagName), props(project));
+            cachedTagName = applyTemplate(new StringReader(cachedTagName), props(model));
         }
 
         return cachedTagName;
     }
 
-    public String getEffectiveTagName(Project project) {
-        if (project.isSnapshot()) {
+    public String getEffectiveTagName(JReleaserModel model) {
+        if (model.getProject().isSnapshot()) {
             return TAG_EARLY_ACCESS;
         }
 
         return cachedTagName;
     }
 
-    public String getResolvedReleaseName(Project project) {
+    public String getResolvedReleaseName(JReleaserModel model) {
         if (isBlank(cachedReleaseName)) {
             cachedReleaseName = Env.resolve(RELEASE_NAME, cachedReleaseName);
         }
 
         if (isBlank(cachedReleaseName)) {
-            cachedReleaseName = applyTemplate(new StringReader(releaseName), props(project));
+            cachedReleaseName = applyTemplate(new StringReader(releaseName), props(model));
         } else if (cachedReleaseName.contains("{{")) {
-            cachedReleaseName = applyTemplate(new StringReader(cachedReleaseName), props(project));
+            cachedReleaseName = applyTemplate(new StringReader(cachedReleaseName), props(model));
         }
 
         return cachedReleaseName;
@@ -163,46 +163,46 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         return cachedReleaseName;
     }
 
-    public String getResolvedRepoUrl(Project project) {
-        return applyTemplate(new StringReader(repoUrlFormat), props(project));
+    public String getResolvedRepoUrl(JReleaserModel model) {
+        return applyTemplate(new StringReader(repoUrlFormat), props(model));
     }
 
-    public String getResolvedRepoCloneUrl(Project project) {
-        return applyTemplate(new StringReader(repoCloneUrlFormat), props(project));
+    public String getResolvedRepoCloneUrl(JReleaserModel model) {
+        return applyTemplate(new StringReader(repoCloneUrlFormat), props(model));
     }
 
-    public String getResolvedRepoUrl(Project project, String repoOwner, String repoName) {
-        Map<String, Object> props = props(project);
+    public String getResolvedRepoUrl(JReleaserModel model, String repoOwner, String repoName) {
+        Map<String, Object> props = props(model);
         props.put(Constants.KEY_REPO_OWNER, repoOwner);
         props.put(Constants.KEY_REPO_NAME, repoName);
         return applyTemplate(new StringReader(repoUrlFormat), props);
     }
 
-    public String getResolvedRepoCloneUrl(Project project, String repoOwner, String repoName) {
-        Map<String, Object> props = props(project);
+    public String getResolvedRepoCloneUrl(JReleaserModel model, String repoOwner, String repoName) {
+        Map<String, Object> props = props(model);
         props.put(Constants.KEY_REPO_OWNER, repoOwner);
         props.put(Constants.KEY_REPO_NAME, repoName);
         return applyTemplate(new StringReader(repoCloneUrlFormat), props);
     }
 
-    public String getResolvedCommitUrl(Project project) {
-        return applyTemplate(new StringReader(commitUrlFormat), props(project));
+    public String getResolvedCommitUrl(JReleaserModel model) {
+        return applyTemplate(new StringReader(commitUrlFormat), props(model));
     }
 
-    public String getResolvedDownloadUrl(Project project) {
-        return applyTemplate(new StringReader(downloadUrlFormat), props(project));
+    public String getResolvedDownloadUrl(JReleaserModel model) {
+        return applyTemplate(new StringReader(downloadUrlFormat), props(model));
     }
 
-    public String getResolvedReleaseNotesUrl(Project project) {
-        return applyTemplate(new StringReader(releaseNotesUrlFormat), props(project));
+    public String getResolvedReleaseNotesUrl(JReleaserModel model) {
+        return applyTemplate(new StringReader(releaseNotesUrlFormat), props(model));
     }
 
-    public String getResolvedLatestReleaseUrl(Project project) {
-        return applyTemplate(new StringReader(latestReleaseUrlFormat), props(project));
+    public String getResolvedLatestReleaseUrl(JReleaserModel model) {
+        return applyTemplate(new StringReader(latestReleaseUrlFormat), props(model));
     }
 
-    public String getResolvedIssueTrackerUrl(Project project) {
-        return applyTemplate(new StringReader(issueTrackerUrlFormat), props(project));
+    public String getResolvedIssueTrackerUrl(JReleaserModel model) {
+        return applyTemplate(new StringReader(issueTrackerUrlFormat), props(model));
     }
 
     @Override
@@ -445,9 +445,11 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         return map;
     }
 
-    public Map<String, Object> props(Project project) {
+    public Map<String, Object> props(JReleaserModel model) {
         // duplicate from JReleaserModel to avoid endless recursion
         Map<String, Object> props = new LinkedHashMap<>();
+        Project project = model.getProject();
+        props.putAll(model.getEnvironment().getProperties());
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
@@ -491,21 +493,21 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         return props;
     }
 
-    public void fillProps(Map<String, Object> props, Project project) {
+    public void fillProps(Map<String, Object> props, JReleaserModel model) {
         props.put(Constants.KEY_REPO_HOST, host);
         props.put(Constants.KEY_REPO_OWNER, owner);
         props.put(Constants.KEY_REPO_NAME, name);
         props.put(Constants.KEY_REPO_BRANCH, getBranch());
         props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, getEffectiveTagName(project));
+        props.put(Constants.KEY_TAG_NAME, getEffectiveTagName(model));
         props.put(Constants.KEY_RELEASE_NAME, getEffectiveReleaseName());
         props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
-        props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(project));
-        props.put(Constants.KEY_REPO_CLONE_URL, getResolvedRepoCloneUrl(project));
-        props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(project));
-        props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(project));
-        props.put(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(project));
-        props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(project));
+        props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(model));
+        props.put(Constants.KEY_REPO_CLONE_URL, getResolvedRepoCloneUrl(model));
+        props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(model));
+        props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(model));
+        props.put(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(model));
+        props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model));
     }
 }

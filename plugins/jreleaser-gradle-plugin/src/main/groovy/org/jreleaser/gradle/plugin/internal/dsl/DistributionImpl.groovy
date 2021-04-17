@@ -58,7 +58,7 @@ class DistributionImpl implements Distribution {
     final Property<Active> active
     final Property<DistributionType> distributionType
     final ListProperty<String> tags
-    final MapProperty<String, String> extraProperties
+    final MapProperty<String, Object> extraProperties
     final BrewImpl brew
     final ChocolateyImpl chocolatey
     final DockerImpl docker
@@ -81,7 +81,7 @@ class DistributionImpl implements Distribution {
         myName = objects.property(String).convention(Providers.notDefined())
         distributionType = objects.property(DistributionType).convention(DistributionType.JAVA_BINARY)
         tags = objects.listProperty(String).convention(Providers.notDefined())
-        extraProperties = objects.mapProperty(String, String).convention(Providers.notDefined())
+        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
 
         artifacts = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override

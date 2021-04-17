@@ -49,15 +49,14 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
-        Project project = context.getModel().getProject();
         GitService gitService = context.getModel().getRelease().getGitService();
 
         props.put(Constants.KEY_BREW_FORMULA_NAME, tool.getResolvedFormulaName(props));
 
         props.put(Constants.KEY_HOMEBREW_TAP_REPO_URL,
-            gitService.getResolvedRepoUrl(project, tool.getTap().getOwner(), tool.getTap().getName()));
+            gitService.getResolvedRepoUrl(context.getModel(), tool.getTap().getOwner(), tool.getTap().getName()));
         props.put(Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL,
-            gitService.getResolvedRepoCloneUrl(project, tool.getTap().getOwner(), tool.getTap().getName()));
+            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getTap().getOwner(), tool.getTap().getName()));
 
         if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {

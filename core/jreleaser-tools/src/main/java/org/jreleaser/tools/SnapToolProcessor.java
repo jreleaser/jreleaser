@@ -85,7 +85,6 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
-        Project project = context.getModel().getProject();
         GitService gitService = context.getModel().getRelease().getGitService();
 
         String desc = context.getModel().getProject().getLongDescription();
@@ -96,9 +95,9 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
             MustacheUtils.passThrough("|" + System.lineSeparator() + desc));
 
         props.put(Constants.KEY_SNAP_REPO_URL,
-            gitService.getResolvedRepoUrl(project, tool.getSnap().getOwner(), tool.getSnap().getName()));
+            gitService.getResolvedRepoUrl(context.getModel(), tool.getSnap().getOwner(), tool.getSnap().getName()));
         props.put(Constants.KEY_SNAP_REPO_CLONE_URL,
-            gitService.getResolvedRepoCloneUrl(project, tool.getSnap().getOwner(), tool.getSnap().getName()));
+            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getSnap().getOwner(), tool.getSnap().getName()));
 
         props.put(Constants.KEY_SNAP_BASE, getTool().getBase());
         props.put(Constants.KEY_SNAP_GRADE, getTool().getGrade());

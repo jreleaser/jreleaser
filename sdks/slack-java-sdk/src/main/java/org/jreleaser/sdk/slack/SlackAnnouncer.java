@@ -59,7 +59,7 @@ public class SlackAnnouncer implements Announcer {
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put(Constants.KEY_CHANGELOG, context.getChangelog());
-            context.getModel().getRelease().getGitService().fillProps(props, context.getModel().getProject());
+            context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
             message = slack.getResolvedMessageTemplate(context, props);
         }
 

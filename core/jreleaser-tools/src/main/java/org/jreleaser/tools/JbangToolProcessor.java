@@ -65,13 +65,12 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
-        Project project = context.getModel().getProject();
         GitService gitService = context.getModel().getRelease().getGitService();
 
         props.put(Constants.KEY_JBANG_CATALOG_REPO_URL,
-            gitService.getResolvedRepoUrl(project, tool.getCatalog().getOwner(), tool.getCatalog().getName()));
+            gitService.getResolvedRepoUrl(context.getModel(), tool.getCatalog().getOwner(), tool.getCatalog().getName()));
         props.put(Constants.KEY_JBANG_CATALOG_REPO_CLONE_URL,
-            gitService.getResolvedRepoCloneUrl(project, tool.getCatalog().getOwner(), tool.getCatalog().getName()));
+            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getCatalog().getOwner(), tool.getCatalog().getName()));
 
         String aliasName = sanitizeAlias(tool.getAlias());
         String scriptName = aliasName;
@@ -94,7 +93,7 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
 
                 String reverseRepoHost = gitService.getReverseRepoHost();
                 if (isBlank(reverseRepoHost)) {
-                    reverseRepoHost = tool.getExtraProperties().get(KEY_REVERSE_REPO_HOST);
+                    reverseRepoHost = (String) tool.getExtraProperties().get(KEY_REVERSE_REPO_HOST);
                 }
 
                 StringBuilder b = new StringBuilder(reverseRepoHost)

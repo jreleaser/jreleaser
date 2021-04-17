@@ -66,7 +66,7 @@ public class Discussions extends AbstractAnnouncer {
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
         Map<String, Object> props = context.getModel().props();
         props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService()
-            .getEffectiveTagName(context.getModel().getProject()));
+            .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);
 
         Path templatePath = context.getBasedir().resolve(messageTemplate);

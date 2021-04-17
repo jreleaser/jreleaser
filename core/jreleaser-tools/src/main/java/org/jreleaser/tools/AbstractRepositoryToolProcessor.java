@@ -83,7 +83,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
             context.getLogger().debug("setting up commit");
             CommitCommand commitCommand = git.commit()
                 .setAll(true)
-                .setMessage(distribution.getExecutable() + " " + gitService.getResolvedTagName(context.getModel().getProject()))
+                .setMessage(distribution.getExecutable() + " " + gitService.getResolvedTagName(context.getModel()))
                 .setAuthor(tool.getCommitAuthor().getName(), tool.getCommitAuthor().getEmail());
             commitCommand.setCredentialsProvider(credentialsProvider);
             if (gitService.isSign()) {

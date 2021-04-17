@@ -17,15 +17,20 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Environment {
     private String variables;
+    private final Map<String, Object> properties = new LinkedHashMap<>();
 
-    void setAll(Environment signing) {
-        this.variables = signing.variables;
+    void setAll(Environment environment) {
+        this.variables = environment.variables;
+        setProperties(environment.properties);
     }
 
     public String getVariables() {
@@ -34,5 +39,13 @@ public class Environment {
 
     public void setVariables(String variables) {
         this.variables = variables;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Object> properties) {
+        this.properties.putAll(properties);
     }
 }

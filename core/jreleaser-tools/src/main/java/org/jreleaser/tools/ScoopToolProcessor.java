@@ -50,13 +50,12 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
-        Project project = context.getModel().getProject();
         GitService gitService = context.getModel().getRelease().getGitService();
 
         props.put(Constants.KEY_SCOOP_BUCKET_REPO_URL,
-            gitService.getResolvedRepoUrl(project, tool.getBucket().getOwner(), tool.getBucket().getName()));
+            gitService.getResolvedRepoUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getName()));
         props.put(Constants.KEY_SCOOP_BUCKET_REPO_CLONE_URL,
-            gitService.getResolvedRepoCloneUrl(project, tool.getBucket().getOwner(), tool.getBucket().getName()));
+            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getName()));
 
         props.put(Constants.KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));
         props.put(Constants.KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(props));
@@ -77,8 +76,8 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
         String artifactFilename = (String) props.get(Constants.KEY_ARTIFACT_FILE_NAME);
         String projectVersion = (String) props.get(Constants.KEY_PROJECT_VERSION);
         String tagName = (String) props.get(Constants.KEY_TAG_NAME);
-        artifactFilename= artifactFilename.replace(projectVersion, "$version");
-        tagName= tagName.replace(projectVersion, "$version");
+        artifactFilename = artifactFilename.replace(projectVersion, "$version");
+        tagName = tagName.replace(projectVersion, "$version");
 
         Map<String, Object> copy = new LinkedHashMap<>(props);
         copy.put(Constants.KEY_PROJECT_VERSION, "$version");
