@@ -58,9 +58,9 @@ public class Checksum {
         }
 
         if (checksums.isEmpty()) {
-            context.getLogger().info("No files configured for checksum. Skipping");
             context.getLogger().restorePrefix();
             context.getLogger().decreaseIndent();
+            context.getLogger().info("No files configured for checksum. Skipping");
             return;
         }
 

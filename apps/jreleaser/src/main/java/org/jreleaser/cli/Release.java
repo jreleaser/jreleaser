@@ -167,8 +167,10 @@ public class Release extends AbstractModelCommand {
         if (isNotBlank(commitAuthorEmail)) logger.info("- release.commitAuthor.email: {}", commitAuthorEmail);
         if (signing) logger.info("- signing.enabled: true");
         if (armored) logger.info("- signing.armored: true");
-        for (String file : files) {
-            logger.info("- file: {}", actualBasedir.relativize(actualBasedir.resolve(file)));
+        if (files != null && files.length > 0) {
+            for (String file : files) {
+                logger.info("- file: {}", actualBasedir.relativize(actualBasedir.resolve(file)));
+            }
         }
     }
 
@@ -206,11 +208,15 @@ public class Release extends AbstractModelCommand {
             throw halt(e.getMessage());
         }
 
-        model.getSigning().setActive(Active.ALWAYS);
-        model.getSigning().setArmored(armored);
+        if (signing) {
+            model.getSigning().setActive(Active.ALWAYS);
+            model.getSigning().setArmored(armored);
+        }
 
-        for (String file : files) {
-            model.getFiles().addArtifact(Artifact.of(Paths.get(file)));
+        if (files != null && files.length > 0) {
+            for (String file : files) {
+                model.getFiles().addArtifact(Artifact.of(Paths.get(file)));
+            }
         }
 
         return model;
