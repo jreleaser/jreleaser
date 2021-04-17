@@ -20,9 +20,9 @@ package org.jreleaser.model.validation;
 import org.jreleaser.model.Discussions;
 import org.jreleaser.model.Github;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
-import java.util.List;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -34,22 +34,22 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public abstract class DiscussionsValidator extends Validator {
     private static final String DEFAULT_DISCUSSIONS_TPL = "src/jreleaser/templates/discussions.tpl";
 
-    public static void validateDiscussions(JReleaserContext context, Discussions discussions, List<String> errors) {
+    public static void validateDiscussions(JReleaserContext context, Discussions discussions, Errors errors) {
         if (!discussions.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.discussions");
 
         if (!Github.NAME.equals(context.getModel().getRelease().getGitService().getServiceName())) {
-            errors.add("discussions may only be used when releasing to GitHub");
+            errors.configuration("discussions may only be used when releasing to GitHub");
             discussions.disable();
             return;
         }
 
         if (isBlank(discussions.getOrganization())) {
-            errors.add("discussions.organization must not be blank.");
+            errors.configuration("discussions.organization must not be blank.");
         }
 
         if (isBlank(discussions.getTeam())) {
-            errors.add("discussions.team must not be blank.");
+            errors.configuration("discussions.team must not be blank.");
         }
 
         if (isBlank(discussions.getTitle())) {
@@ -70,7 +70,7 @@ public abstract class DiscussionsValidator extends Validator {
 
         if (isNotBlank(discussions.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(discussions.getMessageTemplate().trim()))) {
-            errors.add("discussions.messageTemplate does not exist. " + discussions.getMessageTemplate());
+            errors.configuration("discussions.messageTemplate does not exist. " + discussions.getMessageTemplate());
         }
     }
 }

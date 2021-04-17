@@ -21,8 +21,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Scoop;
-
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
@@ -34,20 +33,21 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class ScoopValidator extends Validator {
-    public static void validateScoop(JReleaserContext context, Distribution distribution, Scoop tool, List<String> errors) {
+    public static void validateScoop(JReleaserContext context, Distribution distribution, Scoop tool, Errors errors) {
         JReleaserModel model = context.getModel();
+        Scoop parentTool = model.getPackagers().getScoop();
 
-        if (!tool.isActiveSet() && model.getPackagers().getScoop().isActiveSet()) {
-            tool.setActive(model.getPackagers().getScoop().getActive());
+        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
+            tool.setActive(parentTool.getActive());
         }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
         context.getLogger().debug("distribution.{}.scoop", distribution.getName());
 
-        validateCommitAuthor(tool, model.getPackagers().getScoop());
-        validateOwner(tool.getBucket(), model.getPackagers().getScoop().getBucket());
-        validateTemplate(context, distribution, tool, model.getPackagers().getScoop(), errors);
-        Scoop commonScoop = model.getPackagers().getScoop();
-        mergeExtraProperties(tool, model.getPackagers().getScoop());
+        validateCommitAuthor(tool, parentTool);
+        validateOwner(tool.getBucket(), parentTool.getBucket());
+        validateTemplate(context, distribution, tool, parentTool, errors);
+        Scoop commonScoop = parentTool;
+        mergeExtraProperties(tool, parentTool);
 
         if (isBlank(tool.getCheckverUrl())) {
             tool.setCheckverUrl(commonScoop.getCheckverUrl());
@@ -63,15 +63,15 @@ public abstract class ScoopValidator extends Validator {
         }
 
         if (isBlank(tool.getBucket().getName())) {
-            tool.getBucket().setName(model.getPackagers().getScoop().getBucket().getName());
+            tool.getBucket().setName(parentTool.getBucket().getName());
         }
-        tool.getBucket().setBasename(model.getPackagers().getScoop().getBucket().getBasename());
+        tool.getBucket().setBasename(parentTool.getBucket().getBasename());
 
         if (isBlank(tool.getBucket().getUsername())) {
-            tool.getBucket().setUsername(model.getPackagers().getScoop().getBucket().getUsername());
+            tool.getBucket().setUsername(parentTool.getBucket().getUsername());
         }
         if (isBlank(tool.getBucket().getToken())) {
-            tool.getBucket().setToken(model.getPackagers().getScoop().getBucket().getToken());
+            tool.getBucket().setToken(parentTool.getBucket().getToken());
         }
 
         validateArtifactPlatforms(context, distribution, tool, errors);

@@ -29,10 +29,9 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public class Chocolatey extends AbstractRepositoryTool {
     public static final String NAME = "chocolatey";
-
+    private final ChocolateyBucket bucket = new ChocolateyBucket();
     private String username;
     private Boolean remoteBuild;
-    private ChocolateyBucket bucket = new ChocolateyBucket();
 
     public Chocolatey() {
         super(NAME);
@@ -42,7 +41,7 @@ public class Chocolatey extends AbstractRepositoryTool {
         super.setAll(choco);
         this.username = choco.username;
         this.remoteBuild = choco.remoteBuild;
-        this.bucket.setAll(choco.bucket);
+        setBucket(choco.bucket);
     }
 
     public String getUsername() {
@@ -70,7 +69,7 @@ public class Chocolatey extends AbstractRepositoryTool {
     }
 
     public void setBucket(ChocolateyBucket bucket) {
-        this.bucket = bucket;
+        this.bucket.setAll(bucket);
     }
 
     @Override
@@ -93,6 +92,7 @@ public class Chocolatey extends AbstractRepositoryTool {
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
-        return distribution.getType() != Distribution.DistributionType.SINGLE_JAR;
+        return distribution.getType() != Distribution.DistributionType.SINGLE_JAR &&
+            distribution.getType() != Distribution.DistributionType.NATIVE_IMAGE;
     }
 }

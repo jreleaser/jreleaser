@@ -21,15 +21,17 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaApplication
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
-import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserAssembleTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChangelogTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
@@ -40,10 +42,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
-import org.jreleaser.model.JReleaserContext
 import org.jreleaser.model.JReleaserModel
-
-import java.nio.file.Path
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
 
@@ -87,16 +86,8 @@ class JReleaserProjectConfigurer {
             }
         }
 
-        Path outputDirectory = project.layout.buildDirectory
-            .dir('jreleaser').get().asFile.toPath()
-        PrintWriter tracer = new PrintWriter(new FileOutputStream(outputDirectory.resolve('trace.log').toFile()))
-
-        JReleaserContext context = ContextCreator.create(
-            new JReleaserLoggerAdapter(project, tracer),
-            model,
-            project.projectDir.toPath(),
-            outputDirectory,
-            extension.dryrun.get())
+        Provider<Directory> outputDirectory = project.layout.buildDirectory
+            .dir('jreleaser')
 
         project.tasks.register('jreleaserConfig', JReleaserConfigTask,
             new Action<JReleaserConfigTask>() {
@@ -104,7 +95,9 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserConfigTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Outputs current JReleaser configuration'
-                    t.context.set(context)
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -120,13 +113,30 @@ class JReleaserProjectConfigurer {
                 }
             })
 
+        project.tasks.register('jreleaserAssemble', JReleaserAssembleTask,
+            new Action<JReleaserAssembleTask>() {
+                @Override
+                void execute(JReleaserAssembleTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Assemble all distributions'
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
+                    if (hasDistributionPlugin) {
+                        t.dependsOn('assembleDist')
+                    }
+                }
+            })
+
         project.tasks.register('jreleaserChangelog', JReleaserChangelogTask,
             new Action<JReleaserChangelogTask>() {
                 @Override
                 void execute(JReleaserChangelogTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Calculate changelogs'
-                    t.context.set(context)
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -136,7 +146,9 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserChecksumTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Calculate checksums'
-                    t.context.set(context)
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
                     }
@@ -149,7 +161,9 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserSignTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Signs a release'
-                    t.context.set(context)
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
                     }
@@ -162,7 +176,9 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserReleaseTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Creates or updates a release'
-                    t.context.set(context)
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
                     }
@@ -175,7 +191,9 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserPrepareTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Prepares all distributions'
-                    t.context.set(context)
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
                     }
@@ -189,7 +207,9 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Packages all distributions'
                     t.dependsOn(prepareTask)
-                    t.context.set(context)
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
                     }
@@ -203,7 +223,9 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Uploads all distributions'
                     t.dependsOn(packageTask)
-                    t.context.set(context)
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
                     }
@@ -216,7 +238,9 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserAnnounceTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Announces a release'
-                    t.context.set(context)
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -226,7 +250,9 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserFullReleaseTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Invokes JReleaser on all distributions'
-                    t.context.set(context)
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
                     }

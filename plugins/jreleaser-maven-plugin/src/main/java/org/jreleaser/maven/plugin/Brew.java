@@ -30,7 +30,7 @@ public class Brew extends AbstractRepositoryTool {
     public static final String NAME = "brew";
     @Parameter(property = "dependencies")
     private final List<Dependency> dependencies = new ArrayList<>();
-    private Tap tap = new Tap();
+    private final Tap tap = new Tap();
 
     private String formulaName;
 
@@ -41,7 +41,7 @@ public class Brew extends AbstractRepositoryTool {
     void setAll(Brew brew) {
         super.setAll(brew);
         this.formulaName = brew.formulaName;
-        this.tap.setAll(brew.tap);
+        setTap(brew.tap);
         setDependencies(brew.dependencies);
     }
 
@@ -58,7 +58,7 @@ public class Brew extends AbstractRepositoryTool {
     }
 
     public void setTap(Tap tap) {
-        this.tap = tap;
+        this.tap.setAll(tap);
     }
 
     public List<Dependency> getDependencies() {

@@ -181,7 +181,7 @@ class DistributionImpl implements Distribution {
         distribution.type = distributionType.get()
         distribution.java = java.toModel()
         for (ArtifactImpl artifact : artifacts) {
-            distribution.artifacts.add(artifact.toModel())
+            distribution.addArtifact(artifact.toModel())
         }
         distribution.tags = (List<String>) tags.getOrElse([])
         if (extraProperties.present) distribution.extraProperties.putAll(extraProperties.get())

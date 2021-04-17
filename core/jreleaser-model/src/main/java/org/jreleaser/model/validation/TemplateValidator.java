@@ -17,11 +17,11 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Assembler;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Tool;
-
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -32,12 +32,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class TemplateValidator extends Validator {
     public static void validateTemplate(JReleaserContext context, Distribution distribution,
-                                        Tool tool, Tool parentTool, List<String> errors) {
+                                        Tool tool, Tool parentTool, Errors errors) {
         if (isBlank(tool.getTemplateDirectory())) {
             tool.setTemplateDirectory(parentTool.getTemplateDirectory());
             if (isNotBlank(tool.getTemplateDirectory()) &&
                 !(context.getBasedir().resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
-                errors.add("distribution." + distribution.getName() + "." + tool.getName() + ".template does not exist. " + tool.getTemplateDirectory());
+                errors.configuration("distribution." + distribution.getName() + "." + tool.getName() + ".template does not exist. " + tool.getTemplateDirectory());
             } else {
                 tool.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + tool.getName());
             }
@@ -46,9 +46,18 @@ public abstract class TemplateValidator extends Validator {
 
         if (isNotBlank(tool.getTemplateDirectory()) &&
             !(context.getBasedir().resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
-            errors.add("distribution." + distribution.getName() + "." + tool.getName() + ".template does not exist. " + tool.getTemplateDirectory());
+            errors.configuration("distribution." + distribution.getName() + "." + tool.getName() + ".template does not exist. " + tool.getTemplateDirectory());
         } else {
             tool.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + tool.getName());
+        }
+    }
+
+    public static void validateTemplate(JReleaserContext context, Assembler assembler, Errors errors) {
+        if (isNotBlank(assembler.getTemplateDirectory()) &&
+            !(context.getBasedir().resolve(assembler.getTemplateDirectory().trim()).toFile().exists())) {
+            errors.configuration(assembler.getType() + "." + assembler.getName() + ".template does not exist. " + assembler.getTemplateDirectory());
+        } else {
+            assembler.setTemplateDirectory("src/jreleaser/assemblers/" + assembler.getName() + "/" + assembler.getType());
         }
     }
 }

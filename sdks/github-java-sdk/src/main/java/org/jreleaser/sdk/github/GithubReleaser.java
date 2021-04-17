@@ -54,7 +54,7 @@ public class GithubReleaser implements Releaser {
         try {
             String changelog = context.getChangelog();
 
-            Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedToken());
+            Github api = new Github(context.getLogger(), github.getUsername(), github.getResolvedToken());
 
             context.getLogger().debug("looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
             GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);

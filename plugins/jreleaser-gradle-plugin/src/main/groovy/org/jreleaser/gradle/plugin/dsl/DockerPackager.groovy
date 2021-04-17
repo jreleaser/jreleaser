@@ -37,11 +37,19 @@ interface DockerPackager extends PackagerTool {
 
     ListProperty<String> getBuildArgs()
 
+    ListProperty<String> getPreCommands()
+
+    ListProperty<String> getPostCommands()
+
     MapProperty<String, String> getLabels()
 
     void addImageName(String imageName)
 
     void addBuildArg(String buildArg)
+
+    void addPreCommand(String command)
+
+    void addPostCommand(String command)
 
     void addLabel(String key, String value)
 

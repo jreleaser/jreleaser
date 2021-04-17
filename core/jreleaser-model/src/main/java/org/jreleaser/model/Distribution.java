@@ -42,7 +42,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
 
     private final List<String> tags = new ArrayList<>();
     private final Map<String, String> extraProperties = new LinkedHashMap<>();
-    private final List<Artifact> artifacts = new ArrayList<>();
+    private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final Java java = new Java();
     private Active active;
     private boolean enabled;
@@ -57,7 +57,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.name = distribution.name;
         this.type = distribution.type;
         this.executable = distribution.executable;
-        this.java.setAll(distribution.java);
+        setJava(distribution.java);
         setTags(distribution.tags);
         setExtraProperties(distribution.extraProperties);
         setArtifacts(distribution.artifacts);
@@ -134,16 +134,16 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.executable = executable;
     }
 
-    public List<Artifact> getArtifacts() {
+    public Set<Artifact> getArtifacts() {
         return artifacts;
     }
 
-    public void setArtifacts(List<Artifact> artifacts) {
+    public void setArtifacts(Set<Artifact> artifacts) {
         this.artifacts.clear();
         this.artifacts.addAll(artifacts);
     }
 
-    public void addArtifacts(List<Artifact> artifacts) {
+    public void addArtifacts(Set<Artifact> artifacts) {
         this.artifacts.addAll(artifacts);
     }
 
@@ -249,8 +249,9 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         props.put("executable", executable);
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
-        for (int i = 0; i < artifacts.size(); i++) {
-            mappedArtifacts.put("artifact " + i, artifacts.get(i).asMap(full));
+        int i = 0;
+        for (Artifact artifact: artifacts) {
+            mappedArtifacts.put("artifact " + (i++), artifact.asMap(full));
         }
         props.put("artifacts", mappedArtifacts);
 
@@ -280,7 +281,8 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     public enum DistributionType {
         JAVA_BINARY,
         JLINK,
-        SINGLE_JAR;
+        SINGLE_JAR,
+        NATIVE_IMAGE;
 
         public static DistributionType of(String str) {
             if (isBlank(str)) return null;

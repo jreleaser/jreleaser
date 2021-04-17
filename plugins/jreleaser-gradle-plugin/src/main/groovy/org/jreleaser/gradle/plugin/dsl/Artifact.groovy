@@ -31,4 +31,6 @@ interface Artifact {
     RegularFileProperty getPath()
 
     Property<String> getPlatform()
+
+    void setPath(String path)
 }

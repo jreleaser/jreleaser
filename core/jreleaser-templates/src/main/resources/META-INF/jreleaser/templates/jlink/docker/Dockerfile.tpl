@@ -4,13 +4,22 @@ FROM {{dockerBaseImage}}
 LABEL {{.}}
 {{/dockerLabels}}
 
-COPY assembly/{{artifactFileName}} /{{artifactFileName}}
+{{#dockerPreCommands}}
+{{.}}
+{{/dockerPreCommands}}
 
-RUN unzip {{artifactFileName}} && \
-    rm {{artifactFileName}} && \
-    mv {{distributionName}}-* {{distributionName}} && \
-    chmod +x {{distributionName}}/bin/{{distributionExecutable}}
+COPY assembly/{{distributionArtifactFileName}} /{{distributionArtifactFileName}}
 
-ENV PATH="${PATH}:/{{distributionName}}/bin"
+RUN unzip {{distributionArtifactFileName}} && \
+    rm {{distributionArtifactFileName}} && \
+    chmod +x {{distributionArtifactName}}/bin/{{distributionExecutable}} && \
+    chmod +x {{distributionArtifactName}}/bin/java
 
-ENTRYPOINT ["/{{distributionName}}/bin/{{distributionExecutable}}"]
+{{#dockerPostCommands}}
+{{.}}
+{{/dockerPostCommands}}
+
+ENV JAVA_HOME="/{{distributionArtifactName}}"
+ENV PATH="${PATH}:${JAVA_HOME}/bin"
+
+ENTRYPOINT ["/{{distributionArtifactName}}/bin/{{distributionExecutable}}"]

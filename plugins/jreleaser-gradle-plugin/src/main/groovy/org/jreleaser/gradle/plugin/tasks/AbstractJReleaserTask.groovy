@@ -19,12 +19,19 @@ package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.jreleaser.engine.context.ContextCreator
+import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.JReleaserContext
+import org.jreleaser.model.JReleaserModel
 
 import javax.inject.Inject
+import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  *
@@ -33,11 +40,38 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class AbstractJReleaserTask extends DefaultTask {
+    @Input
+    final Property<Boolean> dryrun
+
+    @Input
+    final DirectoryProperty outputDirectory
+
     @Internal
-    final Property<JReleaserContext> context
+    final Property<JReleaserModel> model
+
+    @Internal
+    JReleaserContext.Mode mode
 
     @Inject
     AbstractJReleaserTask(ObjectFactory objects) {
-        context = objects.property(JReleaserContext)
+        model = objects.property(JReleaserModel)
+        mode = JReleaserContext.Mode.FULL
+        dryrun = objects.property(Boolean).convention(false)
+        outputDirectory = objects.directoryProperty()
+    }
+
+    protected JReleaserContext createContext() {
+        Path outputDirectoryPath = outputDirectory.get().asFile.toPath()
+        Files.createDirectories(outputDirectoryPath)
+        PrintWriter tracer = new PrintWriter(new FileOutputStream(outputDirectoryPath
+            .resolve('trace.log').toFile()))
+
+        return ContextCreator.create(
+            new JReleaserLoggerAdapter(project, tracer),
+            mode,
+            model.get(),
+            project.projectDir.toPath(),
+            outputDirectoryPath,
+            dryrun.get())
     }
 }

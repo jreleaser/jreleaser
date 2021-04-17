@@ -44,6 +44,7 @@ public class Java implements Domain, ExtraProperties, EnabledProvider {
         this.artifactId = java.artifactId;
         this.mainClass = java.mainClass;
         this.multiProject = java.multiProject;
+        setExtraProperties(java.extraProperties);
     }
 
     @Override

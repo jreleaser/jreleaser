@@ -55,7 +55,7 @@ public final class TemplateUtils {
         return str;
     }
 
-    public static Map<String, Reader> resolveAndMergeTemplates(JReleaserLogger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot, Path templateDirectory) {
+    public static Map<String, Reader> resolveAndMergeTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot, Path templateDirectory) {
         Map<String, Reader> templates = resolveTemplates(logger, distributionType, toolName, snapshot);
         if (null != templateDirectory && templateDirectory.toFile().exists()) {
             templates.putAll(resolveTemplates(logger, distributionType, toolName, snapshot, templateDirectory));
@@ -63,7 +63,7 @@ public final class TemplateUtils {
         return templates;
     }
 
-    public static Map<String, Reader> resolveTemplates(JReleaserLogger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot, Path templateDirectory) {
+    public static Map<String, Reader> resolveTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot, Path templateDirectory) {
         Map<String, Reader> templates = new LinkedHashMap<>();
 
         Path snapshotTemplateDirectory = templateDirectory.resolveSibling(templateDirectory.getFileName() + "-snapshot");
@@ -83,7 +83,7 @@ public final class TemplateUtils {
                 }
             });
         } catch (IOException e) {
-            String distributionTypeName = distributionType.name().toLowerCase().replace('_', '-');
+            String distributionTypeName = distributionType.toLowerCase().replace('_', '-');
             throw new JReleaserException("Unexpected error reading templates for distribution " +
                 distributionTypeName + "/" + toolName + " from " + actualTemplateDirectory.toAbsolutePath());
         }
@@ -91,8 +91,8 @@ public final class TemplateUtils {
         return templates;
     }
 
-    public static Map<String, Reader> resolveTemplates(JReleaserLogger logger, Distribution.DistributionType distributionType, String toolName, boolean snapshot) {
-        String distributionTypeName = distributionType.name().toLowerCase().replace('_', '-');
+    public static Map<String, Reader> resolveTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot) {
+        String distributionTypeName = distributionType.toLowerCase().replace('_', '-');
 
         Map<String, Reader> templates = new LinkedHashMap<>();
 
@@ -122,9 +122,9 @@ public final class TemplateUtils {
                     templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
                 }
 
-                if (!templateFound) {
-                    logger.error("templates for {}/{} were not found", distributionTypeName, toolName);
-                }
+                // if (!templateFound) {
+                //     logger.error("templates for {}/{} were not found", distributionTypeName, toolName);
+                // }
             } else {
                 throw new JReleaserException("Could not find location of classpath templates");
             }

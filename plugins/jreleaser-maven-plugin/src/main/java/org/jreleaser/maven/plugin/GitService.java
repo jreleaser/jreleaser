@@ -74,7 +74,7 @@ public abstract class GitService implements Releaser {
 
     @Override
     public Boolean isEnabled() {
-        return enabled;
+        return enabled != null && enabled;
     }
 
     @Override

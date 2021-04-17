@@ -25,10 +25,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Chocolatey extends AbstractRepositoryTool {
     public static final String NAME = "chocolatey";
-
+    private final Bucket bucket = new Bucket();
     private String username;
     private Boolean remoteBuild;
-    private Bucket bucket = new Bucket();
 
     public Chocolatey() {
         super(NAME);
@@ -38,7 +37,7 @@ public class Chocolatey extends AbstractRepositoryTool {
         super.setAll(choco);
         this.username = choco.username;
         this.remoteBuild = choco.remoteBuild;
-        this.bucket.setAll(choco.bucket);
+        setBucket(choco.bucket);
     }
 
     public String getUsername() {
@@ -66,7 +65,7 @@ public class Chocolatey extends AbstractRepositoryTool {
     }
 
     public void setBucket(Bucket bucket) {
-        this.bucket = bucket;
+        this.bucket.setAll(bucket);
     }
 
     @Override

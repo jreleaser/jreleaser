@@ -87,7 +87,7 @@ class WorkflowImpl implements Workflow {
             report(context);
         } else {
             context.getLogger().error("JReleaser failed after {}s", String.format("%.3f", duration));
-            context.getLogger().error(exception.getMessage(), exception);
+            context.getLogger().trace(exception);
             report(context);
             throw exception;
         }

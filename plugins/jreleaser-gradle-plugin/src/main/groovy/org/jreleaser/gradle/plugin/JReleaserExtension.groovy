@@ -23,6 +23,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Artifact
+import org.jreleaser.gradle.plugin.dsl.Assemble
 import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Packagers
@@ -51,6 +52,8 @@ interface JReleaserExtension {
 
     Announce getAnnounce()
 
+    Assemble getAssemble()
+
     Signing getSigning()
 
     NamedDomainObjectContainer<Distribution> getDistributions()
@@ -66,6 +69,8 @@ interface JReleaserExtension {
     void packagers(Action<? super Packagers> action)
 
     void announce(Action<? super Announce> action)
+
+    void assemble(Action<? super Assemble> action)
 
     void signing(Action<? super Signing> action)
 }

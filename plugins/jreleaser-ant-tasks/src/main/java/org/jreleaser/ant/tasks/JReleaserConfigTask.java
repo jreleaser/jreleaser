@@ -28,14 +28,23 @@ import java.io.PrintWriter;
  */
 public class JReleaserConfigTask extends AbstractJReleaserTask {
     private boolean full;
+    private boolean assembly;
 
     public void setFull(boolean full) {
         this.full = full;
+    }
+
+    public void setAssembly(boolean assembly) {
+        this.assembly = assembly;
     }
 
     @Override
     protected void doExecute(JReleaserContext context) {
         new JReleaserModelPrinter(new PrintWriter(System.out, true))
             .print(context.getModel().asMap(full));
+    }
+
+    protected JReleaserContext.Mode getMode() {
+        return assembly ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.FULL;
     }
 }

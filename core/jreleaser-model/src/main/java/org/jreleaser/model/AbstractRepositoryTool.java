@@ -24,7 +24,7 @@ import java.util.Map;
  * @since 0.1.0
  */
 public abstract class AbstractRepositoryTool extends AbstractTool implements RepositoryTool {
-    protected CommitAuthor commitAuthor = new CommitAuthor();
+    protected final CommitAuthor commitAuthor = new CommitAuthor();
 
     protected AbstractRepositoryTool(String name) {
         super(name);
@@ -32,7 +32,7 @@ public abstract class AbstractRepositoryTool extends AbstractTool implements Rep
 
     void setAll(AbstractRepositoryTool tool) {
         super.setAll(tool);
-        this.commitAuthor.setAll(tool.commitAuthor);
+        setCommitAuthor(tool.commitAuthor);
     }
 
     @Override
@@ -42,7 +42,7 @@ public abstract class AbstractRepositoryTool extends AbstractTool implements Rep
 
     @Override
     public void setCommitAuthor(CommitAuthor commitAuthor) {
-        this.commitAuthor = commitAuthor;
+        this.commitAuthor.setAll(commitAuthor);
     }
 
     @Override

@@ -44,6 +44,7 @@ public class JReleaserModel implements Domain {
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
     private final Announce announce = new Announce();
+    private final Assemble assemble = new Assemble();
     private final Signing signing = new Signing();
     private final Files files = new Files();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
@@ -112,6 +113,14 @@ public class JReleaserModel implements Domain {
         this.announce.setAll(announce);
     }
 
+    public Assemble getAssemble() {
+        return assemble;
+    }
+
+    public void setAssemble(Assemble assemble) {
+        this.assemble.setAll(assemble);
+    }
+
     public Signing getSigning() {
         return signing;
     }
@@ -172,6 +181,7 @@ public class JReleaserModel implements Domain {
         if (full || announce.isEnabled()) map.put("announce", announce.asMap(full));
         if (!files.isEmpty()) map.put("files", files.asMap(full));
         if (full || packagers.hasEnabledPackagers()) map.put("packagers", packagers.asMap(full));
+        if (full || assemble.isEnabled()) map.put("assemble", assemble.asMap(full));
 
         List<Map<String, Object>> distributions = this.distributions.values()
             .stream()
@@ -214,6 +224,7 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_PROJECT_TAGS_BY_COMMA, String.join(",", project.getTags()));
 
         if (project.getJava().isEnabled()) {
+            props.putAll(project.getJava().getResolvedExtraProperties());
             props.put(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
             props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
             props.put(Constants.KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());

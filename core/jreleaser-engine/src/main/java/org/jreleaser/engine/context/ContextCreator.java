@@ -21,6 +21,7 @@ import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserModelValidator;
 import org.jreleaser.model.Project;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.JReleaserLogger;
@@ -34,11 +35,13 @@ import java.nio.file.Path;
  */
 public class ContextCreator {
     public static JReleaserContext create(JReleaserLogger logger,
+                                          JReleaserContext.Mode mode,
                                           Path configFile,
                                           Path basedir,
                                           Path outputDirectory,
                                           boolean dryrun) {
         return create(logger,
+            mode,
             resolveModel(logger, configFile),
             basedir,
             outputDirectory,
@@ -46,12 +49,14 @@ public class ContextCreator {
     }
 
     public static JReleaserContext create(JReleaserLogger logger,
+                                          JReleaserContext.Mode mode,
                                           JReleaserModel model,
                                           Path basedir,
                                           Path outputDirectory,
                                           boolean dryrun) {
         JReleaserContext context = new JReleaserContext(
             logger,
+            mode,
             model,
             basedir,
             outputDirectory,

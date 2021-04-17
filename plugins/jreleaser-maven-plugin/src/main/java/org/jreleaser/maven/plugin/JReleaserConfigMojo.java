@@ -22,6 +22,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelPrinter;
+import org.jreleaser.model.JReleaserContext;
 
 import java.io.PrintWriter;
 
@@ -43,6 +44,11 @@ public class JReleaserConfigMojo extends AbstractJReleaserMojo {
      */
     @Parameter(property = "jreleaser.config.full")
     private boolean full;
+    /**
+     * Display assembly configuration.
+     */
+    @Parameter(property = "jreleaser.config.assembly")
+    private boolean assembly;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -51,5 +57,9 @@ public class JReleaserConfigMojo extends AbstractJReleaserMojo {
 
         new JReleaserModelPrinter(new PrintWriter(System.out, true))
             .print(createContext().getModel().asMap(full));
+    }
+
+    protected JReleaserContext.Mode getMode() {
+        return assembly ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.FULL;
     }
 }

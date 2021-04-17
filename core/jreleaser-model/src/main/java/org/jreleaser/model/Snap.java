@@ -39,12 +39,12 @@ public class Snap extends AbstractRepositoryTool {
     private final Set<String> localSlots = new LinkedHashSet<>();
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
+    private final SnapTap snap = new SnapTap();
     private String base = "core18";
     private String grade = "stable";
     private String confinement = "strict";
     private String exportedLogin;
     private Boolean remoteBuild;
-    private SnapTap snap = new SnapTap();
 
     public Snap() {
         super(NAME);
@@ -69,7 +69,7 @@ public class Snap extends AbstractRepositoryTool {
         setLocalSlots(snap.localSlots);
         setPlugs(snap.plugs);
         setSlots(snap.slots);
-        this.snap.setAll(snap.snap);
+        setSnap(snap.snap);
     }
 
     public String getBase() {
@@ -221,7 +221,7 @@ public class Snap extends AbstractRepositoryTool {
     }
 
     public void setSnap(SnapTap snap) {
-        this.snap = snap;
+        this.snap.setAll(snap);
     }
 
     @Override

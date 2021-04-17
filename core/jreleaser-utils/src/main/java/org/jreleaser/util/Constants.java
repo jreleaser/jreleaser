@@ -81,7 +81,8 @@ public interface Constants {
     String KEY_DISTRIBUTION_TAGS_BY_COMMA = "distributionTagsByComma";
     String KEY_DISTRIBUTION_URL = "distributionUrl";
     String KEY_DISTRIBUTION_SHA_256 = "distributionSha256";
-    String KEY_DISTRIBUTION_FILE_NAME = "distributionFileName";
+    String KEY_DISTRIBUTION_ARTIFACT_NAME = "distributionArtifactName";
+    String KEY_DISTRIBUTION_ARTIFACT_FILE_NAME = "distributionArtifactFileName";
     String KEY_DISTRIBUTION_JAVA_VERSION = "distributionJavaVersion";
     String KEY_DISTRIBUTION_JAVA_VERSION_MAJOR = "distributionJavaVersionMajor";
     String KEY_DISTRIBUTION_JAVA_VERSION_MINOR = "distributionJavaVersionMinor";
@@ -94,6 +95,7 @@ public interface Constants {
 
     // Artifact
     String KEY_ARTIFACT_FILE_NAME = "artifactFileName";
+    String KEY_ARTIFACT_NAME = "artifactName";
 
     // Brew
     String KEY_BREW_FORMULA_NAME = "brewFormulaName";
@@ -104,6 +106,8 @@ public interface Constants {
     // Docker
     String KEY_DOCKER_BASE_IMAGE = "dockerBaseImage";
     String KEY_DOCKER_LABELS = "dockerLabels";
+    String KEY_DOCKER_PRE_COMMANDS = "dockerPreCommands";
+    String KEY_DOCKER_POST_COMMANDS = "dockerPostCommands";
 
     // Scoop
     String KEY_SCOOP_CHECKVER_URL = "scoopCheckverUrl";
@@ -141,6 +145,7 @@ public interface Constants {
     // ToolProcessor
     String KEY_CHECKSUM_DIRECTORY = "__CHECKSUM_DIRECTORY__";
     String KEY_OUTPUT_DIRECTORY = "__OUTPUT_DIRECTORY__";
+    String KEY_ASSEMBLE_DIRECTORY = "__ASSEMBLE_DIRECTORY__";
     String KEY_PREPARE_DIRECTORY = "__PREPARE_DIRECTORY__";
     String KEY_PACKAGE_DIRECTORY = "__PACKAGE_DIRECTORY__";
     String KEY_DISTRIBUTION_PREPARE_DIRECTORY = "distributionPrepareDirectory";

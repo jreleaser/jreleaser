@@ -17,11 +17,12 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -35,49 +36,93 @@ public class JReleaserContext {
     private final Path basedir;
     private final Path outputDirectory;
     private final boolean dryrun;
-    private final List<String> errors = new ArrayList<>();
+    private final Mode mode;
+    private final Errors errors = new Errors();
 
     private String distributionName;
     private String toolName;
     private String announcerName;
+    private String assemblerName;
     private String changelog;
 
     public JReleaserContext(JReleaserLogger logger,
+                            Mode mode,
                             JReleaserModel model,
                             Path basedir,
                             Path outputDirectory,
                             boolean dryrun) {
         this.logger = logger;
+        this.mode = mode;
         this.model = model;
         this.basedir = basedir;
         this.outputDirectory = outputDirectory;
         this.dryrun = dryrun;
     }
 
-    public List<String> validateModel() {
-        if (!errors.isEmpty()) return errors;
+    public Errors validateModel() {
+        if (errors.hasErrors()) return errors;
 
         this.model.getEnvironment().initProps(this);
 
         logger.info("Validating configuration");
 
-        try {
-            JReleaserModelValidator.validate(this, errors);
-        } catch (Exception e) {
-            logger.trace(e);
-            errors.add(e.toString());
+        if (mode == Mode.FULL) {
+            adjustDistributions();
         }
 
-        if (!errors.isEmpty()) {
+        try {
+            JReleaserModelValidator.validate(this, this.mode, errors);
+        } catch (Exception e) {
+            logger.trace(e);
+            errors.configuration(e.toString());
+        }
+
+        if (errors.hasErrors()) {
             logger.error("== JReleaser ==");
-            errors.forEach(logger::error);
+            errors.logErrors(logger);
         }
 
         return errors;
     }
 
+    private void adjustDistributions() {
+        logger.debug("adjusting distributions with assemblies");
+
+        // resolve assemblers
+        try {
+            JReleaserModelValidator.validate(this, Mode.ASSEMBLE, errors);
+            JReleaserModelResolver.resolve(this, errors);
+        } catch (Exception e) {
+            logger.trace(e);
+            errors.configuration(e.toString());
+        }
+
+        // match distributions
+        for (Assembler assembler : model.getAssemble().findAllAssemblers()) {
+            Distribution distribution = model.getDistributions().get(assembler.getName());
+            if (null == distribution) {
+                distribution = new Distribution();
+                distribution.setType(assembler.getType());
+                distribution.setName(assembler.getName());
+                model.getDistributions().put(assembler.getName(), distribution);
+            }
+            distribution.setExecutable(assembler.getExecutable());
+            distribution.setActive(assembler.getActive());
+            distribution.setJava(assembler.getJava());
+            distribution.setArtifacts(assembler.getOutputs());
+
+            Map<String, String> extraProperties = new LinkedHashMap<>(distribution.getExtraProperties());
+            extraProperties.putAll(assembler.getExtraProperties());
+            distribution.setExtraProperties(extraProperties);
+        }
+    }
+
     public JReleaserLogger getLogger() {
         return logger;
+    }
+
+    public Mode getMode() {
+        return mode;
     }
 
     public JReleaserModel getModel() {
@@ -124,6 +169,10 @@ public class JReleaserContext {
         return isNotBlank(announcerName);
     }
 
+    public boolean hasAssemblerName() {
+        return isNotBlank(assemblerName);
+    }
+
     public String getDistributionName() {
         return distributionName;
     }
@@ -148,12 +197,26 @@ public class JReleaserContext {
         this.announcerName = announcerName;
     }
 
+    public String getAssemblerName() {
+        return assemblerName;
+    }
+
+    public void setAssemblerName(String assemblerName) {
+        this.assemblerName = assemblerName;
+    }
+
     @Override
     public String toString() {
         return "JReleaserContext[" +
             "basedir=" + basedir.toAbsolutePath() +
             ", outputDirectory=" + outputDirectory.toAbsolutePath() +
             ", dryrun=" + dryrun +
+            ", mode=" + mode +
             "]";
+    }
+
+    public enum Mode {
+        ASSEMBLE,
+        FULL
     }
 }

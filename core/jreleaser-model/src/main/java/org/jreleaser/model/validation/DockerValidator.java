@@ -22,10 +22,10 @@ import org.jreleaser.model.Docker;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Registry;
+import org.jreleaser.util.Errors;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,20 +45,21 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class DockerValidator extends Validator {
-    public static void validateDocker(JReleaserContext context, Distribution distribution, Docker tool, List<String> errors) {
+    public static void validateDocker(JReleaserContext context, Distribution distribution, Docker tool, Errors errors) {
         JReleaserModel model = context.getModel();
+        Docker parentTool = model.getPackagers().getDocker();
 
-        if (!tool.isActiveSet() && model.getPackagers().getDocker().isActiveSet()) {
-            tool.setActive(model.getPackagers().getDocker().getActive());
+        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
+            tool.setActive(parentTool.getActive());
         }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
         context.getLogger().debug("distribution.{}.docker", distribution.getName());
 
-        validateTemplate(context, distribution, tool, model.getPackagers().getDocker(), errors);
-        mergeExtraProperties(tool, model.getPackagers().getDocker());
+        validateTemplate(context, distribution, tool, parentTool, errors);
+        mergeExtraProperties(tool, parentTool);
 
         if (isBlank(tool.getBaseImage())) {
-            tool.setBaseImage(model.getPackagers().getDocker().getBaseImage());
+            tool.setBaseImage(parentTool.getBaseImage());
         }
         if (isBlank(tool.getBaseImage())) {
             if (distribution.getType() != Distribution.DistributionType.JLINK) {
@@ -71,15 +72,27 @@ public abstract class DockerValidator extends Validator {
         }
 
         if (tool.getImageNames().isEmpty()) {
-            tool.setImageNames(model.getPackagers().getDocker().getImageNames());
+            tool.setImageNames(parentTool.getImageNames());
         }
 
         if (tool.getImageNames().isEmpty()) {
             tool.addImageName("{{repoOwner}}/{{distributionName}}:{{tagName}}");
         }
 
+        if (tool.getBuildArgs().isEmpty() && !parentTool.getBuildArgs().isEmpty()) {
+            tool.setBuildArgs(parentTool.getBuildArgs());
+        }
+
+        if (tool.getPreCommands().isEmpty() && !parentTool.getPreCommands().isEmpty()) {
+            tool.setPreCommands(parentTool.getPreCommands());
+        }
+
+        if (tool.getPostCommands().isEmpty() && !parentTool.getPostCommands().isEmpty()) {
+            tool.setPostCommands(parentTool.getPostCommands());
+        }
+
         Map<String, String> labels = new LinkedHashMap<>();
-        labels.putAll(model.getPackagers().getDocker().getLabels());
+        labels.putAll(parentTool.getLabels());
         labels.putAll(tool.getLabels());
         tool.setLabels(labels);
 
@@ -106,7 +119,7 @@ public abstract class DockerValidator extends Validator {
 
         Set<Registry> registries = new LinkedHashSet<>();
         registries.addAll(tool.getRegistries());
-        registries.addAll(model.getPackagers().getDocker().getRegistries());
+        registries.addAll(parentTool.getRegistries());
         tool.setRegistries(registries);
 
         if (registries.isEmpty()) {
@@ -124,7 +137,7 @@ public abstract class DockerValidator extends Validator {
             }
 
             if (isBlank(registry.getUsername())) {
-                errors.add("distribution." + distribution.getName() + "." + tool.getName() +
+                errors.configuration("distribution." + distribution.getName() + "." + tool.getName() +
                     ".registry." + registry.getServerName() + ".username must not be blank");
             }
 

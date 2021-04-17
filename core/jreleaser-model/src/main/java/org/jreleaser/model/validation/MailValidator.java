@@ -19,9 +19,9 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Mail;
+import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
-import java.util.List;
 
 import static org.jreleaser.model.Mail.MAIL_PASSWORD;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -32,7 +32,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class MailValidator extends Validator {
-    public static void validateMail(JReleaserContext context, Mail mail, List<String> errors) {
+    public static void validateMail(JReleaserContext context, Mail mail, Errors errors) {
         if (!mail.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.mail");
 
@@ -41,7 +41,7 @@ public abstract class MailValidator extends Validator {
         }
 
         if (isBlank(mail.getHost())) {
-            errors.add("mail.host must not be blank.");
+            errors.configuration("mail.host must not be blank.");
         }
 
         if (null == mail.getPort()) {
@@ -53,7 +53,7 @@ public abstract class MailValidator extends Validator {
         }
 
         if (isBlank(mail.getUsername())) {
-            errors.add("mail.username must not be blank.");
+            errors.configuration("mail.username must not be blank.");
         }
 
         mail.setPassword(
@@ -64,7 +64,7 @@ public abstract class MailValidator extends Validator {
                 errors));
 
         if (isBlank(mail.getFrom())) {
-            errors.add("mail.from must not be blank.");
+            errors.configuration("mail.from must not be blank.");
         }
 
         boolean to = isBlank(mail.getTo());
@@ -72,7 +72,7 @@ public abstract class MailValidator extends Validator {
         boolean bcc = isBlank(mail.getBcc());
 
         if (!to && !cc && !bcc) {
-            errors.add("mail.to, mail.cc, or mail.bcc must not be blank.");
+            errors.configuration("mail.to, mail.cc, or mail.bcc must not be blank.");
         }
 
         if (isBlank(mail.getSubject())) {
@@ -89,7 +89,7 @@ public abstract class MailValidator extends Validator {
 
         if (isNotBlank(mail.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(mail.getMessageTemplate().trim()))) {
-            errors.add("mail.messageTemplate does not exist. " + mail.getMessageTemplate());
+            errors.configuration("mail.messageTemplate does not exist. " + mail.getMessageTemplate());
         }
     }
 }

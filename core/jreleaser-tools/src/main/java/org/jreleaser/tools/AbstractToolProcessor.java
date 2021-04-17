@@ -21,7 +21,6 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
-import org.jreleaser.model.Release;
 import org.jreleaser.model.Tool;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
@@ -55,6 +54,7 @@ import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.capitalize;
+import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -103,7 +103,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
             context.getLogger().debug("resolving templates for {}/{}", distributionName, getToolName());
             Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
-                distribution.getType(),
+                distribution.getType().name(),
                 getToolName(),
                 context.getModel().getProject().isSnapshot(),
                 context.getBasedir().resolve(getTool().getTemplateDirectory()));
@@ -179,7 +179,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         Map<String, Object> newProps = context.getModel().props();
         newProps.putAll(props);
         context.getLogger().debug("filling distribution properties into props");
-        fillDistributionProperties(newProps, distribution, context.getModel().getRelease());
+        fillDistributionProperties(newProps, distribution);
         context.getLogger().debug("filling git properties into props");
         context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel().getProject());
         context.getLogger().debug("filling artifact properties into props");
@@ -197,9 +197,10 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         return newProps;
     }
 
-    protected void fillDistributionProperties(Map<String, Object> props, Distribution distribution, Release release) {
+    protected void fillDistributionProperties(Map<String, Object> props, Distribution distribution) {
         props.put(Constants.KEY_DISTRIBUTION_NAME, distribution.getName());
         props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, distribution.getExecutable());
+        props.putAll(distribution.getJava().getResolvedExtraProperties());
         props.put(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, distribution.getJava().getGroupId());
         props.put(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, distribution.getJava().getArtifactId());
         props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, distribution.getJava().getVersion());
@@ -268,6 +269,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         Set<String> fileExtensions = tool.getSupportedExtensions();
         List<Artifact> artifacts = distribution.getArtifacts().stream()
             .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
+            .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
             .collect(Collectors.toList());
 
         if (artifacts.size() == 0) {
@@ -281,17 +283,22 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             Artifact artifact = artifacts.get(i);
             String platform = isNotBlank(artifact.getPlatform()) ? capitalize(artifact.getPlatform()) : "";
             String artifactFileName = artifact.getResolvedPath(context).getFileName().toString();
+            String artifactName = getFilename(artifactFileName);
+            props.put("artifact" + platform + "Name", artifactName);
             props.put("artifact" + platform + "FileName", artifactFileName);
             props.put("artifact" + platform + "Hash", artifact.getHash());
             Map<String, Object> newProps = new LinkedHashMap<>(props);
-            newProps.put("artifactFileName", artifactFileName);
+            newProps.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
             String artifactUrl = applyTemplate(new StringReader(context.getModel().getRelease().getGitService().getDownloadUrlFormat()), newProps, "downloadUrl");
             props.put("artifact" + platform + "Url", artifactUrl);
 
             if (0 == i) {
                 props.put(Constants.KEY_DISTRIBUTION_URL, artifactUrl);
                 props.put(Constants.KEY_DISTRIBUTION_SHA_256, artifact.getHash());
-                props.put(Constants.KEY_DISTRIBUTION_FILE_NAME, artifactFileName);
+                props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
+                props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, artifactName);
+                props.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
+                props.put(Constants.KEY_ARTIFACT_NAME, artifactName);
             }
         }
 

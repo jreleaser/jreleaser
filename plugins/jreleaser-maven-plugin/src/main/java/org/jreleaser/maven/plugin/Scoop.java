@@ -25,10 +25,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Scoop extends AbstractRepositoryTool {
     public static final String NAME = "scoop";
-
+    private final Bucket bucket = new Bucket();
     private String checkverUrl;
     private String autoupdateUrl;
-    private Bucket bucket = new Bucket();
 
     public Scoop() {
         super(NAME);
@@ -38,7 +37,7 @@ public class Scoop extends AbstractRepositoryTool {
         super.setAll(scoop);
         this.checkverUrl = scoop.checkverUrl;
         this.autoupdateUrl = scoop.autoupdateUrl;
-        this.bucket.setAll(scoop.bucket);
+        setBucket(scoop.bucket);
     }
 
     public String getCheckverUrl() {
@@ -62,7 +61,7 @@ public class Scoop extends AbstractRepositoryTool {
     }
 
     public void setBucket(Bucket bucket) {
-        this.bucket = bucket;
+        this.bucket.setAll(bucket);
     }
 
     @Override

@@ -31,7 +31,6 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class JReleaserPackageTask extends AbstractJReleaserDistributionTask {
-
     @Inject
     JReleaserPackageTask(ObjectFactory objects) {
         super(objects)

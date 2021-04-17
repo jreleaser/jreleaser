@@ -27,9 +27,8 @@ import java.util.Set;
  */
 public class Jbang extends AbstractRepositoryTool {
     public static final String NAME = "jbang";
-
+    private final JbangCatalog catalog = new JbangCatalog();
     private String alias;
-    private JbangCatalog catalog = new JbangCatalog();
 
     public Jbang() {
         super(NAME);
@@ -43,7 +42,7 @@ public class Jbang extends AbstractRepositoryTool {
     void setAll(Jbang jbang) {
         super.setAll(jbang);
         this.alias = jbang.alias;
-        this.catalog.setAll(jbang.catalog);
+        setCatalog(jbang.catalog);
     }
 
     public String getAlias() {
@@ -59,7 +58,7 @@ public class Jbang extends AbstractRepositoryTool {
     }
 
     public void setCatalog(JbangCatalog tap) {
-        this.catalog = tap;
+        this.catalog.setAll(tap);
     }
 
     @Override
@@ -77,5 +76,10 @@ public class Jbang extends AbstractRepositoryTool {
     @Override
     public boolean supportsPlatform(String platform) {
         return true;
+    }
+
+    @Override
+    public boolean supportsDistribution(Distribution distribution) {
+        return distribution.getType() != Distribution.DistributionType.NATIVE_IMAGE;
     }
 }

@@ -33,8 +33,16 @@ public class Config extends AbstractModelCommand {
         description = "Display full configuration.")
     boolean full;
 
+    @CommandLine.Option(names = {"-a", "--assembly"},
+        description = "Display assembly configuration.")
+    boolean assembly;
+
     @Override
     protected void doExecute(JReleaserContext context) {
         new JReleaserModelPrinter(parent.out).print(context.getModel().asMap(full));
+    }
+
+    protected JReleaserContext.Mode getMode() {
+        return assembly ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.FULL;
     }
 }

@@ -18,14 +18,16 @@
 package org.jreleaser.maven.plugin;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Files {
-    private final List<Artifact> artifacts = new ArrayList<>();
+    private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final List<Glob> globs = new ArrayList<>();
 
     void setAll(Files files) {
@@ -33,16 +35,16 @@ public class Files {
         setGlobs(files.globs);
     }
 
-    public List<Artifact> getArtifacts() {
+    public Set<Artifact> getArtifacts() {
         return artifacts;
     }
 
-    public void setArtifacts(List<Artifact> artifacts) {
+    public void setArtifacts(Set<Artifact> artifacts) {
         this.artifacts.clear();
         this.artifacts.addAll(artifacts);
     }
 
-    public void addArtifacts(List<Artifact> artifacts) {
+    public void addArtifacts(Set<Artifact> artifacts) {
         this.artifacts.addAll(artifacts);
     }
 

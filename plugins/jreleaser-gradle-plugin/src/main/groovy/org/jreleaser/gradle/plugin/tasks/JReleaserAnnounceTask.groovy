@@ -54,7 +54,7 @@ abstract class JReleaserAnnounceTask extends AbstractJReleaserTask {
 
     @TaskAction
     void performAction() {
-        JReleaserContext ctx = context.get()
+        JReleaserContext ctx = createContext()
         ctx.distributionName = announcerName.orNull
         Workflows.announce(ctx).execute()
     }

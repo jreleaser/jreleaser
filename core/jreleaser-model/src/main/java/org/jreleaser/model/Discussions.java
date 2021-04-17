@@ -122,6 +122,7 @@ public class Discussions extends AbstractAnnouncer {
     @Override
     protected void asMap(Map<String, Object> props) {
         props.put("organization", organization);
+        props.put("team", team);
         props.put("title", title);
         props.put("message", message);
         props.put("messageTemplate", messageTemplate);

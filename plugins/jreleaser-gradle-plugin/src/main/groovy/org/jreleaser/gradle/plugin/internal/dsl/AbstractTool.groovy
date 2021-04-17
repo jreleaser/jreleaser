@@ -94,9 +94,9 @@ abstract class AbstractTool implements Tool {
     protected <T extends org.jreleaser.model.Tool> void fillToolProperties(T tool) {
         if (active.present) tool.active = active.get()
         if (templateDirectory.present) {
-            tool.templateDirectory = templateDirectory.get().asFile.toPath()
+            tool.templateDirectory = templateDirectory.get().asFile.toPath().toAbsolutePath().toString()
         } else if (localTemplate.asFile.get().exists()) {
-            tool.templateDirectory = localTemplate.asFile.get().toPath()
+            tool.templateDirectory = localTemplate.asFile.get().toPath().toAbsolutePath().toString()
         }
         if (extraProperties.present) tool.extraProperties.putAll(extraProperties.get())
     }

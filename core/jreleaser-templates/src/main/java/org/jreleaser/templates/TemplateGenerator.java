@@ -101,7 +101,7 @@ public class TemplateGenerator {
             throw fail(e);
         }
 
-        Map<String, Reader> templates = TemplateUtils.resolveTemplates(logger, distributionType, toolName, snapshot);
+        Map<String, Reader> templates = TemplateUtils.resolveTemplates(logger, distributionType.name(), toolName, snapshot);
         for (Map.Entry<String, Reader> template : templates.entrySet()) {
             Path outputFile = output.resolve(template.getKey());
             logger.info("Writing file " + outputFile.toAbsolutePath());

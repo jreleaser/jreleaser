@@ -19,8 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
-
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.GitService.BRANCH;
 
@@ -29,11 +28,11 @@ import static org.jreleaser.model.GitService.BRANCH;
  * @since 0.1.0
  */
 public abstract class GitlabValidator extends GitServiceValidator {
-    public static boolean validateGitlab(JReleaserContext context, Gitlab gitlab, List<String> errors) {
+    public static boolean validateGitlab(JReleaserContext context, JReleaserContext.Mode mode, Gitlab gitlab, Errors errors) {
         if (null == gitlab) return false;
         context.getLogger().debug("release.gitlab");
 
-        validateGitService(context, gitlab, errors);
+        validateGitService(context, mode, gitlab, errors);
 
         gitlab.setRef(
             checkProperty(context.getModel().getEnvironment(),

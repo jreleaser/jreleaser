@@ -22,6 +22,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Java
 
 import javax.inject.Inject
@@ -46,6 +47,15 @@ class JavaImpl implements Java {
         artifactId = objects.property(String).convention(Providers.notDefined())
         multiProject = objects.property(Boolean).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, String).convention(Providers.notDefined())
+    }
+
+    @Internal
+    boolean isSet() {
+        version.present ||
+            groupId.present ||
+            artifactId.present ||
+            multiProject.present ||
+            extraProperties.present
     }
 
     org.jreleaser.model.Java toModel() {

@@ -23,6 +23,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Tool;
+import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
@@ -49,7 +50,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class DistributionsValidator extends Validator {
-    public static void validateDistributions(JReleaserContext context, List<String> errors) {
+    public static void validateDistributions(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        if (mode != JReleaserContext.Mode.FULL) {
+            return;
+        }
+
         context.getLogger().debug("distributions");
         Map<String, Distribution> distributions = context.getModel().getDistributions();
 
@@ -70,7 +75,7 @@ public abstract class DistributionsValidator extends Validator {
         postValidateJBang(context, errors);
     }
 
-    private static void validateDistribution(JReleaserContext context, Distribution distribution, List<String> errors) {
+    private static void validateDistribution(JReleaserContext context, Distribution distribution, Errors errors) {
         context.getLogger().debug("distribution.{}", distribution.getName());
 
         if (!distribution.isActiveSet()) {
@@ -79,11 +84,11 @@ public abstract class DistributionsValidator extends Validator {
         if (!distribution.resolveEnabled(context.getModel().getProject())) return;
 
         if (isBlank(distribution.getName())) {
-            errors.add("distribution.name must not be blank");
+            errors.configuration("distribution.name must not be blank");
             return;
         }
         if (null == distribution.getType()) {
-            errors.add("distribution." + distribution.getName() + ".type must not be null");
+            errors.configuration("distribution." + distribution.getName() + ".type must not be null");
             return;
         }
         if (isBlank(distribution.getExecutable())) {
@@ -97,14 +102,14 @@ public abstract class DistributionsValidator extends Validator {
 
         // validate distribution type
         if (!distribution.getJava().isEnabled() && Distribution.JAVA_DISTRIBUTION_TYPES.contains(distribution.getType())) {
-            errors.add("distribution." + distribution.getName() + ".type is set to " +
+            errors.configuration("distribution." + distribution.getName() + ".type is set to " +
                 distribution.getType() + " but neither distribution." + distribution.getName() +
                 ".java nor project.java have been set");
             return;
         }
 
         if (null == distribution.getArtifacts() || distribution.getArtifacts().isEmpty()) {
-            errors.add("distribution." + distribution.getName() + ".artifacts is empty");
+            errors.configuration("distribution." + distribution.getName() + ".artifacts is empty");
             return;
         }
 
@@ -113,8 +118,9 @@ public abstract class DistributionsValidator extends Validator {
         tags.addAll(distribution.getTags());
         distribution.setTags(tags);
 
-        for (int i = 0; i < distribution.getArtifacts().size(); i++) {
-            validateArtifact(context, distribution, distribution.getArtifacts().get(i), i, errors);
+        int i = 0;
+        for (Artifact artifact : distribution.getArtifacts()) {
+            validateArtifact(context, distribution, artifact, i++, errors);
         }
 
         // validate artifact.platform is unique
@@ -127,7 +133,7 @@ public abstract class DistributionsValidator extends Validator {
                 .collect(groupingBy(artifact -> getFilenameExtension(artifact.getPath())))
                 .entrySet().forEach(e -> {
                 if (e.getValue().size() > 1) {
-                    errors.add("distribution." + distribution.getName() +
+                    errors.configuration("distribution." + distribution.getName() +
                         " has more than one artifact with " + platform +
                         " platform for extension " + e.getValue());
                 }
@@ -142,7 +148,7 @@ public abstract class DistributionsValidator extends Validator {
         validateSnap(context, distribution, distribution.getSnap(), errors);
     }
 
-    private static boolean validateJava(JReleaserContext context, Distribution distribution, List<String> errors) {
+    private static boolean validateJava(JReleaserContext context, Distribution distribution, Errors errors) {
         Project project = context.getModel().getProject();
 
         if (!distribution.getJava().isEnabledSet() && project.getJava().isEnabledSet()) {
@@ -167,8 +173,12 @@ public abstract class DistributionsValidator extends Validator {
             distribution.getJava().setMainClass(project.getJava().getMainClass());
         }
 
+        if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE) {
+            return true;
+        }
+
         if (isBlank(distribution.getJava().getGroupId())) {
-            errors.add("distribution." + distribution.getName() + ".java.groupId must not be blank");
+            errors.configuration("distribution." + distribution.getName() + ".java.groupId must not be blank");
         }
         if (!distribution.getJava().isMultiProjectSet()) {
             distribution.getJava().setMultiProject(project.getJava().isMultiProject());
@@ -176,7 +186,7 @@ public abstract class DistributionsValidator extends Validator {
 
         // validate distribution type
         if (!Distribution.JAVA_DISTRIBUTION_TYPES.contains(distribution.getType())) {
-            errors.add("distribution." + distribution.getName() + ".type must be a valid Java distribution type," +
+            errors.configuration("distribution." + distribution.getName() + ".type must be a valid Java distribution type," +
                 " one of [" + Distribution.JAVA_DISTRIBUTION_TYPES.stream()
                 .map(Distribution.DistributionType::name)
                 .collect(Collectors.joining(", ")) + "]");
@@ -186,13 +196,13 @@ public abstract class DistributionsValidator extends Validator {
         return true;
     }
 
-    private static void validateArtifact(JReleaserContext context, Distribution distribution, Artifact artifact, int index, List<String> errors) {
+    private static void validateArtifact(JReleaserContext context, Distribution distribution, Artifact artifact, int index, Errors errors) {
         if (null == artifact) {
-            errors.add("distribution." + distribution.getName() + ".artifact[" + index + "] is null");
+            errors.configuration("distribution." + distribution.getName() + ".artifact[" + index + "] is null");
             return;
         }
         if (isBlank(artifact.getPath())) {
-            errors.add("distribution." + distribution.getName() + ".artifact[" + index + "].path must not be null");
+            errors.configuration("distribution." + distribution.getName() + ".artifact[" + index + "].path must not be null");
         }
         if (isNotBlank(artifact.getPlatform()) && !PlatformUtils.isSupported(artifact.getPlatform().trim())) {
             context.getLogger().warn("distribution.{}.artifact[{}].platform ({}) is not supported. Please use `${name}` or `${name}-${arch}` from{}       name = {}{}       arch = {}",
@@ -201,7 +211,7 @@ public abstract class DistributionsValidator extends Validator {
         }
     }
 
-    public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Tool tool, List<String> errors) {
+    public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Tool tool, Errors errors) {
         // validate distribution type
         if (distribution.getType() == Distribution.DistributionType.JLINK) {
             // ensure all artifacts define a platform
@@ -213,7 +223,7 @@ public abstract class DistributionsValidator extends Validator {
                 .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? noPlatform : artifact.getPlatform()));
 
             if (byPlatform.containsKey(noPlatform)) {
-                errors.add("distribution." + distribution.getName() +
+                errors.configuration("distribution." + distribution.getName() +
                     " is of type " + distribution.getType() + " and " + tool.getName() +
                     " requires a explicit platform on each artifact");
             }

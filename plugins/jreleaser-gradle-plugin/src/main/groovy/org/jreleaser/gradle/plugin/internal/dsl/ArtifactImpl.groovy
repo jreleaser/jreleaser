@@ -43,6 +43,7 @@ class ArtifactImpl implements Artifact {
         platform = objects.property(String).convention(Providers.notDefined())
     }
 
+    @Override
     void setPath(String path) {
         this.path.set(new File(path))
     }

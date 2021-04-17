@@ -59,6 +59,10 @@ public final class FileUtils {
         grantAccess(path, "rwxrwxrwx");
     }
 
+    public static void grantExecutableAccess(Path path) throws IOException {
+        grantAccess(path, "r-xr-xr-x");
+    }
+
     public static void grantAccess(Path path, String accessRights) throws IOException {
         Set<PosixFilePermission> perms = PosixFilePermissions.fromString(accessRights);
         Files.setPosixFilePermissions(path, perms);

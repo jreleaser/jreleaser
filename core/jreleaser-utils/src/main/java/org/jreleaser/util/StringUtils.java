@@ -76,6 +76,26 @@ public class StringUtils {
         return path.substring(extIndex + 1);
     }
 
+    public static String getFilename(String path) {
+        if (path == null) {
+            return null;
+        }
+
+        int extIndex = path.lastIndexOf(".");
+        if (extIndex == -1) {
+            return null;
+        }
+
+        int folderIndex = path.lastIndexOf(File.separator);
+        if (folderIndex > extIndex) {
+            return null;
+        }
+
+        folderIndex = folderIndex < 0 ? 0 : folderIndex;
+
+        return path.substring(folderIndex, extIndex);
+    }
+
     /**
      * Retrieves the name of a setter for the specified property name
      *

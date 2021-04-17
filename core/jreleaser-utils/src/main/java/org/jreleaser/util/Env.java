@@ -17,8 +17,6 @@
  */
 package org.jreleaser.util;
 
-import java.util.List;
-
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -43,12 +41,12 @@ public class Env {
         return System.getenv(prefix(key));
     }
 
-    public static String check(String key, String value, String property, List<String> errors) {
+    public static String check(String key, String value, String property, Errors errors) {
         if (isBlank(value)) {
             String prefixedKey = prefix(key);
             value = System.getenv(prefixedKey);
             if (isBlank(value)) {
-                errors.add(property + " must not be blank. Alternatively define a " + prefixedKey + " environment variable.");
+                errors.configuration(property + " must not be blank. Alternatively define a " + prefixedKey + " environment variable.");
             }
         }
 

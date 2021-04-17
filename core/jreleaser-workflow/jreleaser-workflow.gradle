@@ -29,4 +29,5 @@ dependencies {
     api project(':gitea-java-sdk')
     // tools
     api project(':jreleaser-tools')
+    api project(':jreleaser-assemblers')
 }

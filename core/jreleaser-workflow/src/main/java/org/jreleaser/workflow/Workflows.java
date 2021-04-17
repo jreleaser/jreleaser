@@ -27,6 +27,12 @@ import static java.util.Collections.singletonList;
  * @since 0.1.0
  */
 public class Workflows {
+    public static Workflow assemble(JReleaserContext context) {
+        return new WorkflowImpl(context, singletonList(
+            new AssembleWorkflowItem()
+        ));
+    }
+
     public static Workflow changelog(JReleaserContext context) {
         return new WorkflowImpl(context, singletonList(
             new ChangelogWorkflowItem()

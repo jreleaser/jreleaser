@@ -19,8 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Announce;
 import org.jreleaser.model.JReleaserContext;
-
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.DiscussionsValidator.validateDiscussions;
 import static org.jreleaser.model.validation.MailValidator.validateMail;
@@ -34,7 +33,11 @@ import static org.jreleaser.model.validation.ZulipValidator.validateZulip;
  * @since 0.1.0
  */
 public abstract class AnnouncersValidator extends Validator {
-    public static void validateAnnouncers(JReleaserContext context, List<String> errors) {
+    public static void validateAnnouncers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        if (mode != JReleaserContext.Mode.FULL) {
+            return;
+        }
+
         context.getLogger().debug("announce");
 
         Announce announce = context.getModel().getAnnounce();

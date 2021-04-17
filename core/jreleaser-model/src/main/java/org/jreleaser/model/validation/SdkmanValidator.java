@@ -19,8 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Sdkman;
-
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
@@ -30,7 +29,7 @@ import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
  * @since 0.1.0
  */
 public abstract class SdkmanValidator extends Validator {
-    public static void validateSdkman(JReleaserContext context, Sdkman sdkman, List<String> errors) {
+    public static void validateSdkman(JReleaserContext context, Sdkman sdkman, Errors errors) {
         if (!sdkman.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.sdkman");
 

@@ -4,13 +4,20 @@ FROM {{dockerBaseImage}}
 LABEL {{.}}
 {{/dockerLabels}}
 
-COPY assembly/{{artifactFileName}} /{{artifactFileName}}
+{{#dockerPreCommands}}
+{{.}}
+{{/dockerPreCommands}}
 
-RUN unzip {{artifactFileName}} && \
-    rm {{artifactFileName}} && \
-    mv {{distributionName}}-* {{distributionName}} && \
-    chmod +x {{distributionName}}/bin/{{distributionExecutable}}
+COPY assembly/{{distributionArtifactFileName}} /{{distributionArtifactFileName}}
 
-ENV PATH="${PATH}:/{{distributionName}}/bin"
+RUN unzip {{distributionArtifactFileName}} && \
+    rm {{distributionArtifactFileName}} && \
+    chmod +x {{distributionArtifactName}}/bin/{{distributionExecutable}}
 
-ENTRYPOINT ["/{{distributionName}}/bin/{{distributionExecutable}}"]
+{{#dockerPostCommands}}
+{{.}}
+{{/dockerPostCommands}}
+
+ENV PATH="${PATH}:/{{distributionArtifactName}}/bin"
+
+ENTRYPOINT ["/{{distributionArtifactName}}/bin/{{distributionExecutable}}"]

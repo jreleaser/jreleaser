@@ -19,8 +19,10 @@ package org.jreleaser.maven.plugin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -29,7 +31,7 @@ import java.util.Map;
 public class Distribution extends Packagers implements ExtraProperties, Activatable {
     private final List<String> tags = new ArrayList<>();
     private final Map<String, String> extraProperties = new LinkedHashMap<>();
-    private final List<Artifact> artifacts = new ArrayList<>();
+    private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final Java java = new Java();
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;
@@ -101,11 +103,11 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.java.setAll(java);
     }
 
-    public List<Artifact> getArtifacts() {
+    public Set<Artifact> getArtifacts() {
         return artifacts;
     }
 
-    public void setArtifacts(List<Artifact> artifacts) {
+    public void setArtifacts(Set<Artifact> artifacts) {
         this.artifacts.clear();
         this.artifacts.addAll(artifacts);
     }
@@ -133,5 +135,6 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         JAVA_BINARY,
         JLINK,
         SINGLE_JAR,
+        NAGIVE_IMAGE
     }
 }

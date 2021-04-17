@@ -22,9 +22,7 @@ import org.jreleaser.model.CommitAuthorProvider;
 import org.jreleaser.model.Environment;
 import org.jreleaser.model.OwnerProvider;
 import org.jreleaser.util.Env;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -34,23 +32,23 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 class Validator {
-    static String checkProperty(Environment environment, String key, String property, String value, List<String> errors) {
+    static String checkProperty(Environment environment, String key, String property, String value, Errors errors) {
         if (isNotBlank(value)) return value;
         return Env.check(key, environment.getVariable(key), property, errors);
     }
 
     static String checkProperty(Environment environment, String key, String property, String value, String defaultValue) {
         if (isNotBlank(value)) return value;
-        List<String> errors = new ArrayList<>();
+        Errors errors = new Errors();
         String result = Env.check(key, environment.getVariable(key), property, errors);
-        return errors.isEmpty() ? result : defaultValue;
+        return !errors.hasErrors() ? result : defaultValue;
     }
 
     static boolean checkProperty(Environment environment, String key, String property, Boolean value, boolean defaultValue) {
         if (null != value) return value;
-        List<String> errors = new ArrayList<>();
+        Errors errors = new Errors();
         String result = Env.check(key, environment.getVariable(key), property, errors);
-        return errors.isEmpty() ? Boolean.parseBoolean(result) : defaultValue;
+        return !errors.hasErrors() ? Boolean.parseBoolean(result) : defaultValue;
     }
 
     static void validateOwner(OwnerProvider self, OwnerProvider other) {

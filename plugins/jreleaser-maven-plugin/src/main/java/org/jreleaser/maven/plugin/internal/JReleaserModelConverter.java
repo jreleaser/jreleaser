@@ -19,6 +19,7 @@ package org.jreleaser.maven.plugin.internal;
 
 import org.jreleaser.maven.plugin.Announce;
 import org.jreleaser.maven.plugin.Artifact;
+import org.jreleaser.maven.plugin.Assemble;
 import org.jreleaser.maven.plugin.Brew;
 import org.jreleaser.maven.plugin.Bucket;
 import org.jreleaser.maven.plugin.Catalog;
@@ -37,9 +38,11 @@ import org.jreleaser.maven.plugin.Gitlab;
 import org.jreleaser.maven.plugin.Glob;
 import org.jreleaser.maven.plugin.Java;
 import org.jreleaser.maven.plugin.Jbang;
+import org.jreleaser.maven.plugin.Jlink;
 import org.jreleaser.maven.plugin.Jreleaser;
 import org.jreleaser.maven.plugin.Mail;
 import org.jreleaser.maven.plugin.Milestone;
+import org.jreleaser.maven.plugin.NativeImage;
 import org.jreleaser.maven.plugin.Packagers;
 import org.jreleaser.maven.plugin.Plug;
 import org.jreleaser.maven.plugin.Project;
@@ -86,6 +89,7 @@ public final class JReleaserModelConverter {
         jreleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
         jreleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
         jreleaserModel.setAnnounce(convertAnnounce(jreleaser.getAnnounce()));
+        jreleaserModel.setAssemble(convertAssemble(jreleaser.getAssemble()));
         jreleaserModel.setSigning(convertSigning(jreleaser.getSigning()));
         jreleaserModel.setFiles(convertFiles(jreleaser.getFiles()));
         jreleaserModel.setDistributions(convertDistributions(jreleaserModel, jreleaser.getDistributions()));
@@ -304,6 +308,63 @@ public final class JReleaserModelConverter {
         return a;
     }
 
+    private static org.jreleaser.model.Assemble convertAssemble(Assemble assemble) {
+        org.jreleaser.model.Assemble a = new org.jreleaser.model.Assemble();
+        if (assemble.isEnabledSet()) a.setEnabled(assemble.isEnabled());
+        a.setJlinks(convertJlinks(assemble.getJlinks()));
+        a.setNativeImages(convertNativeImages(assemble.getNativeImages()));
+        return a;
+    }
+
+    private static Map<String, org.jreleaser.model.Jlink> convertJlinks(Map<String, Jlink> jlink) {
+        Map<String, org.jreleaser.model.Jlink> map = new LinkedHashMap<>();
+        for (Jlink jl : jlink.values()) {
+            map.put(jl.getName(), convertJlinks(jl));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.Jlink convertJlinks(Jlink jlink) {
+        org.jreleaser.model.Jlink a = new org.jreleaser.model.Jlink();
+        a.setName(jlink.getName());
+        a.setActive(jlink.resolveActive());
+        a.setJava(convertJava(jlink.getJava()));
+        a.setExecutable(jlink.getExecutable());
+        a.setExtraProperties(jlink.getExtraProperties());
+        a.setTemplateDirectory(jlink.getTemplateDirectory());
+        a.setTargetJdks(convertArtifacts(jlink.getTargetJdks()));
+        a.setModuleNames(jlink.getModuleNames());
+        a.setArgs(jlink.getArgs());
+        a.setJdk(convertArtifact(jlink.getJdk()));
+        a.setMainJar(convertArtifact(jlink.getMainJar()));
+        a.setImageName(jlink.getImageName());
+        a.setModuleName(jlink.getModuleName());
+        a.setJars(convertGlobs(jlink.getJars()));
+        return a;
+    }
+
+    private static Map<String, org.jreleaser.model.NativeImage> convertNativeImages(Map<String, NativeImage> nativeImage) {
+        Map<String, org.jreleaser.model.NativeImage> map = new LinkedHashMap<>();
+        for (NativeImage ni : nativeImage.values()) {
+            map.put(ni.getName(), convertNativeImages(ni));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.NativeImage convertNativeImages(NativeImage nativeImage) {
+        org.jreleaser.model.NativeImage a = new org.jreleaser.model.NativeImage();
+        a.setName(nativeImage.getName());
+        a.setActive(nativeImage.resolveActive());
+        a.setJava(convertJava(nativeImage.getJava()));
+        a.setExecutable(nativeImage.getExecutable());
+        a.setExtraProperties(nativeImage.getExtraProperties());
+        a.setTemplateDirectory(nativeImage.getTemplateDirectory());
+        a.setGraal(convertArtifact(nativeImage.getGraal()));
+        a.setMainJar(convertArtifact(nativeImage.getMainJar()));
+        a.setArgs(nativeImage.getArgs());
+        return a;
+    }
+
     private static org.jreleaser.model.Signing convertSigning(Signing signing) {
         org.jreleaser.model.Signing s = new org.jreleaser.model.Signing();
         s.setActive(signing.resolveActive());
@@ -350,8 +411,8 @@ public final class JReleaserModelConverter {
         return fs;
     }
 
-    private static List<org.jreleaser.model.Artifact> convertArtifacts(List<Artifact> artifacts) {
-        List<org.jreleaser.model.Artifact> as = new ArrayList<>();
+    private static Set<org.jreleaser.model.Artifact> convertArtifacts(Set<Artifact> artifacts) {
+        Set<org.jreleaser.model.Artifact> as = new LinkedHashSet<>();
         for (Artifact artifact : artifacts) {
             as.add(convertArtifact(artifact));
         }
@@ -430,6 +491,8 @@ public final class JReleaserModelConverter {
         t.setBaseImage(docker.getBaseImage());
         t.setImageNames(docker.getImageNames());
         t.setBuildArgs(docker.getBuildArgs());
+        t.setPreCommands(docker.getPreCommands());
+        t.setPostCommands(docker.getPostCommnands());
         t.setLabels(docker.getLabels());
         t.setRegistries(convertRegistries(docker.getRegistries()));
         return t;

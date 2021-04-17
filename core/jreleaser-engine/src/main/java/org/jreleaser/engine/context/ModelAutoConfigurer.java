@@ -27,6 +27,7 @@ import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.Env;
+import org.jreleaser.util.Errors;
 
 import java.io.IOException;
 
@@ -68,11 +69,23 @@ public class ModelAutoConfigurer {
         }
 
         try {
-            if (!context.validateModel().isEmpty()) {
-                throw new JReleaserException("JReleaser has not been properly configured.");
-            }
+            Errors errors = context.validateModel();
+
             new JReleaserModelPrinter.Plain(context.getLogger().getTracer())
                 .print(context.getModel().asMap(true));
+
+            switch (context.getMode()) {
+                case ASSEMBLE:
+                    if (errors.hasConfigurationErrors()) {
+                        throw new JReleaserException("JReleaser has not been properly configured.");
+                    }
+                    break;
+                case FULL:
+                    if (errors.hasErrors()) {
+                        throw new JReleaserException("JReleaser has not been properly configured.");
+                    }
+                    break;
+            }
         } catch (JReleaserException e) {
             context.getLogger().trace(e);
             throw e;

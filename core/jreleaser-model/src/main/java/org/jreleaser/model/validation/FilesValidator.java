@@ -19,8 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
-
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -29,7 +28,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class FilesValidator extends Validator {
-    public static void validateFiles(JReleaserContext context, List<String> errors) {
+    public static void validateFiles(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        if (mode != JReleaserContext.Mode.FULL) {
+            return;
+        }
+
         context.getLogger().debug("files");
 
         int i = 0;
@@ -50,7 +53,7 @@ public abstract class FilesValidator extends Validator {
             if (isBlank(glob.getExclude()) &&
                 includeAll && isBaseDir) {
                 // too broad!
-                errors.add("files.glob[" + i + "] must define either a directory or an include/exclude pattern");
+                errors.configuration("files.glob[" + i + "] must define either a directory or an include/exclude pattern");
             }
         }
     }

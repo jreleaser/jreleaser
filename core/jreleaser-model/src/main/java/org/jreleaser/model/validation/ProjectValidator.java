@@ -20,8 +20,7 @@ package org.jreleaser.model.validation;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
-
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Project.PROJECT_NAME;
@@ -34,7 +33,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class ProjectValidator extends Validator {
-    public static void validateProject(JReleaserContext context, List<String> errors) {
+    public static void validateProject(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
         context.getLogger().debug("project");
         Project project = context.getModel().getProject();
 
@@ -59,15 +58,19 @@ public abstract class ProjectValidator extends Validator {
                 project.getSnapshotPattern(),
                 DEFAULT_SNAPSHOT_PATTERN));
 
-        // validate only if there are Java distributions
-        if (context.getModel().getDistributions().values().stream()
+        boolean javaDistributions = context.getModel().getDistributions().values().stream()
             .map(Distribution::getType)
-            .anyMatch(type -> type != Distribution.DistributionType.JLINK)) {
+            .anyMatch(type -> type != Distribution.DistributionType.JLINK);
+        boolean jlinkAssemblers = !context.getModel().getAssemble().getJlinks().isEmpty();
+
+        if ((mode == JReleaserContext.Mode.FULL && javaDistributions) || jlinkAssemblers) {
             validateJava(context, project, errors);
         }
     }
 
-    public static void postValidateProject(JReleaserContext context, List<String> errors) {
+    public static void postValidateProject(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        if (mode != JReleaserContext.Mode.FULL) return;
+
         context.getLogger().debug("project");
         Project project = context.getModel().getProject();
 
@@ -76,23 +79,23 @@ public abstract class ProjectValidator extends Validator {
         }
 
         if (isBlank(project.getDescription())) {
-            errors.add("project.description must not be blank");
+            errors.configuration("project.description must not be blank");
         }
         if (isBlank(project.getWebsite())) {
-            errors.add("project.website must not be blank");
+            errors.configuration("project.website must not be blank");
         }
         if (isBlank(project.getLicense())) {
-            errors.add("project.license must not be blank");
+            errors.configuration("project.license must not be blank");
         }
         if (isBlank(project.getLongDescription())) {
             project.setLongDescription(project.getDescription());
         }
         if (project.getAuthors().isEmpty()) {
-            errors.add("project.authors must not be empty");
+            errors.configuration("project.authors must not be empty");
         }
     }
 
-    private static void validateJava(JReleaserContext context, Project project, List<String> errors) {
+    private static void validateJava(JReleaserContext context, Project project, Errors errors) {
         context.getLogger().debug("project.java");
         if (!project.getJava().isSet()) return;
 
@@ -102,10 +105,10 @@ public abstract class ProjectValidator extends Validator {
             project.getJava().setArtifactId(project.getName());
         }
         if (isBlank(project.getJava().getGroupId())) {
-            errors.add("project.java.groupId must not be blank");
+            errors.configuration("project.java.groupId must not be blank");
         }
         if (isBlank(project.getJava().getArtifactId())) {
-            errors.add("project.java.artifactId must not be blank");
+            errors.configuration("project.java.artifactId must not be blank");
         }
         if (!project.getJava().isMultiProjectSet()) {
             project.getJava().setMultiProject(false);

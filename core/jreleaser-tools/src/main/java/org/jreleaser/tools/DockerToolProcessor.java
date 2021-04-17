@@ -27,7 +27,6 @@ import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
-import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.IOException;
@@ -43,6 +42,7 @@ import java.util.stream.Collectors;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -234,9 +234,15 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
             applyTemplate(new StringReader(getTool().getBaseImage()), props, "baseImage"));
 
         List<String> labels = new ArrayList<>();
-        getTool().getLabels().forEach((label, value) -> labels.add(MustacheUtils.passThrough("\"" + label + "\"=\"" +
+        getTool().getLabels().forEach((label, value) -> labels.add(passThrough("\"" + label + "\"=\"" +
             applyTemplate(new StringReader(value), props, label) + "\"")));
         props.put(Constants.KEY_DOCKER_LABELS, labels);
+        props.put(Constants.KEY_DOCKER_PRE_COMMANDS, tool.getPreCommands().stream()
+            .map(c -> passThrough(applyTemplate(new StringReader(c), props)))
+            .collect(Collectors.toList()));
+        props.put(Constants.KEY_DOCKER_POST_COMMANDS, tool.getPostCommands().stream()
+            .map(c -> passThrough(applyTemplate(new StringReader(c), props)))
+            .collect(Collectors.toList()));
     }
 
     @Override
@@ -245,9 +251,14 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         fileName = trimTplExtension(fileName);
 
         Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
-        Path outputFile = "app.tpl".equals(fileName) ?
+        Path outputFile = "app".equals(fileName) ?
             outputDirectory.resolve(distribution.getExecutable()) :
             outputDirectory.resolve(fileName);
+
+        if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE &&
+            outputFile.getFileName().toString().equals(distribution.getExecutable())) {
+            return;
+        }
 
         writeFile(content, outputFile);
     }

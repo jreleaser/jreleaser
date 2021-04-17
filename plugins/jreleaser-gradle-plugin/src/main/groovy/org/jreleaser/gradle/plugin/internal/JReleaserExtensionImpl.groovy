@@ -29,6 +29,7 @@ import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Artifact
+import org.jreleaser.gradle.plugin.dsl.Assemble
 import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
@@ -36,6 +37,7 @@ import org.jreleaser.gradle.plugin.dsl.Release
 import org.jreleaser.gradle.plugin.dsl.Signing
 import org.jreleaser.gradle.plugin.internal.dsl.AnnounceImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ArtifactImpl
+import org.jreleaser.gradle.plugin.internal.dsl.AssembleImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.EnvironmentImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
@@ -62,6 +64,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final ReleaseImpl release
     final PackagersImpl packagers
     final AnnounceImpl announce
+    final AssembleImpl assemble
     final SigningImpl signing
     final NamedDomainObjectContainer<ArtifactImpl> files
     final NamedDomainObjectContainer<DistributionImpl> distributions
@@ -79,6 +82,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         release = objects.newInstance(ReleaseImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)
         announce = objects.newInstance(AnnounceImpl, objects)
+        assemble = objects.newInstance(AssembleImpl, objects)
         signing = objects.newInstance(SigningImpl, objects)
         files = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
@@ -130,6 +134,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
+    void assemble(Action<? super Assemble> action) {
+        action.execute(assemble)
+    }
+
+    @Override
     void signing(Action<? super Signing> action) {
         action.execute(signing)
     }
@@ -142,6 +151,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.release = release.toModel()
         jreleaser.packagers = packagers.toModel()
         jreleaser.announce = announce.toModel()
+        jreleaser.assemble = assemble.toModel()
         jreleaser.signing = signing.toModel()
         for (ArtifactImpl file : files) {
             jreleaser.files.add(file.toModel())

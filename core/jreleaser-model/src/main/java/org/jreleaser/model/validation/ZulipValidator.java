@@ -19,9 +19,9 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Zulip;
+import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
-import java.util.List;
 
 import static org.jreleaser.model.Zulip.ZULIP_API_KEY;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -34,12 +34,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public abstract class ZulipValidator extends Validator {
     private static final String DEFAULT_ZULIP_TPL = "src/jreleaser/templates/zulip.tpl";
 
-    public static void validateZulip(JReleaserContext context, Zulip zulip, List<String> errors) {
+    public static void validateZulip(JReleaserContext context, Zulip zulip, Errors errors) {
         if (!zulip.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.zulip");
 
         if (isBlank(zulip.getAccount())) {
-            errors.add("zulip.account must not be blank.");
+            errors.configuration("zulip.account must not be blank.");
         }
 
         zulip.setApiKey(
@@ -50,7 +50,7 @@ public abstract class ZulipValidator extends Validator {
                 errors));
 
         if (isBlank(zulip.getApiHost())) {
-            errors.add("zulip.apiHost must not be blank.");
+            errors.configuration("zulip.apiHost must not be blank.");
         }
         if (isBlank(zulip.getSubject())) {
             zulip.setSubject("{{projectNameCapitalized}} {{projectVersion}} released!");
@@ -69,7 +69,7 @@ public abstract class ZulipValidator extends Validator {
 
         if (isNotBlank(zulip.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(zulip.getMessageTemplate().trim()))) {
-            errors.add("zulip.messageTemplate does not exist. " + zulip.getMessageTemplate());
+            errors.configuration("zulip.messageTemplate does not exist. " + zulip.getMessageTemplate());
         }
     }
 }

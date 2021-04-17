@@ -19,8 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Github;
 import org.jreleaser.model.JReleaserContext;
-
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.model.GitService.PRERELEASE;
@@ -30,11 +29,11 @@ import static org.jreleaser.model.GitService.PRERELEASE;
  * @since 0.1.0
  */
 public abstract class GithubValidator extends GitServiceValidator {
-    public static boolean validateGithub(JReleaserContext context, Github github, List<String> errors) {
+    public static boolean validateGithub(JReleaserContext context, JReleaserContext.Mode mode, Github github, Errors errors) {
         if (null == github) return false;
         context.getLogger().debug("release.github");
 
-        validateGitService(context, github, errors);
+        validateGitService(context, mode, github, errors);
 
         github.setTargetCommitish(
             checkProperty(context.getModel().getEnvironment(),

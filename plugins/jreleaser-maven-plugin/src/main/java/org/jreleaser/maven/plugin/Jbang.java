@@ -25,9 +25,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Jbang extends AbstractRepositoryTool {
     public static final String NAME = "catalog";
-
+    private final Catalog catalog = new Catalog();
     private String alias;
-    private Catalog catalog = new Catalog();
 
     public Jbang() {
         super(NAME);
@@ -36,7 +35,7 @@ public class Jbang extends AbstractRepositoryTool {
     void setAll(Jbang jbang) {
         super.setAll(jbang);
         this.alias = jbang.alias;
-        this.catalog.setAll(jbang.catalog);
+        setCatalog(jbang.catalog);
     }
 
     public String getAlias() {
@@ -52,7 +51,7 @@ public class Jbang extends AbstractRepositoryTool {
     }
 
     public void setCatalog(Catalog catalog) {
-        this.catalog = catalog;
+        this.catalog.setAll(catalog);
     }
 
     @Override

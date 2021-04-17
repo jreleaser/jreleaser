@@ -26,6 +26,12 @@ public class Artifact {
     private String hash;
     private String platform;
 
+    void setAll(Artifact artifact) {
+        this.path = artifact.path;
+        this.hash = artifact.hash;
+        this.platform = artifact.platform;
+    }
+
     public String getPath() {
         return path;
     }

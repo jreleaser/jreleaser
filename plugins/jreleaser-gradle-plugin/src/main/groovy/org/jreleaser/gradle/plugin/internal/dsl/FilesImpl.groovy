@@ -74,10 +74,10 @@ class FilesImpl implements Files {
     org.jreleaser.model.Files toModel() {
         org.jreleaser.model.Files files = new org.jreleaser.model.Files()
         for (ArtifactImpl artifact : artifacts) {
-            files.artifacts.add(artifact.toModel())
+            files.addArtifact(artifact.toModel())
         }
         for (GlobImpl glob : globs) {
-            files.globs.add(glob.toModel())
+            files.addGlob(glob.toModel())
         }
         files
     }

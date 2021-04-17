@@ -19,9 +19,9 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Slack;
+import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
-import java.util.List;
 
 import static org.jreleaser.model.Slack.SLACK_TOKEN;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public abstract class SlackValidator extends Validator {
     private static final String DEFAULT_SLACK_TPL = "src/jreleaser/templates/slack.tpl";
 
-    public static void validateSlack(JReleaserContext context, Slack slack, List<String> errors) {
+    public static void validateSlack(JReleaserContext context, Slack slack, Errors errors) {
         if (!slack.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.slack");
 
@@ -60,7 +60,7 @@ public abstract class SlackValidator extends Validator {
 
         if (isNotBlank(slack.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(slack.getMessageTemplate().trim()))) {
-            errors.add("slack.messageTemplate does not exist. " + slack.getMessageTemplate());
+            errors.configuration("slack.messageTemplate does not exist. " + slack.getMessageTemplate());
         }
     }
 }

@@ -22,9 +22,8 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
+import org.jreleaser.util.Errors;
 import org.jreleaser.util.StringUtils;
-
-import java.util.List;
 
 import static org.jreleaser.model.GitService.OVERWRITE;
 import static org.jreleaser.model.GitService.RELEASE_NAME;
@@ -39,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class GitServiceValidator extends Validator {
-    public static void validateGitService(JReleaserContext context, GitService service, List<String> errors) {
+    public static void validateGitService(JReleaserContext context, JReleaserContext.Mode mode, GitService service, Errors errors) {
         JReleaserModel model = context.getModel();
         Project project = model.getProject();
 
@@ -47,7 +46,7 @@ public abstract class GitServiceValidator extends Validator {
             service.setEnabled(true);
         }
         if (isBlank(service.getOwner())) {
-            errors.add(service.getServiceName() + ".owner must not be blank");
+            errors.configuration(service.getServiceName() + ".owner must not be blank");
         }
         if (isBlank(service.getName())) {
             service.setName(project.getName());
@@ -113,9 +112,6 @@ public abstract class GitServiceValidator extends Validator {
         if (!service.getChangelog().isEnabledSet()) {
             service.getChangelog().setEnabled(true);
         }
-        if (service.isSign() && !model.getSigning().isEnabled()) {
-            errors.add(service.getServiceName() + ".sign is set to `true` but signing is not enabled");
-        }
         if (isBlank(service.getCommitAuthor().getName())) {
             service.getCommitAuthor().setName("jreleaser-bot");
         }
@@ -141,6 +137,12 @@ public abstract class GitServiceValidator extends Validator {
             service.getChangelog().setExternal(null);
             service.getChangelog().setSort(Changelog.Sort.DESC);
             service.setOverwrite(true);
+        }
+
+        if (mode == JReleaserContext.Mode.FULL) {
+            if (service.isSign() && !model.getSigning().isEnabled()) {
+                errors.configuration(service.getServiceName() + ".sign is set to `true` but signing is not enabled");
+            }
         }
     }
 }

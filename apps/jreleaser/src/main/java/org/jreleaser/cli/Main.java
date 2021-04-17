@@ -30,6 +30,7 @@ import java.io.PrintWriter;
     mixinStandardHelpOptions = true,
     versionProvider = Versions.class,
     subcommands = {Init.class, Config.class, Template.class,
+        Assemble.class,
         Changelog.class, Checksum.class, Sign.class,
         Release.class, Prepare.class, Package.class,
         Upload.class, Announce.class, FullRelease.class})

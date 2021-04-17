@@ -103,7 +103,7 @@ abstract class JReleaserTemplateTask extends AbstractJReleaserTask {
     @TaskAction
     void generateTemplate() {
         Path output = TemplateGenerator.builder()
-            .logger(context.get().logger)
+            .logger(createContext().logger)
             .distributionName(distributionName.get())
             .distributionType(distributionType.get())
             .toolName(toolName.get())

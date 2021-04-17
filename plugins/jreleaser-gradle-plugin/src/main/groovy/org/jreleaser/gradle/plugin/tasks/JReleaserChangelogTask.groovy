@@ -38,6 +38,6 @@ abstract class JReleaserChangelogTask extends AbstractJReleaserTask {
 
     @TaskAction
     void performAction() {
-        Workflows.changelog(context.get()).execute()
+        Workflows.changelog(createContext()).execute()
     }
 }

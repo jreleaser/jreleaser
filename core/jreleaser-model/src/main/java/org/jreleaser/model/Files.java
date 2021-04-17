@@ -30,7 +30,7 @@ import java.util.Set;
  * @since 0.1.0
  */
 public class Files implements Domain {
-    private final List<Artifact> artifacts = new ArrayList<>();
+    private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final List<Glob> globs = new ArrayList<>();
     private final Set<Artifact> paths = new LinkedHashSet<>();
     private boolean resolved;
@@ -58,16 +58,16 @@ public class Files implements Domain {
         setGlobs(files.globs);
     }
 
-    public List<Artifact> getArtifacts() {
+    public Set<Artifact> getArtifacts() {
         return artifacts;
     }
 
-    public void setArtifacts(List<Artifact> artifacts) {
+    public void setArtifacts(Set<Artifact> artifacts) {
         this.artifacts.clear();
         this.artifacts.addAll(artifacts);
     }
 
-    public void addArtifacts(List<Artifact> artifacts) {
+    public void addArtifacts(Set<Artifact> artifacts) {
         this.artifacts.addAll(artifacts);
     }
 
@@ -101,13 +101,14 @@ public class Files implements Domain {
         Map<String, Object> map = new LinkedHashMap<>();
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
-        for (int i = 0; i < artifacts.size(); i++) {
-            mappedArtifacts.put("artifact " + i, artifacts.get(i).asMap(full));
+        int i = 0;
+        for (Artifact artifact : artifacts) {
+            mappedArtifacts.put("artifact " + (i++), artifact.asMap(full));
         }
         map.put("artifacts", mappedArtifacts);
 
         Map<String, Map<String, Object>> mappedGlobs = new LinkedHashMap<>();
-        for (int i = 0; i < globs.size(); i++) {
+        for (i = 0; i < globs.size(); i++) {
             mappedGlobs.put("glob " + i, globs.get(i).asMap(full));
         }
         map.put("globs", mappedGlobs);

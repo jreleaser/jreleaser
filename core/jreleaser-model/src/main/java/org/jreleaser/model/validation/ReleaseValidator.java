@@ -19,8 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Release;
-
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.GiteaValidator.validateGitea;
 import static org.jreleaser.model.validation.GithubValidator.validateGithub;
@@ -31,21 +30,21 @@ import static org.jreleaser.model.validation.GitlabValidator.validateGitlab;
  * @since 0.1.0
  */
 public abstract class ReleaseValidator extends Validator {
-    public static void validateRelease(JReleaserContext context, List<String> errors) {
+    public static void validateRelease(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
         context.getLogger().debug("release");
         Release release = context.getModel().getRelease();
 
         int count = 0;
-        if (validateGithub(context, release.getGithub(), errors)) count++;
-        if (validateGitlab(context, release.getGitlab(), errors)) count++;
-        if (validateGitea(context, release.getGitea(), errors)) count++;
+        if (validateGithub(context, mode, release.getGithub(), errors)) count++;
+        if (validateGitlab(context, mode, release.getGitlab(), errors)) count++;
+        if (validateGitea(context, mode, release.getGitea(), errors)) count++;
 
         if (0 == count) {
-            errors.add("No release provider has been configured");
+            errors.configuration("No release provider has been configured");
             return;
         }
         if (count > 1) {
-            errors.add("Only one of release.github, release.gitlab, release.gitea can be enabled");
+            errors.configuration("Only one of release.github, release.gitlab, release.gitea can be enabled");
         }
     }
 }

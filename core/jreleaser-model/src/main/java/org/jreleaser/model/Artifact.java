@@ -25,9 +25,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.nio.file.Files.exists;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -38,6 +40,13 @@ public class Artifact implements Domain {
     private String hash;
     private String platform;
     private Path filePath;
+
+    void setAll(Artifact artifact) {
+        this.path = artifact.path;
+        this.hash = artifact.hash;
+        this.platform = artifact.platform;
+        this.filePath = artifact.filePath;
+    }
 
     public Path getResolvedPath(JReleaserContext context) {
         if (null == filePath) {
@@ -58,21 +67,59 @@ public class Artifact implements Domain {
                 Map<String, Object> props = context.getModel().props();
                 props.put(Constants.KEY_DISTRIBUTION_NAME, distribution.getName());
                 props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, distribution.getExecutable());
-                props.put(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, distribution.getJava().getGroupId());
-                props.put(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, distribution.getJava().getArtifactId());
-                props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, distribution.getJava().getVersion());
-                Version jv = Version.of(distribution.getJava().getVersion());
-                props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor());
-                if (jv.hasMinor()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor());
-                if (jv.hasPatch()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch());
-                if (jv.hasTag()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag());
-                if (jv.hasBuild()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild());
+                if (distribution.getJava().isEnabled()) {
+                    props.putAll(distribution.getJava().getResolvedExtraProperties());
+                    props.put(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, distribution.getJava().getGroupId());
+                    props.put(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, distribution.getJava().getArtifactId());
+                    props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, distribution.getJava().getVersion());
+                    Version jv = Version.of(distribution.getJava().getVersion());
+                    props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor());
+                    if (jv.hasMinor()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor());
+                    if (jv.hasPatch()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch());
+                    if (jv.hasTag()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag());
+                    if (jv.hasBuild()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild());
+                }
                 props.putAll(distribution.getResolvedExtraProperties());
                 path = applyTemplate(new StringReader(path), props);
             }
             filePath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(filePath)) {
                 throw new JReleaserException("Artifact does not exist. " + context.getBasedir().relativize(filePath));
+            }
+        }
+        return filePath;
+    }
+
+    public Path getResolvedPath(JReleaserContext context, Assembler assembler) {
+        if (null == filePath) {
+            if (path.contains("{{")) {
+                Map<String, Object> props = context.getModel().props();
+                props.put(Constants.KEY_DISTRIBUTION_NAME, assembler.getName());
+                props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable());
+                props.putAll(assembler.getJava().getResolvedExtraProperties());
+                props.put(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, assembler.getJava().getGroupId());
+                props.put(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, assembler.getJava().getArtifactId());
+                props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, assembler.getJava().getVersion());
+                if (isNotBlank(assembler.getJava().getVersion())) {
+                    Version jv = Version.of(assembler.getJava().getVersion());
+                    props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor());
+                    if (jv.hasMinor()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor());
+                    if (jv.hasPatch()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch());
+                    if (jv.hasTag()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag());
+                    if (jv.hasBuild()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild());
+                } else {
+                    props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, "");
+                    props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, "");
+                    props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, "");
+                    props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, "");
+                    props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
+                }
+                props.putAll(assembler.getResolvedExtraProperties());
+                path = applyTemplate(new StringReader(path), props);
+            }
+            filePath = context.getBasedir().resolve(Paths.get(path)).normalize();
+            if (!exists(filePath)) {
+                throw new JReleaserException("Path does not exist. " + context.getBasedir().relativize(filePath));
             }
         }
         return filePath;
@@ -115,10 +162,31 @@ public class Artifact implements Domain {
         return map;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Artifact artifact = (Artifact) o;
+        return path.equals(artifact.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path);
+    }
+
     public static Artifact of(Path filePath) {
         Artifact artifact = new Artifact();
         artifact.path = filePath.toAbsolutePath().toString();
         artifact.filePath = filePath;
+        return artifact;
+    }
+
+    public static Artifact of(Path filePath, String platform) {
+        Artifact artifact = new Artifact();
+        artifact.path = filePath.toAbsolutePath().toString();
+        artifact.filePath = filePath;
+        artifact.platform = platform;
         return artifact;
     }
 }

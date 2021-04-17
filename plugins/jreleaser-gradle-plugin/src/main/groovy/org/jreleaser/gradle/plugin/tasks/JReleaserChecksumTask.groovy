@@ -38,6 +38,6 @@ abstract class JReleaserChecksumTask extends AbstractJReleaserTask {
 
     @TaskAction
     void performAction() {
-        Workflows.checksum(context.get()).execute()
+        Workflows.checksum(createContext()).execute()
     }
 }

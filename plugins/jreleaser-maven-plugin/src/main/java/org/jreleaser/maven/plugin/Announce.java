@@ -42,7 +42,7 @@ public class Announce implements EnabledProvider {
 
     @Override
     public Boolean isEnabled() {
-        return enabled;
+        return enabled != null && enabled;
     }
 
     @Override

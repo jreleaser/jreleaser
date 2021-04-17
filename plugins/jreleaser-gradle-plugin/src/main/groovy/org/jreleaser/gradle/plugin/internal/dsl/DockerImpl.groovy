@@ -44,6 +44,8 @@ class DockerImpl extends AbstractTool implements Docker {
     final Property<String> baseImage
     final SetProperty<String> imageNames
     final ListProperty<String> buildArgs
+    final ListProperty<String> preCommands
+    final ListProperty<String> postCommands
     final MapProperty<String, String> labels
 
     final NamedDomainObjectContainer<RegistryImpl> registries
@@ -54,6 +56,8 @@ class DockerImpl extends AbstractTool implements Docker {
         baseImage = objects.property(String).convention(Providers.notDefined())
         imageNames = objects.setProperty(String).convention(Providers.notDefined())
         buildArgs = objects.listProperty(String).convention(Providers.notDefined())
+        preCommands = objects.listProperty(String).convention(Providers.notDefined())
+        postCommands = objects.listProperty(String).convention(Providers.notDefined())
         labels = objects.mapProperty(String, String).convention(Providers.notDefined())
 
         registries = objects.domainObjectContainer(RegistryImpl)
@@ -84,12 +88,28 @@ class DockerImpl extends AbstractTool implements Docker {
     }
 
     @Override
+    void addPreCommand(String command) {
+        if (isNotBlank(command)) {
+            preCommands.add(command.trim())
+        }
+    }
+
+    @Override
+    void addPostCommand(String command) {
+        if (isNotBlank(command)) {
+            postCommands.add(command.trim())
+        }
+    }
+
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||
             baseImage.present ||
             imageNames.present ||
             buildArgs.present ||
+            preCommands.present ||
+            postCommands.present ||
             labels.present ||
             registries.size()
     }
@@ -100,6 +120,8 @@ class DockerImpl extends AbstractTool implements Docker {
         if (baseImage.present) tool.baseImage = baseImage.get()
         if (imageNames.present) tool.imageNames.addAll(imageNames.get())
         if (buildArgs.present) tool.buildArgs.addAll(buildArgs.get())
+        if (preCommands.present) tool.preCommands.addAll(preCommands.get())
+        if (postCommands.present) tool.postCommands.addAll(postCommands.get())
         if (labels.present) tool.labels.putAll(labels.get())
         for (RegistryImpl registry : registries) {
             tool.addRegistry(registry.toModel())

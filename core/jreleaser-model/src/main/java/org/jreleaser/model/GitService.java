@@ -465,6 +465,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         }
 
         if (project.getJava().isEnabled()) {
+            props.putAll(project.getJava().getResolvedExtraProperties());
             props.put(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
             props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
             props.put(Constants.KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());

@@ -31,6 +31,7 @@ public class Jreleaser {
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
     private final Announce announce = new Announce();
+    private final Assemble assemble = new Assemble();
     private final Signing signing = new Signing();
     private final Files files = new Files();
     private final List<Distribution> distributions = new ArrayList<>();
@@ -73,6 +74,14 @@ public class Jreleaser {
 
     public void setAnnounce(Announce announce) {
         this.announce.setAll(announce);
+    }
+
+    public Assemble getAssemble() {
+        return assemble;
+    }
+
+    public void setAssemble(Assemble assemble) {
+        this.assemble.setAll(assemble);
     }
 
     public Signing getSigning() {

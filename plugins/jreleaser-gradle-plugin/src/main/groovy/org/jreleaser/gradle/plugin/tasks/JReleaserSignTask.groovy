@@ -38,6 +38,6 @@ abstract class JReleaserSignTask extends AbstractJReleaserTask {
 
     @TaskAction
     void performAction() {
-        Workflows.sign(context.get()).execute()
+        Workflows.sign(createContext()).execute()
     }
 }

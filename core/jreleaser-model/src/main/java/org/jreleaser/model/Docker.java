@@ -46,6 +46,8 @@ public class Docker extends AbstractTool {
     private final Map<String, String> labels = new LinkedHashMap<>();
     private final Set<String> imageNames = new LinkedHashSet<>();
     private final List<String> buildArgs = new ArrayList<>();
+    private final List<String> preCommands = new ArrayList<>();
+    private final List<String> postCommands = new ArrayList<>();
     private final Set<Registry> registries = new LinkedHashSet<>();
 
     private String baseImage;
@@ -59,6 +61,8 @@ public class Docker extends AbstractTool {
         this.baseImage = docker.baseImage;
         setImageNames(docker.imageNames);
         setBuildArgs(docker.buildArgs);
+        setPreCommands(docker.preCommands);
+        setPostCommands(docker.postCommands);
         setLabels(docker.labels);
         setRegistries(docker.registries);
     }
@@ -124,6 +128,40 @@ public class Docker extends AbstractTool {
         }
     }
 
+    public List<String> getPreCommands() {
+        return preCommands;
+    }
+
+    public void setPreCommands(List<String> preCommands) {
+        if (preCommands != null) {
+            this.preCommands.clear();
+            this.preCommands.addAll(preCommands);
+        }
+    }
+
+    public void addPreAssembly(String preAssembly) {
+        if (isNotBlank(preAssembly)) {
+            this.preCommands.add(preAssembly);
+        }
+    }
+
+    public List<String> getPostCommands() {
+        return postCommands;
+    }
+
+    public void setPostCommands(List<String> postCommands) {
+        if (postCommands != null) {
+            this.postCommands.clear();
+            this.postCommands.addAll(postCommands);
+        }
+    }
+
+    public void addPostAssembly(String postAssembly) {
+        if (isNotBlank(postAssembly)) {
+            this.postCommands.add(postAssembly);
+        }
+    }
+
     public Set<Registry> getRegistries() {
         return registries;
     }
@@ -147,6 +185,8 @@ public class Docker extends AbstractTool {
         props.put("imageNames", imageNames);
         props.put("buildArgs", buildArgs);
         props.put("labels", labels);
+        props.put("preCommands", preCommands);
+        props.put("postCommands", postCommands);
 
         List<Map<String, Object>> repos = this.registries
             .stream()
@@ -157,7 +197,7 @@ public class Docker extends AbstractTool {
 
     @Override
     public boolean supportsPlatform(String platform) {
-        return isBlank(platform) || !PlatformUtils.isMac(platform);
+        return isBlank(platform) || PlatformUtils.isUnix(platform);
     }
 
     @Override

@@ -130,6 +130,7 @@ abstract class AbstractJReleaserTask extends Task {
     protected JReleaserContext createContext() {
         return ContextCreator.create(
             logger,
+            getMode(),
             actualConfigFile,
             actualBasedir,
             getOutputDirectory(),
@@ -147,5 +148,9 @@ abstract class AbstractJReleaserTask extends Task {
         }
 
         return extensions;
+    }
+
+    protected JReleaserContext.Mode getMode() {
+        return JReleaserContext.Mode.FULL;
     }
 }

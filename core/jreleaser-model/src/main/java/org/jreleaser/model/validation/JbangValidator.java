@@ -21,6 +21,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Jbang;
+import org.jreleaser.util.Errors;
 
 import java.util.List;
 import java.util.Map;
@@ -37,42 +38,43 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class JbangValidator extends Validator {
-    public static void validateJbang(JReleaserContext context, Distribution distribution, Jbang tool, List<String> errors) {
+    public static void validateJbang(JReleaserContext context, Distribution distribution, Jbang tool, Errors errors) {
         JReleaserModel model = context.getModel();
+        Jbang parentTool = model.getPackagers().getJbang();
 
-        if (!tool.isActiveSet() && model.getPackagers().getJbang().isActiveSet()) {
-            tool.setActive(model.getPackagers().getJbang().getActive());
+        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
+            tool.setActive(parentTool.getActive());
         }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
         context.getLogger().debug("distribution.{}.jbang", distribution.getName());
 
-        validateCommitAuthor(tool, model.getPackagers().getJbang());
-        validateOwner(tool.getCatalog(), model.getPackagers().getJbang().getCatalog());
-        validateTemplate(context, distribution, tool, model.getPackagers().getJbang(), errors);
-        mergeExtraProperties(tool, model.getPackagers().getJbang());
+        validateCommitAuthor(tool, parentTool);
+        validateOwner(tool.getCatalog(), parentTool.getCatalog());
+        validateTemplate(context, distribution, tool, parentTool, errors);
+        mergeExtraProperties(tool, parentTool);
 
         if (isBlank(tool.getAlias())) {
             tool.setAlias(distribution.getExecutable());
         }
         if (isBlank(tool.getCatalog().getName())) {
-            tool.getCatalog().setName(model.getPackagers().getJbang().getCatalog().getName());
+            tool.getCatalog().setName(parentTool.getCatalog().getName());
         }
         if (isBlank(tool.getCatalog().getUsername())) {
-            tool.getCatalog().setUsername(model.getPackagers().getJbang().getCatalog().getUsername());
+            tool.getCatalog().setUsername(parentTool.getCatalog().getUsername());
         }
         if (isBlank(tool.getCatalog().getToken())) {
-            tool.getCatalog().setToken(model.getPackagers().getJbang().getCatalog().getToken());
+            tool.getCatalog().setToken(parentTool.getCatalog().getToken());
         }
 
         if (model.getProject().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
-            !model.getPackagers().getJbang().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
-            model.getPackagers().getJbang().getExtraProperties().put(KEY_REVERSE_REPO_HOST,
+            !parentTool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
+            parentTool.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
                 model.getProject().getExtraProperties().get(KEY_REVERSE_REPO_HOST));
         }
-        if (model.getPackagers().getJbang().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
+        if (parentTool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
             !distribution.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
             distribution.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
-                model.getPackagers().getJbang().getExtraProperties().get(KEY_REVERSE_REPO_HOST));
+                parentTool.getExtraProperties().get(KEY_REVERSE_REPO_HOST));
         }
 
         if (distribution.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
@@ -82,24 +84,24 @@ public abstract class JbangValidator extends Validator {
         }
         if (isBlank(model.getRelease().getGitService().getReverseRepoHost()) &&
             !tool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
-            errors.add("distribution." + distribution.getName() +
+            errors.configuration("distribution." + distribution.getName() +
                 ".jbang must define an extra property named '" +
                 KEY_REVERSE_REPO_HOST + "'");
         }
 
         if (isBlank(distribution.getJava().getMainClass())) {
-            errors.add("distribution." + distribution.getName() + ".java.mainClass must not be blank, required by jbang");
+            errors.configuration("distribution." + distribution.getName() + ".java.mainClass must not be blank, required by jbang");
         }
     }
 
-    public static void postValidateJBang(JReleaserContext context, List<String> errors) {
+    public static void postValidateJBang(JReleaserContext context, Errors errors) {
         Map<String, List<Distribution>> map = context.getModel().getDistributions().values().stream()
             .filter(d -> d.isEnabled() && d.getJbang().isEnabled())
             .collect(groupingBy(d -> d.getJbang().getAlias()));
 
         map.forEach((alias, distributions) -> {
             if (distributions.size() > 1) {
-                errors.add("jbang.alias '" + alias + "' is defined for more than one distribution: " +
+                errors.configuration("jbang.alias '" + alias + "' is defined for more than one distribution: " +
                     distributions.stream().map(Distribution::getName).collect(Collectors.joining(", ")));
             }
         });

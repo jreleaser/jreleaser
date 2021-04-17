@@ -23,10 +23,10 @@ import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Plug;
 import org.jreleaser.model.Slot;
 import org.jreleaser.model.Snap;
+import org.jreleaser.util.Errors;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,50 +41,51 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class SnapValidator extends Validator {
-    public static void validateSnap(JReleaserContext context, Distribution distribution, Snap tool, List<String> errors) {
+    public static void validateSnap(JReleaserContext context, Distribution distribution, Snap tool, Errors errors) {
         JReleaserModel model = context.getModel();
+        Snap parentTool = model.getPackagers().getSnap();
 
-        if (!tool.isActiveSet() && model.getPackagers().getSnap().isActiveSet()) {
-            tool.setActive(model.getPackagers().getSnap().getActive());
+        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
+            tool.setActive(parentTool.getActive());
         }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
         context.getLogger().debug("distribution.{}.snap", distribution.getName());
 
-        validateCommitAuthor(tool, model.getPackagers().getSnap());
-        validateOwner(tool.getSnap(), model.getPackagers().getSnap().getSnap());
-        validateTemplate(context, distribution, tool, model.getPackagers().getSnap(), errors);
-        Snap commonSnap = model.getPackagers().getSnap();
-        mergeExtraProperties(tool, model.getPackagers().getSnap());
-        mergeSnapPlugs(tool, model.getPackagers().getSnap());
-        mergeSnapSlots(tool, model.getPackagers().getSnap());
+        validateCommitAuthor(tool, parentTool);
+        validateOwner(tool.getSnap(), parentTool.getSnap());
+        validateTemplate(context, distribution, tool, parentTool, errors);
+        Snap commonSnap = parentTool;
+        mergeExtraProperties(tool, parentTool);
+        mergeSnapPlugs(tool, parentTool);
+        mergeSnapSlots(tool, parentTool);
 
         if (isBlank(tool.getBase())) {
             tool.setBase(commonSnap.getBase());
             if (isBlank(tool.getBase())) {
-                errors.add("distribution." + distribution.getName() + ".snap.base must not be blank");
+                errors.configuration("distribution." + distribution.getName() + ".snap.base must not be blank");
             }
         }
         if (isBlank(tool.getGrade())) {
             tool.setGrade(commonSnap.getGrade());
             if (isBlank(tool.getGrade())) {
-                errors.add("distribution." + distribution.getName() + ".snap.grade must not be blank");
+                errors.configuration("distribution." + distribution.getName() + ".snap.grade must not be blank");
             }
         }
         if (isBlank(tool.getConfinement())) {
             tool.setConfinement(commonSnap.getConfinement());
             if (isBlank(tool.getConfinement())) {
-                errors.add("distribution." + distribution.getName() + ".snap.confinement must not be blank");
+                errors.configuration("distribution." + distribution.getName() + ".snap.confinement must not be blank");
             }
         }
-        if (!tool.isRemoteBuildSet() && model.getPackagers().getSnap().isRemoteBuildSet()) {
-            tool.setRemoteBuild(model.getPackagers().getSnap().isRemoteBuild());
+        if (!tool.isRemoteBuildSet() && parentTool.isRemoteBuildSet()) {
+            tool.setRemoteBuild(parentTool.isRemoteBuild());
         }
         if (!tool.isRemoteBuild() && isBlank(tool.getExportedLogin())) {
             tool.setExportedLogin(commonSnap.getExportedLogin());
             if (isBlank(tool.getExportedLogin())) {
-                errors.add("distribution." + distribution.getName() + ".snap.exportedLogin must not be empty");
+                errors.configuration("distribution." + distribution.getName() + ".snap.exportedLogin must not be empty");
             } else if (!context.getBasedir().resolve(tool.getExportedLogin()).toFile().exists()) {
-                errors.add("distribution." + distribution.getName() + ".snap.exportedLogin does not exist. " +
+                errors.configuration("distribution." + distribution.getName() + ".snap.exportedLogin does not exist. " +
                     context.getBasedir().resolve(tool.getExportedLogin()));
             }
         }
@@ -94,10 +95,10 @@ public abstract class SnapValidator extends Validator {
         }
         tool.getSnap().setBasename(distribution.getName() + "-snap");
         if (isBlank(tool.getSnap().getUsername())) {
-            tool.getSnap().setUsername(model.getPackagers().getSnap().getSnap().getUsername());
+            tool.getSnap().setUsername(parentTool.getSnap().getUsername());
         }
         if (isBlank(tool.getSnap().getToken())) {
-            tool.getSnap().setToken(model.getPackagers().getSnap().getSnap().getToken());
+            tool.getSnap().setToken(parentTool.getSnap().getToken());
         }
 
         validateArtifactPlatforms(context, distribution, tool, errors);

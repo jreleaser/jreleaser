@@ -38,6 +38,6 @@ abstract class JReleaserFullReleaseTask extends AbstractJReleaserTask {
 
     @TaskAction
     void performAction() {
-        Workflows.fullRelease(context.get()).execute()
+        Workflows.fullRelease(createContext()).execute()
     }
 }

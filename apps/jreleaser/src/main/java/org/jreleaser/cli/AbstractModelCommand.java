@@ -110,6 +110,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
     protected JReleaserContext createContext() {
         return ContextCreator.create(
             logger,
+            getMode(),
             actualConfigFile,
             actualBasedir,
             getOutputDirectory(),
@@ -135,5 +136,9 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         }
 
         return extensions;
+    }
+
+    protected JReleaserContext.Mode getMode() {
+        return JReleaserContext.Mode.FULL;
     }
 }

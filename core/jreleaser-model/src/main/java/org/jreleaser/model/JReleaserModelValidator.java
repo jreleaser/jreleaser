@@ -17,17 +17,17 @@
  */
 package org.jreleaser.model;
 
-import java.util.Collections;
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.AnnouncersValidator.validateAnnouncers;
+import static org.jreleaser.model.validation.AssemblersValidator.validateAssemblers;
 import static org.jreleaser.model.validation.DistributionsValidator.validateDistributions;
 import static org.jreleaser.model.validation.FilesValidator.validateFiles;
 import static org.jreleaser.model.validation.PackagersValidator.validatePackagers;
 import static org.jreleaser.model.validation.ProjectValidator.postValidateProject;
 import static org.jreleaser.model.validation.ProjectValidator.validateProject;
 import static org.jreleaser.model.validation.ReleaseValidator.validateRelease;
-import static org.jreleaser.model.validation.SignValidator.validateSign;
+import static org.jreleaser.model.validation.SigningValidator.validateSigning;
 
 /**
  * @author Andres Almiray
@@ -38,26 +38,26 @@ public final class JReleaserModelValidator {
         // noop
     }
 
-    public static List<String> validate(JReleaserContext context, List<String> errors) {
+    public static void validate(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
         context.getLogger().increaseIndent();
         context.getLogger().setPrefix("validation");
         try {
-            validateModel(context, errors);
-            return Collections.unmodifiableList(errors);
+            validateModel(context, mode, errors);
         } finally {
             context.getLogger().restorePrefix();
             context.getLogger().decreaseIndent();
         }
     }
 
-    private static void validateModel(JReleaserContext context, List<String> errors) {
-        validateProject(context, errors);
-        validateSign(context, errors);
-        validateRelease(context, errors);
-        validatePackagers(context, errors);
-        validateAnnouncers(context, errors);
-        validateFiles(context, errors);
-        validateDistributions(context, errors);
-        postValidateProject(context, errors);
+    private static void validateModel(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        validateProject(context, mode, errors);
+        validateSigning(context, mode, errors);
+        validateRelease(context, mode, errors);
+        validateAssemblers(context, mode, errors);
+        validatePackagers(context, mode, errors);
+        validateAnnouncers(context, mode, errors);
+        validateFiles(context, mode, errors);
+        validateDistributions(context, mode, errors);
+        postValidateProject(context, mode, errors);
     }
 }

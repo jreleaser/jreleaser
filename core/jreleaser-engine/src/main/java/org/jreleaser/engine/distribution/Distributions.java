@@ -33,7 +33,7 @@ public class Distributions {
         List<Distribution> activeDistributions = context.getModel().getActiveDistributions();
 
         if (activeDistributions.isEmpty()) {
-            context.getLogger().debug("No active distributions [" + action.toLowerCase() + "]. Skipping");
+            context.getLogger().debug("No active distributions [{}]. Skipping", action.toLowerCase());
             return;
         }
 

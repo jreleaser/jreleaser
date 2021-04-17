@@ -24,6 +24,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.gradle.plugin.internal.JReleaserModelPrinter
+import org.jreleaser.model.JReleaserContext
 
 import javax.inject.Inject
 
@@ -37,21 +38,32 @@ abstract class JReleaserConfigTask extends AbstractJReleaserTask {
     @Input
     final Property<Boolean> full
 
+    @Input
+    final Property<Boolean> assembly
+
     @Inject
     JReleaserConfigTask(ObjectFactory objects) {
         super(objects)
         full = objects.property(Boolean).convention(false)
+        assembly = objects.property(Boolean).convention(false)
     }
 
     @Option(option = 'full', description = 'Display full configuration (OPTIONAL).')
-    void full(boolean full) {
+    void setFull(boolean full) {
         this.full.set(full)
+    }
+
+    @Option(option = 'assembly', description = 'Display assembly configuration (OPTIONAL).')
+    void setAssembly(boolean assembly) {
+        this.assembly.set(assembly)
     }
 
     @TaskAction
     void displayConfig() {
+        mode = assembly.get() ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.FULL
+
         println '== JReleaser =='
         new JReleaserModelPrinter(project)
-            .print(context.get().model.asMap(full.get()))
+            .print(createContext().model.asMap(full.get()))
     }
 }

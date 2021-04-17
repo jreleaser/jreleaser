@@ -61,7 +61,7 @@ abstract class AbstractJReleaserDistributionTask extends AbstractJReleaserTask {
     }
 
     protected JReleaserContext setupContext() {
-        JReleaserContext ctx = context.get()
+        JReleaserContext ctx = createContext()
         ctx.distributionName = distributionName.orNull
         ctx.toolName = toolName.orNull
         ctx

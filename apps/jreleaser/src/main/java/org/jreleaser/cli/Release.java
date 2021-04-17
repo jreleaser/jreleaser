@@ -144,6 +144,7 @@ public class Release extends AbstractModelCommand {
     private JReleaserContext createAutoConfiguredContext() {
         return ContextCreator.create(
             logger,
+            JReleaserContext.Mode.FULL,
             autoConfiguredModel(),
             actualBasedir,
             getOutputDirectory(),

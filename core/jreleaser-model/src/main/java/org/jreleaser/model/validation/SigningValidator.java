@@ -19,8 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
-
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.Signing.GPG_PASSPHRASE;
 import static org.jreleaser.model.Signing.GPG_PUBLIC_KEY;
@@ -30,8 +29,12 @@ import static org.jreleaser.model.Signing.GPG_SECRET_KEY;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class SignValidator extends Validator {
-    public static void validateSign(JReleaserContext context, List<String> errors) {
+public abstract class SigningValidator extends Validator {
+    public static void validateSigning(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        if (mode != JReleaserContext.Mode.FULL) {
+            return;
+        }
+
         context.getLogger().debug("sign");
         Signing signing = context.getModel().getSigning();
 

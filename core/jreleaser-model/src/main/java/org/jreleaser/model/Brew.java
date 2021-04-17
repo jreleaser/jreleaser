@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Brew extends AbstractRepositoryTool {
     public static final String NAME = "brew";
     private final List<Dependency> dependencies = new ArrayList<>();
-    private HomebrewTap tap = new HomebrewTap();
+    private final HomebrewTap tap = new HomebrewTap();
 
     private String formulaName;
     private String cachedFormulaName;
@@ -50,7 +50,7 @@ public class Brew extends AbstractRepositoryTool {
     void setAll(Brew brew) {
         super.setAll(brew);
         this.formulaName = brew.formulaName;
-        this.tap.setAll(brew.tap);
+        setTap(brew.tap);
         setDependenciesAsList(brew.dependencies);
     }
 
@@ -94,7 +94,7 @@ public class Brew extends AbstractRepositoryTool {
     }
 
     public void setTap(HomebrewTap tap) {
-        this.tap = tap;
+        this.tap.setAll(tap);
     }
 
     public void setDependencies(Map<String, String> dependencies) {

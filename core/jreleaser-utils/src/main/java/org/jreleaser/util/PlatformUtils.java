@@ -146,6 +146,14 @@ public final class PlatformUtils {
         }
     }
 
+    public static String getCurrent() {
+        return OS_DETECTOR.get(Detector.DETECTED_NAME);
+    }
+
+    public static String getCurrentFull() {
+        return getCurrent() + "-" + OS_DETECTOR.get(Detector.DETECTED_ARCH);
+    }
+
     public static boolean isWindows() {
         return "windows".equals(OS_DETECTOR.get(Detector.DETECTED_NAME));
     }

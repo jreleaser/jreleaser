@@ -83,6 +83,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
         try {
             return ContextCreator.create(
                 getLogger(),
+                getMode(),
                 convertModel(),
                 project.getBasedir().toPath(),
                 outputDirectory.toPath(),
@@ -90,5 +91,9 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
         } catch (JReleaserException e) {
             throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.", e);
         }
+    }
+
+    protected JReleaserContext.Mode getMode() {
+        return JReleaserContext.Mode.FULL;
     }
 }

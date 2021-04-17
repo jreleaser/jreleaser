@@ -48,9 +48,7 @@ public class DistributionProcessor {
         this.context = context;
         this.distributionName = distributionName;
         this.toolName = toolName;
-        this.outputDirectory = context.getOutputDirectory()
-            .resolve(distributionName)
-            .resolve(toolName);
+        this.outputDirectory = context.getOutputDirectory();
     }
 
     public String getDistributionName() {
@@ -119,12 +117,22 @@ public class DistributionProcessor {
     }
 
     private Map<String, Object> initProps() {
+        Path prepareDirectory = outputDirectory
+            .resolve(distributionName)
+            .resolve("prepare")
+            .resolve(toolName);
+
+        Path packageDirectory = outputDirectory
+            .resolve(distributionName)
+            .resolve("package")
+            .resolve(toolName);
+
         Map<String, Object> props = new LinkedHashMap<>();
         props.put(Constants.KEY_OUTPUT_DIRECTORY, outputDirectory);
-        props.put(Constants.KEY_PREPARE_DIRECTORY, outputDirectory.resolve("prepare"));
-        props.put(Constants.KEY_PACKAGE_DIRECTORY, outputDirectory.resolve("package"));
-        props.put(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, context.getBasedir().relativize(outputDirectory.resolve("prepare")));
-        props.put(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, context.getBasedir().relativize(outputDirectory.resolve("package")));
+        props.put(Constants.KEY_PREPARE_DIRECTORY, prepareDirectory);
+        props.put(Constants.KEY_PACKAGE_DIRECTORY, packageDirectory);
+        props.put(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, context.getBasedir().relativize(prepareDirectory));
+        props.put(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, context.getBasedir().relativize(packageDirectory));
         props.put(Constants.KEY_CHECKSUM_DIRECTORY, context.getChecksumsDirectory());
         return props;
     }

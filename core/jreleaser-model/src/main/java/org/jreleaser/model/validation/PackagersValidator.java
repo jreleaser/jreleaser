@@ -22,8 +22,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.OwnerProvider;
 import org.jreleaser.model.Packagers;
-
-import java.util.List;
+import org.jreleaser.util.Errors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -32,7 +31,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class PackagersValidator extends Validator {
-    public static void validatePackagers(JReleaserContext context, List<String> errors) {
+    public static void validatePackagers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        if (mode != JReleaserContext.Mode.FULL) {
+            return;
+        }
+
         context.getLogger().debug("packagers");
 
         JReleaserModel model = context.getModel();
@@ -74,7 +77,7 @@ public abstract class PackagersValidator extends Validator {
     private static void validatePackager(JReleaserContext context,
                                          AbstractRepositoryTool tool,
                                          OwnerProvider ownerProvider,
-                                         List<String> errors) {
+                                         Errors errors) {
         tool.resolveEnabled(context.getModel().getProject());
         validateCommitAuthor(tool, context.getModel().getRelease().getGitService());
         validateOwner(ownerProvider, context.getModel().getRelease().getGitService());

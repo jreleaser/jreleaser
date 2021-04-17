@@ -32,9 +32,11 @@
     <property name="jreleaser.distribution.type" value="JAVA_BINARY"/>
     <property name="jreleaser.tool.name" value=""/>
     <property name="jreleaser.announcer.name" value=""/>
+    <property name="jreleaser.assembler.name" value=""/>
     <property name="jreleaser.overwrite" value="false"/>
     <property name="jreleaser.snapshot" value="false"/>
     <property name="jreleaser.full" value="false"/>
+    <property name="jreleaser.assembly" value="false"/>
 
     <target name="jreleaser-template">
         <jreleaser:template skip="${jreleaser.skip}"
@@ -53,6 +55,13 @@
                             announcerName="${jreleaser.announcer.name}"/>
     </target>
 
+    <target name="jreleaser-assemble">
+        <jreleaser:assembler skip="${jreleaser.skip}"
+                             configFile="${jreleaser.config.file}"
+                             distributionName="${jreleaser.distribution.name}"
+                             assemblerName="${jreleaser.assembler.name}"/>
+    </target>
+
     <target name="jreleaser-changelog">
         <jreleaser:changelog dryrun="${jreleaser.dryrun}"
                              skip="${jreleaser.skip}"
@@ -67,6 +76,7 @@
 
     <target name="jreleaser-config">
         <jreleaser:config full="${jreleaser.full}"
+                          assembly="${jreleaser.assembly}"
                           configFile="${jreleaser.config.file}"/>
     </target>
 

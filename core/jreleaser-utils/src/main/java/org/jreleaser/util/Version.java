@@ -82,6 +82,16 @@ public class Version {
         return build;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder(major);
+        if (hasMinor()) b.append(".").append(minor);
+        if (hasPatch()) b.append(".").append(patch);
+        if (hasTag()) b.append("-").append(tag);
+        if (hasBuild()) b.append("+").append(build);
+        return b.toString();
+    }
+
     public static Version of(String version) {
         requireNonBlank(version, "Argument 'version' must not be blank");
 

@@ -36,6 +36,8 @@ public class Docker extends AbstractTool {
     private final Map<String, String> labels = new LinkedHashMap<>();
     private final Set<String> imageNames = new LinkedHashSet<>();
     private final List<String> buildArgs = new ArrayList<>();
+    private final List<String> preCommands = new ArrayList<>();
+    private final List<String> postCommnands = new ArrayList<>();
     private final Set<Registry> registries = new LinkedHashSet<>();
 
     private String baseImage;
@@ -92,6 +94,28 @@ public class Docker extends AbstractTool {
         }
     }
 
+    public List<String> getPreCommands() {
+        return preCommands;
+    }
+
+    public void setPreCommands(List<String> preCommands) {
+        if (preCommands != null) {
+            this.preCommands.clear();
+            this.preCommands.addAll(preCommands);
+        }
+    }
+
+    public List<String> getPostCommnands() {
+        return postCommnands;
+    }
+
+    public void setPostCommnands(List<String> postCommnands) {
+        if (postCommnands != null) {
+            this.postCommnands.clear();
+            this.postCommnands.addAll(postCommnands);
+        }
+    }
+
     public Set<Registry> getRegistries() {
         return registries;
     }
@@ -100,12 +124,6 @@ public class Docker extends AbstractTool {
         if (registries != null) {
             this.registries.clear();
             this.registries.addAll(registries);
-        }
-    }
-
-    public void addRegistry(Registry registry) {
-        if (null != registry) {
-            this.registries.add(registry);
         }
     }
 
