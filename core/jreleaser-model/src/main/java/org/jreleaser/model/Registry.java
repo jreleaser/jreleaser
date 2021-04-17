@@ -30,6 +30,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Registry implements Domain, Comparable<Registry> {
+    public static final String DEFAULT_NAME = "DEFAULT";
+
     protected String server;
     protected String serverName = "DEFAULT";
     protected String repositoryName;
@@ -45,7 +47,7 @@ public class Registry implements Domain, Comparable<Registry> {
     }
 
     public String getResolvedPassword() {
-        return Env.resolve("DOCKER_" + serverName + "_PASSWORD", password);
+        return Env.resolve("DOCKER_" + Env.toVar(serverName) + "_PASSWORD", password);
     }
 
     public String getServer() {

@@ -69,9 +69,8 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
 
     @Override
     public String getResolvedToken(GitService service) {
-        return Env.resolve(basename.toUpperCase()
-            .replaceAll("-", "_") + "_"
-            + service.getName().toUpperCase() + "_TOKEN", token);
+        return Env.resolve(Env.toVar(basename + "_"
+            + service.getServiceName()) + "_TOKEN", token);
     }
 
     @Override

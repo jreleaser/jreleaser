@@ -27,6 +27,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Env {
     private static final String JRELEASER_PREFIX = "JRELEASER_";
 
+    public static String toVar(String str) {
+        return str.replaceAll(" ", "_")
+            .replaceAll("-", "_")
+            .toUpperCase();
+    }
+
     public static String prefix(String key) {
         if (!key.startsWith(JRELEASER_PREFIX)) {
             return JRELEASER_PREFIX + key;

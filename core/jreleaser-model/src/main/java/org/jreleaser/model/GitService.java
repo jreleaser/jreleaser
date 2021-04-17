@@ -303,7 +303,7 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     }
 
     public String getResolvedToken() {
-        return Env.resolve(getClass().getSimpleName().toUpperCase() + "_TOKEN", token);
+        return Env.resolve(Env.toVar(getServiceName()) + "_TOKEN", token);
     }
 
     public String getUsername() {

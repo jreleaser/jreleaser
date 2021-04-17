@@ -33,6 +33,7 @@ import org.zeroturnaround.exec.ProcessInitException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -226,6 +227,33 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             int exitValue = new ProcessExecutor(cmd)
                 .redirectOutput(out)
                 .redirectError(err)
+                .execute()
+                .getExitValue();
+
+            info(out);
+            error(err);
+
+            if (exitValue == 0) return true;
+            throw new ToolProcessingException("Command execution error. exitValue = " + exitValue);
+        } catch (ProcessInitException e) {
+            throw new ToolProcessingException("Unexpected error", e.getCause());
+        } catch (Exception e) {
+            if (e instanceof ToolProcessingException) {
+                throw (ToolProcessingException) e;
+            }
+            throw new ToolProcessingException("Unexpected error", e);
+        }
+    }
+
+    protected boolean executeCommandWithInput(List<String> cmd, InputStream in) throws ToolProcessingException {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteArrayOutputStream err = new ByteArrayOutputStream();
+
+            int exitValue = new ProcessExecutor(cmd)
+                .redirectOutput(out)
+                .redirectError(err)
+                .redirectInput(in)
                 .execute()
                 .getExitValue();
 

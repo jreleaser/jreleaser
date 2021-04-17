@@ -29,6 +29,7 @@ import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -166,32 +167,52 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
 
     private void login(Registry registry) throws ToolProcessingException {
         List<String> cmd = createCommand("login");
+        if (isNotBlank(registry.getServer())) {
+            cmd.add(registry.getServer());
+        }
         cmd.add("-u");
         cmd.add(registry.getUsername());
         cmd.add("-p");
         cmd.add(registry.getResolvedPassword());
-        if (isNotBlank(registry.getServer())) {
-            cmd.add(registry.getServerName());
-        }
+
+        ByteArrayInputStream in = new ByteArrayInputStream((registry.getResolvedPassword() + System.lineSeparator()).getBytes());
 
         context.getLogger().debug("login into {}{}",
             registry.getServerName(),
             (isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : ""));
-        if (!context.isDryrun()) executeCommand(cmd);
+        if (!context.isDryrun()) executeCommandWithInput(cmd, in);
     }
 
     private void publish(Registry registry, String imageName, Map<String, Object> props, int index) throws ToolProcessingException {
         imageName = applyTemplate(new StringReader(imageName), props, "image" + index);
 
         String tag = imageName;
-        String registryName = registry.getRepositoryName();
+        String serverName = registry.getServerName();
+        String server = registry.getServer();
+        String repositoryName = registry.getRepositoryName();
 
-        if (!tag.startsWith(registryName)) {
-            int pos = tag.indexOf("/");
-            if (pos < 0) {
-                tag = registryName + "/" + tag;
-            } else {
-                tag = registryName + tag.substring(pos);
+        // if serverName == DEFAULT
+        //   tag: repositoryName/imageName
+        // else
+        //   tag: server/repositoryName/imageName
+
+        if (Registry.DEFAULT_NAME.equals(serverName)) {
+            if (!tag.startsWith(repositoryName)) {
+                int pos = tag.indexOf("/");
+                if (pos < 0) {
+                    tag = repositoryName + "/" + tag;
+                } else {
+                    tag = repositoryName + tag.substring(pos);
+                }
+            }
+        } else {
+            if (!tag.startsWith(server)) {
+                int pos = tag.indexOf("/");
+                if (pos < 0) {
+                    tag = server + "/" + repositoryName + "/" + tag;
+                } else {
+                    tag = server + "/" + repositoryName + tag.substring(pos);
+                }
             }
         }
 

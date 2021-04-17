@@ -22,6 +22,7 @@ import org.jreleaser.model.Docker;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Registry;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.LinkedHashMap;
@@ -143,8 +144,8 @@ public abstract class DockerValidator extends Validator {
 
             registry.setPassword(
                 checkProperty(context.getModel().getEnvironment(),
-                    "DOCKER_" + registry.getServerName() + "_PASSWORD",
-                    "registry." + registry.getServerName() + ".password",
+                    "DOCKER_" + Env.toVar(registry.getServerName()) + "_PASSWORD",
+                    "registry." + Env.toVar(registry.getServerName()) + ".password",
                     registry.getPassword(),
                     errors));
         }
