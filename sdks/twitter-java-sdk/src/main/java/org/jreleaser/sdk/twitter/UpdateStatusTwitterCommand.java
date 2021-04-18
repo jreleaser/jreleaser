@@ -30,13 +30,15 @@ public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
 
     private UpdateStatusTwitterCommand(JReleaserLogger logger,
                                        String apiHost,
+                                       int connectTimeout,
+                                       int readTimeout,
                                        String consumerKey,
                                        String consumerToken,
                                        String accessToken,
                                        String accessTokenSecret,
                                        boolean dryrun,
                                        String status) {
-        super(logger, apiHost, consumerKey, consumerToken, accessToken, accessTokenSecret, dryrun);
+        super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, accessToken, accessTokenSecret, dryrun);
         this.status = status;
     }
 
@@ -68,6 +70,8 @@ public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
             return new UpdateStatusTwitterCommand(
                 logger,
                 apiHost,
+                connectTimeout,
+                readTimeout,
                 consumerKey,
                 consumerToken,
                 accessToken,

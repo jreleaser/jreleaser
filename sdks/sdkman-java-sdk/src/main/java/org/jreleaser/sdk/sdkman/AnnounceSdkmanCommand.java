@@ -31,6 +31,8 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
 
     private AnnounceSdkmanCommand(JReleaserLogger logger,
                                   String apiHost,
+                                  int connectTimeout,
+                                  int readTimeout,
                                   String consumerKey,
                                   String consumerToken,
                                   String candidate,
@@ -38,7 +40,7 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
                                   boolean dryrun,
                                   String hashtag,
                                   String releaseNotesUrl) {
-        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryrun);
+        super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
         this.hashtag = hashtag;
         this.releaseNotesUrl = releaseNotesUrl;
     }
@@ -86,6 +88,8 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
             return new AnnounceSdkmanCommand(
                 logger,
                 apiHost,
+                connectTimeout,
+                readTimeout,
                 consumerKey,
                 consumerToken,
                 candidate,

@@ -34,11 +34,13 @@ public class MessageZulipCommand extends AbstractZulipCommand {
                                 String apiHost,
                                 String account,
                                 String apiKey,
+                                int connectTimeout,
+                                int readTimeout,
                                 boolean dryrun,
                                 String channel,
                                 String subject,
                                 String message) {
-        super(logger, apiHost, account, apiKey, dryrun);
+        super(logger, apiHost, account, apiKey, connectTimeout, readTimeout, dryrun);
         this.channel = channel;
         this.subject = subject;
         this.message = message;
@@ -88,6 +90,8 @@ public class MessageZulipCommand extends AbstractZulipCommand {
                 apiHost,
                 account,
                 apiKey,
+                connectTimeout,
+                readTimeout,
                 dryrun,
                 channel,
                 subject,

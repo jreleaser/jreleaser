@@ -55,6 +55,8 @@ abstract class AbstractGitService implements GitService {
     final Property<Boolean> sign
     final Property<Boolean> skipTag
     final Property<String> apiEndpoint
+    final Property<Integer> connectTimeout
+    final Property<Integer> readTimeout
     final Property<Boolean> overwrite
     final Property<Boolean> update
 
@@ -79,6 +81,8 @@ abstract class AbstractGitService implements GitService {
         sign = objects.property(Boolean).convention(Providers.notDefined())
         skipTag = objects.property(Boolean).convention(Providers.notDefined())
         apiEndpoint = objects.property(String).convention(Providers.notDefined())
+        connectTimeout = objects.property(Integer).convention(Providers.notDefined())
+        readTimeout = objects.property(Integer).convention(Providers.notDefined())
         overwrite = objects.property(Boolean).convention(Providers.notDefined())
         update = objects.property(Boolean).convention(Providers.notDefined())
     }
@@ -103,6 +107,8 @@ abstract class AbstractGitService implements GitService {
             sign.present ||
             skipTag.present ||
             apiEndpoint.present ||
+            connectTimeout.present ||
+            readTimeout.present||
             overwrite.present ||
             update.present
     }
@@ -139,6 +145,8 @@ abstract class AbstractGitService implements GitService {
         if (tagName.present) service.tagName = tagName.get()
         if (releaseName.present) service.releaseName = releaseName.get()
         if (apiEndpoint.present) service.apiEndpoint = apiEndpoint.get()
+        if (connectTimeout.present) service.connectTimeout = connectTimeout.get()
+        if (readTimeout.present) service.readTimeout = readTimeout.get()
         service.sign = sign.getOrElse(false)
         service.skipTag = skipTag.getOrElse(false)
         service.overwrite = overwrite.getOrElse(false)

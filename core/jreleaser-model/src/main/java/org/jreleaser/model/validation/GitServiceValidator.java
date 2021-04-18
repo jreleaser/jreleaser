@@ -119,6 +119,13 @@ public abstract class GitServiceValidator extends Validator {
             service.getCommitAuthor().setEmail("jreleaser-bot@jreleaser.org");
         }
 
+        if (service.getConnectTimeout() <= 0 || service.getConnectTimeout() > 300) {
+            service.setConnectTimeout(20);
+        }
+        if (service.getReadTimeout() <= 0 || service.getReadTimeout() > 300) {
+            service.setReadTimeout(60);
+        }
+
         // milestone
         service.getMilestone().setName(
             checkProperty(context.getModel().getEnvironment(),

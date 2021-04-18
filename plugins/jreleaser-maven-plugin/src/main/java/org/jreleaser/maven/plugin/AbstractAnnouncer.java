@@ -23,9 +23,13 @@ package org.jreleaser.maven.plugin;
  */
 abstract class AbstractAnnouncer implements Announcer {
     protected Active active;
+    private int connectTimeout;
+    private int readTimeout;
 
     void setAll(AbstractAnnouncer announcer) {
         this.active = announcer.active;
+        this.connectTimeout = announcer.connectTimeout;
+        this.readTimeout = announcer.readTimeout;
     }
 
     @Override
@@ -43,7 +47,29 @@ abstract class AbstractAnnouncer implements Announcer {
         return active != null ? active.name() : null;
     }
 
+    @Override
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    @Override
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    @Override
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    @Override
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
     public boolean isSet() {
-        return active != null;
+        return active != null ||
+            connectTimeout != 0 ||
+            readTimeout != 0;
     }
 }

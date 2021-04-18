@@ -72,5 +72,12 @@ public abstract class DiscussionsValidator extends Validator {
             !Files.exists(context.getBasedir().resolve(discussions.getMessageTemplate().trim()))) {
             errors.configuration("discussions.messageTemplate does not exist. " + discussions.getMessageTemplate());
         }
+
+        if (discussions.getConnectTimeout() <= 0 || discussions.getConnectTimeout() > 300) {
+            discussions.setConnectTimeout(context.getModel().getRelease().getGitService().getConnectTimeout());
+        }
+        if (discussions.getReadTimeout() <= 0 || discussions.getReadTimeout() > 300) {
+            discussions.setReadTimeout(context.getModel().getRelease().getGitService().getReadTimeout());
+        }
     }
 }

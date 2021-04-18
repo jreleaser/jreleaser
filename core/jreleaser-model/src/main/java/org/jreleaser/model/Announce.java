@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Announce implements Domain, EnabledProvider {
+public class Announce implements Domain, EnabledAware {
     private final Discussions discussions = new Discussions();
     private final Mail mail = new Mail();
     private final Sdkman sdkman = new Sdkman();

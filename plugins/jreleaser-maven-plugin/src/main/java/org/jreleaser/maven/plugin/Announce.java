@@ -21,7 +21,7 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Announce implements EnabledProvider {
+public class Announce implements EnabledAware {
     private final Discussions discussions = new Discussions();
     private final Mail mail = new Mail();
     private final Sdkman sdkman = new Sdkman();

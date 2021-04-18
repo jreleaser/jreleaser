@@ -56,7 +56,11 @@ public class GitlabReleaser implements Releaser {
         try {
             String changelog = context.getChangelog();
 
-            Gitlab api = new Gitlab(context.getLogger(), gitlab.getApiEndpoint(), gitlab.getResolvedToken());
+            Gitlab api = new Gitlab(context.getLogger(),
+                gitlab.getApiEndpoint(),
+                gitlab.getResolvedToken(),
+                gitlab.getConnectTimeout(),
+                gitlab.getReadTimeout());
 
             context.getLogger().debug("looking up release with tag {} at repository {}", tagName, gitlab.getCanonicalRepoName());
             Release release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), tagName);
@@ -95,7 +99,11 @@ public class GitlabReleaser implements Releaser {
         org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
         context.getLogger().debug("looking up {}/{}", owner, repo);
 
-        Gitlab api = new Gitlab(context.getLogger(), gitlab.getApiEndpoint(), password);
+        Gitlab api = new Gitlab(context.getLogger(),
+            gitlab.getApiEndpoint(),
+            password,
+            gitlab.getConnectTimeout(),
+            gitlab.getReadTimeout());
         Project project = null;
 
         try {

@@ -30,5 +30,9 @@ import org.jreleaser.model.Active
 interface Announcer {
     Property<Active> getActive()
 
+    Property<Integer> getConnectTimeout()
+
+    Property<Integer> getReadTimeout()
+
     void setActive(String str)
 }

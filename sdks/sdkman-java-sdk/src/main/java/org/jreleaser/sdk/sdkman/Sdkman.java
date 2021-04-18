@@ -43,7 +43,13 @@ public class Sdkman {
     private final SdkmanAPI api;
     private final boolean dryrun;
 
-    public Sdkman(JReleaserLogger logger, String apiHost, String consumerKey, String consumerToken, boolean dryrun) {
+    public Sdkman(JReleaserLogger logger,
+                  String apiHost,
+                  int connectTimeout,
+                  int readTimeout,
+                  String consumerKey,
+                  String consumerToken,
+                  boolean dryrun) {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(consumerKey, "'consumerKey' must not be blank");
@@ -61,7 +67,7 @@ public class Sdkman {
                 template.header("Accept", "application/json");
             })
             .errorDecoder((methodKey, response) -> new IllegalStateException("Server returned error " + response.reason()))
-            .options(new Request.Options(20, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
+            .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(SdkmanAPI.class, apiHost);
 
         this.logger.debug("Sdkman dryrun set to {}", dryrun);

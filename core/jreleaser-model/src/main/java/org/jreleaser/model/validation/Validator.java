@@ -18,9 +18,9 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.model.CommitAuthor;
-import org.jreleaser.model.CommitAuthorProvider;
+import org.jreleaser.model.CommitAuthorAware;
 import org.jreleaser.model.Environment;
-import org.jreleaser.model.OwnerProvider;
+import org.jreleaser.model.OwnerAware;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
@@ -51,11 +51,11 @@ class Validator {
         return !errors.hasErrors() ? Boolean.parseBoolean(result) : defaultValue;
     }
 
-    static void validateOwner(OwnerProvider self, OwnerProvider other) {
+    static void validateOwner(OwnerAware self, OwnerAware other) {
         if (isBlank(self.getOwner())) self.setOwner(other.getOwner());
     }
 
-    static void validateCommitAuthor(CommitAuthorProvider self, CommitAuthorProvider other) {
+    static void validateCommitAuthor(CommitAuthorAware self, CommitAuthorAware other) {
         CommitAuthor author = new CommitAuthor();
         author.setName(self.getCommitAuthor().getName());
         author.setEmail(self.getCommitAuthor().getEmail());

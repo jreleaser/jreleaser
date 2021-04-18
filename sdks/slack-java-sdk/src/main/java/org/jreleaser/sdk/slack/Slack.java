@@ -43,7 +43,12 @@ public class Slack {
     private final SlackAPI api;
     private final boolean dryrun;
 
-    public Slack(JReleaserLogger logger, String token, String apiHost, boolean dryrun) {
+    public Slack(JReleaserLogger logger,
+                 String token,
+                 String apiHost,
+                 int connectTimeout,
+                 int readTimeout,
+                 boolean dryrun) {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(token, "'token' must not be blank");
 
@@ -54,7 +59,7 @@ public class Slack {
             .decoder(new JacksonDecoder())
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", token)))
             .errorDecoder((methodKey, response) -> new IllegalStateException("Server returned error " + response.reason()))
-            .options(new Request.Options(20, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
+            .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(SlackAPI.class, apiHost);
 
         this.logger.debug("Slack dryrun set to {}", dryrun);

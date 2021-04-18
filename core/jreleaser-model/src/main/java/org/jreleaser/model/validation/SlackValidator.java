@@ -62,5 +62,12 @@ public abstract class SlackValidator extends Validator {
             !Files.exists(context.getBasedir().resolve(slack.getMessageTemplate().trim()))) {
             errors.configuration("slack.messageTemplate does not exist. " + slack.getMessageTemplate());
         }
+
+        if (slack.getConnectTimeout() <= 0 || slack.getConnectTimeout() > 300) {
+            slack.setConnectTimeout(20);
+        }
+        if (slack.getReadTimeout() <= 0 || slack.getReadTimeout() > 300) {
+            slack.setReadTimeout(60);
+        }
     }
 }

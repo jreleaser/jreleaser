@@ -67,5 +67,12 @@ public abstract class TwitterValidator extends Validator {
         if (isBlank(twitter.getStatus())) {
             twitter.setStatus("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
         }
+
+        if (twitter.getConnectTimeout() <= 0 || twitter.getConnectTimeout() > 300) {
+            twitter.setConnectTimeout(20);
+        }
+        if (twitter.getReadTimeout() <= 0 || twitter.getReadTimeout() > 300) {
+            twitter.setReadTimeout(60);
+        }
     }
 }

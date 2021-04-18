@@ -34,8 +34,10 @@ abstract class AbstractZulipCommand implements ZulipCommand {
                                    String apiHost,
                                    String account,
                                    String apiKey,
+                                   int connectTimeout,
+                                   int readTimeout,
                                    boolean dryrun) {
-        this.zulip = new Zulip(logger, apiHost, account, apiKey, dryrun);
+        this.zulip = new Zulip(logger, apiHost, account, apiKey, connectTimeout, readTimeout, dryrun);
         this.dryrun = dryrun;
     }
 
@@ -45,6 +47,8 @@ abstract class AbstractZulipCommand implements ZulipCommand {
         protected String account;
         protected String apiKey;
         protected String apiHost;
+        protected int connectTimeout = 20;
+        protected int readTimeout = 60;
 
         protected Builder(JReleaserLogger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be blank");
@@ -71,6 +75,16 @@ abstract class AbstractZulipCommand implements ZulipCommand {
 
         public S apiHost(String apiHost) {
             this.apiHost = requireNonBlank(apiHost, "'apiHost' must not be blank").trim();
+            return self();
+        }
+
+        public S connectTimeout(int connectTimeout) {
+            this.connectTimeout = connectTimeout;
+            return self();
+        }
+
+        public S readTimeout(int readTimeout) {
+            this.readTimeout = readTimeout;
             return self();
         }
 

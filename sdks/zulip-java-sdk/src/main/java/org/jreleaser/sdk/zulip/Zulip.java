@@ -41,7 +41,13 @@ public class Zulip {
     private final ZulipAPI api;
     private final boolean dryrun;
 
-    public Zulip(JReleaserLogger logger, String apiHost, String account, String apiKey, boolean dryrun) {
+    public Zulip(JReleaserLogger logger,
+                 String apiHost,
+                 String account,
+                 String apiKey,
+                 int connectTimeout,
+                 int readTimeout,
+                 boolean dryrun) {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(account, "'account' must not be blank");
@@ -54,7 +60,7 @@ public class Zulip {
             .decoder(new JacksonDecoder())
             .requestInterceptor(new BasicAuthRequestInterceptor(account, apiKey))
             .errorDecoder((methodKey, response) -> new IllegalStateException("Server returned error " + response.reason()))
-            .options(new Request.Options(20, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
+            .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(ZulipAPI.class, apiHost);
 
         this.logger.debug("Zulip dryrun set to {}", dryrun);

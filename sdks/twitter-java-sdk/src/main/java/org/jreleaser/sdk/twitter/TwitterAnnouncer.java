@@ -53,6 +53,8 @@ public class TwitterAnnouncer implements Announcer {
 
         try {
             UpdateStatusTwitterCommand.builder(context.getLogger())
+                .connectTimeout(twitter.getConnectTimeout())
+                .readTimeout(twitter.getReadTimeout())
                 .consumerKey(twitter.getResolvedConsumerKey())
                 .consumerToken(twitter.getResolvedConsumerSecret())
                 .accessToken(twitter.getResolvedAccessToken())

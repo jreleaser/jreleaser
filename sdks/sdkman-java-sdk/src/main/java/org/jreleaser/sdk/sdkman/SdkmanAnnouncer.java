@@ -90,6 +90,8 @@ public class SdkmanAnnouncer implements Announcer {
             if (sdkman.isMajor()) {
                 context.getLogger().info("Announcing major release of '{}' candidate", candidate);
                 MajorReleaseSdkmanCommand.builder(context.getLogger())
+                    .connectTimeout(sdkman.getConnectTimeout())
+                    .readTimeout(sdkman.getReadTimeout())
                     .consumerKey(sdkman.getResolvedConsumerKey())
                     .consumerToken(sdkman.getResolvedConsumerToken())
                     .candidate(candidate)
@@ -102,6 +104,8 @@ public class SdkmanAnnouncer implements Announcer {
             } else {
                 context.getLogger().info("Announcing minor release of '{}' candidate", candidate);
                 MinorReleaseSdkmanCommand.builder(context.getLogger())
+                    .connectTimeout(sdkman.getConnectTimeout())
+                    .readTimeout(sdkman.getReadTimeout())
                     .consumerKey(sdkman.getResolvedConsumerKey())
                     .consumerToken(sdkman.getResolvedConsumerToken())
                     .candidate(candidate)

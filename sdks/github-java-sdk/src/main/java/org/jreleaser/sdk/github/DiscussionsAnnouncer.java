@@ -70,7 +70,11 @@ public class DiscussionsAnnouncer implements Announcer {
         context.getLogger().debug("message: {}", message);
 
         try {
-            Github api = new Github(context.getLogger(), github.getApiEndpoint(), github.getResolvedToken());
+            Github api = new Github(context.getLogger(),
+                github.getApiEndpoint(),
+                github.getResolvedToken(),
+                discussions.getConnectTimeout(),
+                discussions.getReadTimeout());
 
             if (api.findDiscussion(discussions.getOrganization(), discussions.getTeam(), title).isPresent()) {
                 throw new IllegalStateException("A discussion titled \"" + title + "\" has already been posted to " +

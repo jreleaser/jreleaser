@@ -55,7 +55,11 @@ public class GiteaReleaser implements Releaser {
         try {
             String changelog = context.getChangelog();
 
-            Gitea api = new Gitea(context.getLogger(), gitea.getApiEndpoint(), gitea.getResolvedToken());
+            Gitea api = new Gitea(context.getLogger(),
+                gitea.getApiEndpoint(),
+                gitea.getResolvedToken(),
+                gitea.getConnectTimeout(),
+                gitea.getReadTimeout());
 
             context.getLogger().debug("looking up release with tag {} at repository {}", tagName, gitea.getCanonicalRepoName());
             GtRelease release = api.findReleaseByTag(gitea.getOwner(), gitea.getName(), tagName);
@@ -93,7 +97,11 @@ public class GiteaReleaser implements Releaser {
         org.jreleaser.model.Gitea gitea = context.getModel().getRelease().getGitea();
         context.getLogger().debug("looking up {}/{}", owner, repo);
 
-        Gitea api = new Gitea(context.getLogger(), gitea.getApiEndpoint(), password);
+        Gitea api = new Gitea(context.getLogger(),
+            gitea.getApiEndpoint(),
+            password,
+            gitea.getConnectTimeout(),
+            gitea.getReadTimeout());
         GtRepository repository = api.findRepository(owner, repo);
         if (null == repository) {
             repository = api.createRepository(owner, repo);

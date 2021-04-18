@@ -21,6 +21,8 @@ package org.jreleaser.model;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Releaser extends Domain, EnabledAware {
-    String getServiceName();
+public interface CommitAuthorAware {
+    CommitAuthor getCommitAuthor();
+
+    void setCommitAuthor(CommitAuthor commitAuthor);
 }

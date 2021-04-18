@@ -54,7 +54,11 @@ public class GithubReleaser implements Releaser {
         try {
             String changelog = context.getChangelog();
 
-            Github api = new Github(context.getLogger(), github.getUsername(), github.getResolvedToken());
+            Github api = new Github(context.getLogger(),
+                github.getUsername(),
+                github.getResolvedToken(),
+                github.getConnectTimeout(),
+                github.getReadTimeout());
 
             context.getLogger().debug("looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
             GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);
@@ -90,7 +94,11 @@ public class GithubReleaser implements Releaser {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
         context.getLogger().debug("looking up {}/{}", owner, repo);
 
-        Github api = new Github(context.getLogger(), github.getApiEndpoint(), password);
+        Github api = new Github(context.getLogger(),
+            github.getApiEndpoint(),
+            password,
+            github.getConnectTimeout(),
+            github.getReadTimeout());
         GHRepository repository = api.findRepository(owner, repo);
         if (null == repository) {
             repository = api.createRepository(owner, repo);

@@ -37,15 +37,21 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 abstract class AbstractAnnouncer implements Announcer {
     final Property<Active> active
+    final Property<Integer> connectTimeout
+    final Property<Integer> readTimeout
 
     @Inject
     AbstractAnnouncer(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
+        connectTimeout = objects.property(Integer).convention(Providers.notDefined())
+        readTimeout = objects.property(Integer).convention(Providers.notDefined())
     }
 
     @Internal
     boolean isSet() {
-        active.present
+        active.present ||
+            connectTimeout.present ||
+            readTimeout.present
     }
 
     @Override
@@ -57,5 +63,7 @@ abstract class AbstractAnnouncer implements Announcer {
 
     protected <A extends org.jreleaser.model.Announcer> void fillProperties(A announcer) {
         if (active.present) announcer.active = active.get()
+        if (connectTimeout.present) announcer.connectTimeout = connectTimeout.get()
+        if (readTimeout.present) announcer.readTimeout = readTimeout.get()
     }
 }

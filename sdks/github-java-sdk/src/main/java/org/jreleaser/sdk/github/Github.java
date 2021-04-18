@@ -33,7 +33,9 @@ import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHTeam;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
+import org.kohsuke.github.HttpConnector;
 import org.kohsuke.github.PagedIterable;
+import org.kohsuke.github.extras.ImpatientHttpConnector;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -56,11 +58,20 @@ class Github {
     private final JReleaserLogger logger;
     private final GitHub github;
 
-    Github(JReleaserLogger logger, String username, String password) throws IOException {
-        this(logger, ENDPOINT, username, password);
+    Github(JReleaserLogger logger,
+           String username,
+           String password,
+           int connectTimeout,
+           int readTimeout) throws IOException {
+        this(logger, ENDPOINT, username, password, connectTimeout, readTimeout);
     }
 
-    Github(JReleaserLogger logger, String endpoint, String username, String password) throws IOException {
+    Github(JReleaserLogger logger,
+           String endpoint,
+           String username,
+           String password,
+           int connectTimeout,
+           int readTimeout) throws IOException {
         this.logger = logger;
 
         if (isBlank(endpoint)) {
@@ -68,6 +79,7 @@ class Github {
         }
 
         github = new GitHubBuilder()
+            .withConnector(new ImpatientHttpConnector(HttpConnector.DEFAULT, connectTimeout * 1000, readTimeout * 1000))
             .withEndpoint(endpoint)
             .withOAuthToken(password, username)
             .build();

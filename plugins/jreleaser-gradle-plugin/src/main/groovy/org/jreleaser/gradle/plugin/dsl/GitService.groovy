@@ -62,6 +62,10 @@ interface GitService extends Releaser {
 
     Property<String> getApiEndpoint()
 
+    Property<Integer> getConnectTimeout()
+
+    Property<Integer> getReadTimeout()
+
     Property<Boolean> getOverwrite()
 
     Property<Boolean> getUpdate()

@@ -188,6 +188,8 @@ public final class JReleaserModelConverter {
         s.setApiEndpoint(service.getApiEndpoint());
         s.setChangelog(convertChangelog(service.getChangelog()));
         s.setMilestone(convertMilestone(service.getMilestone()));
+        s.setConnectTimeout(service.getConnectTimeout());
+        s.setReadTimeout(service.getReadTimeout());
     }
 
     private static org.jreleaser.model.CommitAuthor convertCommitAuthor(CommitAuthor commitAuthor) {
@@ -243,6 +245,8 @@ public final class JReleaserModelConverter {
         a.setTitle(discussions.getTitle());
         a.setMessage(discussions.getMessage());
         a.setMessageTemplate(discussions.getMessageTemplate());
+        a.setConnectTimeout(discussions.getConnectTimeout());
+        a.setReadTimeout(discussions.getReadTimeout());
         return a;
     }
 
@@ -272,6 +276,8 @@ public final class JReleaserModelConverter {
         a.setConsumerToken(sdkman.getConsumerToken());
         a.setCandidate(sdkman.getCandidate());
         a.setMajor(sdkman.isMajor());
+        a.setConnectTimeout(sdkman.getConnectTimeout());
+        a.setReadTimeout(sdkman.getReadTimeout());
         return a;
     }
 
@@ -282,6 +288,8 @@ public final class JReleaserModelConverter {
         a.setChannel(slack.getChannel());
         a.setMessage(slack.getMessage());
         a.setMessageTemplate(slack.getMessageTemplate());
+        a.setConnectTimeout(slack.getConnectTimeout());
+        a.setReadTimeout(slack.getReadTimeout());
         return a;
     }
 
@@ -293,6 +301,8 @@ public final class JReleaserModelConverter {
         a.setAccessToken(twitter.getAccessToken());
         a.setAccessTokenSecret(twitter.getAccessTokenSecret());
         a.setStatus(twitter.getStatus());
+        a.setConnectTimeout(twitter.getConnectTimeout());
+        a.setReadTimeout(twitter.getReadTimeout());
         return a;
     }
 
@@ -306,6 +316,8 @@ public final class JReleaserModelConverter {
         a.setSubject(zulip.getSubject());
         a.setMessage(zulip.getMessage());
         a.setMessageTemplate(zulip.getMessageTemplate());
+        a.setConnectTimeout(zulip.getConnectTimeout());
+        a.setReadTimeout(zulip.getReadTimeout());
         return a;
     }
 

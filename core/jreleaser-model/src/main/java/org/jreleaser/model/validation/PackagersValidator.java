@@ -20,7 +20,7 @@ package org.jreleaser.model.validation;
 import org.jreleaser.model.AbstractRepositoryTool;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.OwnerProvider;
+import org.jreleaser.model.OwnerAware;
 import org.jreleaser.model.Packagers;
 import org.jreleaser.util.Errors;
 
@@ -76,10 +76,10 @@ public abstract class PackagersValidator extends Validator {
 
     private static void validatePackager(JReleaserContext context,
                                          AbstractRepositoryTool tool,
-                                         OwnerProvider ownerProvider,
+                                         OwnerAware ownerAware,
                                          Errors errors) {
         tool.resolveEnabled(context.getModel().getProject());
         validateCommitAuthor(tool, context.getModel().getRelease().getGitService());
-        validateOwner(ownerProvider, context.getModel().getRelease().getGitService());
+        validateOwner(ownerAware, context.getModel().getRelease().getGitService());
     }
 }

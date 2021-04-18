@@ -17,7 +17,7 @@
  */
 package org.jreleaser.model;
 
-public interface OwnerProvider {
+public interface OwnerAware {
     String getOwner();
 
     void setOwner(String owner);

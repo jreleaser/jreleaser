@@ -33,8 +33,10 @@ abstract class AbstractSlackCommand implements SlackCommand {
     protected AbstractSlackCommand(JReleaserLogger logger,
                                    String token,
                                    String apiHost,
+                                   int connectTimeout,
+                                   int readTimeout,
                                    boolean dryrun) {
-        this.slack = new Slack(logger, token, apiHost, dryrun);
+        this.slack = new Slack(logger, token, apiHost, connectTimeout, readTimeout, dryrun);
         this.dryrun = dryrun;
     }
 
@@ -43,6 +45,8 @@ abstract class AbstractSlackCommand implements SlackCommand {
         protected boolean dryrun;
         protected String token;
         protected String apiHost;
+        protected int connectTimeout = 20;
+        protected int readTimeout = 60;
 
         protected Builder(JReleaserLogger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be blank");
@@ -64,6 +68,16 @@ abstract class AbstractSlackCommand implements SlackCommand {
 
         public S apiHost(String apiHost) {
             this.apiHost = requireNonBlank(apiHost, "'apiHost' must not be blank").trim();
+            return self();
+        }
+
+        public S connectTimeout(int connectTimeout) {
+            this.connectTimeout = connectTimeout;
+            return self();
+        }
+
+        public S readTimeout(int readTimeout) {
+            this.readTimeout = readTimeout;
             return self();
         }
 

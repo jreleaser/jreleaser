@@ -28,12 +28,14 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
     private DefaultSdkmanCommand(JReleaserLogger logger,
                                  String apiHost,
+                                 int connectTimeout,
+                                 int readTimeout,
                                  String consumerKey,
                                  String consumerToken,
                                  String candidate,
                                  String version,
                                  boolean dryrun) {
-        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryrun);
+        super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
     }
 
     @Override
@@ -60,6 +62,8 @@ public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
             return new DefaultSdkmanCommand(
                 logger,
                 apiHost,
+                connectTimeout,
+                readTimeout,
                 consumerKey,
                 consumerToken,
                 candidate,

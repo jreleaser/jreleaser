@@ -69,7 +69,11 @@ class Gitlab {
     private User user;
     private Project project;
 
-    Gitlab(JReleaserLogger logger, String endpoint, String token) throws IOException {
+    Gitlab(JReleaserLogger logger,
+           String endpoint,
+           String token,
+           int connectTimeout,
+           int readTimeout) throws IOException {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(token, "'token' must not be blank");
 
@@ -98,7 +102,7 @@ class Gitlab {
             .decoder(new JacksonDecoder(objectMapper))
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", token)))
             .errorDecoder((methodKey, response) -> new GitlabAPIException(response.status(), response.reason(), response.headers()))
-            .options(new Request.Options(20, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
+            .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(GitlabAPI.class, endpoint);
     }
 

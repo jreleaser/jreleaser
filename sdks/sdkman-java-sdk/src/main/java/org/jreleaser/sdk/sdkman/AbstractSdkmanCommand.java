@@ -34,12 +34,14 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
 
     protected AbstractSdkmanCommand(JReleaserLogger logger,
                                     String apiHost,
+                                    int connectTimeout,
+                                    int readTimeout,
                                     String consumerKey,
                                     String consumerToken,
                                     String candidate,
                                     String version,
                                     boolean dryrun) {
-        this.sdkman = new Sdkman(logger, apiHost, consumerKey, consumerToken, dryrun);
+        this.sdkman = new Sdkman(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, dryrun);
         this.candidate = candidate;
         this.version = version;
         this.dryrun = dryrun;
@@ -53,6 +55,8 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
         protected String candidate;
         protected String version;
         protected String apiHost = "https://vendors.sdkman.io";
+        protected int connectTimeout = 20;
+        protected int readTimeout = 60;
 
         protected Builder(JReleaserLogger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be blank");
@@ -104,6 +108,16 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
          */
         public S apiHost(String apiHost) {
             this.apiHost = requireNonBlank(apiHost, "'apiHost' must not be blank").trim();
+            return self();
+        }
+
+        public S connectTimeout(int connectTimeout) {
+            this.connectTimeout = connectTimeout;
+            return self();
+        }
+
+        public S readTimeout(int readTimeout) {
+            this.readTimeout = readTimeout;
             return self();
         }
     }

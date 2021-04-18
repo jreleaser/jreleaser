@@ -37,6 +37,8 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
 
     private MinorReleaseSdkmanCommand(JReleaserLogger logger,
                                       String apiHost,
+                                      int connectTimeout,
+                                      int readTimeout,
                                       String consumerKey,
                                       String consumerToken,
                                       String candidate,
@@ -45,7 +47,7 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
                                       String hashtag,
                                       String releaseNotesUrl,
                                       Map<String, String> platforms) {
-        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryrun);
+        super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
         this.hashtag = hashtag;
         this.releaseNotesUrl = releaseNotesUrl;
         this.platforms.putAll(platforms);
@@ -140,6 +142,8 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
             return new MinorReleaseSdkmanCommand(
                 logger,
                 apiHost,
+                connectTimeout,
+                readTimeout,
                 consumerKey,
                 consumerToken,
                 candidate,

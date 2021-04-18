@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class GitService implements Releaser, CommitAuthorProvider, OwnerProvider {
+public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAware, TimeoutAware {
     public static final String TAG_NAME = "TAG_NAME";
     public static final String RELEASE_NAME = "RELEASE_NAME";
     public static final String OVERWRITE = "OVERWRITE";
@@ -70,6 +70,8 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     private Boolean overwrite;
     private Boolean update;
     private String apiEndpoint;
+    private int connectTimeout;
+    private int readTimeout;
 
     private String cachedTagName;
     private String cachedReleaseName;
@@ -104,6 +106,8 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         this.overwrite = service.overwrite;
         this.update = service.update;
         this.apiEndpoint = service.apiEndpoint;
+        this.connectTimeout = service.connectTimeout;
+        this.readTimeout = service.readTimeout;
         setCommitAuthor(service.commitAuthor);
         setChangelog(service.changelog);
         setMilestone(service.milestone);
@@ -417,6 +421,26 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
     }
 
     @Override
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    @Override
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    @Override
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    @Override
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
@@ -440,6 +464,8 @@ public abstract class GitService implements Releaser, CommitAuthorProvider, Owne
         map.put("overwrite", isOverwrite());
         map.put("update", isUpdate());
         map.put("apiEndpoint", apiEndpoint);
+        map.put("connectTimeout", connectTimeout);
+        map.put("readTimeout", readTimeout);
         map.put("changelog", changelog.asMap(full));
         map.put("milestone", milestone.asMap(full));
         return map;

@@ -35,13 +35,15 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
 
     private ReleaseSdkmanCommand(JReleaserLogger logger,
                                  String apiHost,
+                                 int connectTimeout,
+                                 int readTimeout,
                                  String consumerKey,
                                  String consumerToken,
                                  String candidate,
                                  String version,
                                  boolean dryrun,
                                  Map<String, String> platforms) {
-        super(logger, apiHost, consumerKey, consumerToken, candidate, version, dryrun);
+        super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
         this.platforms.putAll(platforms);
     }
 
@@ -116,6 +118,8 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
             return new ReleaseSdkmanCommand(
                 logger,
                 apiHost,
+                connectTimeout,
+                readTimeout,
                 consumerKey,
                 consumerToken,
                 candidate,

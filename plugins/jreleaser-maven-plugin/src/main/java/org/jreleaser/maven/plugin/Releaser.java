@@ -17,9 +17,11 @@
  */
 package org.jreleaser.maven.plugin;
 
+import org.jreleaser.model.TimeoutAware;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Releaser extends EnabledProvider {
+public interface Releaser extends EnabledAware, TimeoutAware {
 }

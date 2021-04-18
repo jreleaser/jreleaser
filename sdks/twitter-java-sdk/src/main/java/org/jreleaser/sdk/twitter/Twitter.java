@@ -33,8 +33,15 @@ public class Twitter {
     private final twitter4j.Twitter twitter;
     private final boolean dryrun;
 
-    public Twitter(JReleaserLogger logger, String apiHost, String consumerKey, String consumerToken,
-                   String accessToken, String accessTokenSecret, boolean dryrun) {
+    public Twitter(JReleaserLogger logger,
+                   String apiHost,
+                   int connectTimeout,
+                   int readTimeout,
+                   String consumerKey,
+                   String consumerToken,
+                   String accessToken,
+                   String accessTokenSecret,
+                   boolean dryrun) {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(consumerKey, "'consumerKey' must not be blank");
@@ -47,6 +54,8 @@ public class Twitter {
         this.twitter = new TwitterFactory(
             new ConfigurationBuilder()
                 .setRestBaseURL(apiHost)
+                .setHttpConnectionTimeout(connectTimeout)
+                .setHttpReadTimeout(readTimeout)
                 .setOAuthConsumerKey(consumerKey)
                 .setOAuthConsumerSecret(consumerToken)
                 .setOAuthAccessToken(accessToken)

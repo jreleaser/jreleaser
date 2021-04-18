@@ -15,14 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
+package org.jreleaser.maven.plugin;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface CommitAuthorProvider {
-    CommitAuthor getCommitAuthor();
+public interface EnabledAware {
+    Boolean isEnabled();
 
-    void setCommitAuthor(CommitAuthor commitAuthor);
+    void setEnabled(Boolean enabled);
+
+    boolean isEnabledSet();
 }

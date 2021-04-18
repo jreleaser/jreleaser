@@ -23,7 +23,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Changelog implements EnabledProvider {
+public class Changelog implements EnabledAware {
     private Boolean enabled;
     private boolean links;
     private Sort sort = Sort.DESC;

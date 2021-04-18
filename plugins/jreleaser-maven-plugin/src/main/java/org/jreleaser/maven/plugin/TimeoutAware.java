@@ -15,12 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
+package org.jreleaser.maven.plugin;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.2.0
  */
-public interface Releaser extends Domain, EnabledAware {
-    String getServiceName();
+public interface TimeoutAware {
+    int getConnectTimeout();
+
+    void setConnectTimeout(int timeout);
+
+    int getReadTimeout();
+
+    void setReadTimeout(int timeout);
 }

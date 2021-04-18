@@ -15,16 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.model;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.2.0
  */
-public interface EnabledProvider {
-    Boolean isEnabled();
+public interface TimeoutAware {
+    int getConnectTimeout();
 
-    void setEnabled(Boolean enabled);
+    void setConnectTimeout(int timeout);
 
-    boolean isEnabledSet();
+    int getReadTimeout();
+
+    void setReadTimeout(int timeout);
 }

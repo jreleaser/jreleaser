@@ -62,7 +62,11 @@ class Gitea {
     private final JReleaserLogger logger;
     private final GiteaAPI api;
 
-    Gitea(JReleaserLogger logger, String endpoint, String token) throws IOException {
+    Gitea(JReleaserLogger logger,
+          String endpoint,
+          String token,
+          int connectTimeout,
+          int readTimeout) throws IOException {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(token, "'token' must not be blank");
         requireNonBlank(endpoint, "'endpoint' must not be blank");
@@ -87,7 +91,7 @@ class Gitea {
             .decoder(new JacksonDecoder(objectMapper))
             .requestInterceptor(template -> template.header("Authorization", String.format("token %s", token)))
             .errorDecoder((methodKey, response) -> new GiteaAPIException(response.status(), response.reason(), response.headers()))
-            .options(new Request.Options(20, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true))
+            .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(GiteaAPI.class, endpoint);
     }
 

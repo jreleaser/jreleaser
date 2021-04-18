@@ -68,6 +68,8 @@ public class SlackAnnouncer implements Announcer {
 
         try {
             MessageSlackCommand.builder(context.getLogger())
+                .connectTimeout(slack.getConnectTimeout())
+                .readTimeout(slack.getReadTimeout())
                 .token(slack.getResolvedToken())
                 .channel(slack.getChannel())
                 .message(message)

@@ -29,6 +29,8 @@ abstract class AbstractAnnouncer implements Announcer {
     protected final String name;
     protected boolean enabled;
     protected Active active;
+    private int connectTimeout;
+    private int readTimeout;
 
     protected AbstractAnnouncer(String name) {
         this.name = name;
@@ -37,6 +39,8 @@ abstract class AbstractAnnouncer implements Announcer {
     void setAll(AbstractAnnouncer announcer) {
         this.active = announcer.active;
         this.enabled = announcer.enabled;
+        this.connectTimeout = announcer.connectTimeout;
+        this.readTimeout = announcer.readTimeout;
     }
 
     @Override
@@ -91,12 +95,34 @@ abstract class AbstractAnnouncer implements Announcer {
     }
 
     @Override
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    @Override
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    @Override
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    @Override
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    @Override
     public final Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
         props.put("active", active);
+        props.put("connectTimeout", connectTimeout);
+        props.put("readTimeout", readTimeout);
         asMap(props);
 
         Map<String, Object> map = new LinkedHashMap<>();

@@ -21,7 +21,7 @@ package org.jreleaser.model;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface EnabledProvider {
+public interface EnabledAware {
     boolean isEnabled();
 
     void setEnabled(Boolean enabled);

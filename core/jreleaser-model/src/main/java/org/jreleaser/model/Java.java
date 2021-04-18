@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Java implements Domain, ExtraProperties, EnabledProvider {
+public class Java implements Domain, ExtraProperties, EnabledAware {
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
 
     protected Boolean enabled;

@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Assemble implements Domain, EnabledProvider {
+public class Assemble implements Domain, EnabledAware {
     private final Map<String, Jlink> jlinks = new LinkedHashMap<>();
     private final Map<String, NativeImage> nativeImages = new LinkedHashMap<>();
     private Boolean enabled;

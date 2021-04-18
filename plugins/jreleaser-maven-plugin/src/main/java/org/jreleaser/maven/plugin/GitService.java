@@ -45,6 +45,8 @@ public abstract class GitService implements Releaser {
     private Boolean overwrite;
     private Boolean update;
     private String apiEndpoint;
+    private int connectTimeout;
+    private int readTimeout;
 
     void setAll(GitService service) {
         this.enabled = service.enabled;
@@ -67,6 +69,8 @@ public abstract class GitService implements Releaser {
         this.overwrite = service.overwrite;
         this.update = service.update;
         this.apiEndpoint = service.apiEndpoint;
+        this.connectTimeout = service.connectTimeout;
+        this.readTimeout = service.readTimeout;
         setCommitAuthor(service.commitAuthor);
         setChangelog(service.changelog);
         setMilestone(service.milestone);
@@ -273,5 +277,25 @@ public abstract class GitService implements Releaser {
 
     public void setApiEndpoint(String apiEndpoint) {
         this.apiEndpoint = apiEndpoint;
+    }
+
+    @Override
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    @Override
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    @Override
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    @Override
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
     }
 }

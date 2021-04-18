@@ -33,10 +33,12 @@ public class MessageSlackCommand extends AbstractSlackCommand {
     private MessageSlackCommand(JReleaserLogger logger,
                                 String token,
                                 String apiHost,
+                                int connectTimeout,
+                                int readTimeout,
                                 boolean dryrun,
                                 String channel,
                                 String message) {
-        super(logger, token, apiHost, dryrun);
+        super(logger, token, apiHost, connectTimeout, readTimeout, dryrun);
         this.channel = channel;
         this.message = message;
     }
@@ -82,6 +84,8 @@ public class MessageSlackCommand extends AbstractSlackCommand {
                 logger,
                 token,
                 apiHost,
+                connectTimeout,
+                readTimeout,
                 dryrun,
                 channel,
                 message);

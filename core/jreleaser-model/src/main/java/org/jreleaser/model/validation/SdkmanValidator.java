@@ -51,5 +51,12 @@ public abstract class SdkmanValidator extends Validator {
             context.getLogger().warn("There are no active distributions. Disabling Sdkman announcer");
             sdkman.disable();
         }
+
+        if (sdkman.getConnectTimeout() <= 0 || sdkman.getConnectTimeout() > 300) {
+            sdkman.setConnectTimeout(20);
+        }
+        if (sdkman.getReadTimeout() <= 0 || sdkman.getReadTimeout() > 300) {
+            sdkman.setReadTimeout(60);
+        }
     }
 }

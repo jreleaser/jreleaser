@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Assemble implements EnabledProvider {
+public class Assemble implements EnabledAware {
     private final Map<String, Jlink> jlinks = new LinkedHashMap<>();
     private final Map<String, NativeImage> nativeImages = new LinkedHashMap<>();
     private Boolean enabled;

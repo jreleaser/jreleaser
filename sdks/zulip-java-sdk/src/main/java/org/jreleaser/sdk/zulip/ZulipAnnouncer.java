@@ -73,6 +73,8 @@ public class ZulipAnnouncer implements Announcer {
                 .account(zulip.getAccount())
                 .apiKey(zulip.getResolvedApiKey())
                 .apiHost(zulip.getApiHost())
+                .connectTimeout(zulip.getConnectTimeout())
+                .readTimeout(zulip.getReadTimeout())
                 .channel(zulip.getChannel())
                 .subject(subject)
                 .message(message)
