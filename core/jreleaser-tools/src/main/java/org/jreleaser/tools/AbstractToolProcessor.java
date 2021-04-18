@@ -102,6 +102,9 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 return false;
             }
 
+            Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+            Files.createDirectories(prepareDirectory);
+
             context.getLogger().debug("resolving templates for {}/{}", distributionName, getToolName());
             Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
                 distribution.getType().name(),
@@ -138,8 +141,12 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 context.getLogger().warn("skipping {} distribution", distributionName);
                 return false;
             }
+
+            Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+            Files.createDirectories(packageDirectory);
+
             return doPackageDistribution(distribution, newProps);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IOException e) {
             throw new ToolProcessingException(e);
         }
     }

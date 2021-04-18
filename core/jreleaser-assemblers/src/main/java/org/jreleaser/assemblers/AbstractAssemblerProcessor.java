@@ -17,7 +17,6 @@
  */
 package org.jreleaser.assemblers;
 
-import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
@@ -37,7 +36,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -96,8 +94,11 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
                 writeFile(context.getModel().getProject(), content, newProps, entry.getKey());
             }
 
+            Path assembleDirectory = (Path) props.get(Constants.KEY_ASSEMBLE_DIRECTORY);
+            Files.createDirectories(assembleDirectory);
+
             doAssemble(newProps);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IOException e) {
             throw new AssemblerProcessingException(e);
         }
     }
