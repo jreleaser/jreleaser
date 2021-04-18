@@ -54,8 +54,8 @@ public class Twitter {
         this.twitter = new TwitterFactory(
             new ConfigurationBuilder()
                 .setRestBaseURL(apiHost)
-                .setHttpConnectionTimeout(connectTimeout)
-                .setHttpReadTimeout(readTimeout)
+                .setHttpConnectionTimeout(connectTimeout * 1000)
+                .setHttpReadTimeout(readTimeout * 1000)
                 .setOAuthConsumerKey(consumerKey)
                 .setOAuthConsumerSecret(consumerToken)
                 .setOAuthAccessToken(accessToken)
