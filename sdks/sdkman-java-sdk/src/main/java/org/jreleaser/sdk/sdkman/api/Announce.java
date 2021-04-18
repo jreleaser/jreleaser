@@ -26,7 +26,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  */
 public class Announce extends Candidate {
     private String hashtag;
-    private String releaseNotesUrl;
+    private String url;
 
     public String getHashtag() {
         return hashtag;
@@ -36,12 +36,12 @@ public class Announce extends Candidate {
         this.hashtag = hashtag;
     }
 
-    public String getReleaseNotesUrl() {
-        return releaseNotesUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public void setReleaseNotesUrl(String releaseNotesUrl) {
-        this.releaseNotesUrl = releaseNotesUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class Announce extends Candidate {
             "candidate='" + candidate + '\'' +
             ", version='" + version + '\'' +
             ", hashtag='" + hashtag + '\'' +
-            ", releaseNotesUrl='" + releaseNotesUrl + '\'' +
+            ", url='" + url + '\'' +
             ']';
     }
 
@@ -62,7 +62,7 @@ public class Announce extends Candidate {
         o.candidate = requireNonBlank(candidate, "'candidate' must not be blank").trim();
         o.version = requireNonBlank(version, "'version' must not be blank").trim();
         o.hashtag = isNotBlank(hashtag) ? hashtag.trim() : null;
-        o.releaseNotesUrl = isNotBlank(releaseNotesUrl) ? releaseNotesUrl.trim() : null;
+        o.url = isNotBlank(releaseNotesUrl) ? releaseNotesUrl.trim() : null;
         return o;
     }
 }
