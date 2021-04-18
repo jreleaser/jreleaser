@@ -55,9 +55,9 @@ public final class JReleaserModelValidator {
         validateRelease(context, mode, errors);
         validateAssemblers(context, mode, errors);
         validatePackagers(context, mode, errors);
-        validateAnnouncers(context, mode, errors);
-        validateFiles(context, mode, errors);
         validateDistributions(context, mode, errors);
+        validateFiles(context, mode, errors);
+        validateAnnouncers(context, mode, errors);
         postValidateProject(context, mode, errors);
     }
 }
