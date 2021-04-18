@@ -27,12 +27,15 @@ import org.jreleaser.model.Changelog;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.util.Version;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -102,14 +105,28 @@ public class ChangelogGenerator {
         return String.join(commitSeparator, lines);
     }
 
+    private static Version versionOf(Ref tag, Pattern versionPattern) {
+        Matcher matcher = versionPattern.matcher(extractTagName(tag));
+        if (matcher.matches()) {
+            return Version.of(matcher.group(1));
+        }
+        return Version.of("0.0.0");
+    }
+
     private static Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
         List<Ref> tags = git.tagList().call();
-        tags.sort(new GitSdk.TagComparator().reversed());
 
         GitService gitService = context.getModel().getRelease().getGitService();
         String effectiveTagName = gitService.getEffectiveTagName(context.getModel());
         String tagName = gitService.getConfiguredTagName();
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
+        Pattern versionPattern = Pattern.compile(tagName.replaceAll("\\{\\{.*}}", "\\(\\.\\*\\)"));
+
+        tags.sort((tag1, tag2) -> {
+            Version v1 = versionOf(tag1, versionPattern);
+            Version v2 = versionOf(tag2, versionPattern);
+            return v2.compareTo(v1);
+        });
 
         Optional<Ref> tag = Optional.empty();
         if (TAG_EARLY_ACCESS.equals(effectiveTagName)) {

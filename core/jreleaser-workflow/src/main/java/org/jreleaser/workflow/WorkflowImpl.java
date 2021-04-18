@@ -129,7 +129,7 @@ class WorkflowImpl implements Workflow {
 
     private void safePut(String key, Map<String, Object> src, Properties props) {
         if (src.containsKey(key)) {
-            props.put(key, src.get(key));
+            props.put(key, String.valueOf(src.get(key)));
         }
     }
 }

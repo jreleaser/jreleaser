@@ -73,7 +73,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
             Version targetJdkVersion = Version.of(readJavaVersion(targetJdkPath));
             context.getLogger().debug("target jdk version is {}", jdkVersion);
 
-            if (!jdkVersion.getMajor().equals(targetJdkVersion.getMajor())) {
+            if (jdkVersion.getMajor() != targetJdkVersion.getMajor()) {
                 throw new AssemblerProcessingException("Target JDK " + targetJdkVersion +
                     " is not compatible with " + jdkVersion);
             }
