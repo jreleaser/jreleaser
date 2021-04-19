@@ -35,6 +35,7 @@ import org.jreleaser.maven.plugin.GitService;
 import org.jreleaser.maven.plugin.Gitea;
 import org.jreleaser.maven.plugin.Github;
 import org.jreleaser.maven.plugin.Gitlab;
+import org.jreleaser.maven.plugin.Gitter;
 import org.jreleaser.maven.plugin.Glob;
 import org.jreleaser.maven.plugin.Java;
 import org.jreleaser.maven.plugin.Jbang;
@@ -229,6 +230,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Announce a = new org.jreleaser.model.Announce();
         if (announce.isEnabledSet()) a.setEnabled(announce.isEnabled());
         if (announce.getDiscussions().isSet()) a.setDiscussions(convertDiscussions(announce.getDiscussions()));
+        if (announce.getGitter().isSet()) a.setGitter(convertGitter(announce.getGitter()));
         if (announce.getMail().isSet()) a.setMail(convertMail(announce.getMail()));
         if (announce.getSdkman().isSet()) a.setSdkman(convertSdkman(announce.getSdkman()));
         if (announce.getSlack().isSet()) a.setSlack(convertSlack(announce.getSlack()));
@@ -247,6 +249,17 @@ public final class JReleaserModelConverter {
         a.setMessageTemplate(discussions.getMessageTemplate());
         a.setConnectTimeout(discussions.getConnectTimeout());
         a.setReadTimeout(discussions.getReadTimeout());
+        return a;
+    }
+
+    private static org.jreleaser.model.Gitter convertGitter(Gitter gitter) {
+        org.jreleaser.model.Gitter a = new org.jreleaser.model.Gitter();
+        a.setActive(gitter.resolveActive());
+        a.setWebhook(gitter.getWebhook());
+        a.setMessage(gitter.getMessage());
+        a.setMessageTemplate(gitter.getMessageTemplate());
+        a.setConnectTimeout(gitter.getConnectTimeout());
+        a.setReadTimeout(gitter.getReadTimeout());
         return a;
     }
 

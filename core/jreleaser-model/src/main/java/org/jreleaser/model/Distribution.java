@@ -196,12 +196,12 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.extraProperties.putAll(extraProperties);
     }
 
-    // --== TOOLs ==--
-
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
         this.extraProperties.putAll(extraProperties);
     }
+
+    // --== TOOLs ==--
 
     public <T extends Tool> T findTool(String name) {
         if (isBlank(name)) {

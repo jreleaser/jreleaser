@@ -15,20 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-engine')
-    // announce
-    api project(':gitter-java-sdk')
-    api project(':mail-java-sdk')
-    api project(':sdkman-java-sdk')
-    api project(':slack-java-sdk')
-    api project(':twitter-java-sdk')
-    api project(':zulip-java-sdk')
-    // release
-    api project(':github-java-sdk')
-    api project(':gitlab-java-sdk')
-    api project(':gitea-java-sdk')
-    // tools
-    api project(':jreleaser-tools')
-    api project(':jreleaser-assemblers')
+package org.jreleaser.sdk.gitter;
+
+import org.jreleaser.model.announcer.spi.AnnouncerBuilderFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
+
+/**
+ * @author Andres Almiray
+ * @since 0.2.0
+ */
+@ServiceProviderFor(AnnouncerBuilderFactory.class)
+public class GitterAnnouncerBuilderFactory implements AnnouncerBuilderFactory<GitterAnnouncer, GitterAnnouncerBuilder> {
+    @Override
+    public String getName() {
+        return org.jreleaser.model.Gitter.NAME;
+    }
+
+    @Override
+    public GitterAnnouncerBuilder getBuilder() {
+        return new GitterAnnouncerBuilder();
+    }
 }

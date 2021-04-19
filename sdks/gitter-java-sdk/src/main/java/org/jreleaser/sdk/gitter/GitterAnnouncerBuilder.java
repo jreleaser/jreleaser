@@ -15,20 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-engine')
-    // announce
-    api project(':gitter-java-sdk')
-    api project(':mail-java-sdk')
-    api project(':sdkman-java-sdk')
-    api project(':slack-java-sdk')
-    api project(':twitter-java-sdk')
-    api project(':zulip-java-sdk')
-    // release
-    api project(':github-java-sdk')
-    api project(':gitlab-java-sdk')
-    api project(':gitea-java-sdk')
-    // tools
-    api project(':jreleaser-tools')
-    api project(':jreleaser-assemblers')
+package org.jreleaser.sdk.gitter;
+
+import org.jreleaser.model.announcer.spi.AbstractAnnouncerBuilder;
+
+/**
+ * @author Andres Almiray
+ * @since 0.2.0
+ */
+public class GitterAnnouncerBuilder extends AbstractAnnouncerBuilder<GitterAnnouncer> {
+    @Override
+    public GitterAnnouncer build() {
+        validate();
+
+        return new GitterAnnouncer(context);
+    }
 }

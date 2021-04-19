@@ -17,14 +17,8 @@
  */
 package org.jreleaser.engine.announce;
 
-import org.jreleaser.model.Discussions;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.Mail;
-import org.jreleaser.model.Sdkman;
-import org.jreleaser.model.Slack;
-import org.jreleaser.model.Twitter;
-import org.jreleaser.model.Zulip;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.model.announcer.spi.AnnouncerBuilder;
@@ -48,9 +42,14 @@ public class Announcers {
             return;
         }
 
+        Map<String, Announcer> announcers = Announcers.findAnnouncers(context);
+        if (announcers.isEmpty()) {
+            context.getLogger().info("No announcers have been configured. Skipping.");
+            return;
+        }
+
         if (context.hasAnnouncerName()) {
-            Announcer announcer = Announcers.findAnnouncers(context)
-                .get(context.getAnnouncerName());
+            Announcer announcer = announcers.get(context.getAnnouncerName());
 
             if (null == announcer) {
                 context.getLogger().warn("Announcer [{}] not found. Skipping.", context.getAnnouncerName());
@@ -61,7 +60,7 @@ public class Announcers {
             return;
         }
 
-        for (Map.Entry<String, Announcer> entry : Announcers.findAnnouncers(context).entrySet()) {
+        for (Map.Entry<String, Announcer> entry : announcers.entrySet()) {
             announce(context, entry.getValue());
         }
     }
@@ -92,28 +91,11 @@ public class Announcers {
             .collect(Collectors.toMap(AnnouncerBuilderFactory::getName, AnnouncerBuilderFactory::getBuilder));
 
         Map<String, Announcer> announcers = new LinkedHashMap<>();
-        if (null != model.getAnnounce().getDiscussions()) {
-            announcers.put(Discussions.NAME, builders.get(Discussions.NAME).configureWith(context).build());
-        }
-        if (null != model.getAnnounce().getMail()) {
-            announcers.put(Mail.NAME, builders.get(Mail.NAME).configureWith(context).build());
-        }
-        if (null != model.getAnnounce().getSdkman()) {
-            announcers.put(Sdkman.NAME, builders.get(Sdkman.NAME).configureWith(context).build());
-        }
-        if (null != model.getAnnounce().getSlack()) {
-            announcers.put(Slack.NAME, builders.get(Slack.NAME).configureWith(context).build());
-        }
-        if (null != model.getAnnounce().getTwitter()) {
-            announcers.put(Twitter.NAME, builders.get(Twitter.NAME).configureWith(context).build());
-        }
-        if (null != model.getAnnounce().getZulip()) {
-            announcers.put(Zulip.NAME, builders.get(Zulip.NAME).configureWith(context).build());
-        }
-
-        if (announcers.isEmpty()) {
-            context.getLogger().info("No announcers have been configured. Skipping.");
-        }
+        builders.forEach((name, builder) -> {
+            if (null != model.getAnnounce().findAnnouncer(name)) {
+                announcers.put(name, builder.configureWith(context).build());
+            }
+        });
 
         return announcers;
     }

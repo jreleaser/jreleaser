@@ -32,6 +32,8 @@ interface Announce {
 
     Discussions getDiscussions()
 
+    Gitter getGitter()
+
     Mail getMail()
 
     Sdkman getSdkman()
@@ -43,6 +45,8 @@ interface Announce {
     Zulip getZulip()
 
     void discussions(Action<? super Discussions> action)
+
+    void gitter(Action<? super Gitter> action)
 
     void mail(Action<? super Mail> action)
 

@@ -23,6 +23,7 @@ package org.jreleaser.maven.plugin;
  */
 public class Announce implements EnabledAware {
     private final Discussions discussions = new Discussions();
+    private final Gitter gitter = new Gitter();
     private final Mail mail = new Mail();
     private final Sdkman sdkman = new Sdkman();
     private final Slack slack = new Slack();
@@ -33,6 +34,7 @@ public class Announce implements EnabledAware {
     void setAll(Announce announce) {
         this.enabled = announce.enabled;
         setDiscussions(announce.discussions);
+        setGitter(announce.gitter);
         setMail(announce.mail);
         setSdkman(announce.sdkman);
         setSlack(announce.slack);
@@ -61,6 +63,14 @@ public class Announce implements EnabledAware {
 
     public void setDiscussions(Discussions discussions) {
         this.discussions.setAll(discussions);
+    }
+
+    public Gitter getGitter() {
+        return gitter;
+    }
+
+    public void setGitter(Gitter gitter) {
+        this.gitter.setAll(gitter);
     }
 
     public Mail getMail() {

@@ -20,12 +20,15 @@ package org.jreleaser.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jreleaser.util.StringUtils.isBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Announce implements Domain, EnabledAware {
     private final Discussions discussions = new Discussions();
+    private final Gitter gitter = new Gitter();
     private final Mail mail = new Mail();
     private final Sdkman sdkman = new Sdkman();
     private final Slack slack = new Slack();
@@ -36,6 +39,7 @@ public class Announce implements Domain, EnabledAware {
     void setAll(Announce announce) {
         this.enabled = announce.enabled;
         setDiscussions(announce.discussions);
+        setGitter(announce.gitter);
         setMail(announce.mail);
         setSdkman(announce.sdkman);
         setSlack(announce.slack);
@@ -64,6 +68,14 @@ public class Announce implements Domain, EnabledAware {
 
     public void setDiscussions(Discussions discussions) {
         this.discussions.setAll(discussions);
+    }
+
+    public Gitter getGitter() {
+        return gitter;
+    }
+
+    public void setGitter(Gitter gitter) {
+        this.gitter.setAll(gitter);
     }
 
     public Mail getMail() {
@@ -111,11 +123,49 @@ public class Announce implements Domain, EnabledAware {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.putAll(discussions.asMap(full));
+        map.putAll(gitter.asMap(full));
         map.putAll(mail.asMap(full));
         map.putAll(sdkman.asMap(full));
         map.putAll(slack.asMap(full));
         map.putAll(twitter.asMap(full));
         map.putAll(zulip.asMap(full));
         return map;
+    }
+
+    public <A extends Announcer> A findAnnouncer(String name) {
+        if (isBlank(name)) {
+            throw new JReleaserException("Announcer name must not be blank");
+        }
+
+        return resolveAnnouncer(name);
+    }
+
+    public <A extends Announcer> A getAnnouncer(String name) {
+        A announcer = findAnnouncer(name);
+        if (null != announcer) {
+            return announcer;
+        }
+        throw new JReleaserException("Announcer '" + name + "' has not been configured");
+    }
+
+    private <A extends Announcer> A resolveAnnouncer(String name) {
+        switch (name.toLowerCase().trim()) {
+            case Discussions.NAME:
+                return (A) getDiscussions();
+            case Gitter.NAME:
+                return (A) getGitter();
+            case Mail.NAME:
+                return (A) getMail();
+            case Sdkman.NAME:
+                return (A) getSdkman();
+            case Slack.NAME:
+                return (A) getSlack();
+            case Twitter.NAME:
+                return (A) getTwitter();
+            case Zulip.NAME:
+                return (A) getZulip();
+            default:
+                throw new JReleaserException("Unsupported announcer '" + name + "'");
+        }
     }
 }

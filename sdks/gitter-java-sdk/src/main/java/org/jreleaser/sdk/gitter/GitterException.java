@@ -15,20 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-engine')
-    // announce
-    api project(':gitter-java-sdk')
-    api project(':mail-java-sdk')
-    api project(':sdkman-java-sdk')
-    api project(':slack-java-sdk')
-    api project(':twitter-java-sdk')
-    api project(':zulip-java-sdk')
-    // release
-    api project(':github-java-sdk')
-    api project(':gitlab-java-sdk')
-    api project(':gitea-java-sdk')
-    // tools
-    api project(':jreleaser-tools')
-    api project(':jreleaser-assemblers')
+package org.jreleaser.sdk.gitter;
+
+/**
+ * @author Andres Almiray
+ * @since 0.2.0
+ */
+public class GitterException extends Exception {
+    public GitterException(String message) {
+        super(message);
+    }
+
+    public GitterException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public GitterException(Throwable cause) {
+        super(cause);
+    }
 }

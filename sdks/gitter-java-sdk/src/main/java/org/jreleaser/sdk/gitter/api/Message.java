@@ -15,20 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-engine')
-    // announce
-    api project(':gitter-java-sdk')
-    api project(':mail-java-sdk')
-    api project(':sdkman-java-sdk')
-    api project(':slack-java-sdk')
-    api project(':twitter-java-sdk')
-    api project(':zulip-java-sdk')
-    // release
-    api project(':github-java-sdk')
-    api project(':gitlab-java-sdk')
-    api project(':gitea-java-sdk')
-    // tools
-    api project(':jreleaser-tools')
-    api project(':jreleaser-assemblers')
+package org.jreleaser.sdk.gitter.api;
+
+/**
+ * @author Andres Almiray
+ * @since 0.2.0
+ */
+public class Message {
+    private String message;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "Message[" +
+            "message='" + message + '\'' +
+            "]";
+    }
+
+    public static Message of(String text) {
+        Message message = new Message();
+        message.message = text;
+        return message;
+    }
 }
