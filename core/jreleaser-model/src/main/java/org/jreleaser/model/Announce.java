@@ -27,6 +27,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public class Announce implements Domain, EnabledAware {
+    private final Discord discord = new Discord();
     private final Discussions discussions = new Discussions();
     private final Gitter gitter = new Gitter();
     private final Mail mail = new Mail();
@@ -38,6 +39,7 @@ public class Announce implements Domain, EnabledAware {
 
     void setAll(Announce announce) {
         this.enabled = announce.enabled;
+        setDiscord(announce.discord);
         setDiscussions(announce.discussions);
         setGitter(announce.gitter);
         setMail(announce.mail);
@@ -60,6 +62,14 @@ public class Announce implements Domain, EnabledAware {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
+    }
+
+    public Discord getDiscord() {
+        return discord;
+    }
+
+    public void setDiscord(Discord discord) {
+        this.discord.setAll(discord);
     }
 
     public Discussions getDiscussions() {
@@ -122,6 +132,7 @@ public class Announce implements Domain, EnabledAware {
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
+        map.putAll(discord.asMap(full));
         map.putAll(discussions.asMap(full));
         map.putAll(gitter.asMap(full));
         map.putAll(mail.asMap(full));
@@ -150,6 +161,8 @@ public class Announce implements Domain, EnabledAware {
 
     private <A extends Announcer> A resolveAnnouncer(String name) {
         switch (name.toLowerCase().trim()) {
+            case Discord.NAME:
+                return (A) getDiscord();
             case Discussions.NAME:
                 return (A) getDiscussions();
             case Gitter.NAME:

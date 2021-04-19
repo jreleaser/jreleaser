@@ -23,6 +23,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Announce
+import org.jreleaser.gradle.plugin.dsl.Discord
 import org.jreleaser.gradle.plugin.dsl.Discussions
 import org.jreleaser.gradle.plugin.dsl.Gitter
 import org.jreleaser.gradle.plugin.dsl.Mail
@@ -41,6 +42,7 @@ import javax.inject.Inject
 @CompileStatic
 class AnnounceImpl implements Announce {
     final Property<Boolean> enabled
+    final DiscordImpl discord
     final DiscussionsImpl discussions
     final GitterImpl gitter
     final MailImpl mail
@@ -52,6 +54,7 @@ class AnnounceImpl implements Announce {
     @Inject
     AnnounceImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
+        discord = objects.newInstance(DiscordImpl, objects)
         discussions = objects.newInstance(DiscussionsImpl, objects)
         gitter = objects.newInstance(GitterImpl, objects)
         mail = objects.newInstance(MailImpl, objects)
@@ -59,6 +62,11 @@ class AnnounceImpl implements Announce {
         slack = objects.newInstance(SlackImpl, objects)
         twitter = objects.newInstance(TwitterImpl, objects)
         zulip = objects.newInstance(ZulipImpl, objects)
+    }
+
+    @Override
+    void discord(Action<? super Discord> action) {
+        action.execute(discord)
     }
 
     @Override
@@ -99,6 +107,7 @@ class AnnounceImpl implements Announce {
     org.jreleaser.model.Announce toModel() {
         org.jreleaser.model.Announce announce = new org.jreleaser.model.Announce()
         if (enabled.present) announce.enabled = enabled.get()
+        if (discord.isSet()) announce.discord = discord.toModel()
         if (discussions.isSet()) announce.discussions = discussions.toModel()
         if (gitter.isSet()) announce.gitter = gitter.toModel()
         if (mail.isSet()) announce.mail = mail.toModel()

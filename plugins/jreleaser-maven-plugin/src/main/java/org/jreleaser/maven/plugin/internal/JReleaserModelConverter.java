@@ -26,6 +26,7 @@ import org.jreleaser.maven.plugin.Catalog;
 import org.jreleaser.maven.plugin.Changelog;
 import org.jreleaser.maven.plugin.Chocolatey;
 import org.jreleaser.maven.plugin.CommitAuthor;
+import org.jreleaser.maven.plugin.Discord;
 import org.jreleaser.maven.plugin.Discussions;
 import org.jreleaser.maven.plugin.Distribution;
 import org.jreleaser.maven.plugin.Docker;
@@ -229,6 +230,7 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Announce convertAnnounce(Announce announce) {
         org.jreleaser.model.Announce a = new org.jreleaser.model.Announce();
         if (announce.isEnabledSet()) a.setEnabled(announce.isEnabled());
+        if (announce.getDiscord().isSet()) a.setDiscord(convertDiscord(announce.getDiscord()));
         if (announce.getDiscussions().isSet()) a.setDiscussions(convertDiscussions(announce.getDiscussions()));
         if (announce.getGitter().isSet()) a.setGitter(convertGitter(announce.getGitter()));
         if (announce.getMail().isSet()) a.setMail(convertMail(announce.getMail()));
@@ -236,6 +238,17 @@ public final class JReleaserModelConverter {
         if (announce.getSlack().isSet()) a.setSlack(convertSlack(announce.getSlack()));
         if (announce.getTwitter().isSet()) a.setTwitter(convertTwitter(announce.getTwitter()));
         if (announce.getZulip().isSet()) a.setZulip(convertZulip(announce.getZulip()));
+        return a;
+    }
+
+    private static org.jreleaser.model.Discord convertDiscord(Discord discord) {
+        org.jreleaser.model.Discord a = new org.jreleaser.model.Discord();
+        a.setActive(discord.resolveActive());
+        a.setWebhook(discord.getWebhook());
+        a.setMessage(discord.getMessage());
+        a.setMessageTemplate(discord.getMessageTemplate());
+        a.setConnectTimeout(discord.getConnectTimeout());
+        a.setReadTimeout(discord.getReadTimeout());
         return a;
     }
 

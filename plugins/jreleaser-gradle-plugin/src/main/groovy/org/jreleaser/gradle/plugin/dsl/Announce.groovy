@@ -30,6 +30,8 @@ import org.gradle.api.provider.Property
 interface Announce {
     Property<Boolean> getEnabled()
 
+    Discord getDiscord()
+
     Discussions getDiscussions()
 
     Gitter getGitter()
@@ -43,6 +45,8 @@ interface Announce {
     Twitter getTwitter()
 
     Zulip getZulip()
+
+    void discord(Action<? super Discord> action)
 
     void discussions(Action<? super Discussions> action)
 

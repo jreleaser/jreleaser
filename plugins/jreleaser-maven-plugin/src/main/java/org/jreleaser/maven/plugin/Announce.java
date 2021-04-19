@@ -22,6 +22,7 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public class Announce implements EnabledAware {
+    private final Discord discord = new Discord();
     private final Discussions discussions = new Discussions();
     private final Gitter gitter = new Gitter();
     private final Mail mail = new Mail();
@@ -33,6 +34,7 @@ public class Announce implements EnabledAware {
 
     void setAll(Announce announce) {
         this.enabled = announce.enabled;
+        setDiscord(announce.discord);
         setDiscussions(announce.discussions);
         setGitter(announce.gitter);
         setMail(announce.mail);
@@ -55,6 +57,14 @@ public class Announce implements EnabledAware {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
+    }
+
+    public Discord getDiscord() {
+        return discord;
+    }
+
+    public void setDiscord(Discord discord) {
+        this.discord.setAll(discord);
     }
 
     public Discussions getDiscussions() {

@@ -15,21 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-engine')
-    // announce
-    api project(':discord-java-sdk')
-    api project(':gitter-java-sdk')
-    api project(':mail-java-sdk')
-    api project(':sdkman-java-sdk')
-    api project(':slack-java-sdk')
-    api project(':twitter-java-sdk')
-    api project(':zulip-java-sdk')
-    // release
-    api project(':github-java-sdk')
-    api project(':gitlab-java-sdk')
-    api project(':gitea-java-sdk')
-    // tools
-    api project(':jreleaser-tools')
-    api project(':jreleaser-assemblers')
+package org.jreleaser.sdk.discord.api;
+
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
+
+/**
+ * @author Andres Almiray
+ * @since 0.2.0
+ */
+public interface WebhookDiscordAPI {
+    @RequestLine("POST /{path}")
+    @Headers("Content-Type: application/json")
+    void sendMessage(Message message, @Param("path") String path);
 }

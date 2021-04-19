@@ -21,6 +21,7 @@ import org.jreleaser.model.Announce;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.validation.DiscordValidator.validateDiscord;
 import static org.jreleaser.model.validation.DiscussionsValidator.validateDiscussions;
 import static org.jreleaser.model.validation.GitterValidator.validateGitter;
 import static org.jreleaser.model.validation.MailValidator.validateMail;
@@ -43,6 +44,7 @@ public abstract class AnnouncersValidator extends Validator {
 
         Announce announce = context.getModel().getAnnounce();
         validateDiscussions(context, announce.getDiscussions(), errors);
+        validateDiscord(context, announce.getDiscord(), errors);
         validateGitter(context, announce.getGitter(), errors);
         validateMail(context, announce.getMail(), errors);
         validateSdkman(context, announce.getSdkman(), errors);
@@ -51,7 +53,8 @@ public abstract class AnnouncersValidator extends Validator {
         validateZulip(context, announce.getZulip(), errors);
 
         if (!announce.isEnabledSet()) {
-            announce.setEnabled(announce.getDiscussions().isEnabled() ||
+            announce.setEnabled(announce.getDiscord().isEnabled() ||
+                announce.getDiscussions().isEnabled() ||
                 announce.getGitter().isEnabled() ||
                 announce.getMail().isEnabled() ||
                 announce.getSdkman().isEnabled() ||
