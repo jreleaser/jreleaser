@@ -16,21 +16,10 @@
  * limitations under the License.
  */
 dependencies {
-    api project(':jreleaser-engine')
-    // announce
-    api project(':discord-java-sdk')
-    api project(':gitter-java-sdk')
-    api project(':mail-java-sdk')
-    api project(':sdkman-java-sdk')
-    api project(':slack-java-sdk')
-    api project(':teams-java-sdk')
-    api project(':twitter-java-sdk')
-    api project(':zulip-java-sdk')
-    // release
-    api project(':github-java-sdk')
-    api project(':gitlab-java-sdk')
-    api project(':gitea-java-sdk')
-    // tools
-    api project(':jreleaser-tools')
-    api project(':jreleaser-assemblers')
+    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
+    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+
+    api project(':jreleaser-model')
+    api "commons-io:commons-io:$commonsIoVersion"
+
 }

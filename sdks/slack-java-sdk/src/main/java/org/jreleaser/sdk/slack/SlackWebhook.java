@@ -21,6 +21,7 @@ import feign.Feign;
 import feign.Request;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.sdk.slack.api.Message;
 import org.jreleaser.sdk.slack.api.SlackAPIException;
 import org.jreleaser.sdk.slack.api.SlackWebhookAPI;
@@ -52,6 +53,7 @@ public class SlackWebhook {
         this.api = Feign.builder()
             .encoder(new JacksonEncoder())
             .decoder(new JacksonDecoder())
+            .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
             .errorDecoder((methodKey, response) -> new SlackAPIException(response.status(), response.reason(), response.headers()))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(SlackWebhookAPI.class, WEBHOOKS_URI);

@@ -42,6 +42,8 @@ interface Announce {
 
     Slack getSlack()
 
+    Teams getTeams()
+
     Twitter getTwitter()
 
     Zulip getZulip()
@@ -57,6 +59,8 @@ interface Announce {
     void sdkman(Action<? super Sdkman> action)
 
     void slack(Action<? super Slack> action)
+
+    void teams(Action<? super Teams> action)
 
     void twitter(Action<? super Twitter> action)
 

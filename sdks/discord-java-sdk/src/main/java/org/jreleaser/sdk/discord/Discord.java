@@ -21,6 +21,7 @@ import feign.Feign;
 import feign.Request;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.sdk.discord.api.DiscordAPIException;
 import org.jreleaser.sdk.discord.api.Message;
 import org.jreleaser.sdk.discord.api.WebhookDiscordAPI;
@@ -52,6 +53,7 @@ public class Discord {
         this.api = Feign.builder()
             .encoder(new JacksonEncoder())
             .decoder(new JacksonDecoder())
+            .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
             .errorDecoder((methodKey, response) -> new DiscordAPIException(response.status(), response.reason()))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(WebhookDiscordAPI.class, WEBHOOKS_URI);

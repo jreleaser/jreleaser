@@ -23,6 +23,7 @@ import feign.auth.BasicAuthRequestInterceptor;
 import feign.form.FormEncoder;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.sdk.zulip.api.Message;
 import org.jreleaser.sdk.zulip.api.ZulipAPI;
 import org.jreleaser.util.JReleaserLogger;
@@ -58,6 +59,7 @@ public class Zulip {
         this.api = Feign.builder()
             .encoder(new FormEncoder(new JacksonEncoder()))
             .decoder(new JacksonDecoder())
+            .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
             .requestInterceptor(new BasicAuthRequestInterceptor(account, apiKey))
             .errorDecoder((methodKey, response) -> new IllegalStateException("Server returned error " + response.reason()))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))

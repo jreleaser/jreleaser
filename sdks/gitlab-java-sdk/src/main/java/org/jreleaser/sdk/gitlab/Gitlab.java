@@ -30,6 +30,7 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
+import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
 import org.jreleaser.sdk.gitlab.api.GitlabAPI;
 import org.jreleaser.sdk.gitlab.api.GitlabAPIException;
@@ -100,6 +101,7 @@ class Gitlab {
         this.api = Feign.builder()
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new JacksonDecoder(objectMapper))
+            .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", token)))
             .errorDecoder((methodKey, response) -> new GitlabAPIException(response.status(), response.reason(), response.headers()))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))

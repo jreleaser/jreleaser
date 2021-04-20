@@ -21,6 +21,7 @@ import feign.Feign;
 import feign.Request;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.sdk.sdkman.api.Announce;
 import org.jreleaser.sdk.sdkman.api.Candidate;
 import org.jreleaser.sdk.sdkman.api.Release;
@@ -61,6 +62,7 @@ public class Sdkman {
             .encoder(new JacksonEncoder())
             .decoder(new JacksonDecoder())
             .requestInterceptor(template -> {
+                template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
                 template.header("Consumer-Key", consumerKey);
                 template.header("Consumer-Token", consumerToken);
                 template.header("Content-Type", "application/json");

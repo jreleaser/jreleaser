@@ -22,6 +22,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.MustacheUtils;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -60,7 +61,7 @@ public class DiscussionsAnnouncer implements Announcer {
             message = discussions.getResolvedMessage(context.getModel());
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, context.getChangelog());
+            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
             context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
             message = discussions.getResolvedMessageTemplate(context, props);
         }

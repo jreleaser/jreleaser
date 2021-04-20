@@ -27,6 +27,7 @@ import static org.jreleaser.model.validation.GitterValidator.validateGitter;
 import static org.jreleaser.model.validation.MailValidator.validateMail;
 import static org.jreleaser.model.validation.SdkmanValidator.validateSdkman;
 import static org.jreleaser.model.validation.SlackValidator.validateSlack;
+import static org.jreleaser.model.validation.TeamsValidator.validateTeams;
 import static org.jreleaser.model.validation.TwitterValidator.validateTwitter;
 import static org.jreleaser.model.validation.ZulipValidator.validateZulip;
 
@@ -49,6 +50,7 @@ public abstract class AnnouncersValidator extends Validator {
         validateMail(context, announce.getMail(), errors);
         validateSdkman(context, announce.getSdkman(), errors);
         validateSlack(context, announce.getSlack(), errors);
+        validateTeams(context, announce.getTeams(), errors);
         validateTwitter(context, announce.getTwitter(), errors);
         validateZulip(context, announce.getZulip(), errors);
 
@@ -59,6 +61,7 @@ public abstract class AnnouncersValidator extends Validator {
                 announce.getMail().isEnabled() ||
                 announce.getSdkman().isEnabled() ||
                 announce.getSlack().isEnabled() ||
+                announce.getTeams().isEnabled() ||
                 announce.getTwitter().isEnabled() ||
                 announce.getZulip().isEnabled());
         }

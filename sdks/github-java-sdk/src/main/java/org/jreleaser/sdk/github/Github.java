@@ -19,6 +19,7 @@ package org.jreleaser.sdk.github;
 
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
+import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.JReleaserLogger;
 import org.kohsuke.github.GHAsset;
 import org.kohsuke.github.GHDiscussion;
@@ -38,6 +39,8 @@ import org.kohsuke.github.PagedIterable;
 import org.kohsuke.github.extras.ImpatientHttpConnector;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -79,7 +82,7 @@ class Github {
         }
 
         github = new GitHubBuilder()
-            .withConnector(new ImpatientHttpConnector(HttpConnector.DEFAULT, connectTimeout * 1000, readTimeout * 1000))
+            .withConnector(new JReleaserHttpConnector(connectTimeout, readTimeout))
             .withEndpoint(endpoint)
             .withOAuthToken(password, username)
             .build();
@@ -213,5 +216,18 @@ class Github {
         }
 
         return ghTeam;
+    }
+
+    private static class JReleaserHttpConnector extends ImpatientHttpConnector {
+        public JReleaserHttpConnector(int connectTimeout, int readTimeout) {
+            super(HttpConnector.DEFAULT, connectTimeout * 1000, readTimeout * 1000);
+        }
+
+        @Override
+        public HttpURLConnection connect(URL url) throws IOException {
+            HttpURLConnection connection = super.connect(url);
+            connection.addRequestProperty("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
+            return connection;
+        }
     }
 }

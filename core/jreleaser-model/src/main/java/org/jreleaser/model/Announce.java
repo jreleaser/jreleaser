@@ -33,6 +33,7 @@ public class Announce implements Domain, EnabledAware {
     private final Mail mail = new Mail();
     private final Sdkman sdkman = new Sdkman();
     private final Slack slack = new Slack();
+    private final Teams teams = new Teams();
     private final Twitter twitter = new Twitter();
     private final Zulip zulip = new Zulip();
     private Boolean enabled;
@@ -45,6 +46,7 @@ public class Announce implements Domain, EnabledAware {
         setMail(announce.mail);
         setSdkman(announce.sdkman);
         setSlack(announce.slack);
+        setTeams(announce.teams);
         setTwitter(announce.twitter);
         setZulip(announce.zulip);
     }
@@ -112,6 +114,14 @@ public class Announce implements Domain, EnabledAware {
         this.slack.setAll(slack);
     }
 
+    public Teams getTeams() {
+        return teams;
+    }
+
+    public void setTeams(Teams teams) {
+        this.teams.setAll(teams);
+    }
+
     public Twitter getTwitter() {
         return twitter;
     }
@@ -138,6 +148,7 @@ public class Announce implements Domain, EnabledAware {
         map.putAll(mail.asMap(full));
         map.putAll(sdkman.asMap(full));
         map.putAll(slack.asMap(full));
+        map.putAll(teams.asMap(full));
         map.putAll(twitter.asMap(full));
         map.putAll(zulip.asMap(full));
         return map;
@@ -173,6 +184,8 @@ public class Announce implements Domain, EnabledAware {
                 return (A) getSdkman();
             case Slack.NAME:
                 return (A) getSlack();
+            case Teams.NAME:
+                return (A) getTeams();
             case Twitter.NAME:
                 return (A) getTwitter();
             case Zulip.NAME:

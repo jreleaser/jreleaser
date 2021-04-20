@@ -31,6 +31,7 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
+import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.sdk.gitea.api.GiteaAPI;
 import org.jreleaser.sdk.gitea.api.GiteaAPIException;
 import org.jreleaser.sdk.gitea.api.GtMilestone;
@@ -89,6 +90,7 @@ class Gitea {
             .client(new ApacheHttpClient())
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new JacksonDecoder(objectMapper))
+            .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
             .requestInterceptor(template -> template.header("Authorization", String.format("token %s", token)))
             .errorDecoder((methodKey, response) -> new GiteaAPIException(response.status(), response.reason(), response.headers()))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))

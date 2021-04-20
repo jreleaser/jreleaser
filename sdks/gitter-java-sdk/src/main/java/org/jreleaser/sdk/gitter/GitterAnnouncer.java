@@ -22,6 +22,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.MustacheUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class GitterAnnouncer implements Announcer {
             message = gitter.getResolvedMessage(context.getModel());
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, context.getChangelog());
+            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
             context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
             message = gitter.getResolvedMessageTemplate(context, props);
         }

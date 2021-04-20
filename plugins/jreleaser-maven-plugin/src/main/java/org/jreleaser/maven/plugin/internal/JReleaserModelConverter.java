@@ -57,6 +57,7 @@ import org.jreleaser.maven.plugin.Slack;
 import org.jreleaser.maven.plugin.Slot;
 import org.jreleaser.maven.plugin.Snap;
 import org.jreleaser.maven.plugin.Tap;
+import org.jreleaser.maven.plugin.Teams;
 import org.jreleaser.maven.plugin.Twitter;
 import org.jreleaser.maven.plugin.Zulip;
 import org.jreleaser.model.ChocolateyBucket;
@@ -236,6 +237,7 @@ public final class JReleaserModelConverter {
         if (announce.getMail().isSet()) a.setMail(convertMail(announce.getMail()));
         if (announce.getSdkman().isSet()) a.setSdkman(convertSdkman(announce.getSdkman()));
         if (announce.getSlack().isSet()) a.setSlack(convertSlack(announce.getSlack()));
+        if (announce.getTeams().isSet()) a.setTeams(convertTeams(announce.getTeams()));
         if (announce.getTwitter().isSet()) a.setTwitter(convertTwitter(announce.getTwitter()));
         if (announce.getZulip().isSet()) a.setZulip(convertZulip(announce.getZulip()));
         return a;
@@ -317,6 +319,16 @@ public final class JReleaserModelConverter {
         a.setMessageTemplate(slack.getMessageTemplate());
         a.setConnectTimeout(slack.getConnectTimeout());
         a.setReadTimeout(slack.getReadTimeout());
+        return a;
+    }
+
+    private static org.jreleaser.model.Teams convertTeams(Teams teams) {
+        org.jreleaser.model.Teams a = new org.jreleaser.model.Teams();
+        a.setActive(teams.resolveActive());
+        a.setWebhook(teams.getWebhook());
+        a.setMessageTemplate(teams.getMessageTemplate());
+        a.setConnectTimeout(teams.getConnectTimeout());
+        a.setReadTimeout(teams.getReadTimeout());
         return a;
     }
 

@@ -28,6 +28,7 @@ public class Announce implements EnabledAware {
     private final Mail mail = new Mail();
     private final Sdkman sdkman = new Sdkman();
     private final Slack slack = new Slack();
+    private final Teams teams = new Teams();
     private final Twitter twitter = new Twitter();
     private final Zulip zulip = new Zulip();
     private Boolean enabled;
@@ -40,6 +41,7 @@ public class Announce implements EnabledAware {
         setMail(announce.mail);
         setSdkman(announce.sdkman);
         setSlack(announce.slack);
+        setTeams(announce.teams);
         setTwitter(announce.twitter);
         setZulip(announce.zulip);
     }
@@ -105,6 +107,14 @@ public class Announce implements EnabledAware {
 
     public void setSlack(Slack slack) {
         this.slack.setAll(slack);
+    }
+
+    public Teams getTeams() {
+        return teams;
+    }
+
+    public void setTeams(Teams teams) {
+        this.teams.setAll(teams);
     }
 
     public Twitter getTwitter() {
