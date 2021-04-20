@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.gitter.api;
+package org.jreleaser.sdk.slack.api;
 
 import feign.Headers;
 import feign.Param;
@@ -25,7 +25,7 @@ import feign.RequestLine;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public interface WebhookGitterAPI {
+public interface SlackWebhookAPI {
     @RequestLine("POST /{path}")
     @Headers("Content-Type: application/json")
     void sendMessage(Message message, @Param("path") String path);

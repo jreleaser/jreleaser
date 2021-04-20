@@ -36,8 +36,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Slack extends AbstractAnnouncer {
     public static final String NAME = "slack";
     public static final String SLACK_TOKEN = "SLACK_TOKEN";
+    public static final String SLACK_WEBHOOK = "SLACK_WEBHOOK";
 
     private String token;
+    private String webhook;
     private String channel;
     private String message;
     private String messageTemplate;
@@ -49,6 +51,7 @@ public class Slack extends AbstractAnnouncer {
     void setAll(Slack slack) {
         super.setAll(slack);
         this.token = slack.token;
+        this.webhook = slack.webhook;
         this.channel = slack.channel;
         this.message = slack.message;
         this.messageTemplate = slack.messageTemplate;
@@ -87,6 +90,18 @@ public class Slack extends AbstractAnnouncer {
         this.token = token;
     }
 
+    public String getResolvedWebhook() {
+        return Env.resolve(SLACK_WEBHOOK, webhook);
+    }
+
+    public String getWebhook() {
+        return webhook;
+    }
+
+    public void setWebhook(String webhook) {
+        this.webhook = webhook;
+    }
+
     public String getChannel() {
         return channel;
     }
@@ -113,6 +128,7 @@ public class Slack extends AbstractAnnouncer {
 
     @Override
     protected void asMap(Map<String, Object> props) {
+        props.put("webhook", isNotBlank(getResolvedWebhook()) ? "************" : "**unset**");
         props.put("token", isNotBlank(getResolvedToken()) ? "************" : "**unset**");
         props.put("channel", channel);
         props.put("message", message);

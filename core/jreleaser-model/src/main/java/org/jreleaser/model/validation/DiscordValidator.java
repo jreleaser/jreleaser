@@ -41,7 +41,7 @@ public abstract class DiscordValidator extends Validator {
         discord.setWebhook(
             checkProperty(context.getModel().getEnvironment(),
                 DISCORD_WEBHOOK,
-                "discord.token",
+                "discord.webhook",
                 discord.getWebhook(),
                 errors));
 

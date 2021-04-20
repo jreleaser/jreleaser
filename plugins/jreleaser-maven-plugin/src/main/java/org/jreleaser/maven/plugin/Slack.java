@@ -17,12 +17,15 @@
  */
 package org.jreleaser.maven.plugin;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Slack extends AbstractAnnouncer {
     private String token;
+    private String webhook;
     private String channel;
     private String message;
     private String messageTemplate;
@@ -30,6 +33,7 @@ public class Slack extends AbstractAnnouncer {
     void setAll(Slack slack) {
         super.setAll(slack);
         this.token = slack.token;
+        this.webhook = slack.webhook;
         this.channel = slack.channel;
         this.message = slack.message;
         this.messageTemplate = slack.messageTemplate;
@@ -41,6 +45,14 @@ public class Slack extends AbstractAnnouncer {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getWebhook() {
+        return webhook;
+    }
+
+    public void setWebhook(String webhook) {
+        this.webhook = webhook;
     }
 
     public String getChannel() {
@@ -65,5 +77,15 @@ public class Slack extends AbstractAnnouncer {
 
     public void setMessageTemplate(String messageTemplate) {
         this.messageTemplate = messageTemplate;
+    }
+
+    @Override
+    public boolean isSet() {
+        return super.isSet() ||
+            isNotBlank(token) ||
+            isNotBlank(webhook) ||
+            isNotBlank(channel) ||
+            isNotBlank(message) ||
+            isNotBlank(messageTemplate);
     }
 }

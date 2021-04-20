@@ -23,7 +23,9 @@ import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.util.Constants;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -63,21 +65,45 @@ public class SlackAnnouncer implements Announcer {
             message = slack.getResolvedMessageTemplate(context, props);
         }
 
-        context.getLogger().info("channel: {}", slack.getChannel());
         context.getLogger().debug("message: {}", message);
 
-        try {
-            MessageSlackCommand.builder(context.getLogger())
-                .connectTimeout(slack.getConnectTimeout())
-                .readTimeout(slack.getReadTimeout())
-                .token(slack.getResolvedToken())
-                .channel(slack.getChannel())
-                .message(message)
-                .dryrun(context.isDryrun())
-                .build()
-                .execute();
-        } catch (SlackException e) {
-            throw new AnnounceException(e);
+        List<String> errors = new ArrayList<>();
+        if (isNotBlank(slack.getResolvedToken())) {
+            context.getLogger().info("channel: {}", slack.getChannel());
+            try {
+                MessageSlackCommand.builder(context.getLogger())
+                    .connectTimeout(slack.getConnectTimeout())
+                    .readTimeout(slack.getReadTimeout())
+                    .token(slack.getResolvedToken())
+                    .channel(slack.getChannel())
+                    .message(message)
+                    .dryrun(context.isDryrun())
+                    .build()
+                    .execute();
+            } catch (SlackException e) {
+                context.getLogger().trace(e);
+                errors.add(e.toString());
+            }
+        }
+
+        if (isNotBlank(slack.getResolvedWebhook())) {
+            try {
+                WebhookSlackCommand.builder(context.getLogger())
+                    .connectTimeout(slack.getConnectTimeout())
+                    .readTimeout(slack.getReadTimeout())
+                    .webhook(slack.getResolvedWebhook())
+                    .message(message)
+                    .dryrun(context.isDryrun())
+                    .build()
+                    .execute();
+            } catch (SlackException e) {
+                context.getLogger().trace(e);
+                errors.add(e.toString());
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            throw new AnnounceException(String.join(System.lineSeparator(), errors));
         }
     }
 }

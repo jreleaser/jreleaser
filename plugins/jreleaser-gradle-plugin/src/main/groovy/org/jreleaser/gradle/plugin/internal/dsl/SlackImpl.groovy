@@ -35,6 +35,7 @@ import javax.inject.Inject
 @CompileStatic
 class SlackImpl extends AbstractAnnouncer implements Slack {
     final Property<String> token
+    final Property<String> webhook
     final Property<String> channel
     final Property<String> message
     final RegularFileProperty messageTemplate
@@ -43,6 +44,7 @@ class SlackImpl extends AbstractAnnouncer implements Slack {
     SlackImpl(ObjectFactory objects) {
         super(objects)
         token = objects.property(String).convention(Providers.notDefined())
+        webhook = objects.property(String).convention(Providers.notDefined())
         channel = objects.property(String).convention(Providers.notDefined())
         message = objects.property(String).convention(Providers.notDefined())
         messageTemplate = objects.fileProperty().convention(Providers.notDefined())
@@ -53,6 +55,7 @@ class SlackImpl extends AbstractAnnouncer implements Slack {
     boolean isSet() {
         super.isSet() ||
             token.present ||
+            webhook.present ||
             channel.present ||
             message.present ||
             messageTemplate.present
@@ -62,6 +65,7 @@ class SlackImpl extends AbstractAnnouncer implements Slack {
         org.jreleaser.model.Slack slack = new org.jreleaser.model.Slack()
         fillProperties(slack)
         if (token.present) slack.token = token.get()
+        if (webhook.present) slack.webhook = webhook.get()
         if (channel.present) slack.channel = channel.get()
         if (message.present) slack.message = message.get()
         if (messageTemplate.present) {

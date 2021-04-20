@@ -24,6 +24,7 @@ import org.jreleaser.util.Errors;
 import java.nio.file.Files;
 
 import static org.jreleaser.model.Slack.SLACK_TOKEN;
+import static org.jreleaser.model.Slack.SLACK_WEBHOOK;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -38,13 +39,28 @@ public abstract class SlackValidator extends Validator {
         if (!slack.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.slack");
 
+        Errors ignored = new Errors();
         slack.setToken(
             checkProperty(context.getModel().getEnvironment(),
                 SLACK_TOKEN,
                 "slack.token",
                 slack.getToken(),
-                errors));
+                ignored));
 
+        slack.setWebhook(
+            checkProperty(context.getModel().getEnvironment(),
+                SLACK_WEBHOOK,
+                "slack.webhook",
+                slack.getWebhook(),
+                ignored));
+
+        String token = slack.getResolvedToken();
+        String webhook = slack.getResolvedWebhook();
+
+        if (isBlank(token) && isBlank(webhook)) {
+            errors.configuration("slack.token or slack.webhook must be provided");
+            return;
+        }
 
         if (isBlank(slack.getChannel())) {
             slack.setChannel("#announce");

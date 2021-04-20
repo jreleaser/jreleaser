@@ -51,8 +51,13 @@ public class Message {
             ']';
     }
 
-    public static Message of(String channel,
-                             String text) {
+    public static Message of(String text) {
+        Message o = new Message();
+        o.text = requireNonBlank(text, "'text' must not be blank").trim();
+        return o;
+    }
+
+    public static Message of(String channel, String text) {
         Message o = new Message();
         o.channel = requireNonBlank(channel, "'channel' must not be blank").trim();
         o.text = requireNonBlank(text, "'text' must not be blank").trim();

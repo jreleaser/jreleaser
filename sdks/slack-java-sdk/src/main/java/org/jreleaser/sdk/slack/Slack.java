@@ -24,6 +24,7 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.sdk.slack.api.Message;
 import org.jreleaser.sdk.slack.api.SlackAPI;
+import org.jreleaser.sdk.slack.api.SlackAPIException;
 import org.jreleaser.sdk.slack.api.SlackResponse;
 import org.jreleaser.util.JReleaserLogger;
 
@@ -58,7 +59,7 @@ public class Slack {
             .encoder(new FormEncoder(new JacksonEncoder()))
             .decoder(new JacksonDecoder())
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", token)))
-            .errorDecoder((methodKey, response) -> new IllegalStateException("Server returned error " + response.reason()))
+            .errorDecoder((methodKey, response) -> new SlackAPIException(response.status(), response.reason(), response.headers()))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(SlackAPI.class, apiHost);
 

@@ -311,6 +311,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Slack a = new org.jreleaser.model.Slack();
         a.setActive(slack.resolveActive());
         a.setToken(slack.getToken());
+        a.setWebhook(slack.getWebhook());
         a.setChannel(slack.getChannel());
         a.setMessage(slack.getMessage());
         a.setMessageTemplate(slack.getMessageTemplate());
