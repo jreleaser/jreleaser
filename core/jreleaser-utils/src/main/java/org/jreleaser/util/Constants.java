@@ -121,6 +121,18 @@ public interface Constants {
     String KEY_BREW_DEPENDENCIES = "brewDependencies";
     String KEY_HOMEBREW_TAP_REPO_URL = "brewTapRepoUrl";
     String KEY_HOMEBREW_TAP_REPO_CLONE_URL = "brewTapRepoCloneUrl";
+    String KEY_BREW_HAS_LIVECHECK = "brewHasLivecheck";
+    String KEY_BREW_LIVECHECK = "brewLivecheck";
+    String KEY_BREW_CASK_NAME = "brewCaskName";
+    String KEY_BREW_CASK_DISPLAY_NAME = "brewCaskDisplayName";
+    String KEY_BREW_CASK_HAS_PKG = "brewCaskHasPkg";
+    String KEY_BREW_CASK_PKG = "brewCaskPkg";
+    String KEY_BREW_CASK_HAS_APP = "brewCaskHasApp";
+    String KEY_BREW_CASK_APP = "brewCaskApp";
+    String KEY_BREW_CASK_HAS_UNINSTALL = "brewCaskHasUninstall";
+    String KEY_BREW_CASK_UNINSTALL = "brewCaskUninstall";
+    String KEY_BREW_CASK_HAS_ZAP = "brewCaskHasZap";
+    String KEY_BREW_CASK_ZAP = "brewCaskZap";
 
     // Docker
     String KEY_DOCKER_SPEC_NAME = "dockerSpecName";

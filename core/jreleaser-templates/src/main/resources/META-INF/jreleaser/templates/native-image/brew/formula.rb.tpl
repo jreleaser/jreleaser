@@ -8,6 +8,13 @@ class {{brewFormulaName}} < Formula
 
   bottle :unneeded
 
+  {{#brewHasLivecheck}}
+  livecheck do
+    {{#brewLivecheck}}
+    {{.}}
+    {{/brewLivecheck}}
+  end
+  {{/brewHasLivecheck}}
   {{#brewDependencies}}
   depends_on {{.}}
   {{/brewDependencies}}

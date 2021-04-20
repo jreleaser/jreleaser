@@ -23,6 +23,7 @@ import org.jreleaser.maven.plugin.Artifactory;
 import org.jreleaser.maven.plugin.Assemble;
 import org.jreleaser.maven.plugin.Brew;
 import org.jreleaser.maven.plugin.Bucket;
+import org.jreleaser.maven.plugin.Cask;
 import org.jreleaser.maven.plugin.Catalog;
 import org.jreleaser.maven.plugin.Changelog;
 import org.jreleaser.maven.plugin.Checksum;
@@ -706,7 +707,22 @@ public final class JReleaserModelConverter {
                 t.addDependency(dependency.getKey());
             }
         });
+        t.setLivecheck(brew.getLivecheck());
+        if(brew.getCask().isSet()) {
+            t.setCask(convertCask(brew.getCask()));
+        }
         return t;
+    }
+
+    private static org.jreleaser.model.Cask convertCask(Cask cask) {
+        org.jreleaser.model.Cask c = new org.jreleaser.model.Cask();
+        c.setName(cask.getName());
+        c.setDisplayName(cask.getDisplayName());
+        c.setPkgName(cask.getPkgName());
+        c.setAppName(cask.getAppName());
+        c.setUninstall(cask.getUninstall());
+        c.setZap(cask.getZap());
+        return c;
     }
 
     private static HomebrewTap convertHomebrewTap(Tap tap) {

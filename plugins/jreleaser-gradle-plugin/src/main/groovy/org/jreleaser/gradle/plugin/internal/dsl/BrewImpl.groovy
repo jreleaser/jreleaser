@@ -21,10 +21,12 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Brew
+import org.jreleaser.gradle.plugin.dsl.Cask
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Tap
 import org.kordamp.gradle.util.ConfigureUtil
@@ -43,15 +45,19 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
     final Property<String> formulaName
     final CommitAuthorImpl commitAuthor
     final TapImpl tap
+    final CaskImpl cask
     final MapProperty<String, String> dependencies
+    final ListProperty<String> livecheck
 
     @Inject
     BrewImpl(ObjectFactory objects) {
         super(objects)
         formulaName = objects.property(String).convention(Providers.notDefined())
         tap = objects.newInstance(TapImpl, objects)
+        cask = objects.newInstance(CaskImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
         dependencies = objects.mapProperty(String, String).convention(Providers.notDefined())
+        livecheck = objects.listProperty(String).convention(Providers.notDefined())
     }
 
     @Override
@@ -75,7 +81,9 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
             formulaName.present ||
             dependencies.present ||
             tap.isSet() ||
-            commitAuthor.isSet()
+            commitAuthor.isSet() ||
+            livecheck.present ||
+            cask.isSet()
     }
 
     @Override
@@ -89,6 +97,11 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
     }
 
     @Override
+    void cask(Action<? super Cask> action) {
+        action.execute(cask)
+    }
+
+    @Override
     void tap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
         ConfigureUtil.configure(action, tap)
     }
@@ -98,6 +111,11 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
         ConfigureUtil.configure(action, commitAuthor)
     }
 
+    @Override
+    void cask(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cask) Closure<Void> action) {
+        ConfigureUtil.configure(action, cask)
+    }
+
     org.jreleaser.model.Brew toModel() {
         org.jreleaser.model.Brew tool = new org.jreleaser.model.Brew()
         fillToolProperties(tool)
@@ -105,6 +123,8 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
         if (tap.isSet()) tool.tap = tap.toHomebrewTap()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (dependencies.present) tool.dependencies = dependencies.get()
+        if (livecheck.present) tool.livecheck = (livecheck.get() as List<String>)
+        if (cask.isSet()) tool.cask = cask.toModel()
         tool
     }
 }

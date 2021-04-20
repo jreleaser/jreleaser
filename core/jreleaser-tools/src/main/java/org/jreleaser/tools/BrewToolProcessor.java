@@ -31,6 +31,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.MustacheUtils.passThrough;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -59,16 +62,39 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         props.put(Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getTap().getOwner(), tool.getTap().getName()));
 
+        props.put(Constants.KEY_BREW_HAS_LIVECHECK, tool.hasLivecheck());
+        if (tool.hasLivecheck()) {
+            props.put(Constants.KEY_BREW_LIVECHECK, tool.getLivecheck().stream()
+                .map(line -> applyTemplate(line, props))
+                .map(MustacheUtils::passThrough)
+                .collect(Collectors.toList()));
+        }
+
         if ((distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == Distribution.DistributionType.SINGLE_JAR) &&
             !tool.getExtraProperties().containsKey("javaSkip")) {
             tool.addDependency("openjdk@" + props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
+        } else if (distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE) {
+            props.put(Constants.KEY_BREW_CASK_NAME, tool.getCask().getResolvedCaskName(props));
+            props.put(Constants.KEY_BREW_CASK_DISPLAY_NAME, tool.getCask().getResolvedDisplayName(props));
+            props.put(Constants.KEY_BREW_CASK_HAS_UNINSTALL, !tool.getCask().getUninstallItems().isEmpty());
+            props.put(Constants.KEY_BREW_CASK_HAS_PKG, isNotBlank(tool.getCask().getPkgName()));
+            if (isNotBlank(tool.getCask().getPkgName())) {
+                props.put(Constants.KEY_BREW_CASK_PKG, tool.getCask().getResolvedPkgName(props));
+            }
+            props.put(Constants.KEY_BREW_CASK_HAS_APP, isNotBlank(tool.getCask().getAppName()));
+            if (isNotBlank(tool.getCask().getAppName())) {
+                props.put(Constants.KEY_BREW_CASK_APP, tool.getCask().getResolvedAppName(props));
+            }
+            props.put(Constants.KEY_BREW_CASK_UNINSTALL, tool.getCask().getUninstallItems());
+            props.put(Constants.KEY_BREW_CASK_HAS_ZAP, !tool.getCask().getZapItems().isEmpty());
+            props.put(Constants.KEY_BREW_CASK_ZAP, tool.getCask().getZapItems());
         }
 
         props.put(Constants.KEY_BREW_DEPENDENCIES, tool.getDependenciesAsList()
             .stream()
             // prevent Mustache from converting quotes into &quot;
-            .map(dependency -> MustacheUtils.passThrough(dependency.toString()))
+            .map(dependency -> passThrough(dependency.toString()))
             .collect(Collectors.toList()));
     }
 
@@ -84,7 +110,9 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
 
         Path outputFile = "formula.rb".equals(fileName) ?
             outputDirectory.resolve("Formula").resolve(distribution.getExecutable().concat(".rb")) :
-            outputDirectory.resolve(fileName);
+            ("cask.rb".equals(fileName) ?
+                outputDirectory.resolve("Casks").resolve(tool.getCask().getResolvedCaskName(props).concat(".rb")) :
+                outputDirectory.resolve(fileName));
 
         writeFile(content, outputFile);
     }

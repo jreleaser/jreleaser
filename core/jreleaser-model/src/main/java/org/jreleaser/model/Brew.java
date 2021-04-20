@@ -37,7 +37,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Brew extends AbstractRepositoryTool {
     public static final String NAME = "brew";
     private final List<Dependency> dependencies = new ArrayList<>();
+    private final List<String> livecheck = new ArrayList<>();
     private final HomebrewTap tap = new HomebrewTap();
+    private final Cask cask = new Cask();
 
     private String formulaName;
     private String cachedFormulaName;
@@ -51,6 +53,8 @@ public class Brew extends AbstractRepositoryTool {
         this.formulaName = brew.formulaName;
         setTap(brew.tap);
         setDependenciesAsList(brew.dependencies);
+        setLivecheck(brew.livecheck);
+        setCask(brew.cask);
     }
 
     public String getResolvedFormulaName(JReleaserContext context) {
@@ -96,6 +100,14 @@ public class Brew extends AbstractRepositoryTool {
         this.tap.setAll(tap);
     }
 
+    public Cask getCask() {
+        return cask;
+    }
+
+    public void setCask(Cask cask) {
+        this.cask.setAll(cask);
+    }
+
     public void setDependencies(Map<String, String> dependencies) {
         if (null == dependencies || dependencies.isEmpty()) {
             return;
@@ -131,12 +143,27 @@ public class Brew extends AbstractRepositoryTool {
         dependencies.add(new Dependency(key));
     }
 
+    public List<String> getLivecheck() {
+        return livecheck;
+    }
+
+    public void setLivecheck(List<String> livecheck) {
+        this.livecheck.clear();
+        this.livecheck.addAll(livecheck);
+    }
+
+    public boolean hasLivecheck() {
+        return !livecheck.isEmpty();
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
         props.put("formulaName", formulaName);
         props.put("tap", tap.asMap(full));
         props.put("dependencies", dependencies);
+        props.put("livecheck", livecheck);
+        props.put("cask", cask.asMap(full));
     }
 
     @Override
@@ -153,6 +180,8 @@ public class Brew extends AbstractRepositoryTool {
     public Set<String> getSupportedExtensions() {
         Set<String> extensions = super.getSupportedExtensions();
         extensions.add(".jar");
+        extensions.add(".dmg");
+        extensions.add(".pkg");
         return extensions;
     }
 

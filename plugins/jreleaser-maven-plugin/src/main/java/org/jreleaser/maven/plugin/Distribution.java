@@ -136,6 +136,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         JAVA_BINARY,
         JLINK,
         SINGLE_JAR,
-        NATIVE_IMAGE
+        NATIVE_IMAGE,
+        NATIVE_PACKAGE
     }
 }

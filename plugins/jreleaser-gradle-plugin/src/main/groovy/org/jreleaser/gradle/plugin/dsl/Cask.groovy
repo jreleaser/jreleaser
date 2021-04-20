@@ -18,37 +18,25 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.5.0
  */
 @CompileStatic
-interface Brew extends RepositoryTool {
-    Property<String> getFormulaName()
+interface Cask {
+    Property<String> getName()
 
-    ListProperty<String> getLivecheck()
+    Property<String> getDisplayName()
 
-    MapProperty<String, String> getDependencies()
+    Property<String> getPkgName()
 
-    void addDependency(String key, String value)
+    Property<String> getAppName()
 
-    void addDependency(String key)
+    MapProperty<String, List<String>> getUninstall()
 
-    Tap getTap()
-
-    void tap(Action<? super Tap> tap)
-
-    void tap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
-
-    Cask getCask()
-
-    void cask(Action<? super Cask> cask)
-
-    void cask(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cask) Closure<Void> action)
+    MapProperty<String, List<String>> getZap()
 }

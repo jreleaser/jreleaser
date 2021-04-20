@@ -156,6 +156,10 @@ public abstract class DistributionsValidator extends Validator {
             distribution.getJava().setEnabled(distribution.getJava().isSet());
         }
 
+        if (distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE) {
+            distribution.getJava().setEnabled(false);
+        }
+
         if (!distribution.getJava().isEnabled()) return true;
 
         if (isBlank(distribution.getJava().getArtifactId())) {

@@ -30,6 +30,8 @@ public class Brew extends AbstractRepositoryTool {
     @Parameter(property = "dependencies")
     private final List<Dependency> dependencies = new ArrayList<>();
     private final Tap tap = new Tap();
+    private final List<String> livecheck = new ArrayList<>();
+    private final Cask cask = new Cask();
 
     private String formulaName;
 
@@ -38,6 +40,8 @@ public class Brew extends AbstractRepositoryTool {
         this.formulaName = brew.formulaName;
         setTap(brew.tap);
         setDependencies(brew.dependencies);
+        setLivecheck(brew.livecheck);
+        setCask(brew.cask);
     }
 
     public String getFormulaName() {
@@ -65,10 +69,29 @@ public class Brew extends AbstractRepositoryTool {
         this.dependencies.addAll(dependencies);
     }
 
+    public Cask getCask() {
+        return cask;
+    }
+
+    public void setCask(Cask cask) {
+        this.cask.setAll(cask);
+    }
+
+    public List<String> getLivecheck() {
+        return livecheck;
+    }
+
+    public void setLivecheck(List<String> livecheck) {
+        this.livecheck.clear();
+        this.livecheck.addAll(livecheck);
+    }
+
     @Override
     public boolean isSet() {
         return super.isSet() ||
             !dependencies.isEmpty() ||
-            tap.isSet();
+            tap.isSet() ||
+            !livecheck.isEmpty() ||
+            cask.isSet();
     }
 }

@@ -17,7 +17,9 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Brew;
+import org.jreleaser.model.Cask;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
@@ -33,6 +35,7 @@ import static org.jreleaser.model.validation.DistributionsValidator.validateArti
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -78,6 +81,64 @@ public abstract class BrewValidator extends Validator {
         }
 
         validateArtifactPlatforms(context, distribution, tool, errors);
+        validateCask(context, distribution, tool, errors);
+    }
+
+    private static void validateCask(JReleaserContext context, Distribution distribution, Brew tool, Errors errors) {
+        context.getLogger().debug("distribution.{}.brew.cask", distribution.getName());
+
+        // look for a .dmg o .pkg
+        int dmgFound = 0;
+        int pkgFound = 0;
+        String pkgName = "";
+        for (Artifact artifact : distribution.getArtifacts()) {
+            if (artifact.getPath().endsWith(".dmg") && !artifact.getExtraProperties().containsKey("skipBrew"))
+                dmgFound++;
+            if (artifact.getPath().endsWith(".pkg") && !artifact.getExtraProperties().containsKey("skipBrew")) {
+                pkgFound++;
+                pkgName = artifact.getEffectivePath(context).getFileName().toString();
+            }
+        }
+
+        Cask cask = tool.getCask();
+
+        if (dmgFound == 0 && pkgFound == 0) {
+            // no artifacts found, disable cask
+            cask.disable();
+            return;
+        } else if (dmgFound > 0 && pkgFound > 0) {
+            errors.configuration("distribution." + distribution.getName() + ".brew can only have a single .dmg or .pkg artifact");
+            return;
+        } else if (dmgFound > 1) {
+            errors.configuration("distribution." + distribution.getName() + ".brew has more than one .dmg artifact");
+            return;
+        } else if (pkgFound > 1) {
+            errors.configuration("distribution." + distribution.getName() + ".brew has more than one .pkg artifact");
+            return;
+        }
+
+        cask.enable();
+
+        if (isBlank(cask.getPkgName()) && isNotBlank(pkgName)) {
+            cask.setPkgName(pkgName);
+        }
+
+        if (isNotBlank(cask.getPkgName())) {
+            if (!cask.getPkgName().endsWith(".pkg")) {
+                cask.setPkgName(cask.getPkgName() + ".pkg");
+            }
+        } else if (isBlank(cask.getAppName())) {
+            cask.setAppName(tool.getResolvedFormulaName(context) + ".app");
+        } else if (!cask.getAppName().endsWith(".app")) {
+            cask.setAppName(cask.getAppName() + ".app");
+        }
+
+        if (isBlank(cask.getName())) {
+            cask.setName(tool.getResolvedFormulaName(context).toLowerCase());
+        }
+        if (isBlank(cask.getDisplayName())) {
+            cask.setDisplayName(tool.getResolvedFormulaName(context));
+        }
     }
 
     public static void postValidateBrew(JReleaserContext context, Errors errors) {
@@ -88,6 +149,17 @@ public abstract class BrewValidator extends Validator {
         map.forEach((formulaName, distributions) -> {
             if (distributions.size() > 1) {
                 errors.configuration("brew.formulaName '" + formulaName + "' is defined for more than one distribution: " +
+                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", ")));
+            }
+        });
+
+        map = context.getModel().getDistributions().values().stream()
+            .filter(d -> d.isEnabled() && d.getBrew().getCask().isEnabled())
+            .collect(groupingBy(d -> d.getBrew().getCask().getResolvedCaskName(context)));
+
+        map.forEach((caskName, distributions) -> {
+            if (distributions.size() > 1) {
+                errors.configuration("brew.cask.name '" + caskName + "' is defined for more than one distribution: " +
                     distributions.stream().map(Distribution::getName).collect(Collectors.joining(", ")));
             }
         });
