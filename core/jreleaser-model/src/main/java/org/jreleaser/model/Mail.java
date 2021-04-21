@@ -78,20 +78,20 @@ public class Mail extends AbstractAnnouncer {
         setProperties(mail.properties);
     }
 
-    public String getResolvedSubject(JReleaserModel model) {
-        Map<String, Object> props = model.props();
-        props.put(Constants.KEY_TAG_NAME, model.getRelease().getGitService().getEffectiveTagName(model));
+    public String getResolvedSubject(JReleaserContext context) {
+        Map<String, Object> props = context.props();
+        props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
         return applyTemplate(new StringReader(subject), props);
     }
 
-    public String getResolvedMessage(JReleaserModel model) {
-        Map<String, Object> props = model.props();
-        props.put(Constants.KEY_TAG_NAME, model.getRelease().getGitService().getEffectiveTagName(model));
+    public String getResolvedMessage(JReleaserContext context) {
+        Map<String, Object> props = context.props();
+        props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
         return applyTemplate(new StringReader(message), props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
-        Map<String, Object> props = context.getModel().props();
+        Map<String, Object> props = context.props();
         props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);

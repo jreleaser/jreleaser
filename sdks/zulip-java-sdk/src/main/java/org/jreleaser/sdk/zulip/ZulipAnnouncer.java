@@ -56,7 +56,7 @@ public class ZulipAnnouncer implements Announcer {
 
         String message = "";
         if (isNotBlank(zulip.getMessage())) {
-            message = zulip.getResolvedMessage(context.getModel());
+            message = zulip.getResolvedMessage(context);
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
@@ -64,7 +64,7 @@ public class ZulipAnnouncer implements Announcer {
             message = zulip.getResolvedMessageTemplate(context, props);
         }
 
-        String subject = zulip.getResolvedSubject(context.getModel());
+        String subject = zulip.getResolvedSubject(context);
         context.getLogger().info("channel: {}", zulip.getChannel());
         context.getLogger().info("subject: {}", subject);
         context.getLogger().debug("message: {}", message);

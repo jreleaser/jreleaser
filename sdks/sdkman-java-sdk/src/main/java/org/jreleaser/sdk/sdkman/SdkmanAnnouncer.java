@@ -65,7 +65,7 @@ public class SdkmanAnnouncer implements Announcer {
                 // only zips are supported
                 if (!artifact.getPath().endsWith(".zip")) {
                     context.getLogger().debug("Artifact {} is not suitable for Sdkman publication. Skipping.",
-                        artifact.getResolvedPath(context, distribution).getFileName());
+                        artifact.getEffectivePath(context, distribution).getFileName());
                     continue;
                 }
 
@@ -158,8 +158,8 @@ public class SdkmanAnnouncer implements Announcer {
     }
 
     private String artifactUrl(Distribution distribution, Artifact artifact) {
-        Map<String, Object> newProps = context.getModel().props();
-        newProps.put("artifactFileName", artifact.getResolvedPath(context, distribution).getFileName().toString());
+        Map<String, Object> newProps = context.props();
+        newProps.put("artifactFileName", artifact.getEffectivePath(context, distribution).getFileName().toString());
         return applyTemplate(new StringReader(context.getModel().getRelease().getGitService().getDownloadUrlFormat()), newProps, "downloadUrl");
     }
 }

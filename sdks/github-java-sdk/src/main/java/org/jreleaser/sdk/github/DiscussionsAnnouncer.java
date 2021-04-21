@@ -58,7 +58,7 @@ public class DiscussionsAnnouncer implements Announcer {
 
         String message = "";
         if (isNotBlank(discussions.getMessage())) {
-            message = discussions.getResolvedMessage(context.getModel());
+            message = discussions.getResolvedMessage(context);
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
@@ -66,7 +66,7 @@ public class DiscussionsAnnouncer implements Announcer {
             message = discussions.getResolvedMessageTemplate(context, props);
         }
 
-        String title = discussions.getResolvedTitle(context.getModel());
+        String title = discussions.getResolvedTitle(context);
         context.getLogger().info("title: {}", title);
         context.getLogger().debug("message: {}", message);
 

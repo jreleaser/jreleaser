@@ -1,0 +1,52 @@
+name: "Trigger Early Access"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  earlyaccess:
+    name: "Trigger Early Access"
+    if: github.event_name == 'push' && github.repository == 'jreleaser/jreleaser' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-cache-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradlew') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlew-
+
+      - name: Build
+        run: ./gradlew -Prelease=true build -S
+
+      - name: Rename artifacts
+        run: |
+          mkdir early-access
+          cp apps/jreleaser-tool-provider/build/VERSION early-access/VERSION
+          cp apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-*-SNAPSHOT.jar early-access/jreleaser-tool-provider-early-access.jar
+          cp apps/jreleaser/build/distributions/jreleaser-*-SNAPSHOT.zip early-access/jreleaser-early-access.zip
+          cp plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-*-SNAPSHOT.zip early-access/jreleaser-ant-tasks-early-access.zip
+
+      - name: 'Release early-access artifacts'
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          automatic_release_tag: 'early-access'
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          title: "JReleaser Early-Access"
+          files: |
+            early-access/*

@@ -157,7 +157,7 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
 
     private boolean createSnap(Distribution distribution, Map<String, Object> props, Path primeDirectory) throws ToolProcessingException {
         Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
-        String version = (String) props.get(Constants.KEY_PROJECT_VERSION);
+        String version = (String) props.get(Constants.KEY_PROJECT_EFFECTIVE_VERSION);
         String snapName = distribution.getName() + "-" + version + ".snap";
 
         List<String> cmd = new ArrayList<>();

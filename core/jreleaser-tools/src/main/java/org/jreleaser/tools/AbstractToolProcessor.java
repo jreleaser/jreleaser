@@ -184,8 +184,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        Map<String, Object> newProps = context.getModel().props();
-        newProps.putAll(props);
+        Map<String, Object> newProps = new LinkedHashMap<>(props);
         context.getLogger().debug("filling distribution properties into props");
         fillDistributionProperties(newProps, distribution);
         context.getLogger().debug("filling git properties into props");
@@ -317,7 +316,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         for (int i = 0; i < artifacts.size(); i++) {
             Artifact artifact = artifacts.get(i);
             String platform = isNotBlank(artifact.getPlatform()) ? capitalize(artifact.getPlatform()) : "";
-            String artifactFileName = artifact.getResolvedPath(context).getFileName().toString();
+            String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
             String artifactName = getFilename(artifactFileName);
             props.put("artifact" + platform + "Name", artifactName);
             props.put("artifact" + platform + "FileName", artifactFileName);

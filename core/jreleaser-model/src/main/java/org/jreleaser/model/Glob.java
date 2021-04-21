@@ -55,7 +55,7 @@ public class Glob implements Domain {
             Path path = context.getBasedir();
             if (isNotBlank(directory)) {
                 if (directory.contains("{{")) {
-                    directory = applyTemplate(new StringReader(directory), context.getModel().props());
+                    directory = applyTemplate(new StringReader(directory), context.props());
                 }
                 path = context.getBasedir().resolve(Paths.get(directory)).normalize();
                 if (!exists(path)) {

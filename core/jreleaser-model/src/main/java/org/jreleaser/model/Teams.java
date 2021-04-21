@@ -50,7 +50,7 @@ public class Teams extends AbstractAnnouncer {
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
-        Map<String, Object> props = context.getModel().props();
+        Map<String, Object> props = context.props();
         props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);

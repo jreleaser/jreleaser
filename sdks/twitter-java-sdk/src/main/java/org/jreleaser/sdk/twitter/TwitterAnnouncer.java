@@ -47,7 +47,7 @@ public class TwitterAnnouncer implements Announcer {
     public void announce() throws AnnounceException {
         Twitter twitter = context.getModel().getAnnounce().getTwitter();
 
-        String status = twitter.getResolvedStatus(context.getModel());
+        String status = twitter.getResolvedStatus(context);
         context.getLogger().info("Tweeting: {}", status);
         context.getLogger().debug("status is {} chars long", status.length());
 

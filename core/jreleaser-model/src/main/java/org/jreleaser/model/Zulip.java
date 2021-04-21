@@ -60,18 +60,18 @@ public class Zulip extends AbstractAnnouncer {
         this.messageTemplate = zulip.messageTemplate;
     }
 
-    public String getResolvedSubject(JReleaserModel model) {
-        Map<String, Object> props = model.props();
+    public String getResolvedSubject(JReleaserContext context) {
+        Map<String, Object> props = context.props();
         return applyTemplate(new StringReader(subject), props);
     }
 
-    public String getResolvedMessage(JReleaserModel model) {
-        Map<String, Object> props = model.props();
+    public String getResolvedMessage(JReleaserContext context) {
+        Map<String, Object> props = context.props();
         return applyTemplate(new StringReader(message), props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
-        Map<String, Object> props = context.getModel().props();
+        Map<String, Object> props = context.props();
         props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);

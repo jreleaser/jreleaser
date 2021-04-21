@@ -39,12 +39,11 @@ public abstract class JlinkResolver extends Validator {
     }
 
     private static void resolveJlinkOutputs(JReleaserContext context, Jlink jlink, Errors errors) {
-        Path baseOutputDirectory = context.getOutputDirectory()
+        Path baseOutputDirectory = context.getAssembleDirectory()
             .resolve(jlink.getName())
-            .resolve("assemble")
             .resolve(jlink.getType());
 
-        String imageName = jlink.getResolvedImageName(context.getModel());
+        String imageName = jlink.getResolvedImageName(context);
 
         for (Artifact targetJdk : jlink.getTargetJdks()) {
             Path image = baseOutputDirectory

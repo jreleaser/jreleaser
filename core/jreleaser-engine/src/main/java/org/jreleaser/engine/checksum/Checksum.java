@@ -46,14 +46,14 @@ public class Checksum {
 
         for (Artifact artifact : Artifacts.resolveFiles(context)) {
             readHash(context, artifact);
-            checksums.add(artifact.getHash() + " " + artifact.getFilePath().getFileName());
+            checksums.add(artifact.getHash() + " " + artifact.getEffectivePath(context).getFileName());
         }
 
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
             for (Artifact artifact : distribution.getArtifacts()) {
                 readHash(context, distribution, artifact);
                 checksums.add(artifact.getHash() + " " + distribution.getName() + "/" +
-                    artifact.getFilePath().getFileName());
+                    artifact.getEffectivePath(context).getFileName());
             }
         }
 
@@ -97,14 +97,14 @@ public class Checksum {
     }
 
     public static void readHash(JReleaserContext context, Distribution distribution, Artifact artifact) throws JReleaserException {
-        Path artifactPath = artifact.getResolvedPath(context, distribution);
+        Path artifactPath = artifact.getEffectivePath(context, distribution);
         Path checksumPath = context.getChecksumsDirectory().resolve(distribution.getName()).resolve(artifactPath.getFileName() + ".sha256");
 
         readHash(context, artifact, artifactPath, checksumPath);
     }
 
     public static void readHash(JReleaserContext context, Artifact artifact) throws JReleaserException {
-        Path artifactPath = artifact.getResolvedPath(context);
+        Path artifactPath = artifact.getEffectivePath(context);
         Path checksumPath = context.getChecksumsDirectory().resolve(artifactPath.getFileName() + ".sha256");
 
         readHash(context, artifact, artifactPath, checksumPath);
@@ -115,7 +115,7 @@ public class Checksum {
             throw new JReleaserException("Artifact does not exist. " + context.getBasedir().relativize(artifactPath));
         }
 
-        if (!checksumPath.toFile().exists()) {
+        if (!Files.exists(checksumPath)) {
             context.getLogger().debug("checksum does not exist: {}", context.getBasedir().relativize(checksumPath));
             calculateHash(context, artifactPath, checksumPath);
         } else if (artifactPath.toFile().lastModified() > checksumPath.toFile().lastModified()) {

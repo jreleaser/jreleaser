@@ -43,7 +43,7 @@ public class Artifacts {
 
         // resolve artifacts
         for (Artifact artifact : files.getArtifacts()) {
-            artifact.getResolvedPath(context);
+            artifact.getEffectivePath(context);
             paths.add(artifact);
         }
 

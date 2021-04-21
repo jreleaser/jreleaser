@@ -57,7 +57,7 @@ public class Brew extends AbstractRepositoryTool {
     public String getResolvedFormulaName(JReleaserContext context) {
         if (isBlank(cachedFormulaName)) {
             if (formulaName.contains("{{")) {
-                cachedFormulaName = applyTemplate(new StringReader(formulaName), context.getModel().props());
+                cachedFormulaName = applyTemplate(new StringReader(formulaName), context.props());
             } else {
                 cachedFormulaName = formulaName;
             }

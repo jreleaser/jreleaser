@@ -81,6 +81,7 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
 
         Map<String, Object> copy = new LinkedHashMap<>(props);
         copy.put(Constants.KEY_PROJECT_VERSION, "$version");
+        copy.put(Constants.KEY_PROJECT_EFFECTIVE_VERSION, "$version");
         copy.put(Constants.KEY_TAG_NAME, tagName);
         copy.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFilename);
         return applyTemplate(new StringReader(getTool().getAutoupdateUrl()), copy);

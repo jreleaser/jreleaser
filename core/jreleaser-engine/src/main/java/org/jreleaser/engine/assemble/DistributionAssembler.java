@@ -24,7 +24,6 @@ import org.jreleaser.model.assembler.spi.AssemblerProcessor;
 import org.jreleaser.util.Constants;
 
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -63,11 +62,10 @@ public class DistributionAssembler {
     }
 
     private Map<String, Object> initProps() {
-        Map<String, Object> props = new LinkedHashMap<>();
+        Map<String, Object> props = context.props();
         props.put(Constants.KEY_OUTPUT_DIRECTORY, outputDirectory);
-        props.put(Constants.KEY_ASSEMBLE_DIRECTORY, outputDirectory
+        props.put(Constants.KEY_ASSEMBLE_DIRECTORY, context.getAssembleDirectory()
             .resolve(assembler.getName())
-            .resolve("assemble")
             .resolve(assembler.getType()));
         return props;
     }

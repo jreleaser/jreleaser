@@ -74,12 +74,12 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
         this.context = context;
 
         for (Artifact artifact : Artifacts.resolveFiles(context)) {
-            addReleaseAsset(artifact.getResolvedPath(context));
+            addReleaseAsset(artifact.getEffectivePath(context));
         }
 
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
             for (Artifact artifact : distribution.getArtifacts()) {
-                addReleaseAsset(artifact.getResolvedPath(context, distribution));
+                addReleaseAsset(artifact.getEffectivePath(context, distribution));
             }
         }
 

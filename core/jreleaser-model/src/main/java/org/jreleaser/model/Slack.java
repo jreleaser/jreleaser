@@ -57,13 +57,13 @@ public class Slack extends AbstractAnnouncer {
         this.messageTemplate = slack.messageTemplate;
     }
 
-    public String getResolvedMessage(JReleaserModel model) {
-        Map<String, Object> props = model.props();
+    public String getResolvedMessage(JReleaserContext context) {
+        Map<String, Object> props = context.props();
         return applyTemplate(new StringReader(message), props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
-        Map<String, Object> props = context.getModel().props();
+        Map<String, Object> props = context.props();
         props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);

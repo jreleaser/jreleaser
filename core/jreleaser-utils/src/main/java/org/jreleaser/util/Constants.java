@@ -37,6 +37,7 @@ public interface Constants {
     String KEY_PROJECT_NAME = "projectName";
     String KEY_PROJECT_NAME_CAPITALIZED = "projectNameCapitalized";
     String KEY_PROJECT_VERSION = "projectVersion";
+    String KEY_PROJECT_EFFECTIVE_VERSION = "projectEffectiveVersion";
     String KEY_PROJECT_SNAPSHOT = "projectSnapshot";
     String KEY_PROJECT_DESCRIPTION = "projectDescription";
     String KEY_PROJECT_LONG_DESCRIPTION = "projectLongDescription";
@@ -142,12 +143,14 @@ public interface Constants {
     String KEY_SNAP_REPO_URL = "snapRepoUrl";
     String KEY_SNAP_REPO_CLONE_URL = "snapRepoCloneUrl";
 
-    // ToolProcessor
-    String KEY_CHECKSUM_DIRECTORY = "__CHECKSUM_DIRECTORY__";
-    String KEY_OUTPUT_DIRECTORY = "__OUTPUT_DIRECTORY__";
-    String KEY_ASSEMBLE_DIRECTORY = "__ASSEMBLE_DIRECTORY__";
-    String KEY_PREPARE_DIRECTORY = "__PREPARE_DIRECTORY__";
-    String KEY_PACKAGE_DIRECTORY = "__PACKAGE_DIRECTORY__";
+    // Directories
+    String KEY_OUTPUT_DIRECTORY = "outputDirectory";
+    String KEY_CHECKSUMS_DIRECTORY = "checksumDirectory";
+    String KEY_SIGNATURES_DIRECTORY = "signaturesDirectory";
+    String KEY_ASSEMBLE_DIRECTORY = "assembleDirectory";
+    String KEY_ARTIFACTS_DIRECTORY = "artifactsDirectory";
+    String KEY_PREPARE_DIRECTORY = "prepareDirectory";
+    String KEY_PACKAGE_DIRECTORY = "packageDirectory";
     String KEY_DISTRIBUTION_PREPARE_DIRECTORY = "distributionPrepareDirectory";
     String KEY_DISTRIBUTION_PACKAGE_DIRECTORY = "distributionPackageDirectory";
 }

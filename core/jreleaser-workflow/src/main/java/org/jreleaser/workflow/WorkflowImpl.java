@@ -109,11 +109,11 @@ class WorkflowImpl implements Workflow {
         props.put(KEY_MILESTONE_NAME, model.getRelease().getGitService().getMilestone().getEffectiveName());
 
         Map<String, Object> resolvedExtraProperties = project.getResolvedExtraProperties();
-        safePut("project" + capitalize(KEY_VERSION_MAJOR), resolvedExtraProperties, props);
-        safePut("project" + capitalize(KEY_VERSION_MINOR), resolvedExtraProperties, props);
-        safePut("project" + capitalize(KEY_VERSION_PATCH), resolvedExtraProperties, props);
-        safePut("project" + capitalize(KEY_VERSION_TAG), resolvedExtraProperties, props);
-        safePut("project" + capitalize(KEY_VERSION_BUILD), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_MAJOR), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_MINOR), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_PATCH), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_TAG), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_BUILD), resolvedExtraProperties, props);
 
         Path output = context.getOutputDirectory().resolve("output.properties");
 

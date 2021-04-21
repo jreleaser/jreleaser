@@ -60,7 +60,7 @@ public class SlackAnnouncer implements Announcer {
 
         String message = "";
         if (isNotBlank(slack.getMessage())) {
-            message = slack.getResolvedMessage(context.getModel());
+            message = slack.getResolvedMessage(context);
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));

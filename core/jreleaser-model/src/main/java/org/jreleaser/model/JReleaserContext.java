@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Constants;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserLogger;
 
@@ -145,6 +146,22 @@ public class JReleaserContext {
         return outputDirectory.resolve("signatures");
     }
 
+    public Path getPrepareDirectory() {
+        return outputDirectory.resolve("prepare");
+    }
+
+    public Path getPackageDirectory() {
+        return outputDirectory.resolve("package");
+    }
+
+    public Path getAssembleDirectory() {
+        return outputDirectory.resolve("assemble");
+    }
+
+    public Path getArtifactsDirectory() {
+        return outputDirectory.resolve("artifacts");
+    }
+
     public boolean isDryrun() {
         return dryrun;
     }
@@ -203,6 +220,18 @@ public class JReleaserContext {
 
     public void setAssemblerName(String assemblerName) {
         this.assemblerName = assemblerName;
+    }
+
+    public Map<String, Object> props() {
+        Map<String, Object> props = new LinkedHashMap<>(model.props());
+        props.put(Constants.KEY_OUTPUT_DIRECTORY, getOutputDirectory());
+        props.put(Constants.KEY_CHECKSUMS_DIRECTORY, getChecksumsDirectory());
+        props.put(Constants.KEY_SIGNATURES_DIRECTORY, getSignaturesDirectory());
+        props.put(Constants.KEY_PREPARE_DIRECTORY, getPrepareDirectory());
+        props.put(Constants.KEY_PACKAGE_DIRECTORY, getPackageDirectory());
+        props.put(Constants.KEY_ASSEMBLE_DIRECTORY, getAssembleDirectory());
+        props.put(Constants.KEY_ARTIFACTS_DIRECTORY, getArtifactsDirectory());
+        return props;
     }
 
     @Override

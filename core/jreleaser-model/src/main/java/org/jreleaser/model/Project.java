@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jreleaser.model.GitService.TAG_EARLY_ACCESS;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -67,6 +68,14 @@ public class Project implements Domain, ExtraProperties {
     @Override
     public String getPrefix() {
         return "project";
+    }
+
+    public String getEffectiveVersion() {
+        if (isSnapshot()) {
+            return TAG_EARLY_ACCESS;
+        }
+
+        return getResolvedVersion();
     }
 
     public boolean isSnapshot() {

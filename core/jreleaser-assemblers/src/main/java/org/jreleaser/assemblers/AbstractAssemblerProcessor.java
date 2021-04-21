@@ -34,6 +34,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -75,10 +76,6 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
         try {
             context.getLogger().debug("creating props for {}/{}", assembler.getType(), assembler.getName());
             Map<String, Object> newProps = fillProps(props);
-            if (newProps.isEmpty()) {
-                context.getLogger().warn("Skipping {} distribution", assembler.getName());
-                return;
-            }
 
             context.getLogger().debug("resolving templates for {}/{}", assembler.getType(), assembler.getName());
             Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
@@ -118,8 +115,7 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
     }
 
     protected Map<String, Object> fillProps(Map<String, Object> props) throws AssemblerProcessingException {
-        Map<String, Object> newProps = context.getModel().props();
-        newProps.putAll(props);
+        Map<String, Object> newProps = new LinkedHashMap<>(props);
         context.getLogger().debug("filling git properties into props");
         context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel());
         context.getLogger().debug("filling assembler properties into props");
@@ -150,6 +146,33 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
             props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
         }
         props.putAll(assembler.getResolvedExtraProperties());
+    }
+
+    protected boolean executeCommand(Path directory, List<String> cmd) throws AssemblerProcessingException {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteArrayOutputStream err = new ByteArrayOutputStream();
+
+            int exitValue = new ProcessExecutor(cmd)
+                .directory(directory.toFile())
+                .redirectOutput(out)
+                .redirectError(err)
+                .execute()
+                .getExitValue();
+
+            info(out);
+            error(err);
+
+            if (exitValue == 0) return true;
+            throw new AssemblerProcessingException("Command execution error. exitValue = " + exitValue);
+        } catch (ProcessInitException e) {
+            throw new AssemblerProcessingException("Unexpected error", e.getCause());
+        } catch (Exception e) {
+            if (e instanceof AssemblerProcessingException) {
+                throw (AssemblerProcessingException) e;
+            }
+            throw new AssemblerProcessingException("Unexpected error", e);
+        }
     }
 
     protected boolean executeCommand(List<String> cmd) throws AssemblerProcessingException {

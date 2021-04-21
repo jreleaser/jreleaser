@@ -257,7 +257,7 @@ public class Signer {
         String extension = context.getModel().getSigning().isArmored() ? ".asc" : ".sig";
 
         for (Artifact artifact : Artifacts.resolveFiles(context)) {
-            Path input = artifact.getResolvedPath(context);
+            Path input = artifact.getEffectivePath(context);
             Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
             FilePair pair = new FilePair(input, output);
             pair.setValid(isValid(context, keyring, pair));
@@ -266,7 +266,7 @@ public class Signer {
 
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
             for (Artifact artifact : distribution.getArtifacts()) {
-                Path input = artifact.getResolvedPath(context, distribution);
+                Path input = artifact.getEffectivePath(context, distribution);
                 Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
                 FilePair pair = new FilePair(input, output);
                 pair.setValid(isValid(context, keyring, pair));

@@ -207,6 +207,7 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
+        props.put(Constants.KEY_PROJECT_EFFECTIVE_VERSION, project.getEffectiveVersion());
         if (isNotBlank(project.getDescription())) {
             props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
         }

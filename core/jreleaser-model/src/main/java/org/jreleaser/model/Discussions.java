@@ -53,18 +53,18 @@ public class Discussions extends AbstractAnnouncer {
         this.messageTemplate = discussions.messageTemplate;
     }
 
-    public String getResolvedTitle(JReleaserModel model) {
-        Map<String, Object> props = model.props();
+    public String getResolvedTitle(JReleaserContext context) {
+        Map<String, Object> props = context.props();
         return applyTemplate(new StringReader(title), props);
     }
 
-    public String getResolvedMessage(JReleaserModel model) {
-        Map<String, Object> props = model.props();
+    public String getResolvedMessage(JReleaserContext context) {
+        Map<String, Object> props = context.props();
         return applyTemplate(new StringReader(message), props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
-        Map<String, Object> props = context.getModel().props();
+        Map<String, Object> props = context.props();
         props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);

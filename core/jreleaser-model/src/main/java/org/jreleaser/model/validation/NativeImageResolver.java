@@ -39,9 +39,8 @@ public abstract class NativeImageResolver extends Validator {
     }
 
     private static void resolveNativeImageOutputs(JReleaserContext context, NativeImage nativeImage, Errors errors) {
-        Path image = context.getOutputDirectory()
+        Path image = context.getAssembleDirectory()
             .resolve(nativeImage.getName())
-            .resolve("assemble")
             .resolve(nativeImage.getType())
             .resolve(nativeImage.getExecutable());
 

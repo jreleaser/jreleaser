@@ -55,7 +55,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
     @Override
     protected void doAssemble(Map<String, Object> props) throws AssemblerProcessingException {
         // verify graal
-        Path graalPath = assembler.getGraal().getResolvedPath(context, assembler);
+        Path graalPath = assembler.getGraal().getEffectivePath(context, assembler);
         Version javaVersion = Version.of(readJavaVersion(graalPath));
         Version graalVersion = Version.of(readGraalVersion(graalPath));
         context.getLogger().debug("java version is {}", javaVersion);
@@ -112,11 +112,11 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         cmd.add(graalPath.resolve("bin").resolve("native-image").toAbsolutePath().toString());
         cmd.addAll(assembler.getArgs());
         cmd.add("-jar");
-        cmd.add(assembler.getMainJar().getFilePath().toAbsolutePath().toString());
+        cmd.add(assembler.getMainJar().getEffectivePath(context).toAbsolutePath().toString());
         cmd.add("-cp");
         cmd.add(assembleDirectory.resolve("jar").toAbsolutePath().toString() + File.separator + "*");
-        cmd.add("-H:Name=" + context.getBasedir().relativize(image).toString());
-        executeCommand(cmd);
+        cmd.add("-H:Name=" + image.getFileName().toString());
+        executeCommand(image.getParent(), cmd);
 
         return Artifact.of(image, assembler.getGraal().getPlatform());
     }
@@ -171,7 +171,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         Set<Path> paths = new LinkedHashSet<>();
 
         // resolve all first
-        paths.add(assembler.getMainJar().getResolvedPath(context, assembler));
+        paths.add(assembler.getMainJar().getEffectivePath(context, assembler));
         for (Glob glob : assembler.getJars()) {
             glob.getResolvedPaths(context).stream()
                 .filter(Files::isRegularFile)
@@ -195,6 +195,6 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
     @Override
     protected void writeFile(Project project, String content, Map<String, Object> props, String fileName)
         throws AssemblerProcessingException {
-
+        // noop
     }
 }

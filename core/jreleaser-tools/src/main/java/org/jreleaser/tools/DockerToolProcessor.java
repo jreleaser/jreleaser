@@ -100,7 +100,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
             .collect(Collectors.toList());
 
         for (Artifact artifact : artifacts) {
-            Path artifactPath = artifact.getResolvedPath(context);
+            Path artifactPath = artifact.getEffectivePath(context);
             Files.copy(artifactPath, assemblyDirectory.resolve(artifactPath.getFileName()), REPLACE_EXISTING);
         }
 

@@ -38,14 +38,14 @@ import java.util.stream.Collectors
 @CompileStatic
 class AssembleImpl implements Assemble {
     final Property<Boolean> enabled
-    final NamedDomainObjectContainer<JlinkImpl> jlink
-    final NamedDomainObjectContainer<NativeImageImpl> nativeImage
+    final NamedDomainObjectContainer<JlinkImpl> jlinks
+    final NamedDomainObjectContainer<NativeImageImpl> nativeImages
 
     @Inject
     AssembleImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(true)
 
-        jlink = objects.domainObjectContainer(JlinkImpl, new NamedDomainObjectFactory<JlinkImpl>() {
+        jlinks = objects.domainObjectContainer(JlinkImpl, new NamedDomainObjectFactory<JlinkImpl>() {
             @Override
             JlinkImpl create(String name) {
                 JlinkImpl jlink = objects.newInstance(JlinkImpl, objects)
@@ -54,7 +54,7 @@ class AssembleImpl implements Assemble {
             }
         })
 
-        nativeImage = objects.domainObjectContainer(NativeImageImpl, new NamedDomainObjectFactory<NativeImageImpl>() {
+        nativeImages = objects.domainObjectContainer(NativeImageImpl, new NamedDomainObjectFactory<NativeImageImpl>() {
             @Override
             NativeImageImpl create(String name) {
                 NativeImageImpl nativeImage = objects.newInstance(NativeImageImpl, objects)
@@ -68,12 +68,12 @@ class AssembleImpl implements Assemble {
     org.jreleaser.model.Assemble toModel() {
         org.jreleaser.model.Assemble assemble = new org.jreleaser.model.Assemble()
 
-        assemble.jlinks = (jlink.toList().stream()
+        assemble.jlinks = (jlinks.toList().stream()
             .collect(Collectors.toMap(
                 { JlinkImpl a -> a.name },
                 { JlinkImpl a -> a.toModel() })) as Map<String, Jlink>)
 
-        assemble.nativeImages = (nativeImage.toList().stream()
+        assemble.nativeImages = (nativeImages.toList().stream()
             .collect(Collectors.toMap(
                 { NativeImageImpl a -> a.name },
                 { NativeImageImpl a -> a.toModel() })) as Map<String, NativeImage>)

@@ -54,7 +54,6 @@ config {
 allprojects {
     repositories {
         gradlePluginPortal()
-        mavenCentral()
         mavenLocal()
     }
 
@@ -68,15 +67,6 @@ subprojects {
         info {
             description = project.project_description
         }
-    }
-
-    tasks.withType(JavaCompile) { JavaCompile c ->
-        c.sourceCompatibility = JavaVersion.VERSION_1_8
-        c.targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    tasks.withType(GroovyCompile) { GroovyCompile c ->
-        c.sourceCompatibility = JavaVersion.VERSION_1_8
-        c.targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     license {
@@ -96,3 +86,5 @@ subprojects {
         useJUnitPlatform()
     }
 }
+
+new File('VERSION').text = project.version

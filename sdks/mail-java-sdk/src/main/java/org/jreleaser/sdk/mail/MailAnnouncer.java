@@ -56,7 +56,7 @@ public class MailAnnouncer implements Announcer {
 
         String message = "";
         if (isNotBlank(mail.getMessage())) {
-            message = mail.getResolvedMessage(context.getModel());
+            message = mail.getResolvedMessage(context);
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
@@ -64,7 +64,7 @@ public class MailAnnouncer implements Announcer {
             message = mail.getResolvedMessageTemplate(context, props);
         }
 
-        String subject = mail.getResolvedSubject(context.getModel());
+        String subject = mail.getResolvedSubject(context);
         context.getLogger().info("subject: {}", subject);
         context.getLogger().debug("message: {}", message);
 

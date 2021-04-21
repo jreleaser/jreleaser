@@ -117,23 +117,19 @@ public class DistributionProcessor {
     }
 
     private Map<String, Object> initProps() {
-        Path prepareDirectory = outputDirectory
+        Path prepareDirectory = context.getPrepareDirectory()
             .resolve(distributionName)
-            .resolve("prepare")
             .resolve(toolName);
 
-        Path packageDirectory = outputDirectory
+        Path packageDirectory = context.getPackageDirectory()
             .resolve(distributionName)
-            .resolve("package")
             .resolve(toolName);
 
-        Map<String, Object> props = new LinkedHashMap<>();
-        props.put(Constants.KEY_OUTPUT_DIRECTORY, outputDirectory);
+        Map<String, Object> props = context.props();
         props.put(Constants.KEY_PREPARE_DIRECTORY, prepareDirectory);
         props.put(Constants.KEY_PACKAGE_DIRECTORY, packageDirectory);
         props.put(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, context.getBasedir().relativize(prepareDirectory));
         props.put(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, context.getBasedir().relativize(packageDirectory));
-        props.put(Constants.KEY_CHECKSUM_DIRECTORY, context.getChecksumsDirectory());
         return props;
     }
 

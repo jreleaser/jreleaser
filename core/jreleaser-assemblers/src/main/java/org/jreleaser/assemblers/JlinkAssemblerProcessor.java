@@ -53,7 +53,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
-
     private static final String KEY_JAVA_VERSION = "JAVA_VERSION";
 
     public JlinkAssemblerProcessor(JReleaserContext context) {
@@ -63,13 +62,13 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
     @Override
     protected void doAssemble(Map<String, Object> props) throws AssemblerProcessingException {
         // verify jdk
-        Path jdkPath = assembler.getJdk().getResolvedPath(context, assembler);
+        Path jdkPath = assembler.getJdk().getEffectivePath(context, assembler);
         Version jdkVersion = Version.of(readJavaVersion(jdkPath));
         context.getLogger().debug("jdk version is {}", jdkVersion);
 
         // verify jdks
         for (Artifact targetJdk : assembler.getTargetJdks()) {
-            Path targetJdkPath = targetJdk.getResolvedPath(context, assembler);
+            Path targetJdkPath = targetJdk.getEffectivePath(context, assembler);
             Version targetJdkVersion = Version.of(readJavaVersion(targetJdkPath));
             context.getLogger().debug("target jdk version is {}", jdkVersion);
 
@@ -93,7 +92,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         context.getLogger().debug("resolved moduleNames: {}", moduleNames);
 
         // run jlink x jdk
-        String imageName = assembler.getResolvedImageName(context.getModel());
+        String imageName = assembler.getResolvedImageName(context);
         for (Artifact targetJdk : assembler.getTargetJdks()) {
             jlink(assembleDirectory, jdkPath, targetJdk, moduleNames, imageName);
         }
@@ -121,7 +120,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         cmd.add(jdkPath.resolve("bin").resolve("jlink").toAbsolutePath().toString());
         cmd.addAll(assembler.getArgs());
         cmd.add("--module-path");
-        cmd.add(targetJdk.getFilePath().resolve("jmods").toAbsolutePath().toString() + ":" +
+        cmd.add(targetJdk.getEffectivePath(context).resolve("jmods").toAbsolutePath().toString() + ":" +
             assembleDirectory.resolve("jars").toAbsolutePath());
         cmd.add("--add-modules");
         cmd.add(String.join(",", moduleNames));
@@ -206,7 +205,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         Set<Path> paths = new LinkedHashSet<>();
 
         // resolve all first
-        paths.add(assembler.getMainJar().getResolvedPath(context, assembler));
+        paths.add(assembler.getMainJar().getEffectivePath(context, assembler));
         for (Glob glob : assembler.getJars()) {
             glob.getResolvedPaths(context).stream()
                 .filter(Files::isRegularFile)

@@ -57,7 +57,7 @@ public class DiscordAnnouncer implements Announcer {
 
         String message = "";
         if (isNotBlank(discord.getMessage())) {
-            message = discord.getResolvedMessage(context.getModel());
+            message = discord.getResolvedMessage(context);
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));

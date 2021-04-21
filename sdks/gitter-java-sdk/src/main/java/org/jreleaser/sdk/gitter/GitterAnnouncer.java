@@ -57,7 +57,7 @@ public class GitterAnnouncer implements Announcer {
 
         String message = "";
         if (isNotBlank(gitter.getMessage())) {
-            message = gitter.getResolvedMessage(context.getModel());
+            message = gitter.getResolvedMessage(context);
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));

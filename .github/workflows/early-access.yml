@@ -32,20 +32,26 @@ jobs:
       - name: Build
         run: ./gradlew -Prelease=true build -S
 
-      - name: Rename artifacts
-        run: |
-          mkdir early-access
-          cp apps/jreleaser-tool-provider/build/VERSION early-access/VERSION
-          cp apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-*-SNAPSHOT.jar early-access/jreleaser-tool-provider-early-access.jar
-          cp apps/jreleaser/build/distributions/jreleaser-*-SNAPSHOT.zip early-access/jreleaser-early-access.zip
-          cp plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-*-SNAPSHOT.zip early-access/jreleaser-ant-tasks-early-access.zip
+      - name: Version
+        id: vars
+        run: echo ::set-output name=version::$(cat VERSION)
 
-      - name: 'Release early-access artifacts'
-        uses: marvinpinto/action-automatic-releases@latest
+      - name: Release
+        uses: jreleaser/release-action@v1
         with:
-          automatic_release_tag: 'early-access'
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: true
-          title: "JReleaser Early-Access"
-          files: |
-            early-access/*
+          version: early-access
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ steps.vars.outputs.version }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
+
+      - name: JReleaser output
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifact
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties

@@ -20,25 +20,25 @@ release:
       enabled: false
 
 signing:
-  enabled: true
+  active: always
   armored: true
 
 announce:
   twitter:
-    enabled: true
+    active: release
   sdkman:
-    enabled: true
+    active: release
 
 distributions:
   jreleaser:
     java:
       mainClass: org.jreleaser.cli.Main
     brew:
-      enabled: true
+      active: release
     scoop:
-      enabled: true
+      active: release
     jbang:
-      enabled: true
+      active: always
     artifacts:
       - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
 
@@ -50,5 +50,6 @@ distributions:
 
 files:
   artifacts:
-    - path: apps/jreleaser-tool-provider/build/VERSION
+    - path: VERSION
     - path: apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-{{projectVersion}}.jar
+      transform: 'jreleaser-tool-provider/jreleaser-tool-provider-{{projectEffectiveVersion}}.jar'

@@ -55,9 +55,9 @@ public class Twitter extends AbstractAnnouncer {
         this.status = twitter.status;
     }
 
-    public String getResolvedStatus(JReleaserModel model) {
-        Map<String, Object> props = model.props();
-        model.getRelease().getGitService().fillProps(props, model);
+    public String getResolvedStatus(JReleaserContext context) {
+        Map<String, Object> props = context.props();
+        context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
         return applyTemplate(new StringReader(status), props);
     }
 
