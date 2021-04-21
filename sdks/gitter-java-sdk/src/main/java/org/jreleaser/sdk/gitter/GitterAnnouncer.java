@@ -21,6 +21,7 @@ import org.jreleaser.model.Gitter;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
+import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.MustacheUtils;
 
@@ -66,17 +67,12 @@ public class GitterAnnouncer implements Announcer {
 
         context.getLogger().info("message: {}", message);
 
-        try {
-            WebhookGitterCommand.builder(context.getLogger())
-                .connectTimeout(gitter.getConnectTimeout())
-                .readTimeout(gitter.getReadTimeout())
-                .webhook(gitter.getResolvedWebhook())
-                .message(message)
-                .dryrun(context.isDryrun())
-                .build()
-                .execute();
-        } catch (GitterException e) {
-            throw new AnnounceException(e);
+        if (!context.isDryrun()) {
+            ClientUtils.webhook(context.getLogger(),
+                gitter.getResolvedWebhook(),
+                gitter.getConnectTimeout(),
+                gitter.getReadTimeout(),
+                Message.of(message));
         }
     }
 }

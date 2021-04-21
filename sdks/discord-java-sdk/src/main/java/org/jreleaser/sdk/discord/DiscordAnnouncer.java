@@ -21,6 +21,7 @@ import org.jreleaser.model.Discord;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
+import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.MustacheUtils;
 
@@ -66,17 +67,12 @@ public class DiscordAnnouncer implements Announcer {
 
         context.getLogger().info("message: {}", message);
 
-        try {
-            WebhookDiscordCommand.builder(context.getLogger())
-                .connectTimeout(discord.getConnectTimeout())
-                .readTimeout(discord.getReadTimeout())
-                .webhook(discord.getResolvedWebhook())
-                .message(message)
-                .dryrun(context.isDryrun())
-                .build()
-                .execute();
-        } catch (DiscordException e) {
-            throw new AnnounceException(e);
+        if (!context.isDryrun()) {
+            ClientUtils.webhook(context.getLogger(),
+                discord.getResolvedWebhook(),
+                discord.getConnectTimeout(),
+                discord.getReadTimeout(),
+                Message.of(message));
         }
     }
 }

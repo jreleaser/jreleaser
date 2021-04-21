@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.gitter.api;
+package org.jreleaser.sdk.commons;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,16 +25,16 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class GitterAPIException extends RuntimeException {
+public class RestAPIException extends RuntimeException {
     private final int status;
     private final String reason;
     private final Map<String, Collection<String>> headers;
 
-    public GitterAPIException(int status, String reason) {
+    public RestAPIException(int status, String reason) {
         this(status, reason, Collections.emptyMap());
     }
 
-    public GitterAPIException(int status, String reason, Map<String, Collection<String>> headers) {
+    public RestAPIException(int status, String reason, Map<String, Collection<String>> headers) {
         this.status = status;
         this.reason = reason;
         this.headers = headers;

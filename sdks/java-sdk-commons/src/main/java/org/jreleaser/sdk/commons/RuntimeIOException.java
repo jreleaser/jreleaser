@@ -15,22 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.discord;
+package org.jreleaser.sdk.commons;
+
+import java.io.IOException;
 
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class DiscordException extends Exception {
-    public DiscordException(String message) {
-        super(message);
-    }
-
-    public DiscordException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public DiscordException(Throwable cause) {
+public class RuntimeIOException extends RuntimeException {
+    public RuntimeIOException(IOException cause) {
         super(cause);
     }
 }

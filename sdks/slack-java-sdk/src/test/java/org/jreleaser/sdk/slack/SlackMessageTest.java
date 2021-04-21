@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class MessageSlackCommandTest {
+public class SlackMessageTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
@@ -44,16 +44,14 @@ public class MessageSlackCommandTest {
         stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
             .willReturn(okJson("{\"status\": 202, \"ok\":\"true\"}")));
 
-        MessageSlackCommand command = MessageSlackCommand
+        SlackSdk sdk = SlackSdk
             .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .token("TOKEN")
             .apiHost(api.baseUrl())
-            .channel("#announce")
-            .message("App 1.0.0 has been released")
             .build();
 
         // when:
-        command.execute();
+        sdk.message("#announce", "App 1.0.0 has been released");
 
         // then:
         Stubs.verifyPostContains(MESSAGES_ENDPOINT,
@@ -68,15 +66,13 @@ public class MessageSlackCommandTest {
         stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
             .willReturn(aResponse().withStatus(400)));
 
-        MessageSlackCommand command = MessageSlackCommand
+        SlackSdk sdk = SlackSdk
             .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .token("TOKEN")
             .apiHost(api.baseUrl())
-            .channel("#announce")
-            .message("App 1.0.0 has been released")
             .build();
 
         // expected:
-        assertThrows(SlackException.class, command::execute);
+        assertThrows(SlackException.class, () -> sdk.message("#announce", "App 1.0.0 has been released"));
     }
 }

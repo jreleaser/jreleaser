@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class MessageZulipCommandTest {
+public class ZulipMessageTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
@@ -45,18 +45,15 @@ public class MessageZulipCommandTest {
         stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
 
-        MessageZulipCommand command = MessageZulipCommand
+        ZulipSdk sdk = ZulipSdk
             .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .apiHost(api.baseUrl())
             .account("ACCOUNT")
             .apiKey("API_KEY")
-            .channel("announce")
-            .subject("App 1.0.0")
-            .message("App 1.0.0 has been released")
             .build();
 
         // when:
-        command.execute();
+        sdk.message("announce", "App 1.0.0", "App 1.0.0 has been released");
 
         // then:
         verifyPostContains(MESSAGES_ENDPOINT,
@@ -75,17 +72,16 @@ public class MessageZulipCommandTest {
         stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
             .willReturn(aResponse().withStatus(400)));
 
-        MessageZulipCommand command = MessageZulipCommand
+        ZulipSdk sdk = ZulipSdk
             .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .apiHost(api.baseUrl())
             .account("ACCOUNT")
             .apiKey("API_KEY")
-            .channel("announce")
-            .subject("App 1.0.0")
-            .message("App 1.0.0 has been released")
             .build();
 
         // expected:
-        assertThrows(ZulipException.class, command::execute);
+        assertThrows(ZulipException.class, () -> sdk.message("announce",
+            "App 1.0.0",
+            "App 1.0.0 has been released"));
     }
 }

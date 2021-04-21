@@ -21,14 +21,5 @@ dependencies {
 
     api project(':jreleaser-model')
     api project(':git-sdk')
-
-    api "org.apache.tika:tika-core:$tikaVersion"
-
-    api "io.github.openfeign:feign-core:$feignVersion"
-    api "io.github.openfeign:feign-jackson:$feignVersion"
-    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    api "io.github.openfeign.form:feign-form:$feignFormVersion"
-
-    testImplementation "com.github.tomakehurst:wiremock-jre8:$wiremockVersion"
+    api project(':java-sdk-commons')
 }

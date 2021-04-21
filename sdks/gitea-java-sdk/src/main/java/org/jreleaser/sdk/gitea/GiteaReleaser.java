@@ -21,8 +21,8 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
+import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.GitSdk;
-import org.jreleaser.sdk.gitea.api.GiteaAPIException;
 import org.jreleaser.sdk.gitea.api.GtMilestone;
 import org.jreleaser.sdk.gitea.api.GtRelease;
 import org.jreleaser.sdk.gitea.api.GtRepository;
@@ -165,7 +165,7 @@ public class GiteaReleaser implements Releaser {
         // delete remote tag
         try {
             api.deleteTag(owner, repo, tagName);
-        } catch (GiteaAPIException ignored) {
+        } catch (RestAPIException ignored) {
             //noop
         }
     }

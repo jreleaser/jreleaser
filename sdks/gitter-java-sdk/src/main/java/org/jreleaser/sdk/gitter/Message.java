@@ -21,16 +21,27 @@ package org.jreleaser.sdk.gitter;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class GitterException extends Exception {
-    public GitterException(String message) {
-        super(message);
+public class Message {
+    private String message;
+
+    public String getMessage() {
+        return message;
     }
 
-    public GitterException(String message, Throwable cause) {
-        super(message, cause);
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public GitterException(Throwable cause) {
-        super(cause);
+    @Override
+    public String toString() {
+        return "Message[" +
+            "message='" + message + '\'' +
+            "]";
+    }
+
+    public static Message of(String text) {
+        Message message = new Message();
+        message.message = text;
+        return message;
     }
 }

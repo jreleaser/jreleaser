@@ -15,33 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.discord.api;
+dependencies {
+    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
+    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
 
-/**
- * @author Andres Almiray
- * @since 0.2.0
- */
-public class Message {
-    private String content;
+    api project(':jreleaser-model')
+    api project(':git-sdk')
 
-    public String getContent() {
-        return content;
-    }
+    api "org.apache.tika:tika-core:$tikaVersion"
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    @Override
-    public String toString() {
-        return "Message[" +
-            "content='" + content + '\'' +
-            "]";
-    }
-
-    public static Message of(String text) {
-        Message message = new Message();
-        message.content = text;
-        return message;
-    }
+    api "io.github.openfeign:feign-core:$feignVersion"
+    api "io.github.openfeign:feign-jackson:$feignVersion"
+    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    api "io.github.openfeign.form:feign-form:$feignFormVersion"
+    api "commons-io:commons-io:$commonsIoVersion"
 }

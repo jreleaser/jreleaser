@@ -22,8 +22,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import feign.Feign;
-import feign.Request;
 import feign.form.FormData;
 import feign.form.FormEncoder;
 import feign.httpclient.ApacheHttpClient;
@@ -31,9 +29,9 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
-import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.sdk.commons.ClientUtils;
+import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.gitea.api.GiteaAPI;
-import org.jreleaser.sdk.gitea.api.GiteaAPIException;
 import org.jreleaser.sdk.gitea.api.GtMilestone;
 import org.jreleaser.sdk.gitea.api.GtOrganization;
 import org.jreleaser.sdk.gitea.api.GtRelease;
@@ -47,7 +45,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -86,14 +83,11 @@ class Gitea {
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
         this.logger = logger;
-        this.api = Feign.builder()
+        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
             .client(new ApacheHttpClient())
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new JacksonDecoder(objectMapper))
-            .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
             .requestInterceptor(template -> template.header("Authorization", String.format("token %s", token)))
-            .errorDecoder((methodKey, response) -> new GiteaAPIException(response.status(), response.reason(), response.headers()))
-            .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(GiteaAPI.class, endpoint);
     }
 
@@ -101,7 +95,7 @@ class Gitea {
         logger.debug("lookup repository {}/{}", owner, repo);
         try {
             return api.getRepository(owner, repo);
-        } catch (GiteaAPIException e) {
+        } catch (RestAPIException e) {
             if (e.isNotFound()) {
                 // ok
                 return null;
@@ -121,7 +115,7 @@ class Gitea {
             }
 
             return "open".equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
-        } catch (GiteaAPIException e) {
+        } catch (RestAPIException e) {
             if (e.isNotFound()) {
                 // ok
                 return Optional.empty();
@@ -155,7 +149,7 @@ class Gitea {
     private GtOrganization resolveOrganization(String name) {
         try {
             return api.getOrganization(name);
-        } catch (GiteaAPIException e) {
+        } catch (RestAPIException e) {
             if (e.isNotFound()) {
                 // ok
                 return null;
@@ -169,7 +163,7 @@ class Gitea {
 
         try {
             return api.getReleaseByTagName(owner, repo, tagName);
-        } catch (GiteaAPIException e) {
+        } catch (RestAPIException e) {
             if (e.isNotFound()) {
                 // ok
                 return null;
@@ -178,12 +172,12 @@ class Gitea {
         }
     }
 
-    void deleteRelease(String owner, String repo, String tagName, Integer id) throws GiteaAPIException {
+    void deleteRelease(String owner, String repo, String tagName, Integer id) throws RestAPIException {
         logger.debug("deleting release {} from {}/{} ({})", tagName, owner, repo, id);
 
         try {
             api.deleteRelease(owner, repo, id);
-        } catch (GiteaAPIException e) {
+        } catch (RestAPIException e) {
             if (e.isNotFound()) {
                 // OK. Release might have been deleted but
                 // tag still exists.
@@ -193,13 +187,13 @@ class Gitea {
         }
     }
 
-    void deleteTag(String owner, String repo, String tagName) throws GiteaAPIException {
+    void deleteTag(String owner, String repo, String tagName) throws RestAPIException {
         logger.debug("deleting tag {} from {}/{}", tagName, owner, repo);
 
         api.deleteTag(owner, repo, tagName);
     }
 
-    GtRelease createRelease(String owner, String repo, GtRelease release) throws GiteaAPIException {
+    GtRelease createRelease(String owner, String repo, GtRelease release) throws RestAPIException {
         logger.debug("creating release on {}/{} with tag {}", owner, repo, release.getTagName());
 
         return api.createRelease(release, owner, repo);
@@ -215,7 +209,7 @@ class Gitea {
             logger.info(" - uploading {}", asset.getFileName().toString());
             try {
                 api.uploadAsset(owner, repo, release.getId(), toFormData(asset));
-            } catch (GiteaAPIException e) {
+            } catch (RestAPIException e) {
                 logger.error(" x failed to upload {}", asset.getFileName());
                 throw e;
             }

@@ -22,18 +22,16 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import feign.Feign;
-import feign.Request;
 import feign.form.FormData;
 import feign.form.FormEncoder;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
-import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.sdk.commons.ClientUtils;
+import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
 import org.jreleaser.sdk.gitlab.api.GitlabAPI;
-import org.jreleaser.sdk.gitlab.api.GitlabAPIException;
 import org.jreleaser.sdk.gitlab.api.Milestone;
 import org.jreleaser.sdk.gitlab.api.Project;
 import org.jreleaser.sdk.gitlab.api.Release;
@@ -47,7 +45,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.sdk.gitlab.internal.UrlEncoder.urlEncode;
@@ -98,17 +95,14 @@ class Gitlab {
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
         this.logger = logger;
-        this.api = Feign.builder()
+        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new JacksonDecoder(objectMapper))
-            .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", token)))
-            .errorDecoder((methodKey, response) -> new GitlabAPIException(response.status(), response.reason(), response.headers()))
-            .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(GitlabAPI.class, endpoint);
     }
 
-    Project findProject(String projectName) throws GitlabAPIException {
+    Project findProject(String projectName) throws RestAPIException {
         User u = getCurrentUser();
 
         logger.debug("fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
@@ -116,7 +110,7 @@ class Gitlab {
             .e("search", projectName));
 
         if (projects == null || projects.isEmpty()) {
-            throw new GitlabAPIException(404, "Project " + projectName + " does not exist or it's not visible");
+            throw new RestAPIException(404, "Project " + projectName + " does not exist or it's not visible");
         }
 
         return projects.get(0);
@@ -137,7 +131,7 @@ class Gitlab {
 
             Milestone milestone = milestones.get(0);
             return "active".equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
-        } catch (GitlabAPIException e) {
+        } catch (RestAPIException e) {
             if (e.isNotFound() || e.isForbidden()) {
                 // ok
                 return Optional.empty();
@@ -162,7 +156,7 @@ class Gitlab {
         return api.createProject(repo, "public");
     }
 
-    User getCurrentUser() throws GitlabAPIException {
+    User getCurrentUser() throws RestAPIException {
         if (null == user) {
             logger.debug("fetching current user");
             user = api.getCurrentUser();
@@ -171,7 +165,7 @@ class Gitlab {
         return user;
     }
 
-    Project getProject(String projectName) throws GitlabAPIException {
+    Project getProject(String projectName) throws RestAPIException {
         User u = getCurrentUser();
 
         if (null == project) {
@@ -180,7 +174,7 @@ class Gitlab {
                 .e("search", projectName));
 
             if (projects == null || projects.isEmpty()) {
-                throw new GitlabAPIException(404, "Project " + projectName + " does not exist or it's not visible");
+                throw new RestAPIException(404, "Project " + projectName + " does not exist or it's not visible");
             }
 
             project = projects.get(0);
@@ -189,14 +183,14 @@ class Gitlab {
         return project;
     }
 
-    Release findReleaseByTag(String owner, String repoName, String tagName) throws GitlabAPIException {
+    Release findReleaseByTag(String owner, String repoName, String tagName) throws RestAPIException {
         logger.debug("fetching release on {}/{} with tag {}", owner, repoName, tagName);
 
         Project project = getProject(repoName);
 
         try {
             return api.getRelease(project.getId(), urlEncode(tagName));
-        } catch (GitlabAPIException e) {
+        } catch (RestAPIException e) {
             if (e.isNotFound() || e.isForbidden()) {
                 // ok
                 return null;
@@ -205,7 +199,7 @@ class Gitlab {
         }
     }
 
-    void deleteTag(String owner, String repoName, String tagName) throws GitlabAPIException {
+    void deleteTag(String owner, String repoName, String tagName) throws RestAPIException {
         logger.debug("deleting tag {} from {}/{}", tagName, owner, repoName);
 
         Project project = getProject(repoName);
@@ -213,7 +207,7 @@ class Gitlab {
         api.deleteTag(project.getId(), urlEncode(tagName));
     }
 
-    void deleteRelease(String owner, String repoName, String tagName) throws GitlabAPIException {
+    void deleteRelease(String owner, String repoName, String tagName) throws RestAPIException {
         logger.debug("deleting release {} from {}/{}", tagName, owner, repoName);
 
         Project project = getProject(repoName);
@@ -221,7 +215,7 @@ class Gitlab {
         api.deleteRelease(project.getId(), urlEncode(tagName));
     }
 
-    void createRelease(String owner, String repoName, Release release) throws GitlabAPIException {
+    void createRelease(String owner, String repoName, Release release) throws RestAPIException {
         logger.debug("creating release on {}/{} with tag {}", owner, repoName, release.getTagName());
 
         Project project = getProject(repoName);
@@ -229,7 +223,7 @@ class Gitlab {
         api.createRelease(release, project.getId());
     }
 
-    List<FileUpload> uploadAssets(String owner, String repoName, List<Path> assets) throws IOException, GitlabAPIException {
+    List<FileUpload> uploadAssets(String owner, String repoName, List<Path> assets) throws IOException, RestAPIException {
         logger.debug("uploading assets to {}/{}", owner, repoName);
 
         List<FileUpload> uploads = new ArrayList<>();
@@ -247,7 +241,7 @@ class Gitlab {
                 FileUpload upload = api.uploadFile(project.getId(), toFormData(asset));
                 upload.setName(asset.getFileName().toString());
                 uploads.add(upload);
-            } catch (IOException | GitlabAPIException e) {
+            } catch (IOException | RestAPIException e) {
                 logger.error(" x Failed to upload {}", asset.getFileName());
                 throw e;
             }
@@ -256,7 +250,7 @@ class Gitlab {
         return uploads;
     }
 
-    void linkAssets(String owner, String repoName, Release release, List<FileUpload> uploads) throws IOException, GitlabAPIException {
+    void linkAssets(String owner, String repoName, Release release, List<FileUpload> uploads) throws IOException, RestAPIException {
         logger.debug("linking assets to {}/{} with tag {}", owner, repoName, release.getTagName());
 
         Project project = getProject(repoName);
@@ -265,7 +259,7 @@ class Gitlab {
             logger.debug(" - linking {}", upload.getName());
             try {
                 api.linkAsset(upload.toLinkRequest(apiHost), project.getId(), release.getTagName());
-            } catch (GitlabAPIException e) {
+            } catch (RestAPIException e) {
                 logger.error(" x failed to link {}", upload.getName());
                 throw e;
             }

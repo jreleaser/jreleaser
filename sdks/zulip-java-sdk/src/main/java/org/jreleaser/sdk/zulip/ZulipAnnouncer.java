@@ -70,18 +70,15 @@ public class ZulipAnnouncer implements Announcer {
         context.getLogger().debug("message: {}", message);
 
         try {
-            MessageZulipCommand.builder(context.getLogger())
+            ZulipSdk sdk = ZulipSdk.builder(context.getLogger())
+                .apiHost(zulip.getApiHost())
                 .account(zulip.getAccount())
                 .apiKey(zulip.getResolvedApiKey())
-                .apiHost(zulip.getApiHost())
                 .connectTimeout(zulip.getConnectTimeout())
                 .readTimeout(zulip.getReadTimeout())
-                .channel(zulip.getChannel())
-                .subject(subject)
-                .message(message)
                 .dryrun(context.isDryrun())
-                .build()
-                .execute();
+                .build();
+            sdk.message(zulip.getChannel(), subject, message);
         } catch (ZulipException e) {
             throw new AnnounceException(e);
         }

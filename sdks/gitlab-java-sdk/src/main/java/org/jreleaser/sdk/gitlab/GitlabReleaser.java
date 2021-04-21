@@ -21,9 +21,9 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
+import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
-import org.jreleaser.sdk.gitlab.api.GitlabAPIException;
 import org.jreleaser.sdk.gitlab.api.Milestone;
 import org.jreleaser.sdk.gitlab.api.Project;
 import org.jreleaser.sdk.gitlab.api.Release;
@@ -108,7 +108,7 @@ public class GitlabReleaser implements Releaser {
 
         try {
             project = api.findProject(repo);
-        } catch (GitlabAPIException e) {
+        } catch (RestAPIException e) {
             if (!e.isNotFound()) {
                 throw e;
             }
@@ -178,7 +178,7 @@ public class GitlabReleaser implements Releaser {
         // delete remote tag
         try {
             api.deleteTag(owner, repo, tagName);
-        } catch (GitlabAPIException ignored) {
+        } catch (RestAPIException ignored) {
             //noop
         }
     }

@@ -15,12 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.gitter;
+package org.jreleaser.sdk.discord;
 
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
-public interface GitterCommand {
-    void execute() throws GitterException;
+public class Message {
+    private String content;
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return "Message[" +
+            "content='" + content + '\'' +
+            "]";
+    }
+
+    public static Message of(String text) {
+        Message message = new Message();
+        message.content = text;
+        return message;
+    }
 }
