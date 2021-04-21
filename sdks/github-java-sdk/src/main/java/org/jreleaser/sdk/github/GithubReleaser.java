@@ -147,14 +147,16 @@ public class GithubReleaser implements Releaser {
             .create();
         api.uploadAssets(release, assets);
 
-        Optional<GHMilestone> milestone = api.findMilestoneByName(
-            github.getOwner(),
-            github.getName(),
-            github.getMilestone().getEffectiveName());
-        if (milestone.isPresent()) {
-            api.closeMilestone(github.getOwner(),
+        if (github.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
+            Optional<GHMilestone> milestone = api.findMilestoneByName(
+                github.getOwner(),
                 github.getName(),
-                milestone.get());
+                github.getMilestone().getEffectiveName());
+            if (milestone.isPresent()) {
+                api.closeMilestone(github.getOwner(),
+                    github.getName(),
+                    milestone.get());
+            }
         }
     }
 

@@ -163,14 +163,16 @@ public class GitlabReleaser implements Releaser {
         api.createRelease(gitlab.getOwner(), gitlab.getName(), release);
         api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, uploads);
 
-        Optional<Milestone> milestone = api.findMilestoneByName(
-            gitlab.getOwner(),
-            gitlab.getName(),
-            gitlab.getMilestone().getEffectiveName());
-        if (milestone.isPresent()) {
-            api.closeMilestone(gitlab.getOwner(),
+        if (gitlab.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
+            Optional<Milestone> milestone = api.findMilestoneByName(
+                gitlab.getOwner(),
                 gitlab.getName(),
-                milestone.get());
+                gitlab.getMilestone().getEffectiveName());
+            if (milestone.isPresent()) {
+                api.closeMilestone(gitlab.getOwner(),
+                    gitlab.getName(),
+                    milestone.get());
+            }
         }
     }
 

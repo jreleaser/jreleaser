@@ -150,14 +150,16 @@ public class GiteaReleaser implements Releaser {
         release = api.createRelease(gitea.getOwner(), gitea.getName(), release);
         api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);
 
-        Optional<GtMilestone> milestone = api.findMilestoneByName(
-            gitea.getOwner(),
-            gitea.getName(),
-            gitea.getMilestone().getEffectiveName());
-        if (milestone.isPresent()) {
-            api.closeMilestone(gitea.getOwner(),
+        if (gitea.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
+            Optional<GtMilestone> milestone = api.findMilestoneByName(
+                gitea.getOwner(),
                 gitea.getName(),
-                milestone.get());
+                gitea.getMilestone().getEffectiveName());
+            if (milestone.isPresent()) {
+                api.closeMilestone(gitea.getOwner(),
+                    gitea.getName(),
+                    milestone.get());
+            }
         }
     }
 
