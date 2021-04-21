@@ -113,10 +113,10 @@ public abstract class GitServiceValidator extends Validator {
             service.getChangelog().setEnabled(true);
         }
         if (isBlank(service.getCommitAuthor().getName())) {
-            service.getCommitAuthor().setName("jreleaser-bot");
+            service.getCommitAuthor().setName("jreleaserbot");
         }
         if (isBlank(service.getCommitAuthor().getEmail())) {
-            service.getCommitAuthor().setEmail("jreleaser-bot@jreleaser.org");
+            service.getCommitAuthor().setEmail("jreleaser@kordamp.org");
         }
 
         if (service.getConnectTimeout() <= 0 || service.getConnectTimeout() > 300) {
