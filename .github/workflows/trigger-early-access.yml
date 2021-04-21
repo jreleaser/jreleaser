@@ -6,7 +6,6 @@ on:
 jobs:
   earlyaccess:
     name: "Trigger Early Access"
-    if: github.event_name == 'push' && github.repository == 'jreleaser/jreleaser' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
