@@ -17,6 +17,7 @@
  */
 package org.jreleaser.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystemLoopException;
@@ -29,6 +30,7 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -43,6 +45,16 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public final class FileUtils {
     private FileUtils() {
         //noop
+    }
+
+    public static void deleteFiles(Path path) throws IOException {
+        if (Files.exists(path)) {
+            Files.walk(path)
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
+            Files.deleteIfExists(path);
+        }
     }
 
     public static void createDirectoriesWithFullAccess(Path path) throws IOException {

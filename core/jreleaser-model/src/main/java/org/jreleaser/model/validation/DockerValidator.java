@@ -28,8 +28,10 @@ import org.jreleaser.util.Errors;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
+import static java.util.Collections.singleton;
 import static org.jreleaser.model.Docker.LABEL_OCI_IMAGE_DESCRIPTION;
 import static org.jreleaser.model.Docker.LABEL_OCI_IMAGE_LICENSES;
 import static org.jreleaser.model.Docker.LABEL_OCI_IMAGE_REVISION;
@@ -78,6 +80,14 @@ public abstract class DockerValidator extends Validator {
 
         if (tool.getImageNames().isEmpty()) {
             tool.addImageName("{{repoOwner}}/{{distributionName}}:{{tagName}}");
+        }
+
+        if (context.getModel().getProject().isSnapshot()) {
+            // find the 1st image that ends with :{{tagName}}
+            Optional<String> imageName = tool.getImageNames().stream()
+                .filter(n -> n.endsWith(":{{tagName}}") || n.endsWith(":{{ tagName }}"))
+                .findFirst();
+            tool.setImageNames(singleton(imageName.orElse("{{repoOwner}}/{{distributionName}}:{{tagName}}")));
         }
 
         if (tool.getBuildArgs().isEmpty() && !parentTool.getBuildArgs().isEmpty()) {

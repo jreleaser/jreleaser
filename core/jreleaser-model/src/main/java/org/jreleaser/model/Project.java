@@ -94,7 +94,9 @@ public class Project implements Domain, ExtraProperties {
     }
 
     public String getResolvedVersion() {
-        return Env.resolve(PROJECT_VERSION, version);
+        String resolvedVersion = Env.resolve(PROJECT_VERSION, version);
+        // prevent NPE during validation
+        return isNotBlank(resolvedVersion) ? resolvedVersion : "";
     }
 
     public String getResolvedSnapshotPattern() {

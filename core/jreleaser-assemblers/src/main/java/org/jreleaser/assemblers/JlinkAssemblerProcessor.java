@@ -29,13 +29,11 @@ import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -104,13 +102,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
 
         Path image = assembleDirectory.resolve(finalImageName).toAbsolutePath();
         try {
-            if (Files.exists(image)) {
-                Files.walk(image)
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-                Files.deleteIfExists(image);
-            }
+            FileUtils.deleteFiles(image);
         } catch (IOException e) {
             throw new AssemblerProcessingException("Could not delete previous image " + finalImageName, e);
         }

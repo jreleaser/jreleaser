@@ -103,6 +103,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             }
 
             Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+            // cleanup from previous session
+            FileUtils.deleteFiles(prepareDirectory);
             Files.createDirectories(prepareDirectory);
 
             context.getLogger().debug("resolving templates for {}/{}", distributionName, getToolName());
@@ -120,10 +122,9 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             }
 
             context.getLogger().debug("copying license files");
-            Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
             FileUtils.copyFiles(context.getLogger(),
                 context.getBasedir(),
-                outputDirectory, path -> path.getFileName().startsWith("LICENSE"));
+                prepareDirectory, path -> path.getFileName().startsWith("LICENSE"));
         } catch (IllegalArgumentException | IOException e) {
             throw new ToolProcessingException(e);
         }
@@ -143,6 +144,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             }
 
             Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+            // cleanup from previous session
+            FileUtils.deleteFiles(packageDirectory);
             Files.createDirectories(packageDirectory);
 
             return doPackageDistribution(distribution, newProps);

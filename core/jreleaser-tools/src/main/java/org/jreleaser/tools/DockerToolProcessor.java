@@ -89,10 +89,9 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
     }
 
     private Path prepareAssembly(Distribution distribution, Map<String, Object> props) throws IOException, ToolProcessingException {
-        Path workingDirectory = Files.createTempDirectory("jreleaser-docker");
-        copyPreparedFiles(distribution, props, workingDirectory);
-        Path assemblyDirectory = workingDirectory.resolve("assembly");
-        Files.createDirectories(assemblyDirectory);
+        Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+        copyPreparedFiles(distribution, props);
+        Path assemblyDirectory = packageDirectory.resolve("assembly");
 
         Set<String> fileExtensions = tool.getSupportedExtensions();
         List<Artifact> artifacts = distribution.getArtifacts().stream()
@@ -104,20 +103,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
             Files.copy(artifactPath, assemblyDirectory.resolve(artifactPath.getFileName()), REPLACE_EXISTING);
         }
 
-        Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
-        Path preparedAssemblyDirectory = prepareDirectory.resolve("assembly");
-        try {
-            if (Files.exists(preparedAssemblyDirectory) &&
-                !FileUtils.copyFilesRecursive(context.getLogger(), preparedAssemblyDirectory, assemblyDirectory)) {
-                throw new ToolProcessingException("Could not copy files from " +
-                    context.getBasedir().relativize(preparedAssemblyDirectory));
-            }
-        } catch (IOException e) {
-            throw new ToolProcessingException("Unexpected error when copying files from " +
-                context.getBasedir().relativize(preparedAssemblyDirectory), e);
-        }
-
-        return workingDirectory;
+        return packageDirectory;
     }
 
     private List<String> createBuildCommand(Map<String, Object> props) {
@@ -246,7 +232,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         context.getLogger().debug("logout from {}{}",
             registry.getServerName(),
             (isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : ""));
-        executeCommand(cmd);
+        if (!context.isDryrun()) executeCommand(cmd);
     }
 
     @Override
@@ -272,8 +258,8 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         fileName = trimTplExtension(fileName);
 
         Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
-        Path outputFile = "app".equals(fileName) ?
-            outputDirectory.resolve(distribution.getExecutable()) :
+        Path outputFile = "executable".equals(fileName) ?
+            outputDirectory.resolve("assembly").resolve(distribution.getExecutable()) :
             outputDirectory.resolve(fileName);
 
         if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE &&
