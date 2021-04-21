@@ -32,6 +32,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -41,6 +43,7 @@ public class JReleaserTemplateTask extends Task {
     private String distributionName;
     private Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
     private String toolName;
+    private String announcerName;
     private boolean overwrite;
     private boolean snapshot;
     private JReleaserLogger logger;
@@ -61,6 +64,10 @@ public class JReleaserTemplateTask extends Task {
         this.toolName = toolName;
     }
 
+    public void setAnnouncerName(String announcerName) {
+        this.announcerName = announcerName;
+    }
+
     public void setOverwrite(boolean overwrite) {
         this.overwrite = overwrite;
     }
@@ -79,14 +86,14 @@ public class JReleaserTemplateTask extends Task {
 
             Path outputDirectory = getOutputDirectory()
                 .resolve("src")
-                .resolve("jreleaser")
-                .resolve("distributions");
+                .resolve("jreleaser");
 
             Path output = TemplateGenerator.builder()
                 .logger(logger)
                 .distributionName(distributionName)
                 .distributionType(distributionType)
                 .toolName(toolName)
+                .announcerName(announcerName)
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)
                 .snapshot(snapshot)

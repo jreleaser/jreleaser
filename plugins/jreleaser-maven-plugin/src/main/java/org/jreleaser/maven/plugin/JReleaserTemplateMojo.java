@@ -36,8 +36,10 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
- * Generate a tool template.
+ * Generate a tool/announcer template.
  *
  * @author Andres Almiray
  * @since 0.1.0
@@ -59,7 +61,7 @@ public class JReleaserTemplateMojo extends AbstractMojo {
     /**
      * The name of the distribution
      */
-    @Parameter(property = "jreleaser.template.distribution.name", required = true)
+    @Parameter(property = "jreleaser.template.distribution.name")
     private String distributionName;
 
     /**
@@ -71,8 +73,14 @@ public class JReleaserTemplateMojo extends AbstractMojo {
     /**
      * The name of the distribution
      */
-    @Parameter(property = "jreleaser.template.tool.name", required = true)
+    @Parameter(property = "jreleaser.template.tool.name")
     private String toolName;
+
+    /**
+     * The name of the distribution
+     */
+    @Parameter(property = "jreleaser.announcer.name")
+    private String announcerName;
 
     /**
      * Overwrite existing files.
@@ -97,14 +105,14 @@ public class JReleaserTemplateMojo extends AbstractMojo {
         try {
             Path outputDirectory = Paths.get(project.getBasedir().getAbsolutePath())
                 .resolve("src")
-                .resolve("jreleaser")
-                .resolve("distributions");
+                .resolve("jreleaser");
 
             Path output = TemplateGenerator.builder()
                 .logger(getLogger())
                 .distributionName(distributionName)
                 .distributionType(distributionType)
                 .toolName(toolName)
+                .announcerName(announcerName)
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)
                 .snapshot(snapshot)

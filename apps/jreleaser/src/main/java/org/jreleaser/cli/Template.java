@@ -31,23 +31,61 @@ import java.nio.file.Path;
  */
 @CommandLine.Command(name = "template",
     mixinStandardHelpOptions = true,
-    description = "Generate a tool template.")
+    description = "Generate a tool/announcer template.")
 public class Template extends AbstractCommand {
-    @CommandLine.Option(names = {"-dn", "--distribution-name"},
-        description = "The name of the distribution.",
-        required = true)
-    String distributionName;
+    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1")
+    Composite composite;
 
-    @CommandLine.Option(names = {"-tn", "--tool-name"},
-        description = "The name of the tool.",
-        required = true)
-    String toolName;
+    static class Composite {
+        @CommandLine.ArgGroup(exclusive = false, multiplicity = "0..1", order = 1,
+            heading = "Announcer templates%n")
+        Announcers announcers;
 
-    @CommandLine.Option(names = {"-dt", "--distribution-type"},
-        description = "The type of the distribution.",
-        required = true,
-        defaultValue = "JAVA_BINARY")
-    Distribution.DistributionType distributionType;
+        @CommandLine.ArgGroup(exclusive = false, multiplicity = "0..1", order = 2,
+            heading = "Tool templates%n")
+        Tools tools;
+
+        String announcerName() {
+            return announcers != null ? announcers.announcerName : null;
+        }
+
+        String toolName() {
+            return tools != null ? tools.toolName : null;
+        }
+
+        String distributionName() {
+            return tools != null ? tools.distributionName : null;
+        }
+
+        Distribution.DistributionType distributionType() {
+            return tools != null ? tools.distributionType : null;
+        }
+    }
+
+    static class Announcers {
+        @CommandLine.Option(names = {"-an", "--announcer-name"},
+            description = "The name of the announcer.",
+            required = true)
+        String announcerName;
+    }
+
+    static class Tools {
+        @CommandLine.Option(names = {"-dn", "--distribution-name"},
+            description = "The name of the distribution.",
+            required = true)
+        String distributionName;
+
+        @CommandLine.Option(names = {"-tn", "--tool-name"},
+            description = "The name of the tool.",
+            required = true)
+        String toolName;
+
+        @CommandLine.Option(names = {"-dt", "--distribution-type"},
+            description = "The type of the distribution.",
+            required = true,
+            defaultValue = "JAVA_BINARY")
+        Distribution.DistributionType distributionType;
+    }
 
     @CommandLine.Option(names = {"-o", "--overwrite"},
         description = "Overwrite existing files.")
@@ -78,14 +116,14 @@ public class Template extends AbstractCommand {
 
             Path outputDirectory = basedir
                 .resolve("src")
-                .resolve("jreleaser")
-                .resolve("distributions");
+                .resolve("jreleaser");
 
             Path output = TemplateGenerator.builder()
                 .logger(logger)
-                .distributionName(distributionName)
-                .distributionType(distributionType)
-                .toolName(toolName)
+                .distributionName(composite.distributionName())
+                .distributionType(composite.distributionType())
+                .toolName(composite.toolName())
+                .announcerName(composite.announcerName())
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)
                 .snapshot(snapshot)

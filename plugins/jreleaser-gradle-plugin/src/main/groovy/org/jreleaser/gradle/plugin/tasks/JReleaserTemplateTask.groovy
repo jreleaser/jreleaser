@@ -19,10 +19,11 @@ package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
@@ -33,6 +34,8 @@ import org.jreleaser.templates.TemplateGenerator
 import javax.inject.Inject
 import java.nio.file.Path
 
+import static org.jreleaser.util.StringUtils.isNotBlank
+
 /**
  *
  * @author Andres Almiray
@@ -40,14 +43,21 @@ import java.nio.file.Path
  */
 @CompileStatic
 abstract class JReleaserTemplateTask extends AbstractJReleaserTask {
-    @Internal
+    @Input
+    @Optional
     final Property<Distribution.DistributionType> distributionType
 
     @Input
+    @Optional
     final Property<String> distributionName
 
     @Input
+    @Optional
     final Property<String> toolName
+
+    @Input
+    @Optional
+    final Property<String> announcerName
 
     @OutputDirectory
     final DirectoryProperty outputDirectory
@@ -64,6 +74,7 @@ abstract class JReleaserTemplateTask extends AbstractJReleaserTask {
         distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.JAVA_BINARY)
         distributionName = objects.property(String)
         toolName = objects.property(String)
+        announcerName = objects.property(String).convention(Providers.notDefined())
         overwrite = objects.property(Boolean).convention(false)
         snapshot = objects.property(Boolean).convention(false)
 
@@ -80,17 +91,22 @@ abstract class JReleaserTemplateTask extends AbstractJReleaserTask {
         this.snapshot.set(snapshot)
     }
 
-    @Option(option = 'distribution-name', description = 'The name of the distribution (REQUIRED).')
+    @Option(option = 'distribution-name', description = 'The name of the distribution (OPTIONAL).')
     void setDistributionName(String distributionName) {
         this.distributionName.set(distributionName)
     }
 
-    @Option(option = 'tool-name', description = 'The name of the tool (REQUIRED).')
+    @Option(option = 'tool-name', description = 'The name of the tool (OPTIONAL).')
     void setToolName(String toolName) {
         this.toolName.set(toolName)
     }
 
-    @Option(option = 'distribution-type', description = 'The type of the distribution (REQUIRED).')
+    @Option(option = 'announcer-name', description = 'The name of the announcer (OPTIONAL).')
+    void setAnnouncerName(String toolName) {
+        this.announcerName.set(toolName)
+    }
+
+    @Option(option = 'distribution-type', description = 'The type of the distribution (OPTIONAL).')
     void setAction(Distribution.DistributionType distributionType) {
         this.distributionType.set(distributionType)
     }
@@ -104,9 +120,10 @@ abstract class JReleaserTemplateTask extends AbstractJReleaserTask {
     void generateTemplate() {
         Path output = TemplateGenerator.builder()
             .logger(createContext().logger)
-            .distributionName(distributionName.get())
-            .distributionType(distributionType.get())
-            .toolName(toolName.get())
+            .distributionName(distributionName.orNull)
+            .distributionType(distributionType.orNull)
+            .toolName(toolName.orNull)
+            .announcerName(announcerName.orNull)
             .outputDirectory(outputDirectory.get().asFile.toPath())
             .overwrite(overwrite.get())
             .snapshot(snapshot.get())

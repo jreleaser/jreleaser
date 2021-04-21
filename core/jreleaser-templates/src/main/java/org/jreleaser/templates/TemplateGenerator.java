@@ -17,6 +17,7 @@
  */
 package org.jreleaser.templates;
 
+import org.jreleaser.model.Announce;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.util.JReleaserLogger;
 
@@ -34,6 +35,8 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Objects.requireNonNull;
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -45,6 +48,7 @@ public class TemplateGenerator {
     private final String distributionName;
     private final Distribution.DistributionType distributionType;
     private final String toolName;
+    private final String announcerName;
     private final Path outputDirectory;
     private final boolean overwrite;
     private final boolean snapshot;
@@ -53,6 +57,7 @@ public class TemplateGenerator {
                               String distributionName,
                               Distribution.DistributionType distributionType,
                               String toolName,
+                              String announcerName,
                               Path outputDirectory,
                               boolean overwrite,
                               boolean snapshot) {
@@ -60,32 +65,53 @@ public class TemplateGenerator {
         this.distributionName = distributionName;
         this.distributionType = distributionType;
         this.toolName = toolName;
-        this.outputDirectory = outputDirectory;
+        this.announcerName = announcerName;
+        this.outputDirectory = outputDirectory.resolve(isNotBlank(announcerName) ? "templates" : "distributions");
         this.overwrite = overwrite;
         this.snapshot = snapshot;
     }
 
-    public String getDistributionName() {
-        return distributionName;
-    }
-
-    public Distribution.DistributionType getDistributionType() {
-        return distributionType;
-    }
-
-    public String getToolName() {
-        return toolName;
-    }
-
-    public Path getOutputDirectory() {
-        return outputDirectory;
-    }
-
-    public boolean isOverwrite() {
-        return overwrite;
-    }
-
     public Path generate() throws TemplateGenerationException {
+        if (isNotBlank(announcerName)) {
+            return generateAnnouncer();
+        }
+        return generateTool();
+    }
+
+    private Path generateAnnouncer() throws TemplateGenerationException {
+        if (!Announce.supportedAnnouncers().contains(announcerName)) {
+            logger.error("Announcer {} is not supported", announcerName);
+            return null;
+        }
+
+        logger.info("Creating output directory {}", outputDirectory.toAbsolutePath());
+        try {
+            Files.createDirectories(outputDirectory);
+        } catch (IOException e) {
+            throw fail(e);
+        }
+
+        Reader reader = TemplateUtils.resolveTemplate(logger, announcerName);
+
+        Path outputFile = outputDirectory.resolve(announcerName + ".tpl");
+        logger.info("Writing file " + outputFile.toAbsolutePath());
+
+        try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
+             Scanner scanner = new Scanner(reader)) {
+            while (scanner.hasNextLine()) {
+                writer.write(scanner.nextLine() + System.lineSeparator());
+            }
+        } catch (FileAlreadyExistsException e) {
+            logger.error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());
+            return null;
+        } catch (Exception e) {
+            throw fail(e);
+        }
+
+        return outputFile;
+    }
+
+    private Path generateTool() throws TemplateGenerationException {
         if (!Distribution.supportedTools().contains(toolName)) {
             logger.error("Tool {} is not supported", toolName);
             return null;
@@ -144,6 +170,7 @@ public class TemplateGenerator {
         private String distributionName;
         private Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
         private String toolName;
+        private String announcerName;
         private Path outputDirectory;
         private boolean overwrite;
         private boolean snapshot;
@@ -154,17 +181,22 @@ public class TemplateGenerator {
         }
 
         public TemplateGeneratorBuilder distributionName(String distributionName) {
-            this.distributionName = requireNonBlank(distributionName, "'distributionName' must not be blank");
+            this.distributionName = distributionName;
             return this;
         }
 
         public TemplateGeneratorBuilder distributionType(Distribution.DistributionType distributionType) {
-            this.distributionType = requireNonNull(distributionType, "'distributionType' must not be null");
+            this.distributionType = distributionType;
             return this;
         }
 
         public TemplateGeneratorBuilder toolName(String toolName) {
-            this.toolName = requireNonBlank(toolName, "'toolName' must not be blank");
+            this.toolName = toolName;
+            return this;
+        }
+
+        public TemplateGeneratorBuilder announcerName(String announcerName) {
+            this.announcerName = announcerName;
             return this;
         }
 
@@ -185,11 +217,13 @@ public class TemplateGenerator {
 
         public TemplateGenerator build() {
             requireNonNull(logger, "'logger' must not be null");
-            requireNonBlank(distributionName, "'distributionName' must not be blank");
-            requireNonNull(distributionType, "'distributionType' must not be null");
-            requireNonBlank(toolName, "'toolName' must not be blank");
+            if (isBlank(announcerName)) {
+                requireNonBlank(distributionName, "'distributionName' must not be blank");
+                requireNonNull(distributionType, "'distributionType' must not be null");
+                requireNonBlank(toolName, "'toolName' must not be blank");
+            }
             requireNonNull(outputDirectory, "'outputDirectory' must not be null");
-            return new TemplateGenerator(logger, distributionName, distributionType, toolName, outputDirectory, overwrite, snapshot);
+            return new TemplateGenerator(logger, distributionName, distributionType, toolName, announcerName, outputDirectory, overwrite, snapshot);
         }
     }
 }

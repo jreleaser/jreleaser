@@ -17,7 +17,6 @@
  */
 package org.jreleaser.templates;
 
-import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
 
@@ -134,6 +133,37 @@ public final class TemplateUtils {
         }
 
         return templates;
+    }
+
+    public static Reader resolveTemplate(JReleaserLogger logger, String announcerName) {
+        logger.debug("resolving templates from classpath");
+        URL location = resolveLocation(TemplateUtils.class);
+        if (null == location) {
+            throw new JReleaserException("could not find location of classpath templates");
+        }
+
+        try {
+            if ("file".equals(location.getProtocol())) {
+                boolean templateFound = false;
+
+                String templateEntryName = "META-INF/jreleaser/templates/announcers/" + announcerName + ".tpl";
+                JarFile jarFile = new JarFile(new File(location.toURI()));
+
+                logger.debug("searching for template matching {}*", templateEntryName);
+                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
+                    JarEntry entry = e.nextElement();
+                    if (entry.isDirectory() || !entry.getName().equals(templateEntryName)) {
+                        continue;
+                    }
+
+                    logger.debug("found template {}", templateEntryName);
+                    return new InputStreamReader(jarFile.getInputStream(entry));
+                }
+            }
+            throw new JReleaserException("Could not find location of classpath templates");
+        } catch (URISyntaxException | IOException e) {
+            throw new JReleaserException("Unexpected error reading templates for announcer " + announcerName + " from classpath.");
+        }
     }
 
     private static boolean findTemplate(JReleaserLogger logger, JarFile jarFile, String templatePrefix, Map<String, Reader> templates) throws IOException {

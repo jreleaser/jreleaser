@@ -43,6 +43,7 @@
                             configFile="${jreleaser.config.file}"
                             distributionName="${jreleaser.distribution.name}"
                             toolName="${jreleaser.tool.name}"
+                            announcerName="${jreleaser.announcer.name}"
                             distributionType="${jreleaser.distribution.type}"
                             overwrite="${jreleaser.overwrite}"
                             snapshot="${jreleaser.snapshot}"/>

@@ -17,8 +17,11 @@
  */
 package org.jreleaser.model;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -193,5 +196,19 @@ public class Announce implements Domain, EnabledAware {
             default:
                 throw new JReleaserException("Unsupported announcer '" + name + "'");
         }
+    }
+
+    public static Set<String> supportedAnnouncers() {
+        Set<String> set = new LinkedHashSet<>();
+        set.add(Discord.NAME);
+        set.add(Discussions.NAME);
+        set.add(Gitter.NAME);
+        set.add(Mail.NAME);
+        set.add(Sdkman.NAME);
+        set.add(Slack.NAME);
+        set.add(Teams.NAME);
+        set.add(Twitter.NAME);
+        set.add(Zulip.NAME);
+        return Collections.unmodifiableSet(set);
     }
 }
