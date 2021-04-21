@@ -23,13 +23,11 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserVersion;
 import picocli.CommandLine;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -70,17 +68,12 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         if (null != configFile) {
             actualConfigFile = configFile;
         } else {
-            ServiceLoader<JReleaserConfigParser> parsers = ServiceLoader.load(JReleaserConfigParser.class,
-                JReleaserConfigParser.class.getClassLoader());
-
-            for (JReleaserConfigParser parser : parsers) {
-                Path file = Paths.get(".").normalize()
-                    .resolve("jreleaser." + parser.getPreferredFileExtension());
-                if (Files.exists(file)) {
-                    actualConfigFile = file;
-                    break;
-                }
+            Path directory = Paths.get(".").normalize();
+            Optional<Path> file = resolveConfigFileAt(directory);
+            if (!file.isPresent() && basedir != null) {
+                file = resolveConfigFileAt(basedir);
             }
+            actualConfigFile = file.orElse(null);
         }
 
         if (null == actualConfigFile || !Files.exists(actualConfigFile)) {
@@ -93,6 +86,20 @@ public abstract class AbstractModelCommand extends AbstractCommand {
             spec.commandLine().usage(parent.out);
             throw new HaltExecutionException();
         }
+    }
+
+    private Optional<Path> resolveConfigFileAt(Path directory) {
+        ServiceLoader<JReleaserConfigParser> parsers = ServiceLoader.load(JReleaserConfigParser.class,
+            JReleaserConfigParser.class.getClassLoader());
+
+        for (JReleaserConfigParser parser : parsers) {
+            Path file = directory.resolve("jreleaser." + parser.getPreferredFileExtension());
+            if (Files.exists(file)) {
+                return Optional.of(file);
+            }
+        }
+
+        return Optional.empty();
     }
 
     private void resolveBasedir() {

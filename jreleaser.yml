@@ -16,8 +16,6 @@ release:
     username: aalmiray
     overwrite: true
     sign: true
-    changelog:
-      enabled: false
 
 signing:
   active: always
