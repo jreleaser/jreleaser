@@ -12,7 +12,6 @@ project:
 
 release:
   github:
-    owner: jreleaser
     username: aalmiray
     overwrite: true
     sign: true
@@ -39,15 +38,34 @@ distributions:
       active: always
     artifacts:
       - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
 
   jreleaser-ant-tasks:
     extraProperties:
       sdkmanSkip: true
     artifacts:
       - path: plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
+
+  jreleaser-tool-provider:
+    type: SINGLE_JAR
+    executable: jreleaser
+    java:
+      version: 11
+    docker:
+      active: always
+      imageNames:
+        - '{{repoOwner}}/{{projectName}}-slim:{{tagName}}'
+        - '{{repoOwner}}/{{projectName}}-slim:latest'
+      postCommands:
+        - 'VOLUME /workspace'
+      registries:
+        - serverName: DEFAULT
+          username: jreleaser
+    artifacts:
+      - path: apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-{{projectVersion}}.jar
+        transform: 'jreleaser-tool-provider/jreleaser-tool-provider-{{projectEffectiveVersion}}.jar'
 
 files:
   artifacts:
     - path: VERSION
-    - path: apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-{{projectVersion}}.jar
-      transform: 'jreleaser-tool-provider/jreleaser-tool-provider-{{projectEffectiveVersion}}.jar'
