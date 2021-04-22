@@ -40,6 +40,7 @@ public class Config extends AbstractModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {
         new JReleaserModelPrinter(parent.out).print(context.getModel().asMap(full));
+        context.report();
     }
 
     protected JReleaserContext.Mode getMode() {

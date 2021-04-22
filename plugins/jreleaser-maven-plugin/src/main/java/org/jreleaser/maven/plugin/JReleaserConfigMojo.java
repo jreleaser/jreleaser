@@ -55,8 +55,10 @@ public class JReleaserConfigMojo extends AbstractJReleaserMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
+        JReleaserContext context = createContext();
         new JReleaserModelPrinter(new PrintWriter(System.out, true))
-            .print(createContext().getModel().asMap(full));
+            .print(context.getModel().asMap(full));
+        context.report();
     }
 
     protected JReleaserContext.Mode getMode() {

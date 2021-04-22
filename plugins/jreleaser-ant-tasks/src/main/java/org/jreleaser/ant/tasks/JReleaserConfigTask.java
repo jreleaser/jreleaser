@@ -42,6 +42,7 @@ public class JReleaserConfigTask extends AbstractJReleaserTask {
     protected void doExecute(JReleaserContext context) {
         new JReleaserModelPrinter(new PrintWriter(System.out, true))
             .print(context.getModel().asMap(full));
+        context.report();
     }
 
     protected JReleaserContext.Mode getMode() {

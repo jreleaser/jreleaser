@@ -20,11 +20,37 @@ package org.jreleaser.model;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.Version;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
 
+import static org.jreleaser.util.Constants.KEY_COMMIT_FULL_HASH;
+import static org.jreleaser.util.Constants.KEY_COMMIT_SHORT_HASH;
+import static org.jreleaser.util.Constants.KEY_MILESTONE_NAME;
+import static org.jreleaser.util.Constants.KEY_PROJECT_NAME;
+import static org.jreleaser.util.Constants.KEY_PROJECT_SNAPSHOT;
+import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
+import static org.jreleaser.util.Constants.KEY_RELEASE_NAME;
+import static org.jreleaser.util.Constants.KEY_TAG_NAME;
+import static org.jreleaser.util.Constants.KEY_TIMESTAMP;
+import static org.jreleaser.util.Constants.KEY_VERSION_BUILD;
+import static org.jreleaser.util.Constants.KEY_VERSION_MAJOR;
+import static org.jreleaser.util.Constants.KEY_VERSION_MINOR;
+import static org.jreleaser.util.Constants.KEY_VERSION_PATCH;
+import static org.jreleaser.util.Constants.KEY_VERSION_TAG;
+import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -244,8 +270,100 @@ public class JReleaserContext {
             "]";
     }
 
+    public void report() {
+        Project project = model.getProject();
+
+        SortedProperties props = new SortedProperties();
+        props.put(KEY_TIMESTAMP, model.getTimestamp());
+        props.put(KEY_COMMIT_SHORT_HASH, model.getCommit().getShortHash());
+        props.put(KEY_COMMIT_FULL_HASH, model.getCommit().getFullHash());
+        props.put(KEY_PROJECT_NAME, project.getName());
+        props.put(KEY_PROJECT_VERSION, project.getVersion());
+        props.put(KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
+        props.put(KEY_TAG_NAME, model.getRelease().getGitService().getEffectiveTagName(model));
+        props.put(KEY_RELEASE_NAME, model.getRelease().getGitService().getEffectiveReleaseName());
+        props.put(KEY_MILESTONE_NAME, model.getRelease().getGitService().getMilestone().getEffectiveName());
+        props.put("javaVersion", System.getProperty("java.version"));
+
+        Map<String, Object> resolvedExtraProperties = project.getResolvedExtraProperties();
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_MAJOR), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_MINOR), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_PATCH), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_TAG), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_BUILD), resolvedExtraProperties, props);
+
+        Path output = getOutputDirectory().resolve("output.properties");
+
+        try (FileOutputStream out = new FileOutputStream(output.toFile())) {
+            logger.info("Writing output properties to {}",
+                basedir.relativize(output));
+            props.store(out, "JReleaser " + JReleaserVersion.getPlainVersion());
+        } catch (IOException ignored) {
+            logger.warn("Could not write output properties to {}",
+                basedir.relativize(output));
+        }
+    }
+
+    private void safePut(String key, Map<String, Object> src, Properties props) {
+        if (src.containsKey(key)) {
+            props.put(key, String.valueOf(src.get(key)));
+        }
+    }
+
     public enum Mode {
         ASSEMBLE,
         FULL
+    }
+
+    private static class SortedProperties extends Properties {
+        // Java 11 calls entrySet() when storing properties
+        @Override
+        public Set<Map.Entry<Object, Object>> entrySet() {
+            int javaMajorVersion = Version.javaMajorVersion();
+            if (javaMajorVersion < 11) {
+                return super.entrySet();
+            }
+
+            Map<Object, Object> map = new TreeMap<>();
+            for (Object k : keySet()) {
+                map.put(String.valueOf(k), get(k));
+            }
+            return map.entrySet();
+        }
+
+        // Java 8 calls keys() when storing properties
+        @Override
+        public synchronized Enumeration<Object> keys() {
+            int javaMajorVersion = Version.javaMajorVersion();
+            if (javaMajorVersion >= 11) {
+                return super.keys();
+            }
+
+            Set<Object> keySet = keySet();
+            List<String> keys = new ArrayList<>(keySet.size());
+            for (Object key : keySet) {
+                keys.add(key.toString());
+            }
+            Collections.sort(keys);
+            return new IteratorEnumeration<>(keys.iterator());
+        }
+    }
+
+    private static class IteratorEnumeration<E> implements Enumeration<E> {
+        private final Iterator<? extends E> iterator;
+
+        public IteratorEnumeration(Iterator<? extends E> iterator) {
+            this.iterator = iterator;
+        }
+
+        @Override
+        public boolean hasMoreElements() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public E nextElement() {
+            return iterator.next();
+        }
     }
 }

@@ -62,8 +62,10 @@ abstract class JReleaserConfigTask extends AbstractJReleaserTask {
     void displayConfig() {
         mode = assembly.get() ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.FULL
 
+        JReleaserContext context = createContext()
         println '== JReleaser =='
         new JReleaserModelPrinter(project)
-            .print(createContext().model.asMap(full.get()))
+            .print(context.model.asMap(full.get()))
+        context.report()
     }
 }

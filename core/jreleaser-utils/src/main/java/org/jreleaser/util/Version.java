@@ -140,6 +140,14 @@ public class Version implements Comparable<Version> {
         return compareTo(other) <= 0;
     }
 
+    public static int javaMajorVersion() {
+        String jv = System.getProperty("java.version");
+        if (jv.startsWith("1.")) {
+            jv = jv.substring(2);
+        }
+        return Integer.parseInt(jv.split("\\.")[0]);
+    }
+
     public static Version of(String version) {
         requireNonBlank(version, "Argument 'version' must not be blank");
 
