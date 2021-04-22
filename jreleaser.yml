@@ -34,6 +34,9 @@ distributions:
       active: release
     scoop:
       active: release
+    snap:
+      active: release
+      remoteBuild: true
     jbang:
       active: always
     artifacts:
