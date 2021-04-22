@@ -45,8 +45,8 @@ processResources {
     filesMatching(['**/*.properties']) {
         expand(
             'version': project.version,
-            'id': 'jrleaser',
-            'name': 'jrleaser'
+            'id': 'jreleaser',
+            'name': 'jreleaser'
         )
     }
 }
