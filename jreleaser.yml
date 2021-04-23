@@ -42,6 +42,8 @@ distributions:
     artifacts:
       - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
+      - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tgz
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tgz'
 
   jreleaser-ant-tasks:
     extraProperties:

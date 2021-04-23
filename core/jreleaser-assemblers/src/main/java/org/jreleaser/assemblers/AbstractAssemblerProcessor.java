@@ -148,13 +148,12 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
         props.putAll(assembler.getResolvedExtraProperties());
     }
 
-    protected boolean executeCommand(Path directory, List<String> cmd) throws AssemblerProcessingException {
+    protected boolean executeCommand(ProcessExecutor processExecutor) throws AssemblerProcessingException {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ByteArrayOutputStream err = new ByteArrayOutputStream();
 
-            int exitValue = new ProcessExecutor(cmd)
-                .directory(directory.toFile())
+            int exitValue = processExecutor
                 .redirectOutput(out)
                 .redirectError(err)
                 .execute()
@@ -167,38 +166,20 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
             throw new AssemblerProcessingException("Command execution error. exitValue = " + exitValue);
         } catch (ProcessInitException e) {
             throw new AssemblerProcessingException("Unexpected error", e.getCause());
+        } catch (AssemblerProcessingException e) {
+            throw e;
         } catch (Exception e) {
-            if (e instanceof AssemblerProcessingException) {
-                throw (AssemblerProcessingException) e;
-            }
             throw new AssemblerProcessingException("Unexpected error", e);
         }
     }
 
+    protected boolean executeCommand(Path directory, List<String> cmd) throws AssemblerProcessingException {
+        return executeCommand(new ProcessExecutor(cmd)
+            .directory(directory.toFile()));
+    }
+
     protected boolean executeCommand(List<String> cmd) throws AssemblerProcessingException {
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ByteArrayOutputStream err = new ByteArrayOutputStream();
-
-            int exitValue = new ProcessExecutor(cmd)
-                .redirectOutput(out)
-                .redirectError(err)
-                .execute()
-                .getExitValue();
-
-            info(out);
-            error(err);
-
-            if (exitValue == 0) return true;
-            throw new AssemblerProcessingException("Command execution error. exitValue = " + exitValue);
-        } catch (ProcessInitException e) {
-            throw new AssemblerProcessingException("Unexpected error", e.getCause());
-        } catch (Exception e) {
-            if (e instanceof AssemblerProcessingException) {
-                throw (AssemblerProcessingException) e;
-            }
-            throw new AssemblerProcessingException("Unexpected error", e);
-        }
+        return executeCommand(new ProcessExecutor(cmd));
     }
 
     protected boolean executeCommandCapturing(List<String> cmd, OutputStream out) throws AssemblerProcessingException {

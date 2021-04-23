@@ -31,9 +31,11 @@ import org.jreleaser.util.Version;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessInitException;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -228,12 +230,12 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     protected abstract void fillToolProperties(Map<String, Object> context, Distribution distribution) throws ToolProcessingException;
 
-    protected boolean executeCommand(List<String> cmd) throws ToolProcessingException {
+    protected boolean executeCommand(ProcessExecutor processExecutor) throws ToolProcessingException {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ByteArrayOutputStream err = new ByteArrayOutputStream();
 
-            int exitValue = new ProcessExecutor(cmd)
+            int exitValue = processExecutor
                 .redirectOutput(out)
                 .redirectError(err)
                 .execute()
@@ -246,39 +248,25 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             throw new ToolProcessingException("Command execution error. exitValue = " + exitValue);
         } catch (ProcessInitException e) {
             throw new ToolProcessingException("Unexpected error", e.getCause());
+        } catch (ToolProcessingException e) {
+            throw e;
         } catch (Exception e) {
-            if (e instanceof ToolProcessingException) {
-                throw (ToolProcessingException) e;
-            }
             throw new ToolProcessingException("Unexpected error", e);
         }
     }
 
+    protected boolean executeCommand(Path directory, List<String> cmd) throws ToolProcessingException {
+        return executeCommand(new ProcessExecutor(cmd)
+            .directory(directory.toFile()));
+    }
+
+    protected boolean executeCommand(List<String> cmd) throws ToolProcessingException {
+        return executeCommand(new ProcessExecutor(cmd));
+    }
+
     protected boolean executeCommandWithInput(List<String> cmd, InputStream in) throws ToolProcessingException {
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ByteArrayOutputStream err = new ByteArrayOutputStream();
-
-            int exitValue = new ProcessExecutor(cmd)
-                .redirectOutput(out)
-                .redirectError(err)
-                .redirectInput(in)
-                .execute()
-                .getExitValue();
-
-            info(out);
-            error(err);
-
-            if (exitValue == 0) return true;
-            throw new ToolProcessingException("Command execution error. exitValue = " + exitValue);
-        } catch (ProcessInitException e) {
-            throw new ToolProcessingException("Unexpected error", e.getCause());
-        } catch (Exception e) {
-            if (e instanceof ToolProcessingException) {
-                throw (ToolProcessingException) e;
-            }
-            throw new ToolProcessingException("Unexpected error", e);
-        }
+        return executeCommand(new ProcessExecutor(cmd)
+            .redirectInput(in));
     }
 
     protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {

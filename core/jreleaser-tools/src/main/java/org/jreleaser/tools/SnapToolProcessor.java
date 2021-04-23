@@ -25,12 +25,9 @@ import org.jreleaser.model.Snap;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
-import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,9 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
-import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 
 /**
  * @author Andres Almiray
@@ -54,7 +49,17 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
     @Override
     protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         copyPreparedFiles(distribution, props);
-        return true;
+
+        if (tool.isRemoteBuild()) {
+            return true;
+        }
+
+        if (PlatformUtils.isWindows()) {
+            context.getLogger().debug("must not run on Windows", getToolName());
+            return false;
+        }
+
+        return createSnap(distribution, props);
     }
 
     @Override
@@ -63,24 +68,22 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
             return super.doUploadDistribution(distribution, releaser, props);
         }
 
-        if (PlatformUtils.isWindows()) {
-            context.getLogger().debug("must not run on Windows", getToolName());
-            return false;
-        }
-
         if (context.isDryrun()) {
             context.getLogger().error("dryun is set to true. Skipping");
             return true;
         }
 
-        Path primeDirectory = createPackage(props);
+        if (PlatformUtils.isWindows()) {
+            context.getLogger().debug("must not run on Windows", getToolName());
+            return false;
+        }
 
         if (!login(distribution, props)) {
             context.getLogger().error("could not log into snapcraft store");
             return false;
         }
 
-        return createSnap(distribution, props, primeDirectory);
+        return push(distribution, props);
     }
 
     @Override
@@ -123,39 +126,28 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         writeFile(content, outputFile);
     }
 
-    private Path createPackage(Map<String, Object> props) throws ToolProcessingException {
-        try {
-            Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
-            Path snapDirectory = prepareDirectory.resolve("snap");
-            Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
-            Path primeDirectory = packageDirectory.resolve("prime");
-            Path metaDirectory = primeDirectory.resolve("meta");
-            createDirectoriesWithFullAccess(metaDirectory);
-            if (FileUtils.copyFilesRecursive(context.getLogger(), snapDirectory, metaDirectory)) {
-                Files.move(metaDirectory.resolve("snapcraft.yaml"),
-                    metaDirectory.resolve("snap.yaml"),
-                    REPLACE_EXISTING);
-                return primeDirectory;
-            } else {
-                throw new ToolProcessingException("Could not copy files from " +
-                    prepareDirectory.toAbsolutePath().toString() + " to " +
-                    metaDirectory.toAbsolutePath().toString());
-            }
-        } catch (IOException e) {
-            throw new ToolProcessingException("Unexpected error when creating package", e);
-        }
-    }
-
     private boolean login(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         List<String> cmd = new ArrayList<>();
         cmd.add("snapcraft");
         cmd.add("login");
         cmd.add("--with");
-        cmd.add(distribution.getSnap().getExportedLogin());
+        cmd.add(context.getBasedir().resolve(distribution.getSnap().getExportedLogin()).toAbsolutePath().toString());
         return executeCommand(cmd);
     }
 
-    private boolean createSnap(Distribution distribution, Map<String, Object> props, Path primeDirectory) throws ToolProcessingException {
+    private boolean push(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+        String version = (String) props.get(Constants.KEY_PROJECT_EFFECTIVE_VERSION);
+        String snapName = distribution.getName() + "-" + version + ".snap";
+
+        List<String> cmd = new ArrayList<>();
+        cmd.add("snapcraft");
+        cmd.add("push");
+        cmd.add(snapName);
+        return executeCommand(packageDirectory, cmd);
+    }
+
+    private boolean createSnap(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
         String version = (String) props.get(Constants.KEY_PROJECT_EFFECTIVE_VERSION);
         String snapName = distribution.getName() + "-" + version + ".snap";
@@ -163,9 +155,8 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         List<String> cmd = new ArrayList<>();
         cmd.add("snapcraft");
         cmd.add("snap");
-        cmd.add(primeDirectory.toAbsolutePath().toString());
         cmd.add("--output");
-        cmd.add(packageDirectory.resolve(snapName).toAbsolutePath().toString());
-        return executeCommand(cmd);
+        cmd.add(snapName);
+        return executeCommand(packageDirectory, cmd);
     }
 }

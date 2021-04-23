@@ -1,12 +1,12 @@
 name: {{distributionName}}
-base: {{snapBase}}
 version: {{projectVersion}}
-license: {{projectLicense}}
-grade: {{snapGrade}}
-type: app
-confinement: {{snapConfinement}}
 summary: {{projectDescription}}
 description: {{projectLongDescription}}
+
+grade: {{snapGrade}}
+confinement: {{snapConfinement}}
+base: {{snapBase}}
+type: app
 
 apps:
   {{distributionExecutable}}:

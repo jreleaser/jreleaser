@@ -51,6 +51,10 @@ processResources {
     }
 }
 
+tasks.withType(Tar){
+    compression = Compression.GZIP
+}
+
 task versionFile {
     doLast {
         project.layout.buildDirectory.file('VERSION').get().asFile.text = project.version

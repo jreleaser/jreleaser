@@ -40,7 +40,7 @@ public class Snap extends AbstractRepositoryTool {
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
     private final SnapTap snap = new SnapTap();
-    private String base = "core18";
+    private String base = "core20";
     private String grade = "stable";
     private String confinement = "strict";
     private String exportedLogin;
@@ -54,6 +54,7 @@ public class Snap extends AbstractRepositoryTool {
     public Set<String> getSupportedExtensions() {
         Set<String> set = new LinkedHashSet<>();
         set.add(".tar.gz");
+        set.add(".tgz");
         set.add(".tar");
         return set;
     }
