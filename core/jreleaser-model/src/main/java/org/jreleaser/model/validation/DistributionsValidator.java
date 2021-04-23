@@ -151,8 +151,8 @@ public abstract class DistributionsValidator extends Validator {
     private static boolean validateJava(JReleaserContext context, Distribution distribution, Errors errors) {
         Project project = context.getModel().getProject();
 
-        if (!distribution.getJava().isEnabledSet() && project.getJava().isEnabledSet()) {
-            distribution.getJava().setEnabled(project.getJava().isEnabled());
+        if (!distribution.getJava().isEnabledSet() && project.getJava().isSet()) {
+            distribution.getJava().setEnabled(project.getJava().isSet());
         }
         if (!distribution.getJava().isEnabledSet()) {
             distribution.getJava().setEnabled(distribution.getJava().isSet());
