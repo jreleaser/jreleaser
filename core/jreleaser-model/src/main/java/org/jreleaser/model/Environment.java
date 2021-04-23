@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.config.JReleaserConfigLoader;
+import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.util.Env;
 
 import java.io.FileInputStream;
@@ -26,7 +28,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.ServiceLoader;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -47,31 +51,6 @@ public class Environment implements Domain {
 
     public String getVariable(String key) {
         return props.getProperty(Env.prefix(key));
-    }
-
-    public void initProps(JReleaserContext context) {
-        if (null == props) {
-            props = new Properties();
-
-            String home = System.getenv("JRELEASER_USER_HOME");
-            if (isBlank(home)) {
-                home = System.getProperty("user.home");
-            }
-
-            Path defaultPath = Paths.get(home).resolve(".jreleaser").resolve("config.properties");
-            Path path = isNotBlank(variables) ? context.getBasedir().resolve(variables.trim()) : defaultPath;
-            if (!Files.exists(path)) path = defaultPath;
-            context.getLogger().debug("properties path: {}", path.toAbsolutePath());
-
-            if (Files.exists(path)) {
-                try {
-                    context.getLogger().info("Loading properties from {}", path.toAbsolutePath());
-                    props.load(new FileInputStream(path.toFile()));
-                } catch (IOException e) {
-                    context.getLogger().debug("Could not load properties from {}", path.toAbsolutePath(), e);
-                }
-            }
-        }
     }
 
     public boolean isSet() {
@@ -102,5 +81,56 @@ public class Environment implements Domain {
         map.put("properties", properties);
 
         return map;
+    }
+
+    public void initProps(JReleaserContext context) {
+        if (null == props) {
+            props = new Properties();
+
+            if (isNotBlank(variables)) {
+                loadProperties(context, context.getBasedir().resolve(variables.trim()));
+                return;
+            }
+
+            String home = System.getenv("JRELEASER_USER_HOME");
+            if (isBlank(home)) {
+                home = System.getProperty("user.home");
+            }
+
+            Path configDirectory = Paths.get(home).resolve(".jreleaser");
+            loadProperties(context, resolveConfigFileAt(configDirectory)
+                .orElse(configDirectory.resolve("config.properties")));
+        }
+    }
+
+    private void loadProperties(JReleaserContext context, Path file) {
+        context.getLogger().info("Loading properties from {}", file.toAbsolutePath());
+        if (Files.exists(file)) {
+            try {
+                if (file.getFileName().toString().endsWith(".properties")) {
+                    props.load(new FileInputStream(file.toFile()));
+                } else {
+                    props.putAll(JReleaserConfigLoader.loadProperties(file));
+                }
+            } catch (IOException e) {
+                context.getLogger().debug("Could not load properties from {}", file.toAbsolutePath(), e);
+            }
+        } else {
+            context.getLogger().warn("Properties source {} does not exist", file.toAbsolutePath());
+        }
+    }
+
+    private Optional<Path> resolveConfigFileAt(Path directory) {
+        ServiceLoader<JReleaserConfigParser> parsers = ServiceLoader.load(JReleaserConfigParser.class,
+            JReleaserConfigParser.class.getClassLoader());
+
+        for (JReleaserConfigParser parser : parsers) {
+            Path file = directory.resolve("config." + parser.getPreferredFileExtension());
+            if (Files.exists(file)) {
+                return Optional.of(file);
+            }
+        }
+
+        return Optional.empty();
     }
 }

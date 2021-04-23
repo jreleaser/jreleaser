@@ -25,6 +25,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * @author Andres Almiray
@@ -47,5 +48,11 @@ public class YamlJReleaserConfigParser implements JReleaserConfigParser {
     public JReleaserModel parse(InputStream inputStream) throws IOException {
         YAMLMapper mapper = YAMLMapper.builder().build();
         return mapper.readValue(inputStream, JReleaserModel.class);
+    }
+
+    @Override
+    public Map<String, String> properties(InputStream inputStream) throws IOException {
+        YAMLMapper mapper = YAMLMapper.builder().build();
+        return mapper.readValue(inputStream, Map.class);
     }
 }

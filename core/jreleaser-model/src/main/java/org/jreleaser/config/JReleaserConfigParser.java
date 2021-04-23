@@ -22,6 +22,7 @@ import org.jreleaser.model.JReleaserModel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * Allows external configuration to be parsed with a custom format.
@@ -54,4 +55,15 @@ public interface JReleaserConfigParser {
      * @throws IOException if an error occurs while reading from the {@code InputStream}.
      */
     JReleaserModel parse(InputStream inputStream) throws IOException;
+
+    /**
+     * Reads and parses external configuration into a {@code Map} instance.
+     * The input sorce defines key/values as an alternative to the Java properties format.
+     *
+     * @param inputStream the configuration's input source
+     * @return a {@code Map} instance, should never return {@code null}.
+     * @throws IOException if an error occurs while reading from the {@code InputStream}.
+     * @since 0.2.0
+     */
+    Map<String, String> properties(InputStream inputStream) throws IOException;
 }

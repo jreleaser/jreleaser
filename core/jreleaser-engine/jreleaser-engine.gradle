@@ -17,7 +17,6 @@
  */
 dependencies {
     api project(':jreleaser-model')
-    api project(':jreleaser-config')
     api project(':git-sdk')
 
     // checksum

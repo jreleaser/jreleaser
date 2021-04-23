@@ -23,6 +23,7 @@ import org.jreleaser.model.JReleaserModel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
@@ -43,5 +44,18 @@ public class JReleaserConfigLoader {
             }
         }
         throw new JReleaserException("Unsupported config format. " + configFile);
+    }
+
+    public static Map<String, String> loadProperties(Path file) throws IOException {
+        ServiceLoader<JReleaserConfigParser> parsers = ServiceLoader.load(JReleaserConfigParser.class, JReleaserConfigParser.class.getClassLoader());
+
+        for (JReleaserConfigParser parser : parsers) {
+            if (parser.supports(file)) {
+                try (InputStream inputStream = file.toUri().toURL().openStream()) {
+                    return parser.properties(inputStream);
+                }
+            }
+        }
+        throw new JReleaserException("Unsupported format. " + file);
     }
 }
