@@ -3,7 +3,7 @@
 :project-owner:   jreleaser
 :project-name:    jreleaser
 :project-group:   org.jreleaser
-:project-version: 0.2.0-SNAPSHOT
+:project-version: 0.1.0
 
 image:https://github.com/{project-owner}/{project-name}/workflows/Build/badge.svg["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
 image:https://img.shields.io/maven-central/v/{project-group}/{project-name}.svg[Download, link="https://search.maven.org/#search|ga|1|{project-name}"]

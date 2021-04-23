@@ -7,7 +7,7 @@ on:
 jobs:
   earlyaccess:
     name: "Early Access"
-    if: github.event_name == 'push' && github.repository == 'jreleaser/jreleaser'
+    if: github.repository == 'jreleaser/jreleaser'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
