@@ -19,6 +19,16 @@ plugins {
     id 'application'
 }
 
+application {
+    mainClass = 'org.jreleaser.cli.Main'
+}
+
+jar {
+    manifest {
+        attributes('Main-Class': 'org.jreleaser.cli.Main')
+    }
+}
+
 config {
     info {
         specification { enabled = true }
@@ -37,9 +47,6 @@ dependencies {
     api "org.slf4j:slf4j-api:$slf4jVersion"
     runtimeOnly "org.slf4j:slf4j-simple:$slf4jVersion"
 }
-
-mainClassName = 'org.jreleaser.cli.Main'
-
 processResources {
     inputs.property('version', project.version)
     filesMatching(['**/*.properties']) {
