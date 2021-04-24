@@ -29,7 +29,7 @@ brew install jreleaser/tap/jreleaser
 *scoop*:
 [source]
 ----
-scoop bucket add jreleaser https://github.com/jreleaser/scoop-bucket.git
+scoop bucket add jreleaser https://github.com/jreleaser/scoop-jreleaser.git
 scoop install jreleaser
 ----
 
