@@ -44,11 +44,11 @@ jobs:
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
           GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
         run: |
           ./gradlew -Pversion=${{ github.event.inputs.version }} \
           -Prelease=true -Pfull-release=true \
-          -Pgradle.publish.key=${{ secrets.GRADLE_PUBLISH_KEY }}\
-          -Pgradle.publish.secret=${{ secrets.GRADLE_PUBLISH_SECRET }} \
           -PsonatypeUsername=${{ secrets.SONATYPE_USERNAME }} \
           -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }} \
           build publishToSonatype publishPlugins -S
