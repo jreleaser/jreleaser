@@ -59,7 +59,6 @@ jobs:
           version: early-access
         env:
           JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
-          JRELEASER_MILESTONE_NAME: ${{ github.event.inputs.version }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
