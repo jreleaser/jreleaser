@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -71,7 +72,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         installNativeImage(graalPath);
 
         // run native-image
-        nativeImage(assembleDirectory, graalPath);
+        nativeImage(assembleDirectory, graalPath, jars);
     }
 
     private void installNativeImage(Path graalPath) throws AssemblerProcessingException {
@@ -90,7 +91,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         }
     }
 
-    private Artifact nativeImage(Path assembleDirectory, Path graalPath) throws AssemblerProcessingException {
+    private Artifact nativeImage(Path assembleDirectory, Path graalPath, Set<Path> jars) throws AssemblerProcessingException {
         String finalImageName = assembler.getExecutable();
         context.getLogger().info("- {}", finalImageName);
 
@@ -113,8 +114,13 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         cmd.addAll(assembler.getArgs());
         cmd.add("-jar");
         cmd.add(assembler.getMainJar().getEffectivePath(context).toAbsolutePath().toString());
-        cmd.add("-cp");
-        cmd.add(assembleDirectory.resolve("jar").toAbsolutePath().toString() + File.separator + "*");
+        if (!jars.isEmpty()) {
+            cmd.add("-cp");
+            cmd.add(jars.stream()
+                .map(Path::getFileName)
+                .map(Path::toString)
+                .collect(Collectors.joining(File.pathSeparator)));
+        }
         cmd.add("-H:Name=" + image.getFileName().toString());
         executeCommand(image.getParent(), cmd);
 
