@@ -140,7 +140,10 @@ public abstract class GitServiceValidator extends Validator {
         service.getMilestone().getResolvedName(service.props(context.getModel()));
 
         if (project.isSnapshot()) {
-            service.setReleaseName(StringUtils.capitalize(project.getName()) + " Early-Access");
+            String projectName = StringUtils.getClassNameForLowerCaseHyphenSeparatedName(project.getName());
+            projectName = StringUtils.getNaturalName(projectName);
+            service.setReleaseName(projectName + " Early-Access");
+            service.getChangelog().setEnabled(true);
             service.getChangelog().setExternal(null);
             service.getChangelog().setSort(Changelog.Sort.DESC);
             service.setOverwrite(true);
