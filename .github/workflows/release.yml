@@ -35,7 +35,8 @@ jobs:
             ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: ./gradlew -Pversion=${{ github.event.inputs.version }} \
+        run: |
+          ./gradlew -Pversion=${{ github.event.inputs.version }} \
           -Prelease=true build -S
 
       - name: Deploy
@@ -43,7 +44,8 @@ jobs:
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
           GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: ./gradlew -Pversion=${{ github.event.inputs.version }} \
+        run: |
+          ./gradlew -Pversion=${{ github.event.inputs.version }} \
           -Prelease=true -Pfull-release=true \
           -Pgradle.publish.key=${{ secrets.GRADLE_PUBLISH_KEY }}\
           -Pgradle.publish.secret=${{ secrets.GRADLE_PUBLISH_SECRET }} \
@@ -57,6 +59,7 @@ jobs:
           version: early-access
         env:
           JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
+          JRELEASER_MILESTONE_NAME: ${{ github.event.inputs.version }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
