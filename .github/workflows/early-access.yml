@@ -7,7 +7,7 @@ on:
 jobs:
   earlyaccess:
     name: "Early Access"
-    if: github.repository == 'jreleaser/jreleaser'
+    if: github.repository == 'jreleaser/jreleaser' && startsWith(github.event.head_commit.message, 'Releasing version') != true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

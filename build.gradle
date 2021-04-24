@@ -15,6 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+project.rootProject.ext.theVersion = file('VERSION').text.trim()
+
+allprojects { p ->
+    p.version = p.rootProject.ext.theVersion
+}
+
 config {
     info {
         description = 'jreleaser'
@@ -86,5 +93,3 @@ subprojects {
         useJUnitPlatform()
     }
 }
-
-new File('VERSION').text = project.version

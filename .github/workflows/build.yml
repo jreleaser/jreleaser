@@ -13,8 +13,8 @@ jobs:
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
-    env:
-      CI: true
+    if: startsWith(github.event.head_commit.message, 'Releasing version') != true
+
     steps:
       - uses: actions/checkout@v2
 

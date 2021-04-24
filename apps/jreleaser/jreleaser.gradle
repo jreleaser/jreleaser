@@ -62,18 +62,10 @@ tasks.withType(Tar){
     compression = Compression.GZIP
 }
 
-task versionFile {
-    doLast {
-        project.layout.buildDirectory.file('VERSION').get().asFile.text = project.version
-    }
-}
-
-classes.dependsOn(versionFile)
-
 distributions {
     main {
         contents {
-            from('build') {
+            from('../..') {
                 include 'VERSION'
             }
         }
