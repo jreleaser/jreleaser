@@ -17,6 +17,7 @@
  */
 plugins {
     id 'application'
+    id 'de.undercouch.download'
 }
 
 application {
@@ -47,6 +48,7 @@ dependencies {
     api "org.slf4j:slf4j-api:$slf4jVersion"
     runtimeOnly "org.slf4j:slf4j-simple:$slf4jVersion"
 }
+
 processResources {
     inputs.property('version', project.version)
     filesMatching(['**/*.properties']) {
@@ -71,3 +73,93 @@ distributions {
         }
     }
 }
+
+ext.jdks = [
+    [
+        platform: 'linux',
+        file: 'zulu11.48.21-ca-jdk11.0.11-linux_x64.zip',
+        url: 'https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-linux_x64.zip',
+        checksum: '9d1718ef74c29a8148b67ddd90bc9267fc1614e0a1eb0f4ea16e234e86419a60',
+        tasks: [:]
+    ],
+    [
+        platform: 'windows',
+        file: 'zulu11.48.21-ca-jdk11.0.11-win_x64.zip',
+        url: 'https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-win_x64.zip',
+        checksum: '7bcbaedecca73811f70a5ee89e9258afff9bc009286449d97d9b3105f52a1a3a',
+        tasks: [:]
+    ],
+    [
+        platform: 'osx',
+        file: 'zulu11.48.21-ca-jdk11.0.11-macosx_x64.zip',
+        url: 'https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-macosx_x64.zip',
+        checksum: 'abc3a9696fb6c10efcf3c5878cdb049244b0ba5dcc7141c6f0f88b99df626d2a',
+        tasks: [:]
+    ]
+]
+
+for (jdk in jdks) {
+    def downloadJdk = tasks.create("download${jdk.platform.capitalize()}Jdk".toString(), de.undercouch.gradle.tasks.download.Download) {
+        group = 'Jdks'
+        description = "Download ${jdk.platform.capitalize()} JDK"
+
+        src jdk.url
+        dest project.file("${buildDir}/jdks/${jdk.file}".toString())
+        doFirst {
+            project.file("${buildDir}/jdks/").mkdirs()
+        }
+    }
+    jdk.tasks.download = downloadJdk
+
+    def verifyJdk = tasks.create("verify${jdk.platform.capitalize()}Jdk".toString(), de.undercouch.gradle.tasks.download.Verify) {
+        group = 'Jdks'
+        description = "Verify ${jdk.platform.capitalize()} JDK"
+        dependsOn downloadJdk
+
+        src downloadJdk.dest
+        algorithm 'SHA-256'
+        checksum jdk.checksum
+    }
+    jdk.tasks.verify = verifyJdk
+
+    def unzipJdk = tasks.create("unzip${jdk.platform.capitalize()}Jdk".toString(), Copy) {
+        group = 'Jdks'
+        description = "Unzip ${jdk.platform.capitalize()} JDK"
+        dependsOn verifyJdk
+
+        from zipTree(downloadJdk.dest)
+        into project.file("${buildDir}/jdks".toString())
+    }
+    jdk.tasks.unzip = unzipJdk
+}
+
+def downloadJdks = tasks.create('downloadJdks', DefaultTask) {
+    group = 'Jdks'
+    description = 'Download all JDKs'
+    dependsOn jdks.tasks.download
+}
+
+def verifyJdks = tasks.create('verifyJdks', DefaultTask) {
+    group = 'Jdks'
+    description = 'Verify all JDKs'
+    dependsOn jdks.tasks.verify
+}
+
+def unzipJdks = tasks.create('unzipJdks', DefaultTask) {
+    group = 'Jdks'
+    description = 'Unzip all JDKs'
+    dependsOn jdks.tasks.unzip
+}
+
+def jdksTask = tasks.create('jdks') {
+    group = 'Jdks'
+    description = 'Download, verify, unzips all JDKS'
+    dependsOn downloadJdks, verifyJdks, unzipJdks
+}
+
+copyDependencies {
+    configuration = 'runtimeClasspath'
+}
+
+assembleDist.dependsOn copyDependencies
+assemble.dependsOn jdksTask

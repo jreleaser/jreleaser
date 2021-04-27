@@ -1,7 +1,16 @@
 project:
   name: jreleaser
   description: Release Java projects quickly and easily with JReleaser
-  longDescription: Release Java projects quickly and easily with JReleaser
+  longDescription: |
+    JReleaser is a release automation tool for Java projects. Its goal is to simplify creating releases
+    and publishing artifacts to multiple package managers while providing customizable options.
+
+    JReleaser takes inputs from popular builds tools (Ant, Maven, Gradle) such as JAR files, binary
+    distributions (.zip, .tar), JLink images, or any other file that you’d like to publish as a Git
+    release on popular Git services such as Github or Gitlab. Distribution files can additionally be
+    published to be consumed by popular package managers as Homebrew, Snapcraft, or get ready to be
+    launched via Jbang. Releases may be announced in a variety of channels such as Twitter, Zulip, or SDKMAN!
+
   website: https://jreleaser.org
   authors:
     - Andres Almiray
@@ -26,6 +35,38 @@ announce:
   sdkman:
     active: release
 
+assemble:
+  jlinks:
+    jreleaser-standalone:
+      active: always
+      extraProperties:
+        sdkmanSkip: true
+      java:
+        version: 11
+        mainClass: org.jreleaser.cli.Main
+      imageName: 'jreleaser-standalone-{{projectEffectiveVersion}}'
+      executable: 'jreleaser'
+      moduleNames:
+        - java.base
+        - java.desktop
+        - java.management
+        - java.naming
+        - java.rmi
+        - java.security.jgss
+        - java.sql
+      targetJdks:
+        - path: 'apps/jreleaser/build/jdks/zulu11.48.21-ca-jdk11.0.11-macosx_x64/zulu-11.jdk/Contents/Home'
+          platform: osx
+        - path: 'apps/jreleaser/build/jdks/zulu11.48.21-ca-jdk11.0.11-linux_x64'
+          platform: linux
+        - path: 'apps/jreleaser/build/jdks/zulu11.48.21-ca-jdk11.0.11-win_x64'
+          platform: windows
+      mainJar:
+        path: 'apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
+      jars:
+        - directory: 'apps/jreleaser/build/dependencies/flat'
+          include: '*.jar'
+
 distributions:
   jreleaser:
     java:
@@ -37,6 +78,10 @@ distributions:
     snap:
       active: release
       remoteBuild: true
+      base: core18
+      localPlugs:
+        - network
+        - home
     jbang:
       active: always
     artifacts:

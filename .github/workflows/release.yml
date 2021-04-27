@@ -61,10 +61,20 @@ jobs:
           -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }} \
           build publishToSonatype publishPlugins -S
 
+      - name: Assmble
+        uses: jreleaser/release-action@v1
+        with:
+          version: early-access
+          arguments: assemble
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+
       - name: Release
         uses: jreleaser/release-action@v1
         with:
           version: early-access
+          arguments: full-release
         env:
           JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
