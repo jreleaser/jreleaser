@@ -49,14 +49,16 @@ for %%i in ("%~dp0..") do set "BASEDIR=%%~fi"
 
 set JAVA_HOME="%BASEDIR%"
 
-set JAVACMD="%JAVA_HOME%"\bin\java
+set JAVACMD="%JAVA_HOME%\bin\java"
 
-set CLASSPATH="%BASEDIR%"\jars\*
+set JARSDIRS="%BASEDIR%\jars"
+
+set CLASSPATH="%JARSDIRS%\*"
 
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 
-%JAVACMD% %JAVA_OPTS% -classpath %CLASSPATH% {{distributionJavaMainClass}} %CMD_LINE_ARGS%
+%JAVACMD% %JAVA_OPTS% -cp %CLASSPATH% {{distributionJavaMainClass}} %CMD_LINE_ARGS%
 if %ERRORLEVEL% NEQ 0 goto error
 goto end
 

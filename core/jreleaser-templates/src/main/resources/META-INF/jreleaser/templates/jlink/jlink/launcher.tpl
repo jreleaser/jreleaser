@@ -7,8 +7,11 @@ PRGDIR=`dirname "$PRG"`
 BASEDIR=`cd "$PRGDIR/.." >/dev/null; pwd`
 
 JAVA_HOME=$BASEDIR
+
 JAVACMD="$JAVA_HOME/bin/java"
 
-CLASSPATH="$BASEDIR/jars/*"
+JARSDIR="$BASEDIR/jars"
 
-exec $JAVACMD $JAVA_OPTS -classpath $CLASSPATH {{distributionJavaMainClass}} "$@"
+CLASSPATH="$JARSDIR/*"
+
+exec "$JAVACMD" $JAVA_OPTS -cp "$CLASSPATH" {{distributionJavaMainClass}} "$@"
