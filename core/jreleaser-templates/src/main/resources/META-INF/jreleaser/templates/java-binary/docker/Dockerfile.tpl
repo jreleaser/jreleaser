@@ -8,7 +8,7 @@ LABEL {{.}}
 {{.}}
 {{/dockerPreCommands}}
 
-COPY assembly/{{distributionArtifactFileName}} /{{distributionArtifactFileName}}
+COPY assembly/* /
 
 RUN unzip {{distributionArtifactFileName}} && \
     rm {{distributionArtifactFileName}} && \
