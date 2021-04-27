@@ -58,6 +58,7 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
             this.logger = requireNonNull(logger, "'logger' must not be blank");
         }
 
+        @SuppressWarnings("unchecked")
         protected final S self() {
             return (S) this;
         }

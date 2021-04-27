@@ -62,6 +62,7 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
             this.logger = requireNonNull(logger, "'logger' must not be blank");
         }
 
+        @SuppressWarnings("unchecked")
         protected final S self() {
             return (S) this;
         }

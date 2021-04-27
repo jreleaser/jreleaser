@@ -50,6 +50,7 @@ public class TomlJReleaserConfigParser implements JReleaserConfigParser {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Map<String, String> properties(InputStream inputStream) throws IOException {
         TomlMapper mapper = TomlMapper.builder().build();
         return mapper.readValue(inputStream, Map.class);

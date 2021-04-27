@@ -50,6 +50,7 @@ public class JsonJReleaserConfigParser implements JReleaserConfigParser {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Map<String, String> properties(InputStream inputStream) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(inputStream, Map.class);

@@ -51,6 +51,7 @@ public class YamlJReleaserConfigParser implements JReleaserConfigParser {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Map<String, String> properties(InputStream inputStream) throws IOException {
         YAMLMapper mapper = YAMLMapper.builder().build();
         return mapper.readValue(inputStream, Map.class);
