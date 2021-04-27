@@ -181,6 +181,7 @@ public final class CollectionUtils {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static class MapBuilder<K, V> implements Map<K, V> {
         private final Map<K, V> delegate;
 
@@ -257,6 +258,7 @@ public final class CollectionUtils {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static class ListBuilder<E> implements List<E> {
         private final List<E> delegate;
 
@@ -377,6 +379,7 @@ public final class CollectionUtils {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static class SetBuilder<E> implements Set<E> {
         private final Set<E> delegate;
 
@@ -457,6 +460,7 @@ public final class CollectionUtils {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static class MapToPropertiesAdapter extends Properties {
         private static final long serialVersionUID = -5465075555013344300L;
         private final transient Map<String, Object> map;

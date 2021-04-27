@@ -35,7 +35,7 @@ jobs:
             ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: ./gradlew -Prelease=true build -S --no-build-cache
+        run: ./gradlew -Prelease=true build -S
 
       - name: Version
         id: vars
