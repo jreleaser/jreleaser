@@ -158,6 +158,7 @@ def jdksTask = tasks.create('jdks') {
 }
 
 copyDependencies {
+    dependsOn classes
     configuration = 'runtimeClasspath'
 }
 
