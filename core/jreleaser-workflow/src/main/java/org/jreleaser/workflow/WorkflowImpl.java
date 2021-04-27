@@ -25,6 +25,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jreleaser.util.TimeUtils.formatDuration;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -60,9 +62,9 @@ class WorkflowImpl implements Workflow {
         context.getLogger().reset();
         context.report();
         if (null == exception) {
-            context.getLogger().info("JReleaser succeeded after {}s", String.format("%.3f", duration));
+            context.getLogger().info("JReleaser succeeded after {}", formatDuration(duration));
         } else {
-            context.getLogger().error("JReleaser failed after {}s", String.format("%.3f", duration));
+            context.getLogger().error("JReleaser failed after {}", formatDuration(duration));
             context.getLogger().trace(exception);
             throw exception;
         }

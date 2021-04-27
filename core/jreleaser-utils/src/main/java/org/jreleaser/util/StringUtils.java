@@ -557,4 +557,40 @@ public class StringUtils {
                 return "" + character;
         }
     }
+
+    public static String padLeft(String str, int numChars) {
+        return padLeft(str, numChars, " ");
+    }
+
+    public static String padLeft(String str, int numChars, String padding) {
+        return numChars <= str.length() ? str : getPadding(padding.toString(), numChars - str.length()) + str;
+    }
+
+    public static String padRight(String str, int numChars) {
+        return padRight(str, numChars, " ");
+    }
+
+    public static String padRight(String str, int numChars, String padding) {
+        return numChars <= str.length() ? str : str + getPadding(padding, numChars - str.length());
+    }
+
+    private static String getPadding(String padding, int length) {
+        return padding.length() < length ? times(padding, length / padding.length() + 1).substring(0, length) : "" + padding.subSequence(0, length);
+    }
+
+    public static String times(String str, int num) {
+        if (num < 0) {
+            throw new IllegalArgumentException("times() should be called with a number >= 0, got " + num);
+        } else if (num == 0) {
+            return "";
+        } else {
+            StringBuilder b = new StringBuilder(str);
+
+            for(int i = 1; i < num; ++i) {
+                b.append(str);
+            }
+
+            return b.toString();
+        }
+    }
 }
