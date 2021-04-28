@@ -10,10 +10,19 @@ LABEL {{.}}
 
 COPY assembly/* /
 
-RUN chmod +x /{{distributionExecutable}}
+RUN mkdir -p /{{distributionName}}/bin && \
+    mkdir -p /{{distributionName}}/lib && \
+    mv /{{distributionExecutable}} /{{distributionName}}/bin && \
+    chmod +x /{{distributionName}}/bin/{{distributionExecutable}} && \
+    mv /{{distributionExecutable}}-entrypoint.sh /{{distributionName}}/bin && \
+    chmod +x /{{distributionName}}/bin/{{distributionExecutable}}-entrypoint.sh && \
+    mv /{{artifactFileName}} /{{distributionName}}/lib
+
+ENV PATH="${PATH}:/{{distributionName}}/bin"
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENTRYPOINT ["/{{distributionExecutable}}"]
+ENTRYPOINT ["/{{distributionName}}/bin/{{distributionExecutable}}-entrypoint.sh"]
+CMD ["/{{distributionName}}/bin/{{distributionExecutable}}"]
