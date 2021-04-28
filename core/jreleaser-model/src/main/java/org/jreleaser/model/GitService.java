@@ -41,6 +41,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     public static final String OVERWRITE = "OVERWRITE";
     public static final String UPDATE = "UPDATE";
     public static final String PRERELEASE = "PRERELEASE";
+    public static final String DRAFT = "DRAFT";
     public static final String SKIP_TAG = "SKIP_TAG";
     public static final String BRANCH = "BRANCH";
 

@@ -22,6 +22,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.GitService.BRANCH;
+import static org.jreleaser.model.GitService.DRAFT;
 import static org.jreleaser.model.GitService.PRERELEASE;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -58,6 +59,19 @@ public abstract class GiteaValidator extends GitServiceValidator {
                     "gitea.prerelease",
                     null,
                     false));
+        }
+
+        if (!gitea.isDraftSet()) {
+            gitea.setDraft(
+                checkProperty(context.getModel().getEnvironment(),
+                    DRAFT,
+                    "gitea.draft",
+                    null,
+                    false));
+        }
+
+        if (gitea.isDraft()) {
+            gitea.getMilestone().setClose(false);
         }
 
         return gitea.isEnabled();

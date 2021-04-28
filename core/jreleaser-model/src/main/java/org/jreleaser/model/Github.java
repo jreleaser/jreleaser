@@ -27,7 +27,7 @@ public class Github extends GitService {
     public static final String NAME = "github";
 
     private String targetCommitish;
-    private boolean draft;
+    private Boolean draft;
     private Boolean prerelease;
 
     public Github() {
@@ -58,11 +58,15 @@ public class Github extends GitService {
     }
 
     public boolean isDraft() {
-        return draft;
+        return draft != null && draft;
     }
 
-    public void setDraft(boolean draft) {
+    public void setDraft(Boolean draft) {
         this.draft = draft;
+    }
+
+    public boolean isDraftSet() {
+        return draft != null;
     }
 
     public boolean isPrerelease() {
@@ -96,7 +100,7 @@ public class Github extends GitService {
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = super.asMap(full);
         map.put("targetCommitish", targetCommitish);
-        map.put("draft", draft);
+        map.put("draft", isDraft());
         map.put("prerelease", isPrerelease());
         return map;
     }

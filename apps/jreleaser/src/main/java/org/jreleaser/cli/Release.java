@@ -77,6 +77,10 @@ public class Release extends AbstractModelCommand {
         description = "If the release is a prerelease.")
     boolean prerelease;
 
+    @CommandLine.Option(names = {"--draft"},
+        description = "If the release is a draft.")
+    boolean draft;
+
     @CommandLine.Option(names = {"--overwrite"},
         description = "Overwrite an existing release.")
     boolean overwrite;
@@ -162,6 +166,7 @@ public class Release extends AbstractModelCommand {
         if (update) logger.info("- release.update: true");
         if (skipTag) logger.info("- release.skipTag: true");
         if (prerelease) logger.info("- release.prerelease: true");
+        if (draft) logger.info("- release.draft: true");
         if (isNotBlank(changelog)) logger.info(" - release.changelog: {}", changelog);
         if (isNotBlank(commitAuthorName)) logger.info("- release.commitAuthor.name: {}", commitAuthorName);
         if (isNotBlank(commitAuthorEmail)) logger.info("- release.commitAuthor.email: {}", commitAuthorEmail);
@@ -186,6 +191,7 @@ public class Release extends AbstractModelCommand {
                 case GITHUB:
                     service = new Github();
                     ((Github) service).setPrerelease(prerelease);
+                    ((Github) service).setDraft(draft);
                     break;
                 case GITLAB:
                     service = new Gitlab();

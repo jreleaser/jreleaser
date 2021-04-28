@@ -22,6 +22,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.GitService.BRANCH;
+import static org.jreleaser.model.GitService.DRAFT;
 import static org.jreleaser.model.GitService.PRERELEASE;
 
 /**
@@ -53,6 +54,19 @@ public abstract class GithubValidator extends GitServiceValidator {
                     "github.prerelease",
                     null,
                     false));
+        }
+
+        if (!github.isDraftSet()) {
+            github.setDraft(
+                checkProperty(context.getModel().getEnvironment(),
+                    DRAFT,
+                    "github.draft",
+                    null,
+                    false));
+        }
+
+        if (github.isDraft()) {
+            github.getMilestone().setClose(false);
         }
 
         return github.isEnabled();
