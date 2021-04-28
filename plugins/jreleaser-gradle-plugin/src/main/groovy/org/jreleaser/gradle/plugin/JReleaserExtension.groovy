@@ -26,6 +26,7 @@ import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Assemble
 import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Environment
+import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
@@ -62,7 +63,7 @@ interface JReleaserExtension {
 
     void project(Action<? super Project> action)
 
-    void file(Action<? super Artifact> action)
+    void files(Action<? super Files> action)
 
     void release(Action<? super Release> action)
 

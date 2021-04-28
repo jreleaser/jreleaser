@@ -61,7 +61,7 @@ jobs:
           -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }} \
           build publishToSonatype publishPlugins -S
 
-      - name: Assmble
+      - name: Assemble
         uses: jreleaser/release-action@v1
         with:
           version: early-access

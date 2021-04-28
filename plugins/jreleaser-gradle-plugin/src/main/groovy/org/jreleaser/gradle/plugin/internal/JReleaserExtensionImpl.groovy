@@ -28,18 +28,18 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Announce
-import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Assemble
 import org.jreleaser.gradle.plugin.dsl.Environment
+import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
 import org.jreleaser.gradle.plugin.dsl.Signing
 import org.jreleaser.gradle.plugin.internal.dsl.AnnounceImpl
-import org.jreleaser.gradle.plugin.internal.dsl.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.AssembleImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.EnvironmentImpl
+import org.jreleaser.gradle.plugin.internal.dsl.FilesImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl
@@ -66,7 +66,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final AnnounceImpl announce
     final AssembleImpl assemble
     final SigningImpl signing
-    final NamedDomainObjectContainer<ArtifactImpl> files
+    final FilesImpl files
     final NamedDomainObjectContainer<DistributionImpl> distributions
 
     @Inject
@@ -84,14 +84,8 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         announce = objects.newInstance(AnnounceImpl, objects)
         assemble = objects.newInstance(AssembleImpl, objects)
         signing = objects.newInstance(SigningImpl, objects)
-        files = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
-            @Override
-            ArtifactImpl create(String name) {
-                ArtifactImpl artifact = objects.newInstance(ArtifactImpl, objects)
-                artifact.name = name
-                artifact
-            }
-        })
+        files = objects.newInstance(FilesImpl, objects)
+
         distributions = objects.domainObjectContainer(DistributionImpl, new NamedDomainObjectFactory<DistributionImpl>() {
             @Override
             DistributionImpl create(String name) {
@@ -113,9 +107,8 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
-    void file(Action<? super Artifact> action) {
-        ArtifactImpl artifact = files.maybeCreate("file-${files.size()}".toString())
-        action.execute(artifact)
+    void files(Action<? super Files> action) {
+        action.execute(files)
     }
 
     @Override
@@ -153,9 +146,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.announce = announce.toModel()
         jreleaser.assemble = assemble.toModel()
         jreleaser.signing = signing.toModel()
-        for (ArtifactImpl file : files) {
-            jreleaser.files.add(file.toModel())
-        }
+        jreleaser.files = files.toModel()
         jreleaser.distributions = (distributions.toList().stream()
             .collect(Collectors.toMap(
                 { DistributionImpl d -> d.name },
