@@ -23,6 +23,7 @@ release:
   github:
     username: aalmiray
     overwrite: true
+    draft: false
     sign: true
 
 signing:

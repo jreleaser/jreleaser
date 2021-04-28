@@ -64,15 +64,16 @@ public class GitlabReleaser implements Releaser {
 
             context.getLogger().debug("looking up release with tag {} at repository {}", tagName, gitlab.getCanonicalRepoName());
             Release release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), tagName);
+            boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
                 context.getLogger().debug("release {} exists", tagName);
-                if (gitlab.isOverwrite()) {
+                if (gitlab.isOverwrite() || snapshot) {
                     context.getLogger().debug("deleting release {}", tagName);
                     if (!context.isDryrun()) {
                         api.deleteRelease(gitlab.getOwner(), gitlab.getName(), tagName);
                     }
                     context.getLogger().debug("creating release {}", tagName);
-                    createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
+                    createRelease(api, tagName, changelog, true);
                 } else if (gitlab.isUpdate()) {
                     context.getLogger().debug("updating release {}", tagName);
                     if (!context.isDryrun()) {
@@ -86,7 +87,7 @@ public class GitlabReleaser implements Releaser {
             } else {
                 context.getLogger().debug("release {} does not exist", tagName);
                 context.getLogger().debug("creating release {}", tagName);
-                createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
+                createRelease(api, tagName, changelog, snapshot);
             }
         } catch (IOException | IllegalStateException e) {
             context.getLogger().trace(e);

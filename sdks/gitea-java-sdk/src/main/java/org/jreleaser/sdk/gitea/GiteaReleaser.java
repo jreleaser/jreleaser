@@ -63,15 +63,16 @@ public class GiteaReleaser implements Releaser {
 
             context.getLogger().debug("looking up release with tag {} at repository {}", tagName, gitea.getCanonicalRepoName());
             GtRelease release = api.findReleaseByTag(gitea.getOwner(), gitea.getName(), tagName);
+            boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
                 context.getLogger().debug("release {} exists", tagName);
-                if (gitea.isOverwrite()) {
+                if (gitea.isOverwrite() || snapshot) {
                     context.getLogger().debug("deleting release {}", tagName);
                     if (!context.isDryrun()) {
                         api.deleteRelease(gitea.getOwner(), gitea.getName(), tagName, release.getId());
                     }
                     context.getLogger().debug("creating release {}", tagName);
-                    createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
+                    createRelease(api, tagName, changelog, true);
                 } else if (gitea.isUpdate()) {
                     context.getLogger().debug("updating release {}", tagName);
                     if (!context.isDryrun()) {
@@ -84,7 +85,7 @@ public class GiteaReleaser implements Releaser {
             } else {
                 context.getLogger().debug("release {} does not exist", tagName);
                 context.getLogger().debug("creating release {}", tagName);
-                createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
+                createRelease(api, tagName, changelog, snapshot);
             }
         } catch (IOException | IllegalStateException e) {
             context.getLogger().trace(e);

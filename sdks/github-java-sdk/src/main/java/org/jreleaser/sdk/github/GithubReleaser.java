@@ -62,18 +62,21 @@ public class GithubReleaser implements Releaser {
 
             context.getLogger().debug("looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
             GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);
+            boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
                 context.getLogger().debug("release {} exists", tagName);
-                if (github.isOverwrite()) {
+                if (github.isOverwrite() || snapshot) {
                     context.getLogger().debug("deleting release {}", tagName);
                     if (!context.isDryrun()) {
                         release.delete();
                     }
                     context.getLogger().debug("creating release {}", tagName);
-                    createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
+                    createRelease(api, tagName, changelog, true);
                 } else if (github.isUpdate()) {
                     context.getLogger().debug("updating release {}", tagName);
-                    if (!context.isDryrun()) api.uploadAssets(release, assets);
+                    if (!context.isDryrun()) {
+                        api.uploadAssets(release, assets);
+                    }
                 } else {
                     throw new IllegalStateException("Github release failed because release " +
                         tagName + " already exists. overwrite = false; update = false");
@@ -81,7 +84,7 @@ public class GithubReleaser implements Releaser {
             } else {
                 context.getLogger().debug("release {} does not exist", tagName);
                 context.getLogger().debug("creating release {}", tagName);
-                createRelease(api, tagName, changelog, context.getModel().getProject().isSnapshot());
+                createRelease(api, tagName, changelog, snapshot);
             }
         } catch (IOException | IllegalStateException e) {
             context.getLogger().trace(e);
