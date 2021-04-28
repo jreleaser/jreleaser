@@ -1,6 +1,6 @@
 ---
-name: Custom issue template
-about: Custom issue template
+name: Issue
+about: Report an issue
 title: ''
 labels: ''
 assignees: ''
@@ -10,9 +10,12 @@ assignees: ''
 <!--
 Thank you for reporting an issue, please review the task list below before submitting the
 issue. Your issue report may be closed if the issue is incomplete and the below tasks not completed.
--->
 
 NOTE: If you are unsure about something and the issue is more of a question a better place to ask questions is on our Discussions space (https://github.com/jreleaser/jreleaser/discussions) or at Stack Overflow (https://stackoverflow.com/tags/jreleaser. Please DO NOT use the issue tracker to ask questions.
+
+Documentation issues should be posted to https://github.com/jreleaser/jreleaser.github.io/issues
+
+-->
 
 ### Task List
 
