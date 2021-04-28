@@ -157,6 +157,25 @@ def jdksTask = tasks.create('jdks') {
     dependsOn downloadJdks, verifyJdks, unzipJdks
 }
 
+def copyJdksToCache = tasks.create('copyJdksToCache', Copy) {
+    group = 'Jdks'
+    description = 'Copy JDK zips to Gradle cache'
+    dependsOn jdks.tasks.download
+    from(jdks.tasks.download.dest)
+    into(file("${gradle.gradleUserHomeDir}/caches/jdks"))
+}
+
+jdksTask.finalizedBy(copyJdksToCache)
+
+def copyJdksFromCache = tasks.create('copyJdksFromCache', Copy) {
+    group = 'Jdks'
+    description = 'Copy JDKs from Gradle cache'
+    file("${gradle.gradleUserHomeDir}/caches/jdks").listFiles().each {jdkZip ->
+        from(zipTree(jdkZip))
+        into project.file("${buildDir}/jdks/")
+    }
+}
+
 copyDependencies {
     dependsOn classes
     inputs.files(configurations.runtimeClasspath)
@@ -164,4 +183,8 @@ copyDependencies {
 }
 
 assemble.dependsOn copyDependencies
-assemble.dependsOn jdksTask
+if (file("${gradle.gradleUserHomeDir}/caches/jdks").exists()) {
+    assemble.dependsOn copyJdksFromCache
+} else {
+    assemble.dependsOn jdksTask
+}
