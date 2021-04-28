@@ -1,3 +1,3 @@
 #!/bin/sh
 
-$JAVA_HOME/bin/java -jar $JAVA_OPTS /{{artifactFileName}} "$@"
+$JAVA_HOME/bin/java $JAVA_OPTS -jar /{{distributionName}}/lib/{{artifactFileName}} "$@"
