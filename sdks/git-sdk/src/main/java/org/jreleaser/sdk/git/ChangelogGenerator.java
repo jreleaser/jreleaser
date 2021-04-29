@@ -27,26 +27,38 @@ import org.jreleaser.model.Changelog;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.Version;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static java.lang.System.lineSeparator;
 import static org.jreleaser.model.GitService.TAG_EARLY_ACCESS;
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.MustacheUtils.passThrough;
+import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.stripMargin;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class ChangelogGenerator {
+    private static final String UNCATEGORIZED = "<<UNCATEGORIZED>>";
+
     public static String generate(JReleaserContext context) throws IOException {
         if (!context.getModel().getRelease().getGitService().getChangelog().isEnabled()) {
             return "";
@@ -60,9 +72,9 @@ public class ChangelogGenerator {
         Changelog changelog = gitService.getChangelog();
         String commitsUrl = gitService.getResolvedCommitUrl(context.getModel());
 
-        String separator = System.lineSeparator();
+        String separator = lineSeparator();
         if (Gitlab.NAME.equals(gitService.getServiceName())) {
-            separator += System.lineSeparator();
+            separator += lineSeparator();
         }
         String commitSeparator = separator;
 
@@ -77,9 +89,13 @@ public class ChangelogGenerator {
             }
             context.getLogger().debug("sorting commits {}", changelog.getSort());
 
-            return "## Changelog" +
-                System.lineSeparator() +
-                System.lineSeparator() +
+            if (changelog.resolveFormatted(context.getModel().getProject())) {
+                return formatChangelog(changelog, commits, revCommitComparator, commitSeparator);
+            }
+
+            return "# Changelog" +
+                lineSeparator() +
+                lineSeparator() +
                 StreamSupport.stream(commits.spliterator(), false)
                     .sorted(revCommitComparator)
                     .map(commit -> formatCommit(commit, commitsUrl, changelog, commitSeparator))
@@ -92,7 +108,7 @@ public class ChangelogGenerator {
     private static String formatCommit(RevCommit commit, String commitsUrl, Changelog changelog, String commitSeparator) {
         String commitHash = commit.getId().name();
         String abbreviation = commit.getId().abbreviate(7).name();
-        String[] input = commit.getFullMessage().trim().split(System.lineSeparator());
+        String[] input = commit.getFullMessage().trim().split(lineSeparator());
 
         List<String> lines = new ArrayList<>();
 
@@ -155,5 +171,130 @@ public class ChangelogGenerator {
         }
 
         return git.log().add(head).call();
+    }
+
+    private static String formatChangelog(Changelog changelog,
+                                          Iterable<RevCommit> commits,
+                                          Comparator<RevCommit> revCommitComparator,
+                                          String lineSeparator) {
+        Set<String> contributorNames = new LinkedHashSet<>();
+        Map<String, List<Commit>> categories = new LinkedHashMap<>();
+
+        StreamSupport.stream(commits.spliterator(), false)
+            .sorted(revCommitComparator)
+            .map(Commit::of)
+            .peek(c -> {
+                contributorNames.add(c.author);
+                if (isNotBlank(c.committer)) contributorNames.add(c.committer);
+            })
+            .peek(c -> applyLabels(c, changelog.getLabelers()))
+            .filter(c -> checkLabels(c, changelog))
+            .forEach(commit -> categories
+                .computeIfAbsent(categorize(commit, changelog), k -> new ArrayList<>())
+                .add(commit));
+
+        StringBuilder changes = new StringBuilder();
+        categories.forEach((category, cs) -> {
+            if (!UNCATEGORIZED.equals(category)) {
+                changes.append("## ")
+                    .append(category)
+                    .append(lineSeparator);
+            }
+            changes.append(cs.stream()
+                .map(c -> applyTemplate(changelog.getChange(), c.asContext()))
+                .collect(Collectors.joining(lineSeparator)))
+                .append(lineSeparator)
+                .append(lineSeparator());
+        });
+
+        StringBuilder contributors = new StringBuilder("## Contributors")
+            .append(lineSeparator)
+            .append(String.join(", ", contributorNames))
+            .append(lineSeparator);
+
+        Map<String, Object> context = new LinkedHashMap<>();
+        context.put("changes", passThrough(changes.toString()));
+        context.put("contributors", passThrough(contributors.toString()));
+
+        return applyReplacers(changelog, applyTemplate(stripMargin(changelog.getTemplate()), context));
+    }
+
+    private static String applyReplacers(Changelog changelog, String text) {
+        for (Changelog.Replacer replacer : changelog.getReplacers()) {
+            text = text.replaceAll(replacer.getSearch(), replacer.getReplace());
+        }
+
+        return text;
+    }
+
+    private static String categorize(Commit commit, Changelog changelog) {
+        if (!commit.labels.isEmpty()) {
+            for (Changelog.Category category : changelog.getCategories()) {
+                if (CollectionUtils.intersects(category.getLabels(), commit.labels)) {
+                    return category.getTitle();
+                }
+            }
+        }
+
+        return UNCATEGORIZED;
+    }
+
+    private static void applyLabels(Commit commit, Set<Changelog.Labeler> labelers) {
+        for (Changelog.Labeler labeler : labelers) {
+            if (isNotBlank(labeler.getTitle())) {
+                if (commit.title.contains(labeler.getTitle()) || commit.title.matches(labeler.getTitle())) {
+                    commit.labels.add(labeler.getLabel());
+                }
+            }
+            if (isNotBlank(labeler.getBody())) {
+                if (commit.body.contains(labeler.getBody()) || commit.body.matches(labeler.getBody())) {
+                    commit.labels.add(labeler.getLabel());
+                }
+            }
+        }
+    }
+
+    private static boolean checkLabels(Commit commit, Changelog changelog) {
+        if (!changelog.getIncludeLabels().isEmpty()) {
+            return CollectionUtils.intersects(changelog.getIncludeLabels(), commit.labels);
+        }
+
+        if (!changelog.getExcludeLabels().isEmpty()) {
+            return !CollectionUtils.intersects(changelog.getExcludeLabels(), commit.labels);
+        }
+
+        return true;
+    }
+
+    private static class Commit {
+        private final Set<String> labels = new LinkedHashSet<>();
+        private String fullHash;
+        private String shortHash;
+        private String title;
+        private String body;
+        private String author;
+        private String committer;
+        private int time;
+
+        Map<String, Object> asContext() {
+            Map<String, Object> context = new LinkedHashMap<>();
+            context.put("commitFullHash", fullHash);
+            context.put("commitShortHash", shortHash);
+            context.put("commitTitle", passThrough(title));
+            context.put("commitAuthor", passThrough(author));
+            return context;
+        }
+
+        static Commit of(RevCommit rc) {
+            Commit c = new Commit();
+            c.fullHash = rc.getId().name();
+            c.shortHash = rc.getId().abbreviate(7).name();
+            c.title = rc.getShortMessage();
+            c.body = rc.getFullMessage();
+            c.author = rc.getAuthorIdent().getName();
+            c.committer = rc.getCommitterIdent().getName();
+            c.time = rc.getCommitTime();
+            return c;
+        }
     }
 }

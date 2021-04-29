@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Active;
 import org.jreleaser.model.Changelog;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -25,6 +26,7 @@ import org.jreleaser.model.Project;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.StringUtils;
 
+import static java.lang.System.lineSeparator;
 import static org.jreleaser.model.GitService.OVERWRITE;
 import static org.jreleaser.model.GitService.RELEASE_NAME;
 import static org.jreleaser.model.GitService.SKIP_TAG;
@@ -32,6 +34,7 @@ import static org.jreleaser.model.GitService.TAG_NAME;
 import static org.jreleaser.model.GitService.UPDATE;
 import static org.jreleaser.model.Milestone.MILESTONE_NAME;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -152,6 +155,73 @@ public abstract class GitServiceValidator extends Validator {
         if (mode == JReleaserContext.Mode.FULL) {
             if (service.isSign() && !model.getSigning().isEnabled()) {
                 errors.configuration(service.getServiceName() + ".sign is set to `true` but signing is not enabled");
+            }
+
+            validateChangelog(context, service, errors);
+        }
+    }
+
+    private static void validateChangelog(JReleaserContext context, GitService service, Errors errors) {
+        Changelog changelog = service.getChangelog();
+
+        if (isNotBlank(changelog.getExternal())) {
+            changelog.setFormatted(Active.NEVER);
+        }
+
+        if (!changelog.resolveFormatted(context.getModel().getProject())) return;
+
+        if (isBlank(changelog.getChange())) {
+            changelog.setChange("- {{commitShortHash}} {{commitTitle}} ({{commitAuthor}})");
+        }
+
+        if (isBlank(changelog.getTemplate())) {
+            changelog.setTemplate(lineSeparator() + "# Changelog" +
+                lineSeparator() + lineSeparator() + "{{changes}}" +
+                lineSeparator() + "    {{contributors}}");
+        }
+
+        if (changelog.getCategories().isEmpty()) {
+            changelog.getCategories().add(Changelog.Category.of("\uD83D\uDE80 Features", "feature", "enhancement"));
+            changelog.getCategories().add(Changelog.Category.of("\uD83D\uDC1B Bug Fixes", "bug", "fix"));
+        } else {
+            int i = 0;
+            for (Changelog.Category category : changelog.getCategories()) {
+                if (isBlank(category.getTitle())) {
+                    errors.configuration(service.getServiceName() + ".changelog.categories[" + i + "].title is missing");
+                }
+                if (category.getLabels().isEmpty()) {
+                    errors.configuration(service.getServiceName() + ".changelog.categories[" + i + "].labels are missing");
+                }
+
+                i++;
+            }
+        }
+
+        if (!changelog.getLabelers().isEmpty()) {
+            int i = 0;
+            for (Changelog.Labeler labeler : changelog.getLabelers()) {
+                if (isBlank(labeler.getLabel())) {
+                    errors.configuration(service.getServiceName() + ".changelog.labelers[" + i + "].label is missing");
+                }
+                if (isBlank(labeler.getTitle()) && isBlank(labeler.getBody())) {
+                    errors.configuration(service.getServiceName() + ".changelog.labelers[" + i + "] title or body is required");
+                }
+
+                i++;
+            }
+        }
+
+        if (!changelog.getReplacers().isEmpty()) {
+            int i = 0;
+            for (Changelog.Replacer replacer : changelog.getReplacers()) {
+                if (isBlank(replacer.getSearch())) {
+                    errors.configuration(service.getServiceName() + ".changelog.replacers[" + i + "].search is missing");
+                }
+                if (null == replacer.getReplace()) {
+                    errors.configuration(service.getServiceName() + ".changelog.replacers[" + i + "].replace is missing");
+                }
+
+                i++;
             }
         }
     }

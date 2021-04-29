@@ -24,12 +24,16 @@ import com.github.mustachejava.MustacheFactory;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
+import static java.lang.System.lineSeparator;
+import static java.util.stream.Collectors.joining;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -63,6 +67,14 @@ public final class MustacheUtils {
 
     public static String applyTemplate(Reader reader, Map<String, Object> context) {
         return applyTemplate(reader, context, UUID.randomUUID().toString()).trim();
+    }
+
+    public static String applyTemplate(String template, Map<String, Object> context, String templateName) {
+        return applyTemplate(new StringReader(template), context, templateName);
+    }
+
+    public static String applyTemplate(String template, Map<String, Object> context) {
+        return applyTemplate(new StringReader(template), context, UUID.randomUUID().toString()).trim();
     }
 
     public static String passThrough(String str) {

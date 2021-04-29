@@ -204,10 +204,52 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Changelog convertChangelog(Changelog changelog) {
         org.jreleaser.model.Changelog c = new org.jreleaser.model.Changelog();
-        c.setEnabled(changelog.isEnabled());
+        if (changelog.isEnabledSet()) c.setEnabled(changelog.isEnabled());
         c.setSort(changelog.getSort().name());
         c.setExternal(changelog.getExternal());
+        c.setFormatted(changelog.resolveFormatted());
+        c.getIncludeLabels().addAll(changelog.getIncludeLabels());
+        c.getExcludeLabels().addAll(changelog.getExcludeLabels());
+        c.setChange(changelog.getChange());
+        c.setTemplate(changelog.getTemplate());
+        c.setCategories(convertCategories(changelog.getCategories()));
+        c.setLabelers(convertLabelers(changelog.getLabelers()));
+        c.setReplacers(convertReplacers(changelog.getReplacers()));
         return c;
+    }
+
+    private static Set<org.jreleaser.model.Changelog.Category> convertCategories(Set<Changelog.Category> categories) {
+        Set<org.jreleaser.model.Changelog.Category> set = new LinkedHashSet<>();
+        for (Changelog.Category category : categories) {
+            org.jreleaser.model.Changelog.Category c = new org.jreleaser.model.Changelog.Category();
+            c.setTitle(category.getTitle());
+            c.setLabels(category.getLabels());
+            set.add(c);
+        }
+        return set;
+    }
+
+    private static Set<org.jreleaser.model.Changelog.Labeler> convertLabelers(Set<Changelog.Labeler> labelers) {
+        Set<org.jreleaser.model.Changelog.Labeler> set = new LinkedHashSet<>();
+        for (Changelog.Labeler labeler : labelers) {
+            org.jreleaser.model.Changelog.Labeler l = new org.jreleaser.model.Changelog.Labeler();
+            l.setLabel(labeler.getLabel());
+            l.setTitle(labeler.getTitle());
+            l.setBody(labeler.getBody());
+            set.add(l);
+        }
+        return set;
+    }
+
+    private static Set<org.jreleaser.model.Changelog.Replacer> convertReplacers(Set<Changelog.Replacer> replacers) {
+        Set<org.jreleaser.model.Changelog.Replacer> set = new LinkedHashSet<>();
+        for (Changelog.Replacer replacer : replacers) {
+            org.jreleaser.model.Changelog.Replacer r = new org.jreleaser.model.Changelog.Replacer();
+            r.setSearch(replacer.getSearch());
+            r.setReplace(replacer.getReplace());
+            set.add(r);
+        }
+        return set;
     }
 
     private static org.jreleaser.model.Milestone convertMilestone(Milestone milestone) {

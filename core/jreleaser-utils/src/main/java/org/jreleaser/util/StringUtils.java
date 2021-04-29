@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import static java.lang.System.lineSeparator;
+import static java.util.stream.Collectors.joining;
 
 /**
  * @author Andres Almiray
@@ -592,5 +596,11 @@ public class StringUtils {
 
             return b.toString();
         }
+    }
+
+    public static String stripMargin(String str) {
+        return Stream.of(str.split(lineSeparator()))
+            .map(String::trim)
+            .collect(joining(lineSeparator()));
     }
 }

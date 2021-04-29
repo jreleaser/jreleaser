@@ -18,8 +18,11 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
+import org.jreleaser.model.Active
 
 /**
  *
@@ -37,4 +40,46 @@ interface Changelog {
     RegularFileProperty getExternal()
 
     void setSort(String sort)
+
+    Property<Active> getFormatted()
+
+    void setFormatted(String str)
+
+    Property<String> getChange()
+
+    Property<String> getTemplate()
+
+    SetProperty<String> getIncludeLabels()
+
+    SetProperty<String> getExcludeLabels()
+
+    void includeLabel(String label)
+
+    void excludeLabel(String label)
+
+    void category(Action<? super Category> action)
+
+    void labeler(Action<? super Labeler> action)
+
+    void replacer(Action<? super Replacer> action)
+
+    interface Category {
+        Property<String> getTitle()
+
+        SetProperty<String> getLabels()
+    }
+
+    interface Labeler {
+        Property<String> getLabel()
+
+        Property<String> getTitle()
+
+        Property<String> getBody()
+    }
+
+    interface Replacer {
+        Property<String> getSearch()
+
+        Property<String> getReplace()
+    }
 }

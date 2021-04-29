@@ -18,14 +18,19 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Changelog
+import org.jreleaser.model.Active
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -38,13 +43,36 @@ class ChangelogImpl implements Changelog {
     final Property<Boolean> links
     final Property<org.jreleaser.model.Changelog.Sort> sort
     final RegularFileProperty external
+    final Property<Active> formatted
+    final Property<String> change
+    final Property<String> template
+    final SetProperty<String> includeLabels
+    final SetProperty<String> excludeLabels
+
+    private final Set<CategoryImpl> categories = []
+    private final Set<LabelerImpl> labelers = []
+    private final Set<ReplacerImpl> replacers = []
+    private final ObjectFactory objects
 
     @Inject
     ChangelogImpl(ObjectFactory objects) {
+        this.objects = objects
         enabled = objects.property(Boolean).convention(Providers.notDefined())
         links = objects.property(Boolean).convention(Providers.notDefined())
         sort = objects.property(org.jreleaser.model.Changelog.Sort).convention(Providers.notDefined())
         external = objects.fileProperty().convention(Providers.notDefined())
+        formatted = objects.property(Active).convention(Providers.notDefined())
+        change = objects.property(String).convention(Providers.notDefined())
+        template = objects.property(String).convention(Providers.notDefined())
+        includeLabels = objects.setProperty(String).convention(Providers.notDefined())
+        excludeLabels = objects.setProperty(String).convention(Providers.notDefined())
+    }
+
+    @Override
+    void setFormatted(String str) {
+        if (isNotBlank(str)) {
+            formatted.set(Active.of(str.trim()))
+        }
     }
 
     @Internal
@@ -52,7 +80,15 @@ class ChangelogImpl implements Changelog {
         enabled.present ||
             links.present ||
             external.present ||
-            sort.present
+            sort.present ||
+            formatted.present ||
+            change.present ||
+            template.present ||
+            includeLabels.present ||
+            excludeLabels.present ||
+            !categories.isEmpty() ||
+            !labelers.isEmpty() ||
+            !replacers.isEmpty()
     }
 
     @Override
@@ -60,12 +96,125 @@ class ChangelogImpl implements Changelog {
         this.sort.set(org.jreleaser.model.Changelog.Sort.valueOf(sort.toUpperCase()))
     }
 
+    @Override
+    void includeLabel(String label) {
+        if (isNotBlank(label)) {
+            includeLabels.add(label.trim())
+        }
+    }
+
+    @Override
+    void excludeLabel(String label) {
+        if (isNotBlank(label)) {
+            excludeLabels.add(label.trim())
+        }
+    }
+
+    @Override
+    void category(Action<? super Category> action) {
+        CategoryImpl category = objects.newInstance(CategoryImpl, objects)
+        action.execute(category)
+        categories.add(category)
+    }
+
+    @Override
+    void labeler(Action<? super Labeler> action) {
+        LabelerImpl labeler = objects.newInstance(LabelerImpl, objects)
+        action.execute(labeler)
+        labelers.add(labeler)
+    }
+
+    @Override
+    void replacer(Action<? super Replacer> action) {
+        ReplacerImpl replacer = objects.newInstance(ReplacerImpl, objects)
+        action.execute(replacer)
+        replacers.add(replacer)
+    }
+
     org.jreleaser.model.Changelog toModel() {
         org.jreleaser.model.Changelog changelog = new org.jreleaser.model.Changelog()
-        if (enabled.present) changelog.enabled = enabled.get()
+        if (enabled.present) {
+            changelog.enabled = enabled.get()
+        } else {
+            changelog.enabled = isSet()
+        }
         if (links.present) changelog.links = links.get()
         if (sort.present) changelog.sort = sort.get()
         if (external.present) changelog.external = external.getAsFile().get().toPath()
+        if (formatted.present) changelog.formatted = formatted.get()
+        if (change.present) changelog.change = change.get()
+        if (template.present) changelog.template = template.get()
+        changelog.includeLabels = (Set<String>) includeLabels.getOrElse([] as Set)
+        changelog.excludeLabels = (Set<String>) excludeLabels.getOrElse([] as Set)
+        changelog.setCategories(categories.collect([] as Set) { CategoryImpl category ->
+            category.toModel()
+        } as Set<org.jreleaser.model.Changelog.Category>)
+        changelog.setLabelers(labelers.collect([] as Set) { LabelerImpl labeler ->
+            labeler.toModel()
+        } as Set<org.jreleaser.model.Changelog.Labeler>)
+        changelog.setReplacers(replacers.collect([] as Set) { ReplacerImpl replacer ->
+            replacer.toModel()
+        } as Set<org.jreleaser.model.Changelog.Replacer>)
         changelog
+    }
+
+    @CompileStatic
+    static class CategoryImpl implements Category {
+        final Property<String> title
+        final SetProperty<String> labels
+
+        @Inject
+        CategoryImpl(ObjectFactory objects) {
+            title = objects.property(String).convention(Providers.notDefined())
+            labels = objects.setProperty(String).convention(Providers.notDefined())
+        }
+
+        org.jreleaser.model.Changelog.Category toModel() {
+            org.jreleaser.model.Changelog.Category category = new org.jreleaser.model.Changelog.Category()
+            category.title = title.orNull
+            category.labels = (Set<String>) labels.getOrElse([] as Set)
+            category
+        }
+    }
+
+    @CompileStatic
+    static class LabelerImpl implements Labeler {
+        final Property<String> label
+        final Property<String> title
+        final Property<String> body
+
+        @Inject
+        LabelerImpl(ObjectFactory objects) {
+            label = objects.property(String).convention(Providers.notDefined())
+            title = objects.property(String).convention(Providers.notDefined())
+            body = objects.property(String).convention(Providers.notDefined())
+        }
+
+        org.jreleaser.model.Changelog.Labeler toModel() {
+            org.jreleaser.model.Changelog.Labeler labeler = new org.jreleaser.model.Changelog.Labeler()
+            labeler.label = label.orNull
+            labeler.title = title.orNull
+            labeler.body = body.orNull
+            labeler
+        }
+    }
+
+    @CompileStatic
+    static class ReplacerImpl implements Replacer {
+        final Property<String> search
+        final Property<String> replace
+
+        @Inject
+        ReplacerImpl(ObjectFactory objects) {
+            search = objects.property(String).convention(Providers.notDefined())
+            replace = objects.property(String).convention(Providers.notDefined())
+        }
+
+        org.jreleaser.model.Changelog.Replacer toModel() {
+            org.jreleaser.model.Changelog.Replacer replacer = new org.jreleaser.model.Changelog.Replacer()
+            replacer.search = search.orNull
+            replacer.replace = replace.orNull
+            replacer
+        }
     }
 }

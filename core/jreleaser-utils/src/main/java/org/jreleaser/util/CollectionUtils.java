@@ -68,6 +68,12 @@ public final class CollectionUtils {
         // prevent instantiation
     }
 
+    public static <T> boolean intersects(Set<T> s1, Set<T> s2) {
+        Set<T> intersection = new LinkedHashSet<>(s1);
+        intersection.removeAll(s2);
+        return intersection.size() != s1.size();
+    }
+
     public static <T> List<T> reverse(List<T> input) {
         List<T> output = new ArrayList<>(input);
         Collections.reverse(output);
