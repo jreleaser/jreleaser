@@ -26,7 +26,11 @@ import org.jreleaser.model.Project;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.StringUtils;
 
+import java.util.List;
+import java.util.Map;
+
 import static java.lang.System.lineSeparator;
+import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.GitService.OVERWRITE;
 import static org.jreleaser.model.GitService.RELEASE_NAME;
 import static org.jreleaser.model.GitService.SKIP_TAG;
@@ -195,6 +199,15 @@ public abstract class GitServiceValidator extends Validator {
 
                 i++;
             }
+
+            // validate category.title is unique
+            Map<String, List<Changelog.Category>> byTitle = changelog.getCategories().stream()
+                .collect(groupingBy(Changelog.Category::getTitle));
+            byTitle.forEach((title, categories) -> {
+                if (categories.size() > 1) {
+                    errors.configuration(service.getServiceName() + ".changelog has more than one category with title: " + title);
+                }
+            });
         }
 
         if (!changelog.getLabelers().isEmpty()) {
