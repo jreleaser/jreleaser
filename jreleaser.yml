@@ -25,6 +25,31 @@ release:
     overwrite: true
     draft: false
     sign: true
+    changelog:
+      formatted: ALWAYS
+      change: '- {{commitShortHash}} {{commitTitle}}'
+      labelers:
+        - label: 'feature'
+          title: 'Resolves #'
+        - label: 'issue'
+          title: 'Fixes #'
+        - label: 'issue'
+          title: 'Relates to #'
+        - label: 'task'
+          title: '[chore]'
+      categories:
+        - title: '🚀 Features'
+          labels:
+            - 'feature'
+        - title: '✅ Issues'
+          labels:
+            - 'issue'
+        - title: '🧰 Tasks'
+          labels:
+            - 'task'
+      replacers:
+        - search: '\[chore\] '
+          replace: ''
 
 signing:
   active: always
