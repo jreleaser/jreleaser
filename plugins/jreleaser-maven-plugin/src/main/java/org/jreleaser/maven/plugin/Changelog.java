@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -214,6 +216,14 @@ public class Changelog implements EnabledAware {
         public void setLabels(Set<String> labels) {
             this.labels.clear();
             this.labels.addAll(labels);
+        }
+
+        public void setLabelsAsString(String str) {
+            if (isNotBlank(str)) {
+                setLabels(Stream.of(str.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toSet()));
+            }
         }
 
         @Override

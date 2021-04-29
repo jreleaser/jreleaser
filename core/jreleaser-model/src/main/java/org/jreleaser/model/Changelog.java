@@ -24,8 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -241,14 +239,6 @@ public class Changelog implements Domain, EnabledAware {
         public void setLabels(Set<String> labels) {
             this.labels.clear();
             this.labels.addAll(labels);
-        }
-
-        public void setLabels(String str) {
-            if (isNotBlank(str)) {
-                setLabels(Stream.of(str.split(","))
-                    .map(String::trim)
-                    .collect(Collectors.toSet()));
-            }
         }
 
         @Override
