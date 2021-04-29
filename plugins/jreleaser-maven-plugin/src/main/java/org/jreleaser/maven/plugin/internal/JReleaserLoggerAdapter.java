@@ -39,83 +39,95 @@ public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     public void debug(String message) {
         String msg = formatMessage(message);
         delegate.debug(msg);
-        trace(msg);
+        trace(Level.DEBUG + msg);
     }
 
     @Override
     public void info(String message) {
         String msg = formatMessage(message);
         delegate.info(msg);
-        trace(msg);
+        trace(Level.INFO + msg);
     }
 
     @Override
     public void warn(String message) {
         String msg = formatMessage(message);
         delegate.warn(msg);
-        trace(msg);
+        trace(Level.WARN + msg);
     }
 
     @Override
     public void error(String message) {
         String msg = formatMessage(message);
         delegate.error(msg);
-        trace(msg);
+        trace(Level.ERROR + msg);
     }
 
     @Override
     public void debug(String message, Object... args) {
         String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
         delegate.debug(msg);
-        trace(msg);
+        trace(Level.DEBUG + msg);
     }
 
     @Override
     public void info(String message, Object... args) {
         String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
         delegate.info(msg);
-        trace(msg);
+        trace(Level.INFO + msg);
     }
 
     @Override
     public void warn(String message, Object... args) {
         String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
         delegate.warn(msg);
-        trace(msg);
+        trace(Level.WARN + msg);
     }
 
     @Override
     public void error(String message, Object... args) {
         String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
         delegate.error(msg);
-        trace(msg);
+        trace(Level.ERROR + msg);
     }
 
     @Override
     public void debug(String message, Throwable throwable) {
         String msg = formatMessage(message);
         delegate.debug(msg, throwable);
-        trace(msg, throwable);
+        trace(Level.DEBUG + msg, throwable);
     }
 
     @Override
     public void info(String message, Throwable throwable) {
         String msg = formatMessage(message);
         delegate.info(msg, throwable);
-        trace(msg, throwable);
+        trace(Level.INFO + msg, throwable);
     }
 
     @Override
     public void warn(String message, Throwable throwable) {
         String msg = formatMessage(message);
         delegate.warn(msg, throwable);
-        trace(msg, throwable);
+        trace(Level.WARN + msg, throwable);
     }
 
     @Override
     public void error(String message, Throwable throwable) {
         String msg = formatMessage(message);
         delegate.error(msg, throwable);
-        trace(msg, throwable);
+        trace(Level.ERROR + msg, throwable);
+    }
+
+    public enum Level {
+        DEBUG,
+        INFO,
+        WARN,
+        ERROR;
+
+        @Override
+        public String toString() {
+            return "[" + name() + "] " + (name().length() == 4 ? " " : "");
+        }
     }
 }
