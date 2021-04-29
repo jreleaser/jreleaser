@@ -199,6 +199,9 @@ public class ChangelogGenerator {
                 changes.append("## ")
                     .append(category)
                     .append(lineSeparator);
+            } else {
+                changes.append("---")
+                    .append(lineSeparator);
             }
             changes.append(cs.stream()
                 .map(c -> applyTemplate(changelog.getChange(), c.asContext()))
