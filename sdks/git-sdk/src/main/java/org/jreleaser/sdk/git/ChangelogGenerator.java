@@ -194,21 +194,31 @@ public class ChangelogGenerator {
                 .add(commit));
 
         StringBuilder changes = new StringBuilder();
-        categories.forEach((category, cs) -> {
-            if (!UNCATEGORIZED.equals(category)) {
-                changes.append("## ")
-                    .append(category)
-                    .append(lineSeparator);
-            } else {
-                changes.append("---")
-                    .append(lineSeparator);
-            }
-            changes.append(cs.stream()
+        for (Changelog.Category category : changelog.getCategories()) {
+            String categoryTitle = category.getTitle();
+            if (!categories.containsKey(categoryTitle)) continue;
+
+            changes.append("## ")
+                .append(categoryTitle)
+                .append(lineSeparator);
+
+            changes.append(categories.get(categoryTitle).stream()
                 .map(c -> applyTemplate(changelog.getChange(), c.asContext()))
                 .collect(Collectors.joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
-        });
+        }
+
+        if (categories.containsKey(UNCATEGORIZED)) {
+            changes.append("---")
+                .append(lineSeparator);
+
+            changes.append(categories.get(UNCATEGORIZED).stream()
+                .map(c -> applyTemplate(changelog.getChange(), c.asContext()))
+                .collect(Collectors.joining(lineSeparator)))
+                .append(lineSeparator)
+                .append(lineSeparator());
+        }
 
         StringBuilder contributors = new StringBuilder("## Contributors")
             .append(lineSeparator)

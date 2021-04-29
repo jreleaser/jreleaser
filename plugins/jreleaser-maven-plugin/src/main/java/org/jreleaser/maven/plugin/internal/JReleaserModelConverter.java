@@ -218,15 +218,15 @@ public final class JReleaserModelConverter {
         return c;
     }
 
-    private static Set<org.jreleaser.model.Changelog.Category> convertCategories(Set<Changelog.Category> categories) {
-        Set<org.jreleaser.model.Changelog.Category> set = new LinkedHashSet<>();
+    private static List<org.jreleaser.model.Changelog.Category> convertCategories(List<Changelog.Category> categories) {
+        List<org.jreleaser.model.Changelog.Category> list = new ArrayList<>();
         for (Changelog.Category category : categories) {
             org.jreleaser.model.Changelog.Category c = new org.jreleaser.model.Changelog.Category();
             c.setTitle(category.getTitle());
             c.setLabels(category.getLabels());
-            set.add(c);
+            list.add(c);
         }
-        return set;
+        return list;
     }
 
     private static Set<org.jreleaser.model.Changelog.Labeler> convertLabelers(Set<Changelog.Labeler> labelers) {

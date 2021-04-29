@@ -49,7 +49,7 @@ class ChangelogImpl implements Changelog {
     final SetProperty<String> includeLabels
     final SetProperty<String> excludeLabels
 
-    private final Set<CategoryImpl> categories = []
+    private final List<CategoryImpl> categories = []
     private final Set<LabelerImpl> labelers = []
     private final Set<ReplacerImpl> replacers = []
     private final ObjectFactory objects
@@ -146,9 +146,9 @@ class ChangelogImpl implements Changelog {
         if (template.present) changelog.template = template.get()
         changelog.includeLabels = (Set<String>) includeLabels.getOrElse([] as Set)
         changelog.excludeLabels = (Set<String>) excludeLabels.getOrElse([] as Set)
-        changelog.setCategories(categories.collect([] as Set) { CategoryImpl category ->
+        changelog.setCategories(categories.collect([]) { CategoryImpl category ->
             category.toModel()
-        } as Set<org.jreleaser.model.Changelog.Category>)
+        } as List<org.jreleaser.model.Changelog.Category>)
         changelog.setLabelers(labelers.collect([] as Set) { LabelerImpl labeler ->
             labeler.toModel()
         } as Set<org.jreleaser.model.Changelog.Labeler>)

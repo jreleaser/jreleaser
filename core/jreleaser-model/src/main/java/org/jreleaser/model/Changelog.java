@@ -17,10 +17,12 @@
  */
 package org.jreleaser.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -35,7 +37,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Changelog implements Domain, EnabledAware {
     private final Set<String> includeLabels = new LinkedHashSet<>();
     private final Set<String> excludeLabels = new LinkedHashSet<>();
-    private final Set<Category> categories = new LinkedHashSet<>();
+    private final List<Category> categories = new ArrayList<>();
     private final Set<Replacer> replacers = new LinkedHashSet<>();
     private final Set<Labeler> labelers = new LinkedHashSet<>();
 
@@ -148,11 +150,11 @@ public class Changelog implements Domain, EnabledAware {
         this.excludeLabels.addAll(excludeLabels);
     }
 
-    public Set<Category> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<Category> categories) {
+    public void setCategories(List<Category> categories) {
         this.categories.clear();
         this.categories.addAll(categories);
     }
