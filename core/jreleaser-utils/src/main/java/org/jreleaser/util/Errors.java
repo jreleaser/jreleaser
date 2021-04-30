@@ -17,6 +17,7 @@
  */
 package org.jreleaser.util;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -52,6 +53,11 @@ public class Errors {
     public void logErrors(JReleaserLogger logger) {
         assemblyErrors.forEach(e -> logger.error(e.message));
         configurationErrors.forEach(e -> logger.error(e.message));
+    }
+
+    public void logErrors(PrintWriter writer) {
+        assemblyErrors.forEach(e -> writer.println(e.message));
+        configurationErrors.forEach(e -> writer.println(e.message));
     }
 
     public enum Kind {
