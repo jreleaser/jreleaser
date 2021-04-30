@@ -57,6 +57,12 @@ public interface Constants {
     String KEY_PROJECT_JAVA_ARTIFACT_ID = "projectJavaArtifactId";
     String KEY_PROJECT_JAVA_MAIN_CLASS = "projectJavaMainClass";
 
+    // Platform
+    String KEY_OS_NAME = "osName";
+    String KEY_OS_ARCH = "osArch";
+    String KEY_OS_PLATFORM = "osPlatform";
+    String KEY_OS_VERSION = "osVersion";
+
     // Release
     String KEY_REPO_HOST = "repoHost";
     String KEY_REPO_OWNER = "repoOwner";

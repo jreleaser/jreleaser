@@ -20,6 +20,8 @@ package org.jreleaser.model;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.MustacheUtils;
+import org.jreleaser.util.OsDetector;
+import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 
 import java.time.ZonedDateTime;
@@ -196,6 +198,14 @@ public class JReleaserModel implements Domain {
         Map<String, Object> props = new LinkedHashMap<>();
         fillProjectProperties(props, project);
         fillReleaseProperties(props, release);
+
+        String osName = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_NAME);
+        String osArch = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_ARCH);
+        props.put(Constants.KEY_OS_NAME, osName);
+        props.put(Constants.KEY_OS_ARCH, osArch);
+        props.put(Constants.KEY_OS_PLATFORM, osName + "-" + osArch);
+        props.put(Constants.KEY_OS_VERSION, PlatformUtils.getOsDetector().get(OsDetector.DETECTED_VERSION));
+
         return props;
     }
 

@@ -24,10 +24,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -178,32 +176,7 @@ public final class PlatformUtils {
         return OS_DETECTOR.getProperties().entrySet();
     }
 
-    private static final class OsDetector extends Detector {
-        private final Map<String, String> props = new LinkedHashMap<>();
-
-        private OsDetector() {
-            Properties p = new Properties();
-            p.put("failOnUnknownOS", "false");
-            detect(p, Collections.emptyList());
-            p.stringPropertyNames().forEach(k -> props.put(k, p.getProperty(k)));
-        }
-
-        private Map<String, String> getProperties() {
-            return Collections.unmodifiableMap(props);
-        }
-
-        private String get(String key) {
-            return props.get(key);
-        }
-
-        @Override
-        protected void log(String message) {
-            // quiet
-        }
-
-        @Override
-        protected void logProperty(String name, String value) {
-            // quiet
-        }
+    public static OsDetector getOsDetector() {
+        return OS_DETECTOR;
     }
 }
