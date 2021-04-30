@@ -97,6 +97,10 @@ public class Release extends AbstractModelCommand {
         description = "Path to changelog file.")
     String changelog;
 
+    @CommandLine.Option(names = {"--changelog-formatted"},
+        description = "Format generated changelog.")
+    boolean changelogFormatted;
+
     @CommandLine.Option(names = {"--username"},
         description = "Git username.")
     String username;
@@ -168,6 +172,7 @@ public class Release extends AbstractModelCommand {
         if (prerelease) logger.info("- release.prerelease: true");
         if (draft) logger.info("- release.draft: true");
         if (isNotBlank(changelog)) logger.info(" - release.changelog: {}", changelog);
+        if (changelogFormatted) logger.info("- release.changelog.formatted: true");
         if (isNotBlank(commitAuthorName)) logger.info("- release.commitAuthor.name: {}", commitAuthorName);
         if (isNotBlank(commitAuthorEmail)) logger.info("- release.commitAuthor.email: {}", commitAuthorEmail);
         if (signing) logger.info("- signing.enabled: true");
@@ -210,6 +215,7 @@ public class Release extends AbstractModelCommand {
             if (isNotBlank(changelog)) service.getChangelog().setExternal(changelog);
             if (isNotBlank(commitAuthorName)) service.getCommitAuthor().setName(commitAuthorName);
             if (isNotBlank(commitAuthorEmail)) service.getCommitAuthor().setEmail(commitAuthorEmail);
+            if (changelogFormatted) service.getChangelog().setFormatted(Active.ALWAYS);
         } catch (IOException e) {
             throw halt(e.getMessage());
         }
