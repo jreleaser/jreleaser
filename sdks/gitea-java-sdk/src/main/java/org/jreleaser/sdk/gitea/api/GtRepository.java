@@ -19,8 +19,6 @@ package org.jreleaser.sdk.gitea.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.Date;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0

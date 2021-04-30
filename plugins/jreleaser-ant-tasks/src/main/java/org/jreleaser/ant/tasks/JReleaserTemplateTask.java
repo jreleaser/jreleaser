@@ -32,8 +32,6 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.jreleaser.util.StringUtils.isNotBlank;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0

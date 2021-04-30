@@ -25,7 +25,6 @@ import org.jreleaser.model.Scoop;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 
-import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -65,7 +64,7 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
         if (!getTool().getCheckverUrl().contains("{{")) {
             return getTool().getCheckverUrl();
         }
-        return applyTemplate(new StringReader(getTool().getCheckverUrl()), props);
+        return applyTemplate(getTool().getCheckverUrl(), props);
     }
 
     private Object resolveAutoupdateUrl(Map<String, Object> props) {
@@ -84,7 +83,7 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
         copy.put(Constants.KEY_PROJECT_EFFECTIVE_VERSION, "$version");
         copy.put(Constants.KEY_TAG_NAME, tagName);
         copy.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFilename);
-        return applyTemplate(new StringReader(getTool().getAutoupdateUrl()), copy);
+        return applyTemplate(getTool().getAutoupdateUrl(), copy);
     }
 
     @Override

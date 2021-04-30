@@ -36,8 +36,6 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.jreleaser.util.StringUtils.isNotBlank;
-
 /**
  * Generate a tool/announcer template.
  *

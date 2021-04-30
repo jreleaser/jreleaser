@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -68,7 +67,7 @@ public class Jlink extends AbstractAssembler {
 
     public String getResolvedImageName(JReleaserContext context) {
         Map<String, Object> props = context.props();
-        return applyTemplate(new StringReader(imageName), props);
+        return applyTemplate(imageName, props);
     }
 
     public Artifact getJdk() {

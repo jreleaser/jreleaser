@@ -21,7 +21,6 @@ import org.jreleaser.util.Constants;
 import org.jreleaser.util.Version;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
@@ -129,7 +128,7 @@ public class Artifact implements Domain {
     private Path getResolvedPath(JReleaserContext context) {
         if (null == resolvedPath) {
             if (path.contains("{{")) {
-                path = applyTemplate(new StringReader(path), context.props());
+                path = applyTemplate(path, context.props());
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
@@ -144,7 +143,7 @@ public class Artifact implements Domain {
             if (path.contains("{{")) {
                 Map<String, Object> props = context.props();
                 fillDistributionProps(props, distribution);
-                path = applyTemplate(new StringReader(path), props);
+                path = applyTemplate(path, props);
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
@@ -159,7 +158,7 @@ public class Artifact implements Domain {
             if (path.contains("{{")) {
                 Map<String, Object> props = context.props();
                 fillAssemblerProps(props, assembler);
-                path = applyTemplate(new StringReader(path), props);
+                path = applyTemplate(path, props);
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
@@ -176,7 +175,7 @@ public class Artifact implements Domain {
     private Path getResolvedTransform(JReleaserContext context) {
         if (null == resolvedTransform && isNotBlank(transform)) {
             if (transform.contains("{{")) {
-                transform = applyTemplate(new StringReader(transform), context.props());
+                transform = applyTemplate(transform, context.props());
             }
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
         }
@@ -188,7 +187,7 @@ public class Artifact implements Domain {
             if (transform.contains("{{")) {
                 Map<String, Object> props = context.props();
                 fillDistributionProps(props, distribution);
-                transform = applyTemplate(new StringReader(transform), props);
+                transform = applyTemplate(transform, props);
             }
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
         }
@@ -200,7 +199,7 @@ public class Artifact implements Domain {
             if (transform.contains("{{")) {
                 Map<String, Object> props = context.props();
                 fillAssemblerProps(props, assembler);
-                transform = applyTemplate(new StringReader(transform), props);
+                transform = applyTemplate(transform, props);
             }
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
         }

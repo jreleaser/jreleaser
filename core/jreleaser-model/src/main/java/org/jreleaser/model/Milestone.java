@@ -19,7 +19,6 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.Env;
 
-import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -53,9 +52,9 @@ public class Milestone implements Domain {
         }
 
         if (isBlank(cachedName)) {
-            cachedName = applyTemplate(new StringReader(name), props);
+            cachedName = applyTemplate(name, props);
         } else if (cachedName.contains("{{")) {
-            cachedName = applyTemplate(new StringReader(cachedName), props);
+            cachedName = applyTemplate(cachedName, props);
         }
 
         return cachedName;

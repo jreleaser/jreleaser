@@ -19,7 +19,6 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.PlatformUtils;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +56,7 @@ public class Brew extends AbstractRepositoryTool {
     public String getResolvedFormulaName(JReleaserContext context) {
         if (isBlank(cachedFormulaName)) {
             if (formulaName.contains("{{")) {
-                cachedFormulaName = applyTemplate(new StringReader(formulaName), context.props());
+                cachedFormulaName = applyTemplate(formulaName, context.props());
             } else {
                 cachedFormulaName = formulaName;
             }
@@ -69,13 +68,13 @@ public class Brew extends AbstractRepositoryTool {
     public String getResolvedFormulaName(Map<String, Object> props) {
         if (isBlank(cachedFormulaName)) {
             if (formulaName.contains("{{")) {
-                cachedFormulaName = applyTemplate(new StringReader(formulaName), props);
+                cachedFormulaName = applyTemplate(formulaName, props);
             } else {
                 cachedFormulaName = formulaName;
             }
             cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
         } else if (cachedFormulaName.contains("{{")) {
-            cachedFormulaName = applyTemplate(new StringReader(cachedFormulaName), props);
+            cachedFormulaName = applyTemplate(cachedFormulaName, props);
             cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
         }
         return cachedFormulaName;

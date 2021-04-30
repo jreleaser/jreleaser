@@ -30,10 +30,7 @@ import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Stream;
 
-import static java.lang.System.lineSeparator;
-import static java.util.stream.Collectors.joining;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**

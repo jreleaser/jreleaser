@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.AssemblersResolver.resolveAssemblers;

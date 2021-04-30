@@ -22,7 +22,6 @@ import org.jreleaser.util.Env;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.Version;
 
-import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -134,9 +133,9 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
 
         if (isBlank(cachedTagName)) {
-            cachedTagName = applyTemplate(new StringReader(tagName), props(model));
+            cachedTagName = applyTemplate(tagName, props(model));
         } else if (cachedTagName.contains("{{")) {
-            cachedTagName = applyTemplate(new StringReader(cachedTagName), props(model));
+            cachedTagName = applyTemplate(cachedTagName, props(model));
         }
 
         return cachedTagName;
@@ -156,9 +155,9 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
 
         if (isBlank(cachedReleaseName)) {
-            cachedReleaseName = applyTemplate(new StringReader(releaseName), props(model));
+            cachedReleaseName = applyTemplate(releaseName, props(model));
         } else if (cachedReleaseName.contains("{{")) {
-            cachedReleaseName = applyTemplate(new StringReader(cachedReleaseName), props(model));
+            cachedReleaseName = applyTemplate(cachedReleaseName, props(model));
         }
 
         return cachedReleaseName;
@@ -169,45 +168,45 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public String getResolvedRepoUrl(JReleaserModel model) {
-        return applyTemplate(new StringReader(repoUrlFormat), props(model));
+        return applyTemplate(repoUrlFormat, props(model));
     }
 
     public String getResolvedRepoCloneUrl(JReleaserModel model) {
-        return applyTemplate(new StringReader(repoCloneUrlFormat), props(model));
+        return applyTemplate(repoCloneUrlFormat, props(model));
     }
 
     public String getResolvedRepoUrl(JReleaserModel model, String repoOwner, String repoName) {
         Map<String, Object> props = props(model);
         props.put(Constants.KEY_REPO_OWNER, repoOwner);
         props.put(Constants.KEY_REPO_NAME, repoName);
-        return applyTemplate(new StringReader(repoUrlFormat), props);
+        return applyTemplate(repoUrlFormat, props);
     }
 
     public String getResolvedRepoCloneUrl(JReleaserModel model, String repoOwner, String repoName) {
         Map<String, Object> props = props(model);
         props.put(Constants.KEY_REPO_OWNER, repoOwner);
         props.put(Constants.KEY_REPO_NAME, repoName);
-        return applyTemplate(new StringReader(repoCloneUrlFormat), props);
+        return applyTemplate(repoCloneUrlFormat, props);
     }
 
     public String getResolvedCommitUrl(JReleaserModel model) {
-        return applyTemplate(new StringReader(commitUrlFormat), props(model));
+        return applyTemplate(commitUrlFormat, props(model));
     }
 
     public String getResolvedDownloadUrl(JReleaserModel model) {
-        return applyTemplate(new StringReader(downloadUrlFormat), props(model));
+        return applyTemplate(downloadUrlFormat, props(model));
     }
 
     public String getResolvedReleaseNotesUrl(JReleaserModel model) {
-        return applyTemplate(new StringReader(releaseNotesUrlFormat), props(model));
+        return applyTemplate(releaseNotesUrlFormat, props(model));
     }
 
     public String getResolvedLatestReleaseUrl(JReleaserModel model) {
-        return applyTemplate(new StringReader(latestReleaseUrlFormat), props(model));
+        return applyTemplate(latestReleaseUrlFormat, props(model));
     }
 
     public String getResolvedIssueTrackerUrl(JReleaserModel model) {
-        return applyTemplate(new StringReader(issueTrackerUrlFormat), props(model));
+        return applyTemplate(issueTrackerUrlFormat, props(model));
     }
 
     @Override

@@ -26,7 +26,6 @@ import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.util.Constants;
 
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;

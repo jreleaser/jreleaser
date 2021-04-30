@@ -22,7 +22,6 @@ import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -81,13 +80,13 @@ public class Mail extends AbstractAnnouncer {
     public String getResolvedSubject(JReleaserContext context) {
         Map<String, Object> props = context.props();
         props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
-        return applyTemplate(new StringReader(subject), props);
+        return applyTemplate(subject, props);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
         Map<String, Object> props = context.props();
         props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
-        return applyTemplate(new StringReader(message), props);
+        return applyTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {

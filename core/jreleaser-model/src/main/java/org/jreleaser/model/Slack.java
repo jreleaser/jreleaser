@@ -22,7 +22,6 @@ import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -59,7 +58,7 @@ public class Slack extends AbstractAnnouncer {
 
     public String getResolvedMessage(JReleaserContext context) {
         Map<String, Object> props = context.props();
-        return applyTemplate(new StringReader(message), props);
+        return applyTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {

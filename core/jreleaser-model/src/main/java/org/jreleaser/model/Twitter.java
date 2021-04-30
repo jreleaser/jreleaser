@@ -19,7 +19,6 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.Env;
 
-import java.io.StringReader;
 import java.util.Map;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
@@ -58,7 +57,7 @@ public class Twitter extends AbstractAnnouncer {
     public String getResolvedStatus(JReleaserContext context) {
         Map<String, Object> props = context.props();
         context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
-        return applyTemplate(new StringReader(status), props);
+        return applyTemplate(status, props);
     }
 
     public String getResolvedConsumerKey() {

@@ -18,7 +18,6 @@
 package org.jreleaser.model;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
@@ -55,7 +54,7 @@ public class Glob implements Domain {
             Path path = context.getBasedir();
             if (isNotBlank(directory)) {
                 if (directory.contains("{{")) {
-                    directory = applyTemplate(new StringReader(directory), context.props());
+                    directory = applyTemplate(directory, context.props());
                 }
                 path = context.getBasedir().resolve(Paths.get(directory)).normalize();
                 if (!exists(path)) {

@@ -17,11 +17,9 @@
  */
 package org.jreleaser.model.assembler.spi;
 
-import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Assembler;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Andres Almiray

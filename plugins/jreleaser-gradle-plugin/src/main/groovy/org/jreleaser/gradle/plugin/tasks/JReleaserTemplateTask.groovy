@@ -34,8 +34,6 @@ import org.jreleaser.templates.TemplateGenerator
 import javax.inject.Inject
 import java.nio.file.Path
 
-import static org.jreleaser.util.StringUtils.isNotBlank
-
 /**
  *
  * @author Andres Almiray

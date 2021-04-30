@@ -21,7 +21,6 @@ import org.jreleaser.util.Constants;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -55,12 +54,12 @@ public class Discussions extends AbstractAnnouncer {
 
     public String getResolvedTitle(JReleaserContext context) {
         Map<String, Object> props = context.props();
-        return applyTemplate(new StringReader(title), props);
+        return applyTemplate(title, props);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
         Map<String, Object> props = context.props();
-        return applyTemplate(new StringReader(message), props);
+        return applyTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {

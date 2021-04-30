@@ -26,12 +26,10 @@ import org.jreleaser.model.Registry;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
-import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -63,7 +61,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
 
             int i = 0;
             for (String imageName : getTool().getImageNames()) {
-                imageName = applyTemplate(new StringReader(imageName), props, "image" + (i++));
+                imageName = applyTemplate(imageName, props, "image" + (i++));
 
                 // command line
                 List<String> cmd = createBuildCommand(props);
@@ -111,7 +109,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         for (int i = 0; i < getTool().getBuildArgs().size(); i++) {
             String arg = getTool().getBuildArgs().get(i);
             if (arg.contains("{{")) {
-                cmd.add(applyTemplate(new StringReader(arg), props, "arg" + i));
+                cmd.add(applyTemplate(arg, props, "arg" + i));
             } else {
                 cmd.add(arg);
             }
@@ -170,7 +168,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
     }
 
     private void publish(Registry registry, String imageName, Map<String, Object> props, int index) throws ToolProcessingException {
-        imageName = applyTemplate(new StringReader(imageName), props, "image" + index);
+        imageName = applyTemplate(imageName, props, "image" + index);
 
         String tag = imageName;
         String serverName = registry.getServerName();
@@ -238,17 +236,17 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         props.put(Constants.KEY_DOCKER_BASE_IMAGE,
-            applyTemplate(new StringReader(getTool().getBaseImage()), props, "baseImage"));
+            applyTemplate(getTool().getBaseImage(), props, "baseImage"));
 
         List<String> labels = new ArrayList<>();
         getTool().getLabels().forEach((label, value) -> labels.add(passThrough("\"" + label + "\"=\"" +
-            applyTemplate(new StringReader(value), props, label) + "\"")));
+            applyTemplate(value, props, label) + "\"")));
         props.put(Constants.KEY_DOCKER_LABELS, labels);
         props.put(Constants.KEY_DOCKER_PRE_COMMANDS, tool.getPreCommands().stream()
-            .map(c -> passThrough(applyTemplate(new StringReader(c), props)))
+            .map(c -> passThrough(applyTemplate(c, props)))
             .collect(Collectors.toList()));
         props.put(Constants.KEY_DOCKER_POST_COMMANDS, tool.getPostCommands().stream()
-            .map(c -> passThrough(applyTemplate(new StringReader(c), props)))
+            .map(c -> passThrough(applyTemplate(c, props)))
             .collect(Collectors.toList()));
     }
 

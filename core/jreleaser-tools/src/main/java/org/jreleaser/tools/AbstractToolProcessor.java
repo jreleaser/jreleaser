@@ -31,13 +31,10 @@ import org.jreleaser.util.Version;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessInitException;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Reader;
-import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -314,7 +311,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             props.put("artifact" + platform + "Hash", artifact.getHash());
             Map<String, Object> newProps = new LinkedHashMap<>(props);
             newProps.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
-            String artifactUrl = applyTemplate(new StringReader(context.getModel().getRelease().getGitService().getDownloadUrlFormat()), newProps, "downloadUrl");
+            String artifactUrl = applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrlFormat(), newProps, "downloadUrl");
             props.put("artifact" + platform + "Url", artifactUrl);
 
             if (0 == i) {

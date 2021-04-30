@@ -21,7 +21,6 @@ import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.JReleaserModelValidator;
 import org.jreleaser.model.Project;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.JReleaserLogger;
