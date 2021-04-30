@@ -36,7 +36,7 @@ public class ObjectUtils {
      * as demonstrated below:
      * <blockquote><pre>
      * public Foo(int[] array) {
-     *     GriffonClassUtils.requireState(array.length > 0);
+     *     GriffonClassUtils.requireState(array.length &gt; 0);
      * }
      * </pre></blockquote>
      *
@@ -56,7 +56,7 @@ public class ObjectUtils {
      * parameters, as demonstrated below:
      * <blockquote><pre>
      * public Foo(int[] array) {
-     *     GriffonClassUtils.requireState(array.length > 0, "array must not be empty");
+     *     GriffonClassUtils.requireState(array.length &gt; 0, "array must not be empty");
      * }
      * </pre></blockquote>
      *
