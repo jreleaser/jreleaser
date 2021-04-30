@@ -47,6 +47,8 @@ import java.util.stream.StreamSupport;
 import static java.lang.System.lineSeparator;
 import static org.jreleaser.model.GitService.TAG_EARLY_ACCESS;
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
+import static org.jreleaser.util.Constants.KEY_CHANGELOG_CHANGES;
+import static org.jreleaser.util.Constants.KEY_CHANGELOG_CONTRIBUTORS;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -90,7 +92,7 @@ public class ChangelogGenerator {
             context.getLogger().debug("sorting commits {}", changelog.getSort());
 
             if (changelog.resolveFormatted(context.getModel().getProject())) {
-                return formatChangelog(changelog, commits, revCommitComparator, commitSeparator);
+                return formatChangelog(context, changelog, commits, revCommitComparator, commitSeparator);
             }
 
             return "# Changelog" +
@@ -173,7 +175,7 @@ public class ChangelogGenerator {
         return git.log().add(head).call();
     }
 
-    private static String formatChangelog(Changelog changelog,
+    private static String formatChangelog(JReleaserContext context, Changelog changelog,
                                           Iterable<RevCommit> commits,
                                           Comparator<RevCommit> revCommitComparator,
                                           String lineSeparator) {
@@ -225,11 +227,11 @@ public class ChangelogGenerator {
             .append(String.join(", ", contributorNames))
             .append(lineSeparator);
 
-        Map<String, Object> context = new LinkedHashMap<>();
-        context.put("changes", passThrough(changes.toString()));
-        context.put("contributors", passThrough(contributors.toString()));
+        Map<String, Object> props = context.props();
+        props.put(KEY_CHANGELOG_CHANGES, passThrough(changes.toString()));
+        props.put(KEY_CHANGELOG_CONTRIBUTORS, passThrough(contributors.toString()));
 
-        return applyReplacers(changelog, applyTemplate(stripMargin(changelog.getTemplate()), context));
+        return applyReplacers(changelog, stripMargin(applyTemplate(changelog.getResolvedContentTemplate(context), props)));
     }
 
     private static String applyReplacers(Changelog changelog, String text) {

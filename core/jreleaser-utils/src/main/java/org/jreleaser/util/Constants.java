@@ -74,6 +74,8 @@ public interface Constants {
     String KEY_ISSUE_TRACKER_URL = "issueTrackerUrl";
     String KEY_REVERSE_REPO_HOST = "reverseRepoHost";
     String KEY_CHANGELOG = "changelog";
+    String KEY_CHANGELOG_CHANGES = "changelogChanges";
+    String KEY_CHANGELOG_CONTRIBUTORS = "changelogContributors";
 
     // Distribution
     String KEY_DISTRIBUTION_NAME = "distributionName";

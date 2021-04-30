@@ -47,7 +47,8 @@ public class Changelog implements EnabledAware {
     private String external;
     private Active formatted;
     private String change;
-    private String template;
+    private String content;
+    private String contentTemplate;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
@@ -56,7 +57,8 @@ public class Changelog implements EnabledAware {
         this.external = changelog.external;
         this.formatted = changelog.formatted;
         this.change = changelog.change;
-        this.template = changelog.template;
+        this.content = changelog.content;
+        this.contentTemplate = changelog.contentTemplate;
         setIncludeLabels(changelog.includeLabels);
         setExcludeLabels(changelog.excludeLabels);
         setCategories(changelog.categories);
@@ -182,12 +184,20 @@ public class Changelog implements EnabledAware {
         this.change = change;
     }
 
-    public String getTemplate() {
-        return template;
+    public String getContent() {
+        return content;
     }
 
-    public void setTemplate(String template) {
-        this.template = template;
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getContentTemplate() {
+        return contentTemplate;
+    }
+
+    public void setContentTemplate(String contentTemplate) {
+        this.contentTemplate = contentTemplate;
     }
 
     public enum Sort {

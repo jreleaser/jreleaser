@@ -26,6 +26,7 @@ import org.jreleaser.model.Project;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.StringUtils;
 
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +46,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class GitServiceValidator extends Validator {
+    private static final String DEFAULT_CHANGELOG_TPL = "src/jreleaser/templates/changelog.tpl";
+
     public static void validateGitService(JReleaserContext context, JReleaserContext.Mode mode, GitService service, Errors errors) {
         JReleaserModel model = context.getModel();
         Project project = model.getProject();
@@ -178,10 +181,19 @@ public abstract class GitServiceValidator extends Validator {
             changelog.setChange("- {{commitShortHash}} {{commitTitle}} ({{commitAuthor}})");
         }
 
-        if (isBlank(changelog.getTemplate())) {
-            changelog.setTemplate(lineSeparator() + "# Changelog" +
-                lineSeparator() + lineSeparator() + "{{changes}}" +
-                lineSeparator() + "    {{contributors}}");
+        if (isBlank(changelog.getContent()) && isBlank(changelog.getContentTemplate())) {
+            if (Files.exists(context.getBasedir().resolve(DEFAULT_CHANGELOG_TPL))) {
+                changelog.setContentTemplate(DEFAULT_CHANGELOG_TPL);
+            } else {
+                changelog.setContent(lineSeparator() + "# Changelog" +
+                    lineSeparator() + lineSeparator() + "{{changelogChanges}}" +
+                    lineSeparator() + "    {{changelogContributors}}");
+            }
+        }
+
+        if (isNotBlank(changelog.getContentTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(changelog.getContentTemplate().trim()))) {
+            errors.configuration("changelog.contentTemplate does not exist. " + changelog.getContentTemplate());
         }
 
         if (changelog.getCategories().isEmpty()) {

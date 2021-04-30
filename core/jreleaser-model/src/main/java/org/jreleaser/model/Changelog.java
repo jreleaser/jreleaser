@@ -17,6 +17,10 @@
  */
 package org.jreleaser.model;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,7 +51,8 @@ public class Changelog implements Domain, EnabledAware {
     private String external;
     private Active formatted;
     private String change;
-    private String template;
+    private String content;
+    private String contentTemplate;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
@@ -56,7 +61,8 @@ public class Changelog implements Domain, EnabledAware {
         this.external = changelog.external;
         this.formatted = changelog.formatted;
         this.change = changelog.change;
-        this.template = changelog.template;
+        this.content = changelog.content;
+        this.contentTemplate = changelog.contentTemplate;
         setIncludeLabels(changelog.includeLabels);
         setExcludeLabels(changelog.excludeLabels);
         setCategories(changelog.categories);
@@ -69,6 +75,20 @@ public class Changelog implements Domain, EnabledAware {
             formatted = Active.NEVER;
         }
         return formatted.check(project);
+    }
+
+    public Reader getResolvedContentTemplate(JReleaserContext context) {
+        if (isNotBlank(content)) {
+            return new StringReader(content);
+        }
+
+        Path templatePath = context.getBasedir().resolve(contentTemplate);
+        try {
+            return java.nio.file.Files.newBufferedReader(templatePath);
+        } catch (IOException e) {
+            throw new JReleaserException("Unexpected error reading template " +
+                context.getBasedir().relativize(templatePath));
+        }
     }
 
     @Override
@@ -185,12 +205,20 @@ public class Changelog implements Domain, EnabledAware {
         this.change = change;
     }
 
-    public String getTemplate() {
-        return template;
+    public String getContent() {
+        return content;
     }
 
-    public void setTemplate(String template) {
-        this.template = template;
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getContentTemplate() {
+        return contentTemplate;
+    }
+
+    public void setContentTemplate(String contentTemplate) {
+        this.contentTemplate = contentTemplate;
     }
 
     @Override
@@ -204,7 +232,8 @@ public class Changelog implements Domain, EnabledAware {
         map.put("sort", sort);
         map.put("formatted", formatted);
         map.put("change", change);
-        map.put("template", template);
+        map.put("content", content);
+        map.put("contentTemplate", contentTemplate);
         map.put("includeLabels", includeLabels);
         map.put("excludeLabels", excludeLabels);
         map.put("categories", categories.stream().map(c -> c.asMap(full)).collect(toList()));
