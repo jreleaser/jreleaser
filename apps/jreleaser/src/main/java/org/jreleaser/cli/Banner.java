@@ -101,7 +101,7 @@ final class Banner {
 
     private static File getMarkerFile(File parent, Banner b) {
         return new File(parent,
-            "kordamp" +
+            "jreleaser" +
                 File.separator +
                 b.productId +
                 File.separator +
