@@ -45,23 +45,15 @@ final class Banner {
     private final List<String> visited = new ArrayList<>();
 
     private Banner() {
-        // nooop
+        // noop
     }
 
     public static void display(MavenProject project, Log log) {
-        MavenProject element = project;
-        MavenProject root = project;
-        while (true) {
-            if (element.getParent() == null || element.getParent() == element) {
-                break;
-            }
-            root = element.getParent();
-        }
-        if (b.visited.contains(root.getName())) {
+        if (b.visited.contains(project.getName())) {
             return;
         }
 
-        b.visited.add(root.getName());
+        b.visited.add(project.getName());
 
         try {
             File parent = new File(System.getProperty("user.home"), "/.m2/caches");

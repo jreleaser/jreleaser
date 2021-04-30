@@ -40,7 +40,7 @@ final class Banner {
     private final String banner = MessageFormat.format(bundle.getString("product.banner"), productName, productVersion);
 
     private Banner() {
-        // nooop
+        // noop
     }
 
     public static void display(PrintWriter writer) {

@@ -41,7 +41,7 @@ final class Banner {
     private static final Banner b = new Banner()
 
     private Banner() {
-        // nooop
+        // noop
     }
 
     static void display(Project project) {
