@@ -76,6 +76,9 @@ enforce {
             "info.picocli:picocli:$picocliVersion",
             "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion",
             "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion",
+            "org.apache.maven:maven-core:$mavenVersion",
+            "org.apache.maven:maven-plugin-api:$mavenVersion",
+            "org.apache.maven:maven-model:$mavenVersion",
             "junit:junit:4.13.1",
             "org.hamcrest:hamcrest:2.2",
             "org.apache.httpcomponents:httpclient:4.5.12"
