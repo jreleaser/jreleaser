@@ -95,7 +95,7 @@ public final class JReleaserModelConverter {
         jreleaserModel.setAssemble(convertAssemble(jreleaser.getAssemble()));
         jreleaserModel.setSigning(convertSigning(jreleaser.getSigning()));
         jreleaserModel.setFiles(convertFiles(jreleaser.getFiles()));
-        jreleaserModel.setDistributions(convertDistributions(jreleaserModel, jreleaser.getDistributions()));
+        jreleaserModel.setDistributions(convertDistributions(jreleaser.getDistributions()));
         return jreleaserModel;
     }
 
@@ -469,15 +469,15 @@ public final class JReleaserModelConverter {
         return s;
     }
 
-    private static Map<String, org.jreleaser.model.Distribution> convertDistributions(JReleaserModel model, List<Distribution> distributions) {
+    private static Map<String, org.jreleaser.model.Distribution> convertDistributions(List<Distribution> distributions) {
         Map<String, org.jreleaser.model.Distribution> ds = new LinkedHashMap<>();
         for (Distribution distribution : distributions) {
-            ds.put(distribution.getName(), convertDistribution(model, distribution));
+            ds.put(distribution.getName(), convertDistribution(distribution));
         }
         return ds;
     }
 
-    private static org.jreleaser.model.Distribution convertDistribution(JReleaserModel model, Distribution distribution) {
+    private static org.jreleaser.model.Distribution convertDistribution(Distribution distribution) {
         org.jreleaser.model.Distribution d = new org.jreleaser.model.Distribution();
         d.setActive(distribution.resolveActive());
         d.setName(distribution.getName());

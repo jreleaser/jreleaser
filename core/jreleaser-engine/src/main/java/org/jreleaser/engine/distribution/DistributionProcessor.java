@@ -40,7 +40,6 @@ public class DistributionProcessor {
     private final JReleaserContext context;
     private final String distributionName;
     private final String toolName;
-    private final Path outputDirectory;
 
     private DistributionProcessor(JReleaserContext context,
                                   String distributionName,
@@ -48,7 +47,6 @@ public class DistributionProcessor {
         this.context = context;
         this.distributionName = distributionName;
         this.toolName = toolName;
-        this.outputDirectory = context.getOutputDirectory();
     }
 
     public String getDistributionName() {

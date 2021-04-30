@@ -58,11 +58,6 @@ public abstract class DistributionsValidator extends Validator {
         context.getLogger().debug("distributions");
         Map<String, Distribution> distributions = context.getModel().getDistributions();
 
-        if (distributions.size() == 1) {
-            distributions.values().stream()
-                .findFirst().ifPresent(distribution -> distribution.setName(context.getModel().getProject().getName()));
-        }
-
         for (Map.Entry<String, Distribution> e : distributions.entrySet()) {
             Distribution distribution = e.getValue();
             if (isBlank(distribution.getName())) {
