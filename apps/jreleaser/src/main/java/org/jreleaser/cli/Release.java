@@ -195,11 +195,13 @@ public class Release extends AbstractModelCommand {
             switch (repository.getKind()) {
                 case GITHUB:
                     service = new Github();
+                    model.getRelease().setGithub((Github) service);
                     ((Github) service).setPrerelease(prerelease);
                     ((Github) service).setDraft(draft);
                     break;
                 case GITLAB:
                     service = new Gitlab();
+                    model.getRelease().setGitlab((Gitlab) service);
                     break;
                 default:
                     throw halt("Auto configuration does not support " + repository.getHttpUrl());
