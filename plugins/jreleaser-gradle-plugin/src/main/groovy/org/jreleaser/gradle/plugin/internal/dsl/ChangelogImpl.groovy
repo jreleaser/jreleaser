@@ -213,7 +213,7 @@ class ChangelogImpl implements Changelog {
         org.jreleaser.model.Changelog.Replacer toModel() {
             org.jreleaser.model.Changelog.Replacer replacer = new org.jreleaser.model.Changelog.Replacer()
             replacer.search = search.orNull
-            replacer.replace = replace.orNull
+            replacer.replace = replace.getOrElse('')
             replacer
         }
     }

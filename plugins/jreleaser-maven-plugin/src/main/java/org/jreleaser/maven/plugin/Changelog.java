@@ -251,7 +251,7 @@ public class Changelog implements EnabledAware {
 
     public static class Replacer {
         private String search;
-        private String replace;
+        private String replace = "";
 
         void setAll(Replacer replacer) {
             this.search = replacer.search;
