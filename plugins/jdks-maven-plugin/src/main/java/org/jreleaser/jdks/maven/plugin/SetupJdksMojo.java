@@ -17,6 +17,8 @@
  */
 package org.jreleaser.jdks.maven.plugin;
 
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -42,13 +44,22 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.goal;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
 
 /**
- * Setups a JDK
+ * Downloads, verifies, and unpacks JDKs.
  *
  * @author Andres Almiray
  * @since 0.3.0
  */
 @Mojo(name = "setup-jdks")
 public class SetupJdksMojo extends AbstractJdksMojo {
+    @Parameter(property = "jdks.output.directory", defaultValue = "${project.build.directory}/jdks")
+    private File outputDirectory;
+
+    @Parameter(defaultValue = "${session}")
+    private MavenSession session;
+
+    @Component
+    private BuildPluginManager pluginManager;
+
     /**
      * The name of the JDK to be downloaded.
      */
@@ -58,7 +69,7 @@ public class SetupJdksMojo extends AbstractJdksMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jdk.setup.skip")
+    @Parameter(property = "jdks.setup.skip")
     private boolean skip;
 
     @Component

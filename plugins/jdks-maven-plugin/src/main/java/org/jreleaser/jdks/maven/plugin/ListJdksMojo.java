@@ -22,7 +22,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
 /**
- * Lists all configured JDKs
+ * Lists all configured JDKs.
  *
  * @author Andres Almiray
  * @since 0.3.0

@@ -17,16 +17,12 @@
  */
 package org.jreleaser.jdks.maven.plugin;
 
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.jreleaser.util.Errors;
 
-import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -41,15 +37,6 @@ abstract class AbstractJdksMojo extends AbstractMojo {
 
     @Parameter(required = true)
     protected List<Jdk> jdks;
-
-    @Parameter(property = "jdks.output.directory", defaultValue = "${project.build.directory}/jdks")
-    protected File outputDirectory;
-
-    @Parameter(defaultValue = "${session}")
-    protected MavenSession session;
-
-    @Component
-    protected BuildPluginManager pluginManager;
 
     protected void validate() throws MojoFailureException {
         if (jdks == null || jdks.isEmpty()) return;
