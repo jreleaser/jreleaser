@@ -53,6 +53,7 @@ import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.stripMargin;
+import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
 
 /**
  * @author Andres Almiray
@@ -95,7 +96,7 @@ public class ChangelogGenerator {
                 return formatChangelog(context, changelog, commits, revCommitComparator, commitSeparator);
             }
 
-            return "# Changelog" +
+            return "## Changelog" +
                 lineSeparator() +
                 lineSeparator() +
                 StreamSupport.stream(commits.spliterator(), false)
@@ -257,12 +258,12 @@ public class ChangelogGenerator {
     private static void applyLabels(Commit commit, Set<Changelog.Labeler> labelers) {
         for (Changelog.Labeler labeler : labelers) {
             if (isNotBlank(labeler.getTitle())) {
-                if (commit.title.contains(labeler.getTitle()) || commit.title.matches(labeler.getTitle())) {
+                if (commit.title.contains(labeler.getTitle()) || commit.title.matches(toSafeRegexPattern(labeler.getTitle()))) {
                     commit.labels.add(labeler.getLabel());
                 }
             }
             if (isNotBlank(labeler.getBody())) {
-                if (commit.body.contains(labeler.getBody()) || commit.body.matches(labeler.getBody())) {
+                if (commit.body.contains(labeler.getBody()) || commit.body.matches(toSafeRegexPattern(labeler.getBody()))) {
                     commit.labels.add(labeler.getLabel());
                 }
             }

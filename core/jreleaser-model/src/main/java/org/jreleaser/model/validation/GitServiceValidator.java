@@ -185,7 +185,7 @@ public abstract class GitServiceValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_CHANGELOG_TPL))) {
                 changelog.setContentTemplate(DEFAULT_CHANGELOG_TPL);
             } else {
-                changelog.setContent(lineSeparator() + "# Changelog" +
+                changelog.setContent(lineSeparator() + "## Changelog" +
                     lineSeparator() + lineSeparator() + "{{changelogChanges}}" +
                     lineSeparator() + "    {{changelogContributors}}");
             }

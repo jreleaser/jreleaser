@@ -42,6 +42,7 @@ public class StringUtils {
     private static final Pattern GETTER_PATTERN_2 = Pattern.compile("^is[A-Z][\\w]*$");
     private static final Pattern SETTER_PATTERN = Pattern.compile("^set[A-Z][\\w]*$");
     private static final String ERROR_METHOD_NULL = "Argument 'method' must not be null";
+    private static final Pattern REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^$\\\\|]");
 
     /**
      * Capitalizes a String (makes the first char uppercase) taking care
@@ -590,7 +591,7 @@ public class StringUtils {
         } else {
             StringBuilder b = new StringBuilder(str);
 
-            for(int i = 1; i < num; ++i) {
+            for (int i = 1; i < num; ++i) {
                 b.append(str);
             }
 
@@ -602,5 +603,17 @@ public class StringUtils {
         return Stream.of(str.split(lineSeparator()))
             .map(String::trim)
             .collect(joining(lineSeparator()));
+    }
+
+    public static String escapeRegexChars(String str) {
+        return REGEX_CHARS.matcher(str).replaceAll("\\\\$0");
+    }
+
+    public static String toSafeRegexPattern(String str) {
+        return ".*" + escapeRegexChars(str) + ".*";
+    }
+
+    public static Pattern toSafePattern(String str) {
+        return Pattern.compile(toSafeRegexPattern(str));
     }
 }
