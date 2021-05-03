@@ -5,9 +5,10 @@
 :project-group:   org.jreleaser
 :project-version: 0.2.0
 
-image:https://github.com/{project-owner}/{project-name}/workflows/Build/badge.svg["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
+image:https://img.shields.io/github/workflow/status/{project-owner}/{project-name}/Build?logo=github["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
 image:https://img.shields.io/maven-central/v/{project-group}/{project-name}.svg[Download, link="https://search.maven.org/#search|ga|1|{project-name}"]
 image:https://img.shields.io/github/downloads/{project-owner}/{project-name}/total[GitHub all releases]
+image:https://img.shields.io/docker/pulls/{project-owner}/{project-name}-slim[Docker Pulls]
 
 ---
 
@@ -50,7 +51,7 @@ jbang jreleaser@jreleaser <command> [<args>]
 .early-access
 ----
 // Download, cache, and run
-jbang jreleaser_snapshot@jreleaser <command> [<args>]
+jbang jreleaser-snapshot@jreleaser <command> [<args>]
 ----
 
 *manually*:
@@ -58,7 +59,7 @@ jbang jreleaser_snapshot@jreleaser <command> [<args>]
 Download the pre-compiled binary from the link:https://github.com/jreleaser/jreleaser/releases[releases page],
 uncompress and copy to the desired location.
 
-Be minful that `jreleaser-{project-version}.zip` requires Java 8 to be installed while
+Be mindful that `jreleaser-{project-version}.zip` requires Java 8 to be installed while
 `jreleaser-standalone-{project-version}-[linux|osx|windows].zip` can be used without a previous installation of Java as
 it includes its own Java Runtime.
 
