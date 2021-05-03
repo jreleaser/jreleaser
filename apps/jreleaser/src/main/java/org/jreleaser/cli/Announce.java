@@ -30,7 +30,7 @@ import picocli.CommandLine;
     description = "Announce a release.")
 public class Announce extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
-        description = "Skips remote operations.")
+        description = "Skip remote operations.")
     boolean dryrun;
 
     @CommandLine.Option(names = {"-an", "--announcer-name"},

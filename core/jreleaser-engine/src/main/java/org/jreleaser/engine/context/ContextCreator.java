@@ -61,7 +61,7 @@ public class ContextCreator {
             outputDirectory,
             dryrun);
 
-        ModelAutoConfigurer.autoConfigure(context);
+        ModelConfigurer.configure(context);
 
         report(context);
 

@@ -1,0 +1,208 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2020-2021 Andres Almiray.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jreleaser.maven.plugin;
+
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.jreleaser.engine.context.ModelAutoConfigurer;
+import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
+import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.workflow.Workflows;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Create or update a release with auto-config enabled.
+ *
+ * @author Andres Almiray
+ * @since 0.3.0
+ */
+@Mojo(name = "auto-config-release")
+public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
+    /**
+     * The project whose model will be checked.
+     */
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    private MavenProject project;
+
+    @Parameter(defaultValue = "${session}", required = true)
+    private MavenSession session;
+
+    @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}/jreleaser")
+    private File outputDirectory;
+
+    @Parameter(property = "jreleaser.dryrun")
+    private boolean dryrun;
+
+    /**
+     * The project name.
+     */
+    @Parameter(property = "jreleaser.project.name", defaultValue = "${project.artifactId}")
+    private String projectName;
+    /**
+     * The project version.
+     */
+    @Parameter(property = "jreleaser.project.version", defaultValue = "${project.version}")
+    private String projectVersion;
+    /**
+     * The release tag.
+     */
+    @Parameter(property = "jreleaser.tag.name")
+    private String tagName;
+    /**
+     * The release name.
+     */
+    @Parameter(property = "jreleaser.release.name")
+    private String releaseName;
+    /**
+     * The milestone name.
+     */
+    @Parameter(property = "jreleaser.milestone.name")
+    private String milestoneName;
+    /**
+     * If the release is a prerelease.
+     */
+    @Parameter(property = "jreleaser.prerelease")
+    private boolean prerelease;
+    /**
+     * If the release is a draft .
+     */
+    @Parameter(property = "jreleaser.draft")
+    private boolean draft;
+    /**
+     * Overwrite an existing release.
+     */
+    @Parameter(property = "jreleaser.overwrite")
+    private boolean overwrite;
+    /**
+     * Update an existing release.
+     */
+    @Parameter(property = "jreleaser.update")
+    private boolean update;
+    /**
+     * Skip tagging the release.
+     */
+    @Parameter(property = "jreleaser.skip.tag")
+    private boolean skipTag;
+    /**
+     * Path to changelog file.
+     */
+    @Parameter(property = "jreleaser.changelog")
+    private String changelog;
+    /**
+     * Format generated changelog.
+     */
+    @Parameter(property = "jreleaser.changelog.formatted")
+    private boolean changelogFormatted;
+    /**
+     * Git username.
+     */
+    @Parameter(property = "jreleaser.username")
+    private String username;
+    /**
+     * Commit author name.
+     */
+    @Parameter(property = "jreleaser.commit.author.name")
+    private String commitAuthorName;
+    /**
+     * Commit author e-mail.
+     */
+    @Parameter(property = "jreleaser.commit.author.email")
+    private String commitAuthorEmail;
+    /**
+     * Sign files.
+     */
+    @Parameter(property = "jreleaser.signing")
+    private boolean signing;
+    /**
+     * Generate ascii armored signatures.
+     */
+    @Parameter(property = "jreleaser.armored")
+    private boolean armored;
+    /**
+     * Input file(s) to be uploaded.
+     */
+    @Parameter(property = "jreleaser.files")
+    private String[] files;
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        Banner.display(project, getLog());
+
+        JReleaserContext context = ModelAutoConfigurer.builder()
+            .logger(getLogger())
+            .basedir(project.getBasedir().toPath())
+            .outputDirectory(outputDirectory.toPath())
+            .dryrun(dryrun)
+            .projectName(projectName)
+            .projectVersion(projectVersion)
+            .tagName(tagName)
+            .releaseName(releaseName)
+            .milestoneName(milestoneName)
+            .prerelease(prerelease)
+            .draft(draft)
+            .overwrite(overwrite)
+            .update(update)
+            .skipTag(skipTag)
+            .changelog(changelog)
+            .changelogFormatted(changelogFormatted)
+            .username(username)
+            .commitAuthorName(commitAuthorName)
+            .commitAuthorEmail(commitAuthorEmail)
+            .signing(signing)
+            .armored(armored)
+            .files(collectFiles())
+            .autoConfigure();
+
+        Workflows.release(context).execute();
+    }
+
+    private JReleaserLogger getLogger() throws MojoExecutionException {
+        return new JReleaserLoggerAdapter(createTracer(), getLog());
+    }
+
+    private PrintWriter createTracer() throws MojoExecutionException {
+        try {
+            java.nio.file.Files.createDirectories(outputDirectory.toPath());
+            return new PrintWriter(new FileOutputStream(
+                outputDirectory.toPath().resolve("trace.log").toFile()));
+        } catch (IOException e) {
+            throw new MojoExecutionException("Could not initialize trace file", e);
+        }
+    }
+
+    private List<String> collectFiles() {
+        List<String> list = new ArrayList<>();
+        if (files != null && files.length > 0) {
+            Collections.addAll(list, files);
+        }
+        return list;
+    }
+}

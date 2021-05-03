@@ -38,6 +38,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserFullReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPackageTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask
+import org.jreleaser.gradle.plugin.tasks.JReleaseAutoConfigReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
@@ -182,6 +183,17 @@ class JReleaserProjectConfigurer {
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
                     }
+                }
+            })
+
+        project.tasks.register('jreleaserAutoConfigRelease', JReleaseAutoConfigReleaseTask,
+            new Action<JReleaseAutoConfigReleaseTask>() {
+                @Override
+                void execute(JReleaseAutoConfigReleaseTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Creates or updates a release with auto-config enabled'
+                    t.dryrun.set(extension.dryrun.get())
+                    t.outputDirectory.set(outputDirectory)
                 }
             })
 

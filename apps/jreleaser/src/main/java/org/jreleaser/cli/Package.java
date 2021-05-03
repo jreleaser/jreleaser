@@ -30,7 +30,7 @@ import picocli.CommandLine;
     description = "Package all distributions.")
 public class Package extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
-        description = "Skips remote operations.")
+        description = "Skip remote operations.")
     boolean dryrun;
 
     @CommandLine.Option(names = {"-dn", "--distribution-name"},

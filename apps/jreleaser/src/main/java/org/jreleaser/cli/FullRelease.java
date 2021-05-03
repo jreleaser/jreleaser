@@ -30,7 +30,7 @@ import picocli.CommandLine;
     description = "Perform a full release.")
 public class FullRelease extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
-        description = "Skips remote operations.")
+        description = "Skip remote operations.")
     boolean dryrun;
 
     @Override

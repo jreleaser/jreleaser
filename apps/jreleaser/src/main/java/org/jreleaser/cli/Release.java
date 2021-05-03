@@ -17,25 +17,16 @@
  */
 package org.jreleaser.cli;
 
-import org.jreleaser.engine.context.ContextCreator;
-import org.jreleaser.model.Active;
-import org.jreleaser.model.Artifact;
-import org.jreleaser.model.GitService;
-import org.jreleaser.model.Github;
-import org.jreleaser.model.Gitlab;
+import org.jreleaser.engine.context.ModelAutoConfigurer;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.JReleaserVersion;
-import org.jreleaser.model.releaser.spi.Repository;
-import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Andres Almiray
@@ -46,7 +37,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
     description = "Create or update a release..")
 public class Release extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
-        description = "Skips remote operations.")
+        description = "Skip remote operations.")
     boolean dryrun;
 
     @CommandLine.Option(names = {"--auto-config"},
@@ -54,11 +45,11 @@ public class Release extends AbstractModelCommand {
     boolean autoConfig;
 
     @CommandLine.Option(names = {"--project-name"},
-        description = "The projects name.")
+        description = "The project name.")
     String projectName;
 
     @CommandLine.Option(names = {"--project-version"},
-        description = "The projects version.")
+        description = "The project version.")
     String projectVersion;
 
     @CommandLine.Option(names = {"--tag-name"},
@@ -133,13 +124,41 @@ public class Release extends AbstractModelCommand {
 
         basedir();
         initLogger();
-        logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
-        logger.info("Auto configure is ON");
-        logger.increaseIndent();
-        logger.info("- basedir set to {}", actualBasedir.toAbsolutePath());
-        dumpAutoConfig();
-        logger.decreaseIndent();
-        doExecute(createAutoConfiguredContext());
+
+        JReleaserContext context = ModelAutoConfigurer.builder()
+            .logger(logger)
+            .basedir(actualBasedir)
+            .outputDirectory(getOutputDirectory())
+            .dryrun(dryrun())
+            .projectName(projectName)
+            .projectVersion(projectVersion)
+            .tagName(tagName)
+            .releaseName(releaseName)
+            .milestoneName(milestoneName)
+            .prerelease(prerelease)
+            .draft(draft)
+            .overwrite(overwrite)
+            .update(update)
+            .skipTag(skipTag)
+            .changelog(changelog)
+            .changelogFormatted(changelogFormatted)
+            .username(username)
+            .commitAuthorName(commitAuthorName)
+            .commitAuthorEmail(commitAuthorEmail)
+            .signing(signing)
+            .armored(armored)
+            .files(collectFiles())
+            .autoConfigure();
+
+        doExecute(context);
+    }
+
+    private List<String> collectFiles() {
+        List<String> list = new ArrayList<>();
+        if (files != null && files.length > 0) {
+            Collections.addAll(list, files);
+        }
+        return list;
     }
 
     private void basedir() {
@@ -147,93 +166,6 @@ public class Release extends AbstractModelCommand {
         if (!Files.exists(actualBasedir)) {
             throw halt("Missing required option: '--basedir=<basedir>'");
         }
-    }
-
-    private JReleaserContext createAutoConfiguredContext() {
-        return ContextCreator.create(
-            logger,
-            JReleaserContext.Mode.FULL,
-            autoConfiguredModel(),
-            actualBasedir,
-            getOutputDirectory(),
-            dryrun());
-    }
-
-    private void dumpAutoConfig() {
-        if (isNotBlank(projectName)) logger.info("- project.name: {}", projectName);
-        if (isNotBlank(projectVersion)) logger.info("- project.version: {}", projectVersion);
-        if (isNotBlank(username)) logger.info("- release.username: {}", username);
-        if (isNotBlank(tagName)) logger.info("- release.tagName: {}", tagName);
-        if (isNotBlank(releaseName)) logger.info("- release.releaseName: {}", releaseName);
-        if (isNotBlank(milestoneName)) logger.info("- release.milestone.name: {}", milestoneName);
-        if (overwrite) logger.info("- release.overwrite: true");
-        if (update) logger.info("- release.update: true");
-        if (skipTag) logger.info("- release.skipTag: true");
-        if (prerelease) logger.info("- release.prerelease: true");
-        if (draft) logger.info("- release.draft: true");
-        if (isNotBlank(changelog)) logger.info(" - release.changelog: {}", changelog);
-        if (changelogFormatted) logger.info("- release.changelog.formatted: true");
-        if (isNotBlank(commitAuthorName)) logger.info("- release.commitAuthor.name: {}", commitAuthorName);
-        if (isNotBlank(commitAuthorEmail)) logger.info("- release.commitAuthor.email: {}", commitAuthorEmail);
-        if (signing) logger.info("- signing.enabled: true");
-        if (armored) logger.info("- signing.armored: true");
-        if (files != null && files.length > 0) {
-            for (String file : files) {
-                logger.info("- file: {}", actualBasedir.relativize(actualBasedir.resolve(file)));
-            }
-        }
-    }
-
-    private JReleaserModel autoConfiguredModel() {
-        JReleaserModel model = new JReleaserModel();
-        model.getProject().setName(projectName);
-        model.getProject().setVersion(projectVersion);
-
-        try {
-            Repository repository = GitSdk.of(actualBasedir).getRemote();
-            GitService service = null;
-            switch (repository.getKind()) {
-                case GITHUB:
-                    service = new Github();
-                    model.getRelease().setGithub((Github) service);
-                    ((Github) service).setPrerelease(prerelease);
-                    ((Github) service).setDraft(draft);
-                    break;
-                case GITLAB:
-                    service = new Gitlab();
-                    model.getRelease().setGitlab((Gitlab) service);
-                    break;
-                default:
-                    throw halt("Auto configuration does not support " + repository.getHttpUrl());
-            }
-
-            service.setUsername(username);
-            service.setTagName(tagName);
-            service.setReleaseName(releaseName);
-            service.getMilestone().setName(milestoneName);
-            service.setOverwrite(overwrite);
-            service.setUpdate(update);
-            service.setSkipTag(skipTag);
-            if (isNotBlank(changelog)) service.getChangelog().setExternal(changelog);
-            if (isNotBlank(commitAuthorName)) service.getCommitAuthor().setName(commitAuthorName);
-            if (isNotBlank(commitAuthorEmail)) service.getCommitAuthor().setEmail(commitAuthorEmail);
-            if (changelogFormatted) service.getChangelog().setFormatted(Active.ALWAYS);
-        } catch (IOException e) {
-            throw halt(e.getMessage());
-        }
-
-        if (signing) {
-            model.getSigning().setActive(Active.ALWAYS);
-            model.getSigning().setArmored(armored);
-        }
-
-        if (files != null && files.length > 0) {
-            for (String file : files) {
-                model.getFiles().addArtifact(Artifact.of(Paths.get(file)));
-            }
-        }
-
-        return model;
     }
 
     @Override
