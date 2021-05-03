@@ -37,6 +37,8 @@ interface Changelog {
 
     Property<Boolean> getLinks()
 
+    Property<Boolean> getHideUncategorized()
+
     RegularFileProperty getExternal()
 
     void setSort(String sort)

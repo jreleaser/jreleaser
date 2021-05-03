@@ -212,7 +212,7 @@ public class ChangelogGenerator {
                 .append(lineSeparator());
         }
 
-        if (categories.containsKey(UNCATEGORIZED)) {
+        if (!changelog.isHideUncategorized() && categories.containsKey(UNCATEGORIZED)) {
             changes.append("---")
                 .append(lineSeparator);
 

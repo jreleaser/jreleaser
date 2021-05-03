@@ -49,6 +49,7 @@ public class Changelog implements EnabledAware {
     private String change;
     private String content;
     private String contentTemplate;
+    private boolean hideUncategorized;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
@@ -59,6 +60,7 @@ public class Changelog implements EnabledAware {
         this.change = changelog.change;
         this.content = changelog.content;
         this.contentTemplate = changelog.contentTemplate;
+        this.hideUncategorized = changelog.hideUncategorized;
         setIncludeLabels(changelog.includeLabels);
         setExcludeLabels(changelog.excludeLabels);
         setCategories(changelog.categories);
@@ -198,6 +200,14 @@ public class Changelog implements EnabledAware {
 
     public void setContentTemplate(String contentTemplate) {
         this.contentTemplate = contentTemplate;
+    }
+
+    public boolean isHideUncategorized() {
+        return hideUncategorized;
+    }
+
+    public void setHideUncategorized(boolean hideUncategorized) {
+        this.hideUncategorized = hideUncategorized;
     }
 
     public enum Sort {

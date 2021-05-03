@@ -41,6 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class ChangelogImpl implements Changelog {
     final Property<Boolean> enabled
     final Property<Boolean> links
+    final Property<Boolean> hideUncategorized
     final Property<org.jreleaser.model.Changelog.Sort> sort
     final RegularFileProperty external
     final Property<Active> formatted
@@ -60,6 +61,7 @@ class ChangelogImpl implements Changelog {
         this.objects = objects
         enabled = objects.property(Boolean).convention(Providers.notDefined())
         links = objects.property(Boolean).convention(Providers.notDefined())
+        hideUncategorized = objects.property(Boolean).convention(Providers.notDefined())
         sort = objects.property(org.jreleaser.model.Changelog.Sort).convention(Providers.notDefined())
         external = objects.fileProperty().convention(Providers.notDefined())
         formatted = objects.property(Active).convention(Providers.notDefined())
@@ -81,6 +83,7 @@ class ChangelogImpl implements Changelog {
     boolean isSet() {
         enabled.present ||
             links.present ||
+            hideUncategorized.present ||
             external.present ||
             sort.present ||
             formatted.present ||
@@ -142,6 +145,7 @@ class ChangelogImpl implements Changelog {
             changelog.enabled = isSet()
         }
         if (links.present) changelog.links = links.get()
+        if (hideUncategorized.present) changelog.hideUncategorized = hideUncategorized.get()
         if (sort.present) changelog.sort = sort.get()
         if (external.present) changelog.external = external.getAsFile().get().toPath()
         if (formatted.present) changelog.formatted = formatted.get()

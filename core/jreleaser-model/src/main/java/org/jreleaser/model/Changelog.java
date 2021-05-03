@@ -53,6 +53,7 @@ public class Changelog implements Domain, EnabledAware {
     private String change;
     private String content;
     private String contentTemplate;
+    private boolean hideUncategorized;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
@@ -63,6 +64,7 @@ public class Changelog implements Domain, EnabledAware {
         this.change = changelog.change;
         this.content = changelog.content;
         this.contentTemplate = changelog.contentTemplate;
+        this.hideUncategorized = changelog.hideUncategorized;
         setIncludeLabels(changelog.includeLabels);
         setExcludeLabels(changelog.excludeLabels);
         setCategories(changelog.categories);
@@ -221,6 +223,14 @@ public class Changelog implements Domain, EnabledAware {
         this.contentTemplate = contentTemplate;
     }
 
+    public boolean isHideUncategorized() {
+        return hideUncategorized;
+    }
+
+    public void setHideUncategorized(boolean hideUncategorized) {
+        this.hideUncategorized = hideUncategorized;
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
@@ -236,6 +246,7 @@ public class Changelog implements Domain, EnabledAware {
         map.put("contentTemplate", contentTemplate);
         map.put("includeLabels", includeLabels);
         map.put("excludeLabels", excludeLabels);
+        map.put("hideUncategorized", hideUncategorized);
         map.put("categories", categories.stream().map(c -> c.asMap(full)).collect(toList()));
         map.put("replacers", replacers.stream().map(r -> r.asMap(full)).collect(toList()));
         map.put("labelers", labelers.stream().map(l -> l.asMap(full)).collect(toList()));
