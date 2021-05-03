@@ -18,6 +18,7 @@ project:
   java:
     groupId: org.jreleaser
     version: 8
+    multiProject: true
 
 release:
   github:
