@@ -66,11 +66,11 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
     }
 
     @Override
-    protected boolean doUploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    protected boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         if (tool.isRemoteBuild()) {
-            return super.doUploadDistribution(distribution, releaser, props);
+            return super.doPublishDistribution(distribution, releaser, props);
         }
-        return uploadChocolateyPackage(distribution, props);
+        return publishChocolateyPackage(distribution, props);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
         return false;
     }
 
-    private boolean uploadChocolateyPackage(Distribution distribution, Map<String, Object> props) {
+    private boolean publishChocolateyPackage(Distribution distribution, Map<String, Object> props) {
         context.getLogger().warn("local publication is not yet supported.");
         return false;
     }

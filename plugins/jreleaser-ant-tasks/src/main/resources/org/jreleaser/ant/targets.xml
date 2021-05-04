@@ -120,11 +120,11 @@
                         configFile="${jreleaser.config.file}"/>
     </target>
 
-    <target name="jreleaser-upload">
-        <jreleaser:upload dryrun="${jreleaser.dryrun}"
-                          skip="${jreleaser.skip}"
-                          configFile="${jreleaser.config.file}"
-                          distributionName="${jreleaser.distribution.name}"
-                          toolName="${jreleaser.tool.name}"/>
+    <target name="jreleaser-publish">
+        <jreleaser:publish dryrun="${jreleaser.dryrun}"
+                           skip="${jreleaser.skip}"
+                           configFile="${jreleaser.config.file}"
+                           distributionName="${jreleaser.distribution.name}"
+                           toolName="${jreleaser.tool.name}"/>
     </target>
 </project>

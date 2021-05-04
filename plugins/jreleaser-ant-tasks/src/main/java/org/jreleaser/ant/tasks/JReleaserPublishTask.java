@@ -15,41 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.cli;
+package org.jreleaser.ant.tasks;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
-import picocli.CommandLine;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "upload",
-    mixinStandardHelpOptions = true,
-    description = "Upload all distributions.")
-public class Upload extends AbstractModelCommand {
-    @CommandLine.Option(names = {"-y", "--dryrun"},
-        description = "Skip remote operations.")
-    boolean dryrun;
+public class JReleaserPublishTask extends AbstractJReleaserTask {
+    private String distributionName;
+    private String toolName;
 
-    @CommandLine.Option(names = {"-dn", "--distribution-name"},
-        description = "The name of the distribution.")
-    String distributionName;
+    public void setDistributionName(String distributionName) {
+        this.distributionName = distributionName;
+    }
 
-    @CommandLine.Option(names = {"-tn", "--tool-name"},
-        description = "The name of the tool.")
-    String toolName;
+    public void setToolName(String toolName) {
+        this.toolName = toolName;
+    }
 
     @Override
     protected void doExecute(JReleaserContext context) {
         context.setDistributionName(distributionName);
         context.setToolName(toolName);
-        Workflows.upload(context).execute();
-    }
-
-    @Override
-    protected boolean dryrun() {
-        return dryrun;
+        Workflows.publish(context).execute();
     }
 }

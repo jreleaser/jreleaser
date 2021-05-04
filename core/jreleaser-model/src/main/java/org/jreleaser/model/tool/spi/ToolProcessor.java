@@ -40,5 +40,5 @@ public interface ToolProcessor<T extends Tool> {
 
     boolean packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
-    boolean uploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
+    boolean publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
 }

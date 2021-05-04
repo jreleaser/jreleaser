@@ -94,7 +94,7 @@ public class DistributionProcessor {
         return toolProcessor.packageDistribution(distribution, initProps());
     }
 
-    public boolean uploadDistribution() throws ToolProcessingException {
+    public boolean publishDistribution() throws ToolProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
@@ -108,9 +108,9 @@ public class DistributionProcessor {
             return false;
         }
 
-        context.getLogger().info("uploading {} distribution", distributionName);
+        context.getLogger().info("publishing {} distribution", distributionName);
 
-        return toolProcessor.uploadDistribution(distribution, Releasers.releaserFor(context), initProps());
+        return toolProcessor.publishDistribution(distribution, Releasers.releaserFor(context), initProps());
     }
 
     private Map<String, Object> initProps() {

@@ -80,13 +80,13 @@ public class Workflows {
         ));
     }
 
-    public static Workflow upload(JReleaserContext context) {
+    public static Workflow publish(JReleaserContext context) {
         return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new PrepareWorkflowItem(),
             new PackageWorkflowItem(),
-            new UploadWorkflowItem()
+            new PublishWorkflowItem()
         ));
     }
 
@@ -105,7 +105,7 @@ public class Workflows {
             new ReleaseWorkflowItem(),
             new PrepareWorkflowItem(),
             new PackageWorkflowItem(),
-            new UploadWorkflowItem(),
+            new PublishWorkflowItem(),
             new AnnounceWorkflowItem()
         ));
     }

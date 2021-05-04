@@ -154,7 +154,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     @Override
-    public boolean uploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    public boolean publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug("creating props for {}/{}", distributionName, getToolName());
@@ -163,7 +163,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 context.getLogger().warn("skipping {} distribution", distributionName);
                 return false;
             }
-            return doUploadDistribution(distribution, releaser, newProps);
+            return doPublishDistribution(distribution, releaser, newProps);
         } catch (IllegalArgumentException e) {
             throw new ToolProcessingException(e);
         }
@@ -171,7 +171,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     protected abstract boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
-    protected abstract boolean doUploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
+    protected abstract boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
 
     protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName) throws ToolProcessingException;
 

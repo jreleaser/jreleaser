@@ -15,29 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.tasks
+package org.jreleaser.workflow;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.TaskAction
-import org.jreleaser.workflow.Workflows
-
-import javax.inject.Inject
+import org.jreleaser.engine.distribution.DistributionProcessor;
+import org.jreleaser.engine.distribution.Distributions;
+import org.jreleaser.model.JReleaserContext;
 
 /**
- *
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CompileStatic
-abstract class JReleaserUploadTask extends AbstractJReleaserDistributionTask {
-    @Inject
-    JReleaserUploadTask(ObjectFactory objects) {
-        super(objects)
-    }
-
-    @TaskAction
-    void performAction() {
-        Workflows.prepare(setupContext()).execute()
+class PublishWorkflowItem implements WorkflowItem {
+    @Override
+    public void invoke(JReleaserContext context) {
+        Distributions.process(context, "Publishing", DistributionProcessor::publishDistribution);
     }
 }

@@ -42,7 +42,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaseAutoConfigReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
-import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserPublishTask
 import org.jreleaser.model.JReleaserModel
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
@@ -228,12 +228,12 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        project.tasks.register('jreleaserUpload', JReleaserUploadTask,
-            new Action<JReleaserUploadTask>() {
+        project.tasks.register('jreleaserPublish', JReleaserPublishTask,
+            new Action<JReleaserPublishTask>() {
                 @Override
-                void execute(JReleaserUploadTask t) {
+                void execute(JReleaserPublishTask t) {
                     t.group = JRELEASER_GROUP
-                    t.description = 'Uploads all distributions'
+                    t.description = 'Publishes all distributions'
                     t.dependsOn(packageTask)
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)

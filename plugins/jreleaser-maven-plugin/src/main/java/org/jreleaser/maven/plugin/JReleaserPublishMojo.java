@@ -25,13 +25,13 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
 /**
- * Upload all distributions.
+ * Publish all distributions.
  *
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "upload")
-public class JReleaserUploadMojo extends AbstractJReleaserMojo {
+@Mojo(name = "publish")
+public class JReleaserPublishMojo extends AbstractJReleaserMojo {
     /**
      * The name of the distribution
      */
@@ -47,7 +47,7 @@ public class JReleaserUploadMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.upload.skip")
+    @Parameter(property = "jreleaser.publish.skip")
     private boolean skip;
 
     @Override
@@ -58,6 +58,6 @@ public class JReleaserUploadMojo extends AbstractJReleaserMojo {
         JReleaserContext context = createContext();
         context.setDistributionName(distributionName);
         context.setToolName(toolName);
-        Workflows.upload(context).execute();
+        Workflows.publish(context).execute();
     }
 }

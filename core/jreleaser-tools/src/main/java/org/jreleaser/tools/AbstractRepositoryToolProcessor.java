@@ -47,7 +47,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
         super(context);
     }
 
-    protected boolean doUploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    protected boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
         try {

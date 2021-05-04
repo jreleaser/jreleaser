@@ -63,9 +63,9 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
     }
 
     @Override
-    protected boolean doUploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    protected boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         if (tool.isRemoteBuild()) {
-            return super.doUploadDistribution(distribution, releaser, props);
+            return super.doPublishDistribution(distribution, releaser, props);
         }
 
         if (context.isDryrun()) {

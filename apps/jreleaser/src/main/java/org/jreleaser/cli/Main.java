@@ -33,7 +33,7 @@ import java.io.PrintWriter;
         Assemble.class,
         Changelog.class, Checksum.class, Sign.class,
         Release.class, Prepare.class, Package.class,
-        Upload.class, Announce.class, FullRelease.class})
+        Publish.class, Announce.class, FullRelease.class})
 public class Main implements Runnable {
     PrintWriter out;
     PrintWriter err;

@@ -15,31 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.ant.tasks;
+package org.jreleaser.gradle.plugin.tasks
 
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.workflow.Workflows;
+import groovy.transform.CompileStatic
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.tasks.TaskAction
+import org.jreleaser.workflow.Workflows
+
+import javax.inject.Inject
 
 /**
+ *
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserUploadTask extends AbstractJReleaserTask {
-    private String distributionName;
-    private String toolName;
-
-    public void setDistributionName(String distributionName) {
-        this.distributionName = distributionName;
+@CompileStatic
+abstract class JReleaserPublishTask extends AbstractJReleaserDistributionTask {
+    @Inject
+    JReleaserPublishTask(ObjectFactory objects) {
+        super(objects)
     }
 
-    public void setToolName(String toolName) {
-        this.toolName = toolName;
-    }
-
-    @Override
-    protected void doExecute(JReleaserContext context) {
-        context.setDistributionName(distributionName);
-        context.setToolName(toolName);
-        Workflows.upload(context).execute();
+    @TaskAction
+    void performAction() {
+        Workflows.publish(setupContext()).execute()
     }
 }

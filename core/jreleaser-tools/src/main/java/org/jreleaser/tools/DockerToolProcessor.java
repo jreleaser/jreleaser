@@ -127,16 +127,16 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
     }
 
     @Override
-    public boolean uploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    public boolean publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         if (tool.getRegistries().isEmpty()) {
             context.getLogger().info("no configured registries. Skipping");
             return false;
         }
-        return super.uploadDistribution(distribution, releaser, props);
+        return super.publishDistribution(distribution, releaser, props);
     }
 
     @Override
-    protected boolean doUploadDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    protected boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         for (Registry registry : getTool().getRegistries()) {
             login(registry);
             int i = 0;
