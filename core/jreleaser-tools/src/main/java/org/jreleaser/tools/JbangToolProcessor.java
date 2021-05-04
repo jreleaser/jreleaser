@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_REVERSE_DOMAIN;
 import static org.jreleaser.util.Constants.KEY_REVERSE_REPO_HOST;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -92,7 +93,9 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
                 // {{reverseRepoHost}}.{{repoOwner}}.{{repoName}}:{{distributionArtifactId}}
 
                 String reverseRepoHost = gitService.getReverseRepoHost();
-                if (isBlank(reverseRepoHost)) {
+                if (tool.getExtraProperties().containsKey(KEY_REVERSE_DOMAIN)) {
+                    reverseRepoHost = (String) tool.getExtraProperties().get(KEY_REVERSE_DOMAIN);
+                } else if (isBlank(reverseRepoHost)) {
                     reverseRepoHost = (String) tool.getExtraProperties().get(KEY_REVERSE_REPO_HOST);
                 }
 
