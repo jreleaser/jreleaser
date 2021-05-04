@@ -18,10 +18,4 @@
 dependencies {
     api project(':jreleaser-model')
     api project(':git-sdk')
-
-    // checksum
-    api "commons-codec:commons-codec:$commonsCodecVersion"
-
-    // sign
-    api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
 }

@@ -17,12 +17,12 @@
  */
 package org.jreleaser.engine.checksum;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.util.ChecksumUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -135,9 +135,13 @@ public class Checksum {
     }
 
     public static String calculateHash(JReleaserContext context, Path input, Path output) throws JReleaserException {
+        return calculateHash(context, input, output, ChecksumUtils.Algorithm.SHA_256);
+    }
+
+    public static String calculateHash(JReleaserContext context, Path input, Path output, ChecksumUtils.Algorithm algorithm) throws JReleaserException {
         try {
             context.getLogger().info("{}", context.getBasedir().relativize(input));
-            String hashcode = DigestUtils.sha256Hex(Files.readAllBytes(input));
+            String hashcode = ChecksumUtils.checksum(algorithm, Files.readAllBytes(input));
             output.toFile().getParentFile().mkdirs();
             Files.write(output, hashcode.getBytes());
             return hashcode;

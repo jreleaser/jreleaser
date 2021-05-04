@@ -22,4 +22,6 @@ dependencies {
     api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
+    // checksum
+    api "commons-codec:commons-codec:$commonsCodecVersion"
 }
