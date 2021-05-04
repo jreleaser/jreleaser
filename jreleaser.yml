@@ -32,10 +32,13 @@ release:
       labelers:
         - label: 'feature'
           title: 'Resolves #'
+          body: 'Resolves #'
         - label: 'issue'
           title: 'Fixes #'
+          body: 'Fixes #'
         - label: 'issue'
           title: 'Relates to #'
+          body: 'Relates to #'
         - label: 'task'
           title: '[chore]'
       categories:
