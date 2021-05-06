@@ -255,8 +255,10 @@ public class ChangelogGenerator {
         }
 
         if (!changelog.isHideUncategorized() && categories.containsKey(UNCATEGORIZED)) {
-            changes.append("---")
-                .append(lineSeparator);
+            if (changes.length() > 0) {
+                changes.append("---")
+                    .append(lineSeparator);
+            }
 
             changes.append(categories.get(UNCATEGORIZED).stream()
                 .map(c -> applyTemplate(changelog.getChange(), c.asContext()))
