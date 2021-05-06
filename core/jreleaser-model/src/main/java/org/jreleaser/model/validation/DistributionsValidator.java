@@ -156,7 +156,7 @@ public abstract class DistributionsValidator extends Validator {
         if (!distribution.getJava().isEnabled()) return true;
 
         if (isBlank(distribution.getJava().getArtifactId())) {
-            distribution.getJava().setArtifactId(project.getJava().getArtifactId());
+            distribution.getJava().setArtifactId(distribution.getName());
         }
         if (isBlank(distribution.getJava().getGroupId())) {
             distribution.getJava().setGroupId(project.getJava().getGroupId());
