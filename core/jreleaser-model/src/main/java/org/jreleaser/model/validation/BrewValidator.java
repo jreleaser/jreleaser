@@ -59,7 +59,7 @@ public abstract class BrewValidator extends Validator {
         tool.setDependenciesAsList(dependencies);
 
         if (isBlank(tool.getFormulaName())) {
-            tool.setFormulaName(model.getProject().getName());
+            tool.setFormulaName(distribution.getName());
         }
 
         if (isBlank(tool.getTap().getName())) {
