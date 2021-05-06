@@ -50,6 +50,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private String projectVersion;
     private String tagName;
     private String releaseName;
+    private String branch;
     private String milestoneName;
     private boolean prerelease;
     private boolean draft;
@@ -87,6 +88,10 @@ public class JReleaserAutoConfigReleaseTask extends Task {
 
     public void setReleaseName(String releaseName) {
         this.releaseName = releaseName;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 
     public void setMilestoneName(String milestoneName) {
@@ -161,6 +166,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .projectVersion(projectVersion)
             .tagName(tagName)
             .releaseName(releaseName)
+            .branch(branch)
             .milestoneName(milestoneName)
             .prerelease(prerelease)
             .draft(draft)

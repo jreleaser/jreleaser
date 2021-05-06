@@ -53,6 +53,9 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}/jreleaser")
     protected File outputDirectory;
 
+    /**
+     * Skips remote operations.
+     */
     @Parameter(property = "jreleaser.dryrun")
     protected boolean dryrun;
 

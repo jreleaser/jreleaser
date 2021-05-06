@@ -82,6 +82,11 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.release.name")
     private String releaseName;
     /**
+     * The release branch.
+     */
+    @Parameter(property = "jreleaser.release.branch")
+    private String branch;
+    /**
      * The milestone name.
      */
     @Parameter(property = "jreleaser.milestone.name")
@@ -92,7 +97,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.prerelease")
     private boolean prerelease;
     /**
-     * If the release is a draft .
+     * If the release is a draft.
      */
     @Parameter(property = "jreleaser.draft")
     private boolean draft;
@@ -165,6 +170,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .projectVersion(projectVersion)
             .tagName(tagName)
             .releaseName(releaseName)
+            .branch(branch)
             .milestoneName(milestoneName)
             .prerelease(prerelease)
             .draft(draft)

@@ -84,6 +84,10 @@ public class Release extends AbstractModelCommand {
         description = "Skip tagging the release.")
     boolean skipTag;
 
+    @CommandLine.Option(names = {"--branch"},
+        description = "The release branch.")
+    String branch;
+
     @CommandLine.Option(names = {"--changelog"},
         description = "Path to changelog file.")
     String changelog;
@@ -135,6 +139,7 @@ public class Release extends AbstractModelCommand {
             .tagName(tagName)
             .releaseName(releaseName)
             .milestoneName(milestoneName)
+            .branch(branch)
             .prerelease(prerelease)
             .draft(draft)
             .overwrite(overwrite)

@@ -53,6 +53,7 @@ public class ModelAutoConfigurer {
     private String tagName;
     private String releaseName;
     private String milestoneName;
+    private String branch;
     private boolean prerelease;
     private boolean draft;
     private boolean overwrite;
@@ -98,6 +99,11 @@ public class ModelAutoConfigurer {
 
     public ModelAutoConfigurer tagName(String tagName) {
         this.tagName = tagName;
+        return this;
+    }
+
+    public ModelAutoConfigurer branch(String branch) {
+        this.branch = branch;
         return this;
     }
 
@@ -213,6 +219,7 @@ public class ModelAutoConfigurer {
         if (isNotBlank(projectVersion)) logger.info("- project.version: {}", projectVersion);
         if (isNotBlank(username)) logger.info("- release.username: {}", username);
         if (isNotBlank(tagName)) logger.info("- release.tagName: {}", tagName);
+        if (isNotBlank(branch)) logger.info("- release.branch: {}", branch);
         if (isNotBlank(releaseName)) logger.info("- release.releaseName: {}", releaseName);
         if (isNotBlank(milestoneName)) logger.info("- release.milestone.name: {}", milestoneName);
         if (overwrite) logger.info("- release.overwrite: true");
@@ -263,6 +270,7 @@ public class ModelAutoConfigurer {
             service.setOverwrite(overwrite);
             service.setUpdate(update);
             service.setSkipTag(skipTag);
+            if (isNotBlank(branch)) service.setBranch(branch);
             if (isNotBlank(changelog)) service.getChangelog().setExternal(changelog);
             if (isNotBlank(commitAuthorName)) service.getCommitAuthor().setName(commitAuthorName);
             if (isNotBlank(commitAuthorEmail)) service.getCommitAuthor().setEmail(commitAuthorEmail);

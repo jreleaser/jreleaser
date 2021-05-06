@@ -63,6 +63,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     final Property<String> releaseName
     @Input
     @Optional
+    final Property<String> branch
+    @Input
+    @Optional
     final Property<String> milestoneName
     @Input
     @Optional
@@ -122,6 +125,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Option(option = 'release-name', description = 'The release name (OPTIONAL).')
     void setReleaseName(String releaseName) {
         this.releaseName.set(releaseName)
+    }
+
+    @Option(option = 'branch', description = 'The release branch (OPTIONAL).')
+    void setBranch(String branch) {
+        this.branch.set(branch)
     }
 
     @Option(option = 'milestone-name', description = 'The milestone name (OPTIONAL).')
@@ -208,6 +216,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         projectVersion = objects.property(String).convention(String.valueOf(project.version))
         tagName = objects.property(String).convention(Providers.notDefined())
         releaseName = objects.property(String).convention(Providers.notDefined())
+        branch = objects.property(String).convention(Providers.notDefined())
         milestoneName = objects.property(String).convention(Providers.notDefined())
         changeLog = objects.property(String).convention(Providers.notDefined())
         username = objects.property(String).convention(Providers.notDefined())
@@ -240,6 +249,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .projectVersion(projectVersion.get())
             .tagName(tagName.orNull)
             .releaseName(releaseName.orNull)
+            .branch(branch.orNull)
             .milestoneName(milestoneName.orNull)
             .prerelease(prerelease.get())
             .draft(draft.get())
