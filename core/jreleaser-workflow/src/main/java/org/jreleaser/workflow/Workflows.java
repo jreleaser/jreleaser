@@ -40,17 +40,23 @@ public class Workflows {
     }
 
     public static Workflow checksum(JReleaserContext context) {
-        return new WorkflowImpl(context, asList(
-            new ChangelogWorkflowItem(),
+        return new WorkflowImpl(context, singletonList(
             new ChecksumWorkflowItem()
         ));
     }
 
     public static Workflow sign(JReleaserContext context) {
         return new WorkflowImpl(context, asList(
-            new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem()
+        ));
+    }
+
+    public static Workflow upload(JReleaserContext context) {
+        return new WorkflowImpl(context, asList(
+            new ChecksumWorkflowItem(),
+            new SignWorkflowItem(),
+            new UploadWorkflowItem()
         ));
     }
 
@@ -59,13 +65,13 @@ public class Workflows {
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem(),
+            new UploadWorkflowItem(),
             new ReleaseWorkflowItem()
         ));
     }
 
     public static Workflow prepare(JReleaserContext context) {
         return new WorkflowImpl(context, asList(
-            new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new PrepareWorkflowItem()
         ));
@@ -73,7 +79,6 @@ public class Workflows {
 
     public static Workflow packageRelease(JReleaserContext context) {
         return new WorkflowImpl(context, asList(
-            new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new PrepareWorkflowItem(),
             new PackageWorkflowItem()
@@ -82,7 +87,6 @@ public class Workflows {
 
     public static Workflow publish(JReleaserContext context) {
         return new WorkflowImpl(context, asList(
-            new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new PrepareWorkflowItem(),
             new PackageWorkflowItem(),
@@ -102,6 +106,7 @@ public class Workflows {
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem(),
+            new UploadWorkflowItem(),
             new ReleaseWorkflowItem(),
             new PrepareWorkflowItem(),
             new PackageWorkflowItem(),

@@ -19,6 +19,7 @@ package org.jreleaser.maven.plugin.internal;
 
 import org.jreleaser.maven.plugin.Announce;
 import org.jreleaser.maven.plugin.Artifact;
+import org.jreleaser.maven.plugin.Artifactory;
 import org.jreleaser.maven.plugin.Assemble;
 import org.jreleaser.maven.plugin.Brew;
 import org.jreleaser.maven.plugin.Bucket;
@@ -59,6 +60,7 @@ import org.jreleaser.maven.plugin.Snap;
 import org.jreleaser.maven.plugin.Tap;
 import org.jreleaser.maven.plugin.Teams;
 import org.jreleaser.maven.plugin.Twitter;
+import org.jreleaser.maven.plugin.Upload;
 import org.jreleaser.maven.plugin.Zulip;
 import org.jreleaser.model.ChocolateyBucket;
 import org.jreleaser.model.HomebrewTap;
@@ -90,6 +92,7 @@ public final class JReleaserModelConverter {
         jreleaserModel.setEnvironment(convertEnvironment(jreleaser.getEnvironment()));
         jreleaserModel.setProject(convertProject(jreleaser.getProject()));
         jreleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
+        jreleaserModel.setUpload(convertUpload(jreleaser.getUpload()));
         jreleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
         jreleaserModel.setAnnounce(convertAnnounce(jreleaser.getAnnounce()));
         jreleaserModel.setAssemble(convertAssemble(jreleaser.getAssemble()));
@@ -261,6 +264,38 @@ public final class JReleaserModelConverter {
         return m;
     }
 
+    private static org.jreleaser.model.Upload convertUpload(Upload upload) {
+        org.jreleaser.model.Upload u = new org.jreleaser.model.Upload();
+        if (upload.isEnabledSet()) u.setEnabled(upload.isEnabled());
+        u.setArtifactories(convertArtifactories(upload.getArtifactories()));
+        return u;
+    }
+
+    private static Map<String, org.jreleaser.model.Artifactory> convertArtifactories(Map<String, Artifactory> artifactories) {
+        Map<String, org.jreleaser.model.Artifactory> map = new LinkedHashMap<>();
+        for (Artifactory artifactory : artifactories.values()) {
+            map.put(artifactory.getName(), convertArtifactory(artifactory));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.Artifactory convertArtifactory(Artifactory artifactory) {
+        org.jreleaser.model.Artifactory a = new org.jreleaser.model.Artifactory();
+        a.setName(artifactory.getName());
+        a.setActive(artifactory.resolveActive());
+        a.setExtraProperties(artifactory.getExtraProperties());
+        a.setConnectTimeout(artifactory.getConnectTimeout());
+        a.setReadTimeout(artifactory.getReadTimeout());
+        if (artifactory.isArtifactsSet()) a.setArtifacts(artifactory.isArtifacts());
+        if (artifactory.isFilesSet()) a.setFiles(artifactory.isFiles());
+        if (artifactory.isSignaturesSet()) a.setSignatures(artifactory.isSignatures());
+        a.setTarget(artifactory.getTarget());
+        a.setUsername(artifactory.getUsername());
+        a.setPassword(artifactory.getPassword());
+        a.setToken(artifactory.getToken());
+        return a;
+    }
+
     private static org.jreleaser.model.Packagers convertPackagers(Packagers packagers) {
         org.jreleaser.model.Packagers p = new org.jreleaser.model.Packagers();
         if (packagers.getBrew().isSet()) p.setBrew(convertBrew(packagers.getBrew()));
@@ -407,20 +442,20 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Assemble convertAssemble(Assemble assemble) {
         org.jreleaser.model.Assemble a = new org.jreleaser.model.Assemble();
         if (assemble.isEnabledSet()) a.setEnabled(assemble.isEnabled());
-        a.setJlinks(convertJlinks(assemble.getJlinks()));
+        a.setJlinks(convertJlink(assemble.getJlinks()));
         a.setNativeImages(convertNativeImages(assemble.getNativeImages()));
         return a;
     }
 
-    private static Map<String, org.jreleaser.model.Jlink> convertJlinks(Map<String, Jlink> jlink) {
+    private static Map<String, org.jreleaser.model.Jlink> convertJlink(Map<String, Jlink> jlinks) {
         Map<String, org.jreleaser.model.Jlink> map = new LinkedHashMap<>();
-        for (Jlink jl : jlink.values()) {
-            map.put(jl.getName(), convertJlinks(jl));
+        for (Jlink jlink : jlinks.values()) {
+            map.put(jlink.getName(), convertJlink(jlink));
         }
         return map;
     }
 
-    private static org.jreleaser.model.Jlink convertJlinks(Jlink jlink) {
+    private static org.jreleaser.model.Jlink convertJlink(Jlink jlink) {
         org.jreleaser.model.Jlink a = new org.jreleaser.model.Jlink();
         a.setName(jlink.getName());
         a.setActive(jlink.resolveActive());

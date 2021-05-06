@@ -57,25 +57,25 @@ public class JReleaserTemplateMojo extends AbstractMojo {
     private boolean skip;
 
     /**
-     * The name of the distribution
+     * The name of the distribution.
      */
     @Parameter(property = "jreleaser.template.distribution.name")
     private String distributionName;
 
     /**
-     * The type of the distribution
+     * The type of the distribution.
      */
     @Parameter(property = "jreleaser.template.distribution.type", defaultValue = "JAVA_BINARY")
     private final Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
 
     /**
-     * The name of the distribution
+     * The name of the tool.
      */
     @Parameter(property = "jreleaser.template.tool.name")
     private String toolName;
 
     /**
-     * The name of the distribution
+     * The name of the announcer.
      */
     @Parameter(property = "jreleaser.announcer.name")
     private String announcerName;

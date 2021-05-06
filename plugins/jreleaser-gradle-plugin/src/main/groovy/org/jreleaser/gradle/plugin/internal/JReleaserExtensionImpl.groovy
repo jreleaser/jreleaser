@@ -35,6 +35,7 @@ import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
 import org.jreleaser.gradle.plugin.dsl.Signing
+import org.jreleaser.gradle.plugin.dsl.Upload
 import org.jreleaser.gradle.plugin.internal.dsl.AnnounceImpl
 import org.jreleaser.gradle.plugin.internal.dsl.AssembleImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
@@ -44,6 +45,7 @@ import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl
 import org.jreleaser.gradle.plugin.internal.dsl.SigningImpl
+import org.jreleaser.gradle.plugin.internal.dsl.UploadImpl
 import org.jreleaser.model.Distribution
 import org.jreleaser.model.JReleaserModel
 
@@ -62,6 +64,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final EnvironmentImpl environment
     final ProjectImpl project
     final ReleaseImpl release
+    final UploadImpl upload
     final PackagersImpl packagers
     final AnnounceImpl announce
     final AssembleImpl assemble
@@ -80,6 +83,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         environment = objects.newInstance(EnvironmentImpl, objects)
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)
         release = objects.newInstance(ReleaseImpl, objects)
+        upload = objects.newInstance(UploadImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)
         announce = objects.newInstance(AnnounceImpl, objects)
         assemble = objects.newInstance(AssembleImpl, objects)
@@ -117,6 +121,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
+    void upload(Action<? super Upload> action) {
+        action.execute(upload)
+    }
+
+    @Override
     void packagers(Action<? super Packagers> action) {
         action.execute(packagers)
     }
@@ -142,6 +151,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.environment = environment.toModel()
         jreleaser.project = project.toModel()
         jreleaser.release = release.toModel()
+        jreleaser.upload = upload.toModel()
         jreleaser.packagers = packagers.toModel()
         jreleaser.announce = announce.toModel()
         jreleaser.assemble = assemble.toModel()

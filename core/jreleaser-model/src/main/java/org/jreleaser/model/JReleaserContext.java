@@ -69,6 +69,8 @@ public class JReleaserContext {
     private String distributionName;
     private String toolName;
     private String announcerName;
+    private String uploaderName;
+    private String uploaderType;
     private String assemblerName;
     private String changelog;
 
@@ -212,6 +214,14 @@ public class JReleaserContext {
         return isNotBlank(announcerName);
     }
 
+    public boolean hasUploaderName() {
+        return isNotBlank(uploaderName);
+    }
+
+    public boolean hasUploaderType() {
+        return isNotBlank(uploaderType);
+    }
+
     public boolean hasAssemblerName() {
         return isNotBlank(assemblerName);
     }
@@ -238,6 +248,22 @@ public class JReleaserContext {
 
     public void setAnnouncerName(String announcerName) {
         this.announcerName = announcerName;
+    }
+
+    public String getUploaderName() {
+        return uploaderName;
+    }
+
+    public void setUploaderName(String uploaderName) {
+        this.uploaderName = uploaderName;
+    }
+
+    public String getUploaderType() {
+        return uploaderType;
+    }
+
+    public void setUploaderType(String uploaderType) {
+        this.uploaderType = uploaderType;
     }
 
     public String getAssemblerName() {

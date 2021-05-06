@@ -67,10 +67,6 @@ class NativeImageImpl extends AbstractAssembler implements NativeImage {
         })
     }
 
-    void setName(String name) {
-        this.name = name
-    }
-
     @Override
     void addArg(String arg) {
         if (isNotBlank(arg)) {

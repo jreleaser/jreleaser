@@ -22,7 +22,7 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public interface EnabledAware {
-    Boolean isEnabled();
+    boolean isEnabled();
 
     void setEnabled(Boolean enabled);
 

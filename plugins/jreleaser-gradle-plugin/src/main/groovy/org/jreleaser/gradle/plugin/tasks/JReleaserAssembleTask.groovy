@@ -36,7 +36,7 @@ import javax.inject.Inject
  * @since 0.2.0
  */
 @CompileStatic
-abstract class JReleaserAssembleTask extends AbstractJReleaserDistributionTask {
+abstract class JReleaserAssembleTask extends AbstractJReleaserTask {
     @Input
     @Optional
     final Property<String> distributionName
@@ -44,7 +44,7 @@ abstract class JReleaserAssembleTask extends AbstractJReleaserDistributionTask {
     @Input
     @Optional
     final Property<String> assemblerName
-    
+
     @Option(option = 'distribution-name', description = 'The name of the distribution (OPTIONAL).')
     void setDistributionName(String distributionName) {
         this.distributionName.set(distributionName)
@@ -54,7 +54,7 @@ abstract class JReleaserAssembleTask extends AbstractJReleaserDistributionTask {
     void setAssemblerName(String assemblerName) {
         this.assemblerName.set(assemblerName)
     }
-    
+
     @Inject
     JReleaserAssembleTask(ObjectFactory objects) {
         super(objects)
@@ -68,7 +68,7 @@ abstract class JReleaserAssembleTask extends AbstractJReleaserDistributionTask {
     }
 
     protected JReleaserContext setupContext() {
-        mode = JReleaserContext.Mode.ASSEMBLE   
+        mode = JReleaserContext.Mode.ASSEMBLE
         JReleaserContext ctx = createContext()
         ctx.distributionName = distributionName.orNull
         ctx.assemblerName = assemblerName.orNull

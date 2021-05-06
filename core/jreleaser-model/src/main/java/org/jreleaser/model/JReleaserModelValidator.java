@@ -28,6 +28,7 @@ import static org.jreleaser.model.validation.ProjectValidator.postValidateProjec
 import static org.jreleaser.model.validation.ProjectValidator.validateProject;
 import static org.jreleaser.model.validation.ReleaseValidator.validateRelease;
 import static org.jreleaser.model.validation.SigningValidator.validateSigning;
+import static org.jreleaser.model.validation.UploadersValidator.validateUploaders;
 
 /**
  * @author Andres Almiray
@@ -52,6 +53,7 @@ public final class JReleaserModelValidator {
     private static void validateModel(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
         validateProject(context, mode, errors);
         validateSigning(context, mode, errors);
+        validateUploaders(context, mode, errors);
         validateRelease(context, mode, errors);
         validateAssemblers(context, mode, errors);
         validatePackagers(context, mode, errors);

@@ -47,7 +47,7 @@ public class Announce implements EnabledAware {
     }
 
     @Override
-    public Boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled != null && enabled;
     }
 

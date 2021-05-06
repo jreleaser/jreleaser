@@ -47,6 +47,7 @@ public class JReleaserModel implements Domain {
     private final Packagers packagers = new Packagers();
     private final Announce announce = new Announce();
     private final Assemble assemble = new Assemble();
+    private final Upload upload = new Upload();
     private final Signing signing = new Signing();
     private final Files files = new Files();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
@@ -123,6 +124,14 @@ public class JReleaserModel implements Domain {
         this.assemble.setAll(assemble);
     }
 
+    public Upload getUpload() {
+        return upload;
+    }
+
+    public void setUpload(Upload upload) {
+        this.upload.setAll(upload);
+    }
+
     public Signing getSigning() {
         return signing;
     }
@@ -184,6 +193,7 @@ public class JReleaserModel implements Domain {
         if (!files.isEmpty()) map.put("files", files.asMap(full));
         if (full || packagers.hasEnabledPackagers()) map.put("packagers", packagers.asMap(full));
         if (full || assemble.isEnabled()) map.put("assemble", assemble.asMap(full));
+        if (full || upload.isEnabled()) map.put("upload", upload.asMap(full));
 
         List<Map<String, Object>> distributions = this.distributions.values()
             .stream()

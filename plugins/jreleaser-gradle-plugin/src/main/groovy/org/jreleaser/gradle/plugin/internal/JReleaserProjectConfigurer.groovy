@@ -43,6 +43,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPublishTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
 import org.jreleaser.model.JReleaserModel
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
@@ -102,7 +103,7 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        project.tasks.register('jeleaserTemplate', JReleaserTemplateTask,
+        project.tasks.register('jreleaserTemplate', JReleaserTemplateTask,
             new Action<JReleaserTemplateTask>() {
                 @Override
                 void execute(JReleaserTemplateTask t) {
@@ -162,6 +163,21 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserSignTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Signs a release'
+                    t.dryrun.set(extension.dryrun.get())
+                    t.model.set(model)
+                    t.outputDirectory.set(outputDirectory)
+                    if (hasDistributionPlugin) {
+                        t.dependsOn('assembleDist')
+                    }
+                }
+            })
+
+        project.tasks.register('jreleaserUpload', JReleaserUploadTask,
+            new Action<JReleaserUploadTask>() {
+                @Override
+                void execute(JReleaserUploadTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Uploads all artifacts'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
                     t.outputDirectory.set(outputDirectory)

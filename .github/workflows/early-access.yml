@@ -1,4 +1,4 @@
-name: "Early Access"
+name: EarlyAccess
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   earlyaccess:
-    name: "Early Access"
+    name: EarlyAccess
     if: github.repository == 'jreleaser/jreleaser' && startsWith(github.event.head_commit.message, 'Releasing version') != true
     runs-on: ubuntu-latest
     steps:

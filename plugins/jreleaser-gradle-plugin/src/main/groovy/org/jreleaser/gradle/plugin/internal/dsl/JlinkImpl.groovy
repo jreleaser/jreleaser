@@ -86,10 +86,6 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
         })
     }
 
-    void setName(String name) {
-        this.name = name
-    }
-
     @Override
     void addArg(String arg) {
         if (isNotBlank(arg)) {

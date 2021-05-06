@@ -30,6 +30,7 @@ import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
 import org.jreleaser.gradle.plugin.dsl.Signing
+import org.jreleaser.gradle.plugin.dsl.Upload
 
 /**
  *
@@ -48,6 +49,8 @@ interface JReleaserExtension {
 
     Release getRelease()
 
+    Upload getUpload()
+
     Packagers getPackagers()
 
     Announce getAnnounce()
@@ -65,6 +68,8 @@ interface JReleaserExtension {
     void files(Action<? super Files> action)
 
     void release(Action<? super Release> action)
+
+    void upload(Action<? super Upload> action)
 
     void packagers(Action<? super Packagers> action)
 

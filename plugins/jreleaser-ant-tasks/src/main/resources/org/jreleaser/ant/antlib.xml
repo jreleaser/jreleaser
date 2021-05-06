@@ -71,6 +71,10 @@
             classname="org.jreleaser.ant.tasks.JReleaserSignTask"/>
 
     <taskdef
+            name="upload"
+            classname="org.jreleaser.ant.tasks.JReleaserUploadTask"/>
+
+    <taskdef
             name="publish"
             classname="org.jreleaser.ant.tasks.JReleaserPublishTask"/>
 </antlib>

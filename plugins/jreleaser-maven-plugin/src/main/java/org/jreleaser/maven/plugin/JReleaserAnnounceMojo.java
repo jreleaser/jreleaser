@@ -33,7 +33,7 @@ import org.jreleaser.workflow.Workflows;
 @Mojo(name = "announce")
 public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
     /**
-     * The name of the distribution
+     * The name of the distribution.
      */
     @Parameter(property = "jreleaser.announcer.name")
     private String announcerName;

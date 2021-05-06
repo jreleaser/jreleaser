@@ -30,6 +30,7 @@ import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.announcer.spi.AnnounceException;
+import org.jreleaser.model.uploader.spi.UploadException;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -57,7 +59,7 @@ public final class ClientUtils {
         // noop
     }
 
-    public FormData toFormData(Path asset) throws IOException {
+    public static FormData toFormData(Path asset) throws IOException {
         return FormData.builder()
             .fileName(asset.getFileName().toString())
             .contentType(MediaType.parse(TIKA.detect(asset)).toString())
@@ -148,6 +150,66 @@ public final class ClientUtils {
         } catch (IOException e) {
             logger.trace(e);
             throw new AnnounceException(e);
+        }
+    }
+
+    public static void putFile(JReleaserLogger logger,
+                               String url,
+                               int connectTimeout,
+                               int readTimeout,
+                               FormData data,
+                               Map<String, String> headers) throws UploadException {
+        try {
+            // create URL
+            URL theUrl = new URL(url + (!url.endsWith("/") ? "/" : "") + data.getFileName());
+            // open connection
+            logger.debug("opening connection");
+            HttpURLConnection connection = (HttpURLConnection) theUrl.openConnection();
+            // set options
+            logger.debug("configuring connection");
+            connection.setConnectTimeout(connectTimeout * 1000);
+            connection.setReadTimeout(readTimeout * 1000);
+            connection.setAllowUserInteraction(false);
+            connection.setInstanceFollowRedirects(true);
+
+            connection.setRequestMethod("PUT");
+            connection.addRequestProperty("Accept", "*/*");
+            connection.addRequestProperty("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
+            connection.addRequestProperty("Content-Length", data.getData().length + "");
+            connection.setRequestProperty("Content-Type", data.getContentType());
+            headers.forEach(connection::setRequestProperty);
+            connection.setRequestProperty("Expect", "100-continue");
+            connection.setDoOutput(true);
+
+            // write message
+            logger.debug("sending data");
+            try (OutputStream os = connection.getOutputStream()) {
+                os.write(data.getData(), 0, data.getData().length);
+                os.flush();
+            }
+
+            // handle response
+            logger.debug("handling response");
+            int status = connection.getResponseCode();
+            if (status >= 400) {
+                String reason = connection.getResponseMessage();
+                Reader reader = new InputStreamReader(connection.getErrorStream(), UTF_8);
+                String message = IOUtils.toString(reader);
+                StringBuilder b = new StringBuilder("Got ")
+                    .append(status);
+                if (isNotBlank(reason)) {
+                    b.append(" reason: ")
+                        .append(reason)
+                        .append(",");
+                }
+                if (isNotBlank(message)) {
+                    b.append(message);
+                }
+                throw new UploadException(b.toString());
+            }
+        } catch (IOException e) {
+            logger.trace(e);
+            throw new UploadException(e);
         }
     }
 }

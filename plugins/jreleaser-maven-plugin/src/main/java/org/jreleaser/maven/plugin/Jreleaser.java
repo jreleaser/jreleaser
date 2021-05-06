@@ -30,6 +30,7 @@ public class Jreleaser {
     private final Project project = new Project();
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
+    private final Upload upload = new Upload();
     private final Announce announce = new Announce();
     private final Assemble assemble = new Assemble();
     private final Signing signing = new Signing();
@@ -58,6 +59,14 @@ public class Jreleaser {
 
     public void setRelease(Release release) {
         this.release.setAll(release);
+    }
+
+    public Upload getUpload() {
+        return upload;
+    }
+
+    public void setUpload(Upload upload) {
+        this.upload.setAll(upload);
     }
 
     public Packagers getPackagers() {

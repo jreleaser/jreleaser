@@ -33,6 +33,8 @@
     <property name="jreleaser.tool.name" value=""/>
     <property name="jreleaser.announcer.name" value=""/>
     <property name="jreleaser.assembler.name" value=""/>
+    <property name="jreleaser.uploader.type" value=""/>
+    <property name="jreleaser.uploader.name" value=""/>
     <property name="jreleaser.overwrite" value="false"/>
     <property name="jreleaser.snapshot" value="false"/>
     <property name="jreleaser.full" value="false"/>
@@ -118,6 +120,14 @@
         <jreleaser:sign dryrun="${jreleaser.dryrun}"
                         skip="${jreleaser.skip}"
                         configFile="${jreleaser.config.file}"/>
+    </target>
+
+    <target name="jreleaser-upload">
+        <jreleaser:upload dryrun="${jreleaser.dryrun}"
+                          skip="${jreleaser.skip}"
+                          configFile="${jreleaser.config.file}"
+                          uploaderType="${jreleaser.uploader.type}"
+                          uploaderName="${jreleaser.uploader.name}"/>
     </target>
 
     <target name="jreleaser-publish">

@@ -33,13 +33,13 @@ import org.jreleaser.workflow.Workflows;
 @Mojo(name = "assemble")
 public class JReleaserAssembleMojo extends AbstractJReleaserMojo {
     /**
-     * The name of the distribution
+     * The name of the distribution.
      */
     @Parameter(property = "jreleaser.distribution.name")
     private String distributionName;
 
     /**
-     * The name of the distribution
+     * The name of the assembler.
      */
     @Parameter(property = "jreleaser.assembler.name")
     private String assemblerName;

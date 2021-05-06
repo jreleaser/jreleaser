@@ -33,4 +33,6 @@ dependencies {
     // tools
     api project(':jreleaser-tools')
     api project(':jreleaser-assemblers')
+    // upload
+    api project(':artifactory-java-sdk')
 }
