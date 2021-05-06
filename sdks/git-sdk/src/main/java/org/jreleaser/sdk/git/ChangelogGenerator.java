@@ -349,8 +349,8 @@ public class ChangelogGenerator {
             Commit c = new Commit();
             c.fullHash = rc.getId().name();
             c.shortHash = rc.getId().abbreviate(7).name();
-            c.title = rc.getShortMessage();
             c.body = rc.getFullMessage();
+            c.title = c.body.split(lineSeparator())[0];
             c.author = rc.getAuthorIdent().getName();
             c.committer = rc.getCommitterIdent().getName();
             c.time = rc.getCommitTime();
