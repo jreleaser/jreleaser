@@ -147,14 +147,34 @@ public class ChangelogGenerator {
             return v2.compareTo(v1);
         });
 
-        Optional<Ref> tag = Optional.empty();
+        ObjectId head = git.getRepository().resolve(Constants.HEAD);
+
+        context.getLogger().debug("looking for tag that matches '{}'", effectiveTagName);
+        Optional<Ref> tag = tags.stream()
+            .filter(ref -> extractTagName(ref).equals(effectiveTagName))
+            .findFirst();
+
+        // tag: early-access
         if (TAG_EARLY_ACCESS.equals(effectiveTagName)) {
-            context.getLogger().debug("looking for tags that match '{}'", effectiveTagName);
-            tag = tags.stream()
-                .filter(ref -> extractTagName(ref).equals(effectiveTagName))
-                .findFirst();
+            if (!tag.isPresent()) {
+                context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
+
+                tag = tags.stream()
+                    .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
+                    .filter(ref -> extractTagName(ref).matches(tagPattern))
+                    .findFirst();
+            }
+
+            if (tag.isPresent()) {
+                context.getLogger().debug("found tag {}", extractTagName(tag.get()));
+                ObjectId fromRef = getObjectId(git, tag.get());
+                return git.log().addRange(fromRef, head).call();
+            } else {
+                return git.log().add(head).call();
+            }
         }
 
+        // tag: latest
         if (!tag.isPresent()) {
             context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
 
@@ -162,18 +182,40 @@ public class ChangelogGenerator {
                 .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
                 .filter(ref -> extractTagName(ref).matches(tagPattern))
                 .findFirst();
+
+            if (tag.isPresent()) {
+                context.getLogger().debug("found tag {}", extractTagName(tag.get()));
+                ObjectId fromRef = getObjectId(git, tag.get());
+                return git.log().addRange(fromRef, head).call();
+            }
+
+            return git.log().add(head).call();
         }
 
-        ObjectId head = git.getRepository().resolve(Constants.HEAD);
+        // tag: somewhere in the middle
+        context.getLogger().debug("looking for a tag before '{}' that matches '{}'", effectiveTagName, tagPattern);
 
-        if (tag.isPresent()) {
-            context.getLogger().debug("found tag {}", extractTagName(tag.get()));
-            Ref peeled = git.getRepository().getRefDatabase().peel(tag.get());
-            ObjectId fromRef = peeled.getPeeledObjectId() != null ? peeled.getPeeledObjectId() : peeled.getObjectId();
-            return git.log().addRange(fromRef, head).call();
+        Version currentVersion = versionOf(tag.get(), versionPattern);
+
+        Optional<Ref> previousTag = tags.stream()
+            .filter(ref -> extractTagName(ref).matches(tagPattern))
+            .filter(ref -> versionOf(ref, versionPattern).lessThan(currentVersion))
+            .findFirst();
+
+        if (previousTag.isPresent()) {
+            context.getLogger().debug("found tag {}", extractTagName(previousTag.get()));
+            ObjectId fromRef = getObjectId(git, previousTag.get());
+            ObjectId toRef = getObjectId(git, tag.get());
+            return git.log().addRange(fromRef, toRef).call();
         }
 
-        return git.log().add(head).call();
+        ObjectId toRef = getObjectId(git, tag.get());
+        return git.log().add(toRef).call();
+    }
+
+    private static ObjectId getObjectId(Git git, Ref ref) throws IOException {
+        Ref peeled = git.getRepository().getRefDatabase().peel(ref);
+        return peeled.getPeeledObjectId() != null ? peeled.getPeeledObjectId() : peeled.getObjectId();
     }
 
     private static String formatChangelog(JReleaserContext context, Changelog changelog,
