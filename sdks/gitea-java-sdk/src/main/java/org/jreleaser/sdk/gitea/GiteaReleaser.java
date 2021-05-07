@@ -145,7 +145,7 @@ public class GiteaReleaser implements Releaser {
         GtRelease release = new GtRelease();
         release.setName(gitea.getEffectiveReleaseName());
         release.setTagName(tagName);
-        release.setTargetCommitish(gitea.getTargetCommitish());
+        release.setTargetCommitish(gitea.getBranch());
         release.setBody(changelog);
 
         release = api.createRelease(gitea.getOwner(), gitea.getName(), release);

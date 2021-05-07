@@ -165,7 +165,6 @@ public final class JReleaserModelConverter {
         if (null == gitea) return null;
         org.jreleaser.model.Gitea g = new org.jreleaser.model.Gitea();
         convertGitService(gitea, g);
-        if (isNotBlank(gitea.getTargetCommitish())) g.setTargetCommitish(gitea.getTargetCommitish());
         g.setDraft(gitea.isDraft());
         if (gitea.isPrereleaseSet()) g.setPrerelease(gitea.isPrerelease());
         return g;

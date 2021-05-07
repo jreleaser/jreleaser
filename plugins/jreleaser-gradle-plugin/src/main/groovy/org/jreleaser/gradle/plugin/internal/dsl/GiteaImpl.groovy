@@ -33,7 +33,6 @@ import javax.inject.Inject
  */
 @CompileStatic
 class GiteaImpl extends AbstractGitService implements Gitea {
-    final Property<String> targetCommitish
     final Property<Boolean> draft
     final Property<Boolean> prerelease
     final ChangelogImpl changelog
@@ -43,7 +42,6 @@ class GiteaImpl extends AbstractGitService implements Gitea {
     @Inject
     GiteaImpl(ObjectFactory objects) {
         super(objects)
-        targetCommitish = objects.property(String).convention(Providers.notDefined())
         draft = objects.property(Boolean).convention(Providers.notDefined())
         prerelease = objects.property(Boolean).convention(Providers.notDefined())
 
@@ -56,7 +54,6 @@ class GiteaImpl extends AbstractGitService implements Gitea {
     @Internal
     boolean isSet() {
         super.isSet() ||
-            targetCommitish.present ||
             draft.present ||
             prerelease.present ||
             changelog.isSet() ||
@@ -67,7 +64,6 @@ class GiteaImpl extends AbstractGitService implements Gitea {
     org.jreleaser.model.Gitea toModel() {
         org.jreleaser.model.Gitea service = new org.jreleaser.model.Gitea()
         toModel(service)
-        if (targetCommitish.present) service.targetCommitish = targetCommitish.get()
         service.draft = draft.getOrElse(false)
         service.prerelease = prerelease.getOrElse(false)
         if (changelog.isSet()) service.changelog = changelog.toModel()

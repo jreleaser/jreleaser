@@ -27,8 +27,6 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Gitea extends GitService {
-    Property<String> getTargetCommitish()
-
     Property<Boolean> getDraft()
 
     Property<Boolean> getPrerelease()
