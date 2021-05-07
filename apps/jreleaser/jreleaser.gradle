@@ -60,10 +60,6 @@ processResources {
     }
 }
 
-tasks.withType(Tar){
-    compression = Compression.GZIP
-}
-
 distributions {
     main {
         contents {
