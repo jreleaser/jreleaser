@@ -73,7 +73,7 @@ class JReleaserProjectConfigurer {
             javaVersion = JavaVersion.current().toString()
         }
 
-        JReleaserModel model = extension.toModel()
+        JReleaserModel model = extension.toModel(project)
         if (isBlank(model.project.java.version)) model.project.java.version = javaVersion
         if (isBlank(model.project.java.artifactId)) model.project.java.artifactId = project.name
         if (isBlank(model.project.java.groupId)) model.project.java.groupId = project.group.toString()

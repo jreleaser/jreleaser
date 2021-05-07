@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
@@ -46,8 +47,9 @@ class EnvironmentImpl implements Environment {
         this.variables.set(new File(variables))
     }
 
-    org.jreleaser.model.Environment toModel() {
+    org.jreleaser.model.Environment toModel(Project project) {
         org.jreleaser.model.Environment environment = new org.jreleaser.model.Environment()
+        environment.variablesSource = new org.jreleaser.model.Environment.MapVariablesSource(project.properties)
         if (variables.present) environment.variables = variables.asFile.get().absolutePath
         if (properties.present) environment.properties.putAll(properties.get())
         environment

@@ -146,9 +146,9 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @CompileDynamic
-    JReleaserModel toModel() {
+    JReleaserModel toModel(org.gradle.api.Project gradleProject) {
         JReleaserModel jreleaser = new JReleaserModel()
-        jreleaser.environment = environment.toModel()
+        jreleaser.environment = environment.toModel(gradleProject)
         jreleaser.project = project.toModel()
         jreleaser.release = release.toModel()
         jreleaser.upload = upload.toModel()
