@@ -41,10 +41,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Environment implements Domain {
     private final Map<String, Object> properties = new LinkedHashMap<>();
+    private VariablesSource variablesSource;
     private String variables;
     private Properties props;
 
     void setAll(Environment environment) {
+        this.variablesSource = environment.variablesSource;
         this.variables = environment.variables;
         setProperties(environment.properties);
     }
@@ -56,6 +58,14 @@ public class Environment implements Domain {
     public boolean isSet() {
         return isNotBlank(variables) ||
             !properties.isEmpty();
+    }
+
+    public VariablesSource getVariablesSource() {
+        return variablesSource;
+    }
+
+    public void setVariablesSource(VariablesSource variablesSource) {
+        this.variablesSource = variablesSource;
     }
 
     public String getVariables() {
@@ -100,6 +110,10 @@ public class Environment implements Domain {
             Path configDirectory = Paths.get(home).resolve(".jreleaser");
             loadProperties(context, resolveConfigFileAt(configDirectory)
                 .orElse(configDirectory.resolve("config.properties")));
+
+            if (null != variablesSource) {
+                props.putAll(variablesSource.getVariables());
+            }
         }
     }
 
@@ -132,5 +146,63 @@ public class Environment implements Domain {
         }
 
         return Optional.empty();
+    }
+
+    public interface VariablesSource {
+        Map<String, String> getVariables();
+    }
+
+    public static abstract class AbstractVariablesSource implements VariablesSource {
+        @Override
+        public Map<String, String> getVariables() {
+            Map<String, String> variables = doGetVariables();
+            Map<String, String> map = new LinkedHashMap<>();
+
+            variables.forEach((key, value) -> {
+                if (key.startsWith("jreleaser.")) {
+                    map.put(key.replace(".", "_").toUpperCase(), value);
+                }
+            });
+
+            variables.forEach((key, value) -> {
+                if (key.startsWith("JRELEASER_")) {
+                    map.put(key, value);
+                }
+            });
+
+            return map;
+        }
+
+        protected abstract Map<String, String> doGetVariables();
+    }
+
+    public static class PropertiesVariablesSource extends AbstractVariablesSource {
+        private final Properties properties;
+
+        public PropertiesVariablesSource(Properties properties) {
+            this.properties = properties;
+        }
+
+        @Override
+        protected Map<String, String> doGetVariables() {
+            Map<String, String> map = new LinkedHashMap<>();
+            properties.forEach((k, v) -> map.put(String.valueOf(k), String.valueOf(v)));
+            return map;
+        }
+    }
+
+    public static class MapVariablesSource extends AbstractVariablesSource {
+        private final Map<String, ?> properties;
+
+        public MapVariablesSource(Map<String, ?> properties) {
+            this.properties = properties;
+        }
+
+        @Override
+        protected Map<String, String> doGetVariables() {
+            Map<String, String> map = new LinkedHashMap<>();
+            properties.forEach((k, v) -> map.put(k, String.valueOf(v)));
+            return map;
+        }
     }
 }

@@ -26,6 +26,7 @@ import org.jreleaser.engine.context.ContextCreator;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
+import org.jreleaser.model.Environment;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
@@ -35,6 +36,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Properties;
 
 /**
  * @author Andres Almiray
@@ -77,7 +79,11 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     protected JReleaserModel convertModel() {
-        JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser);
+        Properties properties = new Properties();
+        properties.putAll(System.getProperties());
+        properties.putAll(project.getModel().getProperties());
+        Environment.VariablesSource variablesSource = new Environment.PropertiesVariablesSource(properties);
+        JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser, variablesSource);
         JReleaserModelConfigurer.configure(jreleaserModel, project, session);
         return jreleaserModel;
     }
