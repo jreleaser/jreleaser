@@ -27,5 +27,4 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Gitlab extends GitService {
-    Property<String> getRef()
 }

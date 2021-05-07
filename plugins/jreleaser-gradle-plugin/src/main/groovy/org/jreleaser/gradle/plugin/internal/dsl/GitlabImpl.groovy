@@ -33,7 +33,6 @@ import javax.inject.Inject
  */
 @CompileStatic
 class GitlabImpl extends AbstractGitService implements Gitlab {
-    final Property<String> ref
     final ChangelogImpl changelog
     final MilestoneImpl milestone
     final CommitAuthorImpl commitAuthor
@@ -41,7 +40,6 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
     @Inject
     GitlabImpl(ObjectFactory objects) {
         super(objects)
-        ref = objects.property(String).convention(Providers.notDefined())
 
         changelog = objects.newInstance(ChangelogImpl, objects)
         milestone = objects.newInstance(MilestoneImpl, objects)
@@ -52,7 +50,6 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
     @Internal
     boolean isSet() {
         super.isSet() ||
-            ref.present ||
             changelog.isSet() ||
             milestone.isSet() ||
             commitAuthor.isSet()
@@ -61,7 +58,6 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
     org.jreleaser.model.Gitlab toModel() {
         org.jreleaser.model.Gitlab service = new org.jreleaser.model.Gitlab()
         toModel(service)
-        if (ref.present) service.ref = ref.get()
         if (changelog.isSet()) service.changelog = changelog.toModel()
         if (milestone.isSet()) service.milestone = milestone.toModel()
         if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()

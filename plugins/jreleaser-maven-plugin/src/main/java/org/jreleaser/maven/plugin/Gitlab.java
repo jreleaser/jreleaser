@@ -22,8 +22,6 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public class Gitlab extends GitService {
-    private String ref;
-
     public Gitlab() {
         setHost("gitlab.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
@@ -37,14 +35,5 @@ public class Gitlab extends GitService {
 
     void setAll(Gitlab service) {
         super.setAll(service);
-        this.ref = service.ref;
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
     }
 }

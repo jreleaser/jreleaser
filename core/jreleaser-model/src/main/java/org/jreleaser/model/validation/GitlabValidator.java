@@ -21,8 +21,6 @@ import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
-import static org.jreleaser.model.GitService.BRANCH;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -33,13 +31,6 @@ public abstract class GitlabValidator extends GitServiceValidator {
         context.getLogger().debug("release.gitlab");
 
         validateGitService(context, mode, gitlab, errors);
-
-        gitlab.setRef(
-            checkProperty(context.getModel().getEnvironment(),
-                BRANCH,
-                "gitlab.ref",
-                gitlab.getRef(),
-                "main"));
 
         return gitlab.isEnabled();
     }

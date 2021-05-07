@@ -157,7 +157,6 @@ public final class JReleaserModelConverter {
         if (null == gitlab) return null;
         org.jreleaser.model.Gitlab g = new org.jreleaser.model.Gitlab();
         convertGitService(gitlab, g);
-        if (isNotBlank(gitlab.getRef())) g.setRef(gitlab.getRef());
         return g;
     }
 

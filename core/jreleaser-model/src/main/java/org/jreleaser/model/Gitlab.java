@@ -17,16 +17,12 @@
  */
 package org.jreleaser.model;
 
-import java.util.Map;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Gitlab extends GitService {
     public static final String NAME = "gitlab";
-
-    private String ref;
 
     public Gitlab() {
         super(NAME);
@@ -42,36 +38,10 @@ public class Gitlab extends GitService {
 
     void setAll(Gitlab service) {
         super.setAll(service);
-        this.ref = service.ref;
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
-    @Override
-    public String getBranch() {
-        return getRef();
-    }
-
-    @Override
-    public void setBranch(String branch) {
-        setRef(branch);
     }
 
     @Override
     public String getReverseRepoHost() {
         return "com.gitlab";
-    }
-
-    @Override
-    public Map<String, Object> asMap(boolean full) {
-        Map<String, Object> map = super.asMap(full);
-        map.put("ref", ref);
-        return map;
     }
 }
