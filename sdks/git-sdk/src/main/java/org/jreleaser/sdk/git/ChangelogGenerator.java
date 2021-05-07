@@ -73,7 +73,6 @@ public class ChangelogGenerator {
     private static String createChangelog(JReleaserContext context) throws IOException {
         GitService gitService = context.getModel().getRelease().getGitService();
         Changelog changelog = gitService.getChangelog();
-        String commitsUrl = gitService.getResolvedCommitUrl(context.getModel());
 
         String separator = lineSeparator();
         if (Gitlab.NAME.equals(gitService.getServiceName())) {
@@ -95,6 +94,8 @@ public class ChangelogGenerator {
             if (changelog.resolveFormatted(context.getModel().getProject())) {
                 return formatChangelog(context, changelog, commits, revCommitComparator, commitSeparator);
             }
+
+            String commitsUrl = gitService.getResolvedCommitUrl(context.getModel());
 
             return "## Changelog" +
                 lineSeparator() +
@@ -218,7 +219,8 @@ public class ChangelogGenerator {
         return peeled.getPeeledObjectId() != null ? peeled.getPeeledObjectId() : peeled.getObjectId();
     }
 
-    private static String formatChangelog(JReleaserContext context, Changelog changelog,
+    private static String formatChangelog(JReleaserContext context,
+                                          Changelog changelog,
                                           Iterable<RevCommit> commits,
                                           Comparator<RevCommit> revCommitComparator,
                                           String lineSeparator) {
@@ -238,6 +240,10 @@ public class ChangelogGenerator {
                 .computeIfAbsent(categorize(commit, changelog), k -> new ArrayList<>())
                 .add(commit));
 
+
+        GitService gitService = context.getModel().getRelease().getGitService();
+        String commitsUrl = gitService.getResolvedCommitUrl(context.getModel());
+
         StringBuilder changes = new StringBuilder();
         for (Changelog.Category category : changelog.getCategories()) {
             String categoryTitle = category.getTitle();
@@ -248,7 +254,7 @@ public class ChangelogGenerator {
                 .append(lineSeparator);
 
             changes.append(categories.get(categoryTitle).stream()
-                .map(c -> applyTemplate(changelog.getChange(), c.asContext()))
+                .map(c -> applyTemplate(changelog.getChange(), c.asContext(changelog.isLinks(), commitsUrl)))
                 .collect(Collectors.joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
@@ -261,7 +267,7 @@ public class ChangelogGenerator {
             }
 
             changes.append(categories.get(UNCATEGORIZED).stream()
-                .map(c -> applyTemplate(changelog.getChange(), c.asContext()))
+                .map(c -> applyTemplate(changelog.getChange(), c.asContext(changelog.isLinks(), commitsUrl)))
                 .collect(Collectors.joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
@@ -336,10 +342,14 @@ public class ChangelogGenerator {
         private String committer;
         private int time;
 
-        Map<String, Object> asContext() {
+        Map<String, Object> asContext(boolean links, String commitsUrl) {
             Map<String, Object> context = new LinkedHashMap<>();
+            if (links) {
+                context.put("commitShortHash", passThrough("[" + shortHash + "](" + commitsUrl + "/" + shortHash + ")"));
+            } else {
+                context.put("commitShortHash", shortHash);
+            }
             context.put("commitFullHash", fullHash);
-            context.put("commitShortHash", shortHash);
             context.put("commitTitle", passThrough(title));
             context.put("commitAuthor", passThrough(author));
             return context;
