@@ -26,7 +26,6 @@ import java.util.Map;
 public class Github extends GitService {
     public static final String NAME = "github";
 
-    private String targetCommitish;
     private Boolean draft;
     private Boolean prerelease;
 
@@ -44,17 +43,8 @@ public class Github extends GitService {
 
     void setAll(Github service) {
         super.setAll(service);
-        this.targetCommitish = service.targetCommitish;
         this.draft = service.draft;
         this.prerelease = service.prerelease;
-    }
-
-    public String getTargetCommitish() {
-        return targetCommitish;
-    }
-
-    public void setTargetCommitish(String targetCommitish) {
-        this.targetCommitish = targetCommitish;
     }
 
     public boolean isDraft() {
@@ -82,16 +72,6 @@ public class Github extends GitService {
     }
 
     @Override
-    public String getBranch() {
-        return getTargetCommitish();
-    }
-
-    @Override
-    public void setBranch(String branch) {
-        setTargetCommitish(branch);
-    }
-
-    @Override
     public String getReverseRepoHost() {
         return "com.github";
     }
@@ -99,7 +79,6 @@ public class Github extends GitService {
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = super.asMap(full);
-        map.put("targetCommitish", targetCommitish);
         map.put("draft", isDraft());
         map.put("prerelease", isPrerelease());
         return map;

@@ -52,6 +52,7 @@ abstract class AbstractGitService implements GitService {
     final Property<String> token
     final Property<String> tagName
     final Property<String> releaseName
+    final Property<String> branch
     final Property<Boolean> sign
     final Property<Boolean> skipTag
     final Property<String> apiEndpoint
@@ -78,6 +79,7 @@ abstract class AbstractGitService implements GitService {
         token = objects.property(String).convention(Providers.notDefined())
         tagName = objects.property(String).convention(Providers.notDefined())
         releaseName = objects.property(String).convention(Providers.notDefined())
+        branch = objects.property(String).convention(Providers.notDefined())
         sign = objects.property(Boolean).convention(Providers.notDefined())
         skipTag = objects.property(Boolean).convention(Providers.notDefined())
         apiEndpoint = objects.property(String).convention(Providers.notDefined())
@@ -104,6 +106,7 @@ abstract class AbstractGitService implements GitService {
             token.present ||
             tagName.present ||
             releaseName.present ||
+            branch.present ||
             sign.present ||
             skipTag.present ||
             apiEndpoint.present ||
@@ -144,6 +147,7 @@ abstract class AbstractGitService implements GitService {
         if (token.present) service.token = token.get()
         if (tagName.present) service.tagName = tagName.get()
         if (releaseName.present) service.releaseName = releaseName.get()
+        if (branch.present) service.branch = branch.get()
         if (apiEndpoint.present) service.apiEndpoint = apiEndpoint.get()
         if (connectTimeout.present) service.connectTimeout = connectTimeout.get()
         if (readTimeout.present) service.readTimeout = readTimeout.get()

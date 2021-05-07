@@ -32,6 +32,7 @@ import java.util.Map;
 
 import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.model.GitService.OVERWRITE;
 import static org.jreleaser.model.GitService.RELEASE_NAME;
 import static org.jreleaser.model.GitService.SKIP_TAG;
@@ -85,6 +86,13 @@ public abstract class GitServiceValidator extends Validator {
                 service.getServiceName() + ".releaseName",
                 service.getReleaseName(),
                 "Release {{tagName}}"));
+
+        service.setBranch(
+            checkProperty(context.getModel().getEnvironment(),
+                BRANCH,
+                service.getServiceName() + ".branch",
+                service.getBranch(),
+                "main"));
 
         if (!service.isOverwriteSet()) {
             service.setOverwrite(

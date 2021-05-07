@@ -148,7 +148,6 @@ public final class JReleaserModelConverter {
         if (null == github) return null;
         org.jreleaser.model.Github g = new org.jreleaser.model.Github();
         convertGitService(github, g);
-        if (isNotBlank(github.getTargetCommitish())) g.setTargetCommitish(github.getTargetCommitish());
         g.setDraft(github.isDraft());
         if (github.isPrereleaseSet()) g.setPrerelease(github.isPrerelease());
         return g;
@@ -186,6 +185,7 @@ public final class JReleaserModelConverter {
         s.setToken(service.getToken());
         if (isNotBlank(service.getTagName())) s.setTagName(service.getTagName());
         if (isNotBlank(service.getReleaseName())) s.setReleaseName(service.getReleaseName());
+        if (isNotBlank(service.getBranch())) s.setBranch(service.getBranch());
         s.setCommitAuthor(convertCommitAuthor(service.getCommitAuthor()));
         s.setSign(service.isSign());
         if (service.isSkipTagSet()) s.setSkipTag(service.isSkipTag());

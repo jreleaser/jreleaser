@@ -67,6 +67,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private String token;
     private String tagName;
     private String releaseName;
+    private String branch;
     private boolean sign;
     private Boolean skipTag;
     private Boolean overwrite;
@@ -103,6 +104,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.token = service.token;
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
+        this.branch = service.branch;
         this.sign = service.sign;
         this.skipTag = service.skipTag;
         this.overwrite = service.overwrite;
@@ -118,10 +120,6 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     public String getCanonicalRepoName() {
         return owner + "/" + name;
     }
-
-    public abstract String getBranch();
-
-    public abstract void setBranch(String branch);
 
     public abstract String getReverseRepoHost();
 
@@ -344,6 +342,14 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.releaseName = releaseName;
     }
 
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+
     @Override
     public CommitAuthor getCommitAuthor() {
         return commitAuthor;
@@ -460,6 +466,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         map.put("issueTrackerUrlFormat", issueTrackerUrlFormat);
         map.put("tagName", tagName);
         map.put("releaseName", releaseName);
+        map.put("branch", branch);
         map.put("commitAuthor", commitAuthor.asMap(full));
         map.put("sign", sign);
         map.put("skipTag", isSkipTag());
@@ -521,7 +528,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put(Constants.KEY_REPO_HOST, host);
         props.put(Constants.KEY_REPO_OWNER, owner);
         props.put(Constants.KEY_REPO_NAME, name);
-        props.put(Constants.KEY_REPO_BRANCH, getBranch());
+        props.put(Constants.KEY_REPO_BRANCH, branch);
         props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         props.put(Constants.KEY_TAG_NAME, project.isSnapshot() ? TAG_EARLY_ACCESS : cachedTagName);
@@ -534,7 +541,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put(Constants.KEY_REPO_HOST, host);
         props.put(Constants.KEY_REPO_OWNER, owner);
         props.put(Constants.KEY_REPO_NAME, name);
-        props.put(Constants.KEY_REPO_BRANCH, getBranch());
+        props.put(Constants.KEY_REPO_BRANCH, branch);
         props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         props.put(Constants.KEY_TAG_NAME, getEffectiveTagName(model));

@@ -21,7 +21,6 @@ import org.jreleaser.model.Github;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
-import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.model.GitService.DRAFT;
 import static org.jreleaser.model.GitService.PRERELEASE;
 
@@ -35,13 +34,6 @@ public abstract class GithubValidator extends GitServiceValidator {
         context.getLogger().debug("release.github");
 
         validateGitService(context, mode, github, errors);
-
-        github.setTargetCommitish(
-            checkProperty(context.getModel().getEnvironment(),
-                BRANCH,
-                "github.targetCommitish",
-                github.getTargetCommitish(),
-                "main"));
 
         if (context.getModel().getProject().isSnapshot()) {
             github.setPrerelease(true);

@@ -40,6 +40,7 @@ public abstract class GitService implements Releaser {
     private String token;
     private String tagName;
     private String releaseName;
+    private String branch;
     private boolean sign;
     private Boolean skipTag;
     private Boolean overwrite;
@@ -64,6 +65,7 @@ public abstract class GitService implements Releaser {
         this.token = service.token;
         this.tagName = service.tagName;
         this.releaseName = service.releaseName;
+        this.branch = service.branch;
         this.sign = service.sign;
         this.skipTag = service.skipTag;
         this.overwrite = service.overwrite;
@@ -201,6 +203,14 @@ public abstract class GitService implements Releaser {
 
     public void setReleaseName(String releaseName) {
         this.releaseName = releaseName;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 
     public CommitAuthor getCommitAuthor() {

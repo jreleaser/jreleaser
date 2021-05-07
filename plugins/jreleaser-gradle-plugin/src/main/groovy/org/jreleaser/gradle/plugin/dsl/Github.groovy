@@ -27,8 +27,6 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Github extends GitService {
-    Property<String> getTargetCommitish()
-
     Property<Boolean> getDraft()
 
     Property<Boolean> getPrerelease()

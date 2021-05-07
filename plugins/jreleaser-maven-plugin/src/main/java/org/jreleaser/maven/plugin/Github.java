@@ -22,7 +22,6 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public class Github extends GitService {
-    private String targetCommitish;
     private boolean draft;
     private Boolean prerelease;
 
@@ -39,17 +38,8 @@ public class Github extends GitService {
 
     void setAll(Github service) {
         super.setAll(service);
-        this.targetCommitish = service.targetCommitish;
         this.draft = service.draft;
         this.prerelease = service.prerelease;
-    }
-
-    public String getTargetCommitish() {
-        return targetCommitish;
-    }
-
-    public void setTargetCommitish(String targetCommitish) {
-        this.targetCommitish = targetCommitish;
     }
 
     public boolean isDraft() {

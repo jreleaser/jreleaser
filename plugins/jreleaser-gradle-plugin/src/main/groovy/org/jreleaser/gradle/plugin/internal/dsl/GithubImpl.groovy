@@ -33,7 +33,6 @@ import javax.inject.Inject
  */
 @CompileStatic
 class GithubImpl extends AbstractGitService implements Github {
-    final Property<String> targetCommitish
     final Property<Boolean> draft
     final Property<Boolean> prerelease
     final ChangelogImpl changelog
@@ -43,7 +42,6 @@ class GithubImpl extends AbstractGitService implements Github {
     @Inject
     GithubImpl(ObjectFactory objects) {
         super(objects)
-        targetCommitish = objects.property(String).convention(Providers.notDefined())
         draft = objects.property(Boolean).convention(Providers.notDefined())
         prerelease = objects.property(Boolean).convention(Providers.notDefined())
 
@@ -56,7 +54,6 @@ class GithubImpl extends AbstractGitService implements Github {
     @Internal
     boolean isSet() {
         super.isSet() ||
-            targetCommitish.present ||
             draft.present ||
             prerelease.present ||
             changelog.isSet() ||
@@ -67,7 +64,6 @@ class GithubImpl extends AbstractGitService implements Github {
     org.jreleaser.model.Github toModel() {
         org.jreleaser.model.Github service = new org.jreleaser.model.Github()
         toModel(service)
-        if (targetCommitish.present) service.targetCommitish = targetCommitish.get()
         service.draft = draft.getOrElse(false)
         service.prerelease = prerelease.getOrElse(false)
         if (changelog.isSet()) service.changelog = changelog.toModel()

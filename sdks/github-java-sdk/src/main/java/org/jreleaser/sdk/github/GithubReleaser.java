@@ -142,7 +142,7 @@ public class GithubReleaser implements Releaser {
 
         // remote tag/release
         GHRelease release = api.createRelease(github.getCanonicalRepoName(), tagName)
-            .commitish(github.getTargetCommitish())
+            .commitish(github.getBranch())
             .name(github.getEffectiveReleaseName())
             .draft(github.isDraft())
             .prerelease(github.isPrerelease())
