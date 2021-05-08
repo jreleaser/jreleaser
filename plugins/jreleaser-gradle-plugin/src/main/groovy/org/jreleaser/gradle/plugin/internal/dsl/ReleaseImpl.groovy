@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.internal.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
+import org.jreleaser.gradle.plugin.dsl.Codeberg
 import org.jreleaser.gradle.plugin.dsl.Gitea
 import org.jreleaser.gradle.plugin.dsl.Github
 import org.jreleaser.gradle.plugin.dsl.Gitlab
@@ -37,12 +38,14 @@ class ReleaseImpl implements Release {
     final GithubImpl github
     final GitlabImpl gitlab
     final GiteaImpl gitea
+    final CodebergImpl codeberg
 
     @Inject
     ReleaseImpl(ObjectFactory objects) {
         github = objects.newInstance(GithubImpl, objects)
         gitlab = objects.newInstance(GitlabImpl, objects)
         gitea = objects.newInstance(GiteaImpl, objects)
+        codeberg = objects.newInstance(CodebergImpl, objects)
     }
 
     @Override
@@ -60,11 +63,17 @@ class ReleaseImpl implements Release {
         action.execute(gitea)
     }
 
+    @Override
+    void codeberg(Action<? super Codeberg> action) {
+        action.execute(codeberg)
+    }
+
     org.jreleaser.model.Release toModel() {
         org.jreleaser.model.Release release = new org.jreleaser.model.Release()
         if (github.isSet()) release.github = github.toModel()
         if (gitlab.isSet()) release.gitlab = gitlab.toModel()
         if (gitea.isSet()) release.gitea = gitea.toModel()
+        if (codeberg.isSet()) release.codeberg = codeberg.toModel()
         release
     }
 }

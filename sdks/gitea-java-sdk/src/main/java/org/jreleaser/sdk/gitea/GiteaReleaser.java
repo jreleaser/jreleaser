@@ -34,21 +34,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.jreleaser.util.StringUtils.capitalize;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class GiteaReleaser implements Releaser {
-    private final JReleaserContext context;
-    private final List<Path> assets = new ArrayList<>();
+    protected final JReleaserContext context;
+    protected final List<Path> assets = new ArrayList<>();
 
-    GiteaReleaser(JReleaserContext context, List<Path> assets) {
+    public GiteaReleaser(JReleaserContext context, List<Path> assets) {
         this.context = context;
         this.assets.addAll(assets);
     }
 
+    protected org.jreleaser.model.Gitea resolveGiteaFromModel() {
+        return context.getModel().getRelease().getGitea();
+    }
+
+    protected Repository.Kind resolveRepositoryKind() {
+        return Repository.Kind.OTHER;
+    }
+
     public void release() throws ReleaseException {
-        org.jreleaser.model.Gitea gitea = context.getModel().getRelease().getGitea();
+        org.jreleaser.model.Gitea gitea = resolveGiteaFromModel();
         context.getLogger().info("Releasing to {}", gitea.getResolvedRepoUrl(context.getModel()));
         String tagName = gitea.getEffectiveTagName(context.getModel());
 
@@ -79,7 +89,7 @@ public class GiteaReleaser implements Releaser {
                         api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);
                     }
                 } else {
-                    throw new IllegalStateException("Gitea release failed because release " +
+                    throw new IllegalStateException(capitalize(gitea.getServiceName()) + " release failed because release " +
                         tagName + " already exists. overwrite = false; update = false");
                 }
             } else {
@@ -95,7 +105,7 @@ public class GiteaReleaser implements Releaser {
 
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
-        org.jreleaser.model.Gitea gitea = context.getModel().getRelease().getGitea();
+        org.jreleaser.model.Gitea gitea = resolveGiteaFromModel();
         context.getLogger().debug("looking up {}/{}", owner, repo);
 
         Gitea api = new Gitea(context.getLogger(),
@@ -109,7 +119,7 @@ public class GiteaReleaser implements Releaser {
         }
 
         return new Repository(
-            Repository.Kind.OTHER,
+            resolveRepositoryKind(),
             owner,
             repo,
             repository.getHtmlUrl(),
@@ -117,7 +127,7 @@ public class GiteaReleaser implements Releaser {
     }
 
     private void createRelease(Gitea api, String tagName, String changelog, boolean deleteTags) throws IOException {
-        org.jreleaser.model.Gitea gitea = context.getModel().getRelease().getGitea();
+        org.jreleaser.model.Gitea gitea = resolveGiteaFromModel();
 
         if (context.isDryrun()) {
             for (Path asset : assets) {

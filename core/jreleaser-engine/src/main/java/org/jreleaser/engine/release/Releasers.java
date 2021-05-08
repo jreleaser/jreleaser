@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.release;
 
+import org.jreleaser.model.Codeberg;
 import org.jreleaser.model.Gitea;
 import org.jreleaser.model.Github;
 import org.jreleaser.model.Gitlab;
@@ -60,6 +61,9 @@ public class Releasers {
         }
         if (null != context.getModel().getRelease().getGitea()) {
             return (RB) builders.get(Gitea.NAME);
+        }
+        if (null != context.getModel().getRelease().getCodeberg()) {
+            return (RB) builders.get(Codeberg.NAME);
         }
 
         throw new JReleaserException("No suitable git releaser has been configured");

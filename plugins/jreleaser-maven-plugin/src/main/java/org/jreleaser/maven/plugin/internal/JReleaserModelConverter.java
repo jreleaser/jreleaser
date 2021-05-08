@@ -26,6 +26,7 @@ import org.jreleaser.maven.plugin.Bucket;
 import org.jreleaser.maven.plugin.Catalog;
 import org.jreleaser.maven.plugin.Changelog;
 import org.jreleaser.maven.plugin.Chocolatey;
+import org.jreleaser.maven.plugin.Codeberg;
 import org.jreleaser.maven.plugin.CommitAuthor;
 import org.jreleaser.maven.plugin.Discord;
 import org.jreleaser.maven.plugin.Discussions;
@@ -142,6 +143,7 @@ public final class JReleaserModelConverter {
         r.setGithub(convertGithub(release.getGithub()));
         r.setGitlab(convertGitlab(release.getGitlab()));
         r.setGitea(convertGitea(release.getGitea()));
+        r.setCodeberg(convertCodeberg(release.getCodeberg()));
         return r;
     }
 
@@ -167,6 +169,15 @@ public final class JReleaserModelConverter {
         convertGitService(gitea, g);
         g.setDraft(gitea.isDraft());
         if (gitea.isPrereleaseSet()) g.setPrerelease(gitea.isPrerelease());
+        return g;
+    }
+
+    private static org.jreleaser.model.Codeberg convertCodeberg(Codeberg codeberg) {
+        if (null == codeberg) return null;
+        org.jreleaser.model.Codeberg g = new org.jreleaser.model.Codeberg();
+        convertGitService(codeberg, g);
+        g.setDraft(codeberg.isDraft());
+        if (codeberg.isPrereleaseSet()) g.setPrerelease(codeberg.isPrerelease());
         return g;
     }
 

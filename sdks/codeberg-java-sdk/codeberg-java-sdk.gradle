@@ -15,31 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+dependencies {
+    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
+    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
 
-import groovy.transform.CompileStatic
-import org.gradle.api.Action
-
-/**
- *
- * @author Andres Almiray
- * @since 0.1.0
- */
-@CompileStatic
-interface Release {
-    Github getGithub()
-
-    Gitlab getGitlab()
-
-    Gitea getGitea()
-
-    Codeberg getCodeberg()
-
-    void github(Action<? super Github> action)
-
-    void gitlab(Action<? super Gitlab> action)
-
-    void gitea(Action<? super Gitea> action)
-
-    void codeberg(Action<? super Codeberg> action)
+    api project(':gitea-java-sdk')
 }

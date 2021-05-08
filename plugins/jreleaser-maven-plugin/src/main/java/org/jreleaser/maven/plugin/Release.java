@@ -25,11 +25,13 @@ public class Release {
     private Github github;
     private Gitlab gitlab;
     private Gitea gitea;
+    private Codeberg codeberg;
 
     void setAll(Release release) {
         this.github = release.github;
         this.gitlab = release.gitlab;
         this.gitea = release.gitea;
+        this.codeberg = release.codeberg;
     }
 
     public Github getGithub() {
@@ -56,9 +58,18 @@ public class Release {
         this.gitea = gitea;
     }
 
+    public Codeberg getCodeberg() {
+        return codeberg;
+    }
+
+    public void setCodeberg(Codeberg codeberg) {
+        this.codeberg = codeberg;
+    }
+
     public GitService getGitService() {
         if (null != github) return github;
         if (null != gitlab) return gitlab;
-        return gitea;
+        if (null != gitea) return gitea;
+        return codeberg;
     }
 }

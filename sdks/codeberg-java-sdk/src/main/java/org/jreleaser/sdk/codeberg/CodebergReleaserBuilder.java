@@ -15,31 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.sdk.codeberg;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.Action
+import org.jreleaser.model.releaser.spi.AbstractReleaserBuilder;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
-@CompileStatic
-interface Release {
-    Github getGithub()
+public class CodebergReleaserBuilder extends AbstractReleaserBuilder<CodebergReleaser> {
+    @Override
+    public CodebergReleaser build() {
+        validate();
 
-    Gitlab getGitlab()
-
-    Gitea getGitea()
-
-    Codeberg getCodeberg()
-
-    void github(Action<? super Github> action)
-
-    void gitlab(Action<? super Gitlab> action)
-
-    void gitea(Action<? super Gitea> action)
-
-    void codeberg(Action<? super Codeberg> action)
+        return new CodebergReleaser(context, assets);
+    }
 }

@@ -18,28 +18,16 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
+import org.gradle.api.provider.Property
 
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
 @CompileStatic
-interface Release {
-    Github getGithub()
+interface Codeberg extends Gitea {
+    Property<Boolean> getDraft()
 
-    Gitlab getGitlab()
-
-    Gitea getGitea()
-
-    Codeberg getCodeberg()
-
-    void github(Action<? super Github> action)
-
-    void gitlab(Action<? super Gitlab> action)
-
-    void gitea(Action<? super Gitea> action)
-
-    void codeberg(Action<? super Codeberg> action)
+    Property<Boolean> getPrerelease()
 }

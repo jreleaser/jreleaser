@@ -88,6 +88,7 @@ public class Repository {
     public enum Kind {
         GITHUB,
         GITLAB,
+        CODEBERG,
         OTHER
     }
 }

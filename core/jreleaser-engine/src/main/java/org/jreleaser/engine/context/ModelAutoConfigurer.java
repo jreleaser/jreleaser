@@ -19,6 +19,7 @@ package org.jreleaser.engine.context;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
+import org.jreleaser.model.Codeberg;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Github;
 import org.jreleaser.model.Gitlab;
@@ -258,6 +259,12 @@ public class ModelAutoConfigurer {
                 case GITLAB:
                     service = new Gitlab();
                     model.getRelease().setGitlab((Gitlab) service);
+                    break;
+                case CODEBERG:
+                    service = new Codeberg();
+                    model.getRelease().setCodeberg((Codeberg) service);
+                    ((Codeberg) service).setPrerelease(prerelease);
+                    ((Codeberg) service).setDraft(draft);
                     break;
                 default:
                     throw new JReleaserException("Auto configuration does not support " + repository.getHttpUrl());

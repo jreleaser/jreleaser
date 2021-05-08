@@ -30,6 +30,7 @@ dependencies {
     api project(':github-java-sdk')
     api project(':gitlab-java-sdk')
     api project(':gitea-java-sdk')
+    api project(':codeberg-java-sdk')
     // tools
     api project(':jreleaser-tools')
     api project(':jreleaser-assemblers')

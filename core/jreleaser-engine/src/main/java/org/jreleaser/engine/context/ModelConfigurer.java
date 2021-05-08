@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.context;
 
+import org.jreleaser.model.Codeberg;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Github;
 import org.jreleaser.model.Gitlab;
@@ -65,6 +66,9 @@ public class ModelConfigurer {
                 break;
             case GITLAB:
                 autoConfigureGitlab(context, repository);
+                break;
+            case CODEBERG:
+                autoConfigureCodeberg(context, repository);
                 break;
         }
 
@@ -141,6 +145,30 @@ public class ModelConfigurer {
         }
 
         fillGitProperties(gitlab, repository, context.getModel().getCommit());
+    }
+
+    private static void autoConfigureCodeberg(JReleaserContext context, Repository repository) {
+        GitService service = context.getModel().getRelease().getGitService();
+        Codeberg codeberg = context.getModel().getRelease().getCodeberg();
+
+        if (service != null) {
+            if (service != codeberg) {
+                context.getLogger().warn("Auto configure detected codeberg but project has " +
+                    service.getServiceName() + " configured");
+
+                if (isBlank(Env.resolve(BRANCH, service.getBranch()))) {
+                    service.setBranch(context.getModel().getCommit().getRefName());
+                }
+                return;
+            }
+        }
+
+        if (null == codeberg) {
+            codeberg = new Codeberg();
+            context.getModel().getRelease().setCodeberg(codeberg);
+        }
+
+        fillGitProperties(codeberg, repository, context.getModel().getCommit());
     }
 
     private static void fillGitProperties(GitService service, Repository repository, Commit head) {

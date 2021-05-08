@@ -73,10 +73,16 @@ public class GitSdk {
             URIish uri = uris.get(0);
 
             Repository.Kind kind = Repository.Kind.OTHER;
-            if (uri.getHost().equals("github.com")) {
-                kind = Repository.Kind.GITHUB;
-            } else if (uri.getHost().equals("gitlab.com")) {
-                kind = Repository.Kind.GITLAB;
+            switch (uri.getHost()) {
+                case "github.com":
+                    kind = Repository.Kind.GITHUB;
+                    break;
+                case "gitlab.com":
+                    kind = Repository.Kind.GITLAB;
+                    break;
+                case "codeberg.org":
+                    kind = Repository.Kind.CODEBERG;
+                    break;
             }
 
             String[] parts = uri.getPath().split("/");
