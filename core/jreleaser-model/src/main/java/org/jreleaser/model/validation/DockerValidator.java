@@ -70,7 +70,7 @@ public abstract class DockerValidator extends Validator {
                 boolean ltsmts = version == 8 || version % 2 == 1;
                 tool.setBaseImage("azul/zulu-openjdk-alpine:{{distributionJavaVersion}}" + (ltsmts ? "-jre" : ""));
             } else {
-                tool.setBaseImage("alpine:3.5");
+                tool.setBaseImage("alpine:3.13.5");
             }
         }
 
