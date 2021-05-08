@@ -64,7 +64,8 @@ public class DistributionAssembler {
     private Map<String, Object> initProps() {
         Map<String, Object> props = context.props();
         props.put(Constants.KEY_OUTPUT_DIRECTORY, outputDirectory);
-        props.put(Constants.KEY_ASSEMBLE_DIRECTORY, context.getAssembleDirectory()
+        props.put(Constants.KEY_ASSEMBLE_DIRECTORY, context.getAssembleDirectory());
+        props.put(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY, context.getAssembleDirectory()
             .resolve(assembler.getName())
             .resolve(assembler.getType()));
         return props;

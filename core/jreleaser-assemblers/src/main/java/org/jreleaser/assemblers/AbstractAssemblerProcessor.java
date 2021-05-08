@@ -91,7 +91,7 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
                 writeFile(context.getModel().getProject(), content, newProps, entry.getKey());
             }
 
-            Path assembleDirectory = (Path) props.get(Constants.KEY_ASSEMBLE_DIRECTORY);
+            Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
             Files.createDirectories(assembleDirectory);
 
             doAssemble(newProps);

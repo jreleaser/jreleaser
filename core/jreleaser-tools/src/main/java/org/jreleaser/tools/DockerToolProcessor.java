@@ -87,7 +87,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
     }
 
     private Path prepareAssembly(Distribution distribution, Map<String, Object> props) throws IOException, ToolProcessingException {
-        Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         copyPreparedFiles(distribution, props);
         Path assemblyDirectory = packageDirectory.resolve("assembly");
 
@@ -255,7 +255,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         Path outputFile = "executable".equals(fileName) ?
             outputDirectory.resolve("assembly").resolve(distribution.getExecutable()) :
             outputDirectory.resolve(fileName);

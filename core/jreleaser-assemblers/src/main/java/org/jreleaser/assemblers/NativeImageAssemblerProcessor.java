@@ -63,7 +63,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         context.getLogger().debug("graal version is {}", graalVersion);
 
         // copy jars to assembly
-        Path assembleDirectory = (Path) props.get(Constants.KEY_ASSEMBLE_DIRECTORY);
+        Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path libDirectory = assembleDirectory.resolve("lib");
         context.getLogger().debug("copying JARs to {}", context.getBasedir().relativize(libDirectory));
         Set<Path> jars = copyJars(context, libDirectory);

@@ -75,7 +75,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         Path outputFile = "formula.rb".equals(fileName) ?
             outputDirectory.resolve("Formula").resolve(distribution.getExecutable().concat(".rb")) :
             outputDirectory.resolve(fileName);

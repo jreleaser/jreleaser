@@ -120,7 +120,7 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         Path outputFile = outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
@@ -136,7 +136,7 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
     }
 
     private boolean push(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         String version = (String) props.get(Constants.KEY_PROJECT_EFFECTIVE_VERSION);
         String snapName = distribution.getName() + "-" + version + ".snap";
 
@@ -148,7 +148,7 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
     }
 
     private boolean createSnap(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         String version = (String) props.get(Constants.KEY_PROJECT_EFFECTIVE_VERSION);
         String snapName = distribution.getName() + "-" + version + ".snap";
 

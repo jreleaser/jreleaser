@@ -25,7 +25,6 @@ import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.util.Constants;
 
-import java.nio.file.Path;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -114,19 +113,15 @@ public class DistributionProcessor {
     }
 
     private Map<String, Object> initProps() {
-        Path prepareDirectory = context.getPrepareDirectory()
-            .resolve(distributionName)
-            .resolve(toolName);
-
-        Path packageDirectory = context.getPackageDirectory()
-            .resolve(distributionName)
-            .resolve(toolName);
-
         Map<String, Object> props = context.props();
-        props.put(Constants.KEY_PREPARE_DIRECTORY, prepareDirectory);
-        props.put(Constants.KEY_PACKAGE_DIRECTORY, packageDirectory);
-        props.put(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, context.getBasedir().relativize(prepareDirectory));
-        props.put(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, context.getBasedir().relativize(packageDirectory));
+        props.put(Constants.KEY_PREPARE_DIRECTORY, context.getPrepareDirectory());
+        props.put(Constants.KEY_PACKAGE_DIRECTORY, context.getPackageDirectory());
+        props.put(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, context.getPrepareDirectory()
+            .resolve(distributionName)
+            .resolve(toolName));
+        props.put(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, context.getPackageDirectory()
+            .resolve(distributionName)
+            .resolve(toolName));
         return props;
     }
 

@@ -157,6 +157,7 @@ public interface Constants {
     String KEY_CHECKSUMS_DIRECTORY = "checksumDirectory";
     String KEY_SIGNATURES_DIRECTORY = "signaturesDirectory";
     String KEY_ASSEMBLE_DIRECTORY = "assembleDirectory";
+    String KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY = "distributionAssembleDirectory";
     String KEY_ARTIFACTS_DIRECTORY = "artifactsDirectory";
     String KEY_PREPARE_DIRECTORY = "prepareDirectory";
     String KEY_PACKAGE_DIRECTORY = "packageDirectory";

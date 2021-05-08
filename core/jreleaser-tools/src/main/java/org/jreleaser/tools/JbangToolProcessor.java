@@ -147,7 +147,7 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         String scriptName = (String) props.get(Constants.KEY_JBANG_SCRIPT_NAME);
         Path outputFile = "jbang.java".equals(fileName) ?
             outputDirectory.resolve(scriptName.concat(".java")) :

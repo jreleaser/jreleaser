@@ -101,7 +101,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 return false;
             }
 
-            Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+            Path prepareDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
             // cleanup from previous session
             FileUtils.deleteFiles(prepareDirectory);
             Files.createDirectories(prepareDirectory);
@@ -142,7 +142,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 return false;
             }
 
-            Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+            Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
             // cleanup from previous session
             FileUtils.deleteFiles(packageDirectory);
             Files.createDirectories(packageDirectory);
@@ -267,12 +267,12 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        Path packageDirectory = (Path) props.get(Constants.KEY_PACKAGE_DIRECTORY);
+        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         copyPreparedFiles(distribution, props, packageDirectory);
     }
 
     protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props, Path outputDirectory) throws ToolProcessingException {
-        Path prepareDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path prepareDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         try {
             if (!FileUtils.copyFilesRecursive(context.getLogger(), prepareDirectory, outputDirectory)) {
                 throw new ToolProcessingException("Could not copy files from " +

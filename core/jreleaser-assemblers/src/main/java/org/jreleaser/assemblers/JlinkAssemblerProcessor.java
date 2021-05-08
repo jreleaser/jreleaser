@@ -77,7 +77,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         }
 
         // copy jars to assembly
-        Path assembleDirectory = (Path) props.get(Constants.KEY_ASSEMBLE_DIRECTORY);
+        Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path jarsDirectory = assembleDirectory.resolve("jars");
         context.getLogger().debug("copying JARs to {}", context.getBasedir().relativize(jarsDirectory));
         Set<Path> jars = copyJars(context, jarsDirectory);
@@ -245,7 +245,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         throws AssemblerProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_ASSEMBLE_DIRECTORY);
+        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path outputFile = "launcher.bat".equals(fileName) ?
             outputDirectory.resolve(assembler.getExecutable().concat(".bat")) :
             "launcher".equals(fileName) ?

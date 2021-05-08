@@ -91,7 +91,7 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         Path outputFile = "manifest.json".equals(fileName) ?
             outputDirectory.resolve("bucket").resolve(distribution.getExecutable().concat(".json")) :
             outputDirectory.resolve(fileName);

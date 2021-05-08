@@ -90,7 +90,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_PREPARE_DIRECTORY);
+        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         Path outputFile = "binary.nuspec".equals(fileName) ?
             outputDirectory.resolve(distribution.getExecutable().concat(".nuspec")) :
             outputDirectory.resolve(fileName);
