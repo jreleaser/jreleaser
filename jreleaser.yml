@@ -134,6 +134,8 @@ distributions:
       version: 11
     docker:
       active: always
+      labels:
+        'org.opencontainers.image.title': jreleaser
       imageNames:
         - '{{repoOwner}}/{{projectName}}-slim:{{tagName}}'
         - '{{repoOwner}}/{{projectName}}-slim:latest'
