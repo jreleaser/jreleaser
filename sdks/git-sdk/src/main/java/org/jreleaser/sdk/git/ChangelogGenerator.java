@@ -349,6 +349,7 @@ public class ChangelogGenerator {
             } else {
                 context.put("commitShortHash", shortHash);
             }
+            context.put("commitsUrl", commitsUrl);
             context.put("commitFullHash", fullHash);
             context.put("commitTitle", passThrough(title));
             context.put("commitAuthor", passThrough(author));
