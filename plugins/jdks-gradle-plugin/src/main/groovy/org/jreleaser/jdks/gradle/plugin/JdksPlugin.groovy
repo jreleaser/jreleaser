@@ -102,6 +102,9 @@ class JdksPlugin implements Plugin<Project> {
                     t.doFirst {
                         jdksDir.get().asFile.mkdirs()
                     }
+                    t.onlyIf {
+                        !jdksDir.get().file(filename).asFile.exists()
+                    }
                 }
             })
 
@@ -144,6 +147,7 @@ class JdksPlugin implements Plugin<Project> {
                         t.from(t.project.tarTree(jdkArchive))
                     }
                     t.into(jdksDir)
+                    t.onlyIf { jdk.verifyTask.get().didWork }
                 }
             })
         }
@@ -198,24 +202,36 @@ class JdksPlugin implements Plugin<Project> {
             }
         })
 
-        TaskProvider<Copy> copyJdksFromCache = project.tasks.register('copyJdksFromCache',
-            Copy, new Action<Copy>() {
-            @Override
-            void execute(Copy t) {
-                t.group = JDKS_GROUP
-                t.description = 'Copy JDKs from Gradle cache'
-                cacheDir.listFiles().each { jdkArchive ->
-                    if (jdkArchive.name.endsWith('.zip')) {
-                        t.from(t.project.zipTree(jdkArchive))
-                    } else if (jdkArchive.name.endsWith('.tar') ||
-                        jdkArchive.name.endsWith('.tar.gz') ||
-                        jdkArchive.name.endsWith('.tgz')) {
-                        t.from(t.project.tarTree(jdkArchive))
-                    }
-                    t.into(jdksDir)
+        List<File> jdksToBeCopied = []
+        if (cacheDir.exists()) {
+            cacheDir.listFiles().each { jdkArchive ->
+                if (!jdksDir.get().file(jdkArchive.name).asFile.exists()) {
+                    jdksToBeCopied << jdkArchive
                 }
             }
-        })
+        }
+
+        TaskProvider<Copy> copyJdksFromCache = null
+        if (jdksToBeCopied) {
+            copyJdksFromCache = project.tasks.register('copyJdksFromCache',
+                Copy, new Action<Copy>() {
+                @Override
+                void execute(Copy t) {
+                    t.group = JDKS_GROUP
+                    t.description = 'Copy JDKs from Gradle cache'
+                    jdksToBeCopied.each { jdkArchive ->
+                        if (jdkArchive.name.endsWith('.zip')) {
+                            t.from(t.project.zipTree(jdkArchive))
+                        } else if (jdkArchive.name.endsWith('.tar') ||
+                            jdkArchive.name.endsWith('.tar.gz') ||
+                            jdkArchive.name.endsWith('.tgz')) {
+                            t.from(t.project.tarTree(jdkArchive))
+                        }
+                        t.into(jdksDir)
+                    }
+                }
+            })
+        }
 
         TaskProvider<DefaultTask> setupJdks = project.tasks.register('setupJdks',
             DefaultTask, new Action<DefaultTask>() {
@@ -229,11 +245,10 @@ class JdksPlugin implements Plugin<Project> {
             }
         })
 
-        if (cacheDir.exists()) {
+        if (cacheDir.exists() && jdksToBeCopied) {
             project.tasks.named('assemble').get().dependsOn(copyJdksFromCache)
-        } else {
-            project.tasks.named('assemble').get().dependsOn(setupJdks)
         }
+        project.tasks.named('assemble').get().dependsOn(setupJdks)
 
         project.tasks.register('listJdks',
             ListJdksTask, new Action<ListJdksTask>() {
