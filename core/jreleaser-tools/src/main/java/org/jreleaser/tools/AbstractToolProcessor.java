@@ -290,7 +290,11 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                                             Distribution distribution) throws ToolProcessingException {
         Set<String> fileExtensions = tool.getSupportedExtensions();
         List<Artifact> artifacts = distribution.getArtifacts().stream()
-            .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
+            .filter(artifact -> {
+                if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE &&
+                    tool.supportsDistribution(distribution)) return true;
+                return fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext));
+            })
             .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
             .collect(Collectors.toList());
 
