@@ -125,7 +125,10 @@ public abstract class DistributionsValidator extends Validator {
         byPlatform.entrySet().forEach(p -> {
             String platform = "<nil>".equals(p.getKey()) ? "no" : p.getKey();
             p.getValue().stream()
-                .collect(groupingBy(artifact -> getFilenameExtension(artifact.getPath())))
+                .collect(groupingBy(artifact -> {
+                    String ext = getFilenameExtension(artifact.getPath());
+                    return isNotBlank(ext) ? ext : "";
+                }))
                 .entrySet().forEach(e -> {
                 if (e.getValue().size() > 1) {
                     errors.configuration("distribution." + distribution.getName() +
