@@ -65,12 +65,15 @@ public abstract class DockerValidator extends Validator {
             tool.setBaseImage(parentTool.getBaseImage());
         }
         if (isBlank(tool.getBaseImage())) {
-            if (distribution.getType() != Distribution.DistributionType.JLINK) {
+            if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
+                distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {
                 int version = Integer.parseInt(distribution.getJava().getVersion());
                 boolean ltsmts = version == 8 || version % 2 == 1;
                 tool.setBaseImage("azul/zulu-openjdk-alpine:{{distributionJavaVersion}}" + (ltsmts ? "-jre" : ""));
-            } else {
+            } else if (distribution.getType() == Distribution.DistributionType.JLINK) {
                 tool.setBaseImage("alpine:3.13.5");
+            } else {
+                tool.setBaseImage("scratch");
             }
         }
 

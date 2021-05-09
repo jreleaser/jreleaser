@@ -10,8 +10,6 @@ LABEL {{.}}
 
 COPY assembly/* /
 
-RUN chmod +x {{distributionExecutable}}
-
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
