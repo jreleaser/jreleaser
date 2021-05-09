@@ -43,11 +43,11 @@ public abstract class NativeImageValidator extends Validator {
             if (isBlank(nativeImage.getName())) {
                 nativeImage.setName(e.getKey());
             }
-            validateNativeImage(context, nativeImage, errors);
+            validateNativeImage(context, mode, nativeImage, errors);
         }
     }
 
-    private static void validateNativeImage(JReleaserContext context, NativeImage nativeImage, Errors errors) {
+    private static void validateNativeImage(JReleaserContext context, JReleaserContext.Mode mode, NativeImage nativeImage, Errors errors) {
         context.getLogger().debug("nativeImage.{}", nativeImage.getName());
 
         if (!nativeImage.isActiveSet()) {
@@ -99,6 +99,8 @@ public abstract class NativeImageValidator extends Validator {
             }
         }
 
-        validateTemplate(context, nativeImage, errors);
+        if (mode == JReleaserContext.Mode.ASSEMBLE) {
+            validateTemplate(context, nativeImage, errors);
+        }
     }
 }
