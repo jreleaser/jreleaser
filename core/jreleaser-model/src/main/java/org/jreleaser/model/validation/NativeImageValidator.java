@@ -66,6 +66,8 @@ public abstract class NativeImageValidator extends Validator {
 
         if (isBlank(nativeImage.getGraal().getPath())) {
             nativeImage.getGraal().setPath(System.getProperty("java.home"));
+        }
+        if (isBlank(nativeImage.getGraal().getPlatform())) {
             nativeImage.getGraal().setPlatform(PlatformUtils.getCurrentFull());
         }
 
