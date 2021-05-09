@@ -208,6 +208,6 @@ copyDependencies {
 
 assemble.dependsOn copyDependencies
 if (file("${gradle.gradleUserHomeDir}/caches/jdks").exists()) {
-    assemble.dependsOn copyJdksFromCache
+//    assemble.dependsOn copyJdksFromCache
 }
 assemble.dependsOn jdksTask
