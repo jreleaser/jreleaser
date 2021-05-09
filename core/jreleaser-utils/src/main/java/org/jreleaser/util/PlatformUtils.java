@@ -19,6 +19,10 @@ package org.jreleaser.util;
 
 import kr.motd.maven.os.Detector;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +30,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -45,6 +50,7 @@ public final class PlatformUtils {
             "hpux",
             "os400",
             "linux",
+            "linux_musl",
             "osx",
             "freebsd",
             "openbsd",
@@ -144,8 +150,49 @@ public final class PlatformUtils {
         }
     }
 
+    public static boolean isLinux(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        switch (parts.length) {
+            case 1:
+            case 2:
+                return OS_NAMES.contains(parts[0]) &&
+                    osNameOrClassifier.contains("linux");
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isAlpineLinux(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        return "linux_musl".equals(parts[0]);
+    }
+
     public static String getCurrent() {
-        return OS_DETECTOR.get(Detector.DETECTED_NAME);
+        String platform = OS_DETECTOR.get(Detector.DETECTED_NAME);
+
+        if (isLinux(platform)) {
+            Path release = Paths.get(System.getProperty("java.home"))
+                .resolve("release");
+
+            try {
+                Properties props = new Properties();
+                props.load(Files.newInputStream(release));
+                if (props.containsKey("LIBC")) {
+                    String libc = props.getProperty("LIBC");
+                    if ("musl".equalsIgnoreCase(libc)) {
+                        platform += "_musl";
+                    }
+                }
+            } catch (IOException ignored) {
+                // ignored
+            }
+        }
+
+        return platform;
     }
 
     public static String getCurrentFull() {
