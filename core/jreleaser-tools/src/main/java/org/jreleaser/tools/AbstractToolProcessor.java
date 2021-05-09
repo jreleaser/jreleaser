@@ -308,6 +308,11 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         for (int i = 0; i < artifacts.size(); i++) {
             Artifact artifact = artifacts.get(i);
             String platform = isNotBlank(artifact.getPlatform()) ? capitalize(artifact.getPlatform()) : "";
+            // add extra properties without clobbering existing keys
+            Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact" + platform);
+            artifactProps.keySet().stream()
+                .filter(k -> !props.containsKey(k))
+                .forEach(k -> props.put(k, artifactProps.get(k)));
             String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
             String artifactName = getFilename(artifactFileName);
             props.put("artifact" + platform + "Name", artifactName);
@@ -325,6 +330,11 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, artifactName);
                 props.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
                 props.put(Constants.KEY_ARTIFACT_NAME, artifactName);
+                // add extra properties without clobbering existing keys
+                Map<String, Object> aprops = artifact.getResolvedExtraProperties();
+                aprops.keySet().stream()
+                    .filter(k -> !props.containsKey(k))
+                    .forEach(k -> props.put(k, aprops.get(k)));
             }
         }
 

@@ -565,6 +565,7 @@ public final class JReleaserModelConverter {
         a.setPath(artifact.getPath());
         a.setHash(artifact.getHash());
         a.setPlatform(artifact.getPlatform());
+        a.setExtraProperties(artifact.getExtraProperties());
         return a;
     }
 

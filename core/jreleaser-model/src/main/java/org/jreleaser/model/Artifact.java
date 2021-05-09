@@ -37,7 +37,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Artifact implements Domain {
+public class Artifact implements Domain, ExtraProperties {
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private String path;
     private String hash;
     private String platform;
@@ -52,6 +53,7 @@ public class Artifact implements Domain {
         this.transform = artifact.transform;
         this.resolvedPath = artifact.resolvedPath;
         this.resolvedTransform = artifact.resolvedTransform;
+        setExtraProperties(artifact.extraProperties);
     }
 
     public Path getEffectivePath(JReleaserContext context) {
@@ -285,12 +287,33 @@ public class Artifact implements Domain {
     }
 
     @Override
+    public String getPrefix() {
+        return "artifact";
+    }
+
+    @Override
+    public Map<String, Object> getExtraProperties() {
+        return extraProperties;
+    }
+
+    @Override
+    public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
+    public void addExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("path", path);
         map.put("hash", hash);
         map.put("platform", platform);
         map.put("transform", transform);
+        map.put("extraProperties", getResolvedExtraProperties());
         return map;
     }
 

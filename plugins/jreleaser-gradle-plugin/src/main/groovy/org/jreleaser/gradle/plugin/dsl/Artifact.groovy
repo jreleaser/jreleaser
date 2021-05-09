@@ -27,7 +27,7 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface Artifact {
+interface Artifact extends ExtraProperties {
     RegularFileProperty getPath()
 
     Property<String> getPlatform()

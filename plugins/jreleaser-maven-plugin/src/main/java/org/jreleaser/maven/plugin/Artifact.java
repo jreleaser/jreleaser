@@ -17,11 +17,15 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Artifact {
+public class Artifact implements ExtraProperties {
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private String path;
     private String hash;
     private String platform;
@@ -30,6 +34,7 @@ public class Artifact {
         this.path = artifact.path;
         this.hash = artifact.hash;
         this.platform = artifact.platform;
+        setExtraProperties(artifact.extraProperties);
     }
 
     public String getPath() {
@@ -54,5 +59,15 @@ public class Artifact {
 
     public void setPlatform(String platform) {
         this.platform = platform;
+    }
+
+    @Override
+    public Map<String, Object> getExtraProperties() {
+        return extraProperties;
+    }
+
+    @Override
+    public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.putAll(extraProperties);
     }
 }

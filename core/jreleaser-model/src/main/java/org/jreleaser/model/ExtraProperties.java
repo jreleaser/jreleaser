@@ -46,12 +46,14 @@ public interface ExtraProperties extends Serializable {
     }
 
     default Map<String, Object> getResolvedExtraProperties() {
+        return getResolvedExtraProperties(getPrefix());
+    }
+
+    default Map<String, Object> getResolvedExtraProperties(String prefix) {
         Map<String, Object> props = new LinkedHashMap<>();
 
         getExtraProperties().forEach((key, value) -> {
             if (null == value) return;
-
-            String prefix = getPrefix();
 
             boolean split = key.endsWith("_split");
             String k = key;
