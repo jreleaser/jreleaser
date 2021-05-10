@@ -94,8 +94,11 @@ working directory at the `/workspace` volume, for example assuming the current d
 
 [source]
 ----
-$ docker run -it --rm -v `(pwd)`:/workspace jreleaser/jreleaser-slim:<tag> <command> [<args>]
+$ docker run -it --rm -v `(pwd)`:/workspace \
+  jreleaser/<image>:<tag> <command> [<args>]
 ----
+
+Where image may be `jreleaser-slim`, `jreleaser-alpine`.
 
 NOTE: The `--basedir` argument will be automatically set to `--basedir=/workspace`.
 
