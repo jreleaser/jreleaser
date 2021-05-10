@@ -1,3 +1,7 @@
+environment:
+  properties:
+    jdkPathPrefix: 'apps/jreleaser/build/jdks/zulu11.48.21-ca-jdk11.0.11'
+
 project:
   name: jreleaser
   description: Release Java projects quickly and easily with JReleaser
@@ -73,8 +77,8 @@ assemble:
         sdkmanSkip: true
       java:
         version: 11
-        mainClass: org.jreleaser.cli.Main
-      imageName: 'jreleaser-standalone-{{projectEffectiveVersion}}'
+        mainClass: 'org.jreleaser.cli.Main'
+      imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: 'jreleaser'
       moduleNames:
         - java.base
@@ -85,14 +89,14 @@ assemble:
         - java.security.jgss
         - java.sql
       targetJdks:
-        - path: 'apps/jreleaser/build/jdks/zulu11.48.21-ca-jdk11.0.11-macosx_x64/zulu-11.jdk/Contents/Home'
-          platform: osx
-        - path: 'apps/jreleaser/build/jdks/zulu11.48.21-ca-jdk11.0.11-linux_x64'
-          platform: linux
-        - path: 'apps/jreleaser/build/jdks/zulu11.48.21-ca-jdk11.0.11-linux_musl_x64'
-          platform: linux_musl
-        - path: 'apps/jreleaser/build/jdks/zulu11.48.21-ca-jdk11.0.11-win_x64'
-          platform: windows
+        - path: '{{jdkPathPrefix}}-macosx_x64/zulu-11.jdk/Contents/Home'
+          platform: 'osx'
+        - path: '{{jdkPathPrefix}}-linux_x64'
+          platform: 'linux'
+        - path: '{{jdkPathPrefix}}-linux_musl_x64'
+          platform: 'linux_musl'
+        - path: '{{jdkPathPrefix}}-win_x64'
+          platform: 'windows'
       mainJar:
         path: 'apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
       jars:
@@ -131,24 +135,37 @@ distributions:
 
   jreleaser-tool-provider:
     type: SINGLE_JAR
-    executable: jreleaser
-    java:
-      version: 11
+    artifacts:
+      - path: apps/{{distributionName}}/build/libs/{{distributionName}}-{{projectVersion}}.jar
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.jar'
+
+  jreleaser-standalone:
     docker:
       active: always
-      labels:
-        'org.opencontainers.image.title': jreleaser
-      imageNames:
-        - '{{repoOwner}}/{{projectName}}-slim:{{tagName}}'
-        - '{{repoOwner}}/{{projectName}}-slim:latest'
-      postCommands:
-        - 'VOLUME /workspace'
       registries:
         - serverName: DEFAULT
-          username: jreleaser
-    artifacts:
-      - path: apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-{{projectVersion}}.jar
-        transform: 'jreleaser-tool-provider/jreleaser-tool-provider-{{projectEffectiveVersion}}.jar'
+      labels:
+        'org.opencontainers.image.title': '{{repoOwner}}'
+      postCommands:
+        - 'VOLUME /workspace'
+      specs:
+        slim:
+          imageNames:
+            - '{{repoOwner}}/{{repoOwner}}-{{dockerSpecName}}:{{tagName}}'
+            - '{{repoOwner}}/{{repoOwner}}-{{dockerSpecName}}:latest'
+          matchers:
+            platform: 'linux'
+          preCommands:
+            - 'RUN apt-get update -y'
+            - 'RUN apt-get install unzip'
+        alpine:
+          imageNames:
+            - '{{repoOwner}}/{{repoOwner}}-{{dockerSpecName}}:{{tagName}}'
+            - '{{repoOwner}}/{{repoOwner}}-{{dockerSpecName}}:latest'
+          matchers:
+            platform: 'linux_musl'
+          preCommands:
+            - 'RUN apk add unzip'
 
 files:
   artifacts:
