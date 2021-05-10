@@ -17,7 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
-import org.jreleaser.model.Tool;
+import org.jreleaser.model.ExtraProperties;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,9 +27,9 @@ import java.util.Map;
  * @since 0.1.0
  */
 public abstract class ExtraPropertiesValidator extends Validator {
-    public static void mergeExtraProperties(Tool tool, Tool common) {
+    public static void mergeExtraProperties(ExtraProperties self, ExtraProperties common) {
         Map<String, Object> extraProperties = new LinkedHashMap<>(common.getExtraProperties());
-        extraProperties.putAll(tool.getExtraProperties());
-        tool.setExtraProperties(extraProperties);
+        extraProperties.putAll(self.getExtraProperties());
+        self.setExtraProperties(extraProperties);
     }
 }

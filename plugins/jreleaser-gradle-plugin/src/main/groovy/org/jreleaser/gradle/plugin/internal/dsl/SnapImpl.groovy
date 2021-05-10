@@ -21,12 +21,10 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
-import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
@@ -59,8 +57,8 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     final NamedDomainObjectContainer<SlotImpl> slots
 
     @Inject
-    SnapImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider) {
-        super(objects, distributionsDirProvider)
+    SnapImpl(ObjectFactory objects) {
+        super(objects)
         base = objects.property(String).convention(Providers.notDefined())
         grade = objects.property(String).convention(Providers.notDefined())
         confinement = objects.property(String).convention(Providers.notDefined())
@@ -89,9 +87,6 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
             }
         })
     }
-
-    @Override
-    protected String toolName() { 'snap' }
 
     @Override
     void addLocalPlug(String plug) {

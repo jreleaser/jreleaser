@@ -19,11 +19,9 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.file.Directory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Scoop
@@ -44,16 +42,13 @@ class ScoopImpl extends AbstractRepositoryTool implements Scoop {
     final TapImpl bucket
 
     @Inject
-    ScoopImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider) {
-        super(objects, distributionsDirProvider)
+    ScoopImpl(ObjectFactory objects) {
+        super(objects)
         checkverUrl = objects.property(String).convention(Providers.notDefined())
         autoupdateUrl = objects.property(String).convention(Providers.notDefined())
         bucket = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
-
-    @Override
-    protected String toolName() { 'scoop' }
 
     @Override
     @Internal

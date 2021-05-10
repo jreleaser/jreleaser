@@ -30,8 +30,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Snap extends AbstractRepositoryTool {
-    public static final String NAME = "snap";
-
     private final Set<String> localPlugs = new LinkedHashSet<>();
     private final Set<String> localSlots = new LinkedHashSet<>();
     private final List<Plug> plugs = new ArrayList<>();
@@ -42,10 +40,6 @@ public class Snap extends AbstractRepositoryTool {
     private String confinement;
     private File exportedLogin;
     private Boolean remoteBuild;
-
-    public Snap() {
-        super(NAME);
-    }
 
     void setAll(Snap snap) {
         super.setAll(snap);

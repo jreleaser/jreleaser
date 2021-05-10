@@ -22,7 +22,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.internal.JReleaserExtensionImpl
 import org.jreleaser.gradle.plugin.internal.JReleaserProjectConfigurer
@@ -41,11 +40,8 @@ class JReleaserPlugin implements Plugin<Project> {
         Provider<String> nameProvider = project.provider({ -> project.name })
         Provider<String> descriptionProvider = project.provider({ -> project.description })
         Provider<String> versionProvider = project.provider({ -> String.valueOf(project.version) })
-        Provider<Directory> distributionsDirProvider = project.provider({ ->
-            project.layout.projectDirectory.dir('src/jreleaser/distributions')
-        })
         project.extensions.create(JReleaserExtension, 'jreleaser', JReleaserExtensionImpl,
-            project.objects, nameProvider, descriptionProvider, versionProvider, distributionsDirProvider)
+            project.objects, nameProvider, descriptionProvider, versionProvider)
 
         project.afterEvaluate(new Action<Project>() {
             @Override

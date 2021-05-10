@@ -24,14 +24,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Chocolatey extends AbstractRepositoryTool {
-    public static final String NAME = "chocolatey";
     private final Bucket bucket = new Bucket();
     private String username;
     private Boolean remoteBuild;
-
-    public Chocolatey() {
-        super(NAME);
-    }
 
     void setAll(Chocolatey choco) {
         super.setAll(choco);

@@ -226,4 +226,14 @@ public final class PlatformUtils {
     public static OsDetector getOsDetector() {
         return OS_DETECTOR;
     }
+
+    public static boolean isCompatible(String expected, String actual) {
+        if (expected.contains("-")) {
+            // expected is strict
+            return expected.equals(actual);
+        }
+
+        String[] parts = actual.split("-");
+        return expected.equals(parts[0]);
+    }
 }

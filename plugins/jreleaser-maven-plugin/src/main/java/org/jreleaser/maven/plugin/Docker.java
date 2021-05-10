@@ -18,121 +18,31 @@
 package org.jreleaser.maven.plugin;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Docker extends AbstractTool {
-    public static final String NAME = "docker";
-
-    private final Map<String, String> labels = new LinkedHashMap<>();
-    private final Set<String> imageNames = new LinkedHashSet<>();
-    private final List<String> buildArgs = new ArrayList<>();
-    private final List<String> preCommands = new ArrayList<>();
-    private final List<String> postCommnands = new ArrayList<>();
-    private final Set<Registry> registries = new LinkedHashSet<>();
-
-    private String baseImage;
-
-    public Docker() {
-        super(NAME);
-    }
+public class Docker extends AbstractDockerConfiguration implements Tool {
+    private final List<DockerSpec> specs = new ArrayList<>();
 
     void setAll(Docker docker) {
         super.setAll(docker);
-        this.baseImage = docker.baseImage;
-        setImageNames(docker.imageNames);
-        setBuildArgs(docker.buildArgs);
-        setLabels(docker.labels);
-        setRegistries(docker.registries);
+        setSpecs(docker.specs);
     }
 
-    public String getBaseImage() {
-        return baseImage;
+    public List<DockerSpec> getSpecs() {
+        return specs;
     }
 
-    public void setBaseImage(String baseImage) {
-        this.baseImage = baseImage;
-    }
-
-    public Map<String, String> getLabels() {
-        return labels;
-    }
-
-    public void setLabels(Map<String, String> labels) {
-        this.labels.clear();
-        this.labels.putAll(labels);
-    }
-
-    public Set<String> getImageNames() {
-        return imageNames;
-    }
-
-    public void setImageNames(Set<String> imageNames) {
-        if (imageNames != null) {
-            this.imageNames.clear();
-            this.imageNames.addAll(imageNames);
-        }
-    }
-
-    public List<String> getBuildArgs() {
-        return buildArgs;
-    }
-
-    public void setBuildArgs(List<String> buildArgs) {
-        if (buildArgs != null) {
-            this.buildArgs.clear();
-            this.buildArgs.addAll(buildArgs);
-        }
-    }
-
-    public List<String> getPreCommands() {
-        return preCommands;
-    }
-
-    public void setPreCommands(List<String> preCommands) {
-        if (preCommands != null) {
-            this.preCommands.clear();
-            this.preCommands.addAll(preCommands);
-        }
-    }
-
-    public List<String> getPostCommnands() {
-        return postCommnands;
-    }
-
-    public void setPostCommnands(List<String> postCommnands) {
-        if (postCommnands != null) {
-            this.postCommnands.clear();
-            this.postCommnands.addAll(postCommnands);
-        }
-    }
-
-    public Set<Registry> getRegistries() {
-        return registries;
-    }
-
-    public void setRegistries(Set<Registry> registries) {
-        if (registries != null) {
-            this.registries.clear();
-            this.registries.addAll(registries);
-        }
+    public void setSpecs(List<DockerSpec> specs) {
+        this.specs.clear();
+        this.specs.addAll(specs);
     }
 
     public boolean isSet() {
         return super.isSet() ||
-            isNotBlank(baseImage) ||
-            !imageNames.isEmpty() ||
-            !buildArgs.isEmpty() ||
-            !labels.isEmpty() ||
-            !registries.isEmpty();
+            !specs.isEmpty();
     }
 }

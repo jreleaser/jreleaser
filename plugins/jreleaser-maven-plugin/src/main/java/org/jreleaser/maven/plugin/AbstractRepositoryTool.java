@@ -26,10 +26,6 @@ import java.util.Map;
 abstract class AbstractRepositoryTool extends AbstractTool implements RepositoryTool {
     protected final CommitAuthor commitAuthor = new CommitAuthor();
 
-    protected AbstractRepositoryTool(String name) {
-        super(name);
-    }
-
     void setAll(AbstractRepositoryTool tool) {
         super.setAll(tool);
         setCommitAuthor(tool.commitAuthor);

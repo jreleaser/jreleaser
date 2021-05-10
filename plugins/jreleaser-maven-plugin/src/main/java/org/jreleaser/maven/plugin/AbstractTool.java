@@ -25,14 +25,9 @@ import java.util.Map;
  * @since 0.1.0
  */
 abstract class AbstractTool implements Tool {
-    protected final String name;
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected Active active;
     protected String templateDirectory;
-
-    protected AbstractTool(String name) {
-        this.name = name;
-    }
 
     void setAll(AbstractTool tool) {
         this.active = tool.active;
@@ -53,11 +48,6 @@ abstract class AbstractTool implements Tool {
     @Override
     public String resolveActive() {
         return active != null ? active.name() : null;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override

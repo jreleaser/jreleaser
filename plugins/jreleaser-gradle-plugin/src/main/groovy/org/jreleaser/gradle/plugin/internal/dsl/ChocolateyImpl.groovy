@@ -19,11 +19,9 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.file.Directory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Chocolatey
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
@@ -44,16 +42,13 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
     final TapImpl bucket
 
     @Inject
-    ChocolateyImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider) {
-        super(objects, distributionsDirProvider)
+    ChocolateyImpl(ObjectFactory objects) {
+        super(objects)
         username = objects.property(String).convention(Providers.notDefined())
         remoteBuild = objects.property(Boolean).convention(Providers.notDefined())
         bucket = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
-
-    @Override
-    protected String toolName() { 'chocolatey' }
 
     @Override
     @Internal

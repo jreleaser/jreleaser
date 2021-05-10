@@ -19,18 +19,26 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.jreleaser.model.Active
 
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
 @CompileStatic
-interface DockerPackager extends PackagerTool {
+interface DockerConfiguration extends ExtraProperties {
+    Property<Active> getActive()
+
+    void setActive(String str)
+
+    DirectoryProperty getTemplateDirectory()
+
     Property<String> getBaseImage()
 
     SetProperty<String> getImageNames()

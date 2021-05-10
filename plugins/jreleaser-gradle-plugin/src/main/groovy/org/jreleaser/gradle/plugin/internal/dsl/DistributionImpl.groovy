@@ -21,13 +21,11 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
-import org.gradle.api.file.Directory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Brew
 import org.jreleaser.gradle.plugin.dsl.Chocolatey
@@ -68,17 +66,13 @@ class DistributionImpl implements Distribution {
     final JavaImpl java
 
     final NamedDomainObjectContainer<ArtifactImpl> artifacts
-    private final Property<String> myName
-    private final PackagersImpl packagers
 
     @Inject
-    DistributionImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider, PackagersImpl packagers) {
-        this.packagers = packagers
+    DistributionImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
         executable = objects.property(String).convention(Providers.notDefined())
         groupId = objects.property(String).convention(Providers.notDefined())
         artifactId = objects.property(String).convention(Providers.notDefined())
-        myName = objects.property(String).convention(Providers.notDefined())
         distributionType = objects.property(DistributionType).convention(DistributionType.JAVA_BINARY)
         tags = objects.listProperty(String).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
@@ -94,23 +88,12 @@ class DistributionImpl implements Distribution {
 
         java = objects.newInstance(JavaImpl, objects)
 
-        brew = objects.newInstance(BrewImpl, objects, distributionsDirProvider)
-        brew.distributionName.set(myName)
-        chocolatey = objects.newInstance(ChocolateyImpl, objects, distributionsDirProvider)
-        chocolatey.distributionName.set(myName)
-        docker = objects.newInstance(DockerImpl, objects, distributionsDirProvider)
-        docker.distributionName.set(myName)
-        jbang = objects.newInstance(JbangImpl, objects, distributionsDirProvider)
-        jbang.distributionName.set(myName)
-        scoop = objects.newInstance(ScoopImpl, objects, distributionsDirProvider)
-        scoop.distributionName.set(myName)
-        snap = objects.newInstance(SnapImpl, objects, distributionsDirProvider)
-        snap.distributionName.set(myName)
-    }
-
-    void setName(String name) {
-        this.name = name
-        this.myName.set(name)
+        brew = objects.newInstance(BrewImpl, objects)
+        chocolatey = objects.newInstance(ChocolateyImpl, objects)
+        docker = objects.newInstance(DockerImpl, objects)
+        jbang = objects.newInstance(JbangImpl, objects)
+        scoop = objects.newInstance(ScoopImpl, objects)
+        snap = objects.newInstance(SnapImpl, objects)
     }
 
     @Override

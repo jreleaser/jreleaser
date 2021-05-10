@@ -18,6 +18,11 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
  *
@@ -25,5 +30,30 @@ import groovy.transform.CompileStatic
  * @since 0.1.0
  */
 @CompileStatic
-interface Snap extends SnapPackager, RepositoryTool {
+interface Snap extends RepositoryTool {
+    Property<String> getBase()
+
+    Property<String> getGrade()
+
+    Property<String> getConfinement()
+
+    RegularFileProperty getExportedLogin()
+
+    Property<Boolean> getRemoteBuild()
+
+    SetProperty<String> getLocalPlugs()
+
+    SetProperty<String> getLocalSlots()
+
+    NamedDomainObjectContainer<Plug> getPlugs()
+
+    NamedDomainObjectContainer<Slot> getSlots()
+
+    void addLocalPlug(String plug)
+
+    void addLocalSlot(String slot)
+
+    Tap getSnap()
+
+    void snap(Action<? super Tap> tap)
 }

@@ -27,27 +27,27 @@ import org.gradle.api.Action
  */
 @CompileStatic
 interface Packagers {
-    BrewPackager getBrew()
+    Brew getBrew()
 
-    ChocolateyPackager getChocolatey()
+    Chocolatey getChocolatey()
 
-    DockerPackager getDocker()
+    Docker getDocker()
 
-    JbangPackager getJbang()
+    Jbang getJbang()
 
-    ScoopPackager getScoop()
+    Scoop getScoop()
 
-    SnapPackager getSnap()
+    Snap getSnap()
 
-    void brew(Action<? super BrewPackager> action)
+    void brew(Action<? super Brew> action)
 
-    void chocolatey(Action<? super ChocolateyPackager> action)
+    void chocolatey(Action<? super Chocolatey> action)
 
-    void docker(Action<? super DockerPackager> action)
+    void docker(Action<? super Docker> action)
 
-    void jbang(Action<? super JbangPackager> action)
+    void jbang(Action<? super Jbang> action)
 
-    void scoop(Action<? super ScoopPackager> action)
+    void scoop(Action<? super Scoop> action)
 
-    void snap(Action<? super SnapPackager> action)
+    void snap(Action<? super Snap> action)
 }

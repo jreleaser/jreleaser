@@ -53,7 +53,8 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
     }
 
     @Override
-    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws ToolProcessingException {
+        super.doPackageDistribution(distribution, props, packageDirectory);
         copyPreparedFiles(distribution, props);
         return true;
     }
@@ -143,11 +144,15 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
     }
 
     @Override
-    protected void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName)
+    protected void writeFile(Project project,
+                             Distribution distribution,
+                             String content,
+                             Map<String, Object> props,
+                             Path outputDirectory,
+                             String fileName)
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         String scriptName = (String) props.get(Constants.KEY_JBANG_SCRIPT_NAME);
         Path outputFile = "jbang.java".equals(fileName) ?
             outputDirectory.resolve(scriptName.concat(".java")) :

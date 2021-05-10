@@ -20,13 +20,13 @@ package org.jreleaser.gradle.plugin.internal.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
-import org.jreleaser.gradle.plugin.dsl.BrewPackager
-import org.jreleaser.gradle.plugin.dsl.ChocolateyPackager
-import org.jreleaser.gradle.plugin.dsl.DockerPackager
-import org.jreleaser.gradle.plugin.dsl.JbangPackager
+import org.jreleaser.gradle.plugin.dsl.Brew
+import org.jreleaser.gradle.plugin.dsl.Chocolatey
+import org.jreleaser.gradle.plugin.dsl.Docker
+import org.jreleaser.gradle.plugin.dsl.Jbang
 import org.jreleaser.gradle.plugin.dsl.Packagers
-import org.jreleaser.gradle.plugin.dsl.ScoopPackager
-import org.jreleaser.gradle.plugin.dsl.SnapPackager
+import org.jreleaser.gradle.plugin.dsl.Scoop
+import org.jreleaser.gradle.plugin.dsl.Snap
 
 import javax.inject.Inject
 
@@ -37,50 +37,50 @@ import javax.inject.Inject
  */
 @CompileStatic
 class PackagersImpl implements Packagers {
-    final BrewPackagerImpl brew
-    final ChocolateyPackagerImpl chocolatey
-    final DockerPackagerImpl docker
-    final JbangPackagerImpl jbang
-    final ScoopPackagerImpl scoop
-    final SnapPackagerImpl snap
+    final BrewImpl brew
+    final ChocolateyImpl chocolatey
+    final DockerImpl docker
+    final JbangImpl jbang
+    final ScoopImpl scoop
+    final SnapImpl snap
 
     @Inject
     PackagersImpl(ObjectFactory objects) {
-        brew = objects.newInstance(BrewPackagerImpl, objects)
-        chocolatey = objects.newInstance(ChocolateyPackagerImpl, objects)
-        docker = objects.newInstance(DockerPackagerImpl, objects)
-        jbang = objects.newInstance(JbangPackagerImpl, objects)
-        scoop = objects.newInstance(ScoopPackagerImpl, objects)
-        snap = objects.newInstance(SnapPackagerImpl, objects)
+        brew = objects.newInstance(BrewImpl, objects)
+        chocolatey = objects.newInstance(ChocolateyImpl, objects)
+        docker = objects.newInstance(DockerImpl, objects)
+        jbang = objects.newInstance(JbangImpl, objects)
+        scoop = objects.newInstance(ScoopImpl, objects)
+        snap = objects.newInstance(SnapImpl, objects)
     }
 
     @Override
-    void brew(Action<? super BrewPackager> action) {
+    void brew(Action<? super Brew> action) {
         action.execute(brew)
     }
 
     @Override
-    void chocolatey(Action<? super ChocolateyPackager> action) {
+    void chocolatey(Action<? super Chocolatey> action) {
         action.execute(chocolatey)
     }
 
     @Override
-    void docker(Action<? super DockerPackager> action) {
+    void docker(Action<? super Docker> action) {
         action.execute(docker)
     }
 
     @Override
-    void jbang(Action<? super JbangPackager> action) {
+    void jbang(Action<? super Jbang> action) {
         action.execute(jbang)
     }
 
     @Override
-    void scoop(Action<? super ScoopPackager> action) {
+    void scoop(Action<? super Scoop> action) {
         action.execute(scoop)
     }
 
     @Override
-    void snap(Action<? super SnapPackager> action) {
+    void snap(Action<? super Snap> action) {
         action.execute(snap)
     }
 

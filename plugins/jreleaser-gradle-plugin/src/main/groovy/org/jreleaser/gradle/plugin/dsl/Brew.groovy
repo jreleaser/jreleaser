@@ -18,6 +18,8 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -26,6 +28,16 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface Brew extends BrewPackager, RepositoryTool {
+interface Brew extends RepositoryTool {
     Property<String> getFormulaName()
+
+    MapProperty<String, String> getDependencies()
+
+    void addDependency(String key, String value)
+
+    void addDependency(String key)
+
+    Tap getTap()
+
+    void tap(Action<? super Tap> tap)
 }

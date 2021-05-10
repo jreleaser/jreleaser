@@ -19,6 +19,8 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.Docker;
+import org.jreleaser.model.DockerSpec;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Tool;
 import org.jreleaser.util.Errors;
@@ -58,6 +60,16 @@ public abstract class TemplateValidator extends Validator {
             errors.configuration(assembler.getType() + "." + assembler.getName() + ".template does not exist. " + assembler.getTemplateDirectory());
         } else {
             assembler.setTemplateDirectory("src/jreleaser/assemblers/" + assembler.getName() + "/" + assembler.getType());
+        }
+    }
+
+    public static void validateTemplate(JReleaserContext context, Distribution distribution,
+                                        DockerSpec spec, Docker docker, Errors errors) {
+        if (isNotBlank(spec.getTemplateDirectory()) &&
+            !(context.getBasedir().resolve(spec.getTemplateDirectory().trim()).toFile().exists())) {
+            errors.configuration("distribution." + distribution.getName() + ".docker." + spec.getName() + ".template does not exist. " + spec.getTemplateDirectory());
+        } else {
+            spec.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + spec.getName() + "/" + docker.getName());
         }
     }
 }

@@ -19,11 +19,9 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.file.Directory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Jbang
@@ -43,15 +41,12 @@ class JbangImpl extends AbstractRepositoryTool implements Jbang {
     final TapImpl catalog
 
     @Inject
-    JbangImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider) {
-        super(objects, distributionsDirProvider)
+    JbangImpl(ObjectFactory objects) {
+        super(objects)
         alias = objects.property(String).convention(Providers.notDefined())
         catalog = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
-
-    @Override
-    protected String toolName() { 'jbang' }
 
     @Override
     @Internal

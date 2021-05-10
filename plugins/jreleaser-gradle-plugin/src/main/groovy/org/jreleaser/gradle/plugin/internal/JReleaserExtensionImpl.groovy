@@ -22,7 +22,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
-import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -76,8 +75,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     JReleaserExtensionImpl(ObjectFactory objects,
                            Provider<String> nameProvider,
                            Provider<String> descriptionProvider,
-                           Provider<String> versionProvider,
-                           Provider<Directory> distributionsDirProvider) {
+                           Provider<String> versionProvider) {
         enabled = objects.property(Boolean).convention(true)
         dryrun = objects.property(Boolean).convention(false)
         environment = objects.newInstance(EnvironmentImpl, objects)
@@ -93,7 +91,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         distributions = objects.domainObjectContainer(DistributionImpl, new NamedDomainObjectFactory<DistributionImpl>() {
             @Override
             DistributionImpl create(String name) {
-                DistributionImpl distribution = objects.newInstance(DistributionImpl, objects, distributionsDirProvider, packagers)
+                DistributionImpl distribution = objects.newInstance(DistributionImpl, objects)
                 distribution.name = name
                 return distribution
             }

@@ -24,13 +24,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Jbang extends AbstractRepositoryTool {
-    public static final String NAME = "catalog";
     private final Catalog catalog = new Catalog();
     private String alias;
-
-    public Jbang() {
-        super(NAME);
-    }
 
     void setAll(Jbang jbang) {
         super.setAll(jbang);

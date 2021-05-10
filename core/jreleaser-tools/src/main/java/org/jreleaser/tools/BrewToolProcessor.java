@@ -42,7 +42,8 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
     }
 
     @Override
-    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws ToolProcessingException {
+        super.doPackageDistribution(distribution, props, packageDirectory);
         copyPreparedFiles(distribution, props);
         return true;
     }
@@ -71,11 +72,15 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
     }
 
     @Override
-    protected void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName)
+    protected void writeFile(Project project,
+                             Distribution distribution,
+                             String content,
+                             Map<String, Object> props,
+                             Path outputDirectory,
+                             String fileName)
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         Path outputFile = "formula.rb".equals(fileName) ?
             outputDirectory.resolve("Formula").resolve(distribution.getExecutable().concat(".rb")) :
             outputDirectory.resolve(fileName);

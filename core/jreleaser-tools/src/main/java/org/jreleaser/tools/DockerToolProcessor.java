@@ -20,6 +20,8 @@ package org.jreleaser.tools;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
+import org.jreleaser.model.DockerConfiguration;
+import org.jreleaser.model.DockerSpec;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Registry;
@@ -33,6 +35,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,17 +58,94 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
     }
 
     @Override
-    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+    protected void doPrepareDistribution(Distribution distribution,
+                                         Map<String, Object> props,
+                                         String distributionName,
+                                         Path prepareDirectory) throws IOException, ToolProcessingException {
+        if (tool.getActiveSpecs().isEmpty()) {
+            super.doPrepareDistribution(distribution, props, distributionName, prepareDirectory);
+            return;
+        }
+
+        for (DockerSpec spec : tool.getActiveSpecs()) {
+            prepareSpec(distribution, props, distributionName, prepareDirectory, spec);
+        }
+    }
+
+    private void prepareSpec(Distribution distribution,
+                             Map<String, Object> props,
+                             String distributionName,
+                             Path prepareDirectory,
+                             DockerSpec spec) throws IOException, ToolProcessingException {
+        Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+        super.doPrepareDistribution(distribution, newProps, distributionName, prepareDirectory.resolve(spec.getName()));
+    }
+
+    private Map<String, Object> fillSpecProps(Distribution distribution, Map<String, Object> props, DockerSpec spec) throws ToolProcessingException {
+        List<Artifact> artifacts = Collections.singletonList(spec.getArtifact());
+        Map<String, Object> newProps = fillProps(distribution, props);
+        fillDockerProperties(newProps, distribution, spec);
+        verifyAndAddArtifacts(newProps, distribution, artifacts);
+        newProps.put(Constants.KEY_DOCKER_SPEC_NAME, spec.getName());
+        Path prepareDirectory = (Path) newProps.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
+        newProps.put(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, prepareDirectory.resolve(spec.getName()));
+        Path packageDirectory = (Path) newProps.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+        newProps.put(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, packageDirectory.resolve(spec.getName()));
+        return newProps;
+    }
+
+    @Override
+    protected boolean verifyAndAddArtifacts(Map<String, Object> props,
+                                            Distribution distribution) throws ToolProcessingException {
+        if (tool.getActiveSpecs().isEmpty()) {
+            return super.verifyAndAddArtifacts(props, distribution);
+        }
+        return true;
+    }
+
+    @Override
+    protected boolean doPackageDistribution(Distribution distribution,
+                                            Map<String, Object> props,
+                                            Path packageDirectory) throws ToolProcessingException {
+        if (tool.getActiveSpecs().isEmpty()) {
+            Set<String> fileExtensions = tool.getSupportedExtensions();
+            List<Artifact> artifacts = distribution.getArtifacts().stream()
+                .filter(artifact -> {
+                    if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE &&
+                        tool.supportsDistribution(distribution)) return true;
+                    return fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext));
+                })
+                .collect(Collectors.toList());
+
+            packageDocker(distribution, props, packageDirectory, getTool(), artifacts);
+            return true;
+        }
+
+        for (DockerSpec spec : tool.getActiveSpecs()) {
+            Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+            packageDocker(distribution, newProps, packageDirectory.resolve(spec.getName()),
+                spec, Collections.singletonList(spec.getArtifact()));
+        }
+        return true;
+    }
+
+    protected void packageDocker(Distribution distribution,
+                                 Map<String, Object> props,
+                                 Path packageDirectory,
+                                 DockerConfiguration docker,
+                                 List<Artifact> artifacts) throws ToolProcessingException {
+        super.doPackageDistribution(distribution, props, packageDirectory);
+
         try {
             // copy files
-            Path workingDirectory = prepareAssembly(distribution, props);
+            Path workingDirectory = prepareAssembly(distribution, props, packageDirectory, artifacts);
 
             int i = 0;
-            for (String imageName : getTool().getImageNames()) {
+            for (String imageName : docker.getImageNames()) {
                 imageName = applyTemplate(imageName, props, "image" + (i++));
 
                 // command line
-                List<String> cmd = createBuildCommand(props);
+                List<String> cmd = createBuildCommand(props, docker);
                 if (!cmd.contains("-q") && !cmd.contains("--quiet")) {
                     cmd.add("-q");
                 }
@@ -82,25 +163,16 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         } catch (IOException e) {
             throw new ToolProcessingException(e);
         }
-
-        return true;
     }
 
-    private Path prepareAssembly(Distribution distribution, Map<String, Object> props) throws IOException, ToolProcessingException {
-        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+    private Path prepareAssembly(Distribution distribution,
+                                 Map<String, Object> props,
+                                 Path packageDirectory,
+                                 List<Artifact> artifacts) throws IOException, ToolProcessingException {
         copyPreparedFiles(distribution, props);
         Path assemblyDirectory = packageDirectory.resolve("assembly");
 
         Files.createDirectories(assemblyDirectory);
-
-        Set<String> fileExtensions = tool.getSupportedExtensions();
-        List<Artifact> artifacts = distribution.getArtifacts().stream()
-            .filter(artifact -> {
-                if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE &&
-                    tool.supportsDistribution(distribution)) return true;
-                return fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext));
-            })
-            .collect(Collectors.toList());
 
         for (Artifact artifact : artifacts) {
             Path artifactPath = artifact.getEffectivePath(context);
@@ -110,10 +182,10 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         return packageDirectory;
     }
 
-    private List<String> createBuildCommand(Map<String, Object> props) {
+    private List<String> createBuildCommand(Map<String, Object> props, DockerConfiguration docker) {
         List<String> cmd = createCommand("build");
-        for (int i = 0; i < getTool().getBuildArgs().size(); i++) {
-            String arg = getTool().getBuildArgs().get(i);
+        for (int i = 0; i < docker.getBuildArgs().size(); i++) {
+            String arg = docker.getBuildArgs().get(i);
             if (arg.contains("{{")) {
                 cmd.add(applyTemplate(arg, props, "arg" + i));
             } else {
@@ -134,19 +206,35 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
 
     @Override
     public boolean publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
-        if (tool.getRegistries().isEmpty()) {
-            context.getLogger().info("no configured registries. Skipping");
-            return false;
+        if (tool.getActiveSpecs().isEmpty()) {
+            if (tool.getRegistries().isEmpty()) {
+                context.getLogger().info("no configured registries. Skipping");
+                return false;
+            }
+            return super.publishDistribution(distribution, releaser, props);
         }
-        return super.publishDistribution(distribution, releaser, props);
+
+        for (DockerSpec spec : tool.getActiveSpecs()) {
+            Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+            publishDocker(distribution, releaser, newProps, spec);
+        }
+
+        return true;
     }
 
     @Override
     protected boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
-        for (Registry registry : getTool().getRegistries()) {
+        return publishDocker(distribution, releaser, props, getTool());
+    }
+
+    protected boolean publishDocker(Distribution distribution,
+                                    Releaser releaser,
+                                    Map<String, Object> props,
+                                    DockerConfiguration docker) throws ToolProcessingException {
+        for (Registry registry : docker.getRegistries()) {
             login(registry);
             int i = 0;
-            for (String imageName : getTool().getImageNames()) {
+            for (String imageName : docker.getImageNames()) {
                 publish(registry, imageName, props, i++);
             }
             logout(registry);
@@ -241,27 +329,37 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
+        fillDockerProperties(props, distribution, getTool());
+    }
+
+    protected void fillDockerProperties(Map<String, Object> props,
+                                        Distribution distribution,
+                                        DockerConfiguration docker) throws ToolProcessingException {
         props.put(Constants.KEY_DOCKER_BASE_IMAGE,
-            applyTemplate(getTool().getBaseImage(), props, "baseImage"));
+            applyTemplate(docker.getBaseImage(), props, "baseImage"));
 
         List<String> labels = new ArrayList<>();
-        getTool().getLabels().forEach((label, value) -> labels.add(passThrough("\"" + label + "\"=\"" +
+        docker.getLabels().forEach((label, value) -> labels.add(passThrough("\"" + label + "\"=\"" +
             applyTemplate(value, props, label) + "\"")));
         props.put(Constants.KEY_DOCKER_LABELS, labels);
-        props.put(Constants.KEY_DOCKER_PRE_COMMANDS, tool.getPreCommands().stream()
+        props.put(Constants.KEY_DOCKER_PRE_COMMANDS, docker.getPreCommands().stream()
             .map(c -> passThrough(applyTemplate(c, props)))
             .collect(Collectors.toList()));
-        props.put(Constants.KEY_DOCKER_POST_COMMANDS, tool.getPostCommands().stream()
+        props.put(Constants.KEY_DOCKER_POST_COMMANDS, docker.getPostCommands().stream()
             .map(c -> passThrough(applyTemplate(c, props)))
             .collect(Collectors.toList()));
     }
 
     @Override
-    protected void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName)
+    protected void writeFile(Project project,
+                             Distribution distribution,
+                             String content,
+                             Map<String, Object> props,
+                             Path outputDirectory,
+                             String fileName)
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         Path outputFile = "executable".equals(fileName) ?
             outputDirectory.resolve("assembly").resolve(distribution.getExecutable()) :
             outputDirectory.resolve(fileName);

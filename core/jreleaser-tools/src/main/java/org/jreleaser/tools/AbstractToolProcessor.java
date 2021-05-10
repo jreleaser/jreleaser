@@ -101,34 +101,40 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 return false;
             }
 
-            Path prepareDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
-            // cleanup from previous session
-            FileUtils.deleteFiles(prepareDirectory);
-            Files.createDirectories(prepareDirectory);
-
-            context.getLogger().debug("resolving templates for {}/{}", distributionName, getToolName());
-            Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
-                distribution.getType().name(),
-                getToolName(),
-                context.getModel().getProject().isSnapshot(),
-                context.getBasedir().resolve(getTool().getTemplateDirectory()));
-
-            for (Map.Entry<String, Reader> entry : templates.entrySet()) {
-                context.getLogger().debug("evaluating template {} for {}/{}", entry.getKey(), distributionName, getToolName());
-                String content = applyTemplate(entry.getValue(), newProps);
-                context.getLogger().debug("writing template {} for {}/{}", entry.getKey(), distributionName, getToolName());
-                writeFile(context.getModel().getProject(), distribution, content, newProps, entry.getKey());
-            }
-
-            context.getLogger().debug("copying license files");
-            FileUtils.copyFiles(context.getLogger(),
-                context.getBasedir(),
-                prepareDirectory, path -> path.getFileName().startsWith("LICENSE"));
+            doPrepareDistribution(distribution, newProps, distributionName, getPrepareDirectory(props));
         } catch (IllegalArgumentException | IOException e) {
             throw new ToolProcessingException(e);
         }
 
         return true;
+    }
+
+    protected void doPrepareDistribution(Distribution distribution,
+                                         Map<String, Object> props,
+                                         String distributionName,
+                                         Path prepareDirectory) throws IOException, ToolProcessingException {
+        // cleanup from previous session
+        FileUtils.deleteFiles(prepareDirectory);
+        Files.createDirectories(prepareDirectory);
+
+        context.getLogger().debug("resolving templates for {}/{}", distributionName, getToolName());
+        Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
+            distribution.getType().name(),
+            getToolName(),
+            context.getModel().getProject().isSnapshot(),
+            context.getBasedir().resolve(getTool().getTemplateDirectory()));
+
+        for (Map.Entry<String, Reader> entry : templates.entrySet()) {
+            context.getLogger().debug("evaluating template {} for {}/{}", entry.getKey(), distributionName, getToolName());
+            String content = applyTemplate(entry.getValue(), props);
+            context.getLogger().debug("writing template {} for {}/{}", entry.getKey(), distributionName, getToolName());
+            writeFile(context.getModel().getProject(), distribution, content, props, prepareDirectory, entry.getKey());
+        }
+
+        context.getLogger().debug("copying license files");
+        FileUtils.copyFiles(context.getLogger(),
+            context.getBasedir(),
+            prepareDirectory, path -> path.getFileName().startsWith("LICENSE"));
     }
 
     @Override
@@ -142,13 +148,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 return false;
             }
 
-            Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
-            // cleanup from previous session
-            FileUtils.deleteFiles(packageDirectory);
-            Files.createDirectories(packageDirectory);
-
-            return doPackageDistribution(distribution, newProps);
-        } catch (IllegalArgumentException | IOException e) {
+            return doPackageDistribution(distribution, newProps, getPackageDirectory(props));
+        } catch (IllegalArgumentException e) {
             throw new ToolProcessingException(e);
         }
     }
@@ -163,17 +164,27 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 context.getLogger().warn("skipping {} distribution", distributionName);
                 return false;
             }
+
             return doPublishDistribution(distribution, releaser, newProps);
         } catch (IllegalArgumentException e) {
             throw new ToolProcessingException(e);
         }
     }
 
-    protected abstract boolean doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
+    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws ToolProcessingException {
+        try {
+            // cleanup from previous session
+            FileUtils.deleteFiles(packageDirectory);
+            Files.createDirectories(packageDirectory);
+            return true;
+        } catch (IOException e) {
+            throw new ToolProcessingException(e);
+        }
+    }
 
     protected abstract boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
 
-    protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, String fileName) throws ToolProcessingException;
+    protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, Path outputDirectory, String fileName) throws ToolProcessingException;
 
     protected void writeFile(String content, Path outputFile) throws ToolProcessingException {
         try {
@@ -267,12 +278,12 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+        Path packageDirectory = getPackageDirectory(props);
         copyPreparedFiles(distribution, props, packageDirectory);
     }
 
     protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props, Path outputDirectory) throws ToolProcessingException {
-        Path prepareDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
+        Path prepareDirectory = getPrepareDirectory(props);
         try {
             if (!FileUtils.copyFilesRecursive(context.getLogger(), prepareDirectory, outputDirectory)) {
                 throw new ToolProcessingException("Could not copy files from " +
@@ -288,16 +299,12 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     protected boolean verifyAndAddArtifacts(Map<String, Object> props,
                                             Distribution distribution) throws ToolProcessingException {
-        Set<String> fileExtensions = tool.getSupportedExtensions();
-        List<Artifact> artifacts = distribution.getArtifacts().stream()
-            .filter(artifact -> {
-                if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE &&
-                    tool.supportsDistribution(distribution)) return true;
-                return fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext));
-            })
-            .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
-            .collect(Collectors.toList());
+        return verifyAndAddArtifacts(props, distribution, collectArtifacts(distribution));
+    }
 
+    protected boolean verifyAndAddArtifacts(Map<String, Object> props,
+                                            Distribution distribution,
+                                            List<Artifact> artifacts) throws ToolProcessingException {
         if (artifacts.size() == 0) {
             // we can't proceed
             context.getLogger().warn("no suitable artifacts found in distribution {} to be packaged with {}",
@@ -341,6 +348,18 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         return true;
     }
 
+    protected List<Artifact> collectArtifacts(Distribution distribution) {
+        Set<String> fileExtensions = tool.getSupportedExtensions();
+        return distribution.getArtifacts().stream()
+            .filter(artifact -> {
+                if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE &&
+                    tool.supportsDistribution(distribution)) return true;
+                return fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext));
+            })
+            .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
+            .collect(Collectors.toList());
+    }
+
     protected void info(ByteArrayOutputStream out) {
         log(out, context.getLogger()::info);
     }
@@ -355,5 +374,13 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
         Arrays.stream(str.split(System.lineSeparator()))
             .forEach(consumer);
+    }
+
+    protected Path getPrepareDirectory(Map<String, Object> props) {
+        return (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
+    }
+
+    protected Path getPackageDirectory(Map<String, Object> props) {
+        return (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
     }
 }

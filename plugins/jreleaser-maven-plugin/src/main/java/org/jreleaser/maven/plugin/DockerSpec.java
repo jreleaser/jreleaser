@@ -17,12 +17,37 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
-public interface Tool extends ExtraProperties, Activatable {
-    String getTemplateDirectory();
+public class DockerSpec extends AbstractDockerConfiguration {
+    private final Map<String, Object> matchers = new LinkedHashMap<>();
 
-    void setTemplateDirectory(String templateDirectory);
+    private String name;
+
+    void setAll(DockerSpec docker) {
+        super.setAll(docker);
+        this.name = docker.name;
+        setMatchers(docker.matchers);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Map<String, Object> getMatchers() {
+        return matchers;
+    }
+
+    public void setMatchers(Map<String, Object> matchers) {
+        this.matchers.putAll(matchers);
+    }
 }

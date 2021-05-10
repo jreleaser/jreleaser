@@ -195,7 +195,7 @@ abstract class AbstractUploader implements Uploader {
     }
 
     @Override
-    public final Map<String, Object> asMap(boolean full) {
+    public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> props = new LinkedHashMap<>();

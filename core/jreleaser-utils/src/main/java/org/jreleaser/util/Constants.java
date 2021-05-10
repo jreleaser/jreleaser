@@ -114,6 +114,7 @@ public interface Constants {
     String KEY_HOMEBREW_TAP_REPO_CLONE_URL = "brewTapRepoCloneUrl";
 
     // Docker
+    String KEY_DOCKER_SPEC_NAME = "dockerSpecName";
     String KEY_DOCKER_BASE_IMAGE = "dockerBaseImage";
     String KEY_DOCKER_LABELS = "dockerLabels";
     String KEY_DOCKER_PRE_COMMANDS = "dockerPreCommands";

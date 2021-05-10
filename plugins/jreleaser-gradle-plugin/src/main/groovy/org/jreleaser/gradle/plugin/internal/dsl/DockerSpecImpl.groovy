@@ -21,11 +21,8 @@ import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.PackagerTool
-import org.jreleaser.model.Active
-import org.jreleaser.model.Tool
+import org.jreleaser.gradle.plugin.dsl.DockerSpec
 
 import javax.inject.Inject
 
@@ -34,36 +31,38 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
 @CompileStatic
-abstract class AbstractPackagerTool implements PackagerTool {
-    final Property<Active> active
-    final MapProperty<String, Object> extraProperties
+class DockerSpecImpl extends AbstractDockerConfiguration implements DockerSpec {
+    String name
+    final MapProperty<String, Object> matchers
 
     @Inject
-    AbstractPackagerTool(ObjectFactory objects) {
-        active = objects.property(Active).convention(Providers.notDefined())
-        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
-    }
+    DockerSpecImpl(ObjectFactory objects) {
+        super(objects)
 
-    protected abstract String toolName()
-
-    @Internal
-    boolean isSet() {
-        active.present ||
-            extraProperties.present
+        matchers = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
     @Override
-    void setActive(String str) {
-        if (isNotBlank(str)) {
-            active.set(Active.of(str.trim()))
+    void addMatcher(String key, Object value) {
+        if (isNotBlank(key) && null != value) {
+            matchers.put(key.trim(), value)
         }
     }
 
-    protected <T extends Tool> void fillToolProperties(T tool) {
-        if (active.present) tool.active = active.get()
-        if (extraProperties.present) tool.extraProperties.putAll(extraProperties.get())
+    @Override
+    @Internal
+    boolean isSet() {
+        super.isSet() ||
+            !matchers.present
+    }
+
+    org.jreleaser.model.DockerSpec toModel() {
+        org.jreleaser.model.DockerSpec spec = new org.jreleaser.model.DockerSpec()
+        toModel(spec)
+        if (matchers.present) spec.matchers.putAll(matchers.get())
+        spec
     }
 }

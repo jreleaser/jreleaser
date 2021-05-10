@@ -17,12 +17,44 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
-public interface Tool extends ExtraProperties, Activatable {
+public interface DockerConfiguration extends ExtraProperties, Activatable {
     String getTemplateDirectory();
 
     void setTemplateDirectory(String templateDirectory);
+
+    String getBaseImage();
+
+    void setBaseImage(String baseImage);
+
+    Map<String, String> getLabels();
+
+    void setLabels(Map<String, String> labels);
+
+    Set<String> getImageNames();
+
+    void setImageNames(Set<String> imageNames);
+
+    List<String> getBuildArgs();
+
+    void setBuildArgs(List<String> buildArgs);
+
+    List<String> getPreCommands();
+
+    void setPreCommands(List<String> preCommands);
+
+    List<String> getPostCommands();
+
+    void setPostCommands(List<String> postCommands);
+
+    Set<Registry> getRegistries();
+
+    void setRegistries(Set<Registry> registries);
 }

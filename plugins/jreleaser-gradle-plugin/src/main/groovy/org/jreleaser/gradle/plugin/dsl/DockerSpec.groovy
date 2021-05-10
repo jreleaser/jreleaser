@@ -18,21 +18,16 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.provider.Property
+import org.gradle.api.provider.MapProperty
 
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
 @CompileStatic
-interface ScoopPackager extends PackagerRepositoryTool {
-    Property<String> getCheckverUrl()
+interface DockerSpec extends DockerConfiguration {
+    MapProperty<String, Object> getMatchers()
 
-    Property<String> getAutoupdateUrl()
-
-    Tap getBucket()
-
-    void bucket(Action<? super Tap> tap)
+    void addMatcher(String key, Object value)
 }

@@ -18,6 +18,8 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
+import org.gradle.api.provider.Property
 
 /**
  *
@@ -25,5 +27,10 @@ import groovy.transform.CompileStatic
  * @since 0.1.0
  */
 @CompileStatic
-interface Jbang extends JbangPackager, RepositoryTool {
+interface Jbang extends RepositoryTool {
+    Property<String> getAlias()
+
+    Tap getCatalog()
+
+    void catalog(Action<? super Tap> tap)
 }

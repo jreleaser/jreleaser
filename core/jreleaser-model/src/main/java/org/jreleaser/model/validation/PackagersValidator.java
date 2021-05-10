@@ -52,6 +52,9 @@ public abstract class PackagersValidator extends Validator {
             errors);
 
         packagers.getDocker().resolveEnabled(context.getModel().getProject());
+        if (!packagers.getDocker().getSpecs().isEmpty()) {
+            errors.configuration("docker.specs can only be defined inside distributions.");
+        }
 
         validatePackager(context,
             packagers.getJbang(),

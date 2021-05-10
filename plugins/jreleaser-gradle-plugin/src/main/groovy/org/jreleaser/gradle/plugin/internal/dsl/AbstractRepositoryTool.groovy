@@ -33,7 +33,7 @@ import javax.inject.Inject
 @CompileStatic
 abstract class AbstractRepositoryTool extends AbstractTool implements RepositoryTool {
     @Inject
-    AbstractRepositoryTool(ObjectFactory objects, Provider<Directory> distributionsDirProvider) {
-        super(objects, distributionsDirProvider)
+    AbstractRepositoryTool(ObjectFactory objects) {
+        super(objects)
     }
 }

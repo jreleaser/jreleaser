@@ -32,6 +32,8 @@ import org.jreleaser.maven.plugin.Discord;
 import org.jreleaser.maven.plugin.Discussions;
 import org.jreleaser.maven.plugin.Distribution;
 import org.jreleaser.maven.plugin.Docker;
+import org.jreleaser.maven.plugin.DockerConfiguration;
+import org.jreleaser.maven.plugin.DockerSpec;
 import org.jreleaser.maven.plugin.Environment;
 import org.jreleaser.maven.plugin.Files;
 import org.jreleaser.maven.plugin.GitService;
@@ -627,17 +629,37 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Docker convertDocker(Docker docker) {
         org.jreleaser.model.Docker t = new org.jreleaser.model.Docker();
-        t.setActive(docker.resolveActive());
-        t.setTemplateDirectory(docker.getTemplateDirectory());
-        t.setExtraProperties(docker.getExtraProperties());
-        t.setBaseImage(docker.getBaseImage());
-        t.setImageNames(docker.getImageNames());
-        t.setBuildArgs(docker.getBuildArgs());
-        t.setPreCommands(docker.getPreCommands());
-        t.setPostCommands(docker.getPostCommnands());
-        t.setLabels(docker.getLabels());
-        t.setRegistries(convertRegistries(docker.getRegistries()));
+        convertDocker(t, docker);
+        t.setSpecs(convertDockerSpecs(docker.getSpecs()));
         return t;
+    }
+
+    private static void convertDocker(org.jreleaser.model.DockerConfiguration d, DockerConfiguration docker) {
+        d.setActive(docker.resolveActive());
+        d.setTemplateDirectory(docker.getTemplateDirectory());
+        d.setExtraProperties(docker.getExtraProperties());
+        d.setBaseImage(docker.getBaseImage());
+        d.setImageNames(docker.getImageNames());
+        d.setBuildArgs(docker.getBuildArgs());
+        d.setPreCommands(docker.getPreCommands());
+        d.setPostCommands(docker.getPostCommands());
+        d.setLabels(docker.getLabels());
+        d.setRegistries(convertRegistries(docker.getRegistries()));
+    }
+
+    private static Map<String, org.jreleaser.model.DockerSpec> convertDockerSpecs(List<DockerSpec> specs) {
+        Map<String, org.jreleaser.model.DockerSpec> ds = new LinkedHashMap<>();
+        for (DockerSpec spec : specs) {
+            ds.put(spec.getName(), convertDockerSpec(spec));
+        }
+        return ds;
+    }
+
+    private static org.jreleaser.model.DockerSpec convertDockerSpec(DockerSpec spec) {
+        org.jreleaser.model.DockerSpec d = new org.jreleaser.model.DockerSpec();
+        convertDocker(d, spec);
+        d.setMatchers(spec.getMatchers());
+        return d;
     }
 
     private static Set<org.jreleaser.model.Registry> convertRegistries(Set<Registry> repositories) {

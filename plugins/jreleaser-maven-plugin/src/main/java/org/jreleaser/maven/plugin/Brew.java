@@ -27,16 +27,11 @@ import java.util.List;
  * @since 0.1.0
  */
 public class Brew extends AbstractRepositoryTool {
-    public static final String NAME = "brew";
     @Parameter(property = "dependencies")
     private final List<Dependency> dependencies = new ArrayList<>();
     private final Tap tap = new Tap();
 
     private String formulaName;
-
-    public Brew() {
-        super(NAME);
-    }
 
     void setAll(Brew brew) {
         super.setAll(brew);

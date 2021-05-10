@@ -24,14 +24,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Scoop extends AbstractRepositoryTool {
-    public static final String NAME = "scoop";
     private final Bucket bucket = new Bucket();
     private String checkverUrl;
     private String autoupdateUrl;
-
-    public Scoop() {
-        super(NAME);
-    }
 
     void setAll(Scoop scoop) {
         super.setAll(scoop);

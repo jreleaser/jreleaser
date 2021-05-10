@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -26,8 +27,8 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.DockerPackager
-import org.jreleaser.model.Docker
+import org.jreleaser.gradle.plugin.dsl.DockerConfiguration
+import org.jreleaser.model.Active
 
 import javax.inject.Inject
 
@@ -36,10 +37,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
 @CompileStatic
-class DockerPackagerImpl extends AbstractPackagerTool implements DockerPackager {
+                class AbstractDockerConfiguration implements DockerConfiguration {
+    final Property<Active> active
+    final DirectoryProperty templateDirectory
+    final MapProperty<String, Object> extraProperties
     final Property<String> baseImage
     final SetProperty<String> imageNames
     final ListProperty<String> buildArgs
@@ -50,8 +54,10 @@ class DockerPackagerImpl extends AbstractPackagerTool implements DockerPackager 
     final NamedDomainObjectContainer<RegistryImpl> registries
 
     @Inject
-    DockerPackagerImpl(ObjectFactory objects) {
-        super(objects)
+    AbstractDockerConfiguration(ObjectFactory objects) {
+        active = objects.property(Active).convention(Providers.notDefined())
+        templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
+        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
         baseImage = objects.property(String).convention(Providers.notDefined())
         imageNames = objects.setProperty(String).convention(Providers.notDefined())
         buildArgs = objects.listProperty(String).convention(Providers.notDefined())
@@ -63,7 +69,11 @@ class DockerPackagerImpl extends AbstractPackagerTool implements DockerPackager 
     }
 
     @Override
-    protected String toolName() { 'docker' }
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
+    }
 
     @Override
     void addLabel(String key, String value) {
@@ -100,10 +110,11 @@ class DockerPackagerImpl extends AbstractPackagerTool implements DockerPackager 
         }
     }
 
-    @Override
     @Internal
     boolean isSet() {
-        super.isSet() ||
+        active.present ||
+            templateDirectory.present ||
+            extraProperties.present ||
             baseImage.present ||
             imageNames.present ||
             buildArgs.present ||
@@ -113,18 +124,21 @@ class DockerPackagerImpl extends AbstractPackagerTool implements DockerPackager 
             registries.size()
     }
 
-    Docker toModel() {
-        Docker tool = new Docker()
-        fillToolProperties(tool)
-        if (baseImage.present) tool.baseImage = baseImage.get()
-        if (imageNames.present) tool.imageNames.addAll(imageNames.get())
-        if (buildArgs.present) tool.buildArgs.addAll(buildArgs.get())
-        if (preCommands.present) tool.preCommands.addAll(preCommands.get())
-        if (postCommands.present) tool.postCommands.addAll(postCommands.get())
-        if (labels.present) tool.labels.putAll(labels.get())
-        for (RegistryImpl registry : registries) {
-            tool.addRegistry(registry.toModel())
+    void toModel(org.jreleaser.model.DockerConfiguration docker) {
+        if (active.present) docker.active = active.get()
+        if (templateDirectory.present) {
+            docker.templateDirectory = templateDirectory.get().asFile.toPath().toAbsolutePath().toString()
+            println "Setting docker.templateDirectory = ${docker.templateDirectory}"
         }
-        tool
+        if (extraProperties.present) docker.extraProperties.putAll(extraProperties.get())
+        if (baseImage.present) docker.baseImage = baseImage.get()
+        if (imageNames.present) docker.imageNames.addAll(imageNames.get())
+        if (buildArgs.present) docker.buildArgs.addAll(buildArgs.get())
+        if (preCommands.present) docker.preCommands.addAll(preCommands.get())
+        if (postCommands.present) docker.postCommands.addAll(postCommands.get())
+        if (labels.present) docker.labels.putAll(labels.get())
+        for (RegistryImpl registry : registries) {
+            docker.addRegistry(registry.toModel())
+        }
     }
 }

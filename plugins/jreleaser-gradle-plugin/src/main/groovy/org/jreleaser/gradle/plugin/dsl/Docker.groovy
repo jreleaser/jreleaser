@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.NamedDomainObjectContainer
 
 /**
  *
@@ -25,5 +26,6 @@ import groovy.transform.CompileStatic
  * @since 0.1.0
  */
 @CompileStatic
-interface Docker extends DockerPackager, Tool {
+interface Docker extends DockerConfiguration, Tool {
+    NamedDomainObjectContainer<DockerSpec> getSpecs()
 }

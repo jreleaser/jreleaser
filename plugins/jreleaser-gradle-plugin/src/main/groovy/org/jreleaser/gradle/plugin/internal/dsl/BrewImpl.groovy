@@ -19,12 +19,10 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.file.Directory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Brew
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
@@ -47,16 +45,13 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
     final MapProperty<String, String> dependencies
 
     @Inject
-    BrewImpl(ObjectFactory objects, Provider<Directory> distributionsDirProvider) {
-        super(objects, distributionsDirProvider)
+    BrewImpl(ObjectFactory objects) {
+        super(objects)
         formulaName = objects.property(String).convention(Providers.notDefined())
         tap = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
         dependencies = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
-
-    @Override
-    protected String toolName() { 'brew' }
 
     @Override
     void addDependency(String key, String value) {

@@ -140,7 +140,7 @@ public abstract class DistributionsValidator extends Validator {
 
         validateBrew(context, distribution, distribution.getBrew(), errors);
         validateChocolatey(context, distribution, distribution.getChocolatey(), errors);
-        validateDocker(context, distribution, distribution.getDocker(), errors);
+        DockerValidator.validateDocker(context, distribution, distribution.getDocker(), errors);
         validateJbang(context, distribution, distribution.getJbang(), errors);
         validateScoop(context, distribution, distribution.getScoop(), errors);
         validateSnap(context, distribution, distribution.getSnap(), errors);

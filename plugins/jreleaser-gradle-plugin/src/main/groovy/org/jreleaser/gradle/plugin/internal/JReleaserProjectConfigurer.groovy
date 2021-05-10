@@ -234,7 +234,6 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserPackageTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Packages all distributions'
-                    t.dependsOn(prepareTask)
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
                     t.outputDirectory.set(outputDirectory)
@@ -250,7 +249,6 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserPublishTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Publishes all distributions'
-                    t.dependsOn(packageTask)
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
                     t.outputDirectory.set(outputDirectory)

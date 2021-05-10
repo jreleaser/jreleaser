@@ -18,6 +18,8 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
+import org.gradle.api.provider.Property
 
 /**
  *
@@ -25,5 +27,12 @@ import groovy.transform.CompileStatic
  * @since 0.1.0
  */
 @CompileStatic
-interface Scoop extends ScoopPackager, RepositoryTool {
+interface Scoop extends RepositoryTool {
+    Property<String> getCheckverUrl()
+
+    Property<String> getAutoupdateUrl()
+
+    Tap getBucket()
+
+    void bucket(Action<? super Tap> tap)
 }

@@ -17,19 +17,25 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
+import org.jreleaser.model.DockerConfiguration;
+import org.jreleaser.model.DockerSpec;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Registry;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
+import org.jreleaser.util.PlatformUtils;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.singleton;
 import static org.jreleaser.model.Docker.LABEL_OCI_IMAGE_DESCRIPTION;
@@ -56,26 +62,29 @@ public abstract class DockerValidator extends Validator {
             tool.setActive(parentTool.getActive());
         }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
-        context.getLogger().debug("distribution.{}.docker", distribution.getName());
 
-        validateTemplate(context, distribution, tool, parentTool, errors);
+        String element = "distribution." + distribution.getName() + ".docker";
+        context.getLogger().debug(element);
+
+        // check specs for active status
+        for (DockerSpec spec : tool.getSpecs().values()) {
+            if (!spec.isActiveSet() && tool.isActiveSet()) {
+                spec.setActive(tool.getActive());
+            }
+            spec.resolveEnabled(context.getModel().getProject(), distribution);
+        }
+
+        boolean hasActiveSpecs = tool.getActiveSpecs().isEmpty();
+
+        if (!hasActiveSpecs) {
+            validateTemplate(context, distribution, tool, parentTool, errors);
+        }
         mergeExtraProperties(tool, parentTool);
 
         if (isBlank(tool.getBaseImage())) {
             tool.setBaseImage(parentTool.getBaseImage());
         }
-        if (isBlank(tool.getBaseImage())) {
-            if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
-                distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {
-                int version = Integer.parseInt(distribution.getJava().getVersion());
-                boolean ltsmts = version == 8 || version % 2 == 1;
-                tool.setBaseImage("azul/zulu-openjdk-alpine:{{distributionJavaVersion}}" + (ltsmts ? "-jre" : ""));
-            } else if (distribution.getType() == Distribution.DistributionType.JLINK) {
-                tool.setBaseImage("alpine:3.13.5");
-            } else {
-                tool.setBaseImage("scratch");
-            }
-        }
+        validateBaseImage(distribution, tool);
 
         if (tool.getImageNames().isEmpty()) {
             tool.setImageNames(parentTool.getImageNames());
@@ -93,17 +102,7 @@ public abstract class DockerValidator extends Validator {
             tool.setImageNames(singleton(imageName.orElse("{{repoOwner}}/{{distributionName}}:{{tagName}}")));
         }
 
-        if (tool.getBuildArgs().isEmpty() && !parentTool.getBuildArgs().isEmpty()) {
-            tool.setBuildArgs(parentTool.getBuildArgs());
-        }
-
-        if (tool.getPreCommands().isEmpty() && !parentTool.getPreCommands().isEmpty()) {
-            tool.setPreCommands(parentTool.getPreCommands());
-        }
-
-        if (tool.getPostCommands().isEmpty() && !parentTool.getPostCommands().isEmpty()) {
-            tool.setPostCommands(parentTool.getPostCommands());
-        }
+        validateCommands(tool, parentTool);
 
         Map<String, String> labels = new LinkedHashMap<>();
         labels.putAll(parentTool.getLabels());
@@ -113,31 +112,146 @@ public abstract class DockerValidator extends Validator {
         if (!tool.getLabels().containsKey(LABEL_OCI_IMAGE_TITLE)) {
             tool.getLabels().put(LABEL_OCI_IMAGE_TITLE, "{{distributionName}}");
         }
-        if (!tool.getLabels().containsKey(LABEL_OCI_IMAGE_DESCRIPTION)) {
-            tool.getLabels().put(LABEL_OCI_IMAGE_DESCRIPTION, "{{projectDescription}}");
-        }
-        if (!tool.getLabels().containsKey(LABEL_OCI_IMAGE_URL)) {
-            tool.getLabels().put(LABEL_OCI_IMAGE_URL, "{{projectWebsite}}");
-        }
-        if (!tool.getLabels().containsKey(LABEL_OCI_IMAGE_LICENSES)) {
-            tool.getLabels().put(LABEL_OCI_IMAGE_LICENSES, "{{projectLicense}}");
-        }
-        if (!tool.getLabels().containsKey(LABEL_OCI_IMAGE_VERSION)) {
-            tool.getLabels().put(LABEL_OCI_IMAGE_VERSION, "{{projectVersion}}");
-        }
-        if (!tool.getLabels().containsKey(LABEL_OCI_IMAGE_REVISION)) {
-            tool.getLabels().put(LABEL_OCI_IMAGE_REVISION, "{{commitFullHash}}");
-        }
+        validateLabels(tool);
 
         validateArtifactPlatforms(context, distribution, tool, errors);
 
+        validateRegistries(context, tool, parentTool, errors, element);
+
+        for (Map.Entry<String, DockerSpec> e : tool.getSpecs().entrySet()) {
+            DockerSpec spec = e.getValue();
+            if (isBlank(spec.getName())) {
+                spec.setName(e.getKey());
+            }
+            validateDockerSpec(context, distribution, spec, tool, errors);
+        }
+    }
+
+    public static void validateDockerSpec(JReleaserContext context, Distribution distribution, DockerSpec spec, Docker docker, Errors errors) {
+        if (!spec.isEnabled()) return;
+
+        String element = "distribution." + distribution.getName() + ".docker.spec." + spec.getName();
+        context.getLogger().debug(element);
+
+        validateTemplate(context, distribution, spec, docker, errors);
+        mergeExtraProperties(spec, docker);
+
+        validateBaseImage(distribution, spec);
+
+        if (spec.getImageNames().isEmpty()) {
+            spec.addImageName("{{repoOwner}}/{{distributionName}}-{{dockerSpecName}}:{{tagName}}");
+        }
+
+        if (context.getModel().getProject().isSnapshot()) {
+            // find the 1st image that ends with :{{tagName}}
+            Optional<String> imageName = spec.getImageNames().stream()
+                .filter(n -> n.endsWith(":{{tagName}}") || n.endsWith(":{{ tagName }}"))
+                .findFirst();
+            spec.setImageNames(singleton(imageName.orElse("{{repoOwner}}/{{distributionName}}-{{dockerSpecName}}:{{tagName}}")));
+        }
+
+        validateCommands(spec, docker);
+
+        Map<String, String> labels = new LinkedHashMap<>();
+        labels.putAll(docker.getLabels());
+        labels.putAll(spec.getLabels());
+        if (!spec.getLabels().containsKey(LABEL_OCI_IMAGE_TITLE)) {
+            labels.put(LABEL_OCI_IMAGE_TITLE, "{{distributionName}}-{{dockerSpecName}}");
+        }
+        spec.setLabels(labels);
+
+        validateLabels(spec);
+
+        validateRegistries(context, spec, docker, errors, element);
+
+        if (spec.getMatchers().isEmpty()) {
+            errors.configuration(element + ".matchers must not be empty");
+        }
+    }
+
+    private static void validateBaseImage(Distribution distribution, DockerConfiguration docker) {
+        if (isBlank(docker.getBaseImage())) {
+            if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
+                distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {
+                int version = Integer.parseInt(distribution.getJava().getVersion());
+                boolean ltsmts = version == 8 || version % 2 == 1;
+                docker.setBaseImage("azul/zulu-openjdk-alpine:{{distributionJavaVersion}}" + (ltsmts ? "-jre" : ""));
+            } else if (distribution.getType() == Distribution.DistributionType.JLINK) {
+                if (isAlpineCompatible(distribution, docker)) {
+                    docker.setBaseImage("alpine:latest");
+                } else {
+                    docker.setBaseImage("ubuntu:latest");
+                }
+            } else {
+                docker.setBaseImage("scratch");
+            }
+        }
+    }
+
+    private static boolean isAlpineCompatible(Distribution distribution, DockerConfiguration docker) {
+        List<Artifact> artifacts = distribution.getArtifacts().stream()
+            .filter(artifact -> artifact.getPath().endsWith(".zip"))
+            .collect(Collectors.toList());
+
+        if (docker instanceof DockerSpec) {
+            DockerSpec spec = (DockerSpec) docker;
+            Optional<Artifact> artifact = artifacts.stream()
+                .filter(spec::matches)
+                .findFirst();
+            if (artifact.isPresent()) {
+                spec.setArtifact(artifact.get());
+                return PlatformUtils.isAlpineLinux(artifact.get().getPlatform());
+            }
+
+            return false;
+        }
+
+        return artifacts.stream()
+            .anyMatch(artifact -> PlatformUtils.isAlpineLinux(artifact.getPlatform()));
+    }
+
+    private static void validateCommands(DockerConfiguration self, DockerConfiguration other) {
+        if (self.getBuildArgs().isEmpty() && !other.getBuildArgs().isEmpty()) {
+            self.setBuildArgs(other.getBuildArgs());
+        }
+
+        if (self.getPreCommands().isEmpty() && !other.getPreCommands().isEmpty()) {
+            self.setPreCommands(other.getPreCommands());
+        }
+
+        if (self.getPostCommands().isEmpty() && !other.getPostCommands().isEmpty()) {
+            self.setPostCommands(other.getPostCommands());
+        }
+    }
+
+    private static void validateLabels(DockerConfiguration self) {
+        if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_DESCRIPTION)) {
+            self.getLabels().put(LABEL_OCI_IMAGE_DESCRIPTION, "{{projectDescription}}");
+        }
+        if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_URL)) {
+            self.getLabels().put(LABEL_OCI_IMAGE_URL, "{{projectWebsite}}");
+        }
+        if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_LICENSES)) {
+            self.getLabels().put(LABEL_OCI_IMAGE_LICENSES, "{{projectLicense}}");
+        }
+        if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_VERSION)) {
+            self.getLabels().put(LABEL_OCI_IMAGE_VERSION, "{{projectVersion}}");
+        }
+        if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_REVISION)) {
+            self.getLabels().put(LABEL_OCI_IMAGE_REVISION, "{{commitFullHash}}");
+        }
+    }
+
+    private static void validateRegistries(JReleaserContext context, DockerConfiguration self, DockerConfiguration other, Errors errors, String element) {
+        JReleaserModel model = context.getModel();
+
         Set<Registry> registries = new LinkedHashSet<>();
-        registries.addAll(tool.getRegistries());
-        registries.addAll(parentTool.getRegistries());
-        tool.setRegistries(registries);
+        registries.addAll(self.getRegistries());
+        registries.addAll(other.getRegistries());
+        self.setRegistries(registries);
 
         if (registries.isEmpty()) {
-            context.getLogger().warn("distribution." + distribution.getName() + "." + tool.getName() +
+            context.getLogger().warn(element +
                 " does not define any registries. Image publication will be disabled");
             return;
         }
@@ -151,7 +265,7 @@ public abstract class DockerValidator extends Validator {
             }
 
             if (isBlank(registry.getUsername())) {
-                errors.configuration("distribution." + distribution.getName() + "." + tool.getName() +
+                errors.configuration(element +
                     ".registry." + registry.getServerName() + ".username must not be blank");
             }
 

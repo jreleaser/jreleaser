@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.file.DirectoryProperty
 
 /**
@@ -26,6 +27,8 @@ import org.gradle.api.file.DirectoryProperty
  * @since 0.1.0
  */
 @CompileStatic
-interface RepositoryTool extends PackagerRepositoryTool {
-    DirectoryProperty getTemplateDirectory()
+interface RepositoryTool extends Tool {
+    CommitAuthor getCommitAuthor()
+
+    void commitAuthor(Action<? super CommitAuthor> action)
 }
