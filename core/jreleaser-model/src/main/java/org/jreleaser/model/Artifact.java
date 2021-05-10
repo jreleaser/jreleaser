@@ -17,9 +17,6 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.Constants;
-import org.jreleaser.util.Version;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -144,7 +141,7 @@ public class Artifact implements Domain, ExtraProperties {
         if (null == resolvedPath) {
             if (path.contains("{{")) {
                 Map<String, Object> props = context.props();
-                fillDistributionProps(props, distribution);
+                props.putAll(distribution.props());
                 path = applyTemplate(path, props);
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
@@ -159,7 +156,7 @@ public class Artifact implements Domain, ExtraProperties {
         if (null == resolvedPath) {
             if (path.contains("{{")) {
                 Map<String, Object> props = context.props();
-                fillAssemblerProps(props, assembler);
+                props.putAll(assembler.props());
                 path = applyTemplate(path, props);
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
@@ -188,7 +185,7 @@ public class Artifact implements Domain, ExtraProperties {
         if (null == resolvedTransform && isNotBlank(transform)) {
             if (transform.contains("{{")) {
                 Map<String, Object> props = context.props();
-                fillDistributionProps(props, distribution);
+                props.putAll(distribution.props());
                 transform = applyTemplate(transform, props);
             }
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
@@ -200,54 +197,12 @@ public class Artifact implements Domain, ExtraProperties {
         if (null == resolvedTransform && isNotBlank(transform)) {
             if (transform.contains("{{")) {
                 Map<String, Object> props = context.props();
-                fillAssemblerProps(props, assembler);
+                props.putAll(assembler.props());
                 transform = applyTemplate(transform, props);
             }
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
         }
         return resolvedTransform;
-    }
-
-    private void fillDistributionProps(Map<String, Object> props, Distribution distribution) {
-        props.put(Constants.KEY_DISTRIBUTION_NAME, distribution.getName());
-        props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, distribution.getExecutable());
-        if (distribution.getJava().isEnabled()) {
-            props.putAll(distribution.getJava().getResolvedExtraProperties());
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, distribution.getJava().getGroupId());
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, distribution.getJava().getArtifactId());
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, distribution.getJava().getVersion());
-            Version jv = Version.of(distribution.getJava().getVersion());
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor());
-            if (jv.hasMinor()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor());
-            if (jv.hasPatch()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch());
-            if (jv.hasTag()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag());
-            if (jv.hasBuild()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild());
-        }
-        props.putAll(distribution.getResolvedExtraProperties());
-    }
-
-    private void fillAssemblerProps(Map<String, Object> props, Assembler assembler) {
-        props.put(Constants.KEY_DISTRIBUTION_NAME, assembler.getName());
-        props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable());
-        props.putAll(assembler.getJava().getResolvedExtraProperties());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, assembler.getJava().getGroupId());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, assembler.getJava().getArtifactId());
-        if (isNotBlank(assembler.getJava().getVersion())) {
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, assembler.getJava().getVersion());
-            Version jv = Version.of(assembler.getJava().getVersion());
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor());
-            if (jv.hasMinor()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor());
-            if (jv.hasPatch()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch());
-            if (jv.hasTag()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag());
-            if (jv.hasBuild()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild());
-        } else {
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
-        }
-        props.putAll(assembler.getResolvedExtraProperties());
     }
 
     public Path getResolvedTransform() {

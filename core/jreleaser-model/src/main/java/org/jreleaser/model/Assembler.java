@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -49,4 +50,6 @@ public interface Assembler extends Domain, Activatable, ExtraProperties {
     void setOutputs(Set<Artifact> output);
 
     void addOutput(Artifact artifact);
+
+    Map<String, Object> props();
 }

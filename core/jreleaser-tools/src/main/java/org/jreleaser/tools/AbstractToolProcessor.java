@@ -27,7 +27,6 @@ import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
-import org.jreleaser.util.Version;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessInitException;
 
@@ -101,7 +100,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 return false;
             }
 
-            doPrepareDistribution(distribution, newProps, distributionName, getPrepareDirectory(props));
+            doPrepareDistribution(distribution, newProps, distributionName,
+                getPrepareDirectory(props), getTool().getTemplateDirectory(), getToolName());
         } catch (IllegalArgumentException | IOException e) {
             throw new ToolProcessingException(e);
         }
@@ -112,22 +112,25 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     protected void doPrepareDistribution(Distribution distribution,
                                          Map<String, Object> props,
                                          String distributionName,
-                                         Path prepareDirectory) throws IOException, ToolProcessingException {
+                                         Path prepareDirectory,
+                                         String templateDirectory,
+                                         String toolName) throws IOException, ToolProcessingException {
         // cleanup from previous session
         FileUtils.deleteFiles(prepareDirectory);
         Files.createDirectories(prepareDirectory);
 
-        context.getLogger().debug("resolving templates for {}/{}", distributionName, getToolName());
+        context.getLogger().debug("resolving templates for {}/{}", distributionName, toolName);
         Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
             distribution.getType().name(),
+            // leave this one be!
             getToolName(),
             context.getModel().getProject().isSnapshot(),
-            context.getBasedir().resolve(getTool().getTemplateDirectory()));
+            context.getBasedir().resolve(templateDirectory));
 
         for (Map.Entry<String, Reader> entry : templates.entrySet()) {
-            context.getLogger().debug("evaluating template {} for {}/{}", entry.getKey(), distributionName, getToolName());
+            context.getLogger().debug("evaluating template {} for {}/{}", entry.getKey(), distributionName, toolName);
             String content = applyTemplate(entry.getValue(), props);
-            context.getLogger().debug("writing template {} for {}/{}", entry.getKey(), distributionName, getToolName());
+            context.getLogger().debug("writing template {} for {}/{}", entry.getKey(), distributionName, toolName);
             writeFile(context.getModel().getProject(), distribution, content, props, prepareDirectory, entry.getKey());
         }
 
@@ -218,22 +221,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     protected void fillDistributionProperties(Map<String, Object> props, Distribution distribution) {
-        props.put(Constants.KEY_DISTRIBUTION_NAME, distribution.getName());
-        props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, distribution.getExecutable());
-        props.putAll(distribution.getJava().getResolvedExtraProperties());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, distribution.getJava().getGroupId());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, distribution.getJava().getArtifactId());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, distribution.getJava().getVersion());
-        Version jv = Version.of(distribution.getJava().getVersion());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor());
-        if (jv.hasMinor()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor());
-        if (jv.hasPatch()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch());
-        if (jv.hasTag()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag());
-        if (jv.hasBuild()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
-        props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", distribution.getTags()));
-        props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", distribution.getTags()));
-        props.putAll(distribution.getResolvedExtraProperties());
+        props.putAll(distribution.props());
     }
 
     protected abstract void fillToolProperties(Map<String, Object> context, Distribution distribution) throws ToolProcessingException;

@@ -17,6 +17,9 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Constants;
+import org.jreleaser.util.Version;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -26,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -61,6 +65,35 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         setTags(distribution.tags);
         setExtraProperties(distribution.extraProperties);
         setArtifacts(distribution.artifacts);
+    }
+
+    public Map<String, Object> props() {
+        Map<String, Object> props = new LinkedHashMap<>(getResolvedExtraProperties());
+        props.put(Constants.KEY_DISTRIBUTION_NAME, name);
+        props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, executable);
+        props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", tags));
+        props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", tags));
+        props.putAll(java.getResolvedExtraProperties());
+        safePut(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, java.getGroupId(), props, true);
+        safePut(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, java.getArtifactId(), props, true);
+        safePut(Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass(), props, true);
+        if (isNotBlank(java.getVersion())) {
+            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, java.getVersion());
+            Version jv = Version.of(java.getVersion());
+            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor(), props, true);
+            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor(), props, true);
+            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch(), props, true);
+            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag(), props, true);
+            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild(), props, true);
+        } else {
+            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, "");
+            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, "");
+            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, "");
+            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, "");
+            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, "");
+            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
+        }
+        return props;
     }
 
     @Override
@@ -250,7 +283,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         int i = 0;
-        for (Artifact artifact: artifacts) {
+        for (Artifact artifact : artifacts) {
             mappedArtifacts.put("artifact " + (i++), artifact.asMap(full));
         }
         props.put("artifacts", mappedArtifacts);

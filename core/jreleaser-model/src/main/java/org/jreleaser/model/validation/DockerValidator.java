@@ -74,9 +74,7 @@ public abstract class DockerValidator extends Validator {
             spec.resolveEnabled(context.getModel().getProject(), distribution);
         }
 
-        boolean hasActiveSpecs = tool.getActiveSpecs().isEmpty();
-
-        if (!hasActiveSpecs) {
+        if (tool.getActiveSpecs().isEmpty()) {
             validateTemplate(context, distribution, tool, parentTool, errors);
         }
         mergeExtraProperties(tool, parentTool);
@@ -156,10 +154,9 @@ public abstract class DockerValidator extends Validator {
         labels.putAll(docker.getLabels());
         labels.putAll(spec.getLabels());
         if (!spec.getLabels().containsKey(LABEL_OCI_IMAGE_TITLE)) {
-            labels.put(LABEL_OCI_IMAGE_TITLE, "{{distributionName}}-{{dockerSpecName}}");
+            labels.put(LABEL_OCI_IMAGE_TITLE, docker.getLabels().get(LABEL_OCI_IMAGE_TITLE) + "-{{dockerSpecName}}");
         }
         spec.setLabels(labels);
-
         validateLabels(spec);
 
         validateRegistries(context, spec, docker, errors, element);
@@ -185,6 +182,13 @@ public abstract class DockerValidator extends Validator {
             } else {
                 docker.setBaseImage("scratch");
             }
+        } else if (docker instanceof DockerSpec) {
+            DockerSpec spec = (DockerSpec) docker;
+            distribution.getArtifacts().stream()
+                .filter(artifact -> artifact.getPath().endsWith(".zip"))
+                .filter(spec::matches)
+                .findFirst()
+                .ifPresent(spec::setArtifact);
         }
     }
 

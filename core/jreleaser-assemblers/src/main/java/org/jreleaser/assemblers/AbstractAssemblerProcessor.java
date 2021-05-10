@@ -23,7 +23,6 @@ import org.jreleaser.model.Project;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
 import org.jreleaser.model.assembler.spi.AssemblerProcessor;
 import org.jreleaser.util.Constants;
-import org.jreleaser.util.Version;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessInitException;
 
@@ -47,7 +46,6 @@ import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -124,28 +122,7 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
     }
 
     protected void fillAssemblerProperties(Map<String, Object> props) {
-        props.put(Constants.KEY_DISTRIBUTION_NAME, assembler.getName());
-        props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable());
-        props.putAll(assembler.getJava().getResolvedExtraProperties());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, assembler.getJava().getGroupId());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, assembler.getJava().getArtifactId());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, assembler.getJava().getVersion());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS, assembler.getJava().getMainClass());
-        if (isNotBlank(assembler.getJava().getVersion())) {
-            Version jv = Version.of(assembler.getJava().getVersion());
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor());
-            if (jv.hasMinor()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor());
-            if (jv.hasPatch()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch());
-            if (jv.hasTag()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag());
-            if (jv.hasBuild()) props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild());
-        } else {
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
-        }
-        props.putAll(assembler.getResolvedExtraProperties());
+        props.putAll(assembler.props());
     }
 
     protected boolean executeCommand(ProcessExecutor processExecutor) throws AssemblerProcessingException {

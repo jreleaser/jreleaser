@@ -36,6 +36,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
+import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.Constants.KEY_COMMIT_FULL_HASH;
 import static org.jreleaser.util.Constants.KEY_COMMIT_SHORT_HASH;
 import static org.jreleaser.util.Constants.KEY_MILESTONE_NAME;
@@ -135,6 +136,7 @@ public class JReleaserContext {
                 distribution.setName(assembler.getName());
                 model.getDistributions().put(assembler.getName(), distribution);
             }
+            distribution.setType(assembler.getType());
             distribution.setExecutable(assembler.getExecutable());
             distribution.setActive(assembler.getActive());
             distribution.setJava(assembler.getJava());
@@ -327,12 +329,6 @@ public class JReleaserContext {
         } catch (IOException ignored) {
             logger.warn("Could not write output properties to {}",
                 basedir.relativize(output));
-        }
-    }
-
-    private void safePut(String key, Map<String, Object> src, Properties props) {
-        if (src.containsKey(key)) {
-            props.put(key, String.valueOf(src.get(key)));
         }
     }
 

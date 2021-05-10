@@ -68,6 +68,48 @@ public final class CollectionUtils {
         // prevent instantiation
     }
 
+    public static void safePut(String key, Map<String, Object> src, Properties dest) {
+        if (src.containsKey(key)) {
+            dest.put(key, String.valueOf(src.get(key)));
+        }
+    }
+
+    public static void safePut(String key, Map<String, Object> src, Properties dest, boolean forceKey) {
+        if (src.containsKey(key)) {
+            dest.put(key, String.valueOf(src.get(key)));
+        } else if (forceKey) {
+            dest.put(key, "");
+        }
+    }
+
+    public static void safePut(String key, Map<String, Object> src, Map<String, Object> dest) {
+        if (src.containsKey(key)) {
+            dest.put(key, src.get(key));
+        }
+    }
+
+    public static void safePut(String key, Map<String, Object> src, Map<String, Object> dest, boolean forceKey) {
+        if (src.containsKey(key)) {
+            dest.put(key, src.get(key));
+        } else if (forceKey) {
+            dest.put(key, "");
+        }
+    }
+
+    public static void safePut(String key, Object value, Map<String, Object> dest) {
+        if (value != null) {
+            dest.put(key, value);
+        }
+    }
+
+    public static void safePut(String key, Object value, Map<String, Object> dest, boolean forceKey) {
+        if (value != null) {
+            dest.put(key, value);
+        } else if (forceKey) {
+            dest.put(key, "");
+        }
+    }
+
     public static <T> boolean intersects(Set<T> s1, Set<T> s2) {
         Set<T> intersection = new LinkedHashSet<>(s1);
         intersection.removeAll(s2);

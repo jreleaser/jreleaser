@@ -36,7 +36,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,9 +60,12 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
     protected void doPrepareDistribution(Distribution distribution,
                                          Map<String, Object> props,
                                          String distributionName,
-                                         Path prepareDirectory) throws IOException, ToolProcessingException {
+                                         Path prepareDirectory,
+                                         String templateDirectory,
+                                         String toolName) throws IOException, ToolProcessingException {
         if (tool.getActiveSpecs().isEmpty()) {
-            super.doPrepareDistribution(distribution, props, distributionName, prepareDirectory);
+            super.doPrepareDistribution(distribution, props, distributionName,
+                prepareDirectory, templateDirectory, toolName);
             return;
         }
 
@@ -78,15 +80,19 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
                              Path prepareDirectory,
                              DockerSpec spec) throws IOException, ToolProcessingException {
         Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
-        super.doPrepareDistribution(distribution, newProps, distributionName, prepareDirectory.resolve(spec.getName()));
+        context.getLogger().debug("preparing {} spec", spec.getName());
+        super.doPrepareDistribution(distribution, newProps, distributionName,
+            prepareDirectory.resolve(spec.getName()),
+            spec.getTemplateDirectory(),
+            spec.getName() + "/" + tool.getName());
     }
 
     private Map<String, Object> fillSpecProps(Distribution distribution, Map<String, Object> props, DockerSpec spec) throws ToolProcessingException {
         List<Artifact> artifacts = Collections.singletonList(spec.getArtifact());
         Map<String, Object> newProps = fillProps(distribution, props);
+        newProps.put(Constants.KEY_DOCKER_SPEC_NAME, spec.getName());
         fillDockerProperties(newProps, distribution, spec);
         verifyAndAddArtifacts(newProps, distribution, artifacts);
-        newProps.put(Constants.KEY_DOCKER_SPEC_NAME, spec.getName());
         Path prepareDirectory = (Path) newProps.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         newProps.put(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, prepareDirectory.resolve(spec.getName()));
         Path packageDirectory = (Path) newProps.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
@@ -122,6 +128,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         }
 
         for (DockerSpec spec : tool.getActiveSpecs()) {
+            context.getLogger().debug("packaging {} spec", spec.getName());
             Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
             packageDocker(distribution, newProps, packageDirectory.resolve(spec.getName()),
                 spec, Collections.singletonList(spec.getArtifact()));
@@ -215,6 +222,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         }
 
         for (DockerSpec spec : tool.getActiveSpecs()) {
+            context.getLogger().debug("publishing {} spec", spec.getName());
             Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
             publishDocker(distribution, releaser, newProps, spec);
         }

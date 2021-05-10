@@ -67,6 +67,7 @@ public class Jlink extends AbstractAssembler {
 
     public String getResolvedImageName(JReleaserContext context) {
         Map<String, Object> props = context.props();
+        props.putAll(props());
         return applyTemplate(imageName, props);
     }
 
