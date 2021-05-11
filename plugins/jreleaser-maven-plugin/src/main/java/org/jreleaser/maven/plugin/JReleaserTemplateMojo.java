@@ -98,7 +98,10 @@ public class JReleaserTemplateMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
-        if (skip) return;
+        if (skip) {
+            getLog().info("Execution has been explicitly skipped.");
+            return;
+        }
 
         try {
             Path outputDirectory = Paths.get(project.getBasedir().getAbsolutePath())

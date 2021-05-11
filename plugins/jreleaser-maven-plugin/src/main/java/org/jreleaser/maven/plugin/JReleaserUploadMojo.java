@@ -53,7 +53,10 @@ public class JReleaserUploadMojo extends AbstractJReleaserMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
-        if (skip) return;
+        if (skip) {
+            getLog().info("Execution has been explicitly skipped.");
+            return;
+        }
 
         JReleaserContext context = createContext();
         context.setUploaderType(uploaderType);
