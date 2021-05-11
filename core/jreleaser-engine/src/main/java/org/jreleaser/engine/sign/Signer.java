@@ -38,7 +38,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
 import org.jreleaser.model.util.Artifacts;
-import org.jreleaser.util.signing.InMemoryKeyring;
+import org.jreleaser.util.signing.Keyring;
 import org.jreleaser.util.signing.SigningException;
 
 import java.io.BufferedInputStream;
@@ -80,7 +80,7 @@ public class Signer {
         context.getLogger().increaseIndent();
         context.getLogger().setPrefix("sign");
 
-        InMemoryKeyring keyring = createInMemoryKeyring(context.getModel().getSigning());
+        Keyring keyring = context.createKeyring();
 
         List<FilePair> files = collectArtifacts(context, keyring);
         if (files.isEmpty()) {
@@ -108,18 +108,7 @@ public class Signer {
         context.getLogger().decreaseIndent();
     }
 
-    private static InMemoryKeyring createInMemoryKeyring(Signing sign) throws SigningException {
-        try {
-            InMemoryKeyring keyring = new InMemoryKeyring();
-            keyring.addPublicKey(sign.getResolvedPublicKey().getBytes());
-            keyring.addSecretKey(sign.getResolvedSecretKey().getBytes());
-            return keyring;
-        } catch (IOException | PGPException e) {
-            throw new SigningException("Could not initialize keyring", e);
-        }
-    }
-
-    private static void verify(JReleaserContext context, InMemoryKeyring keyring, List<FilePair> files) throws SigningException {
+    private static void verify(JReleaserContext context, Keyring keyring, List<FilePair> files) throws SigningException {
         context.getLogger().debug("verifying {} signatures", files.size());
 
         for (FilePair pair : files) {
@@ -133,7 +122,7 @@ public class Signer {
         }
     }
 
-    private static boolean verify(JReleaserContext context, InMemoryKeyring keyring, FilePair filePair) throws SigningException {
+    private static boolean verify(JReleaserContext context, Keyring keyring, FilePair filePair) throws SigningException {
         context.getLogger().setPrefix("verify");
 
         try {
@@ -179,7 +168,7 @@ public class Signer {
         }
     }
 
-    private static void sign(JReleaserContext context, InMemoryKeyring keyring, List<FilePair> files) throws SigningException {
+    private static void sign(JReleaserContext context, Keyring keyring, List<FilePair> files) throws SigningException {
         Path signaturesDirectory = context.getSignaturesDirectory();
 
         try {
@@ -198,7 +187,7 @@ public class Signer {
         }
     }
 
-    private static PGPSignatureGenerator initSignatureGenerator(Signing signing, InMemoryKeyring keyring) throws SigningException {
+    private static PGPSignatureGenerator initSignatureGenerator(Signing signing, Keyring keyring) throws SigningException {
         try {
             PGPSecretKey pgpSecretKey = keyring.getSecretKey();
 
@@ -250,7 +239,7 @@ public class Signer {
         }
     }
 
-    private static List<FilePair> collectArtifacts(JReleaserContext context, InMemoryKeyring keyring) {
+    private static List<FilePair> collectArtifacts(JReleaserContext context, Keyring keyring) {
         List<FilePair> files = new ArrayList<>();
 
         Path signaturesDirectory = context.getSignaturesDirectory();
@@ -285,7 +274,7 @@ public class Signer {
         return files;
     }
 
-    private static boolean isValid(JReleaserContext context, InMemoryKeyring keyring, FilePair pair) {
+    private static boolean isValid(JReleaserContext context, Keyring keyring, FilePair pair) {
         if (Files.notExists(pair.getSignatureFile())) {
             context.getLogger().debug("signature does not exist: {}",
                 context.getBasedir().relativize(pair.getSignatureFile()));

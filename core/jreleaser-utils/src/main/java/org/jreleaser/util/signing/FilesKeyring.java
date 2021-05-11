@@ -19,30 +19,32 @@ package org.jreleaser.util.signing;
 
 import org.bouncycastle.openpgp.PGPException;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
-public final class InMemoryKeyring extends Keyring {
-    private final byte[] encodedPublicKey;
-    private final byte[] encodedPrivateKey;
+public final class FilesKeyring extends Keyring {
+    private final Path publicKeyring;
+    private final Path secretKeyring;
 
-    public InMemoryKeyring(byte[] encodedPublicKey, byte[] encodedPrivateKey) throws IOException, PGPException {
-        this.encodedPublicKey = encodedPublicKey;
-        this.encodedPrivateKey = encodedPrivateKey;
+    public FilesKeyring(Path publicKeyring, Path secretKeyring) throws IOException, PGPException {
+        this.publicKeyring = publicKeyring;
+        this.secretKeyring = secretKeyring;
     }
 
     @Override
     protected InputStream getPublicKeyRingStream() throws IOException {
-        return new ByteArrayInputStream(encodedPublicKey);
+        return Files.newInputStream(publicKeyring);
     }
 
     @Override
     protected InputStream getSecretKeyRingStream() throws IOException {
-        return new ByteArrayInputStream(encodedPrivateKey);
+        return Files.newInputStream(secretKeyring);
     }
 }

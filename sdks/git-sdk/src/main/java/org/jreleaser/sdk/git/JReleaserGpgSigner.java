@@ -43,7 +43,7 @@ import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
-import org.jreleaser.util.signing.InMemoryKeyring;
+import org.jreleaser.util.signing.Keyring;
 import org.jreleaser.util.signing.SigningException;
 
 import java.io.ByteArrayOutputStream;
@@ -58,7 +58,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class InMemoryGpgSigner extends GpgSigner implements GpgObjectSigner {
+public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
     static {
         // replace BC provider with our version
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
@@ -68,7 +68,7 @@ public class InMemoryGpgSigner extends GpgSigner implements GpgObjectSigner {
 
     private final JReleaserContext context;
 
-    public InMemoryGpgSigner(JReleaserContext context) {
+    public JReleaserGpgSigner(JReleaserContext context) {
         this.context = context;
     }
 
@@ -98,7 +98,7 @@ public class InMemoryGpgSigner extends GpgSigner implements GpgObjectSigner {
     public void signObject(ObjectBuilder object, String gpgSigningKey, PersonIdent committer, CredentialsProvider credentialsProvider, GpgConfig config)
         throws CanceledException, UnsupportedSigningFormatException {
         try {
-            InMemoryKeyring keyring = createInMemoryKeyring(context.getModel().getSigning());
+            Keyring keyring = context.createKeyring();
             PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);
             adjustCommiterId(signatureGenerator, committer, keyring);
             signObject(signatureGenerator, object);
@@ -107,18 +107,7 @@ public class InMemoryGpgSigner extends GpgSigner implements GpgObjectSigner {
         }
     }
 
-    private InMemoryKeyring createInMemoryKeyring(Signing sign) throws SigningException {
-        try {
-            InMemoryKeyring keyring = new InMemoryKeyring();
-            keyring.addPublicKey(sign.getResolvedPublicKey().getBytes());
-            keyring.addSecretKey(sign.getResolvedSecretKey().getBytes());
-            return keyring;
-        } catch (IOException | PGPException e) {
-            throw new SigningException("Could not initialize keyring", e);
-        }
-    }
-
-    private PGPSignatureGenerator initSignatureGenerator(Signing signing, InMemoryKeyring keyring) throws SigningException {
+    private PGPSignatureGenerator initSignatureGenerator(Signing signing, Keyring keyring) throws SigningException {
         try {
             PGPSecretKey secretKey = keyring.getSecretKey();
 
@@ -139,7 +128,7 @@ public class InMemoryGpgSigner extends GpgSigner implements GpgObjectSigner {
         }
     }
 
-    private void adjustCommiterId(PGPSignatureGenerator signatureGenerator, PersonIdent committer, InMemoryKeyring keyring)
+    private void adjustCommiterId(PGPSignatureGenerator signatureGenerator, PersonIdent committer, Keyring keyring)
         throws SigningException {
         PGPPublicKey publicKey = keyring.readPublicKey();
         PGPSignatureSubpacketGenerator subpackets = new PGPSignatureSubpacketGenerator();

@@ -39,4 +39,8 @@ interface Signing {
     Property<String> getPublicKey()
 
     Property<String> getSecretKey()
+
+    Property<org.jreleaser.model.Signing.Mode> getMode()
+
+    void setMode(String mode)
 }

@@ -41,6 +41,7 @@ class SigningImpl implements Signing {
     final Property<String> passphrase
     final Property<String> publicKey
     final Property<String> secretKey
+    final Property<org.jreleaser.model.Signing.Mode> mode
 
     @Inject
     SigningImpl(ObjectFactory objects) {
@@ -49,6 +50,7 @@ class SigningImpl implements Signing {
         passphrase = objects.property(String).convention(Providers.notDefined())
         publicKey = objects.property(String).convention(Providers.notDefined())
         secretKey = objects.property(String).convention(Providers.notDefined())
+        mode = objects.property(org.jreleaser.model.Signing.Mode).convention(org.jreleaser.model.Signing.Mode.MEMORY)
     }
 
     @Internal
@@ -67,6 +69,13 @@ class SigningImpl implements Signing {
         }
     }
 
+    @Override
+    void setMode(String str) {
+        if (isNotBlank(str)) {
+            mode.set(org.jreleaser.model.Signing.Mode.of(str.trim()))
+        }
+    }
+
     org.jreleaser.model.Signing toModel() {
         org.jreleaser.model.Signing sign = new org.jreleaser.model.Signing()
         if (active.present) sign.active = active.get()
@@ -74,6 +83,7 @@ class SigningImpl implements Signing {
         if (passphrase.present) sign.passphrase = passphrase.get()
         if (publicKey.present) sign.publicKey = publicKey.get()
         if (secretKey.present) sign.secretKey = secretKey.get()
+        if (mode.present) sign.mode = mode.get()
         sign
     }
 }

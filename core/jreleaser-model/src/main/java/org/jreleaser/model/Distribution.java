@@ -321,7 +321,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
             if (isBlank(str)) return null;
             return DistributionType.valueOf(str.replaceAll(" ", "_")
                 .replaceAll("-", "_")
-                .toUpperCase());
+                .toUpperCase().trim());
         }
     }
 }

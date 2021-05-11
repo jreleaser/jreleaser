@@ -27,6 +27,7 @@ public class Signing implements Activatable {
     private String publicKey;
     private String secretKey;
     private String passphrase;
+    private Mode mode;
 
     void setAll(Signing signing) {
         this.active = signing.active;
@@ -81,5 +82,22 @@ public class Signing implements Activatable {
 
     public void setPassphrase(String passphrase) {
         this.passphrase = passphrase;
+    }
+
+    public Mode getMode() {
+        return mode;
+    }
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
+    public String resolveMode() {
+        return mode != null ? mode.name() : null;
+    }
+
+    public enum Mode {
+        MEMORY,
+        FILE
     }
 }

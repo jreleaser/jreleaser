@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -40,6 +41,7 @@ public class Signing implements Domain, Activatable {
     private String publicKey;
     private String secretKey;
     private String passphrase;
+    private Mode mode;
 
     void setAll(Signing signing) {
         this.active = signing.active;
@@ -48,6 +50,7 @@ public class Signing implements Domain, Activatable {
         this.publicKey = signing.publicKey;
         this.secretKey = signing.secretKey;
         this.passphrase = signing.passphrase;
+        this.mode = signing.mode;
     }
 
     @Override
@@ -136,6 +139,18 @@ public class Signing implements Domain, Activatable {
         this.passphrase = passphrase;
     }
 
+    public Mode getMode() {
+        return mode;
+    }
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
+    public void setMode(String str) {
+        this.mode = Mode.of(str);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
@@ -144,10 +159,26 @@ public class Signing implements Domain, Activatable {
         map.put("enabled", isEnabled());
         map.put("active", active);
         map.put("armored", isArmored());
+        map.put("mode", mode);
         map.put("publicKey", isNotBlank(publicKey) ? "************" : "**unset**");
         map.put("secretKey", isNotBlank(secretKey) ? "************" : "**unset**");
         map.put("passphrase", isNotBlank(passphrase) ? "************" : "**unset**");
 
         return map;
+    }
+
+    public enum Mode {
+        MEMORY,
+        FILE;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+
+        public static Mode of(String str) {
+            if (isBlank(str)) return null;
+            return Mode.valueOf(str.toUpperCase().trim());
+        }
     }
 }

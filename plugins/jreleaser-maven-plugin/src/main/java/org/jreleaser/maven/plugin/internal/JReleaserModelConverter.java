@@ -515,6 +515,7 @@ public final class JReleaserModelConverter {
         s.setPublicKey(signing.getPublicKey());
         s.setSecretKey(signing.getSecretKey());
         s.setPassphrase(signing.getPassphrase());
+        s.setMode(signing.resolveMode());
         return s;
     }
 

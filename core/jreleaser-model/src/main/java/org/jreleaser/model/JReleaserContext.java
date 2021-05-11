@@ -17,10 +17,15 @@
  */
 package org.jreleaser.model;
 
+import org.bouncycastle.openpgp.PGPException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.Version;
+import org.jreleaser.util.signing.FilesKeyring;
+import org.jreleaser.util.signing.InMemoryKeyring;
+import org.jreleaser.util.signing.Keyring;
+import org.jreleaser.util.signing.SigningException;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -329,6 +334,24 @@ public class JReleaserContext {
         } catch (IOException ignored) {
             logger.warn("Could not write output properties to {}",
                 basedir.relativize(output));
+        }
+    }
+
+    public Keyring createKeyring() throws SigningException {
+        try {
+            if (model.getSigning().getMode() == Signing.Mode.FILE) {
+                return new FilesKeyring(
+                    basedir.resolve(model.getSigning().getResolvedPublicKey()),
+                    basedir.resolve(model.getSigning().getResolvedSecretKey())
+                ).initialize();
+            }
+
+            return new InMemoryKeyring(
+                model.getSigning().getResolvedPublicKey().getBytes(),
+                model.getSigning().getResolvedSecretKey().getBytes()
+            ).initialize();
+        } catch (IOException | PGPException e) {
+            throw new SigningException("Could not initialize keyring", e);
         }
     }
 

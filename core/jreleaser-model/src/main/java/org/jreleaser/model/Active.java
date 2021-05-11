@@ -48,6 +48,6 @@ public enum Active {
 
     public static Active of(String str) {
         if (isBlank(str)) return null;
-        return Active.valueOf(str.toUpperCase());
+        return Active.valueOf(str.toUpperCase().trim());
     }
 }

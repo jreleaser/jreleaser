@@ -27,7 +27,7 @@ import org.jreleaser.model.RepositoryTool;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
-import org.jreleaser.sdk.git.InMemoryGpgSigner;
+import org.jreleaser.sdk.git.JReleaserGpgSigner;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 
@@ -90,7 +90,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 commitCommand = commitCommand
                     .setSign(true)
                     .setSigningKey("**********")
-                    .setGpgSigner(new InMemoryGpgSigner(context));
+                    .setGpgSigner(new JReleaserGpgSigner(context));
             }
 
             commitCommand.call();
