@@ -146,14 +146,14 @@ distributions:
         - serverName: DEFAULT
           username: jreleaser
       labels:
-        'org.opencontainers.image.title': '{{repoOwner}}'
+        'org.opencontainers.image.title': 'jreleaser'
       postCommands:
         - 'VOLUME /workspace'
       specs:
         slim:
           imageNames:
-            - '{{repoOwner}}/{{repoOwner}}-{{dockerSpecName}}:{{tagName}}'
-            - '{{repoOwner}}/{{repoOwner}}-{{dockerSpecName}}:latest'
+            - 'jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}'
+            - 'jreleaser/jreleaser-{{dockerSpecName}}:latest'
           matchers:
             platform: 'linux'
           preCommands:
@@ -161,8 +161,8 @@ distributions:
             - 'RUN apt-get install unzip'
         alpine:
           imageNames:
-            - '{{repoOwner}}/{{repoOwner}}-{{dockerSpecName}}:{{tagName}}'
-            - '{{repoOwner}}/{{repoOwner}}-{{dockerSpecName}}:latest'
+            - 'jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}'
+            - 'jreleaser/jreleaser-{{dockerSpecName}}:latest'
           matchers:
             platform: 'linux_musl'
           preCommands:
