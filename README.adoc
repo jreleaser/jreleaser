@@ -3,12 +3,13 @@
 :project-owner:   jreleaser
 :project-name:    jreleaser
 :project-group:   org.jreleaser
-:project-version: 0.2.0
+:project-version: 0.3.0
 
 image:https://img.shields.io/github/workflow/status/{project-owner}/{project-name}/EarlyAccess?logo=github["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
 image:https://img.shields.io/maven-central/v/{project-group}/{project-name}.svg[Download, link="https://search.maven.org/#search|ga|1|{project-name}"]
 image:https://img.shields.io/github/downloads/{project-owner}/{project-name}/total[GitHub all releases]
-image:https://img.shields.io/docker/pulls/{project-owner}/{project-name}-slim[Docker Pulls]
+image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-slim?label={project-owner}-slim&logo=docker[Docker Pulls {project-owner}-slim]
+image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-alpine?label={project-owner}-alpine&logo=docker[Docker Pulls {project-owner}-alpine]
 
 ---
 
@@ -100,7 +101,7 @@ $ docker run -it --rm -v `(pwd)`:/workspace \
 
 Where image may be `jreleaser-slim`, `jreleaser-alpine`.
 
-NOTE: The `--basedir` argument will be automatically set to `--basedir=/workspace`.
+NOTE: The `jreleaser` command will be automatically executed inside `/workspace`.
 
 You may also need to map environment variables to the container, such as `JRELEASER_PROJECT_VERSION`,
 `JRELEASER_GITHUB_TOKEN`, or others depending on your setup. Refer to the

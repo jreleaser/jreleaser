@@ -144,6 +144,7 @@ distributions:
       active: always
       registries:
         - serverName: DEFAULT
+          username: jreleaser
       labels:
         'org.opencontainers.image.title': '{{repoOwner}}'
       postCommands:
