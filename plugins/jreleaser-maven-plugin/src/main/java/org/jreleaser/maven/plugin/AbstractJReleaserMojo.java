@@ -49,7 +49,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
-    @Parameter(required = true)
+    @Parameter
     protected Jreleaser jreleaser;
 
     @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}/jreleaser")
@@ -83,7 +83,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
         properties.putAll(System.getProperties());
         properties.putAll(project.getModel().getProperties());
         Environment.VariablesSource variablesSource = new Environment.PropertiesVariablesSource(properties);
-        JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser, variablesSource);
+        JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser != null ? jreleaser : new Jreleaser(), variablesSource);
         JReleaserModelConfigurer.configure(jreleaserModel, project, session);
         return jreleaserModel;
     }
