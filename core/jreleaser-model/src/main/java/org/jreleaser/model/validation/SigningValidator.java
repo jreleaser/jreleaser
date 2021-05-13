@@ -35,7 +35,7 @@ public abstract class SigningValidator extends Validator {
             return;
         }
 
-        context.getLogger().debug("sign");
+        context.getLogger().debug("signing");
         Signing signing = context.getModel().getSigning();
 
         if (!signing.resolveEnabled(context.getModel().getProject())) return;
@@ -47,7 +47,7 @@ public abstract class SigningValidator extends Validator {
         signing.setPassphrase(
             checkProperty(context.getModel().getEnvironment(),
                 GPG_PASSPHRASE,
-                "signing.secretKey",
+                "signing.passphrase",
                 signing.getPassphrase(),
                 errors));
 

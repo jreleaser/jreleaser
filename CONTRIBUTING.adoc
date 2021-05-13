@@ -1,0 +1,35 @@
+= Contributing
+
+Anyone is welcome to open link:https://github.com/jreleaser/jreleaser/issues[issues] and/or pull-requests for bugfixes,
+feature-requests and/or ideas. If unsure where to start we encourage you to open a
+link:https://github.com/jreleaser/jreleaser/discussions[discussion] topic first.
+
+== Code of Conduct
+
+This project and everyone participating in it is governed by our link:CODE_OF_CONDUCT.md[Code of Conduct].
+By participating, you are expected to uphold this code. Please report unacceptable behavior to jreleaser@kordapm.org.
+
+== How to build
+
+.Prerequisites
+Java 11.
+
+1. `git clone https://github.com/jreleaser/jreleaser.git`
+2. `cd jreleaser`
+3. `./gradlew build`
+
+If you'd like to test out the Maven or Gradle plugins then you must install all dependencies into your local Maven
+repository at least once:
+
+`./gradlew publishToMavenLocal`
+
+From then on you just have to re-install those dependencies that changed, for example
+
+`./gradlew :jreleaser-model:publishToMavenLocal` when changes were made to the `jreleaser-model` project.
+
+IMPORTANT: The Gradle plugin responsible for building the Maven plugin descriptor is not that realiable. You'll have to
+clean and regenerte the plugin descritptor on every change, that is
+`./gradlew :jreleaser-maven-plugin:clean :jreleaser-maven-plugin:publishToMavenLocal --no-build-cache`.
+
+TIP: You maye use link:https://github.com/kordamp/gm[] instead in which case the commands are shorter, for example
+`./gradlew publishToMavenLocal` becomes `gm install`.
