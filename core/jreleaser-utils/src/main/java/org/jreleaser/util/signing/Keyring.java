@@ -49,11 +49,11 @@ public abstract class Keyring {
         this.secretKeyRings = new PGPSecretKeyRingCollection(Collections.emptyList());
     }
 
-    public Keyring initialize() throws IOException, PGPException {
+    public Keyring initialize(boolean armored) throws IOException, PGPException {
         try (InputStream pub = getPublicKeyRingStream();
              InputStream sec = getSecretKeyRingStream()) {
-            addPublicKey(pub);
-            addSecretKey(sec);
+            addPublicKey(armored, pub);
+            addSecretKey(armored, sec);
         }
 
         return this;
@@ -67,13 +67,23 @@ public abstract class Keyring {
 
     protected abstract InputStream getSecretKeyRingStream() throws IOException;
 
-    public void addPublicKey(InputStream raw) throws IOException, PGPException {
+    public void addPublicKey(boolean armored, InputStream raw) throws IOException, PGPException {
+        if (!armored) {
+            addPublicKeyRing(new PGPPublicKeyRing(raw, keyFingerPrintCalculator));
+            return;
+        }
+
         try (InputStream decoded = org.bouncycastle.openpgp.PGPUtil.getDecoderStream(raw)) {
             addPublicKeyRing(new PGPPublicKeyRing(decoded, keyFingerPrintCalculator));
         }
     }
 
-    public void addSecretKey(InputStream raw) throws IOException, PGPException {
+    public void addSecretKey(boolean armored, InputStream raw) throws IOException, PGPException {
+        if (!armored) {
+            addSecretKeyRing(new PGPSecretKeyRing(raw, keyFingerPrintCalculator));
+            return;
+        }
+
         try (InputStream decoded = org.bouncycastle.openpgp.PGPUtil.getDecoderStream(raw)) {
             addSecretKeyRing(new PGPSecretKeyRing(decoded, keyFingerPrintCalculator));
         }

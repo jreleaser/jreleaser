@@ -113,7 +113,9 @@ public final class JReleaserModelConfigurer {
 
     private static String resolveJavaVersion(MavenProject mavenProject) {
         Properties properties = mavenProject.getProperties();
-        if (null == properties || properties.isEmpty()) return "";
+        if (null == properties || properties.isEmpty()) {
+            return resolveJavaVersion(System.getProperty("java.version"));
+        }
 
         if (properties.containsKey("maven.compiler.release")) {
             return properties.getProperty("maven.compiler.release");

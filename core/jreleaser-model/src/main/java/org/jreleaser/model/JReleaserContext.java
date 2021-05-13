@@ -343,13 +343,13 @@ public class JReleaserContext {
                 return new FilesKeyring(
                     basedir.resolve(model.getSigning().getResolvedPublicKey()),
                     basedir.resolve(model.getSigning().getResolvedSecretKey())
-                ).initialize();
+                ).initialize(model.getSigning().isArmored());
             }
 
             return new InMemoryKeyring(
                 model.getSigning().getResolvedPublicKey().getBytes(),
                 model.getSigning().getResolvedSecretKey().getBytes()
-            ).initialize();
+            ).initialize(model.getSigning().isArmored());
         } catch (IOException | PGPException e) {
             throw new SigningException("Could not initialize keyring", e);
         }
