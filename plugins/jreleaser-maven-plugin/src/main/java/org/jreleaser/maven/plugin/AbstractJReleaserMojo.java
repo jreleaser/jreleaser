@@ -36,7 +36,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
+
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -63,6 +67,9 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${session}", required = true)
     private MavenSession session;
+
+    @Parameter(defaultValue = "${maven.multiModuleProjectDirectory}")
+    private String multiModuleProjectDirectory;
 
     protected JReleaserLogger getLogger() throws MojoExecutionException {
         return new JReleaserLoggerAdapter(createTracer(), getLog());
@@ -94,7 +101,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 getLogger(),
                 getMode(),
                 convertModel(),
-                project.getBasedir().toPath(),
+                resolveBasedir(),
                 outputDirectory.toPath(),
                 dryrun);
         } catch (JReleaserException e) {
@@ -104,5 +111,14 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
 
     protected JReleaserContext.Mode getMode() {
         return JReleaserContext.Mode.FULL;
+    }
+
+    private Path resolveBasedir() {
+        if (isNotBlank(multiModuleProjectDirectory)) {
+            return Paths.get(multiModuleProjectDirectory.trim());
+        } else if (isNotBlank(session.getExecutionRootDirectory())) {
+            return Paths.get(session.getExecutionRootDirectory().trim());
+        }
+        return project.getBasedir().toPath();
     }
 }
