@@ -33,6 +33,10 @@ dependencies {
     api "org.slf4j:slf4j-api:$slf4jVersion"
 
     api project(':jreleaser-workflow')
+    //config
+    api project(':jreleaser-config-yaml')
+    api project(':jreleaser-config-toml')
+    api project(':jreleaser-config-json')
 
     implementation "org.apache.maven:maven-plugin-api:$mavenVersion"
 
