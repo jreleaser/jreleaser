@@ -27,6 +27,7 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Brew
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Tap
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -85,6 +86,16 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
     @Override
     void commitAuthor(Action<? super CommitAuthor> action) {
         action.execute(commitAuthor)
+    }
+
+    @Override
+    void tap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, tap)
+    }
+
+    @Override
+    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
+        ConfigureUtil.configure(action, commitAuthor)
     }
 
     org.jreleaser.model.Brew toModel() {

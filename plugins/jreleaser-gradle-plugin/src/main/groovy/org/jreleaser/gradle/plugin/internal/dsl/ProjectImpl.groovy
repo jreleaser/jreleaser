@@ -27,6 +27,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Project
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -87,6 +88,11 @@ class ProjectImpl implements Project {
     @Override
     void java(Action<? super Java> action) {
         action.execute(java)
+    }
+
+    @Override
+    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
+        ConfigureUtil.configure(action, java)
     }
 
     org.jreleaser.model.Project toModel() {

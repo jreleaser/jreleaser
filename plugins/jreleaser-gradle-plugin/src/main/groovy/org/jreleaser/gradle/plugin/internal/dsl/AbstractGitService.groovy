@@ -27,6 +27,7 @@ import org.jreleaser.gradle.plugin.dsl.Changelog
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.GitService
 import org.jreleaser.gradle.plugin.dsl.Milestone
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -129,6 +130,21 @@ abstract class AbstractGitService implements GitService {
     @Override
     void commitAuthor(Action<? super CommitAuthor> action) {
         action.execute(commitAuthor)
+    }
+
+    @Override
+    void changelog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Changelog) Closure<Void> action) {
+        ConfigureUtil.configure(action, changelog)
+    }
+
+    @Override
+    void milestone(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Milestone) Closure<Void> action) {
+        ConfigureUtil.configure(action, milestone)
+    }
+
+    @Override
+    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
+        ConfigureUtil.configure(action, commitAuthor)
     }
 
     protected void toModel(org.jreleaser.model.GitService service) {

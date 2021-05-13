@@ -74,13 +74,19 @@ interface GitService extends Releaser {
 
     Changelog getChangelog()
 
-    void changelog(Action<? super Changelog> action)
-
     Milestone getMilestone()
-
-    void milestone(Action<? super Milestone> action)
 
     CommitAuthor getCommitAuthor()
 
+    void changelog(Action<? super Changelog> action)
+
+    void milestone(Action<? super Milestone> action)
+
     void commitAuthor(Action<? super CommitAuthor> action)
+
+    void changelog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Changelog) Closure<Void> action)
+
+    void milestone(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Milestone) Closure<Void> action)
+
+    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action)
 }

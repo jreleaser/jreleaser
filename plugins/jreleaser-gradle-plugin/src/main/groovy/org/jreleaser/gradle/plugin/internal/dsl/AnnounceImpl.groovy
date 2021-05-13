@@ -32,6 +32,7 @@ import org.jreleaser.gradle.plugin.dsl.Slack
 import org.jreleaser.gradle.plugin.dsl.Teams
 import org.jreleaser.gradle.plugin.dsl.Twitter
 import org.jreleaser.gradle.plugin.dsl.Zulip
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -110,6 +111,51 @@ class AnnounceImpl implements Announce {
     @Override
     void zulip(Action<? super Zulip> action) {
         action.execute(zulip)
+    }
+
+    @Override
+    void discord(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Discord) Closure<Void> action) {
+        ConfigureUtil.configure(action, discord)
+    }
+
+    @Override
+    void discussions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Discussions) Closure<Void> action) {
+        ConfigureUtil.configure(action, discussions)
+    }
+
+    @Override
+    void gitter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Gitter) Closure<Void> action) {
+        ConfigureUtil.configure(action, gitter)
+    }
+
+    @Override
+    void mail(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mail) Closure<Void> action) {
+        ConfigureUtil.configure(action, mail)
+    }
+
+    @Override
+    void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sdkman) Closure<Void> action) {
+        ConfigureUtil.configure(action, sdkman)
+    }
+
+    @Override
+    void slack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Slack) Closure<Void> action) {
+        ConfigureUtil.configure(action, slack)
+    }
+
+    @Override
+    void teams(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Teams) Closure<Void> action) {
+        ConfigureUtil.configure(action, teams)
+    }
+
+    @Override
+    void twitter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Twitter) Closure<Void> action) {
+        ConfigureUtil.configure(action, twitter)
+    }
+
+    @Override
+    void zulip(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Zulip) Closure<Void> action) {
+        ConfigureUtil.configure(action, zulip)
     }
 
     org.jreleaser.model.Announce toModel() {

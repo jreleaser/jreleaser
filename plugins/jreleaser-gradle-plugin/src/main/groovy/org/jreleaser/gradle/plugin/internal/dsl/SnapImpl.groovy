@@ -32,6 +32,7 @@ import org.jreleaser.gradle.plugin.dsl.Snap
 import org.jreleaser.gradle.plugin.dsl.Tap
 import org.jreleaser.model.Plug
 import org.jreleaser.model.Slot
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -127,6 +128,16 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     @Override
     void commitAuthor(Action<? super CommitAuthor> action) {
         action.execute(commitAuthor)
+    }
+
+    @Override
+    void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, snap)
+    }
+
+    @Override
+    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
+        ConfigureUtil.configure(action, commitAuthor)
     }
 
     org.jreleaser.model.Snap toModel() {

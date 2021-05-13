@@ -26,6 +26,7 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Jbang
 import org.jreleaser.gradle.plugin.dsl.Tap
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -61,10 +62,19 @@ class JbangImpl extends AbstractRepositoryTool implements Jbang {
         action.execute(catalog)
     }
 
-
     @Override
     void commitAuthor(Action<? super CommitAuthor> action) {
         action.execute(commitAuthor)
+    }
+
+    @Override
+    void catalog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, catalog)
+    }
+
+    @Override
+    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
+        ConfigureUtil.configure(action, commitAuthor)
     }
 
     org.jreleaser.model.Jbang toModel() {

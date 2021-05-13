@@ -19,7 +19,6 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.file.DirectoryProperty
 
 /**
  *
@@ -31,4 +30,6 @@ interface RepositoryTool extends Tool {
     CommitAuthor getCommitAuthor()
 
     void commitAuthor(Action<? super CommitAuthor> action)
+
+    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action)
 }

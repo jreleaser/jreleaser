@@ -47,6 +47,7 @@ import org.jreleaser.gradle.plugin.internal.dsl.SigningImpl
 import org.jreleaser.gradle.plugin.internal.dsl.UploadImpl
 import org.jreleaser.model.Distribution
 import org.jreleaser.model.JReleaserModel
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 import java.util.stream.Collectors
@@ -141,6 +142,51 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     @Override
     void signing(Action<? super Signing> action) {
         action.execute(signing)
+    }
+
+    @Override
+    void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action) {
+        ConfigureUtil.configure(action, environment)
+    }
+
+    @Override
+    void project(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Project) Closure<Void> action) {
+        ConfigureUtil.configure(action, project)
+    }
+
+    @Override
+    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Files) Closure<Void> action) {
+        ConfigureUtil.configure(action, files)
+    }
+
+    @Override
+    void release(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Release) Closure<Void> action) {
+        ConfigureUtil.configure(action, release)
+    }
+
+    @Override
+    void upload(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upload) Closure<Void> action) {
+        ConfigureUtil.configure(action, upload)
+    }
+
+    @Override
+    void packagers(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Packagers) Closure<Void> action) {
+        ConfigureUtil.configure(action, packagers)
+    }
+
+    @Override
+    void announce(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Announce) Closure<Void> action) {
+        ConfigureUtil.configure(action, announce)
+    }
+
+    @Override
+    void assemble(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Assemble) Closure<Void> action) {
+        ConfigureUtil.configure(action, assemble)
+    }
+
+    @Override
+    void signing(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Signing) Closure<Void> action) {
+        ConfigureUtil.configure(action, signing)
     }
 
     @CompileDynamic

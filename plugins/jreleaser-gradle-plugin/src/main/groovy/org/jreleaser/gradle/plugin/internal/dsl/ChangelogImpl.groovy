@@ -27,6 +27,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Changelog
 import org.jreleaser.model.Active
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -134,6 +135,27 @@ class ChangelogImpl implements Changelog {
     void replacer(Action<? super Replacer> action) {
         ReplacerImpl replacer = objects.newInstance(ReplacerImpl, objects)
         action.execute(replacer)
+        replacers.add(replacer)
+    }
+
+    @Override
+    void category(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Category) Closure<Void> action) {
+        CategoryImpl category = objects.newInstance(CategoryImpl, objects)
+        ConfigureUtil.configure(action, category)
+        categories.add(category)
+    }
+
+    @Override
+    void labeler(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Labeler) Closure<Void> action) {
+        LabelerImpl labeler = objects.newInstance(LabelerImpl, objects)
+        ConfigureUtil.configure(action, labeler)
+        labelers.add(labeler)
+    }
+
+    @Override
+    void replacer(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Replacer) Closure<Void> action) {
+        ReplacerImpl replacer = objects.newInstance(ReplacerImpl, objects)
+        ConfigureUtil.configure(action, replacer)
         replacers.add(replacer)
     }
 

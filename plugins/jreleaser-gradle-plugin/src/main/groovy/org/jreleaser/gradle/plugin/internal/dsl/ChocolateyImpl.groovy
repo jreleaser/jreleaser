@@ -26,6 +26,7 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Chocolatey
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Tap
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -68,6 +69,16 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
     @Override
     void commitAuthor(Action<? super CommitAuthor> action) {
         action.execute(commitAuthor)
+    }
+
+    @Override
+    void bucket(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, bucket)
+    }
+
+    @Override
+    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
+        ConfigureUtil.configure(action, commitAuthor)
     }
 
     org.jreleaser.model.Chocolatey toModel() {

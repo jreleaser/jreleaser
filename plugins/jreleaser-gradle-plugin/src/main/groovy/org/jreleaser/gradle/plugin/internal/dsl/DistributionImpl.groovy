@@ -37,6 +37,7 @@ import org.jreleaser.gradle.plugin.dsl.Scoop
 import org.jreleaser.gradle.plugin.dsl.Snap
 import org.jreleaser.model.Active
 import org.jreleaser.model.Distribution.DistributionType
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -110,8 +111,7 @@ class DistributionImpl implements Distribution {
 
     @Override
     void artifact(Action<? super Artifact> action) {
-        ArtifactImpl artifact = artifacts.maybeCreate("artifact-${artifacts.size()}".toString())
-        action.execute(artifact)
+        action.execute(artifacts.maybeCreate("artifact-${artifacts.size()}".toString()))
     }
 
     @Override
@@ -154,6 +154,46 @@ class DistributionImpl implements Distribution {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
         }
+    }
+
+    @Override
+    void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, artifacts.maybeCreate("artifact-${artifacts.size()}".toString()))
+    }
+
+    @Override
+    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
+        ConfigureUtil.configure(action, java)
+    }
+
+    @Override
+    void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Brew) Closure<Void> action) {
+        ConfigureUtil.configure(action, brew)
+    }
+
+    @Override
+    void chocolatey(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Chocolatey) Closure<Void> action) {
+        ConfigureUtil.configure(action, chocolatey)
+    }
+
+    @Override
+    void docker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Docker) Closure<Void> action) {
+        ConfigureUtil.configure(action, docker)
+    }
+
+    @Override
+    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jbang) Closure<Void> action) {
+        ConfigureUtil.configure(action, jbang)
+    }
+
+    @Override
+    void scoop(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scoop) Closure<Void> action) {
+        ConfigureUtil.configure(action, scoop)
+    }
+
+    @Override
+    void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snap) Closure<Void> action) {
+        ConfigureUtil.configure(action, snap)
     }
 
     org.jreleaser.model.Distribution toModel() {

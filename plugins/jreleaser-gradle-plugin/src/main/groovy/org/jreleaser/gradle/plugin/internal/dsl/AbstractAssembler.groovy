@@ -28,6 +28,7 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Assembler
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.model.Active
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -70,6 +71,11 @@ abstract class AbstractAssembler implements Assembler {
     @Override
     void java(Action<? super Java> action) {
         action.execute(java)
+    }
+
+    @Override
+    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
+        ConfigureUtil.configure(action, java)
     }
 
     protected <A extends org.jreleaser.model.Assembler> void fillProperties(A assembler) {

@@ -42,4 +42,12 @@ interface Release {
     void gitea(Action<? super Gitea> action)
 
     void codeberg(Action<? super Codeberg> action)
+
+    void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Github) Closure<Void> action)
+
+    void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Gitlab) Closure<Void> action)
+
+    void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Gitea) Closure<Void> action)
+
+    void codeberg(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Codeberg) Closure<Void> action)
 }

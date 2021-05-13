@@ -56,4 +56,6 @@ interface Snap extends RepositoryTool {
     Tap getSnap()
 
     void snap(Action<? super Tap> tap)
+
+    void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 }

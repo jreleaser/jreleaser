@@ -25,6 +25,7 @@ import org.jreleaser.gradle.plugin.dsl.Gitea
 import org.jreleaser.gradle.plugin.dsl.Github
 import org.jreleaser.gradle.plugin.dsl.Gitlab
 import org.jreleaser.gradle.plugin.dsl.Release
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -66,6 +67,26 @@ class ReleaseImpl implements Release {
     @Override
     void codeberg(Action<? super Codeberg> action) {
         action.execute(codeberg)
+    }
+
+    @Override
+    void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Github) Closure<Void> action) {
+        ConfigureUtil.configure(action, github)
+    }
+
+    @Override
+    void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Gitlab) Closure<Void> action) {
+        ConfigureUtil.configure(action, gitlab)
+    }
+
+    @Override
+    void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Gitea) Closure<Void> action) {
+        ConfigureUtil.configure(action, gitea)
+    }
+
+    @Override
+    void codeberg(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Codeberg) Closure<Void> action) {
+        ConfigureUtil.configure(action, codeberg)
     }
 
     org.jreleaser.model.Release toModel() {

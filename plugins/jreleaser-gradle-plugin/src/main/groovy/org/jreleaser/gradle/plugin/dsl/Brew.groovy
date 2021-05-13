@@ -40,4 +40,6 @@ interface Brew extends RepositoryTool {
     Tap getTap()
 
     void tap(Action<? super Tap> tap)
+
+    void tap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 }

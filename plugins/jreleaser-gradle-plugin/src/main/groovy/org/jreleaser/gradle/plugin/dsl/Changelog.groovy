@@ -67,6 +67,12 @@ interface Changelog {
 
     void replacer(Action<? super Replacer> action)
 
+    void category(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Category) Closure<Void> action)
+
+    void labeler(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Labeler) Closure<Void> action)
+
+    void replacer(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Replacer) Closure<Void> action)
+
     interface Category {
         Property<String> getTitle()
 

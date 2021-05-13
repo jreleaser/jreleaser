@@ -45,8 +45,6 @@ interface Distribution extends ExtraProperties {
 
     void addTag(String tag)
 
-    void artifact(Action<? super Artifact> action)
-
     Brew getBrew()
 
     Chocolatey getChocolatey()
@@ -61,6 +59,8 @@ interface Distribution extends ExtraProperties {
 
     Java getJava()
 
+    void artifact(Action<? super Artifact> action)
+
     void java(Action<? super Java> action)
 
     void brew(Action<? super Brew> action)
@@ -74,4 +74,20 @@ interface Distribution extends ExtraProperties {
     void scoop(Action<? super Scoop> action)
 
     void snap(Action<? super Snap> action)
+
+    void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
+
+    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
+
+    void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Brew) Closure<Void> action)
+
+    void chocolatey(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Chocolatey) Closure<Void> action)
+
+    void docker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Docker) Closure<Void> action)
+
+    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jbang) Closure<Void> action)
+
+    void scoop(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scoop) Closure<Void> action)
+
+    void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snap) Closure<Void> action)
 }

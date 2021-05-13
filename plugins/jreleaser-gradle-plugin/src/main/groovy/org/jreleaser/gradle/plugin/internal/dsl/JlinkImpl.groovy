@@ -28,9 +28,9 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Glob
-import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Jlink
 import org.jreleaser.model.Active
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -54,7 +54,7 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
     private final ArtifactImpl mainJar
     private final NamedDomainObjectContainer<GlobImpl> jars
     final NamedDomainObjectContainer<ArtifactImpl> targetJdks
-    
+
     @Inject
     JlinkImpl(ObjectFactory objects) {
         super(objects)
@@ -105,19 +105,12 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
 
     @Override
     void targetJdk(Action<? super Artifact> action) {
-        ArtifactImpl artifact = targetJdks.maybeCreate("targetJdk-${targetJdks.size()}".toString())
-        action.execute(artifact)
-    }
-
-    @Override
-    void java(Action<? super Java> action) {
-        action.execute(java)
+        action.execute(targetJdks.maybeCreate("targetJdk-${targetJdks.size()}".toString()))
     }
 
     @Override
     void jars(Action<? super Glob> action) {
-        GlobImpl glob = jars.maybeCreate("jars-${jars.size()}".toString())
-        action.execute(glob)
+        action.execute(jars.maybeCreate("jars-${jars.size()}".toString()))
     }
 
     @Override
@@ -125,6 +118,26 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
         }
+    }
+
+    @Override
+    void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, jdk)
+    }
+
+    @Override
+    void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, mainJar)
+    }
+
+    @Override
+    void targetJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, targetJdks.maybeCreate("targetJdk-${targetJdks.size()}".toString()))
+    }
+
+    @Override
+    void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
+        ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
     }
 
     org.jreleaser.model.Jlink toModel() {
@@ -135,8 +148,8 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
         jlink.jdk = jdk.toModel()
         jlink.mainJar = mainJar.toModel()
         jlink.java = java.toModel()
-        if(imageName.present) jlink.imageName = imageName.get()
-        if(moduleName.present) jlink.moduleName = moduleName.get()
+        if (imageName.present) jlink.imageName = imageName.get()
+        if (moduleName.present) jlink.moduleName = moduleName.get()
         jlink.moduleNames = (Set<String>) moduleNames.getOrElse([] as Set)
         for (ArtifactImpl artifact : targetJdks) {
             jlink.addTargetJdk(artifact.toModel())

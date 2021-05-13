@@ -25,6 +25,7 @@ import org.gradle.api.model.ObjectFactory
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Glob
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -61,14 +62,22 @@ class FilesImpl implements Files {
 
     @Override
     void artifact(Action<? super Artifact> action) {
-        ArtifactImpl artifact = artifacts.maybeCreate("artifact-${artifacts.size()}".toString())
-        action.execute(artifact)
+        action.execute(artifacts.maybeCreate("artifact-${artifacts.size()}".toString()))
     }
 
     @Override
     void glob(Action<? super Glob> action) {
-        GlobImpl glob = globs.maybeCreate("glob-${globs.size()}".toString())
-        action.execute(glob)
+        action.execute(globs.maybeCreate("glob-${globs.size()}".toString()))
+    }
+
+    @Override
+    void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, artifacts.maybeCreate("artifact-${artifacts.size()}".toString()))
+    }
+
+    @Override
+    void glob(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
+        ConfigureUtil.configure(action, globs.maybeCreate("glob-${globs.size()}".toString()))
     }
 
     org.jreleaser.model.Files toModel() {

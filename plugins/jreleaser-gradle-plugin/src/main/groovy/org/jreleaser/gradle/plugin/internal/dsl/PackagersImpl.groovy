@@ -27,6 +27,7 @@ import org.jreleaser.gradle.plugin.dsl.Jbang
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Scoop
 import org.jreleaser.gradle.plugin.dsl.Snap
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -82,6 +83,36 @@ class PackagersImpl implements Packagers {
     @Override
     void snap(Action<? super Snap> action) {
         action.execute(snap)
+    }
+
+    @Override
+    void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Brew) Closure<Void> action) {
+        ConfigureUtil.configure(action, brew)
+    }
+
+    @Override
+    void chocolatey(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Chocolatey) Closure<Void> action) {
+        ConfigureUtil.configure(action, chocolatey)
+    }
+
+    @Override
+    void docker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Docker) Closure<Void> action) {
+        ConfigureUtil.configure(action, docker)
+    }
+
+    @Override
+    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jbang) Closure<Void> action) {
+        ConfigureUtil.configure(action, jbang)
+    }
+
+    @Override
+    void scoop(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scoop) Closure<Void> action) {
+        ConfigureUtil.configure(action, scoop)
+    }
+
+    @Override
+    void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snap) Closure<Void> action) {
+        ConfigureUtil.configure(action, snap)
     }
 
     org.jreleaser.model.Packagers toModel() {

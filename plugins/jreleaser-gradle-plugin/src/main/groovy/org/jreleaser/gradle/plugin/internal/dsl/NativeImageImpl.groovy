@@ -26,9 +26,9 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Glob
-import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.NativeImage
 import org.jreleaser.model.Active
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -85,14 +85,23 @@ class NativeImageImpl extends AbstractAssembler implements NativeImage {
     }
 
     @Override
-    void java(Action<? super Java> action) {
-        action.execute(java)
+    void jars(Action<? super Glob> action) {
+        action.execute(jars.maybeCreate("jars-${jars.size()}".toString()))
     }
 
     @Override
-    void jars(Action<? super Glob> action) {
-        GlobImpl glob = jars.maybeCreate("jars-${jars.size()}".toString())
-        action.execute(glob)
+    void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, graal)
+    }
+
+    @Override
+    void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, mainJar)
+    }
+
+    @Override
+    void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
+        ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
     }
 
     @Override

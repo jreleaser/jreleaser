@@ -30,4 +30,8 @@ interface Files {
     void artifact(Action<? super Artifact> action)
 
     void glob(Action<? super Glob> action)
+
+    void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
+
+    void glob(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
 }

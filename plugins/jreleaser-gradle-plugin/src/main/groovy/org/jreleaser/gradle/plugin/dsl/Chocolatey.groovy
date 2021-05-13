@@ -35,4 +35,6 @@ interface Chocolatey extends RepositoryTool {
     Tap getBucket()
 
     void bucket(Action<? super Tap> tap)
+
+    void bucket(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 }
