@@ -79,7 +79,8 @@ enforce {
             "org.apache.maven:maven-core:$mavenVersion",
             "org.apache.maven:maven-plugin-api:$mavenVersion",
             "org.apache.maven:maven-model:$mavenVersion",
-            "junit:junit:4.13.1",
+            "org.junit.jupiter:junit-jupiter-api:$junitVersion",
+            "junit:junit:4.13.2",
             "org.hamcrest:hamcrest:2.2",
             "org.apache.httpcomponents:httpclient:4.5.12"
     }
