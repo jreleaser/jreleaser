@@ -263,7 +263,8 @@ public class Signer {
             }
         }
 
-        Path checksums = context.getChecksumsDirectory().resolve("checksums.txt");
+        Path checksums = context.getChecksumsDirectory()
+            .resolve(context.getModel().getChecksum().getResolvedName(context));
         if (Files.exists(checksums)) {
             Path output = signaturesDirectory.resolve(checksums.getFileName().toString().concat(extension));
             FilePair pair = new FilePair(checksums, output);

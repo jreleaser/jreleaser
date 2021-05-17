@@ -33,6 +33,7 @@ public class Jreleaser {
     private final Upload upload = new Upload();
     private final Announce announce = new Announce();
     private final Assemble assemble = new Assemble();
+    private final Checksum checksum = new Checksum();
     private final Signing signing = new Signing();
     private final Files files = new Files();
     private final List<Distribution> distributions = new ArrayList<>();
@@ -91,6 +92,14 @@ public class Jreleaser {
 
     public void setAssemble(Assemble assemble) {
         this.assemble.setAll(assemble);
+    }
+
+    public Checksum getChecksum() {
+        return checksum;
+    }
+
+    public void setChecksum(Checksum checksum) {
+        this.checksum.setAll(checksum);
     }
 
     public Signing getSigning() {

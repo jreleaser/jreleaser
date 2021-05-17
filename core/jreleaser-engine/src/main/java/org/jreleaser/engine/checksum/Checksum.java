@@ -64,7 +64,8 @@ public class Checksum {
             return;
         }
 
-        Path checksumsFilePath = context.getChecksumsDirectory().resolve("checksums.txt");
+        Path checksumsFilePath = context.getChecksumsDirectory()
+            .resolve(context.getModel().getChecksum().getResolvedName(context));
         String newContent = String.join(System.lineSeparator(), checksums) + System.lineSeparator();
 
         try {

@@ -122,20 +122,20 @@ public abstract class DistributionsValidator extends Validator {
         Map<String, List<Artifact>> byPlatform = distribution.getArtifacts().stream()
             .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? "<nil>" : artifact.getPlatform()));
         // check platforms by extension
-        byPlatform.entrySet().forEach(p -> {
-            String platform = "<nil>".equals(p.getKey()) ? "no" : p.getKey();
-            p.getValue().stream()
+        byPlatform.forEach((p, artifacts) -> {
+            String platform = "<nil>".equals(p) ? "no" : p;
+            artifacts.stream()
                 .collect(groupingBy(artifact -> {
                     String ext = getFilenameExtension(artifact.getPath());
                     return isNotBlank(ext) ? ext : "";
                 }))
-                .entrySet().forEach(e -> {
-                if (e.getValue().size() > 1) {
-                    errors.configuration("distribution." + distribution.getName() +
-                        " has more than one artifact with " + platform +
-                        " platform for extension " + e.getKey());
-                }
-            });
+                .forEach((ext, matches) -> {
+                    if (matches.size() > 1) {
+                        errors.configuration("distribution." + distribution.getName() +
+                            " has more than one artifact with " + platform +
+                            " platform for extension " + ext);
+                    }
+                });
         });
 
         validateBrew(context, distribution, distribution.getBrew(), errors);

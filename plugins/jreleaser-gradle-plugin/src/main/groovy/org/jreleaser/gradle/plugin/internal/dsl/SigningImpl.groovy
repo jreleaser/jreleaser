@@ -77,13 +77,13 @@ class SigningImpl implements Signing {
     }
 
     org.jreleaser.model.Signing toModel() {
-        org.jreleaser.model.Signing sign = new org.jreleaser.model.Signing()
-        if (active.present) sign.active = active.get()
-        if (armored.present) sign.armored = armored.get()
-        if (passphrase.present) sign.passphrase = passphrase.get()
-        if (publicKey.present) sign.publicKey = publicKey.get()
-        if (secretKey.present) sign.secretKey = secretKey.get()
-        if (mode.present) sign.mode = mode.get()
-        sign
+        org.jreleaser.model.Signing signing = new org.jreleaser.model.Signing()
+        if (active.present) signing.active = active.get()
+        if (armored.present) signing.armored = armored.get()
+        if (passphrase.present) signing.passphrase = passphrase.get()
+        if (publicKey.present) signing.publicKey = publicKey.get()
+        if (secretKey.present) signing.secretKey = secretKey.get()
+        if (mode.present) signing.mode = mode.get()
+        signing
     }
 }

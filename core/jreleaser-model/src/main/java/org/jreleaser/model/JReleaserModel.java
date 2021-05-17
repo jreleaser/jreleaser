@@ -48,6 +48,7 @@ public class JReleaserModel implements Domain {
     private final Announce announce = new Announce();
     private final Assemble assemble = new Assemble();
     private final Upload upload = new Upload();
+    private final Checksum checksum = new Checksum();
     private final Signing signing = new Signing();
     private final Files files = new Files();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
@@ -132,6 +133,14 @@ public class JReleaserModel implements Domain {
         this.upload.setAll(upload);
     }
 
+    public Checksum getChecksum() {
+        return checksum;
+    }
+
+    public void setChecksum(Checksum checksum) {
+        this.checksum.setAll(checksum);
+    }
+
     public Signing getSigning() {
         return signing;
     }
@@ -188,6 +197,7 @@ public class JReleaserModel implements Domain {
         if (environment.isSet()) map.put("environment", environment.asMap(full));
         map.put("project", project.asMap(full));
         map.put("release", release.asMap(full));
+        map.put("checksum", checksum.asMap(full));
         if (full || signing.isEnabled()) map.put("signing", signing.asMap(full));
         if (full || announce.isEnabled()) map.put("announce", announce.asMap(full));
         if (!files.isEmpty()) map.put("files", files.asMap(full));

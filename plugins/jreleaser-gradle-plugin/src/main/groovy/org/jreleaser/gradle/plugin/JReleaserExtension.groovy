@@ -23,6 +23,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Assemble
+import org.jreleaser.gradle.plugin.dsl.Checksum
 import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Files
@@ -59,6 +60,8 @@ interface JReleaserExtension {
 
     Signing getSigning()
 
+    Checksum getChecksum()
+
     NamedDomainObjectContainer<Distribution> getDistributions()
 
     void environment(Action<? super Environment> action)
@@ -79,6 +82,8 @@ interface JReleaserExtension {
 
     void signing(Action<? super Signing> action)
 
+    void checksum(Action<? super Checksum> action)
+
     void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action)
 
     void project(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Project) Closure<Void> action)
@@ -96,4 +101,6 @@ interface JReleaserExtension {
     void assemble(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Assemble) Closure<Void> action)
 
     void signing(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Signing) Closure<Void> action)
+
+    void checksum(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Checksum) Closure<Void> action)
 }

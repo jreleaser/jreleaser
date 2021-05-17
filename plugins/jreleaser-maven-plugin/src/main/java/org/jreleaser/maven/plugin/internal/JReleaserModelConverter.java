@@ -25,6 +25,7 @@ import org.jreleaser.maven.plugin.Brew;
 import org.jreleaser.maven.plugin.Bucket;
 import org.jreleaser.maven.plugin.Catalog;
 import org.jreleaser.maven.plugin.Changelog;
+import org.jreleaser.maven.plugin.Checksum;
 import org.jreleaser.maven.plugin.Chocolatey;
 import org.jreleaser.maven.plugin.Codeberg;
 import org.jreleaser.maven.plugin.CommitAuthor;
@@ -99,6 +100,7 @@ public final class JReleaserModelConverter {
         jreleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
         jreleaserModel.setAnnounce(convertAnnounce(jreleaser.getAnnounce()));
         jreleaserModel.setAssemble(convertAssemble(jreleaser.getAssemble()));
+        jreleaserModel.setChecksum(convertChecksum(jreleaser.getChecksum()));
         jreleaserModel.setSigning(convertSigning(jreleaser.getSigning()));
         jreleaserModel.setFiles(convertFiles(jreleaser.getFiles()));
         jreleaserModel.setDistributions(convertDistributions(jreleaser.getDistributions()));
@@ -506,6 +508,13 @@ public final class JReleaserModelConverter {
         a.setMainJar(convertArtifact(nativeImage.getMainJar()));
         a.setArgs(nativeImage.getArgs());
         return a;
+    }
+
+    private static org.jreleaser.model.Checksum convertChecksum(Checksum checksum) {
+        org.jreleaser.model.Checksum s = new org.jreleaser.model.Checksum();
+        s.setName(checksum.getName());
+        s.setIndividual(checksum.isIndividual());
+        return s;
     }
 
     private static org.jreleaser.model.Signing convertSigning(Signing signing) {

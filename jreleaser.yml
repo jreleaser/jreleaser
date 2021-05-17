@@ -45,6 +45,8 @@ release:
           body: 'Relates to #'
         - label: 'task'
           title: '[chore]'
+        - label: 'dependencies'
+          title: '[deps]'
       categories:
         - title: '🚀 Features'
           labels:
@@ -55,8 +57,13 @@ release:
         - title: '🧰 Tasks'
           labels:
             - 'task'
+        - title: '⚙️  Dependencies'
+          labels:
+            - 'dependencies'
       replacers:
         - search: '\[chore\] '
+          replace: ''
+        - search: '\[deps\] '
           replace: ''
 
 signing:

@@ -73,17 +73,27 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
     public ReleaserBuilder<R> configureWith(JReleaserContext context) {
         this.context = context;
 
+        boolean uploadIndividualChecksums = context.getModel().getChecksum().isIndividual();
         for (Artifact artifact : Artifacts.resolveFiles(context)) {
-            addReleaseAsset(artifact.getEffectivePath(context));
+            Path path = artifact.getEffectivePath(context);
+            addReleaseAsset(path);
+            if (uploadIndividualChecksums) {
+                addReleaseAsset(context.getChecksumsDirectory()
+                    .resolve(path.getFileName() + ".sha256"));
+            }
         }
 
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
             for (Artifact artifact : distribution.getArtifacts()) {
                 addReleaseAsset(artifact.getEffectivePath(context, distribution));
             }
+            if (uploadIndividualChecksums) {
+                addReleaseAssets(context.getChecksumsDirectory().resolve(distribution.getName()));
+            }
         }
 
-        Path checksums = context.getChecksumsDirectory().resolve("checksums.txt");
+        Path checksums = context.getChecksumsDirectory()
+            .resolve(context.getModel().getChecksum().getResolvedName(context));
         if (Files.exists(checksums)) {
             addReleaseAsset(checksums);
         }

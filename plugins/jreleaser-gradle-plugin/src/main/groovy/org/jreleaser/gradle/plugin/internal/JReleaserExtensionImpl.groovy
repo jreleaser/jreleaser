@@ -28,6 +28,7 @@ import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Assemble
+import org.jreleaser.gradle.plugin.dsl.Checksum
 import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Packagers
@@ -37,6 +38,7 @@ import org.jreleaser.gradle.plugin.dsl.Signing
 import org.jreleaser.gradle.plugin.dsl.Upload
 import org.jreleaser.gradle.plugin.internal.dsl.AnnounceImpl
 import org.jreleaser.gradle.plugin.internal.dsl.AssembleImpl
+import org.jreleaser.gradle.plugin.internal.dsl.ChecksumImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.EnvironmentImpl
 import org.jreleaser.gradle.plugin.internal.dsl.FilesImpl
@@ -68,6 +70,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final PackagersImpl packagers
     final AnnounceImpl announce
     final AssembleImpl assemble
+    final ChecksumImpl checksum
     final SigningImpl signing
     final FilesImpl files
     final NamedDomainObjectContainer<DistributionImpl> distributions
@@ -86,6 +89,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         packagers = objects.newInstance(PackagersImpl, objects)
         announce = objects.newInstance(AnnounceImpl, objects)
         assemble = objects.newInstance(AssembleImpl, objects)
+        checksum = objects.newInstance(ChecksumImpl, objects)
         signing = objects.newInstance(SigningImpl, objects)
         files = objects.newInstance(FilesImpl, objects)
 
@@ -145,6 +149,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
+    void checksum(Action<? super Checksum> action) {
+        action.execute(checksum)
+    }
+
+    @Override
     void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action) {
         ConfigureUtil.configure(action, environment)
     }
@@ -189,6 +198,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         ConfigureUtil.configure(action, signing)
     }
 
+    @Override
+    void checksum(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Checksum) Closure<Void> action) {
+        ConfigureUtil.configure(action, checksum)
+    }
+
     @CompileDynamic
     JReleaserModel toModel(org.gradle.api.Project gradleProject) {
         JReleaserModel jreleaser = new JReleaserModel()
@@ -200,6 +214,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.announce = announce.toModel()
         jreleaser.assemble = assemble.toModel()
         jreleaser.signing = signing.toModel()
+        jreleaser.checksum = checksum.toModel()
         jreleaser.files = files.toModel()
         jreleaser.distributions = (distributions.toList().stream()
             .collect(Collectors.toMap(
