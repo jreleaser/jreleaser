@@ -314,7 +314,7 @@ public class Changelog implements Domain, EnabledAware {
 
     public static class Replacer implements Domain {
         private String search;
-        private String replace;
+        private String replace = "";
 
         void setAll(Replacer replacer) {
             this.search = replacer.search;
