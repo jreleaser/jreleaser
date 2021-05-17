@@ -59,12 +59,13 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         props.put(Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getTap().getOwner(), tool.getTap().getName()));
 
-        if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
-            distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {
-            getTool().addDependency("openjdk@" + props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
+        if ((distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
+            distribution.getType() == Distribution.DistributionType.SINGLE_JAR) &&
+            !tool.getExtraProperties().containsKey("javaSkip")) {
+            tool.addDependency("openjdk@" + props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
         }
 
-        props.put(Constants.KEY_BREW_DEPENDENCIES, getTool().getDependenciesAsList()
+        props.put(Constants.KEY_BREW_DEPENDENCIES, tool.getDependenciesAsList()
             .stream()
             // prevent Mustache from converting quotes into &quot;
             .map(dependency -> MustacheUtils.passThrough(dependency.toString()))
