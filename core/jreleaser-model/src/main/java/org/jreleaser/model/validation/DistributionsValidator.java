@@ -133,7 +133,7 @@ public abstract class DistributionsValidator extends Validator {
                 if (e.getValue().size() > 1) {
                     errors.configuration("distribution." + distribution.getName() +
                         " has more than one artifact with " + platform +
-                        " platform for extension " + e.getValue());
+                        " platform for extension " + e.getKey());
                 }
             });
         });
