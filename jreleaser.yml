@@ -92,7 +92,13 @@ assemble:
         - java.naming
         - java.rmi
         - java.security.jgss
+        - java.security.sasl
         - java.sql
+        - jdk.crypto.ec
+        - jdk.crypto.cryptoki
+        - jdk.security.auth
+        - jdk.security.jgss
+        - org.openjsse
       targetJdks:
         - path: '{{jdkPathPrefix}}-macosx_x64/zulu-11.jdk/Contents/Home'
           platform: 'osx'
