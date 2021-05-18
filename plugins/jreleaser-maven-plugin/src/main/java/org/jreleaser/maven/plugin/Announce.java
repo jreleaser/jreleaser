@@ -26,6 +26,7 @@ public class Announce implements EnabledAware {
     private final Discussions discussions = new Discussions();
     private final Gitter gitter = new Gitter();
     private final Mail mail = new Mail();
+    private final Mastodon mastodon = new Mastodon();
     private final Sdkman sdkman = new Sdkman();
     private final Slack slack = new Slack();
     private final Teams teams = new Teams();
@@ -39,6 +40,7 @@ public class Announce implements EnabledAware {
         setDiscussions(announce.discussions);
         setGitter(announce.gitter);
         setMail(announce.mail);
+        setMastodon(announce.mastodon);
         setSdkman(announce.sdkman);
         setSlack(announce.slack);
         setTeams(announce.teams);
@@ -91,6 +93,14 @@ public class Announce implements EnabledAware {
 
     public void setMail(Mail mail) {
         this.mail.setAll(mail);
+    }
+
+    public Mastodon getMastodon() {
+        return mastodon;
+    }
+
+    public void setMastodon(Mastodon mastodon) {
+        this.mastodon.setAll(mastodon);
     }
 
     public Sdkman getSdkman() {

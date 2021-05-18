@@ -27,6 +27,7 @@ import org.jreleaser.gradle.plugin.dsl.Discord
 import org.jreleaser.gradle.plugin.dsl.Discussions
 import org.jreleaser.gradle.plugin.dsl.Gitter
 import org.jreleaser.gradle.plugin.dsl.Mail
+import org.jreleaser.gradle.plugin.dsl.Mastodon
 import org.jreleaser.gradle.plugin.dsl.Sdkman
 import org.jreleaser.gradle.plugin.dsl.Slack
 import org.jreleaser.gradle.plugin.dsl.Teams
@@ -48,6 +49,7 @@ class AnnounceImpl implements Announce {
     final DiscussionsImpl discussions
     final GitterImpl gitter
     final MailImpl mail
+    final MastodonImpl mastodon
     final SdkmanImpl sdkman
     final SlackImpl slack
     final TeamsImpl teams
@@ -61,6 +63,7 @@ class AnnounceImpl implements Announce {
         discussions = objects.newInstance(DiscussionsImpl, objects)
         gitter = objects.newInstance(GitterImpl, objects)
         mail = objects.newInstance(MailImpl, objects)
+        mastodon = objects.newInstance(MastodonImpl, objects)
         sdkman = objects.newInstance(SdkmanImpl, objects)
         slack = objects.newInstance(SlackImpl, objects)
         teams = objects.newInstance(TeamsImpl, objects)
@@ -86,6 +89,11 @@ class AnnounceImpl implements Announce {
     @Override
     void mail(Action<? super Mail> action) {
         action.execute(mail)
+    }
+
+    @Override
+    void mastodon(Action<? super Mastodon> action) {
+        action.execute(mastodon)
     }
 
     @Override
@@ -134,6 +142,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void mastodon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mastodon) Closure<Void> action) {
+        ConfigureUtil.configure(action, mastodon)
+    }
+
+    @Override
     void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sdkman) Closure<Void> action) {
         ConfigureUtil.configure(action, sdkman)
     }
@@ -165,6 +178,7 @@ class AnnounceImpl implements Announce {
         if (discussions.isSet()) announce.discussions = discussions.toModel()
         if (gitter.isSet()) announce.gitter = gitter.toModel()
         if (mail.isSet()) announce.mail = mail.toModel()
+        if (mastodon.isSet()) announce.mastodon = mastodon.toModel()
         if (sdkman.isSet()) announce.sdkman = sdkman.toModel()
         if (slack.isSet()) announce.slack = slack.toModel()
         if (teams.isSet()) announce.teams = teams.toModel()

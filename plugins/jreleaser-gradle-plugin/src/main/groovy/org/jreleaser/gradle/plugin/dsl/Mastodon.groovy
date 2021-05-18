@@ -18,7 +18,6 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -27,8 +26,10 @@ import org.gradle.api.provider.Property
  * @since 0.2.0
  */
 @CompileStatic
-interface Teams extends Announcer {
-    Property<String> getWebhook()
+interface Mastodon extends Announcer {
+    Property<String> getHost()
 
-    RegularFileProperty getMessageTemplate()
+    Property<String> getAccessToken()
+
+    Property<String> getStatus()
 }

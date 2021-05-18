@@ -20,7 +20,6 @@ package org.jreleaser.gradle.plugin.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.jreleaser.gradle.plugin.dsl.Announcer
 
 /**
  *

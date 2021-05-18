@@ -48,6 +48,7 @@ import org.jreleaser.maven.plugin.Jbang;
 import org.jreleaser.maven.plugin.Jlink;
 import org.jreleaser.maven.plugin.Jreleaser;
 import org.jreleaser.maven.plugin.Mail;
+import org.jreleaser.maven.plugin.Mastodon;
 import org.jreleaser.maven.plugin.Milestone;
 import org.jreleaser.maven.plugin.NativeImage;
 import org.jreleaser.maven.plugin.Packagers;
@@ -328,6 +329,7 @@ public final class JReleaserModelConverter {
         if (announce.getDiscussions().isSet()) a.setDiscussions(convertDiscussions(announce.getDiscussions()));
         if (announce.getGitter().isSet()) a.setGitter(convertGitter(announce.getGitter()));
         if (announce.getMail().isSet()) a.setMail(convertMail(announce.getMail()));
+        if (announce.getMastodon().isSet()) a.setMastodon(convertMastodon(announce.getMastodon()));
         if (announce.getSdkman().isSet()) a.setSdkman(convertSdkman(announce.getSdkman()));
         if (announce.getSlack().isSet()) a.setSlack(convertSlack(announce.getSlack()));
         if (announce.getTeams().isSet()) a.setTeams(convertTeams(announce.getTeams()));
@@ -387,6 +389,17 @@ public final class JReleaserModelConverter {
         a.setSubject(mail.getSubject());
         a.setMessage(mail.getMessage());
         a.setMessageTemplate(mail.getMessageTemplate());
+        return a;
+    }
+
+    private static org.jreleaser.model.Mastodon convertMastodon(Mastodon mastodon) {
+        org.jreleaser.model.Mastodon a = new org.jreleaser.model.Mastodon();
+        a.setActive(mastodon.resolveActive());
+        a.setHost(mastodon.getHost());
+        a.setAccessToken(mastodon.getAccessToken());
+        a.setStatus(mastodon.getStatus());
+        a.setConnectTimeout(mastodon.getConnectTimeout());
+        a.setReadTimeout(mastodon.getReadTimeout());
         return a;
     }
 

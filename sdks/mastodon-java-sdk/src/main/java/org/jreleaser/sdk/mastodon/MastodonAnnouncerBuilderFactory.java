@@ -15,20 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.sdk.mastodon;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
+import org.jreleaser.model.announcer.spi.AnnouncerBuilderFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.4.0
  */
-@CompileStatic
-interface Teams extends Announcer {
-    Property<String> getWebhook()
+@ServiceProviderFor(AnnouncerBuilderFactory.class)
+public class MastodonAnnouncerBuilderFactory implements AnnouncerBuilderFactory<MastodonAnnouncer, MastodonAnnouncerBuilder> {
+    @Override
+    public String getName() {
+        return org.jreleaser.model.Mastodon.NAME;
+    }
 
-    RegularFileProperty getMessageTemplate()
+    @Override
+    public MastodonAnnouncerBuilder getBuilder() {
+        return new MastodonAnnouncerBuilder();
+    }
 }

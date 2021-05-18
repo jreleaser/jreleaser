@@ -15,20 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.sdk.mastodon.api;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
+import feign.Headers;
+import feign.RequestLine;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.4.0
  */
-@CompileStatic
-interface Teams extends Announcer {
-    Property<String> getWebhook()
-
-    RegularFileProperty getMessageTemplate()
+public interface MastodonAPI {
+    @RequestLine("POST /statuses")
+    @Headers("Content-Type: application/json")
+    void status(Status status);
 }

@@ -15,20 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
-
-import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
+package org.jreleaser.sdk.mastodon;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.4.0
  */
-@CompileStatic
-interface Teams extends Announcer {
-    Property<String> getWebhook()
+public class MastodonException extends Exception {
+    public MastodonException(String message) {
+        super(message);
+    }
 
-    RegularFileProperty getMessageTemplate()
+    public MastodonException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public MastodonException(Throwable cause) {
+        super(cause);
+    }
 }

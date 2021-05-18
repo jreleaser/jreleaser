@@ -34,6 +34,7 @@ public class Announce implements Domain, EnabledAware {
     private final Discussions discussions = new Discussions();
     private final Gitter gitter = new Gitter();
     private final Mail mail = new Mail();
+    private final Mastodon mastodon = new Mastodon();
     private final Sdkman sdkman = new Sdkman();
     private final Slack slack = new Slack();
     private final Teams teams = new Teams();
@@ -47,6 +48,7 @@ public class Announce implements Domain, EnabledAware {
         setDiscussions(announce.discussions);
         setGitter(announce.gitter);
         setMail(announce.mail);
+        setMastodon(announce.mastodon);
         setSdkman(announce.sdkman);
         setSlack(announce.slack);
         setTeams(announce.teams);
@@ -101,6 +103,14 @@ public class Announce implements Domain, EnabledAware {
         this.mail.setAll(mail);
     }
 
+    public Mastodon getMastodon() {
+        return mastodon;
+    }
+
+    public void setMastodon(Mastodon mastodon) {
+        this.mastodon.setAll(mastodon);
+    }
+
     public Sdkman getSdkman() {
         return sdkman;
     }
@@ -149,6 +159,7 @@ public class Announce implements Domain, EnabledAware {
         map.putAll(discussions.asMap(full));
         map.putAll(gitter.asMap(full));
         map.putAll(mail.asMap(full));
+        map.putAll(mastodon.asMap(full));
         map.putAll(sdkman.asMap(full));
         map.putAll(slack.asMap(full));
         map.putAll(teams.asMap(full));
@@ -183,6 +194,8 @@ public class Announce implements Domain, EnabledAware {
                 return (A) getGitter();
             case Mail.NAME:
                 return (A) getMail();
+            case Mastodon.NAME:
+                return (A) getMastodon();
             case Sdkman.NAME:
                 return (A) getSdkman();
             case Slack.NAME:
@@ -204,6 +217,7 @@ public class Announce implements Domain, EnabledAware {
         set.add(Discussions.NAME);
         set.add(Gitter.NAME);
         set.add(Mail.NAME);
+        set.add(Mastodon.NAME);
         set.add(Sdkman.NAME);
         set.add(Slack.NAME);
         set.add(Teams.NAME);

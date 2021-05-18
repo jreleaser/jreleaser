@@ -18,7 +18,6 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.provider.Property
 
 /**
  *

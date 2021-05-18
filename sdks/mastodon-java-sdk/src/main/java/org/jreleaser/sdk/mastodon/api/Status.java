@@ -15,20 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.sdk.mastodon.api;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
+import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.4.0
  */
-@CompileStatic
-interface Teams extends Announcer {
-    Property<String> getWebhook()
+public class Status {
+    private String status;
 
-    RegularFileProperty getMessageTemplate()
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Status[status='" + status + '\'' +
+            ']';
+    }
+
+    public static Status of(String status) {
+        Status o = new Status();
+        o.status = requireNonBlank(status, "'status' must not be blank").trim();
+        return o;
+    }
 }

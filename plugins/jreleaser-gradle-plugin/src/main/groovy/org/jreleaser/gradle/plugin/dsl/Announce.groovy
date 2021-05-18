@@ -38,6 +38,8 @@ interface Announce {
 
     Mail getMail()
 
+    Mastodon getMastodon()
+
     Sdkman getSdkman()
 
     Slack getSlack()
@@ -56,6 +58,8 @@ interface Announce {
 
     void mail(Action<? super Mail> action)
 
+    void mastodon(Action<? super Mastodon> action)
+
     void sdkman(Action<? super Sdkman> action)
 
     void slack(Action<? super Slack> action)
@@ -73,6 +77,8 @@ interface Announce {
     void gitter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Gitter) Closure<Void> action)
 
     void mail(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mail) Closure<Void> action)
+
+    void mastodon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mastodon) Closure<Void> action)
 
     void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sdkman) Closure<Void> action)
 
