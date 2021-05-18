@@ -19,6 +19,7 @@ package org.jreleaser.model;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
@@ -40,6 +41,10 @@ public class JReleaserVersion {
     }
 
     public static void banner(PrintStream out) {
+        banner(out, true);
+    }
+
+    public static void banner(PrintStream out, boolean full) {
         Manifest manifest = findMyManifest();
         if (null != manifest) {
             String version = manifest.getMainAttributes().getValue(Attributes.Name.SPECIFICATION_VERSION);
@@ -48,8 +53,40 @@ public class JReleaserVersion {
             String buildRevision = manifest.getMainAttributes().getValue("Build-Revision");
             boolean additionalInfo = isNotBlank(buildDate) || isNotBlank(buildTime) || isNotBlank(buildRevision);
 
+            if (full) {
+                out.printf("------------------------------------------------------------%n");
+                out.printf("jreleaser %s%n", version);
+            }
             out.printf("------------------------------------------------------------%n");
-            out.printf("jreleaser %s%n", version);
+            if (additionalInfo) {
+                if (isNotBlank(buildDate) && isNotBlank(buildTime)) {
+                    out.printf("Build time:   %s %s%n", buildDate, buildTime);
+                }
+                if (isNotBlank(buildRevision)) out.println("Revision:     " + buildRevision);
+                out.printf("------------------------------------------------------------%n");
+            }
+        } else {
+            out.printf("jreleaser %s%n", JRELEASER_VERSION);
+        }
+    }
+
+    public static void banner(PrintWriter out) {
+        banner(out, true);
+    }
+
+    public static void banner(PrintWriter out, boolean full) {
+        Manifest manifest = findMyManifest();
+        if (null != manifest) {
+            String version = manifest.getMainAttributes().getValue(Attributes.Name.SPECIFICATION_VERSION);
+            String buildDate = manifest.getMainAttributes().getValue("Build-Date");
+            String buildTime = manifest.getMainAttributes().getValue("Build-Time");
+            String buildRevision = manifest.getMainAttributes().getValue("Build-Revision");
+            boolean additionalInfo = isNotBlank(buildDate) || isNotBlank(buildTime) || isNotBlank(buildRevision);
+
+            if (full) {
+                out.printf("------------------------------------------------------------%n");
+                out.printf("jreleaser %s%n", version);
+            }
             out.printf("------------------------------------------------------------%n");
             if (additionalInfo) {
                 if (isNotBlank(buildDate) && isNotBlank(buildTime)) {

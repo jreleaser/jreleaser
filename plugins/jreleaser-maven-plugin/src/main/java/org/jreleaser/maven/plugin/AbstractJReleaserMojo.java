@@ -30,6 +30,7 @@ import org.jreleaser.model.Environment;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.File;
@@ -97,11 +98,20 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
 
     protected JReleaserContext createContext() throws MojoExecutionException {
         try {
+            JReleaserLogger logger = getLogger();
+            Path basedir = resolveBasedir();
+
+            logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
+            JReleaserVersion.banner(logger.getTracer(), false);
+            logger.increaseIndent();
+            logger.info("- basedir set to {}", basedir.toAbsolutePath());
+            logger.decreaseIndent();
+
             return ContextCreator.create(
-                getLogger(),
+                logger,
                 getMode(),
                 convertModel(),
-                resolveBasedir(),
+                basedir,
                 outputDirectory.toPath(),
                 dryrun);
         } catch (JReleaserException e) {

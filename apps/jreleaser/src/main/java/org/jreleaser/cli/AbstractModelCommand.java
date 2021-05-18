@@ -57,6 +57,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         resolveBasedir();
         initLogger();
         logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
+        JReleaserVersion.banner(logger.getTracer(), false);
         logger.info("Configuring with {}", actualConfigFile);
         logger.increaseIndent();
         logger.info("- basedir set to {}", actualBasedir.toAbsolutePath());

@@ -197,6 +197,7 @@ public class ModelAutoConfigurer {
         requireNonNull(outputDirectory, "Argument 'outputDirectory' ust not be null");
 
         logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
+        JReleaserVersion.banner(logger.getTracer(), false);
         logger.info("Auto configure is ON");
         logger.increaseIndent();
         logger.info("- basedir set to {}", basedir.toAbsolutePath());

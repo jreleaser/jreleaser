@@ -28,6 +28,8 @@ import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.JReleaserContext
 import org.jreleaser.model.JReleaserModel
+import org.jreleaser.model.JReleaserVersion
+import org.jreleaser.util.JReleaserLogger
 
 import javax.inject.Inject
 import java.nio.file.Files
@@ -66,8 +68,16 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         PrintWriter tracer = new PrintWriter(new FileOutputStream(outputDirectoryPath
             .resolve('trace.log').toFile()))
 
+        JReleaserLogger logger = new JReleaserLoggerAdapter(project, tracer)
+
+        logger.info('JReleaser {}', JReleaserVersion.getPlainVersion())
+        JReleaserVersion.banner(logger.getTracer(), false)
+        logger.increaseIndent()
+        logger.info('- basedir set to {}', project.projectDir.toPath().toAbsolutePath())
+        logger.decreaseIndent()
+
         return ContextCreator.create(
-            new JReleaserLoggerAdapter(project, tracer),
+            logger,
             mode,
             model.get(),
             project.projectDir.toPath(),

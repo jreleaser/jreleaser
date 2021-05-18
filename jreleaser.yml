@@ -62,9 +62,7 @@ release:
             - 'dependencies'
       replacers:
         - search: '\[chore\] '
-          replace: ''
         - search: '\[deps\] '
-          replace: ''
 
 signing:
   active: always
