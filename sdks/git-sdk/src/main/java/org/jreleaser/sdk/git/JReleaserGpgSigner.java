@@ -67,26 +67,30 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
     }
 
     private final JReleaserContext context;
+    private final boolean enabled;
 
-    public JReleaserGpgSigner(JReleaserContext context) {
+    public JReleaserGpgSigner(JReleaserContext context, boolean enabled) {
         this.context = context;
+        this.enabled = enabled;
     }
 
     @Override
     public boolean canLocateSigningKey(String gpgSigningKey, PersonIdent committer, CredentialsProvider credentialsProvider, GpgConfig config)
         throws CanceledException, UnsupportedSigningFormatException {
-        return context.getModel().getSigning().isEnabled();
+        return enabled;
     }
 
     @Override
     public boolean canLocateSigningKey(String gpgSigningKey, PersonIdent committer, CredentialsProvider credentialsProvider)
         throws CanceledException {
-        return context.getModel().getSigning().isEnabled();
+        return enabled;
     }
 
     @Override
     public void sign(CommitBuilder commit, String gpgSigningKey, PersonIdent committer, CredentialsProvider credentialsProvider)
         throws CanceledException {
+        if (!enabled) return;
+
         try {
             signObject(commit, gpgSigningKey, committer, credentialsProvider, null);
         } catch (UnsupportedSigningFormatException ignored) {
@@ -97,6 +101,8 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
     @Override
     public void signObject(ObjectBuilder object, String gpgSigningKey, PersonIdent committer, CredentialsProvider credentialsProvider, GpgConfig config)
         throws CanceledException, UnsupportedSigningFormatException {
+        if (!enabled) return;
+
         try {
             Keyring keyring = context.createKeyring();
             PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);

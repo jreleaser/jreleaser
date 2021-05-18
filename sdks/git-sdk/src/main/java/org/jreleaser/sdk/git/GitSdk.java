@@ -130,15 +130,19 @@ public class GitSdk {
         }
     }
 
-    public void tag(String tagName) throws IOException {
-        tag(tagName, false);
+    public void tag(String tagName, JReleaserContext context) throws IOException {
+        tag(tagName, false, context);
     }
 
-    public void tag(String tagName, boolean force) throws IOException {
+    public void tag(String tagName, boolean force, JReleaserContext context) throws IOException {
         Git git = open();
 
         try {
+            boolean signEnabled = context.getModel().getRelease().getGitService().isSign();
             git.tag()
+                .setSigned(signEnabled)
+                .setSigningKey("**********")
+                .setGpgSigner(new JReleaserGpgSigner(context, signEnabled))
                 .setName(tagName)
                 .setForceUpdate(force)
                 .call();

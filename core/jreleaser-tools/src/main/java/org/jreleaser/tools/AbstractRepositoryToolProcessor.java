@@ -90,7 +90,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 commitCommand = commitCommand
                     .setSign(true)
                     .setSigningKey("**********")
-                    .setGpgSigner(new JReleaserGpgSigner(context));
+                    .setGpgSigner(new JReleaserGpgSigner(context, true));
             }
 
             commitCommand.call();

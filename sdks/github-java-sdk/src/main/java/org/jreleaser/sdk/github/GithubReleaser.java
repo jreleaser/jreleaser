@@ -137,7 +137,7 @@ public class GithubReleaser implements Releaser {
         // local tag
         if (deleteTags || !github.isSkipTag()) {
             context.getLogger().debug("tagging local repository with {}", tagName);
-            GitSdk.of(context).tag(tagName, true);
+            GitSdk.of(context).tag(tagName, true, context);
         }
 
         // remote tag/release

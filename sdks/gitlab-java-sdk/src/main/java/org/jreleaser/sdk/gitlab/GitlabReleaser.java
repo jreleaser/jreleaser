@@ -149,7 +149,7 @@ public class GitlabReleaser implements Releaser {
         // local tag
         if (deleteTags || !gitlab.isSkipTag()) {
             context.getLogger().debug("tagging local repository with {}", tagName);
-            GitSdk.of(context).tag(tagName, true);
+            GitSdk.of(context).tag(tagName, true, context);
         }
 
         List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), assets);
