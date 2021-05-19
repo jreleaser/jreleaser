@@ -21,6 +21,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
+import org.jreleaser.model.Environment;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
 
@@ -41,8 +42,16 @@ public final class JReleaserModelConfigurer {
         // noop
     }
 
-    public static void configure(JReleaserModel model, MavenProject mavenProject, MavenSession session) {
+    public static JReleaserModel configure(JReleaserModel model, MavenProject mavenProject, MavenSession session) {
+        Properties properties = new Properties();
+        properties.putAll(System.getProperties());
+        properties.putAll(mavenProject.getModel().getProperties());
+        Environment.VariablesSource variablesSource = new Environment.PropertiesVariablesSource(properties);
+
+        model.getEnvironment().setVariablesSource(variablesSource);
         configureProject(model.getProject(), mavenProject, session);
+
+        return model;
     }
 
     private static void configureProject(Project project, MavenProject mavenProject, MavenSession session) {

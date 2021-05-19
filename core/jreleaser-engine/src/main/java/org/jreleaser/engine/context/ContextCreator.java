@@ -68,7 +68,7 @@ public class ContextCreator {
         return context;
     }
 
-    private static JReleaserModel resolveModel(JReleaserLogger logger, Path configFile) {
+    public static JReleaserModel resolveModel(JReleaserLogger logger, Path configFile) {
         try {
             logger.info("Reading configuration");
             return JReleaserConfigLoader.loadConfig(configFile);

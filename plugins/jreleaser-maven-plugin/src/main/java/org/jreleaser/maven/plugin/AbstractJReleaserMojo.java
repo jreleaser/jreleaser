@@ -26,7 +26,6 @@ import org.jreleaser.engine.context.ContextCreator;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
-import org.jreleaser.model.Environment;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
@@ -39,7 +38,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Properties;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -59,6 +57,9 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
 
     @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}/jreleaser")
     protected File outputDirectory;
+
+    @Parameter(property = "jreleaser.config.file")
+    protected File configFile;
 
     /**
      * Skips remote operations.
@@ -87,13 +88,13 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     protected JReleaserModel convertModel() {
-        Properties properties = new Properties();
-        properties.putAll(System.getProperties());
-        properties.putAll(project.getModel().getProperties());
-        Environment.VariablesSource variablesSource = new Environment.PropertiesVariablesSource(properties);
-        JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser != null ? jreleaser : new Jreleaser(), variablesSource);
-        JReleaserModelConfigurer.configure(jreleaserModel, project, session);
-        return jreleaserModel;
+        JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser != null ? jreleaser : new Jreleaser());
+        return JReleaserModelConfigurer.configure(jreleaserModel, project, session);
+    }
+
+    protected JReleaserModel readModel(JReleaserLogger logger) {
+        JReleaserModel jreleaserModel = ContextCreator.resolveModel(logger, configFile.toPath());
+        return JReleaserModelConfigurer.configure(jreleaserModel, project, session);
     }
 
     protected JReleaserContext createContext() throws MojoExecutionException {
@@ -103,6 +104,9 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
 
             logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
             JReleaserVersion.banner(logger.getTracer(), false);
+            if (null != configFile) {
+                logger.info("Configuring with {}", configFile.getAbsolutePath());
+            }
             logger.increaseIndent();
             logger.info("- basedir set to {}", basedir.toAbsolutePath());
             logger.decreaseIndent();
@@ -110,7 +114,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
             return ContextCreator.create(
                 logger,
                 getMode(),
-                convertModel(),
+                null == configFile ? convertModel() : readModel(logger),
                 basedir,
                 outputDirectory.toPath(),
                 dryrun);

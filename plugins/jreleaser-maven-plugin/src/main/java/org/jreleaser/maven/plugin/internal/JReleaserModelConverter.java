@@ -92,9 +92,9 @@ public final class JReleaserModelConverter {
         // noop
     }
 
-    public static JReleaserModel convert(Jreleaser jreleaser, org.jreleaser.model.Environment.VariablesSource variablesSource) {
+    public static JReleaserModel convert(Jreleaser jreleaser) {
         JReleaserModel jreleaserModel = new JReleaserModel();
-        jreleaserModel.setEnvironment(convertEnvironment(jreleaser.getEnvironment(), variablesSource));
+        jreleaserModel.setEnvironment(convertEnvironment(jreleaser.getEnvironment()));
         jreleaserModel.setProject(convertProject(jreleaser.getProject()));
         jreleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
         jreleaserModel.setUpload(convertUpload(jreleaser.getUpload()));
@@ -108,9 +108,8 @@ public final class JReleaserModelConverter {
         return jreleaserModel;
     }
 
-    private static org.jreleaser.model.Environment convertEnvironment(Environment environment, org.jreleaser.model.Environment.VariablesSource variablesSource) {
+    private static org.jreleaser.model.Environment convertEnvironment(Environment environment) {
         org.jreleaser.model.Environment e = new org.jreleaser.model.Environment();
-        e.setVariablesSource(variablesSource);
         e.setVariables(environment.getVariables());
         e.setProperties(environment.getProperties());
         return e;
