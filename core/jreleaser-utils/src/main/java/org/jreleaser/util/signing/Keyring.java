@@ -17,6 +17,11 @@
  */
 package org.jreleaser.util.signing;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Iterator;
+import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
@@ -26,11 +31,6 @@ import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.operator.KeyFingerPrintCalculator;
 import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.Iterator;
 
 /**
  * Adapted from {@code name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.InMemoryKeyring}
@@ -109,12 +109,33 @@ public abstract class Keyring {
             Iterator<PGPPublicKey> keyIter = keyRing.getPublicKeys();
             while (keyIter.hasNext()) {
                 PGPPublicKey key = keyIter.next();
-                if (key.isEncryptionKey()) {
+                if (isSigningKey(key)) {
                     return key;
                 }
             }
         }
 
         throw new SigningException("Did not find public key for signing.");
+    }
+
+    /**
+     * Returns {@code true} if the given key can be used for signing.
+     *
+     * <p>There is no Method key.isSigningKey(), and encryption does not always mean signing.
+     * The algorithms here need to be kept in sync with {@code org.bouncycastle.openpgp.operator.jcajce.OperatorHelper#createSignature}.
+     *
+     * @param key they key to check if it is usable for signing.
+     * @return {@code true} if the given key can be used for signing.
+     */
+    private static boolean isSigningKey(PGPPublicKey key) {
+        final int algorithm = key.getAlgorithm();
+
+        return algorithm == PublicKeyAlgorithmTags.EDDSA ||
+            algorithm == PublicKeyAlgorithmTags.ECDSA ||
+            algorithm == PublicKeyAlgorithmTags.ELGAMAL_GENERAL ||
+            algorithm == PublicKeyAlgorithmTags.ELGAMAL_ENCRYPT ||
+            algorithm == PublicKeyAlgorithmTags.RSA_SIGN ||
+            algorithm == PublicKeyAlgorithmTags.RSA_GENERAL ||
+            algorithm == PublicKeyAlgorithmTags.DSA;
     }
 }
