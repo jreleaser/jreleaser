@@ -25,15 +25,12 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.jreleaser.engine.context.ContextCreator
-import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.JReleaserContext
 import org.jreleaser.model.JReleaserModel
 import org.jreleaser.model.JReleaserVersion
 import org.jreleaser.util.JReleaserLogger
 
 import javax.inject.Inject
-import java.nio.file.Files
-import java.nio.file.Path
 
 /**
  *
@@ -52,23 +49,22 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     final Property<JReleaserModel> model
 
     @Internal
+    final Property<JReleaserLogger> jlogger
+
+    @Internal
     JReleaserContext.Mode mode
 
     @Inject
     AbstractJReleaserTask(ObjectFactory objects) {
         model = objects.property(JReleaserModel)
+        jlogger = objects.property(JReleaserLogger)
         mode = JReleaserContext.Mode.FULL
         dryrun = objects.property(Boolean).convention(false)
         outputDirectory = objects.directoryProperty()
     }
 
     protected JReleaserContext createContext() {
-        Path outputDirectoryPath = outputDirectory.get().asFile.toPath()
-        Files.createDirectories(outputDirectoryPath)
-        PrintWriter tracer = new PrintWriter(new FileOutputStream(outputDirectoryPath
-            .resolve('trace.log').toFile()))
-
-        JReleaserLogger logger = new JReleaserLoggerAdapter(project, tracer)
+        JReleaserLogger logger = jlogger.get()
 
         logger.info('JReleaser {}', JReleaserVersion.getPlainVersion())
         JReleaserVersion.banner(logger.getTracer(), false)
@@ -81,7 +77,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             mode,
             model.get(),
             project.projectDir.toPath(),
-            outputDirectoryPath,
+            outputDirectory.get().asFile.toPath(),
             dryrun.get())
     }
 }

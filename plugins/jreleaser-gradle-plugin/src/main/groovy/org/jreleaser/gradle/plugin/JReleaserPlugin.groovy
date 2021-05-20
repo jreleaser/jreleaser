@@ -41,7 +41,7 @@ class JReleaserPlugin implements Plugin<Project> {
         Provider<String> descriptionProvider = project.provider({ -> project.description })
         Provider<String> versionProvider = project.provider({ -> String.valueOf(project.version) })
         project.extensions.create(JReleaserExtension, 'jreleaser', JReleaserExtensionImpl,
-            project.objects, nameProvider, descriptionProvider, versionProvider)
+            project.objects, project.layout, nameProvider, descriptionProvider, versionProvider)
 
         project.afterEvaluate(new Action<Project>() {
             @Override

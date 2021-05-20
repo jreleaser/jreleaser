@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Assemble
@@ -40,6 +41,10 @@ import org.jreleaser.gradle.plugin.dsl.Upload
  */
 @CompileStatic
 interface JReleaserExtension {
+    RegularFileProperty getConfigFile()
+
+    void setConfigFile(String path)
+
     Property<Boolean> getEnabled()
 
     Property<Boolean> getDryrun()

@@ -22,9 +22,12 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
+import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Assemble
@@ -49,10 +52,13 @@ import org.jreleaser.gradle.plugin.internal.dsl.SigningImpl
 import org.jreleaser.gradle.plugin.internal.dsl.UploadImpl
 import org.jreleaser.model.Distribution
 import org.jreleaser.model.JReleaserModel
+import org.jreleaser.util.JReleaserLogger
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 import java.util.stream.Collectors
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -61,6 +67,7 @@ import java.util.stream.Collectors
  */
 @CompileStatic
 class JReleaserExtensionImpl implements JReleaserExtension {
+    final RegularFileProperty configFile
     final Property<Boolean> enabled
     final Property<Boolean> dryrun
     final EnvironmentImpl environment
@@ -75,11 +82,16 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final FilesImpl files
     final NamedDomainObjectContainer<DistributionImpl> distributions
 
+    private final ProjectLayout layout
+
     @Inject
     JReleaserExtensionImpl(ObjectFactory objects,
+                           ProjectLayout layout,
                            Provider<String> nameProvider,
                            Provider<String> descriptionProvider,
                            Provider<String> versionProvider) {
+        this.layout = layout
+        configFile = objects.fileProperty()
         enabled = objects.property(Boolean).convention(true)
         dryrun = objects.property(Boolean).convention(false)
         environment = objects.newInstance(EnvironmentImpl, objects)
@@ -101,6 +113,12 @@ class JReleaserExtensionImpl implements JReleaserExtension {
                 return distribution
             }
         })
+    }
+
+    void setConfigFile(String path) {
+        if (isNotBlank(path)) {
+            this.configFile.set(layout.projectDirectory.file(path.trim()))
+        }
     }
 
     @Override
@@ -204,7 +222,13 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @CompileDynamic
-    JReleaserModel toModel(org.gradle.api.Project gradleProject) {
+    JReleaserModel toModel(org.gradle.api.Project gradleProject, JReleaserLogger logger) {
+        if (configFile.present) {
+            JReleaserModel jreleaser = ContextCreator.resolveModel(logger, configFile.asFile.get().toPath())
+            jreleaser.environment.variablesSource = new org.jreleaser.model.Environment.MapVariablesSource(project.properties)
+            return jreleaser
+        }
+
         JReleaserModel jreleaser = new JReleaserModel()
         jreleaser.environment = environment.toModel(gradleProject)
         jreleaser.project = project.toModel()

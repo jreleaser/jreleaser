@@ -24,12 +24,12 @@ import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Tar
 import org.gradle.api.tasks.bundling.Zip
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
+import org.jreleaser.gradle.plugin.tasks.JReleaseAutoConfigReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserAssembleTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChangelogTask
@@ -38,13 +38,16 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserFullReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPackageTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask
-import org.jreleaser.gradle.plugin.tasks.JReleaseAutoConfigReleaseTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserPublishTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
-import org.jreleaser.gradle.plugin.tasks.JReleaserPublishTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
 import org.jreleaser.model.JReleaserModel
+import org.jreleaser.util.JReleaserLogger
+
+import java.nio.file.Files
+import java.nio.file.Path
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
 
@@ -62,34 +65,13 @@ class JReleaserProjectConfigurer {
 
         boolean hasDistributionPlugin = configureDefaultDistribution(project, extension)
 
-        String javaVersion = ''
-        if (project.hasProperty('targetCompatibility')) {
-            javaVersion = String.valueOf(project.findProperty('targetCompatibility'))
-        }
-        if (project.hasProperty('compilerRelease')) {
-            javaVersion = String.valueOf(project.findProperty('compilerRelease'))
-        }
-        if (isBlank(javaVersion)) {
-            javaVersion = JavaVersion.current().toString()
-        }
-
-        JReleaserModel model = extension.toModel(project)
-        if (isBlank(model.project.java.version)) model.project.java.version = javaVersion
-        if (isBlank(model.project.java.artifactId)) model.project.java.artifactId = project.name
-        if (isBlank(model.project.java.groupId)) model.project.java.groupId = project.group.toString()
-        if (!model.project.java.multiProjectSet) {
-            model.project.java.multiProject = project.rootProject.childProjects.size() > 0
-        }
-
-        if (isBlank(model.project.java.mainClass)) {
-            JavaApplication application = (JavaApplication) project.extensions.findByType(JavaApplication)
-            if (application) {
-                model.project.java.mainClass = application.mainClass.orNull
-            }
-        }
-
         Provider<Directory> outputDirectory = project.layout.buildDirectory
             .dir('jreleaser')
+
+        JReleaserLogger logger = createLogger(project, outputDirectory)
+
+        JReleaserModel model = extension.toModel(project, logger)
+        configureModel(project, model)
 
         project.tasks.register('jreleaserConfig', JReleaserConfigTask,
             new Action<JReleaserConfigTask>() {
@@ -99,6 +81,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Outputs current JReleaser configuration'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                 }
             })
@@ -109,6 +92,8 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserTemplateTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Generates templates for a specific tool/announcer'
+                    t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(project.layout
                         .projectDirectory
                         .dir('src/jreleaser'))
@@ -123,6 +108,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Assemble all distributions'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -138,6 +124,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Calculate changelogs'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                 }
             })
@@ -150,6 +137,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Calculate checksums'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -165,6 +153,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Signs a release'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -180,6 +169,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Uploads all artifacts'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -195,6 +185,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Creates or updates a release'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -213,7 +204,7 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        TaskProvider<JReleaserPrepareTask> prepareTask = project.tasks.register('jreleaserPrepare', JReleaserPrepareTask,
+        project.tasks.register('jreleaserPrepare', JReleaserPrepareTask,
             new Action<JReleaserPrepareTask>() {
                 @Override
                 void execute(JReleaserPrepareTask t) {
@@ -221,6 +212,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Prepares all distributions'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -228,7 +220,7 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        TaskProvider<JReleaserPackageTask> packageTask = project.tasks.register('jreleaserPackage', JReleaserPackageTask,
+        project.tasks.register('jreleaserPackage', JReleaserPackageTask,
             new Action<JReleaserPackageTask>() {
                 @Override
                 void execute(JReleaserPackageTask t) {
@@ -236,6 +228,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Packages all distributions'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -251,6 +244,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Publishes all distributions'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -266,6 +260,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Announces a release'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                 }
             })
@@ -278,6 +273,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Invokes JReleaser on all distributions'
                     t.dryrun.set(extension.dryrun.get())
                     t.model.set(model)
+                    t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -322,5 +318,41 @@ class JReleaserProjectConfigurer {
         }
 
         return hasDistributionPlugin
+    }
+
+    private static JReleaserLogger createLogger(Project project, Provider<Directory> outputDirectory) {
+        Path outputDirectoryPath = outputDirectory.get().asFile.toPath()
+        Files.createDirectories(outputDirectoryPath)
+        PrintWriter tracer = new PrintWriter(new FileOutputStream(outputDirectoryPath
+            .resolve('trace.log').toFile()))
+
+        new JReleaserLoggerAdapter(project, tracer)
+    }
+
+    private static void configureModel(Project project, JReleaserModel model) {
+        String javaVersion = ''
+        if (project.hasProperty('targetCompatibility')) {
+            javaVersion = String.valueOf(project.findProperty('targetCompatibility'))
+        }
+        if (project.hasProperty('compilerRelease')) {
+            javaVersion = String.valueOf(project.findProperty('compilerRelease'))
+        }
+        if (isBlank(javaVersion)) {
+            javaVersion = JavaVersion.current().toString()
+        }
+
+        if (isBlank(model.project.java.version)) model.project.java.version = javaVersion
+        if (isBlank(model.project.java.artifactId)) model.project.java.artifactId = project.name
+        if (isBlank(model.project.java.groupId)) model.project.java.groupId = project.group.toString()
+        if (!model.project.java.multiProjectSet) {
+            model.project.java.multiProject = project.rootProject.childProjects.size() > 0
+        }
+
+        if (isBlank(model.project.java.mainClass)) {
+            JavaApplication application = (JavaApplication) project.extensions.findByType(JavaApplication)
+            if (application) {
+                model.project.java.mainClass = application.mainClass.orNull
+            }
+        }
     }
 }
