@@ -22,6 +22,9 @@ package org.jreleaser.util;
  * @since 0.1.0
  */
 public interface Constants {
+    String UNSET = "**unset**";
+    String HIDE = "************";
+
     // General
     String KEY_TIMESTAMP = "timestamp";
     String KEY_COMMIT_SHORT_HASH = "commitShortHash";

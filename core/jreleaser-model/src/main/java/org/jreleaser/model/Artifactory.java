@@ -21,6 +21,8 @@ import org.jreleaser.util.Env;
 
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -106,8 +108,8 @@ public class Artifactory extends AbstractUploader {
     @Override
     protected void asMap(Map<String, Object> props, boolean full) {
         props.put("target", target);
-        props.put("username", isNotBlank(getResolvedUsername()) ? "************" : "**unset**");
-        props.put("password", isNotBlank(getResolvedPassword()) ? "************" : "**unset**");
-        props.put("token", isNotBlank(getResolvedToken()) ? "************" : "**unset**");
+        props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
+        props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
+        props.put("token", isNotBlank(getResolvedToken()) ? HIDE : UNSET);
     }
 }

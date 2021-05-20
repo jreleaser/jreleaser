@@ -22,6 +22,8 @@ import org.jreleaser.util.Env;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -119,7 +121,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
         map.put("owner", owner);
         map.put("name", getResolvedName());
         map.put("username", username);
-        map.put("token", isNotBlank(token) ? "************" : "**unset**");
+        map.put("token", isNotBlank(token) ? HIDE : UNSET);
         return map;
     }
 }

@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -160,9 +162,9 @@ public class Signing implements Domain, Activatable {
         map.put("active", active);
         map.put("armored", isArmored());
         map.put("mode", mode);
-        map.put("publicKey", isNotBlank(publicKey) ? "************" : "**unset**");
-        map.put("secretKey", isNotBlank(secretKey) ? "************" : "**unset**");
-        map.put("passphrase", isNotBlank(passphrase) ? "************" : "**unset**");
+        map.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
+        map.put("secretKey", isNotBlank(secretKey) ? HIDE : UNSET);
+        map.put("passphrase", isNotBlank(passphrase) ? HIDE : UNSET);
 
         return map;
     }

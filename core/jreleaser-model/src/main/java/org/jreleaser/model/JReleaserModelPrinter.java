@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -199,7 +201,9 @@ public abstract class JReleaserModelPrinter {
             return cyan(String.valueOf(value));
         } else if (value != null) {
             String s = String.valueOf(value);
-            s = secret ? multiply("*", 12) : s;
+            if (secret && !UNSET.equals(s)) {
+                s = HIDE;
+            }
 
             String r = parseAsBoolean(s);
             if (r != null) return r;

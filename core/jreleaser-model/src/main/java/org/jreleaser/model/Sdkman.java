@@ -21,6 +21,8 @@ import org.jreleaser.util.Env;
 
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -96,8 +98,8 @@ public class Sdkman extends AbstractAnnouncer {
 
     @Override
     protected void asMap(Map<String, Object> props) {
-        props.put("consumerKey", isNotBlank(getResolvedConsumerKey()) ? "************" : "**unset**");
-        props.put("consumerToken", isNotBlank(getResolvedConsumerToken()) ? "************" : "**unset**");
+        props.put("consumerKey", isNotBlank(getResolvedConsumerKey()) ? HIDE : UNSET);
+        props.put("consumerToken", isNotBlank(getResolvedConsumerToken()) ? HIDE : UNSET);
         props.put("candidate", candidate);
         props.put("major", major);
     }

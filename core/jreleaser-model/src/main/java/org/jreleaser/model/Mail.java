@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 
 import java.io.IOException;
@@ -26,6 +25,9 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.KEY_TAG_NAME;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -79,19 +81,19 @@ public class Mail extends AbstractAnnouncer {
 
     public String getResolvedSubject(JReleaserContext context) {
         Map<String, Object> props = context.props();
-        props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
+        props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
         return applyTemplate(subject, props);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
         Map<String, Object> props = context.props();
-        props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
+        props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
         return applyTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
         Map<String, Object> props = context.props();
-        props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService()
+        props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);
 
@@ -252,7 +254,7 @@ public class Mail extends AbstractAnnouncer {
         props.put("port", port);
         props.put("auth", isAuth());
         props.put("username", username);
-        props.put("password", isNotBlank(getResolvedPassword()) ? "************" : "**unset**");
+        props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
         props.put("from", from);
         props.put("to", to);
         props.put("cc", cc);

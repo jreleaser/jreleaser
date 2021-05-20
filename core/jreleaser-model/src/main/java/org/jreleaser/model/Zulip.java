@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 
 import java.io.IOException;
@@ -25,6 +24,9 @@ import java.io.Reader;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.KEY_TAG_NAME;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -71,7 +73,7 @@ public class Zulip extends AbstractAnnouncer {
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
         Map<String, Object> props = context.props();
-        props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService()
+        props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);
 
@@ -148,7 +150,7 @@ public class Zulip extends AbstractAnnouncer {
     @Override
     protected void asMap(Map<String, Object> props) {
         props.put("account", account);
-        props.put("apiKey", isNotBlank(getResolvedApiKey()) ? "************" : "**unset**");
+        props.put("apiKey", isNotBlank(getResolvedApiKey()) ? HIDE : UNSET);
         props.put("apiHost", apiHost);
         props.put("channel", channel);
         props.put("subject", subject);

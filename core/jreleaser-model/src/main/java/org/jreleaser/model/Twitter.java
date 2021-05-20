@@ -21,6 +21,8 @@ import org.jreleaser.util.Env;
 
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -118,10 +120,10 @@ public class Twitter extends AbstractAnnouncer {
 
     @Override
     protected void asMap(Map<String, Object> props) {
-        props.put("consumerKey", isNotBlank(getResolvedConsumerKey()) ? "************" : "**unset**");
-        props.put("consumerSecret", isNotBlank(getResolvedConsumerSecret()) ? "************" : "**unset**");
-        props.put("accessToken", isNotBlank(getResolvedAccessToken()) ? "************" : "**unset**");
-        props.put("accessTokenSecret", isNotBlank(getResolvedAccessTokenSecret()) ? "************" : "**unset**");
+        props.put("consumerKey", isNotBlank(getResolvedConsumerKey()) ? HIDE : UNSET);
+        props.put("consumerSecret", isNotBlank(getResolvedConsumerSecret()) ? HIDE : UNSET);
+        props.put("accessToken", isNotBlank(getResolvedAccessToken()) ? HIDE : UNSET);
+        props.put("accessTokenSecret", isNotBlank(getResolvedAccessTokenSecret()) ? HIDE : UNSET);
         props.put("status", status);
     }
 }

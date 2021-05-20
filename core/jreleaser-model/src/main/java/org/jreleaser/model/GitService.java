@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.OsDetector;
@@ -27,6 +26,44 @@ import org.jreleaser.util.Version;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.KEY_CANONICAL_REPO_NAME;
+import static org.jreleaser.util.Constants.KEY_COMMIT_URL;
+import static org.jreleaser.util.Constants.KEY_ISSUE_TRACKER_URL;
+import static org.jreleaser.util.Constants.KEY_LATEST_RELEASE_URL;
+import static org.jreleaser.util.Constants.KEY_MILESTONE_NAME;
+import static org.jreleaser.util.Constants.KEY_OS_ARCH;
+import static org.jreleaser.util.Constants.KEY_OS_NAME;
+import static org.jreleaser.util.Constants.KEY_OS_PLATFORM;
+import static org.jreleaser.util.Constants.KEY_OS_VERSION;
+import static org.jreleaser.util.Constants.KEY_PROJECT_DESCRIPTION;
+import static org.jreleaser.util.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
+import static org.jreleaser.util.Constants.KEY_PROJECT_JAVA_ARTIFACT_ID;
+import static org.jreleaser.util.Constants.KEY_PROJECT_JAVA_GROUP_ID;
+import static org.jreleaser.util.Constants.KEY_PROJECT_JAVA_MAIN_CLASS;
+import static org.jreleaser.util.Constants.KEY_PROJECT_JAVA_VERSION;
+import static org.jreleaser.util.Constants.KEY_PROJECT_JAVA_VERSION_BUILD;
+import static org.jreleaser.util.Constants.KEY_PROJECT_JAVA_VERSION_MAJOR;
+import static org.jreleaser.util.Constants.KEY_PROJECT_JAVA_VERSION_MINOR;
+import static org.jreleaser.util.Constants.KEY_PROJECT_JAVA_VERSION_PATCH;
+import static org.jreleaser.util.Constants.KEY_PROJECT_JAVA_VERSION_TAG;
+import static org.jreleaser.util.Constants.KEY_PROJECT_LICENSE;
+import static org.jreleaser.util.Constants.KEY_PROJECT_LONG_DESCRIPTION;
+import static org.jreleaser.util.Constants.KEY_PROJECT_NAME;
+import static org.jreleaser.util.Constants.KEY_PROJECT_NAME_CAPITALIZED;
+import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
+import static org.jreleaser.util.Constants.KEY_PROJECT_WEBSITE;
+import static org.jreleaser.util.Constants.KEY_RELEASE_NAME;
+import static org.jreleaser.util.Constants.KEY_RELEASE_NOTES_URL;
+import static org.jreleaser.util.Constants.KEY_REPO_BRANCH;
+import static org.jreleaser.util.Constants.KEY_REPO_CLONE_URL;
+import static org.jreleaser.util.Constants.KEY_REPO_HOST;
+import static org.jreleaser.util.Constants.KEY_REPO_NAME;
+import static org.jreleaser.util.Constants.KEY_REPO_OWNER;
+import static org.jreleaser.util.Constants.KEY_REPO_URL;
+import static org.jreleaser.util.Constants.KEY_REVERSE_REPO_HOST;
+import static org.jreleaser.util.Constants.KEY_TAG_NAME;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -177,15 +214,15 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
 
     public String getResolvedRepoUrl(JReleaserModel model, String repoOwner, String repoName) {
         Map<String, Object> props = props(model);
-        props.put(Constants.KEY_REPO_OWNER, repoOwner);
-        props.put(Constants.KEY_REPO_NAME, repoName);
+        props.put(KEY_REPO_OWNER, repoOwner);
+        props.put(KEY_REPO_NAME, repoName);
         return applyTemplate(repoUrlFormat, props);
     }
 
     public String getResolvedRepoCloneUrl(JReleaserModel model, String repoOwner, String repoName) {
         Map<String, Object> props = props(model);
-        props.put(Constants.KEY_REPO_OWNER, repoOwner);
-        props.put(Constants.KEY_REPO_NAME, repoName);
+        props.put(KEY_REPO_OWNER, repoOwner);
+        props.put(KEY_REPO_NAME, repoName);
         return applyTemplate(repoCloneUrlFormat, props);
     }
 
@@ -456,7 +493,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         map.put("owner", owner);
         map.put("name", name);
         map.put("username", username);
-        map.put("token", isNotBlank(getResolvedToken()) ? "************" : "**unset**");
+        map.put("token", isNotBlank(getResolvedToken()) ? HIDE : UNSET);
         map.put("repoUrlFormat", repoUrlFormat);
         map.put("repoCloneUrlFormat", repoCloneUrlFormat);
         map.put("commitUrlFormat", commitUrlFormat);
@@ -485,73 +522,73 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         Map<String, Object> props = new LinkedHashMap<>();
         Project project = model.getProject();
         props.putAll(model.getEnvironment().getProperties());
-        props.put(Constants.KEY_PROJECT_NAME, project.getName());
-        props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
-        props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
-        props.put(Constants.KEY_PROJECT_EFFECTIVE_VERSION, project.getEffectiveVersion());
+        props.put(KEY_PROJECT_NAME, project.getName());
+        props.put(KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
+        props.put(KEY_PROJECT_VERSION, project.getVersion());
+        props.put(KEY_PROJECT_EFFECTIVE_VERSION, project.getEffectiveVersion());
         if (isNotBlank(project.getDescription())) {
-            props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
+            props.put(KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
         }
         if (isNotBlank(project.getLongDescription())) {
-            props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
+            props.put(KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
         }
         if (isNotBlank(project.getWebsite())) {
-            props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
+            props.put(KEY_PROJECT_WEBSITE, project.getWebsite());
         }
         if (isNotBlank(project.getLicense())) {
-            props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+            props.put(KEY_PROJECT_LICENSE, project.getLicense());
         }
 
         if (project.getJava().isEnabled()) {
             props.putAll(project.getJava().getResolvedExtraProperties());
-            props.put(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
-            props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
-            props.put(Constants.KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());
-            props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
+            props.put(KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
+            props.put(KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
+            props.put(KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());
+            props.put(KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
             Version jv = Version.of(project.getJava().getVersion());
-            props.put(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
-            if (jv.hasMinor()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
-            if (jv.hasPatch()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
-            if (jv.hasTag()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
-            if (jv.hasBuild()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
+            props.put(KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
+            if (jv.hasMinor()) props.put(KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
+            if (jv.hasPatch()) props.put(KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
+            if (jv.hasTag()) props.put(KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
+            if (jv.hasBuild()) props.put(KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
         }
 
         props.putAll(project.getResolvedExtraProperties());
 
         String osName = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_NAME);
         String osArch = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_ARCH);
-        props.put(Constants.KEY_OS_NAME, osName);
-        props.put(Constants.KEY_OS_ARCH, osArch);
-        props.put(Constants.KEY_OS_PLATFORM, osName + "-" + osArch);
-        props.put(Constants.KEY_OS_VERSION, PlatformUtils.getOsDetector().get(OsDetector.DETECTED_VERSION));
+        props.put(KEY_OS_NAME, osName);
+        props.put(KEY_OS_ARCH, osArch);
+        props.put(KEY_OS_PLATFORM, osName + "-" + osArch);
+        props.put(KEY_OS_VERSION, PlatformUtils.getOsDetector().get(OsDetector.DETECTED_VERSION));
 
-        props.put(Constants.KEY_REPO_HOST, host);
-        props.put(Constants.KEY_REPO_OWNER, owner);
-        props.put(Constants.KEY_REPO_NAME, name);
-        props.put(Constants.KEY_REPO_BRANCH, branch);
-        props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
-        props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, project.isSnapshot() ? TAG_EARLY_ACCESS : cachedTagName);
-        props.put(Constants.KEY_RELEASE_NAME, cachedReleaseName);
-        props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
+        props.put(KEY_REPO_HOST, host);
+        props.put(KEY_REPO_OWNER, owner);
+        props.put(KEY_REPO_NAME, name);
+        props.put(KEY_REPO_BRANCH, branch);
+        props.put(KEY_REVERSE_REPO_HOST, getReverseRepoHost());
+        props.put(KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
+        props.put(KEY_TAG_NAME, project.isSnapshot() ? TAG_EARLY_ACCESS : cachedTagName);
+        props.put(KEY_RELEASE_NAME, cachedReleaseName);
+        props.put(KEY_MILESTONE_NAME, milestone.getEffectiveName());
         return props;
     }
 
     public void fillProps(Map<String, Object> props, JReleaserModel model) {
-        props.put(Constants.KEY_REPO_HOST, host);
-        props.put(Constants.KEY_REPO_OWNER, owner);
-        props.put(Constants.KEY_REPO_NAME, name);
-        props.put(Constants.KEY_REPO_BRANCH, branch);
-        props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
-        props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, getEffectiveTagName(model));
-        props.put(Constants.KEY_RELEASE_NAME, getEffectiveReleaseName());
-        props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
-        props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(model));
-        props.put(Constants.KEY_REPO_CLONE_URL, getResolvedRepoCloneUrl(model));
-        props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(model));
-        props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(model));
-        props.put(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(model));
-        props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model));
+        props.put(KEY_REPO_HOST, host);
+        props.put(KEY_REPO_OWNER, owner);
+        props.put(KEY_REPO_NAME, name);
+        props.put(KEY_REPO_BRANCH, branch);
+        props.put(KEY_REVERSE_REPO_HOST, getReverseRepoHost());
+        props.put(KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
+        props.put(KEY_TAG_NAME, getEffectiveTagName(model));
+        props.put(KEY_RELEASE_NAME, getEffectiveReleaseName());
+        props.put(KEY_MILESTONE_NAME, milestone.getEffectiveName());
+        props.put(KEY_REPO_URL, getResolvedRepoUrl(model));
+        props.put(KEY_REPO_CLONE_URL, getResolvedRepoCloneUrl(model));
+        props.put(KEY_COMMIT_URL, getResolvedCommitUrl(model));
+        props.put(KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(model));
+        props.put(KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(model));
+        props.put(KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model));
     }
 }

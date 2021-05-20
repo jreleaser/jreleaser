@@ -21,6 +21,8 @@ import org.jreleaser.util.Env;
 
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -84,7 +86,7 @@ public class Mastodon extends AbstractAnnouncer {
     @Override
     protected void asMap(Map<String, Object> props) {
         props.put("host", host);
-        props.put("accessToken", isNotBlank(getResolvedAccessToken()) ? "************" : "**unset**");
+        props.put("accessToken", isNotBlank(getResolvedAccessToken()) ? HIDE : UNSET);
         props.put("status", status);
     }
 }

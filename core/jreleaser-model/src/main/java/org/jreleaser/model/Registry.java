@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -97,7 +99,7 @@ public class Registry implements Domain, Comparable<Registry> {
         map.put("serverName", serverName);
         map.put("repositoryName", repositoryName);
         map.put("username", username);
-        map.put("password", isNotBlank(password) ? "************" : "**unset**");
+        map.put("password", isNotBlank(password) ? HIDE : UNSET);
         return map;
     }
 
