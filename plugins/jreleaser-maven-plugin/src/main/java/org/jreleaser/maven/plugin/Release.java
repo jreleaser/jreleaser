@@ -26,12 +26,14 @@ public class Release {
     private Gitlab gitlab;
     private Gitea gitea;
     private Codeberg codeberg;
+    private GenericGit generic;
 
     void setAll(Release release) {
         this.github = release.github;
         this.gitlab = release.gitlab;
         this.gitea = release.gitea;
         this.codeberg = release.codeberg;
+        this.generic = release.generic;
     }
 
     public Github getGithub() {
@@ -66,10 +68,11 @@ public class Release {
         this.codeberg = codeberg;
     }
 
-    public GitService getGitService() {
-        if (null != github) return github;
-        if (null != gitlab) return gitlab;
-        if (null != gitea) return gitea;
-        return codeberg;
+    public GenericGit getGeneric() {
+        return generic;
+    }
+
+    public void setGeneric(GenericGit generic) {
+        this.generic = generic;
     }
 }

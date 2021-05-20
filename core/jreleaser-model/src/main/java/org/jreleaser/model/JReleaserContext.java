@@ -313,9 +313,12 @@ public class JReleaserContext {
         props.put(KEY_PROJECT_NAME, project.getName());
         props.put(KEY_PROJECT_VERSION, project.getVersion());
         props.put(KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
-        props.put(KEY_TAG_NAME, model.getRelease().getGitService().getEffectiveTagName(model));
-        props.put(KEY_RELEASE_NAME, model.getRelease().getGitService().getEffectiveReleaseName());
-        props.put(KEY_MILESTONE_NAME, model.getRelease().getGitService().getMilestone().getEffectiveName());
+        GitService gitService = model.getRelease().getGitService();
+        props.put(KEY_TAG_NAME, gitService.getEffectiveTagName(model));
+        if (gitService.isReleaseSupported()) {
+            props.put(KEY_RELEASE_NAME, gitService.getEffectiveReleaseName());
+            props.put(KEY_MILESTONE_NAME, gitService.getMilestone().getEffectiveName());
+        }
         props.put("javaVersion", System.getProperty("java.version"));
 
         Map<String, Object> resolvedExtraProperties = project.getResolvedExtraProperties();

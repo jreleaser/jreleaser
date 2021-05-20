@@ -25,7 +25,7 @@ public class Gitlab extends GitService {
     public static final String NAME = "gitlab";
 
     public Gitlab() {
-        super(NAME);
+        super(NAME, true);
         setHost("gitlab.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setRepoCloneUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}.git");

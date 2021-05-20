@@ -30,7 +30,7 @@ public class Github extends GitService {
     private Boolean prerelease;
 
     public Github() {
-        super(NAME);
+        super(NAME, true);
         setHost("github.com");
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setRepoCloneUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}.git");

@@ -37,6 +37,7 @@ import org.jreleaser.maven.plugin.DockerConfiguration;
 import org.jreleaser.maven.plugin.DockerSpec;
 import org.jreleaser.maven.plugin.Environment;
 import org.jreleaser.maven.plugin.Files;
+import org.jreleaser.maven.plugin.GenericGit;
 import org.jreleaser.maven.plugin.GitService;
 import org.jreleaser.maven.plugin.Gitea;
 import org.jreleaser.maven.plugin.Github;
@@ -148,6 +149,7 @@ public final class JReleaserModelConverter {
         r.setGitlab(convertGitlab(release.getGitlab()));
         r.setGitea(convertGitea(release.getGitea()));
         r.setCodeberg(convertCodeberg(release.getCodeberg()));
+        r.setGeneric(convertGeneric(release.getGeneric()));
         return r;
     }
 
@@ -182,6 +184,13 @@ public final class JReleaserModelConverter {
         convertGitService(codeberg, g);
         g.setDraft(codeberg.isDraft());
         if (codeberg.isPrereleaseSet()) g.setPrerelease(codeberg.isPrerelease());
+        return g;
+    }
+
+    private static org.jreleaser.model.GenericGit convertGeneric(GenericGit generic) {
+        if (null == generic) return null;
+        org.jreleaser.model.GenericGit g = new org.jreleaser.model.GenericGit();
+        convertGitService(generic, g);
         return g;
     }
 

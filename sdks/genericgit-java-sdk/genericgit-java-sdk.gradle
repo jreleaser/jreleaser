@@ -15,14 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
+dependencies {
+    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
+    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
-public interface Releaser extends Domain, EnabledAware {
-    boolean isReleaseSupported();
-
-    String getServiceName();
+    api project(':jreleaser-model')
+    api project(':git-sdk')
+    api project(':java-sdk-commons')
 }

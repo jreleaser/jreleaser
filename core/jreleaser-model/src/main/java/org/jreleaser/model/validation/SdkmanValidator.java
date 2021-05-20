@@ -31,6 +31,11 @@ import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
 public abstract class SdkmanValidator extends Validator {
     public static void validateSdkman(JReleaserContext context, Sdkman sdkman, Errors errors) {
         if (!sdkman.resolveEnabled(context.getModel().getProject())) return;
+        if (!context.getModel().getRelease().getGitService().isReleaseSupported()) {
+            sdkman.disable();
+            return;
+        }
+
         context.getLogger().debug("announce.sdkman");
 
         sdkman.setConsumerKey(

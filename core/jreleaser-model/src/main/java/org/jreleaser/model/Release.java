@@ -29,12 +29,14 @@ public class Release implements Domain {
     private Gitlab gitlab;
     private Gitea gitea;
     private Codeberg codeberg;
+    private GenericGit generic;
 
     void setAll(Release release) {
         this.github = release.github;
         this.gitlab = release.gitlab;
         this.gitea = release.gitea;
         this.codeberg = release.codeberg;
+        this.generic = release.generic;
     }
 
     public Github getGithub() {
@@ -69,11 +71,20 @@ public class Release implements Domain {
         this.codeberg = codeberg;
     }
 
+    public GenericGit getGeneric() {
+        return generic;
+    }
+
+    public void setGeneric(GenericGit generic) {
+        this.generic = generic;
+    }
+
     public GitService getGitService() {
         if (null != github) return github;
         if (null != gitlab) return gitlab;
         if (null != gitea) return gitea;
-        return codeberg;
+        if (null != codeberg) return codeberg;
+        return generic;
     }
 
     @Override
@@ -83,6 +94,7 @@ public class Release implements Domain {
         if (null != gitlab) map.put(Gitlab.NAME, gitlab.asMap(full));
         if (null != gitea) map.put(Gitea.NAME, gitea.asMap(full));
         if (null != codeberg) map.put(Codeberg.NAME, codeberg.asMap(full));
+        if (null != generic) map.put(GenericGit.NAME, generic.asMap(full));
         return map;
     }
 }

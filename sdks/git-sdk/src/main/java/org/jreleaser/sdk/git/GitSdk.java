@@ -130,6 +130,18 @@ public class GitSdk {
         }
     }
 
+    public boolean findTag(String tagName) throws IOException {
+        Git git = open();
+
+        try {
+            return git.tagList().call().stream()
+                .map(GitSdk::extractTagName)
+                .anyMatch(tagName::matches);
+        } catch (GitAPIException e) {
+            throw new IOException("Could not find tag " + tagName, e);
+        }
+    }
+
     public void tag(String tagName, JReleaserContext context) throws IOException {
         tag(tagName, false, context);
     }

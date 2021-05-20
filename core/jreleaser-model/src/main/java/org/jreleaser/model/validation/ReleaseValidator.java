@@ -22,6 +22,7 @@ import org.jreleaser.model.Release;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.CodebergValidator.validateCodeberg;
+import static org.jreleaser.model.validation.GenericGitValidator.validateGeneric;
 import static org.jreleaser.model.validation.GiteaValidator.validateGitea;
 import static org.jreleaser.model.validation.GithubValidator.validateGithub;
 import static org.jreleaser.model.validation.GitlabValidator.validateGitlab;
@@ -40,13 +41,14 @@ public abstract class ReleaseValidator extends Validator {
         if (validateGitlab(context, mode, release.getGitlab(), errors)) count++;
         if (validateGitea(context, mode, release.getGitea(), errors)) count++;
         if (validateCodeberg(context, mode, release.getCodeberg(), errors)) count++;
+        if (validateGeneric(context, mode, release.getGeneric(), errors)) count++;
 
         if (0 == count) {
             errors.configuration("No release provider has been configured");
             return;
         }
         if (count > 1) {
-            errors.configuration("Only one of release.github, release.gitlab, release.gitea can be enabled");
+            errors.configuration("Only one of release.[github|gitlab|gitea|codeberg|generic] can be enabled");
         }
     }
 }

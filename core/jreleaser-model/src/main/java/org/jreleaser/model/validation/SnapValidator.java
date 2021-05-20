@@ -49,6 +49,11 @@ public abstract class SnapValidator extends Validator {
             tool.setActive(parentTool.getActive());
         }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        if (!model.getRelease().getGitService().isReleaseSupported()) {
+            tool.disable();
+            return;
+        }
+
         context.getLogger().debug("distribution.{}.snap", distribution.getName());
 
         validateCommitAuthor(tool, parentTool);

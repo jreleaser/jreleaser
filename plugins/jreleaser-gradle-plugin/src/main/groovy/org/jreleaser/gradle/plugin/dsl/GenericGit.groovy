@@ -15,14 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
+package org.jreleaser.gradle.plugin.dsl
+
+import groovy.transform.CompileStatic
 
 /**
+ *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 04.0
  */
-public interface Releaser extends Domain, EnabledAware {
-    boolean isReleaseSupported();
-
-    String getServiceName();
+@CompileStatic
+interface GenericGit extends GitService {
 }

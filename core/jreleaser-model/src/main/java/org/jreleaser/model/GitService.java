@@ -89,6 +89,8 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private final Changelog changelog = new Changelog();
     private final Milestone milestone = new Milestone();
     private final CommitAuthor commitAuthor = new CommitAuthor();
+    private final boolean releaseSupported;
+
     protected Boolean enabled;
     private String host;
     private String owner;
@@ -116,8 +118,14 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private String cachedTagName;
     private String cachedReleaseName;
 
-    protected GitService(String serviceName) {
+    protected GitService(String serviceName, boolean releaseSupported) {
         this.serviceName = serviceName;
+        this.releaseSupported = releaseSupported;
+    }
+
+    @Override
+    public boolean isReleaseSupported() {
+        return releaseSupported;
     }
 
     @Override
@@ -155,7 +163,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public String getCanonicalRepoName() {
-        return owner + "/" + name;
+        if (isNotBlank(owner)) {
+            return owner + "/" + name;
+        }
+        return name;
     }
 
     public abstract String getReverseRepoHost();
@@ -205,14 +216,17 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public String getResolvedRepoUrl(JReleaserModel model) {
+        if (!releaseSupported) return "";
         return applyTemplate(repoUrlFormat, props(model));
     }
 
     public String getResolvedRepoCloneUrl(JReleaserModel model) {
+        if (!releaseSupported) return "";
         return applyTemplate(repoCloneUrlFormat, props(model));
     }
 
     public String getResolvedRepoUrl(JReleaserModel model, String repoOwner, String repoName) {
+        if (!releaseSupported) return "";
         Map<String, Object> props = props(model);
         props.put(KEY_REPO_OWNER, repoOwner);
         props.put(KEY_REPO_NAME, repoName);
@@ -220,6 +234,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public String getResolvedRepoCloneUrl(JReleaserModel model, String repoOwner, String repoName) {
+        if (!releaseSupported) return "";
         Map<String, Object> props = props(model);
         props.put(KEY_REPO_OWNER, repoOwner);
         props.put(KEY_REPO_NAME, repoName);
@@ -227,22 +242,27 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public String getResolvedCommitUrl(JReleaserModel model) {
+        if (!releaseSupported) return "";
         return applyTemplate(commitUrlFormat, props(model));
     }
 
     public String getResolvedDownloadUrl(JReleaserModel model) {
+        if (!releaseSupported) return "";
         return applyTemplate(downloadUrlFormat, props(model));
     }
 
     public String getResolvedReleaseNotesUrl(JReleaserModel model) {
+        if (!releaseSupported) return "";
         return applyTemplate(releaseNotesUrlFormat, props(model));
     }
 
     public String getResolvedLatestReleaseUrl(JReleaserModel model) {
+        if (!releaseSupported) return "";
         return applyTemplate(latestReleaseUrlFormat, props(model));
     }
 
     public String getResolvedIssueTrackerUrl(JReleaserModel model) {
+        if (!releaseSupported) return "";
         return applyTemplate(issueTrackerUrlFormat, props(model));
     }
 
@@ -494,26 +514,34 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         map.put("name", name);
         map.put("username", username);
         map.put("token", isNotBlank(getResolvedToken()) ? HIDE : UNSET);
-        map.put("repoUrlFormat", repoUrlFormat);
-        map.put("repoCloneUrlFormat", repoCloneUrlFormat);
-        map.put("commitUrlFormat", commitUrlFormat);
-        map.put("downloadUrlFormat", downloadUrlFormat);
-        map.put("releaseNotesUrlFormat", releaseNotesUrlFormat);
-        map.put("latestReleaseUrlFormat", latestReleaseUrlFormat);
-        map.put("issueTrackerUrlFormat", issueTrackerUrlFormat);
+        if (releaseSupported) {
+            map.put("repoUrlFormat", repoUrlFormat);
+            map.put("repoCloneUrlFormat", repoCloneUrlFormat);
+            map.put("commitUrlFormat", commitUrlFormat);
+            map.put("downloadUrlFormat", downloadUrlFormat);
+            map.put("releaseNotesUrlFormat", releaseNotesUrlFormat);
+            map.put("latestReleaseUrlFormat", latestReleaseUrlFormat);
+            map.put("issueTrackerUrlFormat", issueTrackerUrlFormat);
+        }
         map.put("tagName", tagName);
-        map.put("releaseName", releaseName);
+        if (releaseSupported) {
+            map.put("releaseName", releaseName);
+        }
         map.put("branch", branch);
         map.put("commitAuthor", commitAuthor.asMap(full));
         map.put("sign", sign);
         map.put("skipTag", isSkipTag());
         map.put("overwrite", isOverwrite());
-        map.put("update", isUpdate());
-        map.put("apiEndpoint", apiEndpoint);
-        map.put("connectTimeout", connectTimeout);
-        map.put("readTimeout", readTimeout);
+        if (releaseSupported) {
+            map.put("update", isUpdate());
+            map.put("apiEndpoint", apiEndpoint);
+            map.put("connectTimeout", connectTimeout);
+            map.put("readTimeout", readTimeout);
+        }
         map.put("changelog", changelog.asMap(full));
-        map.put("milestone", milestone.asMap(full));
+        if (releaseSupported) {
+            map.put("milestone", milestone.asMap(full));
+        }
         return map;
     }
 

@@ -15,14 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
+package org.jreleaser.maven.plugin;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
-public interface Releaser extends Domain, EnabledAware {
-    boolean isReleaseSupported();
+public class GenericGit extends GitService {
+    public GenericGit() {
+    }
 
-    String getServiceName();
+    void setAll(GenericGit service) {
+        super.setAll(service);
+    }
 }

@@ -15,14 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
+package org.jreleaser.sdk.generic;
+
+import org.jreleaser.model.releaser.spi.ReleaserBuilderFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
-public interface Releaser extends Domain, EnabledAware {
-    boolean isReleaseSupported();
+@ServiceProviderFor(ReleaserBuilderFactory.class)
+public class GenericGitReleaserBuilderFactory implements ReleaserBuilderFactory<GenericGitReleaser, GenericGitReleaserBuilder> {
+    @Override
+    public String getName() {
+        return org.jreleaser.model.GenericGit.NAME;
+    }
 
-    String getServiceName();
+    @Override
+    public GenericGitReleaserBuilder getBuilder() {
+        return new GenericGitReleaserBuilder();
+    }
 }

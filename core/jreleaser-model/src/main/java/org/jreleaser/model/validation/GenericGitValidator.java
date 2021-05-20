@@ -15,14 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
+package org.jreleaser.model.validation;
+
+import org.jreleaser.model.GenericGit;
+import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.util.Errors;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
-public interface Releaser extends Domain, EnabledAware {
-    boolean isReleaseSupported();
+public abstract class GenericGitValidator extends GitServiceValidator {
+    public static boolean validateGeneric(JReleaserContext context, JReleaserContext.Mode mode, GenericGit generic, Errors errors) {
+        if (null == generic) return false;
+        context.getLogger().debug("release.generic");
 
-    String getServiceName();
+        validateGitService(context, mode, generic, errors);
+        generic.getChangelog().setLinks(false);
+
+        return generic.isEnabled();
+    }
 }

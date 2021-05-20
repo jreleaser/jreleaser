@@ -34,7 +34,7 @@ public class Gitea extends GitService {
     }
 
     Gitea(String name) {
-        super(name);
+        super(name, true);
         setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setRepoCloneUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}.git");
         setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");

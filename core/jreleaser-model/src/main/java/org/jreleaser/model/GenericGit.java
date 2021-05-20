@@ -19,10 +19,21 @@ package org.jreleaser.model;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.4.0
  */
-public interface Releaser extends Domain, EnabledAware {
-    boolean isReleaseSupported();
+public class GenericGit extends GitService {
+    public static final String NAME = "generic";
 
-    String getServiceName();
+    public GenericGit() {
+        super(NAME, false);
+    }
+
+    void setAll(GenericGit service) {
+        super.setAll(service);
+    }
+
+    @Override
+    public String getReverseRepoHost() {
+        return "";
+    }
 }

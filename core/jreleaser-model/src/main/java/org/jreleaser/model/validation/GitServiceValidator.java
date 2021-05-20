@@ -19,6 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Changelog;
+import org.jreleaser.model.GenericGit;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
@@ -56,7 +57,7 @@ public abstract class GitServiceValidator extends Validator {
         if (!service.isEnabledSet()) {
             service.setEnabled(true);
         }
-        if (isBlank(service.getOwner())) {
+        if (isBlank(service.getOwner()) && !(service instanceof GenericGit)) {
             errors.configuration(service.getServiceName() + ".owner must not be blank");
         }
         if (isBlank(service.getName())) {
@@ -80,12 +81,14 @@ public abstract class GitServiceValidator extends Validator {
                 service.getTagName(),
                 "v{{projectVersion}}"));
 
-        service.setReleaseName(
-            checkProperty(context.getModel().getEnvironment(),
-                RELEASE_NAME,
-                service.getServiceName() + ".releaseName",
-                service.getReleaseName(),
-                "Release {{tagName}}"));
+        if (service.isReleaseSupported()) {
+            service.setReleaseName(
+                checkProperty(context.getModel().getEnvironment(),
+                    RELEASE_NAME,
+                    service.getServiceName() + ".releaseName",
+                    service.getReleaseName(),
+                    "Release {{tagName}}"));
+        }
 
         service.setBranch(
             checkProperty(context.getModel().getEnvironment(),
@@ -103,13 +106,15 @@ public abstract class GitServiceValidator extends Validator {
                     false));
         }
 
-        if (!service.isUpdateSet()) {
-            service.setUpdate(
-                checkProperty(context.getModel().getEnvironment(),
-                    UPDATE,
-                    service.getServiceName() + ".update",
-                    null,
-                    false));
+        if (service.isReleaseSupported()) {
+            if (!service.isUpdateSet()) {
+                service.setUpdate(
+                    checkProperty(context.getModel().getEnvironment(),
+                        UPDATE,
+                        service.getServiceName() + ".update",
+                        null,
+                        false));
+            }
         }
 
         if (!service.isSkipTagSet()) {
@@ -124,8 +129,10 @@ public abstract class GitServiceValidator extends Validator {
         if (isBlank(service.getTagName())) {
             service.setTagName("v" + project.getVersion());
         }
-        if (isBlank(service.getReleaseName())) {
-            service.setReleaseName("Release {{ tagName }}");
+        if (service.isReleaseSupported()) {
+            if (isBlank(service.getReleaseName())) {
+                service.setReleaseName("Release {{ tagName }}");
+            }
         }
         if (!service.getChangelog().isEnabledSet()) {
             service.getChangelog().setEnabled(true);
@@ -144,27 +151,33 @@ public abstract class GitServiceValidator extends Validator {
             service.setReadTimeout(60);
         }
 
-        // milestone
-        service.getMilestone().setName(
-            checkProperty(context.getModel().getEnvironment(),
-                MILESTONE_NAME,
-                service.getServiceName() + ".milestone.name",
-                service.getMilestone().getName(),
-                "{{tagName}}"));
+        if (service.isReleaseSupported()) {
+            // milestone
+            service.getMilestone().setName(
+                checkProperty(context.getModel().getEnvironment(),
+                    MILESTONE_NAME,
+                    service.getServiceName() + ".milestone.name",
+                    service.getMilestone().getName(),
+                    "{{tagName}}"));
+        }
 
         // eager resolve
         service.getResolvedTagName(context.getModel());
-        service.getResolvedReleaseName(context.getModel());
-        service.getMilestone().getResolvedName(service.props(context.getModel()));
+        if (service.isReleaseSupported()) {
+            service.getResolvedReleaseName(context.getModel());
+            service.getMilestone().getResolvedName(service.props(context.getModel()));
+        }
 
         if (project.isSnapshot()) {
             String projectName = StringUtils.getClassNameForLowerCaseHyphenSeparatedName(project.getName());
             projectName = StringUtils.getNaturalName(projectName);
-            service.setReleaseName(projectName + " Early-Access");
             service.getChangelog().setEnabled(true);
             service.getChangelog().setExternal(null);
             service.getChangelog().setSort(Changelog.Sort.DESC);
-            service.setOverwrite(true);
+            if (service.isReleaseSupported()) {
+                service.setReleaseName(projectName + " Early-Access");
+                service.setOverwrite(true);
+            }
         }
 
         if (mode == JReleaserContext.Mode.FULL) {
