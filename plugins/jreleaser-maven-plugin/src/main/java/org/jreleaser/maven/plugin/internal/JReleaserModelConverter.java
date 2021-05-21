@@ -291,14 +291,14 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Upload convertUpload(Upload upload) {
         org.jreleaser.model.Upload u = new org.jreleaser.model.Upload();
         if (upload.isEnabledSet()) u.setEnabled(upload.isEnabled());
-        u.setArtifactories(convertArtifactories(upload.getArtifactories()));
+        u.setArtifactory(convertArtifactory(upload.getArtifactory()));
         u.setHttp(convertHttp(upload.getHttp()));
         return u;
     }
 
-    private static Map<String, org.jreleaser.model.Artifactory> convertArtifactories(Map<String, Artifactory> artifactories) {
+    private static Map<String, org.jreleaser.model.Artifactory> convertArtifactory(Map<String, Artifactory> artifactory) {
         Map<String, org.jreleaser.model.Artifactory> map = new LinkedHashMap<>();
-        for (Map.Entry<String, Artifactory> e : artifactories.entrySet()) {
+        for (Map.Entry<String, Artifactory> e : artifactory.entrySet()) {
             e.getValue().setName(e.getKey());
             map.put(e.getKey(), convertArtifactory(e.getValue()));
         }

@@ -25,13 +25,13 @@ import java.util.Map;
  * @since 0.3.0
  */
 public class Upload implements EnabledAware {
-    private final Map<String, Artifactory> artifactories = new LinkedHashMap<>();
+    private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
     private final Map<String, Http> http = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Upload assemble) {
         this.enabled = assemble.enabled;
-        setArtifactories(assemble.artifactories);
+        setArtifactory(assemble.artifactory);
     }
 
     @Override
@@ -49,13 +49,13 @@ public class Upload implements EnabledAware {
         return enabled != null;
     }
 
-    public Map<String, Artifactory> getArtifactories() {
-        return artifactories;
+    public Map<String, Artifactory> getArtifactory() {
+        return artifactory;
     }
 
-    public void setArtifactories(Map<String, Artifactory> artifactories) {
-        this.artifactories.clear();
-        this.artifactories.putAll(artifactories);
+    public void setArtifactory(Map<String, Artifactory> artifactory) {
+        this.artifactory.clear();
+        this.artifactory.putAll(artifactory);
     }
 
     public Map<String, Http> getHttp() {

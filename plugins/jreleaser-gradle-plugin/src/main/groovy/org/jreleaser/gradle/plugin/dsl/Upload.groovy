@@ -30,7 +30,7 @@ import org.gradle.api.provider.Property
 interface Upload {
     Property<Boolean> getEnabled()
 
-    NamedDomainObjectContainer<Artifactory> getArtifactories()
+    NamedDomainObjectContainer<Artifactory> getArtifactory()
 
     NamedDomainObjectContainer<Http> getHttp()
 }

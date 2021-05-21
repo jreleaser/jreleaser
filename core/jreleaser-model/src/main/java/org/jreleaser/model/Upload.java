@@ -32,13 +32,13 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.3.0
  */
 public class Upload implements Domain, EnabledAware {
-    private final Map<String, Artifactory> artifactories = new LinkedHashMap<>();
+    private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
     private final Map<String, HttpUploader> http = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Upload assemble) {
         this.enabled = assemble.enabled;
-        setArtifactories(assemble.artifactories);
+        setArtifactory(assemble.artifactory);
         setHttp(assemble.http);
     }
 
@@ -58,22 +58,22 @@ public class Upload implements Domain, EnabledAware {
     }
 
     public List<Artifactory> getActiveArtifactories() {
-        return artifactories.values().stream()
+        return artifactory.values().stream()
             .filter(Artifactory::isEnabled)
             .collect(Collectors.toList());
     }
 
-    public Map<String, Artifactory> getArtifactories() {
-        return artifactories;
+    public Map<String, Artifactory> getArtifactory() {
+        return artifactory;
     }
 
-    public void setArtifactories(Map<String, Artifactory> artifactories) {
-        this.artifactories.clear();
-        this.artifactories.putAll(artifactories);
+    public void setArtifactory(Map<String, Artifactory> artifactory) {
+        this.artifactory.clear();
+        this.artifactory.putAll(artifactory);
     }
 
     public void addArtifactory(Artifactory artifactory) {
-        this.artifactories.put(artifactory.getType(), artifactory);
+        this.artifactory.put(artifactory.getType(), artifactory);
     }
 
     public Artifactory findArtifactory(String name) {
@@ -81,14 +81,14 @@ public class Upload implements Domain, EnabledAware {
             throw new JReleaserException("Artifactory name must not be blank");
         }
 
-        if (artifactories.containsKey(name)) {
-            return artifactories.get(name);
+        if (artifactory.containsKey(name)) {
+            return artifactory.get(name);
         }
 
         throw new JReleaserException("Artifactory '" + name + "' not found");
     }
 
-    public List<HttpUploader> getActiveHttp() {
+    public List<HttpUploader> getActiveHttps() {
         return http.values().stream()
             .filter(HttpUploader::isEnabled)
             .collect(Collectors.toList());
@@ -124,7 +124,7 @@ public class Upload implements Domain, EnabledAware {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
 
-        List<Map<String, Object>> artifactory = this.artifactories.values()
+        List<Map<String, Object>> artifactory = this.artifactory.values()
             .stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
@@ -144,7 +144,7 @@ public class Upload implements Domain, EnabledAware {
     public <A extends Uploader> Map<String, A> findUploadersByType(String uploaderName) {
         switch (uploaderName) {
             case Artifactory.NAME:
-                return (Map<String, A>) artifactories;
+                return (Map<String, A>) artifactory;
                 case HttpUploader.NAME:
                 return (Map<String, A>) http;
         }
@@ -155,7 +155,7 @@ public class Upload implements Domain, EnabledAware {
     public <A extends Uploader> Collection<A> findAllUploaders() {
         List<A> uploaders = new ArrayList<>();
         uploaders.addAll((List<A>) getActiveArtifactories());
-        uploaders.addAll((List<A>) getActiveHttp());
+        uploaders.addAll((List<A>) getActiveHttps());
         return uploaders;
     }
 }

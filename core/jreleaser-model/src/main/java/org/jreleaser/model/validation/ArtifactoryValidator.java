@@ -35,14 +35,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public abstract class ArtifactoryValidator extends Validator {
     public static void validateArtifactory(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
         context.getLogger().debug("artifactory");
-        Map<String, Artifactory> artifactories = context.getModel().getUpload().getArtifactories();
+        Map<String, Artifactory> artifactory = context.getModel().getUpload().getArtifactory();
 
-        for (Map.Entry<String, Artifactory> e : artifactories.entrySet()) {
-            Artifactory artifactory = e.getValue();
-            if (isBlank(artifactory.getName())) {
-                artifactory.setName(e.getKey());
-            }
-            validateArtifactory(context, mode, artifactory, errors);
+        for (Map.Entry<String, Artifactory> e : artifactory.entrySet()) {
+            e.getValue().setName(e.getKey());
+            validateArtifactory(context, mode, e.getValue(), errors);
         }
     }
 

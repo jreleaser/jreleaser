@@ -38,7 +38,7 @@ public abstract class UploadersValidator extends Validator {
 
         if (!upload.isEnabledSet()) {
             upload.setEnabled(!upload.getActiveArtifactories().isEmpty() ||
-                !upload.getActiveHttp().isEmpty());
+                !upload.getActiveHttps().isEmpty());
         }
     }
 }

@@ -38,19 +38,19 @@ import java.util.stream.Collectors
 @CompileStatic
 class UploadImpl implements Upload {
     final Property<Boolean> enabled
-    final NamedDomainObjectContainer<ArtifactoryImpl> artifactories
+    final NamedDomainObjectContainer<ArtifactoryImpl> artifactory
     final NamedDomainObjectContainer<HttpImpl> http
 
     @Inject
     UploadImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(true)
 
-        artifactories = objects.domainObjectContainer(ArtifactoryImpl, new NamedDomainObjectFactory<ArtifactoryImpl>() {
+        artifactory = objects.domainObjectContainer(ArtifactoryImpl, new NamedDomainObjectFactory<ArtifactoryImpl>() {
             @Override
             ArtifactoryImpl create(String name) {
-                ArtifactoryImpl artifactory = objects.newInstance(ArtifactoryImpl, objects)
-                artifactory.name = name
-                return artifactory
+                ArtifactoryImpl a = objects.newInstance(ArtifactoryImpl, objects)
+                a.name = name
+                return a
             }
         })
 
@@ -68,7 +68,7 @@ class UploadImpl implements Upload {
     org.jreleaser.model.Upload toModel() {
         org.jreleaser.model.Upload upload = new org.jreleaser.model.Upload()
 
-        upload.artifactories = (artifactories.toList().stream()
+        upload.artifactory = (artifactory.toList().stream()
             .collect(Collectors.toMap(
                 { ArtifactoryImpl a -> a.name },
                 { ArtifactoryImpl a -> a.toModel() })) as Map<String, Artifactory>)
