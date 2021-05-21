@@ -568,6 +568,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Checksum s = new org.jreleaser.model.Checksum();
         s.setName(checksum.getName());
         s.setIndividual(checksum.isIndividual());
+        s.setAlgorithms(checksum.getAlgorithms());
         return s;
     }
 

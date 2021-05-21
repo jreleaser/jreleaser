@@ -17,17 +17,24 @@
  */
 package org.jreleaser.maven.plugin;
 
+import org.jreleaser.util.Algorithm;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 0.4.0
  */
 public class Checksum {
+    private final Set<Algorithm> algorithms = new LinkedHashSet<>();
     private Boolean individual;
     private String name;
 
-    void setAll(Checksum signing) {
-        this.name = signing.name;
-        this.individual = signing.individual;
+    void setAll(Checksum checksum) {
+        this.name = checksum.name;
+        this.individual = checksum.individual;
+        setAlgorithms(checksum.algorithms);
     }
 
     public String getName() {
@@ -48,5 +55,14 @@ public class Checksum {
 
     public boolean isIndividualSet() {
         return individual != null;
+    }
+
+    public Set<Algorithm> getAlgorithms() {
+        return algorithms;
+    }
+
+    public void setAlgorithms(Set<Algorithm> algorithms) {
+        this.algorithms.clear();
+        this.algorithms.addAll(algorithms);
     }
 }

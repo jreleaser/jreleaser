@@ -18,7 +18,9 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.jreleaser.util.Algorithm
 
 /**
  *
@@ -30,4 +32,8 @@ interface Checksum {
     Property<String> getName()
 
     Property<Boolean> getIndividual()
+
+    ListProperty<Algorithm> getAlgorithms()
+
+    void algorithm(String algorithm)
 }

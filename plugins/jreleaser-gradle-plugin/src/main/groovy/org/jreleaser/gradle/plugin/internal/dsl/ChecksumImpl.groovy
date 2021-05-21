@@ -20,10 +20,11 @@ package org.jreleaser.gradle.plugin.internal.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Checksum
-import org.jreleaser.model.Active
+import org.jreleaser.util.Algorithm
 
 import javax.inject.Inject
 
@@ -38,11 +39,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class ChecksumImpl implements Checksum {
     final Property<String> name
     final Property<Boolean> individual
+    final ListProperty<Algorithm> algorithms
 
     @Inject
     ChecksumImpl(ObjectFactory objects) {
         name = objects.property(String).convention(Providers.notDefined())
         individual = objects.property(Boolean).convention(Providers.notDefined())
+        algorithms = objects.listProperty(Algorithm).convention(Providers.notDefined())
     }
 
     @Internal
@@ -51,10 +54,18 @@ class ChecksumImpl implements Checksum {
             individual.present
     }
 
+    @Override
+    void algorithm(String algorithm) {
+        if (isNotBlank(algorithm)) {
+            algorithms.add(Algorithm.of(algorithm.trim()))
+        }
+    }
+
     org.jreleaser.model.Checksum toModel() {
         org.jreleaser.model.Checksum checksum = new org.jreleaser.model.Checksum()
         if (name.present) checksum.name = name.get()
         if (individual.present) checksum.individual = individual.get()
+        checksum.algorithms = (Set<Algorithm>) algorithms.getOrElse([])
         checksum
     }
 }
