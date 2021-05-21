@@ -44,6 +44,7 @@ import org.jreleaser.maven.plugin.Github;
 import org.jreleaser.maven.plugin.Gitlab;
 import org.jreleaser.maven.plugin.Gitter;
 import org.jreleaser.maven.plugin.Glob;
+import org.jreleaser.maven.plugin.Http;
 import org.jreleaser.maven.plugin.Java;
 import org.jreleaser.maven.plugin.Jbang;
 import org.jreleaser.maven.plugin.Jlink;
@@ -291,13 +292,15 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Upload u = new org.jreleaser.model.Upload();
         if (upload.isEnabledSet()) u.setEnabled(upload.isEnabled());
         u.setArtifactories(convertArtifactories(upload.getArtifactories()));
+        u.setHttp(convertHttp(upload.getHttp()));
         return u;
     }
 
     private static Map<String, org.jreleaser.model.Artifactory> convertArtifactories(Map<String, Artifactory> artifactories) {
         Map<String, org.jreleaser.model.Artifactory> map = new LinkedHashMap<>();
-        for (Artifactory artifactory : artifactories.values()) {
-            map.put(artifactory.getName(), convertArtifactory(artifactory));
+        for (Map.Entry<String, Artifactory> e : artifactories.entrySet()) {
+            e.getValue().setName(e.getKey());
+            map.put(e.getKey(), convertArtifactory(e.getValue()));
         }
         return map;
     }
@@ -317,6 +320,34 @@ public final class JReleaserModelConverter {
         a.setPassword(artifactory.getPassword());
         a.setToken(artifactory.getToken());
         return a;
+    }
+
+    private static Map<String, org.jreleaser.model.HttpUploader> convertHttp(Map<String, Http> http) {
+        Map<String, org.jreleaser.model.HttpUploader> map = new LinkedHashMap<>();
+        for (Map.Entry<String, Http> e : http.entrySet()) {
+            e.getValue().setName(e.getKey());
+            map.put(e.getKey(), convertHttp(e.getValue()));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.HttpUploader convertHttp(Http http) {
+        org.jreleaser.model.HttpUploader h = new org.jreleaser.model.HttpUploader();
+        h.setName(http.getName());
+        h.setActive(http.resolveActive());
+        h.setExtraProperties(http.getExtraProperties());
+        h.setConnectTimeout(http.getConnectTimeout());
+        h.setReadTimeout(http.getReadTimeout());
+        if (http.isArtifactsSet()) h.setArtifacts(http.isArtifacts());
+        if (http.isFilesSet()) h.setFiles(http.isFiles());
+        if (http.isSignaturesSet()) h.setSignatures(http.isSignatures());
+        h.setTarget(http.getTarget());
+        h.setUsername(http.getUsername());
+        h.setPassword(http.getPassword());
+        h.setAuthorization(http.resolveAuthorization().name());
+        h.setMethod(http.resolveMethod().name());
+        h.setHeaders(http.getHeaders());
+        return h;
     }
 
     private static org.jreleaser.model.Packagers convertPackagers(Packagers packagers) {
@@ -484,8 +515,9 @@ public final class JReleaserModelConverter {
 
     private static Map<String, org.jreleaser.model.Jlink> convertJlink(Map<String, Jlink> jlinks) {
         Map<String, org.jreleaser.model.Jlink> map = new LinkedHashMap<>();
-        for (Jlink jlink : jlinks.values()) {
-            map.put(jlink.getName(), convertJlink(jlink));
+        for (Map.Entry<String, Jlink> e : jlinks.entrySet()) {
+            e.getValue().setName(e.getKey());
+            map.put(e.getKey(), convertJlink(e.getValue()));
         }
         return map;
     }
@@ -511,8 +543,9 @@ public final class JReleaserModelConverter {
 
     private static Map<String, org.jreleaser.model.NativeImage> convertNativeImages(Map<String, NativeImage> nativeImage) {
         Map<String, org.jreleaser.model.NativeImage> map = new LinkedHashMap<>();
-        for (NativeImage ni : nativeImage.values()) {
-            map.put(ni.getName(), convertNativeImages(ni));
+        for (Map.Entry<String, NativeImage> e : nativeImage.entrySet()) {
+            e.getValue().setName(e.getKey());
+            map.put(e.getKey(), convertNativeImages(e.getValue()));
         }
         return map;
     }

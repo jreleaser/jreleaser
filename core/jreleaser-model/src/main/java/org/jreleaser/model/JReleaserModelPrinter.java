@@ -245,7 +245,7 @@ public abstract class JReleaserModelPrinter {
         }
     }
 
-    private boolean isSecret(String key) {
+    public static boolean isSecret(String key) {
         String lower = key.toLowerCase();
 
         for (String keyword : SECRET_KEYWORDS.split(",")) {

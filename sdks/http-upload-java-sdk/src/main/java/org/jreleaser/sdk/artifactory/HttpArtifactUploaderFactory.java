@@ -15,22 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.sdk.artifactory;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.provider.Property
+import org.jreleaser.model.HttpUploader;
+import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.uploader.spi.ArtifactUploaderFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.3.0
+ * @since 0.4.0
  */
-@CompileStatic
-interface Upload {
-    Property<Boolean> getEnabled()
+@ServiceProviderFor(ArtifactUploaderFactory.class)
+public class HttpArtifactUploaderFactory implements ArtifactUploaderFactory<HttpUploader, HttpArtifactUploader> {
+    @Override
+    public String getName() {
+        return HttpUploader.NAME;
+    }
 
-    NamedDomainObjectContainer<Artifactory> getArtifactories()
-
-    NamedDomainObjectContainer<Http> getHttp()
+    @Override
+    public HttpArtifactUploader getArtifactUploader(JReleaserContext context) {
+        return new HttpArtifactUploader(context);
+    }
 }

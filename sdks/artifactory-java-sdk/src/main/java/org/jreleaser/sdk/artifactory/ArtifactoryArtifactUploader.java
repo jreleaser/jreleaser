@@ -18,20 +18,15 @@
 package org.jreleaser.sdk.artifactory;
 
 import feign.form.FormData;
-import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Artifactory;
-import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.uploader.spi.ArtifactUploader;
 import org.jreleaser.model.uploader.spi.UploadException;
-import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.sdk.commons.AbstractArtifactUploader;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.util.ChecksumUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,12 +38,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class ArtifactoryArtifactUploader implements ArtifactUploader<Artifactory> {
-    private final JReleaserContext context;
+public class ArtifactoryArtifactUploader extends AbstractArtifactUploader<Artifactory> {
     private Artifactory uploader;
 
     public ArtifactoryArtifactUploader(JReleaserContext context) {
-        this.context = context;
+        super(context);
     }
 
     @Override
@@ -112,49 +106,5 @@ public class ArtifactoryArtifactUploader implements ArtifactUploader<Artifactory
                 }
             }
         }
-    }
-
-    private List<Path> collectPaths() {
-        List<Path> paths = new ArrayList<>();
-
-        if (uploader.isFiles()) {
-            for (Artifact artifact : Artifacts.resolveFiles(context)) {
-                Path path = artifact.getEffectivePath(context);
-                if (Files.exists(path) && 0 != path.toFile().length()) {
-                    paths.add(path);
-                }
-            }
-        }
-
-        if (uploader.isArtifacts()) {
-            for (Distribution distribution : context.getModel().getActiveDistributions()) {
-                if (distribution.getExtraProperties().containsKey("uploadSkip") ||
-                    distribution.getExtraProperties().containsKey("artifactoryUploadSkip")) {
-                    continue;
-                }
-                for (Artifact artifact : distribution.getArtifacts()) {
-                    Path path = artifact.getEffectivePath(context);
-                    if (Files.exists(path) && 0 != path.toFile().length()) {
-                        paths.add(path);
-                    }
-                }
-            }
-        }
-
-        if (uploader.isSignatures() && context.getModel().getSigning().isEnabled()) {
-            String extension = context.getModel().getSigning().isArmored() ? ".asc" : ".sig";
-
-            List<Path> signatures = new ArrayList<>();
-            for (Path path : paths) {
-                path = context.getSignaturesDirectory().resolve(path.getFileName() + extension);
-                if (Files.exists(path) && 0 != path.toFile().length()) {
-                    signatures.add(path);
-                }
-            }
-
-            paths.addAll(signatures);
-        }
-
-        return paths;
     }
 }

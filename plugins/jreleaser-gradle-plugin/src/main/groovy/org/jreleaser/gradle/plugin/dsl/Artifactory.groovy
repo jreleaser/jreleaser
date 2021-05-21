@@ -23,7 +23,7 @@ import org.gradle.api.provider.Property
 /**
  *
  * @author Andres Almiray
- * @since 0.13.0
+ * @since 0.3.0
  */
 @CompileStatic
 interface Artifactory extends Uploader {

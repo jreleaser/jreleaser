@@ -59,7 +59,7 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
         protected int readTimeout = 60;
 
         protected Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be blank");
+            this.logger = requireNonNull(logger, "'logger' must not be null");
         }
 
         @SuppressWarnings("unchecked")

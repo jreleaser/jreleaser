@@ -17,6 +17,8 @@
  */
 package org.jreleaser.sdk.commons;
 
+import feign.Request;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -26,18 +28,24 @@ import java.util.Map;
  * @since 0.2.0
  */
 public class RestAPIException extends RuntimeException {
+    private final Request request;
     private final int status;
     private final String reason;
     private final Map<String, Collection<String>> headers;
 
     public RestAPIException(int status, String reason) {
-        this(status, reason, Collections.emptyMap());
+        this(null, status, reason, Collections.emptyMap());
     }
 
-    public RestAPIException(int status, String reason, Map<String, Collection<String>> headers) {
+    public RestAPIException(Request request, int status, String reason, Map<String, Collection<String>> headers) {
+        this.request = request;
         this.status = status;
         this.reason = reason;
         this.headers = headers;
+    }
+
+    public Request getRequest() {
+        return request;
     }
 
     public int getStatus() {

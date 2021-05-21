@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import static org.jreleaser.util.StringUtils.isBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.3.0
@@ -47,4 +49,35 @@ public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProper
     void setSignatures(Boolean signatures);
 
     boolean isSignaturesSet();
+
+    enum Method {
+        PUT,
+        POST;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+
+        public static HttpUploader.Method of(String str) {
+            if (isBlank(str)) return null;
+            return HttpUploader.Method.valueOf(str.toUpperCase().trim());
+        }
+    }
+
+    public enum Authorization {
+        NONE,
+        BASIC,
+        BEARER;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+
+        public static HttpUploader.Authorization of(String str) {
+            if (isBlank(str)) return null;
+            return HttpUploader.Authorization.valueOf(str.toUpperCase().trim());
+        }
+    }
 }

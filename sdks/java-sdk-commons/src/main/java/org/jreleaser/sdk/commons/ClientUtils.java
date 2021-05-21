@@ -28,9 +28,11 @@ import feign.jackson.JacksonEncoder;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
+import org.jreleaser.model.JReleaserModelPrinter;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.uploader.spi.UploadException;
+import org.jreleaser.util.Constants;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
@@ -70,13 +72,13 @@ public final class ClientUtils {
     public static Feign.Builder builder(JReleaserLogger logger,
                                         int connectTimeout,
                                         int readTimeout) {
-        requireNonNull(logger, "'logger' must not be blank");
+        requireNonNull(logger, "'logger' must not be null");
 
         return Feign.builder()
             .encoder(new FormEncoder(new JacksonEncoder()))
             .decoder(new JacksonDecoder())
             .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
-            .errorDecoder((methodKey, response) -> new RestAPIException(response.status(), response.reason(), response.headers()))
+            .errorDecoder((methodKey, response) -> new RestAPIException(response.request(), response.status(), response.reason(), response.headers()))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true));
     }
 
@@ -153,15 +155,38 @@ public final class ClientUtils {
         }
     }
 
+    public static void postFile(JReleaserLogger logger,
+                                String url,
+                                int connectTimeout,
+                                int readTimeout,
+                                FormData data,
+                                Map<String, String> headers) throws UploadException {
+        headers.put("METHOD", "POST");
+        uploadFile(logger, url, connectTimeout, readTimeout, data, headers);
+    }
+
     public static void putFile(JReleaserLogger logger,
                                String url,
                                int connectTimeout,
                                int readTimeout,
                                FormData data,
                                Map<String, String> headers) throws UploadException {
+        headers.put("METHOD", "PUT");
+        headers.put("Expect", "100-continue");
+        uploadFile(logger, url, connectTimeout, readTimeout, data, headers);
+    }
+
+    private static void uploadFile(JReleaserLogger logger,
+                                   String url,
+                                   int connectTimeout,
+                                   int readTimeout,
+                                   FormData data,
+                                   Map<String, String> headers) throws UploadException {
         try {
             // create URL
-            URL theUrl = new URL(url + (!url.endsWith("/") ? "/" : "") + data.getFileName());
+            URL theUrl = new URL(url);
+            logger.debug("url: {}", theUrl);
+
             // open connection
             logger.debug("opening connection");
             HttpURLConnection connection = (HttpURLConnection) theUrl.openConnection();
@@ -172,13 +197,21 @@ public final class ClientUtils {
             connection.setAllowUserInteraction(false);
             connection.setInstanceFollowRedirects(true);
 
-            connection.setRequestMethod("PUT");
+            connection.setRequestMethod(headers.remove("METHOD"));
             connection.addRequestProperty("Accept", "*/*");
             connection.addRequestProperty("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
             connection.addRequestProperty("Content-Length", data.getData().length + "");
             connection.setRequestProperty("Content-Type", data.getContentType());
             headers.forEach(connection::setRequestProperty);
-            connection.setRequestProperty("Expect", "100-continue");
+
+            connection.getRequestProperties().forEach((k, v) -> {
+                if (JReleaserModelPrinter.isSecret(k)) {
+                    logger.debug("{}: {}", k, Constants.HIDE);
+                } else {
+                    logger.debug("{}: {}", k, v);
+                }
+            });
+
             connection.setDoOutput(true);
 
             // write message

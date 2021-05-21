@@ -25,8 +25,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Upload
 import org.jreleaser.model.Artifactory
-import org.jreleaser.model.Jlink
-import org.jreleaser.model.NativeImage
+import org.jreleaser.model.HttpUploader
 
 import javax.inject.Inject
 import java.util.stream.Collectors
@@ -40,6 +39,7 @@ import java.util.stream.Collectors
 class UploadImpl implements Upload {
     final Property<Boolean> enabled
     final NamedDomainObjectContainer<ArtifactoryImpl> artifactories
+    final NamedDomainObjectContainer<HttpImpl> http
 
     @Inject
     UploadImpl(ObjectFactory objects) {
@@ -53,6 +53,15 @@ class UploadImpl implements Upload {
                 return artifactory
             }
         })
+
+        http = objects.domainObjectContainer(HttpImpl, new NamedDomainObjectFactory<HttpImpl>() {
+            @Override
+            HttpImpl create(String name) {
+                HttpImpl h = objects.newInstance(HttpImpl, objects)
+                h.name = name
+                return h
+            }
+        })
     }
 
     @CompileDynamic
@@ -63,6 +72,11 @@ class UploadImpl implements Upload {
             .collect(Collectors.toMap(
                 { ArtifactoryImpl a -> a.name },
                 { ArtifactoryImpl a -> a.toModel() })) as Map<String, Artifactory>)
+
+        upload.http = (http.toList().stream()
+            .collect(Collectors.toMap(
+                { HttpImpl a -> a.name },
+                { HttpImpl a -> a.toModel() })) as Map<String, HttpUploader>)
 
         upload
     }

@@ -26,6 +26,7 @@ import java.util.Map;
  */
 public class Upload implements EnabledAware {
     private final Map<String, Artifactory> artifactories = new LinkedHashMap<>();
+    private final Map<String, Http> http = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Upload assemble) {
@@ -57,7 +58,12 @@ public class Upload implements EnabledAware {
         this.artifactories.putAll(artifactories);
     }
 
-    public void addArtifactory(Artifactory artifactory) {
-        this.artifactories.put(artifactory.getType(), artifactory);
+    public Map<String, Http> getHttp() {
+        return http;
+    }
+
+    public void setHttp(Map<String, Http> http) {
+        this.http.clear();
+        this.http.putAll(http);
     }
 }

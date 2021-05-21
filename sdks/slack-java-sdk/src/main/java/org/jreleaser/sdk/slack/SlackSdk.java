@@ -45,7 +45,7 @@ public class SlackSdk {
                      int connectTimeout,
                      int readTimeout,
                      boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be blank");
+        requireNonNull(logger, "'logger' must not be null");
         requireNonBlank(token, "'token' must not be blank");
 
         this.logger = logger;
@@ -96,7 +96,7 @@ public class SlackSdk {
         private int readTimeout = 60;
 
         private Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be blank");
+            this.logger = requireNonNull(logger, "'logger' must not be null");
         }
 
         public Builder dryrun(boolean dryrun) {

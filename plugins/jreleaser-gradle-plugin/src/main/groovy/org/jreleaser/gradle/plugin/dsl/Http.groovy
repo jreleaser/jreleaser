@@ -18,19 +18,27 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 
 /**
  *
  * @author Andres Almiray
- * @since 0.3.0
+ * @since 0.4.0
  */
 @CompileStatic
-interface Upload {
-    Property<Boolean> getEnabled()
+interface Http extends Uploader {
+    Property<String> getTarget()
 
-    NamedDomainObjectContainer<Artifactory> getArtifactories()
+    Property<String> getUsername()
 
-    NamedDomainObjectContainer<Http> getHttp()
+    Property<String> getPassword()
+
+    Property<org.jreleaser.model.Uploader.Method> getMethod()
+
+    Property<org.jreleaser.model.Uploader.Authorization> getAuthorization()
+
+    MapProperty<String,String> getHeaders()
+
+    void setHeader(String key, String value)
 }

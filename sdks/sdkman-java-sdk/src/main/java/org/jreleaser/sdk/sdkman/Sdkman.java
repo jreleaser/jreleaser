@@ -51,7 +51,7 @@ public class Sdkman {
                   String consumerKey,
                   String consumerToken,
                   boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be blank");
+        requireNonNull(logger, "'logger' must not be null");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(consumerKey, "'consumerKey' must not be blank");
         requireNonBlank(consumerToken, "'consumerToken' must not be blank");

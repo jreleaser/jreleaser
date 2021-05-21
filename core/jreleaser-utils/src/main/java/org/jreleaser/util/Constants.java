@@ -107,6 +107,7 @@ public interface Constants {
     String KEY_DISTRIBUTION_JAVA_MAIN_CLASS = "distributionJavaMainClass";
 
     // Artifact
+    String KEY_ARTIFACT_PLATFORM = "artifactPlatform";
     String KEY_ARTIFACT_FILE_NAME = "artifactFileName";
     String KEY_ARTIFACT_NAME = "artifactName";
 

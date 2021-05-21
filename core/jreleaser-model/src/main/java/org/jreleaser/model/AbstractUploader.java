@@ -210,7 +210,7 @@ abstract class AbstractUploader implements Uploader {
         asMap(props, full);
 
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put(this.getType(), props);
+        map.put(this.getName(), props);
         return map;
     }
 

@@ -45,4 +45,15 @@ public interface Uploader extends Activatable, TimeoutAware, ExtraProperties {
     void setSignatures(Boolean signatures);
 
     boolean isSignaturesSet();
+
+    enum Method {
+        PUT,
+        POST
+    }
+
+    public enum Authorization {
+        NONE,
+        BASIC,
+        BEARER
+    }
 }

@@ -33,11 +33,13 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public class Upload implements Domain, EnabledAware {
     private final Map<String, Artifactory> artifactories = new LinkedHashMap<>();
+    private final Map<String, HttpUploader> http = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Upload assemble) {
         this.enabled = assemble.enabled;
         setArtifactories(assemble.artifactories);
+        setHttp(assemble.http);
     }
 
     @Override
@@ -86,6 +88,37 @@ public class Upload implements Domain, EnabledAware {
         throw new JReleaserException("Artifactory '" + name + "' not found");
     }
 
+    public List<HttpUploader> getActiveHttp() {
+        return http.values().stream()
+            .filter(HttpUploader::isEnabled)
+            .collect(Collectors.toList());
+    }
+
+    public Map<String, HttpUploader> getHttp() {
+        return http;
+    }
+
+    public void setHttp(Map<String, HttpUploader> http) {
+        this.http.clear();
+        this.http.putAll(http);
+    }
+
+    public void addHttp(HttpUploader http) {
+        this.http.put(http.getType(), http);
+    }
+
+    public HttpUploader findHttp(String name) {
+        if (isBlank(name)) {
+            throw new JReleaserException("HttpUploader name must not be blank");
+        }
+
+        if (http.containsKey(name)) {
+            return http.get(name);
+        }
+
+        throw new JReleaserException("HttpUploader '" + name + "' not found");
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -98,6 +131,13 @@ public class Upload implements Domain, EnabledAware {
             .collect(Collectors.toList());
         if (!artifactory.isEmpty()) map.put("artifactory", artifactory);
 
+        List<Map<String, Object>> http = this.http.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(Collectors.toList());
+        if (!http.isEmpty()) map.put("http", http);
+
         return map;
     }
 
@@ -105,6 +145,8 @@ public class Upload implements Domain, EnabledAware {
         switch (uploaderName) {
             case Artifactory.NAME:
                 return (Map<String, A>) artifactories;
+                case HttpUploader.NAME:
+                return (Map<String, A>) http;
         }
 
         return Collections.emptyMap();
@@ -113,6 +155,7 @@ public class Upload implements Domain, EnabledAware {
     public <A extends Uploader> Collection<A> findAllUploaders() {
         List<A> uploaders = new ArrayList<>();
         uploaders.addAll((List<A>) getActiveArtifactories());
+        uploaders.addAll((List<A>) getActiveHttp());
         return uploaders;
     }
 }

@@ -72,7 +72,7 @@ class Gitlab {
            String token,
            int connectTimeout,
            int readTimeout) throws IOException {
-        requireNonNull(logger, "'logger' must not be blank");
+        requireNonNull(logger, "'logger' must not be null");
         requireNonBlank(token, "'token' must not be blank");
 
         if (isBlank(endpoint)) {

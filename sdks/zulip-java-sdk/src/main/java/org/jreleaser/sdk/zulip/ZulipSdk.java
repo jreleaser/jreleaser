@@ -45,7 +45,7 @@ public class ZulipSdk {
                      int connectTimeout,
                      int readTimeout,
                      boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be blank");
+        requireNonNull(logger, "'logger' must not be null");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(account, "'account' must not be blank");
         requireNonBlank(apiKey, "'apiKey' must not be blank");
@@ -91,7 +91,7 @@ public class ZulipSdk {
         private int readTimeout = 60;
 
         private Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be blank");
+            this.logger = requireNonNull(logger, "'logger' must not be null");
         }
 
         public Builder dryrun(boolean dryrun) {
