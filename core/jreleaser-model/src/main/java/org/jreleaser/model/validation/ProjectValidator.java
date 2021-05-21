@@ -61,7 +61,7 @@ public abstract class ProjectValidator extends Validator {
         boolean javaDistributions = context.getModel().getDistributions().values().stream()
             .map(Distribution::getType)
             .anyMatch(type -> type != Distribution.DistributionType.JLINK);
-        boolean jlinkAssemblers = !context.getModel().getAssemble().getJlinks().isEmpty();
+        boolean jlinkAssemblers = !context.getModel().getAssemble().getJlink().isEmpty();
 
         if ((mode == JReleaserContext.Mode.FULL && javaDistributions) || jlinkAssemblers) {
             validateJava(context, project, errors);

@@ -41,14 +41,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public abstract class JlinkValidator extends Validator {
     public static void validateJlink(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
         context.getLogger().debug("jlink");
-        Map<String, Jlink> jlinks = context.getModel().getAssemble().getJlinks();
+        Map<String, Jlink> jlink = context.getModel().getAssemble().getJlink();
 
-        for (Map.Entry<String, Jlink> e : jlinks.entrySet()) {
-            Jlink jlink = e.getValue();
-            if (isBlank(jlink.getName())) {
-                jlink.setName(e.getKey());
-            }
-            validateJlink(context, mode, jlink, errors);
+        for (Map.Entry<String, Jlink> e : jlink.entrySet()) {
+            e.getValue().setName(e.getKey());
+            validateJlink(context, mode, e.getValue(), errors);
         }
     }
 

@@ -32,14 +32,14 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public class Assemble implements Domain, EnabledAware {
-    private final Map<String, Jlink> jlinks = new LinkedHashMap<>();
-    private final Map<String, NativeImage> nativeImages = new LinkedHashMap<>();
+    private final Map<String, Jlink> jlink = new LinkedHashMap<>();
+    private final Map<String, NativeImage> nativeImage = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Assemble assemble) {
         this.enabled = assemble.enabled;
-        setJlinks(assemble.jlinks);
-        setNativeImages(assemble.nativeImages);
+        setJlink(assemble.jlink);
+        setNativeImage(assemble.nativeImage);
     }
 
     @Override
@@ -58,22 +58,22 @@ public class Assemble implements Domain, EnabledAware {
     }
 
     public List<Jlink> getActiveJlinks() {
-        return jlinks.values().stream()
+        return jlink.values().stream()
             .filter(Jlink::isEnabled)
             .collect(Collectors.toList());
     }
 
-    public Map<String, Jlink> getJlinks() {
-        return jlinks;
+    public Map<String, Jlink> getJlink() {
+        return jlink;
     }
 
-    public void setJlinks(Map<String, Jlink> jlinks) {
-        this.jlinks.clear();
-        this.jlinks.putAll(jlinks);
+    public void setJlink(Map<String, Jlink> jlink) {
+        this.jlink.clear();
+        this.jlink.putAll(jlink);
     }
 
     public void addJlink(Jlink jlink) {
-        this.jlinks.put(jlink.getName(), jlink);
+        this.jlink.put(jlink.getName(), jlink);
     }
 
     public Jlink findJlink(String name) {
@@ -81,30 +81,30 @@ public class Assemble implements Domain, EnabledAware {
             throw new JReleaserException("Jlink name must not be blank");
         }
 
-        if (jlinks.containsKey(name)) {
-            return jlinks.get(name);
+        if (jlink.containsKey(name)) {
+            return jlink.get(name);
         }
 
         throw new JReleaserException("Jlink '" + name + "' not found");
     }
 
     public List<NativeImage> getActiveNativeImages() {
-        return nativeImages.values().stream()
+        return nativeImage.values().stream()
             .filter(NativeImage::isEnabled)
             .collect(Collectors.toList());
     }
 
-    public Map<String, NativeImage> getNativeImages() {
-        return nativeImages;
+    public Map<String, NativeImage> getNativeImage() {
+        return nativeImage;
     }
 
-    public void setNativeImages(Map<String, NativeImage> nativeImages) {
-        this.nativeImages.clear();
-        this.nativeImages.putAll(nativeImages);
+    public void setNativeImage(Map<String, NativeImage> nativeImage) {
+        this.nativeImage.clear();
+        this.nativeImage.putAll(nativeImage);
     }
 
     public void addNativeImage(NativeImage nativeImage) {
-        this.nativeImages.put(nativeImage.getName(), nativeImage);
+        this.nativeImage.put(nativeImage.getName(), nativeImage);
     }
 
     public NativeImage findNativeImage(String name) {
@@ -112,8 +112,8 @@ public class Assemble implements Domain, EnabledAware {
             throw new JReleaserException("NativeImage name must not be blank");
         }
 
-        if (nativeImages.containsKey(name)) {
-            return nativeImages.get(name);
+        if (nativeImage.containsKey(name)) {
+            return nativeImage.get(name);
         }
 
         throw new JReleaserException("NativeImage '" + name + "' not found");
@@ -124,14 +124,14 @@ public class Assemble implements Domain, EnabledAware {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
 
-        List<Map<String, Object>> jlink = this.jlinks.values()
+        List<Map<String, Object>> jlink = this.jlink.values()
             .stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
             .collect(Collectors.toList());
         if (!jlink.isEmpty()) map.put("jlink", jlink);
 
-        List<Map<String, Object>> nativeImage = this.nativeImages.values()
+        List<Map<String, Object>> nativeImage = this.nativeImage.values()
             .stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
@@ -144,9 +144,9 @@ public class Assemble implements Domain, EnabledAware {
     public <A extends Assembler> Map<String, A> findAssemblersByType(String assemblerName) {
         switch (assemblerName) {
             case Jlink.NAME:
-                return (Map<String, A>) jlinks;
+                return (Map<String, A>) jlink;
             case NativeImage.NAME:
-                return (Map<String, A>) nativeImages;
+                return (Map<String, A>) nativeImage;
         }
 
         return Collections.emptyMap();

@@ -25,14 +25,14 @@ import java.util.Map;
  * @since 0.2.0
  */
 public class Assemble implements EnabledAware {
-    private final Map<String, Jlink> jlinks = new LinkedHashMap<>();
-    private final Map<String, NativeImage> nativeImages = new LinkedHashMap<>();
+    private final Map<String, Jlink> jlink = new LinkedHashMap<>();
+    private final Map<String, NativeImage> nativeImage = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Assemble assemble) {
         this.enabled = assemble.enabled;
-        setJlinks(assemble.jlinks);
-        setNativeImages(assemble.nativeImages);
+        setJlink(assemble.jlink);
+        setNativeImage(assemble.nativeImage);
     }
 
     @Override
@@ -50,21 +50,21 @@ public class Assemble implements EnabledAware {
         return enabled != null;
     }
 
-    public Map<String, Jlink> getJlinks() {
-        return jlinks;
+    public Map<String, Jlink> getJlink() {
+        return jlink;
     }
 
-    public void setJlinks(Map<String, Jlink> jlinks) {
-        this.jlinks.clear();
-        this.jlinks.putAll(jlinks);
+    public void setJlink(Map<String, Jlink> jlink) {
+        this.jlink.clear();
+        this.jlink.putAll(jlink);
     }
 
-    public Map<String, NativeImage> getNativeImages() {
-        return nativeImages;
+    public Map<String, NativeImage> getNativeImage() {
+        return nativeImage;
     }
 
-    public void setNativeImages(Map<String, NativeImage> nativeImages) {
-        this.nativeImages.clear();
-        this.nativeImages.putAll(nativeImages);
+    public void setNativeImage(Map<String, NativeImage> nativeImage) {
+        this.nativeImage.clear();
+        this.nativeImage.putAll(nativeImage);
     }
 }

@@ -508,14 +508,14 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Assemble convertAssemble(Assemble assemble) {
         org.jreleaser.model.Assemble a = new org.jreleaser.model.Assemble();
         if (assemble.isEnabledSet()) a.setEnabled(assemble.isEnabled());
-        a.setJlinks(convertJlink(assemble.getJlinks()));
-        a.setNativeImages(convertNativeImages(assemble.getNativeImages()));
+        a.setJlink(convertJlink(assemble.getJlink()));
+        a.setNativeImage(convertNativeImage(assemble.getNativeImage()));
         return a;
     }
 
-    private static Map<String, org.jreleaser.model.Jlink> convertJlink(Map<String, Jlink> jlinks) {
+    private static Map<String, org.jreleaser.model.Jlink> convertJlink(Map<String, Jlink> jlink) {
         Map<String, org.jreleaser.model.Jlink> map = new LinkedHashMap<>();
-        for (Map.Entry<String, Jlink> e : jlinks.entrySet()) {
+        for (Map.Entry<String, Jlink> e : jlink.entrySet()) {
             e.getValue().setName(e.getKey());
             map.put(e.getKey(), convertJlink(e.getValue()));
         }
@@ -541,16 +541,16 @@ public final class JReleaserModelConverter {
         return a;
     }
 
-    private static Map<String, org.jreleaser.model.NativeImage> convertNativeImages(Map<String, NativeImage> nativeImage) {
+    private static Map<String, org.jreleaser.model.NativeImage> convertNativeImage(Map<String, NativeImage> nativeImage) {
         Map<String, org.jreleaser.model.NativeImage> map = new LinkedHashMap<>();
         for (Map.Entry<String, NativeImage> e : nativeImage.entrySet()) {
             e.getValue().setName(e.getKey());
-            map.put(e.getKey(), convertNativeImages(e.getValue()));
+            map.put(e.getKey(), convertNativeImage(e.getValue()));
         }
         return map;
     }
 
-    private static org.jreleaser.model.NativeImage convertNativeImages(NativeImage nativeImage) {
+    private static org.jreleaser.model.NativeImage convertNativeImage(NativeImage nativeImage) {
         org.jreleaser.model.NativeImage a = new org.jreleaser.model.NativeImage();
         a.setName(nativeImage.getName());
         a.setActive(nativeImage.resolveActive());

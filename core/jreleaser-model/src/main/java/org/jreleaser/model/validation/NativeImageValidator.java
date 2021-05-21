@@ -36,14 +36,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public abstract class NativeImageValidator extends Validator {
     public static void validateNativeImage(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
         context.getLogger().debug("nativeImage");
-        Map<String, NativeImage> nativeImages = context.getModel().getAssemble().getNativeImages();
+        Map<String, NativeImage> nativeImage = context.getModel().getAssemble().getNativeImage();
 
-        for (Map.Entry<String, NativeImage> e : nativeImages.entrySet()) {
-            NativeImage nativeImage = e.getValue();
-            if (isBlank(nativeImage.getName())) {
-                nativeImage.setName(e.getKey());
-            }
-            validateNativeImage(context, mode, nativeImage, errors);
+        for (Map.Entry<String, NativeImage> e : nativeImage.entrySet()) {
+            e.getValue().setName(e.getKey());
+            validateNativeImage(context, mode, e.getValue(), errors);
         }
     }
 
