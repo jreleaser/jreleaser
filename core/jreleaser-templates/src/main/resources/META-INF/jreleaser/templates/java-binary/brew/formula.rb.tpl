@@ -3,7 +3,7 @@ class {{brewFormulaName}} < Formula
   homepage "{{projectWebsite}}"
   version "{{projectVersion}}"
   url "{{distributionUrl}}"
-  sha256 "{{distributionSha256}}"
+  sha256 "{{distributionChecksumSha256}}"
   license "{{projectLicense}}"
 
   bottle :unneeded

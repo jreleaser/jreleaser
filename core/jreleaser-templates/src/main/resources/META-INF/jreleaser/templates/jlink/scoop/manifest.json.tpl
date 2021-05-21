@@ -4,7 +4,7 @@
   "version": "{{projectVersion}}",
   "license": "{{projectLicense}}",
   "url": "{{distributionUrl}}",
-  "hash": "sha256:{{distributionSha256}}",
+  "hash": "sha256:{{distributionChecksumSha256}}",
   "extract_dir": "{{projectName}}-{{projectVersion}}",
   "env_add_path": "bin",
   "checkver": {

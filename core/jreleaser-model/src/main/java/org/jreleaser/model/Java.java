@@ -122,6 +122,7 @@ public class Java implements Domain, ExtraProperties, EnabledAware {
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 

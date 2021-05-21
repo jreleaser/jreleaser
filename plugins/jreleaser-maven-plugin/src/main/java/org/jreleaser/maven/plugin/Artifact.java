@@ -27,12 +27,10 @@ import java.util.Map;
 public class Artifact implements ExtraProperties {
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private String path;
-    private String hash;
     private String platform;
 
     void setAll(Artifact artifact) {
         this.path = artifact.path;
-        this.hash = artifact.hash;
         this.platform = artifact.platform;
         setExtraProperties(artifact.extraProperties);
     }
@@ -43,14 +41,6 @@ public class Artifact implements ExtraProperties {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash(String hash) {
-        this.hash = hash;
     }
 
     public String getPlatform() {
@@ -68,6 +58,7 @@ public class Artifact implements ExtraProperties {
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 }

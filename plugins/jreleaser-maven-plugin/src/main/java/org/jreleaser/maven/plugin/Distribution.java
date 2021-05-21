@@ -128,6 +128,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 

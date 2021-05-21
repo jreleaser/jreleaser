@@ -15,32 +15,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.util;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.3.0
  */
-abstract class AbstractRepositoryTool extends AbstractTool implements RepositoryTool {
-    protected final CommitAuthor commitAuthor = new CommitAuthor();
+public enum Algorithm {
+    MD2,
+    MD5,
+    SHA_1,
+    SHA_256,
+    SHA_384,
+    SHA_512,
+    SHA3_224,
+    SHA3_256,
+    SHA3_384,
+    SHA3_512;
 
-    void setAll(AbstractRepositoryTool tool) {
-        super.setAll(tool);
-        setCommitAuthor(tool.commitAuthor);
+    public String formatted() {
+        if (name().startsWith("SHA3")) {
+            return name().toLowerCase().replace("_", "-");
+        }
+        return name().toLowerCase().replace("_", "");
     }
 
-    @Override
-    public CommitAuthor getCommitAuthor() {
-        return commitAuthor;
-    }
-
-    @Override
-    public void setCommitAuthor(CommitAuthor commitAuthor) {
-        this.commitAuthor.setAll(commitAuthor);
-    }
-
-    public boolean isSet() {
-        return super.isSet() ||
-            commitAuthor.isSet();
+    @JsonCreator
+    public static Algorithm of(String str) {
+        if (isBlank(str)) return null;
+        return Algorithm.valueOf(str.toUpperCase().trim());
     }
 }

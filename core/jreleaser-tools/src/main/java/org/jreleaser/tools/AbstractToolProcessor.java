@@ -25,6 +25,7 @@ import org.jreleaser.model.Tool;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.model.tool.spi.ToolProcessor;
+import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
@@ -312,7 +313,9 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             String artifactName = getFilename(artifactFileName);
             props.put("artifact" + platform + "Name", artifactName);
             props.put("artifact" + platform + "FileName", artifactFileName);
-            props.put("artifact" + platform + "Hash", artifact.getHash());
+            for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+                props.put("artifact" + platform + "Checksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
+            }
             Map<String, Object> newProps = new LinkedHashMap<>(props);
             newProps.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
             String artifactUrl = applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrlFormat(), newProps, "downloadUrl");
@@ -320,7 +323,10 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
             if (0 == i) {
                 props.put(Constants.KEY_DISTRIBUTION_URL, artifactUrl);
-                props.put(Constants.KEY_DISTRIBUTION_SHA_256, artifact.getHash());
+                props.put(Constants.KEY_DISTRIBUTION_SHA_256, artifact.getHash(Algorithm.SHA_256));
+                for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+                    props.put("distributionChecksum"  + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
+                }
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, artifactName);
                 props.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);

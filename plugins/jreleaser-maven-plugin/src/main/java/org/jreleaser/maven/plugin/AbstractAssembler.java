@@ -127,6 +127,7 @@ abstract class AbstractAssembler implements Assembler {
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 }

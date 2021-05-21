@@ -61,7 +61,7 @@ parts:
   {{distributionExecutable}}:
     plugin: dump
     source: {{distributionUrl}}
-    source-checksum: sha256/{{distributionSha256}}
+    source-checksum: sha256/{{distributionChecksumSha256}}
     stage-packages:
       - openjdk-{{distributionJavaVersion}}-jre
       - ca-certificates

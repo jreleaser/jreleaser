@@ -126,6 +126,7 @@ public class Project implements ExtraProperties {
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 

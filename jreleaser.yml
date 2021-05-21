@@ -75,7 +75,7 @@ announce:
     active: release
 
 assemble:
-  jlinks:
+  jlink:
     jreleaser-standalone:
       active: always
       extraProperties:

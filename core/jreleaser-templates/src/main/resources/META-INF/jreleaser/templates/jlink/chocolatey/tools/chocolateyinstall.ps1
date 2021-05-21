@@ -6,7 +6,7 @@ $app_bat = Join-Path $app_home 'bin/{{distributionExecutable}}.cmd'
 Install-ChocolateyZipPackage `
     -PackageName '{{distributionName}}' `
     -Url '{{distributionUrl}}' `
-    -Checksum '{{distributionSha256}}' `
+    -Checksum '{{distributionChecksumSha256}}' `
     -ChecksumType 'sha256' `
     -UnzipLocation $package
 

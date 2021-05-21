@@ -58,4 +58,4 @@ parts:
   {{distributionExecutable}}:
     plugin: dump
     source: {{distributionUrl}}
-    source-checksum: sha256/{{distributionSha256}}
+    source-checksum: sha256/{{distributionChecksumSha256}}

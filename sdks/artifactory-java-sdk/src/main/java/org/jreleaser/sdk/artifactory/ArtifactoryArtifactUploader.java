@@ -23,6 +23,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.uploader.spi.UploadException;
 import org.jreleaser.sdk.commons.AbstractArtifactUploader;
 import org.jreleaser.sdk.commons.ClientUtils;
+import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.ChecksumUtils;
 
 import java.io.IOException;
@@ -89,9 +90,9 @@ public class ArtifactoryArtifactUploader extends AbstractArtifactUploader<Artifa
                         headers.put("Authorization", "Bearer " + token);
                     }
                     headers.put("X-Checksum-Deploy", "false");
-                    headers.put("X-Checksum-Sha1", ChecksumUtils.checksum(ChecksumUtils.Algorithm.SHA_1, data.getData()));
-                    headers.put("X-Checksum-Sha256", ChecksumUtils.checksum(ChecksumUtils.Algorithm.SHA_256, data.getData()));
-                    headers.put("X-Checksum", ChecksumUtils.checksum(ChecksumUtils.Algorithm.MD5, data.getData()));
+                    headers.put("X-Checksum-Sha1", ChecksumUtils.checksum(Algorithm.SHA_1, data.getData()));
+                    headers.put("X-Checksum-Sha256", ChecksumUtils.checksum(Algorithm.SHA_256, data.getData()));
+                    headers.put("X-Checksum", ChecksumUtils.checksum(Algorithm.MD5, data.getData()));
 
                     ClientUtils.putFile(context.getLogger(),
                         target,

@@ -17,9 +17,12 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Algorithm;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -36,8 +39,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Artifact implements Domain, ExtraProperties {
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final Map<Algorithm, String> hashes = new LinkedHashMap<>();
+
     private String path;
-    private String hash;
     private String platform;
     private String transform;
     private Path resolvedPath;
@@ -45,12 +49,12 @@ public class Artifact implements Domain, ExtraProperties {
 
     void setAll(Artifact artifact) {
         this.path = artifact.path;
-        this.hash = artifact.hash;
         this.platform = artifact.platform;
         this.transform = artifact.transform;
         this.resolvedPath = artifact.resolvedPath;
         this.resolvedTransform = artifact.resolvedTransform;
         setExtraProperties(artifact.extraProperties);
+        setHashes(artifact.hashes);
     }
 
     public Path getEffectivePath(JReleaserContext context) {
@@ -218,11 +222,30 @@ public class Artifact implements Domain, ExtraProperties {
     }
 
     public String getHash() {
-        return hash;
+        return getHash(Algorithm.SHA_256);
     }
 
     public void setHash(String hash) {
-        this.hash = hash;
+        setHash(Algorithm.SHA_256, hash);
+    }
+
+    public String getHash(Algorithm algorithm) {
+        return hashes.get(algorithm);
+    }
+
+    public void setHash(Algorithm algorithm, String hash) {
+        if (isNotBlank(hash)) {
+            this.hashes.put(algorithm, hash.trim());
+        }
+    }
+
+    public Map<Algorithm, String> getHashes() {
+        return Collections.unmodifiableMap(hashes);
+    }
+
+    void setHashes(Map<Algorithm, String> hashes) {
+        this.hashes.clear();
+        this.hashes.putAll(hashes);
     }
 
     public String getPlatform() {
@@ -253,6 +276,7 @@ public class Artifact implements Domain, ExtraProperties {
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
@@ -265,7 +289,6 @@ public class Artifact implements Domain, ExtraProperties {
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("path", path);
-        map.put("hash", hash);
         map.put("platform", platform);
         map.put("transform", transform);
         map.put("extraProperties", getResolvedExtraProperties());

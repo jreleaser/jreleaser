@@ -17,8 +17,12 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Algorithm;
+
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 
@@ -27,18 +31,32 @@ import static org.jreleaser.util.MustacheUtils.applyTemplate;
  * @since 0.4.0
  */
 public class Checksum implements Domain {
+    private final Set<Algorithm> algorithms = new LinkedHashSet<>();
     private Boolean individual;
     private String name;
 
-    void setAll(Checksum signing) {
-        this.name = signing.name;
-        this.individual = signing.individual;
+    void setAll(Checksum checksum) {
+        this.name = checksum.name;
+        this.individual = checksum.individual;
+        setAlgorithms(checksum.algorithms);
     }
 
     public String getResolvedName(JReleaserContext context) {
         Map<String, Object> props = context.props();
         context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
         return applyTemplate(name, props);
+    }
+
+    public String getResolvedName(JReleaserContext context, Algorithm algorithm) {
+        String resolvedName = context.getModel().getChecksum().getResolvedName(context);
+        int pos = resolvedName.lastIndexOf(".");
+        if (pos != -1) {
+            resolvedName = resolvedName.substring(0, pos) + "_" + algorithm.formatted() + resolvedName.substring(pos);
+        } else {
+            resolvedName += "." + algorithm.formatted();
+        }
+
+        return resolvedName;
     }
 
     public String getName() {
@@ -61,11 +79,21 @@ public class Checksum implements Domain {
         return individual != null;
     }
 
+    public Set<Algorithm> getAlgorithms() {
+        return algorithms;
+    }
+
+    public void setAlgorithms(Set<Algorithm> algorithms) {
+        this.algorithms.clear();
+        this.algorithms.addAll(algorithms);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
         map.put("individual", isIndividual());
+        map.put("algorithms", algorithms);
         return map;
     }
 }

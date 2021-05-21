@@ -19,6 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Checksum;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -43,5 +44,7 @@ public abstract class ChecksumValidator extends Validator {
         if (isBlank(checksum.getName())) {
             checksum.setName("checksums.txt");
         }
+
+        checksum.getAlgorithms().add(Algorithm.SHA_256);
     }
 }

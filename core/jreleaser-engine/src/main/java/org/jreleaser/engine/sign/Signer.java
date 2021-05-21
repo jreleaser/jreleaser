@@ -38,6 +38,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
 import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.signing.Keyring;
 import org.jreleaser.util.signing.SigningException;
 
@@ -263,13 +264,15 @@ public class Signer {
             }
         }
 
-        Path checksums = context.getChecksumsDirectory()
-            .resolve(context.getModel().getChecksum().getResolvedName(context));
-        if (Files.exists(checksums)) {
-            Path output = signaturesDirectory.resolve(checksums.getFileName().toString().concat(extension));
-            FilePair pair = new FilePair(checksums, output);
-            pair.setValid(isValid(context, keyring, pair));
-            files.add(pair);
+        for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+            Path checksums = context.getChecksumsDirectory()
+                .resolve(context.getModel().getChecksum().getResolvedName(context, algorithm));
+            if (Files.exists(checksums)) {
+                Path output = signaturesDirectory.resolve(checksums.getFileName().toString().concat(extension));
+                FilePair pair = new FilePair(checksums, output);
+                pair.setValid(isValid(context, keyring, pair));
+                files.add(pair);
+            }
         }
 
         return files;

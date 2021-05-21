@@ -44,10 +44,6 @@ public class ChecksumUtils {
                 return DigestUtils.sha384Hex(data);
             case SHA_512:
                 return DigestUtils.sha512Hex(data);
-            case SHA_512_224:
-                return DigestUtils.sha512_224Hex(data);
-            case SHA_512_256:
-                return DigestUtils.sha512_256Hex(data);
             case SHA3_224:
                 return DigestUtils.sha3_224Hex(data);
             case SHA3_256:
@@ -59,20 +55,5 @@ public class ChecksumUtils {
             default:
                 throw new IOException("Unsupported algorithm " + algorithm.name());
         }
-    }
-
-    public enum Algorithm {
-        MD2,
-        MD5,
-        SHA_1,
-        SHA_256,
-        SHA_384,
-        SHA_512,
-        SHA_512_224,
-        SHA_512_256,
-        SHA3_224,
-        SHA3_256,
-        SHA3_384,
-        SHA3_512
     }
 }

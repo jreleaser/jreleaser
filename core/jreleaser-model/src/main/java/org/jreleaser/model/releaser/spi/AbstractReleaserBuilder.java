@@ -21,6 +21,7 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.util.Algorithm;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -92,10 +93,12 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
             }
         }
 
-        Path checksums = context.getChecksumsDirectory()
-            .resolve(context.getModel().getChecksum().getResolvedName(context));
-        if (Files.exists(checksums)) {
-            addReleaseAsset(checksums);
+        for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+            Path checksums = context.getChecksumsDirectory()
+                .resolve(context.getModel().getChecksum().getResolvedName(context, algorithm));
+            if (Files.exists(checksums)) {
+                addReleaseAsset(checksums);
+            }
         }
         addReleaseAssets(context.getSignaturesDirectory());
 
