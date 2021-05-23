@@ -38,6 +38,7 @@ import org.jreleaser.sdk.gitlab.api.Release;
 import org.jreleaser.sdk.gitlab.api.User;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -102,24 +103,14 @@ class Gitlab {
             .target(GitlabAPI.class, endpoint);
     }
 
-    Project findProject(String projectName) throws RestAPIException {
-        User u = getCurrentUser();
-
-        logger.debug("fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
-        List<Project> projects = api.getProject(u.getId(), CollectionUtils.<String, Object>map()
-            .e("search", projectName));
-
-        if (projects == null || projects.isEmpty()) {
-            throw new RestAPIException(404, "Project " + projectName + " does not exist or it's not visible");
-        }
-
-        return projects.get(0);
+    Project findProject(String projectName, String identifier) throws RestAPIException {
+        return getProject(projectName, identifier);
     }
 
-    Optional<Milestone> findMilestoneByName(String owner, String repo, String milestoneName) throws IOException {
-        logger.debug("Llookup milestone '{}' on {}/{}", milestoneName, owner, repo);
+    Optional<Milestone> findMilestoneByName(String owner, String repo, String identifier, String milestoneName) throws IOException {
+        logger.debug("lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
 
-        Project project = getProject(repo);
+        Project project = getProject(repo, identifier);
 
         try {
             List<Milestone> milestones = api.findMilestoneByTitle(project.getId(), CollectionUtils.<String, Object>map()
@@ -140,10 +131,10 @@ class Gitlab {
         }
     }
 
-    void closeMilestone(String owner, String repo, Milestone milestone) throws IOException {
+    void closeMilestone(String owner, String repo, String identifier, Milestone milestone) throws IOException {
         logger.debug("closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
 
-        Project project = getProject(repo);
+        Project project = getProject(repo, identifier);
 
         api.updateMilestone(CollectionUtils.<String, Object>map()
                 .e("state_event", "close"),
@@ -165,28 +156,37 @@ class Gitlab {
         return user;
     }
 
-    Project getProject(String projectName) throws RestAPIException {
-        User u = getCurrentUser();
+    Project getProject(String projectName, String identifier) throws RestAPIException {
 
         if (null == project) {
-            logger.debug("fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
-            List<Project> projects = api.getProject(u.getId(), CollectionUtils.<String, Object>map()
-                .e("search", projectName));
 
-            if (projects == null || projects.isEmpty()) {
-                throw new RestAPIException(404, "Project " + projectName + " does not exist or it's not visible");
+            if (StringUtils.isNotBlank(identifier)) {
+                logger.debug("fetching project with GitLab id {}", identifier);
+                project =  api.getProject(identifier.trim());
+            } else {
+                User u = getCurrentUser();
+
+                logger.debug("fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
+                List<Project> projects = api.getProject(u.getId(), CollectionUtils.<String, Object>map()
+                        .e("search", projectName));
+
+                if (projects == null || projects.isEmpty()) {
+                    throw new RestAPIException(404, "Project " + projectName + " does not exist or it's not visible");
+                }
+
+                project = projects.get(0);
             }
 
-            project = projects.get(0);
+            logger.debug("found {} (ID: {})", project.getNameWithNamespace(), project.getId());
         }
 
         return project;
     }
 
-    Release findReleaseByTag(String owner, String repoName, String tagName) throws RestAPIException {
+    Release findReleaseByTag(String owner, String repoName, String identifier, String tagName) throws RestAPIException {
         logger.debug("fetching release on {}/{} with tag {}", owner, repoName, tagName);
 
-        Project project = getProject(repoName);
+        Project project = getProject(repoName, identifier);
 
         try {
             return api.getRelease(project.getId(), urlEncode(tagName));
@@ -199,36 +199,36 @@ class Gitlab {
         }
     }
 
-    void deleteTag(String owner, String repoName, String tagName) throws RestAPIException {
+    void deleteTag(String owner, String repoName, String identifier, String tagName) throws RestAPIException {
         logger.debug("deleting tag {} from {}/{}", tagName, owner, repoName);
 
-        Project project = getProject(repoName);
+        Project project = getProject(repoName, identifier);
 
         api.deleteTag(project.getId(), urlEncode(tagName));
     }
 
-    void deleteRelease(String owner, String repoName, String tagName) throws RestAPIException {
+    void deleteRelease(String owner, String repoName, String identifier, String tagName) throws RestAPIException {
         logger.debug("deleting release {} from {}/{}", tagName, owner, repoName);
 
-        Project project = getProject(repoName);
+        Project project = getProject(repoName, identifier);
 
         api.deleteRelease(project.getId(), urlEncode(tagName));
     }
 
-    void createRelease(String owner, String repoName, Release release) throws RestAPIException {
+    void createRelease(String owner, String repoName, String identifier, Release release) throws RestAPIException {
         logger.debug("creating release on {}/{} with tag {}", owner, repoName, release.getTagName());
 
-        Project project = getProject(repoName);
+        Project project = getProject(repoName, identifier);
 
         api.createRelease(release, project.getId());
     }
 
-    List<FileUpload> uploadAssets(String owner, String repoName, List<Path> assets) throws IOException, RestAPIException {
+    List<FileUpload> uploadAssets(String owner, String repoName, String identifier, List<Path> assets) throws IOException, RestAPIException {
         logger.debug("uploading assets to {}/{}", owner, repoName);
 
         List<FileUpload> uploads = new ArrayList<>();
 
-        Project project = getProject(repoName);
+        Project project = getProject(repoName, identifier);
 
         for (Path asset : assets) {
             if (0 == asset.toFile().length() || !Files.exists(asset)) {
@@ -250,10 +250,10 @@ class Gitlab {
         return uploads;
     }
 
-    void linkAssets(String owner, String repoName, Release release, List<FileUpload> uploads) throws IOException, RestAPIException {
+    void linkAssets(String owner, String repoName, Release release, String identifier, List<FileUpload> uploads) throws IOException, RestAPIException {
         logger.debug("linking assets to {}/{} with tag {}", owner, repoName, release.getTagName());
 
-        Project project = getProject(repoName);
+        Project project = getProject(repoName, identifier);
 
         for (FileUpload upload : uploads) {
             logger.debug(" - linking {}", upload.getName());

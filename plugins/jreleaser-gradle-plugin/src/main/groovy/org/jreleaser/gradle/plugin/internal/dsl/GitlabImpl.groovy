@@ -36,6 +36,7 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
     final ChangelogImpl changelog
     final MilestoneImpl milestone
     final CommitAuthorImpl commitAuthor
+    final Property<String> identifier
 
     @Inject
     GitlabImpl(ObjectFactory objects) {
@@ -44,6 +45,8 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
         changelog = objects.newInstance(ChangelogImpl, objects)
         milestone = objects.newInstance(MilestoneImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
+
+        identifier = objects.property(String).convention(Providers.notDefined())
     }
 
     @Override
@@ -61,6 +64,7 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
         if (changelog.isSet()) service.changelog = changelog.toModel()
         if (milestone.isSet()) service.milestone = milestone.toModel()
         if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
+        if (identifier.present) service.identifier = identifier.get()
         service
     }
 }

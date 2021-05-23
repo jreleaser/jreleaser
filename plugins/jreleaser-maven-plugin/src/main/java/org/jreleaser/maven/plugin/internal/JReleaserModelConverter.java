@@ -166,6 +166,7 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Gitlab convertGitlab(Gitlab gitlab) {
         if (null == gitlab) return null;
         org.jreleaser.model.Gitlab g = new org.jreleaser.model.Gitlab();
+        g.setIdentifier(gitlab.getIdentifier());
         convertGitService(gitlab, g);
         return g;
     }

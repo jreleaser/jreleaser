@@ -33,7 +33,18 @@ public class Gitlab extends GitService {
         setIssueTrackerUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/issues");
     }
 
+    private String identifier;
+
     void setAll(Gitlab service) {
         super.setAll(service);
+        this.identifier = service.identifier;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }
