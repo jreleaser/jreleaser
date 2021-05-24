@@ -40,6 +40,8 @@ interface Announce {
 
     Mastodon getMastodon()
 
+    Mattermost getMattermost()
+
     Sdkman getSdkman()
 
     Slack getSlack()
@@ -60,6 +62,8 @@ interface Announce {
 
     void mastodon(Action<? super Mastodon> action)
 
+    void mattermost(Action<? super Mattermost> action)
+
     void sdkman(Action<? super Sdkman> action)
 
     void slack(Action<? super Slack> action)
@@ -79,6 +83,8 @@ interface Announce {
     void mail(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mail) Closure<Void> action)
 
     void mastodon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mastodon) Closure<Void> action)
+
+    void mattermost(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mattermost) Closure<Void> action)
 
     void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sdkman) Closure<Void> action)
 

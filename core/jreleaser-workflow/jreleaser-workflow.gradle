@@ -22,6 +22,7 @@ dependencies {
     api project(':gitter-java-sdk')
     api project(':mail-java-sdk')
     api project(':mastodon-java-sdk')
+    api project(':mattermost-java-sdk')
     api project(':sdkman-java-sdk')
     api project(':slack-java-sdk')
     api project(':teams-java-sdk')

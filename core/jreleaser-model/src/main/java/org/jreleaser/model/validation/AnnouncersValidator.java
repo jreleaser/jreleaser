@@ -26,6 +26,7 @@ import static org.jreleaser.model.validation.DiscussionsValidator.validateDiscus
 import static org.jreleaser.model.validation.GitterValidator.validateGitter;
 import static org.jreleaser.model.validation.MailValidator.validateMail;
 import static org.jreleaser.model.validation.MastodonValidator.validateMastodon;
+import static org.jreleaser.model.validation.MattermostValidator.validateMattermost;
 import static org.jreleaser.model.validation.SdkmanValidator.validateSdkman;
 import static org.jreleaser.model.validation.SlackValidator.validateSlack;
 import static org.jreleaser.model.validation.TeamsValidator.validateTeams;
@@ -50,6 +51,7 @@ public abstract class AnnouncersValidator extends Validator {
         validateGitter(context, announce.getGitter(), errors);
         validateMail(context, announce.getMail(), errors);
         validateMastodon(context, announce.getMastodon(), errors);
+        validateMattermost(context, announce.getMattermost(), errors);
         validateSdkman(context, announce.getSdkman(), errors);
         validateSlack(context, announce.getSlack(), errors);
         validateTeams(context, announce.getTeams(), errors);
@@ -62,6 +64,7 @@ public abstract class AnnouncersValidator extends Validator {
                 announce.getGitter().isEnabled() ||
                 announce.getMail().isEnabled() ||
                 announce.getMastodon().isEnabled() ||
+                announce.getMattermost().isEnabled() ||
                 announce.getSdkman().isEnabled() ||
                 announce.getSlack().isEnabled() ||
                 announce.getTeams().isEnabled() ||

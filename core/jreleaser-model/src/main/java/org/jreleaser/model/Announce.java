@@ -35,6 +35,7 @@ public class Announce implements Domain, EnabledAware {
     private final Gitter gitter = new Gitter();
     private final Mail mail = new Mail();
     private final Mastodon mastodon = new Mastodon();
+    private final Mattermost mattermost = new Mattermost();
     private final Sdkman sdkman = new Sdkman();
     private final Slack slack = new Slack();
     private final Teams teams = new Teams();
@@ -49,6 +50,7 @@ public class Announce implements Domain, EnabledAware {
         setGitter(announce.gitter);
         setMail(announce.mail);
         setMastodon(announce.mastodon);
+        setMattermost(announce.mattermost);
         setSdkman(announce.sdkman);
         setSlack(announce.slack);
         setTeams(announce.teams);
@@ -111,6 +113,14 @@ public class Announce implements Domain, EnabledAware {
         this.mastodon.setAll(mastodon);
     }
 
+    public Mattermost getMattermost() {
+        return mattermost;
+    }
+
+    public void setMattermost(Mattermost mattermost) {
+        this.mattermost.setAll(mattermost);
+    }
+
     public Sdkman getSdkman() {
         return sdkman;
     }
@@ -160,6 +170,7 @@ public class Announce implements Domain, EnabledAware {
         map.putAll(gitter.asMap(full));
         map.putAll(mail.asMap(full));
         map.putAll(mastodon.asMap(full));
+        map.putAll(mattermost.asMap(full));
         map.putAll(sdkman.asMap(full));
         map.putAll(slack.asMap(full));
         map.putAll(teams.asMap(full));
@@ -196,6 +207,8 @@ public class Announce implements Domain, EnabledAware {
                 return (A) getMail();
             case Mastodon.NAME:
                 return (A) getMastodon();
+            case Mattermost.NAME:
+                return (A) getMattermost();
             case Sdkman.NAME:
                 return (A) getSdkman();
             case Slack.NAME:
@@ -218,6 +231,7 @@ public class Announce implements Domain, EnabledAware {
         set.add(Gitter.NAME);
         set.add(Mail.NAME);
         set.add(Mastodon.NAME);
+        set.add(Mattermost.NAME);
         set.add(Sdkman.NAME);
         set.add(Slack.NAME);
         set.add(Teams.NAME);
