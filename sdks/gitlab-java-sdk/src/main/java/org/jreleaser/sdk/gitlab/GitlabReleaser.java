@@ -63,22 +63,22 @@ public class GitlabReleaser implements Releaser {
                 gitlab.getReadTimeout());
 
             context.getLogger().debug("looking up release with tag {} at repository {}", tagName, gitlab.getCanonicalRepoName());
-            Release release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), tagName);
+            Release release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), tagName);
             boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
                 context.getLogger().debug("release {} exists", tagName);
                 if (gitlab.isOverwrite() || snapshot) {
                     context.getLogger().debug("deleting release {}", tagName);
                     if (!context.isDryrun()) {
-                        api.deleteRelease(gitlab.getOwner(), gitlab.getName(), tagName);
+                        api.deleteRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), tagName);
                     }
                     context.getLogger().debug("creating release {}", tagName);
                     createRelease(api, tagName, changelog, true);
                 } else if (gitlab.isUpdate()) {
                     context.getLogger().debug("updating release {}", tagName);
                     if (!context.isDryrun()) {
-                        List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), assets);
-                        api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, uploads);
+                        List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), assets);
+                        api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), uploads);
                     }
                 } else {
                     throw new IllegalStateException("Gitlab release failed because release " +
@@ -108,7 +108,7 @@ public class GitlabReleaser implements Releaser {
         Project project = null;
 
         try {
-            project = api.findProject(repo);
+            project = api.findProject(repo, gitlab.getIdentifier());
         } catch (RestAPIException e) {
             if (!e.isNotFound()) {
                 throw e;
@@ -143,7 +143,7 @@ public class GitlabReleaser implements Releaser {
         }
 
         if (deleteTags) {
-            deleteTags(api, gitlab.getOwner(), gitlab.getName(), tagName);
+            deleteTags(api, gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), tagName);
         }
 
         // local tag
@@ -152,7 +152,7 @@ public class GitlabReleaser implements Releaser {
             GitSdk.of(context).tag(tagName, true, context);
         }
 
-        List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), assets);
+        List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), assets);
 
         Release release = new Release();
         release.setName(gitlab.getEffectiveReleaseName());
@@ -161,26 +161,28 @@ public class GitlabReleaser implements Releaser {
         release.setDescription(changelog);
 
         // remote tag/release
-        api.createRelease(gitlab.getOwner(), gitlab.getName(), release);
-        api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, uploads);
+        api.createRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), release);
+        api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), uploads);
 
         if (gitlab.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
             Optional<Milestone> milestone = api.findMilestoneByName(
                 gitlab.getOwner(),
                 gitlab.getName(),
+                gitlab.getIdentifier(),
                 gitlab.getMilestone().getEffectiveName());
             if (milestone.isPresent()) {
                 api.closeMilestone(gitlab.getOwner(),
-                    gitlab.getName(),
-                    milestone.get());
+                        gitlab.getName(),
+                        gitlab.getIdentifier(),
+                        milestone.get());
             }
         }
     }
 
-    private void deleteTags(Gitlab api, String owner, String repo, String tagName) {
+    private void deleteTags(Gitlab api, String owner, String repo, String identifier, String tagName) {
         // delete remote tag
         try {
-            api.deleteTag(owner, repo, tagName);
+            api.deleteTag(owner, repo, identifier, tagName);
         } catch (RestAPIException ignored) {
             //noop
         }

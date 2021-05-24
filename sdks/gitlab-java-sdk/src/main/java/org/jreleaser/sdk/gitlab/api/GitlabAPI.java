@@ -34,6 +34,10 @@ public interface GitlabAPI {
     @RequestLine("GET /user")
     User getCurrentUser();
 
+    @RequestLine("GET /projects/{projectId}")
+    @Headers("Content-Type: application/json")
+    Project getProject(@Param("projectId") String projectId);
+
     @RequestLine("GET /users/{userId}/projects")
     List<Project> getProject(@Param("userId") Integer userId, @QueryMap Map<String, Object> queryMap);
 

@@ -17,6 +17,10 @@
  */
 package org.jreleaser.model;
 
+import java.util.Map;
+
+import static org.jreleaser.util.Constants.KEY_IDENTIFIER;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -36,12 +40,38 @@ public class Gitlab extends GitService {
         setIssueTrackerUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/issues");
     }
 
+    private String identifier;
+
     void setAll(Gitlab service) {
         super.setAll(service);
+        this.identifier = service.identifier;
     }
 
     @Override
     public String getReverseRepoHost() {
         return "com.gitlab";
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    @Override
+    public Map<String, Object> asMap(boolean full) {
+        Map<String, Object> map = super.asMap(full);
+        map.put("identifier", identifier);
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> props(JReleaserModel model) {
+        Map<String, Object> props = super.props(model);
+        props.put(KEY_IDENTIFIER, identifier);
+
+        return props;
     }
 }
