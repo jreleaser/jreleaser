@@ -33,3 +33,16 @@ clean and regenerte the plugin descritptor on every change, that is
 
 TIP: You maye use link:https://github.com/kordamp/gm[] instead in which case the commands are shorter, for example
 `./gradlew publishToMavenLocal` becomes `gm install`.
+
+=== Git Commit Messages
+
+ * Use the present tense ("Add feature" not "Added feature")
+ * Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
+ * Reference issues and pull requests liberally after the first line
+ * When only changing documentation, include [ci skip] in the commit title
+ * If fixing a bug, append "Fixes #<n>" to the first line
+ * If fixing a feature, append "Resolves #<n>" to the first line
+
+== Documentation
+
+Documentation changes should be posted to link:https://github.com/jreleaser/jreleaser.github.io[jreleaser/jreleaser.github.io].
