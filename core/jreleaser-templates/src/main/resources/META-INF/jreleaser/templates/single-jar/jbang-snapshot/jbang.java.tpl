@@ -1,5 +1,5 @@
 //usr/bin/env jbang "$0" "$@" ; exit $?
-//JAVA {{distributionJavaVersion}}
+//JAVA {{distributionJavaVersion}}+
 //REPOS jitpack
 //DEPS {{jbangDistributionGA}}:{{repoBranch}}-SNAPSHOT
 

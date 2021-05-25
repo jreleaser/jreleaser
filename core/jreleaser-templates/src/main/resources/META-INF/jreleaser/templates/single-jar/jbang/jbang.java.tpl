@@ -1,5 +1,5 @@
 //usr/bin/env jbang "$0" "$@" ; exit $?
-//JAVA {{distributionJavaVersion}}
+//JAVA {{distributionJavaVersion}}+
 //DEPS {{jbangDistributionGA}}:{{projectVersion}}
 
 public class {{jbangScriptName}} {

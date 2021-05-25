@@ -28,7 +28,7 @@ From then on you just have to re-install those dependencies that changed, for ex
 `./gradlew :jreleaser-model:publishToMavenLocal` when changes were made to the `jreleaser-model` project.
 
 IMPORTANT: The Gradle plugin responsible for building the Maven plugin descriptor is not that realiable. You'll have to
-clean and regenerte the plugin descritptor on every change, that is
+clean and regenerate the plugin descritptor on every change, that is
 `./gradlew :jreleaser-maven-plugin:clean :jreleaser-maven-plugin:publishToMavenLocal --no-build-cache`.
 
 TIP: You maye use link:https://github.com/kordamp/gm[] instead in which case the commands are shorter, for example
