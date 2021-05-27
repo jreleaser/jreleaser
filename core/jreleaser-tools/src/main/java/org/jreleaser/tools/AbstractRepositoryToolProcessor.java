@@ -86,12 +86,10 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 .setMessage(distribution.getExecutable() + " " + gitService.getResolvedTagName(context.getModel()))
                 .setAuthor(tool.getCommitAuthor().getName(), tool.getCommitAuthor().getEmail());
             commitCommand.setCredentialsProvider(credentialsProvider);
-            if (gitService.isSign()) {
-                commitCommand = commitCommand
-                    .setSign(true)
-                    .setSigningKey("**********")
-                    .setGpgSigner(new JReleaserGpgSigner(context, true));
-            }
+            commitCommand = commitCommand
+                .setSign(gitService.isSign())
+                .setSigningKey("**********")
+                .setGpgSigner(new JReleaserGpgSigner(context, gitService.isSign()));
 
             commitCommand.call();
 
