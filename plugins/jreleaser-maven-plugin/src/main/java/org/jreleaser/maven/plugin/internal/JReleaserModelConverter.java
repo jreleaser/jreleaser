@@ -390,6 +390,7 @@ public final class JReleaserModelConverter {
         a.setMessageTemplate(discord.getMessageTemplate());
         a.setConnectTimeout(discord.getConnectTimeout());
         a.setReadTimeout(discord.getReadTimeout());
+        a.setExtraProperties(discord.getExtraProperties());
         return a;
     }
 
@@ -403,6 +404,7 @@ public final class JReleaserModelConverter {
         a.setMessageTemplate(discussions.getMessageTemplate());
         a.setConnectTimeout(discussions.getConnectTimeout());
         a.setReadTimeout(discussions.getReadTimeout());
+        a.setExtraProperties(discussions.getExtraProperties());
         return a;
     }
 
@@ -414,6 +416,7 @@ public final class JReleaserModelConverter {
         a.setMessageTemplate(gitter.getMessageTemplate());
         a.setConnectTimeout(gitter.getConnectTimeout());
         a.setReadTimeout(gitter.getReadTimeout());
+        a.setExtraProperties(gitter.getExtraProperties());
         return a;
     }
 
@@ -433,6 +436,7 @@ public final class JReleaserModelConverter {
         a.setSubject(mail.getSubject());
         a.setMessage(mail.getMessage());
         a.setMessageTemplate(mail.getMessageTemplate());
+        a.setExtraProperties(mail.getExtraProperties());
         return a;
     }
 
@@ -444,6 +448,7 @@ public final class JReleaserModelConverter {
         a.setStatus(mastodon.getStatus());
         a.setConnectTimeout(mastodon.getConnectTimeout());
         a.setReadTimeout(mastodon.getReadTimeout());
+        a.setExtraProperties(mastodon.getExtraProperties());
         return a;
     }
 
@@ -455,6 +460,7 @@ public final class JReleaserModelConverter {
         a.setMessageTemplate(mattermost.getMessageTemplate());
         a.setConnectTimeout(mattermost.getConnectTimeout());
         a.setReadTimeout(mattermost.getReadTimeout());
+        a.setExtraProperties(mattermost.getExtraProperties());
         return a;
     }
 
@@ -467,6 +473,7 @@ public final class JReleaserModelConverter {
         a.setMajor(sdkman.isMajor());
         a.setConnectTimeout(sdkman.getConnectTimeout());
         a.setReadTimeout(sdkman.getReadTimeout());
+        a.setExtraProperties(sdkman.getExtraProperties());
         return a;
     }
 
@@ -480,6 +487,7 @@ public final class JReleaserModelConverter {
         a.setMessageTemplate(slack.getMessageTemplate());
         a.setConnectTimeout(slack.getConnectTimeout());
         a.setReadTimeout(slack.getReadTimeout());
+        a.setExtraProperties(slack.getExtraProperties());
         return a;
     }
 
@@ -490,6 +498,7 @@ public final class JReleaserModelConverter {
         a.setMessageTemplate(teams.getMessageTemplate());
         a.setConnectTimeout(teams.getConnectTimeout());
         a.setReadTimeout(teams.getReadTimeout());
+        a.setExtraProperties(teams.getExtraProperties());
         return a;
     }
 
@@ -503,6 +512,7 @@ public final class JReleaserModelConverter {
         a.setStatus(twitter.getStatus());
         a.setConnectTimeout(twitter.getConnectTimeout());
         a.setReadTimeout(twitter.getReadTimeout());
+        a.setExtraProperties(twitter.getExtraProperties());
         return a;
     }
 
@@ -518,6 +528,7 @@ public final class JReleaserModelConverter {
         a.setMessageTemplate(zulip.getMessageTemplate());
         a.setConnectTimeout(zulip.getConnectTimeout());
         a.setReadTimeout(zulip.getReadTimeout());
+        a.setExtraProperties(zulip.getExtraProperties());
         return a;
     }
 

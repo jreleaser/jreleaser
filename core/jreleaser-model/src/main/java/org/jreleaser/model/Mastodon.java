@@ -24,6 +24,7 @@ import java.util.Map;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -51,6 +52,7 @@ public class Mastodon extends AbstractAnnouncer {
 
     public String getResolvedStatus(JReleaserContext context) {
         Map<String, Object> props = context.props();
+        applyTemplates(props, getResolvedExtraProperties());
         context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
         return applyTemplate(status, props);
     }

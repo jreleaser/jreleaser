@@ -55,11 +55,6 @@ public class HttpUploader extends AbstractUploader {
         setHeaders(http.headers);
     }
 
-    @Override
-    public String getPrefix() {
-        return NAME;
-    }
-
     public Authorization resolveAuthorization() {
         if (null == authorization) {
             authorization = Authorization.NONE;

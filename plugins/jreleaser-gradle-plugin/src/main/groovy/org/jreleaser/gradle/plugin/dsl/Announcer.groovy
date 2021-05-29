@@ -27,7 +27,7 @@ import org.jreleaser.model.Active
  * @since 0.1.0
  */
 @CompileStatic
-interface Announcer {
+interface Announcer extends ExtraProperties {
     Property<Active> getActive()
 
     Property<Integer> getConnectTimeout()

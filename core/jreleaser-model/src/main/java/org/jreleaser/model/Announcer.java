@@ -21,7 +21,7 @@ package org.jreleaser.model;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Announcer extends Domain, Activatable, TimeoutAware {
+public interface Announcer extends Domain, Activatable, TimeoutAware, ExtraProperties {
     String getName();
 
     boolean isSnapshotSupported();

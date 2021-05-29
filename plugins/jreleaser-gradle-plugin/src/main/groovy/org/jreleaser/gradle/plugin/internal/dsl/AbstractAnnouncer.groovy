@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.internal.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Announcer
@@ -39,19 +40,22 @@ abstract class AbstractAnnouncer implements Announcer {
     final Property<Active> active
     final Property<Integer> connectTimeout
     final Property<Integer> readTimeout
+    final MapProperty<String, Object> extraProperties
 
     @Inject
     AbstractAnnouncer(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
         connectTimeout = objects.property(Integer).convention(Providers.notDefined())
         readTimeout = objects.property(Integer).convention(Providers.notDefined())
+        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
     @Internal
     boolean isSet() {
         active.present ||
             connectTimeout.present ||
-            readTimeout.present
+            readTimeout.present ||
+            extraProperties.present
     }
 
     @Override
@@ -65,5 +69,6 @@ abstract class AbstractAnnouncer implements Announcer {
         if (active.present) announcer.active = active.get()
         if (connectTimeout.present) announcer.connectTimeout = connectTimeout.get()
         if (readTimeout.present) announcer.readTimeout = readTimeout.get()
+        if (extraProperties.present) announcer.extraProperties.putAll(extraProperties.get())
     }
 }

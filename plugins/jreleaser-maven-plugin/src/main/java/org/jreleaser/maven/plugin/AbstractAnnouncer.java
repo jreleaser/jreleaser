@@ -17,11 +17,15 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 abstract class AbstractAnnouncer implements Announcer {
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected Active active;
     private int connectTimeout;
     private int readTimeout;
@@ -30,6 +34,7 @@ abstract class AbstractAnnouncer implements Announcer {
         this.active = announcer.active;
         this.connectTimeout = announcer.connectTimeout;
         this.readTimeout = announcer.readTimeout;
+        setExtraProperties(announcer.extraProperties);
     }
 
     @Override
@@ -67,9 +72,21 @@ abstract class AbstractAnnouncer implements Announcer {
         this.readTimeout = readTimeout;
     }
 
+    @Override
+    public Map<String, Object> getExtraProperties() {
+        return extraProperties;
+    }
+
+    @Override
+    public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
+        this.extraProperties.putAll(extraProperties);
+    }
+
     public boolean isSet() {
         return active != null ||
             connectTimeout != 0 ||
-            readTimeout != 0;
+            readTimeout != 0 ||
+            !extraProperties.isEmpty();
     }
 }

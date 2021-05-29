@@ -54,6 +54,11 @@ abstract class AbstractUploader implements Uploader {
     }
 
     @Override
+    public String getPrefix() {
+        return name;
+    }
+
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -207,8 +212,8 @@ abstract class AbstractUploader implements Uploader {
         props.put("artifacts", isArtifacts());
         props.put("files", isFiles());
         props.put("signatures", isSignatures());
-        props.put("extraProperties", getResolvedExtraProperties());
         asMap(props, full);
+        props.put("extraProperties", getResolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(this.getName(), props);

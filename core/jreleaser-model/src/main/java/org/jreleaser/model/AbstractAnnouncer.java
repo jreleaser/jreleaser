@@ -26,6 +26,7 @@ import java.util.Map;
  * @since 0.1.0
  */
 abstract class AbstractAnnouncer implements Announcer {
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected final String name;
     protected boolean enabled;
     protected Active active;
@@ -41,6 +42,12 @@ abstract class AbstractAnnouncer implements Announcer {
         this.enabled = announcer.enabled;
         this.connectTimeout = announcer.connectTimeout;
         this.readTimeout = announcer.readTimeout;
+        setExtraProperties(announcer.extraProperties);
+    }
+
+    @Override
+    public String getPrefix() {
+        return name;
     }
 
     @Override
@@ -115,6 +122,22 @@ abstract class AbstractAnnouncer implements Announcer {
     }
 
     @Override
+    public Map<String, Object> getExtraProperties() {
+        return extraProperties;
+    }
+
+    @Override
+    public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
+    public void addExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
 
@@ -124,6 +147,7 @@ abstract class AbstractAnnouncer implements Announcer {
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
         asMap(props);
+        props.put("extraProperties", getResolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(getName(), props);

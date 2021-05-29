@@ -50,11 +50,6 @@ public class Artifactory extends AbstractUploader {
         this.authorization = artifactory.authorization;
     }
 
-    @Override
-    public String getPrefix() {
-        return NAME;
-    }
-
     public Authorization resolveAuthorization() {
         if (null == authorization) {
             authorization = Authorization.BEARER;

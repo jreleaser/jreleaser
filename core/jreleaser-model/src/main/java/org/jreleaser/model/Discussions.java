@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.MustacheUtils.applyTemplates;
 
 /**
  * @author Andres Almiray
@@ -54,16 +55,19 @@ public class Discussions extends AbstractAnnouncer {
 
     public String getResolvedTitle(JReleaserContext context) {
         Map<String, Object> props = context.props();
+        applyTemplates(props, getResolvedExtraProperties());
         return applyTemplate(title, props);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
         Map<String, Object> props = context.props();
+        applyTemplates(props, getResolvedExtraProperties());
         return applyTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
         Map<String, Object> props = context.props();
+        applyTemplates(props, getResolvedExtraProperties());
         props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);
