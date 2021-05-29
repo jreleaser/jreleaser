@@ -47,7 +47,8 @@ public abstract class ZulipValidator extends Validator {
                 ZULIP_API_KEY,
                 "zulip.apiKey",
                 zulip.getApiKey(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         if (isBlank(zulip.getApiHost())) {
             errors.configuration("zulip.apiHost must not be blank.");

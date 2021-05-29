@@ -43,7 +43,8 @@ public abstract class DiscordValidator extends Validator {
                 DISCORD_WEBHOOK,
                 "discord.webhook",
                 discord.getWebhook(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         if (isBlank(discord.getMessage()) && isBlank(discord.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_DISCORD_TPL))) {

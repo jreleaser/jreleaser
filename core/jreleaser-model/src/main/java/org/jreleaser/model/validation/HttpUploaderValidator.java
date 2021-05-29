@@ -74,7 +74,8 @@ public abstract class HttpUploaderValidator extends Validator {
                         "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
                         "http.password",
                         http.getPassword(),
-                        errors));
+                        errors,
+                        context.isDryrun()));
                 break;
             case BASIC:
                 http.setUsername(
@@ -82,14 +83,16 @@ public abstract class HttpUploaderValidator extends Validator {
                         "HTTP_" + Env.toVar(http.getName()) + "_USERNAME",
                         "http.username",
                         http.getUsername(),
-                        new Errors()));
+                        errors,
+                        context.isDryrun()));
 
                 http.setPassword(
                     checkProperty(context.getModel().getEnvironment(),
                         "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
                         "http.password",
                         http.getPassword(),
-                        errors));
+                        errors,
+                        context.isDryrun()));
                 break;
             case NONE:
                 break;

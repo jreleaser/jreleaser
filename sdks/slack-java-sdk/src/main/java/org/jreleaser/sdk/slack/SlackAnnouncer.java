@@ -77,7 +77,7 @@ public class SlackAnnouncer implements Announcer {
                 SlackSdk sdk = SlackSdk.builder(context.getLogger())
                     .connectTimeout(slack.getConnectTimeout())
                     .readTimeout(slack.getReadTimeout())
-                    .token(slack.getResolvedToken())
+                    .token(context.isDryrun() ? "**UNDEFINED**" :slack.getResolvedToken())
                     .dryrun(context.isDryrun())
                     .build();
 

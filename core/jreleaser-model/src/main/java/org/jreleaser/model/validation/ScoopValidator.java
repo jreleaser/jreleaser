@@ -51,17 +51,16 @@ public abstract class ScoopValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         validateOwner(tool.getBucket(), parentTool.getBucket());
         validateTemplate(context, distribution, tool, parentTool, errors);
-        Scoop commonScoop = parentTool;
         mergeExtraProperties(tool, parentTool);
 
         if (isBlank(tool.getCheckverUrl())) {
-            tool.setCheckverUrl(commonScoop.getCheckverUrl());
+            tool.setCheckverUrl(parentTool.getCheckverUrl());
             if (isBlank(tool.getCheckverUrl())) {
                 tool.setCheckverUrl(model.getRelease().getGitService().getLatestReleaseUrlFormat());
             }
         }
         if (isBlank(tool.getAutoupdateUrl())) {
-            tool.setAutoupdateUrl(commonScoop.getAutoupdateUrl());
+            tool.setAutoupdateUrl(parentTool.getAutoupdateUrl());
             if (isBlank(tool.getAutoupdateUrl())) {
                 tool.setAutoupdateUrl(model.getRelease().getGitService().getDownloadUrlFormat());
             }

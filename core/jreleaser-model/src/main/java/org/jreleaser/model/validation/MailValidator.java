@@ -61,7 +61,8 @@ public abstract class MailValidator extends Validator {
                 MAIL_PASSWORD,
                 "mail.password",
                 mail.getPassword(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         if (isBlank(mail.getFrom())) {
             errors.configuration("mail.from must not be blank.");

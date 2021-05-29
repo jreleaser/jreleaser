@@ -49,20 +49,23 @@ public abstract class SigningValidator extends Validator {
                 GPG_PASSPHRASE,
                 "signing.passphrase",
                 signing.getPassphrase(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         signing.setPublicKey(
             checkProperty(context.getModel().getEnvironment(),
                 GPG_PUBLIC_KEY,
                 "signing.publicKey",
                 signing.getPublicKey(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         signing.setSecretKey(
             checkProperty(context.getModel().getEnvironment(),
                 GPG_SECRET_KEY,
                 "signing.secretKey",
                 signing.getSecretKey(),
-                errors));
+                errors,
+                context.isDryrun()));
     }
 }

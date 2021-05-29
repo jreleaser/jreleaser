@@ -93,6 +93,9 @@ public class MessageMailCommand implements MailCommand {
 
     @Override
     public void execute() throws MailException {
+        logger.info("Sending e-mail announcement");
+        if (dryrun) return;
+
         Properties props = new Properties();
         props.putAll(properties);
 
@@ -146,16 +149,13 @@ public class MessageMailCommand implements MailCommand {
             message.setHeader("X-Mailer", "JReleaser " + JReleaserVersion.getPlainVersion());
             message.setSentDate(new Date());
 
-            logger.info("Sending e-mail announcement");
-            if (!dryrun) {
-                Transport t = session.getTransport(transport.name().toLowerCase());
-                if (auth) {
-                    t.connect(host, username, password);
-                } else {
-                    t.connect();
-                }
-                t.sendMessage(message, message.getAllRecipients());
+            Transport t = session.getTransport(transport.name().toLowerCase());
+            if (auth) {
+                t.connect(host, username, password);
+            } else {
+                t.connect();
             }
+            t.sendMessage(message, message.getAllRecipients());
         } catch (Exception e) {
             throw new MailException(e);
         }

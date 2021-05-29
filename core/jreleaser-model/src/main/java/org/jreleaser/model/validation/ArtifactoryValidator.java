@@ -66,7 +66,8 @@ public abstract class ArtifactoryValidator extends Validator {
                         "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_PASSWORD",
                         "artifactory.password",
                         artifactory.getPassword(),
-                        errors));
+                        errors,
+                        context.isDryrun()));
                 break;
             case BASIC:
                 artifactory.setUsername(
@@ -74,14 +75,16 @@ public abstract class ArtifactoryValidator extends Validator {
                         "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_USERNAME",
                         "artifactory.username",
                         artifactory.getUsername(),
-                        new Errors()));
+                        errors,
+                        context.isDryrun()));
 
                 artifactory.setPassword(
                     checkProperty(context.getModel().getEnvironment(),
                         "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_PASSWORD",
                         "artifactory.password",
                         artifactory.getPassword(),
-                        errors));
+                        errors,
+                        context.isDryrun()));
                 break;
             case NONE:
                 errors.configuration("artifactory." + artifactory.getName() + ".authorization can not be NONE");

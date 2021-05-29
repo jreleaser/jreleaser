@@ -59,25 +59,24 @@ public abstract class SnapValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         validateOwner(tool.getSnap(), parentTool.getSnap());
         validateTemplate(context, distribution, tool, parentTool, errors);
-        Snap commonSnap = parentTool;
         mergeExtraProperties(tool, parentTool);
         mergeSnapPlugs(tool, parentTool);
         mergeSnapSlots(tool, parentTool);
 
         if (isBlank(tool.getBase())) {
-            tool.setBase(commonSnap.getBase());
+            tool.setBase(parentTool.getBase());
             if (isBlank(tool.getBase())) {
                 errors.configuration("distribution." + distribution.getName() + ".snap.base must not be blank");
             }
         }
         if (isBlank(tool.getGrade())) {
-            tool.setGrade(commonSnap.getGrade());
+            tool.setGrade(parentTool.getGrade());
             if (isBlank(tool.getGrade())) {
                 errors.configuration("distribution." + distribution.getName() + ".snap.grade must not be blank");
             }
         }
         if (isBlank(tool.getConfinement())) {
-            tool.setConfinement(commonSnap.getConfinement());
+            tool.setConfinement(parentTool.getConfinement());
             if (isBlank(tool.getConfinement())) {
                 errors.configuration("distribution." + distribution.getName() + ".snap.confinement must not be blank");
             }
@@ -86,7 +85,7 @@ public abstract class SnapValidator extends Validator {
             tool.setRemoteBuild(parentTool.isRemoteBuild());
         }
         if (!tool.isRemoteBuild() && isBlank(tool.getExportedLogin())) {
-            tool.setExportedLogin(commonSnap.getExportedLogin());
+            tool.setExportedLogin(parentTool.getExportedLogin());
             if (isBlank(tool.getExportedLogin())) {
                 errors.configuration("distribution." + distribution.getName() + ".snap.exportedLogin must not be empty");
             } else if (!context.getBasedir().resolve(tool.getExportedLogin()).toFile().exists()) {

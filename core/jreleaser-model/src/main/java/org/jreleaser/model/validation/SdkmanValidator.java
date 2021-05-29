@@ -43,14 +43,16 @@ public abstract class SdkmanValidator extends Validator {
                 SDKMAN_CONSUMER_KEY,
                 "sdkman.consumerKey",
                 sdkman.getConsumerKey(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         sdkman.setConsumerToken(
             checkProperty(context.getModel().getEnvironment(),
                 SDKMAN_CONSUMER_TOKEN,
                 "sdkman.consumerToken",
                 sdkman.getConsumerToken(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         if (context.getModel().getActiveDistributions().isEmpty()) {
             context.getLogger().warn("There are no active distributions. Disabling Sdkman announcer");

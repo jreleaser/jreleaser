@@ -41,28 +41,32 @@ public abstract class TwitterValidator extends Validator {
                 TWITTER_CONSUMER_KEY,
                 "twitter.consumerKey",
                 twitter.getConsumerKey(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         twitter.setConsumerSecret(
             checkProperty(context.getModel().getEnvironment(),
                 TWITTER_CONSUMER_SECRET,
                 "twitter.consumerSecret",
                 twitter.getConsumerSecret(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         twitter.setAccessToken(
             checkProperty(context.getModel().getEnvironment(),
                 TWITTER_ACCESS_TOKEN,
                 "twitter.accessToken",
                 twitter.getAccessToken(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         twitter.setAccessTokenSecret(
             checkProperty(context.getModel().getEnvironment(),
                 TWITTER_ACCESS_TOKEN_SECRET,
                 "twitter.accessTokenSecret",
                 twitter.getAccessTokenSecret(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         if (isBlank(twitter.getStatus())) {
             twitter.setStatus("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");

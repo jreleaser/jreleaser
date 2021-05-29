@@ -73,7 +73,7 @@ public class ZulipAnnouncer implements Announcer {
             ZulipSdk sdk = ZulipSdk.builder(context.getLogger())
                 .apiHost(zulip.getApiHost())
                 .account(zulip.getAccount())
-                .apiKey(zulip.getResolvedApiKey())
+                .apiKey(context.isDryrun() ? "**UNDEFINED**" : zulip.getResolvedApiKey())
                 .connectTimeout(zulip.getConnectTimeout())
                 .readTimeout(zulip.getReadTimeout())
                 .dryrun(context.isDryrun())

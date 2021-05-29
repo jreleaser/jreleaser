@@ -45,19 +45,21 @@ public abstract class SlackValidator extends Validator {
                 SLACK_TOKEN,
                 "slack.token",
                 slack.getToken(),
-                ignored));
+                ignored,
+                context.isDryrun()));
 
         slack.setWebhook(
             checkProperty(context.getModel().getEnvironment(),
                 SLACK_WEBHOOK,
                 "slack.webhook",
                 slack.getWebhook(),
-                ignored));
+                ignored,
+                context.isDryrun()));
 
         String token = slack.getResolvedToken();
         String webhook = slack.getResolvedWebhook();
 
-        if (isBlank(token) && isBlank(webhook)) {
+        if (!context.isDryrun() && isBlank(token) && isBlank(webhook)) {
             errors.configuration("slack.token or slack.webhook must be provided");
             return;
         }

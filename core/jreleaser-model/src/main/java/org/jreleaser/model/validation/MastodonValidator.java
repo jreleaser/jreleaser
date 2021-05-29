@@ -42,7 +42,8 @@ public abstract class MastodonValidator extends Validator {
                 MASTODON_ACCESS_TOKEN,
                 "mastodon.accessToken",
                 mastodon.getAccessToken(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         if (isBlank(mastodon.getStatus())) {
             mastodon.setStatus("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");

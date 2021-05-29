@@ -43,7 +43,8 @@ public abstract class TeamsValidator extends Validator {
                 TEAMS_WEBHOOK,
                 "teams.webhook",
                 teams.getWebhook(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         if (isBlank(teams.getMessageTemplate())) {
             teams.setMessageTemplate(DEFAULT_TEAMS_TPL);

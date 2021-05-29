@@ -43,7 +43,8 @@ public abstract class MattermostValidator extends Validator {
                 MATTERMOST_WEBHOOK,
                 "mattermost.webhook",
                 mattermost.getWebhook(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         if (isBlank(mattermost.getMessage()) && isBlank(mattermost.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_MATTERMOST_TPL))) {

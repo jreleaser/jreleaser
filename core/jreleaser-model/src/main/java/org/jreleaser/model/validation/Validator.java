@@ -37,6 +37,11 @@ class Validator {
         return Env.check(key, environment.getVariable(key), property, errors);
     }
 
+    static String checkProperty(Environment environment, String key, String property, String value, Errors errors, boolean dryrun) {
+        if (isNotBlank(value)) return value;
+        return Env.check(key, environment.getVariable(key), property, dryrun ? new Errors() : errors);
+    }
+
     static String checkProperty(Environment environment, String key, String property, String value, String defaultValue) {
         if (isNotBlank(value)) return value;
         Errors errors = new Errors();

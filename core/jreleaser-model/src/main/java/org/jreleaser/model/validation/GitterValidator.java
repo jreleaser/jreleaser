@@ -43,7 +43,8 @@ public abstract class GitterValidator extends Validator {
                 GITTER_WEBHOOK,
                 "gitter.webhook",
                 gitter.getWebhook(),
-                errors));
+                errors,
+                context.isDryrun()));
 
         if (isBlank(gitter.getMessage()) && isBlank(gitter.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_GITTER_TPL))) {

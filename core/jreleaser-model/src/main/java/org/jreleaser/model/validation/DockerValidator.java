@@ -278,7 +278,8 @@ public abstract class DockerValidator extends Validator {
                     "DOCKER_" + Env.toVar(registry.getServerName()) + "_PASSWORD",
                     "registry." + Env.toVar(registry.getServerName()) + ".password",
                     registry.getPassword(),
-                    errors));
+                    errors,
+                    context.isDryrun()));
         }
     }
 }
