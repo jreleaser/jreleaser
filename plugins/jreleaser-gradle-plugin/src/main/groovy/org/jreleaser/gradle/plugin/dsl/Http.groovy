@@ -38,7 +38,11 @@ interface Http extends Uploader {
 
     Property<org.jreleaser.model.Uploader.Authorization> getAuthorization()
 
-    MapProperty<String,String> getHeaders()
+    MapProperty<String, String> getHeaders()
 
     void setHeader(String key, String value)
+
+    void setAuthorization(String authorization)
+
+    void setMethod(String method)
 }

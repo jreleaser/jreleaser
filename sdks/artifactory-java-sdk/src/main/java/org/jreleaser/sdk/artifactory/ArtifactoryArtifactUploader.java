@@ -71,7 +71,6 @@ public class ArtifactoryArtifactUploader extends AbstractArtifactUploader<Artifa
         String target = uploader.getResolvedTarget(context);
         String username = uploader.getResolvedUsername();
         String password = uploader.getResolvedPassword();
-        String token = uploader.getResolvedToken();
 
         for (Path path : paths) {
             context.getLogger().info(" - {}", path.getFileName());
@@ -81,14 +80,18 @@ public class ArtifactoryArtifactUploader extends AbstractArtifactUploader<Artifa
                     FormData data = ClientUtils.toFormData(path);
 
                     Map<String, String> headers = new LinkedHashMap<>();
-                    if (isNotBlank(username)) {
-                        String auth = username + ":" + password;
-                        byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
-                        auth = new String(encodedAuth);
-                        headers.put("Authorization", "Basic " + auth);
-                    } else {
-                        headers.put("Authorization", "Bearer " + token);
+                    switch (uploader.resolveAuthorization()) {
+                        case BASIC:
+                            String auth = username + ":" + password;
+                            byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
+                            auth = new String(encodedAuth);
+                            headers.put("Authorization", "Basic " + auth);
+                            break;
+                        case BEARER:
+                            headers.put("Authorization", "Bearer " + password);
+                            break;
                     }
+
                     headers.put("X-Checksum-Deploy", "false");
                     headers.put("X-Checksum-Sha1", ChecksumUtils.checksum(Algorithm.SHA_1, data.getData()));
                     headers.put("X-Checksum-Sha256", ChecksumUtils.checksum(Algorithm.SHA_256, data.getData()));

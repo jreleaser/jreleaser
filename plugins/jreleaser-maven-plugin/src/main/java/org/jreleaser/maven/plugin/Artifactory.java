@@ -27,7 +27,7 @@ public class Artifactory extends AbstractUploader {
     private String target;
     private String username;
     private String password;
-    private String token;
+    private Authorization authorization;
 
     public Artifactory() {
         super(NAME);
@@ -38,7 +38,15 @@ public class Artifactory extends AbstractUploader {
         this.target = artifactory.target;
         this.username = artifactory.username;
         this.password = artifactory.password;
-        this.token = artifactory.token;
+        this.authorization = artifactory.authorization;
+    }
+
+    public Authorization resolveAuthorization() {
+        if (null == authorization) {
+            authorization = Authorization.NONE;
+        }
+
+        return authorization;
     }
 
     public String getTarget() {
@@ -65,12 +73,11 @@ public class Artifactory extends AbstractUploader {
         this.password = password;
     }
 
-    public String getToken() {
-        return token;
+    public Authorization getAuthorization() {
+        return authorization;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setAuthorization(Authorization authorization) {
+        this.authorization = authorization;
     }
-
 }

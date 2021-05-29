@@ -320,7 +320,7 @@ public final class JReleaserModelConverter {
         a.setTarget(artifactory.getTarget());
         a.setUsername(artifactory.getUsername());
         a.setPassword(artifactory.getPassword());
-        a.setToken(artifactory.getToken());
+        a.setAuthorization(artifactory.resolveAuthorization().name());
         return a;
     }
 

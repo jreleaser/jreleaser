@@ -33,5 +33,7 @@ interface Artifactory extends Uploader {
 
     Property<String> getPassword()
 
-    Property<String> getToken()
+    Property<org.jreleaser.model.Uploader.Authorization> getAuthorization()
+
+    void setAuthorization(String authorization)
 }

@@ -75,6 +75,16 @@ class HttpImpl extends AbstractUploader implements Http {
         }
     }
 
+    @Override
+    void setAuthorization(String authorization) {
+        this.authorization.set(Uploader.Authorization.of(authorization))
+    }
+
+    @Override
+    void setMethod(String method) {
+        this.method.set(Uploader.Method.of(method))
+    }
+
     org.jreleaser.model.HttpUploader toModel() {
         org.jreleaser.model.HttpUploader http = new org.jreleaser.model.HttpUploader()
         http.name = name

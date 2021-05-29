@@ -25,7 +25,6 @@ import java.util.Map;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
-import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -151,21 +150,5 @@ public class HttpUploader extends AbstractUploader {
         props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
         props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
         props.put("headers", headers);
-    }
-
-    public enum Authorization {
-        NONE,
-        BASIC,
-        BEARER;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-
-        public static Authorization of(String str) {
-            if (isBlank(str)) return null;
-            return Authorization.valueOf(str.toUpperCase().trim());
-        }
     }
 }

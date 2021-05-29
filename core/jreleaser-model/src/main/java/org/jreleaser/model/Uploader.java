@@ -65,7 +65,7 @@ public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProper
         }
     }
 
-    public enum Authorization {
+    enum Authorization {
         NONE,
         BASIC,
         BEARER;

@@ -36,7 +36,7 @@ public class Artifactory extends AbstractUploader {
     private String target;
     private String username;
     private String password;
-    private String token;
+    private Authorization authorization;
 
     public Artifactory() {
         super(NAME);
@@ -47,12 +47,20 @@ public class Artifactory extends AbstractUploader {
         this.username = artifactory.username;
         this.password = artifactory.password;
         this.target = artifactory.target;
-        this.token = artifactory.token;
+        this.authorization = artifactory.authorization;
     }
 
     @Override
     public String getPrefix() {
         return NAME;
+    }
+
+    public Authorization resolveAuthorization() {
+        if (null == authorization) {
+            authorization = Authorization.BEARER;
+        }
+
+        return authorization;
     }
 
     public String getResolvedTarget(JReleaserContext context) {
@@ -67,10 +75,6 @@ public class Artifactory extends AbstractUploader {
 
     public String getResolvedPassword() {
         return Env.resolve("ARTIFACTORY_" + Env.toVar(name) + "_PASSWORD", password);
-    }
-
-    public String getResolvedToken() {
-        return Env.resolve("ARTIFACTORY_" + Env.toVar(name) + "_TOKEN", token);
     }
 
     public String getUsername() {
@@ -97,19 +101,23 @@ public class Artifactory extends AbstractUploader {
         this.target = target;
     }
 
-    public String getToken() {
-        return token;
+    public Authorization getAuthorization() {
+        return authorization;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setAuthorization(Authorization authorization) {
+        this.authorization = authorization;
+    }
+
+    public void setAuthorization(String authorization) {
+        this.authorization = Authorization.of(authorization);
     }
 
     @Override
     protected void asMap(Map<String, Object> props, boolean full) {
         props.put("target", target);
+        props.put("authorization", authorization);
         props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
         props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
-        props.put("token", isNotBlank(getResolvedToken()) ? HIDE : UNSET);
     }
 }

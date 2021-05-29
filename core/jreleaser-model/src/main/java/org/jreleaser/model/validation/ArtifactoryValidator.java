@@ -26,7 +26,6 @@ import org.jreleaser.util.Errors;
 import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -56,36 +55,37 @@ public abstract class ArtifactoryValidator extends Validator {
             return;
         }
 
-        if (isBlank(artifactory.getName())) {
-            errors.configuration("artifactory.name must not be blank");
-            return;
-        }
-
         if (isBlank(artifactory.getTarget())) {
-            errors.configuration("artifactory.target must not be blank.");
+            errors.configuration("artifactory." + artifactory.getName() + ".target must not be blank.");
         }
 
-        artifactory.setUsername(
-            checkProperty(context.getModel().getEnvironment(),
-                "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_USERNAME",
-                "artifactory.username",
-                artifactory.getUsername(),
-                new Errors()));
+        switch (artifactory.resolveAuthorization()) {
+            case BEARER:
+                artifactory.setPassword(
+                    checkProperty(context.getModel().getEnvironment(),
+                        "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_PASSWORD",
+                        "artifactory.password",
+                        artifactory.getPassword(),
+                        errors));
+                break;
+            case BASIC:
+                artifactory.setUsername(
+                    checkProperty(context.getModel().getEnvironment(),
+                        "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_USERNAME",
+                        "artifactory.username",
+                        artifactory.getUsername(),
+                        new Errors()));
 
-        if (isNotBlank(artifactory.getResolvedUsername())) {
-            artifactory.setPassword(
-                checkProperty(context.getModel().getEnvironment(),
-                    "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_PASSWORD",
-                    "artifactory.password",
-                    artifactory.getPassword(),
-                    errors));
-        } else {
-            artifactory.setToken(
-                checkProperty(context.getModel().getEnvironment(),
-                    "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_TOKEN",
-                    "artifactory.token",
-                    artifactory.getToken(),
-                    errors));
+                artifactory.setPassword(
+                    checkProperty(context.getModel().getEnvironment(),
+                        "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_PASSWORD",
+                        "artifactory.password",
+                        artifactory.getPassword(),
+                        errors));
+                break;
+            case NONE:
+                errors.configuration("artifactory." + artifactory.getName() + ".authorization can not be NONE");
+                break;
         }
 
         if (artifactory.getConnectTimeout() <= 0 || artifactory.getConnectTimeout() > 300) {
