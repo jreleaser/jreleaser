@@ -127,6 +127,8 @@ public final class JReleaserModelConverter {
         p.setLongDescription(project.getLongDescription());
         p.setWebsite(project.getWebsite());
         p.setLicense(project.getLicense());
+        p.setCopyright(project.getCopyright());
+        p.setDocsUrl(project.getDocsUrl());
         p.setTags(project.getTags());
         p.setAuthors(project.getAuthors());
         p.setExtraProperties(project.getExtraProperties());

@@ -73,6 +73,10 @@ public final class JReleaserModelConfigurer {
         if (isBlank(project.getLicense())) {
             project.setLicense(resolveLicense(mavenProject.getLicenses()));
         }
+        if (!project.getExtraProperties().containsKey("inceptionYear") &&
+            isNotBlank(mavenProject.getInceptionYear())) {
+            project.getExtraProperties().put("inceptionYear", mavenProject.getInceptionYear());
+        }
 
         project.getJava().setGroupId(mavenProject.getGroupId());
         project.getJava().setArtifactId(mavenProject.getArtifactId());

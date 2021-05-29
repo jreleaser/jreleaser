@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jreleaser.util.CollectionUtils.safePut;
+import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -68,7 +69,8 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     }
 
     public Map<String, Object> props() {
-        Map<String, Object> props = new LinkedHashMap<>(getResolvedExtraProperties());
+        Map<String, Object> props = new LinkedHashMap<>();
+        applyTemplates(props, getResolvedExtraProperties());
         props.put(Constants.KEY_DISTRIBUTION_NAME, name);
         props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, executable);
         props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", tags));

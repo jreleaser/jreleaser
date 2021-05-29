@@ -47,6 +47,8 @@ class ProjectImpl implements Project {
     final Property<String> longDescription
     final Property<String> website
     final Property<String> license
+    final Property<String> copyright
+    final Property<String> docsUrl
     final ListProperty<String> authors
     final ListProperty<String> tags
     final MapProperty<String, Object> extraProperties
@@ -64,6 +66,8 @@ class ProjectImpl implements Project {
         longDescription = objects.property(String).convention(descriptionProvider)
         website = objects.property(String).convention(Providers.notDefined())
         license = objects.property(String).convention(Providers.notDefined())
+        copyright = objects.property(String).convention(Providers.notDefined())
+        docsUrl = objects.property(String).convention(Providers.notDefined())
         authors = objects.listProperty(String).convention(Providers.notDefined())
         tags = objects.listProperty(String).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
@@ -104,6 +108,8 @@ class ProjectImpl implements Project {
         if (longDescription.present) project.longDescription = longDescription.get()
         if (website.present) project.website = website.get()
         if (license.present) project.license = license.get()
+        if (copyright.present) project.copyright = copyright.get()
+        if (docsUrl.present) project.docsUrl = docsUrl.get()
         project.authors = (List<String>) authors.getOrElse([])
         project.tags = (List<String>) tags.getOrElse([])
         if (extraProperties.present) project.extraProperties.putAll(extraProperties.get())

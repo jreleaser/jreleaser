@@ -74,6 +74,17 @@ public final class MustacheUtils {
         return applyTemplate(new StringReader(template), context, UUID.randomUUID().toString()).trim();
     }
 
+    public static void applyTemplates(Map<String, Object> props, Map<String, Object> templates) {
+        for (Map.Entry<String, Object> e : templates.entrySet()) {
+            String value = String.valueOf(e.getValue());
+            if (value.contains("{{") && value.contains("}}")) {
+                props.put(e.getKey(), applyTemplate(value, props));
+            } else {
+                props.put(e.getKey(), value);
+            }
+        }
+    }
+
     public static String passThrough(String str) {
         return isNotBlank(str) ? "!!" + str + "!!" : str;
     }

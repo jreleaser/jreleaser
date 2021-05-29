@@ -10,10 +10,15 @@
     <!-- optional -->
     <title>{{projectName}}</title>
     <projectUrl>{{projectWebsite}}</projectUrl>
+    <copyright>{{projectCopyright}}</copyright>
     <license type="expression">{{projectLicense}}</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>{{distributionTagsBySpace}}</tags>
     <summary>{{projectDescription}}</summary>
+    <projectSourceUrl>{{repoUrl}}</projectSourceUrl>
+    <packageSourceUrl>{{chocolateyBucketRepoUrl}}</packageSourceUrl>
+    <docsUrl>{{projectDocsUrl}}</docsUrl>
+    <bugTrackerUrl>{{issueTrackerUrl}}</bugTrackerUrl>
     <releaseNotes>{{releaseNotesUrl}}</releaseNotes>
   </metadata>
   <files>

@@ -43,6 +43,10 @@ interface Project extends ExtraProperties {
 
     Property<String> getLicense()
 
+    Property<String> getCopyright()
+
+    Property<String> getDocsUrl()
+
     ListProperty<String> getAuthors()
 
     ListProperty<String> getTags()

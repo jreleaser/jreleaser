@@ -74,15 +74,21 @@ public abstract class ProjectValidator extends Validator {
         context.getLogger().debug("project");
         Project project = context.getModel().getProject();
 
-        if (context.getModel().getActiveDistributions().isEmpty() || !context.getModel().getAnnounce().isEnabled()) {
+        if (context.getModel().getActiveDistributions().isEmpty() && !context.getModel().getAnnounce().isEnabled()) {
             return;
         }
 
         if (isBlank(project.getDescription())) {
             errors.configuration("project.description must not be blank");
         }
+        if (isBlank(project.getDocsUrl())) {
+            project.setDocsUrl(project.getWebsite());
+        }
         if (isBlank(project.getWebsite())) {
             errors.configuration("project.website must not be blank");
+        }
+        if (isBlank(project.getDocsUrl())) {
+            errors.configuration("project.docsUrl must not be blank");
         }
         if (isBlank(project.getLicense())) {
             errors.configuration("project.license must not be blank");
@@ -92,6 +98,16 @@ public abstract class ProjectValidator extends Validator {
         }
         if (project.getAuthors().isEmpty()) {
             errors.configuration("project.authors must not be empty");
+        }
+        if (isBlank(project.getCopyright())) {
+            if (project.getExtraProperties().containsKey("inceptionYear") &&
+                !project.getAuthors().isEmpty()) {
+                project.setCopyright(
+                    project.getExtraProperties().get("inceptionYear") + " " +
+                        String.join(",", project.getAuthors()));
+            } else {
+                errors.configuration("project.copyright must not be blank");
+            }
         }
     }
 

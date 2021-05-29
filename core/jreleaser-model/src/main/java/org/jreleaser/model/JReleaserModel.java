@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -226,6 +227,8 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_OS_PLATFORM, osName + "-" + osArch);
         props.put(Constants.KEY_OS_VERSION, PlatformUtils.getOsDetector().get(OsDetector.DETECTED_VERSION));
 
+        applyTemplates(props, project.getResolvedExtraProperties());
+
         return props;
     }
 
@@ -249,6 +252,12 @@ public class JReleaserModel implements Domain {
         }
         if (isNotBlank(project.getLicense())) {
             props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+        }
+        if (isNotBlank(project.getDocsUrl())) {
+            props.put(Constants.KEY_PROJECT_DOCS_URL, project.getDocsUrl());
+        }
+        if (isNotBlank(project.getCopyright())) {
+            props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
         }
         props.put(Constants.KEY_PROJECT_AUTHORS_BY_SPACE, String.join(" ", project.getAuthors()));
         props.put(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));

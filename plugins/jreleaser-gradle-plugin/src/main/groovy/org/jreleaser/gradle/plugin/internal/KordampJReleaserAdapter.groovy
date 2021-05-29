@@ -55,5 +55,9 @@ class KordampJReleaserAdapter {
                 jreleaser.project.license.set(license.name)
             }
         }
+        if (jreleaser.project.extraProperties.present &&
+            !jreleaser.project.extraProperties.get().containsKey('inceptionYear')) {
+            jreleaser.project.extraProperties.put('inceptionYear', config.info.inceptionYear)
+        }
     }
 }

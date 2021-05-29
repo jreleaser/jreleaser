@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jreleaser.util.CollectionUtils.safePut;
+import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -61,7 +62,8 @@ abstract class AbstractAssembler implements Assembler {
 
     @Override
     public Map<String, Object> props() {
-        Map<String, Object> props = new LinkedHashMap<>(getResolvedExtraProperties());
+        Map<String, Object> props = new LinkedHashMap<>();
+        applyTemplates(props, getResolvedExtraProperties());
         props.put(Constants.KEY_DISTRIBUTION_NAME, name);
         props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, executable);
         props.putAll(java.getResolvedExtraProperties());

@@ -53,6 +53,7 @@ import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -213,7 +214,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         }
         context.getLogger().debug("filling tool properties into props");
         fillToolProperties(newProps, distribution);
-        newProps.putAll(tool.getResolvedExtraProperties());
+        applyTemplates(newProps, tool.getResolvedExtraProperties());
         if (isBlank(context.getModel().getRelease().getGitService().getReverseRepoHost())) {
             newProps.put(Constants.KEY_REVERSE_REPO_HOST,
                 tool.getExtraProperties().get(Constants.KEY_REVERSE_REPO_HOST));
@@ -333,6 +334,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 props.put(Constants.KEY_ARTIFACT_NAME, artifactName);
                 // add extra properties without clobbering existing keys
                 Map<String, Object> aprops = artifact.getResolvedExtraProperties();
+                applyTemplates(aprops, aprops);
                 aprops.keySet().stream()
                     .filter(k -> !props.containsKey(k))
                     .forEach(k -> props.put(k, aprops.get(k)));

@@ -63,7 +63,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 resolveGitToken(gitService));
 
             // clone the repository
-            context.getLogger().debug("clonning {}", repository.getHttpUrl());
+            context.getLogger().debug("cloning {}", repository.getHttpUrl());
             Path directory = Files.createTempDirectory("jreleaser-" + tool.getRepositoryTap().getResolvedName());
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)

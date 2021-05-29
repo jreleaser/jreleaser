@@ -48,6 +48,8 @@ public class Project implements Domain, ExtraProperties {
     private String longDescription;
     private String website;
     private String license;
+    private String copyright;
+    private String docsUrl;
     private String snapshotPattern;
     private Boolean snapshot;
 
@@ -59,6 +61,8 @@ public class Project implements Domain, ExtraProperties {
         this.longDescription = project.longDescription;
         this.website = project.website;
         this.license = project.license;
+        this.copyright = project.copyright;
+        this.docsUrl = project.docsUrl;
         this.java.setAll(project.java);
         setAuthors(project.authors);
         setTags(project.tags);
@@ -163,6 +167,22 @@ public class Project implements Domain, ExtraProperties {
         this.license = license;
     }
 
+    public String getCopyright() {
+        return copyright;
+    }
+
+    public void setCopyright(String copyright) {
+        this.copyright = copyright;
+    }
+
+    public String getDocsUrl() {
+        return docsUrl;
+    }
+
+    public void setDocsUrl(String docsUrl) {
+        this.docsUrl = docsUrl;
+    }
+
     public Java getJava() {
         return java;
     }
@@ -247,7 +267,9 @@ public class Project implements Domain, ExtraProperties {
         map.put("description", description);
         map.put("longDescription", longDescription);
         map.put("website", website);
+        map.put("docsUrl", docsUrl);
         map.put("license", license);
+        map.put("copyright", copyright);
         map.put("authors", authors);
         map.put("tags", tags);
         map.put("extraProperties", getResolvedExtraProperties());
