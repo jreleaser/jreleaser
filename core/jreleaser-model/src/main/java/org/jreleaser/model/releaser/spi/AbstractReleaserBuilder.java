@@ -100,7 +100,10 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
                 addReleaseAsset(checksums);
             }
         }
-        addReleaseAssets(context.getSignaturesDirectory());
+
+        if (context.getModel().getSigning().isEnabled()) {
+            addReleaseAssets(context.getSignaturesDirectory());
+        }
 
         return this;
     }

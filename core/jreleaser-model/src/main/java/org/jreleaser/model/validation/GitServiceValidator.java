@@ -182,7 +182,11 @@ public abstract class GitServiceValidator extends Validator {
 
         if (mode == JReleaserContext.Mode.FULL) {
             if (service.isSign() && !model.getSigning().isEnabled()) {
-                errors.configuration(service.getServiceName() + ".sign is set to `true` but signing is not enabled");
+                if (context.isDryrun()) {
+                    service.setSign(false);
+                } else {
+                    errors.configuration(service.getServiceName() + ".sign is set to `true` but signing is not enabled");
+                }
             }
 
             validateChangelog(context, service, errors);

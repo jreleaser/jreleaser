@@ -23,6 +23,8 @@ project:
     groupId: org.jreleaser
     version: 8
     multiProject: true
+  extraProperties:
+    inceptionYear: 2020
 
 release:
   github:

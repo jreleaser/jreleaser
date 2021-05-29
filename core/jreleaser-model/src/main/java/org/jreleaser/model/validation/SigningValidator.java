@@ -17,13 +17,16 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.Signing.GPG_PASSPHRASE;
 import static org.jreleaser.model.Signing.GPG_PUBLIC_KEY;
 import static org.jreleaser.model.Signing.GPG_SECRET_KEY;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -67,5 +70,13 @@ public abstract class SigningValidator extends Validator {
                 signing.getSecretKey(),
                 errors,
                 context.isDryrun()));
+
+        if (context.isDryrun() &&
+            (isBlank(Env.resolve(GPG_PASSPHRASE, signing.getPassphrase())) ||
+                isBlank(Env.resolve(GPG_PUBLIC_KEY, signing.getPublicKey())) ||
+                isBlank(Env.resolve(GPG_SECRET_KEY, signing.getSecretKey())))) {
+            signing.setActive(Active.NEVER);
+            signing.disable();
+        }
     }
 }
