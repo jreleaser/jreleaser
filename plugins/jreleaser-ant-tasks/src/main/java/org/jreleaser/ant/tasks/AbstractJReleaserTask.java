@@ -45,6 +45,7 @@ abstract class AbstractJReleaserTask extends Task {
     protected File configFile;
     protected boolean dryrun;
     protected boolean skip;
+    protected Path outputDir;
 
     protected JReleaserLogger logger;
     protected Path actualConfigFile;
@@ -60,6 +61,10 @@ abstract class AbstractJReleaserTask extends Task {
 
     public void setSkip(boolean skip) {
         this.skip = skip;
+    }
+
+    public void setOutputDir(Path outputDir) {
+        this.outputDir = outputDir;
     }
 
     @Override
@@ -125,7 +130,10 @@ abstract class AbstractJReleaserTask extends Task {
     }
 
     protected Path getOutputDirectory() {
-        return actualBasedir.resolve("out").resolve("jreleaser");
+        if (null != outputDir) {
+            return outputDir.resolve("jreleaser");
+        }
+        return actualBasedir.resolve("build").resolve("jreleaser");
     }
 
     protected JReleaserContext createContext() {

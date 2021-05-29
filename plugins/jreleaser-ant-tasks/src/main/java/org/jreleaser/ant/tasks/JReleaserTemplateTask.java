@@ -38,6 +38,7 @@ import java.nio.file.Path;
  */
 public class JReleaserTemplateTask extends Task {
     private boolean skip;
+    private Path outputDir;
     private String distributionName;
     private Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
     private String toolName;
@@ -74,6 +75,10 @@ public class JReleaserTemplateTask extends Task {
         this.snapshot = snapshot;
     }
 
+    public void setOutputDir(Path outputDir) {
+        this.outputDir = outputDir;
+    }
+
     @Override
     public void execute() throws BuildException {
         Banner.display(new PrintWriter(System.out, true));
@@ -107,8 +112,11 @@ public class JReleaserTemplateTask extends Task {
         }
     }
 
-    private Path getOutputDirectory() {
-        return getProject().getBaseDir().toPath().normalize();
+    protected Path getOutputDirectory() {
+        if (null != outputDir) {
+            return outputDir.resolve("jreleaser");
+        }
+        return project.getBaseDir().toPath().resolve("out").resolve("jreleaser");
     }
 
     private JReleaserLogger initLogger() {

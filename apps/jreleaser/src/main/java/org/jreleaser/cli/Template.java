@@ -140,8 +140,9 @@ public class Template extends AbstractCommand {
 
     @Override
     protected Path getOutputDirectory() {
-        return basedir
-            .resolve("out")
-            .resolve("jreleaser");
+        if (null != outputdir) {
+            return outputdir.resolve("jreleaser");
+        }
+        return basedir.resolve("out").resolve("jreleaser");
     }
 }

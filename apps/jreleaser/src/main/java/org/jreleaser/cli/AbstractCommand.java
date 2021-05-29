@@ -58,6 +58,10 @@ abstract class AbstractCommand implements Callable<Integer> {
         description = "Base directory.")
     Path basedir;
 
+    @CommandLine.Option(names = {"-od", "--output-directory"},
+        description = "Output directory.")
+    Path outputdir;
+
     @CommandLine.Spec
     CommandLine.Model.CommandSpec spec;
 

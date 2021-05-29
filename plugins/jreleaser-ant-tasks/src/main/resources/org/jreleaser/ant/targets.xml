@@ -39,6 +39,7 @@
     <property name="jreleaser.snapshot" value="false"/>
     <property name="jreleaser.full" value="false"/>
     <property name="jreleaser.assembly" value="false"/>
+    <property name="jreleaser.outputdir" value="build"/>
 
     <target name="jreleaser-template">
         <jreleaser:template skip="${jreleaser.skip}"
@@ -48,45 +49,52 @@
                             announcerName="${jreleaser.announcer.name}"
                             distributionType="${jreleaser.distribution.type}"
                             overwrite="${jreleaser.overwrite}"
-                            snapshot="${jreleaser.snapshot}"/>
+                            snapshot="${jreleaser.snapshot}"
+                            outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-announce">
         <jreleaser:announce dryrun="${jreleaser.dryrun}"
                             skip="${jreleaser.skip}"
                             configFile="${jreleaser.config.file}"
-                            announcerName="${jreleaser.announcer.name}"/>
+                            announcerName="${jreleaser.announcer.name}"
+                            outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-assemble">
         <jreleaser:assembler skip="${jreleaser.skip}"
                              configFile="${jreleaser.config.file}"
                              distributionName="${jreleaser.distribution.name}"
-                             assemblerName="${jreleaser.assembler.name}"/>
+                             assemblerName="${jreleaser.assembler.name}"
+                             outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-changelog">
         <jreleaser:changelog dryrun="${jreleaser.dryrun}"
                              skip="${jreleaser.skip}"
-                             configFile="${jreleaser.config.file}"/>
+                             configFile="${jreleaser.config.file}"
+                             outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-checksum">
         <jreleaser:checksum dryrun="${jreleaser.dryrun}"
                             skip="${jreleaser.skip}"
-                            configFile="${jreleaser.config.file}"/>
+                            configFile="${jreleaser.config.file}"
+                            outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-config">
         <jreleaser:config full="${jreleaser.full}"
                           assembly="${jreleaser.assembly}"
-                          configFile="${jreleaser.config.file}"/>
+                          configFile="${jreleaser.config.file}"
+                          outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-full-release">
         <jreleaser:full-release dryrun="${jreleaser.dryrun}"
                                 skip="${jreleaser.skip}"
-                                configFile="${jreleaser.config.file}"/>
+                                configFile="${jreleaser.config.file}"
+                                outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-init">
@@ -99,7 +107,8 @@
                            skip="${jreleaser.skip}"
                            configFile="${jreleaser.config.file}"
                            distributionName="${jreleaser.distribution.name}"
-                           toolName="${jreleaser.tool.name}"/>
+                           toolName="${jreleaser.tool.name}"
+                           outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-prepare">
@@ -107,19 +116,22 @@
                            skip="${jreleaser.skip}"
                            configFile="${jreleaser.config.file}"
                            distributionName="${jreleaser.distribution.name}"
-                           toolName="${jreleaser.tool.name}"/>
+                           toolName="${jreleaser.tool.name}"
+                           outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-release">
         <jreleaser:release dryrun="${jreleaser.dryrun}"
                            skip="${jreleaser.skip}"
-                           configFile="${jreleaser.config.file}"/>
+                           configFile="${jreleaser.config.file}"
+                           outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-sign">
         <jreleaser:sign dryrun="${jreleaser.dryrun}"
                         skip="${jreleaser.skip}"
-                        configFile="${jreleaser.config.file}"/>
+                        configFile="${jreleaser.config.file}"
+                        outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-upload">
@@ -127,7 +139,8 @@
                           skip="${jreleaser.skip}"
                           configFile="${jreleaser.config.file}"
                           uploaderType="${jreleaser.uploader.type}"
-                          uploaderName="${jreleaser.uploader.name}"/>
+                          uploaderName="${jreleaser.uploader.name}"
+                          outputDir="${jreleaser.outputdir"/>
     </target>
 
     <target name="jreleaser-publish">
@@ -135,6 +148,7 @@
                            skip="${jreleaser.skip}"
                            configFile="${jreleaser.config.file}"
                            distributionName="${jreleaser.distribution.name}"
-                           toolName="${jreleaser.tool.name}"/>
+                           toolName="${jreleaser.tool.name}"
+                           outputDir="${jreleaser.outputdir"/>
     </target>
 </project>
