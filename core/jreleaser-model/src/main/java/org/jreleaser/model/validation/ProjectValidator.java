@@ -106,7 +106,9 @@ public abstract class ProjectValidator extends Validator {
                     project.getExtraProperties().get("inceptionYear") + " " +
                         String.join(",", project.getAuthors()));
             } else {
-                errors.configuration("project.copyright must not be blank");
+                context.nag("0.4.0", "project.copyright must not be blank");
+                project.setCopyright("");
+                // errors.configuration("project.copyright must not be blank");
             }
         }
     }

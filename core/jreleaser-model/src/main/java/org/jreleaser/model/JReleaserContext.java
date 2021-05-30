@@ -344,6 +344,10 @@ public class JReleaserContext {
         }
     }
 
+    public void nag(String version, String message) {
+        logger.warn(message + " since {}. This warning will become an error in a future release.", version);
+    }
+
     public Keyring createKeyring() throws SigningException {
         try {
             if (model.getSigning().getMode() == Signing.Mode.FILE) {
