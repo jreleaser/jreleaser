@@ -16,12 +16,6 @@
  * limitations under the License.
  */
 
-project.rootProject.ext.theVersion = file('VERSION').text.trim()
-
-allprojects { p ->
-    p.version = p.rootProject.ext.theVersion
-}
-
 config {
     info {
         description = 'jreleaser'
