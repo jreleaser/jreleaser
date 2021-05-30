@@ -79,7 +79,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         // copy jars to assembly
         Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path jarsDirectory = assembleDirectory.resolve("jars");
-        context.getLogger().debug("copying JARs to {}", context.getBasedir().relativize(jarsDirectory));
+        context.getLogger().debug("copying JARs to {}", context.relativizeToBasedir(jarsDirectory));
         Set<Path> jars = copyJars(context, jarsDirectory);
 
         // resolve module names
@@ -138,7 +138,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
                     jarsDirectory);
             } catch (IOException e) {
                 throw new AssemblerProcessingException("Could not copy JARs to " +
-                    context.getBasedir().relativize(jarsDirectory), e);
+                    context.relativizeToBasedir(jarsDirectory), e);
             }
             try {
                 if (PlatformUtils.isWindows(targetJdk.getPlatform())) {
@@ -151,7 +151,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
                 }
             } catch (IOException e) {
                 throw new AssemblerProcessingException("Could not copy launcher to " +
-                    context.getBasedir().relativize(jarsDirectory), e);
+                    context.relativizeToBasedir(jarsDirectory), e);
             }
         }
 

@@ -131,7 +131,7 @@ abstract class AbstractJReleaserTask extends Task {
 
     protected Path getOutputDirectory() {
         if (null != outputDir) {
-            return outputDir.resolve("jreleaser");
+            return actualBasedir.resolve(outputDir).resolve("jreleaser");
         }
         return actualBasedir.resolve("build").resolve("jreleaser");
     }

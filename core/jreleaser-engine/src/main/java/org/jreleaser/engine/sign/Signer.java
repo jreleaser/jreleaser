@@ -117,8 +117,8 @@ public class Signer {
 
             if (!pair.isValid()) {
                 throw new SigningException("Could not verify file " +
-                    context.getBasedir().relativize(pair.inputFile) + " with signature " +
-                    context.getBasedir().relativize(pair.signatureFile));
+                    context.relativizeToBasedir(pair.inputFile) + " with signature " +
+                    context.relativizeToBasedir(pair.signatureFile));
             }
         }
     }
@@ -128,7 +128,7 @@ public class Signer {
 
         try {
             context.getLogger().debug("{}",
-                context.getBasedir().relativize(filePair.signatureFile));
+                context.relativizeToBasedir(filePair.signatureFile));
 
             InputStream sigInputStream = PGPUtil.getDecoderStream(
                 new BufferedInputStream(
@@ -163,7 +163,7 @@ public class Signer {
             return sig.verify();
         } catch (IOException | PGPException e) {
             throw new SigningException("Error when verifying signature of " +
-                context.getBasedir().relativize(filePair.inputFile), e);
+                context.relativizeToBasedir(filePair.inputFile), e);
         } finally {
             context.getLogger().restorePrefix();
         }
@@ -179,7 +179,7 @@ public class Signer {
         }
 
         context.getLogger().debug("signing {} files into {}",
-            files.size(), context.getBasedir().relativize(signaturesDirectory));
+            files.size(), context.relativizeToBasedir(signaturesDirectory));
 
         PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);
 
@@ -211,7 +211,7 @@ public class Signer {
 
     private static void sign(JReleaserContext context, PGPSignatureGenerator signatureGenerator, Path input, Path output) throws SigningException {
         try {
-            context.getLogger().info("{}", context.getBasedir().relativize(input));
+            context.getLogger().info("{}", context.relativizeToBasedir(input));
 
             OutputStream out = new BufferedOutputStream(new FileOutputStream(output.toFile()));
             if (context.getModel().getSigning().isArmored()) {
@@ -281,14 +281,14 @@ public class Signer {
     private static boolean isValid(JReleaserContext context, Keyring keyring, FilePair pair) {
         if (Files.notExists(pair.getSignatureFile())) {
             context.getLogger().debug("signature does not exist: {}",
-                context.getBasedir().relativize(pair.getSignatureFile()));
+                context.relativizeToBasedir(pair.getSignatureFile()));
             return false;
         }
 
         if (pair.inputFile.toFile().lastModified() > pair.signatureFile.toFile().lastModified()) {
             context.getLogger().debug("{} is newer than {}",
-                context.getBasedir().relativize(pair.inputFile),
-                context.getBasedir().relativize(pair.signatureFile));
+                context.relativizeToBasedir(pair.inputFile),
+                context.relativizeToBasedir(pair.signatureFile));
             return false;
         }
 

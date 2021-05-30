@@ -65,12 +65,12 @@ public class Artifact implements Domain, ExtraProperties {
 
         if (!java.nio.file.Files.exists(tp)) {
             context.getLogger().debug("transformed artifact does not exist: {}",
-                context.getBasedir().relativize(tp));
+                context.relativizeToBasedir(tp));
             copyFile(context, rp, tp);
         } else if (rp.toFile().lastModified() > tp.toFile().lastModified()) {
             context.getLogger().debug("{} is newer than {}",
-                context.getBasedir().relativize(rp),
-                context.getBasedir().relativize(tp));
+                context.relativizeToBasedir(rp),
+                context.relativizeToBasedir(tp));
             copyFile(context, rp, tp);
         }
 
@@ -85,12 +85,12 @@ public class Artifact implements Domain, ExtraProperties {
 
         if (!java.nio.file.Files.exists(tp)) {
             context.getLogger().debug("transformed artifact does not exist: {}",
-                context.getBasedir().relativize(tp));
+                context.relativizeToBasedir(tp));
             copyFile(context, rp, tp);
         } else if (rp.toFile().lastModified() > tp.toFile().lastModified()) {
             context.getLogger().debug("{} is newer than {}",
-                context.getBasedir().relativize(rp),
-                context.getBasedir().relativize(tp));
+                context.relativizeToBasedir(rp),
+                context.relativizeToBasedir(tp));
             copyFile(context, rp, tp);
         }
 
@@ -105,12 +105,12 @@ public class Artifact implements Domain, ExtraProperties {
 
         if (!java.nio.file.Files.exists(tp)) {
             context.getLogger().debug("transformed artifact does not exist: {}",
-                context.getBasedir().relativize(tp));
+                context.relativizeToBasedir(tp));
             copyFile(context, rp, tp);
         } else if (rp.toFile().lastModified() > tp.toFile().lastModified()) {
             context.getLogger().debug("{} is newer than {}",
-                context.getBasedir().relativize(rp),
-                context.getBasedir().relativize(tp));
+                context.relativizeToBasedir(rp),
+                context.relativizeToBasedir(tp));
             copyFile(context, rp, tp);
         }
 
@@ -123,8 +123,8 @@ public class Artifact implements Domain, ExtraProperties {
             java.nio.file.Files.copy(src, dest, REPLACE_EXISTING, COPY_ATTRIBUTES);
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error copying " +
-                context.getBasedir().relativize(src) + " to " +
-                context.getBasedir().relativize(dest));
+                context.relativizeToBasedir(src) + " to " +
+                context.relativizeToBasedir(dest));
         }
     }
 
@@ -135,7 +135,7 @@ public class Artifact implements Domain, ExtraProperties {
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
-                throw new JReleaserException("Path does not exist. " + context.getBasedir().relativize(resolvedPath));
+                throw new JReleaserException("Path does not exist. " + context.relativizeToBasedir(resolvedPath));
             }
         }
         return resolvedPath;
@@ -150,7 +150,7 @@ public class Artifact implements Domain, ExtraProperties {
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
-                throw new JReleaserException("Artifact does not exist. " + context.getBasedir().relativize(resolvedPath));
+                throw new JReleaserException("Artifact does not exist. " + context.relativizeToBasedir(resolvedPath));
             }
         }
         return resolvedPath;
@@ -165,7 +165,7 @@ public class Artifact implements Domain, ExtraProperties {
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
-                throw new JReleaserException("Path does not exist. " + context.getBasedir().relativize(resolvedPath));
+                throw new JReleaserException("Path does not exist. " + context.relativizeToBasedir(resolvedPath));
             }
         }
         return resolvedPath;

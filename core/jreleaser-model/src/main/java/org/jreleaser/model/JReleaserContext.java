@@ -94,6 +94,10 @@ public class JReleaserContext {
         this.dryrun = dryrun;
     }
 
+    public Path relativizeToBasedir(Path other) {
+        return basedir.toAbsolutePath().relativize(other.toAbsolutePath());
+    }
+
     public Errors validateModel() {
         if (errors.hasErrors()) return errors;
 
@@ -332,11 +336,11 @@ public class JReleaserContext {
 
         try (FileOutputStream out = new FileOutputStream(output.toFile())) {
             logger.info("Writing output properties to {}",
-                basedir.relativize(output));
+                relativizeToBasedir(output));
             props.store(out, "JReleaser " + JReleaserVersion.getPlainVersion());
         } catch (IOException ignored) {
             logger.warn("Could not write output properties to {}",
-                basedir.relativize(output));
+                relativizeToBasedir(output));
         }
     }
 

@@ -131,25 +131,25 @@ public class Checksum {
                                  Path artifactPath,
                                  Path checksumPath) throws JReleaserException {
         if (!Files.exists(artifactPath)) {
-            throw new JReleaserException("Artifact does not exist. " + context.getBasedir().relativize(artifactPath));
+            throw new JReleaserException("Artifact does not exist. " + context.relativizeToBasedir(artifactPath));
         }
 
         if (!Files.exists(checksumPath)) {
-            context.getLogger().debug("checksum does not exist: {}", context.getBasedir().relativize(checksumPath));
+            context.getLogger().debug("checksum does not exist: {}", context.relativizeToBasedir(checksumPath));
             calculateHash(context, artifactPath, checksumPath, algorithm);
         } else if (artifactPath.toFile().lastModified() > checksumPath.toFile().lastModified()) {
             context.getLogger().debug("{} is newer than {}",
-                context.getBasedir().relativize(artifactPath),
-                context.getBasedir().relativize(checksumPath));
+                context.relativizeToBasedir(artifactPath),
+                context.relativizeToBasedir(checksumPath));
             calculateHash(context, artifactPath, checksumPath, algorithm);
         }
 
         try {
             context.getLogger().debug("reading {}",
-                context.getBasedir().relativize(checksumPath));
+                context.relativizeToBasedir(checksumPath));
             artifact.setHash(algorithm, new String(Files.readAllBytes(checksumPath)));
         } catch (IOException e) {
-            throw new JReleaserException("Unexpected error when reading hash from " + context.getBasedir().relativize(checksumPath), e);
+            throw new JReleaserException("Unexpected error when reading hash from " + context.relativizeToBasedir(checksumPath), e);
         }
     }
 
@@ -159,7 +159,7 @@ public class Checksum {
 
     public static String calculateHash(JReleaserContext context, Path input, Path output, Algorithm algorithm) throws JReleaserException {
         try {
-            context.getLogger().info("{}.{}", context.getBasedir().relativize(input), algorithm.formatted());
+            context.getLogger().info("{}.{}", context.relativizeToBasedir(input), algorithm.formatted());
             String hashcode = ChecksumUtils.checksum(algorithm, Files.readAllBytes(input));
             output.toFile().getParentFile().mkdirs();
             Files.write(output, hashcode.getBytes());

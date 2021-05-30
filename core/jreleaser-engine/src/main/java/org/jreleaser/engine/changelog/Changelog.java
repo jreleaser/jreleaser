@@ -48,7 +48,7 @@ public class Changelog {
                 return new String(Files.readAllBytes(changelogFile)).trim();
             } catch (IOException e) {
                 context.getLogger().warn("Could not read changelog from {}",
-                    context.getBasedir().relativize(changelogFile));
+                    context.relativizeToBasedir(changelogFile));
             }
         }
 

@@ -114,7 +114,7 @@ public class JReleaserTemplateTask extends Task {
 
     protected Path getOutputDirectory() {
         if (null != outputDir) {
-            return outputDir.resolve("jreleaser");
+            return project.getBaseDir().toPath().resolve(outputDir).resolve("jreleaser");
         }
         return project.getBaseDir().toPath().resolve("out").resolve("jreleaser");
     }

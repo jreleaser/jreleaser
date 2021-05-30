@@ -127,7 +127,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
 
     protected Path getOutputDirectory() {
         if (null != outputdir) {
-            return outputdir.resolve("jreleaser");
+            return actualBasedir.resolve(outputdir).resolve("jreleaser");
         }
         return actualBasedir.resolve("out").resolve("jreleaser");
     }

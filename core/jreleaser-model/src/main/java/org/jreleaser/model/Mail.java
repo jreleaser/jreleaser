@@ -107,7 +107,7 @@ public class Mail extends AbstractAnnouncer {
             return applyTemplate(reader, props);
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error reading template " +
-                context.getBasedir().relativize(templatePath));
+                context.relativizeToBasedir(templatePath));
         }
     }
 

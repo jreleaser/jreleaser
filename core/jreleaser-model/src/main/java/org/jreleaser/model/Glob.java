@@ -58,7 +58,7 @@ public class Glob implements Domain {
                 }
                 path = context.getBasedir().resolve(Paths.get(directory)).normalize();
                 if (!exists(path)) {
-                    throw new JReleaserException("Path does not exist. " + context.getBasedir().relativize(path));
+                    throw new JReleaserException("Path does not exist. " + context.relativizeToBasedir(path));
                 }
             }
 
@@ -192,7 +192,7 @@ public class Glob implements Domain {
         public FileVisitResult visitFileFailed(Path file, IOException e) {
             failed = true;
             context.getLogger().error("Unnexpected error visiting path " +
-                context.getBasedir().relativize(file), e);
+                context.relativizeToBasedir(file), e);
             return CONTINUE;
         }
     }

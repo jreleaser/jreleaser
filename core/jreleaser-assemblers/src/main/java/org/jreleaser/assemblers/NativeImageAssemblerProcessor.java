@@ -65,7 +65,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         // copy jars to assembly
         Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path libDirectory = assembleDirectory.resolve("lib");
-        context.getLogger().debug("copying JARs to {}", context.getBasedir().relativize(libDirectory));
+        context.getLogger().debug("copying JARs to {}", context.relativizeToBasedir(libDirectory));
         Set<Path> jars = copyJars(context, libDirectory);
 
         // install native-image

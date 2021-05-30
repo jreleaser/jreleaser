@@ -277,13 +277,13 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         try {
             if (!FileUtils.copyFilesRecursive(context.getLogger(), prepareDirectory, outputDirectory)) {
                 throw new ToolProcessingException("Could not copy files from " +
-                    context.getBasedir().relativize(prepareDirectory) + " to " +
-                    context.getBasedir().relativize(outputDirectory));
+                    context.relativizeToBasedir(prepareDirectory) + " to " +
+                    context.relativizeToBasedir(outputDirectory));
             }
         } catch (IOException e) {
             throw new ToolProcessingException("Unexpected error when copying files from " +
-                context.getBasedir().relativize(prepareDirectory) + " to " +
-                context.getBasedir().relativize(outputDirectory), e);
+                context.relativizeToBasedir(prepareDirectory) + " to " +
+                context.relativizeToBasedir(outputDirectory), e);
         }
     }
 
