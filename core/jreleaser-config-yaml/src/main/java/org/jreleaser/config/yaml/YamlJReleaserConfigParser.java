@@ -18,6 +18,11 @@
 package org.jreleaser.config.yaml;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.github.sbaudoin.yamllint.Format;
+import com.github.sbaudoin.yamllint.LintProblem;
+import com.github.sbaudoin.yamllint.Linter;
+import com.github.sbaudoin.yamllint.YamlLintConfig;
+import com.github.sbaudoin.yamllint.YamlLintConfigException;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.JReleaserModel;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
@@ -25,7 +30,11 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+
+import static java.lang.System.lineSeparator;
+import static java.util.Arrays.asList;
 
 /**
  * @author Andres Almiray
@@ -33,6 +42,15 @@ import java.util.Map;
  */
 @ServiceProviderFor(JReleaserConfigParser.class)
 public class YamlJReleaserConfigParser implements JReleaserConfigParser {
+    private static final String YAML_LINT_CONFIG = String.join(lineSeparator(), asList(
+        "---",
+        "rules:",
+        "  indentation:",
+        "    spaces: consistent",
+        "    check-multi-line-strings: true",
+        "    indent-sequences: true",
+        "  comments-indentation: {}")) + lineSeparator();
+
     @Override
     public String getPreferredFileExtension() {
         return "yml";
@@ -42,6 +60,24 @@ public class YamlJReleaserConfigParser implements JReleaserConfigParser {
     public boolean supports(Path configFile) {
         String fileName = configFile.getFileName().toString();
         return fileName.endsWith(".yml") || fileName.endsWith(".yaml");
+    }
+
+    @Override
+    public void validate(Path configFile) throws IOException {
+        YamlLintConfig config = null;
+        try {
+            config = new YamlLintConfig(YAML_LINT_CONFIG);
+        } catch (YamlLintConfigException e) {
+            return;
+        }
+
+        List<LintProblem> problems = Linter.run(config, configFile.toFile());
+
+        if (!problems.isEmpty()) {
+            throw new IOException(Format.format(configFile.toAbsolutePath().toString(),
+                problems,
+                Format.OutputFormat.AUTO));
+        }
     }
 
     @Override

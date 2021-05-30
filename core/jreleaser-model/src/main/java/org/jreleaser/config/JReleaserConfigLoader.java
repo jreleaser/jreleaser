@@ -36,6 +36,11 @@ public class JReleaserConfigLoader {
 
         for (JReleaserConfigParser parser : parsers) {
             if (parser.supports(configFile)) {
+                try {
+                    parser.validate(configFile);
+                } catch (IOException e) {
+                    throw new JReleaserException("Invalid config file. " + configFile, e);
+                }
                 try (InputStream inputStream = configFile.toUri().toURL().openStream()) {
                     return parser.parse(inputStream);
                 } catch (IOException e) {

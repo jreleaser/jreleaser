@@ -44,6 +44,11 @@ public class TomlJReleaserConfigParser implements JReleaserConfigParser {
     }
 
     @Override
+    public void validate(Path configFile) throws IOException {
+        // noop
+    }
+
+    @Override
     public JReleaserModel parse(InputStream inputStream) throws IOException {
         TomlMapper mapper = TomlMapper.builder().build();
         return mapper.readValue(inputStream, JReleaserModel.class);

@@ -44,6 +44,11 @@ public class JsonJReleaserConfigParser implements JReleaserConfigParser {
     }
 
     @Override
+    public void validate(Path configFile) throws IOException {
+        // noop
+    }
+
+    @Override
     public JReleaserModel parse(InputStream inputStream) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(inputStream, JReleaserModel.class);

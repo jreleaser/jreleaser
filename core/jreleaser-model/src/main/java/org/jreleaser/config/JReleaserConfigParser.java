@@ -48,6 +48,13 @@ public interface JReleaserConfigParser {
     boolean supports(Path configFile);
 
     /**
+     * Checks the contents of the config file for syntax compliance.
+     *
+     * @param configFile the configuration file to inspect
+     */
+    void validate(Path configFile) throws IOException;
+
+    /**
      * Reads and parses external configuration into a {@code JReleaserModel} instance.
      *
      * @param inputStream the configuration's input source
