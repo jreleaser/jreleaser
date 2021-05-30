@@ -10,6 +10,8 @@ project:
   java:
     groupId: com.acme
     version: 8
+  extraProperties:
+    inceptionYear: @year@
 
 release:
   github:

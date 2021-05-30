@@ -24,11 +24,12 @@ import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Writer;
+import java.io.StringWriter;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.ServiceLoader;
@@ -85,12 +86,21 @@ public class Init extends AbstractCommand {
             Reader template = TemplateUtils.resolveTemplate(logger, Init.class,
                 "META-INF/jreleaser/templates/jreleaser." + format + ".tpl");
 
-            logger.info("Writing file " + outputFile.toAbsolutePath());
-            try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
-                 Scanner scanner = new Scanner(template)) {
+            StringWriter sw = new StringWriter();
+            try (Scanner scanner = new Scanner(template)) {
                 while (scanner.hasNextLine()) {
-                    writer.write(scanner.nextLine() + System.lineSeparator());
+                    sw.write(scanner.nextLine() + System.lineSeparator());
                 }
+            }
+
+            String content = sw.toString();
+            LocalDate now = LocalDate.now();
+            content = content.replaceAll("@year@", now.getYear() + "");
+
+            logger.info("Writing file " + outputFile.toAbsolutePath());
+
+            try {
+                Files.write(outputFile, content.getBytes(), (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
             } catch (FileAlreadyExistsException e) {
                 logger.error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());
                 return;
