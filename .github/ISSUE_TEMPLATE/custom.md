@@ -43,3 +43,5 @@ Tell us what happens instead
 - **Operating System**: TODO
 - **JReleaser Version:** TODO
 - **JDK Version:** TODO
+
+Please paste stacktraces from `[out|build|target]/jreleaser/trace.log`.
