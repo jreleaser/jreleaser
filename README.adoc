@@ -3,7 +3,7 @@
 :project-owner:   jreleaser
 :project-name:    jreleaser
 :project-group:   org.jreleaser
-:project-version: 0.3.0
+:project-version: 0.4.0
 
 image:https://img.shields.io/github/workflow/status/{project-owner}/{project-name}/EarlyAccess?logo=github["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
 image:https://img.shields.io/maven-central/v/{project-group}/{project-name}.svg[Download, link="https://search.maven.org/#search|ga|1|{project-name}"]
@@ -89,7 +89,7 @@ Be mindful that `jreleaser-{project-version}.zip` requires Java 8 to be installe
 `jreleaser-standalone-{project-version}-[linux|osx|windows].zip` can be used without a previous installation of Java as
 it includes its own Java Runtime.
 
-== Docker
+=== Docker
 You can run JReleaser as a docker image, skipping the need to have a pre-installed Java runtime. You must mount the
 working directory at the `/workspace` volume, for example assuming the current directory is the starting point:
 
