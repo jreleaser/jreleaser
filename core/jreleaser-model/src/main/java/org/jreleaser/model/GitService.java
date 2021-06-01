@@ -59,13 +59,13 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private String host;
     private String owner;
     private String name;
-    private String repoUrlFormat;
-    private String repoCloneUrlFormat;
-    private String commitUrlFormat;
-    private String downloadUrlFormat;
-    private String releaseNotesUrlFormat;
-    private String latestReleaseUrlFormat;
-    private String issueTrackerUrlFormat;
+    private String repoUrl;
+    private String repoCloneUrl;
+    private String commitUrl;
+    private String downloadUrl;
+    private String releaseNotesUrl;
+    private String latestReleaseUrl;
+    private String issueTrackerUrl;
     private String username;
     private String token;
     private String tagName;
@@ -102,13 +102,13 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.host = service.host;
         this.owner = service.owner;
         this.name = service.name;
-        this.repoUrlFormat = service.repoUrlFormat;
-        this.repoCloneUrlFormat = service.repoCloneUrlFormat;
-        this.commitUrlFormat = service.commitUrlFormat;
-        this.downloadUrlFormat = service.downloadUrlFormat;
-        this.releaseNotesUrlFormat = service.releaseNotesUrlFormat;
-        this.latestReleaseUrlFormat = service.latestReleaseUrlFormat;
-        this.issueTrackerUrlFormat = service.issueTrackerUrlFormat;
+        this.repoUrl = service.repoUrl;
+        this.repoCloneUrl = service.repoCloneUrl;
+        this.commitUrl = service.commitUrl;
+        this.downloadUrl = service.downloadUrl;
+        this.releaseNotesUrl = service.releaseNotesUrl;
+        this.latestReleaseUrl = service.latestReleaseUrl;
+        this.issueTrackerUrl = service.issueTrackerUrl;
         this.username = service.username;
         this.token = service.token;
         this.tagName = service.tagName;
@@ -181,12 +181,12 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
 
     public String getResolvedRepoUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(repoUrlFormat, props(model));
+        return applyTemplate(repoUrl, props(model));
     }
 
     public String getResolvedRepoCloneUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(repoCloneUrlFormat, props(model));
+        return applyTemplate(repoCloneUrl, props(model));
     }
 
     public String getResolvedRepoUrl(JReleaserModel model, String repoOwner, String repoName) {
@@ -194,7 +194,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         Map<String, Object> props = props(model);
         props.put(Constants.KEY_REPO_OWNER, repoOwner);
         props.put(Constants.KEY_REPO_NAME, repoName);
-        return applyTemplate(repoUrlFormat, props);
+        return applyTemplate(repoUrl, props);
     }
 
     public String getResolvedRepoCloneUrl(JReleaserModel model, String repoOwner, String repoName) {
@@ -202,32 +202,32 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         Map<String, Object> props = props(model);
         props.put(Constants.KEY_REPO_OWNER, repoOwner);
         props.put(Constants.KEY_REPO_NAME, repoName);
-        return applyTemplate(repoCloneUrlFormat, props);
+        return applyTemplate(repoCloneUrl, props);
     }
 
     public String getResolvedCommitUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(commitUrlFormat, props(model));
+        return applyTemplate(commitUrl, props(model));
     }
 
     public String getResolvedDownloadUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(downloadUrlFormat, props(model));
+        return applyTemplate(downloadUrl, props(model));
     }
 
     public String getResolvedReleaseNotesUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(releaseNotesUrlFormat, props(model));
+        return applyTemplate(releaseNotesUrl, props(model));
     }
 
     public String getResolvedLatestReleaseUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(latestReleaseUrlFormat, props(model));
+        return applyTemplate(latestReleaseUrl, props(model));
     }
 
     public String getResolvedIssueTrackerUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(issueTrackerUrlFormat, props(model));
+        return applyTemplate(issueTrackerUrl, props(model));
     }
 
     @Override
@@ -271,60 +271,144 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.name = name;
     }
 
+    public String getRepoUrl() {
+        return repoUrl;
+    }
+
+    public void setRepoUrl(String repoUrl) {
+        this.repoUrl = repoUrl;
+    }
+
+    public String getRepoCloneUrl() {
+        return repoCloneUrl;
+    }
+
+    public void setRepoCloneUrl(String repoCloneUrl) {
+        this.repoCloneUrl = repoCloneUrl;
+    }
+
+    public String getCommitUrl() {
+        return commitUrl;
+    }
+
+    public void setCommitUrl(String commitUrl) {
+        this.commitUrl = commitUrl;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+    public String getReleaseNotesUrl() {
+        return releaseNotesUrl;
+    }
+
+    public void setReleaseNotesUrl(String releaseNotesUrl) {
+        this.releaseNotesUrl = releaseNotesUrl;
+    }
+
+    public String getLatestReleaseUrl() {
+        return latestReleaseUrl;
+    }
+
+    public void setLatestReleaseUrl(String latestReleaseUrl) {
+        this.latestReleaseUrl = latestReleaseUrl;
+    }
+
+    public String getIssueTrackerUrl() {
+        return issueTrackerUrl;
+    }
+
+    public void setIssueTrackerUrl(String issueTrackerUrl) {
+        this.issueTrackerUrl = issueTrackerUrl;
+    }
+
+    @Deprecated
     public String getRepoUrlFormat() {
-        return repoUrlFormat;
+        System.out.println("getRepoUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getRepoUrl() instead");
+        return repoUrl;
     }
 
-    public void setRepoUrlFormat(String repoUrlFormat) {
-        this.repoUrlFormat = repoUrlFormat;
+    @Deprecated
+    public void setRepoUrlFormat(String repoUrl) {
+        System.out.println("setRepoUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setRepoUrl() instead");
+        this.repoUrl = repoUrl;
     }
 
+    @Deprecated
     public String getRepoCloneUrlFormat() {
-        return repoCloneUrlFormat;
+        System.out.println("getRepoCloneUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getRepoCloneUrl() instead");
+        return repoCloneUrl;
     }
 
-    public void setRepoCloneUrlFormat(String repoCloneUrlFormat) {
-        this.repoCloneUrlFormat = repoCloneUrlFormat;
+    @Deprecated
+    public void setRepoCloneUrlFormat(String repoCloneUrl) {
+        System.out.println("setRepoCloneUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setRepoCloneUrl() instead");
+        this.repoCloneUrl = repoCloneUrl;
     }
 
+    @Deprecated
     public String getCommitUrlFormat() {
-        return commitUrlFormat;
+        System.out.println("getCommitUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getCommitUrl() instead");
+        return commitUrl;
     }
 
-    public void setCommitUrlFormat(String commitUrlFormat) {
-        this.commitUrlFormat = commitUrlFormat;
+    @Deprecated
+    public void setCommitUrlFormat(String commitUrl) {
+        System.out.println("setCommitUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setCommitUrl() instead");
+        this.commitUrl = commitUrl;
     }
 
+    @Deprecated
     public String getDownloadUrlFormat() {
-        return downloadUrlFormat;
+        System.out.println("getDownloadUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getDownloadUrl() instead");
+        return downloadUrl;
     }
 
-    public void setDownloadUrlFormat(String downloadUrlFormat) {
-        this.downloadUrlFormat = downloadUrlFormat;
+    @Deprecated
+    public void setDownloadUrlFormat(String downloadUrl) {
+        System.out.println("setDownloadUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setDownloadUrl() instead");
+        this.downloadUrl = downloadUrl;
     }
 
+    @Deprecated
     public String getReleaseNotesUrlFormat() {
-        return releaseNotesUrlFormat;
+        System.out.println("getReleaseNotesUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getReleaseNotesUrl() instead");
+        return releaseNotesUrl;
     }
 
-    public void setReleaseNotesUrlFormat(String releaseNotesUrlFormat) {
-        this.releaseNotesUrlFormat = releaseNotesUrlFormat;
+    @Deprecated
+    public void setReleaseNotesUrlFormat(String releaseNotesUrl) {
+        System.out.println("setReleaseNotesUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setReleaseNotesUrl() instead");
+        this.releaseNotesUrl = releaseNotesUrl;
     }
 
+    @Deprecated
     public String getLatestReleaseUrlFormat() {
-        return latestReleaseUrlFormat;
+        System.out.println("getLatestReleaseUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getLatestReleaseUrl() instead");
+        return latestReleaseUrl;
     }
 
-    public void setLatestReleaseUrlFormat(String latestReleaseUrlFormat) {
-        this.latestReleaseUrlFormat = latestReleaseUrlFormat;
+    @Deprecated
+    public void setLatestReleaseUrlFormat(String latestReleaseUrl) {
+        System.out.println("setLatestReleaseUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setLatestReleaseUrl() instead");
+        this.latestReleaseUrl = latestReleaseUrl;
     }
 
+    @Deprecated
     public String getIssueTrackerUrlFormat() {
-        return issueTrackerUrlFormat;
+        System.out.println("getIssueTrackerUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getIssueTrackerUrl() instead");
+        return issueTrackerUrl;
     }
 
-    public void setIssueTrackerUrlFormat(String issueTrackerUrlFormat) {
-        this.issueTrackerUrlFormat = issueTrackerUrlFormat;
+    @Deprecated
+    public void setIssueTrackerUrlFormat(String issueTrackerUrl) {
+        System.out.println("setIssueTrackerUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setIssueTrackerUrl() instead");
+        this.issueTrackerUrl = issueTrackerUrl;
     }
 
     public String getResolvedToken() {
@@ -479,13 +563,13 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         map.put("username", username);
         map.put("token", isNotBlank(getResolvedToken()) ? Constants.HIDE : Constants.UNSET);
         if (releaseSupported) {
-            map.put("repoUrlFormat", repoUrlFormat);
-            map.put("repoCloneUrlFormat", repoCloneUrlFormat);
-            map.put("commitUrlFormat", commitUrlFormat);
-            map.put("downloadUrlFormat", downloadUrlFormat);
-            map.put("releaseNotesUrlFormat", releaseNotesUrlFormat);
-            map.put("latestReleaseUrlFormat", latestReleaseUrlFormat);
-            map.put("issueTrackerUrlFormat", issueTrackerUrlFormat);
+            map.put("repoUrlFormat", repoUrl);
+            map.put("repoCloneUrlFormat", repoCloneUrl);
+            map.put("commitUrlFormat", commitUrl);
+            map.put("downloadUrlFormat", downloadUrl);
+            map.put("releaseNotesUrlFormat", releaseNotesUrl);
+            map.put("latestReleaseUrlFormat", latestReleaseUrl);
+            map.put("issueTrackerUrlFormat", issueTrackerUrl);
         }
         map.put("tagName", tagName);
         if (releaseSupported) {

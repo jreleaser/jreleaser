@@ -42,13 +42,13 @@ abstract class AbstractGitService implements GitService {
     final Property<String> host
     final Property<String> owner
     final Property<String> name
-    final Property<String> repoUrlFormat
-    final Property<String> repoCloneUrlFormat
-    final Property<String> commitUrlFormat
-    final Property<String> downloadUrlFormat
-    final Property<String> releaseNotesUrlFormat
-    final Property<String> latestReleaseUrlFormat
-    final Property<String> issueTrackerUrlFormat
+    final Property<String> repoUrl
+    final Property<String> repoCloneUrl
+    final Property<String> commitUrl
+    final Property<String> downloadUrl
+    final Property<String> releaseNotesUrl
+    final Property<String> latestReleaseUrl
+    final Property<String> issueTrackerUrl
     final Property<String> username
     final Property<String> token
     final Property<String> tagName
@@ -68,13 +68,13 @@ abstract class AbstractGitService implements GitService {
         host = objects.property(String).convention(Providers.notDefined())
         owner = objects.property(String).convention(Providers.notDefined())
         name = objects.property(String).convention(Providers.notDefined())
-        repoUrlFormat = objects.property(String).convention(Providers.notDefined())
-        repoCloneUrlFormat = objects.property(String).convention(Providers.notDefined())
-        commitUrlFormat = objects.property(String).convention(Providers.notDefined())
-        downloadUrlFormat = objects.property(String).convention(Providers.notDefined())
-        releaseNotesUrlFormat = objects.property(String).convention(Providers.notDefined())
-        latestReleaseUrlFormat = objects.property(String).convention(Providers.notDefined())
-        issueTrackerUrlFormat = objects.property(String).convention(Providers.notDefined())
+        repoUrl = objects.property(String).convention(Providers.notDefined())
+        repoCloneUrl = objects.property(String).convention(Providers.notDefined())
+        commitUrl = objects.property(String).convention(Providers.notDefined())
+        downloadUrl = objects.property(String).convention(Providers.notDefined())
+        releaseNotesUrl = objects.property(String).convention(Providers.notDefined())
+        latestReleaseUrl = objects.property(String).convention(Providers.notDefined())
+        issueTrackerUrl = objects.property(String).convention(Providers.notDefined())
 
         username = objects.property(String).convention(Providers.notDefined())
         token = objects.property(String).convention(Providers.notDefined())
@@ -90,19 +90,68 @@ abstract class AbstractGitService implements GitService {
         update = objects.property(Boolean).convention(Providers.notDefined())
     }
 
+    @Deprecated
+    @Override
+    Property<String> getRepoUrlFormat() {
+        println('getRepoUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getRepoUrl() instead')
+        return repoUrl
+    }
+
+    @Deprecated
+    @Override
+    Property<String> getRepoCloneUrlFormat() {
+        println('getRepoCloneUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getRepoCloneUrl() instead')
+        return repoCloneUrl
+    }
+
+    @Deprecated
+    @Override
+    Property<String> getCommitUrlFormat() {
+        println('getCommitUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getCommitUrl() instead')
+        return commitUrl
+    }
+
+    @Deprecated
+    @Override
+    Property<String> getDownloadUrlFormat() {
+        println('getDownloadUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getDownloadUrl() instead')
+        return downloadUrl
+    }
+
+    @Deprecated
+    @Override
+    Property<String> getReleaseNotesUrlFormat() {
+        println('getReleaseNotesUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getReleaseNotesUrl() instead')
+        return releaseNotesUrl
+    }
+
+    @Deprecated
+    @Override
+    Property<String> getLatestReleaseUrlFormat() {
+        println('getLatestReleaseUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getLatestReleaseUrl() instead')
+        return latestReleaseUrl
+    }
+
+    @Deprecated
+    @Override
+    Property<String> getIssueTrackerUrlFormat() {
+        println('getIssueTrackerUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getIssueTrackerUrl() instead')
+        return issueTrackerUrl
+    }
+
     @Internal
     boolean isSet() {
         enabled.present ||
             host.present ||
             owner.present ||
             name.present ||
-            repoUrlFormat.present ||
-            repoCloneUrlFormat.present ||
-            commitUrlFormat.present ||
-            downloadUrlFormat.present ||
-            releaseNotesUrlFormat.present ||
-            latestReleaseUrlFormat.present ||
-            issueTrackerUrlFormat.present ||
+            repoUrl.present ||
+            repoCloneUrl.present ||
+            commitUrl.present ||
+            downloadUrl.present ||
+            releaseNotesUrl.present ||
+            latestReleaseUrl.present ||
+            issueTrackerUrl.present ||
             username.present ||
             token.present ||
             tagName.present ||
@@ -152,13 +201,13 @@ abstract class AbstractGitService implements GitService {
         if (host.present) service.host = host.get()
         if (owner.present) service.owner = owner.get()
         if (name.present) service.name = name.get()
-        if (repoUrlFormat.present) service.repoUrlFormat = repoUrlFormat.get()
-        if (repoCloneUrlFormat.present) service.repoCloneUrlFormat = repoCloneUrlFormat.get()
-        if (commitUrlFormat.present) service.commitUrlFormat = commitUrlFormat.get()
-        if (downloadUrlFormat.present) service.downloadUrlFormat = downloadUrlFormat.get()
-        if (releaseNotesUrlFormat.present) service.releaseNotesUrlFormat = releaseNotesUrlFormat.get()
-        if (latestReleaseUrlFormat.present) service.latestReleaseUrlFormat = latestReleaseUrlFormat.get()
-        if (issueTrackerUrlFormat.present) service.issueTrackerUrlFormat = issueTrackerUrlFormat.get()
+        if (repoUrl.present) service.repoUrl = repoUrl.get()
+        if (repoCloneUrl.present) service.repoCloneUrl = repoCloneUrl.get()
+        if (commitUrl.present) service.commitUrl = commitUrl.get()
+        if (downloadUrl.present) service.downloadUrl = downloadUrl.get()
+        if (releaseNotesUrl.present) service.releaseNotesUrl = releaseNotesUrl.get()
+        if (latestReleaseUrl.present) service.latestReleaseUrl = latestReleaseUrl.get()
+        if (issueTrackerUrl.present) service.issueTrackerUrl = issueTrackerUrl.get()
         if (username.present) service.username = username.get()
         if (token.present) service.token = token.get()
         if (tagName.present) service.tagName = tagName.get()

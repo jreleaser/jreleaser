@@ -34,18 +34,39 @@ interface GitService extends Releaser {
 
     Property<String> getName()
 
+    Property<String> getRepoUrl()
+
+    Property<String> getRepoCloneUrl()
+
+    Property<String> getCommitUrl()
+
+    Property<String> getDownloadUrl()
+
+    Property<String> getReleaseNotesUrl()
+
+    Property<String> getLatestReleaseUrl()
+
+    Property<String> getIssueTrackerUrl()
+
+    @Deprecated
     Property<String> getRepoUrlFormat()
 
+    @Deprecated
     Property<String> getRepoCloneUrlFormat()
 
+    @Deprecated
     Property<String> getCommitUrlFormat()
 
+    @Deprecated
     Property<String> getDownloadUrlFormat()
 
+    @Deprecated
     Property<String> getReleaseNotesUrlFormat()
 
+    @Deprecated
     Property<String> getLatestReleaseUrlFormat()
 
+    @Deprecated
     Property<String> getIssueTrackerUrlFormat()
 
     Property<String> getUsername()

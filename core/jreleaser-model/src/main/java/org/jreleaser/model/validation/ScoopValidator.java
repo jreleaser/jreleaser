@@ -56,13 +56,13 @@ public abstract class ScoopValidator extends Validator {
         if (isBlank(tool.getCheckverUrl())) {
             tool.setCheckverUrl(parentTool.getCheckverUrl());
             if (isBlank(tool.getCheckverUrl())) {
-                tool.setCheckverUrl(model.getRelease().getGitService().getLatestReleaseUrlFormat());
+                tool.setCheckverUrl(model.getRelease().getGitService().getLatestReleaseUrl());
             }
         }
         if (isBlank(tool.getAutoupdateUrl())) {
             tool.setAutoupdateUrl(parentTool.getAutoupdateUrl());
             if (isBlank(tool.getAutoupdateUrl())) {
-                tool.setAutoupdateUrl(model.getRelease().getGitService().getDownloadUrlFormat());
+                tool.setAutoupdateUrl(model.getRelease().getGitService().getDownloadUrl());
             }
         }
 

@@ -35,13 +35,13 @@ public class Gitea extends GitService {
 
     Gitea(String name) {
         super(name, true);
-        setRepoUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
-        setRepoCloneUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}.git");
-        setCommitUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");
-        setDownloadUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/{{artifactFileName}}");
-        setReleaseNotesUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/tag/{{tagName}}");
-        setLatestReleaseUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/latest");
-        setIssueTrackerUrlFormat("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/issues");
+        setRepoUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
+        setRepoCloneUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}.git");
+        setCommitUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");
+        setDownloadUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/{{artifactFileName}}");
+        setReleaseNotesUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/tag/{{tagName}}");
+        setLatestReleaseUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/latest");
+        setIssueTrackerUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/issues");
     }
 
     void setAll(Gitea service) {

@@ -159,6 +159,6 @@ public class SdkmanAnnouncer implements Announcer {
     private String artifactUrl(Distribution distribution, Artifact artifact) {
         Map<String, Object> newProps = context.props();
         newProps.put("artifactFileName", artifact.getEffectivePath(context, distribution).getFileName().toString());
-        return applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrlFormat(), newProps, "downloadUrl");
+        return applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps, "downloadUrl");
     }
 }

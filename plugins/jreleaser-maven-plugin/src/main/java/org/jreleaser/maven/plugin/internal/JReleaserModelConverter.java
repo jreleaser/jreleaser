@@ -202,13 +202,13 @@ public final class JReleaserModelConverter {
     private static void convertGitService(GitService service, org.jreleaser.model.GitService s) {
         s.setOwner(service.getOwner());
         s.setName(service.getName());
-        s.setRepoUrlFormat(service.getRepoUrlFormat());
-        s.setRepoCloneUrlFormat(service.getRepoCloneUrlFormat());
-        s.setCommitUrlFormat(service.getCommitUrlFormat());
-        s.setDownloadUrlFormat(service.getDownloadUrlFormat());
-        s.setReleaseNotesUrlFormat(service.getReleaseNotesUrlFormat());
-        s.setLatestReleaseUrlFormat(service.getLatestReleaseUrlFormat());
-        s.setIssueTrackerUrlFormat(service.getIssueTrackerUrlFormat());
+        s.setRepoUrl(service.getRepoUrl());
+        s.setRepoCloneUrl(service.getRepoCloneUrl());
+        s.setCommitUrl(service.getCommitUrl());
+        s.setDownloadUrl(service.getDownloadUrl());
+        s.setReleaseNotesUrl(service.getReleaseNotesUrl());
+        s.setLatestReleaseUrl(service.getLatestReleaseUrl());
+        s.setIssueTrackerUrl(service.getIssueTrackerUrl());
         s.setUsername(service.getUsername());
         s.setToken(service.getToken());
         if (isNotBlank(service.getTagName())) s.setTagName(service.getTagName());
