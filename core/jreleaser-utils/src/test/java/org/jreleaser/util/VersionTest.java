@@ -25,6 +25,10 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.jreleaser.util.ComparatorUtils.greaterThan;
+import static org.jreleaser.util.ComparatorUtils.greaterThanOrEqualTo;
+import static org.jreleaser.util.ComparatorUtils.lessThan;
+import static org.jreleaser.util.ComparatorUtils.lessThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -56,8 +60,8 @@ public class VersionTest {
         // then:
         assertThat(version, equalTo(version));
         assertThat(version.hashCode(), equalTo(version.hashCode()));
-        assertTrue(version.greaterThanOrEqualTo(version));
-        assertTrue(version.lessThanOrEqualTo(version));
+        assertTrue(greaterThanOrEqualTo(version, version));
+        assertTrue(lessThanOrEqualTo(version, version));
         assertThat(version.compareTo(version), equalTo(0));
     }
 
@@ -69,8 +73,8 @@ public class VersionTest {
         Version v2 = Version.of(input2);
 
         // then:
-        assertTrue(v1.lessThan(v2));
-        assertTrue(v2.greaterThan(v1));
+        assertTrue(lessThan(v1, v2));
+        assertTrue(greaterThan(v2, v1));
     }
 
     private static Stream<Arguments> version_parsing() {

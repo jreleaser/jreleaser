@@ -124,22 +124,6 @@ public class Version implements Comparable<Version> {
         return result;
     }
 
-    public boolean greaterThan(Version other) {
-        return compareTo(other) > 0;
-    }
-
-    public boolean greaterThanOrEqualTo(Version other) {
-        return compareTo(other) >= 0;
-    }
-
-    public boolean lessThan(Version other) {
-        return compareTo(other) < 0;
-    }
-
-    public boolean lessThanOrEqualTo(Version other) {
-        return compareTo(other) <= 0;
-    }
-
     public static int javaMajorVersion() {
         String jv = System.getProperty("java.version");
         if (jv.startsWith("1.")) {

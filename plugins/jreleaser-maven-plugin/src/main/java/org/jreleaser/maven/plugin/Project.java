@@ -22,8 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jreleaser.util.StringUtils.isNotBlank;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -32,8 +30,10 @@ public class Project implements ExtraProperties {
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final Java java = new Java();
     private String name;
     private String version;
+    private VersionPattern versionPattern;
     private String snapshotPattern;
     private String description;
     private String longDescription;
@@ -41,11 +41,11 @@ public class Project implements ExtraProperties {
     private String license;
     private String copyright;
     private String docsUrl;
-    private final Java java = new Java();
 
     void setAll(Project project) {
         this.name = project.name;
         this.version = project.version;
+        this.versionPattern = project.versionPattern;
         this.snapshotPattern = project.snapshotPattern;
         this.description = project.description;
         this.longDescription = project.longDescription;
@@ -73,6 +73,18 @@ public class Project implements ExtraProperties {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public VersionPattern getVersionPattern() {
+        return versionPattern;
+    }
+
+    public void setVersionPattern(VersionPattern versionPattern) {
+        this.versionPattern = versionPattern;
+    }
+
+    public String resolveVersionPattern() {
+        return versionPattern != null ? versionPattern.name() : null;
     }
 
     public String getSnapshotPattern() {

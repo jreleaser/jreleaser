@@ -35,7 +35,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Project implements Domain, ExtraProperties {
     public static final String PROJECT_NAME = "PROJECT_NAME";
     public static final String PROJECT_VERSION = "PROJECT_VERSION";
-    public static final String SNAPSHOT_PATTERN = "SNAPSHOT_PATTERN";
+    public static final String PROJECT_VERSION_PATTERN = "PROJECT_VERSION_PATTERN";
+    public static final String PROJECT_SNAPSHOT_PATTERN = "PROJECT_SNAPSHOT_PATTERN";
     public static final String DEFAULT_SNAPSHOT_PATTERN = ".*-SNAPSHOT";
 
     private final List<String> authors = new ArrayList<>();
@@ -44,6 +45,7 @@ public class Project implements Domain, ExtraProperties {
     private final Java java = new Java();
     private String name;
     private String version;
+    private VersionPattern versionPattern;
     private String description;
     private String longDescription;
     private String website;
@@ -56,6 +58,7 @@ public class Project implements Domain, ExtraProperties {
     void setAll(Project project) {
         this.name = project.name;
         this.version = project.version;
+        this.versionPattern = project.versionPattern;
         this.snapshotPattern = project.snapshotPattern;
         this.description = project.description;
         this.longDescription = project.longDescription;
@@ -104,7 +107,7 @@ public class Project implements Domain, ExtraProperties {
     }
 
     public String getResolvedSnapshotPattern() {
-        snapshotPattern = Env.resolve(SNAPSHOT_PATTERN, snapshotPattern);
+        snapshotPattern = Env.resolve(PROJECT_SNAPSHOT_PATTERN, snapshotPattern);
         if (isBlank(snapshotPattern)) {
             snapshotPattern = DEFAULT_SNAPSHOT_PATTERN;
         }
@@ -125,6 +128,18 @@ public class Project implements Domain, ExtraProperties {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public VersionPattern getVersionPattern() {
+        return versionPattern;
+    }
+
+    public void setVersionPattern(VersionPattern versionPattern) {
+        this.versionPattern = versionPattern;
+    }
+
+    public void setVersionPattern(String str) {
+        this.versionPattern = VersionPattern.of(str);
     }
 
     public String getSnapshotPattern() {
@@ -262,6 +277,7 @@ public class Project implements Domain, ExtraProperties {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
         map.put("version", version);
+        map.put("versionPattern", versionPattern);
         map.put("snapshotPattern", snapshotPattern);
         map.put("snapshot", isSnapshot());
         map.put("description", description);

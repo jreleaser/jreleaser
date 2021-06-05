@@ -52,6 +52,14 @@ public class Release extends AbstractModelCommand {
         description = "The project version.")
     String projectVersion;
 
+    @CommandLine.Option(names = {"--project-version-pattern"},
+        description = "The project version pattern.")
+    String projectVersionPattern;
+
+    @CommandLine.Option(names = {"--project-snapshot-pattern"},
+        description = "The project snapshot pattern.")
+    String projectSnapshotPattern;
+
     @CommandLine.Option(names = {"--tag-name"},
         description = "The release tag.")
     String tagName;
@@ -140,6 +148,8 @@ public class Release extends AbstractModelCommand {
             .dryrun(dryrun())
             .projectName(projectName)
             .projectVersion(projectVersion)
+            .projectVersionPattern(projectVersionPattern)
+            .projectSnapshotPattern(projectSnapshotPattern)
             .tagName(tagName)
             .releaseName(releaseName)
             .milestoneName(milestoneName)

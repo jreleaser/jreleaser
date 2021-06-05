@@ -54,7 +54,9 @@ import static org.jreleaser.util.Constants.KEY_TIMESTAMP;
 import static org.jreleaser.util.Constants.KEY_VERSION_BUILD;
 import static org.jreleaser.util.Constants.KEY_VERSION_MAJOR;
 import static org.jreleaser.util.Constants.KEY_VERSION_MINOR;
+import static org.jreleaser.util.Constants.KEY_VERSION_NUMBER;
 import static org.jreleaser.util.Constants.KEY_VERSION_PATCH;
+import static org.jreleaser.util.Constants.KEY_VERSION_PRERELEASE;
 import static org.jreleaser.util.Constants.KEY_VERSION_TAG;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -329,6 +331,8 @@ public class JReleaserContext {
         safePut(project.getPrefix() + capitalize(KEY_VERSION_MAJOR), resolvedExtraProperties, props);
         safePut(project.getPrefix() + capitalize(KEY_VERSION_MINOR), resolvedExtraProperties, props);
         safePut(project.getPrefix() + capitalize(KEY_VERSION_PATCH), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_NUMBER), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_PRERELEASE), resolvedExtraProperties, props);
         safePut(project.getPrefix() + capitalize(KEY_VERSION_TAG), resolvedExtraProperties, props);
         safePut(project.getPrefix() + capitalize(KEY_VERSION_BUILD), resolvedExtraProperties, props);
 

@@ -56,6 +56,13 @@ class Validator {
         return !errors.hasErrors() ? Boolean.parseBoolean(result) : defaultValue;
     }
 
+    static <T extends Enum<T>> String checkProperty(Environment environment, String key, String property, T value, T defaultValue) {
+        if (null != value) return value.name();
+        Errors errors = new Errors();
+        String result = Env.check(key, environment.getVariable(key), property, errors);
+        return !errors.hasErrors() ? result : (null != defaultValue ? defaultValue.name() : null);
+    }
+
     static void validateOwner(OwnerAware self, OwnerAware other) {
         if (isBlank(self.getOwner())) self.setOwner(other.getOwner());
     }

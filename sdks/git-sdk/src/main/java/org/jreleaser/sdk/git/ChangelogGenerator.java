@@ -28,6 +28,7 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.CollectionUtils;
+import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.Version;
 
 import java.io.IOException;
@@ -47,6 +48,7 @@ import java.util.stream.StreamSupport;
 import static java.lang.System.lineSeparator;
 import static org.jreleaser.model.GitService.TAG_EARLY_ACCESS;
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
+import static org.jreleaser.util.ComparatorUtils.lessThan;
 import static org.jreleaser.util.Constants.KEY_CHANGELOG_CHANGES;
 import static org.jreleaser.util.Constants.KEY_CHANGELOG_CONTRIBUTORS;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
@@ -125,12 +127,39 @@ public class ChangelogGenerator {
         return String.join(commitSeparator, lines);
     }
 
-    private static Version versionOf(Ref tag, Pattern versionPattern) {
+    private static Version semverOf(Ref tag, Pattern versionPattern) {
         Matcher matcher = versionPattern.matcher(extractTagName(tag));
         if (matcher.matches()) {
             return Version.of(matcher.group(1));
         }
         return Version.of("0.0.0");
+    }
+
+    private static JavaModuleVersion javaModuleVersionOf(Ref tag, Pattern versionPattern) {
+        Matcher matcher = versionPattern.matcher(extractTagName(tag));
+        if (matcher.matches()) {
+            return JavaModuleVersion.of(matcher.group(1));
+        }
+        return JavaModuleVersion.of("0.0.0");
+    }
+
+    private static String versionOf(Ref tag, Pattern versionPattern) {
+        Matcher matcher = versionPattern.matcher(extractTagName(tag));
+        if (matcher.matches()) {
+            return matcher.group(1);
+        }
+        return "0.0.0";
+    }
+
+    private static Comparable version(JReleaserContext context, Ref tag, Pattern versionPattern) {
+        switch (context.getModel().getProject().getVersionPattern()) {
+            case SEMVER:
+                return semverOf(tag, versionPattern);
+            case JAVA_MODULE:
+                return javaModuleVersionOf(tag, versionPattern);
+            default:
+                return versionOf(tag, versionPattern);
+        }
     }
 
     private static Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
@@ -143,8 +172,8 @@ public class ChangelogGenerator {
         Pattern versionPattern = Pattern.compile(tagName.replaceAll("\\{\\{.*}}", "\\(\\.\\*\\)"));
 
         tags.sort((tag1, tag2) -> {
-            Version v1 = versionOf(tag1, versionPattern);
-            Version v2 = versionOf(tag2, versionPattern);
+            Comparable v1 = version(context, tag1, versionPattern);
+            Comparable v2 = version(context, tag2, versionPattern);
             return v2.compareTo(v1);
         });
 
@@ -196,11 +225,11 @@ public class ChangelogGenerator {
         // tag: somewhere in the middle
         context.getLogger().debug("looking for a tag before '{}' that matches '{}'", effectiveTagName, tagPattern);
 
-        Version currentVersion = versionOf(tag.get(), versionPattern);
+        Comparable currentVersion = version(context, tag.get(), versionPattern);
 
         Optional<Ref> previousTag = tags.stream()
             .filter(ref -> extractTagName(ref).matches(tagPattern))
-            .filter(ref -> versionOf(ref, versionPattern).lessThan(currentVersion))
+            .filter(ref -> lessThan(version(context, ref, versionPattern), currentVersion))
             .findFirst();
 
         if (previousTag.isPresent()) {

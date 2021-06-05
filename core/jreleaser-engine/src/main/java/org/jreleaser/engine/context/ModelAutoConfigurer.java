@@ -56,6 +56,8 @@ public class ModelAutoConfigurer {
     private boolean dryrun;
     private String projectName;
     private String projectVersion;
+    private String projectVersionPattern;
+    private String projectSnapshotPattern;
     private String tagName;
     private String releaseName;
     private String milestoneName;
@@ -100,6 +102,16 @@ public class ModelAutoConfigurer {
 
     public ModelAutoConfigurer projectVersion(String projectVersion) {
         this.projectVersion = projectVersion;
+        return this;
+    }
+
+    public ModelAutoConfigurer projectVersionPattern(String projectVersionPattern) {
+        this.projectVersionPattern = projectVersionPattern;
+        return this;
+    }
+
+    public ModelAutoConfigurer projectSnapshotPattern(String projectSnapshotPattern) {
+        this.projectSnapshotPattern = projectSnapshotPattern;
         return this;
     }
 
@@ -243,6 +255,8 @@ public class ModelAutoConfigurer {
     private void dumpAutoConfig() {
         if (isNotBlank(projectName)) logger.info("- project.name: {}", projectName);
         if (isNotBlank(projectVersion)) logger.info("- project.version: {}", projectVersion);
+        if (isNotBlank(projectVersionPattern)) logger.info("- project.version.pattern: {}", projectVersionPattern);
+        if (isNotBlank(projectSnapshotPattern)) logger.info("- project.snapshot.pattern: {}", projectSnapshotPattern);
         if (isNotBlank(username)) logger.info("- release.username: {}", username);
         if (isNotBlank(tagName)) logger.info("- release.tagName: {}", tagName);
         if (isNotBlank(branch)) logger.info("- release.branch: {}", branch);
@@ -275,6 +289,8 @@ public class ModelAutoConfigurer {
         JReleaserModel model = new JReleaserModel();
         model.getProject().setName(projectName);
         model.getProject().setVersion(projectVersion);
+        model.getProject().setVersionPattern(projectVersionPattern);
+        model.getProject().setSnapshotPattern(projectSnapshotPattern);
 
         try {
             Repository repository = GitSdk.of(basedir).getRemote();

@@ -20,12 +20,14 @@ package org.jreleaser.model.validation;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
+import org.jreleaser.model.VersionPattern;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Project.PROJECT_NAME;
 import static org.jreleaser.model.Project.PROJECT_VERSION;
-import static org.jreleaser.model.Project.SNAPSHOT_PATTERN;
+import static org.jreleaser.model.Project.PROJECT_VERSION_PATTERN;
+import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_PATTERN;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -51,9 +53,16 @@ public abstract class ProjectValidator extends Validator {
                 project.getVersion(),
                 errors));
 
+        project.setVersionPattern(
+            checkProperty(context.getModel().getEnvironment(),
+                PROJECT_VERSION_PATTERN,
+                "project.versionPattern",
+                project.getVersionPattern(),
+                VersionPattern.SEMVER));
+
         project.setSnapshotPattern(
             checkProperty(context.getModel().getEnvironment(),
-                SNAPSHOT_PATTERN,
+                PROJECT_SNAPSHOT_PATTERN,
                 "project.snapshotPattern",
                 project.getSnapshotPattern(),
                 DEFAULT_SNAPSHOT_PATTERN));

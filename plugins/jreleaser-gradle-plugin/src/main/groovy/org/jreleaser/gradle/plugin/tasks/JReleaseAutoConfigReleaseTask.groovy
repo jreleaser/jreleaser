@@ -57,6 +57,12 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     final Property<String> projectVersion
     @Input
     @Optional
+    final Property<String> projectVersionPattern
+    @Input
+    @Optional
+    final Property<String> projectSnapshotPattern
+    @Input
+    @Optional
     final Property<String> tagName
     @Input
     @Optional
@@ -118,6 +124,16 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Option(option = 'project-version', description = 'The project version (OPTIONAL).')
     void setProjectVersion(String projectVersion) {
         this.projectVersion.set(projectVersion)
+    }
+
+    @Option(option = 'project-version-pattern', description = 'The project version pattern (OPTIONAL).')
+    void setProjectVersionPattern(String projectVersionPattern) {
+        this.projectVersionPattern.set(projectVersionPattern)
+    }
+
+    @Option(option = 'project-snapshot-pattern', description = 'The project snapshot pattern (OPTIONAL).')
+    void setProjectSnapshotPattern(String projectSnapshotPattern) {
+        this.projectSnapshotPattern.set(projectSnapshotPattern)
     }
 
     @Option(option = 'tag-name', description = 'The release tga (OPTIONAL).')
@@ -222,6 +238,8 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
 
         projectName = objects.property(String).convention(project.name)
         projectVersion = objects.property(String).convention(String.valueOf(project.version))
+        projectVersionPattern = objects.property(String).convention(String.valueOf(Providers.notDefined()))
+        projectSnapshotPattern = objects.property(String).convention(String.valueOf(Providers.notDefined()))
         tagName = objects.property(String).convention(Providers.notDefined())
         releaseName = objects.property(String).convention(Providers.notDefined())
         branch = objects.property(String).convention(Providers.notDefined())
@@ -256,6 +274,8 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .dryrun(dryrun.get())
             .projectName(projectName.get())
             .projectVersion(projectVersion.get())
+            .projectVersionPattern(projectVersionPattern.orNull)
+            .projectSnapshotPattern(projectSnapshotPattern.orNull)
             .tagName(tagName.orNull)
             .releaseName(releaseName.orNull)
             .branch(branch.orNull)

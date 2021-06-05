@@ -24,6 +24,7 @@ import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.Version;
 
 import java.nio.file.Path;
@@ -83,7 +84,7 @@ public class ContextCreator {
 
     private static void report(JReleaserContext context) {
         String version = context.getModel().getProject().getVersion();
-        parseVersion(version, context.getModel().getProject());
+        parseVersion(context.getModel().getProject());
 
         context.getLogger().info("Project version set to {}", version);
         context.getLogger().info("Release is{}snapshot", context.getModel().getProject().isSnapshot() ? " " : " not ");
@@ -91,13 +92,46 @@ public class ContextCreator {
         context.getLogger().info("HEAD is at {}", context.getModel().getCommit().getShortHash());
     }
 
-    private static void parseVersion(String version, Project project) {
-        Version parsedVersion = Version.of(version);
-
-        project.addExtraProperty(Constants.KEY_VERSION_MAJOR, parsedVersion.getMajor());
-        if (parsedVersion.hasMinor()) project.addExtraProperty(Constants.KEY_VERSION_MINOR, parsedVersion.getMinor());
-        if (parsedVersion.hasPatch()) project.addExtraProperty(Constants.KEY_VERSION_PATCH, parsedVersion.getPatch());
-        if (parsedVersion.hasTag()) project.addExtraProperty(Constants.KEY_VERSION_TAG, parsedVersion.getTag());
-        if (parsedVersion.hasBuild()) project.addExtraProperty(Constants.KEY_VERSION_BUILD, parsedVersion.getBuild());
+    private static void parseVersion(Project project) {
+        switch (project.getVersionPattern()) {
+            case SEMVER: {
+                try {
+                    Version parsedVersion = Version.of(project.getVersion());
+                    project.addExtraProperty(Constants.KEY_VERSION_MAJOR, parsedVersion.getMajor());
+                    if (parsedVersion.hasMinor()) {
+                        project.addExtraProperty(Constants.KEY_VERSION_MINOR, parsedVersion.getMinor());
+                    }
+                    if (parsedVersion.hasPatch()) {
+                        project.addExtraProperty(Constants.KEY_VERSION_PATCH, parsedVersion.getPatch());
+                    }
+                    if (parsedVersion.hasTag()) {
+                        project.addExtraProperty(Constants.KEY_VERSION_TAG, parsedVersion.getTag());
+                    }
+                    if (parsedVersion.hasBuild()) {
+                        project.addExtraProperty(Constants.KEY_VERSION_BUILD, parsedVersion.getBuild());
+                    }
+                } catch (IllegalArgumentException e) {
+                    throw new JReleaserException("Version '" + project.getVersion() + "' does not follow the semver spec", e);
+                }
+            }
+            break;
+            case JAVA_MODULE: {
+                try {
+                    JavaModuleVersion parsedVersion = JavaModuleVersion.of(project.getVersion());
+                    project.addExtraProperty(Constants.KEY_VERSION_NUMBER, parsedVersion.getVersion());
+                    if (parsedVersion.hasPrerelease()) {
+                        project.addExtraProperty(Constants.KEY_VERSION_PRERELEASE, parsedVersion.getPrerelease());
+                    }
+                    if (parsedVersion.hasBuild()) {
+                        project.addExtraProperty(Constants.KEY_VERSION_BUILD, parsedVersion.getBuild());
+                    }
+                } catch (IllegalArgumentException e) {
+                    throw new JReleaserException("Version '" + project.getVersion() + "' does not follow the Java module spec", e);
+                }
+            }
+            break;
+            default:
+                // noop
+        }
     }
 }

@@ -72,6 +72,16 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.project.version", defaultValue = "${project.version}")
     private String projectVersion;
     /**
+     * The project version pattern.
+     */
+    @Parameter(property = "jreleaser.project.version.pattern")
+    private String projectVersionPattern;
+    /**
+     * The project snapshot pattern.
+     */
+    @Parameter(property = "jreleaser.project.snapshot.pattern")
+    private String projectSnapshotPattern;
+    /**
      * The release tag.
      */
     @Parameter(property = "jreleaser.tag.name")
@@ -173,6 +183,8 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .dryrun(dryrun)
             .projectName(projectName)
             .projectVersion(projectVersion)
+            .projectVersionPattern(projectVersionPattern)
+            .projectSnapshotPattern(projectSnapshotPattern)
             .tagName(tagName)
             .releaseName(releaseName)
             .branch(branch)

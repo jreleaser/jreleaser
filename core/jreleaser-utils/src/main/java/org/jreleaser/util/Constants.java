@@ -34,6 +34,8 @@ public interface Constants {
     String KEY_VERSION_MINOR = "versionMinor";
     String KEY_VERSION_PATCH = "versionPatch";
     String KEY_VERSION_TAG = "versionTag";
+    String KEY_VERSION_NUMBER = "versionNumber";
+    String KEY_VERSION_PRERELEASE = "versionPrelease";
     String KEY_VERSION_BUILD = "versionBuild";
 
     // Project
