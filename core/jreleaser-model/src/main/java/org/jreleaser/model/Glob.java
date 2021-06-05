@@ -191,7 +191,7 @@ public class Glob implements Domain {
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException e) {
             failed = true;
-            context.getLogger().error("Unnexpected error visiting path " +
+            context.getLogger().error("Unexpected error visiting path " +
                 context.relativizeToBasedir(file), e);
             return CONTINUE;
         }

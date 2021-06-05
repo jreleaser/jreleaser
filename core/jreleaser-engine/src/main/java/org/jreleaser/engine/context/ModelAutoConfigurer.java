@@ -28,6 +28,7 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.releaser.spi.Repository;
+import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.JReleaserLogger;
 
@@ -44,7 +45,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.3.0
  */
 public class ModelAutoConfigurer {
+    private static final String GLOB_PREFIX = "glob:";
+    private static final String REGEX_PREFIX = "regex:";
+
     private final List<String> files = new ArrayList<>();
+    private final List<String> globs = new ArrayList<>();
     private JReleaserLogger logger;
     private Path basedir;
     private Path outputDirectory;
@@ -191,6 +196,25 @@ public class ModelAutoConfigurer {
         return this;
     }
 
+    public ModelAutoConfigurer globs(List<String> globs) {
+        if (null != globs && !globs.isEmpty()) {
+            this.globs.clear();
+            globs.forEach(this::glob);
+        }
+        return this;
+    }
+
+    public ModelAutoConfigurer glob(String glob) {
+        if (isNotBlank(glob)) {
+            if (glob.startsWith(GLOB_PREFIX) || glob.startsWith(REGEX_PREFIX)) {
+                this.globs.add(glob.trim());
+            } else {
+                this.globs.add(GLOB_PREFIX + glob.trim());
+            }
+        }
+        return this;
+    }
+
     public JReleaserContext autoConfigure() {
         requireNonNull(logger, "Argument 'logger' ust not be null");
         requireNonNull(basedir, "Argument 'basedir' ust not be null");
@@ -238,6 +262,11 @@ public class ModelAutoConfigurer {
         if (!files.isEmpty()) {
             for (String file : files) {
                 logger.info("- file: {}", basedir.relativize(basedir.resolve(file)));
+            }
+        }
+        if (!globs.isEmpty()) {
+            for (String glob : globs) {
+                logger.info("- glob: {}", glob);
             }
         }
     }
@@ -296,6 +325,10 @@ public class ModelAutoConfigurer {
             for (String file : files) {
                 model.getFiles().addArtifact(Artifact.of(basedir.resolve(file)));
             }
+        }
+
+        if (!globs.isEmpty()) {
+            model.getFiles().addArtifacts(Artifacts.resolveFiles(logger, basedir, globs));
         }
 
         return model;

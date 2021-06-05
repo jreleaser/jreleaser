@@ -106,6 +106,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Input
     @Optional
     final ListProperty<String> files
+    @Input
+    @Optional
+    final ListProperty<String> globs
 
     @Option(option = 'project-name', description = 'The project name (OPTIONAL).')
     void setProjectName(String projectName) {
@@ -207,6 +210,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         this.files.addAll(files)
     }
 
+    @Option(option = 'glob', description = 'Input file(s) to be uploaded (as globs) (OPTIONAL).')
+    void setGlob(List<String> globs) {
+        this.globs.addAll(globs)
+    }
+
     @Inject
     JReleaseAutoConfigReleaseTask(ObjectFactory objects) {
         dryrun = objects.property(Boolean).convention(false)
@@ -231,6 +239,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         signing = objects.property(Boolean).convention(false)
         armored = objects.property(Boolean).convention(false)
         files = objects.listProperty(String).convention([])
+        globs = objects.listProperty(String).convention([])
     }
 
     @TaskAction
@@ -264,6 +273,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .signing(signing.get())
             .armored(armored.get())
             .files((List<String>) files.getOrElse([] as List<String>))
+            .globs((List<String>) globs.getOrElse([] as List<String>))
             .autoConfigure()
 
         Workflows.release(context).execute()

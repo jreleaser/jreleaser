@@ -34,6 +34,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
@@ -65,6 +66,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private boolean signing;
     private boolean armored;
     private FileSet fileSet;
+    private List<String> globs;
 
     public void setDryrun(boolean dryrun) {
         this.dryrun = dryrun;
@@ -150,6 +152,10 @@ public class JReleaserAutoConfigReleaseTask extends Task {
         this.fileSet = fileSet;
     }
 
+    public void setGlobs(List<String> globs) {
+        this.globs = globs;
+    }
+
     @Override
     public void execute() throws BuildException {
         Banner.display(new PrintWriter(System.out, true));
@@ -181,6 +187,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .signing(signing)
             .armored(armored)
             .files(fileSet.stream().map(Resource::getName).collect(toList()))
+            .globs(globs)
             .autoConfigure();
 
         Workflows.release(context).execute();

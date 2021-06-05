@@ -120,6 +120,10 @@ public class Release extends AbstractModelCommand {
         description = "Input file(s) to be uploaded.")
     String[] files;
 
+    @CommandLine.Option(names = {"--glob"},
+        description = "Input file(s) to be uploaded (as globs).")
+    String[] globs;
+
     protected void execute() {
         if (!autoConfig) {
             super.execute();
@@ -153,6 +157,7 @@ public class Release extends AbstractModelCommand {
             .signing(signing)
             .armored(armored)
             .files(collectFiles())
+            .globs(collectGlobs())
             .autoConfigure();
 
         doExecute(context);
@@ -162,6 +167,14 @@ public class Release extends AbstractModelCommand {
         List<String> list = new ArrayList<>();
         if (files != null && files.length > 0) {
             Collections.addAll(list, files);
+        }
+        return list;
+    }
+
+    private List<String> collectGlobs() {
+        List<String> list = new ArrayList<>();
+        if (globs != null && globs.length > 0) {
+            Collections.addAll(list, globs);
         }
         return list;
     }

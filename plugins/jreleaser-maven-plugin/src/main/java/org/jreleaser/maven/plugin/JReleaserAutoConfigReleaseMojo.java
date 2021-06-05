@@ -156,6 +156,11 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
      */
     @Parameter(property = "jreleaser.files")
     private String[] files;
+    /**
+     * Input file(s) to be uploaded (as globs).
+     */
+    @Parameter(property = "jreleaser.globs")
+    private String[] globs;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -185,6 +190,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .signing(signing)
             .armored(armored)
             .files(collectFiles())
+            .globs(collectGlobs())
             .autoConfigure();
 
         Workflows.release(context).execute();
@@ -208,6 +214,14 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
         List<String> list = new ArrayList<>();
         if (files != null && files.length > 0) {
             Collections.addAll(list, files);
+        }
+        return list;
+    }
+
+    private List<String> collectGlobs() {
+        List<String> list = new ArrayList<>();
+        if (globs != null && globs.length > 0) {
+            Collections.addAll(list, globs);
         }
         return list;
     }
