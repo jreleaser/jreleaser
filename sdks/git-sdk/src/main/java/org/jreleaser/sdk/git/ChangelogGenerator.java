@@ -169,7 +169,11 @@ public class ChangelogGenerator {
         String effectiveTagName = gitService.getEffectiveTagName(context.getModel());
         String tagName = gitService.getConfiguredTagName();
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
-        Pattern versionPattern = Pattern.compile(tagName.replaceAll("\\{\\{.*}}", "\\(\\.\\*\\)"));
+        Pattern vp = Pattern.compile(tagName.replaceAll("\\{\\{.*}}", "\\(\\.\\*\\)"));
+        if (!tagName.contains("{{")) {
+            vp = Pattern.compile("(.*)");
+        }
+        Pattern versionPattern = vp;
 
         tags.sort((tag1, tag2) -> {
             Comparable v1 = version(context, tag1, versionPattern);

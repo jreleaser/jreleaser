@@ -17,12 +17,19 @@
  */
 package org.jreleaser.util;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.jreleaser.util.ComparatorUtils.greaterThan;
@@ -56,6 +63,51 @@ public class JavaModuleVersionTest {
         // then:
         assertTrue(lessThan(v1, v2));
         assertTrue(greaterThan(v2, v1));
+    }
+
+    @Test
+    public void testVersionSort() {
+        List<JavaModuleVersion> asc = new ArrayList<>(asList(
+            JavaModuleVersion.of("0-ea"),
+            JavaModuleVersion.of("2021.01.22"),
+            JavaModuleVersion.of("2021.01.24"),
+            JavaModuleVersion.of("2021.02"),
+            JavaModuleVersion.of("2021.02.24"),
+            JavaModuleVersion.of("2021.03"),
+            JavaModuleVersion.of("2021.04.01"),
+            JavaModuleVersion.of("2021.04.13"),
+            JavaModuleVersion.of("2021.05.01"),
+            JavaModuleVersion.of("2021.05.20")));
+
+        List<JavaModuleVersion> desc = new ArrayList<>(asList(
+            JavaModuleVersion.of("2021.05.20"),
+            JavaModuleVersion.of("2021.05.01"),
+            JavaModuleVersion.of("2021.04.13"),
+            JavaModuleVersion.of("2021.04.01"),
+            JavaModuleVersion.of("2021.03"),
+            JavaModuleVersion.of("2021.02.24"),
+            JavaModuleVersion.of("2021.02"),
+            JavaModuleVersion.of("2021.01.24"),
+            JavaModuleVersion.of("2021.01.22"),
+            JavaModuleVersion.of("0-ea")));
+
+        // given:
+        List<JavaModuleVersion> sortedAsc = new ArrayList<>(desc);
+        Collections.sort(sortedAsc, JavaModuleVersion::compareTo);
+
+        // then:
+        assertThat(
+            sortedAsc.stream().map(JavaModuleVersion::toString).collect(Collectors.joining(",")),
+            equalTo(asc.stream().map(JavaModuleVersion::toString).collect(Collectors.joining(","))));
+
+        // given:
+        List<JavaModuleVersion> sortedDesc = new ArrayList<>(asc);
+        Collections.sort(sortedDesc, Comparator.reverseOrder());
+
+        // then:
+        assertThat(
+            sortedDesc.stream().map(JavaModuleVersion::toString).collect(Collectors.joining(",")),
+            equalTo(desc.stream().map(JavaModuleVersion::toString).collect(Collectors.joining(","))));
     }
 
     private static Stream<Arguments> version_parsing() {

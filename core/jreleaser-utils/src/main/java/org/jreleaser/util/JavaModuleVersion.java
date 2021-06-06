@@ -75,10 +75,10 @@ public class JavaModuleVersion implements Comparable<JavaModuleVersion> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        JavaModuleVersion version = (JavaModuleVersion) o;
-        return Objects.equals(version, version.version) &&
-            Objects.equals(prerelease, version.prerelease) &&
-            Objects.equals(build, version.build);
+        JavaModuleVersion v = (JavaModuleVersion) o;
+        return Objects.equals(version, v.version) &&
+            Objects.equals(prerelease, v.prerelease) &&
+            Objects.equals(build, v.build);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class JavaModuleVersion implements Comparable<JavaModuleVersion> {
     }
 
     private String[] split(String s, List<Character> delims) {
-        if(isBlank(s)) return new String[0];
+        if (isBlank(s)) return new String[0];
 
         List<String> tokens = new ArrayList<>();
 
