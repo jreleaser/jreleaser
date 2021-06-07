@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.gitea;
 
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
@@ -86,7 +87,25 @@ public class GiteaReleaser implements Releaser {
                 } else if (gitea.isUpdate()) {
                     context.getLogger().debug("updating release {}", tagName);
                     if (!context.isDryrun()) {
-                        api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);
+                        boolean update = false;
+                        GtRelease updater = new GtRelease();
+                        if (gitea.getUpdateSections().contains(UpdateSection.TITLE)) {
+                            update = true;
+                            context.getLogger().info("updating release title to {}", gitea.getEffectiveReleaseName());
+                            updater.setName(gitea.getEffectiveReleaseName());
+                        }
+                        if (gitea.getUpdateSections().contains(UpdateSection.BODY)) {
+                            update = true;
+                            context.getLogger().info("updating release body");
+                            updater.setBody(changelog);
+                        }
+                        if (update) {
+                            api.updateRelease(gitea.getOwner(), gitea.getName(), release.getId(), updater);
+                        }
+
+                        if (gitea.getUpdateSections().contains(UpdateSection.ASSETS)) {
+                            api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);
+                        }
                     }
                 } else {
                     throw new IllegalStateException(capitalize(gitea.getServiceName()) + " release failed because release " +

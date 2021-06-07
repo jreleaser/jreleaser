@@ -19,6 +19,7 @@ package org.jreleaser.cli;
 
 import org.jreleaser.engine.context.ModelAutoConfigurer;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.UpdateSection;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
@@ -26,7 +27,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -87,6 +90,10 @@ public class Release extends AbstractModelCommand {
     @CommandLine.Option(names = {"--update"},
         description = "Update an existing release.")
     boolean update;
+
+    @CommandLine.Option(names = {"--update-section"},
+        description = "Release section to be updated.")
+    String[] updateSections;
 
     @CommandLine.Option(names = {"--skip-tag"},
         description = "Skip tagging the release.")
@@ -158,6 +165,7 @@ public class Release extends AbstractModelCommand {
             .draft(draft)
             .overwrite(overwrite)
             .update(update)
+            .updateSections(collectUpdateSections())
             .skipTag(skipTag)
             .changelog(changelog)
             .changelogFormatted(changelogFormatted)
@@ -187,6 +195,16 @@ public class Release extends AbstractModelCommand {
             Collections.addAll(list, globs);
         }
         return list;
+    }
+
+    private Set<UpdateSection> collectUpdateSections() {
+        Set<UpdateSection> set = new LinkedHashSet<>();
+        if (updateSections != null && updateSections.length > 0) {
+            for (String updateSection : updateSections) {
+                set.add(UpdateSection.of(updateSection.trim()));
+            }
+        }
+        return set;
     }
 
     private void basedir() {

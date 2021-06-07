@@ -58,6 +58,10 @@ public interface GitlabAPI {
     @Headers("Content-Type: application/json")
     void createRelease(Release release, @Param("projectId") Integer projectId);
 
+    @RequestLine("PUT /projects/{projectId}/releases/{tagName}")
+    @Headers("Content-Type: application/json")
+    void updateRelease(Release release, @Param("projectId") Integer projectId);
+
     @RequestLine("POST /projects/{projectId}/uploads")
     @Headers("Content-Type: multipart/form-data")
     FileUpload uploadFile(@Param("projectId") Integer projectId, @Param("file") FormData file);

@@ -18,12 +18,14 @@
 package org.jreleaser.sdk.github;
 
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
 import org.kohsuke.github.GHMilestone;
 import org.kohsuke.github.GHRelease;
+import org.kohsuke.github.GHReleaseUpdater;
 import org.kohsuke.github.GHRepository;
 
 import java.io.IOException;
@@ -75,7 +77,23 @@ public class GithubReleaser implements Releaser {
                 } else if (github.isUpdate()) {
                     context.getLogger().debug("updating release {}", tagName);
                     if (!context.isDryrun()) {
-                        api.uploadAssets(release, assets);
+                        boolean update = false;
+                        GHReleaseUpdater updater = release.update();
+                        if (github.getUpdateSections().contains(UpdateSection.TITLE)) {
+                            update = true;
+                            context.getLogger().info("updating release title to {}", github.getEffectiveReleaseName());
+                            updater.name(github.getEffectiveReleaseName());
+                        }
+                        if (github.getUpdateSections().contains(UpdateSection.BODY)) {
+                            update = true;
+                            context.getLogger().info("updating release body");
+                            updater.body(changelog);
+                        }
+                        if (update) updater.update();
+
+                        if (github.getUpdateSections().contains(UpdateSection.ASSETS)) {
+                            api.uploadAssets(release, assets);
+                        }
                     }
                 } else {
                     throw new IllegalStateException("Github release failed because release " +

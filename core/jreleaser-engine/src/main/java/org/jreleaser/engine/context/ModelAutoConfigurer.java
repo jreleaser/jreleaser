@@ -27,6 +27,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.sdk.git.GitSdk;
@@ -35,7 +36,9 @@ import org.jreleaser.util.JReleaserLogger;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -50,6 +53,7 @@ public class ModelAutoConfigurer {
 
     private final List<String> files = new ArrayList<>();
     private final List<String> globs = new ArrayList<>();
+    private final Set<UpdateSection> updateSections = new LinkedHashSet<>();
     private JReleaserLogger logger;
     private Path basedir;
     private Path outputDirectory;
@@ -155,6 +159,21 @@ public class ModelAutoConfigurer {
         return this;
     }
 
+    public ModelAutoConfigurer updateSections(Set<UpdateSection> updateSections) {
+        this.updateSections.clear();
+        if (null != updateSections && !updateSections.isEmpty()) {
+            updateSections.forEach(this::updateSection);
+        }
+        return this;
+    }
+
+    public ModelAutoConfigurer updateSection(UpdateSection updateSection) {
+        if (null != updateSection) {
+            this.updateSections.add(updateSection);
+        }
+        return this;
+    }
+
     public ModelAutoConfigurer skipTag(boolean skipTag) {
         this.skipTag = skipTag;
         return this;
@@ -197,7 +216,9 @@ public class ModelAutoConfigurer {
 
     public ModelAutoConfigurer files(List<String> files) {
         this.files.clear();
-        this.files.addAll(files);
+        if (null != files && !files.isEmpty()) {
+            files.forEach(this::file);
+        }
         return this;
     }
 
@@ -209,8 +230,8 @@ public class ModelAutoConfigurer {
     }
 
     public ModelAutoConfigurer globs(List<String> globs) {
+        this.globs.clear();
         if (null != globs && !globs.isEmpty()) {
-            this.globs.clear();
             globs.forEach(this::glob);
         }
         return this;
@@ -264,6 +285,7 @@ public class ModelAutoConfigurer {
         if (isNotBlank(milestoneName)) logger.info("- release.milestone.name: {}", milestoneName);
         if (overwrite) logger.info("- release.overwrite: true");
         if (update) logger.info("- release.update: true");
+        if (!updateSections.isEmpty()) logger.info("- release.updateSections: " + updateSections);
         if (skipTag) logger.info("- release.skipTag: true");
         if (prerelease) logger.info("- release.prerelease: true");
         if (draft) logger.info("- release.draft: true");
@@ -322,6 +344,12 @@ public class ModelAutoConfigurer {
             service.getMilestone().setName(milestoneName);
             service.setOverwrite(overwrite);
             service.setUpdate(update);
+            if (!updateSections.isEmpty()) {
+                if (!service.isUpdate()) {
+                    throw new JReleaserException("release.updateSections is set but releasse.update is false");
+                }
+                service.setUpdateSections(updateSections);
+            }
             service.setSkipTag(skipTag);
             if (isNotBlank(branch)) service.setBranch(branch);
             if (isNotBlank(changelog)) service.getChangelog().setExternal(changelog);

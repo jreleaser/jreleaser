@@ -24,6 +24,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
@@ -31,11 +32,14 @@ import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ModelAutoConfigurer
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.JReleaserContext
+import org.jreleaser.model.UpdateSection
 import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
 import java.nio.file.Files
 import java.nio.file.Path
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -97,6 +101,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Input
     @Optional
     final Property<Boolean> update
+    @Input
+    @Optional
+    final SetProperty<UpdateSection> updateSections
     @Input
     @Optional
     final Property<Boolean> skipTag
@@ -231,6 +238,17 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         this.globs.addAll(globs)
     }
 
+    @Option(option = 'update-section', description = 'Release section to be updated (OPTIONAL).')
+    void setUpdateSection(List<String> updateSections) {
+        if (updateSections) {
+            for (String updateSection : updateSections) {
+                if (isNotBlank(updateSection)) {
+                    this.updateSections.add(UpdateSection.of(updateSection.trim()))
+                }
+            }
+        }
+    }
+
     @Inject
     JReleaseAutoConfigReleaseTask(ObjectFactory objects) {
         dryrun = objects.property(Boolean).convention(false)
@@ -252,6 +270,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         draft = objects.property(Boolean).convention(false)
         overwrite = objects.property(Boolean).convention(false)
         update = objects.property(Boolean).convention(false)
+        updateSections = objects.setProperty(UpdateSection).convention(Providers.notDefined())
         skipTag = objects.property(Boolean).convention(false)
         changelogFormatted = objects.property(Boolean).convention(false)
         signing = objects.property(Boolean).convention(false)
@@ -284,6 +303,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .draft(draft.get())
             .overwrite(overwrite.get())
             .update(update.get())
+            .updateSections((Set<UpdateSection>) updateSections.getOrElse([] as Set<UpdateSection>))
             .skipTag(skipTag.get())
             .changelog(changeLog.orNull)
             .changelogFormatted(changelogFormatted.get())

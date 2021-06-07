@@ -36,7 +36,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Create or update a release with auto-config enabled.
@@ -122,6 +124,11 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.update")
     private boolean update;
     /**
+     * Release section(s) to be updated.
+     */
+    @Parameter(property = "jreleaser.update.sections")
+    private UpdateSection[] updateSections;
+    /**
      * Skip tagging the release.
      */
     @Parameter(property = "jreleaser.skip.tag")
@@ -193,6 +200,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .draft(draft)
             .overwrite(overwrite)
             .update(update)
+            .updateSections(collectUpdateSections())
             .skipTag(skipTag)
             .changelog(changelog)
             .changelogFormatted(changelogFormatted)
@@ -236,5 +244,15 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             Collections.addAll(list, globs);
         }
         return list;
+    }
+
+    private Set<org.jreleaser.model.UpdateSection> collectUpdateSections() {
+        Set<org.jreleaser.model.UpdateSection> set = new LinkedHashSet<>();
+        if (updateSections != null && updateSections.length > 0) {
+            for (UpdateSection updateSection : updateSections) {
+                set.add(org.jreleaser.model.UpdateSection.of(updateSection.name()));
+            }
+        }
+        return set;
     }
 }

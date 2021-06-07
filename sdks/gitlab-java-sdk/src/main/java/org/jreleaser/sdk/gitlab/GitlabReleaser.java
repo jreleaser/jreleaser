@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.gitlab;
 
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
@@ -77,8 +78,26 @@ public class GitlabReleaser implements Releaser {
                 } else if (gitlab.isUpdate()) {
                     context.getLogger().debug("updating release {}", tagName);
                     if (!context.isDryrun()) {
-                        List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), assets);
-                        api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), uploads);
+                        boolean update = false;
+                        Release updater = new Release();
+                        if (gitlab.getUpdateSections().contains(UpdateSection.TITLE)) {
+                            update = true;
+                            context.getLogger().info("updating release title to {}", gitlab.getEffectiveReleaseName());
+                            updater.setName(gitlab.getEffectiveReleaseName());
+                        }
+                        if (gitlab.getUpdateSections().contains(UpdateSection.BODY)) {
+                            update = true;
+                            context.getLogger().info("updating release body");
+                            updater.setDescription(changelog);
+                        }
+                        if (update) {
+                            api.updateRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), updater);
+                        }
+
+                        if (gitlab.getUpdateSections().contains(UpdateSection.ASSETS)) {
+                            List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), assets);
+                            api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), uploads);
+                        }
                     }
                 } else {
                     throw new IllegalStateException("Gitlab release failed because release " +
@@ -172,9 +191,9 @@ public class GitlabReleaser implements Releaser {
                 gitlab.getMilestone().getEffectiveName());
             if (milestone.isPresent()) {
                 api.closeMilestone(gitlab.getOwner(),
-                        gitlab.getName(),
-                        gitlab.getIdentifier(),
-                        milestone.get());
+                    gitlab.getName(),
+                    gitlab.getIdentifier(),
+                    milestone.get());
             }
         }
     }

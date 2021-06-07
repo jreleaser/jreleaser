@@ -24,6 +24,7 @@ import org.apache.tools.ant.types.Resource;
 import org.jreleaser.ant.tasks.internal.JReleaserLoggerAdapter;
 import org.jreleaser.engine.context.ModelAutoConfigurer;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.UpdateSection;
 import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.workflow.Workflows;
 
@@ -34,7 +35,9 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -59,6 +62,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private boolean draft;
     private boolean overwrite;
     private boolean update;
+    private List<String> updateSections;
     private boolean skipTag;
     private String changelog;
     private boolean changelogFormatted;
@@ -126,6 +130,10 @@ public class JReleaserAutoConfigReleaseTask extends Task {
         this.update = update;
     }
 
+    public void setUpdateSections(List<String> updateSections) {
+        this.updateSections = updateSections;
+    }
+
     public void setSkipTag(boolean skipTag) {
         this.skipTag = skipTag;
     }
@@ -190,6 +198,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .draft(draft)
             .overwrite(overwrite)
             .update(update)
+            .updateSections(collectUpdateSections())
             .skipTag(skipTag)
             .changelog(changelog)
             .changelogFormatted(changelogFormatted)
@@ -203,6 +212,16 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .autoConfigure();
 
         Workflows.release(context).execute();
+    }
+
+    private Set<UpdateSection> collectUpdateSections() {
+        Set<UpdateSection> set = new LinkedHashSet<>();
+        if (updateSections != null && updateSections.size() > 0) {
+            for (String updateSection : updateSections) {
+                set.add(UpdateSection.of(updateSection.trim()));
+            }
+        }
+        return set;
     }
 
     private void basedir() {

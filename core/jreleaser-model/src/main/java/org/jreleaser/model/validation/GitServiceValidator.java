@@ -24,6 +24,7 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
+import org.jreleaser.model.UpdateSection;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.StringUtils;
 
@@ -114,6 +115,10 @@ public abstract class GitServiceValidator extends Validator {
                         service.getServiceName() + ".update",
                         null,
                         false));
+            }
+
+            if (service.isUpdate() && service.getUpdateSections().isEmpty()) {
+                service.getUpdateSections().add(UpdateSection.ASSETS);
             }
         }
 

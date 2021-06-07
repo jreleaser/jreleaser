@@ -76,6 +76,7 @@ import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JbangCatalog;
 import org.jreleaser.model.ScoopBucket;
 import org.jreleaser.model.SnapTap;
+import org.jreleaser.model.UpdateSection;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -83,6 +84,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -219,12 +221,21 @@ public final class JReleaserModelConverter {
         s.setSign(service.isSign());
         if (service.isSkipTagSet()) s.setSkipTag(service.isSkipTag());
         if (service.isOverwriteSet()) s.setOverwrite(service.isOverwrite());
-        if (service.isUpdateSet()) s.setUpdate(service.isUpdate());
+        if (service.isUpdateSet()) {
+            s.setUpdate(service.isUpdate());
+            s.setUpdateSections(convertUpdateSections(service.getUpdateSections()));
+        }
         s.setApiEndpoint(service.getApiEndpoint());
         s.setChangelog(convertChangelog(service.getChangelog()));
         s.setMilestone(convertMilestone(service.getMilestone()));
         s.setConnectTimeout(service.getConnectTimeout());
         s.setReadTimeout(service.getReadTimeout());
+    }
+
+    private static Set<org.jreleaser.model.UpdateSection> convertUpdateSections(Set<UpdateSection> updateSections) {
+        return updateSections.stream()
+            .map(s -> org.jreleaser.model.UpdateSection.of(s.name()))
+            .collect(Collectors.toSet());
     }
 
     private static org.jreleaser.model.CommitAuthor convertCommitAuthor(CommitAuthor commitAuthor) {

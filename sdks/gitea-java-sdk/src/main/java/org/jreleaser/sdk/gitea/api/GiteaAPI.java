@@ -56,6 +56,10 @@ public interface GiteaAPI {
     @Headers("Content-Type: application/json")
     GtRelease createRelease(GtRelease release, @Param("owner") String owner, @Param("repo") String repo);
 
+    @RequestLine("PATCH /repos/{owner}/{repo}/releases/{id}")
+    @Headers("Content-Type: application/json")
+    void updateRelease(GtRelease release, @Param("owner") String owner, @Param("repo") String repo, @Param("id") Integer id);
+
     @RequestLine("POST /repos/{owner}/{repo}/releases/{id}/assets")
     @Headers("Content-Type: multipart/form-data")
     GtAttachment uploadAsset(@Param("owner") String owner, @Param("repo") String repo, @Param("id") Integer id, @Param("attachment") FormData file);

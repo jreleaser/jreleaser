@@ -199,6 +199,12 @@ class Gitea {
         return api.createRelease(release, owner, repo);
     }
 
+    void updateRelease(String owner, String repo, Integer id, GtRelease release) throws RestAPIException {
+        logger.debug("updating release on {}/{} with tag {}", owner, repo, release.getTagName());
+
+        api.updateRelease(release, owner, repo, id);
+    }
+
     void uploadAssets(String owner, String repo, GtRelease release, List<Path> assets) throws IOException {
         for (Path asset : assets) {
             if (0 == asset.toFile().length() || !Files.exists(asset)) {

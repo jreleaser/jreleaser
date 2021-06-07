@@ -25,7 +25,9 @@ import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
@@ -54,6 +56,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private final Milestone milestone = new Milestone();
     private final CommitAuthor commitAuthor = new CommitAuthor();
     private final boolean releaseSupported;
+    private final Set<UpdateSection> updateSections = new LinkedHashSet<>();
 
     protected Boolean enabled;
     private String host;
@@ -124,6 +127,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         setCommitAuthor(service.commitAuthor);
         setChangelog(service.changelog);
         setMilestone(service.milestone);
+        setUpdateSections(service.updateSections);
     }
 
     public String getCanonicalRepoName() {
@@ -525,6 +529,15 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         return update != null;
     }
 
+    public Set<UpdateSection> getUpdateSections() {
+        return updateSections;
+    }
+
+    public void setUpdateSections(Set<UpdateSection> updateSections) {
+        this.updateSections.clear();
+        this.updateSections.addAll(updateSections);
+    }
+
     public String getApiEndpoint() {
         return apiEndpoint;
     }
@@ -582,6 +595,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         map.put("overwrite", isOverwrite());
         if (releaseSupported) {
             map.put("update", isUpdate());
+            map.put("updateSections", updateSections);
             map.put("apiEndpoint", apiEndpoint);
             map.put("connectTimeout", connectTimeout);
             map.put("readTimeout", readTimeout);

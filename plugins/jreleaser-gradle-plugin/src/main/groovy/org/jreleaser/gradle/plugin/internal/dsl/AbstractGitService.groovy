@@ -22,14 +22,18 @@ import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Changelog
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.GitService
 import org.jreleaser.gradle.plugin.dsl.Milestone
+import org.jreleaser.model.UpdateSection
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -61,6 +65,7 @@ abstract class AbstractGitService implements GitService {
     final Property<Integer> readTimeout
     final Property<Boolean> overwrite
     final Property<Boolean> update
+    final SetProperty<UpdateSection> updateSections
 
     @Inject
     AbstractGitService(ObjectFactory objects) {
@@ -88,6 +93,7 @@ abstract class AbstractGitService implements GitService {
         readTimeout = objects.property(Integer).convention(Providers.notDefined())
         overwrite = objects.property(Boolean).convention(Providers.notDefined())
         update = objects.property(Boolean).convention(Providers.notDefined())
+        updateSections = objects.setProperty(UpdateSection).convention(Providers.notDefined())
     }
 
     @Deprecated
@@ -161,9 +167,10 @@ abstract class AbstractGitService implements GitService {
             skipTag.present ||
             apiEndpoint.present ||
             connectTimeout.present ||
-            readTimeout.present||
+            readTimeout.present ||
             overwrite.present ||
-            update.present
+            update.present ||
+            updateSections.present
     }
 
     @Override
@@ -196,6 +203,13 @@ abstract class AbstractGitService implements GitService {
         ConfigureUtil.configure(action, commitAuthor)
     }
 
+    @Override
+    void updateSection(String str) {
+        if (isNotBlank(str)) {
+            this.updateSections.add(UpdateSection.of(str.trim()))
+        }
+    }
+
     protected void toModel(org.jreleaser.model.GitService service) {
         if (enabled.present) service.enabled = enabled.get()
         if (host.present) service.host = host.get()
@@ -220,5 +234,8 @@ abstract class AbstractGitService implements GitService {
         service.skipTag = skipTag.getOrElse(false)
         service.overwrite = overwrite.getOrElse(false)
         service.update = update.getOrElse(false)
+        if (service.update) {
+            service.updateSections = (Set<UpdateSection>) updateSections.getOrElse([] as Set<UpdateSection>)
+        }
     }
 }

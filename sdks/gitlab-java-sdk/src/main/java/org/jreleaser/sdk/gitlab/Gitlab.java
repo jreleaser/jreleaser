@@ -223,6 +223,14 @@ class Gitlab {
         api.createRelease(release, project.getId());
     }
 
+    void updateRelease(String owner, String repoName, String identifier, Release release) throws RestAPIException {
+        logger.debug("creating release on {}/{} with tag {}", owner, repoName, release.getTagName());
+
+        Project project = getProject(repoName, identifier);
+
+        api.updateRelease(release, project.getId());
+    }
+
     List<FileUpload> uploadAssets(String owner, String repoName, String identifier, List<Path> assets) throws IOException, RestAPIException {
         logger.debug("uploading assets to {}/{}", owner, repoName);
 

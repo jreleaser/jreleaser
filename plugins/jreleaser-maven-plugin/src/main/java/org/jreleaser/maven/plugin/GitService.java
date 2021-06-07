@@ -17,6 +17,11 @@
  */
 package org.jreleaser.maven.plugin;
 
+import org.jreleaser.model.UpdateSection;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -25,6 +30,7 @@ public abstract class GitService implements Releaser {
     private final CommitAuthor commitAuthor = new CommitAuthor();
     private final Changelog changelog = new Changelog();
     private final Milestone milestone = new Milestone();
+    private final Set<UpdateSection> updateSections = new LinkedHashSet<>();
     protected Boolean enabled;
     private String host;
     private String owner;
@@ -76,6 +82,7 @@ public abstract class GitService implements Releaser {
         setCommitAuthor(service.commitAuthor);
         setChangelog(service.changelog);
         setMilestone(service.milestone);
+        setUpdateSections(service.updateSections);
     }
 
     @Override
@@ -359,6 +366,15 @@ public abstract class GitService implements Releaser {
 
     public void setUpdate(Boolean update) {
         this.update = update;
+    }
+
+    public Set<UpdateSection> getUpdateSections() {
+        return updateSections;
+    }
+
+    public void setUpdateSections(Set<UpdateSection> updateSections) {
+        this.updateSections.clear();
+        this.updateSections.addAll(updateSections);
     }
 
     public boolean isUpdateSet() {
