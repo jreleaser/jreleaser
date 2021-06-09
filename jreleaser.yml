@@ -13,7 +13,7 @@ project:
     distributions (.zip, .tar), JLink images, or any other file that you’d like to publish as a Git
     release on popular Git services such as Github or Gitlab. Distribution files can additionally be
     published to be consumed by popular package managers as Homebrew, Snapcraft, or get ready to be
-    launched via Jbang. Releases may be announced in a variety of channels such as Twitter, Zulip, or SDKMAN!
+    launched via JBang. Releases may be announced in a variety of channels such as Twitter, Zulip, or SDKMAN!
 
   website: https://jreleaser.org
   authors:

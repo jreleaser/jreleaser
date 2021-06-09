@@ -22,7 +22,7 @@ There are multiple choices depending on your preference.
 === CLI
 The CLI can be installed in the following ways:
 
-*homebrew tap* (only on OSX for now):
+*Homebrew* (only on OSX for now):
 
 Requires Java 8
 [source]
@@ -30,7 +30,7 @@ Requires Java 8
 brew install jreleaser/tap/jreleaser
 ----
 
-*scoop*:
+*Scoop*:
 
 Requires Java 8
 [source]
@@ -39,7 +39,7 @@ scoop bucket add jreleaser https://github.com/jreleaser/scoop-jreleaser.git
 scoop install jreleaser
 ----
 
-*sdkman*:
+*Sdkman*:
 
 Requires Java 8
 [source]
@@ -47,7 +47,7 @@ Requires Java 8
 sdk install jreleaser
 ----
 
-*jbang*
+*Jbang*
 
 Requires Java 8
 [source]
@@ -63,7 +63,7 @@ jbang jreleaser@jreleaser <command> [<args>]
 jbang jreleaser-snapshot@jreleaser <command> [<args>]
 ----
 
-*curl*
+*Curl*
 
 Requires Java 11
 [source]
@@ -80,7 +80,7 @@ java get_jreleaser.java <version>
 java -jar jreleaser-cli.jar <command> [<args>]
 ----
 
-*manually*:
+*mmanually*:
 
 Download the pre-compiled binary from the link:https://github.com/jreleaser/jreleaser/releases[releases page],
 uncompress and copy to the desired location.
