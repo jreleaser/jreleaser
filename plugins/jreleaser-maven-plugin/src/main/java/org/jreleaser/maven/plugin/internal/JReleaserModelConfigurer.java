@@ -125,27 +125,25 @@ public final class JReleaserModelConfigurer {
     }
 
     private static String resolveJavaVersion(MavenProject mavenProject) {
+        String javaVersion = System.getProperty("java.version");
+
         Properties properties = mavenProject.getProperties();
-        if (null == properties || properties.isEmpty()) {
-            return resolveJavaVersion(System.getProperty("java.version"));
+        if (null != properties && !properties.isEmpty()) {
+            if (properties.containsKey("maven.compiler.release")) {
+                javaVersion = properties.getProperty("maven.compiler.release");
+            } else if (properties.containsKey("maven.compiler.target")) {
+                javaVersion = properties.getProperty("maven.compiler.target");
+            } else if (properties.containsKey("maven.compiler.source")) {
+                javaVersion = properties.getProperty("maven.compiler.source");
+            }
         }
 
-        if (properties.containsKey("maven.compiler.release")) {
-            return properties.getProperty("maven.compiler.release");
-        }
-        if (properties.containsKey("maven.compiler.target")) {
-            return properties.getProperty("maven.compiler.target");
-        }
-        if (properties.containsKey("maven.compiler.source")) {
-            return properties.getProperty("maven.compiler.source");
-        }
-
-        return resolveJavaVersion(System.getProperty("java.version"));
+        return resolveJavaVersion(javaVersion);
     }
 
     private static String resolveJavaVersion(String str) {
         if (str.startsWith("1.")) {
-            return str.substring(0, 2);
+            return str.substring(2);
         }
         return str.split("\\.")[0];
     }
