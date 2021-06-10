@@ -34,7 +34,7 @@ public abstract class NativeImageResolver extends Validator {
         context.getLogger().debug("nativeImage");
 
         for (NativeImage nativeImage : context.getModel().getAssemble().getActiveNativeImages()) {
-            resolveNativeImageOutputs(context, nativeImage, errors);
+            if (nativeImage.isExported()) resolveNativeImageOutputs(context, nativeImage, errors);
         }
     }
 

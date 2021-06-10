@@ -34,7 +34,7 @@ public abstract class JlinkResolver extends Validator {
         context.getLogger().debug("jlink");
 
         for (Jlink jlink : context.getModel().getAssemble().getActiveJlinks()) {
-            resolveJlinkOutputs(context, jlink, errors);
+            if (jlink.isExported()) resolveJlinkOutputs(context, jlink, errors);
         }
     }
 

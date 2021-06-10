@@ -35,16 +35,28 @@ abstract class AbstractAssembler implements Assembler {
     protected Active active;
     protected String executable;
     protected String templateDirectory;
+    protected Boolean exported;
 
     void setAll(AbstractAssembler assembler) {
         this.active = assembler.active;
         this.enabled = assembler.enabled;
+        this.exported = assembler.exported;
         this.name = assembler.name;
         this.executable = assembler.executable;
         this.templateDirectory = assembler.templateDirectory;
         setOutputs(assembler.output);
         setJava(assembler.java);
         setExtraProperties(assembler.extraProperties);
+    }
+
+    @Override
+    public boolean isExported() {
+        return exported == null || exported;
+    }
+
+    @Override
+    public void setExported(boolean exported) {
+        this.exported = exported;
     }
 
     @Override

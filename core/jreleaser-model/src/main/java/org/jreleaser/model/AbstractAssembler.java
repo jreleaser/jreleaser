@@ -44,6 +44,7 @@ abstract class AbstractAssembler implements Assembler {
     protected Active active;
     protected String executable;
     protected String templateDirectory;
+    protected Boolean exported;
 
     protected AbstractAssembler(String type) {
         this.type = type;
@@ -52,6 +53,7 @@ abstract class AbstractAssembler implements Assembler {
     void setAll(AbstractAssembler assembler) {
         this.active = assembler.active;
         this.enabled = assembler.enabled;
+        this.exported = assembler.exported;
         this.name = assembler.name;
         this.executable = assembler.executable;
         this.templateDirectory = assembler.templateDirectory;
@@ -110,6 +112,16 @@ abstract class AbstractAssembler implements Assembler {
         }
         enabled = active.check(project);
         return enabled;
+    }
+
+    @Override
+    public boolean isExported() {
+        return exported == null || exported;
+    }
+
+    @Override
+    public void setExported(boolean exported) {
+        this.exported = exported;
     }
 
     @Override
@@ -217,6 +229,7 @@ abstract class AbstractAssembler implements Assembler {
 
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
+        props.put("exported", isExported());
         props.put("active", active);
         props.put("executable", executable);
         props.put("templateDirectory", templateDirectory);

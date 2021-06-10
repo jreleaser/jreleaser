@@ -30,6 +30,8 @@ import org.jreleaser.model.Active
  */
 @CompileStatic
 interface Assembler extends ExtraProperties {
+    Property<Boolean> getExported()
+
     Property<Active> getActive()
 
     void setActive(String str)

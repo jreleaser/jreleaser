@@ -140,6 +140,8 @@ public class JReleaserContext {
 
         // match distributions
         for (Assembler assembler : model.getAssemble().findAllAssemblers()) {
+            if (!assembler.isExported()) continue;
+
             Distribution distribution = model.getDistributions().get(assembler.getName());
             if (null == distribution) {
                 distribution = new Distribution();

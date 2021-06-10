@@ -41,6 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  */
 @CompileStatic
 abstract class AbstractAssembler implements Assembler {
+    final Property<Boolean> exported
     final Property<Active> active
     final Property<String> executable
     final MapProperty<String, Object> extraProperties
@@ -48,6 +49,7 @@ abstract class AbstractAssembler implements Assembler {
 
     @Inject
     AbstractAssembler(ObjectFactory objects) {
+        exported = objects.property(Boolean).convention(Providers.notDefined())
         active = objects.property(Active).convention(Providers.notDefined())
         executable = objects.property(String).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
@@ -56,7 +58,8 @@ abstract class AbstractAssembler implements Assembler {
 
     @Internal
     boolean isSet() {
-        active.present ||
+        exported.present ||
+            active.present ||
             executable.present ||
             extraProperties.present
     }
@@ -79,6 +82,7 @@ abstract class AbstractAssembler implements Assembler {
     }
 
     protected <A extends org.jreleaser.model.Assembler> void fillProperties(A assembler) {
+        assembler.exported = exported.getOrElse(true)
         if (active.present) assembler.active = active.get()
         if (executable.present) assembler.executable = executable.get()
         if (extraProperties.present) assembler.extraProperties.putAll(extraProperties.get())

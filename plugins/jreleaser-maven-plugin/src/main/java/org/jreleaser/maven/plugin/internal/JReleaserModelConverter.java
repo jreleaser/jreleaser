@@ -564,6 +564,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Jlink convertJlink(Jlink jlink) {
         org.jreleaser.model.Jlink a = new org.jreleaser.model.Jlink();
+        a.setExported(jlink.isExported());
         a.setName(jlink.getName());
         a.setActive(jlink.resolveActive());
         a.setJava(convertJava(jlink.getJava()));
@@ -592,6 +593,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.NativeImage convertNativeImage(NativeImage nativeImage) {
         org.jreleaser.model.NativeImage a = new org.jreleaser.model.NativeImage();
+        a.setExported(nativeImage.isExported());
         a.setName(nativeImage.getName());
         a.setActive(nativeImage.resolveActive());
         a.setJava(convertJava(nativeImage.getJava()));

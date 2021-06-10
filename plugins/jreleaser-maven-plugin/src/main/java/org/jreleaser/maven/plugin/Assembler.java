@@ -26,6 +26,10 @@ import java.util.Set;
 public interface Assembler extends Activatable, ExtraProperties {
     String getName();
 
+    boolean isExported();
+
+    void setExported(boolean exported);
+
     void setName(String name);
 
     String getExecutable();
