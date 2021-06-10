@@ -610,7 +610,16 @@ public class StringUtils {
     }
 
     public static String toSafeRegexPattern(String str) {
-        return ".*" + escapeRegexChars(str) + ".*";
+        StringBuilder b = new StringBuilder();
+        if (!str.startsWith("^")) {
+            b.append(".*");
+        }
+        b.append(str);
+        if (!str.endsWith("$")) {
+            b.append(".*");
+        }
+
+        return b.toString();
     }
 
     public static Pattern toSafePattern(String str) {
