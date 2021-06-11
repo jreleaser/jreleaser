@@ -40,6 +40,7 @@ public class Project implements ExtraProperties {
     private String website;
     private String license;
     private String copyright;
+    private String vendor;
     private String docsUrl;
 
     void setAll(Project project) {
@@ -52,6 +53,7 @@ public class Project implements ExtraProperties {
         this.website = project.website;
         this.license = project.license;
         this.copyright = project.copyright;
+        this.vendor = project.vendor;
         this.docsUrl = project.docsUrl;
         this.java.setAll(project.java);
         setAuthors(project.authors);
@@ -133,6 +135,14 @@ public class Project implements ExtraProperties {
 
     public void setCopyright(String copyright) {
         this.copyright = copyright;
+    }
+
+    public String getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
     }
 
     public String getDocsUrl() {

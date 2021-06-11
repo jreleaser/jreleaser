@@ -50,6 +50,7 @@ class ProjectImpl implements Project {
     final Property<String> website
     final Property<String> license
     final Property<String> copyright
+    final Property<String> vendor
     final Property<String> docsUrl
     final ListProperty<String> authors
     final ListProperty<String> tags
@@ -70,6 +71,7 @@ class ProjectImpl implements Project {
         website = objects.property(String).convention(Providers.notDefined())
         license = objects.property(String).convention(Providers.notDefined())
         copyright = objects.property(String).convention(Providers.notDefined())
+        vendor = objects.property(String).convention(Providers.notDefined())
         docsUrl = objects.property(String).convention(Providers.notDefined())
         authors = objects.listProperty(String).convention(Providers.notDefined())
         tags = objects.listProperty(String).convention(Providers.notDefined())
@@ -120,6 +122,7 @@ class ProjectImpl implements Project {
         if (website.present) project.website = website.get()
         if (license.present) project.license = license.get()
         if (copyright.present) project.copyright = copyright.get()
+        if (vendor.present) project.vendor = vendor.get()
         if (docsUrl.present) project.docsUrl = docsUrl.get()
         project.authors = (List<String>) authors.getOrElse([])
         project.tags = (List<String>) tags.getOrElse([])

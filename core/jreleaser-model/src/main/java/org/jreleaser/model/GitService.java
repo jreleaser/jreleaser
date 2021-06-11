@@ -634,6 +634,9 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         if (isNotBlank(project.getCopyright())) {
             props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
         }
+        if (isNotBlank(project.getVendor())) {
+            props.put(Constants.KEY_PROJECT_VENDOR, project.getVendor());
+        }
 
         if (project.getJava().isEnabled()) {
             props.putAll(project.getJava().getResolvedExtraProperties());

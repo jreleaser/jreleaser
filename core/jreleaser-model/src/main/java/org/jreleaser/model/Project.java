@@ -51,6 +51,7 @@ public class Project implements Domain, ExtraProperties {
     private String website;
     private String license;
     private String copyright;
+    private String vendor;
     private String docsUrl;
     private String snapshotPattern;
     private Boolean snapshot;
@@ -65,6 +66,7 @@ public class Project implements Domain, ExtraProperties {
         this.website = project.website;
         this.license = project.license;
         this.copyright = project.copyright;
+        this.vendor = project.vendor;
         this.docsUrl = project.docsUrl;
         this.java.setAll(project.java);
         setAuthors(project.authors);
@@ -190,6 +192,14 @@ public class Project implements Domain, ExtraProperties {
         this.copyright = copyright;
     }
 
+    public String getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
+    }
+
     public String getDocsUrl() {
         return docsUrl;
     }
@@ -286,6 +296,7 @@ public class Project implements Domain, ExtraProperties {
         map.put("docsUrl", docsUrl);
         map.put("license", license);
         map.put("copyright", copyright);
+        map.put("vendor", vendor);
         map.put("authors", authors);
         map.put("tags", tags);
         map.put("extraProperties", getResolvedExtraProperties());

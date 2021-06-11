@@ -259,6 +259,9 @@ public class JReleaserModel implements Domain {
         if (isNotBlank(project.getCopyright())) {
             props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
         }
+        if (isNotBlank(project.getVendor())) {
+            props.put(Constants.KEY_PROJECT_VENDOR, project.getVendor());
+        }
         props.put(Constants.KEY_PROJECT_AUTHORS_BY_SPACE, String.join(" ", project.getAuthors()));
         props.put(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));
         props.put(Constants.KEY_PROJECT_TAGS_BY_SPACE, String.join(" ", project.getTags()));
