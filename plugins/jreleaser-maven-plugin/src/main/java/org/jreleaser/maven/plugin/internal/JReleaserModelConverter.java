@@ -174,8 +174,8 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Gitlab convertGitlab(Gitlab gitlab) {
         if (null == gitlab) return null;
         org.jreleaser.model.Gitlab g = new org.jreleaser.model.Gitlab();
-        g.setIdentifier(gitlab.getIdentifier());
         convertGitService(gitlab, g);
+        g.setIdentifier(gitlab.getIdentifier());
         return g;
     }
 
@@ -205,6 +205,7 @@ public final class JReleaserModelConverter {
     }
 
     private static void convertGitService(GitService service, org.jreleaser.model.GitService s) {
+        s.setHost(service.getHost());
         s.setOwner(service.getOwner());
         s.setName(service.getName());
         s.setRepoUrl(service.getRepoUrl());
