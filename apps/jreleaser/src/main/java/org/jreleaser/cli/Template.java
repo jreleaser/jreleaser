@@ -24,6 +24,7 @@ import org.jreleaser.templates.TemplateGenerator;
 import picocli.CommandLine;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author Andres Almiray
@@ -81,7 +82,7 @@ public class Template extends AbstractCommand {
         String toolName;
 
         @CommandLine.Option(names = {"-dt", "--distribution-type"},
-            description = "The type of the distribution.",
+            description = "The type of the distribution.\nDefaults to JAVA_BINARY.",
             required = true,
             defaultValue = "JAVA_BINARY")
         Distribution.DistributionType distributionType;
@@ -105,12 +106,7 @@ public class Template extends AbstractCommand {
 
     protected void execute() {
         try {
-            if (null == basedir) {
-                spec.commandLine().getErr()
-                    .println(spec.commandLine().getColorScheme().errorText("Missing required option: '--basedir=<basedir>'"));
-                spec.commandLine().usage(parent.out);
-                throw new HaltExecutionException();
-            }
+            basedir = null != basedir ? basedir : Paths.get(".").normalize();
 
             initLogger();
 
