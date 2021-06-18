@@ -347,11 +347,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     protected List<Artifact> collectArtifacts(Distribution distribution) {
         Set<String> fileExtensions = tool.getSupportedExtensions();
         return distribution.getArtifacts().stream()
-            .filter(artifact -> {
-                if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE &&
-                    tool.supportsDistribution(distribution)) return true;
-                return fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext));
-            })
+            .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
             .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
             .collect(Collectors.toList());
     }

@@ -28,6 +28,7 @@ import org.jreleaser.model.Registry;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.ByteArrayInputStream;
@@ -116,11 +117,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         if (tool.getActiveSpecs().isEmpty()) {
             Set<String> fileExtensions = tool.getSupportedExtensions();
             List<Artifact> artifacts = distribution.getArtifacts().stream()
-                .filter(artifact -> {
-                    if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE &&
-                        tool.supportsDistribution(distribution)) return true;
-                    return fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext));
-                })
+                .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
                 .collect(Collectors.toList());
 
             packageDocker(distribution, props, packageDirectory, getTool(), artifacts);
@@ -183,7 +180,15 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
 
         for (Artifact artifact : artifacts) {
             Path artifactPath = artifact.getEffectivePath(context);
-            Files.copy(artifactPath, assemblyDirectory.resolve(artifactPath.getFileName()), REPLACE_EXISTING);
+            if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE) {
+                if (artifactPath.toString().endsWith(".zip")) {
+                    FileUtils.unpack(artifactPath, assemblyDirectory);
+                } else {
+                    Files.copy(artifactPath, assemblyDirectory.resolve(artifactPath.getFileName()), REPLACE_EXISTING);
+                }
+            } else {
+                Files.copy(artifactPath, assemblyDirectory.resolve(artifactPath.getFileName()), REPLACE_EXISTING);
+            }
         }
 
         return packageDirectory;
@@ -371,11 +376,6 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         Path outputFile = "executable".equals(fileName) ?
             outputDirectory.resolve("assembly").resolve(distribution.getExecutable()) :
             outputDirectory.resolve(fileName);
-
-        if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE &&
-            outputFile.getFileName().toString().equals(distribution.getExecutable())) {
-            return;
-        }
 
         writeFile(content, outputFile);
     }

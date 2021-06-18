@@ -24,4 +24,5 @@ dependencies {
     api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
     // checksum
     api "commons-codec:commons-codec:$commonsCodecVersion"
+    api "org.apache.commons:commons-compress:$commonsCompressVersion"
 }

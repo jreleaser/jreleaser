@@ -2,7 +2,7 @@ class {{brewFormulaName}} < Formula
   desc "{{projectDescription}}"
   homepage "{{projectWebsite}}"
   version "{{projectVersion}}"
-  url "{{distributionUrl}}", :using => :nounzip
+  url "{{distributionUrl}}"
   sha256 "{{distributionChecksumSha256}}"
   license "{{projectLicense}}"
 
@@ -20,11 +20,12 @@ class {{brewFormulaName}} < Formula
   {{/brewDependencies}}
 
   def install
-    bin.install "{{artifactFileName}}"
+    libexec.install Dir["*"]
+    bin.install_symlink "#{libexec}/{{distributionExecutable}}"
   end
 
   test do
-    output = shell_output("#{bin}/{{distributionExecutable}} --version")
+    output = shell_output("#{libexec}/{{distributionExecutable}} --version")
     assert_match "{{projectVersion}}", output
   end
 end

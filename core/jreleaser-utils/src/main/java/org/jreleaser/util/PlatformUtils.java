@@ -116,7 +116,7 @@ public final class PlatformUtils {
         switch (parts.length) {
             case 1:
             case 2:
-                return "windows".equalsIgnoreCase(osNameOrClassifier);
+                return "windows".equalsIgnoreCase(parts[0]);
             default:
                 return false;
         }
@@ -126,13 +126,7 @@ public final class PlatformUtils {
         if (isBlank(osNameOrClassifier)) return false;
         String[] parts = osNameOrClassifier.split("-");
 
-        switch (parts.length) {
-            case 1:
-            case 2:
-                return "osx".equalsIgnoreCase(osNameOrClassifier);
-            default:
-                return false;
-        }
+        return "osx".equalsIgnoreCase(parts[0]);
     }
 
     public static boolean isUnix(String osNameOrClassifier) {
@@ -143,8 +137,8 @@ public final class PlatformUtils {
             case 1:
             case 2:
                 return OS_NAMES.contains(parts[0]) &&
-                    !"osx".equalsIgnoreCase(osNameOrClassifier) &&
-                    !"windows".equalsIgnoreCase(osNameOrClassifier);
+                    !"osx".equalsIgnoreCase(parts[0]) &&
+                    !"windows".equalsIgnoreCase(parts[0]);
             default:
                 return false;
         }
@@ -158,7 +152,7 @@ public final class PlatformUtils {
             case 1:
             case 2:
                 return OS_NAMES.contains(parts[0]) &&
-                    osNameOrClassifier.contains("linux");
+                    parts[0].contains("linux");
             default:
                 return false;
         }

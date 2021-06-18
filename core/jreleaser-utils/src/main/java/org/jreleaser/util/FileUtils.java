@@ -17,14 +17,28 @@
  */
 package org.jreleaser.util;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.compress.utils.IOUtils;
+
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystemLoopException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.FileTime;
@@ -33,6 +47,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.zip.ZipOutputStream;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
@@ -45,6 +60,95 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public final class FileUtils {
     private FileUtils() {
         //noop
+    }
+
+    public static void zip(Path src, Path dest) throws IOException {
+        try (ZipArchiveOutputStream out = new ZipArchiveOutputStream(dest.toFile())) {
+            out.setMethod(ZipOutputStream.DEFLATED);
+
+            Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+                    final String entryName = src.relativize(file).toString();
+                    final ZipArchiveEntry archiveEntry = new ZipArchiveEntry(file.toFile(), entryName);
+                    final byte[] contents = Files.readAllBytes(file);
+
+                    archiveEntry.setMethod(ZipOutputStream.DEFLATED);
+
+                    out.putArchiveEntry(archiveEntry);
+                    out.write(contents);
+                    out.closeArchiveEntry();
+
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+    }
+
+    public static void unpack(Path src, Path dest) throws IOException {
+        File destinationDir = dest.toFile();
+
+        try (InputStream fi = Files.newInputStream(src);
+             InputStream bi = new BufferedInputStream(fi);
+             ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
+
+            String filename = src.getFileName().toString();
+            // subtract .zip, .tar
+            filename = filename.substring(0, filename.length() - 4);
+            unpack(filename + "/", destinationDir, in);
+        } catch (ArchiveException e) {
+            throw new IOException(e.getMessage(), e);
+        }
+    }
+
+    public static void unpackCompressed(Path src, Path dest) throws IOException {
+        File destinationDir = dest.toFile();
+
+        try (InputStream fi = Files.newInputStream(src);
+             InputStream bi = new BufferedInputStream(fi);
+             InputStream gzi = new GzipCompressorInputStream(bi);
+             ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
+            String filename = src.getFileName().toString();
+            // subtract .tar.gz
+            filename = filename.substring(0, filename.length() - 7);
+            unpack(filename + "/", destinationDir, in);
+        }
+    }
+
+    private static void unpack(String basename, File destinationDir, ArchiveInputStream in) throws IOException {
+        ArchiveEntry entry = null;
+        while ((entry = in.getNextEntry()) != null) {
+            if (!in.canReadEntryData(entry)) {
+                // log something?
+                continue;
+            }
+
+            String entryName = entry.getName();
+            if (entryName.startsWith(basename) && entryName.length() > basename.length() + 1) {
+                entryName = entryName.substring(basename.length());
+            }
+
+            File file = new File(destinationDir, entryName);
+            String destDirPath = destinationDir.getCanonicalPath();
+            String destFilePath = file.getCanonicalPath();
+            if (!destFilePath.startsWith(destDirPath + File.separator)) {
+                throw new IOException("Entry is outside of the target dir: " + entry.getName());
+            }
+
+            if (entry.isDirectory()) {
+                if (!file.isDirectory() && !file.mkdirs()) {
+                    throw new IOException("failed to create directory " + file);
+                }
+            } else {
+                File parent = file.getParentFile();
+                if (!parent.isDirectory() && !parent.mkdirs()) {
+                    throw new IOException("failed to create directory " + parent);
+                }
+                try (OutputStream o = Files.newOutputStream(file.toPath())) {
+                    IOUtils.copy(in, o);
+                }
+            }
+        }
     }
 
     public static void deleteFiles(Path path) throws IOException {
