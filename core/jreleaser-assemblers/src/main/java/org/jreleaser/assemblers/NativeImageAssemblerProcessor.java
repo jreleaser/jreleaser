@@ -127,7 +127,9 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
 
         try {
             Path tempDirectory = Files.createTempDirectory("jreleaser");
-            Files.copy(image, tempDirectory.resolve(image.getFileName()));
+            Path binDirectory = tempDirectory.resolve("bin");
+            Files.createDirectories(binDirectory);
+            Files.copy(image, binDirectory.resolve(image.getFileName()));
             context.getLogger().debug("copying files to {}", context.relativizeToBasedir(tempDirectory));
             copyFiles(context, tempDirectory);
 
