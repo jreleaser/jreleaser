@@ -70,6 +70,8 @@ public class ModelConfigurer {
             case CODEBERG:
                 autoConfigureCodeberg(context, repository);
                 break;
+            default:
+                autoConfigureOther(context, repository);
         }
 
         try {
@@ -145,6 +147,14 @@ public class ModelConfigurer {
         }
 
         fillGitProperties(gitlab, repository, context.getModel().getCommit());
+    }
+
+    private static void autoConfigureOther(JReleaserContext context, Repository repository) {
+        GitService service = context.getModel().getRelease().getGitService();
+
+        if (service != null) {
+            fillGitProperties(service, repository, context.getModel().getCommit());
+        }
     }
 
     private static void autoConfigureCodeberg(JReleaserContext context, Repository repository) {
