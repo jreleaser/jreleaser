@@ -31,13 +31,14 @@ import static java.nio.file.Files.exists;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Artifact implements Domain, ExtraProperties {
+public class Artifact implements Domain, ExtraProperties, Comparable<Artifact> {
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Map<Algorithm, String> hashes = new LinkedHashMap<>();
 
@@ -306,6 +307,15 @@ public class Artifact implements Domain, ExtraProperties {
     @Override
     public int hashCode() {
         return Objects.hash(path);
+    }
+
+    @Override
+    public int compareTo(Artifact that) {
+        String p1 = this.platform;
+        String p2 = that.platform;
+        if (isBlank(p1)) p1 = "";
+        if (isBlank(p2)) p2 = "";
+        return p1.compareTo(p2);
     }
 
     public static Artifact of(Path resolvedPath) {

@@ -24,6 +24,7 @@ import org.jreleaser.model.NativeImage;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 
@@ -92,16 +93,16 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
     }
 
     private Artifact nativeImage(Path assembleDirectory, Path graalPath, Set<Path> jars) throws AssemblerProcessingException {
-        String finalImageName = assembler.getExecutable();
-        context.getLogger().info("- {}", finalImageName);
+        String executable = assembler.getExecutable();
+        context.getLogger().info("- {}", executable);
 
-        Path image = assembleDirectory.resolve(finalImageName).toAbsolutePath();
+        Path image = assembleDirectory.resolve(executable).toAbsolutePath();
         try {
             if (Files.exists(image)) {
                 Files.deleteIfExists(image);
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Could not delete previous image " + finalImageName, e);
+            throw new AssemblerProcessingException("Could not delete previous image " + executable, e);
         }
 
         assembler.getArgs().stream()
@@ -124,7 +125,19 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         cmd.add("-H:Name=" + image.getFileName().toString());
         executeCommand(image.getParent(), cmd);
 
-        return Artifact.of(image, assembler.getGraal().getPlatform());
+        try {
+            Path tempDirectory = Files.createTempDirectory("jreleaser");
+            Files.copy(image, tempDirectory.resolve(image.getFileName()));
+
+            Path imageZip = assembleDirectory.resolve(assembler.getName() + "-" + context.getModel().getProject().getResolvedVersion() + ".zip");
+            FileUtils.zip(tempDirectory, imageZip);
+
+            context.getLogger().debug("- {}", imageZip.getFileName());
+
+            return Artifact.of(imageZip, assembler.getGraal().getPlatform());
+        } catch (IOException e) {
+            throw new AssemblerProcessingException("Unexpected error", e);
+        }
     }
 
     private String readJavaVersion(Path path) throws AssemblerProcessingException {

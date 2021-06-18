@@ -22,9 +22,9 @@ import org.jreleaser.util.Version;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 abstract class AbstractAssembler implements Assembler {
-    protected final Set<Artifact> output = new LinkedHashSet<>();
+    protected final Set<Artifact> outputs = new TreeSet<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Java java = new Java();
     private final String type;
@@ -57,7 +57,7 @@ abstract class AbstractAssembler implements Assembler {
         this.name = assembler.name;
         this.executable = assembler.executable;
         this.templateDirectory = assembler.templateDirectory;
-        setOutputs(assembler.output);
+        setOutputs(assembler.outputs);
         setJava(assembler.java);
         setExtraProperties(assembler.extraProperties);
     }
@@ -176,19 +176,19 @@ abstract class AbstractAssembler implements Assembler {
 
     @Override
     public Set<Artifact> getOutputs() {
-        return output;
+        return outputs;
     }
 
     @Override
     public void setOutputs(Set<Artifact> output) {
-        this.output.clear();
-        this.output.addAll(output);
+        this.outputs.clear();
+        this.outputs.addAll(output);
     }
 
     @Override
     public void addOutput(Artifact artifact) {
         if (null != artifact) {
-            this.output.add(artifact);
+            this.outputs.add(artifact);
         }
     }
 

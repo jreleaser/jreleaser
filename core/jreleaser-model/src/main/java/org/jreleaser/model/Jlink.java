@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -34,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Jlink extends AbstractAssembler {
     public static final String NAME = "jlink";
 
-    private final Set<Artifact> targetJdks = new LinkedHashSet<>();
+    private final Set<Artifact> targetJdks = new TreeSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
     private final List<String> args = new ArrayList<>();
     private final Artifact jdk = new Artifact();

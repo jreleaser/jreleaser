@@ -20,19 +20,19 @@ package org.jreleaser.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Files implements Domain {
-    private final Set<Artifact> artifacts = new LinkedHashSet<>();
+    private final Set<Artifact> artifacts = new TreeSet<>();
     private final List<Glob> globs = new ArrayList<>();
-    private final Set<Artifact> paths = new LinkedHashSet<>();
+    private final Set<Artifact> paths = new TreeSet<>();
     private boolean resolved;
 
     public boolean isEmpty() {

@@ -42,7 +42,7 @@ public abstract class NativeImageResolver extends Validator {
         Path image = context.getAssembleDirectory()
             .resolve(nativeImage.getName())
             .resolve(nativeImage.getType())
-            .resolve(nativeImage.getExecutable());
+            .resolve(nativeImage.getName() + "-" + context.getModel().getProject().getResolvedVersion() + ".zip");
 
         if (!Files.exists(image)) {
             errors.assembly("Missing outputs for " + nativeImage.getType() + "." + nativeImage.getName() +

@@ -35,9 +35,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
@@ -53,7 +53,7 @@ public class Artifacts {
             return files.getPaths();
         }
 
-        Set<Artifact> paths = new LinkedHashSet<>();
+        Set<Artifact> paths = new TreeSet<>();
 
         // resolve artifacts
         for (Artifact artifact : files.getArtifacts()) {
@@ -100,7 +100,7 @@ public class Artifacts {
         private final JReleaserLogger logger;
         private final List<PathMatcher> matchers;
         private final Path basedir;
-        private final Set<Artifact> artifacts = new LinkedHashSet<>();
+        private final Set<Artifact> artifacts = new TreeSet<>();
         private boolean failed;
 
         private GlobResolver(JReleaserLogger logger, Path basedir, List<PathMatcher> matchers) {
