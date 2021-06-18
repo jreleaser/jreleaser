@@ -48,6 +48,7 @@ class NativeImageImpl extends AbstractAssembler implements NativeImage {
     private final ArtifactImpl graal
     private final ArtifactImpl mainJar
     private final NamedDomainObjectContainer<GlobImpl> jars
+    private final NamedDomainObjectContainer<GlobImpl> files
 
     @Inject
     NativeImageImpl(ObjectFactory objects) {
@@ -58,6 +59,14 @@ class NativeImageImpl extends AbstractAssembler implements NativeImage {
         graal = objects.newInstance(ArtifactImpl, objects)
         mainJar = objects.newInstance(ArtifactImpl, objects)
         jars = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
+            @Override
+            GlobImpl create(String name) {
+                GlobImpl glob = objects.newInstance(GlobImpl, objects)
+                glob.name = name
+                glob
+            }
+        })
+        files = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
             @Override
             GlobImpl create(String name) {
                 GlobImpl glob = objects.newInstance(GlobImpl, objects)
@@ -90,6 +99,11 @@ class NativeImageImpl extends AbstractAssembler implements NativeImage {
     }
 
     @Override
+    void files(Action<? super Glob> action) {
+        action.execute(files.maybeCreate("files-${files.size()}".toString()))
+    }
+
+    @Override
     void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, graal)
     }
@@ -102,6 +116,11 @@ class NativeImageImpl extends AbstractAssembler implements NativeImage {
     @Override
     void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
         ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
+    }
+
+    @Override
+    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
+        ConfigureUtil.configure(action, files.maybeCreate("files-${files.size()}".toString()))
     }
 
     @Override
@@ -121,6 +140,9 @@ class NativeImageImpl extends AbstractAssembler implements NativeImage {
         nativeImage.mainJar = mainJar.toModel()
         for (GlobImpl glob : jars) {
             nativeImage.addJar(glob.toModel())
+        }
+        for (GlobImpl glob : files) {
+            nativeImage.addFile(glob.toModel())
         }
         nativeImage
     }

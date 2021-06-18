@@ -35,6 +35,7 @@ public class NativeImage extends AbstractAssembler {
     private final Artifact graal = new Artifact();
     private final Artifact mainJar = new Artifact();
     private final List<Glob> jars = new ArrayList<>();
+    private final List<Glob> files = new ArrayList<>();
 
     public NativeImage() {
         super(NAME);
@@ -51,6 +52,7 @@ public class NativeImage extends AbstractAssembler {
         setMainJar(nativeImage.mainJar);
         setArgs(nativeImage.args);
         setJars(nativeImage.jars);
+        setFiles(nativeImage.files);
     }
 
     public Artifact getGraal() {
@@ -113,6 +115,25 @@ public class NativeImage extends AbstractAssembler {
         }
     }
 
+    public List<Glob> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<Glob> files) {
+        this.files.clear();
+        this.files.addAll(files);
+    }
+
+    public void addFiles(List<Glob> files) {
+        this.files.addAll(files);
+    }
+
+    public void addFile(Glob file) {
+        if (null != file) {
+            this.files.add(file);
+        }
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("graal", graal.asMap(full));
@@ -122,5 +143,10 @@ public class NativeImage extends AbstractAssembler {
             mappedJars.put("glob " + i, jars.get(i).asMap(full));
         }
         props.put("jars", mappedJars);
+        Map<String, Map<String, Object>> mappedFiles = new LinkedHashMap<>();
+        for (int i = 0; i < files.size(); i++) {
+            mappedFiles.put("glob " + i, files.get(i).asMap(full));
+        }
+        props.put("files", mappedFiles);
     }
 }

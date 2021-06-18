@@ -20,8 +20,6 @@ package org.jreleaser.maven.plugin;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jreleaser.util.StringUtils.isNotBlank;
-
 /**
  * @author Andres Almiray
  * @since 0.2.0
@@ -31,6 +29,7 @@ public class NativeImage extends AbstractAssembler {
     private final Artifact graal = new Artifact();
     private final Artifact mainJar = new Artifact();
     private final List<Glob> jars = new ArrayList<>();
+    private final List<Glob> files = new ArrayList<>();
 
     void setAll(NativeImage nativeImage) {
         super.setAll(nativeImage);
@@ -38,6 +37,7 @@ public class NativeImage extends AbstractAssembler {
         setMainJar(nativeImage.mainJar);
         setArgs(nativeImage.args);
         setJars(nativeImage.jars);
+        setFiles(nativeImage.files);
     }
 
     public Artifact getGraal() {
@@ -65,22 +65,6 @@ public class NativeImage extends AbstractAssembler {
         this.args.addAll(args);
     }
 
-    public void addArgs(List<String> args) {
-        this.args.addAll(args);
-    }
-
-    public void addArg(String arg) {
-        if (isNotBlank(arg)) {
-            this.args.add(arg.trim());
-        }
-    }
-
-    public void removeArg(String arg) {
-        if (isNotBlank(arg)) {
-            this.args.remove(arg.trim());
-        }
-    }
-
     public List<Glob> getJars() {
         return jars;
     }
@@ -90,13 +74,12 @@ public class NativeImage extends AbstractAssembler {
         this.jars.addAll(jars);
     }
 
-    public void addJars(List<Glob> jars) {
-        this.jars.addAll(jars);
+    public List<Glob> getFiles() {
+        return files;
     }
 
-    public void addJar(Glob jar) {
-        if (null != jar) {
-            this.jars.add(jar);
-        }
+    public void setFiles(List<Glob> files) {
+        this.files.clear();
+        this.files.addAll(files);
     }
 }

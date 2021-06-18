@@ -604,6 +604,8 @@ public final class JReleaserModelConverter {
         a.setTemplateDirectory(nativeImage.getTemplateDirectory());
         a.setGraal(convertArtifact(nativeImage.getGraal()));
         a.setMainJar(convertArtifact(nativeImage.getMainJar()));
+        a.setJars(convertGlobs(nativeImage.getJars()));
+        a.setFiles(convertGlobs(nativeImage.getFiles()));
         a.setArgs(nativeImage.getArgs());
         return a;
     }

@@ -128,6 +128,8 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         try {
             Path tempDirectory = Files.createTempDirectory("jreleaser");
             Files.copy(image, tempDirectory.resolve(image.getFileName()));
+            context.getLogger().debug("copying files to {}", context.relativizeToBasedir(tempDirectory));
+            copyFiles(context, tempDirectory);
 
             Path imageZip = assembleDirectory.resolve(assembler.getName() + "-" + context.getModel().getProject().getResolvedVersion() + ".zip");
             FileUtils.zip(tempDirectory, imageZip);
@@ -186,7 +188,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         }
     }
 
-    private Set<Path> copyJars(JReleaserContext context, Path libDirectory) throws AssemblerProcessingException {
+    private Set<Path> copyJars(JReleaserContext context, Path destination) throws AssemblerProcessingException {
         Set<Path> paths = new LinkedHashSet<>();
 
         // resolve all first
@@ -199,13 +201,37 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
 
         // copy all next
         try {
-            Files.createDirectories(libDirectory);
+            Files.createDirectories(destination);
             for (Path path : paths) {
                 context.getLogger().debug("copying {}", path.getFileName());
-                Files.copy(path, libDirectory.resolve(path.getFileName()), REPLACE_EXISTING);
+                Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Unexpected error when copying JAR files", e);
+            throw new AssemblerProcessingException("Unexpected error when copying files", e);
+        }
+
+        return paths;
+    }
+
+    private Set<Path> copyFiles(JReleaserContext context, Path destination) throws AssemblerProcessingException {
+        Set<Path> paths = new LinkedHashSet<>();
+
+        // resolve all first
+        for (Glob glob : assembler.getFiles()) {
+            glob.getResolvedPaths(context).stream()
+                .filter(Files::isRegularFile)
+                .forEach(paths::add);
+        }
+
+        // copy all next
+        try {
+            Files.createDirectories(destination);
+            for (Path path : paths) {
+                context.getLogger().debug("copying {}", path.getFileName());
+                Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            throw new AssemblerProcessingException("Unexpected error when copying files", e);
         }
 
         return paths;
