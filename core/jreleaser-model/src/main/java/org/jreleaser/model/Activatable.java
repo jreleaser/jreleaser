@@ -31,4 +31,6 @@ public interface Activatable {
     boolean isActiveSet();
 
     boolean isEnabled();
+
+    void disable();
 }

@@ -80,8 +80,10 @@ public abstract class BrewValidator extends Validator {
             tool.getTap().setToken(parentTool.getTap().getToken());
         }
 
-        validateArtifactPlatforms(context, distribution, tool, errors);
         validateCask(context, distribution, tool, errors);
+        if (!tool.getCask().isEnabled()) {
+            validateArtifactPlatforms(context, distribution, tool, errors);
+        }
     }
 
     private static void validateCask(JReleaserContext context, Distribution distribution, Brew tool, Errors errors) {

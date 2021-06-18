@@ -36,7 +36,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.validation.BrewValidator.postValidateBrew;
 import static org.jreleaser.model.validation.BrewValidator.validateBrew;
 import static org.jreleaser.model.validation.ChocolateyValidator.validateChocolatey;
-import static org.jreleaser.model.validation.DockerValidator.validateDocker;
 import static org.jreleaser.model.validation.JbangValidator.postValidateJBang;
 import static org.jreleaser.model.validation.JbangValidator.validateJbang;
 import static org.jreleaser.model.validation.ScoopValidator.validateScoop;
@@ -215,7 +214,9 @@ public abstract class DistributionsValidator extends Validator {
 
     public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Tool tool, Errors errors) {
         // validate distribution type
-        if (distribution.getType() == Distribution.DistributionType.JLINK) {
+        if (distribution.getType() == Distribution.DistributionType.JLINK ||
+            distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE ||
+            distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE) {
             // ensure all artifacts define a platform
 
             Set<String> fileExtensions = tool.getSupportedExtensions();
@@ -228,6 +229,14 @@ public abstract class DistributionsValidator extends Validator {
                 errors.configuration("distribution." + distribution.getName() +
                     " is of type " + distribution.getType() + " and " + tool.getName() +
                     " requires a explicit platform on each artifact");
+            }
+
+            if (byPlatform.keySet().stream()
+                .noneMatch(tool::supportsPlatform)) {
+                context.getLogger().warn("disabling distribution." + distribution.getName() +
+                    "." + tool.getName() +
+                    " because there are no matching artifacts");
+                tool.disable();
             }
         }
     }

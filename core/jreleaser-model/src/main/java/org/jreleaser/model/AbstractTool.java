@@ -62,6 +62,7 @@ public abstract class AbstractTool implements Tool {
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;
