@@ -177,6 +177,10 @@ class AnnounceImpl implements Announce {
         ConfigureUtil.configure(action, gitter)
     }
 
+    void googleChat(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GoogleChat) Closure<Void> action) {
+        ConfigureUtil.configure(action, gitter)
+    }
+
     @Override
     void googleChat(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GoogleChat) Closure<Void> action) {
         ConfigureUtil.configure(action, googleChat)
