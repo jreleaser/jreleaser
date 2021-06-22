@@ -71,6 +71,8 @@ signing:
   armored: true
 
 announce:
+  google-chat:
+    webhook: https://chat.googleapis.com/v1/spaces/AAAAR5MZjzc/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=dlMT5sNbL6ypcGeEgCzRrTN8QJ702UjD1BM7x_vx_qY%3D
   twitter:
     active: release
   sdkman:
