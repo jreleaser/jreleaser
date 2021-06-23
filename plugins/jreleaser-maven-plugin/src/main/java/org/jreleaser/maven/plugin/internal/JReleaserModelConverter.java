@@ -629,10 +629,11 @@ public final class JReleaserModelConverter {
         return s;
     }
 
-    private static Map<String, org.jreleaser.model.Distribution> convertDistributions(List<Distribution> distributions) {
+    private static Map<String, org.jreleaser.model.Distribution> convertDistributions(Map<String, Distribution> distributions) {
         Map<String, org.jreleaser.model.Distribution> ds = new LinkedHashMap<>();
-        for (Distribution distribution : distributions) {
-            ds.put(distribution.getName(), convertDistribution(distribution));
+        for (Map.Entry<String,Distribution> e : distributions.entrySet()) {
+            e.getValue().setName(e.getKey());
+            ds.put(e.getKey(), convertDistribution(e.getValue()));
         }
         return ds;
     }
