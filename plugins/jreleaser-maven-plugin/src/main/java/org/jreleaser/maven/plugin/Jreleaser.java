@@ -17,9 +17,8 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author Andres Almiray
@@ -36,7 +35,7 @@ public class Jreleaser {
     private final Checksum checksum = new Checksum();
     private final Signing signing = new Signing();
     private final Files files = new Files();
-    private final List<Distribution> distributions = new ArrayList<>();
+    private final Map<String, Distribution> distributions = new LinkedHashMap<>();
 
     public Environment getEnvironment() {
         return environment;
@@ -118,12 +117,12 @@ public class Jreleaser {
         this.files.setAll(files);
     }
 
-    public List<Distribution> getDistributions() {
+    public Map<String, Distribution> getDistributions() {
         return distributions;
     }
 
-    public void setDistributions(Collection<Distribution> distributions) {
+    public void setDistributions(Map<String, Distribution> distributions) {
         this.distributions.clear();
-        this.distributions.addAll(distributions);
+        this.distributions.putAll(distributions);
     }
 }
