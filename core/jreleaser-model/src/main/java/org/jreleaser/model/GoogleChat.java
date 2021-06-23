@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.5.0
  */
 public class GoogleChat extends AbstractAnnouncer {
-    public static final String NAME = "google-chat";
+    public static final String NAME = "googleChat";
     public static final String GOOGLE_CHAT_WEBHOOK = "GOOGLE_CHAT_WEBHOOK";
 
     private String webhook;

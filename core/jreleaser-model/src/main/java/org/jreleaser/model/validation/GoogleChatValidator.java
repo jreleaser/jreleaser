@@ -42,7 +42,7 @@ public abstract class GoogleChatValidator extends Validator {
         googleChat.setWebhook(
             checkProperty(context.getModel().getEnvironment(),
                 GOOGLE_CHAT_WEBHOOK,
-                "google-chat.webhook",
+                "GoogleChat.webhook",
                 googleChat.getWebhook(),
                 ignored,
                 context.isDryrun()));
@@ -50,7 +50,7 @@ public abstract class GoogleChatValidator extends Validator {
         String webhook = googleChat.getResolvedWebhook();
 
         if (!context.isDryrun() && isBlank(webhook)) {
-            errors.configuration("google-chat.webhook must be provided");
+            errors.configuration("GoogleChat.webhook must be provided");
             return;
         }
 
@@ -64,7 +64,7 @@ public abstract class GoogleChatValidator extends Validator {
 
         if (isNotBlank(googleChat.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(googleChat.getMessageTemplate().trim()))) {
-            errors.configuration("google-chat.messageTemplate does not exist. " + googleChat.getMessageTemplate());
+            errors.configuration("GoogleChat.messageTemplate does not exist. " + googleChat.getMessageTemplate());
         }
 
         if (googleChat.getConnectTimeout() <= 0 || googleChat.getConnectTimeout() > 300) {
