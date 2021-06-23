@@ -9,6 +9,12 @@ link:https://github.com/jreleaser/jreleaser/discussions[discussion] topic first.
 This project and everyone participating in it is governed by our link:CODE_OF_CONDUCT.md[Code of Conduct].
 By participating, you are expected to uphold this code. Please report unacceptable behavior to jreleaser@kordapm.org.
 
+== Contributor License Agreement
+
+Contributions to JReleaser are protected by a link:CLA.adoc[CLA]. Please read the document before making a contribution.
+You'll be asked to digitally sign the document on your first contribution. Feel free to open a
+link:https://github.com/jreleaser/jreleaser/discussions[discussion] topic if you have questions.
+
 == How to build
 
 .Prerequisites
@@ -28,7 +34,8 @@ From then on you just have to re-install those dependencies that changed, for ex
 `./gradlew :jreleaser-model:publishToMavenLocal` when changes were made to the `jreleaser-model` project.
 
 IMPORTANT: The Gradle plugin responsible for building the Maven plugin descriptor is not that realiable. You'll have to
-clean and regenerate the plugin descritptor on every change, that is
+clean and regenerate the plugin descritptor on every change that modifies/affects the MOJO descriptors such as adding/removing
+ parameters to a MOJO, that is
 `./gradlew :jreleaser-maven-plugin:clean :jreleaser-maven-plugin:publishToMavenLocal --no-build-cache`.
 
 TIP: You maye use link:https://github.com/kordamp/gm[] instead in which case the commands are shorter, for example
