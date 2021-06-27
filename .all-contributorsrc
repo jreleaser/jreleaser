@@ -57,6 +57,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jruaux",
+      "name": "Julien Ruaux",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1628034?v=4",
+      "profile": "https://www.linkedin.com/in/jruaux",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
