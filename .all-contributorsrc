@@ -16,6 +16,7 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/13969?v=4",
       "profile": "https://andresalmiray.com/",
       "contributions": [
+        "ideas",
         "code"
       ]
     },
@@ -45,8 +46,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/3180?v=4",
       "profile": "http://dannorth.net",
       "contributions": [
-        "doc",
-        "ideas"
+        "ideas",
+        "doc"
       ]
     },
     {
@@ -65,6 +66,16 @@
       "profile": "https://www.linkedin.com/in/jruaux",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "bmarwell",
+      "name": "Benjamin Marwell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1413391?v=4",
+      "profile": "https://blog.bmarwell.de/",
+      "contributions": [
+        "code",
+        "bug"
       ]
     }
   ],
