@@ -10,7 +10,7 @@ type: app
 
 apps:
   {{distributionExecutable}}:
-    command: $SNAP/{{artifactFileName}}
+    command: $SNAP/bin/{{distributionExecutable}}
     {{#snapHasLocalPlugs}}
     plugs:
       {{#snapLocalPlugs}}
@@ -56,9 +56,8 @@ slots:
 {{/snapHasSlots}}
 parts:
   {{distributionExecutable}}:
-    plugin: nil
-    override-build: |
-      wget -O $SNAPCRAFT_PART_INSTALL/{{artifactFileName}} {{distributionUrl}}
-      snapcraftctl set-version "{{projectVersion}}"
-    build-packages:
-      - wget
+    plugin: dump
+    source: {{distributionUrl}}
+    source-checksum: sha256/{{distributionChecksumSha256}}
+    stage-packages:
+      - curl

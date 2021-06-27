@@ -21,11 +21,11 @@ class {{brewFormulaName}} < Formula
 
   def install
     libexec.install Dir["*"]
-    bin.install_symlink "#{libexec}/{{distributionExecutable}}"
+    bin.install_symlink "#{libexec}/bin/{{distributionExecutable}}"
   end
 
   test do
-    output = shell_output("#{libexec}/{{distributionExecutable}} --version")
+    output = shell_output("#{bin}/{{distributionExecutable}} --version")
     assert_match "{{projectVersion}}", output
   end
 end

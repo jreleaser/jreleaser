@@ -59,3 +59,5 @@ parts:
     plugin: dump
     source: {{distributionUrl}}
     source-checksum: sha256/{{distributionChecksumSha256}}
+    stage-packages:
+      - curl
