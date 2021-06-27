@@ -24,11 +24,8 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Assemble
-import org.jreleaser.model.Jlink
-import org.jreleaser.model.NativeImage
 
 import javax.inject.Inject
-import java.util.stream.Collectors
 
 /**
  *
@@ -68,15 +65,8 @@ class AssembleImpl implements Assemble {
     org.jreleaser.model.Assemble toModel() {
         org.jreleaser.model.Assemble assemble = new org.jreleaser.model.Assemble()
 
-        assemble.jlink = (jlink.toList().stream()
-            .collect(Collectors.toMap(
-                { JlinkImpl a -> a.name },
-                { JlinkImpl a -> a.toModel() })) as Map<String, Jlink>)
-
-        assemble.nativeImage = (nativeImage.toList().stream()
-            .collect(Collectors.toMap(
-                { NativeImageImpl a -> a.name },
-                { NativeImageImpl a -> a.toModel() })) as Map<String, NativeImage>)
+        jlink.each { assemble.addJlink(it.toModel()) }
+        nativeImage.each { assemble.addNativeImage(it.toModel()) }
 
         assemble
     }

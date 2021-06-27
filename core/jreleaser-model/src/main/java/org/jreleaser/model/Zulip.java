@@ -152,7 +152,7 @@ public class Zulip extends AbstractAnnouncer {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
+    protected void asMap(Map<String, Object> props, boolean full) {
         props.put("account", account);
         props.put("apiKey", isNotBlank(getResolvedApiKey()) ? HIDE : UNSET);
         props.put("apiHost", apiHost);

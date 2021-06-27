@@ -19,6 +19,8 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -57,6 +59,7 @@ class AnnounceImpl implements Announce {
     final TeamsImpl teams
     final TwitterImpl twitter
     final ZulipImpl zulip
+    final NamedDomainObjectContainer<WebhookImpl> webhooks
 
     @Inject
     AnnounceImpl(ObjectFactory objects) {
@@ -72,6 +75,15 @@ class AnnounceImpl implements Announce {
         teams = objects.newInstance(TeamsImpl, objects)
         twitter = objects.newInstance(TwitterImpl, objects)
         zulip = objects.newInstance(ZulipImpl, objects)
+
+        webhooks = objects.domainObjectContainer(WebhookImpl, new NamedDomainObjectFactory<WebhookImpl>() {
+            @Override
+            WebhookImpl create(String name) {
+                WebhookImpl webhook = objects.newInstance(WebhookImpl, objects)
+                webhook.name = name
+                return webhook
+            }
+        })
     }
 
     @Override
@@ -198,6 +210,11 @@ class AnnounceImpl implements Announce {
         if (teams.isSet()) announce.teams = teams.toModel()
         if (twitter.isSet()) announce.twitter = twitter.toModel()
         if (zulip.isSet()) announce.zulip = zulip.toModel()
+
+        webhooks.toList().each { webhook ->
+            announce.addWebhook(webhook.toModel())
+        }
+
         announce
     }
 }

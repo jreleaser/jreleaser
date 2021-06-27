@@ -27,7 +27,7 @@ import java.util.Map;
  */
 abstract class AbstractAnnouncer implements Announcer {
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    protected final String name;
+    protected String name;
     protected boolean enabled;
     protected Active active;
     private int connectTimeout;
@@ -146,7 +146,7 @@ abstract class AbstractAnnouncer implements Announcer {
         props.put("active", active);
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
-        asMap(props);
+        asMap(props, full);
         props.put("extraProperties", getResolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
@@ -154,5 +154,5 @@ abstract class AbstractAnnouncer implements Announcer {
         return map;
     }
 
-    protected abstract void asMap(Map<String, Object> props);
+    protected abstract void asMap(Map<String, Object> props, boolean full);
 }

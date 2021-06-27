@@ -86,7 +86,7 @@ public class Mastodon extends AbstractAnnouncer {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
+    protected void asMap(Map<String, Object> props, boolean full) {
         props.put("host", host);
         props.put("accessToken", isNotBlank(getResolvedAccessToken()) ? HIDE : UNSET);
         props.put("status", status);

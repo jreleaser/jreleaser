@@ -17,6 +17,9 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -32,6 +35,7 @@ public class Announce implements EnabledAware {
     private final Slack slack = new Slack();
     private final Teams teams = new Teams();
     private final Twitter twitter = new Twitter();
+    private final Map<String, Webhook> webhooks = new LinkedHashMap<>();
     private final Zulip zulip = new Zulip();
     private Boolean enabled;
 
@@ -46,6 +50,7 @@ public class Announce implements EnabledAware {
         setSlack(announce.slack);
         setTeams(announce.teams);
         setTwitter(announce.twitter);
+        setWebhooks(announce.webhooks);
         setZulip(announce.zulip);
     }
 
@@ -142,6 +147,15 @@ public class Announce implements EnabledAware {
 
     public void setTwitter(Twitter twitter) {
         this.twitter.setAll(twitter);
+    }
+
+    public Map<String, Webhook> getWebhooks() {
+        return webhooks;
+    }
+
+    public void setWebhooks(Map<String, Webhook> webhooks) {
+        this.webhooks.clear();
+        this.webhooks.putAll(webhooks);
     }
 
     public Zulip getZulip() {

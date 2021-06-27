@@ -28,41 +28,38 @@ import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.KEY_TAG_NAME;
 import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
-import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.5.0
  */
-public class Discord extends AbstractAnnouncer {
-    public static final String NAME = "discord";
-    public static final String DISCORD_WEBHOOK = "DISCORD_WEBHOOK";
-
+public class Webhook extends AbstractAnnouncer {
     private String webhook;
     private String message;
+    private String messageProperty;
     private String messageTemplate;
 
-    public Discord() {
-        super(NAME);
+    public Webhook() {
+        super("");
     }
 
-    void setAll(Discord discord) {
-        super.setAll(discord);
-        this.webhook = discord.webhook;
-        this.message = discord.message;
-        this.messageTemplate = discord.messageTemplate;
+    void setAll(Webhook webhook) {
+        super.setAll(webhook);
+        this.name = webhook.name;
+        this.webhook = webhook.webhook;
+        this.message = webhook.message;
+        this.messageProperty = webhook.messageProperty;
+        this.messageTemplate = webhook.messageTemplate;
     }
 
     public String getResolvedMessage(JReleaserContext context) {
         Map<String, Object> props = context.props();
-        applyTemplates(props, getResolvedExtraProperties());
         return applyTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
         Map<String, Object> props = context.props();
-        applyTemplates(props, getResolvedExtraProperties());
         props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);
@@ -78,7 +75,11 @@ public class Discord extends AbstractAnnouncer {
     }
 
     public String getResolvedWebhook() {
-        return Env.resolve(DISCORD_WEBHOOK, webhook);
+        return Env.resolve(Env.toVar(name) + "_WEBHOOK", webhook);
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getWebhook() {
@@ -97,6 +98,14 @@ public class Discord extends AbstractAnnouncer {
         this.message = message;
     }
 
+    public String getMessageProperty() {
+        return messageProperty;
+    }
+
+    public void setMessageProperty(String messageProperty) {
+        this.messageProperty = messageProperty;
+    }
+
     public String getMessageTemplate() {
         return messageTemplate;
     }
@@ -109,6 +118,7 @@ public class Discord extends AbstractAnnouncer {
     protected void asMap(Map<String, Object> props, boolean full) {
         props.put("webhook", isNotBlank(getResolvedWebhook()) ? HIDE : UNSET);
         props.put("message", message);
+        props.put("messageProperty", messageProperty);
         props.put("messageTemplate", messageTemplate);
     }
 }

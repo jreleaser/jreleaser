@@ -24,11 +24,8 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Upload
-import org.jreleaser.model.Artifactory
-import org.jreleaser.model.HttpUploader
 
 import javax.inject.Inject
-import java.util.stream.Collectors
 
 /**
  *
@@ -68,15 +65,8 @@ class UploadImpl implements Upload {
     org.jreleaser.model.Upload toModel() {
         org.jreleaser.model.Upload upload = new org.jreleaser.model.Upload()
 
-        upload.artifactory = (artifactory.toList().stream()
-            .collect(Collectors.toMap(
-                { ArtifactoryImpl a -> a.name },
-                { ArtifactoryImpl a -> a.toModel() })) as Map<String, Artifactory>)
-
-        upload.http = (http.toList().stream()
-            .collect(Collectors.toMap(
-                { HttpImpl a -> a.name },
-                { HttpImpl a -> a.toModel() })) as Map<String, HttpUploader>)
+        artifactory.each { upload.addArtifactory(it.toModel()) }
+        http.each { upload.addHttp(it.toModel()) }
 
         upload
     }

@@ -40,6 +40,7 @@ public class Announce implements Domain, EnabledAware {
     private final Slack slack = new Slack();
     private final Teams teams = new Teams();
     private final Twitter twitter = new Twitter();
+    private final Webhooks webhooks = new Webhooks();
     private final Zulip zulip = new Zulip();
     private Boolean enabled;
 
@@ -56,6 +57,11 @@ public class Announce implements Domain, EnabledAware {
         setTeams(announce.teams);
         setTwitter(announce.twitter);
         setZulip(announce.zulip);
+        setConfiguredWebhooks(announce.webhooks);
+    }
+
+    void setConfiguredWebhooks(Webhooks webhooks) {
+        this.webhooks.setAll(webhooks);
     }
 
     @Override
@@ -153,6 +159,22 @@ public class Announce implements Domain, EnabledAware {
         this.twitter.setAll(twitter);
     }
 
+    public Webhooks getConfiguredWebhooks() {
+        return this.webhooks;
+    }
+
+    public Map<String, Webhook> getWebhooks() {
+        return this.webhooks.getWebhooks();
+    }
+
+    public void setWebhooks(Map<String, Webhook> webhooks) {
+        this.webhooks.setWebhooks(webhooks);
+    }
+
+    public void addWebhook(Webhook webhook) {
+        this.webhooks.addWebhook(webhook);
+    }
+
     public Zulip getZulip() {
         return zulip;
     }
@@ -175,6 +197,7 @@ public class Announce implements Domain, EnabledAware {
         map.putAll(slack.asMap(full));
         map.putAll(teams.asMap(full));
         map.putAll(twitter.asMap(full));
+        map.putAll(webhooks.asMap(full));
         map.putAll(zulip.asMap(full));
         return map;
     }
@@ -217,6 +240,8 @@ public class Announce implements Domain, EnabledAware {
                 return (A) getTeams();
             case Twitter.NAME:
                 return (A) getTwitter();
+            case Webhooks.NAME:
+                return (A) getConfiguredWebhooks();
             case Zulip.NAME:
                 return (A) getZulip();
             default:
@@ -236,6 +261,7 @@ public class Announce implements Domain, EnabledAware {
         set.add(Slack.NAME);
         set.add(Teams.NAME);
         set.add(Twitter.NAME);
+        set.add(Webhooks.NAME);
         set.add(Zulip.NAME);
         return Collections.unmodifiableSet(set);
     }
