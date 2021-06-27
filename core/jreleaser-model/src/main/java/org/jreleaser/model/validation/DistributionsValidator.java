@@ -89,9 +89,11 @@ public abstract class DistributionsValidator extends Validator {
             distribution.setExecutable(distribution.getName());
         }
 
-        context.getLogger().debug("distribution.{}.java", distribution.getName());
-        if (!validateJava(context, distribution, errors)) {
-            return;
+        if (Distribution.JAVA_DISTRIBUTION_TYPES.contains(distribution.getType())) {
+            context.getLogger().debug("distribution.{}.java", distribution.getName());
+            if (!validateJava(context, distribution, errors)) {
+                return;
+            }
         }
 
         // validate distribution type
@@ -214,7 +216,8 @@ public abstract class DistributionsValidator extends Validator {
 
     public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Tool tool, Errors errors) {
         // validate distribution type
-        if (distribution.getType() == Distribution.DistributionType.JLINK ||
+        if (distribution.getType() == Distribution.DistributionType.BINARY ||
+            distribution.getType() == Distribution.DistributionType.JLINK ||
             distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE ||
             distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE) {
             // ensure all artifacts define a platform

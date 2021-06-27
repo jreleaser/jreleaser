@@ -25,9 +25,9 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Project.PROJECT_NAME;
+import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Project.PROJECT_VERSION;
 import static org.jreleaser.model.Project.PROJECT_VERSION_PATTERN;
-import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_PATTERN;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -69,7 +69,10 @@ public abstract class ProjectValidator extends Validator {
 
         boolean javaDistributions = context.getModel().getDistributions().values().stream()
             .map(Distribution::getType)
-            .anyMatch(type -> type != Distribution.DistributionType.JLINK);
+            .anyMatch(type -> type == Distribution.DistributionType.JAVA_BINARY ||
+                type == Distribution.DistributionType.SINGLE_JAR ||
+                type == Distribution.DistributionType.NATIVE_IMAGE ||
+                type == Distribution.DistributionType.NATIVE_PACKAGE);
         boolean jlinkAssemblers = !context.getModel().getAssemble().getJlink().isEmpty();
 
         if ((mode == JReleaserContext.Mode.FULL && javaDistributions) || jlinkAssemblers) {

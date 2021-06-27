@@ -133,6 +133,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     }
 
     public enum DistributionType {
+        BINARY,
         JAVA_BINARY,
         JLINK,
         SINGLE_JAR,
