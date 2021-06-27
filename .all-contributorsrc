@@ -16,6 +16,7 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/13969?v=4",
       "profile": "https://andresalmiray.com/",
       "contributions": [
+        "ideas",
         "code"
       ]
     },
@@ -45,8 +46,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/3180?v=4",
       "profile": "http://dannorth.net",
       "contributions": [
-        "doc",
-        "ideas"
+        "ideas",
+        "doc"
       ]
     },
     {
@@ -54,6 +55,15 @@
       "name": "Dennis Rippinger",
       "avatar_url": "https://avatars.githubusercontent.com/u/1452505?v=4",
       "profile": "https://drippinger.de/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jruaux",
+      "name": "Julien Ruaux",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1628034?v=4",
+      "profile": "https://www.linkedin.com/in/jruaux",
       "contributions": [
         "code"
       ]
