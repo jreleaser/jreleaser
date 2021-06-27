@@ -315,15 +315,26 @@ public class ChangelogGenerator {
         props.put(KEY_CHANGELOG_CHANGES, passThrough(changes.toString()));
         props.put(KEY_CHANGELOG_CONTRIBUTORS, passThrough(contributors.toString()));
 
-        return applyReplacers(changelog, stripMargin(applyTemplate(changelog.getResolvedContentTemplate(context), props)));
+        return applyReplacers(context, changelog, stripMargin(applyTemplate(changelog.getResolvedContentTemplate(context), props)));
     }
 
-    private static String applyReplacers(Changelog changelog, String text) {
+    private static String applyReplacers(JReleaserContext context, Changelog changelog, String text) {
+        Map<String, Object> props = context.getModel().props();
+        context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
         for (Changelog.Replacer replacer : changelog.getReplacers()) {
-            text = text.replaceAll(replacer.getSearch(), replacer.getReplace());
+            String search = maybeExpand(props, replacer.getSearch());
+            String replace = maybeExpand(props, replacer.getReplace());
+            text = text.replaceAll(search, replace);
         }
 
         return text;
+    }
+
+    private static String maybeExpand(Map<String, Object> props, String str) {
+        if (str.contains("{{")) {
+            return applyTemplate(str, props);
+        }
+        return str;
     }
 
     private static String categorize(Commit commit, Changelog changelog) {
