@@ -104,7 +104,7 @@ public class GoogleChat extends AbstractAnnouncer {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
+    protected void asMap(Map<String, Object> props, boolean full) {
         props.put("webhook", isNotBlank(getResolvedWebhook()) ? HIDE : UNSET);
         props.put("message", message);
         props.put("messageTemplate", messageTemplate);
