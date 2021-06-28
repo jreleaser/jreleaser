@@ -32,6 +32,7 @@ import static org.jreleaser.model.validation.SdkmanValidator.validateSdkman;
 import static org.jreleaser.model.validation.SlackValidator.validateSlack;
 import static org.jreleaser.model.validation.TeamsValidator.validateTeams;
 import static org.jreleaser.model.validation.TwitterValidator.validateTwitter;
+import static org.jreleaser.model.validation.WebhooksValidator.validateWebhooks;
 import static org.jreleaser.model.validation.ZulipValidator.validateZulip;
 
 /**
@@ -58,6 +59,7 @@ public abstract class AnnouncersValidator extends Validator {
         validateSlack(context, announce.getSlack(), errors);
         validateTeams(context, announce.getTeams(), errors);
         validateTwitter(context, announce.getTwitter(), errors);
+        validateWebhooks(context, announce.getConfiguredWebhooks(), errors);
         validateZulip(context, announce.getZulip(), errors);
 
         if (!announce.isEnabledSet()) {
@@ -72,6 +74,7 @@ public abstract class AnnouncersValidator extends Validator {
                 announce.getSlack().isEnabled() ||
                 announce.getTeams().isEnabled() ||
                 announce.getTwitter().isEnabled() ||
+                announce.getConfiguredWebhooks().isEnabled() ||
                 announce.getZulip().isEnabled());
         }
     }

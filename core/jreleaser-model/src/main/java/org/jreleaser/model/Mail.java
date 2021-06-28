@@ -252,7 +252,7 @@ public class Mail extends AbstractAnnouncer {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
+    protected void asMap(Map<String, Object> props, boolean full) {
         props.put("transport", transport);
         props.put("host", host);
         props.put("port", port);

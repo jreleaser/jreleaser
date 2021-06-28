@@ -97,7 +97,7 @@ public class Sdkman extends AbstractAnnouncer {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
+    protected void asMap(Map<String, Object> props, boolean full) {
         props.put("consumerKey", isNotBlank(getResolvedConsumerKey()) ? HIDE : UNSET);
         props.put("consumerToken", isNotBlank(getResolvedConsumerToken()) ? HIDE : UNSET);
         props.put("candidate", candidate);

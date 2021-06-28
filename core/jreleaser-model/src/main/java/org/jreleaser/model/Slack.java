@@ -131,7 +131,7 @@ public class Slack extends AbstractAnnouncer {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props) {
+    protected void asMap(Map<String, Object> props, boolean full) {
         props.put("webhook", isNotBlank(getResolvedWebhook()) ? HIDE : UNSET);
         props.put("token", isNotBlank(getResolvedToken()) ? HIDE : UNSET);
         props.put("channel", channel);

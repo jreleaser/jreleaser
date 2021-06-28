@@ -614,7 +614,7 @@ public class StringUtils {
         if (!str.startsWith("^")) {
             b.append(".*");
         }
-        b.append(str);
+        b.append(escapeRegexChars(str));
         if (!str.endsWith("$")) {
             b.append(".*");
         }

@@ -27,6 +27,7 @@ dependencies {
     api project(':slack-java-sdk')
     api project(':teams-java-sdk')
     api project(':twitter-java-sdk')
+    api project(':webhooks-java-sdk')
     api project(':zulip-java-sdk')
     // release
     api project(':github-java-sdk')

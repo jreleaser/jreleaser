@@ -63,6 +63,7 @@ parts:
     source: {{distributionUrl}}
     source-checksum: sha256/{{distributionChecksumSha256}}
     stage-packages:
+      - curl
       - openjdk-{{distributionJavaVersion}}-jre
       - ca-certificates
       - ca-certificates-java

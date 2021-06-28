@@ -103,50 +103,50 @@ public class ModelConfigurer {
 
     private static void autoConfigureGithub(JReleaserContext context, Repository repository) {
         GitService service = context.getModel().getRelease().getGitService();
-        Github github = context.getModel().getRelease().getGithub();
 
         if (service != null) {
-            if (service != github) {
+            if (!(service instanceof Github)) {
                 context.getLogger().warn("Auto configure detected github but project has " +
                     service.getServiceName() + " configured");
-
-                if (isBlank(Env.resolve(BRANCH, service.getBranch()))) {
-                    service.setBranch(context.getModel().getCommit().getRefName());
-                }
-                return;
             }
+        } else {
+            context.getModel().getRelease().setGithub(new Github());
         }
 
-        if (null == github) {
-            github = new Github();
-            context.getModel().getRelease().setGithub(github);
-        }
-
-        fillGitProperties(github, repository, context.getModel().getCommit());
+        fillGitProperties(context.getModel().getRelease().getGitService(),
+            repository, context.getModel().getCommit());
     }
 
     private static void autoConfigureGitlab(JReleaserContext context, Repository repository) {
         GitService service = context.getModel().getRelease().getGitService();
-        Gitlab gitlab = context.getModel().getRelease().getGitlab();
 
         if (service != null) {
-            if (service != gitlab) {
+            if (!(service instanceof Gitlab)) {
                 context.getLogger().warn("Auto configure detected gitlab but project has " +
                     service.getServiceName() + " configured");
-
-                if (isBlank(Env.resolve(BRANCH, service.getBranch()))) {
-                    service.setBranch(context.getModel().getCommit().getRefName());
-                }
-                return;
             }
+        } else {
+            context.getModel().getRelease().setGitlab(new Gitlab());
         }
 
-        if (null == gitlab) {
-            gitlab = new Gitlab();
-            context.getModel().getRelease().setGitlab(gitlab);
+        fillGitProperties(context.getModel().getRelease().getGitService(),
+            repository, context.getModel().getCommit());
+    }
+
+    private static void autoConfigureCodeberg(JReleaserContext context, Repository repository) {
+        GitService service = context.getModel().getRelease().getGitService();
+
+        if (service != null) {
+            if (!(service instanceof Codeberg)) {
+                context.getLogger().warn("Auto configure detected codeberg but project has " +
+                    service.getServiceName() + " configured");
+            }
+        } else {
+            context.getModel().getRelease().setCodeberg(new Codeberg());
         }
 
-        fillGitProperties(gitlab, repository, context.getModel().getCommit());
+        fillGitProperties(context.getModel().getRelease().getGitService(),
+            repository, context.getModel().getCommit());
     }
 
     private static void autoConfigureOther(JReleaserContext context, Repository repository) {
@@ -155,30 +155,6 @@ public class ModelConfigurer {
         if (service != null) {
             fillGitProperties(service, repository, context.getModel().getCommit());
         }
-    }
-
-    private static void autoConfigureCodeberg(JReleaserContext context, Repository repository) {
-        GitService service = context.getModel().getRelease().getGitService();
-        Codeberg codeberg = context.getModel().getRelease().getCodeberg();
-
-        if (service != null) {
-            if (service != codeberg) {
-                context.getLogger().warn("Auto configure detected codeberg but project has " +
-                    service.getServiceName() + " configured");
-
-                if (isBlank(Env.resolve(BRANCH, service.getBranch()))) {
-                    service.setBranch(context.getModel().getCommit().getRefName());
-                }
-                return;
-            }
-        }
-
-        if (null == codeberg) {
-            codeberg = new Codeberg();
-            context.getModel().getRelease().setCodeberg(codeberg);
-        }
-
-        fillGitProperties(codeberg, repository, context.getModel().getCommit());
     }
 
     private static void fillGitProperties(GitService service, Repository repository, Commit head) {

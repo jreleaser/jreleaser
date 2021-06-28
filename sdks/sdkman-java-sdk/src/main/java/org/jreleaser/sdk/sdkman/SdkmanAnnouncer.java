@@ -124,7 +124,8 @@ public class SdkmanAnnouncer implements Announcer {
         return (distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == Distribution.DistributionType.JLINK ||
             distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE) &&
-            !distribution.getExtraProperties().containsKey("sdkmanSkip");
+            !distribution.getExtraProperties().containsKey("sdkmanSkip") &&
+            !distribution.getExtraProperties().containsKey("skipSdkman");
     }
 
     private String mapPlatform(String platform) {

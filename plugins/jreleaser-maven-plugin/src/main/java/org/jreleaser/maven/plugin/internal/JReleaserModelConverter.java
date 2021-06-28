@@ -70,6 +70,7 @@ import org.jreleaser.maven.plugin.Tap;
 import org.jreleaser.maven.plugin.Teams;
 import org.jreleaser.maven.plugin.Twitter;
 import org.jreleaser.maven.plugin.Upload;
+import org.jreleaser.maven.plugin.Webhook;
 import org.jreleaser.maven.plugin.Zulip;
 import org.jreleaser.model.ChocolateyBucket;
 import org.jreleaser.model.HomebrewTap;
@@ -394,6 +395,7 @@ public final class JReleaserModelConverter {
         if (announce.getTeams().isSet()) a.setTeams(convertTeams(announce.getTeams()));
         if (announce.getTwitter().isSet()) a.setTwitter(convertTwitter(announce.getTwitter()));
         if (announce.getZulip().isSet()) a.setZulip(convertZulip(announce.getZulip()));
+        a.setWebhooks(convertWebhooks(announce.getWebhooks()));
         return a;
     }
 
@@ -547,6 +549,28 @@ public final class JReleaserModelConverter {
         return a;
     }
 
+    private static Map<String, org.jreleaser.model.Webhook> convertWebhooks(Map<String, Webhook> webhooks) {
+        Map<String, org.jreleaser.model.Webhook> ds = new LinkedHashMap<>();
+        for (Map.Entry<String, Webhook> e : webhooks.entrySet()) {
+            e.getValue().setName(e.getKey());
+            ds.put(e.getKey(), convertWebhook(e.getValue()));
+        }
+        return ds;
+    }
+
+    private static org.jreleaser.model.Webhook convertWebhook(Webhook webhook) {
+        org.jreleaser.model.Webhook a = new org.jreleaser.model.Webhook();
+        a.setActive(webhook.resolveActive());
+        a.setWebhook(webhook.getWebhook());
+        a.setMessage(webhook.getMessage());
+        a.setMessageProperty(webhook.getMessageProperty());
+        a.setMessageTemplate(webhook.getMessageTemplate());
+        a.setConnectTimeout(webhook.getConnectTimeout());
+        a.setReadTimeout(webhook.getReadTimeout());
+        a.setExtraProperties(webhook.getExtraProperties());
+        return a;
+    }
+
     private static org.jreleaser.model.Assemble convertAssemble(Assemble assemble) {
         org.jreleaser.model.Assemble a = new org.jreleaser.model.Assemble();
         if (assemble.isEnabledSet()) a.setEnabled(assemble.isEnabled());
@@ -629,10 +653,11 @@ public final class JReleaserModelConverter {
         return s;
     }
 
-    private static Map<String, org.jreleaser.model.Distribution> convertDistributions(List<Distribution> distributions) {
+    private static Map<String, org.jreleaser.model.Distribution> convertDistributions(Map<String, Distribution> distributions) {
         Map<String, org.jreleaser.model.Distribution> ds = new LinkedHashMap<>();
-        for (Distribution distribution : distributions) {
-            ds.put(distribution.getName(), convertDistribution(distribution));
+        for (Map.Entry<String, Distribution> e : distributions.entrySet()) {
+            e.getValue().setName(e.getKey());
+            ds.put(e.getKey(), convertDistribution(e.getValue()));
         }
         return ds;
     }
@@ -714,7 +739,7 @@ public final class JReleaserModelConverter {
             }
         });
         t.setLivecheck(brew.getLivecheck());
-        if(brew.getCask().isSet()) {
+        if (brew.getCask().isSet()) {
             t.setCask(convertCask(brew.getCask()));
         }
         return t;

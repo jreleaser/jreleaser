@@ -80,6 +80,8 @@ public class Jbang extends AbstractRepositoryTool {
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
-        return distribution.getType() != Distribution.DistributionType.NATIVE_IMAGE;
+        return distribution.getType() != Distribution.DistributionType.NATIVE_IMAGE &&
+            distribution.getType() != Distribution.DistributionType.NATIVE_PACKAGE &&
+            distribution.getType() != Distribution.DistributionType.BINARY;
     }
 }

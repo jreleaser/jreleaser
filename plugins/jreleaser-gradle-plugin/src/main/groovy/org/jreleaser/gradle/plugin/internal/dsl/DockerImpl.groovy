@@ -24,10 +24,8 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Docker
-import org.jreleaser.model.DockerSpec
 
 import javax.inject.Inject
-import java.util.stream.Collectors
 
 /**
  *
@@ -63,10 +61,9 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     org.jreleaser.model.Docker toModel() {
         org.jreleaser.model.Docker tool = new org.jreleaser.model.Docker()
         toModel(tool)
-        tool.specs = (specs.toList().stream()
-            .collect(Collectors.toMap(
-                { DockerSpecImpl d -> d.name },
-                { DockerSpecImpl d -> d.toModel() })) as Map<String, DockerSpec>)
+
+        specs.each { tool.addSpec(it.toModel()) }
+
         tool
     }
 }

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.generic;
+package org.jreleaser.sdk.generic.git;
 
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jreleaser.model.JReleaserContext;
