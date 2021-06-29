@@ -41,6 +41,10 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         description = "The config file")
     Path configFile;
 
+    @CommandLine.Option(names = {"-grs", "--git-root-search"},
+        description = "Searches for the Git root.")
+    boolean gitRootSearch;
+
     @CommandLine.ParentCommand
     Main parent;
 
@@ -122,7 +126,8 @@ public abstract class AbstractModelCommand extends AbstractCommand {
             actualConfigFile,
             actualBasedir,
             getOutputDirectory(),
-            dryrun());
+            dryrun(),
+            gitRootSearch);
     }
 
     protected Path getOutputDirectory() {

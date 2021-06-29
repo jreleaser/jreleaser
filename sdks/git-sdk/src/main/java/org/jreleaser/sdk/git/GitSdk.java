@@ -19,6 +19,7 @@ package org.jreleaser.sdk.git;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
@@ -45,13 +46,29 @@ public class GitSdk {
     public static final String REFS_HEADS = "refs/heads/";
 
     private final File basedir;
+    private final boolean gitRootSearch;
 
-    private GitSdk(File basedir) {
+    private GitSdk(File basedir, boolean gitRootSearch) {
         this.basedir = basedir;
+        this.gitRootSearch = gitRootSearch;
     }
 
     public Git open() throws IOException {
-        return Git.open(basedir);
+        if (!gitRootSearch) {
+            return Git.open(basedir);
+        }
+
+        File dir = basedir;
+
+        while (dir != null) {
+            try {
+                return Git.open(dir);
+            } catch (RepositoryNotFoundException e) {
+                dir = dir.getParentFile();
+            }
+        }
+
+        throw new RepositoryNotFoundException(basedir);
     }
 
     public Repository getRemote() throws IOException {
@@ -164,29 +181,15 @@ public class GitSdk {
     }
 
     public static GitSdk of(JReleaserContext context) {
-        return new GitSdk(context.getBasedir().toFile());
+        return of(context.getBasedir().toFile(), context.isGitRootSearch());
     }
 
-    public static GitSdk of(Path basedir) {
-        return new GitSdk(basedir.toFile());
+    public static GitSdk of(Path basedir, boolean gitRootSearch) {
+        return of(basedir.toFile(), gitRootSearch);
     }
 
-    public static GitSdk of(File basedir) {
-        return new GitSdk(basedir);
-    }
-
-    public static Commit head(Path basedir) throws IOException {
-        Git git = Git.open(basedir.toFile());
-
-        RevWalk walk = new RevWalk(git.getRepository());
-        ObjectId head = git.getRepository().resolve(Constants.HEAD);
-        RevCommit commit = walk.parseCommit(head);
-        Ref ref = git.getRepository().findRef(Constants.HEAD);
-
-        return new Commit(
-            commit.getId().abbreviate(7).name(),
-            commit.getId().name(),
-            extractHeadName(ref));
+    public static GitSdk of(File basedir, boolean gitRootSearch) {
+        return new GitSdk(basedir, gitRootSearch);
     }
 
     public static String extractTagName(Ref tag) {

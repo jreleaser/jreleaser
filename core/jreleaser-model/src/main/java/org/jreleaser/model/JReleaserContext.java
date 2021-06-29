@@ -71,6 +71,7 @@ public class JReleaserContext {
     private final Path basedir;
     private final Path outputDirectory;
     private final boolean dryrun;
+    private final boolean gitRootSearch;
     private final Mode mode;
     private final Errors errors = new Errors();
 
@@ -87,13 +88,15 @@ public class JReleaserContext {
                             JReleaserModel model,
                             Path basedir,
                             Path outputDirectory,
-                            boolean dryrun) {
+                            boolean dryrun,
+                            boolean gitRootSearch) {
         this.logger = logger;
         this.mode = mode;
         this.model = model;
         this.basedir = basedir;
         this.outputDirectory = outputDirectory;
         this.dryrun = dryrun;
+        this.gitRootSearch = gitRootSearch;
     }
 
     public Path relativizeToBasedir(Path other) {
@@ -209,6 +212,10 @@ public class JReleaserContext {
         return dryrun;
     }
 
+    public boolean isGitRootSearch() {
+        return gitRootSearch;
+    }
+
     public String getChangelog() {
         return changelog;
     }
@@ -307,6 +314,7 @@ public class JReleaserContext {
             "basedir=" + basedir.toAbsolutePath() +
             ", outputDirectory=" + outputDirectory.toAbsolutePath() +
             ", dryrun=" + dryrun +
+            ", gitRootSearch=" + gitRootSearch +
             ", mode=" + mode +
             "]";
     }

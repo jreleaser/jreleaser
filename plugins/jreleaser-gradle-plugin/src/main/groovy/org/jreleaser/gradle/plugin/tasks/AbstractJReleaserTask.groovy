@@ -41,6 +41,8 @@ import javax.inject.Inject
 abstract class AbstractJReleaserTask extends DefaultTask {
     @Input
     final Property<Boolean> dryrun
+    @Input
+    final Property<Boolean> gitRootSearch
 
     @Input
     final DirectoryProperty outputDirectory
@@ -60,6 +62,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         jlogger = objects.property(JReleaserLogger)
         mode = JReleaserContext.Mode.FULL
         dryrun = objects.property(Boolean).convention(false)
+        gitRootSearch = objects.property(Boolean).convention(false)
         outputDirectory = objects.directoryProperty()
     }
 
@@ -78,6 +81,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             model.get(),
             project.projectDir.toPath(),
             outputDirectory.get().asFile.toPath(),
-            dryrun.get())
+            dryrun.get(),
+            gitRootSearch.get())
     }
 }

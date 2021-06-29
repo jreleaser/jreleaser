@@ -49,6 +49,8 @@ interface JReleaserExtension {
 
     Property<Boolean> getDryrun()
 
+    Property<Boolean> getGitRootSearch()
+
     Environment getEnvironment()
 
     Project getProject()

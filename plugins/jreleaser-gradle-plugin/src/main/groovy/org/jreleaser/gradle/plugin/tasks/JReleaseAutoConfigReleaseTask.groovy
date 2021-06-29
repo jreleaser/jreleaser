@@ -55,6 +55,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     final Property<Boolean> dryrun
     @Input
     @Optional
+    final Property<Boolean> gitRootSearch
+    @Input
+    @Optional
     final Property<String> projectName
     @Input
     @Optional
@@ -183,9 +186,14 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         this.commitAuthorEmail.set(commitAuthorEmail)
     }
 
-    @Option(option = 'dryrun', description = 'Skip remote operations.')
+    @Option(option = 'dryrun', description = 'Skip remote operations (OPTIONAL).')
     void setDryrun(boolean dryrun) {
         this.dryrun.set(dryrun)
+    }
+
+    @Option(option = 'git-root-search', description = 'Searches for the Git root (OPTIONAL).')
+    void setGitRootSearch(boolean gitRootSearch) {
+        this.gitRootSearch.set(gitRootSearch)
     }
 
     @Option(option = 'prerelease', description = 'If the release is a prerelease (OPTIONAL).')
@@ -252,6 +260,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Inject
     JReleaseAutoConfigReleaseTask(ObjectFactory objects) {
         dryrun = objects.property(Boolean).convention(false)
+        gitRootSearch = objects.property(Boolean).convention(false)
         outputDirectory = objects.directoryProperty()
 
         projectName = objects.property(String).convention(project.name)
@@ -291,6 +300,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .basedir(project.projectDir.toPath())
             .outputDirectory(outputDirectoryPath)
             .dryrun(dryrun.get())
+            .gitRootSearch(gitRootSearch.get())
             .projectName(projectName.get())
             .projectVersion(projectVersion.get())
             .projectVersionPattern(projectVersionPattern.orNull)

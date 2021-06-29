@@ -50,6 +50,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private Path actualBasedir;
     private File basedir;
     private boolean dryrun;
+    private boolean gitRootSearch;
     private String projectName;
     private String projectVersion;
     private String projectVersionPattern;
@@ -76,6 +77,10 @@ public class JReleaserAutoConfigReleaseTask extends Task {
 
     public void setDryrun(boolean dryrun) {
         this.dryrun = dryrun;
+    }
+
+    public void setGitRootSearch(boolean gitRootSearch) {
+        this.gitRootSearch = gitRootSearch;
     }
 
     public void setBasedir(File basedir) {
@@ -186,6 +191,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .basedir(actualBasedir)
             .outputDirectory(getOutputDirectory())
             .dryrun(dryrun)
+            .gitRootSearch(gitRootSearch)
             .projectName(projectName)
             .projectVersion(projectVersion)
             .projectVersionPattern(projectVersionPattern)

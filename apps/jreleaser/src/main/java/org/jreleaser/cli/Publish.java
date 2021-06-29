@@ -27,7 +27,7 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "publish",
     mixinStandardHelpOptions = true,
-    description = "Publishes all distributions.")
+    description = "Publish all distributions.")
 public class Publish extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skip remote operations.")

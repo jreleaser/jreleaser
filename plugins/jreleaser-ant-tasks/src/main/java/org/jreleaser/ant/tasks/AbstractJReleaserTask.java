@@ -44,6 +44,7 @@ import java.util.Set;
 abstract class AbstractJReleaserTask extends Task {
     protected File configFile;
     protected boolean dryrun;
+    protected boolean gitRootSearch;
     protected boolean skip;
     protected Path outputDir;
 
@@ -57,6 +58,10 @@ abstract class AbstractJReleaserTask extends Task {
 
     public void setDryrun(boolean dryrun) {
         this.dryrun = dryrun;
+    }
+
+    public void setGitRootSearch(boolean gitRootSearch) {
+        this.gitRootSearch = gitRootSearch;
     }
 
     public void setSkip(boolean skip) {
@@ -143,7 +148,8 @@ abstract class AbstractJReleaserTask extends Task {
             actualConfigFile,
             actualBasedir,
             getOutputDirectory(),
-            dryrun);
+            dryrun,
+            gitRootSearch);
     }
 
     private Set<String> getSupportedConfigFormats() {

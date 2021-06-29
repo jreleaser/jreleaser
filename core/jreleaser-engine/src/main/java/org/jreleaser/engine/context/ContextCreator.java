@@ -39,13 +39,15 @@ public class ContextCreator {
                                           Path configFile,
                                           Path basedir,
                                           Path outputDirectory,
-                                          boolean dryrun) {
+                                          boolean dryrun,
+                                          boolean gitRootSearch) {
         return create(logger,
             mode,
             resolveModel(logger, configFile),
             basedir,
             outputDirectory,
-            dryrun);
+            dryrun,
+            gitRootSearch);
     }
 
     public static JReleaserContext create(JReleaserLogger logger,
@@ -53,14 +55,16 @@ public class ContextCreator {
                                           JReleaserModel model,
                                           Path basedir,
                                           Path outputDirectory,
-                                          boolean dryrun) {
+                                          boolean dryrun,
+                                          boolean gitRootSearch) {
         JReleaserContext context = new JReleaserContext(
             logger,
             mode,
             model,
             basedir,
             outputDirectory,
-            dryrun);
+            dryrun,
+            gitRootSearch);
 
         ModelConfigurer.configure(context);
 

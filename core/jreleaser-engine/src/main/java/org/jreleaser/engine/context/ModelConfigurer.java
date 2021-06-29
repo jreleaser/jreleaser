@@ -42,7 +42,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public class ModelConfigurer {
     public static void configure(JReleaserContext context) {
         try {
-            context.getModel().setCommit(GitSdk.head(context.getBasedir()));
+            context.getModel().setCommit(GitSdk.of(context).head());
         } catch (IOException e) {
             context.getLogger().trace(e);
             throw new JReleaserException("Could not determine git HEAD", e);

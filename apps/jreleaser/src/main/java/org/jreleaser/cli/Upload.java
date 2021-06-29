@@ -27,7 +27,7 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "upload",
     mixinStandardHelpOptions = true,
-    description = "Uploads all artifacts.")
+    description = "Upload all artifacts.")
 public class Upload extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skip remote operations.")

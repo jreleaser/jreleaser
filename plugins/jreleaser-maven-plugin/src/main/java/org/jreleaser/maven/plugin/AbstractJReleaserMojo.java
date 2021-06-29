@@ -67,6 +67,12 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.dryrun")
     protected boolean dryrun;
 
+    /**
+     * Searches for the Git root.
+     */
+    @Parameter(property = "jreleaser.git.root.search")
+    protected boolean gitRootSearch;
+
     @Parameter(defaultValue = "${session}", required = true)
     private MavenSession session;
 
@@ -117,7 +123,8 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 null == configFile ? convertModel() : readModel(logger),
                 basedir,
                 outputDirectory.toPath(),
-                dryrun);
+                dryrun,
+                gitRootSearch);
         } catch (JReleaserException e) {
             throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.", e);
         }

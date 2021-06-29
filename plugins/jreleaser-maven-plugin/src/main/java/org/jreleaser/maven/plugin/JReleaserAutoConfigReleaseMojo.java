@@ -60,8 +60,17 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}/jreleaser")
     private File outputDirectory;
 
+    /**
+     * Skips remote operations.
+     */
     @Parameter(property = "jreleaser.dryrun")
     private boolean dryrun;
+
+    /**
+     * Searches for the Git root.
+     */
+    @Parameter(property = "jreleaser.git.root.search")
+    private boolean gitRootSearch;
 
     /**
      * The project name.
@@ -188,6 +197,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .basedir(project.getBasedir().toPath())
             .outputDirectory(outputDirectory.toPath())
             .dryrun(dryrun)
+            .gitRootSearch(gitRootSearch)
             .projectName(projectName)
             .projectVersion(projectVersion)
             .projectVersionPattern(projectVersionPattern)

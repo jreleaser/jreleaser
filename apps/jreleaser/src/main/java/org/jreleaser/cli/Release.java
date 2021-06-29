@@ -37,7 +37,7 @@ import java.util.Set;
  */
 @CommandLine.Command(name = "release",
     mixinStandardHelpOptions = true,
-    description = "Create or update a release..")
+    description = "Create or update a release.")
 public class Release extends AbstractModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skip remote operations.")
@@ -153,6 +153,7 @@ public class Release extends AbstractModelCommand {
             .basedir(actualBasedir)
             .outputDirectory(getOutputDirectory())
             .dryrun(dryrun())
+            .gitRootSearch(gitRootSearch)
             .projectName(projectName)
             .projectVersion(projectVersion)
             .projectVersionPattern(projectVersionPattern)

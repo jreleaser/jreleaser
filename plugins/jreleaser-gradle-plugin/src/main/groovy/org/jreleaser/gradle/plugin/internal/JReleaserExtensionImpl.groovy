@@ -50,13 +50,11 @@ import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl
 import org.jreleaser.gradle.plugin.internal.dsl.SigningImpl
 import org.jreleaser.gradle.plugin.internal.dsl.UploadImpl
-import org.jreleaser.model.Distribution
 import org.jreleaser.model.JReleaserModel
 import org.jreleaser.util.JReleaserLogger
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
-import java.util.stream.Collectors
 
 import static org.jreleaser.util.StringUtils.isNotBlank
 
@@ -70,6 +68,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final RegularFileProperty configFile
     final Property<Boolean> enabled
     final Property<Boolean> dryrun
+    final Property<Boolean> gitRootSearch
     final EnvironmentImpl environment
     final ProjectImpl project
     final ReleaseImpl release
@@ -94,6 +93,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         configFile = objects.fileProperty()
         enabled = objects.property(Boolean).convention(true)
         dryrun = objects.property(Boolean).convention(false)
+        gitRootSearch = objects.property(Boolean).convention(false)
         environment = objects.newInstance(EnvironmentImpl, objects)
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)
         release = objects.newInstance(ReleaseImpl, objects)
@@ -240,10 +240,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.signing = signing.toModel()
         jreleaser.checksum = checksum.toModel()
         jreleaser.files = files.toModel()
-        jreleaser.distributions = (distributions.toList().stream()
-            .collect(Collectors.toMap(
-                { DistributionImpl d -> d.name },
-                { DistributionImpl d -> d.toModel() })) as Map<String, Distribution>)
+        distributions.each { jreleaser.addDistribution(it.toModel()) }
         jreleaser
     }
 }

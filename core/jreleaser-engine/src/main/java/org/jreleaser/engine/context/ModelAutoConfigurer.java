@@ -58,6 +58,7 @@ public class ModelAutoConfigurer {
     private Path basedir;
     private Path outputDirectory;
     private boolean dryrun;
+    private boolean gitRootSearch;
     private String projectName;
     private String projectVersion;
     private String projectVersionPattern;
@@ -96,6 +97,11 @@ public class ModelAutoConfigurer {
 
     public ModelAutoConfigurer dryrun(boolean dryrun) {
         this.dryrun = dryrun;
+        return this;
+    }
+
+    public ModelAutoConfigurer gitRootSearch(boolean gitRootSearch) {
+        this.gitRootSearch = gitRootSearch;
         return this;
     }
 
@@ -270,7 +276,8 @@ public class ModelAutoConfigurer {
             autoConfiguredModel(basedir),
             basedir,
             outputDirectory,
-            dryrun);
+            dryrun,
+            gitRootSearch);
     }
 
     private void dumpAutoConfig() {
@@ -315,7 +322,7 @@ public class ModelAutoConfigurer {
         model.getProject().setSnapshotPattern(projectSnapshotPattern);
 
         try {
-            Repository repository = GitSdk.of(basedir).getRemote();
+            Repository repository = GitSdk.of(basedir, gitRootSearch).getRemote();
             GitService service = null;
             switch (repository.getKind()) {
                 case GITHUB:

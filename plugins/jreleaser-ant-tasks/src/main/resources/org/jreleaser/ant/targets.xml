@@ -26,6 +26,7 @@
     <property name="jreleaser.skip" value="false"/>
     <property name="jreleaser.config.file" value=""/>
     <property name="jreleaser.dryrun" value="false"/>
+    <property name="jreleaser.git.root.search" value="false"/>
     <property name="jreleaser.overwrite" value="false"/>
     <property name="jreleaser.format" value="yml"/>
     <property name="jreleaser.distribution.name" value=""/>
@@ -55,6 +56,7 @@
 
     <target name="jreleaser-announce">
         <jreleaser:announce dryrun="${jreleaser.dryrun}"
+                            gitRootSearch="${jreleaser.git.root.search}"
                             skip="${jreleaser.skip}"
                             configFile="${jreleaser.config.file}"
                             announcerName="${jreleaser.announcer.name}"
@@ -63,6 +65,7 @@
 
     <target name="jreleaser-assemble">
         <jreleaser:assembler skip="${jreleaser.skip}"
+                             gitRootSearch="${jreleaser.git.root.search}"
                              configFile="${jreleaser.config.file}"
                              distributionName="${jreleaser.distribution.name}"
                              assemblerName="${jreleaser.assembler.name}"
@@ -71,6 +74,7 @@
 
     <target name="jreleaser-changelog">
         <jreleaser:changelog dryrun="${jreleaser.dryrun}"
+                             gitRootSearch="${jreleaser.git.root.search}"
                              skip="${jreleaser.skip}"
                              configFile="${jreleaser.config.file}"
                              outputDir="${jreleaser.outputdir"/>
@@ -78,6 +82,7 @@
 
     <target name="jreleaser-checksum">
         <jreleaser:checksum dryrun="${jreleaser.dryrun}"
+                            gitRootSearch="${jreleaser.git.root.search}"
                             skip="${jreleaser.skip}"
                             configFile="${jreleaser.config.file}"
                             outputDir="${jreleaser.outputdir"/>
@@ -85,6 +90,7 @@
 
     <target name="jreleaser-config">
         <jreleaser:config full="${jreleaser.full}"
+                          gitRootSearch="${jreleaser.git.root.search}"
                           assembly="${jreleaser.assembly}"
                           configFile="${jreleaser.config.file}"
                           outputDir="${jreleaser.outputdir"/>
@@ -92,6 +98,7 @@
 
     <target name="jreleaser-full-release">
         <jreleaser:full-release dryrun="${jreleaser.dryrun}"
+                                gitRootSearch="${jreleaser.git.root.search}"
                                 skip="${jreleaser.skip}"
                                 configFile="${jreleaser.config.file}"
                                 outputDir="${jreleaser.outputdir"/>
@@ -104,6 +111,7 @@
 
     <target name="jreleaser-package">
         <jreleaser:package dryrun="${jreleaser.dryrun}"
+                           gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
                            configFile="${jreleaser.config.file}"
                            distributionName="${jreleaser.distribution.name}"
@@ -113,6 +121,7 @@
 
     <target name="jreleaser-prepare">
         <jreleaser:prepare dryrun="${jreleaser.dryrun}"
+                           gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
                            configFile="${jreleaser.config.file}"
                            distributionName="${jreleaser.distribution.name}"
@@ -122,6 +131,7 @@
 
     <target name="jreleaser-release">
         <jreleaser:release dryrun="${jreleaser.dryrun}"
+                           gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
                            configFile="${jreleaser.config.file}"
                            outputDir="${jreleaser.outputdir"/>
@@ -129,6 +139,7 @@
 
     <target name="jreleaser-sign">
         <jreleaser:sign dryrun="${jreleaser.dryrun}"
+                        gitRootSearch="${jreleaser.git.root.search}"
                         skip="${jreleaser.skip}"
                         configFile="${jreleaser.config.file}"
                         outputDir="${jreleaser.outputdir"/>
@@ -136,6 +147,7 @@
 
     <target name="jreleaser-upload">
         <jreleaser:upload dryrun="${jreleaser.dryrun}"
+                          gitRootSearch="${jreleaser.git.root.search}"
                           skip="${jreleaser.skip}"
                           configFile="${jreleaser.config.file}"
                           uploaderType="${jreleaser.uploader.type}"
@@ -145,6 +157,7 @@
 
     <target name="jreleaser-publish">
         <jreleaser:publish dryrun="${jreleaser.dryrun}"
+                           gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
                            configFile="${jreleaser.config.file}"
                            distributionName="${jreleaser.distribution.name}"

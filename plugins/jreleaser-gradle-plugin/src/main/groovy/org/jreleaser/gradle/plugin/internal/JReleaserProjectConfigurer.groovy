@@ -80,6 +80,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Outputs current JReleaser configuration'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -107,6 +108,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Assemble all distributions'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -123,6 +125,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Calculate changelogs'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -136,6 +139,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Calculate checksums'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -152,6 +156,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Signs a release'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -168,6 +173,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Uploads all artifacts'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -184,6 +190,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Creates or updates a release'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -200,6 +207,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Creates or updates a release with auto-config enabled'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.outputDirectory.set(outputDirectory)
                 }
             })
@@ -211,6 +219,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Prepares all distributions'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -227,6 +236,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Packages all distributions'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -243,6 +253,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Publishes all distributions'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -259,6 +270,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Announces a release'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -272,6 +284,7 @@ class JReleaserProjectConfigurer {
                     t.group = JRELEASER_GROUP
                     t.description = 'Invokes JReleaser on all distributions'
                     t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
