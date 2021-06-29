@@ -67,10 +67,7 @@ public class GoogleChatAnnouncer implements Announcer {
             message = googleChat.getResolvedMessageTemplate(context, props);
         }
 
-        context.getLogger().debug("message: {}", message);
-
-        List<String> errors = new ArrayList<>();
-
+        context.getLogger().info("message: {}", message);
 
         if (isNotBlank(googleChat.getResolvedWebhook()) && !context.isDryrun()) {
             try {
@@ -81,12 +78,7 @@ public class GoogleChatAnnouncer implements Announcer {
                     Message.of(message));
             } catch (AnnounceException e) {
                 context.getLogger().trace(e);
-                errors.add(e.toString());
             }
-        }
-
-        if (!errors.isEmpty()) {
-            throw new AnnounceException(String.join(System.lineSeparator(), errors));
         }
     }
 }
