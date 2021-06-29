@@ -28,6 +28,7 @@ import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Discord
 import org.jreleaser.gradle.plugin.dsl.Discussions
 import org.jreleaser.gradle.plugin.dsl.Gitter
+import org.jreleaser.gradle.plugin.dsl.GoogleChat
 import org.jreleaser.gradle.plugin.dsl.Mail
 import org.jreleaser.gradle.plugin.dsl.Mastodon
 import org.jreleaser.gradle.plugin.dsl.Mattermost
@@ -51,6 +52,7 @@ class AnnounceImpl implements Announce {
     final DiscordImpl discord
     final DiscussionsImpl discussions
     final GitterImpl gitter
+    final GoogleChatImpl googleChat
     final MailImpl mail
     final MastodonImpl mastodon
     final MattermostImpl mattermost
@@ -67,6 +69,7 @@ class AnnounceImpl implements Announce {
         discord = objects.newInstance(DiscordImpl, objects)
         discussions = objects.newInstance(DiscussionsImpl, objects)
         gitter = objects.newInstance(GitterImpl, objects)
+        googleChat = objects.newInstance(GoogleChatImpl, objects)
         mail = objects.newInstance(MailImpl, objects)
         mastodon = objects.newInstance(MastodonImpl, objects)
         mattermost = objects.newInstance(MattermostImpl, objects)
@@ -99,6 +102,11 @@ class AnnounceImpl implements Announce {
     @Override
     void gitter(Action<? super Gitter> action) {
         action.execute(gitter)
+    }
+
+    @Override
+    void googleChat(Action<? super GoogleChat> action) {
+        action.execute(googleChat)
     }
 
     @Override
@@ -156,6 +164,10 @@ class AnnounceImpl implements Announce {
         ConfigureUtil.configure(action, gitter)
     }
 
+    void googleChat(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GoogleChat) Closure<Void> action) {
+        ConfigureUtil.configure(action, gitter)
+    }
+
     @Override
     void mail(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mail) Closure<Void> action) {
         ConfigureUtil.configure(action, mail)
@@ -202,6 +214,7 @@ class AnnounceImpl implements Announce {
         if (discord.isSet()) announce.discord = discord.toModel()
         if (discussions.isSet()) announce.discussions = discussions.toModel()
         if (gitter.isSet()) announce.gitter = gitter.toModel()
+        if (googleChat.isSet()) announce.googleChat = googleChat.toModel()
         if (mail.isSet()) announce.mail = mail.toModel()
         if (mastodon.isSet()) announce.mastodon = mastodon.toModel()
         if (mattermost.isSet()) announce.mattermost = mattermost.toModel()

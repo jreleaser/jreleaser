@@ -28,6 +28,7 @@ public class Announce implements EnabledAware {
     private final Discord discord = new Discord();
     private final Discussions discussions = new Discussions();
     private final Gitter gitter = new Gitter();
+    private final GoogleChat googleChat = new GoogleChat();
     private final Mail mail = new Mail();
     private final Mastodon mastodon = new Mastodon();
     private final Mattermost mattermost = new Mattermost();
@@ -44,6 +45,7 @@ public class Announce implements EnabledAware {
         setDiscord(announce.discord);
         setDiscussions(announce.discussions);
         setGitter(announce.gitter);
+        setGoogleChat(announce.googleChat);
         setMail(announce.mail);
         setMastodon(announce.mastodon);
         setSdkman(announce.sdkman);
@@ -91,6 +93,14 @@ public class Announce implements EnabledAware {
 
     public void setGitter(Gitter gitter) {
         this.gitter.setAll(gitter);
+    }
+
+    public GoogleChat getGoogleChat() {
+        return googleChat;
+    }
+
+    public void setGoogleChat(GoogleChat googleChat) {
+        this.googleChat.setAll(googleChat);
     }
 
     public Mail getMail() {
@@ -165,4 +175,6 @@ public class Announce implements EnabledAware {
     public void setZulip(Zulip zulip) {
         this.zulip.setAll(zulip);
     }
+
+
 }

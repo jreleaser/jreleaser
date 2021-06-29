@@ -42,6 +42,7 @@ public class Announce implements Domain, EnabledAware {
     private final Twitter twitter = new Twitter();
     private final Webhooks webhooks = new Webhooks();
     private final Zulip zulip = new Zulip();
+    private final GoogleChat googleChat = new GoogleChat();
     private Boolean enabled;
 
     void setAll(Announce announce) {
@@ -49,6 +50,7 @@ public class Announce implements Domain, EnabledAware {
         setDiscord(announce.discord);
         setDiscussions(announce.discussions);
         setGitter(announce.gitter);
+        setGoogleChat(announce.googleChat);
         setMail(announce.mail);
         setMastodon(announce.mastodon);
         setMattermost(announce.mattermost);
@@ -101,6 +103,14 @@ public class Announce implements Domain, EnabledAware {
 
     public void setGitter(Gitter gitter) {
         this.gitter.setAll(gitter);
+    }
+
+    public GoogleChat getGoogleChat() {
+        return googleChat;
+    }
+
+    public void setGoogleChat(GoogleChat googleChat){
+        this.googleChat.setAll(googleChat);
     }
 
     public Mail getMail() {
@@ -190,6 +200,7 @@ public class Announce implements Domain, EnabledAware {
         map.putAll(discord.asMap(full));
         map.putAll(discussions.asMap(full));
         map.putAll(gitter.asMap(full));
+        map.putAll(googleChat.asMap(full));
         map.putAll(mail.asMap(full));
         map.putAll(mastodon.asMap(full));
         map.putAll(mattermost.asMap(full));
@@ -226,6 +237,8 @@ public class Announce implements Domain, EnabledAware {
                 return (A) getDiscussions();
             case Gitter.NAME:
                 return (A) getGitter();
+            case GoogleChat.NAME:
+                return (A) getGoogleChat();
             case Mail.NAME:
                 return (A) getMail();
             case Mastodon.NAME:

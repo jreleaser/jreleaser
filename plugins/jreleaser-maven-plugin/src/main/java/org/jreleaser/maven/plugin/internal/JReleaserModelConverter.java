@@ -73,6 +73,7 @@ import org.jreleaser.maven.plugin.Upload;
 import org.jreleaser.maven.plugin.Webhook;
 import org.jreleaser.maven.plugin.Zulip;
 import org.jreleaser.model.ChocolateyBucket;
+import org.jreleaser.maven.plugin.GoogleChat;
 import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JbangCatalog;
@@ -387,6 +388,7 @@ public final class JReleaserModelConverter {
         if (announce.getDiscord().isSet()) a.setDiscord(convertDiscord(announce.getDiscord()));
         if (announce.getDiscussions().isSet()) a.setDiscussions(convertDiscussions(announce.getDiscussions()));
         if (announce.getGitter().isSet()) a.setGitter(convertGitter(announce.getGitter()));
+        if (announce.getGoogleChat().isSet()) a.setGoogleChat(convertGoogleChat(announce.getGoogleChat()));
         if (announce.getMail().isSet()) a.setMail(convertMail(announce.getMail()));
         if (announce.getMastodon().isSet()) a.setMastodon(convertMastodon(announce.getMastodon()));
         if (announce.getMattermost().isSet()) a.setMattermost(convertMattermost(announce.getMattermost()));
@@ -434,6 +436,18 @@ public final class JReleaserModelConverter {
         a.setConnectTimeout(gitter.getConnectTimeout());
         a.setReadTimeout(gitter.getReadTimeout());
         a.setExtraProperties(gitter.getExtraProperties());
+        return a;
+    }
+
+    private static org.jreleaser.model.GoogleChat convertGoogleChat(GoogleChat googleChat){
+        org.jreleaser.model.GoogleChat a = new org.jreleaser.model.GoogleChat();
+        a.setActive(googleChat.resolveActive());
+        a.setWebhook(googleChat.getWebhook());
+        a.setMessage(googleChat.getMessage());
+        a.setMessageTemplate(googleChat.getMessageTemplate());
+        a.setConnectTimeout(googleChat.getConnectTimeout());
+        a.setReadTimeout(googleChat.getReadTimeout());
+        a.setExtraProperties(googleChat.getExtraProperties());
         return a;
     }
 

@@ -37,6 +37,8 @@ interface Announce {
 
     Gitter getGitter()
 
+    GoogleChat getGoogleChat()
+
     Mail getMail()
 
     Mastodon getMastodon()
@@ -61,6 +63,8 @@ interface Announce {
 
     void gitter(Action<? super Gitter> action)
 
+    void googleChat(Action<? super GoogleChat> action)
+
     void mail(Action<? super Mail> action)
 
     void mastodon(Action<? super Mastodon> action)
@@ -82,6 +86,8 @@ interface Announce {
     void discussions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Discussions) Closure<Void> action)
 
     void gitter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Gitter) Closure<Void> action)
+
+    void googleChat(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GoogleChat) Closure<Void> action)
 
     void mail(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mail) Closure<Void> action)
 
