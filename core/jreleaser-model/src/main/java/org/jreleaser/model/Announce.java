@@ -200,6 +200,7 @@ public class Announce implements Domain, EnabledAware {
         map.putAll(discord.asMap(full));
         map.putAll(discussions.asMap(full));
         map.putAll(gitter.asMap(full));
+        map.putAll(googleChat.asMap(full));
         map.putAll(mail.asMap(full));
         map.putAll(mastodon.asMap(full));
         map.putAll(mattermost.asMap(full));
