@@ -28,6 +28,7 @@ import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.KEY_TAG_NAME;
 import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -55,11 +56,13 @@ public class Gitter extends AbstractAnnouncer {
 
     public String getResolvedMessage(JReleaserContext context) {
         Map<String, Object> props = context.props();
+        applyTemplates(props, getResolvedExtraProperties());
         return applyTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
         Map<String, Object> props = context.props();
+        applyTemplates(props, getResolvedExtraProperties());
         props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);
