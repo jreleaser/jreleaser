@@ -77,6 +77,16 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "anyulled",
+      "name": "Anyul Rivas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/100741?v=4",
+      "profile": "https://ve.linkedin.com/in/anyulled",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
