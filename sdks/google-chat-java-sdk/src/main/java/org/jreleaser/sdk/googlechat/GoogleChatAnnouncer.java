@@ -17,17 +17,15 @@
  */
 package org.jreleaser.sdk.googlechat;
 
-import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.GoogleChat;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.MustacheUtils;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -69,16 +67,12 @@ public class GoogleChatAnnouncer implements Announcer {
 
         context.getLogger().info("message: {}", message);
 
-        if (isNotBlank(googleChat.getResolvedWebhook()) && !context.isDryrun()) {
-            try {
-                ClientUtils.webhook(context.getLogger(),
-                    googleChat.getResolvedWebhook(),
-                    googleChat.getConnectTimeout(),
-                    googleChat.getReadTimeout(),
-                    Message.of(message));
-            } catch (AnnounceException e) {
-                context.getLogger().trace(e);
-            }
+        if (!context.isDryrun()) {
+            ClientUtils.webhook(context.getLogger(),
+                googleChat.getResolvedWebhook(),
+                googleChat.getConnectTimeout(),
+                googleChat.getReadTimeout(),
+                Message.of(message));
         }
     }
 }

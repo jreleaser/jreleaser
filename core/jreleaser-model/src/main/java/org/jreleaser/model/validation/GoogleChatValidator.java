@@ -28,31 +28,23 @@ import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
- * @author Andres Almiray
- * @since 0.1.0
+ * @author Anyul Rivas
+ * @since 0.5.0
  */
 public abstract class GoogleChatValidator extends Validator {
-    private static final String DEFAULT_GOOGLE_CHAT_TPL = "src/jreleaser/templates/google_chat.tpl";
+    private static final String DEFAULT_GOOGLE_CHAT_TPL = "src/jreleaser/templates/googleChat.tpl";
 
     public static void validateGoogleChat(JReleaserContext context, GoogleChat googleChat, Errors errors) {
         if (!googleChat.resolveEnabled(context.getModel().getProject())) return;
-        context.getLogger().debug("announce.slack");
+        context.getLogger().debug("announce.googleChat");
 
-        Errors ignored = new Errors();
         googleChat.setWebhook(
             checkProperty(context.getModel().getEnvironment(),
                 GOOGLE_CHAT_WEBHOOK,
-                "GoogleChat.webhook",
+                "googleChat.webhook",
                 googleChat.getWebhook(),
-                ignored,
+                errors,
                 context.isDryrun()));
-
-        String webhook = googleChat.getResolvedWebhook();
-
-        if (!context.isDryrun() && isBlank(webhook)) {
-            errors.configuration("GoogleChat.webhook must be provided");
-            return;
-        }
 
         if (isBlank(googleChat.getMessage()) && isBlank(googleChat.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_GOOGLE_CHAT_TPL))) {
@@ -64,7 +56,7 @@ public abstract class GoogleChatValidator extends Validator {
 
         if (isNotBlank(googleChat.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(googleChat.getMessageTemplate().trim()))) {
-            errors.configuration("GoogleChat.messageTemplate does not exist. " + googleChat.getMessageTemplate());
+            errors.configuration("googleChat.messageTemplate does not exist. " + googleChat.getMessageTemplate());
         }
 
         if (googleChat.getConnectTimeout() <= 0 || googleChat.getConnectTimeout() > 300) {

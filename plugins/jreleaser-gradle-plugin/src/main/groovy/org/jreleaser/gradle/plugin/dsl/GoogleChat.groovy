@@ -28,7 +28,6 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface GoogleChat extends Announcer {
-
     Property<String> getWebhook()
 
     Property<String> getMessage()

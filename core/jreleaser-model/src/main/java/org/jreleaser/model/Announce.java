@@ -33,6 +33,7 @@ public class Announce implements Domain, EnabledAware {
     private final Discord discord = new Discord();
     private final Discussions discussions = new Discussions();
     private final Gitter gitter = new Gitter();
+    private final GoogleChat googleChat = new GoogleChat();
     private final Mail mail = new Mail();
     private final Mastodon mastodon = new Mastodon();
     private final Mattermost mattermost = new Mattermost();
@@ -42,7 +43,6 @@ public class Announce implements Domain, EnabledAware {
     private final Twitter twitter = new Twitter();
     private final Webhooks webhooks = new Webhooks();
     private final Zulip zulip = new Zulip();
-    private final GoogleChat googleChat = new GoogleChat();
     private Boolean enabled;
 
     void setAll(Announce announce) {
@@ -267,6 +267,7 @@ public class Announce implements Domain, EnabledAware {
         set.add(Discord.NAME);
         set.add(Discussions.NAME);
         set.add(Gitter.NAME);
+        set.add(GoogleChat.NAME);
         set.add(Mail.NAME);
         set.add(Mastodon.NAME);
         set.add(Mattermost.NAME);
