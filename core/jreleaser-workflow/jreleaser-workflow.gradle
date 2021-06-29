@@ -20,6 +20,7 @@ dependencies {
     // announce
     api project(':discord-java-sdk')
     api project(':gitter-java-sdk')
+    api project(':google-chat-java-sdk')
     api project(':mail-java-sdk')
     api project(':mastodon-java-sdk')
     api project(':mattermost-java-sdk')

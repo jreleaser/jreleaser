@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2021 Andres Almiray.
+ * Copyright 2020-2021 The JReleaser authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,10 @@ import java.io.Reader;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static org.jreleaser.util.Constants.*;
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.KEY_TAG_NAME;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
-import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -34,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.5.0
  */
 public class GoogleChat extends AbstractAnnouncer {
-    public static final String NAME = "googleChat";
+    public static final String NAME = "googlechat";
     public static final String GOOGLE_CHAT_WEBHOOK = "GOOGLE_CHAT_WEBHOOK";
 
     private String webhook;
@@ -54,13 +55,11 @@ public class GoogleChat extends AbstractAnnouncer {
 
     public String getResolvedMessage(JReleaserContext context) {
         Map<String, Object> props = context.props();
-        applyTemplates(props, getResolvedExtraProperties());
         return applyTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
         Map<String, Object> props = context.props();
-        applyTemplates(props, getResolvedExtraProperties());
         props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);
