@@ -48,6 +48,11 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
     }
 
     protected boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+        context.getLogger().info("setting up repository {}", tool.getRepositoryTap().getCanonicalRepoName());
+        if (context.isDryrun()) {
+            return true;
+        }
+
         GitService gitService = context.getModel().getRelease().getGitService();
 
         try {
@@ -95,9 +100,9 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
 
             context.getLogger().info("pushing to {}", tool.getRepositoryTap().getCanonicalRepoName());
             // push commit
-            context.getLogger().debug("pushing commit to remote, dryrun = {}", context.isDryrun());
+            context.getLogger().debug("pushing commit to remote");
             git.push()
-                .setDryRun(context.isDryrun())
+                .setDryRun(false)
                 .setPushAll()
                 .setCredentialsProvider(credentialsProvider)
                 .call();
