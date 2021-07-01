@@ -576,13 +576,13 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         map.put("username", username);
         map.put("token", isNotBlank(getResolvedToken()) ? Constants.HIDE : Constants.UNSET);
         if (releaseSupported) {
-            map.put("repoUrlFormat", repoUrl);
-            map.put("repoCloneUrlFormat", repoCloneUrl);
-            map.put("commitUrlFormat", commitUrl);
-            map.put("downloadUrlFormat", downloadUrl);
-            map.put("releaseNotesUrlFormat", releaseNotesUrl);
-            map.put("latestReleaseUrlFormat", latestReleaseUrl);
-            map.put("issueTrackerUrlFormat", issueTrackerUrl);
+            map.put("repoUrl", repoUrl);
+            map.put("repoCloneUrl", repoCloneUrl);
+            map.put("commitUrl", commitUrl);
+            map.put("downloadUrl", downloadUrl);
+            map.put("releaseNotesUrl", releaseNotesUrl);
+            map.put("latestReleaseUrl", latestReleaseUrl);
+            map.put("issueTrackerUrl", issueTrackerUrl);
         }
         map.put("tagName", tagName);
         if (releaseSupported) {
