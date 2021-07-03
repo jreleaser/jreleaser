@@ -7,7 +7,7 @@ link:https://github.com/jreleaser/jreleaser/discussions[discussion] topic first.
 == Code of Conduct
 
 This project and everyone participating in it is governed by our link:CODE_OF_CONDUCT.md[Code of Conduct].
-By participating, you are expected to uphold this code. Please report unacceptable behavior to jreleaser@kordapm.org.
+By participating, you are expected to uphold this code. Please report unacceptable behavior to jreleaser@kordamp.org.
 
 == Contributor License Agreement
 
