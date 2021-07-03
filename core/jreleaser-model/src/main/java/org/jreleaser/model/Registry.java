@@ -52,6 +52,10 @@ public class Registry implements Domain, Comparable<Registry> {
         return Env.resolve("DOCKER_" + Env.toVar(serverName) + "_PASSWORD", password);
     }
 
+    public String getResolvedUsername() {
+        return Env.resolve("DOCKER_" + Env.toVar(serverName) + "_USERNAME", username);
+    }
+
     public String getServer() {
         return server;
     }
@@ -98,7 +102,7 @@ public class Registry implements Domain, Comparable<Registry> {
         map.put("server", server);
         map.put("serverName", serverName);
         map.put("repositoryName", repositoryName);
-        map.put("username", username);
+        map.put("username", getResolvedUsername());
         map.put("password", isNotBlank(password) ? HIDE : UNSET);
         return map;
     }

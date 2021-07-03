@@ -18,9 +18,12 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Chocolatey;
+import org.jreleaser.model.ChocolateyBucket;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
@@ -41,7 +44,8 @@ public abstract class ChocolateyValidator extends Validator {
             tool.setActive(parentTool.getActive());
         }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
-        if (!model.getRelease().getGitService().isReleaseSupported()) {
+        GitService service = model.getRelease().getGitService();
+        if (!service.isReleaseSupported()) {
             tool.disable();
             return;
         }
@@ -49,27 +53,42 @@ public abstract class ChocolateyValidator extends Validator {
         context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
 
         validateCommitAuthor(tool, parentTool);
-        validateOwner(tool.getBucket(), parentTool.getBucket());
+        ChocolateyBucket bucket = tool.getBucket();
+        validateOwner(bucket, parentTool.getBucket());
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
 
         if (isBlank(tool.getUsername())) {
-            tool.setUsername(model.getRelease().getGitService().getOwner());
+            tool.setUsername(service.getOwner());
         }
         if (!tool.isRemoteBuildSet() && parentTool.isRemoteBuildSet()) {
             tool.setRemoteBuild(parentTool.isRemoteBuild());
         }
 
-        if (isBlank(tool.getBucket().getName())) {
-            tool.getBucket().setName("chocolatey-bucket");
+        if (isBlank(bucket.getName())) {
+            bucket.setName("chocolatey-bucket");
         }
-        tool.getBucket().setBasename("chocolatey-bucket");
-        if (isBlank(tool.getBucket().getUsername())) {
-            tool.getBucket().setUsername(parentTool.getBucket().getUsername());
+        bucket.setBasename("chocolatey-bucket");
+        if (isBlank(bucket.getUsername())) {
+            bucket.setUsername(parentTool.getBucket().getUsername());
         }
-        if (isBlank(tool.getBucket().getToken())) {
-            tool.getBucket().setToken(parentTool.getBucket().getToken());
+        if (isBlank(bucket.getToken())) {
+            bucket.setToken(parentTool.getBucket().getToken());
         }
+
+        bucket.setUsername(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(bucket.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
+                "distribution." + distribution.getName() + "chocolatey.bucket.username",
+                bucket.getUsername(),
+                service.getResolvedUsername()));
+
+        bucket.setToken(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(bucket.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
+                "distribution." + distribution.getName() + "chocolatey.bucket.token",
+                bucket.getToken(),
+                service.getResolvedToken()));
 
         validateArtifactPlatforms(context, distribution, tool, errors);
     }

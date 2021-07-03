@@ -262,7 +262,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
             cmd.add(registry.getServer());
         }
         cmd.add("-u");
-        cmd.add(registry.getUsername());
+        cmd.add(registry.getResolvedUsername());
         cmd.add("-p");
         cmd.add(registry.getResolvedPassword());
 

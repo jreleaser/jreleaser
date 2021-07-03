@@ -21,8 +21,11 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Brew;
 import org.jreleaser.model.Cask;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
+import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.ArrayList;
@@ -50,7 +53,8 @@ public abstract class BrewValidator extends Validator {
             tool.setActive(parentTool.getActive());
         }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
-        if (!model.getRelease().getGitService().isReleaseSupported()) {
+        GitService service = model.getRelease().getGitService();
+        if (!service.isReleaseSupported()) {
             tool.disable();
             return;
         }
@@ -58,7 +62,8 @@ public abstract class BrewValidator extends Validator {
         context.getLogger().debug("distribution.{}.brew", distribution.getName());
 
         validateCommitAuthor(tool, parentTool);
-        validateOwner(tool.getTap(), parentTool.getTap());
+        HomebrewTap tap = tool.getTap();
+        validateOwner(tap, parentTool.getTap());
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
 
@@ -70,15 +75,29 @@ public abstract class BrewValidator extends Validator {
             tool.setFormulaName(distribution.getName());
         }
 
-        if (isBlank(tool.getTap().getName())) {
-            tool.getTap().setName(parentTool.getTap().getName());
+        if (isBlank(tap.getName())) {
+            tap.setName(parentTool.getTap().getName());
         }
-        if (isBlank(tool.getTap().getUsername())) {
-            tool.getTap().setUsername(parentTool.getTap().getUsername());
+        if (isBlank(tap.getUsername())) {
+            tap.setUsername(parentTool.getTap().getUsername());
         }
-        if (isBlank(tool.getTap().getToken())) {
-            tool.getTap().setToken(parentTool.getTap().getToken());
+        if (isBlank(tap.getToken())) {
+            tap.setToken(parentTool.getTap().getToken());
         }
+
+        tap.setUsername(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
+                "distribution." + distribution.getName() + "brew.tap.username",
+                tap.getUsername(),
+                service.getResolvedUsername()));
+
+        tap.setToken(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
+                "distribution." + distribution.getName() + "brew.tap.token",
+                tap.getToken(),
+                service.getResolvedToken()));
 
         validateCask(context, distribution, tool, errors);
         if (!tool.getCask().isEnabled()) {

@@ -64,9 +64,13 @@ public abstract class GitServiceValidator extends Validator {
         if (isBlank(service.getName())) {
             service.setName(project.getName());
         }
-        if (isBlank(service.getUsername())) {
-            service.setUsername(service.getOwner());
-        }
+
+        service.setUsername(
+            checkProperty(context.getModel().getEnvironment(),
+                service.getServiceName().toUpperCase() + "_USERNAME",
+                service.getServiceName() + ".username",
+                service.getUsername(),
+                service.getOwner()));
 
         service.setToken(
             checkProperty(context.getModel().getEnvironment(),

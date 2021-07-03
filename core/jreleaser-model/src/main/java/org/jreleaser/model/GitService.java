@@ -419,6 +419,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         return Env.resolve(Env.toVar(getServiceName()) + "_TOKEN", token);
     }
 
+    public String getResolvedUsername() {
+        return Env.resolve(Env.toVar(getServiceName()) + "_USERNAME", username);
+    }
+
     public String getUsername() {
         return username;
     }

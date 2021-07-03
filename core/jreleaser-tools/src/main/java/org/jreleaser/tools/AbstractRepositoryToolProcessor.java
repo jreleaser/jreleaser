@@ -125,16 +125,12 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
     }
 
     protected String resolveGitUsername(GitService gitService) {
-        if (isNotBlank(tool.getRepositoryTap().getUsername())) {
-            return tool.getRepositoryTap().getUsername();
-        }
-        return gitService.getUsername();
+        String username = tool.getRepositoryTap().getResolvedUsername(gitService);
+        return isNotBlank(username) ? username : gitService.getResolvedUsername();
     }
 
     protected String resolveGitToken(GitService gitService) {
-        if (isNotBlank(tool.getRepositoryTap().getResolvedToken(gitService))) {
-            return tool.getRepositoryTap().getResolvedToken(gitService);
-        }
-        return gitService.getResolvedToken();
+        String token = tool.getRepositoryTap().getResolvedToken(gitService);
+        return isNotBlank(token) ? token : gitService.getResolvedToken();
     }
 }

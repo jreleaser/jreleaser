@@ -41,6 +41,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
         this.basename = basename;
     }
 
+    @Override
     public String getBasename() {
         return basename;
     }
@@ -67,6 +68,12 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
             return name;
         }
         return basename;
+    }
+
+    @Override
+    public String getResolvedUsername(GitService service) {
+        return Env.resolve(Env.toVar(basename + "_"
+            + service.getServiceName()) + "_USERNAME", username);
     }
 
     @Override

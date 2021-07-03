@@ -22,6 +22,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
 import org.jreleaser.model.DockerConfiguration;
 import org.jreleaser.model.DockerSpec;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Registry;
@@ -261,22 +262,29 @@ public abstract class DockerValidator extends Validator {
         }
 
         for (Registry registry : registries) {
-            if (isBlank(registry.getUsername())) {
-                registry.setUsername(model.getRelease().getGitService().getUsername());
-            }
+            GitService service = model.getRelease().getGitService();
+            String serverName = registry.getServerName();
+
+            registry.setUsername(
+                checkProperty(context.getModel().getEnvironment(),
+                    "DOCKER_" + Env.toVar(serverName) + "_USERNAME",
+                    "registry." + Env.toVar(serverName) + ".username",
+                    registry.getUsername(),
+                    service.getResolvedUsername()));
+
             if (isBlank(registry.getRepositoryName())) {
-                registry.setRepositoryName(model.getRelease().getGitService().getOwner());
+                registry.setRepositoryName(service.getOwner());
             }
 
             if (isBlank(registry.getUsername())) {
                 errors.configuration(element +
-                    ".registry." + registry.getServerName() + ".username must not be blank");
+                    ".registry." + serverName + ".username must not be blank");
             }
 
             registry.setPassword(
                 checkProperty(context.getModel().getEnvironment(),
-                    "DOCKER_" + Env.toVar(registry.getServerName()) + "_PASSWORD",
-                    "registry." + Env.toVar(registry.getServerName()) + ".password",
+                    "DOCKER_" + Env.toVar(serverName) + "_PASSWORD",
+                    "registry." + Env.toVar(serverName) + ".password",
                     registry.getPassword(),
                     errors,
                     context.isDryrun()));

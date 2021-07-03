@@ -81,7 +81,7 @@ public class GenericGitReleaser implements Releaser {
             context.getLogger().debug("pushing tag to remote, dryrun = {}", context.isDryrun());
 
             UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
-                context.getModel().getRelease().getGitService().getUsername(),
+                context.getModel().getRelease().getGitService().getResolvedUsername(),
                 context.getModel().getRelease().getGitService().getResolvedToken());
 
             gitSdk.open().push()

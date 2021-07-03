@@ -18,10 +18,13 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.model.AbstractRepositoryTool;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.OwnerAware;
 import org.jreleaser.model.Packagers;
+import org.jreleaser.model.RepositoryTap;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -79,10 +82,25 @@ public abstract class PackagersValidator extends Validator {
 
     private static void validatePackager(JReleaserContext context,
                                          AbstractRepositoryTool tool,
-                                         OwnerAware ownerAware,
+                                         RepositoryTap tap,
                                          Errors errors) {
         tool.resolveEnabled(context.getModel().getProject());
-        validateCommitAuthor(tool, context.getModel().getRelease().getGitService());
-        validateOwner(ownerAware, context.getModel().getRelease().getGitService());
+        GitService service = context.getModel().getRelease().getGitService();
+        validateCommitAuthor(tool, service);
+        validateOwner(tap, service);
+
+        tap.setUsername(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
+                "<empty>",
+                tap.getUsername(),
+                service.getResolvedUsername()));
+
+        tap.setToken(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
+                "<empty>",
+                tap.getToken(),
+                service.getResolvedToken()));
     }
 }

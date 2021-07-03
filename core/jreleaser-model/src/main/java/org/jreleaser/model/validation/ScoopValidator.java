@@ -18,9 +18,12 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Scoop;
+import org.jreleaser.model.ScoopBucket;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
@@ -41,7 +44,8 @@ public abstract class ScoopValidator extends Validator {
             tool.setActive(parentTool.getActive());
         }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
-        if (!model.getRelease().getGitService().isReleaseSupported()) {
+        GitService service = model.getRelease().getGitService();
+        if (!service.isReleaseSupported()) {
             tool.disable();
             return;
         }
@@ -49,34 +53,49 @@ public abstract class ScoopValidator extends Validator {
         context.getLogger().debug("distribution.{}.scoop", distribution.getName());
 
         validateCommitAuthor(tool, parentTool);
-        validateOwner(tool.getBucket(), parentTool.getBucket());
+        ScoopBucket bucket = tool.getBucket();
+        validateOwner(bucket, parentTool.getBucket());
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
 
         if (isBlank(tool.getCheckverUrl())) {
             tool.setCheckverUrl(parentTool.getCheckverUrl());
             if (isBlank(tool.getCheckverUrl())) {
-                tool.setCheckverUrl(model.getRelease().getGitService().getLatestReleaseUrl());
+                tool.setCheckverUrl(service.getLatestReleaseUrl());
             }
         }
         if (isBlank(tool.getAutoupdateUrl())) {
             tool.setAutoupdateUrl(parentTool.getAutoupdateUrl());
             if (isBlank(tool.getAutoupdateUrl())) {
-                tool.setAutoupdateUrl(model.getRelease().getGitService().getDownloadUrl());
+                tool.setAutoupdateUrl(service.getDownloadUrl());
             }
         }
 
-        if (isBlank(tool.getBucket().getName())) {
-            tool.getBucket().setName(parentTool.getBucket().getName());
+        if (isBlank(bucket.getName())) {
+            bucket.setName(parentTool.getBucket().getName());
         }
-        tool.getBucket().setBasename(parentTool.getBucket().getBasename());
+        bucket.setBasename(parentTool.getBucket().getBasename());
 
-        if (isBlank(tool.getBucket().getUsername())) {
-            tool.getBucket().setUsername(parentTool.getBucket().getUsername());
+        if (isBlank(bucket.getUsername())) {
+            bucket.setUsername(parentTool.getBucket().getUsername());
         }
-        if (isBlank(tool.getBucket().getToken())) {
-            tool.getBucket().setToken(parentTool.getBucket().getToken());
+        if (isBlank(bucket.getToken())) {
+            bucket.setToken(parentTool.getBucket().getToken());
         }
+
+        bucket.setUsername(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(bucket.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
+                "distribution." + distribution.getName() + "scoop.bucket.username",
+                bucket.getUsername(),
+                service.getResolvedUsername()));
+
+        bucket.setToken(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(bucket.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
+                "distribution." + distribution.getName() + "scoop.bucket.token",
+                bucket.getToken(),
+                service.getResolvedToken()));
 
         validateArtifactPlatforms(context, distribution, tool, errors);
     }

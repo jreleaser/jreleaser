@@ -22,17 +22,15 @@ package org.jreleaser.model;
  * @since 0.1.0
  */
 public interface RepositoryTap extends Domain, OwnerAware {
+    String getBasename();
+
     String getCanonicalRepoName();
 
     String getResolvedName();
 
+    String getResolvedUsername(GitService service);
+
     String getResolvedToken(GitService service);
-
-    @Override
-    String getOwner();
-
-    @Override
-    void setOwner(String owner);
 
     String getName();
 

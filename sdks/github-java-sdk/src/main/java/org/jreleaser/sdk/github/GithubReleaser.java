@@ -57,7 +57,7 @@ public class GithubReleaser implements Releaser {
             String changelog = context.getChangelog();
 
             Github api = new Github(context.getLogger(),
-                github.getUsername(),
+                github.getResolvedUsername(),
                 github.getResolvedToken(),
                 github.getConnectTimeout(),
                 github.getReadTimeout());

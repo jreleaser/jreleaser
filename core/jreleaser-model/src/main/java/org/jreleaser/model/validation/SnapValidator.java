@@ -18,11 +18,14 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Plug;
 import org.jreleaser.model.Slot;
 import org.jreleaser.model.Snap;
+import org.jreleaser.model.SnapTap;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.ArrayList;
@@ -49,7 +52,8 @@ public abstract class SnapValidator extends Validator {
             tool.setActive(parentTool.getActive());
         }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
-        if (!model.getRelease().getGitService().isReleaseSupported()) {
+        GitService service = model.getRelease().getGitService();
+        if (!service.isReleaseSupported()) {
             tool.disable();
             return;
         }
@@ -57,7 +61,8 @@ public abstract class SnapValidator extends Validator {
         context.getLogger().debug("distribution.{}.snap", distribution.getName());
 
         validateCommitAuthor(tool, parentTool);
-        validateOwner(tool.getSnap(), parentTool.getSnap());
+        SnapTap snap = tool.getSnap();
+        validateOwner(snap, parentTool.getSnap());
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         mergeSnapPlugs(tool, parentTool);
@@ -94,16 +99,30 @@ public abstract class SnapValidator extends Validator {
             }
         }
 
-        if (isBlank(tool.getSnap().getName())) {
-            tool.getSnap().setName(distribution.getName() + "-snap");
+        if (isBlank(snap.getName())) {
+            snap.setName(distribution.getName() + "-snap");
         }
-        tool.getSnap().setBasename(distribution.getName() + "-snap");
-        if (isBlank(tool.getSnap().getUsername())) {
-            tool.getSnap().setUsername(parentTool.getSnap().getUsername());
+        snap.setBasename(distribution.getName() + "-snap");
+        if (isBlank(snap.getUsername())) {
+            snap.setUsername(parentTool.getSnap().getUsername());
         }
-        if (isBlank(tool.getSnap().getToken())) {
-            tool.getSnap().setToken(parentTool.getSnap().getToken());
+        if (isBlank(snap.getToken())) {
+            snap.setToken(parentTool.getSnap().getToken());
         }
+
+        snap.setUsername(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(snap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
+                "distribution." + distribution.getName() + "snap.snap.username",
+                snap.getUsername(),
+                service.getResolvedUsername()));
+
+        snap.setToken(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(snap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
+                "distribution." + distribution.getName() + "snap.snap.token",
+                snap.getToken(),
+                service.getResolvedToken()));
 
         validateArtifactPlatforms(context, distribution, tool, errors);
     }

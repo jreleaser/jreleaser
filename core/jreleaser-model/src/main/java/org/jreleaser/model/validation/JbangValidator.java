@@ -18,9 +18,12 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Jbang;
+import org.jreleaser.model.JbangCatalog;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.List;
@@ -46,7 +49,8 @@ public abstract class JbangValidator extends Validator {
             tool.setActive(parentTool.getActive());
         }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
-        if (!model.getRelease().getGitService().isReleaseSupported()) {
+        GitService service = model.getRelease().getGitService();
+        if (!service.isReleaseSupported()) {
             tool.disable();
             return;
         }
@@ -54,22 +58,37 @@ public abstract class JbangValidator extends Validator {
         context.getLogger().debug("distribution.{}.jbang", distribution.getName());
 
         validateCommitAuthor(tool, parentTool);
-        validateOwner(tool.getCatalog(), parentTool.getCatalog());
+        JbangCatalog catalog = tool.getCatalog();
+        validateOwner(catalog, parentTool.getCatalog());
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
 
         if (isBlank(tool.getAlias())) {
             tool.setAlias(distribution.getExecutable());
         }
-        if (isBlank(tool.getCatalog().getName())) {
-            tool.getCatalog().setName(parentTool.getCatalog().getName());
+        if (isBlank(catalog.getName())) {
+            catalog.setName(parentTool.getCatalog().getName());
         }
-        if (isBlank(tool.getCatalog().getUsername())) {
-            tool.getCatalog().setUsername(parentTool.getCatalog().getUsername());
+        if (isBlank(catalog.getUsername())) {
+            catalog.setUsername(parentTool.getCatalog().getUsername());
         }
-        if (isBlank(tool.getCatalog().getToken())) {
-            tool.getCatalog().setToken(parentTool.getCatalog().getToken());
+        if (isBlank(catalog.getToken())) {
+            catalog.setToken(parentTool.getCatalog().getToken());
         }
+
+        catalog.setUsername(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(catalog.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
+                "distribution." + distribution.getName() + "jbang.catalog.username",
+                catalog.getUsername(),
+                service.getResolvedUsername()));
+
+        catalog.setToken(
+            checkProperty(context.getModel().getEnvironment(),
+                Env.toVar(catalog.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
+                "distribution." + distribution.getName() + "jbang.catalog.token",
+                catalog.getToken(),
+                service.getResolvedToken()));
 
         if (model.getProject().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
             !parentTool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
@@ -87,7 +106,7 @@ public abstract class JbangValidator extends Validator {
             tool.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
                 distribution.getExtraProperties().get(KEY_REVERSE_REPO_HOST));
         }
-        if (isBlank(model.getRelease().getGitService().getReverseRepoHost()) &&
+        if (isBlank(service.getReverseRepoHost()) &&
             !tool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
             errors.configuration("distribution." + distribution.getName() +
                 ".jbang must define an extra property named '" +
