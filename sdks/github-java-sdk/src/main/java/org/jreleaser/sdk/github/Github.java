@@ -62,17 +62,15 @@ class Github {
     private final GitHub github;
 
     Github(JReleaserLogger logger,
-           String username,
-           String password,
+           String token,
            int connectTimeout,
            int readTimeout) throws IOException {
-        this(logger, ENDPOINT, username, password, connectTimeout, readTimeout);
+        this(logger, ENDPOINT, token, connectTimeout, readTimeout);
     }
 
     Github(JReleaserLogger logger,
            String endpoint,
-           String username,
-           String password,
+           String token,
            int connectTimeout,
            int readTimeout) throws IOException {
         this.logger = logger;
@@ -84,7 +82,7 @@ class Github {
         github = new GitHubBuilder()
             .withConnector(new JReleaserHttpConnector(connectTimeout, readTimeout))
             .withEndpoint(endpoint)
-            .withOAuthToken(password, username)
+            .withOAuthToken(token)
             .build();
     }
 
