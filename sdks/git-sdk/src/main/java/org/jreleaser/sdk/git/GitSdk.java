@@ -30,12 +30,15 @@ import org.eclipse.jgit.transport.URIish;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.model.releaser.spi.Repository;
+import org.jreleaser.util.Env;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
+
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -74,16 +77,20 @@ public class GitSdk {
     public Repository getRemote() throws IOException {
         Git git = open();
 
+        String remoteName = Env.resolve("DEFAULT_GIT_REMOTE", "");
+        if (isBlank(remoteName)) remoteName = "origin";
+        String remote = remoteName;
+
         try {
             RemoteConfig remoteConfig = git.remoteList().call().stream()
-                .filter(rc -> "origin".equals(rc.getName()))
+                .filter(rc -> remote.equals(rc.getName()))
                 .findFirst()
-                .orElseThrow(() -> new IOException("repository doesn't have an 'origin' remote"));
+                .orElseThrow(() -> new IOException("repository doesn't have a remote named '" + remote + "'"));
 
             List<URIish> uris = remoteConfig.getURIs();
             if (uris.isEmpty()) {
                 // better be safe than sorry
-                throw new IOException("'origin' remote does not have a configured URL");
+                throw new IOException("'" + remote + "' remote does not have a configured URL");
             }
 
             // grab the first one
