@@ -23,9 +23,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.nio.file.Files.exists;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
@@ -38,7 +42,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Artifact implements Domain, ExtraProperties, Comparable<Artifact> {
+public class Artifact implements Domain, ExtraProperties {
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Map<Algorithm, String> hashes = new LinkedHashMap<>();
 
@@ -300,8 +304,8 @@ public class Artifact implements Domain, ExtraProperties, Comparable<Artifact> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Artifact artifact = (Artifact) o;
-        return path.equals(artifact.path);
+        Artifact that = (Artifact) o;
+        return path.equals(that.path);
     }
 
     @Override
@@ -309,13 +313,20 @@ public class Artifact implements Domain, ExtraProperties, Comparable<Artifact> {
         return Objects.hash(path);
     }
 
-    @Override
-    public int compareTo(Artifact that) {
-        String p1 = this.platform;
-        String p2 = that.platform;
-        if (isBlank(p1)) p1 = "";
-        if (isBlank(p2)) p2 = "";
-        return p1.compareTo(p2);
+    public static Set<Artifact> sortArtifacts(Set<Artifact> artifacts) {
+        return artifacts.stream()
+            .sorted(Artifact.comparatorByPlatform())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    public static Comparator<Artifact> comparatorByPlatform() {
+        return (a1, a2) -> {
+            String p1 = a1.platform;
+            String p2 = a2.platform;
+            if (isBlank(p1)) p1 = "";
+            if (isBlank(p2)) p2 = "";
+            return p1.compareTo(p2);
+        };
     }
 
     public static Artifact of(Path resolvedPath) {

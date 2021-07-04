@@ -35,9 +35,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
@@ -53,7 +53,7 @@ public class Artifacts {
             return files.getPaths();
         }
 
-        Set<Artifact> paths = new TreeSet<>();
+        Set<Artifact> paths = new LinkedHashSet<>();
 
         // resolve artifacts
         for (Artifact artifact : files.getArtifacts()) {
@@ -68,7 +68,7 @@ public class Artifacts {
             }
         }
 
-        files.setPaths(paths);
+        files.setPaths(Artifact.sortArtifacts(paths));
 
         return files.getPaths();
     }
@@ -90,7 +90,8 @@ public class Artifacts {
             if (resolver.failed) {
                 throw new JReleaserException("Some globs failed to be resolved.");
             }
-            return resolver.artifacts;
+
+            return Artifact.sortArtifacts(resolver.artifacts);
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error when resolving globs", e);
         }
@@ -100,7 +101,7 @@ public class Artifacts {
         private final JReleaserLogger logger;
         private final List<PathMatcher> matchers;
         private final Path basedir;
-        private final Set<Artifact> artifacts = new TreeSet<>();
+        private final Set<Artifact> artifacts = new LinkedHashSet<>();
         private boolean failed;
 
         private GlobResolver(JReleaserLogger logger, Path basedir, List<PathMatcher> matchers) {

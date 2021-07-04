@@ -18,21 +18,20 @@
 package org.jreleaser.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Files implements Domain {
-    private final Set<Artifact> artifacts = new TreeSet<>();
+    private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final List<Glob> globs = new ArrayList<>();
-    private final Set<Artifact> paths = new TreeSet<>();
+    private final Set<Artifact> paths = new LinkedHashSet<>();
     private boolean resolved;
 
     public boolean isEmpty() {
@@ -44,7 +43,7 @@ public class Files implements Domain {
     }
 
     public Set<Artifact> getPaths() {
-        return Collections.unmodifiableSet(paths);
+        return Artifact.sortArtifacts(paths);
     }
 
     public void setPaths(Set<Artifact> paths) {
@@ -59,7 +58,7 @@ public class Files implements Domain {
     }
 
     public Set<Artifact> getArtifacts() {
-        return artifacts;
+        return Artifact.sortArtifacts(artifacts);
     }
 
     public void setArtifacts(Set<Artifact> artifacts) {
@@ -102,7 +101,7 @@ public class Files implements Domain {
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         int i = 0;
-        for (Artifact artifact : artifacts) {
+        for (Artifact artifact : getArtifacts()) {
             mappedArtifacts.put("artifact " + (i++), artifact.asMap(full));
         }
         map.put("artifacts", mappedArtifacts);

@@ -23,7 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -35,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Jlink extends AbstractAssembler {
     public static final String NAME = "jlink";
 
-    private final Set<Artifact> targetJdks = new TreeSet<>();
+    private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
     private final List<String> args = new ArrayList<>();
     private final Artifact jdk = new Artifact();
@@ -105,7 +104,7 @@ public class Jlink extends AbstractAssembler {
     }
 
     public Set<Artifact> getTargetJdks() {
-        return targetJdks;
+        return Artifact.sortArtifacts(targetJdks);
     }
 
     public void setTargetJdks(Set<Artifact> targetJdks) {
@@ -200,7 +199,7 @@ public class Jlink extends AbstractAssembler {
         props.put("args", args);
         Map<String, Map<String, Object>> mappedJdks = new LinkedHashMap<>();
         int i = 0;
-        for (Artifact targetJdk : targetJdks) {
+        for (Artifact targetJdk : getTargetJdks()) {
             mappedJdks.put("jdk " + (i++), targetJdk.asMap(full));
         }
         props.put("jdk", jdk.asMap(full));

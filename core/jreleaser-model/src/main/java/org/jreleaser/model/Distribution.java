@@ -28,7 +28,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
@@ -48,7 +47,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
 
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    private final Set<Artifact> artifacts = new TreeSet<>();
+    private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final Java java = new Java();
     private Active active;
     private boolean enabled;
@@ -171,7 +170,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     }
 
     public Set<Artifact> getArtifacts() {
-        return artifacts;
+        return Artifact.sortArtifacts(artifacts);
     }
 
     public void setArtifacts(Set<Artifact> artifacts) {
@@ -287,7 +286,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         int i = 0;
-        for (Artifact artifact : artifacts) {
+        for (Artifact artifact : getArtifacts()) {
             mappedArtifacts.put("artifact " + (i++), artifact.asMap(full));
         }
         props.put("artifacts", mappedArtifacts);

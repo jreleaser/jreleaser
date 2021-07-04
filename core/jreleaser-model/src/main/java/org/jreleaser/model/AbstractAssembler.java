@@ -22,9 +22,9 @@ import org.jreleaser.util.Version;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 abstract class AbstractAssembler implements Assembler {
-    protected final Set<Artifact> outputs = new TreeSet<>();
+    protected final Set<Artifact> outputs = new LinkedHashSet<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Java java = new Java();
     private final String type;
@@ -176,7 +176,7 @@ abstract class AbstractAssembler implements Assembler {
 
     @Override
     public Set<Artifact> getOutputs() {
-        return outputs;
+        return Artifact.sortArtifacts(outputs);
     }
 
     @Override
