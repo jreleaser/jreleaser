@@ -57,7 +57,7 @@ public class GenericGitReleaser implements Releaser {
                 if (generic.isOverwrite() || snapshot) {
                     context.getLogger().debug("tagging release {}", tagName);
                     tagRelease(repository, tagName);
-                } else {
+                } else if (!context.isDryrun()) {
                     throw new IllegalStateException("Generic release failed because tag " +
                         tagName + " already exists. overwrite = false");
                 }

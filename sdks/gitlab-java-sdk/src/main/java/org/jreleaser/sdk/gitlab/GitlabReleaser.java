@@ -100,6 +100,12 @@ public class GitlabReleaser implements Releaser {
                         }
                     }
                 } else {
+                    if (context.isDryrun()) {
+                        context.getLogger().debug("creating release {}", tagName);
+                        createRelease(api, tagName, changelog, false);
+                        return;
+                    }
+
                     throw new IllegalStateException("Gitlab release failed because release " +
                         tagName + " already exists. overwrite = false; update = false");
                 }

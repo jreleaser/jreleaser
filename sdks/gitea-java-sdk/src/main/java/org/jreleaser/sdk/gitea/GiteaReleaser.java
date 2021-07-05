@@ -108,6 +108,12 @@ public class GiteaReleaser implements Releaser {
                         }
                     }
                 } else {
+                    if (context.isDryrun()) {
+                        context.getLogger().debug("creating release {}", tagName);
+                        createRelease(api, tagName, changelog, false);
+                        return;
+                    }
+
                     throw new IllegalStateException(capitalize(gitea.getServiceName()) + " release failed because release " +
                         tagName + " already exists. overwrite = false; update = false");
                 }
