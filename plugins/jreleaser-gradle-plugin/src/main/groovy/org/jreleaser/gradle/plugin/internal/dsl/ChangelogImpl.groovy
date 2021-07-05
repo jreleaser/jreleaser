@@ -51,6 +51,7 @@ class ChangelogImpl implements Changelog {
     final RegularFileProperty contentTemplate
     final SetProperty<String> includeLabels
     final SetProperty<String> excludeLabels
+    final SetProperty<String> hiddenCategories
 
     private final List<CategoryImpl> categories = []
     private final Set<LabelerImpl> labelers = []
@@ -71,6 +72,7 @@ class ChangelogImpl implements Changelog {
         contentTemplate = objects.fileProperty().convention(Providers.notDefined())
         includeLabels = objects.setProperty(String).convention(Providers.notDefined())
         excludeLabels = objects.setProperty(String).convention(Providers.notDefined())
+        hiddenCategories = objects.setProperty(String).convention(Providers.notDefined())
     }
 
     @Override
@@ -93,6 +95,7 @@ class ChangelogImpl implements Changelog {
             contentTemplate.present ||
             includeLabels.present ||
             excludeLabels.present ||
+            hiddenCategories.present ||
             !categories.isEmpty() ||
             !labelers.isEmpty() ||
             !replacers.isEmpty()
@@ -114,6 +117,13 @@ class ChangelogImpl implements Changelog {
     void excludeLabel(String label) {
         if (isNotBlank(label)) {
             excludeLabels.add(label.trim())
+        }
+    }
+
+    @Override
+    void hideCategory(String category) {
+        if (isNotBlank(category)) {
+            hiddenCategories.add(category.trim())
         }
     }
 
@@ -178,6 +188,7 @@ class ChangelogImpl implements Changelog {
         }
         changelog.includeLabels = (Set<String>) includeLabels.getOrElse([] as Set)
         changelog.excludeLabels = (Set<String>) excludeLabels.getOrElse([] as Set)
+        changelog.hiddenCategories = (Set<String>) hiddenCategories.getOrElse([] as Set)
         changelog.setCategories(categories.collect([]) { CategoryImpl category ->
             category.toModel()
         } as List<org.jreleaser.model.Changelog.Category>)

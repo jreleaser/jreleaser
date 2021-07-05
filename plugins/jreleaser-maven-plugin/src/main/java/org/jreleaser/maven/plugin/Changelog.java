@@ -37,6 +37,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Changelog implements EnabledAware {
     private final Set<String> includeLabels = new LinkedHashSet<>();
     private final Set<String> excludeLabels = new LinkedHashSet<>();
+    private final Set<String> hiddenCategories = new LinkedHashSet<>();
     private final List<Category> categories = new ArrayList<>();
     private final Set<Replacer> replacers = new LinkedHashSet<>();
     private final Set<Labeler> labelers = new LinkedHashSet<>();
@@ -61,6 +62,7 @@ public class Changelog implements EnabledAware {
         this.content = changelog.content;
         this.contentTemplate = changelog.contentTemplate;
         this.hideUncategorized = changelog.hideUncategorized;
+        setHiddenCategories(changelog.hiddenCategories);
         setIncludeLabels(changelog.includeLabels);
         setExcludeLabels(changelog.excludeLabels);
         setCategories(changelog.categories);
@@ -131,6 +133,15 @@ public class Changelog implements EnabledAware {
 
     public boolean isFormattedSet() {
         return formatted != null;
+    }
+
+    public Set<String> getHiddenCategories() {
+        return hiddenCategories;
+    }
+
+    public void setHiddenCategories(Set<String> hiddenCategories) {
+        this.hiddenCategories.clear();
+        this.hiddenCategories.addAll(hiddenCategories.stream().map(String::toLowerCase).collect(Collectors.toSet()));
     }
 
     public Set<String> getIncludeLabels() {

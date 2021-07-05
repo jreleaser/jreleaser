@@ -41,6 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Changelog implements Domain, EnabledAware {
     private final Set<String> includeLabels = new LinkedHashSet<>();
     private final Set<String> excludeLabels = new LinkedHashSet<>();
+    private final Set<String> hiddenCategories = new LinkedHashSet<>();
     private final List<Category> categories = new ArrayList<>();
     private final Set<Replacer> replacers = new LinkedHashSet<>();
     private final Set<Labeler> labelers = new LinkedHashSet<>();
@@ -65,6 +66,7 @@ public class Changelog implements Domain, EnabledAware {
         this.content = changelog.content;
         this.contentTemplate = changelog.contentTemplate;
         this.hideUncategorized = changelog.hideUncategorized;
+        setHiddenCategories(changelog.hiddenCategories);
         setIncludeLabels(changelog.includeLabels);
         setExcludeLabels(changelog.excludeLabels);
         setCategories(changelog.categories);
@@ -152,6 +154,28 @@ public class Changelog implements Domain, EnabledAware {
 
     public boolean isFormattedSet() {
         return formatted != null;
+    }
+
+    public Set<String> getHiddenCategories() {
+        return hiddenCategories;
+    }
+
+    public void setHiddenCategories(Set<String> hiddenCategories) {
+        this.hiddenCategories.clear();
+        this.hiddenCategories.addAll(hiddenCategories);
+    }
+
+    public void addHiddenCategory(String category) {
+        if (isNotBlank(category)) {
+            this.hiddenCategories.add(category.trim());
+        }
+    }
+
+    public boolean containsHiddenCategory(String category) {
+        if (isNotBlank(category)) {
+            return this.hiddenCategories.contains(category.trim());
+        }
+        return false;
     }
 
     public Set<String> getIncludeLabels() {
@@ -247,6 +271,7 @@ public class Changelog implements Domain, EnabledAware {
         map.put("includeLabels", includeLabels);
         map.put("excludeLabels", excludeLabels);
         map.put("hideUncategorized", hideUncategorized);
+        map.put("hiddenCategories", hiddenCategories);
         map.put("categories", categories.stream().map(c -> c.asMap(full)).collect(toList()));
         map.put("replacers", replacers.stream().map(r -> r.asMap(full)).collect(toList()));
         map.put("labelers", labelers.stream().map(l -> l.asMap(full)).collect(toList()));

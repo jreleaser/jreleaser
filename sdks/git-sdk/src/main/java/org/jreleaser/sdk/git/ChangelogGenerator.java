@@ -280,7 +280,7 @@ public class ChangelogGenerator {
         StringBuilder changes = new StringBuilder();
         for (Changelog.Category category : changelog.getCategories()) {
             String categoryTitle = category.getTitle();
-            if (!categories.containsKey(categoryTitle)) continue;
+            if (!categories.containsKey(categoryTitle) || changelog.containsHiddenCategory(categoryTitle)) continue;
 
             changes.append("## ")
                 .append(categoryTitle)

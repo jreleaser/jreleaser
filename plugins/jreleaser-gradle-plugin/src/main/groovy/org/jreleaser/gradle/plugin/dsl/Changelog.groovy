@@ -57,6 +57,10 @@ interface Changelog {
 
     SetProperty<String> getExcludeLabels()
 
+    SetProperty<String> getHiddenCategories()
+
+    void hideCategory(String category)
+
     void includeLabel(String label)
 
     void excludeLabel(String label)

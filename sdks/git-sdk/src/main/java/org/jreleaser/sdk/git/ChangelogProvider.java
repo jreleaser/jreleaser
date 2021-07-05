@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -46,7 +47,7 @@ public class ChangelogProvider {
         context.getLogger().debug(content);
 
         Files.createDirectories(changelogFile.getParent());
-        Files.write(changelogFile, content.getBytes(), CREATE, WRITE);
+        Files.write(changelogFile, content.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
 
         return content;
     }

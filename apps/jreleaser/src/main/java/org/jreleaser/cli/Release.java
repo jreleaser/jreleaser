@@ -44,7 +44,7 @@ public class Release extends AbstractModelCommand {
     boolean dryrun;
 
     @CommandLine.Option(names = {"--auto-config"},
-        description = "Model auto configuration..")
+        description = "Model auto configuration.")
     boolean autoConfig;
 
     @CommandLine.Option(names = {"--project-name"},
