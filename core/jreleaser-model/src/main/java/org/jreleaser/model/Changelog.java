@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -162,7 +163,7 @@ public class Changelog implements Domain, EnabledAware {
 
     public void setHiddenCategories(Set<String> hiddenCategories) {
         this.hiddenCategories.clear();
-        this.hiddenCategories.addAll(hiddenCategories);
+        this.hiddenCategories.addAll(hiddenCategories.stream().map(String::trim).collect(Collectors.toSet()));
     }
 
     public void addHiddenCategory(String category) {
@@ -184,7 +185,7 @@ public class Changelog implements Domain, EnabledAware {
 
     public void setIncludeLabels(Set<String> includeLabels) {
         this.includeLabels.clear();
-        this.includeLabels.addAll(includeLabels);
+        this.includeLabels.addAll(includeLabels.stream().map(String::trim).collect(Collectors.toSet()));
     }
 
     public Set<String> getExcludeLabels() {
@@ -193,7 +194,7 @@ public class Changelog implements Domain, EnabledAware {
 
     public void setExcludeLabels(Set<String> excludeLabels) {
         this.excludeLabels.clear();
-        this.excludeLabels.addAll(excludeLabels);
+        this.excludeLabels.addAll(excludeLabels.stream().map(String::trim).collect(Collectors.toSet()));
     }
 
     public List<Category> getCategories() {

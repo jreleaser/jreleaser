@@ -141,7 +141,7 @@ public class Changelog implements EnabledAware {
 
     public void setHiddenCategories(Set<String> hiddenCategories) {
         this.hiddenCategories.clear();
-        this.hiddenCategories.addAll(hiddenCategories.stream().map(String::toLowerCase).collect(Collectors.toSet()));
+        this.hiddenCategories.addAll(hiddenCategories);
     }
 
     public Set<String> getIncludeLabels() {
