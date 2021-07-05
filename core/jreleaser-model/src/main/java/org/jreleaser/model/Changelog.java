@@ -272,9 +272,28 @@ public class Changelog implements Domain, EnabledAware {
         map.put("excludeLabels", excludeLabels);
         map.put("hideUncategorized", hideUncategorized);
         map.put("hiddenCategories", hiddenCategories);
-        map.put("categories", categories.stream().map(c -> c.asMap(full)).collect(toList()));
-        map.put("replacers", replacers.stream().map(r -> r.asMap(full)).collect(toList()));
-        map.put("labelers", labelers.stream().map(l -> l.asMap(full)).collect(toList()));
+
+        Map<String, Map<String, Object>> m = new LinkedHashMap<>();
+        int i = 0;
+        for (Category category : categories) {
+            m.put("category " + (i++), category.asMap(full));
+        }
+        map.put("categories", m);
+
+        m = new LinkedHashMap<>();
+        i = 0;
+        for (Labeler labeler : labelers) {
+            m.put("labeler " + (i++), labeler.asMap(full));
+        }
+        map.put("labelers", m);
+
+        m = new LinkedHashMap<>();
+        i = 0;
+        for (Replacer replacer : replacers) {
+            m.put("replacer " + (i++), replacer.asMap(full));
+        }
+        map.put("replacers", m);
+
         return map;
     }
 
