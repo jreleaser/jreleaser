@@ -93,8 +93,12 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
     }
 
     private Artifact nativeImage(Path assembleDirectory, Path graalPath, Set<Path> jars) throws AssemblerProcessingException {
+        String finalImageName = assembler.getName() + "-" +
+            context.getModel().getProject().getResolvedVersion() + "-" +
+            assembler.getGraal().getPlatform();
+
         String executable = assembler.getExecutable();
-        context.getLogger().info("- {}", executable);
+        context.getLogger().info("- {}", finalImageName);
 
         Path image = assembleDirectory.resolve(executable).toAbsolutePath();
         try {
@@ -127,13 +131,15 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
 
         try {
             Path tempDirectory = Files.createTempDirectory("jreleaser");
-            Path binDirectory = tempDirectory.resolve("bin");
+            Path distDirectory = tempDirectory.resolve(finalImageName);
+            Files.createDirectories(distDirectory);
+            Path binDirectory = distDirectory.resolve("bin");
             Files.createDirectories(binDirectory);
             Files.copy(image, binDirectory.resolve(image.getFileName()));
-            context.getLogger().debug("copying files to {}", context.relativizeToBasedir(tempDirectory));
-            copyFiles(context, tempDirectory);
+            context.getLogger().debug("copying files to {}", context.relativizeToBasedir(distDirectory));
+            copyFiles(context, distDirectory);
 
-            Path imageZip = assembleDirectory.resolve(assembler.getName() + "-" + context.getModel().getProject().getResolvedVersion() + ".zip");
+            Path imageZip = assembleDirectory.resolve(finalImageName + ".zip");
             FileUtils.zip(tempDirectory, imageZip);
 
             context.getLogger().debug("- {}", imageZip.getFileName());
