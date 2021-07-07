@@ -93,9 +93,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
     }
 
     private Artifact nativeImage(Path assembleDirectory, Path graalPath, Set<Path> jars) throws AssemblerProcessingException {
-        String finalImageName = assembler.getName() + "-" +
-            context.getModel().getProject().getResolvedVersion() + "-" +
-            assembler.getGraal().getPlatform();
+        String finalImageName = assembler.getResolvedImageName(context) + "-" + assembler.getGraal().getPlatform();
 
         String executable = assembler.getExecutable();
         context.getLogger().info("- {}", finalImageName);

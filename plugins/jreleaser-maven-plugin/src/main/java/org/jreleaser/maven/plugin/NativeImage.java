@@ -31,13 +31,24 @@ public class NativeImage extends AbstractAssembler {
     private final List<Glob> jars = new ArrayList<>();
     private final List<Glob> files = new ArrayList<>();
 
+    private String imageName;
+
     void setAll(NativeImage nativeImage) {
         super.setAll(nativeImage);
+        this.imageName = nativeImage.imageName;
         setGraal(nativeImage.graal);
         setMainJar(nativeImage.mainJar);
         setArgs(nativeImage.args);
         setJars(nativeImage.jars);
         setFiles(nativeImage.files);
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     public Artifact getGraal() {

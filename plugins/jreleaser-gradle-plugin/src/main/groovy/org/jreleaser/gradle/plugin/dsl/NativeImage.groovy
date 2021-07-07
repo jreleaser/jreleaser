@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 
 /**
  *
@@ -28,6 +29,8 @@ import org.gradle.api.provider.ListProperty
  */
 @CompileStatic
 interface NativeImage extends Assembler {
+    Property<String> getImageName()
+
     ListProperty<String> getArgs()
 
     void addArg(String arg)

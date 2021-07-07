@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -37,6 +38,8 @@ public class NativeImage extends AbstractAssembler {
     private final List<Glob> jars = new ArrayList<>();
     private final List<Glob> files = new ArrayList<>();
 
+    private String imageName;
+
     public NativeImage() {
         super(NAME);
     }
@@ -48,11 +51,26 @@ public class NativeImage extends AbstractAssembler {
 
     void setAll(NativeImage nativeImage) {
         super.setAll(nativeImage);
+        this.imageName = nativeImage.imageName;
         setGraal(nativeImage.graal);
         setMainJar(nativeImage.mainJar);
         setArgs(nativeImage.args);
         setJars(nativeImage.jars);
         setFiles(nativeImage.files);
+    }
+
+    public String getResolvedImageName(JReleaserContext context) {
+        Map<String, Object> props = context.props();
+        props.putAll(props());
+        return applyTemplate(imageName, props);
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     public Artifact getGraal() {
@@ -136,6 +154,7 @@ public class NativeImage extends AbstractAssembler {
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
+        props.put("imageName", imageName);
         props.put("graal", graal.asMap(full));
         props.put("args", args);
         Map<String, Map<String, Object>> mappedJars = new LinkedHashMap<>();

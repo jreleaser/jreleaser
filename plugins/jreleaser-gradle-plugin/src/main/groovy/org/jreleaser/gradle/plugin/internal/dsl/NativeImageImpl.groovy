@@ -24,6 +24,7 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Glob
 import org.jreleaser.gradle.plugin.dsl.NativeImage
@@ -42,6 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class NativeImageImpl extends AbstractAssembler implements NativeImage {
     String name
+    final Property<String> imageName
     final ListProperty<String> args
     final JavaImpl java
 
@@ -54,6 +56,7 @@ class NativeImageImpl extends AbstractAssembler implements NativeImage {
     NativeImageImpl(ObjectFactory objects) {
         super(objects)
 
+        imageName = objects.property(String).convention(Providers.notDefined())
         args = objects.listProperty(String).convention(Providers.notDefined())
         java = objects.newInstance(JavaImpl, objects)
         graal = objects.newInstance(ArtifactImpl, objects)
@@ -135,6 +138,7 @@ class NativeImageImpl extends AbstractAssembler implements NativeImage {
         nativeImage.name = name
         fillProperties(nativeImage)
         nativeImage.java = java.toModel()
+        if (imageName.present) nativeImage.imageName = imageName.get()
         nativeImage.args = (List<String>) args.getOrElse([])
         nativeImage.graal = graal.toModel()
         nativeImage.mainJar = mainJar.toModel()

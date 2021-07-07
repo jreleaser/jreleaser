@@ -39,16 +39,18 @@ public abstract class NativeImageResolver extends Validator {
     }
 
     private static void resolveNativeImageOutputs(JReleaserContext context, NativeImage nativeImage, Errors errors) {
+        String platform = nativeImage.getGraal().getPlatform();
+
         Path image = context.getAssembleDirectory()
             .resolve(nativeImage.getName())
             .resolve(nativeImage.getType())
-            .resolve(nativeImage.getName() + "-" + context.getModel().getProject().getResolvedVersion() + ".zip");
+            .resolve(nativeImage.getResolvedImageName(context) + "-" + platform + ".zip");
 
         if (!Files.exists(image)) {
             errors.assembly("Missing outputs for " + nativeImage.getType() + "." + nativeImage.getName() +
                 ". Distribution " + nativeImage.getName() + " has not been assembled.");
         } else {
-            nativeImage.addOutput(Artifact.of(image, nativeImage.getGraal().getPlatform()));
+            nativeImage.addOutput(Artifact.of(image, platform));
         }
     }
 }
