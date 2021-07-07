@@ -60,6 +60,10 @@ public abstract class NativeImageValidator extends Validator {
         if (isBlank(nativeImage.getExecutable())) {
             nativeImage.setExecutable(nativeImage.getName());
         }
+        if (isBlank(nativeImage.getImageName())) {
+            nativeImage.setImageName(nativeImage.getExecutable() + "-" +
+                context.getModel().getProject().getResolvedVersion());
+        }
 
         if (isBlank(nativeImage.getGraal().getPath())) {
             nativeImage.getGraal().setPath(System.getProperty("java.home"));
