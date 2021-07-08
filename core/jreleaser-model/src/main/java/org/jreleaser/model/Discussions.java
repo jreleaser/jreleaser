@@ -69,7 +69,7 @@ public class Discussions extends AbstractAnnouncer {
         Map<String, Object> props = context.props();
         applyTemplates(props, getResolvedExtraProperties());
         props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getGitService()
-            .getEffectiveTagName(context.getModel()));
+            .getEffectiveTagName());
         props.putAll(extraProps);
 
         Path templatePath = context.getBasedir().resolve(messageTemplate);

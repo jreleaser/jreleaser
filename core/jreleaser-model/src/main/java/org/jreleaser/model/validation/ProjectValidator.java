@@ -18,6 +18,7 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.VersionPattern;
@@ -66,6 +67,10 @@ public abstract class ProjectValidator extends Validator {
                 "project.snapshotPattern",
                 project.getSnapshotPattern(),
                 DEFAULT_SNAPSHOT_PATTERN));
+
+        if (project.isSnapshot()) {
+            context.getModel().getRelease().getGitService().setTagName(GitService.TAG_EARLY_ACCESS);
+        }
 
         boolean javaDistributions = context.getModel().getDistributions().values().stream()
             .map(Distribution::getType)

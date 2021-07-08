@@ -166,7 +166,7 @@ public class ChangelogGenerator {
         List<Ref> tags = git.tagList().call();
 
         GitService gitService = context.getModel().getRelease().getGitService();
-        String effectiveTagName = gitService.getEffectiveTagName(context.getModel());
+        String effectiveTagName = gitService.getEffectiveTagName();
         String tagName = gitService.getConfiguredTagName();
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
         Pattern vp = Pattern.compile(tagName.replaceAll("\\{\\{.*}}", "\\(\\.\\*\\)"));

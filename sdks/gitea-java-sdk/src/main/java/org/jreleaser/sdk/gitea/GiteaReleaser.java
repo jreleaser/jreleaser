@@ -61,7 +61,7 @@ public class GiteaReleaser implements Releaser {
     public void release() throws ReleaseException {
         org.jreleaser.model.Gitea gitea = resolveGiteaFromModel();
         context.getLogger().info("Releasing to {}", gitea.getResolvedRepoUrl(context.getModel()));
-        String tagName = gitea.getEffectiveTagName(context.getModel());
+        String tagName = gitea.getEffectiveTagName();
 
         try {
             String changelog = context.getChangelog();

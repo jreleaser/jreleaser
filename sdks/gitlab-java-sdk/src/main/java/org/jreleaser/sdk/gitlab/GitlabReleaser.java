@@ -52,7 +52,7 @@ public class GitlabReleaser implements Releaser {
     public void release() throws ReleaseException {
         org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
         context.getLogger().info("Releasing to {}", gitlab.getResolvedRepoUrl(context.getModel()));
-        String tagName = gitlab.getEffectiveTagName(context.getModel());
+        String tagName = gitlab.getEffectiveTagName();
 
         try {
             String changelog = context.getChangelog();

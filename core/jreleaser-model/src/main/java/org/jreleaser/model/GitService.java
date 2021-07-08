@@ -145,7 +145,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
 
     public String getResolvedTagName(JReleaserModel model) {
         if (isBlank(cachedTagName)) {
-            cachedTagName = Env.resolve(TAG_NAME, cachedTagName);
+            cachedTagName = getConfiguredTagName();
         }
 
         if (isBlank(cachedTagName)) {
@@ -157,17 +157,17 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         return cachedTagName;
     }
 
-    public String getEffectiveTagName(JReleaserModel model) {
-        if (model.getProject().isSnapshot()) {
-            return TAG_EARLY_ACCESS;
-        }
-
+    public String getEffectiveTagName() {
         return cachedTagName;
+    }
+
+    public String getConfiguredReleaseName() {
+        return Env.resolve(RELEASE_NAME, cachedReleaseName);
     }
 
     public String getResolvedReleaseName(JReleaserModel model) {
         if (isBlank(cachedReleaseName)) {
-            cachedReleaseName = Env.resolve(RELEASE_NAME, cachedReleaseName);
+            cachedReleaseName = getConfiguredReleaseName();
         }
 
         if (isBlank(cachedReleaseName)) {
@@ -620,6 +620,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
         props.put(Constants.KEY_PROJECT_EFFECTIVE_VERSION, project.getEffectiveVersion());
+        props.put(Constants.KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
         if (isNotBlank(project.getDescription())) {
             props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
         }
@@ -687,7 +688,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put(Constants.KEY_REPO_BRANCH, branch);
         props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, getEffectiveTagName(model));
+        props.put(Constants.KEY_TAG_NAME, getEffectiveTagName());
         props.put(Constants.KEY_RELEASE_NAME, getEffectiveReleaseName());
         props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
         props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(model));

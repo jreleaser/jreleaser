@@ -56,7 +56,7 @@ public class Teams extends AbstractAnnouncer {
         Map<String, Object> props = context.props();
         applyTemplates(props, getResolvedExtraProperties());
         props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService()
-            .getEffectiveTagName(context.getModel()));
+            .getEffectiveTagName());
         props.putAll(extraProps);
 
         Path templatePath = context.getBasedir().resolve(messageTemplate);

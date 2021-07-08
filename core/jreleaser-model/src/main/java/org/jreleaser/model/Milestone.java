@@ -42,13 +42,13 @@ public class Milestone implements Domain {
         this.name = changelog.name;
     }
 
-    public String getEffectiveName() {
-        return cachedName;
+    public String getConfiguredName() {
+        return Env.resolve(MILESTONE_NAME, cachedName);
     }
 
     public String getResolvedName(Map<String, Object> props) {
         if (isBlank(cachedName)) {
-            cachedName = Env.resolve(MILESTONE_NAME, cachedName);
+            cachedName = getConfiguredName();
         }
 
         if (isBlank(cachedName)) {
@@ -57,6 +57,10 @@ public class Milestone implements Domain {
             cachedName = applyTemplate(cachedName, props);
         }
 
+        return cachedName;
+    }
+
+    public String getEffectiveName() {
         return cachedName;
     }
 

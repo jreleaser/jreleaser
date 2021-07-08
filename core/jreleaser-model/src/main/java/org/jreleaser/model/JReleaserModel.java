@@ -241,6 +241,7 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
         props.put(Constants.KEY_PROJECT_EFFECTIVE_VERSION, project.getEffectiveVersion());
+        props.put(Constants.KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
         if (isNotBlank(project.getDescription())) {
             props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
         }
@@ -290,7 +291,7 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_REPO_OWNER, service.getOwner());
         props.put(Constants.KEY_REPO_NAME, service.getName());
         props.put(Constants.KEY_REPO_BRANCH, service.getBranch());
-        props.put(Constants.KEY_TAG_NAME, service.getEffectiveTagName(this));
+        props.put(Constants.KEY_TAG_NAME, service.getEffectiveTagName());
         props.put(Constants.KEY_RELEASE_NAME, service.getEffectiveReleaseName());
         props.put(Constants.KEY_MILESTONE_NAME, service.getMilestone().getEffectiveName());
         props.put(Constants.KEY_REVERSE_REPO_HOST, service.getReverseRepoHost());

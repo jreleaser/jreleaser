@@ -26,7 +26,6 @@ import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.util.Errors;
-import org.jreleaser.util.StringUtils;
 
 import java.nio.file.Files;
 import java.util.List;
@@ -178,13 +177,10 @@ public abstract class GitServiceValidator extends Validator {
         }
 
         if (project.isSnapshot()) {
-            String projectName = StringUtils.getClassNameForLowerCaseHyphenSeparatedName(project.getName());
-            projectName = StringUtils.getNaturalName(projectName);
             service.getChangelog().setEnabled(true);
             service.getChangelog().setExternal(null);
             service.getChangelog().setSort(Changelog.Sort.DESC);
             if (service.isReleaseSupported()) {
-                service.setReleaseName(projectName + " Early-Access");
                 service.setOverwrite(true);
             }
         }
