@@ -25,6 +25,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.model.VersionPattern
@@ -56,6 +57,7 @@ class ProjectImpl implements Project {
     final ListProperty<String> tags
     final MapProperty<String, Object> extraProperties
     final JavaImpl java
+    final SnapshotImpl snapshot
 
     @Inject
     ProjectImpl(ObjectFactory objects,
@@ -78,6 +80,7 @@ class ProjectImpl implements Project {
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
 
         java = objects.newInstance(JavaImpl, objects)
+        snapshot = objects.newInstance(SnapshotImpl, objects)
     }
 
     @Override
@@ -111,6 +114,16 @@ class ProjectImpl implements Project {
         ConfigureUtil.configure(action, java)
     }
 
+    @Override
+    void snapshot(Action<? super Snapshot> action) {
+        action.execute(snapshot)
+    }
+
+    @Override
+    void snapshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snapshot) Closure<Void> action) {
+        ConfigureUtil.configure(action, snapshot)
+    }
+
     org.jreleaser.model.Project toModel() {
         org.jreleaser.model.Project project = new org.jreleaser.model.Project()
         project.name = name.get()
@@ -128,6 +141,32 @@ class ProjectImpl implements Project {
         project.tags = (List<String>) tags.getOrElse([])
         if (extraProperties.present) project.extraProperties.putAll(extraProperties.get())
         project.java = java.toModel()
+        project.snapshot = snapshot.toModel()
         project
+    }
+
+    @CompileStatic
+    static class SnapshotImpl implements Snapshot {
+        final Property<String> pattern
+        final Property<String> label
+
+        @Inject
+        SnapshotImpl(ObjectFactory objects) {
+            pattern = objects.property(String).convention(Providers.notDefined())
+            label = objects.property(String).convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            pattern.present ||
+                label.present
+        }
+
+        org.jreleaser.model.Project.Snapshot toModel() {
+            org.jreleaser.model.Project.Snapshot snapshot = new org.jreleaser.model.Project.Snapshot()
+            if (pattern.present) snapshot.pattern = pattern.get()
+            if (label.present) snapshot.label = label.get()
+            snapshot
+        }
     }
 }

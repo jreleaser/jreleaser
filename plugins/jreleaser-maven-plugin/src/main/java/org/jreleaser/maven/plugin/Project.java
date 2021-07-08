@@ -31,6 +31,7 @@ public class Project implements ExtraProperties {
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Java java = new Java();
+    private final Snapshot snapshot = new Snapshot();
     private String name;
     private String version;
     private VersionPattern versionPattern;
@@ -55,7 +56,8 @@ public class Project implements ExtraProperties {
         this.copyright = project.copyright;
         this.vendor = project.vendor;
         this.docsUrl = project.docsUrl;
-        this.java.setAll(project.java);
+        setJava(project.java);
+        setSnapshot(project.snapshot);
         setAuthors(project.authors);
         setTags(project.tags);
         setExtraProperties(project.extraProperties);
@@ -89,12 +91,22 @@ public class Project implements ExtraProperties {
         return versionPattern != null ? versionPattern.name() : null;
     }
 
+    @Deprecated
     public String getSnapshotPattern() {
         return snapshotPattern;
     }
 
+    @Deprecated
     public void setSnapshotPattern(String snapshotPattern) {
         this.snapshotPattern = snapshotPattern;
+    }
+
+    public Snapshot getSnapshot() {
+        return snapshot;
+    }
+
+    public void setSnapshot(Snapshot snapshot) {
+        this.snapshot.setAll(snapshot);
     }
 
     public String getDescription() {
@@ -188,5 +200,31 @@ public class Project implements ExtraProperties {
     public void setTags(List<String> tags) {
         this.tags.clear();
         this.tags.addAll(tags);
+    }
+
+    public static class Snapshot {
+        private String pattern;
+        private String label;
+
+        void setAll(Snapshot snapshot) {
+            this.pattern = snapshot.pattern;
+            this.label = snapshot.label;
+        }
+
+        public String getPattern() {
+            return pattern;
+        }
+
+        public void setPattern(String pattern) {
+            this.pattern = pattern;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
     }
 }

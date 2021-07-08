@@ -18,18 +18,20 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Distribution;
-import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.VersionPattern;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_LABEL;
 import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Project.PROJECT_NAME;
+import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_LABEL;
 import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Project.PROJECT_VERSION;
 import static org.jreleaser.model.Project.PROJECT_VERSION_PATTERN;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -61,15 +63,27 @@ public abstract class ProjectValidator extends Validator {
                 project.getVersionPattern(),
                 VersionPattern.SEMVER));
 
-        project.setSnapshotPattern(
+        project.getSnapshot().setPattern(
             checkProperty(context.getModel().getEnvironment(),
                 PROJECT_SNAPSHOT_PATTERN,
-                "project.snapshotPattern",
-                project.getSnapshotPattern(),
+                "project.snapshot.pattern",
+                project.getSnapshot().getPattern(),
                 DEFAULT_SNAPSHOT_PATTERN));
 
+        project.getSnapshot().setLabel(
+            checkProperty(context.getModel().getEnvironment(),
+                PROJECT_SNAPSHOT_LABEL,
+                "project.snapshot.label",
+                project.getSnapshot().getLabel(),
+                DEFAULT_SNAPSHOT_LABEL));
+
+        if(isNotBlank(project.getSnapshotPattern())) {
+            context.nag("0.6.0", "project.snapshotPattern has been deprecated. Use project.snapshot.pattern instead");
+        }
+
         if (project.isSnapshot()) {
-            context.getModel().getRelease().getGitService().setTagName(GitService.TAG_EARLY_ACCESS);
+            context.getModel().getRelease().getGitService().setTagName(
+                project.getSnapshot().getResolvedLabel(context.getModel()));
         }
 
         boolean javaDistributions = context.getModel().getDistributions().values().stream()

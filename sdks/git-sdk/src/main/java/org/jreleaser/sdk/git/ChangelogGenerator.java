@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.lang.System.lineSeparator;
-import static org.jreleaser.model.GitService.TAG_EARLY_ACCESS;
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
 import static org.jreleaser.util.ComparatorUtils.lessThan;
 import static org.jreleaser.util.Constants.KEY_CHANGELOG_CHANGES;
@@ -189,7 +188,8 @@ public class ChangelogGenerator {
             .findFirst();
 
         // tag: early-access
-        if (TAG_EARLY_ACCESS.equals(effectiveTagName)) {
+        String effectiveLabel = context.getModel().getProject().getSnapshot().getEffectiveLabel();
+        if (effectiveLabel.equals(effectiveTagName)) {
             if (!tag.isPresent()) {
                 context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
 

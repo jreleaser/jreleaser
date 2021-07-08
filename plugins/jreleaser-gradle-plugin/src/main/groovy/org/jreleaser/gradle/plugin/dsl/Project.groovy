@@ -38,6 +38,7 @@ interface Project extends ExtraProperties {
 
     void setVersionPattern(String str)
 
+    @Deprecated
     Property<String> getSnapshotPattern()
 
     Property<String> getDescription()
@@ -64,7 +65,19 @@ interface Project extends ExtraProperties {
 
     Java getJava()
 
+    Snapshot getSnapshot()
+
     void java(Action<? super Java> action)
 
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
+
+    void snapshot(Action<? super Snapshot> action)
+
+    void snapshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snapshot) Closure<Void> action)
+
+    interface Snapshot {
+        Property<String> getPattern()
+
+        Property<String> getLabel()
+    }
 }

@@ -49,8 +49,6 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     public static final String SKIP_TAG = "SKIP_TAG";
     public static final String BRANCH = "BRANCH";
 
-    public static final String TAG_EARLY_ACCESS = "early-access";
-
     private final String serviceName;
     private final Changelog changelog = new Changelog();
     private final Milestone milestone = new Milestone();
@@ -672,7 +670,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put(Constants.KEY_REPO_BRANCH, branch);
         props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, project.isSnapshot() ? TAG_EARLY_ACCESS : cachedTagName);
+        props.put(Constants.KEY_TAG_NAME, project.isSnapshot() ? project.getSnapshot().getResolvedLabel(model) : cachedTagName);
         props.put(Constants.KEY_RELEASE_NAME, cachedReleaseName);
         props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
 

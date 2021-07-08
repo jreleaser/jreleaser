@@ -17,14 +17,21 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
+import org.jreleaser.util.MustacheUtils;
+import org.jreleaser.util.OsDetector;
+import org.jreleaser.util.PlatformUtils;
+import org.jreleaser.util.Version;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jreleaser.model.GitService.TAG_EARLY_ACCESS;
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.MustacheUtils.applyTemplates;
+import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -37,12 +44,15 @@ public class Project implements Domain, ExtraProperties {
     public static final String PROJECT_VERSION = "PROJECT_VERSION";
     public static final String PROJECT_VERSION_PATTERN = "PROJECT_VERSION_PATTERN";
     public static final String PROJECT_SNAPSHOT_PATTERN = "PROJECT_SNAPSHOT_PATTERN";
+    public static final String PROJECT_SNAPSHOT_LABEL = "PROJECT_SNAPSHOT_LABEL";
     public static final String DEFAULT_SNAPSHOT_PATTERN = ".*-SNAPSHOT";
+    public static final String DEFAULT_SNAPSHOT_LABEL = "early-access";
 
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Java java = new Java();
+    private final Snapshot snapshot = new Snapshot();
     private String name;
     private String version;
     private VersionPattern versionPattern;
@@ -54,7 +64,6 @@ public class Project implements Domain, ExtraProperties {
     private String vendor;
     private String docsUrl;
     private String snapshotPattern;
-    private Boolean snapshot;
 
     void setAll(Project project) {
         this.name = project.name;
@@ -68,7 +77,8 @@ public class Project implements Domain, ExtraProperties {
         this.copyright = project.copyright;
         this.vendor = project.vendor;
         this.docsUrl = project.docsUrl;
-        this.java.setAll(project.java);
+        setJava(project.java);
+        setSnapshot(project.snapshot);
         setAuthors(project.authors);
         setTags(project.tags);
         setExtraProperties(project.extraProperties);
@@ -81,17 +91,14 @@ public class Project implements Domain, ExtraProperties {
 
     public String getEffectiveVersion() {
         if (isSnapshot()) {
-            return TAG_EARLY_ACCESS;
+            return getSnapshot().getEffectiveLabel();
         }
 
         return getResolvedVersion();
     }
 
     public boolean isSnapshot() {
-        if (null == snapshot) {
-            snapshot = getResolvedVersion().matches(getResolvedSnapshotPattern());
-        }
-        return snapshot;
+        return snapshot.isSnapshot(getResolvedVersion());
     }
 
     public boolean isRelease() {
@@ -144,12 +151,23 @@ public class Project implements Domain, ExtraProperties {
         this.versionPattern = VersionPattern.of(str);
     }
 
+    public Snapshot getSnapshot() {
+        return snapshot;
+    }
+
+    public void setSnapshot(Snapshot snapshot) {
+        this.snapshot.setAll(snapshot);
+    }
+
+    @Deprecated
     public String getSnapshotPattern() {
         return snapshotPattern;
     }
 
+    @Deprecated
     public void setSnapshotPattern(String snapshotPattern) {
         this.snapshotPattern = snapshotPattern;
+        this.snapshot.setPattern(snapshotPattern);
     }
 
     public String getDescription() {
@@ -288,8 +306,7 @@ public class Project implements Domain, ExtraProperties {
         map.put("name", name);
         map.put("version", version);
         map.put("versionPattern", versionPattern);
-        map.put("snapshotPattern", snapshotPattern);
-        map.put("snapshot", isSnapshot());
+        map.put("snapshot", snapshot.asMap(full));
         map.put("description", description);
         map.put("longDescription", longDescription);
         map.put("website", website);
@@ -304,5 +321,143 @@ public class Project implements Domain, ExtraProperties {
             map.put("java", java.asMap(full));
         }
         return map;
+    }
+
+    public static class Snapshot implements Domain {
+        private Boolean enabled;
+        private String pattern;
+        private String label;
+        private String cachedLabel;
+
+        void setAll(Snapshot snapshot) {
+            this.enabled = snapshot.enabled;
+            this.pattern = snapshot.pattern;
+            this.label = snapshot.label;
+        }
+
+        public boolean isSnapshot(String version) {
+            if (null == enabled) {
+                enabled = version.matches(getResolvedPattern());
+            }
+            return enabled;
+        }
+
+        public String getConfiguredPattern() {
+            return Env.resolve(PROJECT_SNAPSHOT_PATTERN, pattern);
+        }
+
+        public String getResolvedPattern() {
+            pattern = getConfiguredPattern();
+            if (isBlank(pattern)) {
+                pattern = DEFAULT_SNAPSHOT_PATTERN;
+            }
+            return pattern;
+        }
+
+        public String getConfiguredLabel() {
+            return Env.resolve(PROJECT_SNAPSHOT_LABEL, label);
+        }
+
+        public String getResolvedLabel(JReleaserModel model) {
+            if (isBlank(cachedLabel)) {
+                cachedLabel = getConfiguredLabel();
+            }
+
+            if (isBlank(cachedLabel)) {
+                cachedLabel = applyTemplate(label, props(model));
+            } else if (cachedLabel.contains("{{")) {
+                cachedLabel = applyTemplate(cachedLabel, props(model));
+            }
+
+            return cachedLabel;
+        }
+
+        public String getEffectiveLabel() {
+            return cachedLabel;
+        }
+
+        public String getPattern() {
+            return pattern;
+        }
+
+        public void setPattern(String pattern) {
+            this.pattern = pattern;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("enabled", enabled);
+            map.put("pattern", getConfiguredPattern());
+            map.put("label", getConfiguredLabel());
+            return map;
+        }
+
+        public Map<String, Object> props(JReleaserModel model) {
+            // duplicate from JReleaserModel to avoid endless recursion
+            Map<String, Object> props = new LinkedHashMap<>();
+            Project project = model.getProject();
+            props.putAll(model.getEnvironment().getProperties());
+            props.put(Constants.KEY_PROJECT_NAME, project.getName());
+            props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
+            props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
+            props.put(Constants.KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
+            if (isNotBlank(project.getDescription())) {
+                props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
+            }
+            if (isNotBlank(project.getLongDescription())) {
+                props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
+            }
+            if (isNotBlank(project.getWebsite())) {
+                props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
+            }
+            if (isNotBlank(project.getLicense())) {
+                props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+            }
+            if (isNotBlank(project.getDocsUrl())) {
+                props.put(Constants.KEY_PROJECT_DOCS_URL, project.getDocsUrl());
+            }
+            if (isNotBlank(project.getCopyright())) {
+                props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
+            }
+            if (isNotBlank(project.getVendor())) {
+                props.put(Constants.KEY_PROJECT_VENDOR, project.getVendor());
+            }
+
+            if (project.getJava().isEnabled()) {
+                props.putAll(project.getJava().getResolvedExtraProperties());
+                props.put(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
+                props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
+                props.put(Constants.KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());
+                props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
+                Version jv = Version.of(project.getJava().getVersion());
+                props.put(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
+                if (jv.hasMinor()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
+                if (jv.hasPatch()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
+                if (jv.hasTag()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
+                if (jv.hasBuild()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
+            }
+
+            props.putAll(project.getResolvedExtraProperties());
+
+            String osName = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_NAME);
+            String osArch = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_ARCH);
+            props.put(Constants.KEY_OS_NAME, osName);
+            props.put(Constants.KEY_OS_ARCH, osArch);
+            props.put(Constants.KEY_OS_PLATFORM, osName + "-" + osArch);
+            props.put(Constants.KEY_OS_VERSION, PlatformUtils.getOsDetector().get(OsDetector.DETECTED_VERSION));
+
+            applyTemplates(props, project.getResolvedExtraProperties());
+
+            return props;
+        }
     }
 }

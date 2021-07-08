@@ -45,6 +45,7 @@ import org.jreleaser.maven.plugin.Github;
 import org.jreleaser.maven.plugin.Gitlab;
 import org.jreleaser.maven.plugin.Gitter;
 import org.jreleaser.maven.plugin.Glob;
+import org.jreleaser.maven.plugin.GoogleChat;
 import org.jreleaser.maven.plugin.Http;
 import org.jreleaser.maven.plugin.Java;
 import org.jreleaser.maven.plugin.Jbang;
@@ -73,7 +74,6 @@ import org.jreleaser.maven.plugin.Upload;
 import org.jreleaser.maven.plugin.Webhook;
 import org.jreleaser.maven.plugin.Zulip;
 import org.jreleaser.model.ChocolateyBucket;
-import org.jreleaser.maven.plugin.GoogleChat;
 import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JbangCatalog;
@@ -129,6 +129,7 @@ public final class JReleaserModelConverter {
         p.setVersion(project.getVersion());
         p.setVersionPattern(project.resolveVersionPattern());
         p.setSnapshotPattern(project.getSnapshotPattern());
+        p.setSnapshot(convertSnapshot(project.getSnapshot()));
         p.setDescription(project.getDescription());
         p.setLongDescription(project.getLongDescription());
         p.setWebsite(project.getWebsite());
@@ -141,6 +142,13 @@ public final class JReleaserModelConverter {
         p.setExtraProperties(project.getExtraProperties());
         p.setJava(convertJava(project.getJava()));
         return p;
+    }
+
+    private static org.jreleaser.model.Project.Snapshot convertSnapshot(Project.Snapshot snapshot) {
+        org.jreleaser.model.Project.Snapshot s = new org.jreleaser.model.Project.Snapshot();
+        s.setPattern(snapshot.getPattern());
+        s.setLabel(snapshot.getLabel());
+        return s;
     }
 
     private static org.jreleaser.model.Java convertJava(Java java) {
@@ -440,7 +448,7 @@ public final class JReleaserModelConverter {
         return a;
     }
 
-    private static org.jreleaser.model.GoogleChat convertGoogleChat(GoogleChat googleChat){
+    private static org.jreleaser.model.GoogleChat convertGoogleChat(GoogleChat googleChat) {
         org.jreleaser.model.GoogleChat a = new org.jreleaser.model.GoogleChat();
         a.setActive(googleChat.resolveActive());
         a.setWebhook(googleChat.getWebhook());
