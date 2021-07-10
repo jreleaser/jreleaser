@@ -173,10 +173,6 @@ public class ChangelogGenerator {
             vp = Pattern.compile("(.*)");
         }
         Pattern versionPattern = vp;
-        System.out.println("effectiveTagName = " + effectiveTagName);
-        System.out.println("tagName = " + tagName);
-        System.out.println("tagPattern = " + tagPattern);
-        System.out.println("vp = " + vp);
 
         tags.sort((tag1, tag2) -> {
             Comparable v1 = version(context, tag1, versionPattern);
