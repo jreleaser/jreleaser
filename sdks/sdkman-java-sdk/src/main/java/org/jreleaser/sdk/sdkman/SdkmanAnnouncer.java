@@ -68,6 +68,12 @@ public class SdkmanAnnouncer implements Announcer {
                     continue;
                 }
 
+                if (artifact.getExtraProperties().containsKey("skipSdkman")) {
+                    context.getLogger().debug("Artifact {} is explicitly skipped.",
+                        artifact.getEffectivePath(context, distribution).getFileName());
+                    continue;
+                }
+
                 String platform = mapPlatform(artifact.getPlatform());
                 String url = artifactUrl(distribution, artifact);
                 if (platforms.containsKey(platform)) {
@@ -91,8 +97,8 @@ public class SdkmanAnnouncer implements Announcer {
                 MajorReleaseSdkmanCommand.builder(context.getLogger())
                     .connectTimeout(sdkman.getConnectTimeout())
                     .readTimeout(sdkman.getReadTimeout())
-                    .consumerKey(context.isDryrun() ? "**UNDEFINED**" :sdkman.getResolvedConsumerKey())
-                    .consumerToken(context.isDryrun() ? "**UNDEFINED**" :sdkman.getResolvedConsumerToken())
+                    .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getResolvedConsumerKey())
+                    .consumerToken(context.isDryrun() ? "**UNDEFINED**" : sdkman.getResolvedConsumerToken())
                     .candidate(candidate)
                     .version(context.getModel().getProject().getVersion())
                     .platforms(platforms)
@@ -105,8 +111,8 @@ public class SdkmanAnnouncer implements Announcer {
                 MinorReleaseSdkmanCommand.builder(context.getLogger())
                     .connectTimeout(sdkman.getConnectTimeout())
                     .readTimeout(sdkman.getReadTimeout())
-                    .consumerKey(context.isDryrun() ? "**UNDEFINED**" :sdkman.getResolvedConsumerKey())
-                    .consumerToken(context.isDryrun() ? "**UNDEFINED**" :sdkman.getResolvedConsumerToken())
+                    .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getResolvedConsumerKey())
+                    .consumerToken(context.isDryrun() ? "**UNDEFINED**" : sdkman.getResolvedConsumerToken())
                     .candidate(candidate)
                     .version(context.getModel().getProject().getVersion())
                     .platforms(platforms)
