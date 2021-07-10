@@ -47,7 +47,7 @@ public class GenericGitReleaser implements Releaser {
             org.jreleaser.model.GenericGit generic = context.getModel().getRelease().getGeneric();
             context.getLogger().info("Releasing to a generic Git repository is not supported");
             context.getLogger().info("Tagging {}", repository.getHttpUrl());
-            String tagName = generic.getEffectiveTagName();
+            String tagName = generic.getEffectiveTagName(context.getModel());
 
             context.getLogger().debug("looking up tag {}", tagName);
             boolean tagged = git.findTag(tagName);

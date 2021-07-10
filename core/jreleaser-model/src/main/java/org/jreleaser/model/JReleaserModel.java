@@ -291,7 +291,7 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_REPO_OWNER, service.getOwner());
         props.put(Constants.KEY_REPO_NAME, service.getName());
         props.put(Constants.KEY_REPO_BRANCH, service.getBranch());
-        props.put(Constants.KEY_TAG_NAME, service.getEffectiveTagName());
+        props.put(Constants.KEY_TAG_NAME, service.getEffectiveTagName(this));
         props.put(Constants.KEY_RELEASE_NAME, service.getEffectiveReleaseName());
         props.put(Constants.KEY_MILESTONE_NAME, service.getMilestone().getEffectiveName());
         props.put(Constants.KEY_REVERSE_REPO_HOST, service.getReverseRepoHost());

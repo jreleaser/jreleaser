@@ -77,13 +77,8 @@ public abstract class ProjectValidator extends Validator {
                 project.getSnapshot().getLabel(),
                 DEFAULT_SNAPSHOT_LABEL));
 
-        if(isNotBlank(project.getSnapshotPattern())) {
+        if (isNotBlank(project.getSnapshotPattern())) {
             context.nag("0.6.0", "project.snapshotPattern has been deprecated. Use project.snapshot.pattern instead");
-        }
-
-        if (project.isSnapshot()) {
-            context.getModel().getRelease().getGitService().setTagName(
-                project.getSnapshot().getResolvedLabel(context.getModel()));
         }
 
         boolean javaDistributions = context.getModel().getDistributions().values().stream()

@@ -83,14 +83,14 @@ public class Mail extends AbstractAnnouncer {
     public String getResolvedSubject(JReleaserContext context) {
         Map<String, Object> props = context.props();
         applyTemplates(props, getResolvedExtraProperties());
-        props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName());
+        props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
         return applyTemplate(subject, props);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
         Map<String, Object> props = context.props();
         applyTemplates(props, getResolvedExtraProperties());
-        props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName());
+        props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
         return applyTemplate(message, props);
     }
 
@@ -98,7 +98,7 @@ public class Mail extends AbstractAnnouncer {
         Map<String, Object> props = context.props();
         applyTemplates(props, getResolvedExtraProperties());
         props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService()
-            .getEffectiveTagName());
+            .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);
 
         Path templatePath = context.getBasedir().resolve(messageTemplate);

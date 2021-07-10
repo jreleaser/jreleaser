@@ -64,7 +64,7 @@ public class Gitter extends AbstractAnnouncer {
         Map<String, Object> props = context.props();
         applyTemplates(props, getResolvedExtraProperties());
         props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService()
-            .getEffectiveTagName());
+            .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);
 
         Path templatePath = context.getBasedir().resolve(messageTemplate);

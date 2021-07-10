@@ -115,14 +115,6 @@ public class Project implements Domain, ExtraProperties {
         return isNotBlank(resolvedVersion) ? resolvedVersion : "";
     }
 
-    public String getResolvedSnapshotPattern() {
-        snapshotPattern = Env.resolve(PROJECT_SNAPSHOT_PATTERN, snapshotPattern);
-        if (isBlank(snapshotPattern)) {
-            snapshotPattern = DEFAULT_SNAPSHOT_PATTERN;
-        }
-        return snapshotPattern;
-    }
-
     public String getName() {
         return name;
     }

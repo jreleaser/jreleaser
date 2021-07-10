@@ -165,7 +165,7 @@ public class ChangelogGenerator {
         List<Ref> tags = git.tagList().call();
 
         GitService gitService = context.getModel().getRelease().getGitService();
-        String effectiveTagName = gitService.getEffectiveTagName();
+        String effectiveTagName = gitService.getEffectiveTagName(context.getModel());
         String tagName = gitService.getConfiguredTagName();
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
         Pattern vp = Pattern.compile(tagName.replaceAll("\\{\\{.*}}", "\\(\\.\\*\\)"));
@@ -173,6 +173,10 @@ public class ChangelogGenerator {
             vp = Pattern.compile("(.*)");
         }
         Pattern versionPattern = vp;
+        System.out.println("effectiveTagName = " + effectiveTagName);
+        System.out.println("tagName = " + tagName);
+        System.out.println("tagPattern = " + tagPattern);
+        System.out.println("vp = " + vp);
 
         tags.sort((tag1, tag2) -> {
             Comparable v1 = version(context, tag1, versionPattern);

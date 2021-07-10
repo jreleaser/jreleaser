@@ -155,7 +155,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         return cachedTagName;
     }
 
-    public String getEffectiveTagName() {
+    public String getEffectiveTagName(JReleaserModel model) {
+        if (model.getProject().isSnapshot()) {
+            return model.getProject().getSnapshot().getResolvedLabel(model);
+        }
         return cachedTagName;
     }
 
@@ -686,7 +689,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put(Constants.KEY_REPO_BRANCH, branch);
         props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, getEffectiveTagName());
+        props.put(Constants.KEY_TAG_NAME, getEffectiveTagName(model));
         props.put(Constants.KEY_RELEASE_NAME, getEffectiveReleaseName());
         props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
         props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(model));
