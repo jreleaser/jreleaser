@@ -24,7 +24,6 @@ import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -32,24 +31,22 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.4.0
  */
 public class HttpUploader extends AbstractUploader {
-    public static final String NAME = "http";
+    public static final String TYPE = "http";
 
     private final Map<String, String> headers = new LinkedHashMap<>();
-    private String target;
     private String username;
     private String password;
     private Authorization authorization;
     private Method method;
 
     public HttpUploader() {
-        super(NAME);
+        super(TYPE);
     }
 
     void setAll(HttpUploader http) {
         super.setAll(http);
         this.username = http.username;
         this.password = http.password;
-        this.target = http.target;
         this.authorization = http.authorization;
         this.method = http.method;
         setHeaders(http.headers);
@@ -61,12 +58,6 @@ public class HttpUploader extends AbstractUploader {
         }
 
         return authorization;
-    }
-
-    public String getResolvedTarget(Map<String, Object> props) {
-        Map<String, Object> p = new LinkedHashMap<>(props);
-        p.putAll(getResolvedExtraProperties());
-        return applyTemplate(target, p);
     }
 
     public String getResolvedUsername() {
@@ -93,12 +84,16 @@ public class HttpUploader extends AbstractUploader {
         this.password = password;
     }
 
+    @Deprecated
     public String getTarget() {
-        return target;
+        System.out.println("http.target has been deprecated since 0.6.0 and will be removed in the future. Use http.uploadUrl instead");
+        return getUploadUrl();
     }
 
+    @Deprecated
     public void setTarget(String target) {
-        this.target = target;
+        System.out.println("http.target has been deprecated since 0.6.0 and will be removed in the future. Use http.uploadUrl instead");
+        setUploadUrl(target);
     }
 
     public Authorization getAuthorization() {
@@ -139,7 +134,6 @@ public class HttpUploader extends AbstractUploader {
 
     @Override
     protected void asMap(Map<String, Object> props, boolean full) {
-        props.put("target", target);
         props.put("authorization", authorization);
         props.put("method", method);
         props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);

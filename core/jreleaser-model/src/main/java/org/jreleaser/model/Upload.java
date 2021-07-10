@@ -18,13 +18,14 @@
 package org.jreleaser.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.jreleaser.util.StringUtils.capitalize;
+import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -141,21 +142,66 @@ public class Upload implements Domain, EnabledAware {
         return map;
     }
 
-    public <A extends Uploader> Map<String, A> findUploadersByType(String uploaderName) {
-        switch (uploaderName) {
-            case Artifactory.NAME:
+    public <A extends Uploader> Map<String, A> findUploadersByType(String uploaderType) {
+        switch (uploaderType) {
+            case Artifactory.TYPE:
                 return (Map<String, A>) artifactory;
-                case HttpUploader.NAME:
+            case HttpUploader.TYPE:
                 return (Map<String, A>) http;
         }
 
         return Collections.emptyMap();
     }
 
-    public <A extends Uploader> Collection<A> findAllUploaders() {
+    public <A extends Uploader> List<A> findAllUploaders() {
         List<A> uploaders = new ArrayList<>();
         uploaders.addAll((List<A>) getActiveArtifactories());
         uploaders.addAll((List<A>) getActiveHttps());
         return uploaders;
+    }
+
+    public Map<String, String> resolveDownloadUrls(JReleaserContext context, Distribution distribution, Artifact artifact, String prefix) {
+        Map<String, String> urls = new LinkedHashMap<>();
+
+        List<Uploader> uploaders = findAllUploaders();
+        for (Uploader uploader : uploaders) {
+            List<String> keys = uploader.resolveSkipKeys();
+            if (isSkip(distribution.getExtraProperties(), keys) ||
+                isSkip(artifact.getExtraProperties(), keys)) continue;
+            String key = prefix +
+                "Download" +
+                capitalize(uploader.getType()) +
+                getClassNameForLowerCaseHyphenSeparatedName(uploader.getName()) +
+                "Url";
+            String url = uploader.getResolvedDownloadUrl(context, artifact);
+            urls.put(key, url);
+
+            if (findUploadersByType(uploader.getType()).size() == 1 && !isSkip(distribution.getExtraProperties(), keys) &&
+                !isSkip(artifact.getExtraProperties(), keys)) {
+                key = prefix +
+                    "Download" +
+                    capitalize(uploader.getType()) +
+                    "Url";
+                url = uploader.getResolvedDownloadUrl(context, artifact);
+                urls.put(key, url);
+            }
+        }
+
+        if (uploaders.size() == 1) {
+            Uploader uploader = uploaders.get(0);
+            List<String> keys = uploader.resolveSkipKeys();
+            if (!isSkip(distribution.getExtraProperties(), keys) &&
+                !isSkip(artifact.getExtraProperties(), keys)) {
+                String key = prefix + "DownloadUrl";
+                String url = uploader.getResolvedDownloadUrl(context, artifact);
+                urls.put(key, url);
+            }
+        }
+
+        return urls;
+    }
+
+    private boolean isSkip(Map<String, Object> props, List<String> keys) {
+        return props.keySet().stream().anyMatch(keys::contains);
     }
 }

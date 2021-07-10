@@ -29,6 +29,8 @@ abstract class AbstractUploader implements Uploader {
     protected final String type;
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected String name;
+    protected String uploadUrl;
+    protected String downloadUrl;
     protected boolean enabled;
     protected Active active;
     private int connectTimeout;
@@ -45,6 +47,8 @@ abstract class AbstractUploader implements Uploader {
         this.active = uploader.active;
         this.enabled = uploader.enabled;
         this.name = uploader.name;
+        this.uploadUrl = uploader.uploadUrl;
+        this.downloadUrl = uploader.downloadUrl;
         this.connectTimeout = uploader.connectTimeout;
         this.readTimeout = uploader.readTimeout;
         this.artifacts = uploader.artifacts;
@@ -61,6 +65,26 @@ abstract class AbstractUploader implements Uploader {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getUploadUrl() {
+        return uploadUrl;
+    }
+
+    @Override
+    public void setUploadUrl(String uploadUrl) {
+        this.uploadUrl = uploadUrl;
+    }
+
+    @Override
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    @Override
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
     @Override

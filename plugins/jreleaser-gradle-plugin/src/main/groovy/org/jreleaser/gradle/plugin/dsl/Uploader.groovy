@@ -30,6 +30,10 @@ import org.jreleaser.model.Active
 interface Uploader extends ExtraProperties {
     Property<Active> getActive()
 
+    Property<String> getUploadUrl()
+
+    Property<String> getDownloadUrl()
+
     Property<Integer> getConnectTimeout()
 
     Property<Integer> getReadTimeout()

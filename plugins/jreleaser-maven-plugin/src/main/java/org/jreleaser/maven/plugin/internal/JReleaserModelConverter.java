@@ -345,7 +345,9 @@ public final class JReleaserModelConverter {
         if (artifactory.isArtifactsSet()) a.setArtifacts(artifactory.isArtifacts());
         if (artifactory.isFilesSet()) a.setFiles(artifactory.isFiles());
         if (artifactory.isSignaturesSet()) a.setSignatures(artifactory.isSignatures());
-        a.setTarget(artifactory.getTarget());
+        if (isNotBlank(artifactory.getTarget())) a.setTarget(artifactory.getTarget());
+        a.setUploadUrl(artifactory.getUploadUrl());
+        a.setDownloadUrl(artifactory.getDownloadUrl());
         a.setUsername(artifactory.getUsername());
         a.setPassword(artifactory.getPassword());
         a.setAuthorization(artifactory.resolveAuthorization().name());
@@ -371,7 +373,9 @@ public final class JReleaserModelConverter {
         if (http.isArtifactsSet()) h.setArtifacts(http.isArtifacts());
         if (http.isFilesSet()) h.setFiles(http.isFiles());
         if (http.isSignaturesSet()) h.setSignatures(http.isSignatures());
-        h.setTarget(http.getTarget());
+        if (isNotBlank(http.getTarget())) h.setTarget(http.getTarget());
+        h.setUploadUrl(http.getUploadUrl());
+        h.setDownloadUrl(http.getDownloadUrl());
         h.setUsername(http.getUsername());
         h.setPassword(http.getPassword());
         h.setAuthorization(http.resolveAuthorization().name());

@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.artifactory;
 
 import feign.form.FormData;
+import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Artifactory;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.uploader.spi.UploadException;
@@ -32,8 +33,6 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -58,21 +57,21 @@ public class ArtifactoryArtifactUploader extends AbstractArtifactUploader<Artifa
 
     @Override
     public String getType() {
-        return Artifactory.NAME;
+        return Artifactory.TYPE;
     }
 
     @Override
     public void upload(String name) throws UploadException {
-        List<Path> paths = collectPaths();
-        if (paths.isEmpty()) {
+        List<Artifact> artifacts = collectArtifacts();
+        if (artifacts.isEmpty()) {
             context.getLogger().info("No matching artifacts. Skipping");
         }
 
-        String target = uploader.getResolvedTarget(context);
         String username = uploader.getResolvedUsername();
         String password = uploader.getResolvedPassword();
 
-        for (Path path : paths) {
+        for (Artifact artifact : artifacts) {
+            Path path = artifact.getEffectivePath(context);
             context.getLogger().info(" - {}", path.getFileName());
 
             if (!context.isDryrun()) {
@@ -98,7 +97,7 @@ public class ArtifactoryArtifactUploader extends AbstractArtifactUploader<Artifa
                     headers.put("X-Checksum", ChecksumUtils.checksum(Algorithm.MD5, data.getData()));
 
                     ClientUtils.putFile(context.getLogger(),
-                        target,
+                        uploader.getResolvedUploadUrl(context, artifact),
                         uploader.getConnectTimeout(),
                         uploader.getReadTimeout(),
                         data,

@@ -23,7 +23,6 @@ import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -31,22 +30,20 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.3.0
  */
 public class Artifactory extends AbstractUploader {
-    public static final String NAME = "artifactory";
+    public static final String TYPE = "artifactory";
 
-    private String target;
     private String username;
     private String password;
     private Authorization authorization;
 
     public Artifactory() {
-        super(NAME);
+        super(TYPE);
     }
 
     void setAll(Artifactory artifactory) {
         super.setAll(artifactory);
         this.username = artifactory.username;
         this.password = artifactory.password;
-        this.target = artifactory.target;
         this.authorization = artifactory.authorization;
     }
 
@@ -56,12 +53,6 @@ public class Artifactory extends AbstractUploader {
         }
 
         return authorization;
-    }
-
-    public String getResolvedTarget(JReleaserContext context) {
-        Map<String, Object> props = context.props();
-        props.putAll(getResolvedExtraProperties());
-        return applyTemplate(target, props);
     }
 
     public String getResolvedUsername() {
@@ -88,12 +79,16 @@ public class Artifactory extends AbstractUploader {
         this.password = password;
     }
 
+    @Deprecated
     public String getTarget() {
-        return target;
+        System.out.println("artifactory.target has been deprecated since 0.6.0 and will be removed in the future. Use artifactory.uploadUrl instead");
+        return getUploadUrl();
     }
 
+    @Deprecated
     public void setTarget(String target) {
-        this.target = target;
+        System.out.println("artifactory.target has been deprecated since 0.6.0 and will be removed in the future. Use artifactory.uploadUrl instead");
+        setUploadUrl(target);
     }
 
     public Authorization getAuthorization() {
@@ -110,7 +105,6 @@ public class Artifactory extends AbstractUploader {
 
     @Override
     protected void asMap(Map<String, Object> props, boolean full) {
-        props.put("target", target);
         props.put("authorization", authorization);
         props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
         props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);

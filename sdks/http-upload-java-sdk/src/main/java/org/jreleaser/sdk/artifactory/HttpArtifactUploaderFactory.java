@@ -30,7 +30,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
 public class HttpArtifactUploaderFactory implements ArtifactUploaderFactory<HttpUploader, HttpArtifactUploader> {
     @Override
     public String getName() {
-        return HttpUploader.NAME;
+        return HttpUploader.TYPE;
     }
 
     @Override

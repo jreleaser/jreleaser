@@ -28,6 +28,14 @@ public interface Uploader extends Activatable, TimeoutAware, ExtraProperties {
 
     void setName(String name);
 
+    String getUploadUrl();
+
+    void setUploadUrl(String uploadUrl);
+
+    String getDownloadUrl();
+
+    void setDownloadUrl(String downloadUrl);
+
     Boolean isArtifacts();
 
     void setArtifacts(Boolean artifacts);

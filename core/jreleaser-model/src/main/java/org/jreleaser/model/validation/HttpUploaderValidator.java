@@ -59,8 +59,11 @@ public abstract class HttpUploaderValidator extends Validator {
             return;
         }
 
-        if (isBlank(http.getTarget())) {
-            errors.configuration("http." + http.getName() + ".target must not be blank.");
+        if (isBlank(http.getUploadUrl())) {
+            errors.configuration("http." + http.getName() + ".uploadUrl must not be blank.");
+        }
+        if (isBlank(http.getDownloadUrl())) {
+            http.setDownloadUrl(http.getUploadUrl());
         }
 
         if (null == http.getMethod()) {

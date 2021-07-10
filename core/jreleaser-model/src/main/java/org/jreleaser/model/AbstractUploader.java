@@ -17,9 +17,19 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Constants;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.capitalize;
+import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
+import static org.jreleaser.util.StringUtils.getFilename;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -31,6 +41,8 @@ abstract class AbstractUploader implements Uploader {
     protected String name;
     protected boolean enabled;
     protected Active active;
+    private String uploadUrl;
+    private String downloadUrl;
     private int connectTimeout;
     private int readTimeout;
     private Boolean artifacts;
@@ -45,12 +57,28 @@ abstract class AbstractUploader implements Uploader {
         this.active = uploader.active;
         this.enabled = uploader.enabled;
         this.name = uploader.name;
+        this.uploadUrl = uploader.uploadUrl;
+        this.downloadUrl = uploader.downloadUrl;
         this.connectTimeout = uploader.connectTimeout;
         this.readTimeout = uploader.readTimeout;
         this.artifacts = uploader.artifacts;
         this.files = uploader.files;
         this.signatures = uploader.signatures;
         setExtraProperties(uploader.extraProperties);
+    }
+
+    @Override
+    public String getResolvedUploadUrl(JReleaserContext context, Artifact artifact) {
+        Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
+        p.putAll(getResolvedExtraProperties());
+        return applyTemplate(uploadUrl, p);
+    }
+
+    @Override
+    public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
+        Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
+        p.putAll(getResolvedExtraProperties());
+        return applyTemplate(downloadUrl, p);
     }
 
     @Override
@@ -87,6 +115,26 @@ abstract class AbstractUploader implements Uploader {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getUploadUrl() {
+        return uploadUrl;
+    }
+
+    @Override
+    public void setUploadUrl(String uploadUrl) {
+        this.uploadUrl = uploadUrl;
+    }
+
+    @Override
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    @Override
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
     @Override
@@ -207,6 +255,8 @@ abstract class AbstractUploader implements Uploader {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
         props.put("active", active);
+        props.put("uploadUrl", uploadUrl);
+        props.put("downloadUrl", downloadUrl);
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
         props.put("artifacts", isArtifacts());
@@ -221,4 +271,30 @@ abstract class AbstractUploader implements Uploader {
     }
 
     protected abstract void asMap(Map<String, Object> props, boolean full);
+
+    @Override
+    public List<String> resolveSkipKeys() {
+        String skipUpload = "skipUpload";
+        String skipUploadByType = skipUpload + capitalize(type);
+        String skipUploadByName = skipUploadByType + getClassNameForLowerCaseHyphenSeparatedName(name);
+        return Arrays.asList(skipUpload, skipUploadByType, skipUploadByName);
+    }
+
+    @Override
+    public Map<String, Object> artifactProps(JReleaserContext context, Artifact artifact) {
+        Map<String, Object> props = context.props();
+
+        String platform = isNotBlank(artifact.getPlatform()) ? artifact.getPlatform() : "";
+        // add extra properties without clobbering existing keys
+        Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact");
+        artifactProps.keySet().stream()
+            .filter(k -> !props.containsKey(k))
+            .filter(k -> !k.startsWith("artifactSkip"))
+            .forEach(k -> props.put(k, artifactProps.get(k)));
+        String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
+        props.put(Constants.KEY_ARTIFACT_PLATFORM, platform);
+        props.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
+        props.put(Constants.KEY_ARTIFACT_NAME, getFilename(artifactFileName));
+        return props;
+    }
 }

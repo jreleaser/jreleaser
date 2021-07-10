@@ -321,12 +321,16 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             newProps.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
             String artifactUrl = applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps, "downloadUrl");
             props.put("artifact" + platform + "Url", artifactUrl);
+            props.putAll(context.getModel().getUpload()
+                .resolveDownloadUrls(context, distribution, artifact, "artifact" + platform));
 
             if (0 == i) {
+                props.putAll(context.getModel().getUpload()
+                    .resolveDownloadUrls(context, distribution, artifact, "distribution"));
                 props.put(Constants.KEY_DISTRIBUTION_URL, artifactUrl);
                 props.put(Constants.KEY_DISTRIBUTION_SHA_256, artifact.getHash(Algorithm.SHA_256));
                 for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-                    props.put("distributionChecksum"  + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
+                    props.put("distributionChecksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
                 }
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, artifactName);

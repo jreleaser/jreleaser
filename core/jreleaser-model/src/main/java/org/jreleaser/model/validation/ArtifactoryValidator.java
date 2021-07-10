@@ -55,8 +55,11 @@ public abstract class ArtifactoryValidator extends Validator {
             return;
         }
 
-        if (isBlank(artifactory.getTarget())) {
-            errors.configuration("artifactory." + artifactory.getName() + ".target must not be blank.");
+        if (isBlank(artifactory.getUploadUrl())) {
+            errors.configuration("artifactory." + artifactory.getName() + ".uploadUrl must not be blank.");
+        }
+        if (isBlank(artifactory.getDownloadUrl())) {
+            artifactory.setDownloadUrl(artifactory.getUploadUrl());
         }
 
         switch (artifactory.resolveAuthorization()) {

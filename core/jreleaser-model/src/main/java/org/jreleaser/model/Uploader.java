@@ -17,6 +17,9 @@
  */
 package org.jreleaser.model;
 
+import java.util.List;
+import java.util.Map;
+
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -29,6 +32,14 @@ public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProper
     String getName();
 
     void setName(String name);
+
+    String getUploadUrl();
+
+    void setUploadUrl(String uploadUrl);
+
+    String getDownloadUrl();
+
+    void setDownloadUrl(String downloadUrl);
 
     boolean isSnapshotSupported();
 
@@ -49,6 +60,14 @@ public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProper
     void setSignatures(Boolean signatures);
 
     boolean isSignaturesSet();
+
+    List<String> resolveSkipKeys();
+
+    Map<String, Object> artifactProps(JReleaserContext context, Artifact artifact);
+
+    String getResolvedUploadUrl(JReleaserContext context, Artifact artifact);
+
+    String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact);
 
     enum Method {
         PUT,

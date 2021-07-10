@@ -25,7 +25,6 @@ import org.jreleaser.model.Uploader;
 import org.jreleaser.model.uploader.spi.UploadException;
 import org.jreleaser.sdk.commons.AbstractArtifactUploader;
 import org.jreleaser.sdk.commons.ClientUtils;
-import org.jreleaser.util.Constants;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -35,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
-import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -61,7 +59,7 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<HttpUploader>
 
     @Override
     public String getType() {
-        return HttpUploader.NAME;
+        return HttpUploader.TYPE;
     }
 
     @Override
@@ -101,14 +99,14 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<HttpUploader>
 
                     if (uploader.getMethod() == Uploader.Method.POST) {
                         ClientUtils.postFile(context.getLogger(),
-                            resolveUrl(artifact),
+                            uploader.getResolvedUploadUrl(context, artifact),
                             uploader.getConnectTimeout(),
                             uploader.getReadTimeout(),
                             data,
                             headers);
                     } else {
                         ClientUtils.putFile(context.getLogger(),
-                            resolveUrl(artifact),
+                            uploader.getResolvedUploadUrl(context, artifact),
                             uploader.getConnectTimeout(),
                             uploader.getReadTimeout(),
                             data,
@@ -124,31 +122,10 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<HttpUploader>
     }
 
     private void resolveHeaders(Artifact artifact, Map<String, String> headers) {
-        Map<String, Object> props = artifactProps(artifact);
+        Map<String, Object> props = uploader.artifactProps(context, artifact);
         uploader.getHeaders().forEach((k, v) -> {
             String value = applyTemplate(v, props);
             if (isNotBlank(value)) headers.put(k, value);
         });
-    }
-
-    private String resolveUrl(Artifact artifact) {
-        return uploader.getResolvedTarget(artifactProps(artifact));
-    }
-
-    private Map<String, Object> artifactProps(Artifact artifact) {
-        Map<String, Object> props = context.props();
-
-        String platform = isNotBlank(artifact.getPlatform()) ? artifact.getPlatform() : "";
-        // add extra properties without clobbering existing keys
-        Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact");
-        artifactProps.keySet().stream()
-            .filter(k -> !props.containsKey(k))
-            .filter(k -> !k.startsWith("artifactSkip"))
-            .forEach(k -> props.put(k, artifactProps.get(k)));
-        String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
-        props.put(Constants.KEY_ARTIFACT_PLATFORM, platform);
-        props.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
-        props.put(Constants.KEY_ARTIFACT_NAME, getFilename(artifactFileName));
-        return props;
     }
 }

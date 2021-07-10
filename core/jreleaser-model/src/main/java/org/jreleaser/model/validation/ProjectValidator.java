@@ -31,7 +31,6 @@ import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Project.PROJECT_VERSION;
 import static org.jreleaser.model.Project.PROJECT_VERSION_PATTERN;
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -76,10 +75,6 @@ public abstract class ProjectValidator extends Validator {
                 "project.snapshot.label",
                 project.getSnapshot().getLabel(),
                 DEFAULT_SNAPSHOT_LABEL));
-
-        if (isNotBlank(project.getSnapshotPattern())) {
-            context.nag("0.6.0", "project.snapshotPattern has been deprecated. Use project.snapshot.pattern instead");
-        }
 
         boolean javaDistributions = context.getModel().getDistributions().values().stream()
             .map(Distribution::getType)
