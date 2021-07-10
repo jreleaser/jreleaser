@@ -31,6 +31,8 @@ import org.gradle.api.provider.Property
 interface NativeImage extends Assembler {
     Property<String> getImageName()
 
+    Property<String> getImageNameTransform()
+
     ListProperty<String> getArgs()
 
     void addArg(String arg)

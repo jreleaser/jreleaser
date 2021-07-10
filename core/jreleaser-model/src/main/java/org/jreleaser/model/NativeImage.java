@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -39,6 +40,7 @@ public class NativeImage extends AbstractAssembler {
     private final List<Glob> files = new ArrayList<>();
 
     private String imageName;
+    private String imageNameTransform;
 
     public NativeImage() {
         super(NAME);
@@ -52,6 +54,7 @@ public class NativeImage extends AbstractAssembler {
     void setAll(NativeImage nativeImage) {
         super.setAll(nativeImage);
         this.imageName = nativeImage.imageName;
+        this.imageNameTransform = nativeImage.imageNameTransform;
         setGraal(nativeImage.graal);
         setMainJar(nativeImage.mainJar);
         setArgs(nativeImage.args);
@@ -65,12 +68,27 @@ public class NativeImage extends AbstractAssembler {
         return applyTemplate(imageName, props);
     }
 
+    public String getResolvedImageNameTransform(JReleaserContext context) {
+        if (isBlank(imageNameTransform)) return null;
+        Map<String, Object> props = context.props();
+        props.putAll(props());
+        return applyTemplate(imageNameTransform, props);
+    }
+
     public String getImageName() {
         return imageName;
     }
 
     public void setImageName(String imageName) {
         this.imageName = imageName;
+    }
+
+    public String getImageNameTransform() {
+        return imageNameTransform;
+    }
+
+    public void setImageNameTransform(String imageNameTransform) {
+        this.imageNameTransform = imageNameTransform;
     }
 
     public Artifact getGraal() {
@@ -155,6 +173,7 @@ public class NativeImage extends AbstractAssembler {
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("imageName", imageName);
+        props.put("imageNameTransform", imageNameTransform);
         props.put("graal", graal.asMap(full));
         props.put("args", args);
         Map<String, Map<String, Object>> mappedJars = new LinkedHashMap<>();

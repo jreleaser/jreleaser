@@ -45,6 +45,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class JlinkImpl extends AbstractAssembler implements Jlink {
     String name
     final Property<String> imageName
+    final Property<String> imageNameTransform
     final Property<String> moduleName
     final ListProperty<String> args
     final SetProperty<String> moduleNames
@@ -60,6 +61,7 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
         super(objects)
 
         imageName = objects.property(String).convention(Providers.notDefined())
+        imageNameTransform = objects.property(String).convention(Providers.notDefined())
         moduleName = objects.property(String).convention(Providers.notDefined())
         args = objects.listProperty(String).convention(Providers.notDefined())
         moduleNames = objects.setProperty(String).convention(Providers.notDefined())
@@ -149,6 +151,7 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
         jlink.mainJar = mainJar.toModel()
         jlink.java = java.toModel()
         if (imageName.present) jlink.imageName = imageName.get()
+        if (imageNameTransform.present) jlink.imageNameTransform = imageNameTransform.get()
         if (moduleName.present) jlink.moduleName = moduleName.get()
         jlink.moduleNames = (Set<String>) moduleNames.getOrElse([] as Set)
         for (ArtifactImpl artifact : targetJdks) {

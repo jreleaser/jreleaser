@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -42,6 +43,7 @@ public class Jlink extends AbstractAssembler {
     private final List<Glob> jars = new ArrayList<>();
 
     private String imageName;
+    private String imageNameTransform;
     private String moduleName;
 
     public Jlink() {
@@ -56,6 +58,7 @@ public class Jlink extends AbstractAssembler {
     void setAll(Jlink jlink) {
         super.setAll(jlink);
         this.imageName = jlink.imageName;
+        this.imageNameTransform = jlink.imageNameTransform;
         this.moduleName = jlink.moduleName;
         setJdk(jlink.jdk);
         setMainJar(jlink.mainJar);
@@ -69,6 +72,13 @@ public class Jlink extends AbstractAssembler {
         Map<String, Object> props = context.props();
         props.putAll(props());
         return applyTemplate(imageName, props);
+    }
+
+    public String getResolvedImageNameTransform(JReleaserContext context) {
+        if (isBlank(imageNameTransform)) return null;
+        Map<String, Object> props = context.props();
+        props.putAll(props());
+        return applyTemplate(imageNameTransform, props);
     }
 
     public Artifact getJdk() {
@@ -93,6 +103,14 @@ public class Jlink extends AbstractAssembler {
 
     public void setImageName(String imageName) {
         this.imageName = imageName;
+    }
+
+    public String getImageNameTransform() {
+        return imageNameTransform;
+    }
+
+    public void setImageNameTransform(String imageNameTransform) {
+        this.imageNameTransform = imageNameTransform;
     }
 
     public String getModuleName() {
@@ -194,6 +212,7 @@ public class Jlink extends AbstractAssembler {
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("imageName", imageName);
+        props.put("imageNameTransform", imageNameTransform);
         props.put("moduleName", moduleName);
         props.put("moduleNames", moduleNames);
         props.put("args", args);

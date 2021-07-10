@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -73,7 +74,11 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         installNativeImage(graalPath);
 
         // run native-image
-        nativeImage(assembleDirectory, graalPath, jars);
+        Artifact image = nativeImage(assembleDirectory, graalPath, jars);
+        if (isNotBlank(assembler.getImageNameTransform())) {
+            image.setTransform(assembler.getImageNameTransform() + "-" + assembler.getGraal().getPlatform() + ".zip");
+            image.getEffectivePath(context);
+        }
     }
 
     private void installNativeImage(Path graalPath) throws AssemblerProcessingException {

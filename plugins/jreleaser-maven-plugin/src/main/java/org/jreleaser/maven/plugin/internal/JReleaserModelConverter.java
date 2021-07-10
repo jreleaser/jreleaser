@@ -626,6 +626,7 @@ public final class JReleaserModelConverter {
         a.setJdk(convertArtifact(jlink.getJdk()));
         a.setMainJar(convertArtifact(jlink.getMainJar()));
         a.setImageName(jlink.getImageName());
+        a.setImageNameTransform(jlink.getImageNameTransform());
         a.setModuleName(jlink.getModuleName());
         a.setJars(convertGlobs(jlink.getJars()));
         return a;
@@ -652,6 +653,7 @@ public final class JReleaserModelConverter {
         a.setGraal(convertArtifact(nativeImage.getGraal()));
         a.setMainJar(convertArtifact(nativeImage.getMainJar()));
         a.setImageName(nativeImage.getImageName());
+        a.setImageNameTransform(nativeImage.getImageNameTransform());
         a.setJars(convertGlobs(nativeImage.getJars()));
         a.setFiles(convertGlobs(nativeImage.getFiles()));
         a.setArgs(nativeImage.getArgs());

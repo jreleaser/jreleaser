@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import static java.nio.file.Files.exists;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.jreleaser.model.util.Artifacts.copyFile;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -120,17 +121,6 @@ public class Artifact implements Domain, ExtraProperties {
         }
 
         return tp;
-    }
-
-    private void copyFile(JReleaserContext context, Path src, Path dest) throws JReleaserException {
-        try {
-            java.nio.file.Files.createDirectories(dest.getParent());
-            java.nio.file.Files.copy(src, dest, REPLACE_EXISTING, COPY_ATTRIBUTES);
-        } catch (IOException e) {
-            throw new JReleaserException("Unexpected error copying " +
-                context.relativizeToBasedir(src) + " to " +
-                context.relativizeToBasedir(dest));
-        }
     }
 
     private Path getResolvedPath(JReleaserContext context) {

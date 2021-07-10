@@ -38,11 +38,13 @@ public class Jlink extends AbstractAssembler {
     private final List<Glob> jars = new ArrayList<>();
 
     private String imageName;
+    private String imageNameTransform;
     private String moduleName;
 
     void setAll(Jlink jlink) {
         super.setAll(jlink);
         this.imageName = jlink.imageName;
+        this.imageNameTransform = jlink.imageNameTransform;
         this.moduleName = jlink.moduleName;
         setJava(jlink.java);
         setJdk(jlink.jdk);
@@ -75,6 +77,14 @@ public class Jlink extends AbstractAssembler {
 
     public void setImageName(String imageName) {
         this.imageName = imageName;
+    }
+
+    public String getImageNameTransform() {
+        return imageNameTransform;
+    }
+
+    public void setImageNameTransform(String imageNameTransform) {
+        this.imageNameTransform = imageNameTransform;
     }
 
     public String getModuleName() {

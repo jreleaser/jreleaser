@@ -32,6 +32,8 @@ import org.gradle.api.provider.SetProperty
 interface Jlink extends Assembler {
     Property<String> getImageName()
 
+    Property<String> getImageNameTransform()
+
     Property<String> getModuleName()
 
     SetProperty<String> getModuleNames()

@@ -25,6 +25,8 @@ import org.jreleaser.util.Errors;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.2.0
@@ -50,7 +52,12 @@ public abstract class NativeImageResolver extends Validator {
             errors.assembly("Missing outputs for " + nativeImage.getType() + "." + nativeImage.getName() +
                 ". Distribution " + nativeImage.getName() + " has not been assembled.");
         } else {
-            nativeImage.addOutput(Artifact.of(image, platform));
+            Artifact artifact = Artifact.of(image, platform);
+            if (isNotBlank(nativeImage.getImageNameTransform())) {
+                artifact.setTransform(nativeImage.getImageNameTransform() + "-" + platform + ".zip");
+                artifact.getEffectivePath(context);
+            }
+            nativeImage.addOutput(artifact);
         }
     }
 }

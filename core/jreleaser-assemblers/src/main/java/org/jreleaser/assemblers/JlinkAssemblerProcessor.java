@@ -92,7 +92,11 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         // run jlink x jdk
         String imageName = assembler.getResolvedImageName(context);
         for (Artifact targetJdk : assembler.getTargetJdks()) {
-            jlink(assembleDirectory, jdkPath, targetJdk, moduleNames, imageName);
+            Artifact image = jlink(assembleDirectory, jdkPath, targetJdk, moduleNames, imageName);
+            if (isNotBlank(assembler.getImageNameTransform())) {
+                image.setTransform(assembler.getImageNameTransform() + "-" + targetJdk.getPlatform() + ".zip");
+                image.getEffectivePath(context);
+            }
         }
     }
 

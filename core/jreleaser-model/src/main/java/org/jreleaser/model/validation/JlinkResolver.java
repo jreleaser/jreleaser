@@ -25,6 +25,8 @@ import org.jreleaser.util.Errors;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.2.0
@@ -54,7 +56,12 @@ public abstract class JlinkResolver extends Validator {
                 errors.assembly("Missing outputs for " + jlink.getType() + "." + jlink.getName() +
                     ". Distribution " + jlink.getName() + " has not been assembled.");
             } else {
-                jlink.addOutput(Artifact.of(image, targetJdk.getPlatform()));
+                Artifact artifact = Artifact.of(image, targetJdk.getPlatform());
+                if (isNotBlank(jlink.getImageNameTransform())) {
+                    artifact.setTransform(jlink.getImageNameTransform() + "-" + targetJdk.getPlatform() + ".zip");
+                    artifact.getEffectivePath(context);
+                }
+                jlink.addOutput(artifact);
             }
         }
     }

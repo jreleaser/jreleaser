@@ -40,12 +40,25 @@ import java.util.List;
 import java.util.Set;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Artifacts {
+    public static void copyFile(JReleaserContext context, Path src, Path dest) throws JReleaserException {
+        try {
+            java.nio.file.Files.createDirectories(dest.getParent());
+            java.nio.file.Files.copy(src, dest, REPLACE_EXISTING, COPY_ATTRIBUTES);
+        } catch (IOException e) {
+            throw new JReleaserException("Unexpected error copying " +
+                context.relativizeToBasedir(src) + " to " +
+                context.relativizeToBasedir(dest));
+        }
+    }
+
     public static Set<Artifact> resolveFiles(JReleaserContext context) throws JReleaserException {
         Files files = context.getModel().getFiles();
 

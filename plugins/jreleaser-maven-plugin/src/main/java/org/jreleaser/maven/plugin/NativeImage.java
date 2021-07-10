@@ -32,10 +32,12 @@ public class NativeImage extends AbstractAssembler {
     private final List<Glob> files = new ArrayList<>();
 
     private String imageName;
+    private String imageNameTransform;
 
     void setAll(NativeImage nativeImage) {
         super.setAll(nativeImage);
         this.imageName = nativeImage.imageName;
+        this.imageNameTransform = nativeImage.imageNameTransform;
         setGraal(nativeImage.graal);
         setMainJar(nativeImage.mainJar);
         setArgs(nativeImage.args);
@@ -49,6 +51,14 @@ public class NativeImage extends AbstractAssembler {
 
     public void setImageName(String imageName) {
         this.imageName = imageName;
+    }
+
+    public String getImageNameTransform() {
+        return imageNameTransform;
+    }
+
+    public void setImageNameTransform(String imageNameTransform) {
+        this.imageNameTransform = imageNameTransform;
     }
 
     public Artifact getGraal() {

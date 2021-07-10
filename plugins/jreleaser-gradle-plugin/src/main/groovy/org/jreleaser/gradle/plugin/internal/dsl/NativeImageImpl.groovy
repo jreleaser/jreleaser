@@ -44,6 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class NativeImageImpl extends AbstractAssembler implements NativeImage {
     String name
     final Property<String> imageName
+    final Property<String> imageNameTransform
     final ListProperty<String> args
     final JavaImpl java
 
@@ -57,6 +58,7 @@ class NativeImageImpl extends AbstractAssembler implements NativeImage {
         super(objects)
 
         imageName = objects.property(String).convention(Providers.notDefined())
+        imageNameTransform = objects.property(String).convention(Providers.notDefined())
         args = objects.listProperty(String).convention(Providers.notDefined())
         java = objects.newInstance(JavaImpl, objects)
         graal = objects.newInstance(ArtifactImpl, objects)
@@ -139,6 +141,7 @@ class NativeImageImpl extends AbstractAssembler implements NativeImage {
         fillProperties(nativeImage)
         nativeImage.java = java.toModel()
         if (imageName.present) nativeImage.imageName = imageName.get()
+        if (imageNameTransform.present) nativeImage.imageNameTransform = imageNameTransform.get()
         nativeImage.args = (List<String>) args.getOrElse([])
         nativeImage.graal = graal.toModel()
         nativeImage.mainJar = mainJar.toModel()
