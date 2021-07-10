@@ -85,8 +85,9 @@ assemble:
       java:
         version: 11
         mainClass: 'org.jreleaser.cli.Main'
-      imageName: '{{distributionName}}-{{projectVersion}}'
-      imageNameTransform: '{{distributionName}}-{{projectEffectiveVersion}}'
+      imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
+      #imageName: '{{distributionName}}-{{projectVersion}}'
+      #imageNameTransform: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: 'jreleaser'
       moduleNames:
         - java.base
