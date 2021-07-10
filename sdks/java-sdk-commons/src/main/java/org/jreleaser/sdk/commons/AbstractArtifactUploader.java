@@ -27,7 +27,12 @@ import org.jreleaser.model.util.Artifacts;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import static org.jreleaser.util.StringUtils.capitalize;
+import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 
 /**
  * @author Andres Almiray
@@ -43,8 +48,11 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
     protected List<Path> collectPaths() {
         List<Path> paths = new ArrayList<>();
 
+        List<String> keys = resolveSkipKeys();
+
         if (getUploader().isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
+                if (isSkip(artifact.getExtraProperties(), keys)) continue;
                 Path path = artifact.getEffectivePath(context);
                 if (Files.exists(path) && 0 != path.toFile().length()) {
                     paths.add(path);
@@ -54,10 +62,9 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
 
         if (getUploader().isArtifacts()) {
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
-                if (distribution.getExtraProperties().containsKey("skipUpload")) {
-                    continue;
-                }
+                if (isSkip(distribution.getExtraProperties(), keys)) continue;
                 for (Artifact artifact : distribution.getArtifacts()) {
+                    if (isSkip(artifact.getExtraProperties(), keys)) continue;
                     Path path = artifact.getEffectivePath(context);
                     if (Files.exists(path) && 0 != path.toFile().length()) {
                         paths.add(path);
@@ -86,8 +93,11 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
     protected List<Artifact> collectArtifacts() {
         List<Artifact> artifacts = new ArrayList<>();
 
+        List<String> keys = resolveSkipKeys();
+
         if (getUploader().isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
+                if (isSkip(artifact.getExtraProperties(), keys)) continue;
                 Path path = artifact.getEffectivePath(context);
                 if (Files.exists(path) && 0 != path.toFile().length()) {
                     artifacts.add(artifact);
@@ -97,10 +107,9 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
 
         if (getUploader().isArtifacts()) {
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
-                if (distribution.getExtraProperties().containsKey("skipUpload")) {
-                    continue;
-                }
+                if (isSkip(distribution.getExtraProperties(), keys)) continue;
                 for (Artifact artifact : distribution.getArtifacts()) {
+                    if (isSkip(artifact.getExtraProperties(), keys)) continue;
                     Path path = artifact.getEffectivePath(context);
                     if (Files.exists(path) && 0 != path.toFile().length()) {
                         artifacts.add(artifact);
@@ -125,5 +134,16 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
         }
 
         return artifacts;
+    }
+
+    private List<String> resolveSkipKeys() {
+        String skipUpload = "skipUpload";
+        String skipUploadByType = skipUpload + capitalize(getType());
+        String skipUploadByName = skipUploadByType + getClassNameForLowerCaseHyphenSeparatedName(getUploader().getName());
+        return Arrays.asList(skipUpload, skipUploadByType, skipUploadByName);
+    }
+
+    private boolean isSkip(Map<String, Object> props, List<String> keys) {
+        return props.keySet().stream().anyMatch(keys::contains);
     }
 }

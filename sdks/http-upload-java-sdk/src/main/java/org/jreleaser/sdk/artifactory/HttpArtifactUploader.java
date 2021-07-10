@@ -143,6 +143,7 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<HttpUploader>
         Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact");
         artifactProps.keySet().stream()
             .filter(k -> !props.containsKey(k))
+            .filter(k -> !k.startsWith("artifactSkip"))
             .forEach(k -> props.put(k, artifactProps.get(k)));
         String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
         props.put(Constants.KEY_ARTIFACT_PLATFORM, platform);
