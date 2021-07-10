@@ -54,8 +54,7 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
 
         if (getUploader().isArtifacts()) {
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
-                if (distribution.getExtraProperties().containsKey("uploadSkip") ||
-                    distribution.getExtraProperties().containsKey(getType() + "UploadSkip")) {
+                if (distribution.getExtraProperties().containsKey("skipUpload")) {
                     continue;
                 }
                 for (Artifact artifact : distribution.getArtifacts()) {
@@ -98,8 +97,7 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
 
         if (getUploader().isArtifacts()) {
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
-                if (distribution.getExtraProperties().containsKey("uploadSkip") ||
-                    distribution.getExtraProperties().containsKey(getType() + "UploadSkip")) {
+                if (distribution.getExtraProperties().containsKey("skipUpload")) {
                     continue;
                 }
                 for (Artifact artifact : distribution.getArtifacts()) {
