@@ -76,7 +76,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         // run native-image
         Artifact image = nativeImage(assembleDirectory, graalPath, jars);
         if (isNotBlank(assembler.getImageNameTransform())) {
-            image.setTransform(assembler.getImageNameTransform() + "-" + assembler.getGraal().getPlatform() + ".zip");
+            image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" + assembler.getGraal().getPlatform() + ".zip");
             image.getEffectivePath(context);
         }
     }
