@@ -15,17 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
-    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+package org.jreleaser.sdk.github.api;
 
-    api project(':jreleaser-model')
-    api project(':git-sdk')
-    api project(':java-sdk-commons')
-    api("io.github.openfeign:feign-httpclient:$feignVersion") {
-        exclude group: 'commons-logging', module: 'commons-logging'
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+/**
+ * @author Andres Almiray
+ * @since 0.6.0
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class GhRelease {
+    private String discussionCategoryName;
+
+    public String getDiscussionCategoryName() {
+        return discussionCategoryName;
     }
-    api "org.apache.tika:tika-core:$tikaVersion"
 
-    api "org.kohsuke:github-api:$githubVersion"
+    public void setDiscussionCategoryName(String discussionCategoryName) {
+        this.discussionCategoryName = discussionCategoryName;
+    }
 }

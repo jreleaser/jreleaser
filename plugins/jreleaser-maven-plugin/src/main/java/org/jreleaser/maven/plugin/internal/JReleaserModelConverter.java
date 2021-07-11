@@ -178,6 +178,7 @@ public final class JReleaserModelConverter {
         convertGitService(github, g);
         g.setDraft(github.isDraft());
         if (github.isPrereleaseSet()) g.setPrerelease(github.isPrerelease());
+        g.setDiscussionCategoryName(github.getDiscussionCategoryName());
         return g;
     }
 
@@ -215,18 +216,18 @@ public final class JReleaserModelConverter {
     }
 
     private static void convertGitService(GitService service, org.jreleaser.model.GitService s) {
-        s.setHost(service.getHost());
-        s.setOwner(service.getOwner());
-        s.setName(service.getName());
-        s.setRepoUrl(service.getRepoUrl());
-        s.setRepoCloneUrl(service.getRepoCloneUrl());
-        s.setCommitUrl(service.getCommitUrl());
-        s.setDownloadUrl(service.getDownloadUrl());
-        s.setReleaseNotesUrl(service.getReleaseNotesUrl());
-        s.setLatestReleaseUrl(service.getLatestReleaseUrl());
-        s.setIssueTrackerUrl(service.getIssueTrackerUrl());
-        s.setUsername(service.getUsername());
-        s.setToken(service.getToken());
+        if (isNotBlank(service.getHost())) s.setHost(service.getHost());
+        if (isNotBlank(service.getOwner())) s.setOwner(service.getOwner());
+        if (isNotBlank(service.getName())) s.setName(service.getName());
+        if (isNotBlank(service.getRepoUrl())) s.setRepoUrl(service.getRepoUrl());
+        if (isNotBlank(service.getRepoCloneUrl())) s.setRepoCloneUrl(service.getRepoCloneUrl());
+        if (isNotBlank(service.getCommitUrl())) s.setCommitUrl(service.getCommitUrl());
+        if (isNotBlank(service.getDownloadUrl())) s.setDownloadUrl(service.getDownloadUrl());
+        if (isNotBlank(service.getReleaseNotesUrl())) s.setReleaseNotesUrl(service.getReleaseNotesUrl());
+        if (isNotBlank(service.getLatestReleaseUrl())) s.setLatestReleaseUrl(service.getLatestReleaseUrl());
+        if (isNotBlank(service.getIssueTrackerUrl())) s.setIssueTrackerUrl(service.getIssueTrackerUrl());
+        if (isNotBlank(service.getUsername())) s.setUsername(service.getUsername());
+        if (isNotBlank(service.getToken())) s.setToken(service.getToken());
         if (isNotBlank(service.getTagName())) s.setTagName(service.getTagName());
         if (isNotBlank(service.getReleaseName())) s.setReleaseName(service.getReleaseName());
         if (isNotBlank(service.getBranch())) s.setBranch(service.getBranch());
@@ -238,7 +239,7 @@ public final class JReleaserModelConverter {
             s.setUpdate(service.isUpdate());
             s.setUpdateSections(convertUpdateSections(service.getUpdateSections()));
         }
-        s.setApiEndpoint(service.getApiEndpoint());
+        if (isNotBlank(service.getApiEndpoint())) s.setApiEndpoint(service.getApiEndpoint());
         s.setChangelog(convertChangelog(service.getChangelog()));
         s.setMilestone(convertMilestone(service.getMilestone()));
         s.setConnectTimeout(service.getConnectTimeout());

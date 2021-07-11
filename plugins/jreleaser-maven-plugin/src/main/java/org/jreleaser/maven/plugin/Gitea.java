@@ -25,17 +25,6 @@ public class Gitea extends GitService {
     private boolean draft;
     private Boolean prerelease;
 
-    public Gitea() {
-        setHost("try.gitea.io");
-        setRepoUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
-        setRepoCloneUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}.git");
-        setCommitUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");
-        setDownloadUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/v{{projectVersion}}/{{artifactFileName}}");
-        setReleaseNotesUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/tag/v{{projectVersion}}");
-        setLatestReleaseUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/latest");
-        setIssueTrackerUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/issues");
-    }
-
     void setAll(Gitea service) {
         super.setAll(service);
         this.draft = service.draft;

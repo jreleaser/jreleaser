@@ -24,17 +24,7 @@ package org.jreleaser.maven.plugin;
 public class Github extends GitService {
     private boolean draft;
     private Boolean prerelease;
-
-    public Github() {
-        setHost("github.com");
-        setRepoUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
-        setRepoCloneUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}.git");
-        setCommitUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");
-        setDownloadUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/v{{projectVersion}}/{{artifactFileName}}");
-        setReleaseNotesUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/tag/v{{projectVersion}}");
-        setLatestReleaseUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/latest");
-        setIssueTrackerUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/issues");
-    }
+    private String discussionCategoryName;
 
     void setAll(Github service) {
         super.setAll(service);
@@ -60,5 +50,13 @@ public class Github extends GitService {
 
     public boolean isPrereleaseSet() {
         return prerelease != null;
+    }
+
+    public String getDiscussionCategoryName() {
+        return discussionCategoryName;
+    }
+
+    public void setDiscussionCategoryName(String discussionCategoryName) {
+        this.discussionCategoryName = discussionCategoryName;
     }
 }

@@ -15,17 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
-    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+package org.jreleaser.sdk.github.api;
 
-    api project(':jreleaser-model')
-    api project(':git-sdk')
-    api project(':java-sdk-commons')
-    api("io.github.openfeign:feign-httpclient:$feignVersion") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
-    api "org.apache.tika:tika-core:$tikaVersion"
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
 
-    api "org.kohsuke:github-api:$githubVersion"
+/**
+ * @author Andres Almiray
+ * @since 0.6.0
+ */
+public interface GithubAPI {
+    @RequestLine("PATCH /repos/{owner}/{repo}/releases/{id}")
+    @Headers("Content-Type: application/json")
+    void updateRelease(GhRelease release, @Param("owner") String owner, @Param("repo") String repo, @Param("id") Long id);
 }

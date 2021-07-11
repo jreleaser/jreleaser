@@ -28,10 +28,12 @@ public class Github extends GitService {
 
     private Boolean draft;
     private Boolean prerelease;
+    private String discussionCategoryName;
 
     public Github() {
         super(NAME, true);
         setHost("github.com");
+        setApiEndpoint("https://api.github.com");
         setRepoUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setRepoCloneUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}.git");
         setCommitUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");
@@ -45,6 +47,7 @@ public class Github extends GitService {
         super.setAll(service);
         this.draft = service.draft;
         this.prerelease = service.prerelease;
+        this.discussionCategoryName = service.discussionCategoryName;
     }
 
     public boolean isDraft() {
@@ -71,6 +74,14 @@ public class Github extends GitService {
         return prerelease != null;
     }
 
+    public String getDiscussionCategoryName() {
+        return discussionCategoryName;
+    }
+
+    public void setDiscussionCategoryName(String discussionCategoryName) {
+        this.discussionCategoryName = discussionCategoryName;
+    }
+
     @Override
     public String getReverseRepoHost() {
         return "com.github";
@@ -81,6 +92,7 @@ public class Github extends GitService {
         Map<String, Object> map = super.asMap(full);
         map.put("draft", isDraft());
         map.put("prerelease", isPrerelease());
+        map.put("discussionCategoryName", discussionCategoryName);
         return map;
     }
 }

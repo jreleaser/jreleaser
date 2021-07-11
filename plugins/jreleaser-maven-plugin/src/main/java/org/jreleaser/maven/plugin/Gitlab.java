@@ -22,17 +22,6 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public class Gitlab extends GitService {
-    public Gitlab() {
-        setHost("gitlab.com");
-        setRepoUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
-        setRepoCloneUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}.git");
-        setCommitUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/commits");
-        setDownloadUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/archive/v{{projectVersion}}/{{artifactFileName}}");
-        setReleaseNotesUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/releases/v{{projectVersion}}");
-        setLatestReleaseUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/releases/v{{projectVersion}}");
-        setIssueTrackerUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/issues");
-    }
-
     private String identifier;
 
     void setAll(Gitlab service) {

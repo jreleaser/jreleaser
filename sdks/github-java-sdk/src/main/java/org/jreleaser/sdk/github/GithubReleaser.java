@@ -23,6 +23,7 @@ import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
+import org.jreleaser.sdk.github.api.GhRelease;
 import org.kohsuke.github.GHMilestone;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHReleaseUpdater;
@@ -34,6 +35,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -93,6 +96,7 @@ public class GithubReleaser implements Releaser {
                         if (github.getUpdateSections().contains(UpdateSection.ASSETS)) {
                             api.uploadAssets(release, assets);
                         }
+                        linkDiscussion(tagName, release);
                     }
                 } else {
                     if (context.isDryrun()) {
@@ -183,6 +187,40 @@ public class GithubReleaser implements Releaser {
                     github.getName(),
                     milestone.get());
             }
+        }
+
+        linkDiscussion(tagName, release);
+    }
+
+    private void linkDiscussion(String tagName, GHRelease release) {
+        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
+
+        String discussionCategoryName = github.getDiscussionCategoryName();
+        if (isBlank(discussionCategoryName)) return;
+
+        context.getLogger().debug("linking release {} with discussion {}", tagName, discussionCategoryName);
+
+        if (context.isDryrun()) return;
+
+        try {
+            XGithub xapi = new XGithub(context.getLogger(),
+                github.getApiEndpoint(),
+                github.getResolvedToken(),
+                github.getConnectTimeout(),
+                github.getReadTimeout());
+
+
+            GhRelease ghRelease = new GhRelease();
+            ghRelease.setDiscussionCategoryName(discussionCategoryName);
+            xapi.updateRelease(github.getOwner(),
+                github.getName(),
+                tagName,
+                release.getId(),
+                ghRelease);
+        } catch (IOException e) {
+            context.getLogger().trace(e);
+            context.getLogger().warn("Could not update release {} with discussion category {}",
+                tagName, discussionCategoryName);
         }
     }
 

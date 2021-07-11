@@ -188,23 +188,25 @@ public class ChangelogGenerator {
             .findFirst();
 
         // tag: early-access
-        String effectiveLabel = context.getModel().getProject().getSnapshot().getEffectiveLabel();
-        if (effectiveLabel.equals(effectiveTagName)) {
-            if (!tag.isPresent()) {
-                context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
+        if (context.getModel().getProject().isSnapshot()) {
+            String effectiveLabel = context.getModel().getProject().getSnapshot().getEffectiveLabel();
+            if (effectiveLabel.equals(effectiveTagName)) {
+                if (!tag.isPresent()) {
+                    context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
 
-                tag = tags.stream()
-                    .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
-                    .filter(ref -> extractTagName(ref).matches(tagPattern))
-                    .findFirst();
-            }
+                    tag = tags.stream()
+                        .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
+                        .filter(ref -> extractTagName(ref).matches(tagPattern))
+                        .findFirst();
+                }
 
-            if (tag.isPresent()) {
-                context.getLogger().debug("found tag {}", extractTagName(tag.get()));
-                ObjectId fromRef = getObjectId(git, tag.get());
-                return git.log().addRange(fromRef, head).call();
-            } else {
-                return git.log().add(head).call();
+                if (tag.isPresent()) {
+                    context.getLogger().debug("found tag {}", extractTagName(tag.get()));
+                    ObjectId fromRef = getObjectId(git, tag.get());
+                    return git.log().addRange(fromRef, head).call();
+                } else {
+                    return git.log().add(head).call();
+                }
             }
         }
 

@@ -30,4 +30,6 @@ interface Github extends GitService {
     Property<Boolean> getDraft()
 
     Property<Boolean> getPrerelease()
+
+    Property<String> getDiscussionCategoryName()
 }

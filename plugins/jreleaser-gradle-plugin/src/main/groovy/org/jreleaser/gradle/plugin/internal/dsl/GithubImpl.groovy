@@ -35,6 +35,7 @@ import javax.inject.Inject
 class GithubImpl extends AbstractGitService implements Github {
     final Property<Boolean> draft
     final Property<Boolean> prerelease
+    final Property<String> discussionCategoryName
     final ChangelogImpl changelog
     final MilestoneImpl milestone
     final CommitAuthorImpl commitAuthor
@@ -44,6 +45,7 @@ class GithubImpl extends AbstractGitService implements Github {
         super(objects)
         draft = objects.property(Boolean).convention(Providers.notDefined())
         prerelease = objects.property(Boolean).convention(Providers.notDefined())
+        discussionCategoryName = objects.property(String).convention(Providers.notDefined())
 
         changelog = objects.newInstance(ChangelogImpl, objects)
         milestone = objects.newInstance(MilestoneImpl, objects)
@@ -56,6 +58,7 @@ class GithubImpl extends AbstractGitService implements Github {
         super.isSet() ||
             draft.present ||
             prerelease.present ||
+            discussionCategoryName.present ||
             changelog.isSet() ||
             milestone.isSet() ||
             commitAuthor.isSet()
@@ -66,6 +69,7 @@ class GithubImpl extends AbstractGitService implements Github {
         toModel(service)
         service.draft = draft.getOrElse(false)
         service.prerelease = prerelease.getOrElse(false)
+        if (discussionCategoryName.present) service.discussionCategoryName = discussionCategoryName.get()
         if (changelog.isSet()) service.changelog = changelog.toModel()
         if (milestone.isSet()) service.milestone = milestone.toModel()
         if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
