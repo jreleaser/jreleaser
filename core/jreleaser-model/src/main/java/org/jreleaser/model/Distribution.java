@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 
 import java.util.ArrayList;
@@ -235,6 +236,14 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
         this.extraProperties.putAll(extraProperties);
+    }
+
+    public void mergeExtraProperties(Map<String, Object> extraProperties) {
+        extraProperties.forEach((k, v) -> {
+            if (!this.extraProperties.containsKey(k)) {
+                this.extraProperties.put(k, v);
+            }
+        });
     }
 
     // --== TOOLs ==--

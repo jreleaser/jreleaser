@@ -21,6 +21,7 @@ import org.bouncycastle.openpgp.PGPException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 import org.jreleaser.util.signing.FilesKeyring;
 import org.jreleaser.util.signing.InMemoryKeyring;
@@ -37,6 +38,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -152,15 +154,33 @@ public class JReleaserContext {
                 distribution.setName(assembler.getName());
                 model.getDistributions().put(assembler.getName(), distribution);
             }
+            distribution.setName(assembler.getName());
             distribution.setType(assembler.getType());
             distribution.setExecutable(assembler.getExecutable());
             distribution.setActive(assembler.getActive());
             distribution.setJava(assembler.getJava());
-            distribution.setArtifacts(assembler.getOutputs());
+            mergeArtifacts(assembler, distribution);
 
             Map<String, Object> extraProperties = new LinkedHashMap<>(distribution.getExtraProperties());
             extraProperties.putAll(assembler.getExtraProperties());
-            distribution.setExtraProperties(extraProperties);
+            distribution.mergeExtraProperties(extraProperties);
+        }
+    }
+
+    private void mergeArtifacts(Assembler assembler, Distribution distribution) {
+        for (Artifact incoming : assembler.getOutputs()) {
+            Optional<Artifact> artifact = distribution.getArtifacts().stream()
+                .filter(a -> {
+                    Path p1 = incoming.getResolvedPath(this, assembler);
+                    Path p2 = a.getResolvedPath(this, distribution);
+                    return p1.equals(p2);
+                })
+                .findFirst();
+            if (artifact.isPresent()) {
+                artifact.get().merge(incoming);
+            } else {
+                distribution.addArtifact(incoming);
+            }
         }
     }
 

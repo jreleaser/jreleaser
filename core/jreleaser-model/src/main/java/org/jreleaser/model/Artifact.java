@@ -19,7 +19,6 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.Algorithm;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -32,8 +31,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.nio.file.Files.exists;
-import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.model.util.Artifacts.copyFile;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -123,10 +120,10 @@ public class Artifact implements Domain, ExtraProperties {
         return tp;
     }
 
-    private Path getResolvedPath(JReleaserContext context) {
+    public Path getResolvedPath(JReleaserContext context) {
         if (null == resolvedPath) {
             if (path.contains("{{")) {
-                path = applyTemplate(path, context.props());
+                path = applyTemplate(path, artifactProps(context.props()));
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
@@ -136,12 +133,12 @@ public class Artifact implements Domain, ExtraProperties {
         return resolvedPath;
     }
 
-    private Path getResolvedPath(JReleaserContext context, Distribution distribution) {
+    public Path getResolvedPath(JReleaserContext context, Distribution distribution) {
         if (null == resolvedPath) {
             if (path.contains("{{")) {
                 Map<String, Object> props = context.props();
                 props.putAll(distribution.props());
-                path = applyTemplate(path, props);
+                path = applyTemplate(path, artifactProps(props));
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
@@ -151,12 +148,12 @@ public class Artifact implements Domain, ExtraProperties {
         return resolvedPath;
     }
 
-    private Path getResolvedPath(JReleaserContext context, Assembler assembler) {
+    public Path getResolvedPath(JReleaserContext context, Assembler assembler) {
         if (null == resolvedPath) {
             if (path.contains("{{")) {
                 Map<String, Object> props = context.props();
                 props.putAll(assembler.props());
-                path = applyTemplate(path, props);
+                path = applyTemplate(path, artifactProps(props));
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
@@ -170,38 +167,46 @@ public class Artifact implements Domain, ExtraProperties {
         return resolvedPath;
     }
 
-    private Path getResolvedTransform(JReleaserContext context) {
+    public Path getResolvedTransform(JReleaserContext context) {
         if (null == resolvedTransform && isNotBlank(transform)) {
             if (transform.contains("{{")) {
-                transform = applyTemplate(transform, context.props());
+                transform = applyTemplate(transform, artifactProps(context.props()));
             }
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
         }
         return resolvedTransform;
     }
 
-    private Path getResolvedTransform(JReleaserContext context, Distribution distribution) {
+    public Path getResolvedTransform(JReleaserContext context, Distribution distribution) {
         if (null == resolvedTransform && isNotBlank(transform)) {
             if (transform.contains("{{")) {
                 Map<String, Object> props = context.props();
                 props.putAll(distribution.props());
-                transform = applyTemplate(transform, props);
+                transform = applyTemplate(transform, artifactProps(props));
             }
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
         }
         return resolvedTransform;
     }
 
-    private Path getResolvedTransform(JReleaserContext context, Assembler assembler) {
+    public Path getResolvedTransform(JReleaserContext context, Assembler assembler) {
         if (null == resolvedTransform && isNotBlank(transform)) {
             if (transform.contains("{{")) {
                 Map<String, Object> props = context.props();
                 props.putAll(assembler.props());
-                transform = applyTemplate(transform, props);
+                transform = applyTemplate(transform, artifactProps(props));
             }
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
         }
         return resolvedTransform;
+    }
+
+    private Map<String,Object> artifactProps(Map<String, Object> props) {
+        props.putAll(getExtraProperties());
+        props.putAll(getResolvedExtraProperties());
+        props.put("platform", platform);
+        props.put("artifactPlatform", platform);
+        return props;
     }
 
     public Path getResolvedTransform() {
@@ -280,6 +285,14 @@ public class Artifact implements Domain, ExtraProperties {
         this.extraProperties.putAll(extraProperties);
     }
 
+    public void mergeExtraProperties(Map<String, Object> extraProperties) {
+        extraProperties.forEach((k, v) -> {
+            if (!this.extraProperties.containsKey(k)) {
+                this.extraProperties.put(k, v);
+            }
+        });
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -301,6 +314,13 @@ public class Artifact implements Domain, ExtraProperties {
     @Override
     public int hashCode() {
         return Objects.hash(path);
+    }
+
+    public void merge(Artifact other) {
+        if (this == other) return;
+        if (isBlank(this.platform)) this.platform = other.platform;
+        if (isBlank(this.transform)) this.transform = other.transform;
+        mergeExtraProperties(other.extraProperties);
     }
 
     public static Set<Artifact> sortArtifacts(Set<Artifact> artifacts) {
