@@ -128,7 +128,7 @@ public final class JReleaserModelConverter {
         p.setName(project.getName());
         p.setVersion(project.getVersion());
         p.setVersionPattern(project.resolveVersionPattern());
-        p.setSnapshotPattern(project.getSnapshotPattern());
+        if(isNotBlank(project.getSnapshotPattern())) p.setSnapshotPattern(project.getSnapshotPattern());
         p.setSnapshot(convertSnapshot(project.getSnapshot()));
         p.setDescription(project.getDescription());
         p.setLongDescription(project.getLongDescription());
