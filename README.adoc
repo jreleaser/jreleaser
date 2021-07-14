@@ -13,7 +13,12 @@ image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-alpine
 
 ---
 
-Release Java projects quickly and easily with link:https://jreleaser.org[JReleaser]!
+Release Java and non-Java projects quickly and easily with link:https://jreleaser.org[JReleaser]!
+
+JReleaser is a release automation tool for Java and non-Java projects. Its goal is to simplify creating releases and
+publishing artifacts to multiple package managers while providing customizable options.
+
+For questions, support and general discussion, please use link:https://github.com/jreleaser/jreleaser/discussions[GitHub Discussions].
 
 == Install
 
