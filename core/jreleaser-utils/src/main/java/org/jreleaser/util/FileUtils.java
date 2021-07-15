@@ -71,12 +71,17 @@ public final class FileUtils {
                 public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
                     final String entryName = src.relativize(file).toString();
                     final ZipArchiveEntry archiveEntry = new ZipArchiveEntry(file.toFile(), entryName);
-                    final byte[] contents = Files.readAllBytes(file);
 
                     archiveEntry.setMethod(ZipOutputStream.DEFLATED);
-
                     out.putArchiveEntry(archiveEntry);
-                    out.write(contents);
+
+                    if (file.toFile().isFile()) {
+                        if (Files.isExecutable(file)) {
+                            archiveEntry.setUnixMode(0100770);
+                        }
+
+                        out.write(Files.readAllBytes(file));
+                    }
                     out.closeArchiveEntry();
 
                     return FileVisitResult.CONTINUE;

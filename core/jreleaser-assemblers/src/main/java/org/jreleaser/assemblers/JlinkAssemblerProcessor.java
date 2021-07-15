@@ -76,9 +76,11 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
             }
         }
 
-        // copy jars to assembly
         Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
-        Path jarsDirectory = assembleDirectory.resolve("jars");
+        Path inputsDirectory = assembleDirectory.resolve("inputs");
+
+        // copy jars to assembly
+        Path jarsDirectory = inputsDirectory.resolve("jars");
         context.getLogger().debug("copying JARs to {}", context.relativizeToBasedir(jarsDirectory));
         Set<Path> jars = copyJars(context, jarsDirectory);
 
@@ -104,9 +106,11 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         String finalImageName = imageName + "-" + targetJdk.getPlatform();
         context.getLogger().info("- {}", finalImageName);
 
-        Path image = assembleDirectory.resolve(finalImageName).toAbsolutePath();
+        Path inputsDirectory = assembleDirectory.resolve("inputs");
+        Path workDirectory = assembleDirectory.resolve("work");
+        Path imageDirectory = workDirectory.resolve(finalImageName).toAbsolutePath();
         try {
-            FileUtils.deleteFiles(image);
+            FileUtils.deleteFiles(imageDirectory);
         } catch (IOException e) {
             throw new AssemblerProcessingException("Could not delete previous image " + finalImageName, e);
         }
@@ -125,20 +129,18 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
             cmd.add(assembler.getExecutable() + "=" + assembler.getModuleName() + "/" + assembler.getJava().getMainClass());
         }
         cmd.add("--output");
-        cmd.add(image.toString());
+        cmd.add(imageDirectory.toString());
         executeCommand(cmd);
-
-        Path imageZip = assembleDirectory.resolve(finalImageName + ".zip");
 
         if (isBlank(assembler.getModuleName())) {
             // non modular
             // copy jars & launcher
-            Path jarsDirectory = image.resolve("jars");
+            Path jarsDirectory = imageDirectory.resolve("jars");
 
             try {
                 Files.createDirectory(jarsDirectory);
                 FileUtils.copyFiles(context.getLogger(),
-                    assembleDirectory.resolve("jars"),
+                    inputsDirectory.resolve("jars"),
                     jarsDirectory);
             } catch (IOException e) {
                 throw new AssemblerProcessingException("Could not copy JARs to " +
@@ -146,11 +148,11 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
             }
             try {
                 if (PlatformUtils.isWindows(targetJdk.getPlatform())) {
-                    Files.copy(assembleDirectory.resolve(assembler.getExecutable().concat(".bat")),
-                        image.resolve("bin").resolve(assembler.getExecutable().concat(".bat")));
+                    Files.copy(inputsDirectory.resolve(assembler.getExecutable().concat(".bat")),
+                        imageDirectory.resolve("bin").resolve(assembler.getExecutable().concat(".bat")));
                 } else {
-                    Path launcher = image.resolve("bin").resolve(assembler.getExecutable());
-                    Files.copy(assembleDirectory.resolve(assembler.getExecutable()), launcher);
+                    Path launcher = imageDirectory.resolve("bin").resolve(assembler.getExecutable());
+                    Files.copy(inputsDirectory.resolve(assembler.getExecutable()), launcher);
                     FileUtils.grantExecutableAccess(launcher);
                 }
             } catch (IOException e) {
@@ -159,19 +161,16 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
             }
         }
 
-        // zip it
-        cmd = new ArrayList<>();
-        cmd.add(jdkPath.resolve("bin").resolve("jar").toAbsolutePath().toString());
-        cmd.add("cfM");
-        cmd.add(imageZip.toAbsolutePath().toString());
-        cmd.add("-C");
-        cmd.add(assembleDirectory.toAbsolutePath().toString());
-        cmd.add(finalImageName);
-        executeCommand(cmd);
+        try {
+            Path imageZip = assembleDirectory.resolve(finalImageName + ".zip");
+            FileUtils.zip(workDirectory, imageZip);
 
-        context.getLogger().debug("- {}", imageZip.getFileName());
+            context.getLogger().debug("- {}", imageZip.getFileName());
 
-        return Artifact.of(imageZip, targetJdk.getPlatform());
+            return Artifact.of(imageZip, targetJdk.getPlatform());
+        } catch (IOException e) {
+            throw new AssemblerProcessingException("Unexpected error", e);
+        }
     }
 
     private String readJavaVersion(Path path) throws AssemblerProcessingException {
@@ -250,11 +249,18 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         fileName = trimTplExtension(fileName);
 
         Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+        Path inputsDirectory = outputDirectory.resolve("inputs");
+        try {
+            Files.createDirectories(inputsDirectory);
+        } catch (IOException e) {
+            throw new AssemblerProcessingException("Could not create directories", e);
+        }
+
         Path outputFile = "launcher.bat".equals(fileName) ?
-            outputDirectory.resolve(assembler.getExecutable().concat(".bat")) :
+            inputsDirectory.resolve(assembler.getExecutable().concat(".bat")) :
             "launcher".equals(fileName) ?
-                outputDirectory.resolve(assembler.getExecutable()) :
-                outputDirectory.resolve(fileName);
+                inputsDirectory.resolve(assembler.getExecutable()) :
+                inputsDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
     }

@@ -139,7 +139,6 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
             Path binDirectory = distDirectory.resolve("bin");
             Files.createDirectories(binDirectory);
             Files.copy(image, binDirectory.resolve(image.getFileName()));
-            context.getLogger().debug("copying files to {}", context.relativizeToBasedir(distDirectory));
             copyFiles(context, distDirectory);
 
             Path imageZip = assembleDirectory.resolve(finalImageName + ".zip");
