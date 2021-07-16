@@ -79,8 +79,10 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
             Path path = artifact.getEffectivePath(context);
             addReleaseAsset(path);
             if (uploadIndividualChecksums) {
-                addReleaseAsset(context.getChecksumsDirectory()
-                    .resolve(path.getFileName() + ".sha256"));
+                for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+                    addReleaseAsset(context.getChecksumsDirectory()
+                        .resolve(path.getFileName() + "." + algorithm.formatted()));
+                }
             }
         }
 
