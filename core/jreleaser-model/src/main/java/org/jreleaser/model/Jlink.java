@@ -41,6 +41,7 @@ public class Jlink extends AbstractAssembler {
     private final Artifact jdk = new Artifact();
     private final Artifact mainJar = new Artifact();
     private final List<Glob> jars = new ArrayList<>();
+    private final List<Glob> files = new ArrayList<>();
 
     private String imageName;
     private String imageNameTransform;
@@ -66,6 +67,7 @@ public class Jlink extends AbstractAssembler {
         setModuleNames(jlink.moduleNames);
         setArgs(jlink.args);
         setJars(jlink.jars);
+        setFiles(jlink.files);
     }
 
     public String getResolvedImageName(JReleaserContext context) {
@@ -209,6 +211,25 @@ public class Jlink extends AbstractAssembler {
         }
     }
 
+    public List<Glob> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<Glob> files) {
+        this.files.clear();
+        this.files.addAll(files);
+    }
+
+    public void addFiles(List<Glob> files) {
+        this.files.addAll(files);
+    }
+
+    public void addFile(Glob file) {
+        if (null != file) {
+            this.files.add(file);
+        }
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("imageName", imageName);
@@ -228,5 +249,10 @@ public class Jlink extends AbstractAssembler {
             mappedJars.put("glob " + i, jars.get(i).asMap(full));
         }
         props.put("jars", mappedJars);
+        Map<String, Map<String, Object>> mappedFiles = new LinkedHashMap<>();
+        for (i = 0; i < files.size(); i++) {
+            mappedFiles.put("glob " + i, files.get(i).asMap(full));
+        }
+        props.put("files", mappedFiles);
     }
 }

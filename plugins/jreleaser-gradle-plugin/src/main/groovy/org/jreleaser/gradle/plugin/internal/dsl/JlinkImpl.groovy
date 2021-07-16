@@ -54,6 +54,7 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
     private final ArtifactImpl jdk
     private final ArtifactImpl mainJar
     private final NamedDomainObjectContainer<GlobImpl> jars
+    private final NamedDomainObjectContainer<GlobImpl> files
     final NamedDomainObjectContainer<ArtifactImpl> targetJdks
 
     @Inject
@@ -79,6 +80,15 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
         })
 
         jars = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
+            @Override
+            GlobImpl create(String name) {
+                GlobImpl glob = objects.newInstance(GlobImpl, objects)
+                glob.name = name
+                glob
+            }
+        })
+
+        files = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
             @Override
             GlobImpl create(String name) {
                 GlobImpl glob = objects.newInstance(GlobImpl, objects)
@@ -116,6 +126,11 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
     }
 
     @Override
+    void files(Action<? super Glob> action) {
+        action.execute(files.maybeCreate("files-${files.size()}".toString()))
+    }
+
+    @Override
     void setActive(String str) {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
@@ -142,6 +157,11 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
         ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
     }
 
+    @Override
+    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
+        ConfigureUtil.configure(action, files.maybeCreate("files-${files.size()}".toString()))
+    }
+
     org.jreleaser.model.Jlink toModel() {
         org.jreleaser.model.Jlink jlink = new org.jreleaser.model.Jlink()
         jlink.name = name
@@ -159,6 +179,9 @@ class JlinkImpl extends AbstractAssembler implements Jlink {
         }
         for (GlobImpl glob : jars) {
             jlink.addJar(glob.toModel())
+        }
+        for (GlobImpl glob : files) {
+            jlink.addFile(glob.toModel())
         }
         jlink
     }

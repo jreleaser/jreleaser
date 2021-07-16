@@ -163,6 +163,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
 
         try {
             Path imageZip = assembleDirectory.resolve(finalImageName + ".zip");
+            copyFiles(context, imageDirectory);
             FileUtils.zip(workDirectory, imageZip);
 
             context.getLogger().debug("- {}", imageZip.getFileName());
@@ -216,6 +217,30 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
             }
         } catch (IOException e) {
             throw new AssemblerProcessingException("Unexpected error when copying JAR files", e);
+        }
+
+        return paths;
+    }
+
+    private Set<Path> copyFiles(JReleaserContext context, Path destination) throws AssemblerProcessingException {
+        Set<Path> paths = new LinkedHashSet<>();
+
+        // resolve all first
+        for (Glob glob : assembler.getFiles()) {
+            glob.getResolvedPaths(context).stream()
+                .filter(Files::isRegularFile)
+                .forEach(paths::add);
+        }
+
+        // copy all next
+        try {
+            Files.createDirectories(destination);
+            for (Path path : paths) {
+                context.getLogger().debug("copying {}", path.getFileName());
+                Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            throw new AssemblerProcessingException("Unexpected error when copying files", e);
         }
 
         return paths;

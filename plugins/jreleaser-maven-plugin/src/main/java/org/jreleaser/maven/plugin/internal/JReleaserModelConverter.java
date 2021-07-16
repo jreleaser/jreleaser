@@ -641,6 +641,7 @@ public final class JReleaserModelConverter {
         a.setImageNameTransform(jlink.getImageNameTransform());
         a.setModuleName(jlink.getModuleName());
         a.setJars(convertGlobs(jlink.getJars()));
+        a.setFiles(convertGlobs(jlink.getFiles()));
         return a;
     }
 

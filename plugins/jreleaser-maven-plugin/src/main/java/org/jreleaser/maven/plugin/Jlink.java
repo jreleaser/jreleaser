@@ -36,6 +36,7 @@ public class Jlink extends AbstractAssembler {
     private final Artifact jdk = new Artifact();
     private final Artifact mainJar = new Artifact();
     private final List<Glob> jars = new ArrayList<>();
+    private final List<Glob> files = new ArrayList<>();
 
     private String imageName;
     private String imageNameTransform;
@@ -53,6 +54,7 @@ public class Jlink extends AbstractAssembler {
         setModuleNames(jlink.moduleNames);
         setArgs(jlink.args);
         setJars(jlink.jars);
+        setFiles(jlink.files);
     }
 
     public Artifact getJdk() {
@@ -189,5 +191,14 @@ public class Jlink extends AbstractAssembler {
         if (null != jar) {
             this.jars.add(jar);
         }
+    }
+
+    public List<Glob> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<Glob> files) {
+        this.files.clear();
+        this.files.addAll(files);
     }
 }
