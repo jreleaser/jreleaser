@@ -25,4 +25,10 @@ public interface Tool extends ExtraProperties, Activatable {
     String getTemplateDirectory();
 
     void setTemplateDirectory(String templateDirectory);
+
+    boolean isContinueOnError();
+
+    void setContinueOnError(Boolean continueOnError);
+
+    boolean isContinueOnErrorSet();
 }

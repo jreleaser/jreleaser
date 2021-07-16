@@ -40,12 +40,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 abstract class AbstractTool implements Tool {
     final Property<Active> active
     final DirectoryProperty templateDirectory
+    final Property<Boolean> continueOnError
     final MapProperty<String, Object> extraProperties
 
     @Inject
     AbstractTool(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
         templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
+        continueOnError = objects.property(Boolean).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
@@ -53,6 +55,7 @@ abstract class AbstractTool implements Tool {
     boolean isSet() {
         active.present ||
             templateDirectory.present ||
+            continueOnError.present||
             extraProperties.present
     }
 
@@ -68,6 +71,7 @@ abstract class AbstractTool implements Tool {
         if (templateDirectory.present) {
             tool.templateDirectory = templateDirectory.get().asFile.toPath().toAbsolutePath().toString()
         }
+        if (continueOnError.present) tool.continueOnError = continueOnError.get()
         if (extraProperties.present) tool.extraProperties.putAll(extraProperties.get())
     }
 }

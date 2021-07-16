@@ -66,6 +66,7 @@ public abstract class BrewValidator extends Validator {
         validateOwner(tap, parentTool.getTap());
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
+        validateContinueOnError(tool, parentTool);
 
         List<Brew.Dependency> dependencies = new ArrayList<>(parentTool.getDependenciesAsList());
         dependencies.addAll(tool.getDependenciesAsList());

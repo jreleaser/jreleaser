@@ -762,24 +762,25 @@ public final class JReleaserModelConverter {
         return g;
     }
 
-    private static org.jreleaser.model.Brew convertBrew(Brew brew) {
+    private static org.jreleaser.model.Brew convertBrew(Brew tool) {
         org.jreleaser.model.Brew t = new org.jreleaser.model.Brew();
-        t.setActive(brew.resolveActive());
-        t.setTemplateDirectory(brew.getTemplateDirectory());
-        t.setExtraProperties(brew.getExtraProperties());
-        t.setTap(convertHomebrewTap(brew.getTap()));
-        t.setFormulaName(brew.getFormulaName());
-        t.setCommitAuthor(convertCommitAuthor(brew.getCommitAuthor()));
-        brew.getDependencies().forEach(dependency -> {
+        t.setActive(tool.resolveActive());
+        t.setTemplateDirectory(tool.getTemplateDirectory());
+        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setExtraProperties(tool.getExtraProperties());
+        t.setTap(convertHomebrewTap(tool.getTap()));
+        t.setFormulaName(tool.getFormulaName());
+        t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
+        tool.getDependencies().forEach(dependency -> {
             if (isNotBlank(dependency.getValue())) {
                 t.addDependency(dependency.getKey(), dependency.getValue());
             } else {
                 t.addDependency(dependency.getKey());
             }
         });
-        t.setLivecheck(brew.getLivecheck());
-        if (brew.getCask().isSet()) {
-            t.setCask(convertCask(brew.getCask()));
+        t.setLivecheck(tool.getLivecheck());
+        if (tool.getCask().isSet()) {
+            t.setCask(convertCask(tool.getCask()));
         }
         return t;
     }
@@ -804,15 +805,16 @@ public final class JReleaserModelConverter {
         return t;
     }
 
-    private static org.jreleaser.model.Chocolatey convertChocolatey(Chocolatey chocolatey) {
+    private static org.jreleaser.model.Chocolatey convertChocolatey(Chocolatey tool) {
         org.jreleaser.model.Chocolatey t = new org.jreleaser.model.Chocolatey();
-        t.setActive(chocolatey.resolveActive());
-        t.setUsername(chocolatey.getUsername());
-        t.setRemoteBuild(chocolatey.isRemoteBuild());
-        t.setTemplateDirectory(chocolatey.getTemplateDirectory());
-        t.setExtraProperties(chocolatey.getExtraProperties());
-        t.setBucket(convertChocolateyBucket(chocolatey.getBucket()));
-        t.setCommitAuthor(convertCommitAuthor(chocolatey.getCommitAuthor()));
+        t.setActive(tool.resolveActive());
+        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setUsername(tool.getUsername());
+        t.setRemoteBuild(tool.isRemoteBuild());
+        t.setTemplateDirectory(tool.getTemplateDirectory());
+        t.setExtraProperties(tool.getExtraProperties());
+        t.setBucket(convertChocolateyBucket(tool.getBucket()));
+        t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
         return t;
     }
 
@@ -824,6 +826,11 @@ public final class JReleaserModelConverter {
     }
 
     private static void convertDocker(org.jreleaser.model.DockerConfiguration d, DockerConfiguration docker) {
+        if (d instanceof Docker && docker instanceof Docker) {
+            Docker dd = (Docker) d;
+            Docker kk = (Docker) docker;
+            if (kk.isContinueOnErrorSet()) dd.setContinueOnError(kk.isContinueOnError());
+        }
         d.setActive(docker.resolveActive());
         d.setTemplateDirectory(docker.getTemplateDirectory());
         d.setExtraProperties(docker.getExtraProperties());
@@ -878,14 +885,15 @@ public final class JReleaserModelConverter {
         return b;
     }
 
-    private static org.jreleaser.model.Jbang convertJbang(Jbang jbang) {
+    private static org.jreleaser.model.Jbang convertJbang(Jbang tool) {
         org.jreleaser.model.Jbang t = new org.jreleaser.model.Jbang();
-        t.setActive(jbang.resolveActive());
-        t.setTemplateDirectory(jbang.getTemplateDirectory());
-        t.setExtraProperties(jbang.getExtraProperties());
-        t.setAlias(jbang.getAlias());
-        t.setCatalog(convertJbangCatalog(jbang.getCatalog()));
-        t.setCommitAuthor(convertCommitAuthor(jbang.getCommitAuthor()));
+        t.setActive(tool.resolveActive());
+        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setTemplateDirectory(tool.getTemplateDirectory());
+        t.setExtraProperties(tool.getExtraProperties());
+        t.setAlias(tool.getAlias());
+        t.setCatalog(convertJbangCatalog(tool.getCatalog()));
+        t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
         return t;
     }
 
@@ -898,15 +906,16 @@ public final class JReleaserModelConverter {
         return t;
     }
 
-    private static org.jreleaser.model.Scoop convertScoop(Scoop scoop) {
+    private static org.jreleaser.model.Scoop convertScoop(Scoop tool) {
         org.jreleaser.model.Scoop t = new org.jreleaser.model.Scoop();
-        t.setActive(scoop.resolveActive());
-        t.setTemplateDirectory(scoop.getTemplateDirectory());
-        t.setExtraProperties(scoop.getExtraProperties());
-        t.setCheckverUrl(scoop.getCheckverUrl());
-        t.setAutoupdateUrl(scoop.getAutoupdateUrl());
-        t.setBucket(convertScoopBucket(scoop.getBucket()));
-        t.setCommitAuthor(convertCommitAuthor(scoop.getCommitAuthor()));
+        t.setActive(tool.resolveActive());
+        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setTemplateDirectory(tool.getTemplateDirectory());
+        t.setExtraProperties(tool.getExtraProperties());
+        t.setCheckverUrl(tool.getCheckverUrl());
+        t.setAutoupdateUrl(tool.getAutoupdateUrl());
+        t.setBucket(convertScoopBucket(tool.getBucket()));
+        t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
         return t;
     }
 
@@ -919,22 +928,23 @@ public final class JReleaserModelConverter {
         return b;
     }
 
-    private static org.jreleaser.model.Snap convertSnap(Snap snap) {
+    private static org.jreleaser.model.Snap convertSnap(Snap tool) {
         org.jreleaser.model.Snap t = new org.jreleaser.model.Snap();
-        t.setActive(snap.resolveActive());
-        t.setTemplateDirectory(snap.getTemplateDirectory());
-        t.setExtraProperties(snap.getExtraProperties());
-        if (isNotBlank(snap.getBase())) t.setBase(snap.getBase());
-        if (isNotBlank(snap.getGrade())) t.setGrade(snap.getGrade());
-        if (isNotBlank(snap.getConfinement())) t.setConfinement(snap.getConfinement());
-        if (null != snap.getExportedLogin()) t.setExportedLogin(snap.getExportedLogin().getAbsolutePath());
-        t.setRemoteBuild(snap.isRemoteBuild());
-        t.setLocalPlugs(snap.getLocalPlugs());
-        t.setLocalSlots(snap.getLocalSlots());
-        t.setPlugs(convertPlugs(snap.getPlugs()));
-        t.setSlots(convertSlots(snap.getSlots()));
-        t.setSnap(convertSnapTap(snap.getSnap()));
-        t.setCommitAuthor(convertCommitAuthor(snap.getCommitAuthor()));
+        t.setActive(tool.resolveActive());
+        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setTemplateDirectory(tool.getTemplateDirectory());
+        t.setExtraProperties(tool.getExtraProperties());
+        if (isNotBlank(tool.getBase())) t.setBase(tool.getBase());
+        if (isNotBlank(tool.getGrade())) t.setGrade(tool.getGrade());
+        if (isNotBlank(tool.getConfinement())) t.setConfinement(tool.getConfinement());
+        if (null != tool.getExportedLogin()) t.setExportedLogin(tool.getExportedLogin().getAbsolutePath());
+        t.setRemoteBuild(tool.isRemoteBuild());
+        t.setLocalPlugs(tool.getLocalPlugs());
+        t.setLocalSlots(tool.getLocalSlots());
+        t.setPlugs(convertPlugs(tool.getPlugs()));
+        t.setSlots(convertSlots(tool.getSlots()));
+        t.setSnap(convertSnapTap(tool.getSnap()));
+        t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
         return t;
     }
 

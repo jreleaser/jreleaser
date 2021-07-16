@@ -21,7 +21,9 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Docker
 
@@ -35,10 +37,12 @@ import javax.inject.Inject
 @CompileStatic
 class DockerImpl extends AbstractDockerConfiguration implements Docker {
     final NamedDomainObjectContainer<DockerSpecImpl> specs
+    final Property<Boolean> continueOnError
 
     @Inject
     DockerImpl(ObjectFactory objects) {
         super(objects)
+        continueOnError = objects.property(Boolean).convention(Providers.notDefined())
 
         specs = objects.domainObjectContainer(DockerSpecImpl, new NamedDomainObjectFactory<DockerSpecImpl>() {
             @Override
@@ -54,6 +58,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     @Internal
     boolean isSet() {
         super.isSet() ||
+            continueOnError.present||
             !specs.isEmpty()
     }
 
@@ -61,6 +66,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     org.jreleaser.model.Docker toModel() {
         org.jreleaser.model.Docker tool = new org.jreleaser.model.Docker()
         toModel(tool)
+        if (continueOnError.present) tool.continueOnError = continueOnError.get()
 
         specs.each { tool.addSpec(it.toModel()) }
 

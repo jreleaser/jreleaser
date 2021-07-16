@@ -35,4 +35,14 @@ public interface Tool extends Domain, ExtraProperties, Activatable {
     boolean supportsPlatform(String platform);
 
     boolean supportsDistribution(Distribution distribution);
+
+    boolean isContinueOnError();
+
+    void setContinueOnError(Boolean continueOnError);
+
+    boolean isContinueOnErrorSet();
+
+    boolean isFailed();
+
+    void fail();
 }

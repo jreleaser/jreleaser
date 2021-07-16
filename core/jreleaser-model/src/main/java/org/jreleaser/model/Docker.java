@@ -35,10 +35,39 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public class Docker extends AbstractDockerConfiguration implements Tool {
     private final Map<String, DockerSpec> specs = new LinkedHashMap<>();
+    protected Boolean continueOnError;
+    protected boolean failed;
 
     void setAll(Docker docker) {
         super.setAll(docker);
+        this.continueOnError = docker.continueOnError;
+        this.failed = docker.failed;
         setSpecs(docker.specs);
+    }
+
+    @Override
+    public void fail() {
+        this.failed = true;
+    }
+
+    @Override
+    public boolean isFailed() {
+        return failed;
+    }
+
+    @Override
+    public boolean isContinueOnError() {
+        return continueOnError != null && continueOnError;
+    }
+
+    @Override
+    public void setContinueOnError(Boolean continueOnError) {
+        this.continueOnError = continueOnError;
+    }
+
+    @Override
+    public boolean isContinueOnErrorSet() {
+        return continueOnError != null;
     }
 
     @Override
@@ -98,6 +127,7 @@ public class Docker extends AbstractDockerConfiguration implements Tool {
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
+        props.put("continueOnError", isContinueOnError());
         List<Map<String, Object>> specs = this.specs.values()
             .stream()
             .filter(d -> full || d.isEnabled())

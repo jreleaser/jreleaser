@@ -21,6 +21,7 @@ import org.jreleaser.model.CommitAuthor;
 import org.jreleaser.model.CommitAuthorAware;
 import org.jreleaser.model.Environment;
 import org.jreleaser.model.OwnerAware;
+import org.jreleaser.model.Tool;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
@@ -65,6 +66,12 @@ class Validator {
 
     static void validateOwner(OwnerAware self, OwnerAware other) {
         if (isBlank(self.getOwner())) self.setOwner(other.getOwner());
+    }
+
+    static void validateContinueOnError(Tool self, Tool other) {
+        if (!self.isContinueOnErrorSet()) {
+            self.setContinueOnError(other.isContinueOnError());
+        }
     }
 
     static void validateCommitAuthor(CommitAuthorAware self, CommitAuthorAware other) {

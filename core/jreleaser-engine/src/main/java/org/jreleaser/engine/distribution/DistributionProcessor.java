@@ -71,7 +71,18 @@ public class DistributionProcessor {
 
         context.getLogger().info("preparing {} distribution", distributionName);
 
-        return toolProcessor.prepareDistribution(distribution, initProps());
+        try {
+            return toolProcessor.prepareDistribution(distribution, initProps());
+        } catch (ToolProcessingException tpe) {
+            if (tool.isContinueOnError()) {
+                tool.fail();
+                context.getLogger().warn("failure: " + tpe.getMessage());
+                context.getLogger().trace(tpe);
+                return false;
+            } else {
+                throw tpe;
+            }
+        }
     }
 
     public boolean packageDistribution() throws ToolProcessingException {
@@ -79,6 +90,10 @@ public class DistributionProcessor {
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
             context.getLogger().debug("skipping for {} distribution", distributionName);
+            return false;
+        }
+        if (tool.isFailed()) {
+            context.getLogger().warn("skipping due to previous failure");
             return false;
         }
 
@@ -90,7 +105,18 @@ public class DistributionProcessor {
 
         context.getLogger().info("packaging {} distribution", distributionName);
 
-        return toolProcessor.packageDistribution(distribution, initProps());
+        try {
+            return toolProcessor.packageDistribution(distribution, initProps());
+        } catch (ToolProcessingException tpe) {
+            if (tool.isContinueOnError()) {
+                tool.fail();
+                context.getLogger().warn("failure: " + tpe.getMessage());
+                context.getLogger().trace(tpe);
+                return false;
+            } else {
+                throw tpe;
+            }
+        }
     }
 
     public boolean publishDistribution() throws ToolProcessingException {
@@ -98,6 +124,10 @@ public class DistributionProcessor {
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
             context.getLogger().debug("skipping for {} distribution", distributionName);
+            return false;
+        }
+        if (tool.isFailed()) {
+            context.getLogger().warn("skipping due to previous failure");
             return false;
         }
 
@@ -109,7 +139,18 @@ public class DistributionProcessor {
 
         context.getLogger().info("publishing {} distribution", distributionName);
 
-        return toolProcessor.publishDistribution(distribution, Releasers.releaserFor(context), initProps());
+        try {
+            return toolProcessor.publishDistribution(distribution, Releasers.releaserFor(context), initProps());
+        } catch (ToolProcessingException tpe) {
+            if (tool.isContinueOnError()) {
+                tool.fail();
+                context.getLogger().warn("failure: " + tpe.getMessage());
+                context.getLogger().trace(tpe);
+                return false;
+            } else {
+                throw tpe;
+            }
+        }
     }
 
     private Map<String, Object> initProps() {

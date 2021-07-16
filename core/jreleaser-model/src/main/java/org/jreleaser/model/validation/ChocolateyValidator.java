@@ -57,6 +57,7 @@ public abstract class ChocolateyValidator extends Validator {
         validateOwner(bucket, parentTool.getBucket());
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
+        validateContinueOnError(tool, parentTool);
 
         if (isBlank(tool.getUsername())) {
             tool.setUsername(service.getOwner());

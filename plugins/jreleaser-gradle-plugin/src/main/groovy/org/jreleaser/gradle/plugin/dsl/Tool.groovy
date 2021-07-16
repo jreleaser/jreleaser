@@ -34,4 +34,6 @@ interface Tool extends ExtraProperties {
     void setActive(String str)
 
     DirectoryProperty getTemplateDirectory()
+
+    Property<Boolean> getContinueOnError()
 }

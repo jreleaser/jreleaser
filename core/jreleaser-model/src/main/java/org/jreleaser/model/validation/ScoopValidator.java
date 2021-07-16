@@ -57,6 +57,7 @@ public abstract class ScoopValidator extends Validator {
         validateOwner(bucket, parentTool.getBucket());
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
+        validateContinueOnError(tool, parentTool);
 
         if (isBlank(tool.getCheckverUrl())) {
             tool.setCheckverUrl(parentTool.getCheckverUrl());

@@ -33,6 +33,8 @@ public abstract class AbstractTool implements Tool {
     protected boolean enabled;
     protected Active active;
     protected String templateDirectory;
+    protected Boolean continueOnError;
+    protected boolean failed;
 
     protected AbstractTool(String name) {
         this.name = name;
@@ -41,8 +43,20 @@ public abstract class AbstractTool implements Tool {
     void setAll(AbstractTool tool) {
         this.active = tool.active;
         this.enabled = tool.enabled;
+        this.failed = tool.failed;
         this.templateDirectory = tool.templateDirectory;
+        this.continueOnError = tool.continueOnError;
         setExtraProperties(tool.extraProperties);
+    }
+
+    @Override
+    public void fail() {
+        this.failed = true;
+    }
+
+    @Override
+    public boolean isFailed() {
+        return failed;
     }
 
     @Override
@@ -66,6 +80,21 @@ public abstract class AbstractTool implements Tool {
     public void disable() {
         active = Active.NEVER;
         enabled = false;
+    }
+
+    @Override
+    public boolean isContinueOnError() {
+        return continueOnError != null && continueOnError;
+    }
+
+    @Override
+    public void setContinueOnError(Boolean continueOnError) {
+        this.continueOnError = continueOnError;
+    }
+
+    @Override
+    public boolean isContinueOnErrorSet() {
+        return continueOnError != null;
     }
 
     public boolean resolveEnabled(Project project) {
@@ -146,6 +175,7 @@ public abstract class AbstractTool implements Tool {
         props.put("enabled", isEnabled());
         props.put("active", active);
         props.put("templateDirectory", templateDirectory);
+        props.put("continueOnError", isContinueOnError());
         asMap(full, props);
         props.put("extraProperties", getResolvedExtraProperties());
 

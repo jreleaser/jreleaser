@@ -28,10 +28,12 @@ abstract class AbstractTool implements Tool {
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected Active active;
     protected String templateDirectory;
+    protected Boolean continueOnError;
 
     void setAll(AbstractTool tool) {
         this.active = tool.active;
         this.templateDirectory = tool.templateDirectory;
+        this.continueOnError = tool.continueOnError;
         setExtraProperties(tool.extraProperties);
     }
 
@@ -58,6 +60,21 @@ abstract class AbstractTool implements Tool {
     @Override
     public void setTemplateDirectory(String templateDirectory) {
         this.templateDirectory = templateDirectory;
+    }
+
+    @Override
+    public boolean isContinueOnError() {
+        return continueOnError != null && continueOnError;
+    }
+
+    @Override
+    public void setContinueOnError(Boolean continueOnError) {
+        this.continueOnError = continueOnError;
+    }
+
+    @Override
+    public boolean isContinueOnErrorSet() {
+        return continueOnError != null;
     }
 
     @Override

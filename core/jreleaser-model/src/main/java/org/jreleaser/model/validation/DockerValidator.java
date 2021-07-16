@@ -79,6 +79,7 @@ public abstract class DockerValidator extends Validator {
             validateTemplate(context, distribution, tool, parentTool, errors);
         }
         mergeExtraProperties(tool, parentTool);
+        validateContinueOnError(tool, parentTool);
 
         if (isBlank(tool.getBaseImage())) {
             tool.setBaseImage(parentTool.getBaseImage());

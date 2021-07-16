@@ -26,10 +26,27 @@ import java.util.List;
  */
 public class Docker extends AbstractDockerConfiguration implements Tool {
     private final List<DockerSpec> specs = new ArrayList<>();
+    protected Boolean continueOnError;
 
     void setAll(Docker docker) {
         super.setAll(docker);
+        this.continueOnError = docker.continueOnError;
         setSpecs(docker.specs);
+    }
+
+    @Override
+    public boolean isContinueOnError() {
+        return continueOnError != null && continueOnError;
+    }
+
+    @Override
+    public void setContinueOnError(Boolean continueOnError) {
+        this.continueOnError = continueOnError;
+    }
+
+    @Override
+    public boolean isContinueOnErrorSet() {
+        return continueOnError != null;
     }
 
     public List<DockerSpec> getSpecs() {

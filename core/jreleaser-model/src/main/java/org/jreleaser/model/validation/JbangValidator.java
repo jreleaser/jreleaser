@@ -62,6 +62,7 @@ public abstract class JbangValidator extends Validator {
         validateOwner(catalog, parentTool.getCatalog());
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
+        validateContinueOnError(tool, parentTool);
 
         if (isBlank(tool.getAlias())) {
             tool.setAlias(distribution.getExecutable());
