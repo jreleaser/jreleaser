@@ -266,8 +266,9 @@ public class ChangelogGenerator {
             .sorted(revCommitComparator)
             .map(Commit::of)
             .peek(c -> {
-                contributorNames.add(c.author);
-                if (isNotBlank(c.committer)) contributorNames.add(c.committer);
+                if (!changelog.getHide().containsContributor(c.author)) contributorNames.add(c.author);
+                if (isNotBlank(c.committer) && !changelog.getHide().containsContributor(c.committer))
+                    contributorNames.add(c.committer);
             })
             .peek(c -> applyLabels(c, changelog.getLabelers()))
             .filter(c -> checkLabels(c, changelog))
@@ -282,7 +283,7 @@ public class ChangelogGenerator {
         StringBuilder changes = new StringBuilder();
         for (Changelog.Category category : changelog.getCategories()) {
             String categoryTitle = category.getTitle();
-            if (!categories.containsKey(categoryTitle) || changelog.containsHiddenCategory(categoryTitle)) continue;
+            if (!categories.containsKey(categoryTitle) || changelog.getHide().containsCategory(categoryTitle)) continue;
 
             changes.append("## ")
                 .append(categoryTitle)
@@ -295,7 +296,7 @@ public class ChangelogGenerator {
                 .append(lineSeparator());
         }
 
-        if (!changelog.isHideUncategorized() && categories.containsKey(UNCATEGORIZED)) {
+        if (!changelog.getHide().isUncategorized() && categories.containsKey(UNCATEGORIZED)) {
             if (changes.length() > 0) {
                 changes.append("---")
                     .append(lineSeparator);

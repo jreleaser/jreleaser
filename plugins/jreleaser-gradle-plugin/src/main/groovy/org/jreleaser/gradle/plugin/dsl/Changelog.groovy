@@ -37,8 +37,6 @@ interface Changelog {
 
     Property<Boolean> getLinks()
 
-    Property<Boolean> getHideUncategorized()
-
     RegularFileProperty getExternal()
 
     void setSort(String sort)
@@ -57,10 +55,6 @@ interface Changelog {
 
     SetProperty<String> getExcludeLabels()
 
-    SetProperty<String> getHiddenCategories()
-
-    void hideCategory(String category)
-
     void includeLabel(String label)
 
     void excludeLabel(String label)
@@ -76,6 +70,12 @@ interface Changelog {
     void labeler(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Labeler) Closure<Void> action)
 
     void replacer(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Replacer) Closure<Void> action)
+
+    Hide getHide()
+
+    void hide(Action<? super Hide> action)
+
+    void hide(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hide) Closure<Void> action)
 
     interface Category {
         Property<String> getTitle()
@@ -95,5 +95,15 @@ interface Changelog {
         Property<String> getSearch()
 
         Property<String> getReplace()
+    }
+
+    interface Hide {
+        Property<Boolean> getUncategorized()
+
+        SetProperty<String> getCategories()
+
+        SetProperty<String> getContributors()
+
+        void hideCategory(String category)
     }
 }

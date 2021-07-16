@@ -606,7 +606,21 @@ public class StringUtils {
     }
 
     public static String escapeRegexChars(String str) {
-        return REGEX_CHARS.matcher(str).replaceAll("\\\\$0");
+        boolean start = false;
+        boolean end = false;
+
+        String s = str;
+        if (s.charAt(0) == '^' && s.length() > 1) {
+            start = true;
+            s = s.substring(1);
+        }
+        if (s.charAt(s.length() - 1) == '$' && s.length() > 1) {
+            end = true;
+            s = s.substring(0, s.length() - 2);
+        }
+
+        String replaced = REGEX_CHARS.matcher(s).replaceAll("\\\\$0");
+        return (start ? "^" : "") + replaced + (end ? "$" : "");
     }
 
     public static String toSafeRegexPattern(String str) {

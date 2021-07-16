@@ -51,7 +51,7 @@ class ChangelogImpl implements Changelog {
     final RegularFileProperty contentTemplate
     final SetProperty<String> includeLabels
     final SetProperty<String> excludeLabels
-    final SetProperty<String> hiddenCategories
+    final HideImpl hide
 
     private final List<CategoryImpl> categories = []
     private final Set<LabelerImpl> labelers = []
@@ -72,7 +72,7 @@ class ChangelogImpl implements Changelog {
         contentTemplate = objects.fileProperty().convention(Providers.notDefined())
         includeLabels = objects.setProperty(String).convention(Providers.notDefined())
         excludeLabels = objects.setProperty(String).convention(Providers.notDefined())
-        hiddenCategories = objects.setProperty(String).convention(Providers.notDefined())
+        hide = objects.newInstance(HideImpl, objects)
     }
 
     @Override
@@ -95,10 +95,10 @@ class ChangelogImpl implements Changelog {
             contentTemplate.present ||
             includeLabels.present ||
             excludeLabels.present ||
-            hiddenCategories.present ||
             !categories.isEmpty() ||
             !labelers.isEmpty() ||
-            !replacers.isEmpty()
+            !replacers.isEmpty() ||
+            hide.isSet()
     }
 
     @Override
@@ -117,13 +117,6 @@ class ChangelogImpl implements Changelog {
     void excludeLabel(String label) {
         if (isNotBlank(label)) {
             excludeLabels.add(label.trim())
-        }
-    }
-
-    @Override
-    void hideCategory(String category) {
-        if (isNotBlank(category)) {
-            hiddenCategories.add(category.trim())
         }
     }
 
@@ -149,6 +142,11 @@ class ChangelogImpl implements Changelog {
     }
 
     @Override
+    void hide(Action<? super Hide> action) {
+        action.execute(hide)
+    }
+
+    @Override
     void category(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Category) Closure<Void> action) {
         CategoryImpl category = objects.newInstance(CategoryImpl, objects)
         ConfigureUtil.configure(action, category)
@@ -169,6 +167,11 @@ class ChangelogImpl implements Changelog {
         replacers.add(replacer)
     }
 
+    @Override
+    void hide(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hide) Closure<Void> action) {
+        ConfigureUtil.configure(action, hide)
+    }
+
     org.jreleaser.model.Changelog toModel() {
         org.jreleaser.model.Changelog changelog = new org.jreleaser.model.Changelog()
         if (enabled.present) {
@@ -177,7 +180,7 @@ class ChangelogImpl implements Changelog {
             changelog.enabled = isSet()
         }
         if (links.present) changelog.links = links.get()
-        if (hideUncategorized.present) changelog.hideUncategorized = hideUncategorized.get()
+        if (hideUncategorized.present) hide.uncategorized.set(hideUncategorized.get())
         if (sort.present) changelog.sort = sort.get()
         if (external.present) changelog.external = external.getAsFile().get().toPath()
         if (formatted.present) changelog.formatted = formatted.get()
@@ -188,7 +191,6 @@ class ChangelogImpl implements Changelog {
         }
         changelog.includeLabels = (Set<String>) includeLabels.getOrElse([] as Set)
         changelog.excludeLabels = (Set<String>) excludeLabels.getOrElse([] as Set)
-        changelog.hiddenCategories = (Set<String>) hiddenCategories.getOrElse([] as Set)
         changelog.setCategories(categories.collect([]) { CategoryImpl category ->
             category.toModel()
         } as List<org.jreleaser.model.Changelog.Category>)
@@ -198,6 +200,7 @@ class ChangelogImpl implements Changelog {
         changelog.setReplacers(replacers.collect([] as Set) { ReplacerImpl replacer ->
             replacer.toModel()
         } as Set<org.jreleaser.model.Changelog.Replacer>)
+        changelog.hide = hide.toModel()
         changelog
     }
 
@@ -258,6 +261,42 @@ class ChangelogImpl implements Changelog {
             replacer.search = search.orNull
             replacer.replace = replace.getOrElse('')
             replacer
+        }
+    }
+
+    @CompileStatic
+    static class HideImpl implements Hide {
+        final Property<Boolean> uncategorized
+        final SetProperty<String> categories
+        final SetProperty<String> contributors
+
+        @Inject
+        HideImpl(ObjectFactory objects) {
+            uncategorized = objects.property(Boolean).convention(Providers.notDefined())
+            categories = objects.setProperty(String).convention(Providers.notDefined())
+            contributors = objects.setProperty(String).convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            uncategorized.present ||
+                categories.present ||
+                contributors.present
+        }
+
+        @Override
+        void hideCategory(String category) {
+            if (isNotBlank(category)) {
+                categories.add(category.trim())
+            }
+        }
+
+        org.jreleaser.model.Changelog.Hide toModel() {
+            org.jreleaser.model.Changelog.Hide hide = new org.jreleaser.model.Changelog.Hide()
+            if (uncategorized.present) hide.uncategorized = uncategorized.get()
+            hide.categories = (Set<String>) categories.getOrElse([] as Set)
+            hide.contributors = (Set<String>) contributors.getOrElse([] as Set)
+            hide
         }
     }
 }

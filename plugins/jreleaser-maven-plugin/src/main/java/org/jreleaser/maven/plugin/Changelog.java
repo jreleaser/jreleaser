@@ -37,10 +37,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Changelog implements EnabledAware {
     private final Set<String> includeLabels = new LinkedHashSet<>();
     private final Set<String> excludeLabels = new LinkedHashSet<>();
-    private final Set<String> hiddenCategories = new LinkedHashSet<>();
     private final List<Category> categories = new ArrayList<>();
     private final Set<Replacer> replacers = new LinkedHashSet<>();
     private final Set<Labeler> labelers = new LinkedHashSet<>();
+    private final Hide hide = new Hide();
 
     private Boolean enabled;
     private boolean links;
@@ -50,7 +50,6 @@ public class Changelog implements EnabledAware {
     private String change;
     private String content;
     private String contentTemplate;
-    private boolean hideUncategorized;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
@@ -61,13 +60,12 @@ public class Changelog implements EnabledAware {
         this.change = changelog.change;
         this.content = changelog.content;
         this.contentTemplate = changelog.contentTemplate;
-        this.hideUncategorized = changelog.hideUncategorized;
-        setHiddenCategories(changelog.hiddenCategories);
         setIncludeLabels(changelog.includeLabels);
         setExcludeLabels(changelog.excludeLabels);
         setCategories(changelog.categories);
         setReplacers(changelog.replacers);
         setLabelers(changelog.labelers);
+        setHide(changelog.hide);
     }
 
     @Override
@@ -133,15 +131,6 @@ public class Changelog implements EnabledAware {
 
     public boolean isFormattedSet() {
         return formatted != null;
-    }
-
-    public Set<String> getHiddenCategories() {
-        return hiddenCategories;
-    }
-
-    public void setHiddenCategories(Set<String> hiddenCategories) {
-        this.hiddenCategories.clear();
-        this.hiddenCategories.addAll(hiddenCategories);
     }
 
     public Set<String> getIncludeLabels() {
@@ -213,12 +202,22 @@ public class Changelog implements EnabledAware {
         this.contentTemplate = contentTemplate;
     }
 
+    @Deprecated
     public boolean isHideUncategorized() {
-        return hideUncategorized;
+        return this.hide.isUncategorized();
     }
 
+    @Deprecated
     public void setHideUncategorized(boolean hideUncategorized) {
-        this.hideUncategorized = hideUncategorized;
+        this.hide.setUncategorized(hideUncategorized);
+    }
+
+    public Hide getHide() {
+        return hide;
+    }
+
+    public void setHide(Hide hide) {
+        this.hide.setAll(hide);
     }
 
     public enum Sort {
@@ -349,6 +348,44 @@ public class Changelog implements EnabledAware {
 
         public void setBody(String body) {
             this.body = body;
+        }
+    }
+
+    public static class Hide {
+        private final Set<String> categories = new LinkedHashSet<>();
+        private final Set<String> contributors = new LinkedHashSet<>();
+        private boolean uncategorized;
+
+        void setAll(Hide hide) {
+            this.uncategorized = hide.uncategorized;
+            setCategories(hide.categories);
+            setContributors(hide.contributors);
+        }
+
+        public boolean isUncategorized() {
+            return uncategorized;
+        }
+
+        public void setUncategorized(boolean uncategorized) {
+            this.uncategorized = uncategorized;
+        }
+
+        public Set<String> getCategories() {
+            return categories;
+        }
+
+        public void setCategories(Set<String> categories) {
+            this.categories.clear();
+            this.categories.addAll(categories.stream().map(String::trim).collect(Collectors.toSet()));
+        }
+
+        public Set<String> getContributors() {
+            return contributors;
+        }
+
+        public void setContributors(Set<String> contributors) {
+            this.contributors.clear();
+            this.contributors.addAll(contributors.stream().map(String::trim).collect(Collectors.toSet()));
         }
     }
 }

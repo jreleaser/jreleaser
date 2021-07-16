@@ -128,7 +128,7 @@ public final class JReleaserModelConverter {
         p.setName(project.getName());
         p.setVersion(project.getVersion());
         p.setVersionPattern(project.resolveVersionPattern());
-        if(isNotBlank(project.getSnapshotPattern())) p.setSnapshotPattern(project.getSnapshotPattern());
+        if (isNotBlank(project.getSnapshotPattern())) p.setSnapshotPattern(project.getSnapshotPattern());
         p.setSnapshot(convertSnapshot(project.getSnapshot()));
         p.setDescription(project.getDescription());
         p.setLongDescription(project.getLongDescription());
@@ -270,12 +270,19 @@ public final class JReleaserModelConverter {
         c.setChange(changelog.getChange());
         c.setContent(changelog.getContent());
         c.setContentTemplate(changelog.getContentTemplate());
-        c.setHiddenCategories(changelog.getHiddenCategories());
-        c.setHideUncategorized(changelog.isHideUncategorized());
         c.setCategories(convertCategories(changelog.getCategories()));
         c.setLabelers(convertLabelers(changelog.getLabelers()));
         c.setReplacers(convertReplacers(changelog.getReplacers()));
+        c.setHide(convertHide(changelog.getHide()));
         return c;
+    }
+
+    private static org.jreleaser.model.Changelog.Hide convertHide(Changelog.Hide hide) {
+        org.jreleaser.model.Changelog.Hide h = new org.jreleaser.model.Changelog.Hide();
+        h.setUncategorized(hide.isUncategorized());
+        h.setCategories(hide.getCategories());
+        h.setContributors(hide.getContributors());
+        return h;
     }
 
     private static List<org.jreleaser.model.Changelog.Category> convertCategories(List<Changelog.Category> categories) {

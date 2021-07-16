@@ -32,8 +32,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
 
 /**
  * @author Andres Almiray
@@ -42,10 +42,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Changelog implements Domain, EnabledAware {
     private final Set<String> includeLabels = new LinkedHashSet<>();
     private final Set<String> excludeLabels = new LinkedHashSet<>();
-    private final Set<String> hiddenCategories = new LinkedHashSet<>();
     private final List<Category> categories = new ArrayList<>();
     private final Set<Replacer> replacers = new LinkedHashSet<>();
     private final Set<Labeler> labelers = new LinkedHashSet<>();
+    private final Hide hide = new Hide();
 
     private Boolean enabled;
     private boolean links;
@@ -55,7 +55,6 @@ public class Changelog implements Domain, EnabledAware {
     private String change;
     private String content;
     private String contentTemplate;
-    private boolean hideUncategorized;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
@@ -66,13 +65,12 @@ public class Changelog implements Domain, EnabledAware {
         this.change = changelog.change;
         this.content = changelog.content;
         this.contentTemplate = changelog.contentTemplate;
-        this.hideUncategorized = changelog.hideUncategorized;
-        setHiddenCategories(changelog.hiddenCategories);
         setIncludeLabels(changelog.includeLabels);
         setExcludeLabels(changelog.excludeLabels);
         setCategories(changelog.categories);
         setReplacers(changelog.replacers);
         setLabelers(changelog.labelers);
+        setHide(changelog.hide);
     }
 
     public boolean resolveFormatted(Project project) {
@@ -157,28 +155,6 @@ public class Changelog implements Domain, EnabledAware {
         return formatted != null;
     }
 
-    public Set<String> getHiddenCategories() {
-        return hiddenCategories;
-    }
-
-    public void setHiddenCategories(Set<String> hiddenCategories) {
-        this.hiddenCategories.clear();
-        this.hiddenCategories.addAll(hiddenCategories.stream().map(String::trim).collect(Collectors.toSet()));
-    }
-
-    public void addHiddenCategory(String category) {
-        if (isNotBlank(category)) {
-            this.hiddenCategories.add(category.trim());
-        }
-    }
-
-    public boolean containsHiddenCategory(String category) {
-        if (isNotBlank(category)) {
-            return this.hiddenCategories.contains(category.trim());
-        }
-        return false;
-    }
-
     public Set<String> getIncludeLabels() {
         return includeLabels;
     }
@@ -248,12 +224,18 @@ public class Changelog implements Domain, EnabledAware {
         this.contentTemplate = contentTemplate;
     }
 
-    public boolean isHideUncategorized() {
-        return hideUncategorized;
+    public Hide getHide() {
+        return hide;
     }
 
+    public void setHide(Hide hide) {
+        this.hide.setAll(hide);
+    }
+
+    @Deprecated
     public void setHideUncategorized(boolean hideUncategorized) {
-        this.hideUncategorized = hideUncategorized;
+        System.out.println("changelog.hideUncategorized has been deprecated since 0.6.0 and will be removed in the future. Use changelog.hide.uncategorized instead");
+        this.hide.uncategorized = hideUncategorized;
     }
 
     @Override
@@ -271,8 +253,7 @@ public class Changelog implements Domain, EnabledAware {
         map.put("contentTemplate", contentTemplate);
         map.put("includeLabels", includeLabels);
         map.put("excludeLabels", excludeLabels);
-        map.put("hideUncategorized", hideUncategorized);
-        map.put("hiddenCategories", hiddenCategories);
+        map.put("hide", hide.asMap(full));
 
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();
         int i = 0;
@@ -432,6 +413,84 @@ public class Changelog implements Domain, EnabledAware {
             map.put("label", label);
             map.put("title", title);
             map.put("body", body);
+            return map;
+        }
+    }
+
+    public static class Hide implements Domain {
+        private final Set<String> categories = new LinkedHashSet<>();
+        private final Set<String> contributors = new LinkedHashSet<>();
+        private boolean uncategorized;
+
+        void setAll(Hide hide) {
+            this.uncategorized = hide.uncategorized;
+            setCategories(hide.categories);
+            setContributors(hide.contributors);
+        }
+
+        public boolean isUncategorized() {
+            return uncategorized;
+        }
+
+        public void setUncategorized(boolean uncategorized) {
+            this.uncategorized = uncategorized;
+        }
+
+        public Set<String> getCategories() {
+            return categories;
+        }
+
+        public void setCategories(Set<String> categories) {
+            this.categories.clear();
+            this.categories.addAll(categories.stream().map(String::trim).collect(Collectors.toSet()));
+        }
+
+        public void addCategory(String category) {
+            if (isNotBlank(category)) {
+                this.categories.add(category.trim());
+            }
+        }
+
+        public boolean containsCategory(String category) {
+            if (isNotBlank(category)) {
+                return this.categories.contains(category.trim());
+            }
+            return false;
+        }
+
+        public Set<String> getContributors() {
+            return contributors;
+        }
+
+        public void setContributors(Set<String> contributors) {
+            this.contributors.clear();
+            this.contributors.addAll(contributors.stream().map(String::trim).collect(Collectors.toSet()));
+        }
+
+        public void addContributor(String contributor) {
+            if (isNotBlank(contributor)) {
+                this.contributors.add(contributor.trim());
+            }
+        }
+
+        public boolean containsContributor(String name) {
+            if (isNotBlank(name)) {
+                String n = name.trim();
+                for (String contributor : contributors) {
+                    if (n.contains(contributor) || n.matches(toSafeRegexPattern(contributor))) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("uncategorized", uncategorized);
+            map.put("categories", categories);
+            map.put("contributors", contributors);
             return map;
         }
     }
