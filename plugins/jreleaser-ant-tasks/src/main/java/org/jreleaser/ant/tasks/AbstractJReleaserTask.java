@@ -37,6 +37,8 @@ import java.util.LinkedHashSet;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -135,10 +137,7 @@ abstract class AbstractJReleaserTask extends Task {
     }
 
     protected Path getOutputDirectory() {
-        if (null != outputDir) {
-            return actualBasedir.resolve(outputDir).resolve("jreleaser");
-        }
-        return actualBasedir.resolve("build").resolve("jreleaser");
+        return resolveOutputDirectory(actualBasedir, outputDir, "build");
     }
 
     protected JReleaserContext createContext() {

@@ -52,6 +52,7 @@ import java.util.zip.ZipOutputStream;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -60,6 +61,17 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public final class FileUtils {
     private FileUtils() {
         //noop
+    }
+
+    public static Path resolveOutputDirectory(Path basedir, Path outputdir, String baseOutput) {
+        String od = Env.resolve("OUTPUTDIR", "");
+        if (isNotBlank(od)) {
+            return basedir.resolve(od).resolve("jreleaser");
+        }
+        if (null != outputdir) {
+            return basedir.resolve(outputdir).resolve("jreleaser");
+        }
+        return basedir.resolve(baseOutput).resolve("jreleaser");
     }
 
     public static void zip(Path src, Path dest) throws IOException {

@@ -31,6 +31,8 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -131,10 +133,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
     }
 
     protected Path getOutputDirectory() {
-        if (null != outputdir) {
-            return actualBasedir.resolve(outputdir).resolve("jreleaser");
-        }
-        return actualBasedir.resolve("out").resolve("jreleaser");
+        return resolveOutputDirectory(actualBasedir, outputdir, "out");
     }
 
     protected boolean dryrun() {
