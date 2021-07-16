@@ -30,12 +30,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public abstract class AbstractReleaserBuilder<R extends Releaser> implements ReleaserBuilder<R> {
+    private static final String INDIVIDUAL_CHECKSUM = "individualChecksum";
     protected final List<Path> assets = new ArrayList<>();
     protected JReleaserContext context;
 
@@ -78,7 +80,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
         for (Artifact artifact : Artifacts.resolveFiles(context)) {
             Path path = artifact.getEffectivePath(context);
             addReleaseAsset(path);
-            if (uploadIndividualChecksums) {
+            if (isIndividual(context, artifact)) {
                 for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                     addReleaseAsset(context.getChecksumsDirectory()
                         .resolve(path.getFileName() + "." + algorithm.formatted()));
@@ -88,10 +90,15 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
 
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
             for (Artifact artifact : distribution.getArtifacts()) {
-                addReleaseAsset(artifact.getEffectivePath(context, distribution));
-            }
-            if (uploadIndividualChecksums) {
-                addReleaseAssets(context.getChecksumsDirectory().resolve(distribution.getName()));
+                Path path = artifact.getEffectivePath(context, distribution);
+                addReleaseAsset(path);
+                if (isIndividual(context, distribution, artifact)) {
+                    for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+                        addReleaseAsset(context.getChecksumsDirectory()
+                            .resolve(distribution.getName())
+                            .resolve(path.getFileName() + "." + algorithm.formatted()));
+                    }
+                }
             }
         }
 
@@ -108,5 +115,22 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
         }
 
         return this;
+    }
+
+    private boolean isIndividual(JReleaserContext context, Artifact artifact) {
+        if (artifact.getExtraProperties().containsKey(INDIVIDUAL_CHECKSUM)) {
+            return isTrue(artifact.getExtraProperties().get(INDIVIDUAL_CHECKSUM));
+        }
+        return context.getModel().getChecksum().isIndividual();
+    }
+
+    private boolean isIndividual(JReleaserContext context, Distribution distribution, Artifact artifact) {
+        if (artifact.getExtraProperties().containsKey(INDIVIDUAL_CHECKSUM)) {
+            return isTrue(artifact.getExtraProperties().get(INDIVIDUAL_CHECKSUM));
+        }
+        if (distribution.getExtraProperties().containsKey(INDIVIDUAL_CHECKSUM)) {
+            return isTrue(distribution.getExtraProperties().get(INDIVIDUAL_CHECKSUM));
+        }
+        return context.getModel().getChecksum().isIndividual();
     }
 }
