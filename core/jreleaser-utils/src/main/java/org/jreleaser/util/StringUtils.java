@@ -639,4 +639,10 @@ public class StringUtils {
     public static Pattern toSafePattern(String str) {
         return Pattern.compile(toSafeRegexPattern(str));
     }
+
+    public static boolean isTrue(Object o) {
+        if (o == null) return false;
+        if (o instanceof Boolean) return (Boolean) o;
+        return "true".equalsIgnoreCase(String.valueOf(o).trim());
+    }
 }

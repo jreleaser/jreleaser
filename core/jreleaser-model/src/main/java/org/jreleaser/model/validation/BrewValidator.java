@@ -39,6 +39,7 @@ import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtra
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -114,9 +115,9 @@ public abstract class BrewValidator extends Validator {
         int pkgFound = 0;
         String pkgName = "";
         for (Artifact artifact : distribution.getArtifacts()) {
-            if (artifact.getPath().endsWith(".dmg") && !artifact.getExtraProperties().containsKey("skipBrew"))
+            if (artifact.getPath().endsWith(".dmg") && !isTrue(artifact.getExtraProperties().get("skipBrew")))
                 dmgFound++;
-            if (artifact.getPath().endsWith(".pkg") && !artifact.getExtraProperties().containsKey("skipBrew")) {
+            if (artifact.getPath().endsWith(".pkg") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
                 pkgFound++;
                 pkgName = artifact.getEffectivePath(context).getFileName().toString();
             }

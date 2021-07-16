@@ -34,6 +34,7 @@ import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -72,8 +73,8 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
 
         if ((distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == Distribution.DistributionType.SINGLE_JAR) &&
-            !tool.getExtraProperties().containsKey("javaSkip") &&
-            !tool.getExtraProperties().containsKey("skipJava")) {
+            !isTrue(tool.getExtraProperties().get("javaSkip")) &&
+            !isTrue(tool.getExtraProperties().get("skipJava"))) {
             tool.addDependency("openjdk@" + props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
         } else if (distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE) {
             props.put(Constants.KEY_BREW_CASK_NAME, tool.getCask().getResolvedCaskName(props));

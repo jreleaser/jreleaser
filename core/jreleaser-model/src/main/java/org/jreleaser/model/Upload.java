@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -202,6 +203,11 @@ public class Upload implements Domain, EnabledAware {
     }
 
     private boolean isSkip(Map<String, Object> props, List<String> keys) {
-        return props.keySet().stream().anyMatch(keys::contains);
+        for (String key : keys) {
+            if (props.containsKey(key) && isTrue(props.get(key))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

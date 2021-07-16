@@ -30,6 +30,7 @@ import java.util.Map;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -68,7 +69,7 @@ public class SdkmanAnnouncer implements Announcer {
                     continue;
                 }
 
-                if (artifact.getExtraProperties().containsKey("skipSdkman")) {
+                if (isTrue(artifact.getExtraProperties().get("skipSdkman"))) {
                     context.getLogger().debug("Artifact {} is explicitly skipped.",
                         artifact.getEffectivePath(context, distribution).getFileName());
                     continue;
@@ -130,8 +131,8 @@ public class SdkmanAnnouncer implements Announcer {
         return (distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == Distribution.DistributionType.JLINK ||
             distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE) &&
-            !distribution.getExtraProperties().containsKey("sdkmanSkip") &&
-            !distribution.getExtraProperties().containsKey("skipSdkman");
+            !isTrue(distribution.getExtraProperties().get("sdkmanSkip")) &&
+            !isTrue(distribution.getExtraProperties().get("skipSdkman"));
     }
 
     private String mapPlatform(String platform) {

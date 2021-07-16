@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.jreleaser.util.StringUtils.isTrue;
+
 /**
  * @author Andres Almiray
  * @since 0.4.0
@@ -88,6 +90,11 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
     }
 
     private boolean isSkip(Map<String, Object> props, List<String> keys) {
-        return props.keySet().stream().anyMatch(keys::contains);
+        for (String key : keys) {
+            if (props.containsKey(key) && isTrue(props.get(key))) {
+                return true;
+            }
+        }
+        return false;
     }
 }
