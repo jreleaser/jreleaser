@@ -107,7 +107,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         context.getLogger().info("- {}", finalImageName);
 
         Path inputsDirectory = assembleDirectory.resolve("inputs");
-        Path workDirectory = assembleDirectory.resolve("work");
+        Path workDirectory = assembleDirectory.resolve("work-" + targetJdk.getPlatform());
         Path imageDirectory = workDirectory.resolve(finalImageName).toAbsolutePath();
         try {
             FileUtils.deleteFiles(imageDirectory);
