@@ -275,6 +275,8 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
                 return (T) getJbang();
             case Scoop.NAME:
                 return (T) getScoop();
+            case Sdkman.NAME:
+                return (T) getSdkman();
             case Snap.NAME:
                 return (T) getSnap();
             default:
@@ -318,6 +320,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         set.add(Docker.NAME);
         set.add(Jbang.NAME);
         set.add(Scoop.NAME);
+        set.add(Sdkman.NAME);
         set.add(Snap.NAME);
         return Collections.unmodifiableSet(set);
     }

@@ -22,6 +22,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
 import org.jreleaser.model.DockerSpec;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.TemplateTool;
 import org.jreleaser.model.Tool;
 import org.jreleaser.util.Errors;
 
@@ -34,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class TemplateValidator extends Validator {
     public static void validateTemplate(JReleaserContext context, Distribution distribution,
-                                        Tool tool, Tool parentTool, Errors errors) {
+                                        TemplateTool tool, TemplateTool parentTool, Errors errors) {
         if (isBlank(tool.getTemplateDirectory())) {
             tool.setTemplateDirectory(parentTool.getTemplateDirectory());
             if (isNotBlank(tool.getTemplateDirectory()) &&

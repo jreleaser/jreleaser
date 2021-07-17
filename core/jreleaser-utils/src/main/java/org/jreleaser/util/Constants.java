@@ -152,6 +152,10 @@ public interface Constants {
     String KEY_SCOOP_BUCKET_REPO_URL = "scoopBucketRepoUrl";
     String KEY_SCOOP_BUCKET_REPO_CLONE_URL = "scoopBucketRepoCloneUrl";
 
+    // Sdkman
+    String KEY_SDKMAN_CANDIDATE = "sdkmanCandidate";
+    String KEY_SDKMAN_RELEASE_NOTES_URL = "sdkmanReleaseNotesUrl";
+
     // Chocolatey
     String KEY_CHOCOLATEY_USERNAME = "chocolateyUsername";
     String KEY_CHOCOLATEY_BUCKET_REPO_URL = "chocolateyBucketRepoUrl";

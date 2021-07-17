@@ -36,9 +36,9 @@ public interface ToolProcessor<T extends Tool> {
 
     boolean supportsDistribution(Distribution distribution);
 
-    boolean prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
+    void prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
-    boolean packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
+    void packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
-    boolean publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
+    void publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
 }

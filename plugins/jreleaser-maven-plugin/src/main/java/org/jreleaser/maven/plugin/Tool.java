@@ -22,10 +22,6 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public interface Tool extends ExtraProperties, Activatable {
-    String getTemplateDirectory();
-
-    void setTemplateDirectory(String templateDirectory);
-
     boolean isContinueOnError();
 
     void setContinueOnError(Boolean continueOnError);

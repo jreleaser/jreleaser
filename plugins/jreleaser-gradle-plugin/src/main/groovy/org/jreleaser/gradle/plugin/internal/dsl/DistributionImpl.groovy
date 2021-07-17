@@ -34,6 +34,7 @@ import org.jreleaser.gradle.plugin.dsl.Docker
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Jbang
 import org.jreleaser.gradle.plugin.dsl.Scoop
+import org.jreleaser.gradle.plugin.dsl.Sdkman
 import org.jreleaser.gradle.plugin.dsl.Snap
 import org.jreleaser.model.Active
 import org.jreleaser.model.Distribution.DistributionType
@@ -63,6 +64,7 @@ class DistributionImpl implements Distribution {
     final DockerImpl docker
     final JbangImpl jbang
     final ScoopImpl scoop
+    final SdkmanImpl sdkman
     final SnapImpl snap
     final JavaImpl java
 
@@ -94,6 +96,7 @@ class DistributionImpl implements Distribution {
         docker = objects.newInstance(DockerImpl, objects)
         jbang = objects.newInstance(JbangImpl, objects)
         scoop = objects.newInstance(ScoopImpl, objects)
+        sdkman = objects.newInstance(SdkmanImpl, objects)
         snap = objects.newInstance(SnapImpl, objects)
     }
 
@@ -145,6 +148,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void sdkman(Action<? super Sdkman> action) {
+        action.execute(sdkman)
+    }
+
+    @Override
     void snap(Action<? super Snap> action) {
         action.execute(snap)
     }
@@ -192,6 +200,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sdkman) Closure<Void> action) {
+        ConfigureUtil.configure(action, sdkman)
+    }
+
+    @Override
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snap) Closure<Void> action) {
         ConfigureUtil.configure(action, snap)
     }
@@ -213,6 +226,7 @@ class DistributionImpl implements Distribution {
         if (docker.isSet()) distribution.docker = docker.toModel()
         if (jbang.isSet()) distribution.jbang = jbang.toModel()
         if (scoop.isSet()) distribution.scoop = scoop.toModel()
+        if (sdkman.isSet()) distribution.sdkman = sdkman.toModel()
         if (snap.isSet()) distribution.snap = snap.toModel()
         distribution
     }

@@ -19,26 +19,31 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.Env;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-public class Sdkman extends AbstractAnnouncer {
-    public static final String NAME = "sdkman";
+public class Sdkman extends AbstractTool {
     public static final String SDKMAN_CONSUMER_KEY = "SDKMAN_CONSUMER_KEY";
     public static final String SDKMAN_CONSUMER_TOKEN = "SDKMAN_CONSUMER_TOKEN";
+    public static final String NAME = "sdkman";
 
-    private String consumerKey;
-    private String consumerToken;
+    protected Command command;
     private String candidate;
     private String releaseNotesUrl;
-    private boolean major = true;
+    private String consumerKey;
+    private String consumerToken;
+    private int connectTimeout;
+    private int readTimeout;
 
     public Sdkman() {
         super(NAME);
@@ -46,40 +51,20 @@ public class Sdkman extends AbstractAnnouncer {
 
     void setAll(Sdkman sdkman) {
         super.setAll(sdkman);
-        this.consumerKey = sdkman.consumerKey;
-        this.consumerToken = sdkman.consumerToken;
         this.candidate = sdkman.candidate;
         this.releaseNotesUrl = sdkman.releaseNotesUrl;
-        this.major = sdkman.major;
+        this.command = sdkman.command;
+        this.consumerKey = sdkman.consumerKey;
+        this.consumerToken = sdkman.consumerToken;
+        this.connectTimeout = sdkman.connectTimeout;
+        this.readTimeout = sdkman.readTimeout;
     }
-
-    @Override
-    public boolean isSnapshotSupported() {
-        return false;
-    }
-
     public String getResolvedConsumerKey() {
         return Env.resolve(SDKMAN_CONSUMER_KEY, consumerKey);
     }
 
     public String getResolvedConsumerToken() {
         return Env.resolve(SDKMAN_CONSUMER_TOKEN, consumerToken);
-    }
-
-    public String getConsumerKey() {
-        return consumerKey;
-    }
-
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
-    }
-
-    public String getConsumerToken() {
-        return consumerToken;
-    }
-
-    public void setConsumerToken(String consumerToken) {
-        this.consumerToken = consumerToken;
     }
 
     public String getCandidate() {
@@ -98,20 +83,95 @@ public class Sdkman extends AbstractAnnouncer {
         this.releaseNotesUrl = releaseNotesUrl;
     }
 
-    public boolean isMajor() {
-        return major;
+    public Command getCommand() {
+        return command;
     }
 
-    public void setMajor(boolean major) {
-        this.major = major;
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void setCommand(String str) {
+        this.command = Command.of(str);
+    }
+
+    public boolean isCommandSet() {
+        return command != null;
+    }
+
+    public String getConsumerKey() {
+        return consumerKey;
+    }
+
+    public void setConsumerKey(String consumerKey) {
+        this.consumerKey = consumerKey;
+    }
+
+    public String getConsumerToken() {
+        return consumerToken;
+    }
+
+    public void setConsumerToken(String consumerToken) {
+        this.consumerToken = consumerToken;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
     }
 
     @Override
-    protected void asMap(Map<String, Object> props, boolean full) {
+    protected void asMap(boolean full, Map<String, Object> props) {
+        props.put("candidate", candidate);
+        props.put("command", command);
+        props.put("releaseNotesUrl", releaseNotesUrl);
+        props.put("connectTimeout", connectTimeout);
+        props.put("readTimeout", readTimeout);
         props.put("consumerKey", isNotBlank(getResolvedConsumerKey()) ? HIDE : UNSET);
         props.put("consumerToken", isNotBlank(getResolvedConsumerToken()) ? HIDE : UNSET);
-        props.put("candidate", candidate);
-        props.put("releaseNotesUrl", releaseNotesUrl);
-        props.put("major", major);
+    }
+
+    @Override
+    public Set<String> getSupportedExtensions() {
+        Set<String> set = new LinkedHashSet<>();
+        set.add(".zip");
+        return set;
+    }
+
+    @Override
+    public boolean supportsPlatform(String platform) {
+        return true;
+    }
+
+    @Override
+    public boolean supportsDistribution(Distribution distribution) {
+        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
+            distribution.getType() == Distribution.DistributionType.JLINK ||
+            distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE;
+    }
+
+    public enum Command {
+        MAJOR,
+        MINOR;
+
+        public String toString() {
+            return name().toLowerCase();
+        }
+
+        public static Command of(String str) {
+            if (isBlank(str)) return null;
+            return Command.valueOf(str.toUpperCase().trim());
+        }
     }
 }

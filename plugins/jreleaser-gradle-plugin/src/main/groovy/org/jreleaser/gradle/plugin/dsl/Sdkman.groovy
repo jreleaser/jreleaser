@@ -23,10 +23,10 @@ import org.gradle.api.provider.Property
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
 @CompileStatic
-interface Sdkman extends Announcer {
+interface Sdkman extends Tool {
     Property<String> getConsumerKey()
 
     Property<String> getConsumerToken()
@@ -35,5 +35,11 @@ interface Sdkman extends Announcer {
 
     Property<String> getReleaseNotesUrl()
 
-    Property<Boolean> getMajor()
+    Property<Integer> getConnectTimeout()
+
+    Property<Integer> getReadTimeout()
+
+    Property<org.jreleaser.model.Sdkman.Command> getCommand()
+
+    void setCommand(String str)
 }

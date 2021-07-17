@@ -15,32 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.model;
+
+import java.util.Map;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-abstract class AbstractRepositoryTool extends AbstractTemplateTool implements RepositoryTool {
-    protected final CommitAuthor commitAuthor = new CommitAuthor();
+public abstract class AbstractTemplateTool extends AbstractTool implements TemplateTool {
+    protected String templateDirectory;
 
-    void setAll(AbstractRepositoryTool tool) {
+    protected AbstractTemplateTool(String name) {
+        super(name);
+    }
+
+    void setAll(AbstractTemplateTool tool) {
         super.setAll(tool);
-        setCommitAuthor(tool.commitAuthor);
+        this.templateDirectory = tool.templateDirectory;
     }
 
     @Override
-    public CommitAuthor getCommitAuthor() {
-        return commitAuthor;
+    public String getTemplateDirectory() {
+        return templateDirectory;
     }
 
     @Override
-    public void setCommitAuthor(CommitAuthor commitAuthor) {
-        this.commitAuthor.setAll(commitAuthor);
+    public void setTemplateDirectory(String templateDirectory) {
+        this.templateDirectory = templateDirectory;
     }
 
-    public boolean isSet() {
-        return super.isSet() ||
-            commitAuthor.isSet();
+    protected void asMap(boolean full, Map<String, Object> props) {
+        props.put("templateDirectory", templateDirectory);
     }
 }

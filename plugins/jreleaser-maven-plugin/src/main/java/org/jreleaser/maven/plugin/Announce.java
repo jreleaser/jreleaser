@@ -32,7 +32,7 @@ public class Announce implements EnabledAware {
     private final Mail mail = new Mail();
     private final Mastodon mastodon = new Mastodon();
     private final Mattermost mattermost = new Mattermost();
-    private final Sdkman sdkman = new Sdkman();
+    private final SdkmanAnnouncer sdkman = new SdkmanAnnouncer();
     private final Slack slack = new Slack();
     private final Teams teams = new Teams();
     private final Twitter twitter = new Twitter();
@@ -127,11 +127,11 @@ public class Announce implements EnabledAware {
         this.mattermost.setAll(mattermost);
     }
 
-    public Sdkman getSdkman() {
+    public SdkmanAnnouncer getSdkman() {
         return sdkman;
     }
 
-    public void setSdkman(Sdkman sdkman) {
+    public void setSdkman(SdkmanAnnouncer sdkman) {
         this.sdkman.setAll(sdkman);
     }
 

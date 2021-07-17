@@ -27,12 +27,10 @@ import java.util.Map;
 abstract class AbstractTool implements Tool {
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected Active active;
-    protected String templateDirectory;
     protected Boolean continueOnError;
 
     void setAll(AbstractTool tool) {
         this.active = tool.active;
-        this.templateDirectory = tool.templateDirectory;
         this.continueOnError = tool.continueOnError;
         setExtraProperties(tool.extraProperties);
     }
@@ -50,16 +48,6 @@ abstract class AbstractTool implements Tool {
     @Override
     public String resolveActive() {
         return active != null ? active.name() : null;
-    }
-
-    @Override
-    public String getTemplateDirectory() {
-        return templateDirectory;
-    }
-
-    @Override
-    public void setTemplateDirectory(String templateDirectory) {
-        this.templateDirectory = templateDirectory;
     }
 
     @Override
@@ -90,7 +78,6 @@ abstract class AbstractTool implements Tool {
 
     public boolean isSet() {
         return null != active ||
-            null != templateDirectory ||
             !extraProperties.isEmpty();
     }
 }

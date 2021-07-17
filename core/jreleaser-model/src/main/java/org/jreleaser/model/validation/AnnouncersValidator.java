@@ -28,7 +28,7 @@ import static org.jreleaser.model.validation.GoogleChatValidator.validateGoogleC
 import static org.jreleaser.model.validation.MailValidator.validateMail;
 import static org.jreleaser.model.validation.MastodonValidator.validateMastodon;
 import static org.jreleaser.model.validation.MattermostValidator.validateMattermost;
-import static org.jreleaser.model.validation.SdkmanValidator.validateSdkman;
+import static org.jreleaser.model.validation.SdkmanAnnouncerValidator.validateSdkmanAnnouncer;
 import static org.jreleaser.model.validation.SlackValidator.validateSlack;
 import static org.jreleaser.model.validation.TeamsValidator.validateTeams;
 import static org.jreleaser.model.validation.TwitterValidator.validateTwitter;
@@ -55,7 +55,7 @@ public abstract class AnnouncersValidator extends Validator {
         validateMail(context, announce.getMail(), errors);
         validateMastodon(context, announce.getMastodon(), errors);
         validateMattermost(context, announce.getMattermost(), errors);
-        validateSdkman(context, announce.getSdkman(), errors);
+        validateSdkmanAnnouncer(context, announce.getSdkman(), errors);
         validateSlack(context, announce.getSlack(), errors);
         validateTeams(context, announce.getTeams(), errors);
         validateTwitter(context, announce.getTwitter(), errors);

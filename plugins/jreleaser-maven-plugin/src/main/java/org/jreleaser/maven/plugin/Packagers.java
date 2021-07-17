@@ -27,6 +27,7 @@ public class Packagers {
     private final Docker docker = new Docker();
     private final Jbang jbang = new Jbang();
     private final Scoop scoop = new Scoop();
+    private final Sdkman sdkman = new Sdkman();
     private final Snap snap = new Snap();
 
     void setAll(Packagers packagers) {
@@ -35,6 +36,7 @@ public class Packagers {
         setDocker(packagers.docker);
         setJbang(packagers.jbang);
         setScoop(packagers.scoop);
+        setSdkman(packagers.sdkman);
         setSnap(packagers.snap);
     }
 
@@ -76,6 +78,14 @@ public class Packagers {
 
     public void setScoop(Scoop scoop) {
         this.scoop.setAll(scoop);
+    }
+
+    public Sdkman getSdkman() {
+        return sdkman;
+    }
+
+    public void setSdkman(Sdkman sdkman) {
+        this.sdkman.setAll(sdkman);
     }
 
     public Snap getSnap() {

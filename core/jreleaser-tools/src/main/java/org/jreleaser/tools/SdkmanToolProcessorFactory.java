@@ -15,24 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.sdkman;
+package org.jreleaser.tools;
 
-import org.jreleaser.model.announcer.spi.AnnouncerBuilderFactory;
+import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Sdkman;
+import org.jreleaser.model.tool.spi.ToolProcessorFactory;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-@ServiceProviderFor(AnnouncerBuilderFactory.class)
-public class SdkmanAnnouncerBuilderFactory implements AnnouncerBuilderFactory<SdkmanAnnouncer, SdkmanAnnouncerBuilder> {
+@ServiceProviderFor(ToolProcessorFactory.class)
+public class SdkmanToolProcessorFactory implements ToolProcessorFactory<Sdkman, SdkmanToolProcessor> {
     @Override
     public String getName() {
-        return org.jreleaser.model.SdkmanAnnouncer.NAME;
+        return Sdkman.NAME;
     }
 
     @Override
-    public SdkmanAnnouncerBuilder getBuilder() {
-        return new SdkmanAnnouncerBuilder();
+    public SdkmanToolProcessor getToolProcessor(JReleaserContext context) {
+        return new SdkmanToolProcessor(context);
     }
 }

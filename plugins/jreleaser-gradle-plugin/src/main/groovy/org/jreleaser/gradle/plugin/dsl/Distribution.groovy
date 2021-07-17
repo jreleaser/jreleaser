@@ -55,6 +55,8 @@ interface Distribution extends ExtraProperties {
 
     Scoop getScoop()
 
+    Sdkman getSdkman()
+
     Snap getSnap()
 
     Java getJava()
@@ -73,6 +75,8 @@ interface Distribution extends ExtraProperties {
 
     void scoop(Action<? super Scoop> action)
 
+    void sdkman(Action<? super Sdkman> action)
+
     void snap(Action<? super Snap> action)
 
     void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
@@ -88,6 +92,8 @@ interface Distribution extends ExtraProperties {
     void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jbang) Closure<Void> action)
 
     void scoop(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scoop) Closure<Void> action)
+
+    void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sdkman) Closure<Void> action)
 
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snap) Closure<Void> action)
 }

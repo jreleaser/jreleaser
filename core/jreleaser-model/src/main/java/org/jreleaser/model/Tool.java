@@ -26,10 +26,6 @@ import java.util.Set;
 public interface Tool extends Domain, ExtraProperties, Activatable {
     String getName();
 
-    String getTemplateDirectory();
-
-    void setTemplateDirectory(String templateDirectory);
-
     Set<String> getSupportedExtensions();
 
     boolean supportsPlatform(String platform);

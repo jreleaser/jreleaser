@@ -30,6 +30,7 @@ public class Packagers implements Domain {
     private final Docker docker = new Docker();
     private final Jbang jbang = new Jbang();
     private final Scoop scoop = new Scoop();
+    private final Sdkman sdkman = new Sdkman();
     private final Snap snap = new Snap();
 
     public boolean hasEnabledPackagers() {
@@ -38,6 +39,7 @@ public class Packagers implements Domain {
             docker.isEnabled() ||
             jbang.isEnabled() ||
             scoop.isEnabled() ||
+            sdkman.isEnabled() ||
             snap.isEnabled();
     }
 
@@ -47,6 +49,7 @@ public class Packagers implements Domain {
         setDocker(packagers.docker);
         setJbang(packagers.jbang);
         setScoop(packagers.scoop);
+        setSdkman(packagers.sdkman);
         setSnap(packagers.snap);
     }
 
@@ -90,6 +93,14 @@ public class Packagers implements Domain {
         this.scoop.setAll(scoop);
     }
 
+    public Sdkman getSdkman() {
+        return sdkman;
+    }
+
+    public void setSdkman(Sdkman sdkman) {
+        this.sdkman.setAll(sdkman);
+    }
+
     public Snap getSnap() {
         return snap;
     }
@@ -106,6 +117,7 @@ public class Packagers implements Domain {
         map.putAll(docker.asMap(full));
         map.putAll(jbang.asMap(full));
         map.putAll(scoop.asMap(full));
+        map.putAll(sdkman.asMap(full));
         map.putAll(snap.asMap(full));
         return map;
     }

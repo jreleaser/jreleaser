@@ -32,7 +32,6 @@ public abstract class AbstractTool implements Tool {
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected boolean enabled;
     protected Active active;
-    protected String templateDirectory;
     protected Boolean continueOnError;
     protected boolean failed;
 
@@ -44,7 +43,6 @@ public abstract class AbstractTool implements Tool {
         this.active = tool.active;
         this.enabled = tool.enabled;
         this.failed = tool.failed;
-        this.templateDirectory = tool.templateDirectory;
         this.continueOnError = tool.continueOnError;
         setExtraProperties(tool.extraProperties);
     }
@@ -142,16 +140,6 @@ public abstract class AbstractTool implements Tool {
     }
 
     @Override
-    public String getTemplateDirectory() {
-        return templateDirectory;
-    }
-
-    @Override
-    public void setTemplateDirectory(String templateDirectory) {
-        this.templateDirectory = templateDirectory;
-    }
-
-    @Override
     public Map<String, Object> getExtraProperties() {
         return extraProperties;
     }
@@ -174,7 +162,6 @@ public abstract class AbstractTool implements Tool {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
         props.put("active", active);
-        props.put("templateDirectory", templateDirectory);
         props.put("continueOnError", isContinueOnError());
         asMap(full, props);
         props.put("extraProperties", getResolvedExtraProperties());

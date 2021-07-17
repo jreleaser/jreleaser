@@ -26,7 +26,7 @@ import org.gradle.api.Action
  * @since 0.1.0
  */
 @CompileStatic
-interface RepositoryTool extends Tool {
+interface RepositoryTool extends TemplateTool {
     CommitAuthor getCommitAuthor()
 
     void commitAuthor(Action<? super CommitAuthor> action)

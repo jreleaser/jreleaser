@@ -45,7 +45,7 @@ interface Announce {
 
     Mattermost getMattermost()
 
-    Sdkman getSdkman()
+    SdkmanAnnouncer getSdkman()
 
     Slack getSlack()
 
@@ -71,7 +71,7 @@ interface Announce {
 
     void mattermost(Action<? super Mattermost> action)
 
-    void sdkman(Action<? super Sdkman> action)
+    void sdkman(Action<? super SdkmanAnnouncer> action)
 
     void slack(Action<? super Slack> action)
 
@@ -95,7 +95,7 @@ interface Announce {
 
     void mattermost(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mattermost) Closure<Void> action)
 
-    void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sdkman) Closure<Void> action)
+    void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SdkmanAnnouncer) Closure<Void> action)
 
     void slack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Slack) Closure<Void> action)
 

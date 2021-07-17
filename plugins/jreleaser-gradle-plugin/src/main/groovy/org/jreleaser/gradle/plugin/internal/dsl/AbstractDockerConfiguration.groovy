@@ -40,7 +40,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.4.0
  */
 @CompileStatic
-                class AbstractDockerConfiguration implements DockerConfiguration {
+abstract class AbstractDockerConfiguration implements DockerConfiguration {
     final Property<Active> active
     final DirectoryProperty templateDirectory
     final MapProperty<String, Object> extraProperties
@@ -128,7 +128,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank
         if (active.present) docker.active = active.get()
         if (templateDirectory.present) {
             docker.templateDirectory = templateDirectory.get().asFile.toPath().toAbsolutePath().toString()
-            println "Setting docker.templateDirectory = ${docker.templateDirectory}"
         }
         if (extraProperties.present) docker.extraProperties.putAll(extraProperties.get())
         if (baseImage.present) docker.baseImage = baseImage.get()

@@ -43,23 +43,23 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
     }
 
     @Override
-    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws ToolProcessingException {
+    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws ToolProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
 
         if (tool.isRemoteBuild()) {
             // copy from prepare to package
             copyPreparedFiles(distribution, props);
-            return true;
+            return;
         }
 
         if (!PlatformUtils.isWindows()) {
             context.getLogger().debug("must run on Windows", getToolName());
-            return false;
+            return;
         }
 
         copyPreparedFiles(distribution, props);
 
-        return createChocolateyPackage(distribution, props);
+        createChocolateyPackage(distribution, props);
     }
 
     @Override
@@ -68,11 +68,12 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
     }
 
     @Override
-    protected boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    protected void doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         if (tool.isRemoteBuild()) {
-            return super.doPublishDistribution(distribution, releaser, props);
+            super.doPublishDistribution(distribution, releaser, props);
+            return;
         }
-        return publishChocolateyPackage(distribution, props);
+        publishChocolateyPackage(distribution, props);
     }
 
     @Override
@@ -104,13 +105,11 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
         writeFile(content, outputFile);
     }
 
-    private boolean createChocolateyPackage(Distribution distribution, Map<String, Object> props) {
+    private void createChocolateyPackage(Distribution distribution, Map<String, Object> props) {
         context.getLogger().warn("local build is not yet supported.");
-        return false;
     }
 
-    private boolean publishChocolateyPackage(Distribution distribution, Map<String, Object> props) {
+    private void publishChocolateyPackage(Distribution distribution, Map<String, Object> props) {
         context.getLogger().warn("local publication is not yet supported.");
-        return false;
     }
 }

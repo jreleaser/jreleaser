@@ -22,44 +22,31 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.Sdkman
+import org.jreleaser.model.SdkmanAnnouncer
 
 import javax.inject.Inject
-
-import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
  * @author Andres Almiray
- * @since 0.6.0
+ * @since 0.1.0
  */
 @CompileStatic
-class SdkmanImpl extends AbstractTool implements Sdkman {
+class SdkmanAnnouncerImpl extends AbstractAnnouncer implements org.jreleaser.gradle.plugin.dsl.SdkmanAnnouncer {
     final Property<String> consumerKey
     final Property<String> consumerToken
     final Property<String> candidate
     final Property<String> releaseNotesUrl
-    final Property<Integer> connectTimeout
-    final Property<Integer> readTimeout
-    final Property<org.jreleaser.model.Sdkman.Command> command
+    final Property<Boolean> major
 
     @Inject
-    SdkmanImpl(ObjectFactory objects) {
+    SdkmanAnnouncerImpl(ObjectFactory objects) {
         super(objects)
         consumerKey = objects.property(String).convention(Providers.notDefined())
         consumerToken = objects.property(String).convention(Providers.notDefined())
         candidate = objects.property(String).convention(Providers.notDefined())
         releaseNotesUrl = objects.property(String).convention(Providers.notDefined())
-        connectTimeout = objects.property(Integer).convention(Providers.notDefined())
-        readTimeout = objects.property(Integer).convention(Providers.notDefined())
-        command = objects.property(org.jreleaser.model.Sdkman.Command).convention(Providers.notDefined())
-    }
-
-    @Override
-    void setCommand(String str) {
-        if (isNotBlank(str)) {
-            command.set(org.jreleaser.model.Sdkman.Command.of(str.trim()))
-        }
+        major = objects.property(Boolean).convention(Providers.notDefined())
     }
 
     @Override
@@ -70,19 +57,17 @@ class SdkmanImpl extends AbstractTool implements Sdkman {
             consumerToken.present ||
             candidate.present ||
             releaseNotesUrl.present ||
-            connectTimeout.present ||
-            readTimeout.present ||
-            command.present
+            major.present
     }
 
-    org.jreleaser.model.Sdkman toModel() {
-        org.jreleaser.model.Sdkman sdkman = new org.jreleaser.model.Sdkman()
-        fillToolProperties(sdkman)
+    SdkmanAnnouncer toModel() {
+        SdkmanAnnouncer sdkman = new SdkmanAnnouncer()
+        fillProperties(sdkman)
         if (consumerKey.present) sdkman.consumerKey = consumerKey.get()
         if (consumerToken.present) sdkman.consumerToken = consumerToken.get()
         if (candidate.present) sdkman.candidate = candidate.get()
         if (releaseNotesUrl.present) sdkman.releaseNotesUrl = releaseNotesUrl.get()
-        if (command.present) sdkman.command = command.get()
+        sdkman.major = major.getOrElse(true)
         sdkman
     }
 }

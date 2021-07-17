@@ -122,6 +122,7 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
     org.jreleaser.model.Brew toModel() {
         org.jreleaser.model.Brew tool = new org.jreleaser.model.Brew()
         fillToolProperties(tool)
+        fillTemplateToolProperties(tool)
         if (formulaName.present) tool.formulaName = formulaName.get()
         if (multiPlatform.present) tool.multiPlatform = multiPlatform.get()
         if (tap.isSet()) tool.tap = tap.toHomebrewTap()

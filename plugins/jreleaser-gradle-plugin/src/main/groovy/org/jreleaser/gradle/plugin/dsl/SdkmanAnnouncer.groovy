@@ -15,24 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.sdkman;
+package org.jreleaser.gradle.plugin.dsl
 
-import org.jreleaser.model.announcer.spi.AnnouncerBuilderFactory;
-import org.kordamp.jipsy.annotations.ServiceProviderFor;
+import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
 
 /**
+ *
  * @author Andres Almiray
  * @since 0.1.0
  */
-@ServiceProviderFor(AnnouncerBuilderFactory.class)
-public class SdkmanAnnouncerBuilderFactory implements AnnouncerBuilderFactory<SdkmanAnnouncer, SdkmanAnnouncerBuilder> {
-    @Override
-    public String getName() {
-        return org.jreleaser.model.SdkmanAnnouncer.NAME;
-    }
+@CompileStatic
+interface SdkmanAnnouncer extends Announcer {
+    Property<String> getConsumerKey()
 
-    @Override
-    public SdkmanAnnouncerBuilder getBuilder() {
-        return new SdkmanAnnouncerBuilder();
-    }
+    Property<String> getConsumerToken()
+
+    Property<String> getCandidate()
+
+    Property<String> getReleaseNotesUrl()
+
+    Property<Boolean> getMajor()
 }

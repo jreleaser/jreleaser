@@ -39,6 +39,8 @@ import static org.jreleaser.model.validation.ChocolateyValidator.validateChocola
 import static org.jreleaser.model.validation.JbangValidator.postValidateJBang;
 import static org.jreleaser.model.validation.JbangValidator.validateJbang;
 import static org.jreleaser.model.validation.ScoopValidator.validateScoop;
+import static org.jreleaser.model.validation.SdkmanValidator.postValidateSdkman;
+import static org.jreleaser.model.validation.SdkmanValidator.validateSdkman;
 import static org.jreleaser.model.validation.SnapValidator.validateSnap;
 import static org.jreleaser.util.StringUtils.getFilenameExtension;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -67,6 +69,7 @@ public abstract class DistributionsValidator extends Validator {
 
         postValidateBrew(context, errors);
         postValidateJBang(context, errors);
+        postValidateSdkman(context, errors);
     }
 
     private static void validateDistribution(JReleaserContext context, Distribution distribution, Errors errors) {
@@ -153,6 +156,7 @@ public abstract class DistributionsValidator extends Validator {
         DockerValidator.validateDocker(context, distribution, distribution.getDocker(), errors);
         validateJbang(context, distribution, distribution.getJbang(), errors);
         validateScoop(context, distribution, distribution.getScoop(), errors);
+        validateSdkman(context, distribution, distribution.getSdkman(), errors);
         validateSnap(context, distribution, distribution.getSnap(), errors);
     }
 

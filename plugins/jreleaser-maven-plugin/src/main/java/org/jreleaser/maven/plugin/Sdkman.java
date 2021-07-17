@@ -17,42 +17,31 @@
  */
 package org.jreleaser.maven.plugin;
 
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-public class Sdkman extends AbstractAnnouncer {
-    private String consumerKey;
-    private String consumerToken;
+public class Sdkman extends AbstractTool {
+    private Command command;
     private String candidate;
     private String releaseNotesUrl;
-    private boolean major = true;
+    private String consumerKey;
+    private String consumerToken;
+    private int connectTimeout;
+    private int readTimeout;
 
     void setAll(Sdkman sdkman) {
         super.setAll(sdkman);
-        this.consumerKey = sdkman.consumerKey;
-        this.consumerToken = sdkman.consumerToken;
         this.candidate = sdkman.candidate;
         this.releaseNotesUrl = sdkman.releaseNotesUrl;
-        this.major = sdkman.major;
-    }
-
-    public String getConsumerKey() {
-        return consumerKey;
-    }
-
-    public void setConsumerKey(String consumerKey) {
-        this.consumerKey = consumerKey;
-    }
-
-    public String getConsumerToken() {
-        return consumerToken;
-    }
-
-    public void setConsumerToken(String consumerToken) {
-        this.consumerToken = consumerToken;
+        this.command = sdkman.command;
+        this.consumerKey = sdkman.consumerKey;
+        this.consumerToken = sdkman.consumerToken;
+        this.connectTimeout = sdkman.connectTimeout;
+        this.readTimeout = sdkman.readTimeout;
     }
 
     public String getCandidate() {
@@ -71,20 +60,79 @@ public class Sdkman extends AbstractAnnouncer {
         this.releaseNotesUrl = releaseNotesUrl;
     }
 
-    public boolean isMajor() {
-        return major;
+    public Command getCommand() {
+        return command;
     }
 
-    public void setMajor(boolean major) {
-        this.major = major;
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void setCommand(String str) {
+        this.command = Command.of(str);
+    }
+
+    public String resolveCommand() {
+        return command != null ? command.name() : null;
+    }
+
+    public boolean isCommandSet() {
+        return command != null;
+    }
+
+    public String getConsumerKey() {
+        return consumerKey;
+    }
+
+    public void setConsumerKey(String consumerKey) {
+        this.consumerKey = consumerKey;
+    }
+
+    public String getConsumerToken() {
+        return consumerToken;
+    }
+
+    public void setConsumerToken(String consumerToken) {
+        this.consumerToken = consumerToken;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
     }
 
     @Override
     public boolean isSet() {
         return super.isSet() ||
+            isNotBlank(candidate) ||
+            isNotBlank(releaseNotesUrl) ||
             isNotBlank(consumerKey) ||
             isNotBlank(consumerToken) ||
-            isNotBlank(candidate) ||
-            isNotBlank(releaseNotesUrl);
+            null != command;
+    }
+
+    public enum Command {
+        MAJOR,
+        MINOR;
+
+        public String toString() {
+            return name().toLowerCase();
+        }
+
+        public static Command of(String str) {
+            if (isBlank(str)) return null;
+            return Command.valueOf(str.toUpperCase().trim());
+        }
     }
 }

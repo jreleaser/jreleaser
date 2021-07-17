@@ -18,20 +18,38 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
-import org.jreleaser.gradle.plugin.dsl.RepositoryTool
+import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.TemplateTool
 
 import javax.inject.Inject
 
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
 @CompileStatic
-abstract class AbstractRepositoryTool extends AbstractTemplateTool implements RepositoryTool {
+abstract class AbstractTemplateTool extends AbstractTool implements TemplateTool {
+    final DirectoryProperty templateDirectory
+
     @Inject
-    AbstractRepositoryTool(ObjectFactory objects) {
+    AbstractTemplateTool(ObjectFactory objects) {
         super(objects)
+        templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
+    }
+
+    @Internal
+    boolean isSet() {
+        super.isSet() ||
+            templateDirectory.present
+    }
+
+    protected <T extends org.jreleaser.model.TemplateTool> void fillTemplateToolProperties(T tool) {
+        if (templateDirectory.present) {
+            tool.templateDirectory = templateDirectory.get().asFile.toPath().toAbsolutePath().toString()
+        }
     }
 }

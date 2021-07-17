@@ -20,7 +20,6 @@ package org.jreleaser.sdk.sdkman;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Sdkman;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 
@@ -45,7 +44,7 @@ public class SdkmanAnnouncer implements Announcer {
 
     @Override
     public String getName() {
-        return org.jreleaser.model.Sdkman.NAME;
+        return org.jreleaser.model.SdkmanAnnouncer.NAME;
     }
 
     @Override
@@ -55,7 +54,7 @@ public class SdkmanAnnouncer implements Announcer {
 
     @Override
     public void announce() throws AnnounceException {
-        Sdkman sdkman = context.getModel().getAnnounce().getSdkman();
+        org.jreleaser.model.SdkmanAnnouncer sdkman = context.getModel().getAnnounce().getSdkman();
 
         Map<String, String> platforms = new LinkedHashMap<>();
         // collect artifacts by supported SDKMAN! platform

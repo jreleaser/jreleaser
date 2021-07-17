@@ -26,6 +26,7 @@ import org.jreleaser.gradle.plugin.dsl.Docker
 import org.jreleaser.gradle.plugin.dsl.Jbang
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Scoop
+import org.jreleaser.gradle.plugin.dsl.Sdkman
 import org.jreleaser.gradle.plugin.dsl.Snap
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -43,6 +44,7 @@ class PackagersImpl implements Packagers {
     final DockerImpl docker
     final JbangImpl jbang
     final ScoopImpl scoop
+    final SdkmanImpl sdkman
     final SnapImpl snap
 
     @Inject
@@ -52,6 +54,7 @@ class PackagersImpl implements Packagers {
         docker = objects.newInstance(DockerImpl, objects)
         jbang = objects.newInstance(JbangImpl, objects)
         scoop = objects.newInstance(ScoopImpl, objects)
+        sdkman = objects.newInstance(SdkmanImpl, objects)
         snap = objects.newInstance(SnapImpl, objects)
     }
 
@@ -78,6 +81,11 @@ class PackagersImpl implements Packagers {
     @Override
     void scoop(Action<? super Scoop> action) {
         action.execute(scoop)
+    }
+
+    @Override
+    void sdkman(Action<? super Sdkman> action) {
+        action.execute(sdkman)
     }
 
     @Override
@@ -111,6 +119,11 @@ class PackagersImpl implements Packagers {
     }
 
     @Override
+    void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sdkman) Closure<Void> action) {
+        ConfigureUtil.configure(action, sdkman)
+    }
+
+    @Override
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snap) Closure<Void> action) {
         ConfigureUtil.configure(action, snap)
     }
@@ -122,6 +135,7 @@ class PackagersImpl implements Packagers {
         if (docker.isSet()) packagers.docker = docker.toModel()
         if (jbang.isSet()) packagers.jbang = jbang.toModel()
         if (scoop.isSet()) packagers.scoop = scoop.toModel()
+        if (sdkman.isSet()) packagers.sdkman = sdkman.toModel()
         if (snap.isSet()) packagers.snap = snap.toModel()
         packagers
     }

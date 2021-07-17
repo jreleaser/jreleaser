@@ -21,7 +21,7 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface RepositoryTool extends Tool {
+public interface RepositoryTool extends TemplateTool {
     CommitAuthor getCommitAuthor();
 
     void setCommitAuthor(CommitAuthor commitAuthor);

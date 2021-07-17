@@ -37,6 +37,8 @@ interface Packagers {
 
     Scoop getScoop()
 
+    Sdkman getSdkman()
+
     Snap getSnap()
 
     void brew(Action<? super Brew> action)
@@ -49,6 +51,8 @@ interface Packagers {
 
     void scoop(Action<? super Scoop> action)
 
+    void sdkman(Action<? super Sdkman> action)
+
     void snap(Action<? super Snap> action)
 
     void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Brew) Closure<Void> action)
@@ -60,6 +64,8 @@ interface Packagers {
     void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jbang) Closure<Void> action)
 
     void scoop(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scoop) Closure<Void> action)
+
+    void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sdkman) Closure<Void> action)
 
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snap) Closure<Void> action)
 }

@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractRepositoryTool extends AbstractTool implements RepositoryTool {
+public abstract class AbstractRepositoryTool extends AbstractTemplateTool implements RepositoryTool {
     protected final CommitAuthor commitAuthor = new CommitAuthor();
 
     protected AbstractRepositoryTool(String name) {
@@ -47,6 +47,7 @@ public abstract class AbstractRepositoryTool extends AbstractTool implements Rep
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
+        super.asMap(full, props);
         props.put("commitAuthor", commitAuthor.asMap(full));
     }
 }

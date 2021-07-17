@@ -32,7 +32,7 @@ import org.jreleaser.gradle.plugin.dsl.GoogleChat
 import org.jreleaser.gradle.plugin.dsl.Mail
 import org.jreleaser.gradle.plugin.dsl.Mastodon
 import org.jreleaser.gradle.plugin.dsl.Mattermost
-import org.jreleaser.gradle.plugin.dsl.Sdkman
+import org.jreleaser.gradle.plugin.dsl.SdkmanAnnouncer
 import org.jreleaser.gradle.plugin.dsl.Slack
 import org.jreleaser.gradle.plugin.dsl.Teams
 import org.jreleaser.gradle.plugin.dsl.Twitter
@@ -56,7 +56,7 @@ class AnnounceImpl implements Announce {
     final MailImpl mail
     final MastodonImpl mastodon
     final MattermostImpl mattermost
-    final SdkmanImpl sdkman
+    final SdkmanAnnouncerImpl sdkman
     final SlackImpl slack
     final TeamsImpl teams
     final TwitterImpl twitter
@@ -73,7 +73,7 @@ class AnnounceImpl implements Announce {
         mail = objects.newInstance(MailImpl, objects)
         mastodon = objects.newInstance(MastodonImpl, objects)
         mattermost = objects.newInstance(MattermostImpl, objects)
-        sdkman = objects.newInstance(SdkmanImpl, objects)
+        sdkman = objects.newInstance(SdkmanAnnouncerImpl, objects)
         slack = objects.newInstance(SlackImpl, objects)
         teams = objects.newInstance(TeamsImpl, objects)
         twitter = objects.newInstance(TwitterImpl, objects)
@@ -125,7 +125,7 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
-    void sdkman(Action<? super Sdkman> action) {
+    void sdkman(Action<? super SdkmanAnnouncer> action) {
         action.execute(sdkman)
     }
 
@@ -185,7 +185,7 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
-    void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sdkman) Closure<Void> action) {
+    void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SdkmanAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, sdkman)
     }
 

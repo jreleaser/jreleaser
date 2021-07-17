@@ -63,6 +63,7 @@ import org.jreleaser.maven.plugin.Registry;
 import org.jreleaser.maven.plugin.Release;
 import org.jreleaser.maven.plugin.Scoop;
 import org.jreleaser.maven.plugin.Sdkman;
+import org.jreleaser.maven.plugin.SdkmanAnnouncer;
 import org.jreleaser.maven.plugin.Signing;
 import org.jreleaser.maven.plugin.Slack;
 import org.jreleaser.maven.plugin.Slot;
@@ -400,6 +401,7 @@ public final class JReleaserModelConverter {
         if (packagers.getDocker().isSet()) p.setDocker(convertDocker(packagers.getDocker()));
         if (packagers.getJbang().isSet()) p.setJbang(convertJbang(packagers.getJbang()));
         if (packagers.getScoop().isSet()) p.setScoop(convertScoop(packagers.getScoop()));
+        if (packagers.getSdkman().isSet()) p.setSdkman(convertSdkman(packagers.getSdkman()));
         if (packagers.getSnap().isSet()) p.setSnap(convertSnap(packagers.getSnap()));
         return p;
     }
@@ -414,7 +416,7 @@ public final class JReleaserModelConverter {
         if (announce.getMail().isSet()) a.setMail(convertMail(announce.getMail()));
         if (announce.getMastodon().isSet()) a.setMastodon(convertMastodon(announce.getMastodon()));
         if (announce.getMattermost().isSet()) a.setMattermost(convertMattermost(announce.getMattermost()));
-        if (announce.getSdkman().isSet()) a.setSdkman(convertSdkman(announce.getSdkman()));
+        if (announce.getSdkman().isSet()) a.setSdkman(convertSdkmanAnnouncer(announce.getSdkman()));
         if (announce.getSlack().isSet()) a.setSlack(convertSlack(announce.getSlack()));
         if (announce.getTeams().isSet()) a.setTeams(convertTeams(announce.getTeams()));
         if (announce.getTwitter().isSet()) a.setTwitter(convertTwitter(announce.getTwitter()));
@@ -517,8 +519,8 @@ public final class JReleaserModelConverter {
         return a;
     }
 
-    private static org.jreleaser.model.Sdkman convertSdkman(Sdkman sdkman) {
-        org.jreleaser.model.Sdkman a = new org.jreleaser.model.Sdkman();
+    private static org.jreleaser.model.SdkmanAnnouncer convertSdkmanAnnouncer(SdkmanAnnouncer sdkman) {
+        org.jreleaser.model.SdkmanAnnouncer a = new org.jreleaser.model.SdkmanAnnouncer();
         a.setActive(sdkman.resolveActive());
         a.setConsumerKey(sdkman.getConsumerKey());
         a.setConsumerToken(sdkman.getConsumerToken());
@@ -943,6 +945,20 @@ public final class JReleaserModelConverter {
         b.setUsername(bucket.getUsername());
         b.setToken(bucket.getToken());
         return b;
+    }
+
+    private static org.jreleaser.model.Sdkman convertSdkman(Sdkman tool) {
+        org.jreleaser.model.Sdkman t = new org.jreleaser.model.Sdkman();
+        t.setActive(tool.resolveActive());
+        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setExtraProperties(tool.getExtraProperties());
+        t.setConsumerKey(tool.getConsumerKey());
+        t.setConsumerToken(tool.getConsumerToken());
+        t.setCandidate(tool.getCandidate());
+        t.setCommand(tool.resolveCommand());
+        t.setConnectTimeout(tool.getConnectTimeout());
+        t.setReadTimeout(tool.getReadTimeout());
+        return t;
     }
 
     private static org.jreleaser.model.Snap convertSnap(Snap tool) {

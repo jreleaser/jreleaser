@@ -111,9 +111,9 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     }
 
     @Override
-    protected boolean doPackageDistribution(Distribution distribution,
-                                            Map<String, Object> props,
-                                            Path packageDirectory) throws ToolProcessingException {
+    protected void doPackageDistribution(Distribution distribution,
+                                         Map<String, Object> props,
+                                         Path packageDirectory) throws ToolProcessingException {
         if (tool.getActiveSpecs().isEmpty()) {
             Set<String> fileExtensions = tool.getSupportedExtensions();
             List<Artifact> artifacts = distribution.getArtifacts().stream()
@@ -122,7 +122,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
                 .collect(Collectors.toList());
 
             packageDocker(distribution, props, packageDirectory, getTool(), artifacts);
-            return true;
+            return;
         }
 
         for (DockerSpec spec : tool.getActiveSpecs()) {
@@ -131,7 +131,6 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
             packageDocker(distribution, newProps, packageDirectory.resolve(spec.getName()),
                 spec, Collections.singletonList(spec.getArtifact()));
         }
-        return true;
     }
 
     protected void packageDocker(Distribution distribution,
@@ -217,16 +216,16 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     }
 
     @Override
-    public boolean publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    public void publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         if (tool.getActiveSpecs().isEmpty()) {
             if (tool.getRegistries().isEmpty()) {
                 context.getLogger().info("no configured registries. Skipping");
                 publishToRepository(distribution, releaser, props);
-                return false;
+                return;
             }
             super.publishDistribution(distribution, releaser, props);
             publishToRepository(distribution, releaser, props);
-            return true;
+            return;
         }
 
         for (DockerSpec spec : tool.getActiveSpecs()) {
@@ -235,8 +234,6 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
             publishDocker(distribution, releaser, newProps, spec);
         }
         publishToRepository(distribution, releaser, props);
-
-        return true;
     }
 
     private void publishToRepository(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
@@ -244,14 +241,14 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     }
 
     @Override
-    protected boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
-        return publishDocker(distribution, releaser, props, getTool());
+    protected void doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+        publishDocker(distribution, releaser, props, getTool());
     }
 
-    protected boolean publishDocker(Distribution distribution,
-                                    Releaser releaser,
-                                    Map<String, Object> props,
-                                    DockerConfiguration docker) throws ToolProcessingException {
+    protected void publishDocker(Distribution distribution,
+                                 Releaser releaser,
+                                 Map<String, Object> props,
+                                 DockerConfiguration docker) throws ToolProcessingException {
         for (Registry registry : docker.getRegistries()) {
             login(registry);
             for (String imageName : docker.getImageNames()) {
@@ -259,8 +256,6 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
             }
             logout(registry);
         }
-
-        return true;
     }
 
     private void login(Registry registry) throws ToolProcessingException {

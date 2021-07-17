@@ -80,6 +80,7 @@ class JbangImpl extends AbstractRepositoryTool implements Jbang {
     org.jreleaser.model.Jbang toModel() {
         org.jreleaser.model.Jbang tool = new org.jreleaser.model.Jbang()
         fillToolProperties(tool)
+        fillTemplateToolProperties(tool)
         if (alias.present) tool.alias = alias.get()
         if (catalog.isSet()) tool.catalog = catalog.toJbangCatalog()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()

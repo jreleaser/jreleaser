@@ -37,7 +37,7 @@ public class Announce implements Domain, EnabledAware {
     private final Mail mail = new Mail();
     private final Mastodon mastodon = new Mastodon();
     private final Mattermost mattermost = new Mattermost();
-    private final Sdkman sdkman = new Sdkman();
+    private final SdkmanAnnouncer sdkman = new SdkmanAnnouncer();
     private final Slack slack = new Slack();
     private final Teams teams = new Teams();
     private final Twitter twitter = new Twitter();
@@ -137,11 +137,11 @@ public class Announce implements Domain, EnabledAware {
         this.mattermost.setAll(mattermost);
     }
 
-    public Sdkman getSdkman() {
+    public SdkmanAnnouncer getSdkman() {
         return sdkman;
     }
 
-    public void setSdkman(Sdkman sdkman) {
+    public void setSdkman(SdkmanAnnouncer sdkman) {
         this.sdkman.setAll(sdkman);
     }
 
@@ -245,7 +245,7 @@ public class Announce implements Domain, EnabledAware {
                 return (A) getMastodon();
             case Mattermost.NAME:
                 return (A) getMattermost();
-            case Sdkman.NAME:
+            case SdkmanAnnouncer.NAME:
                 return (A) getSdkman();
             case Slack.NAME:
                 return (A) getSlack();
@@ -271,7 +271,7 @@ public class Announce implements Domain, EnabledAware {
         set.add(Mail.NAME);
         set.add(Mastodon.NAME);
         set.add(Mattermost.NAME);
-        set.add(Sdkman.NAME);
+        set.add(SdkmanAnnouncer.NAME);
         set.add(Slack.NAME);
         set.add(Teams.NAME);
         set.add(Twitter.NAME);

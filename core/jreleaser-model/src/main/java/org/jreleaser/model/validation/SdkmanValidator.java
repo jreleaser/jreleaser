@@ -17,58 +17,108 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Sdkman;
 import org.jreleaser.util.Errors;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
+import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
+import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
 public abstract class SdkmanValidator extends Validator {
-    public static void validateSdkman(JReleaserContext context, Sdkman sdkman, Errors errors) {
-        if (!sdkman.resolveEnabled(context.getModel().getProject())) return;
-        if (!context.getModel().getRelease().getGitService().isReleaseSupported()) {
-            sdkman.disable();
+    public static void validateSdkman(JReleaserContext context, Distribution distribution, Sdkman tool, Errors errors) {
+        JReleaserModel model = context.getModel();
+        Sdkman parentTool = model.getPackagers().getSdkman();
+
+        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
+            tool.setActive(parentTool.getActive());
+        }
+        if(model.getProject().isSnapshot()) {
+            tool.disable();
+        }
+        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        GitService service = model.getRelease().getGitService();
+        if (!service.isReleaseSupported()) {
+            tool.disable();
             return;
         }
 
-        context.getLogger().debug("announce.sdkman");
+        context.getLogger().debug("distribution.{}.sdkman", distribution.getName());
 
-        sdkman.setConsumerKey(
+        mergeExtraProperties(tool, parentTool);
+        validateContinueOnError(tool, parentTool);
+
+        if (null == tool.getCommand()) {
+            tool.setCommand(parentTool.getCommand());
+            if (null == tool.getCommand()) {
+                tool.setCommand(Sdkman.Command.MAJOR);
+            }
+        }
+
+        if (isBlank(tool.getCandidate())) {
+            tool.setCandidate(parentTool.getCandidate());
+            if (isBlank(tool.getCandidate())) {
+                tool.setCandidate(distribution.getName());
+            }
+        }
+
+        if (isBlank(tool.getReleaseNotesUrl())) {
+            tool.setReleaseNotesUrl(parentTool.getReleaseNotesUrl());
+            if (isBlank(tool.getReleaseNotesUrl())) {
+                tool.setReleaseNotesUrl(service.getReleaseNotesUrl());
+            }
+        }
+
+        tool.setConsumerKey(
             checkProperty(context.getModel().getEnvironment(),
                 SDKMAN_CONSUMER_KEY,
                 "sdkman.consumerKey",
-                sdkman.getConsumerKey(),
+                tool.getConsumerKey(),
                 errors,
                 context.isDryrun()));
 
-        sdkman.setConsumerToken(
+        tool.setConsumerToken(
             checkProperty(context.getModel().getEnvironment(),
                 SDKMAN_CONSUMER_TOKEN,
                 "sdkman.consumerToken",
-                sdkman.getConsumerToken(),
+                tool.getConsumerToken(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(sdkman.getReleaseNotesUrl())) {
-            sdkman.setReleaseNotesUrl(context.getModel().getRelease().getGitService().getReleaseNotesUrl());
+        if (tool.getConnectTimeout() <= 0 || tool.getConnectTimeout() > 300) {
+            tool.setConnectTimeout(20);
+        }
+        if (tool.getReadTimeout() <= 0 || tool.getReadTimeout() > 300) {
+            tool.setReadTimeout(60);
         }
 
-        if (context.getModel().getActiveDistributions().isEmpty()) {
-            context.getLogger().warn("There are no active distributions. Disabling Sdkman announcer");
-            sdkman.disable();
-        }
+        validateArtifactPlatforms(context, distribution, tool, errors);
+    }
 
-        if (sdkman.getConnectTimeout() <= 0 || sdkman.getConnectTimeout() > 300) {
-            sdkman.setConnectTimeout(20);
-        }
-        if (sdkman.getReadTimeout() <= 0 || sdkman.getReadTimeout() > 300) {
-            sdkman.setReadTimeout(60);
-        }
+    public static void postValidateSdkman(JReleaserContext context, Errors errors) {
+        Map<String, List<Distribution>> map = context.getModel().getDistributions().values().stream()
+            .filter(d -> d.isEnabled() && d.getSdkman().isEnabled())
+            .collect(groupingBy(d -> d.getSdkman().getCandidate()));
+
+        map.forEach((candidate, distributions) -> {
+            if (distributions.size() > 1) {
+                errors.configuration("sdkman.candidate '" + candidate + "' is defined for more than one distribution: " +
+                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", ")));
+            }
+        });
     }
 }

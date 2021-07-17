@@ -43,15 +43,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends AbstractToolProcessor<T> {
+abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends AbstractTemplateToolProcessor<T> {
     protected AbstractRepositoryToolProcessor(JReleaserContext context) {
         super(context);
     }
 
-    protected boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    protected void doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         context.getLogger().info("setting up repository {}", tool.getRepositoryTap().getCanonicalRepoName());
         if (context.isDryrun()) {
-            return true;
+            return;
         }
 
         GitService gitService = context.getModel().getRelease().getGitService();
@@ -110,8 +110,6 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
         } catch (Exception e) {
             throw new ToolProcessingException("Unexpected error updating " + tool.getRepositoryTap().getCanonicalRepoName(), e);
         }
-
-        return true;
     }
 
     protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws ToolProcessingException, IOException {

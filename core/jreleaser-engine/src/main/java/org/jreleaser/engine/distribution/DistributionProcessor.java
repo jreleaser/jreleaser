@@ -55,98 +55,95 @@ public class DistributionProcessor {
         return toolName;
     }
 
-    public boolean prepareDistribution() throws ToolProcessingException {
+    public void prepareDistribution() throws ToolProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
             context.getLogger().debug("skipping for {} distribution", distributionName);
-            return false;
+            return;
         }
 
         ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
         if (!toolProcessor.supportsDistribution(distribution)) {
             context.getLogger().info("distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
-            return false;
+            return;
         }
 
         context.getLogger().info("preparing {} distribution", distributionName);
 
         try {
-            return toolProcessor.prepareDistribution(distribution, initProps());
+            toolProcessor.prepareDistribution(distribution, initProps());
         } catch (ToolProcessingException tpe) {
             if (tool.isContinueOnError()) {
                 tool.fail();
                 context.getLogger().warn("failure: " + tpe.getMessage());
                 context.getLogger().trace(tpe);
-                return false;
             } else {
                 throw tpe;
             }
         }
     }
 
-    public boolean packageDistribution() throws ToolProcessingException {
+    public void packageDistribution() throws ToolProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
             context.getLogger().debug("skipping for {} distribution", distributionName);
-            return false;
+            return;
         }
         if (tool.isFailed()) {
             context.getLogger().warn("skipping due to previous failure");
-            return false;
+            return;
         }
 
         ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
         if (!toolProcessor.supportsDistribution(distribution)) {
             context.getLogger().info("distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
-            return false;
+            return;
         }
 
         context.getLogger().info("packaging {} distribution", distributionName);
 
         try {
-            return toolProcessor.packageDistribution(distribution, initProps());
+            toolProcessor.packageDistribution(distribution, initProps());
         } catch (ToolProcessingException tpe) {
             if (tool.isContinueOnError()) {
                 tool.fail();
                 context.getLogger().warn("failure: " + tpe.getMessage());
                 context.getLogger().trace(tpe);
-                return false;
             } else {
                 throw tpe;
             }
         }
     }
 
-    public boolean publishDistribution() throws ToolProcessingException {
+    public void publishDistribution() throws ToolProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Tool tool = distribution.getTool(toolName);
         if (!tool.isEnabled()) {
             context.getLogger().debug("skipping for {} distribution", distributionName);
-            return false;
+            return;
         }
         if (tool.isFailed()) {
             context.getLogger().warn("skipping due to previous failure");
-            return false;
+            return;
         }
 
         ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
         if (!toolProcessor.supportsDistribution(distribution)) {
             context.getLogger().info("distribution {} with type {} is not supported. Skipping", distributionName, distribution.getType());
-            return false;
+            return;
         }
 
         context.getLogger().info("publishing {} distribution", distributionName);
 
         try {
-            return toolProcessor.publishDistribution(distribution, Releasers.releaserFor(context), initProps());
+            toolProcessor.publishDistribution(distribution, Releasers.releaserFor(context), initProps());
         } catch (ToolProcessingException tpe) {
             if (tool.isContinueOnError()) {
                 tool.fail();
                 context.getLogger().warn("failure: " + tpe.getMessage());
                 context.getLogger().trace(tpe);
-                return false;
             } else {
                 throw tpe;
             }

@@ -42,10 +42,9 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
     }
 
     @Override
-    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws ToolProcessingException {
+    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws ToolProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
         copyPreparedFiles(distribution, props);
-        return true;
     }
 
     @Override

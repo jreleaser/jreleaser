@@ -20,7 +20,6 @@ package org.jreleaser.tools;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Project;
 import org.jreleaser.model.Tool;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
@@ -34,8 +33,6 @@ import org.zeroturnaround.exec.ProcessInitException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,12 +43,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
-import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
-import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
-import static org.jreleaser.util.FileUtils.grantFullAccess;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.capitalize;
@@ -92,114 +83,61 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     @Override
-    public boolean prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+    public void prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug("creating props for {}/{}", distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
                 context.getLogger().warn("Skipping {} distribution", distributionName);
-                return false;
+                return;
             }
 
-            doPrepareDistribution(distribution, newProps, distributionName,
-                getPrepareDirectory(props), getTool().getTemplateDirectory(), getToolName());
-        } catch (IllegalArgumentException | IOException e) {
+            doPrepareDistribution(distribution, newProps);
+        } catch (RuntimeException e) {
             throw new ToolProcessingException(e);
         }
-
-        return true;
     }
 
-    protected void doPrepareDistribution(Distribution distribution,
-                                         Map<String, Object> props,
-                                         String distributionName,
-                                         Path prepareDirectory,
-                                         String templateDirectory,
-                                         String toolName) throws IOException, ToolProcessingException {
-        // cleanup from previous session
-        FileUtils.deleteFiles(prepareDirectory);
-        Files.createDirectories(prepareDirectory);
-
-        context.getLogger().debug("resolving templates for {}/{}", distributionName, toolName);
-        Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
-            distribution.getType().name(),
-            // leave this one be!
-            getToolName(),
-            context.getModel().getProject().isSnapshot(),
-            context.getBasedir().resolve(templateDirectory));
-
-        for (Map.Entry<String, Reader> entry : templates.entrySet()) {
-            context.getLogger().debug("evaluating template {} for {}/{}", entry.getKey(), distributionName, toolName);
-            String content = applyTemplate(entry.getValue(), props);
-            context.getLogger().debug("writing template {} for {}/{}", entry.getKey(), distributionName, toolName);
-            writeFile(context.getModel().getProject(), distribution, content, props, prepareDirectory, entry.getKey());
-        }
-
-        context.getLogger().debug("copying license files");
-        FileUtils.copyFiles(context.getLogger(),
-            context.getBasedir(),
-            prepareDirectory, path -> path.getFileName().startsWith("LICENSE"));
-    }
+    protected abstract void doPrepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
     @Override
-    public boolean packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+    public void packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug("creating props for {}/{}", distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
                 context.getLogger().warn("skipping {} distribution", distributionName);
-                return false;
+                return;
             }
 
-            return doPackageDistribution(distribution, newProps, getPackageDirectory(props));
+            doPackageDistribution(distribution, newProps);
         } catch (IllegalArgumentException e) {
             throw new ToolProcessingException(e);
         }
     }
 
     @Override
-    public boolean publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    public void publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug("creating props for {}/{}", distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
                 context.getLogger().warn("skipping {} distribution", distributionName);
-                return false;
+                return;
             }
 
-            return doPublishDistribution(distribution, releaser, newProps);
+            doPublishDistribution(distribution, releaser, newProps);
         } catch (IllegalArgumentException e) {
             throw new ToolProcessingException(e);
         }
     }
 
-    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws ToolProcessingException {
-        try {
-            // cleanup from previous session
-            FileUtils.deleteFiles(packageDirectory);
-            Files.createDirectories(packageDirectory);
-            return true;
-        } catch (IOException e) {
-            throw new ToolProcessingException(e);
-        }
-    }
+    protected abstract void doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
-    protected abstract boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
-
-    protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, Path outputDirectory, String fileName) throws ToolProcessingException;
-
-    protected void writeFile(String content, Path outputFile) throws ToolProcessingException {
-        try {
-            createDirectoriesWithFullAccess(outputFile.getParent());
-            Files.write(outputFile, content.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
-            grantFullAccess(outputFile);
-        } catch (IOException e) {
-            throw new ToolProcessingException("Unexpected error when writing to " + outputFile.toAbsolutePath(), e);
-        }
-    }
+    protected abstract void doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
 
     protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Map<String, Object> newProps = new LinkedHashMap<>(props);
@@ -226,7 +164,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         props.putAll(distribution.props());
     }
 
-    protected abstract void fillToolProperties(Map<String, Object> context, Distribution distribution) throws ToolProcessingException;
+    protected abstract void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException;
 
     protected boolean executeCommand(ProcessExecutor processExecutor) throws ToolProcessingException {
         try {

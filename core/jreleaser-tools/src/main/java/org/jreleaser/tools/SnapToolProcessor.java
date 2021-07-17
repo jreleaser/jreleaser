@@ -47,44 +47,45 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
     }
 
     @Override
-    protected boolean doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws ToolProcessingException {
+    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws ToolProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
         copyPreparedFiles(distribution, props);
 
         if (tool.isRemoteBuild()) {
-            return true;
+            return;
         }
 
         if (PlatformUtils.isWindows()) {
             context.getLogger().debug("must not run on Windows", getToolName());
-            return false;
+            return;
         }
 
-        return createSnap(distribution, props);
+        createSnap(distribution, props);
     }
 
     @Override
-    protected boolean doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    protected void doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
         if (tool.isRemoteBuild()) {
-            return super.doPublishDistribution(distribution, releaser, props);
+            super.doPublishDistribution(distribution, releaser, props);
+            return;
         }
 
         if (context.isDryrun()) {
             context.getLogger().error("dryun is set to true. Skipping");
-            return true;
+            return;
         }
 
         if (PlatformUtils.isWindows()) {
             context.getLogger().debug("must not run on Windows", getToolName());
-            return false;
+            return;
         }
 
         if (!login(distribution, props)) {
             context.getLogger().error("could not log into snapcraft store");
-            return false;
+            return;
         }
 
-        return push(distribution, props);
+        push(distribution, props);
     }
 
     @Override
@@ -140,7 +141,7 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         return executeCommand(cmd);
     }
 
-    private boolean push(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+    private void push(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         String version = (String) props.get(Constants.KEY_PROJECT_EFFECTIVE_VERSION);
         String snapName = distribution.getName() + "-" + version + ".snap";
@@ -149,10 +150,10 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         cmd.add("snapcraft");
         cmd.add("push");
         cmd.add(snapName);
-        return executeCommand(packageDirectory, cmd);
+        executeCommand(packageDirectory, cmd);
     }
 
-    private boolean createSnap(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+    private void createSnap(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         String version = (String) props.get(Constants.KEY_PROJECT_EFFECTIVE_VERSION);
         String snapName = distribution.getName() + "-" + version + ".snap";
@@ -162,6 +163,6 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         cmd.add("snap");
         cmd.add("--output");
         cmd.add(snapName);
-        return executeCommand(packageDirectory, cmd);
+        executeCommand(packageDirectory, cmd);
     }
 }

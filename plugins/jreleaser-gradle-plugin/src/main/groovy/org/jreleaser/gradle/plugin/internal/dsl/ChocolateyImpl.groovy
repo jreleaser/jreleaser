@@ -84,6 +84,7 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
     org.jreleaser.model.Chocolatey toModel() {
         org.jreleaser.model.Chocolatey tool = new org.jreleaser.model.Chocolatey()
         fillToolProperties(tool)
+        fillTemplateToolProperties(tool)
         if (bucket.isSet()) tool.bucket = bucket.toChocolateyBucket()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (username.present) tool.username = username.get()

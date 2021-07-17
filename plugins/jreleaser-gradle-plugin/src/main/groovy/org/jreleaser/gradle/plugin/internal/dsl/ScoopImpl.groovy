@@ -84,6 +84,7 @@ class ScoopImpl extends AbstractRepositoryTool implements Scoop {
     org.jreleaser.model.Scoop toModel() {
         org.jreleaser.model.Scoop tool = new org.jreleaser.model.Scoop()
         fillToolProperties(tool)
+        fillTemplateToolProperties(tool)
         if (bucket.isSet()) tool.bucket = bucket.toScoopBucket()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (checkverUrl.present) tool.checkverUrl = checkverUrl.get()
