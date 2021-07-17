@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
+import static org.jreleaser.model.Checksum.INDIVIDUAL_CHECKSUM;
 import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
@@ -37,7 +38,6 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @since 0.1.0
  */
 public abstract class AbstractReleaserBuilder<R extends Releaser> implements ReleaserBuilder<R> {
-    private static final String INDIVIDUAL_CHECKSUM = "individualChecksum";
     protected final List<Path> assets = new ArrayList<>();
     protected JReleaserContext context;
 

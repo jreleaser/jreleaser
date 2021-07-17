@@ -31,6 +31,8 @@ import static org.jreleaser.util.MustacheUtils.applyTemplate;
  * @since 0.4.0
  */
 public class Checksum implements Domain {
+    public static final String INDIVIDUAL_CHECKSUM = "individualChecksum";
+
     private final Set<Algorithm> algorithms = new LinkedHashSet<>();
     private Boolean individual;
     private String name;

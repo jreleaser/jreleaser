@@ -26,6 +26,9 @@ import org.jreleaser.model.ScoopBucket;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
+import java.util.Set;
+
+import static org.jreleaser.model.Checksum.INDIVIDUAL_CHECKSUM;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
@@ -99,5 +102,12 @@ public abstract class ScoopValidator extends Validator {
                 service.getResolvedToken()));
 
         validateArtifactPlatforms(context, distribution, tool, errors);
+
+        // activate individual checksums on matching artifacts
+        Set<String> fileExtensions = tool.getSupportedExtensions();
+        distribution.getArtifacts().stream()
+            .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
+            .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
+            .forEach(artifact -> artifact.getExtraProperties().put(INDIVIDUAL_CHECKSUM, true));
     }
 }
