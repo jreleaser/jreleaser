@@ -23,6 +23,7 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -53,6 +54,10 @@ public abstract class SdkmanValidator extends Validator {
                 sdkman.getConsumerToken(),
                 errors,
                 context.isDryrun()));
+
+        if (isBlank(sdkman.getReleaseNotesUrl())) {
+            sdkman.setReleaseNotesUrl(context.getModel().getRelease().getGitService().getReleaseNotesUrl());
+        }
 
         if (context.getModel().getActiveDistributions().isEmpty()) {
             context.getLogger().warn("There are no active distributions. Disabling Sdkman announcer");

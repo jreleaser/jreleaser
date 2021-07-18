@@ -33,5 +33,7 @@ interface Sdkman extends Announcer {
 
     Property<String> getCandidate()
 
+    Property<String> getReleaseNotesUrl()
+
     Property<Boolean> getMajor()
 }

@@ -91,7 +91,7 @@ public class SdkmanAnnouncer implements Announcer {
 
         try {
             String candidate = isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
-            String releaseNotesUrl = context.getModel().getRelease().getGitService().getResolvedReleaseNotesUrl(context.getModel());
+            String releaseNotesUrl = applyTemplate(sdkman.getReleaseNotesUrl(), context.props());
 
             if (sdkman.isMajor()) {
                 context.getLogger().info("Announcing major release of '{}' candidate", candidate);

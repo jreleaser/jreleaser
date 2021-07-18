@@ -522,6 +522,7 @@ public final class JReleaserModelConverter {
         a.setConsumerKey(sdkman.getConsumerKey());
         a.setConsumerToken(sdkman.getConsumerToken());
         a.setCandidate(sdkman.getCandidate());
+        a.setReleaseNotesUrl(sdkman.getReleaseNotesUrl());
         a.setMajor(sdkman.isMajor());
         a.setConnectTimeout(sdkman.getConnectTimeout());
         a.setReadTimeout(sdkman.getReadTimeout());

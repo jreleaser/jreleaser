@@ -36,6 +36,7 @@ class SdkmanImpl extends AbstractAnnouncer implements Sdkman {
     final Property<String> consumerKey
     final Property<String> consumerToken
     final Property<String> candidate
+    final Property<String> releaseNotesUrl
     final Property<Boolean> major
 
     @Inject
@@ -44,6 +45,7 @@ class SdkmanImpl extends AbstractAnnouncer implements Sdkman {
         consumerKey = objects.property(String).convention(Providers.notDefined())
         consumerToken = objects.property(String).convention(Providers.notDefined())
         candidate = objects.property(String).convention(Providers.notDefined())
+        releaseNotesUrl = objects.property(String).convention(Providers.notDefined())
         major = objects.property(Boolean).convention(Providers.notDefined())
     }
 
@@ -54,6 +56,7 @@ class SdkmanImpl extends AbstractAnnouncer implements Sdkman {
             consumerKey.present ||
             consumerToken.present ||
             candidate.present ||
+            releaseNotesUrl.present ||
             major.present
     }
 
@@ -63,6 +66,7 @@ class SdkmanImpl extends AbstractAnnouncer implements Sdkman {
         if (consumerKey.present) sdkman.consumerKey = consumerKey.get()
         if (consumerToken.present) sdkman.consumerToken = consumerToken.get()
         if (candidate.present) sdkman.candidate = candidate.get()
+        if (releaseNotesUrl.present) sdkman.releaseNotesUrl = releaseNotesUrl.get()
         sdkman.major = major.getOrElse(true)
         sdkman
     }
