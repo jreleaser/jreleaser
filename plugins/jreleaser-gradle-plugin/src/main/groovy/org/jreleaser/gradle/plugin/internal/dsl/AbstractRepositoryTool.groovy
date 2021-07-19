@@ -18,9 +18,7 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.dsl.RepositoryTool
 
 import javax.inject.Inject

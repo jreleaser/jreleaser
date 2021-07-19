@@ -21,7 +21,6 @@ import org.jreleaser.model.AbstractRepositoryTool;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.OwnerAware;
 import org.jreleaser.model.Packagers;
 import org.jreleaser.model.RepositoryTap;
 import org.jreleaser.util.Env;

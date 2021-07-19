@@ -21,7 +21,6 @@ import org.bouncycastle.openpgp.PGPException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserLogger;
-import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 import org.jreleaser.util.signing.FilesKeyring;
 import org.jreleaser.util.signing.InMemoryKeyring;

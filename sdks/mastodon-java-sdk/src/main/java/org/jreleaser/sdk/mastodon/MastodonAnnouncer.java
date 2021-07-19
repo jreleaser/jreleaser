@@ -35,7 +35,7 @@ public class MastodonAnnouncer implements Announcer {
 
     @Override
     public String getName() {
-        return org.jreleaser.model.Mastodon.NAME;
+        return Mastodon.NAME;
     }
 
     @Override

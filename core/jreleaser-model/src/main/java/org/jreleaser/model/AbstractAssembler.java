@@ -18,7 +18,6 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.Constants;
-import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 
 import java.util.Collections;

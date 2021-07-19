@@ -17,8 +17,8 @@
  */
 package org.jreleaser.engine.upload;
 
-import org.jreleaser.model.Uploader;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Uploader;
 import org.jreleaser.model.uploader.spi.ArtifactUploader;
 import org.jreleaser.model.uploader.spi.UploadException;
 

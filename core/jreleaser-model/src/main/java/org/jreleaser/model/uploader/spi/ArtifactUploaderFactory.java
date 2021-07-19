@@ -17,8 +17,8 @@
  */
 package org.jreleaser.model.uploader.spi;
 
-import org.jreleaser.model.Uploader;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Uploader;
 
 /**
  * @author Andres Almiray

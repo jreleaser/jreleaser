@@ -17,8 +17,8 @@
  */
 package org.jreleaser.sdk.mattermost;
 
-import org.jreleaser.model.Mattermost;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Mattermost;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.sdk.commons.ClientUtils;
