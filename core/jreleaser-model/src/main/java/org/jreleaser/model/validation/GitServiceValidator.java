@@ -185,7 +185,7 @@ public abstract class GitServiceValidator extends Validator {
             }
         }
 
-        if (mode == JReleaserContext.Mode.FULL) {
+        if (mode != JReleaserContext.Mode.ASSEMBLE) {
             if (service.isSign() && !model.getSigning().isEnabled()) {
                 if (context.isDryrun()) {
                     service.setSign(false);

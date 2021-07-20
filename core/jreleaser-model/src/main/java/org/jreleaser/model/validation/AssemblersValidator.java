@@ -37,6 +37,10 @@ import static org.jreleaser.model.validation.NativeImageValidator.validateNative
  */
 public abstract class AssemblersValidator extends Validator {
     public static void validateAssemblers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        if (mode == JReleaserContext.Mode.CHANGELOG) {
+            return;
+        }
+
         context.getLogger().debug("assemble");
 
         Assemble assemble = context.getModel().getAssemble();

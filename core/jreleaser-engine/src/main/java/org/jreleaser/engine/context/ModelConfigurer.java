@@ -87,6 +87,7 @@ public class ModelConfigurer {
                     }
                     break;
                 case FULL:
+                default:
                     if (errors.hasErrors()) {
                         throw new JReleaserException("JReleaser has not been properly configured.");
                     }

@@ -29,4 +29,9 @@ public class JReleaserChangelogTask extends AbstractJReleaserTask {
     protected void doExecute(JReleaserContext context) {
         Workflows.changelog(context).execute();
     }
+
+    @Override
+    protected JReleaserContext.Mode getMode() {
+        return JReleaserContext.Mode.CHANGELOG;
+    }
 }

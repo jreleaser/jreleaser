@@ -401,7 +401,8 @@ public class JReleaserContext {
 
     public enum Mode {
         ASSEMBLE,
-        FULL
+        FULL,
+        CHANGELOG
     }
 
     private static class SortedProperties extends Properties {

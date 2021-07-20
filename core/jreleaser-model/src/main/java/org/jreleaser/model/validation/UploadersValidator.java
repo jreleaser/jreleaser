@@ -30,6 +30,10 @@ import static org.jreleaser.model.validation.HttpUploaderValidator.validateHttp;
  */
 public abstract class UploadersValidator extends Validator {
     public static void validateUploaders(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        if (mode != JReleaserContext.Mode.FULL) {
+            return;
+        }
+
         context.getLogger().debug("upload");
 
         Upload upload = context.getModel().getUpload();

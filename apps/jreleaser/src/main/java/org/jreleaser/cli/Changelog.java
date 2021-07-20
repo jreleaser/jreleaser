@@ -33,4 +33,9 @@ public class Changelog extends AbstractModelCommand {
     protected void doExecute(JReleaserContext context) {
         Workflows.changelog(context).execute();
     }
+
+    @Override
+    protected JReleaserContext.Mode getMode() {
+        return JReleaserContext.Mode.CHANGELOG;
+    }
 }
