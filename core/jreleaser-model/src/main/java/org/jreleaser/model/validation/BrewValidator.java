@@ -27,6 +27,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
+import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,36 +109,51 @@ public abstract class BrewValidator extends Validator {
     }
 
     private static void validateCask(JReleaserContext context, Distribution distribution, Brew tool, Errors errors) {
+        if (distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {
+            tool.getCask().disable();
+            return;
+        }
+
         context.getLogger().debug("distribution.{}.brew.cask", distribution.getName());
 
-        // look for a .dmg o .pkg
+        // look for a .dmg, .pkg. or .zip
         int dmgFound = 0;
         int pkgFound = 0;
+        int zipFound = 0;
         String pkgName = "";
         for (Artifact artifact : distribution.getArtifacts()) {
-            if (!artifact.isActive()) continue;
-            if (artifact.getPath().endsWith(".dmg") && !isTrue(artifact.getExtraProperties().get("skipBrew")))
+            if (!artifact.isActive() || !PlatformUtils.isMac(artifact.getPlatform())) continue;
+            if (artifact.getPath().endsWith(".dmg") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
                 dmgFound++;
-            if (artifact.getPath().endsWith(".pkg") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
+            } else if (artifact.getPath().endsWith(".pkg") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
                 pkgFound++;
                 pkgName = artifact.getEffectivePath(context).getFileName().toString();
+            } else if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
+                zipFound++;
             }
         }
 
         Cask cask = tool.getCask();
 
-        if (dmgFound == 0 && pkgFound == 0) {
+        if (dmgFound == 0 && pkgFound == 0 && zipFound == 0) {
             // no artifacts found, disable cask
             cask.disable();
             return;
-        } else if (dmgFound > 0 && pkgFound > 0) {
-            errors.configuration("distribution." + distribution.getName() + ".brew can only have a single .dmg or .pkg artifact");
-            return;
         } else if (dmgFound > 1) {
             errors.configuration("distribution." + distribution.getName() + ".brew has more than one .dmg artifact");
+            cask.disable();
             return;
         } else if (pkgFound > 1) {
             errors.configuration("distribution." + distribution.getName() + ".brew has more than one .pkg artifact");
+            cask.disable();
+            return;
+        } else if (zipFound > 1) {
+            errors.configuration("distribution." + distribution.getName() + ".brew has more than one .zip artifact");
+            cask.disable();
+            return;
+        } else if (dmgFound + pkgFound + zipFound > 1) {
+            errors.configuration("distribution." + distribution.getName() + ".brew can only have a single matching .dmg, .pkg, or .zip artifact");
+            cask.disable();
             return;
         }
 
@@ -155,6 +171,10 @@ public abstract class BrewValidator extends Validator {
             cask.setAppName(tool.getResolvedFormulaName(context) + ".app");
         } else if (!cask.getAppName().endsWith(".app")) {
             cask.setAppName(cask.getAppName() + ".app");
+        }
+        if (zipFound > 0) {
+            cask.setAppName("");
+            cask.setPkgName("");
         }
 
         if (isBlank(cask.getName())) {

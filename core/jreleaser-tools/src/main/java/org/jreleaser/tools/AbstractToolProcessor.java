@@ -323,7 +323,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             }
             Map<String, Object> newProps = new LinkedHashMap<>(props);
             newProps.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
-            String artifactUrl = applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps, "downloadUrl");
+            String artifactUrl = applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
             props.put("artifact" + platform + "Url", artifactUrl);
             props.putAll(context.getModel().getUpload()
                 .resolveDownloadUrls(context, distribution, artifact, "artifact" + platform));

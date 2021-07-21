@@ -17,7 +17,9 @@
  */
 package org.jreleaser.tools;
 
+import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Brew;
+import org.jreleaser.model.Cask;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -27,12 +29,14 @@ import org.jreleaser.util.Constants;
 import org.jreleaser.util.MustacheUtils;
 
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.passThrough;
+import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.isTrue;
 
@@ -71,29 +75,44 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
                 .collect(Collectors.toList()));
         }
 
-        if ((distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
+        Cask cask = tool.getCask();
+        if (cask.isEnabled()) {
+            props.put(Constants.KEY_BREW_CASK_NAME, cask.getResolvedCaskName(props));
+            props.put(Constants.KEY_BREW_CASK_DISPLAY_NAME, cask.getResolvedDisplayName(props));
+            props.put(Constants.KEY_BREW_CASK_HAS_UNINSTALL, !cask.getUninstallItems().isEmpty());
+            props.put(Constants.KEY_BREW_CASK_HAS_PKG, isNotBlank(cask.getPkgName()));
+            if (isNotBlank(cask.getPkgName())) {
+                props.put(Constants.KEY_BREW_CASK_PKG, cask.getResolvedPkgName(props));
+            }
+            props.put(Constants.KEY_BREW_CASK_HAS_APP, isNotBlank(cask.getAppName()));
+            if (isNotBlank(cask.getAppName())) {
+                props.put(Constants.KEY_BREW_CASK_APP, cask.getResolvedAppName(props));
+            }
+            props.put(Constants.KEY_BREW_CASK_UNINSTALL, cask.getUninstallItems());
+            props.put(Constants.KEY_BREW_CASK_HAS_ZAP, !cask.getZapItems().isEmpty());
+            props.put(Constants.KEY_BREW_CASK_ZAP, cask.getZapItems());
+            String appcast = cask.getResolvedAppcast(props);
+            props.put(Constants.KEY_BREW_CASK_HAS_APPCAST, isNotBlank(appcast));
+            props.put(Constants.KEY_BREW_CASK_APPCAST, appcast);
+
+            for (Artifact artifact : distribution.getArtifacts()) {
+                if (!artifact.isActive()) continue;
+                if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
+                    String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
+                    Map<String, Object> newProps = new LinkedHashMap<>(props);
+                    newProps.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
+                    props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, getFilename(artifactFileName));
+                    String artifactUrl = applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
+                    props.put(Constants.KEY_DISTRIBUTION_URL, artifactUrl);
+                    props.put(Constants.KEY_BREW_CASK_HAS_BINARY, true);
+                    break;
+                }
+            }
+        } else if ((distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == Distribution.DistributionType.SINGLE_JAR) &&
             !isTrue(tool.getExtraProperties().get("javaSkip")) &&
             !isTrue(tool.getExtraProperties().get("skipJava"))) {
             tool.addDependency("openjdk@" + props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
-        } else if (distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE) {
-            props.put(Constants.KEY_BREW_CASK_NAME, tool.getCask().getResolvedCaskName(props));
-            props.put(Constants.KEY_BREW_CASK_DISPLAY_NAME, tool.getCask().getResolvedDisplayName(props));
-            props.put(Constants.KEY_BREW_CASK_HAS_UNINSTALL, !tool.getCask().getUninstallItems().isEmpty());
-            props.put(Constants.KEY_BREW_CASK_HAS_PKG, isNotBlank(tool.getCask().getPkgName()));
-            if (isNotBlank(tool.getCask().getPkgName())) {
-                props.put(Constants.KEY_BREW_CASK_PKG, tool.getCask().getResolvedPkgName(props));
-            }
-            props.put(Constants.KEY_BREW_CASK_HAS_APP, isNotBlank(tool.getCask().getAppName()));
-            if (isNotBlank(tool.getCask().getAppName())) {
-                props.put(Constants.KEY_BREW_CASK_APP, tool.getCask().getResolvedAppName(props));
-            }
-            props.put(Constants.KEY_BREW_CASK_UNINSTALL, tool.getCask().getUninstallItems());
-            props.put(Constants.KEY_BREW_CASK_HAS_ZAP, !tool.getCask().getZapItems().isEmpty());
-            props.put(Constants.KEY_BREW_CASK_ZAP, tool.getCask().getZapItems());
-            String appcast = tool.getCask().getResolvedAppcast(props);
-            props.put(Constants.KEY_BREW_CASK_HAS_APPCAST, isNotBlank(appcast));
-            props.put(Constants.KEY_BREW_CASK_APPCAST, appcast);
         }
 
         props.put(Constants.KEY_BREW_DEPENDENCIES, tool.getDependenciesAsList()
@@ -113,12 +132,18 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputFile = "formula.rb".equals(fileName) ?
-            outputDirectory.resolve("Formula").resolve(distribution.getExecutable().concat(".rb")) :
-            ("cask.rb".equals(fileName) ?
+        if (tool.getCask().isEnabled()) {
+            if ("formula.rb".equals(fileName)) return;
+            Path outputFile = "cask.rb".equals(fileName) ?
                 outputDirectory.resolve("Casks").resolve(tool.getCask().getResolvedCaskName(props).concat(".rb")) :
-                outputDirectory.resolve(fileName));
-
-        writeFile(content, outputFile);
+                outputDirectory.resolve(fileName);
+            writeFile(content, outputFile);
+        } else {
+            if ("cask.rb".equals(fileName)) return;
+            Path outputFile = "formula.rb".equals(fileName) ?
+                outputDirectory.resolve("Formula").resolve(distribution.getExecutable().concat(".rb")) :
+                outputDirectory.resolve(fileName);
+            writeFile(content, outputFile);
+        }
     }
 }
