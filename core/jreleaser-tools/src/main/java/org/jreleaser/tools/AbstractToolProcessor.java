@@ -295,15 +295,19 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     protected boolean verifyAndAddArtifacts(Map<String, Object> props,
                                             Distribution distribution,
                                             List<Artifact> artifacts) throws ToolProcessingException {
-        if (artifacts.size() == 0) {
+        List<Artifact> activeArtifacts = artifacts.stream()
+            .filter(Artifact::isActive)
+            .collect(Collectors.toList());
+
+        if (activeArtifacts.size() == 0) {
             // we can't proceed
             context.getLogger().warn("no suitable artifacts found in distribution {} to be packaged with {}",
                 distribution.getName(), capitalize(tool.getName()));
             return false;
         }
 
-        for (int i = 0; i < artifacts.size(); i++) {
-            Artifact artifact = artifacts.get(i);
+        for (int i = 0; i < activeArtifacts.size(); i++) {
+            Artifact artifact = activeArtifacts.get(i);
             String platform = isNotBlank(artifact.getPlatform()) ? capitalize(artifact.getPlatform()) : "";
             // add extra properties without clobbering existing keys
             Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact" + platform);
@@ -351,6 +355,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     protected List<Artifact> collectArtifacts(Distribution distribution) {
         Set<String> fileExtensions = tool.getSupportedExtensions();
         return distribution.getArtifacts().stream()
+            .filter(Artifact::isActive)
             .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
             .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
             .collect(Collectors.toList());

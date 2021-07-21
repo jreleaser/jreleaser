@@ -28,6 +28,7 @@ import org.jreleaser.engine.context.ModelAutoConfigurer;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.workflow.Workflows;
 
 import java.io.File;
@@ -187,6 +188,16 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
      */
     @Parameter(property = "jreleaser.globs")
     private String[] globs;
+    /**
+     * Activates paths matching the current platform.
+     */
+    @Parameter(property = "jreleaser.select.current.platform")
+    private boolean selectCurrentPlatform;
+    /**
+     * Activates paths matching the given platform.
+     */
+    @Parameter(property = "jreleaser.select.platform")
+    private String[] selectPlatforms;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -221,6 +232,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .armored(armored)
             .files(collectFiles())
             .globs(collectGlobs())
+            .selectedPlatforms(collectSelectedPlatforms())
             .autoConfigure();
 
         Workflows.release(context).execute();
@@ -264,5 +276,15 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             }
         }
         return set;
+    }
+
+    protected List<String> collectSelectedPlatforms() {
+        if (selectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
+
+        List<String> list = new ArrayList<>();
+        if (selectPlatforms != null && selectPlatforms.length > 0) {
+            Collections.addAll(list, selectPlatforms);
+        }
+        return list;
     }
 }

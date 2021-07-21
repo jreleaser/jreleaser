@@ -31,7 +31,7 @@ import org.jreleaser.workflow.Workflows;
  * @since 0.1.0
  */
 @Mojo(name = "publish")
-public class JReleaserPublishMojo extends AbstractJReleaserMojo {
+public class JReleaserPublishMojo extends AbstractPlatformAwareJReleaserMojo {
     /**
      * The name of the distribution.
      */

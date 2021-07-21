@@ -82,6 +82,11 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             project.projectDir.toPath(),
             outputDirectory.get().asFile.toPath(),
             dryrun.get(),
-            gitRootSearch.get())
+            gitRootSearch.get(),
+            collectSelectedPlatforms())
+    }
+
+    protected List<String> collectSelectedPlatforms() {
+        []
     }
 }

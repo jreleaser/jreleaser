@@ -105,13 +105,13 @@ assemble:
         - org.openjsse
       targetJdks:
         - path: '{{jdkPathPrefix}}-macosx_x64/zulu-11.jdk/Contents/Home'
-          platform: 'osx'
+          platform: 'osx-x86_64'
         - path: '{{jdkPathPrefix}}-linux_x64'
-          platform: 'linux'
+          platform: 'linux-x86_64'
         - path: '{{jdkPathPrefix}}-linux_musl_x64'
-          platform: 'linux_musl'
+          platform: 'linux_musl-x86_64'
         - path: '{{jdkPathPrefix}}-win_x64'
-          platform: 'windows'
+          platform: 'windows-x86_64'
       mainJar:
         path: 'apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
       jars:
@@ -170,7 +170,7 @@ distributions:
             - 'jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}'
             - 'jreleaser/jreleaser-{{dockerSpecName}}:latest'
           matchers:
-            platform: 'linux'
+            platform: 'linux-x86_64'
           preCommands:
             - 'RUN apt-get update -y'
             - 'RUN apt-get install unzip'
@@ -179,7 +179,7 @@ distributions:
             - 'jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}'
             - 'jreleaser/jreleaser-{{dockerSpecName}}:latest'
           matchers:
-            platform: 'linux_musl'
+            platform: 'linux_musl-x86_64'
           preCommands:
             - 'RUN apk add unzip'
 

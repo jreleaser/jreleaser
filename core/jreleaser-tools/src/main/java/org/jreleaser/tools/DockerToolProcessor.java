@@ -117,6 +117,7 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         if (tool.getActiveSpecs().isEmpty()) {
             Set<String> fileExtensions = tool.getSupportedExtensions();
             List<Artifact> artifacts = distribution.getArtifacts().stream()
+                .filter(Artifact::isActive)
                 .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
                 .collect(Collectors.toList());
 

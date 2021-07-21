@@ -36,7 +36,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserAnnounceTask extends AbstractJReleaserTask {
+abstract class JReleaserAnnounceTask extends AbstractPlatformAwareJReleaserTask {
     @Input
     @Optional
     final Property<String> announcerName

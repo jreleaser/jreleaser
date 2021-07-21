@@ -70,6 +70,8 @@ public class Artifacts {
 
         // resolve artifacts
         for (Artifact artifact : files.getArtifacts()) {
+            if (!context.isPlatformSelected(artifact)) continue;
+            artifact.activate();
             artifact.getEffectivePath(context);
             paths.add(artifact);
         }
@@ -77,7 +79,9 @@ public class Artifacts {
         // resolve globs
         for (Glob glob : files.getGlobs()) {
             for (Path path : glob.getResolvedPaths(context)) {
-                paths.add(Artifact.of(path));
+                Artifact artifact = Artifact.of(path);
+                artifact.activate();
+                paths.add(artifact);
             }
         }
 
@@ -125,7 +129,9 @@ public class Artifacts {
 
         private void match(Path path) {
             if (matchers.stream().anyMatch(matcher -> matcher.matches(path))) {
-                artifacts.add(Artifact.of(path));
+                Artifact artifact = Artifact.of(path);
+                artifact.activate();
+                artifacts.add(artifact);
             }
         }
 

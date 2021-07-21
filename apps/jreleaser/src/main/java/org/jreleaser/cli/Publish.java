@@ -28,7 +28,7 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "publish",
     mixinStandardHelpOptions = true,
     description = "Publish all distributions.")
-public class Publish extends AbstractModelCommand {
+public class Publish extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skip remote operations.")
     boolean dryrun;

@@ -30,7 +30,7 @@ import org.jreleaser.workflow.Workflows;
  * @since 0.1.0
  */
 @Mojo(name = "sign")
-public class JReleaserSignMojo extends AbstractJReleaserMojo {
+public class JReleaserSignMojo extends AbstractPlatformAwareJReleaserMojo {
     /**
      * Skip execution.
      */

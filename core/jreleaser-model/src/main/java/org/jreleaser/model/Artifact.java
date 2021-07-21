@@ -49,6 +49,7 @@ public class Artifact implements Domain, ExtraProperties {
     private String transform;
     private Path resolvedPath;
     private Path resolvedTransform;
+    private boolean active;
 
     void setAll(Artifact artifact) {
         this.path = artifact.path;
@@ -56,8 +57,17 @@ public class Artifact implements Domain, ExtraProperties {
         this.transform = artifact.transform;
         this.resolvedPath = artifact.resolvedPath;
         this.resolvedTransform = artifact.resolvedTransform;
+        this.active = artifact.active;
         setExtraProperties(artifact.extraProperties);
         setHashes(artifact.hashes);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void activate() {
+        this.active = true;
     }
 
     public Path getEffectivePath(JReleaserContext context) {

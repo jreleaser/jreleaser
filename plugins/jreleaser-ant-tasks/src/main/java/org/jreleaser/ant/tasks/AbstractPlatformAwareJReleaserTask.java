@@ -17,16 +17,30 @@
  */
 package org.jreleaser.ant.tasks;
 
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.workflow.Workflows;
+import org.jreleaser.util.PlatformUtils;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-public class JReleaserFullReleaseTask extends AbstractPlatformAwareJReleaserTask {
+abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask {
+    protected boolean selectCurrentPlatform;
+    protected List<String> selectPlatforms;
+
+    public void setSelectCurrentPlatform(boolean selectCurrentPlatform) {
+        this.selectCurrentPlatform = selectCurrentPlatform;
+    }
+
+    public void setSelectPlatforms(List<String> selectPlatforms) {
+        this.selectPlatforms = selectPlatforms;
+    }
+
     @Override
-    protected void doExecute(JReleaserContext context) {
-        Workflows.fullRelease(context).execute();
+    protected List<String> collectSelectedPlatforms() {
+        if (selectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
+        return selectPlatforms;
     }
 }

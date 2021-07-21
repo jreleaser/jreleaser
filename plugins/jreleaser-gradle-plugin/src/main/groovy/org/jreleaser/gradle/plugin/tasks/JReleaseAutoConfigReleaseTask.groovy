@@ -33,6 +33,7 @@ import org.jreleaser.engine.context.ModelAutoConfigurer
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.JReleaserContext
 import org.jreleaser.model.UpdateSection
+import org.jreleaser.util.PlatformUtils
 import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
@@ -125,6 +126,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Input
     @Optional
     final ListProperty<String> globs
+    @Input
+    final Property<Boolean> selectCurrentPlatform
+    @Input
+    @Optional
+    final ListProperty<String> selectPlatforms
 
     @Option(option = 'project-name', description = 'The project name (OPTIONAL).')
     void setProjectName(String projectName) {
@@ -257,6 +263,16 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         }
     }
 
+    @Option(option = 'select-current-platform', description = 'Activates paths matching the current platform (OPTIONAL).')
+    void setSelectCurrentPlatform(boolean selectCurrentPlatform) {
+        this.dryrun.set(selectCurrentPlatform)
+    }
+
+    @Option(option = 'select-platform', description = 'Activates paths matching the given platform (OPTIONAL).')
+    void setSelectPlatform(List<String> selectPlatforms) {
+        this.selectPlatforms.addAll(selectPlatforms)
+    }
+
     @Inject
     JReleaseAutoConfigReleaseTask(ObjectFactory objects) {
         dryrun = objects.property(Boolean).convention(false)
@@ -286,6 +302,8 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         armored = objects.property(Boolean).convention(false)
         files = objects.listProperty(String).convention([])
         globs = objects.listProperty(String).convention([])
+        selectCurrentPlatform = objects.property(Boolean).convention(false)
+        selectPlatforms = objects.listProperty(String).convention([])
     }
 
     @TaskAction
@@ -324,8 +342,14 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .armored(armored.get())
             .files((List<String>) files.getOrElse([] as List<String>))
             .globs((List<String>) globs.getOrElse([] as List<String>))
+            .selectedPlatforms(collectSelectedPlatforms())
             .autoConfigure()
 
         Workflows.release(context).execute()
+    }
+
+    protected List<String> collectSelectedPlatforms() {
+        if (selectCurrentPlatform.present) return Collections.singletonList(PlatformUtils.getCurrentFull());
+        return selectPlatforms.get()
     }
 }

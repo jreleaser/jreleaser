@@ -28,7 +28,7 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "config",
     mixinStandardHelpOptions = true,
     description = "Display current configuration.")
-public class Config extends AbstractModelCommand {
+public class Config extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"-f", "--full"},
         description = "Display full configuration.")
     boolean full;

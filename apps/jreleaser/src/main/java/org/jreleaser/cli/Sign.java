@@ -28,7 +28,7 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "sign",
     mixinStandardHelpOptions = true,
     description = "Sign release artifacts.")
-public class Sign extends AbstractModelCommand {
+public class Sign extends AbstractPlatformAwareModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {
         Workflows.sign(context).execute();

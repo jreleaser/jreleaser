@@ -48,6 +48,8 @@ public abstract class JlinkResolver extends Validator {
         String imageName = jlink.getResolvedImageName(context);
 
         for (Artifact targetJdk : jlink.getTargetJdks()) {
+            if (!context.isPlatformSelected(targetJdk)) continue;
+
             Path image = baseOutputDirectory
                 .resolve(imageName + "-" + targetJdk.getPlatform() + ".zip")
                 .toAbsolutePath();
@@ -57,6 +59,7 @@ public abstract class JlinkResolver extends Validator {
                     ". Distribution " + jlink.getName() + " has not been assembled.");
             } else {
                 Artifact artifact = Artifact.of(image, targetJdk.getPlatform());
+                artifact.activate();
                 if (isNotBlank(jlink.getImageNameTransform())) {
                     artifact.setTransform(jlink.getResolvedImageNameTransform(context) + "-" + targetJdk.getPlatform() + ".zip");
                     artifact.getEffectivePath(context);

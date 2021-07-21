@@ -30,7 +30,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserFullReleaseTask extends AbstractJReleaserTask {
+abstract class JReleaserFullReleaseTask extends AbstractPlatformAwareJReleaserTask {
     @Inject
     JReleaserFullReleaseTask(ObjectFactory objects) {
         super(objects)

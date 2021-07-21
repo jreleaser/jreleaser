@@ -26,7 +26,7 @@ import java.io.PrintWriter;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserConfigTask extends AbstractJReleaserTask {
+public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     private boolean full;
     private boolean assembly;
 

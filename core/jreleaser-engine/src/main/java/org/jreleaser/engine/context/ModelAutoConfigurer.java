@@ -53,6 +53,7 @@ public class ModelAutoConfigurer {
 
     private final List<String> files = new ArrayList<>();
     private final List<String> globs = new ArrayList<>();
+    private final List<String> selectedPlatforms = new ArrayList<>();
     private final Set<UpdateSection> updateSections = new LinkedHashSet<>();
     private JReleaserLogger logger;
     private Path basedir;
@@ -254,6 +255,21 @@ public class ModelAutoConfigurer {
         return this;
     }
 
+    public ModelAutoConfigurer selectedPlatforms(List<String> platforms) {
+        this.selectedPlatforms.clear();
+        if (null != platforms && !platforms.isEmpty()) {
+            platforms.forEach(this::selectedPlatform);
+        }
+        return this;
+    }
+
+    public ModelAutoConfigurer selectedPlatform(String platform) {
+        if (isNotBlank(platform)) {
+            this.selectedPlatforms.add(platform.trim());
+        }
+        return this;
+    }
+
     public JReleaserContext autoConfigure() {
         requireNonNull(logger, "Argument 'logger' ust not be null");
         requireNonNull(basedir, "Argument 'basedir' ust not be null");
@@ -277,7 +293,8 @@ public class ModelAutoConfigurer {
             basedir,
             outputDirectory,
             dryrun,
-            gitRootSearch);
+            gitRootSearch,
+            selectedPlatforms);
     }
 
     private void dumpAutoConfig() {
@@ -310,6 +327,11 @@ public class ModelAutoConfigurer {
         if (!globs.isEmpty()) {
             for (String glob : globs) {
                 logger.info("- glob: {}", glob);
+            }
+        }
+        if (!selectedPlatforms.isEmpty()) {
+            for (String platform : selectedPlatforms) {
+                logger.info("- platform: {}", platform);
             }
         }
     }

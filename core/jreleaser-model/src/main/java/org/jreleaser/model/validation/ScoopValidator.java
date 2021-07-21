@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -106,6 +107,7 @@ public abstract class ScoopValidator extends Validator {
         // activate individual checksums on matching artifacts
         Set<String> fileExtensions = tool.getSupportedExtensions();
         distribution.getArtifacts().stream()
+            .filter(Artifact::isActive)
             .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
             .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
             .forEach(artifact -> artifact.getExtraProperties().put(INDIVIDUAL_CHECKSUM, true));

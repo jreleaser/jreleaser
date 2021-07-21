@@ -115,6 +115,7 @@ public abstract class BrewValidator extends Validator {
         int pkgFound = 0;
         String pkgName = "";
         for (Artifact artifact : distribution.getArtifacts()) {
+            if (!artifact.isActive()) continue;
             if (artifact.getPath().endsWith(".dmg") && !isTrue(artifact.getExtraProperties().get("skipBrew")))
                 dmgFound++;
             if (artifact.getPath().endsWith(".pkg") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {

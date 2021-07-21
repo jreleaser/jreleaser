@@ -31,6 +31,7 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.PlatformUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,6 +39,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -124,7 +128,8 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 basedir,
                 outputDirectory.toPath(),
                 dryrun,
-                gitRootSearch);
+                gitRootSearch,
+                collectSelectedPlatforms());
         } catch (JReleaserException e) {
             throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.", e);
         }
@@ -141,5 +146,9 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
             return Paths.get(session.getExecutionRootDirectory().trim());
         }
         return project.getBasedir().toPath();
+    }
+
+    protected List<String> collectSelectedPlatforms() {
+        return Collections.emptyList();
     }
 }

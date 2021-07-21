@@ -28,6 +28,7 @@ import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.Version;
 
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * @author Andres Almiray
@@ -40,14 +41,16 @@ public class ContextCreator {
                                           Path basedir,
                                           Path outputDirectory,
                                           boolean dryrun,
-                                          boolean gitRootSearch) {
+                                          boolean gitRootSearch,
+                                          List<String> selectedPlatforms) {
         return create(logger,
             mode,
             resolveModel(logger, configFile),
             basedir,
             outputDirectory,
             dryrun,
-            gitRootSearch);
+            gitRootSearch,
+            selectedPlatforms);
     }
 
     public static JReleaserContext create(JReleaserLogger logger,
@@ -56,7 +59,8 @@ public class ContextCreator {
                                           Path basedir,
                                           Path outputDirectory,
                                           boolean dryrun,
-                                          boolean gitRootSearch) {
+                                          boolean gitRootSearch,
+                                          List<String> selectedPlatforms) {
         JReleaserContext context = new JReleaserContext(
             logger,
             mode,
@@ -64,7 +68,8 @@ public class ContextCreator {
             basedir,
             outputDirectory,
             dryrun,
-            gitRootSearch);
+            gitRootSearch,
+            selectedPlatforms);
 
         ModelConfigurer.configure(context);
 

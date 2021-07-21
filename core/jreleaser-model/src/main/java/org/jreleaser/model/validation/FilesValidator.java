@@ -35,6 +35,11 @@ public abstract class FilesValidator extends Validator {
 
         context.getLogger().debug("files");
 
+        context.getModel().getFiles().getArtifacts()
+            .forEach(artifact -> {
+                if (context.isPlatformSelected(artifact)) artifact.activate();
+            });
+
         int i = 0;
         for (Glob glob : context.getModel().getFiles().getGlobs()) {
             boolean isBaseDir = false;

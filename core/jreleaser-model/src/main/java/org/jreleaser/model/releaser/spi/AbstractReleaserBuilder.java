@@ -78,6 +78,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
 
         boolean uploadIndividualChecksums = context.getModel().getChecksum().isIndividual();
         for (Artifact artifact : Artifacts.resolveFiles(context)) {
+            if (!artifact.isActive()) continue;
             Path path = artifact.getEffectivePath(context);
             addReleaseAsset(path);
             if (isIndividual(context, artifact)) {
@@ -90,6 +91,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
 
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
             for (Artifact artifact : distribution.getArtifacts()) {
+                if (!artifact.isActive()) continue;
                 Path path = artifact.getEffectivePath(context, distribution);
                 addReleaseAsset(path);
                 if (isIndividual(context, distribution, artifact)) {
@@ -111,7 +113,14 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
         }
 
         if (context.getModel().getSigning().isEnabled()) {
-            addReleaseAssets(context.getSignaturesDirectory());
+            List<Path> assetsCopy = new ArrayList<>(assets);
+            for (Path asset : assetsCopy) {
+                Path signature = context.getSignaturesDirectory()
+                    .resolve(asset.getFileName().toString() + (context.getModel().getSigning().isArmored() ? ".asc" : ".sig"));
+                if (Files.exists(signature)) {
+                    addReleaseAsset(signature);
+                }
+            }
         }
 
         return this;

@@ -30,7 +30,7 @@ import org.jreleaser.workflow.Workflows;
  * @since 0.1.0
  */
 @Mojo(name = "full-release")
-public class JReleaserFullReleaseMojo extends AbstractJReleaserMojo {
+public class JReleaserFullReleaseMojo extends AbstractPlatformAwareJReleaserMojo {
     /**
      * Skip execution.
      */

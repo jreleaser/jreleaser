@@ -33,7 +33,9 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -148,7 +150,8 @@ abstract class AbstractJReleaserTask extends Task {
             actualBasedir,
             getOutputDirectory(),
             dryrun,
-            gitRootSearch);
+            gitRootSearch,
+            collectSelectedPlatforms());
     }
 
     private Set<String> getSupportedConfigFormats() {
@@ -166,5 +169,9 @@ abstract class AbstractJReleaserTask extends Task {
 
     protected JReleaserContext.Mode getMode() {
         return JReleaserContext.Mode.FULL;
+    }
+
+    protected List<String> collectSelectedPlatforms() {
+        return Collections.emptyList();
     }
 }

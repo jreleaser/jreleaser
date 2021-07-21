@@ -24,7 +24,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserAnnounceTask extends AbstractJReleaserTask {
+public class JReleaserAnnounceTask extends AbstractPlatformAwareJReleaserTask {
     private String announcerName;
 
     public void setAnnouncerName(String announcerName) {

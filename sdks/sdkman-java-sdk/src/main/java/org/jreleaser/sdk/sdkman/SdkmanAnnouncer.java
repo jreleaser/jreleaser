@@ -62,6 +62,7 @@ public class SdkmanAnnouncer implements Announcer {
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
             if (!isDistributionSupported(distribution)) continue;
             for (Artifact artifact : distribution.getArtifacts()) {
+                if (!artifact.isActive()) continue;
                 // only zips are supported
                 if (!artifact.getPath().endsWith(".zip")) {
                     context.getLogger().debug("Artifact {} is not suitable for Sdkman publication. Skipping.",

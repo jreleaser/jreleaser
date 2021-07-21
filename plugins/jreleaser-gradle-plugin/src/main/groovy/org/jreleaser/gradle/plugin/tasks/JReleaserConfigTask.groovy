@@ -34,7 +34,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserConfigTask extends AbstractJReleaserTask {
+abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     @Input
     final Property<Boolean> full
 

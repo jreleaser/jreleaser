@@ -36,7 +36,7 @@ import javax.inject.Inject
  * @since 0.3.0
  */
 @CompileStatic
-abstract class JReleaserUploadTask extends AbstractJReleaserTask {
+abstract class JReleaserUploadTask extends AbstractPlatformAwareJReleaserTask {
     @Input
     @Optional
     final Property<String> uploaderType

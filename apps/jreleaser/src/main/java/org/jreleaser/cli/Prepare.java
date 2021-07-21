@@ -28,7 +28,7 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "prepare",
     mixinStandardHelpOptions = true,
     description = "Prepare all distributions.")
-public class Prepare extends AbstractModelCommand {
+public class Prepare extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"-dn", "--distribution-name"},
         description = "The name of the distribution.")
     String distributionName;

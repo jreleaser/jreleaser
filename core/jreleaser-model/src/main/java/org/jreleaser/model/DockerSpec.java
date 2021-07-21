@@ -45,6 +45,7 @@ public class DockerSpec extends AbstractDockerConfiguration {
 
     public void setArtifact(Artifact artifact) {
         this.artifact = artifact;
+        this.artifact.activate();
     }
 
     public String getName() {

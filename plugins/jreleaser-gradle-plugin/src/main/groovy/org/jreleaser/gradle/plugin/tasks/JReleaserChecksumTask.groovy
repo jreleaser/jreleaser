@@ -30,7 +30,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserChecksumTask extends AbstractJReleaserTask {
+abstract class JReleaserChecksumTask extends AbstractPlatformAwareJReleaserTask {
     @Inject
     JReleaserChecksumTask(ObjectFactory objects) {
         super(objects)

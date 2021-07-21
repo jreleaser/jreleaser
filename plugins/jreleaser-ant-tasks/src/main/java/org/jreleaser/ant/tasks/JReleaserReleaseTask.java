@@ -24,7 +24,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserReleaseTask extends AbstractJReleaserTask {
+public class JReleaserReleaseTask extends AbstractPlatformAwareJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
         Workflows.release(context).execute();

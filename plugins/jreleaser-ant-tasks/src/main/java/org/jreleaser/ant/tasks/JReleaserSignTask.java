@@ -24,7 +24,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserSignTask extends AbstractJReleaserTask {
+public class JReleaserSignTask extends AbstractPlatformAwareJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
         Workflows.sign(context).execute();

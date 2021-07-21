@@ -38,7 +38,7 @@ import java.util.Set;
 @CommandLine.Command(name = "release",
     mixinStandardHelpOptions = true,
     description = "Create or update a release.")
-public class Release extends AbstractModelCommand {
+public class Release extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"},
         description = "Skip remote operations.")
     boolean dryrun;
@@ -177,6 +177,7 @@ public class Release extends AbstractModelCommand {
             .armored(armored)
             .files(collectFiles())
             .globs(collectGlobs())
+            .selectedPlatforms(collectSelectedPlatforms())
             .autoConfigure();
 
         doExecute(context);

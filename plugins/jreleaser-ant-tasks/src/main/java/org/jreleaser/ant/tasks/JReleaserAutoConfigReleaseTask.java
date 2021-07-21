@@ -26,6 +26,7 @@ import org.jreleaser.engine.context.ModelAutoConfigurer;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.workflow.Workflows;
 
 import java.io.File;
@@ -35,11 +36,13 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
+import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
 
 /**
  * @author Andres Almiray
@@ -48,6 +51,7 @@ import static java.util.stream.Collectors.toList;
 public class JReleaserAutoConfigReleaseTask extends Task {
     private JReleaserLogger logger;
     private Path actualBasedir;
+    protected Path outputDir;
     private File basedir;
     private boolean dryrun;
     private boolean gitRootSearch;
@@ -74,6 +78,8 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private boolean armored;
     private FileSet fileSet;
     private List<String> globs;
+    protected boolean selectCurrentPlatform;
+    protected List<String> selectPlatforms;
 
     public void setDryrun(boolean dryrun) {
         this.dryrun = dryrun;
@@ -85,6 +91,10 @@ public class JReleaserAutoConfigReleaseTask extends Task {
 
     public void setBasedir(File basedir) {
         this.basedir = basedir;
+    }
+
+    public void setOutputDir(Path outputDir) {
+        this.outputDir = outputDir;
     }
 
     public void setProjectName(String projectName) {
@@ -179,6 +189,14 @@ public class JReleaserAutoConfigReleaseTask extends Task {
         this.globs = globs;
     }
 
+    public void setSelectCurrentPlatform(boolean selectCurrentPlatform) {
+        this.selectCurrentPlatform = selectCurrentPlatform;
+    }
+
+    public void setSelectPlatforms(List<String> selectPlatforms) {
+        this.selectPlatforms = selectPlatforms;
+    }
+
     @Override
     public void execute() throws BuildException {
         Banner.display(new PrintWriter(System.out, true));
@@ -215,6 +233,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .armored(armored)
             .files(fileSet.stream().map(Resource::getName).collect(toList()))
             .globs(globs)
+            .selectedPlatforms(collectSelectedPlatforms())
             .autoConfigure();
 
         Workflows.release(context).execute();
@@ -255,6 +274,11 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     }
 
     private Path getOutputDirectory() {
-        return actualBasedir.resolve("out").resolve("jreleaser");
+        return resolveOutputDirectory(actualBasedir, outputDir, "build");
+    }
+
+    protected List<String> collectSelectedPlatforms() {
+        if (selectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
+        return selectPlatforms;
     }
 }

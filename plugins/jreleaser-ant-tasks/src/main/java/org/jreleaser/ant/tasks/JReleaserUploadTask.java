@@ -24,7 +24,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class JReleaserUploadTask extends AbstractJReleaserTask {
+public class JReleaserUploadTask extends AbstractPlatformAwareJReleaserTask {
     private String uploaderType;
     private String uploaderName;
 

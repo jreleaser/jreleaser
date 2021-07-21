@@ -33,7 +33,7 @@ import java.io.PrintWriter;
  * @since 0.1.0
  */
 @Mojo(name = "config")
-public class JReleaserConfigMojo extends AbstractJReleaserMojo {
+public class JReleaserConfigMojo extends AbstractPlatformAwareJReleaserMojo {
     /**
      * Skip execution.
      */

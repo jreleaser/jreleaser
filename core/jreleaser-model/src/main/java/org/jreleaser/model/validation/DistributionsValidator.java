@@ -77,6 +77,12 @@ public abstract class DistributionsValidator extends Validator {
         }
         if (!distribution.resolveEnabled(context.getModel().getProject())) return;
 
+        if (!selectArtifactsByPlatform(context, distribution)) {
+            distribution.setActive(Active.NEVER);
+            distribution.disable();
+            return;
+        }
+
         if (isBlank(distribution.getName())) {
             errors.configuration("distribution.name must not be blank");
             return;
@@ -116,11 +122,14 @@ public abstract class DistributionsValidator extends Validator {
 
         int i = 0;
         for (Artifact artifact : distribution.getArtifacts()) {
-            validateArtifact(context, distribution, artifact, i++, errors);
+            if (artifact.isActive()) {
+                validateArtifact(context, distribution, artifact, i++, errors);
+            }
         }
 
         // validate artifact.platform is unique
         Map<String, List<Artifact>> byPlatform = distribution.getArtifacts().stream()
+            .filter(Artifact::isActive)
             .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? "<nil>" : artifact.getPlatform()));
         // check platforms by extension
         byPlatform.forEach((p, artifacts) -> {
@@ -145,6 +154,17 @@ public abstract class DistributionsValidator extends Validator {
         validateJbang(context, distribution, distribution.getJbang(), errors);
         validateScoop(context, distribution, distribution.getScoop(), errors);
         validateSnap(context, distribution, distribution.getSnap(), errors);
+    }
+
+    private static boolean selectArtifactsByPlatform(JReleaserContext context, Distribution distribution) {
+        boolean activeArtifacts = false;
+        for (Artifact artifact : distribution.getArtifacts()) {
+            if (context.isPlatformSelected(artifact)) {
+                artifact.activate();
+                activeArtifacts = true;
+            }
+        }
+        return activeArtifacts;
     }
 
     private static boolean validateJava(JReleaserContext context, Distribution distribution, Errors errors) {
@@ -225,6 +245,7 @@ public abstract class DistributionsValidator extends Validator {
             Set<String> fileExtensions = tool.getSupportedExtensions();
             String noPlatform = "<nil>";
             Map<String, List<Artifact>> byPlatform = distribution.getArtifacts().stream()
+                .filter(Artifact::isActive)
                 .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
                 .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? noPlatform : artifact.getPlatform()));
 

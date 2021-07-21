@@ -26,7 +26,9 @@ import picocli.CommandLine;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -129,7 +131,8 @@ public abstract class AbstractModelCommand extends AbstractCommand {
             actualBasedir,
             getOutputDirectory(),
             dryrun(),
-            gitRootSearch);
+            gitRootSearch,
+            collectSelectedPlatforms());
     }
 
     protected Path getOutputDirectory() {
@@ -155,5 +158,9 @@ public abstract class AbstractModelCommand extends AbstractCommand {
 
     protected JReleaserContext.Mode getMode() {
         return JReleaserContext.Mode.FULL;
+    }
+
+    protected List<String> collectSelectedPlatforms() {
+        return Collections.emptyList();
     }
 }

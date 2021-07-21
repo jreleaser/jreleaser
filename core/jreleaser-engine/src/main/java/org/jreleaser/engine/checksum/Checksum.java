@@ -48,6 +48,7 @@ public class Checksum {
         Map<Algorithm, List<String>> checksums = new LinkedHashMap<>();
 
         for (Artifact artifact : Artifacts.resolveFiles(context)) {
+            if (!artifact.isActive()) continue;
             for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                 readHash(context, algorithm, artifact);
                 List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());
@@ -57,6 +58,7 @@ public class Checksum {
 
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
             for (Artifact artifact : distribution.getArtifacts()) {
+                if (!artifact.isActive()) continue;
                 for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                     readHash(context, distribution, algorithm, artifact);
                     List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());

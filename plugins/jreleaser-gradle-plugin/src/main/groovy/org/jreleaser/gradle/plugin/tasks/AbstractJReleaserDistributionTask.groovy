@@ -34,7 +34,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class AbstractJReleaserDistributionTask extends AbstractJReleaserTask {
+abstract class AbstractJReleaserDistributionTask extends AbstractPlatformAwareJReleaserTask {
     @Input
     @Optional
     final Property<String> distributionName

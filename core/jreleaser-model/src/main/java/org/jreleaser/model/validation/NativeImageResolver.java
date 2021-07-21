@@ -41,6 +41,8 @@ public abstract class NativeImageResolver extends Validator {
     }
 
     private static void resolveNativeImageOutputs(JReleaserContext context, NativeImage nativeImage, Errors errors) {
+        if (!context.isPlatformSelected(nativeImage.getGraal())) return;
+
         String platform = nativeImage.getGraal().getPlatform();
 
         Path image = context.getAssembleDirectory()
@@ -53,6 +55,7 @@ public abstract class NativeImageResolver extends Validator {
                 ". Distribution " + nativeImage.getName() + " has not been assembled.");
         } else {
             Artifact artifact = Artifact.of(image, platform);
+            artifact.activate();
             if (isNotBlank(nativeImage.getImageNameTransform())) {
                 artifact.setTransform(nativeImage.getResolvedImageNameTransform(context) + "-" + platform + ".zip");
                 artifact.getEffectivePath(context);

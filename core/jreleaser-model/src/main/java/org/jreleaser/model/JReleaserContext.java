@@ -21,6 +21,7 @@ import org.bouncycastle.openpgp.PGPException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 import org.jreleaser.util.signing.FilesKeyring;
 import org.jreleaser.util.signing.InMemoryKeyring;
@@ -41,6 +42,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.Constants.KEY_COMMIT_FULL_HASH;
@@ -60,6 +62,7 @@ import static org.jreleaser.util.Constants.KEY_VERSION_PATCH;
 import static org.jreleaser.util.Constants.KEY_VERSION_PRERELEASE;
 import static org.jreleaser.util.Constants.KEY_VERSION_TAG;
 import static org.jreleaser.util.StringUtils.capitalize;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -75,6 +78,7 @@ public class JReleaserContext {
     private final boolean gitRootSearch;
     private final Mode mode;
     private final Errors errors = new Errors();
+    private final List<String> selectedPlatforms = new ArrayList<>();
 
     private String distributionName;
     private String toolName;
@@ -90,7 +94,8 @@ public class JReleaserContext {
                             Path basedir,
                             Path outputDirectory,
                             boolean dryrun,
-                            boolean gitRootSearch) {
+                            boolean gitRootSearch,
+                            List<String> selectedPlatforms) {
         this.logger = logger;
         this.mode = mode;
         this.model = model;
@@ -98,6 +103,25 @@ public class JReleaserContext {
         this.outputDirectory = outputDirectory;
         this.dryrun = dryrun;
         this.gitRootSearch = gitRootSearch;
+        this.selectedPlatforms.addAll(selectedPlatforms.stream()
+            .filter(PlatformUtils::isSupported)
+            .collect(Collectors.toList()));
+
+        List<String> unmatchedPlatforms = new ArrayList<>(selectedPlatforms);
+        unmatchedPlatforms.removeAll(this.selectedPlatforms);
+        if (!unmatchedPlatforms.isEmpty()) {
+            logger.warn("Platform selection is in effect");
+            logger.error("The following platforms did not match: {}", unmatchedPlatforms);
+            logger.error("Please use `${name}` or `${name}-${arch}` from{}        name = {}{}        arch = {}",
+                System.lineSeparator(), PlatformUtils.getSupportedOsNames(),
+                System.lineSeparator(), PlatformUtils.getSupportedOsArchs());
+            throw new JReleaserException("Unmatched platforms: " + unmatchedPlatforms);
+        }
+
+        if (!this.selectedPlatforms.isEmpty()) {
+            logger.warn("Platform selection is in effect");
+            logger.warn("Artifacts will be filtered by platform matching: {}", this.selectedPlatforms);
+        }
     }
 
     public Path relativizeToBasedir(Path other) {
@@ -181,6 +205,16 @@ public class JReleaserContext {
                 distribution.addArtifact(incoming);
             }
         }
+    }
+
+    public boolean isPlatformSelected(Artifact artifact) {
+        return isPlatformSelected(artifact.getPlatform());
+    }
+
+    public boolean isPlatformSelected(String platform) {
+        if (isBlank(platform) || selectedPlatforms.isEmpty()) return true;
+        return selectedPlatforms.stream()
+            .anyMatch(selected -> PlatformUtils.isCompatible(selected, platform));
     }
 
     public JReleaserLogger getLogger() {

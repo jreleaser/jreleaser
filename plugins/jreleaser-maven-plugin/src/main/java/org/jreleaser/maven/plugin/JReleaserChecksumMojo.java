@@ -30,7 +30,7 @@ import org.jreleaser.workflow.Workflows;
  * @since 0.1.0
  */
 @Mojo(name = "checksum")
-public class JReleaserChecksumMojo extends AbstractJReleaserMojo {
+public class JReleaserChecksumMojo extends AbstractPlatformAwareJReleaserMojo {
     /**
      * Skip execution.
      */
