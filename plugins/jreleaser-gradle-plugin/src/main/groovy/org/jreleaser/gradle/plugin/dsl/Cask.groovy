@@ -38,6 +38,8 @@ interface Cask {
 
     Property<String> getAppcast()
 
+    Property<Boolean> getEnabled()
+
     MapProperty<String, List<String>> getUninstall()
 
     MapProperty<String, List<String>> getZap()

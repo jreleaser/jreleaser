@@ -36,6 +36,7 @@ public class Cask {
     private String pkgName;
     private String appName;
     private String appcast;
+    private boolean enabled;
 
     void setAll(Cask cask) {
         this.name = cask.name;
@@ -43,6 +44,7 @@ public class Cask {
         this.pkgName = cask.pkgName;
         this.appName = cask.appName;
         this.appcast = cask.appcast;
+        this.enabled = cask.enabled;
         setUninstall(cask.uninstall);
         setZap(cask.zap);
     }
@@ -85,6 +87,14 @@ public class Cask {
 
     public void setAppcast(String appcast) {
         this.appcast = appcast;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Map<String, List<String>> getUninstall() {

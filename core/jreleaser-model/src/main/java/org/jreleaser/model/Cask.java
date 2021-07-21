@@ -72,6 +72,10 @@ public class Cask implements Domain {
         return enabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public String getResolvedAppcast(Map<String, Object> props) {
         if (isNotBlank(appcast)) {
             return applyTemplate(new StringReader(appcast), props);
