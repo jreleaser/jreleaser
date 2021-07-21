@@ -91,6 +91,9 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             props.put(Constants.KEY_BREW_CASK_UNINSTALL, tool.getCask().getUninstallItems());
             props.put(Constants.KEY_BREW_CASK_HAS_ZAP, !tool.getCask().getZapItems().isEmpty());
             props.put(Constants.KEY_BREW_CASK_ZAP, tool.getCask().getZapItems());
+            String appcast = tool.getCask().getResolvedAppcast(props);
+            props.put(Constants.KEY_BREW_CASK_HAS_APPCAST, isNotBlank(appcast));
+            props.put(Constants.KEY_BREW_CASK_APPCAST, appcast);
         }
 
         props.put(Constants.KEY_BREW_DEPENDENCIES, tool.getDependenciesAsList()

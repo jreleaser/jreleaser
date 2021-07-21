@@ -36,6 +36,8 @@ interface Cask {
 
     Property<String> getAppName()
 
+    Property<String> getAppcast()
+
     MapProperty<String, List<String>> getUninstall()
 
     MapProperty<String, List<String>> getZap()

@@ -28,6 +28,7 @@ import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.getNaturalName;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -41,6 +42,7 @@ public class Cask implements Domain {
     private String displayName;
     private String pkgName;
     private String appName;
+    private String appcast;
 
     private String cachedCaskName;
     private String cachedDisplayName;
@@ -53,6 +55,7 @@ public class Cask implements Domain {
         this.displayName = cask.displayName;
         this.pkgName = cask.pkgName;
         this.appName = cask.appName;
+        this.appcast = cask.appcast;
         setUninstallItems(cask.uninstall);
         setZapItems(cask.zap);
     }
@@ -67,6 +70,13 @@ public class Cask implements Domain {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public String getResolvedAppcast(Map<String, Object> props) {
+        if (isNotBlank(appcast)) {
+            return applyTemplate(new StringReader(appcast), props);
+        }
+        return appcast;
     }
 
     public String getResolvedCaskName(JReleaserContext context) {
@@ -203,6 +213,14 @@ public class Cask implements Domain {
         this.appName = appName;
     }
 
+    public String getAppcast() {
+        return appcast;
+    }
+
+    public void setAppcast(String appcast) {
+        this.appcast = appcast;
+    }
+
     public List<CaskItem> getUninstallItems() {
         return uninstall;
     }
@@ -259,6 +277,7 @@ public class Cask implements Domain {
         map.put("displayName", displayName);
         map.put("appName", appName);
         map.put("pkgName", pkgName);
+        map.put("appcast", appcast);
         if (!uninstall.isEmpty()) {
             map.put("uninstall", uninstall.stream()
                 .map(CaskItem::asMap)

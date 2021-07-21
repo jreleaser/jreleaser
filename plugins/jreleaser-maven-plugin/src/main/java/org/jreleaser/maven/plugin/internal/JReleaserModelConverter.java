@@ -792,6 +792,7 @@ public final class JReleaserModelConverter {
         c.setDisplayName(cask.getDisplayName());
         c.setPkgName(cask.getPkgName());
         c.setAppName(cask.getAppName());
+        c.setAppcast(cask.getAppcast());
         c.setUninstall(cask.getUninstall());
         c.setZap(cask.getZap());
         return c;

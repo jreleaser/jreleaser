@@ -7,7 +7,9 @@ cask "{{brewCaskName}}" do
   name "{{brewCaskDisplayName}}"
   desc "{{projectDescription}}"
   homepage "{{projectWebsite}}"
-
+  {{#brewCaskHasAppcast}}
+  appcast {{brewCaskAppcast}}
+  {{/brewCaskHasAppcast}}
   auto_updates true
 
   {{#brewHasLivecheck}}

@@ -38,6 +38,7 @@ class CaskImpl implements Cask {
     final Property<String> displayName
     final Property<String> pkgName
     final Property<String> appName
+    final Property<String> appcast
     final MapProperty<String,List<String>> uninstall
     final MapProperty<String,List<String>> zap
 
@@ -47,6 +48,7 @@ class CaskImpl implements Cask {
         name = objects.property(String).convention(Providers.notDefined())
         pkgName = objects.property(String).convention(Providers.notDefined())
         appName = objects.property(String).convention(Providers.notDefined())
+        appcast = objects.property(String).convention(Providers.notDefined())
         uninstall = (objects.mapProperty(String,List).convention(Providers.notDefined()) as MapProperty<String, List<String>>)
         zap = (objects.mapProperty(String,List).convention(Providers.notDefined()) as MapProperty<String, List<String>>)
     }
@@ -57,6 +59,7 @@ class CaskImpl implements Cask {
             name.present ||
             pkgName.present ||
             appName.present ||
+            appcast.present ||
             uninstall.present ||
             zap.present
     }
@@ -67,6 +70,7 @@ class CaskImpl implements Cask {
         if (name.present) cask.name = name.get()
         if (pkgName.present) cask.pkgName = pkgName.get()
         if (appName.present) cask.appName = appName.get()
+        if (appcast.present) cask.appcast = appcast.get()
         if (uninstall.present) cask.uninstall = uninstall.get()
         if (zap.present) cask.zap = zap.get()
         cask

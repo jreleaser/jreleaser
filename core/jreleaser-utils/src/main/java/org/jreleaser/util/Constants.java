@@ -134,6 +134,8 @@ public interface Constants {
     String KEY_BREW_CASK_UNINSTALL = "brewCaskUninstall";
     String KEY_BREW_CASK_HAS_ZAP = "brewCaskHasZap";
     String KEY_BREW_CASK_ZAP = "brewCaskZap";
+    String KEY_BREW_CASK_HAS_APPCAST = "brewCaskHasAppcast";
+    String KEY_BREW_CASK_APPCAST = "brewCaskAppcast";
 
     // Docker
     String KEY_DOCKER_SPEC_NAME = "dockerSpecName";

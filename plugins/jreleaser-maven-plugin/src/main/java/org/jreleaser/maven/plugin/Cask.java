@@ -35,12 +35,14 @@ public class Cask {
     private String displayName;
     private String pkgName;
     private String appName;
+    private String appcast;
 
     void setAll(Cask cask) {
         this.name = cask.name;
         this.displayName = cask.displayName;
         this.pkgName = cask.pkgName;
         this.appName = cask.appName;
+        this.appcast = cask.appcast;
         setUninstall(cask.uninstall);
         setZap(cask.zap);
     }
@@ -77,6 +79,14 @@ public class Cask {
         this.appName = appName;
     }
 
+    public String getAppcast() {
+        return appcast;
+    }
+
+    public void setAppcast(String appcast) {
+        this.appcast = appcast;
+    }
+
     public Map<String, List<String>> getUninstall() {
         return uninstall;
     }
@@ -100,6 +110,7 @@ public class Cask {
             isNotBlank(displayName) ||
             isNotBlank(pkgName) ||
             isNotBlank(appName) ||
+            isNotBlank(appcast) ||
             !uninstall.isEmpty() ||
             !zap.isEmpty();
     }
