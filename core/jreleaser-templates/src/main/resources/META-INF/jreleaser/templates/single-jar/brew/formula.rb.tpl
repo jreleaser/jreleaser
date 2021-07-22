@@ -20,12 +20,8 @@ class {{brewFormulaName}} < Formula
   {{/brewDependencies}}
 
   def install
-    File.open("{{distributionExecutable}}", "w") do |f|
-      f << "#!/bin/bash\n"
-      f << "java -jar $JAVA_OPTS #{prefix}/{{artifactFileName}} \"$@\"\n"
-    end
-    prefix.install "{{artifactFileName}}"
-    bin.install "{{distributionExecutable}}"
+    libexec.install "{{artifactFileName}}"
+    bin.write_jar_script libexec/"{{artifactFileName}}", "{{distributionExecutable}}"
   end
 
   test do
