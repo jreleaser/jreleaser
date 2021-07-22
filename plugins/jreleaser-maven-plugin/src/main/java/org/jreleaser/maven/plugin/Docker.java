@@ -24,14 +24,19 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Docker extends AbstractDockerConfiguration implements Tool {
+public class Docker extends AbstractDockerConfiguration implements RepositoryTool {
     private final List<DockerSpec> specs = new ArrayList<>();
-    protected Boolean continueOnError;
+    private final CommitAuthor commitAuthor = new CommitAuthor();
+    private final Tap repository = new Tap();
+
+    private Boolean continueOnError;
 
     void setAll(Docker docker) {
         super.setAll(docker);
         this.continueOnError = docker.continueOnError;
         setSpecs(docker.specs);
+        setCommitAuthor(docker.commitAuthor);
+        setTap(docker.repository);
     }
 
     @Override
@@ -49,6 +54,24 @@ public class Docker extends AbstractDockerConfiguration implements Tool {
         return continueOnError != null;
     }
 
+    @Override
+    public CommitAuthor getCommitAuthor() {
+        return commitAuthor;
+    }
+
+    @Override
+    public void setCommitAuthor(CommitAuthor commitAuthor) {
+        this.commitAuthor.setAll(commitAuthor);
+    }
+
+    public Tap getTap() {
+        return repository;
+    }
+
+    public void setTap(Tap repository) {
+        this.repository.setAll(repository);
+    }
+
     public List<DockerSpec> getSpecs() {
         return specs;
     }
@@ -60,6 +83,8 @@ public class Docker extends AbstractDockerConfiguration implements Tool {
 
     public boolean isSet() {
         return super.isSet() ||
+            commitAuthor.isSet() ||
+            repository.isSet() ||
             !specs.isEmpty();
     }
 }

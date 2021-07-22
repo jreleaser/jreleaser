@@ -33,16 +33,21 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Docker extends AbstractDockerConfiguration implements Tool {
+public class Docker extends AbstractDockerConfiguration implements RepositoryTool {
     private final Map<String, DockerSpec> specs = new LinkedHashMap<>();
-    protected Boolean continueOnError;
-    protected boolean failed;
+    private final CommitAuthor commitAuthor = new CommitAuthor();
+    private final DockerRepository repository = new DockerRepository();
+
+    private Boolean continueOnError;
+    private boolean failed;
 
     void setAll(Docker docker) {
         super.setAll(docker);
         this.continueOnError = docker.continueOnError;
         this.failed = docker.failed;
         setSpecs(docker.specs);
+        setCommitAuthor(docker.commitAuthor);
+        setRepository(docker.repository);
     }
 
     @Override
@@ -83,6 +88,16 @@ public class Docker extends AbstractDockerConfiguration implements Tool {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public CommitAuthor getCommitAuthor() {
+        return commitAuthor;
+    }
+
+    @Override
+    public void setCommitAuthor(CommitAuthor commitAuthor) {
+        this.commitAuthor.setAll(commitAuthor);
     }
 
     @Override
@@ -127,6 +142,8 @@ public class Docker extends AbstractDockerConfiguration implements Tool {
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
+        props.put("commitAuthor", commitAuthor.asMap(full));
+        props.put("repository", repository.asMap(full));
         props.put("continueOnError", isContinueOnError());
         List<Map<String, Object>> specs = this.specs.values()
             .stream()
@@ -134,5 +151,18 @@ public class Docker extends AbstractDockerConfiguration implements Tool {
             .map(d -> d.asMap(full))
             .collect(Collectors.toList());
         if (!specs.isEmpty()) props.put("specs", specs);
+    }
+
+    public DockerRepository getRepository() {
+        return repository;
+    }
+
+    public void setRepository(DockerRepository repository) {
+        this.repository.setAll(repository);
+    }
+
+    @Override
+    public RepositoryTap getRepositoryTap() {
+        return repository;
     }
 }

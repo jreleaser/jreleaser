@@ -162,7 +162,7 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
     }
 
     @Override
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
+    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws ToolProcessingException, IOException {
         Path catalog = directory.resolve("jbang-catalog.json");
 
         if (catalog.toFile().exists()) {

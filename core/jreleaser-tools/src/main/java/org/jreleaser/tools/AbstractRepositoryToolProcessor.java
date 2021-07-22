@@ -34,6 +34,7 @@ import org.jreleaser.util.FileUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -113,14 +114,17 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
         return true;
     }
 
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
-        // copy files over
+    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws ToolProcessingException, IOException {
         Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
-        context.getLogger().debug("copying files from {}", context.relativizeToBasedir(packageDirectory));
+        prepareWorkingCopy(packageDirectory, directory);
+    }
 
-        if (!FileUtils.copyFilesRecursive(context.getLogger(), packageDirectory, directory)) {
+    protected void prepareWorkingCopy(Path source, Path destination) throws IOException {
+        context.getLogger().debug("copying files from {}", context.relativizeToBasedir(source));
+
+        if (!FileUtils.copyFilesRecursive(context.getLogger(), source, destination)) {
             throw new IOException("Could not copy files from " +
-                context.relativizeToBasedir(packageDirectory));
+                context.relativizeToBasedir(source));
         }
     }
 

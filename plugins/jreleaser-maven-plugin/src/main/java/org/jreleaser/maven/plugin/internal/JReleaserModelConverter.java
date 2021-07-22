@@ -74,6 +74,7 @@ import org.jreleaser.maven.plugin.Upload;
 import org.jreleaser.maven.plugin.Webhook;
 import org.jreleaser.maven.plugin.Zulip;
 import org.jreleaser.model.ChocolateyBucket;
+import org.jreleaser.model.DockerRepository;
 import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JbangCatalog;
@@ -830,10 +831,13 @@ public final class JReleaserModelConverter {
     }
 
     private static void convertDocker(org.jreleaser.model.DockerConfiguration d, DockerConfiguration docker) {
-        if (d instanceof Docker && docker instanceof Docker) {
-            Docker dd = (Docker) d;
+        if (d instanceof org.jreleaser.model.Docker && docker instanceof Docker) {
+            org.jreleaser.model.Docker dd = (org.jreleaser.model.Docker) d;
             Docker kk = (Docker) docker;
             if (kk.isContinueOnErrorSet()) dd.setContinueOnError(kk.isContinueOnError());
+
+            dd.setRepository(convertDockerRepository(kk.getTap()));
+            dd.setCommitAuthor(convertCommitAuthor(kk.getCommitAuthor()));
         }
         d.setActive(docker.resolveActive());
         d.setTemplateDirectory(docker.getTemplateDirectory());
@@ -845,6 +849,15 @@ public final class JReleaserModelConverter {
         d.setPostCommands(docker.getPostCommands());
         d.setLabels(docker.getLabels());
         d.setRegistries(convertRegistries(docker.getRegistries()));
+    }
+
+    private static DockerRepository convertDockerRepository(Tap tap) {
+        DockerRepository t = new DockerRepository();
+        t.setOwner(tap.getOwner());
+        t.setName(tap.getName());
+        t.setUsername(tap.getUsername());
+        t.setToken(tap.getToken());
+        return t;
     }
 
     private static Map<String, org.jreleaser.model.DockerSpec> convertDockerSpecs(List<DockerSpec> specs) {

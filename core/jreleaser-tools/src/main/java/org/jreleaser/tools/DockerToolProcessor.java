@@ -52,7 +52,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
+public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker> {
     public DockerToolProcessor(JReleaserContext context) {
         super(context);
     }
@@ -145,9 +145,8 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
             // copy files
             Path workingDirectory = prepareAssembly(distribution, props, packageDirectory, artifacts);
 
-            int i = 0;
             for (String imageName : docker.getImageNames()) {
-                imageName = applyTemplate(imageName, props, "image" + (i++));
+                imageName = applyTemplate(imageName, props);
 
                 // command line
                 List<String> cmd = createBuildCommand(props, docker);
@@ -222,9 +221,12 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         if (tool.getActiveSpecs().isEmpty()) {
             if (tool.getRegistries().isEmpty()) {
                 context.getLogger().info("no configured registries. Skipping");
+                publishToRepository(distribution, releaser, props);
                 return false;
             }
-            return super.publishDistribution(distribution, releaser, props);
+            super.publishDistribution(distribution, releaser, props);
+            publishToRepository(distribution, releaser, props);
+            return true;
         }
 
         for (DockerSpec spec : tool.getActiveSpecs()) {
@@ -232,8 +234,13 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
             Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
             publishDocker(distribution, releaser, newProps, spec);
         }
+        publishToRepository(distribution, releaser, props);
 
         return true;
+    }
+
+    private void publishToRepository(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+        super.doPublishDistribution(distribution, releaser, props);
     }
 
     @Override
@@ -247,9 +254,8 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
                                     DockerConfiguration docker) throws ToolProcessingException {
         for (Registry registry : docker.getRegistries()) {
             login(registry);
-            int i = 0;
             for (String imageName : docker.getImageNames()) {
-                publish(registry, imageName, props, i++);
+                publish(registry, imageName, props);
             }
             logout(registry);
         }
@@ -275,8 +281,8 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
         if (!context.isDryrun()) executeCommandWithInput(cmd, in);
     }
 
-    private void publish(Registry registry, String imageName, Map<String, Object> props, int index) throws ToolProcessingException {
-        imageName = applyTemplate(imageName, props, "image" + index);
+    private void publish(Registry registry, String imageName, Map<String, Object> props) throws ToolProcessingException {
+        imageName = applyTemplate(imageName, props);
 
         String tag = imageName;
         String serverName = registry.getServerName();
@@ -379,5 +385,32 @@ public class DockerToolProcessor extends AbstractToolProcessor<Docker> {
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
+    }
+
+    @Override
+    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws ToolProcessingException, IOException {
+        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+
+        if (tool.getActiveSpecs().isEmpty()) {
+            for (String imageName : tool.getImageNames()) {
+                copyDockerfiles(packageDirectory, applyTemplate(imageName, props), directory);
+            }
+        } else {
+            for (DockerSpec spec : tool.getActiveSpecs()) {
+                Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+                for (String imageName : spec.getImageNames()) {
+                    copyDockerfiles(packageDirectory.resolve(spec.getName()), applyTemplate(imageName, newProps), directory);
+                }
+            }
+        }
+    }
+
+    private void copyDockerfiles(Path source, String imageName, Path directory) throws IOException {
+        String[] parts = imageName.split("/");
+        parts = parts[parts.length - 1].split(":");
+
+        Path destination = directory.resolve(parts[0]).resolve(parts[1]);
+        Files.createDirectories(destination);
+        prepareWorkingCopy(source, destination);
     }
 }

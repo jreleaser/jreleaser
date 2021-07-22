@@ -21,10 +21,12 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
 import org.jreleaser.model.DockerConfiguration;
+import org.jreleaser.model.DockerRepository;
 import org.jreleaser.model.DockerSpec;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.Project;
 import org.jreleaser.model.Registry;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
@@ -57,6 +59,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public abstract class DockerValidator extends Validator {
     public static void validateDocker(JReleaserContext context, Distribution distribution, Docker tool, Errors errors) {
         JReleaserModel model = context.getModel();
+        Project project = model.getProject();
         Docker parentTool = model.getPackagers().getDocker();
 
         if (!tool.isActiveSet() && parentTool.isActiveSet()) {
@@ -78,8 +81,23 @@ public abstract class DockerValidator extends Validator {
         if (tool.getActiveSpecs().isEmpty()) {
             validateTemplate(context, distribution, tool, parentTool, errors);
         }
+
+        validateCommitAuthor(tool, parentTool);
+        DockerRepository repository = tool.getRepository();
+        validateOwner(repository, parentTool.getRepository());
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
+
+        if (isBlank(repository.getName())) {
+            repository.setName(project.getName() + "-docker");
+        }
+        repository.setBasename(project.getName() + "-docker");
+        if (isBlank(repository.getUsername())) {
+            repository.setUsername(parentTool.getRepository().getUsername());
+        }
+        if (isBlank(repository.getToken())) {
+            repository.setToken(parentTool.getRepository().getToken());
+        }
 
         if (isBlank(tool.getBaseImage())) {
             tool.setBaseImage(parentTool.getBaseImage());

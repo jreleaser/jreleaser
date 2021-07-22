@@ -22,7 +22,9 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Packagers;
+import org.jreleaser.model.Project;
 import org.jreleaser.model.RepositoryTap;
+import org.jreleaser.model.RepositoryTool;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
@@ -42,27 +44,37 @@ public abstract class PackagersValidator extends Validator {
 
         JReleaserModel model = context.getModel();
         Packagers packagers = model.getPackagers();
+        Project project = model.getProject();
 
+        packagers.getBrew().resolveEnabled(project);
         validatePackager(context,
             packagers.getBrew(),
             packagers.getBrew().getTap(),
             errors);
 
+        packagers.getChocolatey().resolveEnabled(project);
         validatePackager(context,
             packagers.getChocolatey(),
             packagers.getChocolatey().getBucket(),
             errors);
 
-        packagers.getDocker().resolveEnabled(context.getModel().getProject());
+        packagers.getDocker().resolveEnabled(project);
+        validatePackager(context,
+            packagers.getDocker(),
+            packagers.getDocker().getRepository(),
+            errors);
+
         if (!packagers.getDocker().getSpecs().isEmpty()) {
             errors.configuration("docker.specs can only be defined inside distributions.");
         }
 
+        packagers.getDocker().resolveEnabled(project);
         validatePackager(context,
             packagers.getJbang(),
             packagers.getJbang().getCatalog(),
             errors);
 
+        packagers.getScoop().resolveEnabled(project);
         validatePackager(context,
             packagers.getScoop(),
             packagers.getScoop().getBucket(),
@@ -73,6 +85,7 @@ public abstract class PackagersValidator extends Validator {
         }
         packagers.getScoop().getBucket().setBasename("scoop-" + model.getRelease().getGitService().getOwner());
 
+        packagers.getSnap().resolveEnabled(project);
         validatePackager(context,
             packagers.getSnap(),
             packagers.getSnap().getSnap(),
@@ -80,10 +93,9 @@ public abstract class PackagersValidator extends Validator {
     }
 
     private static void validatePackager(JReleaserContext context,
-                                         AbstractRepositoryTool tool,
+                                         RepositoryTool tool,
                                          RepositoryTap tap,
                                          Errors errors) {
-        tool.resolveEnabled(context.getModel().getProject());
         GitService service = context.getModel().getRelease().getGitService();
         validateCommitAuthor(tool, service);
         validateOwner(tap, service);

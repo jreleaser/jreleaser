@@ -19,13 +19,17 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Docker
+import org.jreleaser.gradle.plugin.dsl.Tap
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -38,11 +42,15 @@ import javax.inject.Inject
 class DockerImpl extends AbstractDockerConfiguration implements Docker {
     final NamedDomainObjectContainer<DockerSpecImpl> specs
     final Property<Boolean> continueOnError
+    final TapImpl repository
+    final CommitAuthorImpl commitAuthor
 
     @Inject
     DockerImpl(ObjectFactory objects) {
         super(objects)
         continueOnError = objects.property(Boolean).convention(Providers.notDefined())
+        repository = objects.newInstance(TapImpl, objects)
+        commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
 
         specs = objects.domainObjectContainer(DockerSpecImpl, new NamedDomainObjectFactory<DockerSpecImpl>() {
             @Override
@@ -59,7 +67,29 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     boolean isSet() {
         super.isSet() ||
             continueOnError.present||
-            !specs.isEmpty()
+            !specs.isEmpty() ||
+            repository.isSet() ||
+            commitAuthor.isSet()
+    }
+
+    @Override
+    void repository(Action<? super Tap> action) {
+        action.execute(repository)
+    }
+
+    @Override
+    void commitAuthor(Action<? super CommitAuthor> action) {
+        action.execute(commitAuthor)
+    }
+
+    @Override
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, repository)
+    }
+
+    @Override
+    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
+        ConfigureUtil.configure(action, commitAuthor)
     }
 
     @CompileDynamic
@@ -67,6 +97,8 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
         org.jreleaser.model.Docker tool = new org.jreleaser.model.Docker()
         toModel(tool)
         if (continueOnError.present) tool.continueOnError = continueOnError.get()
+        if (repository.isSet()) tool.repository = repository.toDockerRepository()
+        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
 
         specs.each { tool.addSpec(it.toModel()) }
 

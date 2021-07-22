@@ -15,24 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
-
-import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
+package org.jreleaser.model;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-@CompileStatic
-interface Docker extends DockerConfiguration, RepositoryTool {
-    NamedDomainObjectContainer<DockerSpec> getSpecs()
-
-    Tap getRepository()
-
-    void repository(Action<? super Tap> repository)
-
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
+public class DockerRepository extends AbstractRepositoryTap {
+    public DockerRepository() {
+        super("docker");
+    }
 }
