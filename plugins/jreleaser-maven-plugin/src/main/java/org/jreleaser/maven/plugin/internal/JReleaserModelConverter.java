@@ -771,6 +771,7 @@ public final class JReleaserModelConverter {
         t.setExtraProperties(tool.getExtraProperties());
         t.setTap(convertHomebrewTap(tool.getTap()));
         t.setFormulaName(tool.getFormulaName());
+        if (tool.isMultiPlatformSet()) t.setMultiPlatform(tool.isMultiPlatform());
         t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
         tool.getDependencies().forEach(dependency -> {
             if (isNotBlank(dependency.getValue())) {
@@ -793,7 +794,7 @@ public final class JReleaserModelConverter {
         c.setPkgName(cask.getPkgName());
         c.setAppName(cask.getAppName());
         c.setAppcast(cask.getAppcast());
-        c.setEnabled(cask.isEnabled());
+        if (cask.isEnabledSet()) c.setEnabled(cask.isEnabled());
         c.setUninstall(cask.getUninstall());
         c.setZap(cask.getZap());
         return c;

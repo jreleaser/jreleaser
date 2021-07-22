@@ -43,6 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class BrewImpl extends AbstractRepositoryTool implements Brew {
     final Property<String> formulaName
+    final Property<Boolean> multiPlatform
     final CommitAuthorImpl commitAuthor
     final TapImpl tap
     final CaskImpl cask
@@ -53,6 +54,7 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
     BrewImpl(ObjectFactory objects) {
         super(objects)
         formulaName = objects.property(String).convention(Providers.notDefined())
+        multiPlatform = objects.property(Boolean).convention(Providers.notDefined())
         tap = objects.newInstance(TapImpl, objects)
         cask = objects.newInstance(CaskImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
@@ -79,6 +81,7 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
     boolean isSet() {
         super.isSet() ||
             formulaName.present ||
+            multiPlatform.present ||
             dependencies.present ||
             tap.isSet() ||
             commitAuthor.isSet() ||
@@ -120,6 +123,7 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
         org.jreleaser.model.Brew tool = new org.jreleaser.model.Brew()
         fillToolProperties(tool)
         if (formulaName.present) tool.formulaName = formulaName.get()
+        if (multiPlatform.present) tool.multiPlatform = multiPlatform.get()
         if (tap.isSet()) tool.tap = tap.toHomebrewTap()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (dependencies.present) tool.dependencies = dependencies.get()

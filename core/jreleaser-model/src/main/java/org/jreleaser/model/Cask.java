@@ -37,7 +37,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Cask implements Domain {
     private final List<CaskItem> uninstall = new ArrayList<>();
     private final List<CaskItem> zap = new ArrayList<>();
-    protected boolean enabled;
+    protected Boolean enabled;
     private String name;
     private String displayName;
     private String pkgName;
@@ -69,7 +69,11 @@ public class Cask implements Domain {
     }
 
     public boolean isEnabled() {
-        return enabled;
+        return enabled != null && enabled;
+    }
+
+    public boolean isEnabledSet() {
+        return enabled != null;
     }
 
     public void setEnabled(boolean enabled) {

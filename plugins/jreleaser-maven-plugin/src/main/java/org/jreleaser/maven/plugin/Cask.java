@@ -36,7 +36,7 @@ public class Cask {
     private String pkgName;
     private String appName;
     private String appcast;
-    private boolean enabled;
+    private Boolean enabled;
 
     void setAll(Cask cask) {
         this.name = cask.name;
@@ -90,7 +90,11 @@ public class Cask {
     }
 
     public boolean isEnabled() {
-        return enabled;
+        return enabled != null && enabled;
+    }
+
+    public boolean isEnabledSet() {
+        return enabled != null;
     }
 
     public void setEnabled(boolean enabled) {

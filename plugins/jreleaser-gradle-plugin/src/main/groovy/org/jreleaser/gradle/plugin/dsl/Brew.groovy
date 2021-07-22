@@ -32,6 +32,8 @@ import org.gradle.api.provider.Property
 interface Brew extends RepositoryTool {
     Property<String> getFormulaName()
 
+    Property<Boolean> getMultiPlatform()
+
     ListProperty<String> getLivecheck()
 
     MapProperty<String, String> getDependencies()

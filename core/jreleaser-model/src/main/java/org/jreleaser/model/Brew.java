@@ -43,6 +43,7 @@ public class Brew extends AbstractRepositoryTool {
 
     private String formulaName;
     private String cachedFormulaName;
+    private Boolean multiPlatform;
 
     public Brew() {
         super(NAME);
@@ -51,6 +52,7 @@ public class Brew extends AbstractRepositoryTool {
     void setAll(Brew brew) {
         super.setAll(brew);
         this.formulaName = brew.formulaName;
+        this.multiPlatform = brew.multiPlatform;
         setTap(brew.tap);
         setDependenciesAsList(brew.dependencies);
         setLivecheck(brew.livecheck);
@@ -90,6 +92,18 @@ public class Brew extends AbstractRepositoryTool {
 
     public void setFormulaName(String formulaName) {
         this.formulaName = formulaName;
+    }
+
+    public boolean isMultiPlatform() {
+        return multiPlatform != null && multiPlatform;
+    }
+
+    public void setMultiPlatform(Boolean multiPlatform) {
+        this.multiPlatform = multiPlatform;
+    }
+
+    public boolean isMultiPlatformSet() {
+        return multiPlatform != null;
     }
 
     public HomebrewTap getTap() {
@@ -160,6 +174,7 @@ public class Brew extends AbstractRepositoryTool {
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
         props.put("formulaName", formulaName);
+        props.put("multiPlatform", isMultiPlatform());
         props.put("tap", tap.asMap(full));
         props.put("dependencies", dependencies);
         props.put("livecheck", livecheck);
@@ -173,6 +188,9 @@ public class Brew extends AbstractRepositoryTool {
 
     @Override
     public boolean supportsPlatform(String platform) {
+        if (isMultiPlatform()) {
+            return isBlank(platform) || PlatformUtils.isMac(platform) || PlatformUtils.isLinux(platform);
+        }
         return isBlank(platform) || PlatformUtils.isMac(platform);
     }
 

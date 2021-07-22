@@ -34,10 +34,12 @@ public class Brew extends AbstractRepositoryTool {
     private final Cask cask = new Cask();
 
     private String formulaName;
+    private Boolean multiPlatform;
 
     void setAll(Brew brew) {
         super.setAll(brew);
         this.formulaName = brew.formulaName;
+        this.multiPlatform = brew.multiPlatform;
         setTap(brew.tap);
         setDependencies(brew.dependencies);
         setLivecheck(brew.livecheck);
@@ -50,6 +52,18 @@ public class Brew extends AbstractRepositoryTool {
 
     public void setFormulaName(String formulaName) {
         this.formulaName = formulaName;
+    }
+
+    public boolean isMultiPlatform() {
+        return multiPlatform != null && multiPlatform;
+    }
+
+    public void setMultiPlatform(Boolean multiPlatform) {
+        this.multiPlatform = multiPlatform;
+    }
+
+    public boolean isMultiPlatformSet() {
+        return multiPlatform != null;
     }
 
     public Tap getTap() {
@@ -92,6 +106,7 @@ public class Brew extends AbstractRepositoryTool {
             !dependencies.isEmpty() ||
             tap.isSet() ||
             !livecheck.isEmpty() ||
+            multiPlatform != null ||
             cask.isSet();
     }
 }

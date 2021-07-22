@@ -102,7 +102,21 @@ public abstract class BrewValidator extends Validator {
                 tap.getToken(),
                 service.getResolvedToken()));
 
+        if (!tool.isMultiPlatformSet() && parentTool.isMultiPlatformSet()) {
+            tool.setMultiPlatform(parentTool.isMultiPlatform());
+        }
+        if (tool.isMultiPlatform() &&
+            (distribution.getType() == Distribution.DistributionType.SINGLE_JAR ||
+                distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
+                distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE)) {
+            tool.setMultiPlatform(false);
+        }
+        if (tool.isMultiPlatform()) {
+            tool.getCask().disable();
+        }
+
         validateCask(context, distribution, tool, errors);
+
         if (!tool.getCask().isEnabled()) {
             validateArtifactPlatforms(context, distribution, tool, errors);
         }
@@ -111,6 +125,12 @@ public abstract class BrewValidator extends Validator {
     private static void validateCask(JReleaserContext context, Distribution distribution, Brew tool, Errors errors) {
         if (distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {
             tool.getCask().disable();
+            return;
+        }
+
+        Cask cask = tool.getCask();
+
+        if (cask.isEnabledSet() && !cask.isEnabled()) {
             return;
         }
 
@@ -133,7 +153,6 @@ public abstract class BrewValidator extends Validator {
             }
         }
 
-        Cask cask = tool.getCask();
 
         if (dmgFound == 0 && pkgFound == 0 && zipFound == 0) {
             // no artifacts found, disable cask
