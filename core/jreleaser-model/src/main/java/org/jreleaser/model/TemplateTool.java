@@ -17,8 +17,6 @@
  */
 package org.jreleaser.model;
 
-import java.util.Set;
-
 /**
  * @author Andres Almiray
  * @since 0.6.0

@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model.validation;
 
-import org.jreleaser.model.AbstractRepositoryTool;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;

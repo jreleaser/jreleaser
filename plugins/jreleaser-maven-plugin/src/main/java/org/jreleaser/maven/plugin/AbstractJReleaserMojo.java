@@ -31,7 +31,6 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.JReleaserLogger;
-import org.jreleaser.util.PlatformUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,7 +38,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

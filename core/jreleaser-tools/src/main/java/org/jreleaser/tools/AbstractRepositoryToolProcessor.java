@@ -34,7 +34,6 @@ import org.jreleaser.util.FileUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;

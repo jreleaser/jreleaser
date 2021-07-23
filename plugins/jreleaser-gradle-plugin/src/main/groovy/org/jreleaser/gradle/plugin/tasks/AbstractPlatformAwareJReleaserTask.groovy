@@ -18,20 +18,12 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
-import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
-import org.jreleaser.engine.context.ContextCreator
-import org.jreleaser.model.JReleaserContext
-import org.jreleaser.model.JReleaserModel
-import org.jreleaser.model.JReleaserVersion
-import org.jreleaser.util.JReleaserLogger
 import org.jreleaser.util.PlatformUtils
 
 import javax.inject.Inject

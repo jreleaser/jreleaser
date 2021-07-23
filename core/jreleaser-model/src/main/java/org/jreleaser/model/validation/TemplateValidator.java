@@ -23,7 +23,6 @@ import org.jreleaser.model.Docker;
 import org.jreleaser.model.DockerSpec;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.TemplateTool;
-import org.jreleaser.model.Tool;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
