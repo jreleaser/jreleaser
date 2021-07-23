@@ -84,4 +84,9 @@ public class Jbang extends AbstractRepositoryTool {
             distribution.getType() != Distribution.DistributionType.NATIVE_PACKAGE &&
             distribution.getType() != Distribution.DistributionType.BINARY;
     }
+
+    @Override
+    public boolean isSnapshotSupported() {
+        return true;
+    }
 }

@@ -86,6 +86,11 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
     }
 
     @Override
+    public boolean isSnapshotSupported() {
+        return true;
+    }
+
+    @Override
     public String getName() {
         return NAME;
     }

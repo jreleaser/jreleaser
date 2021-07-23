@@ -65,6 +65,11 @@ public abstract class AbstractTool implements Tool {
     }
 
     @Override
+    public boolean isSnapshotSupported() {
+        return false;
+    }
+
+    @Override
     public String getPrefix() {
         return getName();
     }
@@ -99,12 +104,19 @@ public abstract class AbstractTool implements Tool {
         if (null == active) {
             active = Active.NEVER;
         }
+        if (project.isSnapshot() && !isSnapshotSupported()) {
+            active = Active.NEVER;
+        }
         enabled = active.check(project);
+
         return enabled;
     }
 
     public boolean resolveEnabled(Project project, Distribution distribution) {
         if (null == active) {
+            active = Active.NEVER;
+        }
+        if (project.isSnapshot() && !isSnapshotSupported()) {
             active = Active.NEVER;
         }
         enabled = active.check(project);

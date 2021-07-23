@@ -32,6 +32,8 @@ public interface Tool extends Domain, ExtraProperties, Activatable {
 
     boolean supportsDistribution(Distribution distribution);
 
+    boolean isSnapshotSupported();
+
     boolean isContinueOnError();
 
     void setContinueOnError(Boolean continueOnError);
