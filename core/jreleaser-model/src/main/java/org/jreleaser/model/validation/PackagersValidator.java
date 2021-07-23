@@ -28,8 +28,6 @@ import org.jreleaser.model.Sdkman;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
-import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
-import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -97,22 +95,6 @@ public abstract class PackagersValidator extends Validator {
     }
 
     private static void validateSdkman(JReleaserContext context, Sdkman tool, Errors errors) {
-        tool.setConsumerKey(
-            checkProperty(context,
-                SDKMAN_CONSUMER_KEY,
-                "sdkman.consumerKey",
-                tool.getConsumerKey(),
-                errors,
-                context.isDryrun()));
-
-        tool.setConsumerToken(
-            checkProperty(context,
-                SDKMAN_CONSUMER_TOKEN,
-                "sdkman.consumerToken",
-                tool.getConsumerToken(),
-                errors,
-                context.isDryrun()));
-
         validateTimeout(tool);
     }
 
