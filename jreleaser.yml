@@ -28,9 +28,7 @@ project:
 
 release:
   github:
-    username: aalmiray
     overwrite: true
-    draft: false
     sign: true
     changelog:
       formatted: ALWAYS
@@ -73,15 +71,11 @@ signing:
 announce:
   twitter:
     active: release
-  sdkman:
-    active: release
 
 assemble:
   jlink:
     jreleaser-standalone:
       active: always
-      extraProperties:
-        skipSdkman: true
       java:
         version: 11
         mainClass: 'org.jreleaser.cli.Main'
@@ -135,6 +129,8 @@ distributions:
         - home
     jbang:
       active: always
+    sdkman:
+      active: release
     artifacts:
       - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
@@ -142,8 +138,6 @@ distributions:
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar'
 
   jreleaser-ant-tasks:
-    extraProperties:
-      sdkmanSkip: true
     artifacts:
       - path: plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
