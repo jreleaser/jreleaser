@@ -25,9 +25,12 @@ import org.jreleaser.model.Packagers;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.RepositoryTap;
 import org.jreleaser.model.RepositoryTool;
+import org.jreleaser.model.Sdkman;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
+import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -90,6 +93,33 @@ public abstract class PackagersValidator extends Validator {
             packagers.getSnap(),
             packagers.getSnap().getSnap(),
             errors);
+
+        validateSdkman(context, packagers.getSdkman(), errors);
+    }
+
+    private static void validateSdkman(JReleaserContext context, Sdkman tool, Errors errors) {
+        tool.setConsumerKey(
+            checkProperty(context.getModel().getEnvironment(),
+                SDKMAN_CONSUMER_KEY,
+                "sdkman.consumerKey",
+                tool.getConsumerKey(),
+                errors,
+                context.isDryrun()));
+
+        tool.setConsumerToken(
+            checkProperty(context.getModel().getEnvironment(),
+                SDKMAN_CONSUMER_TOKEN,
+                "sdkman.consumerToken",
+                tool.getConsumerToken(),
+                errors,
+                context.isDryrun()));
+
+        if (tool.getConnectTimeout() <= 0 || tool.getConnectTimeout() > 300) {
+            tool.setConnectTimeout(20);
+        }
+        if (tool.getReadTimeout() <= 0 || tool.getReadTimeout() > 300) {
+            tool.setReadTimeout(60);
+        }
     }
 
     private static void validatePackager(JReleaserContext context,
