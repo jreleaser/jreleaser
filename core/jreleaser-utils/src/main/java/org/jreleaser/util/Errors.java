@@ -18,17 +18,17 @@
 package org.jreleaser.util;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
 public class Errors {
-    private final List<Error> assemblyErrors = new ArrayList<>();
-    private final List<Error> configurationErrors = new ArrayList<>();
+    private final Set<Error> assemblyErrors = new LinkedHashSet<>();
+    private final Set<Error> configurationErrors = new LinkedHashSet<>();
 
     public boolean hasErrors() {
         return !assemblyErrors.isEmpty() || !configurationErrors.isEmpty();
