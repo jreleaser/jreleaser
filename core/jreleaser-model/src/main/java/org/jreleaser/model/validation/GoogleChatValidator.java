@@ -39,7 +39,7 @@ public abstract class GoogleChatValidator extends Validator {
         context.getLogger().debug("announce.googleChat");
 
         googleChat.setWebhook(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 GOOGLE_CHAT_WEBHOOK,
                 "googleChat.webhook",
                 googleChat.getWebhook(),

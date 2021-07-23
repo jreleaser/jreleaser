@@ -47,12 +47,14 @@ public class Env {
         return System.getenv(prefix(key));
     }
 
-    public static String check(String key, String value, String property, Errors errors) {
+    public static String check(String key, String value, String property, String dsl, String configFilePath, Errors errors) {
         if (isBlank(value)) {
             String prefixedKey = prefix(key);
             value = System.getenv(prefixedKey);
             if (isBlank(value)) {
-                errors.configuration(property + " must not be blank. Alternatively define a " + prefixedKey + " environment variable.");
+                errors.configuration(property + " must not be blank. Configure a value using the " +
+                    dsl + ", or define a " + prefixedKey +
+                    " environment variable, or define a key/value pair in " + configFilePath);
             }
         }
 

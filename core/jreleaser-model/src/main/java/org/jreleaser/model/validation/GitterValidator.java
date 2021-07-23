@@ -39,7 +39,7 @@ public abstract class GitterValidator extends Validator {
         context.getLogger().debug("announce.gitter");
 
         gitter.setWebhook(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 GITTER_WEBHOOK,
                 "gitter.webhook",
                 gitter.getWebhook(),

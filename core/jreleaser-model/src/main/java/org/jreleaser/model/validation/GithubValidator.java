@@ -41,7 +41,7 @@ public abstract class GithubValidator extends GitServiceValidator {
 
         if (!github.isPrereleaseSet()) {
             github.setPrerelease(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     PRERELEASE,
                     "github.prerelease",
                     null,
@@ -50,7 +50,7 @@ public abstract class GithubValidator extends GitServiceValidator {
 
         if (!github.isDraftSet()) {
             github.setDraft(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     DRAFT,
                     "github.draft",
                     null,

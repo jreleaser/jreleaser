@@ -84,7 +84,7 @@ public abstract class SdkmanValidator extends Validator {
         }
 
         tool.setConsumerKey(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 SDKMAN_CONSUMER_KEY,
                 "sdkman.consumerKey",
                 tool.getConsumerKey(),
@@ -92,7 +92,7 @@ public abstract class SdkmanValidator extends Validator {
                 context.isDryrun()));
 
         tool.setConsumerToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 SDKMAN_CONSUMER_TOKEN,
                 "sdkman.consumerToken",
                 tool.getConsumerToken(),

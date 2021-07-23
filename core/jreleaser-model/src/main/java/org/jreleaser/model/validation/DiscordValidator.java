@@ -39,7 +39,7 @@ public abstract class DiscordValidator extends Validator {
         context.getLogger().debug("announce.discord");
 
         discord.setWebhook(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 DISCORD_WEBHOOK,
                 "discord.webhook",
                 discord.getWebhook(),

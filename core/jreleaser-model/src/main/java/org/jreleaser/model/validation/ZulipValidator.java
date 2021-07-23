@@ -43,7 +43,7 @@ public abstract class ZulipValidator extends Validator {
         }
 
         zulip.setApiKey(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 ZULIP_API_KEY,
                 "zulip.apiKey",
                 zulip.getApiKey(),

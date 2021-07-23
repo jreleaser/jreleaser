@@ -37,7 +37,7 @@ public abstract class TwitterValidator extends Validator {
         context.getLogger().debug("announce.twitter");
 
         twitter.setConsumerKey(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 TWITTER_CONSUMER_KEY,
                 "twitter.consumerKey",
                 twitter.getConsumerKey(),
@@ -45,7 +45,7 @@ public abstract class TwitterValidator extends Validator {
                 context.isDryrun()));
 
         twitter.setConsumerSecret(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 TWITTER_CONSUMER_SECRET,
                 "twitter.consumerSecret",
                 twitter.getConsumerSecret(),
@@ -53,7 +53,7 @@ public abstract class TwitterValidator extends Validator {
                 context.isDryrun()));
 
         twitter.setAccessToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 TWITTER_ACCESS_TOKEN,
                 "twitter.accessToken",
                 twitter.getAccessToken(),
@@ -61,7 +61,7 @@ public abstract class TwitterValidator extends Validator {
                 context.isDryrun()));
 
         twitter.setAccessTokenSecret(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 TWITTER_ACCESS_TOKEN_SECRET,
                 "twitter.accessTokenSecret",
                 twitter.getAccessTokenSecret(),

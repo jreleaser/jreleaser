@@ -36,6 +36,7 @@ import java.util.List;
  */
 public class ContextCreator {
     public static JReleaserContext create(JReleaserLogger logger,
+                                          JReleaserContext.Configurer configurer,
                                           JReleaserContext.Mode mode,
                                           Path configFile,
                                           Path basedir,
@@ -44,6 +45,7 @@ public class ContextCreator {
                                           boolean gitRootSearch,
                                           List<String> selectedPlatforms) {
         return create(logger,
+            configurer,
             mode,
             resolveModel(logger, configFile),
             basedir,
@@ -54,6 +56,7 @@ public class ContextCreator {
     }
 
     public static JReleaserContext create(JReleaserLogger logger,
+                                          JReleaserContext.Configurer configurer,
                                           JReleaserContext.Mode mode,
                                           JReleaserModel model,
                                           Path basedir,
@@ -63,6 +66,7 @@ public class ContextCreator {
                                           List<String> selectedPlatforms) {
         JReleaserContext context = new JReleaserContext(
             logger,
+            configurer,
             mode,
             model,
             basedir,

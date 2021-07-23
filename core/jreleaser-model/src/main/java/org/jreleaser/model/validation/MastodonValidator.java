@@ -38,7 +38,7 @@ public abstract class MastodonValidator extends Validator {
         }
 
         mastodon.setAccessToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 MASTODON_ACCESS_TOKEN,
                 "mastodon.accessToken",
                 mastodon.getAccessToken(),

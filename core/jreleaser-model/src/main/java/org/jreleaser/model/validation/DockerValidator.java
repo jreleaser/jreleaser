@@ -285,7 +285,7 @@ public abstract class DockerValidator extends Validator {
             String serverName = registry.getServerName();
 
             registry.setUsername(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     "DOCKER_" + Env.toVar(serverName) + "_USERNAME",
                     "registry." + Env.toVar(serverName) + ".username",
                     registry.getUsername(),
@@ -301,7 +301,7 @@ public abstract class DockerValidator extends Validator {
             }
 
             registry.setPassword(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     "DOCKER_" + Env.toVar(serverName) + "_PASSWORD",
                     "registry." + Env.toVar(serverName) + ".password",
                     registry.getPassword(),

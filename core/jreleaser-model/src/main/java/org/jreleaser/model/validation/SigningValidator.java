@@ -48,7 +48,7 @@ public abstract class SigningValidator extends Validator {
         }
 
         signing.setPassphrase(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 GPG_PASSPHRASE,
                 "signing.passphrase",
                 signing.getPassphrase(),
@@ -56,7 +56,7 @@ public abstract class SigningValidator extends Validator {
                 context.isDryrun()));
 
         signing.setPublicKey(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 GPG_PUBLIC_KEY,
                 "signing.publicKey",
                 signing.getPublicKey(),
@@ -64,7 +64,7 @@ public abstract class SigningValidator extends Validator {
                 context.isDryrun()));
 
         signing.setSecretKey(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 GPG_SECRET_KEY,
                 "signing.secretKey",
                 signing.getSecretKey(),

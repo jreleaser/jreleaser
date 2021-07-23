@@ -78,14 +78,14 @@ public abstract class ChocolateyValidator extends Validator {
         }
 
         bucket.setUsername(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 Env.toVar(bucket.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
                 "distribution." + distribution.getName() + "chocolatey.bucket.username",
                 bucket.getUsername(),
                 service.getResolvedUsername()));
 
         bucket.setToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 Env.toVar(bucket.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
                 "distribution." + distribution.getName() + "chocolatey.bucket.token",
                 bucket.getToken(),

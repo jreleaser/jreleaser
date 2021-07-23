@@ -78,14 +78,14 @@ public abstract class JbangValidator extends Validator {
         }
 
         catalog.setUsername(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 Env.toVar(catalog.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
                 "distribution." + distribution.getName() + "jbang.catalog.username",
                 catalog.getUsername(),
                 service.getResolvedUsername()));
 
         catalog.setToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 Env.toVar(catalog.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
                 "distribution." + distribution.getName() + "jbang.catalog.token",
                 catalog.getToken(),

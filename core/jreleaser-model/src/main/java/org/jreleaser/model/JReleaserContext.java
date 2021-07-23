@@ -77,6 +77,7 @@ public class JReleaserContext {
     private final boolean dryrun;
     private final boolean gitRootSearch;
     private final Mode mode;
+    private final Configurer configurer;
     private final Errors errors = new Errors();
     private final List<String> selectedPlatforms = new ArrayList<>();
 
@@ -89,6 +90,7 @@ public class JReleaserContext {
     private String changelog;
 
     public JReleaserContext(JReleaserLogger logger,
+                            Configurer configurer,
                             Mode mode,
                             JReleaserModel model,
                             Path basedir,
@@ -97,6 +99,7 @@ public class JReleaserContext {
                             boolean gitRootSearch,
                             List<String> selectedPlatforms) {
         this.logger = logger;
+        this.configurer = configurer;
         this.mode = mode;
         this.model = model;
         this.basedir = basedir;
@@ -219,6 +222,10 @@ public class JReleaserContext {
 
     public JReleaserLogger getLogger() {
         return logger;
+    }
+
+    public Configurer getConfigurer() {
+        return configurer;
     }
 
     public Mode getMode() {
@@ -437,6 +444,26 @@ public class JReleaserContext {
         ASSEMBLE,
         FULL,
         CHANGELOG
+    }
+
+    public enum Configurer {
+        CLI("CLI flags"),
+        CLI_YAML("CLI yaml DSL"),
+        CLI_TOML("CLI toml DSL"),
+        CLI_JSON("CLI json DSL"),
+        MAVEN("Maven DSL"),
+        GRADLE("Gradle DSL");
+
+        private final String dsl;
+
+        Configurer(String dsl) {
+            this.dsl = dsl;
+        }
+
+        @Override
+        public String toString() {
+            return this.dsl;
+        }
     }
 
     private static class SortedProperties extends Properties {

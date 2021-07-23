@@ -20,6 +20,7 @@ package org.jreleaser.model.validation;
 import org.jreleaser.model.CommitAuthor;
 import org.jreleaser.model.CommitAuthorAware;
 import org.jreleaser.model.Environment;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.OwnerAware;
 import org.jreleaser.model.Tool;
 import org.jreleaser.util.Env;
@@ -33,34 +34,49 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 class Validator {
-    static String checkProperty(Environment environment, String key, String property, String value, Errors errors) {
+    static String checkProperty(JReleaserContext context, String key, String property, String value, Errors errors) {
         if (isNotBlank(value)) return value;
-        return Env.check(key, environment.getVariable(key), property, errors);
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
+        return Env.check(key, environment.getVariable(key), property, dsl, configFilePath, errors);
     }
 
-    static String checkProperty(Environment environment, String key, String property, String value, Errors errors, boolean dryrun) {
+    static String checkProperty(JReleaserContext context, String key, String property, String value, Errors errors, boolean dryrun) {
         if (isNotBlank(value)) return value;
-        return Env.check(key, environment.getVariable(key), property, dryrun ? new Errors() : errors);
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
+        return Env.check(key, environment.getVariable(key), property, dsl, configFilePath, dryrun ? new Errors() : errors);
     }
 
-    static String checkProperty(Environment environment, String key, String property, String value, String defaultValue) {
+    static String checkProperty(JReleaserContext context, String key, String property, String value, String defaultValue) {
         if (isNotBlank(value)) return value;
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
         Errors errors = new Errors();
-        String result = Env.check(key, environment.getVariable(key), property, errors);
+        String result = Env.check(key, environment.getVariable(key), property, dsl, configFilePath, errors);
         return !errors.hasErrors() ? result : defaultValue;
     }
 
-    static boolean checkProperty(Environment environment, String key, String property, Boolean value, boolean defaultValue) {
+    static boolean checkProperty(JReleaserContext context, String key, String property, Boolean value, boolean defaultValue) {
         if (null != value) return value;
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
         Errors errors = new Errors();
-        String result = Env.check(key, environment.getVariable(key), property, errors);
+        String result = Env.check(key, environment.getVariable(key), property, dsl, configFilePath, errors);
         return !errors.hasErrors() ? Boolean.parseBoolean(result) : defaultValue;
     }
 
-    static <T extends Enum<T>> String checkProperty(Environment environment, String key, String property, T value, T defaultValue) {
+    static <T extends Enum<T>> String checkProperty(JReleaserContext context, String key, String property, T value, T defaultValue) {
         if (null != value) return value.name();
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
         Errors errors = new Errors();
-        String result = Env.check(key, environment.getVariable(key), property, errors);
+        String result = Env.check(key, environment.getVariable(key), property, dsl, configFilePath, errors);
         return !errors.hasErrors() ? result : (null != defaultValue ? defaultValue.name() : null);
     }
 

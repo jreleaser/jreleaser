@@ -31,6 +31,7 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -121,6 +122,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
 
             return ContextCreator.create(
                 logger,
+                resolveConfigurer(configFile),
                 getMode(),
                 null == configFile ? convertModel() : readModel(logger),
                 basedir,
@@ -131,6 +133,22 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
         } catch (JReleaserException e) {
             throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.", e);
         }
+    }
+
+    protected JReleaserContext.Configurer resolveConfigurer(File configFile) {
+        if (null == configFile) return JReleaserContext.Configurer.MAVEN;
+
+        switch (StringUtils.getFilenameExtension(configFile.getName())) {
+            case "yml":
+            case "yaml":
+                return JReleaserContext.Configurer.CLI_YAML;
+            case "toml":
+                return JReleaserContext.Configurer.CLI_TOML;
+            case "json":
+                return JReleaserContext.Configurer.CLI_JSON;
+        }
+        // should not happen!
+        throw new IllegalArgumentException("Invalid configuration format: " + configFile.getName());
     }
 
     protected JReleaserContext.Mode getMode() {

@@ -89,14 +89,14 @@ public abstract class BrewValidator extends Validator {
         }
 
         tap.setUsername(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
                 "distribution." + distribution.getName() + "brew.tap.username",
                 tap.getUsername(),
                 service.getResolvedUsername()));
 
         tap.setToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
                 "distribution." + distribution.getName() + "brew.tap.token",
                 tap.getToken(),

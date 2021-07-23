@@ -46,7 +46,7 @@ public abstract class GiteaValidator extends GitServiceValidator {
 
         if (!gitea.isPrereleaseSet()) {
             gitea.setPrerelease(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     PRERELEASE,
                     "gitea.prerelease",
                     null,
@@ -55,7 +55,7 @@ public abstract class GiteaValidator extends GitServiceValidator {
 
         if (!gitea.isDraftSet()) {
             gitea.setDraft(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     DRAFT,
                     "gitea.draft",
                     null,

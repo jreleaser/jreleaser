@@ -39,7 +39,7 @@ public abstract class TeamsValidator extends Validator {
         context.getLogger().debug("announce.teams");
 
         teams.setWebhook(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 TEAMS_WEBHOOK,
                 "teams.webhook",
                 teams.getWebhook(),

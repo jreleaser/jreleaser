@@ -112,14 +112,14 @@ public abstract class SnapValidator extends Validator {
         }
 
         snap.setUsername(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 Env.toVar(snap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
                 "distribution." + distribution.getName() + "snap.snap.username",
                 snap.getUsername(),
                 service.getResolvedUsername()));
 
         snap.setToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 Env.toVar(snap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
                 "distribution." + distribution.getName() + "snap.snap.token",
                 snap.getToken(),

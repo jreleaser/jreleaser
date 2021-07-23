@@ -65,7 +65,7 @@ public abstract class ArtifactoryValidator extends Validator {
         switch (artifactory.resolveAuthorization()) {
             case BEARER:
                 artifactory.setPassword(
-                    checkProperty(context.getModel().getEnvironment(),
+                    checkProperty(context,
                         "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_PASSWORD",
                         "artifactory.password",
                         artifactory.getPassword(),
@@ -74,7 +74,7 @@ public abstract class ArtifactoryValidator extends Validator {
                 break;
             case BASIC:
                 artifactory.setUsername(
-                    checkProperty(context.getModel().getEnvironment(),
+                    checkProperty(context,
                         "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_USERNAME",
                         "artifactory.username",
                         artifactory.getUsername(),
@@ -82,7 +82,7 @@ public abstract class ArtifactoryValidator extends Validator {
                         context.isDryrun()));
 
                 artifactory.setPassword(
-                    checkProperty(context.getModel().getEnvironment(),
+                    checkProperty(context,
                         "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_PASSWORD",
                         "artifactory.password",
                         artifactory.getPassword(),

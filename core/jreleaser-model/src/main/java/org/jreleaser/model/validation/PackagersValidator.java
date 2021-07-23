@@ -98,7 +98,7 @@ public abstract class PackagersValidator extends Validator {
 
     private static void validateSdkman(JReleaserContext context, Sdkman tool, Errors errors) {
         tool.setConsumerKey(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 SDKMAN_CONSUMER_KEY,
                 "sdkman.consumerKey",
                 tool.getConsumerKey(),
@@ -106,7 +106,7 @@ public abstract class PackagersValidator extends Validator {
                 context.isDryrun()));
 
         tool.setConsumerToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 SDKMAN_CONSUMER_TOKEN,
                 "sdkman.consumerToken",
                 tool.getConsumerToken(),
@@ -130,14 +130,14 @@ public abstract class PackagersValidator extends Validator {
         validateOwner(tap, service);
 
         tap.setUsername(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
                 "<empty>",
                 tap.getUsername(),
                 service.getResolvedUsername()));
 
         tap.setToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
                 "<empty>",
                 tap.getToken(),

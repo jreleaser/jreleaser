@@ -44,6 +44,7 @@ public class Environment implements Domain {
     private VariablesSource variablesSource;
     private String variables;
     private Properties props;
+    private Path propertiesFile;
 
     void setAll(Environment environment) {
         this.variablesSource = environment.variablesSource;
@@ -84,6 +85,10 @@ public class Environment implements Domain {
         this.properties.putAll(properties);
     }
 
+    public Path getPropertiesFile() {
+        return propertiesFile;
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -118,6 +123,7 @@ public class Environment implements Domain {
     }
 
     private void loadProperties(JReleaserContext context, Path file) {
+        propertiesFile = file;
         context.getLogger().info("Loading properties from {}", file.toAbsolutePath());
         if (Files.exists(file)) {
             try {

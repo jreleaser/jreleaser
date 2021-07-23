@@ -65,21 +65,21 @@ public abstract class GitServiceValidator extends Validator {
         }
 
         service.setUsername(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 service.getServiceName().toUpperCase() + "_USERNAME",
                 service.getServiceName() + ".username",
                 service.getUsername(),
                 service.getOwner()));
 
         service.setToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 service.getServiceName().toUpperCase() + "_TOKEN",
                 service.getServiceName() + ".token",
                 service.getToken(),
                 errors));
 
         service.setTagName(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 TAG_NAME,
                 service.getServiceName() + ".tagName",
                 service.getTagName(),
@@ -87,7 +87,7 @@ public abstract class GitServiceValidator extends Validator {
 
         if (service.isReleaseSupported()) {
             service.setReleaseName(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     RELEASE_NAME,
                     service.getServiceName() + ".releaseName",
                     service.getReleaseName(),
@@ -95,7 +95,7 @@ public abstract class GitServiceValidator extends Validator {
         }
 
         service.setBranch(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 BRANCH,
                 service.getServiceName() + ".branch",
                 service.getBranch(),
@@ -103,7 +103,7 @@ public abstract class GitServiceValidator extends Validator {
 
         if (!service.isOverwriteSet()) {
             service.setOverwrite(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     OVERWRITE,
                     service.getServiceName() + ".overwrite",
                     null,
@@ -113,7 +113,7 @@ public abstract class GitServiceValidator extends Validator {
         if (service.isReleaseSupported()) {
             if (!service.isUpdateSet()) {
                 service.setUpdate(
-                    checkProperty(context.getModel().getEnvironment(),
+                    checkProperty(context,
                         UPDATE,
                         service.getServiceName() + ".update",
                         null,
@@ -127,7 +127,7 @@ public abstract class GitServiceValidator extends Validator {
 
         if (!service.isSkipTagSet()) {
             service.setSkipTag(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     SKIP_TAG,
                     service.getServiceName() + ".skipTag",
                     null,
@@ -162,7 +162,7 @@ public abstract class GitServiceValidator extends Validator {
         if (service.isReleaseSupported()) {
             // milestone
             service.getMilestone().setName(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     MILESTONE_NAME,
                     service.getServiceName() + ".milestone.name",
                     service.getMilestone().getName(),

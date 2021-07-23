@@ -25,10 +25,12 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.jreleaser.engine.context.ContextCreator
+import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.model.JReleaserContext
 import org.jreleaser.model.JReleaserModel
 import org.jreleaser.model.JReleaserVersion
 import org.jreleaser.util.JReleaserLogger
+import org.jreleaser.util.StringUtils
 
 import javax.inject.Inject
 
@@ -77,6 +79,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
 
         return ContextCreator.create(
             logger,
+            resolveConfigurer(project.extensions.findByType(JReleaserExtension)),
             mode,
             model.get(),
             project.projectDir.toPath(),
@@ -88,5 +91,22 @@ abstract class AbstractJReleaserTask extends DefaultTask {
 
     protected List<String> collectSelectedPlatforms() {
         []
+    }
+
+    protected org.jreleaser.model.JReleaserContext.Configurer resolveConfigurer(JReleaserExtension extension) {
+        if (!extension.configFile.present) return JReleaserContext.Configurer.GRADLE
+
+        File configFile = extension.configFile.get().asFile
+        switch (StringUtils.getFilenameExtension(configFile.name)) {
+            case 'yml':
+            case 'yaml':
+                return JReleaserContext.Configurer.CLI_YAML
+            case 'toml':
+                return JReleaserContext.Configurer.CLI_TOML
+            case 'json':
+                return JReleaserContext.Configurer.CLI_JSON
+        }
+        // should not happen!
+        throw new IllegalArgumentException('Invalid configuration format: ' + configFile.name)
     }
 }

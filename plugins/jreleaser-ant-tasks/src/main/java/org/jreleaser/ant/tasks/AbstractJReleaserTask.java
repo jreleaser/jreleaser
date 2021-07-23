@@ -25,6 +25,7 @@ import org.jreleaser.engine.context.ContextCreator;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -145,6 +146,7 @@ abstract class AbstractJReleaserTask extends Task {
     protected JReleaserContext createContext() {
         return ContextCreator.create(
             logger,
+            resolveConfigurer(actualConfigFile),
             getMode(),
             actualConfigFile,
             actualBasedir,
@@ -152,6 +154,20 @@ abstract class AbstractJReleaserTask extends Task {
             dryrun,
             gitRootSearch,
             collectSelectedPlatforms());
+    }
+
+    protected JReleaserContext.Configurer resolveConfigurer(Path configFile) {
+        switch (StringUtils.getFilenameExtension(configFile.getFileName().toString())) {
+            case "yml":
+            case "yaml":
+                return JReleaserContext.Configurer.CLI_YAML;
+            case "toml":
+                return JReleaserContext.Configurer.CLI_TOML;
+            case "json":
+                return JReleaserContext.Configurer.CLI_JSON;
+        }
+        // should not happen!
+        throw new IllegalArgumentException("Invalid configuration format: " + configFile.getFileName());
     }
 
     private Set<String> getSupportedConfigFormats() {

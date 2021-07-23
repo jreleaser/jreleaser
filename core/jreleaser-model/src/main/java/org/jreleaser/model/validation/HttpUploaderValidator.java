@@ -73,7 +73,7 @@ public abstract class HttpUploaderValidator extends Validator {
         switch (http.resolveAuthorization()) {
             case BEARER:
                 http.setPassword(
-                    checkProperty(context.getModel().getEnvironment(),
+                    checkProperty(context,
                         "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
                         "http.password",
                         http.getPassword(),
@@ -82,7 +82,7 @@ public abstract class HttpUploaderValidator extends Validator {
                 break;
             case BASIC:
                 http.setUsername(
-                    checkProperty(context.getModel().getEnvironment(),
+                    checkProperty(context,
                         "HTTP_" + Env.toVar(http.getName()) + "_USERNAME",
                         "http.username",
                         http.getUsername(),
@@ -90,7 +90,7 @@ public abstract class HttpUploaderValidator extends Validator {
                         context.isDryrun()));
 
                 http.setPassword(
-                    checkProperty(context.getModel().getEnvironment(),
+                    checkProperty(context,
                         "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
                         "http.password",
                         http.getPassword(),

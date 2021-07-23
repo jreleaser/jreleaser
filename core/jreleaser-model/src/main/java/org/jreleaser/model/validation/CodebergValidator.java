@@ -41,7 +41,7 @@ public abstract class CodebergValidator extends GitServiceValidator {
 
         if (!codeberg.isPrereleaseSet()) {
             codeberg.setPrerelease(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     PRERELEASE,
                     "codeberg.prerelease",
                     null,
@@ -50,7 +50,7 @@ public abstract class CodebergValidator extends GitServiceValidator {
 
         if (!codeberg.isDraftSet()) {
             codeberg.setDraft(
-                checkProperty(context.getModel().getEnvironment(),
+                checkProperty(context,
                     DRAFT,
                     "codeberg.draft",
                     null,

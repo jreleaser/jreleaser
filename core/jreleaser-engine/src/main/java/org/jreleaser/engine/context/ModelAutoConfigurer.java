@@ -288,6 +288,7 @@ public class ModelAutoConfigurer {
     private JReleaserContext createAutoConfiguredContext() {
         return ContextCreator.create(
             logger,
+            JReleaserContext.Configurer.CLI,
             JReleaserContext.Mode.FULL,
             autoConfiguredModel(basedir),
             basedir,

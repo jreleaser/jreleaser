@@ -42,35 +42,35 @@ public abstract class ProjectValidator extends Validator {
         Project project = context.getModel().getProject();
 
         project.setName(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 PROJECT_NAME,
                 "project.name",
                 project.getName(),
                 errors));
 
         project.setVersion(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 PROJECT_VERSION,
                 "project.version",
                 project.getVersion(),
                 errors));
 
         project.setVersionPattern(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 PROJECT_VERSION_PATTERN,
                 "project.versionPattern",
                 project.getVersionPattern(),
                 VersionPattern.SEMVER));
 
         project.getSnapshot().setPattern(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 PROJECT_SNAPSHOT_PATTERN,
                 "project.snapshot.pattern",
                 project.getSnapshot().getPattern(),
                 DEFAULT_SNAPSHOT_PATTERN));
 
         project.getSnapshot().setLabel(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 PROJECT_SNAPSHOT_LABEL,
                 "project.snapshot.label",
                 project.getSnapshot().getLabel(),

@@ -57,7 +57,7 @@ public abstract class MailValidator extends Validator {
         }
 
         mail.setPassword(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 MAIL_PASSWORD,
                 "mail.password",
                 mail.getPassword(),

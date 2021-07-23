@@ -39,7 +39,7 @@ public abstract class MattermostValidator extends Validator {
         context.getLogger().debug("announce.mattermost");
 
         mattermost.setWebhook(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 MATTERMOST_WEBHOOK,
                 "mattermost.webhook",
                 mattermost.getWebhook(),

@@ -41,7 +41,7 @@ public abstract class SlackValidator extends Validator {
 
         Errors ignored = new Errors();
         slack.setToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 SLACK_TOKEN,
                 "slack.token",
                 slack.getToken(),
@@ -49,7 +49,7 @@ public abstract class SlackValidator extends Validator {
                 context.isDryrun()));
 
         slack.setWebhook(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 SLACK_WEBHOOK,
                 "slack.webhook",
                 slack.getWebhook(),

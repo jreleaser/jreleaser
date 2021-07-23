@@ -40,7 +40,7 @@ public abstract class SdkmanAnnouncerValidator extends Validator {
         context.getLogger().debug("announce.sdkman");
 
         sdkman.setConsumerKey(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 SDKMAN_CONSUMER_KEY,
                 "sdkman.consumerKey",
                 sdkman.getConsumerKey(),
@@ -48,7 +48,7 @@ public abstract class SdkmanAnnouncerValidator extends Validator {
                 context.isDryrun()));
 
         sdkman.setConsumerToken(
-            checkProperty(context.getModel().getEnvironment(),
+            checkProperty(context,
                 SDKMAN_CONSUMER_TOKEN,
                 "sdkman.consumerToken",
                 sdkman.getConsumerToken(),
