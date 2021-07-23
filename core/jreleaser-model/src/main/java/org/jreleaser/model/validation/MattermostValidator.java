@@ -59,11 +59,6 @@ public abstract class MattermostValidator extends Validator {
             errors.configuration("mattermost.messageTemplate does not exist. " + mattermost.getMessageTemplate());
         }
 
-        if (mattermost.getConnectTimeout() <= 0 || mattermost.getConnectTimeout() > 300) {
-            mattermost.setConnectTimeout(20);
-        }
-        if (mattermost.getReadTimeout() <= 0 || mattermost.getReadTimeout() > 300) {
-            mattermost.setReadTimeout(60);
-        }
+        validateTimeout(mattermost);
     }
 }

@@ -55,11 +55,6 @@ public abstract class TeamsValidator extends Validator {
             errors.configuration("teams.messageTemplate does not exist. " + teams.getMessageTemplate());
         }
 
-        if (teams.getConnectTimeout() <= 0 || teams.getConnectTimeout() > 300) {
-            teams.setConnectTimeout(20);
-        }
-        if (teams.getReadTimeout() <= 0 || teams.getReadTimeout() > 300) {
-            teams.setReadTimeout(60);
-        }
+        validateTimeout(teams);
     }
 }

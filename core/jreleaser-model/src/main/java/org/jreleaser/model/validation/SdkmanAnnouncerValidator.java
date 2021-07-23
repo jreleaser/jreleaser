@@ -64,12 +64,7 @@ public abstract class SdkmanAnnouncerValidator extends Validator {
             sdkman.disable();
         }
 
-        if (sdkman.getConnectTimeout() <= 0 || sdkman.getConnectTimeout() > 300) {
-            sdkman.setConnectTimeout(20);
-        }
-        if (sdkman.getReadTimeout() <= 0 || sdkman.getReadTimeout() > 300) {
-            sdkman.setReadTimeout(60);
-        }
+        validateTimeout(sdkman);
 
         context.getModel().getActiveDistributions().stream()
             .filter(d -> d.getSdkman().isEnabled())

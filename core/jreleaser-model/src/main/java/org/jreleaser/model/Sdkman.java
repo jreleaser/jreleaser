@@ -32,7 +32,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public class Sdkman extends AbstractTool {
+public class Sdkman extends AbstractTool implements TimeoutAware {
     public static final String SDKMAN_CONSUMER_KEY = "SDKMAN_CONSUMER_KEY";
     public static final String SDKMAN_CONSUMER_TOKEN = "SDKMAN_CONSUMER_TOKEN";
     public static final String NAME = "sdkman";
@@ -115,18 +115,22 @@ public class Sdkman extends AbstractTool {
         this.consumerToken = consumerToken;
     }
 
+    @Override
     public int getConnectTimeout() {
         return connectTimeout;
     }
 
+    @Override
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
+    @Override
     public int getReadTimeout() {
         return readTimeout;
     }
 
+    @Override
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
     }

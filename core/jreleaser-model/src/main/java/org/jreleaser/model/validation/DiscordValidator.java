@@ -59,11 +59,6 @@ public abstract class DiscordValidator extends Validator {
             errors.configuration("discord.messageTemplate does not exist. " + discord.getMessageTemplate());
         }
 
-        if (discord.getConnectTimeout() <= 0 || discord.getConnectTimeout() > 300) {
-            discord.setConnectTimeout(20);
-        }
-        if (discord.getReadTimeout() <= 0 || discord.getReadTimeout() > 300) {
-            discord.setReadTimeout(60);
-        }
+        validateTimeout(discord);
     }
 }

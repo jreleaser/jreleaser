@@ -49,11 +49,6 @@ public abstract class MastodonValidator extends Validator {
             mastodon.setStatus("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
         }
 
-        if (mastodon.getConnectTimeout() <= 0 || mastodon.getConnectTimeout() > 300) {
-            mastodon.setConnectTimeout(20);
-        }
-        if (mastodon.getReadTimeout() <= 0 || mastodon.getReadTimeout() > 300) {
-            mastodon.setReadTimeout(60);
-        }
+        validateTimeout(mastodon);
     }
 }

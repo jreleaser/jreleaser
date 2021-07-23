@@ -94,11 +94,6 @@ public abstract class ArtifactoryValidator extends Validator {
                 break;
         }
 
-        if (artifactory.getConnectTimeout() <= 0 || artifactory.getConnectTimeout() > 300) {
-            artifactory.setConnectTimeout(20);
-        }
-        if (artifactory.getReadTimeout() <= 0 || artifactory.getReadTimeout() > 300) {
-            artifactory.setReadTimeout(60);
-        }
+        validateTimeout(artifactory);
     }
 }

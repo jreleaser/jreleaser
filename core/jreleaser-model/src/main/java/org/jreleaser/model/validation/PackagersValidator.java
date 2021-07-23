@@ -113,12 +113,7 @@ public abstract class PackagersValidator extends Validator {
                 errors,
                 context.isDryrun()));
 
-        if (tool.getConnectTimeout() <= 0 || tool.getConnectTimeout() > 300) {
-            tool.setConnectTimeout(20);
-        }
-        if (tool.getReadTimeout() <= 0 || tool.getReadTimeout() > 300) {
-            tool.setReadTimeout(60);
-        }
+        validateTimeout(tool);
     }
 
     private static void validatePackager(JReleaserContext context,

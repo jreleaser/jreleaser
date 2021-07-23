@@ -101,11 +101,6 @@ public abstract class HttpUploaderValidator extends Validator {
                 break;
         }
 
-        if (http.getConnectTimeout() <= 0 || http.getConnectTimeout() > 300) {
-            http.setConnectTimeout(20);
-        }
-        if (http.getReadTimeout() <= 0 || http.getReadTimeout() > 300) {
-            http.setReadTimeout(60);
-        }
+        validateTimeout(http);
     }
 }

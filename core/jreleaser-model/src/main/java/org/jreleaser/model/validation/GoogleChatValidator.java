@@ -59,11 +59,6 @@ public abstract class GoogleChatValidator extends Validator {
             errors.configuration("googleChat.messageTemplate does not exist. " + googleChat.getMessageTemplate());
         }
 
-        if (googleChat.getConnectTimeout() <= 0 || googleChat.getConnectTimeout() > 300) {
-            googleChat.setConnectTimeout(20);
-        }
-        if (googleChat.getReadTimeout() <= 0 || googleChat.getReadTimeout() > 300) {
-            googleChat.setReadTimeout(60);
-        }
+        validateTimeout(googleChat);
     }
 }

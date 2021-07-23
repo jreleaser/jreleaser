@@ -73,11 +73,6 @@ public abstract class ZulipValidator extends Validator {
             errors.configuration("zulip.messageTemplate does not exist. " + zulip.getMessageTemplate());
         }
 
-        if (zulip.getConnectTimeout() <= 0 || zulip.getConnectTimeout() > 300) {
-            zulip.setConnectTimeout(20);
-        }
-        if (zulip.getReadTimeout() <= 0 || zulip.getReadTimeout() > 300) {
-            zulip.setReadTimeout(60);
-        }
+        validateTimeout(zulip);
     }
 }

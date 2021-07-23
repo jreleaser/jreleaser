@@ -59,11 +59,6 @@ public abstract class GitterValidator extends Validator {
             errors.configuration("gitter.messageTemplate does not exist. " + gitter.getMessageTemplate());
         }
 
-        if (gitter.getConnectTimeout() <= 0 || gitter.getConnectTimeout() > 300) {
-            gitter.setConnectTimeout(20);
-        }
-        if (gitter.getReadTimeout() <= 0 || gitter.getReadTimeout() > 300) {
-            gitter.setReadTimeout(60);
-        }
+        validateTimeout(gitter);
     }
 }

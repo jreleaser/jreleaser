@@ -22,6 +22,7 @@ import org.jreleaser.model.CommitAuthorAware;
 import org.jreleaser.model.Environment;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.OwnerAware;
+import org.jreleaser.model.TimeoutAware;
 import org.jreleaser.model.Tool;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
@@ -97,5 +98,14 @@ class Validator {
         if (isBlank(author.getName())) author.setName(other.getCommitAuthor().getName());
         if (isBlank(author.getEmail())) author.setEmail(other.getCommitAuthor().getEmail());
         self.setCommitAuthor(author);
+    }
+
+    static void validateTimeout(TimeoutAware self) {
+        if (self.getConnectTimeout() <= 0 || self.getConnectTimeout() > 300) {
+            self.setConnectTimeout(20);
+        }
+        if (self.getReadTimeout() <= 0 || self.getReadTimeout() > 300) {
+            self.setReadTimeout(60);
+        }
     }
 }

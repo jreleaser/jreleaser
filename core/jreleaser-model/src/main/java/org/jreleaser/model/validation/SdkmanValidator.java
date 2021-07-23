@@ -47,9 +47,6 @@ public abstract class SdkmanValidator extends Validator {
         if (!tool.isActiveSet() && parentTool.isActiveSet()) {
             tool.setActive(parentTool.getActive());
         }
-        if(model.getProject().isSnapshot()) {
-            tool.disable();
-        }
         if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
@@ -99,12 +96,7 @@ public abstract class SdkmanValidator extends Validator {
                 errors,
                 context.isDryrun()));
 
-        if (tool.getConnectTimeout() <= 0 || tool.getConnectTimeout() > 300) {
-            tool.setConnectTimeout(20);
-        }
-        if (tool.getReadTimeout() <= 0 || tool.getReadTimeout() > 300) {
-            tool.setReadTimeout(60);
-        }
+        validateTimeout(tool);
 
         validateArtifactPlatforms(context, distribution, tool, errors);
     }

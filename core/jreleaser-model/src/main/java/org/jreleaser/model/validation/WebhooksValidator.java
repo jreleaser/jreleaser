@@ -90,13 +90,7 @@ public abstract class WebhooksValidator extends Validator {
             errors.configuration("webhook." + webhook.getName() + ".messageTemplate does not exist. " + webhook.getMessageTemplate());
         }
 
-        if (webhook.getConnectTimeout() <= 0 || webhook.getConnectTimeout() > 300) {
-            webhook.setConnectTimeout(20);
-        }
-
-        if (webhook.getReadTimeout() <= 0 || webhook.getReadTimeout() > 300) {
-            webhook.setReadTimeout(60);
-        }
+        validateTimeout(webhook);
 
         return true;
     }
