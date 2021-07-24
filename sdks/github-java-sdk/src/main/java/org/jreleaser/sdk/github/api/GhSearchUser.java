@@ -15,19 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.releaser.spi;
+package org.jreleaser.sdk.github.api;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.util.List;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-public interface Releaser {
-    void release() throws ReleaseException;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class GhSearchUser {
+    private int totalCount = 0;
+    private List<GhUser> items;
 
-    Repository maybeCreateRepository(String owner, String repo, String password) throws IOException;
+    public int getTotalCount() {
+        return totalCount;
+    }
 
-    Optional<User> findUser(String email, String name);
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    public List<GhUser> getItems() {
+        return items;
+    }
+
+    public void setItems(List<GhUser> items) {
+        this.items = items;
+    }
 }

@@ -29,6 +29,7 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
+import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.gitea.api.GiteaAPI;
@@ -36,6 +37,8 @@ import org.jreleaser.sdk.gitea.api.GtMilestone;
 import org.jreleaser.sdk.gitea.api.GtOrganization;
 import org.jreleaser.sdk.gitea.api.GtRelease;
 import org.jreleaser.sdk.gitea.api.GtRepository;
+import org.jreleaser.sdk.gitea.api.GtSearchUser;
+import org.jreleaser.sdk.gitea.api.GtUser;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JReleaserLogger;
 
@@ -220,6 +223,18 @@ class Gitea {
                 throw e;
             }
         }
+    }
+
+    Optional<User> findUser(String email, String name, String host) throws RestAPIException {
+        logger.debug("looking up user for {} <{}>", name, email);
+
+        GtSearchUser search = api.searchUser(CollectionUtils.<String, String>newMap("q", email));
+        if (null != search.getData() && !search.getData().isEmpty()) {
+            GtUser user = search.getData().get(0);
+            return Optional.of(new User(user.getUsername(), email, host + user.getUsername()));
+        }
+
+        return Optional.empty();
     }
 
     private FormData toFormData(Path asset) throws IOException {

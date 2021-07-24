@@ -19,7 +19,10 @@ package org.jreleaser.sdk.github.api;
 
 import feign.Headers;
 import feign.Param;
+import feign.QueryMap;
 import feign.RequestLine;
+
+import java.util.Map;
 
 /**
  * @author Andres Almiray
@@ -29,4 +32,8 @@ public interface GithubAPI {
     @RequestLine("PATCH /repos/{owner}/{repo}/releases/{id}")
     @Headers("Content-Type: application/json")
     void updateRelease(GhRelease release, @Param("owner") String owner, @Param("repo") String repo, @Param("id") Long id);
+
+    @RequestLine("GET /search/users")
+    @Headers("Content-Type: application/json")
+    GhSearchUser searchUser(@QueryMap Map<String, String> q);
 }

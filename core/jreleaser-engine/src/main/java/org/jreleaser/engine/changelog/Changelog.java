@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.changelog;
 
+import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.sdk.git.ChangelogProvider;
@@ -32,7 +33,7 @@ import java.nio.file.Path;
 public class Changelog {
     public static String createChangelog(JReleaserContext context) {
         try {
-            return ChangelogProvider.getChangelog(context).trim();
+            return ChangelogProvider.getChangelog(context, Releasers.releaserFor(context)).trim();
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error when creating changelog.", e);
         }

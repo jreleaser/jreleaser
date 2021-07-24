@@ -73,9 +73,15 @@ interface Changelog {
 
     Hide getHide()
 
+    Contributors getContributors()
+
     void hide(Action<? super Hide> action)
 
+    void contributors(Action<? super Contributors> action)
+
     void hide(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hide) Closure<Void> action)
+
+    void contributors(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Contributors) Closure<Void> action)
 
     interface Category {
         Property<String> getTitle()
@@ -95,6 +101,12 @@ interface Changelog {
         Property<String> getSearch()
 
         Property<String> getReplace()
+    }
+
+    interface Contributors {
+        Property<Boolean> getEnabled()
+
+        Property<String> getFormat()
     }
 
     interface Hide {

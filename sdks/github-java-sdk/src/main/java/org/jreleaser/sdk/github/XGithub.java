@@ -27,13 +27,18 @@ import feign.httpclient.ApacheHttpClient;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
+import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.github.api.GhRelease;
+import org.jreleaser.sdk.github.api.GhSearchUser;
+import org.jreleaser.sdk.github.api.GhUser;
 import org.jreleaser.sdk.github.api.GithubAPI;
+import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -77,5 +82,25 @@ class XGithub {
         logger.debug("updating release on {}/{} with tag {}", owner, repo, tag);
 
         api.updateRelease(release, owner, repo, id);
+    }
+
+    Optional<User> findUser(String email, String name) throws RestAPIException {
+        logger.debug("looking up user for {} <{}>", name, email);
+
+        GhSearchUser search = api.searchUser(CollectionUtils.<String, String>newMap("q", email));
+        if (search.getTotalCount() > 0) {
+            GhUser user = search.getItems().get(0);
+            return Optional.of(new User(user.getLogin(), email, user.getHtmlUrl()));
+        }
+
+        // use full name instead
+        String query = "fullname:" + name + " type:user";
+        search = api.searchUser(CollectionUtils.<String, String>newMap("q", query));
+        if (search.getTotalCount() > 0) {
+            GhUser user = search.getItems().get(0);
+            return Optional.of(new User(user.getLogin(), email, user.getHtmlUrl()));
+        }
+
+        return Optional.empty();
     }
 }

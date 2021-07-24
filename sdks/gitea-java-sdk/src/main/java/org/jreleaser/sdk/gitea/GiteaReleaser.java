@@ -22,6 +22,7 @@ import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
+import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.gitea.api.GtMilestone;
@@ -149,6 +150,36 @@ public class GiteaReleaser implements Releaser {
             repo,
             repository.getHtmlUrl(),
             repository.getCloneUrl());
+    }
+
+    @Override
+    public Optional<User> findUser(String email, String name) {
+        org.jreleaser.model.Gitea gitea = resolveGiteaFromModel();
+
+        try {
+            String host = gitea.getHost();
+            String endpoint = gitea.getApiEndpoint();
+            if (endpoint.startsWith("https")) {
+                host = "https://" + host;
+            } else {
+                host = "http://" + host;
+            }
+            if (!host.endsWith("/")) {
+                host += "/";
+            }
+
+            return new Gitea(context.getLogger(),
+                gitea.getApiEndpoint(),
+                gitea.getResolvedToken(),
+                gitea.getConnectTimeout(),
+                gitea.getReadTimeout())
+                .findUser(email, name, host);
+        } catch (IOException e) {
+            context.getLogger().trace(e);
+            context.getLogger().debug("Could not find user matching {}", email);
+        }
+
+        return Optional.empty();
     }
 
     private void createRelease(Gitea api, String tagName, String changelog, boolean deleteTags) throws IOException {

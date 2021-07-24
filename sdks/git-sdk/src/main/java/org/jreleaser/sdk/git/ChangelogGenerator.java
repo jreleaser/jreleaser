@@ -27,6 +27,8 @@ import org.jreleaser.model.Changelog;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.releaser.spi.Releaser;
+import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.Version;
@@ -38,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -46,6 +49,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.lang.System.lineSeparator;
+import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
 import static org.jreleaser.util.ComparatorUtils.lessThan;
 import static org.jreleaser.util.Constants.KEY_CHANGELOG_CHANGES;
@@ -63,15 +67,15 @@ import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
 public class ChangelogGenerator {
     private static final String UNCATEGORIZED = "<<UNCATEGORIZED>>";
 
-    public static String generate(JReleaserContext context) throws IOException {
+    public static String generate(JReleaserContext context, Releaser releaser) throws IOException {
         if (!context.getModel().getRelease().getGitService().getChangelog().isEnabled()) {
             return "";
         }
 
-        return createChangelog(context);
+        return createChangelog(context, releaser);
     }
 
-    private static String createChangelog(JReleaserContext context) throws IOException {
+    private static String createChangelog(JReleaserContext context, Releaser releaser) throws IOException {
         GitService gitService = context.getModel().getRelease().getGitService();
         Changelog changelog = gitService.getChangelog();
 
@@ -93,7 +97,7 @@ public class ChangelogGenerator {
             context.getLogger().debug("sorting commits {}", changelog.getSort());
 
             if (changelog.resolveFormatted(context.getModel().getProject())) {
-                return formatChangelog(context, changelog, commits, revCommitComparator, commitSeparator);
+                return formatChangelog(context, releaser, changelog, commits, revCommitComparator, commitSeparator);
             }
 
             String commitsUrl = gitService.getResolvedCommitUrl(context.getModel());
@@ -255,20 +259,26 @@ public class ChangelogGenerator {
     }
 
     private static String formatChangelog(JReleaserContext context,
+                                          Releaser releaser,
                                           Changelog changelog,
                                           Iterable<RevCommit> commits,
                                           Comparator<RevCommit> revCommitComparator,
                                           String lineSeparator) {
-        Set<String> contributorNames = new LinkedHashSet<>();
+        Set<Contributor> contributors = new LinkedHashSet<>();
         Map<String, List<Commit>> categories = new LinkedHashMap<>();
 
         StreamSupport.stream(commits.spliterator(), false)
             .sorted(revCommitComparator)
             .map(Commit::of)
             .peek(c -> {
-                if (!changelog.getHide().containsContributor(c.author)) contributorNames.add(c.author);
-                if (isNotBlank(c.committer) && !changelog.getHide().containsContributor(c.committer))
-                    contributorNames.add(c.committer);
+                if (!changelog.getContributors().isEnabled()) return;
+
+                if (!changelog.getHide().containsContributor(c.author)) {
+                    contributors.add(new Contributor(c.author, c.authorEmail));
+                }
+                if (isNotBlank(c.committer) && !changelog.getHide().containsContributor(c.committer)) {
+                    contributors.add(new Contributor(c.committer, c.committerEmail));
+                }
             })
             .peek(c -> applyLabels(c, changelog.getLabelers()))
             .filter(c -> checkLabels(c, changelog))
@@ -309,16 +319,55 @@ public class ChangelogGenerator {
                 .append(lineSeparator());
         }
 
-        StringBuilder contributors = new StringBuilder("## Contributors")
-            .append(lineSeparator)
-            .append(String.join(", ", contributorNames))
-            .append(lineSeparator);
+        StringBuilder formattedContributors = new StringBuilder();
+        if (changelog.getContributors().isEnabled()) {
+            formattedContributors.append("## Contributors")
+                .append(lineSeparator)
+                .append("We'd like to thank the following people for their contributions:")
+                .append(lineSeparator)
+                .append(formatContributors(context, releaser, changelog, contributors, lineSeparator))
+                .append(lineSeparator);
+        }
 
         Map<String, Object> props = context.props();
         props.put(KEY_CHANGELOG_CHANGES, passThrough(changes.toString()));
-        props.put(KEY_CHANGELOG_CONTRIBUTORS, passThrough(contributors.toString()));
+        props.put(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors.toString()));
 
         return applyReplacers(context, changelog, stripMargin(applyTemplate(changelog.getResolvedContentTemplate(context), props)));
+    }
+
+    private static String formatContributors(JReleaserContext context,
+                                             Releaser releaser,
+                                             Changelog changelog,
+                                             Set<Contributor> contributors,
+                                             String lineSeparator) {
+        List<String> list = new ArrayList<>();
+        String format = changelog.getContributors().getFormat();
+
+        Map<String, List<Contributor>> grouped = contributors.stream()
+            .peek(contributor -> {
+                if (isNotBlank(format) && (format.contains("AsLink") || format.contains("Username"))) {
+                    releaser.findUser(contributor.email, contributor.name)
+                        .ifPresent(contributor::setUser);
+                }
+            })
+            .collect(groupingBy(Contributor::getName));
+
+        String contributorFormat = isNotBlank(format) ? format : "{{contributorName}}";
+
+        grouped.forEach((name, cs) -> {
+            Optional<Contributor> contributor = cs.stream()
+                .filter(c -> c.getUser() != null)
+                .findFirst();
+            if (contributor.isPresent()) {
+                list.add(applyTemplate(contributorFormat, contributor.get().asContext()));
+            } else {
+                list.add(applyTemplate(contributorFormat, cs.get(0).asContext()));
+            }
+        });
+
+        String separator = contributorFormat.startsWith("-") || contributorFormat.startsWith("*") ? lineSeparator : ", ";
+        return String.join(separator, list);
     }
 
     private static String applyReplacers(JReleaserContext context, Changelog changelog, String text) {
@@ -387,6 +436,8 @@ public class ChangelogGenerator {
         private String body;
         private String author;
         private String committer;
+        private String authorEmail;
+        private String committerEmail;
         private int time;
 
         Map<String, Object> asContext(boolean links, String commitsUrl) {
@@ -411,8 +462,74 @@ public class ChangelogGenerator {
             c.title = c.body.split(lineSeparator())[0];
             c.author = rc.getAuthorIdent().getName();
             c.committer = rc.getCommitterIdent().getName();
+            c.authorEmail = rc.getAuthorIdent().getEmailAddress();
+            c.committerEmail = rc.getCommitterIdent().getEmailAddress();
             c.time = rc.getCommitTime();
             return c;
+        }
+    }
+
+    private static class Contributor implements Comparable<Contributor> {
+        private final String name;
+        private final String email;
+        private User user;
+
+        private Contributor(String name, String email) {
+            this.name = name;
+            this.email = email;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public User getUser() {
+            return user;
+        }
+
+        public void setUser(User user) {
+            this.user = user;
+        }
+
+        Map<String, Object> asContext() {
+            Map<String, Object> context = new LinkedHashMap<>();
+            context.put("contributorName", passThrough(name));
+            context.put("contributorNameAsLink", passThrough(name));
+            context.put("contributorUsername", "");
+            context.put("contributorUsernameAsLink", "");
+            if (user != null) {
+                context.put("contributorNameAsLink", passThrough(user.asLink(name)));
+                context.put("contributorUsername", passThrough(user.getUsername()));
+                context.put("contributorUsernameAsLink", passThrough(user.asLink("@" + user.getUsername())));
+            }
+            return context;
+        }
+
+        @Override
+        public int compareTo(Contributor that) {
+            return email.compareTo(that.email);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Contributor that = (Contributor) o;
+            return email.equals(that.email);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(email);
+        }
+
+        @Override
+        public String toString() {
+            return name + " <" + email + ">";
         }
     }
 }

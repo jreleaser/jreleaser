@@ -64,8 +64,8 @@ public class Repository {
             "kind='" + kind + '\'' +
             ", owner='" + owner + '\'' +
             ", name='" + name + '\'' +
-            ", url=" + url +
-            ", httpUrl=" + httpUrl +
+            ", url='" + url + '\'' +
+            ", httpUrl'=" + httpUrl + '\'' +
             "]";
     }
 

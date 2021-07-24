@@ -15,19 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.releaser.spi;
+package org.jreleaser.sdk.gitea.api;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-public interface Releaser {
-    void release() throws ReleaseException;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class GtUser {
+    private String id;
+    private String username;
 
-    Repository maybeCreateRepository(String owner, String repo, String password) throws IOException;
+    public String getId() {
+        return id;
+    }
 
-    Optional<User> findUser(String email, String name);
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

@@ -46,6 +46,7 @@ public class Changelog implements Domain, EnabledAware {
     private final Set<Replacer> replacers = new LinkedHashSet<>();
     private final Set<Labeler> labelers = new LinkedHashSet<>();
     private final Hide hide = new Hide();
+    private final Contributors contributors = new Contributors();
 
     private Boolean enabled;
     private boolean links;
@@ -71,6 +72,7 @@ public class Changelog implements Domain, EnabledAware {
         setReplacers(changelog.replacers);
         setLabelers(changelog.labelers);
         setHide(changelog.hide);
+        setContributors(changelog.contributors);
     }
 
     public boolean resolveFormatted(Project project) {
@@ -232,6 +234,14 @@ public class Changelog implements Domain, EnabledAware {
         this.hide.setAll(hide);
     }
 
+    public Contributors getContributors() {
+        return contributors;
+    }
+
+    public void setContributors(Contributors contributors) {
+        this.contributors.setAll(contributors);
+    }
+
     @Deprecated
     public void setHideUncategorized(boolean hideUncategorized) {
         System.out.println("changelog.hideUncategorized has been deprecated since 0.6.0 and will be removed in the future. Use changelog.hide.uncategorized instead");
@@ -254,6 +264,7 @@ public class Changelog implements Domain, EnabledAware {
         map.put("includeLabels", includeLabels);
         map.put("excludeLabels", excludeLabels);
         map.put("hide", hide.asMap(full));
+        map.put("contributors", contributors.asMap(full));
 
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();
         int i = 0;
@@ -413,6 +424,44 @@ public class Changelog implements Domain, EnabledAware {
             map.put("label", label);
             map.put("title", title);
             map.put("body", body);
+            return map;
+        }
+    }
+
+    public static class Contributors implements Domain {
+        private Boolean enabled;
+        private String format;
+
+        void setAll(Contributors contributor) {
+            this.enabled = contributor.enabled;
+            this.format = contributor.format;
+        }
+
+        public boolean isEnabled() {
+            return enabled != null && enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public boolean isEnabledSet() {
+            return enabled != null;
+        }
+
+        public String getFormat() {
+            return format;
+        }
+
+        public void setFormat(String format) {
+            this.format = format;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("enabled", enabled);
+            map.put("format", format);
             return map;
         }
     }

@@ -76,4 +76,8 @@ public interface GitlabAPI {
     @RequestLine("PUT /projects/{projectId}/milestones/{milestoneId}")
     @Headers("Content-Type: application/json")
     void updateMilestone(Map<String, Object> params, @Param("projectId") Integer projectId, @Param("milestoneId") Integer milestoneId);
+
+    @RequestLine("GET /search")
+    @Headers("Content-Type: application/json")
+    List<User> searchUser(@QueryMap Map<String, String> q);
 }

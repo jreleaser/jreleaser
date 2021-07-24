@@ -19,6 +19,7 @@ package org.jreleaser.sdk.gitea.api;
 
 import feign.Headers;
 import feign.Param;
+import feign.QueryMap;
 import feign.RequestLine;
 import feign.form.FormData;
 
@@ -70,4 +71,8 @@ public interface GiteaAPI {
     @RequestLine("PATCH /repos/{owner}/{repo}/milestones/{id}")
     @Headers("Content-Type: application/json")
     void updateMilestone(Map<String, Object> params, @Param("owner") String owner, @Param("repo") String repo, @Param("id") Integer id);
+
+    @RequestLine("GET /users/search")
+    @Headers("Content-Type: application/json")
+    GtSearchUser searchUser(@QueryMap Map<String, String> q);
 }

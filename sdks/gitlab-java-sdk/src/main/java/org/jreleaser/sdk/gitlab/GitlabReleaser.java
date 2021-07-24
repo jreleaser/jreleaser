@@ -22,6 +22,7 @@ import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
+import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
@@ -150,6 +151,25 @@ public class GitlabReleaser implements Releaser {
             repo,
             project.getWebUrl(),
             project.getHttpUrlToRepo());
+    }
+
+    @Override
+    public Optional<User> findUser(String email, String name) {
+        org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
+
+        try {
+            return new Gitlab(context.getLogger(),
+                gitlab.getApiEndpoint(),
+                gitlab.getResolvedToken(),
+                gitlab.getConnectTimeout(),
+                gitlab.getReadTimeout())
+                .findUser(email, name);
+        } catch (IOException e) {
+            context.getLogger().trace(e);
+            context.getLogger().debug("Could not find user matching {}", email);
+        }
+
+        return Optional.empty();
     }
 
     private void createRelease(Gitlab api, String tagName, String changelog, boolean deleteTags) throws IOException {

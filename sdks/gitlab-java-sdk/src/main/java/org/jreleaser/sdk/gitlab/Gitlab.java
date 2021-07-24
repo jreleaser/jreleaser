@@ -162,13 +162,13 @@ class Gitlab {
 
             if (StringUtils.isNotBlank(identifier)) {
                 logger.debug("fetching project with GitLab id {}", identifier);
-                project =  api.getProject(identifier.trim());
+                project = api.getProject(identifier.trim());
             } else {
                 User u = getCurrentUser();
 
                 logger.debug("fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
                 List<Project> projects = api.getProject(u.getId(), CollectionUtils.<String, Object>map()
-                        .e("search", projectName));
+                    .e("search", projectName));
 
                 if (projects == null || projects.isEmpty()) {
                     throw new RestAPIException(404, "Project " + projectName + " does not exist or it's not visible");
@@ -272,6 +272,24 @@ class Gitlab {
                 throw e;
             }
         }
+    }
+
+    Optional<org.jreleaser.model.releaser.spi.User> findUser(String email, String name) throws RestAPIException {
+        logger.debug("looking up user for {} <{}>", name, email);
+
+        List<User> users = api.searchUser(CollectionUtils.<String, String>newMap("scope", "users", "search", email));
+        if (users != null && !users.isEmpty()) {
+            User user = users.get(0);
+            return Optional.of(new org.jreleaser.model.releaser.spi.User(user.getUsername(), email, user.getWebUrl()));
+        }
+
+        users = api.searchUser(CollectionUtils.<String, String>newMap("scope", "users", "search", name));
+        if (users != null && !users.isEmpty()) {
+            User user = users.get(0);
+            return Optional.of(new org.jreleaser.model.releaser.spi.User(user.getUsername(), email, user.getWebUrl()));
+        }
+
+        return Optional.empty();
     }
 
     private FormData toFormData(Path asset) throws IOException {

@@ -52,6 +52,7 @@ class ChangelogImpl implements Changelog {
     final SetProperty<String> includeLabels
     final SetProperty<String> excludeLabels
     final HideImpl hide
+    final ContributorsImpl contributors
 
     private final List<CategoryImpl> categories = []
     private final Set<LabelerImpl> labelers = []
@@ -73,6 +74,7 @@ class ChangelogImpl implements Changelog {
         includeLabels = objects.setProperty(String).convention(Providers.notDefined())
         excludeLabels = objects.setProperty(String).convention(Providers.notDefined())
         hide = objects.newInstance(HideImpl, objects)
+        contributors = objects.newInstance(ContributorsImpl, objects)
     }
 
     @Override
@@ -98,6 +100,7 @@ class ChangelogImpl implements Changelog {
             !categories.isEmpty() ||
             !labelers.isEmpty() ||
             !replacers.isEmpty() ||
+            contributors.isSet()||
             hide.isSet()
     }
 
@@ -147,6 +150,11 @@ class ChangelogImpl implements Changelog {
     }
 
     @Override
+    void contributors(Action<? super Contributors> action) {
+        action.execute(contributors)
+    }
+
+    @Override
     void category(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Category) Closure<Void> action) {
         CategoryImpl category = objects.newInstance(CategoryImpl, objects)
         ConfigureUtil.configure(action, category)
@@ -170,6 +178,11 @@ class ChangelogImpl implements Changelog {
     @Override
     void hide(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hide) Closure<Void> action) {
         ConfigureUtil.configure(action, hide)
+    }
+
+    @Override
+    void contributors(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Contributors) Closure<Void> action) {
+        ConfigureUtil.configure(action, contributors)
     }
 
     org.jreleaser.model.Changelog toModel() {
@@ -201,6 +214,7 @@ class ChangelogImpl implements Changelog {
             replacer.toModel()
         } as Set<org.jreleaser.model.Changelog.Replacer>)
         changelog.hide = hide.toModel()
+        changelog.contributors = contributors.toModel()
         changelog
     }
 
@@ -261,6 +275,31 @@ class ChangelogImpl implements Changelog {
             replacer.search = search.orNull
             replacer.replace = replace.getOrElse('')
             replacer
+        }
+    }
+
+    @CompileStatic
+    static class ContributorsImpl implements Contributors {
+        final Property<Boolean> enabled
+        final Property<String> format
+
+        @Inject
+        ContributorsImpl(ObjectFactory objects) {
+            enabled = objects.property(Boolean).convention(Providers.notDefined())
+            format = objects.property(String).convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            enabled.present ||
+                format.present
+        }
+
+        org.jreleaser.model.Changelog.Contributors toModel() {
+            org.jreleaser.model.Changelog.Contributors contributors = new org.jreleaser.model.Changelog.Contributors()
+            if (enabled.present) contributors.enabled = enabled.get()
+            if (format.present) contributors.format = format.get()
+            contributors
         }
     }
 

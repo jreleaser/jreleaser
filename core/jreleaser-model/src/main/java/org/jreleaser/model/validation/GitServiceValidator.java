@@ -274,5 +274,9 @@ public abstract class GitServiceValidator extends Validator {
                 i++;
             }
         }
+
+        if (!changelog.getContributors().isEnabledSet()) {
+            changelog.getContributors().setEnabled(true);
+        }
     }
 }

@@ -22,11 +22,13 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
+import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.git.GitSdk;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Andres Almiray
@@ -98,5 +100,10 @@ public class GenericGitReleaser implements Releaser {
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
         return null;
+    }
+
+    @Override
+    public Optional<User> findUser(String email, String name) {
+        return Optional.empty();
     }
 }

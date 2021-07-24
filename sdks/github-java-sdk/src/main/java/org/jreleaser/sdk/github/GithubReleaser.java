@@ -22,6 +22,7 @@ import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
+import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.github.api.GhRelease;
 import org.kohsuke.github.GHMilestone;
@@ -140,6 +141,25 @@ public class GithubReleaser implements Releaser {
             repo,
             repository.getUrl().toExternalForm(),
             repository.getHttpTransportUrl());
+    }
+
+    @Override
+    public Optional<User> findUser(String email, String name) {
+        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
+
+        try {
+            return new XGithub(context.getLogger(),
+                github.getApiEndpoint(),
+                github.getResolvedToken(),
+                github.getConnectTimeout(),
+                github.getReadTimeout())
+                .findUser(email, name);
+        } catch (IOException e) {
+            context.getLogger().trace(e);
+            context.getLogger().debug("Could not find user matching {}", email);
+        }
+
+        return Optional.empty();
     }
 
     private void createRelease(Github api, String tagName, String changelog, boolean deleteTags) throws IOException {

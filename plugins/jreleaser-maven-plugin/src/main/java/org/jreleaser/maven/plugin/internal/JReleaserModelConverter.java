@@ -276,6 +276,7 @@ public final class JReleaserModelConverter {
         c.setLabelers(convertLabelers(changelog.getLabelers()));
         c.setReplacers(convertReplacers(changelog.getReplacers()));
         c.setHide(convertHide(changelog.getHide()));
+        c.setContributors(convertContributors(changelog.getContributors()));
         return c;
     }
 
@@ -285,6 +286,13 @@ public final class JReleaserModelConverter {
         h.setCategories(hide.getCategories());
         h.setContributors(hide.getContributors());
         return h;
+    }
+
+    private static org.jreleaser.model.Changelog.Contributors convertContributors(Changelog.Contributors contributors) {
+        org.jreleaser.model.Changelog.Contributors c = new org.jreleaser.model.Changelog.Contributors();
+        if (contributors.isEnabledSet()) c.setEnabled(contributors.isEnabled());
+        c.setFormat(contributors.getFormat());
+        return c;
     }
 
     private static List<org.jreleaser.model.Changelog.Category> convertCategories(List<Changelog.Category> categories) {

@@ -40,6 +40,7 @@ public class Changelog implements EnabledAware {
     private final List<Category> categories = new ArrayList<>();
     private final Set<Replacer> replacers = new LinkedHashSet<>();
     private final Set<Labeler> labelers = new LinkedHashSet<>();
+    private final Contributors contributors = new Contributors();
     private final Hide hide = new Hide();
 
     private Boolean enabled;
@@ -65,6 +66,7 @@ public class Changelog implements EnabledAware {
         setCategories(changelog.categories);
         setReplacers(changelog.replacers);
         setLabelers(changelog.labelers);
+        setContributors(changelog.contributors);
         setHide(changelog.hide);
     }
 
@@ -212,6 +214,15 @@ public class Changelog implements EnabledAware {
         this.hide.setUncategorized(hideUncategorized);
     }
 
+    public Contributors getContributors() {
+        return contributors;
+    }
+
+    public void setContributors(Contributors hide) {
+        this.contributors.setAll(contributors);
+    }
+
+
     public Hide getHide() {
         return hide;
     }
@@ -348,6 +359,36 @@ public class Changelog implements EnabledAware {
 
         public void setBody(String body) {
             this.body = body;
+        }
+    }
+
+    public static class Contributors {
+        private Boolean enabled;
+        private String format;
+
+        void setAll(Contributors contributor) {
+            this.enabled = contributor.enabled;
+            this.format = contributor.format;
+        }
+
+        public boolean isEnabled() {
+            return enabled != null && enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public boolean isEnabledSet() {
+            return enabled != null;
+        }
+
+        public String getFormat() {
+            return format;
+        }
+
+        public void setFormat(String format) {
+            this.format = format;
         }
     }
 
