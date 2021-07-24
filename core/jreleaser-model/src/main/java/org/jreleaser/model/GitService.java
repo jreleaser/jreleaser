@@ -658,6 +658,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
             if (jv.hasBuild()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
         }
 
+        project.parseVersion();
         props.putAll(project.getResolvedExtraProperties());
 
         String osName = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_NAME);

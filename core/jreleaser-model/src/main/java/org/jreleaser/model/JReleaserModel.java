@@ -282,6 +282,7 @@ public class JReleaserModel implements Domain {
             if (jv.hasBuild()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
         }
 
+        project.parseVersion();
         props.putAll(project.getResolvedExtraProperties());
     }
 

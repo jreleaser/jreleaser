@@ -19,6 +19,7 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
+import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.OsDetector;
 import org.jreleaser.util.PlatformUtils;
@@ -313,6 +314,53 @@ public class Project implements Domain, ExtraProperties {
         return map;
     }
 
+    public void parseVersion() {
+        switch (getVersionPattern()) {
+            case SEMVER: {
+                try {
+                    Version parsedVersion = Version.of(getVersion());
+                    StringBuilder vn = new StringBuilder().append(parsedVersion.getMajor());
+                    addExtraProperty(Constants.KEY_VERSION_MAJOR, parsedVersion.getMajor());
+                    if (parsedVersion.hasMinor()) {
+                        vn.append(".").append(parsedVersion.getMinor());
+                        addExtraProperty(Constants.KEY_VERSION_MINOR, parsedVersion.getMinor());
+                    }
+                    if (parsedVersion.hasPatch()) {
+                        vn.append(".").append(parsedVersion.getPatch());
+                        addExtraProperty(Constants.KEY_VERSION_PATCH, parsedVersion.getPatch());
+                    }
+                    addExtraProperty(Constants.KEY_VERSION_NUMBER, vn.toString());
+                    if (parsedVersion.hasTag()) {
+                        addExtraProperty(Constants.KEY_VERSION_TAG, parsedVersion.getTag());
+                    }
+                    if (parsedVersion.hasBuild()) {
+                        addExtraProperty(Constants.KEY_VERSION_BUILD, parsedVersion.getBuild());
+                    }
+                } catch (IllegalArgumentException e) {
+                    throw new JReleaserException("Version '" + getVersion() + "' does not follow the semver spec", e);
+                }
+            }
+            break;
+            case JAVA_MODULE: {
+                try {
+                    JavaModuleVersion parsedVersion = JavaModuleVersion.of(getVersion());
+                    addExtraProperty(Constants.KEY_VERSION_NUMBER, parsedVersion.getVersion());
+                    if (parsedVersion.hasPrerelease()) {
+                        addExtraProperty(Constants.KEY_VERSION_PRERELEASE, parsedVersion.getPrerelease());
+                    }
+                    if (parsedVersion.hasBuild()) {
+                        addExtraProperty(Constants.KEY_VERSION_BUILD, parsedVersion.getBuild());
+                    }
+                } catch (IllegalArgumentException e) {
+                    throw new JReleaserException("Version '" + getVersion() + "' does not follow the Java module spec", e);
+                }
+            }
+            break;
+            default:
+                // noop
+        }
+    }
+
     public static class Snapshot implements Domain {
         private Boolean enabled;
         private String pattern;
@@ -436,6 +484,7 @@ public class Project implements Domain, ExtraProperties {
                 if (jv.hasBuild()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
             }
 
+            project.parseVersion();
             props.putAll(project.getResolvedExtraProperties());
 
             String osName = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_NAME);
