@@ -63,13 +63,11 @@ public class Project implements Domain, ExtraProperties {
     private String copyright;
     private String vendor;
     private String docsUrl;
-    private String snapshotPattern;
 
     void setAll(Project project) {
         this.name = project.name;
         this.version = project.version;
         this.versionPattern = project.versionPattern;
-        this.snapshotPattern = project.snapshotPattern;
         this.description = project.description;
         this.longDescription = project.longDescription;
         this.website = project.website;
@@ -154,13 +152,12 @@ public class Project implements Domain, ExtraProperties {
     @Deprecated
     public String getSnapshotPattern() {
         System.out.println("project.snapshotPattern has been deprecated since 0.6.0 and will be removed in the future. Use project.snapshot.pattern instead");
-        return snapshotPattern;
+        return this.snapshot.getPattern();
     }
 
     @Deprecated
     public void setSnapshotPattern(String snapshotPattern) {
         System.out.println("project.snapshotPattern has been deprecated since 0.6.0 and will be removed in the future. Use project.snapshot.pattern instead");
-        this.snapshotPattern = snapshotPattern;
         this.snapshot.setPattern(snapshotPattern);
     }
 

@@ -94,6 +94,11 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.project.snapshot.pattern")
     private String projectSnapshotPattern;
     /**
+     * The project snapshot label.
+     */
+    @Parameter(property = "jreleaser.project.snapshot.label")
+    private String projectSnapshotLabel;
+    /**
      * The release tag.
      */
     @Parameter(property = "jreleaser.tag.name")
@@ -213,6 +218,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .projectVersion(projectVersion)
             .projectVersionPattern(projectVersionPattern)
             .projectSnapshotPattern(projectSnapshotPattern)
+            .projectSnapshotLabel(projectSnapshotLabel)
             .tagName(tagName)
             .releaseName(releaseName)
             .branch(branch)

@@ -64,6 +64,7 @@ public class ModelAutoConfigurer {
     private String projectVersion;
     private String projectVersionPattern;
     private String projectSnapshotPattern;
+    private String projectSnapshotLabel;
     private String tagName;
     private String releaseName;
     private String milestoneName;
@@ -123,6 +124,11 @@ public class ModelAutoConfigurer {
 
     public ModelAutoConfigurer projectSnapshotPattern(String projectSnapshotPattern) {
         this.projectSnapshotPattern = projectSnapshotPattern;
+        return this;
+    }
+
+    public ModelAutoConfigurer projectSnapshotLabel(String projectSnapshotLabel) {
+        this.projectSnapshotLabel = projectSnapshotLabel;
         return this;
     }
 
@@ -303,6 +309,7 @@ public class ModelAutoConfigurer {
         if (isNotBlank(projectVersion)) logger.info("- project.version: {}", projectVersion);
         if (isNotBlank(projectVersionPattern)) logger.info("- project.version.pattern: {}", projectVersionPattern);
         if (isNotBlank(projectSnapshotPattern)) logger.info("- project.snapshot.pattern: {}", projectSnapshotPattern);
+        if (isNotBlank(projectSnapshotLabel)) logger.info("- project.snapshot.label: {}", projectSnapshotLabel);
         if (isNotBlank(username)) logger.info("- release.username: {}", username);
         if (isNotBlank(tagName)) logger.info("- release.tagName: {}", tagName);
         if (isNotBlank(branch)) logger.info("- release.branch: {}", branch);
@@ -342,7 +349,8 @@ public class ModelAutoConfigurer {
         model.getProject().setName(projectName);
         model.getProject().setVersion(projectVersion);
         model.getProject().setVersionPattern(projectVersionPattern);
-        model.getProject().setSnapshotPattern(projectSnapshotPattern);
+        model.getProject().getSnapshot().setPattern(projectSnapshotPattern);
+        model.getProject().getSnapshot().setLabel(projectSnapshotLabel);
 
         try {
             Repository repository = GitSdk.of(basedir, gitRootSearch).getRemote();

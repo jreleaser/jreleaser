@@ -71,6 +71,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     final Property<String> projectSnapshotPattern
     @Input
     @Optional
+    final Property<String> projectSnapshotLabel
+    @Input
+    @Optional
     final Property<String> tagName
     @Input
     @Optional
@@ -150,6 +153,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Option(option = 'project-snapshot-pattern', description = 'The project snapshot pattern (OPTIONAL).')
     void setProjectSnapshotPattern(String projectSnapshotPattern) {
         this.projectSnapshotPattern.set(projectSnapshotPattern)
+    }
+
+    @Option(option = 'project-snapshot-label', description = 'The project snapshot label (OPTIONAL).')
+    void projectSnapshotLabel(String projectSnapshotLabel) {
+        this.projectSnapshotLabel.set(projectSnapshotLabel)
     }
 
     @Option(option = 'tag-name', description = 'The release tga (OPTIONAL).')
@@ -283,6 +291,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         projectVersion = objects.property(String).convention(String.valueOf(project.version))
         projectVersionPattern = objects.property(String).convention(String.valueOf(Providers.notDefined()))
         projectSnapshotPattern = objects.property(String).convention(String.valueOf(Providers.notDefined()))
+        projectSnapshotLabel = objects.property(String).convention(String.valueOf(Providers.notDefined()))
         tagName = objects.property(String).convention(Providers.notDefined())
         releaseName = objects.property(String).convention(Providers.notDefined())
         branch = objects.property(String).convention(Providers.notDefined())
@@ -323,6 +332,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .projectVersion(projectVersion.get())
             .projectVersionPattern(projectVersionPattern.orNull)
             .projectSnapshotPattern(projectSnapshotPattern.orNull)
+            .projectSnapshotLabel(projectSnapshotLabel.orNull)
             .tagName(tagName.orNull)
             .releaseName(releaseName.orNull)
             .branch(branch.orNull)

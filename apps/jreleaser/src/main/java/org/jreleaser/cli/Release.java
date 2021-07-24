@@ -63,6 +63,10 @@ public class Release extends AbstractPlatformAwareModelCommand {
         description = "The project snapshot pattern.")
     String projectSnapshotPattern;
 
+    @CommandLine.Option(names = {"--project-snapshot-label"},
+        description = "The project snapshot label.")
+    String projectSnapshotLabel;
+
     @CommandLine.Option(names = {"--tag-name"},
         description = "The release tag.")
     String tagName;
@@ -158,6 +162,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
             .projectVersion(projectVersion)
             .projectVersionPattern(projectVersionPattern)
             .projectSnapshotPattern(projectSnapshotPattern)
+            .projectSnapshotLabel(projectSnapshotLabel)
             .tagName(tagName)
             .releaseName(releaseName)
             .milestoneName(milestoneName)
