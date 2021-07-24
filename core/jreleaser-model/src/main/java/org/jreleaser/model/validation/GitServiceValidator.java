@@ -202,8 +202,8 @@ public abstract class GitServiceValidator extends Validator {
 
         if (!changelog.resolveFormatted(context.getModel().getProject())) return;
 
-        if (isBlank(changelog.getChange())) {
-            changelog.setChange("- {{commitShortHash}} {{commitTitle}} ({{commitAuthor}})");
+        if (isBlank(changelog.getFormat())) {
+            changelog.setFormat("- {{commitShortHash}} {{commitTitle}} ({{commitAuthor}})");
         }
 
         if (isBlank(changelog.getContent()) && isBlank(changelog.getContentTemplate())) {

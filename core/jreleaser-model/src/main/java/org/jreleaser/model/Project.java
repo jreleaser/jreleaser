@@ -151,7 +151,6 @@ public class Project implements Domain, ExtraProperties {
 
     @Deprecated
     public String getSnapshotPattern() {
-        System.out.println("project.snapshotPattern has been deprecated since 0.6.0 and will be removed in the future. Use project.snapshot.pattern instead");
         return this.snapshot.getPattern();
     }
 

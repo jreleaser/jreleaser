@@ -269,7 +269,8 @@ public final class JReleaserModelConverter {
         c.setFormatted(changelog.resolveFormatted());
         c.getIncludeLabels().addAll(changelog.getIncludeLabels());
         c.getExcludeLabels().addAll(changelog.getExcludeLabels());
-        c.setChange(changelog.getChange());
+        if (isNotBlank(changelog.getChange())) c.setChange(changelog.getChange());
+        c.setFormat(changelog.getFormat());
         c.setContent(changelog.getContent());
         c.setContentTemplate(changelog.getContentTemplate());
         c.setCategories(convertCategories(changelog.getCategories()));

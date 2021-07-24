@@ -53,7 +53,7 @@ public class Changelog implements Domain, EnabledAware {
     private Sort sort = Sort.DESC;
     private String external;
     private Active formatted;
-    private String change;
+    private String format;
     private String content;
     private String contentTemplate;
 
@@ -63,7 +63,7 @@ public class Changelog implements Domain, EnabledAware {
         this.sort = changelog.sort;
         this.external = changelog.external;
         this.formatted = changelog.formatted;
-        this.change = changelog.change;
+        this.format = changelog.format;
         this.content = changelog.content;
         this.contentTemplate = changelog.contentTemplate;
         setIncludeLabels(changelog.includeLabels);
@@ -202,12 +202,23 @@ public class Changelog implements Domain, EnabledAware {
         this.labelers.addAll(labelers);
     }
 
+    @Deprecated
     public String getChange() {
-        return change;
+        return this.format;
     }
 
+    @Deprecated
     public void setChange(String change) {
-        this.change = change;
+        System.out.println("changelog.change has been deprecated since 0.6.0 and will be removed in the future. Use changelog.format instead");
+        this.format = change;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     public String getContent() {
@@ -258,7 +269,7 @@ public class Changelog implements Domain, EnabledAware {
         map.put("links", links);
         map.put("sort", sort);
         map.put("formatted", formatted);
-        map.put("change", change);
+        map.put("format", format);
         map.put("content", content);
         map.put("contentTemplate", contentTemplate);
         map.put("includeLabels", includeLabels);

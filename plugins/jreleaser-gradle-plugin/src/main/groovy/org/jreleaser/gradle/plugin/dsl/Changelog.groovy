@@ -47,6 +47,8 @@ interface Changelog {
 
     Property<String> getChange()
 
+    Property<String> getFormat()
+
     Property<String> getContent()
 
     RegularFileProperty getContentTemplate()

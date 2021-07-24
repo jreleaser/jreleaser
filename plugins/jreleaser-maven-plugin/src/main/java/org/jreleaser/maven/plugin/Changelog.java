@@ -49,6 +49,7 @@ public class Changelog implements EnabledAware {
     private String external;
     private Active formatted;
     private String change;
+    private String format;
     private String content;
     private String contentTemplate;
 
@@ -59,6 +60,7 @@ public class Changelog implements EnabledAware {
         this.external = changelog.external;
         this.formatted = changelog.formatted;
         this.change = changelog.change;
+        this.format = changelog.format;
         this.content = changelog.content;
         this.contentTemplate = changelog.contentTemplate;
         setIncludeLabels(changelog.includeLabels);
@@ -186,6 +188,14 @@ public class Changelog implements EnabledAware {
 
     public void setChange(String change) {
         this.change = change;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     public String getContent() {

@@ -47,6 +47,7 @@ class ChangelogImpl implements Changelog {
     final RegularFileProperty external
     final Property<Active> formatted
     final Property<String> change
+    final Property<String> format
     final Property<String> content
     final RegularFileProperty contentTemplate
     final SetProperty<String> includeLabels
@@ -69,6 +70,7 @@ class ChangelogImpl implements Changelog {
         external = objects.fileProperty().convention(Providers.notDefined())
         formatted = objects.property(Active).convention(Providers.notDefined())
         change = objects.property(String).convention(Providers.notDefined())
+        format = objects.property(String).convention(Providers.notDefined())
         content = objects.property(String).convention(Providers.notDefined())
         contentTemplate = objects.fileProperty().convention(Providers.notDefined())
         includeLabels = objects.setProperty(String).convention(Providers.notDefined())
@@ -93,6 +95,7 @@ class ChangelogImpl implements Changelog {
             sort.present ||
             formatted.present ||
             change.present ||
+            format.present ||
             content.present ||
             contentTemplate.present ||
             includeLabels.present ||
@@ -198,6 +201,7 @@ class ChangelogImpl implements Changelog {
         if (external.present) changelog.external = external.getAsFile().get().toPath()
         if (formatted.present) changelog.formatted = formatted.get()
         if (change.present) changelog.change = change.get()
+        if (format.present) changelog.format = format.get()
         if (content.present) changelog.content = content.get()
         if (contentTemplate.present) {
             changelog.contentTemplate = contentTemplate.asFile.get().absolutePath
