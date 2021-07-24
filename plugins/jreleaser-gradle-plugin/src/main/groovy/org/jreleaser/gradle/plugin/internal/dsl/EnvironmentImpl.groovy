@@ -49,7 +49,7 @@ class EnvironmentImpl implements Environment {
 
     org.jreleaser.model.Environment toModel(Project project) {
         org.jreleaser.model.Environment environment = new org.jreleaser.model.Environment()
-        environment.variablesSource = new org.jreleaser.model.Environment.MapVariablesSource(project.properties)
+        environment.propertiesSource = new org.jreleaser.model.Environment.MapPropertiesSource(project.properties)
         if (variables.present) environment.variables = variables.asFile.get().absolutePath
         if (properties.present) environment.properties.putAll(properties.get())
         environment

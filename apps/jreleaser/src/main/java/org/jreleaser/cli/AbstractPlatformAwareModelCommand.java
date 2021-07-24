@@ -30,12 +30,13 @@ import java.util.List;
  */
 @CommandLine.Command
 public abstract class AbstractPlatformAwareModelCommand extends AbstractModelCommand {
-    @CommandLine.Option(names = {"--select-current-platform"},
+    @CommandLine.Option(names = {"-scp", "--select-current-platform"},
         description = "Activates paths matching the current platform.")
     boolean selectCurrentPlatform;
 
-    @CommandLine.Option(names = {"--select-platform"},
-        description = "Activates paths matching the given platform.")
+    @CommandLine.Option(names = {"-sp", "--select-platform"},
+        paramLabel = "<platform>",
+        description = "Activates paths matching the given platform. Repeatable.")
     String[] selectPlatforms;
 
     @Override

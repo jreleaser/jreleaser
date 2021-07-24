@@ -19,7 +19,9 @@ package org.jreleaser.cli;
 
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.engine.context.ContextCreator;
+import org.jreleaser.model.Environment;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.StringUtils;
 import picocli.CommandLine;
@@ -31,6 +33,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -49,6 +52,11 @@ public abstract class AbstractModelCommand extends AbstractCommand {
     @CommandLine.Option(names = {"-grs", "--git-root-search"},
         description = "Searches for the Git root.")
     boolean gitRootSearch;
+
+    @CommandLine.Option(names = {"-p", "--set-property"},
+        paramLabel = "<key=value>",
+        description = "Sets the value of a property. Repeatable.")
+    String[] properties;
 
     @CommandLine.ParentCommand
     Main parent;
@@ -125,11 +133,15 @@ public abstract class AbstractModelCommand extends AbstractCommand {
     protected abstract void doExecute(JReleaserContext context);
 
     protected JReleaserContext createContext() {
+        JReleaserModel model = ContextCreator.resolveModel(logger, actualConfigFile);
+        Environment.PropertiesSource propertiesSource = new Environment.PropertiesPropertiesSource(collectProperties());
+        model.getEnvironment().setPropertiesSource(propertiesSource);
+
         return ContextCreator.create(
             logger,
             resolveConfigurer(actualConfigFile),
             getMode(),
-            actualConfigFile,
+            model,
             actualBasedir,
             getOutputDirectory(),
             dryrun(),
@@ -178,5 +190,26 @@ public abstract class AbstractModelCommand extends AbstractCommand {
 
     protected List<String> collectSelectedPlatforms() {
         return Collections.emptyList();
+    }
+
+    protected Properties collectProperties() {
+        Properties props = new Properties();
+
+        if (properties != null && properties.length > 0) {
+            for (String property : properties) {
+                if (property.contains("=")) {
+                    int d = property.indexOf('=');
+                    if (d == 0 || d == properties.length - 1) {
+                        throw new IllegalArgumentException("Invalid property '" + property + "'");
+                    }
+                    props.put(property.substring(0, d),
+                        property.substring(d + 1));
+                } else {
+                    props.put(property, Boolean.TRUE);
+                }
+            }
+        }
+
+        return props;
     }
 }

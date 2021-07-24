@@ -44,11 +44,10 @@ public final class JReleaserModelConfigurer {
 
     public static JReleaserModel configure(JReleaserModel model, MavenProject mavenProject, MavenSession session) {
         Properties properties = new Properties();
-        properties.putAll(System.getProperties());
         properties.putAll(mavenProject.getModel().getProperties());
-        Environment.VariablesSource variablesSource = new Environment.PropertiesVariablesSource(properties);
+        Environment.PropertiesSource propertiesSource = new Environment.PropertiesPropertiesSource(properties);
 
-        model.getEnvironment().setVariablesSource(variablesSource);
+        model.getEnvironment().setPropertiesSource(propertiesSource);
         configureProject(model.getProject(), mavenProject, session);
 
         return model;

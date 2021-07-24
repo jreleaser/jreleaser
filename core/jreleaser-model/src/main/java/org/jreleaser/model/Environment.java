@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
+import static org.jreleaser.util.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -41,19 +42,19 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Environment implements Domain {
     private final Map<String, Object> properties = new LinkedHashMap<>();
-    private VariablesSource variablesSource;
+    private PropertiesSource propertiesSource;
     private String variables;
-    private Properties props;
+    private Properties vars;
     private Path propertiesFile;
 
     void setAll(Environment environment) {
-        this.variablesSource = environment.variablesSource;
         this.variables = environment.variables;
         setProperties(environment.properties);
+        setPropertiesSource(environment.propertiesSource);
     }
 
     public String getVariable(String key) {
-        return props.getProperty(Env.prefix(key));
+        return vars.getProperty(Env.prefix(key));
     }
 
     public boolean isSet() {
@@ -61,12 +62,15 @@ public class Environment implements Domain {
             !properties.isEmpty();
     }
 
-    public VariablesSource getVariablesSource() {
-        return variablesSource;
+    public PropertiesSource getPropertiesSource() {
+        return propertiesSource;
     }
 
-    public void setVariablesSource(VariablesSource variablesSource) {
-        this.variablesSource = variablesSource;
+    public void setPropertiesSource(PropertiesSource propertiesSource) {
+        this.propertiesSource = propertiesSource;
+        if (null != this.propertiesSource) {
+            properties.putAll(propertiesSource.getProperties());
+        }
     }
 
     public String getVariables() {
@@ -99,13 +103,8 @@ public class Environment implements Domain {
     }
 
     public void initProps(JReleaserContext context) {
-        if (null == props) {
-            props = new Properties();
-
-            if (isNotBlank(variables)) {
-                loadProperties(context, context.getBasedir().resolve(variables.trim()));
-                return;
-            }
+        if (null == vars) {
+            vars = new Properties();
 
             String home = System.getenv("JRELEASER_USER_HOME");
             if (isBlank(home)) {
@@ -113,24 +112,28 @@ public class Environment implements Domain {
             }
 
             Path configDirectory = Paths.get(home).resolve(".jreleaser");
-            loadProperties(context, resolveConfigFileAt(configDirectory)
+            loadVariables(context, resolveConfigFileAt(configDirectory)
                 .orElse(configDirectory.resolve("config.properties")));
 
-            if (null != variablesSource) {
-                props.putAll(variablesSource.getVariables());
+            if (isNotBlank(variables)) {
+                loadVariables(context, context.getBasedir().resolve(variables.trim()));
+            }
+
+            if (null != propertiesSource) {
+                properties.putAll(propertiesSource.getProperties());
             }
         }
     }
 
-    private void loadProperties(JReleaserContext context, Path file) {
+    private void loadVariables(JReleaserContext context, Path file) {
         propertiesFile = file;
         context.getLogger().info("Loading properties from {}", file.toAbsolutePath());
         if (Files.exists(file)) {
             try {
                 if (file.getFileName().toString().endsWith(".properties")) {
-                    props.load(new FileInputStream(file.toFile()));
+                    vars.load(new FileInputStream(file.toFile()));
                 } else {
-                    props.putAll(JReleaserConfigLoader.loadProperties(file));
+                    vars.putAll(JReleaserConfigLoader.loadProperties(file));
                 }
             } catch (IOException e) {
                 context.getLogger().debug("Could not load properties from {}", file.toAbsolutePath(), e);
@@ -154,58 +157,53 @@ public class Environment implements Domain {
         return Optional.empty();
     }
 
-    public interface VariablesSource {
-        Map<String, String> getVariables();
+    public interface PropertiesSource {
+        Map<String, String> getProperties();
     }
 
-    public static abstract class AbstractVariablesSource implements VariablesSource {
+    public static abstract class AbstractPropertiesSource implements PropertiesSource {
         @Override
-        public Map<String, String> getVariables() {
-            Map<String, String> variables = doGetVariables();
+        public Map<String, String> getProperties() {
+            Map<String, String> props = doGetProperties();
             Map<String, String> map = new LinkedHashMap<>();
 
-            variables.forEach((key, value) -> {
-                if (key.startsWith("jreleaser.")) {
-                    map.put(key.replace(".", "_").toUpperCase(), value);
-                }
-            });
-
-            variables.forEach((key, value) -> {
-                if (key.startsWith("JRELEASER_")) {
-                    map.put(key, value);
-                }
+            props.forEach((key, value) -> {
+                if (key.startsWith("JRELEASER_")) return;
+                String k = key.replace(".", "-");
+                k = getPropertyNameForLowerCaseHyphenSeparatedName(k);
+                map.put(k, value);
             });
 
             return map;
         }
 
-        protected abstract Map<String, String> doGetVariables();
+        protected abstract Map<String, String> doGetProperties();
     }
 
-    public static class PropertiesVariablesSource extends AbstractVariablesSource {
+    public static class PropertiesPropertiesSource extends AbstractPropertiesSource {
         private final Properties properties;
 
-        public PropertiesVariablesSource(Properties properties) {
+        public PropertiesPropertiesSource(Properties properties) {
             this.properties = properties;
         }
 
         @Override
-        protected Map<String, String> doGetVariables() {
+        protected Map<String, String> doGetProperties() {
             Map<String, String> map = new LinkedHashMap<>();
             properties.forEach((k, v) -> map.put(String.valueOf(k), String.valueOf(v)));
             return map;
         }
     }
 
-    public static class MapVariablesSource extends AbstractVariablesSource {
+    public static class MapPropertiesSource extends AbstractPropertiesSource {
         private final Map<String, ?> properties;
 
-        public MapVariablesSource(Map<String, ?> properties) {
+        public MapPropertiesSource(Map<String, ?> properties) {
             this.properties = properties;
         }
 
         @Override
-        protected Map<String, String> doGetVariables() {
+        protected Map<String, String> doGetProperties() {
             Map<String, String> map = new LinkedHashMap<>();
             properties.forEach((k, v) -> map.put(k, String.valueOf(v)));
             return map;

@@ -225,7 +225,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     JReleaserModel toModel(org.gradle.api.Project gradleProject, JReleaserLogger logger) {
         if (configFile.present) {
             JReleaserModel jreleaser = ContextCreator.resolveModel(logger, configFile.asFile.get().toPath())
-            jreleaser.environment.variablesSource = new org.jreleaser.model.Environment.MapVariablesSource(project.properties)
+            jreleaser.environment.propertiesSource = new org.jreleaser.model.Environment.MapPropertiesSource(project.properties)
             return jreleaser
         }
 

@@ -211,7 +211,7 @@ public class Artifact implements Domain, ExtraProperties {
         return resolvedTransform;
     }
 
-    private Map<String,Object> artifactProps(Map<String, Object> props) {
+    private Map<String, Object> artifactProps(Map<String, Object> props) {
         props.putAll(getExtraProperties());
         props.putAll(getResolvedExtraProperties());
         props.put("platform", platform);

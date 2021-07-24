@@ -96,7 +96,8 @@ public class Release extends AbstractPlatformAwareModelCommand {
     boolean update;
 
     @CommandLine.Option(names = {"--update-section"},
-        description = "Release section to be updated.")
+        paramLabel = "<section>",
+        description = "Release section to be updated. Repeatable.")
     String[] updateSections;
 
     @CommandLine.Option(names = {"--skip-tag"},
@@ -136,11 +137,13 @@ public class Release extends AbstractPlatformAwareModelCommand {
     boolean armored;
 
     @CommandLine.Option(names = {"--file"},
-        description = "Input file(s) to be uploaded.")
+        paramLabel = "<file>",
+        description = "Input file to be uploaded. Repeatable.")
     String[] files;
 
     @CommandLine.Option(names = {"--glob"},
-        description = "Input file(s) to be uploaded (as globs).")
+        paramLabel = "<file>",
+        description = "Input file to be uploaded (as glob). Repeatable.")
     String[] globs;
 
     protected void execute() {
