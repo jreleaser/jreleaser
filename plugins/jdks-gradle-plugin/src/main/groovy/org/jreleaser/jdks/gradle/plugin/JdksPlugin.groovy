@@ -35,6 +35,7 @@ import org.jreleaser.jdks.gradle.plugin.internal.JdkImpl
 import org.jreleaser.jdks.gradle.plugin.tasks.ListJdksTask
 import org.jreleaser.util.Errors
 
+import static org.jreleaser.util.StringUtils.getFilename
 import static org.jreleaser.util.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName
 
 /**
@@ -83,12 +84,32 @@ class JdksPlugin implements Plugin<Project> {
         Provider<Directory> jdksDir = project.layout.buildDirectory.dir('jdks')
 
         List<JdkImpl> jdks = new ArrayList<>(jdkContainer)
+        List<String> jdkArchives = []
+
+        // collect all candidate jdk archives
+        jdks.each { jdk ->
+            int p = jdk.url.get().lastIndexOf('/')
+            String jdkArchiveFileName = jdk.url.get().substring(p + 1)
+            jdkArchives << jdkArchiveFileName
+        }
+
+        File cacheDir = project.file("${project.gradle.gradleUserHomeDir}/caches/jdks")
+
+        List<File> jdksToBeCopied = []
+        if (cacheDir.exists()) {
+            cacheDir.listFiles().each { jdkArchive ->
+                if (jdkArchives.contains(jdkArchive.name) && !jdksDir.get().file(jdkArchive.name).asFile.exists()) {
+                    jdksToBeCopied << jdkArchive
+                }
+            }
+        }
 
         // register tasks per JDK
         jdks.each { jdk ->
             String normalizedName = getPropertyNameForLowerCaseHyphenSeparatedName(jdk.name).capitalize()
             int p = jdk.url.get().lastIndexOf('/')
-            String filename = jdk.url.get().substring(p + 1)
+            String jdkArchiveFileName = jdk.url.get().substring(p + 1)
+            String jdkArchiveName = getFilename(jdkArchiveFileName)
 
             jdk.downloadTask = project.tasks.register('downloadJdk' + normalizedName,
                 Download, new Action<Download>() {
@@ -96,14 +117,16 @@ class JdksPlugin implements Plugin<Project> {
                 void execute(Download t) {
                     t.group = JDKS_GROUP
                     t.description = "Download JDK ${jdk.name}".toString()
+                    t.enabled = !jdksToBeCopied.find { it.name == jdkArchiveFileName }
 
                     t.src(jdk.url)
-                    t.dest(jdksDir.get().file(filename).asFile)
+                    t.dest(jdksDir.get().file(jdkArchiveFileName).asFile)
                     t.doFirst {
                         jdksDir.get().asFile.mkdirs()
                     }
                     t.onlyIf {
-                        !jdksDir.get().file(filename).asFile.exists()
+                        !jdksDir.get().file(jdkArchiveFileName).asFile.exists() &&
+                            !jdksDir.get().file(jdkArchiveName).asFile.exists()
                     }
                 }
             })
@@ -114,6 +137,7 @@ class JdksPlugin implements Plugin<Project> {
                 void execute(Verify t) {
                     t.group = JDKS_GROUP
                     t.description = "Verify JDK ${jdk.name}".toString()
+                    t.enabled = !jdksToBeCopied.find { it.name == jdkArchiveFileName }
                     t.dependsOn(jdk.downloadTask)
 
                     String algorithm = 'SHA-256'
@@ -127,6 +151,9 @@ class JdksPlugin implements Plugin<Project> {
                     t.src(jdk.downloadTask.get().dest)
                     t.algorithm(algorithm)
                     t.checksum(checksum)
+                    t.onlyIf {
+                        jdksDir.get().file(jdkArchiveFileName).asFile.exists()
+                    }
                 }
             })
 
@@ -136,6 +163,7 @@ class JdksPlugin implements Plugin<Project> {
                 void execute(Copy t) {
                     t.group = JDKS_GROUP
                     t.description = "Unpack JDK ${jdk.name}".toString()
+                    t.enabled = !jdksToBeCopied.find { it.name == jdkArchiveFileName }
                     t.dependsOn(jdk.verifyTask)
 
                     File jdkArchive = jdk.downloadTask.get().dest
@@ -147,7 +175,7 @@ class JdksPlugin implements Plugin<Project> {
                         t.from(t.project.tarTree(jdkArchive))
                     }
                     t.into(jdksDir)
-                    t.onlyIf { jdk.verifyTask.get().didWork }
+                    t.onlyIf { !jdksDir.get().file(jdkArchiveName).asFile.exists() && jdk.verifyTask.get().didWork }
                 }
             })
         }
@@ -187,8 +215,6 @@ class JdksPlugin implements Plugin<Project> {
             }
         })
 
-        File cacheDir = project.file("${project.gradle.gradleUserHomeDir}/caches/jdks")
-
         TaskProvider<Copy> copyJdksToCache = project.tasks.register('copyJdksToCache',
             Copy, new Action<Copy>() {
             @Override
@@ -201,15 +227,6 @@ class JdksPlugin implements Plugin<Project> {
                 t.into(cacheDir)
             }
         })
-
-        List<File> jdksToBeCopied = []
-        if (cacheDir.exists()) {
-            cacheDir.listFiles().each { jdkArchive ->
-                if (!jdksDir.get().file(jdkArchive.name).asFile.exists()) {
-                    jdksToBeCopied << jdkArchive
-                }
-            }
-        }
 
         TaskProvider<Copy> copyJdksFromCache = null
         if (jdksToBeCopied) {
@@ -229,6 +246,8 @@ class JdksPlugin implements Plugin<Project> {
                         }
                         t.into(jdksDir)
                     }
+                    // Not ideal but must nuke the directory to avoid copy errors
+                    t.doFirst { jdksDir.get().asFile.deleteDir() }
                 }
             })
         }
