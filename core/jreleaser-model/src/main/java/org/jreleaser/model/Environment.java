@@ -127,7 +127,7 @@ public class Environment implements Domain {
 
     private void loadVariables(JReleaserContext context, Path file) {
         propertiesFile = file;
-        context.getLogger().info("Loading properties from {}", file.toAbsolutePath());
+        context.getLogger().info("Loading variables from {}", file.toAbsolutePath());
         if (Files.exists(file)) {
             try {
                 if (file.getFileName().toString().endsWith(".properties")) {
@@ -136,10 +136,10 @@ public class Environment implements Domain {
                     vars.putAll(JReleaserConfigLoader.loadProperties(file));
                 }
             } catch (IOException e) {
-                context.getLogger().debug("Could not load properties from {}", file.toAbsolutePath(), e);
+                context.getLogger().debug("Could not load variables from {}", file.toAbsolutePath(), e);
             }
         } else {
-            context.getLogger().warn("Properties source {} does not exist", file.toAbsolutePath());
+            context.getLogger().warn("Variables source {} does not exist", file.toAbsolutePath());
         }
     }
 

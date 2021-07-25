@@ -315,10 +315,13 @@ public class Project implements Domain, ExtraProperties {
     }
 
     public void parseVersion() {
+        String v = getResolvedVersion();
+        if (isBlank(v)) return;
+
         switch (getVersionPattern()) {
             case SEMVER: {
                 try {
-                    Version parsedVersion = Version.of(getVersion());
+                    Version parsedVersion = Version.of(v);
                     StringBuilder vn = new StringBuilder().append(parsedVersion.getMajor());
                     addExtraProperty(Constants.KEY_VERSION_MAJOR, parsedVersion.getMajor());
                     if (parsedVersion.hasMinor()) {
@@ -337,13 +340,13 @@ public class Project implements Domain, ExtraProperties {
                         addExtraProperty(Constants.KEY_VERSION_BUILD, parsedVersion.getBuild());
                     }
                 } catch (IllegalArgumentException e) {
-                    throw new JReleaserException("Version '" + getVersion() + "' does not follow the semver spec", e);
+                    throw new JReleaserException("Version '" + v + "' does not follow the semver spec", e);
                 }
             }
             break;
-            case JAVA_MODULE: {
+            case JAVA_MODULE: { 
                 try {
-                    JavaModuleVersion parsedVersion = JavaModuleVersion.of(getVersion());
+                    JavaModuleVersion parsedVersion = JavaModuleVersion.of(v);
                     addExtraProperty(Constants.KEY_VERSION_NUMBER, parsedVersion.getVersion());
                     if (parsedVersion.hasPrerelease()) {
                         addExtraProperty(Constants.KEY_VERSION_PRERELEASE, parsedVersion.getPrerelease());
@@ -352,7 +355,7 @@ public class Project implements Domain, ExtraProperties {
                         addExtraProperty(Constants.KEY_VERSION_BUILD, parsedVersion.getBuild());
                     }
                 } catch (IllegalArgumentException e) {
-                    throw new JReleaserException("Version '" + getVersion() + "' does not follow the Java module spec", e);
+                    throw new JReleaserException("Version '" + v + "' does not follow the Java module spec", e);
                 }
             }
             break;
