@@ -679,6 +679,8 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
 
         applyTemplates(props, project.getResolvedExtraProperties());
+        props.put(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
+        MustacheUtils.applyFunctions(props);
 
         return props;
     }

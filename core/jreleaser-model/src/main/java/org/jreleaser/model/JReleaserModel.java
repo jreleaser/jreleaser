@@ -54,16 +54,22 @@ public class JReleaserModel implements Domain {
     private final Files files = new Files();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
 
+    private final ZonedDateTime now;
     private final String timestamp;
     private Commit commit;
 
     public JReleaserModel() {
-        this.timestamp = ZonedDateTime.now().format(new DateTimeFormatterBuilder()
+        this.now = ZonedDateTime.now();
+        this.timestamp = now.format(new DateTimeFormatterBuilder()
             .append(ISO_LOCAL_DATE_TIME)
             .optionalStart()
             .appendOffset("+HH:MM", "Z")
             .optionalEnd()
             .toFormatter());
+    }
+
+    public ZonedDateTime getNow() {
+        return now;
     }
 
     public String getTimestamp() {
@@ -228,6 +234,8 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_OS_VERSION, PlatformUtils.getOsDetector().get(OsDetector.DETECTED_VERSION));
 
         applyTemplates(props, project.getResolvedExtraProperties());
+        props.put(Constants.KEY_ZONED_DATE_TIME_NOW, now);
+        MustacheUtils.applyFunctions(props);
 
         return props;
     }

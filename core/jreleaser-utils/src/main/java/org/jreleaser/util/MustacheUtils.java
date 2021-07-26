@@ -27,9 +27,12 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -89,6 +92,22 @@ public final class MustacheUtils {
         return isNotBlank(str) ? "!!" + str + "!!" : str;
     }
 
+    public static void applyFunctions(Map<String, Object> props) {
+        ZonedDateTime now = (ZonedDateTime) props.get(Constants.KEY_ZONED_DATE_TIME_NOW);
+        if (null == now) {
+            now = ZonedDateTime.now();
+        }
+        props.put("f_now", new TimeFormatFunction(now));
+
+        props.put("f_underscore", new UnderscoreFunction());
+        props.put("f_dash", new DashFunction());
+        props.put("f_slash", new SlashFunction());
+        props.put("f_upper", new UpperFunction());
+        props.put("f_lower", new LowerFunction());
+        props.put("f_capitalize", new CapitalizeFunction());
+        props.put("f_uncapitalize", new UncapitalizeFunction());
+    }
+
     private static class MyMustacheFactory extends DefaultMustacheFactory {
         @Override
         public void encode(String value, Writer writer) {
@@ -101,6 +120,72 @@ public final class MustacheUtils {
             } else {
                 super.encode(value, writer);
             }
+        }
+    }
+
+    private static class TimeFormatFunction implements Function<String, String> {
+        private final ZonedDateTime now;
+
+        private TimeFormatFunction(ZonedDateTime now) {
+            this.now = now;
+        }
+
+        @Override
+        public String apply(String input) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(input);
+            return now.format(formatter);
+        }
+    }
+
+    private static class UnderscoreFunction implements Function<String,String> {
+        @Override
+        public String apply(String input) {
+            return input.replace(".", "_")
+                .replace("-", "_");
+        }
+    }
+
+    private static class DashFunction implements Function<String,String> {
+        @Override
+        public String apply(String input) {
+            return input.replace(".", "-")
+                .replace("_", "-");
+        }
+    }
+
+    private static class SlashFunction implements Function<String,String> {
+        @Override
+        public String apply(String input) {
+            return input.replace(".", "/")
+                .replace("-", "/");
+        }
+    }
+
+    private static class UpperFunction implements Function<String,String> {
+        @Override
+        public String apply(String input) {
+            return input.toUpperCase();
+        }
+    }
+
+    private static class LowerFunction implements Function<String,String> {
+        @Override
+        public String apply(String input) {
+            return input.toLowerCase();
+        }
+    }
+
+    private static class CapitalizeFunction implements Function<String,String> {
+        @Override
+        public String apply(String input) {
+            return StringUtils.capitalize(input);
+        }
+    }
+
+    private static class UncapitalizeFunction implements Function<String,String> {
+        @Override
+        public String apply(String input) {
+            return StringUtils.uncapitalize(input);
         }
     }
 }

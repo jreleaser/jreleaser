@@ -26,6 +26,7 @@ public interface Constants {
     String HIDE = "************";
 
     // General
+    String KEY_ZONED_DATE_TIME_NOW = "__ZonedDateTime_now__";
     String KEY_TIMESTAMP = "timestamp";
     String KEY_COMMIT_SHORT_HASH = "commitShortHash";
     String KEY_COMMIT_FULL_HASH = "commitFullHash";
@@ -35,8 +36,14 @@ public interface Constants {
     String KEY_VERSION_PATCH = "versionPatch";
     String KEY_VERSION_TAG = "versionTag";
     String KEY_VERSION_NUMBER = "versionNumber";
-    String KEY_VERSION_PRERELEASE = "versionPrelease";
+    String KEY_VERSION_PRERELEASE = "versionPrerelease";
     String KEY_VERSION_BUILD = "versionBuild";
+    String KEY_VERSION_WITH_UNDERSCORES = "versionWithUnderscores";
+    String KEY_VERSION_WITH_DASHES      = "versionWithDashes";
+    String KEY_VERSION_NUMBER_WITH_UNDERSCORES = "versionNumberWithUnderscores";
+    String KEY_VERSION_NUMBER_WITH_DASHES      = "versionNumberWithDashes";
+    String KEY_EFFECTIVE_VERSION_WITH_UNDERSCORES = "effectiveVersionWithUnderscores";
+    String KEY_EFFECTIVE_VERSION_WITH_DASHES      = "effectiveVersionWithDashes";
 
     // Project
     String KEY_PROJECT_NAME = "projectName";

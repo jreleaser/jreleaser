@@ -510,6 +510,8 @@ public class Project implements Domain, ExtraProperties {
             props.put(Constants.KEY_OS_VERSION, PlatformUtils.getOsDetector().get(OsDetector.DETECTED_VERSION));
 
             applyTemplates(props, project.getResolvedExtraProperties());
+            props.put(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
+            MustacheUtils.applyFunctions(props);
 
             return props;
         }
