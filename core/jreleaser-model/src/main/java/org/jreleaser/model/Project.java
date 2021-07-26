@@ -344,7 +344,7 @@ public class Project implements Domain, ExtraProperties {
                 }
             }
             break;
-            case JAVA_MODULE: { 
+            case JAVA_MODULE: {
                 try {
                     JavaModuleVersion parsedVersion = JavaModuleVersion.of(v);
                     addExtraProperty(Constants.KEY_VERSION_NUMBER, parsedVersion.getVersion());
@@ -360,7 +360,19 @@ public class Project implements Domain, ExtraProperties {
             }
             break;
             default:
+                addExtraProperty(Constants.KEY_VERSION_NUMBER, v);
                 // noop
+        }
+
+        String vn = (String) getExtraProperties().get(Constants.KEY_VERSION_NUMBER);
+        String ev = getEffectiveVersion();
+        addExtraProperty(Constants.KEY_VERSION_WITH_UNDERSCORES, v.replace(".", "_").replace("-", "_"));
+        addExtraProperty(Constants.KEY_VERSION_WITH_DASHES, v.replace(".", "-").replace("_", "-"));
+        addExtraProperty(Constants.KEY_VERSION_NUMBER_WITH_UNDERSCORES, vn.replace(".", "_").replace("-", "_"));
+        addExtraProperty(Constants.KEY_VERSION_NUMBER_WITH_DASHES, vn.replace(".", "-").replace("_", "-"));
+        if (isNotBlank(ev)) {
+            addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_UNDERSCORES, ev.replace(".", "_").replace("-", "_"));
+            addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_DASHES, ev.replace(".", "-").replace("_", "-"));
         }
     }
 
