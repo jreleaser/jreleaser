@@ -71,7 +71,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
             Path directory = Files.createTempDirectory("jreleaser-" + tool.getRepositoryTap().getResolvedName());
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
-                .setBranch("HEAD")
+                .setBranch(tool.getRepositoryTap().getBranch())
                 .setDirectory(directory.toFile())
                 .setURI(repository.getHttpUrl())
                 .call();

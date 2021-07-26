@@ -144,7 +144,7 @@ public class ArticleAnnouncer implements Announcer {
             Path directory = Files.createTempDirectory("jreleaser-" + article.getRepository().getResolvedName());
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
-                .setBranch("HEAD")
+                .setBranch(article.getRepository().getBranch())
                 .setDirectory(directory.toFile())
                 .setURI(repository.getHttpUrl())
                 .call();

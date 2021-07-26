@@ -18,6 +18,7 @@
 package org.jreleaser.maven.plugin.internal;
 
 import org.jreleaser.maven.plugin.Announce;
+import org.jreleaser.maven.plugin.Announcer;
 import org.jreleaser.maven.plugin.Article;
 import org.jreleaser.maven.plugin.Artifact;
 import org.jreleaser.maven.plugin.Artifactory;
@@ -73,6 +74,7 @@ import org.jreleaser.maven.plugin.Tap;
 import org.jreleaser.maven.plugin.Teams;
 import org.jreleaser.maven.plugin.Twitter;
 import org.jreleaser.maven.plugin.Upload;
+import org.jreleaser.maven.plugin.Uploader;
 import org.jreleaser.maven.plugin.Webhook;
 import org.jreleaser.maven.plugin.Zulip;
 import org.jreleaser.model.ChocolateyBucket;
@@ -80,6 +82,8 @@ import org.jreleaser.model.DockerRepository;
 import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JbangCatalog;
+import org.jreleaser.model.Repository;
+import org.jreleaser.model.RepositoryTap;
 import org.jreleaser.model.ScoopBucket;
 import org.jreleaser.model.SnapTap;
 import org.jreleaser.model.UpdateSection;
@@ -357,21 +361,25 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Artifactory convertArtifactory(Artifactory artifactory) {
         org.jreleaser.model.Artifactory a = new org.jreleaser.model.Artifactory();
-        a.setName(artifactory.getName());
-        a.setActive(artifactory.resolveActive());
-        a.setExtraProperties(artifactory.getExtraProperties());
-        a.setConnectTimeout(artifactory.getConnectTimeout());
-        a.setReadTimeout(artifactory.getReadTimeout());
-        if (artifactory.isArtifactsSet()) a.setArtifacts(artifactory.isArtifacts());
-        if (artifactory.isFilesSet()) a.setFiles(artifactory.isFiles());
-        if (artifactory.isSignaturesSet()) a.setSignatures(artifactory.isSignatures());
+        convertUploader(artifactory, a);
         if (isNotBlank(artifactory.getTarget())) a.setTarget(artifactory.getTarget());
-        a.setUploadUrl(artifactory.getUploadUrl());
-        a.setDownloadUrl(artifactory.getDownloadUrl());
         a.setUsername(artifactory.getUsername());
         a.setPassword(artifactory.getPassword());
         a.setAuthorization(artifactory.resolveAuthorization().name());
         return a;
+    }
+
+    private static void convertUploader(Uploader from, org.jreleaser.model.Uploader into) {
+        into.setName(from.getName());
+        into.setActive(from.resolveActive());
+        into.setExtraProperties(from.getExtraProperties());
+        into.setConnectTimeout(from.getConnectTimeout());
+        into.setReadTimeout(from.getReadTimeout());
+        if (from.isArtifactsSet()) into.setArtifacts(from.isArtifacts());
+        if (from.isFilesSet()) into.setFiles(from.isFiles());
+        if (from.isSignaturesSet()) into.setSignatures(from.isSignatures());
+        into.setUploadUrl(from.getUploadUrl());
+        into.setDownloadUrl(from.getDownloadUrl());
     }
 
     private static Map<String, org.jreleaser.model.HttpUploader> convertHttp(Map<String, Http> http) {
@@ -385,17 +393,8 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.HttpUploader convertHttp(Http http) {
         org.jreleaser.model.HttpUploader h = new org.jreleaser.model.HttpUploader();
-        h.setName(http.getName());
-        h.setActive(http.resolveActive());
-        h.setExtraProperties(http.getExtraProperties());
-        h.setConnectTimeout(http.getConnectTimeout());
-        h.setReadTimeout(http.getReadTimeout());
-        if (http.isArtifactsSet()) h.setArtifacts(http.isArtifacts());
-        if (http.isFilesSet()) h.setFiles(http.isFiles());
-        if (http.isSignaturesSet()) h.setSignatures(http.isSignatures());
+        convertUploader(http, h);
         if (isNotBlank(http.getTarget())) h.setTarget(http.getTarget());
-        h.setUploadUrl(http.getUploadUrl());
-        h.setDownloadUrl(http.getDownloadUrl());
         h.setUsername(http.getUsername());
         h.setPassword(http.getPassword());
         h.setAuthorization(http.resolveAuthorization().name());
@@ -439,66 +438,76 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Article convertArticle(Article article) {
         org.jreleaser.model.Article a = new org.jreleaser.model.Article();
         a.setActive(article.resolveActive());
+        a.setExtraProperties(article.getExtraProperties());
         a.setFiles(convertArtifacts(article.getFiles()));
         a.setTemplateDirectory(article.getTemplateDirectory());
         a.setCommitAuthor(convertCommitAuthor(article.getCommitAuthor()));
-        a.setExtraProperties(article.getExtraProperties());
+        a.setRepository(convertRepository(article.getRepository()));
         return a;
+    }
+
+    private static Repository convertRepository(Tap tap) {
+        Repository t = new Repository();
+        convertTap(tap, t);
+        return t;
+    }
+
+    private static void convertTap(Tap from, RepositoryTap into) {
+        into.setOwner(from.getOwner());
+        into.setName(from.getName());
+        into.setBranch(from.getBranch());
+        into.setUsername(from.getUsername());
+        into.setToken(from.getToken());
+    }
+
+    private static void convertAnnouncer(Announcer from, org.jreleaser.model.Announcer into) {
+        into.setActive(from.resolveActive());
+        into.setConnectTimeout(from.getConnectTimeout());
+        into.setReadTimeout(from.getReadTimeout());
+        into.setExtraProperties(from.getExtraProperties());
     }
 
     private static org.jreleaser.model.Discord convertDiscord(Discord discord) {
         org.jreleaser.model.Discord a = new org.jreleaser.model.Discord();
-        a.setActive(discord.resolveActive());
+        convertAnnouncer(discord, a);
         a.setWebhook(discord.getWebhook());
         a.setMessage(discord.getMessage());
         a.setMessageTemplate(discord.getMessageTemplate());
-        a.setConnectTimeout(discord.getConnectTimeout());
-        a.setReadTimeout(discord.getReadTimeout());
-        a.setExtraProperties(discord.getExtraProperties());
         return a;
     }
 
     private static org.jreleaser.model.Discussions convertDiscussions(Discussions discussions) {
         org.jreleaser.model.Discussions a = new org.jreleaser.model.Discussions();
-        a.setActive(discussions.resolveActive());
+        convertAnnouncer(discussions, a);
         a.setOrganization(discussions.getOrganization());
         a.setTeam(discussions.getTeam());
         a.setTitle(discussions.getTitle());
         a.setMessage(discussions.getMessage());
         a.setMessageTemplate(discussions.getMessageTemplate());
-        a.setConnectTimeout(discussions.getConnectTimeout());
-        a.setReadTimeout(discussions.getReadTimeout());
-        a.setExtraProperties(discussions.getExtraProperties());
         return a;
     }
 
     private static org.jreleaser.model.Gitter convertGitter(Gitter gitter) {
         org.jreleaser.model.Gitter a = new org.jreleaser.model.Gitter();
-        a.setActive(gitter.resolveActive());
+        convertAnnouncer(gitter, a);
         a.setWebhook(gitter.getWebhook());
         a.setMessage(gitter.getMessage());
         a.setMessageTemplate(gitter.getMessageTemplate());
-        a.setConnectTimeout(gitter.getConnectTimeout());
-        a.setReadTimeout(gitter.getReadTimeout());
-        a.setExtraProperties(gitter.getExtraProperties());
         return a;
     }
 
     private static org.jreleaser.model.GoogleChat convertGoogleChat(GoogleChat googleChat) {
         org.jreleaser.model.GoogleChat a = new org.jreleaser.model.GoogleChat();
-        a.setActive(googleChat.resolveActive());
+        convertAnnouncer(googleChat, a);
         a.setWebhook(googleChat.getWebhook());
         a.setMessage(googleChat.getMessage());
         a.setMessageTemplate(googleChat.getMessageTemplate());
-        a.setConnectTimeout(googleChat.getConnectTimeout());
-        a.setReadTimeout(googleChat.getReadTimeout());
-        a.setExtraProperties(googleChat.getExtraProperties());
         return a;
     }
 
     private static org.jreleaser.model.Mail convertMail(Mail mail) {
         org.jreleaser.model.Mail a = new org.jreleaser.model.Mail();
-        a.setActive(mail.resolveActive());
+        convertAnnouncer(mail, a);
         if (mail.isAuthSet()) a.setAuth(mail.isAuth());
         if (null != mail.getTransport()) a.setTransport(mail.getTransport().name());
         if (null != mail.getMimeType()) a.setMimeType(mail.getMimeType().name());
@@ -512,90 +521,71 @@ public final class JReleaserModelConverter {
         a.setSubject(mail.getSubject());
         a.setMessage(mail.getMessage());
         a.setMessageTemplate(mail.getMessageTemplate());
-        a.setExtraProperties(mail.getExtraProperties());
         return a;
     }
 
     private static org.jreleaser.model.Mastodon convertMastodon(Mastodon mastodon) {
         org.jreleaser.model.Mastodon a = new org.jreleaser.model.Mastodon();
-        a.setActive(mastodon.resolveActive());
+        convertAnnouncer(mastodon, a);
         a.setHost(mastodon.getHost());
         a.setAccessToken(mastodon.getAccessToken());
         a.setStatus(mastodon.getStatus());
-        a.setConnectTimeout(mastodon.getConnectTimeout());
-        a.setReadTimeout(mastodon.getReadTimeout());
-        a.setExtraProperties(mastodon.getExtraProperties());
         return a;
     }
 
     private static org.jreleaser.model.Mattermost convertMattermost(Mattermost mattermost) {
         org.jreleaser.model.Mattermost a = new org.jreleaser.model.Mattermost();
-        a.setActive(mattermost.resolveActive());
+        convertAnnouncer(mattermost, a);
         a.setWebhook(mattermost.getWebhook());
         a.setMessage(mattermost.getMessage());
         a.setMessageTemplate(mattermost.getMessageTemplate());
-        a.setConnectTimeout(mattermost.getConnectTimeout());
-        a.setReadTimeout(mattermost.getReadTimeout());
-        a.setExtraProperties(mattermost.getExtraProperties());
         return a;
     }
 
     private static org.jreleaser.model.SdkmanAnnouncer convertSdkmanAnnouncer(SdkmanAnnouncer sdkman) {
         org.jreleaser.model.SdkmanAnnouncer a = new org.jreleaser.model.SdkmanAnnouncer();
-        a.setActive(sdkman.resolveActive());
+        convertAnnouncer(sdkman, a);
         a.setConsumerKey(sdkman.getConsumerKey());
         a.setConsumerToken(sdkman.getConsumerToken());
         a.setCandidate(sdkman.getCandidate());
         a.setReleaseNotesUrl(sdkman.getReleaseNotesUrl());
         a.setMajor(sdkman.isMajor());
-        a.setConnectTimeout(sdkman.getConnectTimeout());
-        a.setReadTimeout(sdkman.getReadTimeout());
-        a.setExtraProperties(sdkman.getExtraProperties());
         return a;
     }
 
     private static org.jreleaser.model.Slack convertSlack(Slack slack) {
         org.jreleaser.model.Slack a = new org.jreleaser.model.Slack();
-        a.setActive(slack.resolveActive());
+        convertAnnouncer(slack, a);
         a.setToken(slack.getToken());
         a.setWebhook(slack.getWebhook());
         a.setChannel(slack.getChannel());
         a.setMessage(slack.getMessage());
         a.setMessageTemplate(slack.getMessageTemplate());
-        a.setConnectTimeout(slack.getConnectTimeout());
-        a.setReadTimeout(slack.getReadTimeout());
-        a.setExtraProperties(slack.getExtraProperties());
         return a;
     }
 
     private static org.jreleaser.model.Teams convertTeams(Teams teams) {
         org.jreleaser.model.Teams a = new org.jreleaser.model.Teams();
-        a.setActive(teams.resolveActive());
+        convertAnnouncer(teams, a);
         a.setWebhook(teams.getWebhook());
         a.setMessageTemplate(teams.getMessageTemplate());
-        a.setConnectTimeout(teams.getConnectTimeout());
-        a.setReadTimeout(teams.getReadTimeout());
-        a.setExtraProperties(teams.getExtraProperties());
         return a;
     }
 
     private static org.jreleaser.model.Twitter convertTwitter(Twitter twitter) {
         org.jreleaser.model.Twitter a = new org.jreleaser.model.Twitter();
-        a.setActive(twitter.resolveActive());
+        convertAnnouncer(twitter, a);
         a.setConsumerKey(twitter.getConsumerKey());
         a.setConsumerSecret(twitter.getConsumerSecret());
         a.setAccessToken(twitter.getAccessToken());
         a.setAccessTokenSecret(twitter.getAccessTokenSecret());
         a.setStatus(twitter.getStatus());
-        a.setConnectTimeout(twitter.getConnectTimeout());
-        a.setReadTimeout(twitter.getReadTimeout());
-        a.setExtraProperties(twitter.getExtraProperties());
         return a;
     }
 
     private static org.jreleaser.model.Zulip convertZulip(Zulip zulip) {
         org.jreleaser.model.Zulip a = new org.jreleaser.model.Zulip();
-        a.setActive(zulip.resolveActive());
+        convertAnnouncer(zulip, a);
         a.setAccount(zulip.getAccount());
         a.setApiKey(zulip.getApiKey());
         a.setApiHost(zulip.getApiHost());
@@ -603,9 +593,6 @@ public final class JReleaserModelConverter {
         a.setSubject(zulip.getSubject());
         a.setMessage(zulip.getMessage());
         a.setMessageTemplate(zulip.getMessageTemplate());
-        a.setConnectTimeout(zulip.getConnectTimeout());
-        a.setReadTimeout(zulip.getReadTimeout());
-        a.setExtraProperties(zulip.getExtraProperties());
         return a;
     }
 
@@ -620,14 +607,11 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Webhook convertWebhook(Webhook webhook) {
         org.jreleaser.model.Webhook a = new org.jreleaser.model.Webhook();
-        a.setActive(webhook.resolveActive());
+        convertAnnouncer(webhook, a);
         a.setWebhook(webhook.getWebhook());
         a.setMessage(webhook.getMessage());
         a.setMessageProperty(webhook.getMessageProperty());
         a.setMessageTemplate(webhook.getMessageTemplate());
-        a.setConnectTimeout(webhook.getConnectTimeout());
-        a.setReadTimeout(webhook.getReadTimeout());
-        a.setExtraProperties(webhook.getExtraProperties());
         return a;
     }
 
@@ -826,10 +810,7 @@ public final class JReleaserModelConverter {
 
     private static HomebrewTap convertHomebrewTap(Tap tap) {
         HomebrewTap t = new HomebrewTap();
-        t.setOwner(tap.getOwner());
-        t.setName(tap.getName());
-        t.setUsername(tap.getUsername());
-        t.setToken(tap.getToken());
+        convertTap(tap, t);
         return t;
     }
 
@@ -876,10 +857,7 @@ public final class JReleaserModelConverter {
 
     private static DockerRepository convertDockerRepository(Tap tap) {
         DockerRepository t = new DockerRepository();
-        t.setOwner(tap.getOwner());
-        t.setName(tap.getName());
-        t.setUsername(tap.getUsername());
-        t.setToken(tap.getToken());
+        convertTap(tap, t);
         return t;
     }
 
@@ -918,10 +896,7 @@ public final class JReleaserModelConverter {
 
     private static ChocolateyBucket convertChocolateyBucket(Bucket bucket) {
         ChocolateyBucket b = new ChocolateyBucket();
-        b.setOwner(bucket.getOwner());
-        b.setName(bucket.getName());
-        b.setUsername(bucket.getUsername());
-        b.setToken(bucket.getToken());
+        convertTap(bucket, b);
         return b;
     }
 
@@ -939,10 +914,7 @@ public final class JReleaserModelConverter {
 
     private static JbangCatalog convertJbangCatalog(Catalog catalog) {
         JbangCatalog t = new JbangCatalog();
-        t.setOwner(catalog.getOwner());
-        t.setName(catalog.getName());
-        t.setUsername(catalog.getUsername());
-        t.setToken(catalog.getToken());
+        convertTap(catalog, t);
         return t;
     }
 
@@ -961,10 +933,7 @@ public final class JReleaserModelConverter {
 
     private static ScoopBucket convertScoopBucket(Bucket bucket) {
         ScoopBucket b = new ScoopBucket();
-        b.setOwner(bucket.getOwner());
-        b.setName(bucket.getName());
-        b.setUsername(bucket.getUsername());
-        b.setToken(bucket.getToken());
+        convertTap(bucket, b);
         return b;
     }
 
@@ -1004,10 +973,7 @@ public final class JReleaserModelConverter {
 
     private static SnapTap convertSnapTap(Tap tap) {
         SnapTap t = new SnapTap();
-        t.setOwner(tap.getOwner());
-        t.setName(tap.getName());
-        t.setUsername(tap.getUsername());
-        t.setToken(tap.getToken());
+        convertTap(tap, t);
         return t;
     }
 

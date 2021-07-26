@@ -25,7 +25,6 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -66,6 +65,9 @@ public abstract class BrewValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         HomebrewTap tap = tool.getTap();
         validateOwner(tap, parentTool.getTap());
+        if (isBlank(tap.getBranch())) {
+            tap.setBranch(parentTool.getTap().getBranch());
+        }
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
@@ -88,19 +90,7 @@ public abstract class BrewValidator extends Validator {
             tap.setToken(parentTool.getTap().getToken());
         }
 
-        tap.setUsername(
-            checkProperty(context,
-                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
-                "distribution." + distribution.getName() + "brew.tap.username",
-                tap.getUsername(),
-                service.getResolvedUsername()));
-
-        tap.setToken(
-            checkProperty(context,
-                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
-                "distribution." + distribution.getName() + "brew.tap.token",
-                tap.getToken(),
-                service.getResolvedToken()));
+        validateTap(context, distribution, tap, "brew.tap");
 
         if (!tool.isMultiPlatformSet() && parentTool.isMultiPlatformSet()) {
             tool.setMultiPlatform(parentTool.isMultiPlatform());

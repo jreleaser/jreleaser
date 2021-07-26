@@ -42,6 +42,7 @@ public abstract class ArticleValidator extends Validator {
 
         validateCommitAuthor(article, service);
         validateOwner(repository, service);
+
         if (isBlank(repository.getName())) {
             errors.configuration("announce.article.repository.name must not be blank.");
         }
@@ -59,6 +60,13 @@ public abstract class ArticleValidator extends Validator {
                 "announce.article.repository.token",
                 repository.getToken(),
                 service.getResolvedToken()));
+
+        repository.setBranch(
+            checkProperty(context,
+                Env.toVar(repository.getBasename() + "_" + service.getServiceName()) + "_BRANCH",
+                "announce.article.repository.branch",
+                repository.getBranch(),
+                "HEAD"));
 
         if (isBlank(article.getTemplateDirectory())) {
             article.setTemplateDirectory("src/jreleaser/templates/article");

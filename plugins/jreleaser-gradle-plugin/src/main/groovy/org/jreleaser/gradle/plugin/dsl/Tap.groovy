@@ -34,4 +34,6 @@ interface Tap {
     Property<String> getUsername()
 
     Property<String> getToken()
+
+    Property<String> getBranch()
 }

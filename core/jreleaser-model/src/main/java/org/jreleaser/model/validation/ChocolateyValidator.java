@@ -23,7 +23,6 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
@@ -55,6 +54,9 @@ public abstract class ChocolateyValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         ChocolateyBucket bucket = tool.getBucket();
         validateOwner(bucket, parentTool.getBucket());
+        if (isBlank(bucket.getBranch())) {
+            bucket.setBranch(parentTool.getBucket().getBranch());
+        }
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
@@ -77,19 +79,7 @@ public abstract class ChocolateyValidator extends Validator {
             bucket.setToken(parentTool.getBucket().getToken());
         }
 
-        bucket.setUsername(
-            checkProperty(context,
-                Env.toVar(bucket.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
-                "distribution." + distribution.getName() + "chocolatey.bucket.username",
-                bucket.getUsername(),
-                service.getResolvedUsername()));
-
-        bucket.setToken(
-            checkProperty(context,
-                Env.toVar(bucket.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
-                "distribution." + distribution.getName() + "chocolatey.bucket.token",
-                bucket.getToken(),
-                service.getResolvedToken()));
+        validateTap(context, distribution, bucket, "chocolatey.bucket");
 
         validateArtifactPlatforms(context, distribution, tool, errors);
     }

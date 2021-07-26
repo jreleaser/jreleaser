@@ -25,7 +25,6 @@ import org.jreleaser.model.Plug;
 import org.jreleaser.model.Slot;
 import org.jreleaser.model.Snap;
 import org.jreleaser.model.SnapTap;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.ArrayList;
@@ -63,6 +62,9 @@ public abstract class SnapValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         SnapTap snap = tool.getSnap();
         validateOwner(snap, parentTool.getSnap());
+        if (isBlank(snap.getBranch())) {
+            snap.setBranch(parentTool.getSnap().getBranch());
+        }
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
@@ -111,19 +113,7 @@ public abstract class SnapValidator extends Validator {
             snap.setToken(parentTool.getSnap().getToken());
         }
 
-        snap.setUsername(
-            checkProperty(context,
-                Env.toVar(snap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
-                "distribution." + distribution.getName() + "snap.snap.username",
-                snap.getUsername(),
-                service.getResolvedUsername()));
-
-        snap.setToken(
-            checkProperty(context,
-                Env.toVar(snap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
-                "distribution." + distribution.getName() + "snap.snap.token",
-                snap.getToken(),
-                service.getResolvedToken()));
+        validateTap(context, distribution, snap, "snap.snap");
 
         validateArtifactPlatforms(context, distribution, tool, errors);
     }

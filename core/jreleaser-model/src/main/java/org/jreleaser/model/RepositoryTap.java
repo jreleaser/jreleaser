@@ -36,6 +36,10 @@ public interface RepositoryTap extends Domain, OwnerAware {
 
     void setName(String name);
 
+    String getBranch();
+
+    void setBranch(String branch);
+
     String getUsername();
 
     void setUsername(String username);

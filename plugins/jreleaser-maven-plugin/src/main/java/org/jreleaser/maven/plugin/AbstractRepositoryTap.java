@@ -26,12 +26,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 abstract class AbstractRepositoryTap {
     private String owner;
     private String name;
+    private String branch;
     private String username;
     private String token;
 
     void setAll(AbstractRepositoryTap tap) {
         this.owner = tap.owner;
         this.name = tap.name;
+        this.branch = tap.branch;
         this.username = tap.username;
         this.token = tap.token;
     }
@@ -50,6 +52,14 @@ abstract class AbstractRepositoryTap {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 
     public String getUsername() {
@@ -71,6 +81,7 @@ abstract class AbstractRepositoryTap {
     public boolean isSet() {
         return isNotBlank(owner) ||
             isNotBlank(name) ||
+            isNotBlank(branch) ||
             isNotBlank(username) ||
             isNotBlank(token);
     }

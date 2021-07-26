@@ -28,6 +28,7 @@ import org.jreleaser.model.DockerRepository
 import org.jreleaser.model.HomebrewTap
 import org.jreleaser.model.JbangCatalog
 import org.jreleaser.model.Repository
+import org.jreleaser.model.RepositoryTap
 import org.jreleaser.model.ScoopBucket
 import org.jreleaser.model.SnapTap
 
@@ -42,6 +43,7 @@ import javax.inject.Inject
 class TapImpl implements Tap {
     final Property<String> owner
     final Property<String> name
+    final Property<String> branch
     final Property<String> username
     final Property<String> token
 
@@ -49,6 +51,7 @@ class TapImpl implements Tap {
     TapImpl(ObjectFactory objects) {
         owner = objects.property(String).convention(Providers.notDefined())
         name = objects.property(String).convention(Providers.notDefined())
+        branch = objects.property(String).convention(Providers.notDefined())
         username = objects.property(String).convention(Providers.notDefined())
         token = objects.property(String).convention(Providers.notDefined())
     }
@@ -57,70 +60,58 @@ class TapImpl implements Tap {
     boolean isSet() {
         owner.present ||
             name.present ||
+            branch.present ||
             username.present ||
             token.present
     }
 
+    private void convert(RepositoryTap into) {
+        if (owner.present) into.owner = owner.get()
+        if (name.present) into.name = name.get()
+        if (branch.present) into.branch = branch.get()
+        if (username.present) into.name = username.get()
+        if (token.present) into.token = token.get()
+    }
+
     HomebrewTap toHomebrewTap() {
         HomebrewTap tap = new HomebrewTap()
-        if (owner.present) tap.owner = owner.get()
-        if (name.present) tap.name = name.get()
-        if (username.present) tap.name = username.get()
-        if (token.present) tap.token = token.get()
+        convert(tap)
         tap
     }
 
     SnapTap toSnapTap() {
         SnapTap tap = new SnapTap()
-        if (owner.present) tap.owner = owner.get()
-        if (name.present) tap.name = name.get()
-        if (username.present) tap.name = username.get()
-        if (token.present) tap.token = token.get()
+        convert(tap)
         tap
     }
 
     Repository toRepository() {
         Repository tap = new Repository()
-        if (owner.present) tap.owner = owner.get()
-        if (name.present) tap.name = name.get()
-        if (username.present) tap.name = username.get()
-        if (token.present) tap.token = token.get()
+        convert(tap)
         tap
     }
 
     DockerRepository toDockerRepository() {
         DockerRepository tap = new DockerRepository()
-        if (owner.present) tap.owner = owner.get()
-        if (name.present) tap.name = name.get()
-        if (username.present) tap.name = username.get()
-        if (token.present) tap.token = token.get()
+        convert(tap)
         tap
     }
 
     ScoopBucket toScoopBucket() {
         ScoopBucket tap = new ScoopBucket()
-        if (owner.present) tap.owner = owner.get()
-        if (name.present) tap.name = name.get()
-        if (username.present) tap.name = username.get()
-        if (token.present) tap.token = token.get()
+        convert(tap)
         tap
     }
 
     ChocolateyBucket toChocolateyBucket() {
         ChocolateyBucket tap = new ChocolateyBucket()
-        if (owner.present) tap.owner = owner.get()
-        if (name.present) tap.name = name.get()
-        if (username.present) tap.name = username.get()
-        if (token.present) tap.token = token.get()
+        convert(tap)
         tap
     }
 
     JbangCatalog toJbangCatalog() {
-        JbangCatalog catalog = new JbangCatalog()
-        if (owner.present) catalog.owner = owner.get()
-        if (name.present) catalog.name = name.get()
-        if (username.present) catalog.name = username.get()
-        if (token.present) catalog.token = token.get()
-        catalog
+        JbangCatalog tap = new JbangCatalog()
+        convert(tap)
+        tap
     }
 }

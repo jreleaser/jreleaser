@@ -119,5 +119,9 @@ public abstract class PackagersValidator extends Validator {
                 "<empty>",
                 tap.getToken(),
                 service.getResolvedToken()));
+
+        if (isBlank(tap.getBranch())) {
+            tap.setBranch("HEAD");
+        }
     }
 }

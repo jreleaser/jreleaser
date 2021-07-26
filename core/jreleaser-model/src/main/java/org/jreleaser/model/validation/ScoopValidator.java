@@ -24,7 +24,6 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Scoop;
 import org.jreleaser.model.ScoopBucket;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Set;
@@ -59,6 +58,9 @@ public abstract class ScoopValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         ScoopBucket bucket = tool.getBucket();
         validateOwner(bucket, parentTool.getBucket());
+        if (isBlank(bucket.getBranch())) {
+            bucket.setBranch(parentTool.getBucket().getBranch());
+        }
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
@@ -88,19 +90,7 @@ public abstract class ScoopValidator extends Validator {
             bucket.setToken(parentTool.getBucket().getToken());
         }
 
-        bucket.setUsername(
-            checkProperty(context,
-                Env.toVar(bucket.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
-                "distribution." + distribution.getName() + "scoop.bucket.username",
-                bucket.getUsername(),
-                service.getResolvedUsername()));
-
-        bucket.setToken(
-            checkProperty(context,
-                Env.toVar(bucket.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
-                "distribution." + distribution.getName() + "scoop.bucket.token",
-                bucket.getToken(),
-                service.getResolvedToken()));
+        validateTap(context, distribution, bucket, "scoop.bucket");
 
         validateArtifactPlatforms(context, distribution, tool, errors);
 

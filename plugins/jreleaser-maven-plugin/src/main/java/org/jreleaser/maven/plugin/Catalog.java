@@ -21,5 +21,5 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Catalog extends AbstractRepositoryTap {
+public class Catalog extends Tap {
 }

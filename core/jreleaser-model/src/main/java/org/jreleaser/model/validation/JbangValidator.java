@@ -23,7 +23,6 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Jbang;
 import org.jreleaser.model.JbangCatalog;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.List;
@@ -60,6 +59,9 @@ public abstract class JbangValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         JbangCatalog catalog = tool.getCatalog();
         validateOwner(catalog, parentTool.getCatalog());
+        if (isBlank(catalog.getBranch())) {
+            catalog.setBranch(parentTool.getCatalog().getBranch());
+        }
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
@@ -77,19 +79,7 @@ public abstract class JbangValidator extends Validator {
             catalog.setToken(parentTool.getCatalog().getToken());
         }
 
-        catalog.setUsername(
-            checkProperty(context,
-                Env.toVar(catalog.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
-                "distribution." + distribution.getName() + "jbang.catalog.username",
-                catalog.getUsername(),
-                service.getResolvedUsername()));
-
-        catalog.setToken(
-            checkProperty(context,
-                Env.toVar(catalog.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
-                "distribution." + distribution.getName() + "jbang.catalog.token",
-                catalog.getToken(),
-                service.getResolvedToken()));
+        validateTap(context, distribution, catalog, "jbang.catalog");
 
         if (model.getProject().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
             !parentTool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {

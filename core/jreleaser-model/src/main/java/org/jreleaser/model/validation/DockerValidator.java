@@ -85,6 +85,9 @@ public abstract class DockerValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         DockerRepository repository = tool.getRepository();
         validateOwner(repository, parentTool.getRepository());
+        if (isBlank(repository.getBranch())) {
+            repository.setBranch(parentTool.getRepository().getBranch());
+        }
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
 
@@ -98,6 +101,8 @@ public abstract class DockerValidator extends Validator {
         if (isBlank(repository.getToken())) {
             repository.setToken(parentTool.getRepository().getToken());
         }
+
+        validateTap(context, distribution, repository, "docker.repository");
 
         if (isBlank(tool.getBaseImage())) {
             tool.setBaseImage(parentTool.getBaseImage());

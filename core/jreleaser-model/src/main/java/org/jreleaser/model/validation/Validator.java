@@ -19,9 +19,12 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.CommitAuthor;
 import org.jreleaser.model.CommitAuthorAware;
+import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Environment;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.OwnerAware;
+import org.jreleaser.model.RepositoryTap;
 import org.jreleaser.model.TimeoutAware;
 import org.jreleaser.model.Tool;
 import org.jreleaser.util.Env;
@@ -107,5 +110,30 @@ class Validator {
         if (self.getReadTimeout() <= 0 || self.getReadTimeout() > 300) {
             self.setReadTimeout(60);
         }
+    }
+
+    static void validateTap(JReleaserContext context, Distribution distribution, RepositoryTap tap, String property) {
+        GitService service = context.getModel().getRelease().getGitService();
+
+        tap.setUsername(
+            checkProperty(context,
+                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
+                "distribution." + distribution.getName() + "." + property + ".username",
+                tap.getUsername(),
+                service.getResolvedUsername()));
+
+        tap.setToken(
+            checkProperty(context,
+                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
+                "distribution." + distribution.getName() + "." + property + ".token",
+                tap.getToken(),
+                service.getResolvedToken()));
+
+        tap.setBranch(
+            checkProperty(context,
+                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_BRANCH",
+                "distribution." + distribution.getName() + "." + property + ".branch",
+                tap.getBranch(),
+                "HEAD"));
     }
 }

@@ -34,6 +34,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
     protected String basename;
     protected String owner;
     protected String name;
+    protected String branch;
     protected String username;
     protected String token;
 
@@ -53,6 +54,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
     void setAll(AbstractRepositoryTap tap) {
         this.owner = tap.owner;
         this.name = tap.name;
+        this.branch = tap.branch;
         this.username = tap.username;
         this.token = tap.token;
     }
@@ -103,6 +105,16 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
     }
 
     @Override
+    public String getBranch() {
+        return branch;
+    }
+
+    @Override
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+
+    @Override
     public String getUsername() {
         return username;
     }
@@ -127,6 +139,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("owner", owner);
         map.put("name", getResolvedName());
+        map.put("branch", branch);
         map.put("username", username);
         map.put("token", isNotBlank(token) ? HIDE : UNSET);
         return map;
