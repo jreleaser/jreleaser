@@ -27,7 +27,6 @@ import org.jreleaser.model.Changelog;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JavaModuleVersion;
@@ -67,15 +66,15 @@ import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
 public class ChangelogGenerator {
     private static final String UNCATEGORIZED = "<<UNCATEGORIZED>>";
 
-    public static String generate(JReleaserContext context, Releaser releaser) throws IOException {
+    public static String generate(JReleaserContext context) throws IOException {
         if (!context.getModel().getRelease().getGitService().getChangelog().isEnabled()) {
             return "";
         }
 
-        return createChangelog(context, releaser);
+        return createChangelog(context);
     }
 
-    private static String createChangelog(JReleaserContext context, Releaser releaser) throws IOException {
+    private static String createChangelog(JReleaserContext context) throws IOException {
         GitService gitService = context.getModel().getRelease().getGitService();
         Changelog changelog = gitService.getChangelog();
 
@@ -97,7 +96,7 @@ public class ChangelogGenerator {
             context.getLogger().debug("sorting commits {}", changelog.getSort());
 
             if (changelog.resolveFormatted(context.getModel().getProject())) {
-                return formatChangelog(context, releaser, changelog, commits, revCommitComparator, commitSeparator);
+                return formatChangelog(context, changelog, commits, revCommitComparator, commitSeparator);
             }
 
             String commitsUrl = gitService.getResolvedCommitUrl(context.getModel());
@@ -259,7 +258,6 @@ public class ChangelogGenerator {
     }
 
     private static String formatChangelog(JReleaserContext context,
-                                          Releaser releaser,
                                           Changelog changelog,
                                           Iterable<RevCommit> commits,
                                           Comparator<RevCommit> revCommitComparator,
@@ -325,7 +323,7 @@ public class ChangelogGenerator {
                 .append(lineSeparator)
                 .append("We'd like to thank the following people for their contributions:")
                 .append(lineSeparator)
-                .append(formatContributors(context, releaser, changelog, contributors, lineSeparator))
+                .append(formatContributors(context, changelog, contributors, lineSeparator))
                 .append(lineSeparator);
         }
 
@@ -337,7 +335,6 @@ public class ChangelogGenerator {
     }
 
     private static String formatContributors(JReleaserContext context,
-                                             Releaser releaser,
                                              Changelog changelog,
                                              Set<Contributor> contributors,
                                              String lineSeparator) {
@@ -347,7 +344,7 @@ public class ChangelogGenerator {
         Map<String, List<Contributor>> grouped = contributors.stream()
             .peek(contributor -> {
                 if (isNotBlank(format) && (format.contains("AsLink") || format.contains("Username"))) {
-                    releaser.findUser(contributor.email, contributor.name)
+                    context.getReleaser().findUser(contributor.email, contributor.name)
                         .ifPresent(contributor::setUser);
                 }
             })

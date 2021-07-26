@@ -130,17 +130,21 @@ public class Artifact implements Domain, ExtraProperties {
         return tp;
     }
 
-    public Path getResolvedPath(JReleaserContext context) {
+    public Path getResolvedPath(JReleaserContext context, Path basedir, boolean checkIfExists) {
         if (null == resolvedPath) {
             if (path.contains("{{")) {
                 path = applyTemplate(path, artifactProps(context.props()));
             }
-            resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
-            if (!exists(resolvedPath)) {
+            resolvedPath = basedir.resolve(Paths.get(path)).normalize();
+            if (checkIfExists && !exists(resolvedPath)) {
                 throw new JReleaserException("Path does not exist. " + context.relativizeToBasedir(resolvedPath));
             }
         }
         return resolvedPath;
+    }
+
+    public Path getResolvedPath(JReleaserContext context) {
+        return getResolvedPath(context, context.getBasedir(), true);
     }
 
     public Path getResolvedPath(JReleaserContext context, Distribution distribution) {
@@ -177,14 +181,18 @@ public class Artifact implements Domain, ExtraProperties {
         return resolvedPath;
     }
 
-    public Path getResolvedTransform(JReleaserContext context) {
+    public Path getResolvedTransform(JReleaserContext context, Path basedir) {
         if (null == resolvedTransform && isNotBlank(transform)) {
             if (transform.contains("{{")) {
                 transform = applyTemplate(transform, artifactProps(context.props()));
             }
-            resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
+            resolvedTransform = basedir.resolve(Paths.get(transform)).normalize();
         }
         return resolvedTransform;
+    }
+
+    public Path getResolvedTransform(JReleaserContext context) {
+        return getResolvedTransform(context, context.getArtifactsDirectory());
     }
 
     public Path getResolvedTransform(JReleaserContext context, Distribution distribution) {

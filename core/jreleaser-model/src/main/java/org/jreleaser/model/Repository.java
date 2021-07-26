@@ -15,29 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.tool.spi;
-
-import org.jreleaser.model.Distribution;
-import org.jreleaser.model.Tool;
-
-import java.util.Map;
+package org.jreleaser.model;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-public interface ToolProcessor<T extends Tool> {
-    T getTool();
-
-    void setTool(T tool);
-
-    String getToolName();
-
-    boolean supportsDistribution(Distribution distribution);
-
-    void prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
-
-    void packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
-
-    void publishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
+public class Repository extends AbstractRepositoryTap {
+    public Repository() {
+        super("article");
+    }
 }

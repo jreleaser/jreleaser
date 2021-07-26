@@ -15,29 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.tool.spi;
+package org.jreleaser.announcers;
 
-import org.jreleaser.model.Distribution;
-import org.jreleaser.model.Tool;
+import org.jreleaser.model.announcer.spi.AnnouncerBuilderFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
-import java.util.Map;
+import static org.jreleaser.model.Article.NAME;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-public interface ToolProcessor<T extends Tool> {
-    T getTool();
+@ServiceProviderFor(AnnouncerBuilderFactory.class)
+public class ArticleAnnouncerBuilderFactory implements AnnouncerBuilderFactory<ArticleAnnouncer, ArticleAnnouncerBuilder> {
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-    void setTool(T tool);
-
-    String getToolName();
-
-    boolean supportsDistribution(Distribution distribution);
-
-    void prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
-
-    void packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
-
-    void publishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
+    @Override
+    public ArticleAnnouncerBuilder getBuilder() {
+        return new ArticleAnnouncerBuilder();
+    }
 }

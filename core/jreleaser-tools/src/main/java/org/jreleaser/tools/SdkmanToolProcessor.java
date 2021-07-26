@@ -22,7 +22,6 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Sdkman;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.sdk.sdkman.MajorReleaseSdkmanCommand;
 import org.jreleaser.sdk.sdkman.MinorReleaseSdkmanCommand;
@@ -57,7 +56,7 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
     }
 
     @Override
-    protected void doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         org.jreleaser.model.Sdkman sdkman = distribution.getSdkman();
 
         Map<String, String> platforms = new LinkedHashMap<>();

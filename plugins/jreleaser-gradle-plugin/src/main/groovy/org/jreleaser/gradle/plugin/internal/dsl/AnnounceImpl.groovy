@@ -25,6 +25,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Announce
+import org.jreleaser.gradle.plugin.dsl.Article
 import org.jreleaser.gradle.plugin.dsl.Discord
 import org.jreleaser.gradle.plugin.dsl.Discussions
 import org.jreleaser.gradle.plugin.dsl.Gitter
@@ -49,6 +50,7 @@ import javax.inject.Inject
 @CompileStatic
 class AnnounceImpl implements Announce {
     final Property<Boolean> enabled
+    final ArticleImpl article
     final DiscordImpl discord
     final DiscussionsImpl discussions
     final GitterImpl gitter
@@ -66,6 +68,7 @@ class AnnounceImpl implements Announce {
     @Inject
     AnnounceImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
+        article = objects.newInstance(ArticleImpl, objects)
         discord = objects.newInstance(DiscordImpl, objects)
         discussions = objects.newInstance(DiscussionsImpl, objects)
         gitter = objects.newInstance(GitterImpl, objects)
@@ -87,6 +90,11 @@ class AnnounceImpl implements Announce {
                 return webhook
             }
         })
+    }
+
+    @Override
+    void article(Action<? super Article> action) {
+        action.execute(article)
     }
 
     @Override
@@ -147,6 +155,11 @@ class AnnounceImpl implements Announce {
     @Override
     void zulip(Action<? super Zulip> action) {
         action.execute(zulip)
+    }
+
+    @Override
+    void article(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Article) Closure<Void> action) {
+        ConfigureUtil.configure(action, article)
     }
 
     @Override
@@ -212,6 +225,7 @@ class AnnounceImpl implements Announce {
     org.jreleaser.model.Announce toModel() {
         org.jreleaser.model.Announce announce = new org.jreleaser.model.Announce()
         if (enabled.present) announce.enabled = enabled.get()
+        if (article.isSet()) announce.article = article.toModel()
         if (discord.isSet()) announce.discord = discord.toModel()
         if (discussions.isSet()) announce.discussions = discussions.toModel()
         if (gitter.isSet()) announce.gitter = gitter.toModel()

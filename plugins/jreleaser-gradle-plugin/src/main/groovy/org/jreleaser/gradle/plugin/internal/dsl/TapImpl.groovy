@@ -27,6 +27,7 @@ import org.jreleaser.model.ChocolateyBucket
 import org.jreleaser.model.DockerRepository
 import org.jreleaser.model.HomebrewTap
 import org.jreleaser.model.JbangCatalog
+import org.jreleaser.model.Repository
 import org.jreleaser.model.ScoopBucket
 import org.jreleaser.model.SnapTap
 
@@ -71,6 +72,15 @@ class TapImpl implements Tap {
 
     SnapTap toSnapTap() {
         SnapTap tap = new SnapTap()
+        if (owner.present) tap.owner = owner.get()
+        if (name.present) tap.name = name.get()
+        if (username.present) tap.name = username.get()
+        if (token.present) tap.token = token.get()
+        tap
+    }
+
+    Repository toRepository() {
+        Repository tap = new Repository()
         if (owner.present) tap.owner = owner.get()
         if (name.present) tap.name = name.get()
         if (username.present) tap.name = username.get()

@@ -57,12 +57,12 @@ public final class TemplateUtils {
     public static Map<String, Reader> resolveAndMergeTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot, Path templateDirectory) {
         Map<String, Reader> templates = resolveTemplates(logger, distributionType, toolName, snapshot);
         if (null != templateDirectory && templateDirectory.toFile().exists()) {
-            templates.putAll(resolveTemplates(logger, distributionType, toolName, snapshot, templateDirectory));
+            templates.putAll(resolveTemplates(distributionType, toolName, snapshot, templateDirectory));
         }
         return templates;
     }
 
-    public static Map<String, Reader> resolveTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot, Path templateDirectory) {
+    public static Map<String, Reader> resolveTemplates(String distributionType, String toolName, boolean snapshot, Path templateDirectory) {
         Map<String, Reader> templates = new LinkedHashMap<>();
 
         Path snapshotTemplateDirectory = templateDirectory.resolveSibling(templateDirectory.getFileName() + "-snapshot");
@@ -85,6 +85,25 @@ public final class TemplateUtils {
             String distributionTypeName = distributionType.toLowerCase().replace('_', '-');
             throw new JReleaserException("Unexpected error reading templates for distribution " +
                 distributionTypeName + "/" + toolName + " from " + actualTemplateDirectory.toAbsolutePath());
+        }
+
+        return templates;
+    }
+
+    public static Map<String, Reader> resolveTemplates(Path templateDirectory) {
+        Map<String, Reader> templates = new LinkedHashMap<>();
+
+        try {
+            Files.walkFileTree(templateDirectory, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    templates.put(templateDirectory.relativize(file).toString(),
+                        Files.newBufferedReader(file));
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            throw new JReleaserException("Unexpected error reading templates from " + templateDirectory.toAbsolutePath());
         }
 
         return templates;

@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import org.bouncycastle.openpgp.PGPException;
+import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserLogger;
@@ -88,6 +89,7 @@ public class JReleaserContext {
     private String uploaderType;
     private String assemblerName;
     private String changelog;
+    private Releaser releaser;
 
     public JReleaserContext(JReleaserLogger logger,
                             Configurer configurer,
@@ -127,8 +129,12 @@ public class JReleaserContext {
         }
     }
 
-    public Path relativizeToBasedir(Path other) {
+    public Path relativize(Path basedir, Path other) {
         return basedir.toAbsolutePath().relativize(other.toAbsolutePath());
+    }
+
+    public Path relativizeToBasedir(Path other) {
+        return relativize(basedir, other);
     }
 
     public Errors validateModel() {
@@ -282,6 +288,14 @@ public class JReleaserContext {
 
     public void setChangelog(String changelog) {
         this.changelog = changelog;
+    }
+
+    public Releaser getReleaser() {
+        return releaser;
+    }
+
+    public void setReleaser(Releaser releaser) {
+        this.releaser = releaser;
     }
 
     public boolean hasDistributionName() {

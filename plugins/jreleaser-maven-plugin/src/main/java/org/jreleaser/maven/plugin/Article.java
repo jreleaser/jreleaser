@@ -17,49 +17,40 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-public class Docker extends AbstractDockerConfiguration implements RepositoryTool {
-    private final List<DockerSpec> specs = new ArrayList<>();
+public class Article extends AbstractAnnouncer {
+    private final Set<Artifact> files = new LinkedHashSet<>();
     private final CommitAuthor commitAuthor = new CommitAuthor();
     private final Tap repository = new Tap();
 
-    private Boolean continueOnError;
+    private String templateDirectory;
 
-    void setAll(Docker docker) {
-        super.setAll(docker);
-        this.continueOnError = docker.continueOnError;
-        setSpecs(docker.specs);
-        setCommitAuthor(docker.commitAuthor);
-        setRepository(docker.repository);
+    void setAll(Article article) {
+        super.setAll(article);
+        setFiles(article.files);
+        setCommitAuthor(article.commitAuthor);
+        setRepository(article.repository);
     }
 
-    @Override
-    public boolean isContinueOnError() {
-        return continueOnError != null && continueOnError;
+    public Set<Artifact> getFiles() {
+        return files;
     }
 
-    @Override
-    public void setContinueOnError(Boolean continueOnError) {
-        this.continueOnError = continueOnError;
+    public void setFiles(Set<Artifact> files) {
+        this.files.clear();
+        this.files.addAll(files);
     }
 
-    @Override
-    public boolean isContinueOnErrorSet() {
-        return continueOnError != null;
-    }
-
-    @Override
     public CommitAuthor getCommitAuthor() {
         return commitAuthor;
     }
 
-    @Override
     public void setCommitAuthor(CommitAuthor commitAuthor) {
         this.commitAuthor.setAll(commitAuthor);
     }
@@ -72,19 +63,19 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
         this.repository.setAll(repository);
     }
 
-    public List<DockerSpec> getSpecs() {
-        return specs;
+    public String getTemplateDirectory() {
+        return templateDirectory;
     }
 
-    public void setSpecs(List<DockerSpec> specs) {
-        this.specs.clear();
-        this.specs.addAll(specs);
+    public void setTemplateDirectory(String templateDirectory) {
+        this.templateDirectory = templateDirectory;
     }
 
+    @Override
     public boolean isSet() {
         return super.isSet() ||
+            !files.isEmpty() ||
             commitAuthor.isSet() ||
-            repository.isSet() ||
-            !specs.isEmpty();
+            repository.isSet();
     }
 }

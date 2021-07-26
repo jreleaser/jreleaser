@@ -30,6 +30,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public class Announce implements Domain, EnabledAware {
+    private final Article article = new Article();
     private final Discord discord = new Discord();
     private final Discussions discussions = new Discussions();
     private final Gitter gitter = new Gitter();
@@ -47,6 +48,7 @@ public class Announce implements Domain, EnabledAware {
 
     void setAll(Announce announce) {
         this.enabled = announce.enabled;
+        setArticle(announce.article);
         setDiscord(announce.discord);
         setDiscussions(announce.discussions);
         setGitter(announce.gitter);
@@ -79,6 +81,14 @@ public class Announce implements Domain, EnabledAware {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
+    }
+
+    public Article getArticle() {
+        return article;
+    }
+
+    public void setArticle(Article article) {
+        this.article.setAll(article);
     }
 
     public Discord getDiscord() {
@@ -197,6 +207,7 @@ public class Announce implements Domain, EnabledAware {
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
+        map.putAll(article.asMap(full));
         map.putAll(discord.asMap(full));
         map.putAll(discussions.asMap(full));
         map.putAll(gitter.asMap(full));
@@ -231,6 +242,8 @@ public class Announce implements Domain, EnabledAware {
 
     private <A extends Announcer> A resolveAnnouncer(String name) {
         switch (name.toLowerCase().trim()) {
+            case Article.NAME:
+                return (A) getArticle();
             case Discord.NAME:
                 return (A) getDiscord();
             case Discussions.NAME:
@@ -264,6 +277,7 @@ public class Announce implements Domain, EnabledAware {
 
     public static Set<String> supportedAnnouncers() {
         Set<String> set = new LinkedHashSet<>();
+        set.add(Article.NAME);
         set.add(Discord.NAME);
         set.add(Discussions.NAME);
         set.add(Gitter.NAME);

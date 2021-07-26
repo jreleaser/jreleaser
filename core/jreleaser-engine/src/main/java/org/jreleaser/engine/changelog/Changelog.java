@@ -33,7 +33,7 @@ import java.nio.file.Path;
 public class Changelog {
     public static String createChangelog(JReleaserContext context) {
         try {
-            return ChangelogProvider.getChangelog(context, Releasers.releaserFor(context)).trim();
+            return ChangelogProvider.getChangelog(context).trim();
         } catch (IOException e) {
             throw new JReleaserException("Unexpected error when creating changelog.", e);
         }

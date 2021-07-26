@@ -27,10 +27,10 @@ public class Teams extends AbstractAnnouncer {
     private String webhook;
     private String messageTemplate;
 
-    void setAll(Teams gitter) {
-        super.setAll(gitter);
-        this.webhook = gitter.webhook;
-        this.messageTemplate = gitter.messageTemplate;
+    void setAll(Teams teams) {
+        super.setAll(teams);
+        this.webhook = teams.webhook;
+        this.messageTemplate = teams.messageTemplate;
     }
 
     public String getWebhook() {

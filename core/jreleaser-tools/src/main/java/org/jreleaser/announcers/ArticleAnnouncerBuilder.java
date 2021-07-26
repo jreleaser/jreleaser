@@ -15,29 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.tool.spi;
+package org.jreleaser.announcers;
 
-import org.jreleaser.model.Distribution;
-import org.jreleaser.model.Tool;
-
-import java.util.Map;
+import org.jreleaser.model.announcer.spi.AbstractAnnouncerBuilder;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.6.0
  */
-public interface ToolProcessor<T extends Tool> {
-    T getTool();
+public class ArticleAnnouncerBuilder extends AbstractAnnouncerBuilder<ArticleAnnouncer> {
+    @Override
+    public ArticleAnnouncer build() {
+        validate();
 
-    void setTool(T tool);
-
-    String getToolName();
-
-    boolean supportsDistribution(Distribution distribution);
-
-    void prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
-
-    void packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
-
-    void publishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
+        return new ArticleAnnouncer(context);
+    }
 }

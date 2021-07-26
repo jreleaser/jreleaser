@@ -21,7 +21,6 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Tool;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.util.Algorithm;
@@ -119,7 +118,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     @Override
-    public void publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    public void publishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug("creating props for {}/{}", distributionName, getToolName());
@@ -129,7 +128,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 return;
             }
 
-            doPublishDistribution(distribution, releaser, newProps);
+            doPublishDistribution(distribution, newProps);
         } catch (IllegalArgumentException e) {
             throw new ToolProcessingException(e);
         }
@@ -137,7 +136,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     protected abstract void doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
-    protected abstract void doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException;
+    protected abstract void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException;
 
     protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Map<String, Object> newProps = new LinkedHashMap<>(props);

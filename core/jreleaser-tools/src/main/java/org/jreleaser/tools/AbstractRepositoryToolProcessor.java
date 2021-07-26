@@ -24,7 +24,6 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.RepositoryTool;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.sdk.git.JReleaserGpgSigner;
@@ -47,7 +46,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
         super(context);
     }
 
-    protected void doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         context.getLogger().info("setting up repository {}", tool.getRepositoryTap().getCanonicalRepoName());
         if (context.isDryrun()) {
             return;
@@ -58,7 +57,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
         try {
             // get the repository
             context.getLogger().debug("locating repository {}", tool.getRepositoryTap().getCanonicalRepoName());
-            Repository repository = releaser.maybeCreateRepository(
+            Repository repository = context.getReleaser().maybeCreateRepository(
                 tool.getRepositoryTap().getOwner(),
                 tool.getRepositoryTap().getResolvedName(),
                 resolveGitToken(gitService));

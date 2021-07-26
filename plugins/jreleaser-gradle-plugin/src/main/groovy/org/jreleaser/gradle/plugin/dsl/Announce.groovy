@@ -31,6 +31,8 @@ import org.gradle.api.provider.Property
 interface Announce {
     Property<Boolean> getEnabled()
 
+    Article getArticle()
+
     Discord getDiscord()
 
     Discussions getDiscussions()
@@ -57,6 +59,8 @@ interface Announce {
 
     NamedDomainObjectContainer<Webhook> getWebhooks()
 
+    void article(Action<? super Article> action)
+
     void discord(Action<? super Discord> action)
 
     void discussions(Action<? super Discussions> action)
@@ -80,6 +84,8 @@ interface Announce {
     void twitter(Action<? super Twitter> action)
 
     void zulip(Action<? super Zulip> action)
+
+    void article(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Article) Closure<Void> action)
 
     void discord(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Discord) Closure<Void> action)
 

@@ -138,7 +138,7 @@ public class DistributionProcessor {
         context.getLogger().info("publishing {} distribution", distributionName);
 
         try {
-            toolProcessor.publishDistribution(distribution, Releasers.releaserFor(context), initProps());
+            toolProcessor.publishDistribution(distribution, initProps());
         } catch (ToolProcessingException tpe) {
             if (tool.isContinueOnError()) {
                 tool.fail();

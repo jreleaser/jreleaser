@@ -22,7 +22,6 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.PlatformUtils;
@@ -68,9 +67,9 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
     }
 
     @Override
-    protected void doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         if (tool.isRemoteBuild()) {
-            super.doPublishDistribution(distribution, releaser, props);
+            super.doPublishDistribution(distribution, props);
             return;
         }
         publishChocolateyPackage(distribution, props);

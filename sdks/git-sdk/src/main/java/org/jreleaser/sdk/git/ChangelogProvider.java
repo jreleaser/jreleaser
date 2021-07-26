@@ -19,7 +19,6 @@ package org.jreleaser.sdk.git;
 
 import org.jreleaser.model.Changelog;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.releaser.spi.Releaser;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,8 +36,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class ChangelogProvider {
-    public static String getChangelog(JReleaserContext context, Releaser releaser) throws IOException {
-        String content = resolveChangelog(context, releaser);
+    public static String getChangelog(JReleaserContext context) throws IOException {
+        String content = resolveChangelog(context);
 
         Path changelogFile = context.getOutputDirectory()
             .resolve("release")
@@ -53,7 +52,7 @@ public class ChangelogProvider {
         return content;
     }
 
-    private static String resolveChangelog(JReleaserContext context, Releaser releaser) throws IOException {
+    private static String resolveChangelog(JReleaserContext context) throws IOException {
         Changelog changelog = context.getModel().getRelease().getGitService().getChangelog();
 
         if (!changelog.isEnabled()) {
@@ -73,6 +72,6 @@ public class ChangelogProvider {
             return new String(Files.readAllBytes(externalChangelogPath));
         }
 
-        return ChangelogGenerator.generate(context, releaser);
+        return ChangelogGenerator.generate(context);
     }
 }

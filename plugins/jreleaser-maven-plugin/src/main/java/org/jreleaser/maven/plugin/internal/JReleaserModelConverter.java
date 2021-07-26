@@ -18,6 +18,7 @@
 package org.jreleaser.maven.plugin.internal;
 
 import org.jreleaser.maven.plugin.Announce;
+import org.jreleaser.maven.plugin.Article;
 import org.jreleaser.maven.plugin.Artifact;
 import org.jreleaser.maven.plugin.Artifactory;
 import org.jreleaser.maven.plugin.Assemble;
@@ -418,6 +419,7 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Announce convertAnnounce(Announce announce) {
         org.jreleaser.model.Announce a = new org.jreleaser.model.Announce();
         if (announce.isEnabledSet()) a.setEnabled(announce.isEnabled());
+        if (announce.getArticle().isSet()) a.setArticle(convertArticle(announce.getArticle()));
         if (announce.getDiscord().isSet()) a.setDiscord(convertDiscord(announce.getDiscord()));
         if (announce.getDiscussions().isSet()) a.setDiscussions(convertDiscussions(announce.getDiscussions()));
         if (announce.getGitter().isSet()) a.setGitter(convertGitter(announce.getGitter()));
@@ -431,6 +433,16 @@ public final class JReleaserModelConverter {
         if (announce.getTwitter().isSet()) a.setTwitter(convertTwitter(announce.getTwitter()));
         if (announce.getZulip().isSet()) a.setZulip(convertZulip(announce.getZulip()));
         a.setWebhooks(convertWebhooks(announce.getWebhooks()));
+        return a;
+    }
+
+    private static org.jreleaser.model.Article convertArticle(Article article) {
+        org.jreleaser.model.Article a = new org.jreleaser.model.Article();
+        a.setActive(article.resolveActive());
+        a.setFiles(convertArtifacts(article.getFiles()));
+        a.setTemplateDirectory(article.getTemplateDirectory());
+        a.setCommitAuthor(convertCommitAuthor(article.getCommitAuthor()));
+        a.setExtraProperties(article.getExtraProperties());
         return a;
     }
 
@@ -847,7 +859,7 @@ public final class JReleaserModelConverter {
             Docker kk = (Docker) docker;
             if (kk.isContinueOnErrorSet()) dd.setContinueOnError(kk.isContinueOnError());
 
-            dd.setRepository(convertDockerRepository(kk.getTap()));
+            dd.setRepository(convertDockerRepository(kk.getRepository()));
             dd.setCommitAuthor(convertCommitAuthor(kk.getCommitAuthor()));
         }
         d.setActive(docker.resolveActive());

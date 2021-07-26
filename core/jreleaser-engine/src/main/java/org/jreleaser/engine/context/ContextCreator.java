@@ -18,6 +18,7 @@
 package org.jreleaser.engine.context;
 
 import org.jreleaser.config.JReleaserConfigLoader;
+import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
@@ -72,6 +73,9 @@ public class ContextCreator {
             selectedPlatforms);
 
         ModelConfigurer.configure(context);
+        if (mode != JReleaserContext.Mode.ASSEMBLE) {
+            context.setReleaser(Releasers.releaserFor(context));
+        }
 
         report(context);
 

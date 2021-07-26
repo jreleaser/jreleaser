@@ -25,6 +25,7 @@ import java.util.Map;
  * @since 0.1.0
  */
 public class Announce implements EnabledAware {
+    private final Article article = new Article();
     private final Discord discord = new Discord();
     private final Discussions discussions = new Discussions();
     private final Gitter gitter = new Gitter();
@@ -42,6 +43,7 @@ public class Announce implements EnabledAware {
 
     void setAll(Announce announce) {
         this.enabled = announce.enabled;
+        setArticle(announce.article);
         setDiscord(announce.discord);
         setDiscussions(announce.discussions);
         setGitter(announce.gitter);
@@ -69,6 +71,14 @@ public class Announce implements EnabledAware {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
+    }
+
+    public Article getArticle() {
+        return article;
+    }
+
+    public void setArticle(Article article) {
+        this.article.setAll(article);
     }
 
     public Discord getDiscord() {
@@ -175,6 +185,4 @@ public class Announce implements EnabledAware {
     public void setZulip(Zulip zulip) {
         this.zulip.setAll(zulip);
     }
-
-
 }

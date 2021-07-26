@@ -25,7 +25,6 @@ import org.jreleaser.model.DockerSpec;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Registry;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
@@ -216,37 +215,36 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     }
 
     @Override
-    public void publishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
+    public void publishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         if (tool.getActiveSpecs().isEmpty()) {
             if (tool.getRegistries().isEmpty()) {
                 context.getLogger().info("no configured registries. Skipping");
-                publishToRepository(distribution, releaser, props);
+                publishToRepository(distribution, props);
                 return;
             }
-            super.publishDistribution(distribution, releaser, props);
-            publishToRepository(distribution, releaser, props);
+            super.publishDistribution(distribution, props);
+            publishToRepository(distribution, props);
             return;
         }
 
         for (DockerSpec spec : tool.getActiveSpecs()) {
             context.getLogger().debug("publishing {} spec", spec.getName());
             Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
-            publishDocker(distribution, releaser, newProps, spec);
+            publishDocker(distribution, newProps, spec);
         }
-        publishToRepository(distribution, releaser, props);
+        publishToRepository(distribution, props);
     }
 
-    private void publishToRepository(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
-        super.doPublishDistribution(distribution, releaser, props);
+    private void publishToRepository(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        super.doPublishDistribution(distribution, props);
     }
 
     @Override
-    protected void doPublishDistribution(Distribution distribution, Releaser releaser, Map<String, Object> props) throws ToolProcessingException {
-        publishDocker(distribution, releaser, props, getTool());
+    protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        publishDocker(distribution, props, getTool());
     }
 
     protected void publishDocker(Distribution distribution,
-                                 Releaser releaser,
                                  Map<String, Object> props,
                                  DockerConfiguration docker) throws ToolProcessingException {
         for (Registry registry : docker.getRegistries()) {
