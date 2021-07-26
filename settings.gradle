@@ -66,6 +66,7 @@ enforce {
             "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
             "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion",
             "commons-codec:commons-codec:$commonsCodecVersion",
+            "org.apache.commons:commons-compress:$commonsCompressVersion",
             "org.hamcrest:hamcrest-core:$hamcrestVersion",
             "org.slf4j:slf4j-api:$slf4jVersion",
             "org.apache.commons:commons-lang3:3.8.1",
