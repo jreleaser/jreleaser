@@ -26,6 +26,7 @@ import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
+import org.jreleaser.util.StringUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessInitException;
 
@@ -33,12 +34,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -290,11 +291,17 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     protected List<Artifact> collectArtifacts(Distribution distribution) {
-        Set<String> fileExtensions = tool.getSupportedExtensions();
+        List<String> fileExtensions = new ArrayList<>(tool.getSupportedExtensions());
+
         return distribution.getArtifacts().stream()
             .filter(Artifact::isActive)
             .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
             .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
+            // sort by platform, then by extension
+            .sorted(Artifact.comparatorByPlatform().thenComparingInt(artifact -> {
+                String ext = "." + StringUtils.getFilenameExtension(artifact.getPath());
+                return fileExtensions.indexOf(ext);
+            }))
             .collect(Collectors.toList());
     }
 

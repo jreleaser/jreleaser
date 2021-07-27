@@ -96,15 +96,18 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
 
         Cask cask = tool.getCask();
         if (cask.isEnabled()) {
+            boolean hasPkg = isNotBlank(cask.getPkgName());
+            boolean hasApp = isNotBlank(cask.getAppName());
+
             props.put(Constants.KEY_BREW_CASK_NAME, cask.getResolvedCaskName(props));
             props.put(Constants.KEY_BREW_CASK_DISPLAY_NAME, cask.getResolvedDisplayName(props));
             props.put(Constants.KEY_BREW_CASK_HAS_UNINSTALL, !cask.getUninstallItems().isEmpty());
-            props.put(Constants.KEY_BREW_CASK_HAS_PKG, isNotBlank(cask.getPkgName()));
-            if (isNotBlank(cask.getPkgName())) {
+            props.put(Constants.KEY_BREW_CASK_HAS_PKG, hasPkg);
+            if (hasPkg) {
                 props.put(Constants.KEY_BREW_CASK_PKG, cask.getResolvedPkgName(props));
             }
-            props.put(Constants.KEY_BREW_CASK_HAS_APP, isNotBlank(cask.getAppName()));
-            if (isNotBlank(cask.getAppName())) {
+            props.put(Constants.KEY_BREW_CASK_HAS_APP, hasApp);
+            if (hasApp) {
                 props.put(Constants.KEY_BREW_CASK_APP, cask.getResolvedAppName(props));
             }
             props.put(Constants.KEY_BREW_CASK_UNINSTALL, cask.getUninstallItems());
@@ -114,12 +117,14 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             props.put(Constants.KEY_BREW_CASK_HAS_APPCAST, isNotBlank(appcast));
             props.put(Constants.KEY_BREW_CASK_APPCAST, appcast);
 
-            for (Artifact artifact : distribution.getArtifacts()) {
-                if (!artifact.isActive()) continue;
-                if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
-                    props.put(Constants.KEY_DISTRIBUTION_URL, resolveArtifactUrl(props, artifact));
-                    props.put(Constants.KEY_BREW_CASK_HAS_BINARY, true);
-                    break;
+            if (!hasApp && !hasPkg) {
+                for (Artifact artifact : distribution.getArtifacts()) {
+                    if (!artifact.isActive()) continue;
+                    if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
+                        props.put(Constants.KEY_DISTRIBUTION_URL, resolveArtifactUrl(props, artifact));
+                        props.put(Constants.KEY_BREW_CASK_HAS_BINARY, true);
+                        break;
+                    }
                 }
             }
         } else if (tool.isMultiPlatform()) {
@@ -153,7 +158,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             if (multiPlatforms.isEmpty()) {
                 throw new ToolProcessingException("There are no matching multi-platform binaries.");
             }
-            props.put(Constants.KEY_BREW_MULTIPLATFORM, passThrough(String.join(System.lineSeparator()+"  ", multiPlatforms)));
+            props.put(Constants.KEY_BREW_MULTIPLATFORM, passThrough(String.join(System.lineSeparator() + "  ", multiPlatforms)));
         } else if ((distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == Distribution.DistributionType.SINGLE_JAR) &&
             !isTrue(tool.getExtraProperties().get("javaSkip")) &&

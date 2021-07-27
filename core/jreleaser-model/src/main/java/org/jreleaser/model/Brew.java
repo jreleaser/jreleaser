@@ -20,6 +20,7 @@ package org.jreleaser.model;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -196,10 +197,11 @@ public class Brew extends AbstractRepositoryTool {
 
     @Override
     public Set<String> getSupportedExtensions() {
-        Set<String> extensions = super.getSupportedExtensions();
-        extensions.add(".jar");
+        Set<String> extensions = new LinkedHashSet<>();
         extensions.add(".dmg");
         extensions.add(".pkg");
+        extensions.add(".zip");
+        extensions.add(".jar");
         return extensions;
     }
 
