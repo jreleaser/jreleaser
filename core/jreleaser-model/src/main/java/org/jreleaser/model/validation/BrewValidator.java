@@ -53,10 +53,15 @@ public abstract class BrewValidator extends Validator {
         if (!tool.isActiveSet() && parentTool.isActiveSet()) {
             tool.setActive(parentTool.getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) {
+            tool.disable();
+            tool.getCask().disable();
+            return;
+        }
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
             tool.disable();
+            tool.getCask().disable();
             return;
         }
 
