@@ -44,10 +44,11 @@ public final class JReleaserModelConfigurer {
 
     public static JReleaserModel configure(JReleaserModel model, MavenProject mavenProject, MavenSession session) {
         Properties properties = new Properties();
-        properties.putAll(mavenProject.getModel().getProperties());
+        properties.putAll(mavenProject.getProperties());
+        properties.putAll(session.getUserProperties());
         Environment.PropertiesSource propertiesSource = new Environment.PropertiesPropertiesSource(properties);
-
         model.getEnvironment().setPropertiesSource(propertiesSource);
+
         configureProject(model.getProject(), mavenProject, session);
 
         return model;
@@ -65,6 +66,9 @@ public final class JReleaserModelConfigurer {
         }
         if (isBlank(project.getWebsite())) {
             project.setWebsite(mavenProject.getUrl());
+        }
+        if (isBlank(project.getWebsite()) && (null != mavenProject.getOrganization())) {
+            project.setWebsite(mavenProject.getOrganization().getUrl());
         }
         if (project.getAuthors().isEmpty()) {
             project.setAuthors(resolveAuthors(mavenProject.getDevelopers()));

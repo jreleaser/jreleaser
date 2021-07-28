@@ -315,8 +315,8 @@ public class Artifact implements Domain, ExtraProperties {
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("path", path);
-        map.put("platform", platform);
         map.put("transform", transform);
+        map.put("platform", platform);
         map.put("extraProperties", getResolvedExtraProperties());
         return map;
     }
