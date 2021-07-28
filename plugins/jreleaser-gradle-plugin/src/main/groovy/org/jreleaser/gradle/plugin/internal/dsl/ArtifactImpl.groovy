@@ -36,6 +36,7 @@ import javax.inject.Inject
 class ArtifactImpl implements Artifact {
     String name
     final RegularFileProperty path
+    final Property<String> transform
     final Property<String> platform
     final MapProperty<String, Object> extraProperties
 
@@ -43,6 +44,7 @@ class ArtifactImpl implements Artifact {
     ArtifactImpl(ObjectFactory objects) {
         path = objects.fileProperty().convention(Providers.notDefined())
         platform = objects.property(String).convention(Providers.notDefined())
+        transform = objects.property(String).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
@@ -58,6 +60,7 @@ class ArtifactImpl implements Artifact {
         } else {
             throw new IllegalArgumentException("Artifact ${name} requires a value for 'path'")
         }
+        if (transform.present) artifact.transform = transform.get()
         if (platform.present) artifact.platform = platform.get()
         if (extraProperties.present) artifact.extraProperties.putAll(extraProperties.get())
         artifact

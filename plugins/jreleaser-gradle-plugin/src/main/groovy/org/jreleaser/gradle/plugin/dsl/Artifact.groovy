@@ -30,6 +30,8 @@ import org.gradle.api.provider.Property
 interface Artifact extends ExtraProperties {
     RegularFileProperty getPath()
 
+    Property<String>  getTransform()
+
     Property<String> getPlatform()
 
     void setPath(String path)
