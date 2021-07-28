@@ -749,6 +749,7 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Artifact convertArtifact(Artifact artifact) {
         org.jreleaser.model.Artifact a = new org.jreleaser.model.Artifact();
         a.setPath(artifact.getPath());
+        a.setTransform(artifact.getTransform());
         a.setPlatform(artifact.getPlatform());
         a.setExtraProperties(artifact.getExtraProperties());
         return a;
