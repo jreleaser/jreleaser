@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -167,8 +166,8 @@ public class Upload implements Domain, EnabledAware {
         List<Uploader> uploaders = findAllUploaders();
         for (Uploader uploader : uploaders) {
             List<String> keys = uploader.resolveSkipKeys();
-            if (isSkip(distribution.getExtraProperties(), keys) ||
-                isSkip(artifact.getExtraProperties(), keys)) continue;
+            if (isSkip(distribution, keys) ||
+                isSkip(artifact, keys)) continue;
             String key = prefix +
                 "Download" +
                 capitalize(uploader.getType()) +
@@ -177,8 +176,8 @@ public class Upload implements Domain, EnabledAware {
             String url = uploader.getResolvedDownloadUrl(context, artifact);
             urls.put(key, url);
 
-            if (findUploadersByType(uploader.getType()).size() == 1 && !isSkip(distribution.getExtraProperties(), keys) &&
-                !isSkip(artifact.getExtraProperties(), keys)) {
+            if (findUploadersByType(uploader.getType()).size() == 1 && !isSkip(distribution, keys) &&
+                !isSkip(artifact, keys)) {
                 key = prefix +
                     "Download" +
                     capitalize(uploader.getType()) +
@@ -191,8 +190,8 @@ public class Upload implements Domain, EnabledAware {
         if (uploaders.size() == 1) {
             Uploader uploader = uploaders.get(0);
             List<String> keys = uploader.resolveSkipKeys();
-            if (!isSkip(distribution.getExtraProperties(), keys) &&
-                !isSkip(artifact.getExtraProperties(), keys)) {
+            if (!isSkip(distribution, keys) &&
+                !isSkip(artifact, keys)) {
                 String key = prefix + "DownloadUrl";
                 String url = uploader.getResolvedDownloadUrl(context, artifact);
                 urls.put(key, url);
@@ -202,9 +201,9 @@ public class Upload implements Domain, EnabledAware {
         return urls;
     }
 
-    private boolean isSkip(Map<String, Object> props, List<String> keys) {
+    private boolean isSkip(ExtraProperties props, List<String> keys) {
         for (String key : keys) {
-            if (props.containsKey(key) && isTrue(props.get(key))) {
+            if (props.extraPropertyIsTrue(key)) {
                 return true;
             }
         }

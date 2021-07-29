@@ -43,4 +43,10 @@ interface Signing {
     Property<org.jreleaser.model.Signing.Mode> getMode()
 
     void setMode(String mode)
+
+    Property<Boolean> getArtifacts()
+
+    Property<Boolean> getFiles()
+
+    Property<Boolean> getChecksums()
 }

@@ -42,6 +42,9 @@ class SigningImpl implements Signing {
     final Property<String> publicKey
     final Property<String> secretKey
     final Property<org.jreleaser.model.Signing.Mode> mode
+    final Property<Boolean> artifacts
+    final Property<Boolean> files
+    final Property<Boolean> checksums
 
     @Inject
     SigningImpl(ObjectFactory objects) {
@@ -51,6 +54,9 @@ class SigningImpl implements Signing {
         publicKey = objects.property(String).convention(Providers.notDefined())
         secretKey = objects.property(String).convention(Providers.notDefined())
         mode = objects.property(org.jreleaser.model.Signing.Mode).convention(org.jreleaser.model.Signing.Mode.MEMORY)
+        artifacts = objects.property(Boolean).convention(Providers.notDefined())
+        files = objects.property(Boolean).convention(Providers.notDefined())
+        checksums = objects.property(Boolean).convention(Providers.notDefined())
     }
 
     @Internal
@@ -59,6 +65,9 @@ class SigningImpl implements Signing {
             armored.present ||
             passphrase.present ||
             publicKey.present ||
+            artifacts.present ||
+            files.present ||
+            checksums.present ||
             secretKey.present
     }
 
@@ -84,6 +93,9 @@ class SigningImpl implements Signing {
         if (publicKey.present) signing.publicKey = publicKey.get()
         if (secretKey.present) signing.secretKey = secretKey.get()
         if (mode.present) signing.mode = mode.get()
+        if (artifacts.present) signing.artifacts = artifacts.get()
+        if (files.present) signing.files = files.get()
+        if (checksums.present) signing.checksums = checksums.get()
         signing
     }
 }

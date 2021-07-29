@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 import static org.jreleaser.util.StringUtils.splitValue;
 
 /**
@@ -72,5 +73,9 @@ public interface ExtraProperties extends Serializable {
         });
 
         return props;
+    }
+
+    default boolean extraPropertyIsTrue(String key) {
+        return getExtraProperties().containsKey(key) && isTrue(getExtraProperties().get(key));
     }
 }

@@ -28,6 +28,9 @@ public class Signing implements Activatable {
     private String secretKey;
     private String passphrase;
     private Mode mode;
+    private Boolean artifacts;
+    private Boolean files;
+    private Boolean checksums;
 
     void setAll(Signing signing) {
         this.active = signing.active;
@@ -35,6 +38,9 @@ public class Signing implements Activatable {
         this.publicKey = signing.publicKey;
         this.secretKey = signing.secretKey;
         this.passphrase = signing.passphrase;
+        this.artifacts = signing.artifacts;
+        this.files = signing.files;
+        this.checksums = signing.checksums;
     }
 
     @Override
@@ -94,6 +100,42 @@ public class Signing implements Activatable {
 
     public String resolveMode() {
         return mode != null ? mode.name() : null;
+    }
+
+    public boolean isArtifactsSet() {
+        return artifacts != null;
+    }
+
+    public Boolean isArtifacts() {
+        return artifacts == null || artifacts;
+    }
+
+    public void setArtifacts(Boolean artifacts) {
+        this.artifacts = artifacts;
+    }
+
+    public Boolean isFiles() {
+        return files == null || files;
+    }
+
+    public boolean isFilesSet() {
+        return files != null;
+    }
+
+    public void setFiles(Boolean files) {
+        this.files = files;
+    }
+
+    public boolean isChecksumsSet() {
+        return checksums != null;
+    }
+
+    public Boolean isChecksums() {
+        return checksums == null || checksums;
+    }
+
+    public void setChecksums(Boolean checksums) {
+        this.checksums = checksums;
     }
 
     public enum Mode {

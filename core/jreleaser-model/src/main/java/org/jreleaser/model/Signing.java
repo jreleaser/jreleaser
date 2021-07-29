@@ -33,6 +33,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Signing implements Domain, Activatable {
+    public static final String KEY_SKIP_SIGNING = "skipSigning";
     public static final String GPG_PASSPHRASE = "GPG_PASSPHRASE";
     public static final String GPG_PUBLIC_KEY = "GPG_PUBLIC_KEY";
     public static final String GPG_SECRET_KEY = "GPG_SECRET_KEY";
@@ -44,6 +45,9 @@ public class Signing implements Domain, Activatable {
     private String secretKey;
     private String passphrase;
     private Mode mode;
+    private Boolean artifacts;
+    private Boolean files;
+    private Boolean checksums;
 
     void setAll(Signing signing) {
         this.active = signing.active;
@@ -53,6 +57,9 @@ public class Signing implements Domain, Activatable {
         this.secretKey = signing.secretKey;
         this.passphrase = signing.passphrase;
         this.mode = signing.mode;
+        this.artifacts = signing.artifacts;
+        this.files = signing.files;
+        this.checksums = signing.checksums;
     }
 
     @Override
@@ -153,20 +160,59 @@ public class Signing implements Domain, Activatable {
         this.mode = Mode.of(str);
     }
 
+    public boolean isArtifactsSet() {
+        return artifacts != null;
+    }
+
+    public Boolean isArtifacts() {
+        return artifacts == null || artifacts;
+    }
+
+    public void setArtifacts(Boolean artifacts) {
+        this.artifacts = artifacts;
+    }
+
+    public Boolean isFiles() {
+        return files == null || files;
+    }
+
+    public boolean isFilesSet() {
+        return files != null;
+    }
+
+    public void setFiles(Boolean files) {
+        this.files = files;
+    }
+
+    public boolean isChecksumsSet() {
+        return checksums != null;
+    }
+
+    public Boolean isChecksums() {
+        return checksums == null || checksums;
+    }
+
+    public void setChecksums(Boolean checksums) {
+        this.checksums = checksums;
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
 
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", isEnabled());
-        map.put("active", active);
-        map.put("armored", isArmored());
-        map.put("mode", mode);
-        map.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
-        map.put("secretKey", isNotBlank(secretKey) ? HIDE : UNSET);
-        map.put("passphrase", isNotBlank(passphrase) ? HIDE : UNSET);
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.put("enabled", isEnabled());
+        props.put("active", active);
+        props.put("armored", isArmored());
+        props.put("mode", mode);
+        props.put("artifacts", isArtifacts());
+        props.put("files", isFiles());
+        props.put("checksums", isChecksums());
+        props.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
+        props.put("secretKey", isNotBlank(secretKey) ? HIDE : UNSET);
+        props.put("passphrase", isNotBlank(passphrase) ? HIDE : UNSET);
 
-        return map;
+        return props;
     }
 
     public enum Mode {

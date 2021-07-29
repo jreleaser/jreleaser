@@ -96,7 +96,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -699,6 +698,9 @@ public final class JReleaserModelConverter {
         s.setSecretKey(signing.getSecretKey());
         s.setPassphrase(signing.getPassphrase());
         s.setMode(signing.resolveMode());
+        if (signing.isArtifactsSet()) s.setArtifacts(signing.isArtifacts());
+        if (signing.isFilesSet()) s.setFiles(signing.isFiles());
+        if (signing.isChecksumsSet()) s.setChecksums(signing.isChecksums());
         return s;
     }
 

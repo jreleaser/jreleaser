@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.bouncycastle.bcpg.CompressionAlgorithmTags.UNCOMPRESSED;
+import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
 
 /**
  * @author Andres Almiray
@@ -246,19 +247,10 @@ public class Signer {
         Path signaturesDirectory = context.getSignaturesDirectory();
         String extension = context.getModel().getSigning().isArmored() ? ".asc" : ".sig";
 
-        for (Artifact artifact : Artifacts.resolveFiles(context)) {
-            if (!artifact.isActive()) continue;
-            Path input = artifact.getEffectivePath(context);
-            Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
-            FilePair pair = new FilePair(input, output);
-            pair.setValid(isValid(context, keyring, pair));
-            files.add(pair);
-        }
-
-        for (Distribution distribution : context.getModel().getActiveDistributions()) {
-            for (Artifact artifact : distribution.getArtifacts()) {
-                if (!artifact.isActive()) continue;
-                Path input = artifact.getEffectivePath(context, distribution);
+        if (context.getModel().getSigning().isFiles()) {
+            for (Artifact artifact : Artifacts.resolveFiles(context)) {
+                if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
+                Path input = artifact.getEffectivePath(context);
                 Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
                 FilePair pair = new FilePair(input, output);
                 pair.setValid(isValid(context, keyring, pair));
@@ -266,14 +258,29 @@ public class Signer {
             }
         }
 
-        for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-            Path checksums = context.getChecksumsDirectory()
-                .resolve(context.getModel().getChecksum().getResolvedName(context, algorithm));
-            if (Files.exists(checksums)) {
-                Path output = signaturesDirectory.resolve(checksums.getFileName().toString().concat(extension));
-                FilePair pair = new FilePair(checksums, output);
-                pair.setValid(isValid(context, keyring, pair));
-                files.add(pair);
+        if (context.getModel().getSigning().isArtifacts()) {
+            for (Distribution distribution : context.getModel().getActiveDistributions()) {
+                for (Artifact artifact : distribution.getArtifacts()) {
+                    if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
+                    Path input = artifact.getEffectivePath(context, distribution);
+                    Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
+                    FilePair pair = new FilePair(input, output);
+                    pair.setValid(isValid(context, keyring, pair));
+                    files.add(pair);
+                }
+            }
+        }
+
+        if (context.getModel().getSigning().isChecksums()) {
+            for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+                Path checksums = context.getChecksumsDirectory()
+                    .resolve(context.getModel().getChecksum().getResolvedName(context, algorithm));
+                if (Files.exists(checksums)) {
+                    Path output = signaturesDirectory.resolve(checksums.getFileName().toString().concat(extension));
+                    FilePair pair = new FilePair(checksums, output);
+                    pair.setValid(isValid(context, keyring, pair));
+                    files.add(pair);
+                }
             }
         }
 

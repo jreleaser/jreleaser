@@ -19,6 +19,7 @@ package org.jreleaser.sdk.commons;
 
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.ExtraProperties;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Uploader;
 import org.jreleaser.model.uploader.spi.ArtifactUploader;
@@ -28,9 +29,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static org.jreleaser.util.StringUtils.isTrue;
+import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
 
 /**
  * @author Andres Almiray
@@ -51,7 +51,7 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
         if (getUploader().isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
                 if (!artifact.isActive()) continue;
-                if (isSkip(artifact.getExtraProperties(), keys)) continue;
+                if (isSkip(artifact, keys)) continue;
                 Path path = artifact.getEffectivePath(context);
                 if (Files.exists(path) && 0 != path.toFile().length()) {
                     artifacts.add(artifact);
@@ -61,10 +61,10 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
 
         if (getUploader().isArtifacts()) {
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
-                if (isSkip(distribution.getExtraProperties(), keys)) continue;
+                if (isSkip(distribution, keys)) continue;
                 for (Artifact artifact : distribution.getArtifacts()) {
                     if (!artifact.isActive()) continue;
-                    if (isSkip(artifact.getExtraProperties(), keys)) continue;
+                    if (isSkip(artifact, keys)) continue;
                     Path path = artifact.getEffectivePath(context);
                     if (Files.exists(path) && 0 != path.toFile().length()) {
                         artifacts.add(artifact);
@@ -78,6 +78,7 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
 
             List<Artifact> signatures = new ArrayList<>();
             for (Artifact artifact : artifacts) {
+                if (artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
                 Path signaturePath = context.getSignaturesDirectory()
                     .resolve(artifact.getEffectivePath(context).getFileName() + extension);
                 if (Files.exists(signaturePath) && 0 != signaturePath.toFile().length()) {
@@ -91,9 +92,9 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
         return artifacts;
     }
 
-    private boolean isSkip(Map<String, Object> props, List<String> keys) {
+    private boolean isSkip(ExtraProperties props, List<String> keys) {
         for (String key : keys) {
-            if (props.containsKey(key) && isTrue(props.get(key))) {
+            if (props.extraPropertyIsTrue(key)) {
                 return true;
             }
         }

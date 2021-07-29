@@ -357,6 +357,14 @@ public class Artifact implements Domain, ExtraProperties {
         };
     }
 
+    public static Artifact of(Path resolvedPath, Map<String,Object> props) {
+        Artifact artifact = new Artifact();
+        artifact.path = resolvedPath.toAbsolutePath().toString();
+        artifact.resolvedPath = resolvedPath;
+        artifact.setExtraProperties(props);
+        return artifact;
+    }
+
     public static Artifact of(Path resolvedPath) {
         Artifact artifact = new Artifact();
         artifact.path = resolvedPath.toAbsolutePath().toString();
