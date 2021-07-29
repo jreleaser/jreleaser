@@ -89,7 +89,7 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
 
             switch (sdkman.getCommand()) {
                 case MAJOR:
-                    context.getLogger().info("Announcing major release of '{}' candidate", candidate);
+                    context.getLogger().info("publishing major release of '{}' candidate", candidate);
                     MajorReleaseSdkmanCommand.builder(context.getLogger())
                         .connectTimeout(sdkman.getConnectTimeout())
                         .readTimeout(sdkman.getReadTimeout())
@@ -100,11 +100,12 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
                         .platforms(platforms)
                         .releaseNotesUrl(releaseNotesUrl)
                         .dryrun(context.isDryrun())
+                        .skipAnnounce(true)
                         .build()
                         .execute();
                     break;
                 case MINOR:
-                    context.getLogger().info("Announcing minor release of '{}' candidate", candidate);
+                    context.getLogger().info("publishing minor release of '{}' candidate", candidate);
                     MinorReleaseSdkmanCommand.builder(context.getLogger())
                         .connectTimeout(sdkman.getConnectTimeout())
                         .readTimeout(sdkman.getReadTimeout())
@@ -115,10 +116,13 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
                         .platforms(platforms)
                         .releaseNotesUrl(releaseNotesUrl)
                         .dryrun(context.isDryrun())
+                        .skipAnnounce(true)
                         .build()
                         .execute();
                     break;
             }
+
+            sdkman.setPublished(true);
         } catch (SdkmanException e) {
             throw new ToolProcessingException(e);
         }

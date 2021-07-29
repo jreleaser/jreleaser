@@ -20,12 +20,15 @@ package org.jreleaser.sdk.sdkman;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Sdkman;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import static org.jreleaser.util.Constants.MAGIC_SET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -54,6 +57,56 @@ public class SdkmanAnnouncer implements Announcer {
 
     @Override
     public void announce() throws AnnounceException {
+        Map<String, Distribution> distributions = context.getModel().getActiveDistributions().stream()
+            .filter(d -> d.getSdkman().isEnabled())
+            .filter(d -> d.getSdkman().isPublished())
+            .collect(Collectors.toMap(distribution -> {
+                Sdkman sdkman = distribution.getSdkman();
+                return isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
+            }, distribution -> distribution));
+
+        Boolean set = (Boolean) context.getModel().getAnnounce().getSdkman().getExtraProperties().remove(MAGIC_SET);
+        if (distributions.isEmpty() && (set != null && !set)) {
+            announceProject();
+            return;
+        }
+
+        boolean failures = false;
+        for (Map.Entry<String, Distribution> e : distributions.entrySet()) {
+            String candidate = e.getKey();
+            Distribution distribution = e.getValue();
+
+            Sdkman sdkman = distribution.getSdkman();
+            Map<String, Object> props = context.props();
+            props.putAll(distribution.props());
+            String releaseNotesUrl = applyTemplate(sdkman.getReleaseNotesUrl(), props);
+            String command = sdkman.getCommand().name().toLowerCase();
+
+            context.getLogger().info("announcing {} release of '{}' candidate", command, candidate);
+            try {
+                AnnounceSdkmanCommand.builder(context.getLogger())
+                    .connectTimeout(sdkman.getConnectTimeout())
+                    .readTimeout(sdkman.getReadTimeout())
+                    .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getResolvedConsumerKey())
+                    .consumerToken(context.isDryrun() ? "**UNDEFINED**" : sdkman.getResolvedConsumerToken())
+                    .candidate(candidate)
+                    .version(context.getModel().getProject().getVersion())
+                    .releaseNotesUrl(releaseNotesUrl)
+                    .dryrun(context.isDryrun())
+                    .build()
+                    .execute();
+            } catch (SdkmanException x) {
+                context.getLogger().warn(x.getMessage().trim());
+                failures = true;
+            }
+        }
+
+        if (failures) {
+            throw new AnnounceException("Failed to announce some candidates.");
+        }
+    }
+
+    private void announceProject() throws AnnounceException {
         org.jreleaser.model.SdkmanAnnouncer sdkman = context.getModel().getAnnounce().getSdkman();
 
         Map<String, String> platforms = new LinkedHashMap<>();

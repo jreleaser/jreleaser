@@ -127,10 +127,11 @@ public class Sdkman {
                              String version,
                              String url,
                              String hashtag,
-                             String releaseNotesUrl) throws SdkmanException {
+                             String releaseNotesUrl,
+                             boolean skipAnnounce) throws SdkmanException {
         Map<String, String> platforms = new LinkedHashMap<>();
         platforms.put("UNIVERSAL", url);
-        majorRelease(candidate, version, platforms, hashtag, releaseNotesUrl);
+        majorRelease(candidate, version, platforms, hashtag, releaseNotesUrl, skipAnnounce);
     }
 
     public void majorRelease(String candidate,
@@ -138,19 +139,21 @@ public class Sdkman {
                              String platform,
                              String url,
                              String hashtag,
-                             String releaseNotesUrl) throws SdkmanException {
+                             String releaseNotesUrl,
+                             boolean skipAnnounce) throws SdkmanException {
         Map<String, String> platforms = new LinkedHashMap<>();
         platforms.put(platform, url);
-        majorRelease(candidate, version, platforms, hashtag, releaseNotesUrl);
+        majorRelease(candidate, version, platforms, hashtag, releaseNotesUrl, skipAnnounce);
     }
 
     public void majorRelease(String candidate,
                              String version,
                              Map<String, String> platforms,
                              String hashtag,
-                             String releaseNotesUrl) throws SdkmanException {
+                             String releaseNotesUrl,
+                             boolean skipAnnounce) throws SdkmanException {
         release(candidate, version, platforms);
-        announce(candidate, version, hashtag, releaseNotesUrl);
+        if (!skipAnnounce) announce(candidate, version, hashtag, releaseNotesUrl);
         setDefault(candidate, version);
     }
 
@@ -158,10 +161,11 @@ public class Sdkman {
                              String version,
                              String url,
                              String hashtag,
-                             String releaseNotesUrl) throws SdkmanException {
+                             String releaseNotesUrl,
+                             boolean skipAnnounce) throws SdkmanException {
         Map<String, String> platforms = new LinkedHashMap<>();
         platforms.put("UNIVERSAL", url);
-        minorRelease(candidate, version, platforms, hashtag, releaseNotesUrl);
+        minorRelease(candidate, version, platforms, hashtag, releaseNotesUrl, skipAnnounce);
     }
 
     public void minorRelease(String candidate,
@@ -169,19 +173,21 @@ public class Sdkman {
                              String platform,
                              String url,
                              String hashtag,
-                             String releaseNotesUrl) throws SdkmanException {
+                             String releaseNotesUrl,
+                             boolean skipAnnounce) throws SdkmanException {
         Map<String, String> platforms = new LinkedHashMap<>();
         platforms.put(platform, url);
-        minorRelease(candidate, version, platforms, hashtag, releaseNotesUrl);
+        minorRelease(candidate, version, platforms, hashtag, releaseNotesUrl, skipAnnounce);
     }
 
     public void minorRelease(String candidate,
                              String version,
                              Map<String, String> platforms,
                              String hashtag,
-                             String releaseNotesUrl) throws SdkmanException {
+                             String releaseNotesUrl,
+                             boolean skipAnnounce) throws SdkmanException {
         release(candidate, version, platforms);
-        announce(candidate, version, hashtag, releaseNotesUrl);
+        if (!skipAnnounce) announce(candidate, version, hashtag, releaseNotesUrl);
     }
 
     private void wrap(Runnable runnable) throws SdkmanException {

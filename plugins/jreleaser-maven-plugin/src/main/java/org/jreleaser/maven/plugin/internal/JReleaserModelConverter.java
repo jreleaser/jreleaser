@@ -554,6 +554,7 @@ public final class JReleaserModelConverter {
         a.setCandidate(sdkman.getCandidate());
         a.setReleaseNotesUrl(sdkman.getReleaseNotesUrl());
         a.setMajor(sdkman.isMajor());
+        a.setCommand(sdkman.resolveCommand());
         return a;
     }
 

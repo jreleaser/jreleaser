@@ -29,6 +29,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
     private String candidate;
     private String releaseNotesUrl;
     private boolean major = true;
+    private Sdkman.Command command;
 
     void setAll(SdkmanAnnouncer sdkman) {
         super.setAll(sdkman);
@@ -37,6 +38,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         this.candidate = sdkman.candidate;
         this.releaseNotesUrl = sdkman.releaseNotesUrl;
         this.major = sdkman.major;
+        this.command = sdkman.command;
     }
 
     public String getConsumerKey() {
@@ -79,12 +81,33 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         this.major = major;
     }
 
+    public Sdkman.Command getCommand() {
+        return command;
+    }
+
+    public void setCommand(Sdkman.Command command) {
+        this.command = command;
+    }
+
+    public void setCommand(String str) {
+        this.command = Sdkman.Command.of(str);
+    }
+
+    public String resolveCommand() {
+        return command != null ? command.name() : null;
+    }
+
+    public boolean isCommandSet() {
+        return command != null;
+    }
+
     @Override
     public boolean isSet() {
         return super.isSet() ||
             isNotBlank(consumerKey) ||
             isNotBlank(consumerToken) ||
             isNotBlank(candidate) ||
-            isNotBlank(releaseNotesUrl);
+            isNotBlank(releaseNotesUrl) ||
+            null != command;
     }
 }

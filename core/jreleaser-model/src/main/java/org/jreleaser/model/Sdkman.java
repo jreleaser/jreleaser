@@ -44,6 +44,7 @@ public class Sdkman extends AbstractTool implements TimeoutAware {
     private String consumerToken;
     private int connectTimeout;
     private int readTimeout;
+    private boolean published;
 
     public Sdkman() {
         super(NAME);
@@ -58,6 +59,7 @@ public class Sdkman extends AbstractTool implements TimeoutAware {
         this.consumerToken = sdkman.consumerToken;
         this.connectTimeout = sdkman.connectTimeout;
         this.readTimeout = sdkman.readTimeout;
+        this.published = sdkman.published;
     }
     public String getResolvedConsumerKey() {
         return Env.resolve(SDKMAN_CONSUMER_KEY, consumerKey);
@@ -133,6 +135,14 @@ public class Sdkman extends AbstractTool implements TimeoutAware {
     @Override
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
+    }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
     }
 
     @Override

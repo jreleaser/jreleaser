@@ -31,6 +31,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class MajorReleaseSdkmanCommand extends AbstractSdkmanCommand {
+    private final boolean skipAnnounce;
     private final String hashtag;
     private final String releaseNotesUrl;
     private final Map<String, String> platforms = new LinkedHashMap<>();
@@ -44,18 +45,20 @@ public class MajorReleaseSdkmanCommand extends AbstractSdkmanCommand {
                                       String candidate,
                                       String version,
                                       boolean dryrun,
+                                      boolean skipAnnounce,
                                       String hashtag,
                                       String releaseNotesUrl,
                                       Map<String, String> platforms) {
         super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
         this.hashtag = hashtag;
+        this.skipAnnounce = skipAnnounce;
         this.releaseNotesUrl = releaseNotesUrl;
         this.platforms.putAll(platforms);
     }
 
     @Override
     public void execute() throws SdkmanException {
-        sdkman.majorRelease(candidate, version, platforms, hashtag, releaseNotesUrl);
+        sdkman.majorRelease(candidate, version, platforms, hashtag, releaseNotesUrl, skipAnnounce);
     }
 
     public static Builder builder(JReleaserLogger logger) {
@@ -149,6 +152,7 @@ public class MajorReleaseSdkmanCommand extends AbstractSdkmanCommand {
                 candidate,
                 version,
                 dryrun,
+                skipAnnounce,
                 hashtag,
                 releaseNotesUrl,
                 platforms);

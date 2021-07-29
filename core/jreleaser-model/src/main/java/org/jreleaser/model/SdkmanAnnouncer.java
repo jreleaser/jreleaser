@@ -38,7 +38,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
     private String consumerToken;
     private String candidate;
     private String releaseNotesUrl;
-    private boolean major = true;
+    private Sdkman.Command command;
 
     public SdkmanAnnouncer() {
         super(NAME);
@@ -50,7 +50,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         this.consumerToken = sdkman.consumerToken;
         this.candidate = sdkman.candidate;
         this.releaseNotesUrl = sdkman.releaseNotesUrl;
-        this.major = sdkman.major;
+        this.command = sdkman.command;
     }
 
     @Override
@@ -98,12 +98,29 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         this.releaseNotesUrl = releaseNotesUrl;
     }
 
+    public Sdkman.Command getCommand() {
+        return command;
+    }
+
+    public void setCommand(Sdkman.Command command) {
+        this.command = command;
+    }
+
+    public void setCommand(String str) {
+        this.command = Sdkman.Command.of(str);
+    }
+
+    public boolean isCommandSet() {
+        return command != null;
+    }
+
     public boolean isMajor() {
-        return major;
+        return command == Sdkman.Command.MAJOR;
     }
 
     public void setMajor(boolean major) {
-        this.major = major;
+        System.out.println("announce.sdkman.major has been deprecated since 0.6.0 and will be removed in the future. Use announce.sdkman.command instead");
+        this.command = major? Sdkman.Command.MAJOR: Sdkman.Command.MINOR;
     }
 
     @Override
@@ -112,6 +129,6 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         props.put("consumerToken", isNotBlank(getResolvedConsumerToken()) ? HIDE : UNSET);
         props.put("candidate", candidate);
         props.put("releaseNotesUrl", releaseNotesUrl);
-        props.put("major", major);
+        props.put("command", command);
     }
 }

@@ -24,9 +24,9 @@ import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.model.announcer.spi.AnnouncerBuilder;
 import org.jreleaser.model.announcer.spi.AnnouncerBuilderFactory;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -90,7 +90,7 @@ public class Announcers {
             Announcers.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(AnnouncerBuilderFactory::getName, AnnouncerBuilderFactory::getBuilder));
 
-        Map<String, Announcer> announcers = new LinkedHashMap<>();
+        Map<String, Announcer> announcers = new TreeMap<>();
         builders.forEach((name, builder) -> {
             if (null != model.getAnnounce().findAnnouncer(name)) {
                 announcers.put(name, builder.configureWith(context).build());

@@ -26,6 +26,8 @@ import org.jreleaser.model.SdkmanAnnouncer
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.StringUtils.isNotBlank
+
 /**
  *
  * @author Andres Almiray
@@ -38,6 +40,7 @@ class SdkmanAnnouncerImpl extends AbstractAnnouncer implements org.jreleaser.gra
     final Property<String> candidate
     final Property<String> releaseNotesUrl
     final Property<Boolean> major
+    final Property<org.jreleaser.model.Sdkman.Command> command
 
     @Inject
     SdkmanAnnouncerImpl(ObjectFactory objects) {
@@ -50,6 +53,13 @@ class SdkmanAnnouncerImpl extends AbstractAnnouncer implements org.jreleaser.gra
     }
 
     @Override
+    void setCommand(String str) {
+        if (isNotBlank(str)) {
+            command.set(org.jreleaser.model.Sdkman.Command.of(str.trim()))
+        }
+    }
+
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||
@@ -57,7 +67,8 @@ class SdkmanAnnouncerImpl extends AbstractAnnouncer implements org.jreleaser.gra
             consumerToken.present ||
             candidate.present ||
             releaseNotesUrl.present ||
-            major.present
+            major.present ||
+            command.present
     }
 
     SdkmanAnnouncer toModel() {
@@ -67,6 +78,7 @@ class SdkmanAnnouncerImpl extends AbstractAnnouncer implements org.jreleaser.gra
         if (consumerToken.present) sdkman.consumerToken = consumerToken.get()
         if (candidate.present) sdkman.candidate = candidate.get()
         if (releaseNotesUrl.present) sdkman.releaseNotesUrl = releaseNotesUrl.get()
+        if (command.present) sdkman.command = command.get()
         sdkman.major = major.getOrElse(true)
         sdkman
     }

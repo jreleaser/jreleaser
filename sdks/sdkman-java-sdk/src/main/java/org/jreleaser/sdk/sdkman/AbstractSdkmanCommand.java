@@ -50,6 +50,7 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
     static class Builder<S extends Builder<S>> {
         protected final JReleaserLogger logger;
         protected boolean dryrun;
+        protected boolean skipAnnounce;
         protected String consumerKey;
         protected String consumerToken;
         protected String candidate;
@@ -69,6 +70,11 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
 
         public S dryrun(boolean dryrun) {
             this.dryrun = dryrun;
+            return self();
+        }
+
+        public S skipAnnounce(boolean skipAnnounce) {
+            this.skipAnnounce = skipAnnounce;
             return self();
         }
 

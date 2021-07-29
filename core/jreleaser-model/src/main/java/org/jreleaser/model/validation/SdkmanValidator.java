@@ -33,6 +33,7 @@ import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
+import static org.jreleaser.util.Constants.MAGIC_SET;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -43,6 +44,10 @@ public abstract class SdkmanValidator extends Validator {
     public static void validateSdkman(JReleaserContext context, Distribution distribution, Sdkman tool, Errors errors) {
         JReleaserModel model = context.getModel();
         Sdkman parentTool = model.getPackagers().getSdkman();
+
+        boolean toolSet = tool.isActiveSet();
+        boolean parentToolSet = parentTool.isActiveSet();
+        tool.getExtraProperties().put(MAGIC_SET, toolSet && parentToolSet);
 
         if (!tool.isActiveSet() && parentTool.isActiveSet()) {
             tool.setActive(parentTool.getActive());
@@ -103,6 +108,14 @@ public abstract class SdkmanValidator extends Validator {
 
     public static void postValidateSdkman(JReleaserContext context, Errors errors) {
         Map<String, List<Distribution>> map = context.getModel().getDistributions().values().stream()
+            .peek(distribution -> {
+                if (distribution.getSdkman().getExtraProperties().containsKey(MAGIC_SET)) {
+                    boolean set = (boolean) distribution.getSdkman().getExtraProperties().remove(MAGIC_SET);
+                    if (set) {
+                        context.getModel().getAnnounce().getSdkman().getExtraProperties().put(MAGIC_SET, set);
+                    }
+                }
+            })
             .filter(d -> d.isEnabled() && d.getSdkman().isEnabled())
             .collect(groupingBy(d -> d.getSdkman().getCandidate()));
 

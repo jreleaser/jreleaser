@@ -17,7 +17,9 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Sdkman;
 import org.jreleaser.model.SdkmanAnnouncer;
 import org.jreleaser.util.Errors;
 
@@ -31,6 +33,12 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class SdkmanAnnouncerValidator extends Validator {
     public static void validateSdkmanAnnouncer(JReleaserContext context, SdkmanAnnouncer sdkman, Errors errors) {
+        // activate if there are any active distributions with Sdkman packager enabled
+        context.getModel().getActiveDistributions().stream()
+            .filter(d -> d.getSdkman().isEnabled())
+            .findFirst()
+            .ifPresent(distribution -> sdkman.setActive(Active.ALWAYS));
+
         if (!sdkman.resolveEnabled(context.getModel().getProject())) return;
         if (!context.getModel().getRelease().getGitService().isReleaseSupported()) {
             sdkman.disable();
@@ -64,15 +72,10 @@ public abstract class SdkmanAnnouncerValidator extends Validator {
             sdkman.disable();
         }
 
-        validateTimeout(sdkman);
+        if (null == sdkman.getCommand()) {
+            sdkman.setCommand(Sdkman.Command.MAJOR);
+        }
 
-        context.getModel().getActiveDistributions().stream()
-            .filter(d -> d.getSdkman().isEnabled())
-            .findFirst()
-            .ifPresent(distribution -> {
-                errors.configuration("announce.sdkman and distribution." +
-                    distribution.getName() +
-                    ".sdkman are mutually exclusive. Please remove one of them.");
-            });
+        validateTimeout(sdkman);
     }
 }

@@ -25,6 +25,8 @@ public interface Constants {
     String UNSET = "**unset**";
     String HIDE = "************";
 
+    String MAGIC_SET = "__MAGIC_SET__";
+
     // General
     String KEY_ZONED_DATE_TIME_NOW = "__ZonedDateTime_now__";
     String KEY_TIMESTAMP = "timestamp";
