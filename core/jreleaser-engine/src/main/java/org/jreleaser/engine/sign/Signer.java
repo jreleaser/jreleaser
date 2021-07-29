@@ -260,6 +260,7 @@ public class Signer {
 
         if (context.getModel().getSigning().isArtifacts()) {
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
+                if (distribution.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
                 for (Artifact artifact : distribution.getArtifacts()) {
                     if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
                     Path input = artifact.getEffectivePath(context, distribution);
