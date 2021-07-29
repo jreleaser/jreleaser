@@ -251,6 +251,10 @@ public final class JReleaserModelConverter {
         s.setMilestone(convertMilestone(service.getMilestone()));
         s.setConnectTimeout(service.getConnectTimeout());
         s.setReadTimeout(service.getReadTimeout());
+        if (service.isArtifactsSet()) s.setArtifacts(service.isArtifacts());
+        if (service.isFilesSet()) s.setFiles(service.isFiles());
+        if (service.isChecksumsSet()) s.setChecksums(service.isChecksums());
+        if (service.isSignaturesSet()) s.setSignatures(service.isSignatures());
     }
 
     private static Set<org.jreleaser.model.UpdateSection> convertUpdateSections(Set<UpdateSection> updateSections) {

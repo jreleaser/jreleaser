@@ -91,6 +91,14 @@ interface GitService extends Releaser {
 
     Property<Integer> getReadTimeout()
 
+    Property<Boolean> getArtifacts()
+
+    Property<Boolean> getFiles()
+
+    Property<Boolean> getChecksums()
+
+    Property<Boolean> getSignatures()
+
     Property<Boolean> getOverwrite()
 
     Property<Boolean> getUpdate()

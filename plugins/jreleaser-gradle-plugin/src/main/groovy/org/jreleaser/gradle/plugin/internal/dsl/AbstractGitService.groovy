@@ -63,6 +63,10 @@ abstract class AbstractGitService implements GitService {
     final Property<String> apiEndpoint
     final Property<Integer> connectTimeout
     final Property<Integer> readTimeout
+    final Property<Boolean> artifacts
+    final Property<Boolean> files
+    final Property<Boolean> checksums
+    final Property<Boolean> signatures
     final Property<Boolean> overwrite
     final Property<Boolean> update
     final SetProperty<UpdateSection> updateSections
@@ -91,6 +95,10 @@ abstract class AbstractGitService implements GitService {
         apiEndpoint = objects.property(String).convention(Providers.notDefined())
         connectTimeout = objects.property(Integer).convention(Providers.notDefined())
         readTimeout = objects.property(Integer).convention(Providers.notDefined())
+        artifacts = objects.property(Boolean).convention(Providers.notDefined())
+        files = objects.property(Boolean).convention(Providers.notDefined())
+        checksums = objects.property(Boolean).convention(Providers.notDefined())
+        signatures = objects.property(Boolean).convention(Providers.notDefined())
         overwrite = objects.property(Boolean).convention(Providers.notDefined())
         update = objects.property(Boolean).convention(Providers.notDefined())
         updateSections = objects.setProperty(UpdateSection).convention(Providers.notDefined())
@@ -168,6 +176,10 @@ abstract class AbstractGitService implements GitService {
             apiEndpoint.present ||
             connectTimeout.present ||
             readTimeout.present ||
+            artifacts.present ||
+            files.present ||
+            checksums.present ||
+            signatures.present ||
             overwrite.present ||
             update.present ||
             updateSections.present
@@ -230,6 +242,10 @@ abstract class AbstractGitService implements GitService {
         if (apiEndpoint.present) service.apiEndpoint = apiEndpoint.get()
         if (connectTimeout.present) service.connectTimeout = connectTimeout.get()
         if (readTimeout.present) service.readTimeout = readTimeout.get()
+        if (artifacts.present) service.artifacts = artifacts.get()
+        if (files.present) service.files = files.get()
+        if (checksums.present) service.checksums = checksums.get()
+        if (signatures.present) service.signatures = signatures.get()
         service.sign = sign.getOrElse(false)
         service.skipTag = skipTag.getOrElse(false)
         service.overwrite = overwrite.getOrElse(false)

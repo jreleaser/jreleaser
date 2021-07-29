@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.model.GitService.KEY_SKIP_RELEASE_SIGNATURES;
 import static org.jreleaser.model.validation.BrewValidator.postValidateBrew;
 import static org.jreleaser.model.validation.BrewValidator.validateBrew;
 import static org.jreleaser.model.validation.ChocolateyValidator.validateChocolatey;
@@ -127,6 +128,11 @@ public abstract class DistributionsValidator extends Validator {
         for (Artifact artifact : distribution.getArtifacts()) {
             if (artifact.isActive()) {
                 validateArtifact(context, distribution, artifact, i++, errors);
+                if (distribution.getExtraProperties().containsKey(KEY_SKIP_RELEASE_SIGNATURES) &&
+                    !artifact.getExtraProperties().containsKey(KEY_SKIP_RELEASE_SIGNATURES)) {
+                    artifact.getExtraProperties().put(KEY_SKIP_RELEASE_SIGNATURES,
+                        distribution.getExtraProperties().get(KEY_SKIP_RELEASE_SIGNATURES));
+                }
             }
         }
 

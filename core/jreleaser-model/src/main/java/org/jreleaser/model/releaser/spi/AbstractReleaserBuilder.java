@@ -19,6 +19,7 @@ package org.jreleaser.model.releaser.spi;
 
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.util.Algorithm;
@@ -31,6 +32,8 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.model.Checksum.INDIVIDUAL_CHECKSUM;
+import static org.jreleaser.model.GitService.KEY_SKIP_RELEASE;
+import static org.jreleaser.model.GitService.KEY_SKIP_RELEASE_SIGNATURES;
 import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
 import static org.jreleaser.util.StringUtils.isTrue;
 
@@ -76,48 +79,56 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
     @Override
     public ReleaserBuilder<R> configureWith(JReleaserContext context) {
         this.context = context;
+        GitService service = context.getModel().getRelease().getGitService();
 
         List<Artifact> artifacts = new ArrayList<>();
-
-        for (Artifact artifact : Artifacts.resolveFiles(context)) {
-            if (!artifact.isActive()) continue;
-            Path path = artifact.getEffectivePath(context);
-            artifacts.add(Artifact.of(path, artifact.getExtraProperties()));
-            if (isIndividual(context, artifact)) {
-                for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-                    artifacts.add(Artifact.of(context.getChecksumsDirectory()
-                        .resolve(path.getFileName() + "." + algorithm.formatted())));
-                }
-            }
-        }
-
-        for (Distribution distribution : context.getModel().getActiveDistributions()) {
-            for (Artifact artifact : distribution.getArtifacts()) {
-                if (!artifact.isActive()) continue;
-                Path path = artifact.getEffectivePath(context, distribution);
+        if (service.isFiles()) {
+            for (Artifact artifact : Artifacts.resolveFiles(context)) {
+                if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE)) continue;
+                Path path = artifact.getEffectivePath(context);
                 artifacts.add(Artifact.of(path, artifact.getExtraProperties()));
-                if (isIndividual(context, distribution, artifact)) {
+                if (service.isChecksums() && isIndividual(context, artifact)) {
                     for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                         artifacts.add(Artifact.of(context.getChecksumsDirectory()
-                            .resolve(distribution.getName())
                             .resolve(path.getFileName() + "." + algorithm.formatted())));
                     }
                 }
             }
         }
 
-        for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-            Path checksums = context.getChecksumsDirectory()
-                .resolve(context.getModel().getChecksum().getResolvedName(context, algorithm));
-            if (Files.exists(checksums)) {
-                artifacts.add(Artifact.of(checksums));
+        if (service.isArtifacts()) {
+            for (Distribution distribution : context.getModel().getActiveDistributions()) {
+                if (distribution.extraPropertyIsTrue(KEY_SKIP_RELEASE)) continue;
+                for (Artifact artifact : distribution.getArtifacts()) {
+                    if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE)) continue;
+                    Path path = artifact.getEffectivePath(context, distribution);
+                    artifacts.add(Artifact.of(path, artifact.getExtraProperties()));
+                    if (service.isChecksums() && isIndividual(context, distribution, artifact)) {
+                        for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+                            artifacts.add(Artifact.of(context.getChecksumsDirectory()
+                                .resolve(distribution.getName())
+                                .resolve(path.getFileName() + "." + algorithm.formatted())));
+                        }
+                    }
+                }
             }
         }
 
-        if (context.getModel().getSigning().isEnabled()) {
+        if (service.isChecksums()) {
+            for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+                Path checksums = context.getChecksumsDirectory()
+                    .resolve(context.getModel().getChecksum().getResolvedName(context, algorithm));
+                if (Files.exists(checksums)) {
+                    artifacts.add(Artifact.of(checksums));
+                }
+            }
+        }
+
+        if (context.getModel().getSigning().isEnabled() && service.isSignatures()) {
             List<Artifact> artifactsCopy = new ArrayList<>(artifacts);
             for (Artifact artifact : artifactsCopy) {
-                if (artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
+                if (artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING) ||
+                    artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE_SIGNATURES)) continue;
                 Path signature = context.getSignaturesDirectory()
                     .resolve(artifact.getResolvedPath().getFileName().toString() + (context.getModel().getSigning().isArmored() ? ".asc" : ".sig"));
                 if (Files.exists(signature)) {

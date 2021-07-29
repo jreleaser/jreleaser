@@ -40,6 +40,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAware, TimeoutAware {
+    public static final String KEY_SKIP_RELEASE = "skipRelease";
+    public static final String KEY_SKIP_RELEASE_SIGNATURES = "skipReleaseSignatures";
+
     public static final String TAG_NAME = "TAG_NAME";
     public static final String RELEASE_NAME = "RELEASE_NAME";
     public static final String OVERWRITE = "OVERWRITE";
@@ -79,6 +82,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private String apiEndpoint;
     private int connectTimeout;
     private int readTimeout;
+    private Boolean artifacts;
+    private Boolean files;
+    private Boolean checksums;
+    private Boolean signatures;
 
     private String cachedTagName;
     private String cachedReleaseName;
@@ -122,6 +129,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.apiEndpoint = service.apiEndpoint;
         this.connectTimeout = service.connectTimeout;
         this.readTimeout = service.readTimeout;
+        this.artifacts = service.artifacts;
+        this.files = service.files;
+        this.checksums = service.checksums;
+        this.signatures = service.signatures;
         setCommitAuthor(service.commitAuthor);
         setChangelog(service.changelog);
         setMilestone(service.milestone);
@@ -571,45 +582,97 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.readTimeout = readTimeout;
     }
 
+    public boolean isArtifactsSet() {
+        return artifacts != null;
+    }
+
+    public Boolean isArtifacts() {
+        return artifacts == null || artifacts;
+    }
+
+    public void setArtifacts(Boolean artifacts) {
+        this.artifacts = artifacts;
+    }
+
+    public Boolean isFiles() {
+        return files == null || files;
+    }
+
+    public boolean isFilesSet() {
+        return files != null;
+    }
+
+    public void setFiles(Boolean files) {
+        this.files = files;
+    }
+
+    public boolean isChecksumsSet() {
+        return checksums != null;
+    }
+
+    public Boolean isChecksums() {
+        return checksums == null || checksums;
+    }
+
+    public void setChecksums(Boolean checksums) {
+        this.checksums = checksums;
+    }
+
+    public boolean isSignaturesSet() {
+        return signatures != null;
+    }
+
+    public Boolean isSignatures() {
+        return signatures == null || signatures;
+    }
+
+    public void setSignatures(Boolean signatures) {
+        this.signatures = signatures;
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", isEnabled());
-        map.put("host", host);
-        map.put("owner", owner);
-        map.put("name", name);
-        map.put("username", username);
-        map.put("token", isNotBlank(getResolvedToken()) ? Constants.HIDE : Constants.UNSET);
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.put("enabled", isEnabled());
+        props.put("host", host);
+        props.put("owner", owner);
+        props.put("name", name);
+        props.put("username", username);
+        props.put("token", isNotBlank(getResolvedToken()) ? Constants.HIDE : Constants.UNSET);
         if (releaseSupported) {
-            map.put("repoUrl", repoUrl);
-            map.put("repoCloneUrl", repoCloneUrl);
-            map.put("commitUrl", commitUrl);
-            map.put("downloadUrl", downloadUrl);
-            map.put("releaseNotesUrl", releaseNotesUrl);
-            map.put("latestReleaseUrl", latestReleaseUrl);
-            map.put("issueTrackerUrl", issueTrackerUrl);
+            props.put("artifacts", isArtifacts());
+            props.put("files", isFiles());
+            props.put("checksums", isChecksums());
+            props.put("signatures", isSignatures());
+            props.put("repoUrl", repoUrl);
+            props.put("repoCloneUrl", repoCloneUrl);
+            props.put("commitUrl", commitUrl);
+            props.put("downloadUrl", downloadUrl);
+            props.put("releaseNotesUrl", releaseNotesUrl);
+            props.put("latestReleaseUrl", latestReleaseUrl);
+            props.put("issueTrackerUrl", issueTrackerUrl);
         }
-        map.put("tagName", tagName);
+        props.put("tagName", tagName);
         if (releaseSupported) {
-            map.put("releaseName", releaseName);
+            props.put("releaseName", releaseName);
         }
-        map.put("branch", branch);
-        map.put("commitAuthor", commitAuthor.asMap(full));
-        map.put("sign", sign);
-        map.put("skipTag", isSkipTag());
-        map.put("overwrite", isOverwrite());
+        props.put("branch", branch);
+        props.put("commitAuthor", commitAuthor.asMap(full));
+        props.put("sign", sign);
+        props.put("skipTag", isSkipTag());
+        props.put("overwrite", isOverwrite());
         if (releaseSupported) {
-            map.put("update", isUpdate());
-            map.put("updateSections", updateSections);
-            map.put("apiEndpoint", apiEndpoint);
-            map.put("connectTimeout", connectTimeout);
-            map.put("readTimeout", readTimeout);
+            props.put("update", isUpdate());
+            props.put("updateSections", updateSections);
+            props.put("apiEndpoint", apiEndpoint);
+            props.put("connectTimeout", connectTimeout);
+            props.put("readTimeout", readTimeout);
         }
-        map.put("changelog", changelog.asMap(full));
+        props.put("changelog", changelog.asMap(full));
         if (releaseSupported) {
-            map.put("milestone", milestone.asMap(full));
+            props.put("milestone", milestone.asMap(full));
         }
-        return map;
+        return props;
     }
 
     public Map<String, Object> props(JReleaserModel model) {

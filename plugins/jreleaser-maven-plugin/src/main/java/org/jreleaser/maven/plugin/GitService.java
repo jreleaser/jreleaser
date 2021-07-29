@@ -54,6 +54,10 @@ public abstract class GitService implements Releaser {
     private String apiEndpoint;
     private int connectTimeout;
     private int readTimeout;
+    private Boolean artifacts;
+    private Boolean files;
+    private Boolean checksums;
+    private Boolean signatures;
 
     void setAll(GitService service) {
         this.enabled = service.enabled;
@@ -79,6 +83,10 @@ public abstract class GitService implements Releaser {
         this.apiEndpoint = service.apiEndpoint;
         this.connectTimeout = service.connectTimeout;
         this.readTimeout = service.readTimeout;
+        this.artifacts = service.artifacts;
+        this.files = service.files;
+        this.checksums = service.checksums;
+        this.signatures = service.signatures;
         setCommitAuthor(service.commitAuthor);
         setChangelog(service.changelog);
         setMilestone(service.milestone);
@@ -407,5 +415,53 @@ public abstract class GitService implements Releaser {
     @Override
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
+    }
+
+    public boolean isArtifactsSet() {
+        return artifacts != null;
+    }
+
+    public Boolean isArtifacts() {
+        return artifacts == null || artifacts;
+    }
+
+    public void setArtifacts(Boolean artifacts) {
+        this.artifacts = artifacts;
+    }
+
+    public Boolean isFiles() {
+        return files == null || files;
+    }
+
+    public boolean isFilesSet() {
+        return files != null;
+    }
+
+    public void setFiles(Boolean files) {
+        this.files = files;
+    }
+
+    public boolean isChecksumsSet() {
+        return checksums != null;
+    }
+
+    public Boolean isChecksums() {
+        return checksums == null || checksums;
+    }
+
+    public void setChecksums(Boolean checksums) {
+        this.checksums = checksums;
+    }
+
+    public boolean isSignaturesSet() {
+        return signatures != null;
+    }
+
+    public Boolean isSignatures() {
+        return signatures == null || signatures;
+    }
+
+    public void setSignatures(Boolean signatures) {
+        this.signatures = signatures;
     }
 }
