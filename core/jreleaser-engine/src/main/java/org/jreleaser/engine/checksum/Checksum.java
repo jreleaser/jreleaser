@@ -52,7 +52,7 @@ public class Checksum {
             for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                 readHash(context, algorithm, artifact);
                 List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());
-                list.add(artifact.getHash(algorithm) + " " + artifact.getEffectivePath(context).getFileName());
+                list.add(artifact.getHash(algorithm) + "  " + artifact.getEffectivePath(context).getFileName());
             }
         }
 
@@ -62,8 +62,7 @@ public class Checksum {
                 for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                     readHash(context, distribution, algorithm, artifact);
                     List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());
-                    list.add(artifact.getHash(algorithm) + " " + distribution.getName() + "/" +
-                        artifact.getEffectivePath(context).getFileName());
+                    list.add(artifact.getHash(algorithm) + "  " + artifact.getEffectivePath(context).getFileName());
                 }
             }
         }
