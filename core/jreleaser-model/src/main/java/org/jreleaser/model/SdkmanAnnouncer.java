@@ -118,6 +118,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         return command == Sdkman.Command.MAJOR;
     }
 
+    @Deprecated
     public void setMajor(boolean major) {
         System.out.println("announce.sdkman.major has been deprecated since 0.6.0 and will be removed in the future. Use announce.sdkman.command instead");
         this.command = major? Sdkman.Command.MAJOR: Sdkman.Command.MINOR;

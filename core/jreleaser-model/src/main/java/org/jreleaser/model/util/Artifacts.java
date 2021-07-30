@@ -37,11 +37,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
 
 /**
  * @author Andres Almiray
@@ -78,9 +80,8 @@ public class Artifacts {
 
         // resolve globs
         for (Glob glob : files.getGlobs()) {
-            for (Path path : glob.getResolvedPaths(context)) {
-                Artifact artifact = Artifact.of(path);
-                artifact.activate();
+            for (Artifact artifact : glob.getResolvedArtifacts(context)) {
+                if (!artifact.isActive()) continue;
                 paths.add(artifact);
             }
         }
@@ -114,6 +115,37 @@ public class Artifacts {
         }
     }
 
+    public static Set<Artifact> resolveFiles(JReleaserLogger logger,
+                                             Map<String, Object> props,
+                                             Path basedir,
+                                             Collection<String> globs) throws JReleaserException {
+        if (null == globs || globs.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        FileSystem fileSystem = FileSystems.getDefault();
+        List<PathMatcher> matchers = new ArrayList<>();
+        for (String glob : globs) {
+            matchers.add(fileSystem.getPathMatcher(applyTemplate(glob, props)));
+        }
+
+        GlobResolver resolver = new GlobResolver(logger, basedir, matchers);
+        try {
+            java.nio.file.Files.walkFileTree(basedir, resolver);
+            if (resolver.failed) {
+                throw new JReleaserException("Some globs failed to be resolved.");
+            }
+
+            return Artifact.sortArtifacts(resolver.artifacts);
+        } catch (IOException e) {
+            throw new JReleaserException("Unexpected error when resolving globs", e);
+        }
+    }
+
+    public static Set<Artifact> resolveFiles(JReleaserContext context, Collection<String> globs) throws JReleaserException {
+        return resolveFiles(context.getLogger(), context.props(), context.getBasedir(), globs);
+    }
+
     private static class GlobResolver extends SimpleFileVisitor<Path> {
         private final JReleaserLogger logger;
         private final List<PathMatcher> matchers;
@@ -128,10 +160,9 @@ public class Artifacts {
         }
 
         private void match(Path path) {
-            if (matchers.stream().anyMatch(matcher -> matcher.matches(path))) {
-                Artifact artifact = Artifact.of(path);
-                artifact.activate();
-                artifacts.add(artifact);
+            if (matchers.stream()
+                .anyMatch(matcher -> matcher.matches(path))) {
+                artifacts.add(Artifact.of(path));
             }
         }
 

@@ -19,7 +19,6 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
-import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jlink;
 import org.jreleaser.model.Project;
@@ -120,27 +119,10 @@ public abstract class JlinkValidator extends Validator {
             errors.configuration("jlink." + jlink.getName() + ".mainJar.path must not be null");
         }
 
-        i = 0;
-        for (Glob glob : jlink.getJars()) {
-            boolean isBaseDir = false;
-
-            if (isBlank(glob.getDirectory())) {
-                glob.setDirectory(".");
-                isBaseDir = true;
-            }
-
-            boolean includeAll = false;
-            if (isBlank(glob.getInclude())) {
-                glob.setInclude("*");
-                includeAll = true;
-            }
-
-            if (isBlank(glob.getExclude()) &&
-                includeAll && isBaseDir) {
-                // too broad!
-                errors.configuration("jlink." + jlink.getName() + ".jars[" + i + "] must define either a directory or an include/exclude pattern");
-            }
-        }
+        validateGlobs(context,
+            jlink.getJars(),
+            "jlink." + jlink.getName() + ".jars",
+            errors);
 
         if (mode != JReleaserContext.Mode.FULL) {
             validateTemplate(context, jlink, errors);

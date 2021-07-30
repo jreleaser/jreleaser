@@ -203,8 +203,8 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         // resolve all first
         paths.add(assembler.getMainJar().getEffectivePath(context, assembler));
         for (Glob glob : assembler.getJars()) {
-            glob.getResolvedPaths(context).stream()
-                .filter(Files::isRegularFile)
+            glob.getResolvedArtifacts(context).stream()
+                .map(artifact -> artifact.getResolvedPath(context, assembler))
                 .forEach(paths::add);
         }
 
@@ -227,8 +227,8 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
 
         // resolve all first
         for (Glob glob : assembler.getFiles()) {
-            glob.getResolvedPaths(context).stream()
-                .filter(Files::isRegularFile)
+            glob.getResolvedArtifacts(context).stream()
+                .map(artifact -> artifact.getResolvedPath(context, assembler))
                 .forEach(paths::add);
         }
 

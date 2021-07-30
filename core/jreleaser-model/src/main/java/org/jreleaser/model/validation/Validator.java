@@ -22,6 +22,7 @@ import org.jreleaser.model.CommitAuthorAware;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Environment;
 import org.jreleaser.model.GitService;
+import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.OwnerAware;
 import org.jreleaser.model.RepositoryTap;
@@ -29,6 +30,8 @@ import org.jreleaser.model.TimeoutAware;
 import org.jreleaser.model.Tool;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
+
+import java.util.Collection;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -135,5 +138,30 @@ class Validator {
                 "distribution." + distribution.getName() + "." + property + ".branch",
                 tap.getBranch(),
                 "HEAD"));
+    }
+
+    static void validateGlobs(JReleaserContext context, Collection<Glob> globs, String property, Errors errors) {
+        int i = 0;
+        for (Glob glob : globs) {
+            if (isNotBlank(glob.getPattern())) continue;
+
+            boolean isBaseDir = false;
+            if (isBlank(glob.getDirectory())) {
+                glob.setDirectory(".");
+                isBaseDir = true;
+            }
+
+            boolean includeAll = false;
+            if (isBlank(glob.getInclude())) {
+                glob.setInclude("*");
+                includeAll = true;
+            }
+
+            if (isBlank(glob.getExclude()) &&
+                includeAll && isBaseDir) {
+                // too broad!
+                errors.configuration(property + "[" + i + "] must define a pattern");
+            }
+        }
     }
 }

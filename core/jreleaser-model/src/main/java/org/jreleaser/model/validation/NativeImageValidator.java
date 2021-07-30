@@ -18,7 +18,6 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Active;
-import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.NativeImage;
 import org.jreleaser.util.Errors;
@@ -80,27 +79,10 @@ public abstract class NativeImageValidator extends Validator {
             errors.configuration("nativeImage." + nativeImage.getName() + ".mainJar.path must not be null");
         }
 
-        int i = 0;
-        for (Glob glob : nativeImage.getJars()) {
-            boolean isBaseDir = false;
-
-            if (isBlank(glob.getDirectory())) {
-                glob.setDirectory(".");
-                isBaseDir = true;
-            }
-
-            boolean includeAll = false;
-            if (isBlank(glob.getInclude())) {
-                glob.setInclude("*");
-                includeAll = true;
-            }
-
-            if (isBlank(glob.getExclude()) &&
-                includeAll && isBaseDir) {
-                // too broad!
-                errors.configuration("nativeImage." + nativeImage.getName() + ".jars[" + i + "] must define either a directory or an include/exclude pattern");
-            }
-        }
+        validateGlobs(context,
+            nativeImage.getJars(),
+            "nativeImage." + nativeImage.getName() + ".jars",
+            errors);
 
         if (mode == JReleaserContext.Mode.ASSEMBLE) {
             validateTemplate(context, nativeImage, errors);

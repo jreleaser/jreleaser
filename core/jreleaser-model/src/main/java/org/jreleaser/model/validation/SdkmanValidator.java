@@ -47,7 +47,7 @@ public abstract class SdkmanValidator extends Validator {
 
         boolean toolSet = tool.isActiveSet();
         boolean parentToolSet = parentTool.isActiveSet();
-        tool.getExtraProperties().put(MAGIC_SET, toolSet && parentToolSet);
+        tool.getExtraProperties().put(MAGIC_SET, toolSet || parentToolSet);
 
         if (!tool.isActiveSet() && parentTool.isActiveSet()) {
             tool.setActive(parentTool.getActive());

@@ -17,11 +17,8 @@
  */
 package org.jreleaser.model.validation;
 
-import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
-
-import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -40,26 +37,6 @@ public abstract class FilesValidator extends Validator {
                 if (context.isPlatformSelected(artifact)) artifact.activate();
             });
 
-        int i = 0;
-        for (Glob glob : context.getModel().getFiles().getGlobs()) {
-            boolean isBaseDir = false;
-
-            if (isBlank(glob.getDirectory())) {
-                glob.setDirectory(".");
-                isBaseDir = true;
-            }
-
-            boolean includeAll = false;
-            if (isBlank(glob.getInclude())) {
-                glob.setInclude("*");
-                includeAll = true;
-            }
-
-            if (isBlank(glob.getExclude()) &&
-                includeAll && isBaseDir) {
-                // too broad!
-                errors.configuration("files.glob[" + i + "] must define either a directory or an include/exclude pattern");
-            }
-        }
+        validateGlobs(context, context.getModel().getFiles().getGlobs(), "files.glob", errors);
     }
 }

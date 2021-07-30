@@ -17,6 +17,9 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.model.util.Artifacts;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -30,26 +33,78 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.Files.exists;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Glob implements Domain {
+public class Glob implements Domain, ExtraProperties {
+    private static final String GLOB_PREFIX = "glob:";
+    private static final String REGEX_PREFIX = "regex:";
+
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+
+    private String pattern;
+    private Set<Artifact> artifacts;
+
     private String directory;
     private String include;
     private String exclude;
     private Boolean recursive;
-    private Set<Path> paths;
 
-    public Set<Path> getResolvedPaths(JReleaserContext context) {
-        if (null == paths) {
+    void setAll(Glob glob) {
+        this.pattern = glob.pattern;
+        setExtraProperties(glob.extraProperties);
+    }
+
+    @Override
+    public String getPrefix() {
+        return "glob";
+    }
+
+    @Override
+    public Map<String, Object> getExtraProperties() {
+        return extraProperties;
+    }
+
+    @Override
+    public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
+    public void addExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    public Set<Artifact> getResolvedArtifacts(JReleaserContext context) {
+        return isNotBlank(pattern) ? getResolvedArtifactsPattern(context) : getResolvedArtifactsLegacy(context);
+    }
+
+    public Set<Artifact> getResolvedArtifactsPattern(JReleaserContext context) {
+        if (null == artifacts) {
+            artifacts = Artifacts.resolveFiles(context, Collections.singletonList(pattern));
+            artifacts.forEach(artifact -> {
+                if (context.isPlatformSelected(artifact)) artifact.activate();
+                artifact.setExtraProperties(getExtraProperties());
+            });
+        }
+
+        return artifacts;
+    }
+
+    @Deprecated
+    public Set<Artifact> getResolvedArtifactsLegacy(JReleaserContext context) {
+        if (null == artifacts) {
             // resolve directory
             Path path = context.getBasedir();
             if (isNotBlank(directory)) {
@@ -73,16 +128,50 @@ public class Glob implements Domain {
                 throw new JReleaserException("Could not resolve glob " + this.asMap(true));
             }
 
-            paths = fileCollector.getFiles();
+            artifacts = fileCollector.getFiles().stream()
+                .map(p -> Artifact.of(p, getExtraProperties()))
+                .peek(a -> {
+                    if (context.isPlatformSelected(a)) a.activate();
+                })
+                .collect(Collectors.toSet());
+            Artifact.sortArtifacts(artifacts);
         }
-        return paths;
+        return artifacts;
+    }
+
+    public String getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(String pattern) {
+        if (isBlank(pattern)) return;
+
+        if (pattern.startsWith(GLOB_PREFIX) || pattern.startsWith(REGEX_PREFIX)) {
+            this.pattern = pattern.trim();
+        } else {
+            this.pattern = GLOB_PREFIX + pattern.trim();
+        }
+
+        if (this.pattern.startsWith(GLOB_PREFIX)) {
+            String path = this.pattern.substring(GLOB_PREFIX.length());
+            if (!Paths.get(path).isAbsolute()) {
+                this.pattern = GLOB_PREFIX + "**" + File.separator + path;
+            }
+        } else {
+            String path = this.pattern.substring(REGEX_PREFIX.length());
+            if (!Paths.get(path).isAbsolute()) {
+                this.pattern = REGEX_PREFIX + ".*" + File.separator + path;
+            }
+        }
     }
 
     public String getDirectory() {
         return directory;
     }
 
+    @Deprecated
     public void setDirectory(String directory) {
+        System.out.println("glob.directory has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
         this.directory = directory;
     }
 
@@ -90,7 +179,9 @@ public class Glob implements Domain {
         return include;
     }
 
+    @Deprecated
     public void setInclude(String include) {
+        System.out.println("glob.include has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
         this.include = include;
     }
 
@@ -98,7 +189,9 @@ public class Glob implements Domain {
         return exclude;
     }
 
+    @Deprecated
     public void setExclude(String exclude) {
+        System.out.println("glob.exclude has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
         this.exclude = exclude;
     }
 
@@ -106,7 +199,9 @@ public class Glob implements Domain {
         return recursive != null && recursive;
     }
 
+    @Deprecated
     public void setRecursive(Boolean recursive) {
+        System.out.println("glob.recursive has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
         this.recursive = recursive;
     }
 
@@ -116,12 +211,14 @@ public class Glob implements Domain {
 
     @Override
     public Map<String, Object> asMap(boolean full) {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("directory", directory);
-        map.put("include", include);
-        map.put("exclude", exclude);
-        map.put("recursive", isRecursive());
-        return map;
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.put("pattern", pattern);
+        props.put("extraProperties", getResolvedExtraProperties());
+        props.put("directory", directory);
+        props.put("include", include);
+        props.put("exclude", exclude);
+        if (isBlank(pattern)) props.put("recursive", isRecursive());
+        return props;
     }
 
     public static class FileCollector extends SimpleFileVisitor<Path> {
@@ -165,7 +262,7 @@ public class Glob implements Domain {
                 if (null != excludeMatcher && excludeMatcher.matches(fileName)) {
                     return false;
                 }
-                files.add(file);
+                if (java.nio.file.Files.isRegularFile(file)) files.add(file);
             }
             return null == excludeMatcher || !excludeMatcher.matches(fileName);
         }

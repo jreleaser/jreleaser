@@ -204,8 +204,8 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         // resolve all first
         paths.add(assembler.getMainJar().getEffectivePath(context, assembler));
         for (Glob glob : assembler.getJars()) {
-            glob.getResolvedPaths(context).stream()
-                .filter(Files::isRegularFile)
+            glob.getResolvedArtifacts(context).stream()
+                .map(artifact -> artifact.getResolvedPath(context, assembler))
                 .forEach(paths::add);
         }
 
@@ -228,8 +228,8 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
 
         // resolve all first
         for (Glob glob : assembler.getFiles()) {
-            glob.getResolvedPaths(context).stream()
-                .filter(Files::isRegularFile)
+            glob.getResolvedArtifacts(context).stream()
+                .map(artifact -> artifact.getResolvedPath(context, assembler))
                 .forEach(paths::add);
         }
 
