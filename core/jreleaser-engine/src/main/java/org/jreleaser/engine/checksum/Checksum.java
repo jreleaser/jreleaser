@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jreleaser.model.Checksum.KEY_SKIP_CHECKSUM;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -47,12 +48,14 @@ public class Checksum {
 
         Map<Algorithm, List<String>> checksums = new LinkedHashMap<>();
 
-        for (Artifact artifact : Artifacts.resolveFiles(context)) {
-            if (!artifact.isActive()) continue;
-            for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-                readHash(context, algorithm, artifact);
-                List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());
-                list.add(artifact.getHash(algorithm) + "  " + artifact.getEffectivePath(context).getFileName());
+        if (context.getModel().getChecksum().isFiles()) {
+            for (Artifact artifact : Artifacts.resolveFiles(context)) {
+                if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_CHECKSUM)) continue;
+                for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+                    readHash(context, algorithm, artifact);
+                    List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());
+                    list.add(artifact.getHash(algorithm) + "  " + artifact.getEffectivePath(context).getFileName());
+                }
             }
         }
 

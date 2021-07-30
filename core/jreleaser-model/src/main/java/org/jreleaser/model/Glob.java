@@ -67,7 +67,7 @@ public class Glob implements Domain, ExtraProperties {
 
     @Override
     public String getPrefix() {
-        return "glob";
+        return "artifact";
     }
 
     @Override

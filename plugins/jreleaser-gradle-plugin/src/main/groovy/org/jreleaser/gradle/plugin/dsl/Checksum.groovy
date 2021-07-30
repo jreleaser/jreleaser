@@ -33,6 +33,8 @@ interface Checksum {
 
     Property<Boolean> getIndividual()
 
+    Property<Boolean> getFiles()
+
     ListProperty<Algorithm> getAlgorithms()
 
     void algorithm(String algorithm)

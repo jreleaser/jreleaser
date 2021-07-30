@@ -31,15 +31,18 @@ import static org.jreleaser.util.MustacheUtils.applyTemplate;
  * @since 0.4.0
  */
 public class Checksum implements Domain {
+    public static final String KEY_SKIP_CHECKSUM = "skipChecksum";
     public static final String INDIVIDUAL_CHECKSUM = "individualChecksum";
 
     private final Set<Algorithm> algorithms = new LinkedHashSet<>();
     private Boolean individual;
     private String name;
+    private Boolean files;
 
     void setAll(Checksum checksum) {
         this.name = checksum.name;
         this.individual = checksum.individual;
+        this.files = checksum.files;
         setAlgorithms(checksum.algorithms);
     }
 
@@ -90,12 +93,26 @@ public class Checksum implements Domain {
         this.algorithms.addAll(algorithms);
     }
 
+    public Boolean isFiles() {
+        return files == null || files;
+    }
+
+    public boolean isFilesSet() {
+        return files != null;
+    }
+
+    public void setFiles(Boolean files) {
+        System.out.println("setting files "+files);
+        this.files = files;
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("name", name);
-        map.put("individual", isIndividual());
-        map.put("algorithms", algorithms);
-        return map;
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.put("name", name);
+        props.put("individual", isIndividual());
+        props.put("algorithms", algorithms);
+        props.put("files", isFiles());
+        return props;
     }
 }

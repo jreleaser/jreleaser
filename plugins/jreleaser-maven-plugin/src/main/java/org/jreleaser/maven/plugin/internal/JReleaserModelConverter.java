@@ -692,6 +692,7 @@ public final class JReleaserModelConverter {
         s.setName(checksum.getName());
         s.setIndividual(checksum.isIndividual());
         s.setAlgorithms(checksum.getAlgorithms());
+        if (checksum.isFilesSet()) s.setFiles(checksum.isFiles());
         return s;
     }
 

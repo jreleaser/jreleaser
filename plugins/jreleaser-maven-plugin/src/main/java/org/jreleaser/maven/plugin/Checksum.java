@@ -30,11 +30,13 @@ public class Checksum {
     private final Set<Algorithm> algorithms = new LinkedHashSet<>();
     private Boolean individual;
     private String name;
+    private Boolean files;
 
     void setAll(Checksum checksum) {
         this.name = checksum.name;
         this.individual = checksum.individual;
         setAlgorithms(checksum.algorithms);
+        this.files = checksum.files;
     }
 
     public String getName() {
@@ -64,5 +66,17 @@ public class Checksum {
     public void setAlgorithms(Set<Algorithm> algorithms) {
         this.algorithms.clear();
         this.algorithms.addAll(algorithms);
+    }
+
+    public Boolean isFiles() {
+        return files == null || files;
+    }
+
+    public boolean isFilesSet() {
+        return files != null;
+    }
+
+    public void setFiles(Boolean files) {
+        this.files = files;
     }
 }

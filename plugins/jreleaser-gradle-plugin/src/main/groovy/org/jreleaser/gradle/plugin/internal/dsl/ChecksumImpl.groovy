@@ -39,19 +39,22 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class ChecksumImpl implements Checksum {
     final Property<String> name
     final Property<Boolean> individual
+    final Property<Boolean> files
     final ListProperty<Algorithm> algorithms
 
     @Inject
     ChecksumImpl(ObjectFactory objects) {
         name = objects.property(String).convention(Providers.notDefined())
         individual = objects.property(Boolean).convention(Providers.notDefined())
+        files = objects.property(Boolean).convention(Providers.notDefined())
         algorithms = objects.listProperty(Algorithm).convention(Providers.notDefined())
     }
 
     @Internal
     boolean isSet() {
         return name.present ||
-            individual.present
+            individual.present ||
+            files.present
     }
 
     @Override
@@ -65,6 +68,7 @@ class ChecksumImpl implements Checksum {
         org.jreleaser.model.Checksum checksum = new org.jreleaser.model.Checksum()
         if (name.present) checksum.name = name.get()
         if (individual.present) checksum.individual = individual.get()
+        if (files.present) checksum.files = files.get()
         checksum.algorithms = (Set<Algorithm>) algorithms.getOrElse([])
         checksum
     }

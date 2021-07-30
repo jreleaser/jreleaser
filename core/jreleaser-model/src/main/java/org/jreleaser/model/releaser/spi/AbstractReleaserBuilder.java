@@ -32,6 +32,7 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.model.Checksum.INDIVIDUAL_CHECKSUM;
+import static org.jreleaser.model.Checksum.KEY_SKIP_CHECKSUM;
 import static org.jreleaser.model.GitService.KEY_SKIP_RELEASE;
 import static org.jreleaser.model.GitService.KEY_SKIP_RELEASE_SIGNATURES;
 import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
@@ -87,7 +88,8 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
                 if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE)) continue;
                 Path path = artifact.getEffectivePath(context);
                 artifacts.add(Artifact.of(path, artifact.getExtraProperties()));
-                if (service.isChecksums() && isIndividual(context, artifact)) {
+                if (service.isChecksums() && isIndividual(context, artifact) &&
+                    !artifact.extraPropertyIsTrue(KEY_SKIP_CHECKSUM)) {
                     for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                         artifacts.add(Artifact.of(context.getChecksumsDirectory()
                             .resolve(path.getFileName() + "." + algorithm.formatted())));
