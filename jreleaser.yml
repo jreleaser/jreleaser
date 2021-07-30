@@ -82,6 +82,10 @@ release:
 signing:
   active: always
   armored: true
+  files: false
+
+checksum:
+  files: false
 
 announce:
   twitter:
@@ -124,8 +128,7 @@ assemble:
       mainJar:
         path: 'apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
       jars:
-        - directory: 'apps/jreleaser/build/dependencies/flat'
-          include: '*.jar'
+        - pattern: 'apps/jreleaser/build/dependencies/flat/*.jar'
 
 distributions:
   jreleaser:
