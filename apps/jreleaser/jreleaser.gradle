@@ -17,7 +17,7 @@
  */
 plugins {
     id 'application'
-    id 'de.undercouch.download'
+    id 'org.jreleaser.jdks'
 }
 
 application {
@@ -70,133 +70,26 @@ distributions {
     }
 }
 
-ext.jdks = [
-    [
-        platform: 'linux',
-        file: 'zulu11.48.21-ca-jdk11.0.11-linux_x64.zip',
-        url: 'https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-linux_x64.zip',
-        checksum: '9d1718ef74c29a8148b67ddd90bc9267fc1614e0a1eb0f4ea16e234e86419a60',
-        tasks: [:]
-    ],
-    [
-        platform: 'windows',
-        file: 'zulu11.48.21-ca-jdk11.0.11-win_x64.zip',
-        url: 'https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-win_x64.zip',
-        checksum: '7bcbaedecca73811f70a5ee89e9258afff9bc009286449d97d9b3105f52a1a3a',
-        tasks: [:]
-    ],
-    [
-        platform: 'osx',
-        file: 'zulu11.48.21-ca-jdk11.0.11-macosx_x64.zip',
-        url: 'https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-macosx_x64.zip',
-        checksum: 'abc3a9696fb6c10efcf3c5878cdb049244b0ba5dcc7141c6f0f88b99df626d2a',
-        tasks: [:]
-    ],
-    [
-        platform: 'linux_musl',
-        file: 'zulu11.48.21-ca-jdk11.0.11-linux_musl_x64.tar.gz',
-        url: 'https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-linux_musl_x64.tar.gz',
-        checksum: '406b76e53e8be7e19436dee6954ee903f50c0a2ed3ed86456de4c7b5072aa544',
-        tasks: [:]
-    ]
-]
-
-for (jdk in jdks) {
-    def downloadJdk = tasks.create("download${jdk.platform.capitalize()}Jdk".toString(), de.undercouch.gradle.tasks.download.Download) {
-        group = 'Jdks'
-        description = "Download ${jdk.platform.capitalize()} JDK"
-
-        src jdk.url
-        dest project.file("${buildDir}/jdks/${jdk.file}".toString())
-        doFirst {
-            project.file("${buildDir}/jdks/").mkdirs()
-        }
-
-        String jdkFile = jdk.file
-        onlyIf {
-            !project.file("${buildDir}/jdks/"+ jdkFile).exists()
-        }
+jdks {
+    zulu11Linux {
+        platform = 'linux'
+        url = 'https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-linux_x64.zip'
+        checksum = '9d1718ef74c29a8148b67ddd90bc9267fc1614e0a1eb0f4ea16e234e86419a60'
     }
-    jdk.tasks.download = downloadJdk
-
-    def verifyJdk = tasks.create("verify${jdk.platform.capitalize()}Jdk".toString(), de.undercouch.gradle.tasks.download.Verify) {
-        group = 'Jdks'
-        description = "Verify ${jdk.platform.capitalize()} JDK"
-        dependsOn downloadJdk
-
-        src downloadJdk.dest
-        algorithm 'SHA-256'
-        checksum jdk.checksum
-        onlyIf {
-            downloadJdk.didWork
-        }
+    zulu11LinuxMusl {
+        platform = 'linux_musl'
+        url = 'https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-linux_musl_x64.tar.gz'
+        checksum = '406b76e53e8be7e19436dee6954ee903f50c0a2ed3ed86456de4c7b5072aa544'
     }
-    jdk.tasks.verify = verifyJdk
-
-    def unzipJdk = tasks.create("unzip${jdk.platform.capitalize()}Jdk".toString(), Copy) {
-        group = 'Jdks'
-        description = "Unzip ${jdk.platform.capitalize()} JDK"
-        dependsOn verifyJdk
-
-        if (jdk.file.endsWith('.zip')) {
-            from zipTree(downloadJdk.dest)
-        } else {
-            from tarTree(downloadJdk.dest)
-        }
-        into project.file("${buildDir}/jdks".toString())
-        duplicatesStrategy = 'include'
-        onlyIf {
-            verifyJdk.didWork
-        }
+    zulu11Windows {
+        platform = 'windows'
+        url = 'https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-win_x64.zip'
+        checksum = '7bcbaedecca73811f70a5ee89e9258afff9bc009286449d97d9b3105f52a1a3a'
     }
-    jdk.tasks.unzip = unzipJdk
-}
-
-def downloadJdks = tasks.create('downloadJdks', DefaultTask) {
-    group = 'Jdks'
-    description = 'Download all JDKs'
-    dependsOn jdks.tasks.download
-}
-
-def verifyJdks = tasks.create('verifyJdks', DefaultTask) {
-    group = 'Jdks'
-    description = 'Verify all JDKs'
-    dependsOn jdks.tasks.verify
-}
-
-def unzipJdks = tasks.create('unzipJdks', DefaultTask) {
-    group = 'Jdks'
-    description = 'Unzip all JDKs'
-    dependsOn jdks.tasks.unzip
-}
-
-def jdksTask = tasks.create('jdks') {
-    group = 'Jdks'
-    description = 'Download, verify, unzips all JDKS'
-    dependsOn downloadJdks, verifyJdks, unzipJdks
-}
-
-def copyJdksToCache = tasks.create('copyJdksToCache', Copy) {
-    group = 'Jdks'
-    description = 'Copy JDK zips to Gradle cache'
-    dependsOn jdks.tasks.download
-    from(jdks.tasks.download.dest)
-    into(file("${gradle.gradleUserHomeDir}/caches/jdks"))
-}
-
-jdksTask.finalizedBy(copyJdksToCache)
-
-def copyJdksFromCache = tasks.create('copyJdksFromCache', Copy) {
-    group = 'Jdks'
-    description = 'Copy JDKs from Gradle cache'
-    file("${gradle.gradleUserHomeDir}/caches/jdks").listFiles().each {jdkZip ->
-        if (jdkZip.name.endsWith('.zip')) {
-            from zipTree(jdkZip)
-        } else {
-            from tarTree(jdkZip)
-        }
-        into project.file("${buildDir}/jdks/")
-        duplicatesStrategy = 'include'
+    zulu11Osx {
+        platform = 'osx'
+        url = 'https://cdn.azul.com/zulu/bin/zulu11.48.21-ca-jdk11.0.11-macosx_x64.zip'
+        checksum = 'abc3a9696fb6c10efcf3c5878cdb049244b0ba5dcc7141c6f0f88b99df626d2a'
     }
 }
 
@@ -207,7 +100,3 @@ copyDependencies {
 }
 
 assemble.dependsOn copyDependencies
-if (file("${gradle.gradleUserHomeDir}/caches/jdks").exists()) {
-//    assemble.dependsOn copyJdksFromCache
-}
-assemble.dependsOn jdksTask

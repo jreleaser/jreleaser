@@ -27,6 +27,7 @@ buildscript {
         classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:plugin-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:kordamp-parentbuild:$kordampBuildVersion"
+        classpath "org.jreleaser:jdks-gradle-plugin:$jdksPluginVersion"
         classpath 'de.undercouch:gradle-download-task:4.1.1'
         classpath "org.ow2.asm:asm:$asmVersion"
         classpath "org.ow2.asm:asm-commons:$asmVersion"
