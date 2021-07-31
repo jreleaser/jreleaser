@@ -90,6 +90,7 @@ checksum:
 announce:
   twitter:
     active: release
+    status: 🚀 JReleaser {{projectVersion}} has been released! {{releaseNotesUrl}}
 
 assemble:
   jlink:

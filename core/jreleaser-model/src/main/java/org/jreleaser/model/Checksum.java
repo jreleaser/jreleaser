@@ -102,7 +102,6 @@ public class Checksum implements Domain {
     }
 
     public void setFiles(Boolean files) {
-        System.out.println("setting files "+files);
         this.files = files;
     }
 
