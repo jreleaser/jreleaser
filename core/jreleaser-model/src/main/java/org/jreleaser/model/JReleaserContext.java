@@ -90,6 +90,7 @@ public class JReleaserContext {
     private String assemblerName;
     private String changelog;
     private Releaser releaser;
+    private JReleaserCommand command;
 
     public JReleaserContext(JReleaserLogger logger,
                             Configurer configurer,
@@ -368,6 +369,14 @@ public class JReleaserContext {
 
     public void setAssemblerName(String assemblerName) {
         this.assemblerName = assemblerName;
+    }
+
+    public JReleaserCommand getCommand() {
+        return command;
+    }
+
+    public void setCommand(JReleaserCommand command) {
+        this.command = command;
     }
 
     public Map<String, Object> props() {

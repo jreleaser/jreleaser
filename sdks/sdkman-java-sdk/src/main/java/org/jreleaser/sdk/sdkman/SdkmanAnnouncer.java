@@ -19,6 +19,7 @@ package org.jreleaser.sdk.sdkman;
 
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.JReleaserCommand;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Sdkman;
 import org.jreleaser.model.announcer.spi.AnnounceException;
@@ -59,15 +60,19 @@ public class SdkmanAnnouncer implements Announcer {
     public void announce() throws AnnounceException {
         Map<String, Distribution> distributions = context.getModel().getActiveDistributions().stream()
             .filter(d -> d.getSdkman().isEnabled())
-            .filter(d -> d.getSdkman().isPublished())
+            .filter(d -> !JReleaserCommand.supportsPublish(context.getCommand()) || d.getSdkman().isPublished())
             .collect(Collectors.toMap(distribution -> {
                 Sdkman sdkman = distribution.getSdkman();
                 return isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
             }, distribution -> distribution));
 
         Boolean set = (Boolean) context.getModel().getAnnounce().getSdkman().getExtraProperties().remove(MAGIC_SET);
-        if (distributions.isEmpty() && (set != null && !set)) {
-            announceProject();
+        if (distributions.isEmpty()) {
+            if (set == null || !set) {
+                announceProject();
+            } else {
+                context.getLogger().debug("disabled. Skipping");
+            }
             return;
         }
 

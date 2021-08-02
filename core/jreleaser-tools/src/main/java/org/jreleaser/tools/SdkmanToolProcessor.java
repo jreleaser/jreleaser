@@ -19,7 +19,6 @@ package org.jreleaser.tools;
 
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
-import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Sdkman;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
@@ -130,8 +129,6 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
-        GitService gitService = context.getModel().getRelease().getGitService();
-
         props.put(Constants.KEY_SDKMAN_CANDIDATE, tool.getCandidate());
         props.put(Constants.KEY_SDKMAN_RELEASE_NOTES_URL, applyTemplate(tool.getReleaseNotesUrl(), props));
     }
