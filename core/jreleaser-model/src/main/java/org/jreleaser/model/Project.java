@@ -46,6 +46,7 @@ public class Project implements Domain, ExtraProperties {
     public static final String PROJECT_VERSION_PATTERN = "PROJECT_VERSION_PATTERN";
     public static final String PROJECT_SNAPSHOT_PATTERN = "PROJECT_SNAPSHOT_PATTERN";
     public static final String PROJECT_SNAPSHOT_LABEL = "PROJECT_SNAPSHOT_LABEL";
+    public static final String PROJECT_SNAPSHOT_FULL_CHANGELOG = "PROJECT_SNAPSHOT_FULL_CHANGELOG";
     public static final String DEFAULT_SNAPSHOT_PATTERN = ".*-SNAPSHOT";
     public static final String DEFAULT_SNAPSHOT_LABEL = "early-access";
 
@@ -380,12 +381,14 @@ public class Project implements Domain, ExtraProperties {
         private Boolean enabled;
         private String pattern;
         private String label;
+        private Boolean fullChangelog;
         private String cachedLabel;
 
         void setAll(Snapshot snapshot) {
             this.enabled = snapshot.enabled;
             this.pattern = snapshot.pattern;
             this.label = snapshot.label;
+            this.fullChangelog = snapshot.fullChangelog;
         }
 
         public boolean isSnapshot(String version) {
@@ -445,12 +448,29 @@ public class Project implements Domain, ExtraProperties {
             this.label = label;
         }
 
+        public Boolean getFullChangelog() {
+            return fullChangelog;
+        }
+
+        public boolean isFullChangelog() {
+            return fullChangelog != null && fullChangelog;
+        }
+
+        public void setFullChangelog(Boolean fullChangelog) {
+            this.fullChangelog = fullChangelog;
+        }
+
+        public boolean isFullChangelogSet() {
+            return fullChangelog != null;
+        }
+
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("enabled", enabled);
             map.put("pattern", getConfiguredPattern());
             map.put("label", getConfiguredLabel());
+            map.put("fullChangelog", isFullChangelog());
             return map;
         }
 

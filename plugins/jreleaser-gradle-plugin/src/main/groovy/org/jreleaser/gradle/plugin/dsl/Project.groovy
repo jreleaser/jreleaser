@@ -79,5 +79,7 @@ interface Project extends ExtraProperties {
         Property<String> getPattern()
 
         Property<String> getLabel()
+
+        Property<Boolean> getFullChangelog()
     }
 }

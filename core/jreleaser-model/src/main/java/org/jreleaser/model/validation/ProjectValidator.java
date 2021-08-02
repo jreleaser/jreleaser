@@ -26,6 +26,7 @@ import org.jreleaser.util.Errors;
 import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_LABEL;
 import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Project.PROJECT_NAME;
+import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_FULL_CHANGELOG;
 import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_LABEL;
 import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Project.PROJECT_VERSION;
@@ -75,6 +76,13 @@ public abstract class ProjectValidator extends Validator {
                 "project.snapshot.label",
                 project.getSnapshot().getLabel(),
                 DEFAULT_SNAPSHOT_LABEL));
+
+        project.getSnapshot().setFullChangelog(
+            checkProperty(context,
+                PROJECT_SNAPSHOT_FULL_CHANGELOG,
+                "project.snapshot.fullChangelog",
+                project.getSnapshot().getFullChangelog(),
+                false));
 
         boolean javaDistributions = context.getModel().getDistributions().values().stream()
             .map(Distribution::getType)

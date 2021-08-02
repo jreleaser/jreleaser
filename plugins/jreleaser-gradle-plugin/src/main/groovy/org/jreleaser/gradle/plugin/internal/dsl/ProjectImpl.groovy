@@ -149,23 +149,27 @@ class ProjectImpl implements Project {
     static class SnapshotImpl implements Snapshot {
         final Property<String> pattern
         final Property<String> label
+        final Property<Boolean> fullChangelog
 
         @Inject
         SnapshotImpl(ObjectFactory objects) {
             pattern = objects.property(String).convention(Providers.notDefined())
             label = objects.property(String).convention(Providers.notDefined())
+            fullChangelog = objects.property(Boolean).convention(Providers.notDefined())
         }
 
         @Internal
         boolean isSet() {
             pattern.present ||
-                label.present
+                label.present ||
+                fullChangelog.present
         }
 
         org.jreleaser.model.Project.Snapshot toModel() {
             org.jreleaser.model.Project.Snapshot snapshot = new org.jreleaser.model.Project.Snapshot()
             if (pattern.present) snapshot.pattern = pattern.get()
             if (label.present) snapshot.label = label.get()
+            if (fullChangelog.present) snapshot.fullChangelog = fullChangelog.get()
             snapshot
         }
     }

@@ -155,6 +155,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Project.Snapshot s = new org.jreleaser.model.Project.Snapshot();
         s.setPattern(snapshot.getPattern());
         s.setLabel(snapshot.getLabel());
+        if (snapshot.isFullChangelogSet()) s.setFullChangelog(snapshot.isFullChangelog());
         return s;
     }
 

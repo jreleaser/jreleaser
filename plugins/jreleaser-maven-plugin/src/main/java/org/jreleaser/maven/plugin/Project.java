@@ -205,10 +205,12 @@ public class Project implements ExtraProperties {
     public static class Snapshot {
         private String pattern;
         private String label;
+        private Boolean fullChangelog;
 
         void setAll(Snapshot snapshot) {
             this.pattern = snapshot.pattern;
             this.label = snapshot.label;
+            this.fullChangelog = snapshot.fullChangelog;
         }
 
         public String getPattern() {
@@ -225,6 +227,18 @@ public class Project implements ExtraProperties {
 
         public void setLabel(String label) {
             this.label = label;
+        }
+
+        public boolean isFullChangelog() {
+            return fullChangelog != null && fullChangelog;
+        }
+
+        public void setFullChangelog(Boolean fullChangelog) {
+            this.fullChangelog = fullChangelog;
+        }
+
+        public boolean isFullChangelogSet() {
+            return fullChangelog != null;
         }
     }
 }

@@ -27,6 +27,7 @@ import org.jreleaser.model.Changelog;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Project;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JavaModuleVersion;
@@ -192,9 +193,10 @@ public class ChangelogGenerator {
 
         // tag: early-access
         if (context.getModel().getProject().isSnapshot()) {
-            String effectiveLabel = context.getModel().getProject().getSnapshot().getEffectiveLabel();
+            Project.Snapshot snapshot = context.getModel().getProject().getSnapshot();
+            String effectiveLabel = snapshot.getEffectiveLabel();
             if (effectiveLabel.equals(effectiveTagName)) {
-                if (!tag.isPresent()) {
+                if (!tag.isPresent() || snapshot.isFullChangelog()) {
                     context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
 
                     tag = tags.stream()
@@ -318,7 +320,7 @@ public class ChangelogGenerator {
         }
 
         StringBuilder formattedContributors = new StringBuilder();
-        if (changelog.getContributors().isEnabled()) {
+        if (changelog.getContributors().isEnabled() && !contributors.isEmpty()) {
             formattedContributors.append("## Contributors")
                 .append(lineSeparator)
                 .append("We'd like to thank the following people for their contributions:")
