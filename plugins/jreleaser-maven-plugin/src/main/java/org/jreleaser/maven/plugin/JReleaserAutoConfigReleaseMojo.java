@@ -99,6 +99,11 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.project.snapshot.label")
     private String projectSnapshotLabel;
     /**
+     * Calculate full changelog since last non-snapshot release.
+     */
+    @Parameter(property = "jreleaser.project.snapshot.full.changelog")
+    boolean projectSnapshotFullChangelog;
+    /**
      * The release tag.
      */
     @Parameter(property = "jreleaser.tag.name")
@@ -219,6 +224,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .projectVersionPattern(projectVersionPattern)
             .projectSnapshotPattern(projectSnapshotPattern)
             .projectSnapshotLabel(projectSnapshotLabel)
+            .projectSnapshotFullChangelog(projectSnapshotFullChangelog)
             .tagName(tagName)
             .releaseName(releaseName)
             .branch(branch)

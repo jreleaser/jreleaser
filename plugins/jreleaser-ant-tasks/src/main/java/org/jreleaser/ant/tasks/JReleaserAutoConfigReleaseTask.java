@@ -60,6 +60,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private String projectVersionPattern;
     private String projectSnapshotPattern;
     private String projectSnapshotLabel;
+    private boolean projectSnapshotFullChangelog;
     private String tagName;
     private String releaseName;
     private String branch;
@@ -116,6 +117,10 @@ public class JReleaserAutoConfigReleaseTask extends Task {
 
     public void setProjectSnapshotLabel(String projectSnapshotLabel) {
         this.projectSnapshotLabel = projectSnapshotLabel;
+    }
+
+    public void setProjectSnapshotFullChangelog(boolean projectSnapshotFullChangelog) {
+        this.projectSnapshotFullChangelog = projectSnapshotFullChangelog;
     }
 
     public void setTagName(String tagName) {
@@ -220,6 +225,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .projectVersionPattern(projectVersionPattern)
             .projectSnapshotPattern(projectSnapshotPattern)
             .projectSnapshotLabel(projectSnapshotLabel)
+            .projectSnapshotFullChangelog(projectSnapshotFullChangelog)
             .tagName(tagName)
             .releaseName(releaseName)
             .branch(branch)

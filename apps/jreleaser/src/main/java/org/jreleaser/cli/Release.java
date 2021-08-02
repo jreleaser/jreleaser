@@ -67,6 +67,10 @@ public class Release extends AbstractPlatformAwareModelCommand {
         description = "The project snapshot label.")
     String projectSnapshotLabel;
 
+    @CommandLine.Option(names = {"--project-snapshot-full-changelog"},
+        description = "Calculate full changelog since last non-snapshot release.")
+    boolean projectSnapshotFullChangelog;
+
     @CommandLine.Option(names = {"--tag-name"},
         description = "The release tag.")
     String tagName;
@@ -166,6 +170,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
             .projectVersionPattern(projectVersionPattern)
             .projectSnapshotPattern(projectSnapshotPattern)
             .projectSnapshotLabel(projectSnapshotLabel)
+            .projectSnapshotFullChangelog(projectSnapshotFullChangelog)
             .tagName(tagName)
             .releaseName(releaseName)
             .milestoneName(milestoneName)

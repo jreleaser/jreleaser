@@ -74,6 +74,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     final Property<String> projectSnapshotLabel
     @Input
     @Optional
+    final Property<Boolean> projectSnapshotFullChangelog
+    @Input
+    @Optional
     final Property<String> tagName
     @Input
     @Optional
@@ -156,8 +159,13 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     }
 
     @Option(option = 'project-snapshot-label', description = 'The project snapshot label (OPTIONAL).')
-    void projectSnapshotLabel(String projectSnapshotLabel) {
+    void setProjectSnapshotLabel(String projectSnapshotLabel) {
         this.projectSnapshotLabel.set(projectSnapshotLabel)
+    }
+
+    @Option(option = 'project-snapshot-full-changelog', description = 'Calculate full changelog since last non-snapshot release (OPTIONAL).')
+    void setProjectSnapshotFullChangelog(boolean projectSnapshotFullChangelog) {
+        this.projectSnapshotFullChangelog.set(projectSnapshotFullChangelog)
     }
 
     @Option(option = 'tag-name', description = 'The release tga (OPTIONAL).')
@@ -292,6 +300,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         projectVersionPattern = objects.property(String).convention(String.valueOf(Providers.notDefined()))
         projectSnapshotPattern = objects.property(String).convention(String.valueOf(Providers.notDefined()))
         projectSnapshotLabel = objects.property(String).convention(String.valueOf(Providers.notDefined()))
+        projectSnapshotFullChangelog = objects.property(Boolean).convention(false)
         tagName = objects.property(String).convention(Providers.notDefined())
         releaseName = objects.property(String).convention(Providers.notDefined())
         branch = objects.property(String).convention(Providers.notDefined())
@@ -333,6 +342,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .projectVersionPattern(projectVersionPattern.orNull)
             .projectSnapshotPattern(projectSnapshotPattern.orNull)
             .projectSnapshotLabel(projectSnapshotLabel.orNull)
+            .projectSnapshotFullChangelog(projectSnapshotFullChangelog.get())
             .tagName(tagName.orNull)
             .releaseName(releaseName.orNull)
             .branch(branch.orNull)
