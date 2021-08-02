@@ -228,10 +228,9 @@ public class Changelog implements EnabledAware {
         return contributors;
     }
 
-    public void setContributors(Contributors hide) {
+    public void setContributors(Contributors contributors) {
         this.contributors.setAll(contributors);
     }
-
 
     public Hide getHide() {
         return hide;
