@@ -21,10 +21,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.jreleaser.maven.plugin.internal.JReleaserModelPrinter;
 import org.jreleaser.model.JReleaserContext;
 
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Display current configuration.

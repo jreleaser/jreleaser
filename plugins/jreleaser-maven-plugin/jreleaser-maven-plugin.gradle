@@ -39,6 +39,7 @@ dependencies {
     api project(':jreleaser-config-json')
 
     implementation "org.apache.maven:maven-plugin-api:$mavenVersion"
+    implementation "org.apache.maven.shared:maven-shared-utils:$mavenSharedVersion"
 
     compileOnly "org.apache.maven:maven-core:$mavenVersion"
     compileOnly "org.apache.maven.plugin-tools:maven-plugin-annotations:$mavenVersion"

@@ -60,6 +60,7 @@ enforce {
 
     rule(enforcer.rules.ForceDependencies) { r ->
         r.dependencies.addAll "org.apache.maven:maven-artifact:$mavenVersion",
+            "org.apache.maven.shared:maven-shared-utils:$mavenSharedVersion",
             "org.codehaus.plexus:plexus-utils:$plexusVersion",
             "org.codehaus.plexus:plexus-component-annotations:1.7.1",
             "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
