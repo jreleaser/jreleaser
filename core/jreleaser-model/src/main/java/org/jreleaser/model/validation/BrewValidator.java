@@ -110,20 +110,25 @@ public abstract class BrewValidator extends Validator {
             tool.getCask().disable();
         }
 
-        validateCask(context, distribution, tool, errors);
+        validateCask(context, distribution, tool, parentTool, errors);
 
         if (!tool.getCask().isEnabled()) {
             validateArtifactPlatforms(context, distribution, tool, errors);
         }
     }
 
-    private static void validateCask(JReleaserContext context, Distribution distribution, Brew tool, Errors errors) {
+    private static void validateCask(JReleaserContext context, Distribution distribution, Brew tool, Brew parentTool, Errors errors) {
         if (distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {
             tool.getCask().disable();
             return;
         }
 
         Cask cask = tool.getCask();
+        Cask parentCask = parentTool.getCask();
+
+        if (!cask.isEnabledSet() && parentCask.isEnabledSet()) {
+            cask.setEnabled(parentCask.isEnabled());
+        }
 
         if (cask.isEnabledSet() && !cask.isEnabled()) {
             return;
