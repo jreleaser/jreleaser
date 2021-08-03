@@ -176,6 +176,12 @@ public abstract class BrewValidator extends Validator {
             return;
         }
 
+        if (zipFound == 1 && !cask.isEnabled()) {
+            // zips should only be packaged into Casks when explicitly stated
+            // https://github.com/jreleaser/jreleaser/issues/337
+            return;
+        }
+
         cask.enable();
 
         if (isBlank(cask.getPkgName()) && isNotBlank(pkgName)) {
