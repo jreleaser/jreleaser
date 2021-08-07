@@ -50,6 +50,7 @@ class SdkmanAnnouncerImpl extends AbstractAnnouncer implements org.jreleaser.gra
         candidate = objects.property(String).convention(Providers.notDefined())
         releaseNotesUrl = objects.property(String).convention(Providers.notDefined())
         major = objects.property(Boolean).convention(Providers.notDefined())
+        command = objects.property(org.jreleaser.model.Sdkman.Command).convention(Providers.notDefined())
     }
 
     @Override
