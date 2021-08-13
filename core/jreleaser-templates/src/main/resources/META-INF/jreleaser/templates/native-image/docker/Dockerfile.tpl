@@ -8,7 +8,7 @@ LABEL {{.}}
 {{.}}
 {{/dockerPreCommands}}
 
-COPY assembly/* /
+COPY assembly/ /
 RUN chmod +x {{distributionArtifactName}}/bin/{{distributionExecutable}}
 
 {{#dockerPostCommands}}

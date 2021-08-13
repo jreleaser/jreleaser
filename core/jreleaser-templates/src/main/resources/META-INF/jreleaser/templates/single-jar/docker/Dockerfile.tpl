@@ -8,7 +8,7 @@ LABEL {{.}}
 {{.}}
 {{/dockerPreCommands}}
 
-COPY assembly/* /
+COPY assembly/ /
 
 RUN mkdir -p /{{distributionName}}/bin && \
     mkdir -p /{{distributionName}}/lib && \
