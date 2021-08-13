@@ -276,6 +276,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 }
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, artifactName);
+                props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM, artifact.getPlatform());
                 props.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
                 props.put(Constants.KEY_ARTIFACT_NAME, artifactName);
                 // add extra properties without clobbering existing keys

@@ -109,6 +109,7 @@ public interface Constants {
     String KEY_DISTRIBUTION_TAGS_BY_COMMA = "distributionTagsByComma";
     String KEY_DISTRIBUTION_URL = "distributionUrl";
     String KEY_DISTRIBUTION_SHA_256 = "distributionSha256";
+    String KEY_DISTRIBUTION_ARTIFACT_PLATFORM = "distributionArtifactPlatform";
     String KEY_DISTRIBUTION_ARTIFACT_NAME = "distributionArtifactName";
     String KEY_DISTRIBUTION_ARTIFACT_FILE_NAME = "distributionArtifactFileName";
     String KEY_DISTRIBUTION_JAVA_VERSION = "distributionJavaVersion";
