@@ -163,6 +163,13 @@ public final class FileUtils {
                 }
                 try (OutputStream o = Files.newOutputStream(file.toPath())) {
                     IOUtils.copy(in, o);
+                    // TODO: make it a generic solution
+                    // zipEntry.unixMode returns 0 most times even if the
+                    // entry is executable
+                    // https://github.com/jreleaser/jreleaser/issues/358
+                    if ("bin".equalsIgnoreCase(file.getParentFile().getName())) {
+                        grantExecutableAccess(file.toPath());
+                    }
                 }
             }
         }
