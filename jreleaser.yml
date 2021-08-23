@@ -30,6 +30,7 @@ release:
   github:
     overwrite: true
     sign: true
+    discussionCategoryName: Announcements
     changelog:
       formatted: ALWAYS
       format: '- {{commitShortHash}} {{commitTitle}}'
