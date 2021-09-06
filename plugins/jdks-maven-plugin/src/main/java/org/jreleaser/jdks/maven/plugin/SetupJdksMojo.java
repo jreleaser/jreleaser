@@ -98,15 +98,17 @@ public class SetupJdksMojo extends AbstractJdksMojo {
     }
 
     private void setupJdk(Jdk jdk) throws MojoExecutionException {
+        File jdkExtractDirectory = new File(outputDirectory, jdk.getName());
+
         boolean downloaded = false;
-        if (!new File(outputDirectory, getFilename(jdk)).exists()) {
-            downloadJdk(jdk);
+        if (!new File(jdkExtractDirectory, getFilename(jdk)).exists()) {
+            downloadJdk(jdkExtractDirectory, jdk);
             downloaded = true;
         }
 
-        verifyJdk(jdk);
+        verifyJdk(jdkExtractDirectory, jdk);
 
-        File jdkDir = new File(outputDirectory, getDirname(jdk));
+        File jdkDir = new File(jdkExtractDirectory, getDirname(jdk));
         if (jdkDir.exists()) {
             if (downloaded) {
                 try {
@@ -114,14 +116,14 @@ public class SetupJdksMojo extends AbstractJdksMojo {
                 } catch (IOException e) {
                     throw new MojoExecutionException("Unexpected error", e);
                 }
-                extractJdk(jdk);
+                extractJdk(jdkExtractDirectory, jdk);
             }
         } else {
-            extractJdk(jdk);
+            extractJdk(jdkExtractDirectory, jdk);
         }
     }
 
-    private void downloadJdk(Jdk jdk) throws MojoExecutionException {
+    private void downloadJdk(File jdkExtractDirectory, Jdk jdk) throws MojoExecutionException {
         getLog().info("Downloading " + jdk.getUrl());
 
         Boolean interactiveMode = session.getSettings().getInteractiveMode();
@@ -136,7 +138,7 @@ public class SetupJdksMojo extends AbstractJdksMojo {
                 configuration(
                     element("uri", jdk.getUrl()),
                     element("followRedirects", "true"),
-                    element("outputDirectory", outputDirectory.getAbsolutePath())
+                    element("outputDirectory", jdkExtractDirectory.getAbsolutePath())
                 ),
                 executionEnvironment(
                     project,
@@ -147,7 +149,7 @@ public class SetupJdksMojo extends AbstractJdksMojo {
         }
     }
 
-    private void verifyJdk(Jdk jdk) throws MojoExecutionException {
+    private void verifyJdk(File jdkExtractDirectory, Jdk jdk) throws MojoExecutionException {
         String algorithm = "SHA-256";
         String checksum = jdk.getChecksum();
         if (checksum.contains("/")) {
@@ -162,7 +164,7 @@ public class SetupJdksMojo extends AbstractJdksMojo {
             // calculate checksum
             MessageDigest md = MessageDigest.getInstance(algorithm);
             String calculatedChecksum;
-            try (FileInputStream fis = new FileInputStream(new File(outputDirectory, filename))) {
+            try (FileInputStream fis = new FileInputStream(new File(jdkExtractDirectory, filename))) {
                 byte[] buf = new byte[1024];
                 int read;
                 while ((read = fis.read(buf)) != -1) {
@@ -201,14 +203,14 @@ public class SetupJdksMojo extends AbstractJdksMojo {
         return result.toString();
     }
 
-    private void extractJdk(Jdk jdk) throws MojoExecutionException {
-        File inputFile = new File(outputDirectory, getFilename(jdk));
+    private void extractJdk(File jdkExtractDirectory, Jdk jdk) throws MojoExecutionException {
+        File inputFile = new File(jdkExtractDirectory, getFilename(jdk));
 
         try {
             getLog().info("Extracting " + inputFile.getName());
             UnArchiver unarchiver = archiverManager.getUnArchiver(inputFile);
             unarchiver.setSourceFile(inputFile);
-            unarchiver.setDestDirectory(outputDirectory);
+            unarchiver.setDestDirectory(jdkExtractDirectory);
             unarchiver.extract();
         } catch (NoSuchArchiverException e) {
             throw new MojoExecutionException("Unexpected error when extracting " + inputFile.getName(), e);

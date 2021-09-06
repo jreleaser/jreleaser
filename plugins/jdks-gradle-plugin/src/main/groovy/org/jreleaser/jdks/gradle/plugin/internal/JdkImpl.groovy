@@ -20,6 +20,7 @@ package org.jreleaser.jdks.gradle.plugin.internal
 import de.undercouch.gradle.tasks.download.Download
 import de.undercouch.gradle.tasks.download.Verify
 import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -30,6 +31,9 @@ import org.jreleaser.util.Errors
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.StringUtils.getFilename
+import static org.jreleaser.util.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName
+
 /**
  *
  * @author Andres Almiray
@@ -37,11 +41,13 @@ import javax.inject.Inject
  */
 @CompileStatic
 class JdkImpl implements Jdk {
+    private final ObjectFactory objects
     String name
 
     final Property<String> platform
     final Property<String> url
     final Property<String> checksum
+    final RegularFileProperty archive
 
     TaskProvider<Download> downloadTask
     TaskProvider<Verify> verifyTask
@@ -49,9 +55,46 @@ class JdkImpl implements Jdk {
 
     @Inject
     JdkImpl(ObjectFactory objects) {
+        this.objects = objects
         platform = objects.property(String).convention(Providers.notDefined())
         url = objects.property(String).convention(Providers.notDefined())
         checksum = objects.property(String).convention(Providers.notDefined())
+        archive = objects.fileProperty().convention(Providers.notDefined())
+    }
+
+    String toString() {
+        "${name} ${url.orNull}".toString()
+    }
+
+    JdkImpl copyOf() {
+        JdkImpl jdk = new JdkImpl(objects)
+        jdk.name = name
+        jdk.platform.set(platform.orNull)
+        jdk.url.set(url.orNull)
+        jdk.checksum.set(checksum.orNull)
+        jdk.archive.set(archive.orNull)
+        jdk
+    }
+
+    String getArchiveName() {
+        if (archive.present) {
+            return getFilename(archive.get().asFile.name)
+        }
+
+        getFilename(getArchiveFileName())
+    }
+
+    String getArchiveFileName() {
+        if (archive.present) {
+            return archive.get().asFile.name
+        }
+
+        int p = url.get().lastIndexOf('/')
+        url.get().substring(p + 1)
+    }
+
+    String getNormalizedName() {
+        getPropertyNameForLowerCaseHyphenSeparatedName(name)
     }
 
     void validate(Errors errors) {
