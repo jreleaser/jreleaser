@@ -30,6 +30,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
 import org.jreleaser.jdks.gradle.plugin.internal.JdkImpl
 import org.jreleaser.jdks.gradle.plugin.tasks.ListJdksTask
@@ -257,6 +258,35 @@ class JdksPlugin implements Plugin<Project> {
                 t.group = JDKS_GROUP
                 t.description = 'Copy JDKs from Gradle cache'
                 t.dependsOn(copyFromCacheTasks)
+            }
+        })
+
+        List<TaskProvider<Delete>> deleteFromCacheTasks = []
+        if (jdksToBeCopied) {
+            jdksToBeCopied.each { candidateJdk ->
+                String normalizedName = candidateJdk.normalizedName
+                Provider<Directory> jdkDirectory = jdksDir.map({ d -> d.dir(normalizedName) })
+
+                deleteFromCacheTasks << project.tasks.register('deleteJdkFromCache' + normalizedName.capitalize(),
+                    Delete, new Action<Delete>() {
+                    @Override
+                    void execute(Delete t) {
+                        t.group = JDKS_GROUP
+                        t.description = "Delete JDK ${candidateJdk.name} from cache".toString()
+                        t.delete(candidateJdk.archive)
+                    }
+                })
+            }
+        }
+
+        project.tasks.register('deleteJdksFromCache',
+            DefaultTask, new Action<DefaultTask>() {
+            @Override
+            @CompileDynamic
+            void execute(DefaultTask t) {
+                t.group = JDKS_GROUP
+                t.description = 'Delete JDKs from Gradle cache'
+                t.dependsOn(deleteFromCacheTasks)
             }
         })
 
