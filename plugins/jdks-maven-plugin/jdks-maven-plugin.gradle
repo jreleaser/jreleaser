@@ -31,7 +31,7 @@ mavenPlugin {
 
 dependencies {
     api project(':jreleaser-utils')
-    api 'org.twdata.maven:mojo-executor:2.3.1'
+    api 'org.twdata.maven:mojo-executor:2.3.2'
     api 'org.codehaus.plexus:plexus-archiver:4.2.5'
 
     implementation "org.apache.maven:maven-plugin-api:$mavenVersion"
