@@ -132,6 +132,7 @@ class JdksPlugin implements Plugin<Project> {
                     t.description = "Verify JDK ${jdk.name}".toString()
                     t.enabled = !jdksToBeCopied.find { it.archiveFileName == jdkArchiveFileName }
                     t.dependsOn(jdk.downloadTask)
+                    t.inputs.file(jdk.downloadTask.get().dest)
 
                     String algorithm = 'SHA-256'
                     String checksum = jdk.checksum.get()
