@@ -22,13 +22,15 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public class Gitea extends GitService {
+    private final Prerelease prerelease = new Prerelease();
     private boolean draft;
-    private Boolean prerelease;
+    private Boolean prereleaseEnabled;
 
     void setAll(Gitea service) {
         super.setAll(service);
         this.draft = service.draft;
-        this.prerelease = service.prerelease;
+        this.prereleaseEnabled = service.prereleaseEnabled;
+        setPrerelease(service.prerelease);
     }
 
     public boolean isDraft() {
@@ -39,15 +41,23 @@ public class Gitea extends GitService {
         this.draft = draft;
     }
 
-    public boolean isPrerelease() {
-        return prerelease != null && prerelease;
+    public Prerelease getPrerelease() {
+        return prerelease;
+    }
+
+    public void setPrerelease(Prerelease prerelease) {
+        this.prerelease.setAll(prerelease);
     }
 
     public void setPrerelease(Boolean prerelease) {
-        this.prerelease = prerelease;
+        this.prereleaseEnabled = prerelease;
     }
 
-    public boolean isPrereleaseSet() {
-        return prerelease != null;
+    public Boolean getPrereleaseEnabled() {
+        return prereleaseEnabled;
+    }
+
+    public boolean isPrereleaseEnabledSet() {
+        return prereleaseEnabled != null;
     }
 }

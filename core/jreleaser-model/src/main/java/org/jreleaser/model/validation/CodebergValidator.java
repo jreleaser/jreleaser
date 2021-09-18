@@ -23,6 +23,7 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.GitService.DRAFT;
 import static org.jreleaser.model.GitService.PRERELEASE;
+import static org.jreleaser.model.GitService.PRERELEASE_PATTERN;
 
 /**
  * @author Andres Almiray
@@ -36,17 +37,16 @@ public abstract class CodebergValidator extends GitServiceValidator {
         validateGitService(context, mode, codeberg, errors);
 
         if (context.getModel().getProject().isSnapshot()) {
-            codeberg.setPrerelease(true);
+            codeberg.getPrerelease().setEnabled(true);
         }
 
-        if (!codeberg.isPrereleaseSet()) {
-            codeberg.setPrerelease(
-                checkProperty(context,
-                    PRERELEASE,
-                    "codeberg.prerelease",
-                    null,
-                    false));
-        }
+        codeberg.getPrerelease().setPattern(
+            checkProperty(context,
+                PRERELEASE_PATTERN,
+                "codeberg.github.prerelease.pattern",
+                codeberg.getPrerelease().getPattern(),
+                ""));
+        codeberg.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
 
         if (!codeberg.isDraftSet()) {
             codeberg.setDraft(

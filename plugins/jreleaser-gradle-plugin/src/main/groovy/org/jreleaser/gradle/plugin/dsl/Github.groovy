@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.provider.Property
 
 /**
@@ -29,7 +30,11 @@ import org.gradle.api.provider.Property
 interface Github extends GitService {
     Property<Boolean> getDraft()
 
-    Property<Boolean> getPrerelease()
-
     Property<String> getDiscussionCategoryName()
+
+    Prerelease getPrerelease()
+
+    void prerelease(Action<? super Prerelease> action)
+
+    void prerelease(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Prerelease) Closure<Void> action)
 }

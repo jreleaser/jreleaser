@@ -464,4 +464,30 @@ public abstract class GitService implements Releaser {
     public void setSignatures(Boolean signatures) {
         this.signatures = signatures;
     }
+
+    public static class Prerelease {
+        private Boolean enabled;
+        private String pattern;
+
+        void setAll(Prerelease prerelease) {
+            this.enabled = prerelease.enabled;
+            this.pattern = prerelease.pattern;
+        }
+
+        public Boolean getEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getPattern() {
+            return pattern;
+        }
+
+        public void setPattern(String pattern) {
+            this.pattern = pattern;
+        }
+    }
 }

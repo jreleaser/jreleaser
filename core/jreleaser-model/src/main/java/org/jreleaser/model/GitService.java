@@ -51,6 +51,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     public static final String DRAFT = "DRAFT";
     public static final String SKIP_TAG = "SKIP_TAG";
     public static final String BRANCH = "BRANCH";
+    public static final String PRERELEASE_PATTERN = "PRERELEASE_PATTERN";
 
     private final String serviceName;
     private final Changelog changelog = new Changelog();
@@ -764,5 +765,64 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(model));
         props.put(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(model));
         props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model));
+    }
+
+    public static class Prerelease implements Domain {
+        private Boolean enabled;
+        private String pattern;
+
+        public Prerelease() {
+        }
+
+        public Prerelease(Boolean enabled) {
+            System.out.println("prerelease has been deprecated since 0.7.0 and will be removed in the future. Use prerelease.enabled instead");
+            this.enabled = enabled;
+        }
+
+        void setAll(Prerelease prerelease) {
+            this.enabled = prerelease.enabled;
+            this.pattern = prerelease.pattern;
+        }
+
+        public boolean isEnabled() {
+            return enabled != null && enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public boolean isPrerelease(String version) {
+            if (null == enabled) {
+                String configuredPattern = getConfiguredPattern();
+                if (isNotBlank(configuredPattern)) {
+                    enabled = version.matches(configuredPattern);
+                } else {
+                    enabled = false;
+                }
+            }
+
+            return enabled;
+        }
+
+        public String getConfiguredPattern() {
+            return Env.resolve(PRERELEASE_PATTERN, pattern);
+        }
+
+        public String getPattern() {
+            return pattern;
+        }
+
+        public void setPattern(String pattern) {
+            this.pattern = pattern;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("enabled", isEnabled());
+            map.put("pattern", getConfiguredPattern());
+            return map;
+        }
     }
 }

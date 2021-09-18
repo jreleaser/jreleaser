@@ -23,6 +23,7 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.GitService.DRAFT;
 import static org.jreleaser.model.GitService.PRERELEASE;
+import static org.jreleaser.model.GitService.PRERELEASE_PATTERN;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -41,17 +42,16 @@ public abstract class GiteaValidator extends GitServiceValidator {
         }
 
         if (context.getModel().getProject().isSnapshot()) {
-            gitea.setPrerelease(true);
+            gitea.getPrerelease().setEnabled(true);
         }
 
-        if (!gitea.isPrereleaseSet()) {
-            gitea.setPrerelease(
-                checkProperty(context,
-                    PRERELEASE,
-                    "gitea.prerelease",
-                    null,
-                    false));
-        }
+        gitea.getPrerelease().setPattern(
+            checkProperty(context,
+                PRERELEASE_PATTERN,
+                "release.gitea.prerelease.pattern",
+                gitea.getPrerelease().getPattern(),
+                ""));
+        gitea.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
 
         if (!gitea.isDraftSet()) {
             gitea.setDraft(

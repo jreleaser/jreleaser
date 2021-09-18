@@ -28,6 +28,4 @@ import org.gradle.api.provider.Property
 @CompileStatic
 interface Codeberg extends Gitea {
     Property<Boolean> getDraft()
-
-    Property<Boolean> getPrerelease()
 }

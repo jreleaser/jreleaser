@@ -104,6 +104,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     final Property<Boolean> prerelease
     @Input
     @Optional
+    final Property<String> prereleasePattern
+    @Input
+    @Optional
     final Property<Boolean> draft
     @Input
     @Optional
@@ -221,6 +224,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Option(option = 'prerelease', description = 'If the release is a prerelease (OPTIONAL).')
     void setPrerelease(boolean prerelease) {
         this.prerelease.set(prerelease)
+    }
+
+    @Option(option = 'prerelease-pattern', description = 'The prerelease pattern (OPTIONAL).')
+    void prereleasePattern(String prereleasePattern) {
+        this.prereleasePattern.set(prereleasePattern)
     }
 
     @Option(option = 'draft', description = 'If the release is a draft (OPTIONAL).')
@@ -348,6 +356,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .branch(branch.orNull)
             .milestoneName(milestoneName.orNull)
             .prerelease(prerelease.get())
+            .prereleasePattern(prereleasePattern.orNull)
             .draft(draft.get())
             .overwrite(overwrite.get())
             .update(update.get())

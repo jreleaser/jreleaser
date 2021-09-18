@@ -87,6 +87,10 @@ public class Release extends AbstractPlatformAwareModelCommand {
         description = "If the release is a prerelease.")
     boolean prerelease;
 
+    @CommandLine.Option(names = {"--prerelease-pattern"},
+        description = "The prerelease pattern.")
+    String prereleasePattern;
+
     @CommandLine.Option(names = {"--draft"},
         description = "If the release is a draft.")
     boolean draft;
@@ -176,6 +180,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
             .milestoneName(milestoneName)
             .branch(branch)
             .prerelease(prerelease)
+            .prereleasePattern(prereleasePattern)
             .draft(draft)
             .overwrite(overwrite)
             .update(update)

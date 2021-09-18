@@ -18,11 +18,13 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Github
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -34,22 +36,22 @@ import javax.inject.Inject
 @CompileStatic
 class GithubImpl extends AbstractGitService implements Github {
     final Property<Boolean> draft
-    final Property<Boolean> prerelease
     final Property<String> discussionCategoryName
     final ChangelogImpl changelog
     final MilestoneImpl milestone
     final CommitAuthorImpl commitAuthor
+    final PrereleaseImpl prerelease
 
     @Inject
     GithubImpl(ObjectFactory objects) {
         super(objects)
         draft = objects.property(Boolean).convention(Providers.notDefined())
-        prerelease = objects.property(Boolean).convention(Providers.notDefined())
         discussionCategoryName = objects.property(String).convention(Providers.notDefined())
 
         changelog = objects.newInstance(ChangelogImpl, objects)
         milestone = objects.newInstance(MilestoneImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
+        prerelease = objects.newInstance(PrereleaseImpl, objects)
     }
 
     @Override
@@ -57,18 +59,28 @@ class GithubImpl extends AbstractGitService implements Github {
     boolean isSet() {
         super.isSet() ||
             draft.present ||
-            prerelease.present ||
+            prerelease.isSet() ||
             discussionCategoryName.present ||
             changelog.isSet() ||
             milestone.isSet() ||
             commitAuthor.isSet()
     }
 
+    @Override
+    void prerelease(Action<? super Prerelease> action) {
+        action.execute(prerelease)
+    }
+
+    @Override
+    void prerelease(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Prerelease) Closure<Void> action) {
+        ConfigureUtil.configure(action, prerelease)
+    }
+
     org.jreleaser.model.Github toModel() {
         org.jreleaser.model.Github service = new org.jreleaser.model.Github()
         toModel(service)
         service.draft = draft.getOrElse(false)
-        service.prerelease = prerelease.getOrElse(false)
+        service.prerelease = prerelease.toModel()
         if (discussionCategoryName.present) service.discussionCategoryName = discussionCategoryName.get()
         if (changelog.isSet()) service.changelog = changelog.toModel()
         if (milestone.isSet()) service.milestone = milestone.toModel()

@@ -254,4 +254,29 @@ abstract class AbstractGitService implements GitService {
             service.updateSections = (Set<UpdateSection>) updateSections.getOrElse([] as Set<UpdateSection>)
         }
     }
+
+    @CompileStatic
+    static class PrereleaseImpl implements Prerelease {
+        final Property<String> pattern
+        final Property<Boolean> enabled
+
+        @Inject
+        PrereleaseImpl(ObjectFactory objects) {
+            pattern = objects.property(String).convention(Providers.notDefined())
+            enabled = objects.property(Boolean).convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            pattern.present ||
+                enabled.present
+        }
+
+        org.jreleaser.model.GitService.Prerelease toModel() {
+            org.jreleaser.model.GitService.Prerelease prerelease = new org.jreleaser.model.GitService.Prerelease()
+            if (pattern.present) prerelease.pattern = pattern.get()
+            if (enabled.present) prerelease.enabled = enabled.get()
+            prerelease
+        }
+    }
 }

@@ -129,6 +129,11 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.prerelease")
     private boolean prerelease;
     /**
+     * The prerelease pattern.
+     */
+    @Parameter(property = "jreleaser.prerelease.pattern")
+    private String prereleasePattern;
+    /**
      * If the release is a draft.
      */
     @Parameter(property = "jreleaser.draft")
@@ -230,6 +235,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .branch(branch)
             .milestoneName(milestoneName)
             .prerelease(prerelease)
+            .prereleasePattern(prereleasePattern)
             .draft(draft)
             .overwrite(overwrite)
             .update(update)

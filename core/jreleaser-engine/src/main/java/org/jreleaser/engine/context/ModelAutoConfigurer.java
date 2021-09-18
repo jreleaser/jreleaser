@@ -71,6 +71,7 @@ public class ModelAutoConfigurer {
     private String milestoneName;
     private String branch;
     private boolean prerelease;
+    private String prereleasePattern;
     private boolean draft;
     private boolean overwrite;
     private boolean update;
@@ -160,6 +161,11 @@ public class ModelAutoConfigurer {
 
     public ModelAutoConfigurer prerelease(boolean prerelease) {
         this.prerelease = prerelease;
+        return this;
+    }
+
+    public ModelAutoConfigurer prereleasePattern(String prereleasePattern) {
+        this.prereleasePattern = prereleasePattern;
         return this;
     }
 
@@ -327,6 +333,7 @@ public class ModelAutoConfigurer {
         if (!updateSections.isEmpty()) logger.info("- release.updateSections: " + updateSections);
         if (skipTag) logger.info("- release.skipTag: true");
         if (prerelease) logger.info("- release.prerelease: true");
+        if (isNotBlank(prereleasePattern)) logger.info("- release.prerelease.pattern: {}", prereleasePattern);
         if (draft) logger.info("- release.draft: true");
         if (isNotBlank(changelog)) logger.info(" - release.changelog: {}", changelog);
         if (changelogFormatted) logger.info("- release.changelog.formatted: true");
@@ -367,7 +374,8 @@ public class ModelAutoConfigurer {
                 case GITHUB:
                     service = new Github();
                     model.getRelease().setGithub((Github) service);
-                    ((Github) service).setPrerelease(prerelease);
+                    if (prerelease) ((Github) service).getPrerelease().setEnabled(true);
+                    ((Github) service).getPrerelease().setPattern(prereleasePattern);
                     ((Github) service).setDraft(draft);
                     break;
                 case GITLAB:
@@ -377,7 +385,8 @@ public class ModelAutoConfigurer {
                 case CODEBERG:
                     service = new Codeberg();
                     model.getRelease().setCodeberg((Codeberg) service);
-                    ((Codeberg) service).setPrerelease(prerelease);
+                    if (prerelease) ((Codeberg) service).getPrerelease().setEnabled(true);
+                    ((Codeberg) service).getPrerelease().setPattern(prereleasePattern);
                     ((Codeberg) service).setDraft(draft);
                     break;
                 default:

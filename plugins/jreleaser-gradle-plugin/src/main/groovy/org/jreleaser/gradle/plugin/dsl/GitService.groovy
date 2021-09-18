@@ -124,4 +124,10 @@ interface GitService extends Releaser {
     void milestone(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Milestone) Closure<Void> action)
 
     void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action)
+
+    interface Prerelease {
+        Property<Boolean> getEnabled()
+
+        Property<String> getPattern()
+    }
 }

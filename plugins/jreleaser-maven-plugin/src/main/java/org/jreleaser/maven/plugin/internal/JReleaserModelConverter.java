@@ -185,7 +185,8 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Github g = new org.jreleaser.model.Github();
         convertGitService(github, g);
         g.setDraft(github.isDraft());
-        if (github.isPrereleaseSet()) g.setPrerelease(github.isPrerelease());
+        if (github.isPrereleaseEnabledSet()) g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(github.getPrereleaseEnabled()));
+        g.setPrerelease(convertPrerelease(github.getPrerelease()));
         g.setDiscussionCategoryName(github.getDiscussionCategoryName());
         return g;
     }
@@ -203,7 +204,8 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Gitea g = new org.jreleaser.model.Gitea();
         convertGitService(gitea, g);
         g.setDraft(gitea.isDraft());
-        if (gitea.isPrereleaseSet()) g.setPrerelease(gitea.isPrerelease());
+        if (gitea.isPrereleaseEnabledSet()) g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(gitea.getPrereleaseEnabled()));
+        g.setPrerelease(convertPrerelease(gitea.getPrerelease()));
         return g;
     }
 
@@ -212,8 +214,16 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Codeberg g = new org.jreleaser.model.Codeberg();
         convertGitService(codeberg, g);
         g.setDraft(codeberg.isDraft());
-        if (codeberg.isPrereleaseSet()) g.setPrerelease(codeberg.isPrerelease());
+        if (codeberg.isPrereleaseEnabledSet()) g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(codeberg.getPrereleaseEnabled()));
+        g.setPrerelease(convertPrerelease(codeberg.getPrerelease()));
         return g;
+    }
+
+    private static org.jreleaser.model.GitService.Prerelease convertPrerelease(GitService.Prerelease prerelease) {
+        org.jreleaser.model.GitService.Prerelease s = new org.jreleaser.model.GitService.Prerelease();
+        s.setPattern(prerelease.getPattern());
+        s.setEnabled(prerelease.getEnabled());
+        return s;
     }
 
     private static org.jreleaser.model.GenericGit convertGeneric(GenericGit generic) {

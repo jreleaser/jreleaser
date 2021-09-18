@@ -23,6 +23,9 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.GitService.DRAFT;
 import static org.jreleaser.model.GitService.PRERELEASE;
+import static org.jreleaser.model.GitService.PRERELEASE_PATTERN;
+import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_PATTERN;
+import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_PATTERN;
 
 /**
  * @author Andres Almiray
@@ -36,17 +39,16 @@ public abstract class GithubValidator extends GitServiceValidator {
         validateGitService(context, mode, github, errors);
 
         if (context.getModel().getProject().isSnapshot()) {
-            github.setPrerelease(true);
+            github.getPrerelease().setEnabled(true);
         }
 
-        if (!github.isPrereleaseSet()) {
-            github.setPrerelease(
-                checkProperty(context,
-                    PRERELEASE,
-                    "github.prerelease",
-                    null,
-                    false));
-        }
+        github.getPrerelease().setPattern(
+            checkProperty(context,
+                PRERELEASE_PATTERN,
+                "release.github.prerelease.pattern",
+                github.getPrerelease().getPattern(),
+                ""));
+        github.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
 
         if (!github.isDraftSet()) {
             github.setDraft(

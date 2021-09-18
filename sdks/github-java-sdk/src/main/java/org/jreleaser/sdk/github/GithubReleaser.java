@@ -192,7 +192,7 @@ public class GithubReleaser implements Releaser {
             .commitish(github.getBranch())
             .name(github.getEffectiveReleaseName())
             .draft(github.isDraft())
-            .prerelease(github.isPrerelease())
+            .prerelease(github.getPrerelease().isEnabled())
             .body(changelog)
             .create();
         api.uploadAssets(release, assets);
@@ -228,7 +228,6 @@ public class GithubReleaser implements Releaser {
                 github.getResolvedToken(),
                 github.getConnectTimeout(),
                 github.getReadTimeout());
-
 
             GhRelease ghRelease = new GhRelease();
             ghRelease.setDiscussionCategoryName(discussionCategoryName);

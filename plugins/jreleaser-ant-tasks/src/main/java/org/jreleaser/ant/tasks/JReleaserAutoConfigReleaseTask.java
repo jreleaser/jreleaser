@@ -66,6 +66,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private String branch;
     private String milestoneName;
     private boolean prerelease;
+    private String prereleasePattern;
     private boolean draft;
     private boolean overwrite;
     private boolean update;
@@ -141,6 +142,10 @@ public class JReleaserAutoConfigReleaseTask extends Task {
 
     public void setPrerelease(boolean prerelease) {
         this.prerelease = prerelease;
+    }
+
+    public void setPrereleasePattern(String prereleasePattern) {
+        this.prereleasePattern = prereleasePattern;
     }
 
     public void setDraft(boolean draft) {
@@ -231,6 +236,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .branch(branch)
             .milestoneName(milestoneName)
             .prerelease(prerelease)
+            .prereleasePattern(prereleasePattern)
             .draft(draft)
             .overwrite(overwrite)
             .update(update)
