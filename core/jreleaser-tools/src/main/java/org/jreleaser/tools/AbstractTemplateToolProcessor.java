@@ -29,6 +29,7 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Scanner;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -76,10 +77,16 @@ abstract class AbstractTemplateToolProcessor<T extends TemplateTool> extends Abs
             context.getBasedir().resolve(templateDirectory));
 
         for (Map.Entry<String, Reader> entry : templates.entrySet()) {
-            context.getLogger().debug("evaluating template {} for {}/{}", entry.getKey(), distributionName, toolName);
-            String content = applyTemplate(entry.getValue(), props);
-            context.getLogger().debug("writing template {} for {}/{}", entry.getKey(), distributionName, toolName);
-            writeFile(context.getModel().getProject(), distribution, content, props, prepareDirectory, entry.getKey());
+            String filename = entry.getKey();
+            if (filename.endsWith(".tpl")) {
+                context.getLogger().debug("evaluating template {} for {}/{}", filename, distributionName, toolName);
+                String content = applyTemplate(entry.getValue(), props);
+                context.getLogger().debug("writing template {} for {}/{}", filename, distributionName, toolName);
+                writeFile(context.getModel().getProject(), distribution, content, props, prepareDirectory, filename);
+            } else {
+                context.getLogger().debug("writing file {} for {}/{}", filename, distributionName, toolName);
+                writeFile(entry.getValue(), prepareDirectory.resolve(filename));
+            }
         }
 
         context.getLogger().debug("copying license files");
@@ -103,6 +110,19 @@ abstract class AbstractTemplateToolProcessor<T extends TemplateTool> extends Abs
     }
 
     protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, Path outputDirectory, String fileName) throws ToolProcessingException;
+
+    protected void writeFile(Reader reader, Path outputFile) throws ToolProcessingException {
+        try {
+            createDirectoriesWithFullAccess(outputFile.getParent());
+            Scanner scanner = new Scanner(reader);
+            scanner.useDelimiter("\\Z");
+            Files.write(outputFile, scanner.next().getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
+            scanner.close();
+            grantFullAccess(outputFile);
+        } catch (IOException e) {
+            throw new ToolProcessingException("Unexpected error when writing to " + outputFile.toAbsolutePath(), e);
+        }
+    }
 
     protected void writeFile(String content, Path outputFile) throws ToolProcessingException {
         try {
