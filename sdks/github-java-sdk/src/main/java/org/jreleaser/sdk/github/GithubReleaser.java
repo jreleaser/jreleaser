@@ -216,7 +216,7 @@ public class GithubReleaser implements Releaser {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
 
         String discussionCategoryName = github.getDiscussionCategoryName();
-        if (isBlank(discussionCategoryName)) return;
+        if (context.getModel().getProject().isSnapshot() || isBlank(discussionCategoryName)) return;
 
         context.getLogger().debug("linking release {} with discussion {}", tagName, discussionCategoryName);
 
