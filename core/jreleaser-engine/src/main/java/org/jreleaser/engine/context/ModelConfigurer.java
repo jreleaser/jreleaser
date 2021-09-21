@@ -77,8 +77,10 @@ public class ModelConfigurer {
         try {
             Errors errors = context.validateModel();
 
-            new JReleaserModelPrinter.Plain(context.getLogger().getTracer())
-                .print(context.getModel().asMap(true));
+            if (context.getMode() != JReleaserContext.Mode.CHANGELOG) {
+                new JReleaserModelPrinter.Plain(context.getLogger().getTracer())
+                    .print(context.getModel().asMap(true));
+            }
 
             switch (context.getMode()) {
                 case ASSEMBLE:
