@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.nio.file.Files.exists;
-import static org.jreleaser.model.util.Artifacts.copyFile;
+import static org.jreleaser.model.util.Artifacts.checkAndCopyFile;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -73,61 +73,19 @@ public class Artifact implements Domain, ExtraProperties {
     public Path getEffectivePath(JReleaserContext context) {
         Path rp = getResolvedPath(context);
         Path tp = getResolvedTransform(context);
-
-        if (null == tp) return rp;
-
-        if (!java.nio.file.Files.exists(tp)) {
-            context.getLogger().debug("transformed artifact does not exist: {}",
-                context.relativizeToBasedir(tp));
-            copyFile(context, rp, tp);
-        } else if (rp.toFile().lastModified() > tp.toFile().lastModified()) {
-            context.getLogger().debug("{} is newer than {}",
-                context.relativizeToBasedir(rp),
-                context.relativizeToBasedir(tp));
-            copyFile(context, rp, tp);
-        }
-
-        return tp;
+        return checkAndCopyFile(context, rp, tp);
     }
 
     public Path getEffectivePath(JReleaserContext context, Distribution distribution) {
         Path rp = getResolvedPath(context, distribution);
         Path tp = getResolvedTransform(context, distribution);
-
-        if (null == tp) return rp;
-
-        if (!java.nio.file.Files.exists(tp)) {
-            context.getLogger().debug("transformed artifact does not exist: {}",
-                context.relativizeToBasedir(tp));
-            copyFile(context, rp, tp);
-        } else if (rp.toFile().lastModified() > tp.toFile().lastModified()) {
-            context.getLogger().debug("{} is newer than {}",
-                context.relativizeToBasedir(rp),
-                context.relativizeToBasedir(tp));
-            copyFile(context, rp, tp);
-        }
-
-        return tp;
+        return checkAndCopyFile(context, rp, tp);
     }
 
     public Path getEffectivePath(JReleaserContext context, Assembler assembler) {
         Path rp = getResolvedPath(context, assembler);
         Path tp = getResolvedTransform(context, assembler);
-
-        if (null == tp) return rp;
-
-        if (!java.nio.file.Files.exists(tp)) {
-            context.getLogger().debug("transformed artifact does not exist: {}",
-                context.relativizeToBasedir(tp));
-            copyFile(context, rp, tp);
-        } else if (rp.toFile().lastModified() > tp.toFile().lastModified()) {
-            context.getLogger().debug("{} is newer than {}",
-                context.relativizeToBasedir(rp),
-                context.relativizeToBasedir(tp));
-            copyFile(context, rp, tp);
-        }
-
-        return tp;
+        return checkAndCopyFile(context, rp, tp);
     }
 
     public Path getResolvedPath(JReleaserContext context, Path basedir, boolean checkIfExists) {
@@ -357,7 +315,7 @@ public class Artifact implements Domain, ExtraProperties {
         };
     }
 
-    public static Artifact of(Path resolvedPath, Map<String,Object> props) {
+    public static Artifact of(Path resolvedPath, Map<String, Object> props) {
         Artifact artifact = new Artifact();
         artifact.path = resolvedPath.toAbsolutePath().toString();
         artifact.resolvedPath = resolvedPath;

@@ -50,6 +50,23 @@ import static org.jreleaser.util.MustacheUtils.applyTemplate;
  * @since 0.1.0
  */
 public class Artifacts {
+    public static Path checkAndCopyFile(JReleaserContext context, Path src, Path dest) throws JReleaserException {
+        if (null == dest) return src;
+
+        if (!java.nio.file.Files.exists(dest)) {
+            context.getLogger().debug("artifact does not exist: {}",
+                context.relativizeToBasedir(dest));
+            copyFile(context, src, dest);
+        } else if (src.toFile().lastModified() > dest.toFile().lastModified()) {
+            context.getLogger().debug("{} is newer than {}",
+                context.relativizeToBasedir(src),
+                context.relativizeToBasedir(dest));
+            copyFile(context, src, dest);
+        }
+
+        return dest;
+    }
+
     public static void copyFile(JReleaserContext context, Path src, Path dest) throws JReleaserException {
         try {
             java.nio.file.Files.createDirectories(dest.getParent());
