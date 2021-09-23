@@ -19,12 +19,13 @@ package org.jreleaser.sdk.gitea;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.releaser.spi.AbstractReleaser;
 import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.GitSdk;
+import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.sdk.gitea.api.GtMilestone;
 import org.jreleaser.sdk.gitea.api.GtRelease;
 import org.jreleaser.sdk.gitea.api.GtRepository;
@@ -32,7 +33,6 @@ import org.jreleaser.sdk.gitea.api.GtRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,24 +42,18 @@ import static org.jreleaser.util.StringUtils.capitalize;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class GiteaReleaser implements Releaser {
-    protected final JReleaserContext context;
-    protected final List<Path> assets = new ArrayList<>();
-
+public class GiteaReleaser extends AbstractReleaser {
     public GiteaReleaser(JReleaserContext context, List<Path> assets) {
-        this.context = context;
-        this.assets.addAll(assets);
+        super(context, assets);
     }
 
-    protected org.jreleaser.model.Gitea resolveGiteaFromModel() {
-        return context.getModel().getRelease().getGitea();
+    @Override
+    protected void createTag() throws ReleaseException {
+        ReleaseUtils.createTag(context);
     }
 
-    protected Repository.Kind resolveRepositoryKind() {
-        return Repository.Kind.OTHER;
-    }
-
-    public void release() throws ReleaseException {
+    @Override
+    protected void createRelease() throws ReleaseException {
         org.jreleaser.model.Gitea gitea = resolveGiteaFromModel();
         context.getLogger().info("Releasing to {}", gitea.getResolvedRepoUrl(context.getModel()));
         String tagName = gitea.getEffectiveTagName(context.getModel());
@@ -127,6 +121,14 @@ public class GiteaReleaser implements Releaser {
             context.getLogger().trace(e);
             throw new ReleaseException(e);
         }
+    }
+
+    protected org.jreleaser.model.Gitea resolveGiteaFromModel() {
+        return context.getModel().getRelease().getGitea();
+    }
+
+    protected Repository.Kind resolveRepositoryKind() {
+        return Repository.Kind.OTHER;
     }
 
     @Override

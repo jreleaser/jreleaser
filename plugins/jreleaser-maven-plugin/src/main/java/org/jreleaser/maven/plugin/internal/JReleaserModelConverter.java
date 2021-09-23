@@ -252,6 +252,7 @@ public final class JReleaserModelConverter {
         s.setCommitAuthor(convertCommitAuthor(service.getCommitAuthor()));
         s.setSign(service.isSign());
         if (service.isSkipTagSet()) s.setSkipTag(service.isSkipTag());
+        if (service.isSkipReleaseSet()) s.setSkipRelease(service.isSkipRelease());
         if (service.isOverwriteSet()) s.setOverwrite(service.isOverwrite());
         if (service.isUpdateSet()) {
             s.setUpdate(service.isUpdate());

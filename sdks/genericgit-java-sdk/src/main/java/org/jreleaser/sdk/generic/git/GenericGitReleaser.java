@@ -17,13 +17,12 @@
  */
 package org.jreleaser.sdk.generic.git;
 
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.releaser.spi.AbstractReleaser;
 import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
-import org.jreleaser.sdk.git.GitSdk;
+import org.jreleaser.sdk.git.ReleaseUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -34,67 +33,20 @@ import java.util.Optional;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public class GenericGitReleaser implements Releaser {
-    private final JReleaserContext context;
-
-    GenericGitReleaser(JReleaserContext context, List<Path> assets) {
-        this.context = context;
+public class GenericGitReleaser extends AbstractReleaser {
+    public GenericGitReleaser(JReleaserContext context, List<Path> assets) {
+        super(context, assets);
     }
 
-    public void release() throws ReleaseException {
-        try {
-            GitSdk git = GitSdk.of(context);
-            Repository repository = git.getRemote();
-
-            org.jreleaser.model.GenericGit generic = context.getModel().getRelease().getGeneric();
-            context.getLogger().info("Releasing to a generic Git repository is not supported");
-            context.getLogger().info("Tagging {}", repository.getHttpUrl());
-            String tagName = generic.getEffectiveTagName(context.getModel());
-
-            context.getLogger().debug("looking up tag {}", tagName);
-            boolean tagged = git.findTag(tagName);
-            boolean snapshot = context.getModel().getProject().isSnapshot();
-            if (tagged) {
-                context.getLogger().debug("tag {} exists", tagName);
-                if (generic.isOverwrite() || snapshot) {
-                    context.getLogger().debug("tagging release {}", tagName);
-                    tagRelease(repository, tagName);
-                } else if (!context.isDryrun()) {
-                    throw new IllegalStateException("Generic release failed because tag " +
-                        tagName + " already exists. overwrite = false");
-                }
-            } else {
-                context.getLogger().debug("tag {} does not exist", tagName);
-                context.getLogger().debug("tagging release {}", tagName);
-                tagRelease(repository, tagName);
-            }
-        } catch (IOException | IllegalStateException e) {
-            context.getLogger().trace(e);
-            throw new ReleaseException(e);
-        }
+    @Override
+    protected void createTag() throws ReleaseException {
+        ReleaseUtils.createTag(context);
     }
 
-    private void tagRelease(Repository repository, String tagName) throws ReleaseException {
-        try {
-            GitSdk gitSdk = GitSdk.of(context);
-            gitSdk.tag(tagName, true, context);
-
-            context.getLogger().info("pushing to {}", repository.getHttpUrl());
-            context.getLogger().debug("pushing tag to remote, dryrun = {}", context.isDryrun());
-
-            UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
-                context.getModel().getRelease().getGitService().getResolvedUsername(),
-                context.getModel().getRelease().getGitService().getResolvedToken());
-
-            gitSdk.open().push()
-                .setDryRun(context.isDryrun())
-                .setPushTags()
-                .setCredentialsProvider(credentialsProvider)
-                .call();
-        } catch (Exception e) {
-            context.getLogger().trace(e);
-            throw new ReleaseException(e);
-        }
+    @Override
+    protected void createRelease() throws ReleaseException {
+        context.getLogger().info("Releasing to a generic Git repository is not supported");
+        ReleaseUtils.createTag(context);
     }
 
     @Override

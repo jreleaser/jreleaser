@@ -49,6 +49,7 @@ public abstract class GitService implements Releaser {
     private String branch;
     private boolean sign;
     private Boolean skipTag;
+    private Boolean skipRelease;
     private Boolean overwrite;
     private Boolean update;
     private String apiEndpoint;
@@ -78,6 +79,7 @@ public abstract class GitService implements Releaser {
         this.branch = service.branch;
         this.sign = service.sign;
         this.skipTag = service.skipTag;
+        this.skipRelease = service.skipRelease;
         this.overwrite = service.overwrite;
         this.update = service.update;
         this.apiEndpoint = service.apiEndpoint;
@@ -354,6 +356,18 @@ public abstract class GitService implements Releaser {
 
     public boolean isSkipTagSet() {
         return skipTag != null;
+    }
+
+    public boolean isSkipRelease() {
+        return skipRelease != null && skipRelease;
+    }
+
+    public void setSkipRelease(Boolean skipRelease) {
+        this.skipRelease = skipRelease;
+    }
+
+    public boolean isSkipReleaseSet() {
+        return skipRelease != null;
     }
 
     public boolean isOverwrite() {

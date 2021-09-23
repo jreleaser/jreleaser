@@ -122,6 +122,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     final Property<Boolean> skipTag
     @Input
     @Optional
+    final Property<Boolean> skipRelease
+    @Input
+    @Optional
     final Property<Boolean> changelogFormatted
     @Input
     @Optional
@@ -251,6 +254,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         this.skipTag.set(skipTag)
     }
 
+    @Option(option = 'skip-release', description = 'Skip creating a release (OPTIONAL).')
+    void setSkipRelease(boolean skipRelease) {
+        this.skipRelease.set(skipRelease)
+    }
+
     @Option(option = 'changelog-formatted', description = 'Format generated changelog (OPTIONAL).')
     void setChangelogformatted(boolean changelogFormatted) {
         this.changelogFormatted.set(changelogFormatted)
@@ -323,6 +331,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         update = objects.property(Boolean).convention(false)
         updateSections = objects.setProperty(UpdateSection).convention(Providers.notDefined())
         skipTag = objects.property(Boolean).convention(false)
+        skipRelease = objects.property(Boolean).convention(false)
         changelogFormatted = objects.property(Boolean).convention(false)
         signing = objects.property(Boolean).convention(false)
         armored = objects.property(Boolean).convention(false)
@@ -362,6 +371,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .update(update.get())
             .updateSections((Set<UpdateSection>) updateSections.getOrElse([] as Set<UpdateSection>))
             .skipTag(skipTag.get())
+            .skipRelease(skipRelease.get())
             .changelog(changeLog.orNull)
             .changelogFormatted(changelogFormatted.get())
             .username(username.orNull)

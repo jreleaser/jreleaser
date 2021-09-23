@@ -112,6 +112,10 @@ public class Release extends AbstractPlatformAwareModelCommand {
         description = "Skip tagging the release.")
     boolean skipTag;
 
+    @CommandLine.Option(names = {"--skip-release"},
+        description = "Skip creating a release.")
+    boolean skipRelease;
+
     @CommandLine.Option(names = {"--branch"},
         description = "The release branch.")
     String branch;
@@ -186,6 +190,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
             .update(update)
             .updateSections(collectUpdateSections())
             .skipTag(skipTag)
+            .skipRelease(skipRelease)
             .changelog(changelog)
             .changelogFormatted(changelogFormatted)
             .username(username)

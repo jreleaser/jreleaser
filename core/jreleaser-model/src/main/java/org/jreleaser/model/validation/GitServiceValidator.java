@@ -36,6 +36,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.model.GitService.OVERWRITE;
 import static org.jreleaser.model.GitService.RELEASE_NAME;
+import static org.jreleaser.model.GitService.SKIP_RELEASE;
 import static org.jreleaser.model.GitService.SKIP_TAG;
 import static org.jreleaser.model.GitService.TAG_NAME;
 import static org.jreleaser.model.GitService.UPDATE;
@@ -130,6 +131,15 @@ public abstract class GitServiceValidator extends Validator {
                 checkProperty(context,
                     SKIP_TAG,
                     service.getServiceName() + ".skipTag",
+                    null,
+                    false));
+        }
+
+        if (!service.isSkipReleaseSet()) {
+            service.setSkipRelease(
+                checkProperty(context,
+                    SKIP_RELEASE,
+                    service.getServiceName() + ".skipRelease",
                     null,
                     false));
         }

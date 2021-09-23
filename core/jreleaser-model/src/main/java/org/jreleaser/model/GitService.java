@@ -50,6 +50,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     public static final String PRERELEASE = "PRERELEASE";
     public static final String DRAFT = "DRAFT";
     public static final String SKIP_TAG = "SKIP_TAG";
+    public static final String SKIP_RELEASE = "SKIP_RELEASE";
     public static final String BRANCH = "BRANCH";
     public static final String PRERELEASE_PATTERN = "PRERELEASE_PATTERN";
 
@@ -78,6 +79,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private String branch;
     private boolean sign;
     private Boolean skipTag;
+    private Boolean skipRelease;
     private Boolean overwrite;
     private Boolean update;
     private String apiEndpoint;
@@ -125,6 +127,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.branch = service.branch;
         this.sign = service.sign;
         this.skipTag = service.skipTag;
+        this.skipRelease = service.skipRelease;
         this.overwrite = service.overwrite;
         this.update = service.update;
         this.apiEndpoint = service.apiEndpoint;
@@ -522,6 +525,18 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         return skipTag != null;
     }
 
+    public boolean isSkipRelease() {
+        return skipRelease != null && skipRelease;
+    }
+
+    public void setSkipRelease(Boolean skipRelease) {
+        this.skipRelease = skipRelease;
+    }
+
+    public boolean isSkipReleaseSet() {
+        return skipRelease != null;
+    }
+
     public boolean isOverwrite() {
         return overwrite != null && overwrite;
     }
@@ -661,6 +676,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put("commitAuthor", commitAuthor.asMap(full));
         props.put("sign", sign);
         props.put("skipTag", isSkipTag());
+        props.put("skipRelease", isSkipRelease());
         props.put("overwrite", isOverwrite());
         if (releaseSupported) {
             props.put("update", isUpdate());

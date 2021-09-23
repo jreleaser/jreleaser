@@ -19,11 +19,12 @@ package org.jreleaser.sdk.github;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.releaser.spi.AbstractReleaser;
 import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.git.GitSdk;
+import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.sdk.github.api.GhRelease;
 import org.kohsuke.github.GHMilestone;
 import org.kohsuke.github.GHRelease;
@@ -33,7 +34,6 @@ import org.kohsuke.github.GHRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,16 +43,18 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class GithubReleaser implements Releaser {
-    private final JReleaserContext context;
-    private final List<Path> assets = new ArrayList<>();
-
-    GithubReleaser(JReleaserContext context, List<Path> assets) {
-        this.context = context;
-        this.assets.addAll(assets);
+public class GithubReleaser extends AbstractReleaser {
+    public GithubReleaser(JReleaserContext context, List<Path> assets) {
+        super(context, assets);
     }
 
-    public void release() throws ReleaseException {
+    @Override
+    protected void createTag() throws ReleaseException {
+        ReleaseUtils.createTag(context);
+    }
+
+    @Override
+    protected void createRelease() throws ReleaseException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
         context.getLogger().info("Releasing to {}", github.getResolvedRepoUrl(context.getModel()));
         String tagName = github.getEffectiveTagName(context.getModel());

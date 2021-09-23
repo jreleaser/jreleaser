@@ -85,6 +85,8 @@ interface GitService extends Releaser {
 
     Property<Boolean> getSkipTag()
 
+    Property<Boolean> getSkipRelease()
+
     Property<String> getApiEndpoint()
 
     Property<Integer> getConnectTimeout()

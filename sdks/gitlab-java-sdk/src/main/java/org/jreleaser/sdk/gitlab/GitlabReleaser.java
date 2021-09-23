@@ -19,12 +19,13 @@ package org.jreleaser.sdk.gitlab;
 
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.releaser.spi.AbstractReleaser;
 import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.GitSdk;
+import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
 import org.jreleaser.sdk.gitlab.api.Milestone;
 import org.jreleaser.sdk.gitlab.api.Project;
@@ -33,7 +34,6 @@ import org.jreleaser.sdk.gitlab.api.Release;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,16 +41,18 @@ import java.util.Optional;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class GitlabReleaser implements Releaser {
-    private final JReleaserContext context;
-    private final List<Path> assets = new ArrayList<>();
-
-    GitlabReleaser(JReleaserContext context, List<Path> assets) {
-        this.context = context;
-        this.assets.addAll(assets);
+public class GitlabReleaser extends AbstractReleaser {
+    public GitlabReleaser(JReleaserContext context, List<Path> assets) {
+        super(context, assets);
     }
 
-    public void release() throws ReleaseException {
+    @Override
+    protected void createTag() throws ReleaseException {
+        ReleaseUtils.createTag(context);
+    }
+
+    @Override
+    protected void createRelease() throws ReleaseException {
         org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
         context.getLogger().info("Releasing to {}", gitlab.getResolvedRepoUrl(context.getModel()));
         String tagName = gitlab.getEffectiveTagName(context.getModel());

@@ -76,6 +76,7 @@ public class ModelAutoConfigurer {
     private boolean overwrite;
     private boolean update;
     private boolean skipTag;
+    private boolean skipRelease;
     private String changelog;
     private boolean changelogFormatted;
     private String username;
@@ -201,6 +202,11 @@ public class ModelAutoConfigurer {
 
     public ModelAutoConfigurer skipTag(boolean skipTag) {
         this.skipTag = skipTag;
+        return this;
+    }
+
+    public ModelAutoConfigurer skipRelease(boolean skipRelease) {
+        this.skipRelease = skipRelease;
         return this;
     }
 
@@ -332,6 +338,7 @@ public class ModelAutoConfigurer {
         if (update) logger.info("- release.update: true");
         if (!updateSections.isEmpty()) logger.info("- release.updateSections: " + updateSections);
         if (skipTag) logger.info("- release.skipTag: true");
+        if (skipRelease) logger.info("- release.skipRelease: true");
         if (prerelease) logger.info("- release.prerelease: true");
         if (isNotBlank(prereleasePattern)) logger.info("- release.prerelease.pattern: {}", prereleasePattern);
         if (draft) logger.info("- release.draft: true");
@@ -406,6 +413,7 @@ public class ModelAutoConfigurer {
                 service.setUpdateSections(updateSections);
             }
             service.setSkipTag(skipTag);
+            service.setSkipRelease(skipRelease);
             if (isNotBlank(branch)) service.setBranch(branch);
             if (isNotBlank(changelog)) service.getChangelog().setExternal(changelog);
             if (isNotBlank(commitAuthorName)) service.getCommitAuthor().setName(commitAuthorName);

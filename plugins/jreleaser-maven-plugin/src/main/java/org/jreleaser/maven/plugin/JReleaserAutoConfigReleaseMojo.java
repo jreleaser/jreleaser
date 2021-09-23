@@ -159,6 +159,11 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.skip.tag")
     private boolean skipTag;
     /**
+     * Skip creating a release.
+     */
+    @Parameter(property = "jreleaser.skip.release")
+    private boolean skipRelease;
+    /**
      * Path to changelog file.
      */
     @Parameter(property = "jreleaser.changelog")
@@ -241,6 +246,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .update(update)
             .updateSections(collectUpdateSections())
             .skipTag(skipTag)
+            .skipRelease(skipRelease)
             .changelog(changelog)
             .changelogFormatted(changelogFormatted)
             .username(username)

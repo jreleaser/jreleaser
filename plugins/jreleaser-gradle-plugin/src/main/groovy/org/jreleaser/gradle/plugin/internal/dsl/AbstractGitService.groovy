@@ -60,6 +60,7 @@ abstract class AbstractGitService implements GitService {
     final Property<String> branch
     final Property<Boolean> sign
     final Property<Boolean> skipTag
+    final Property<Boolean> skipRelease
     final Property<String> apiEndpoint
     final Property<Integer> connectTimeout
     final Property<Integer> readTimeout
@@ -92,6 +93,7 @@ abstract class AbstractGitService implements GitService {
         branch = objects.property(String).convention(Providers.notDefined())
         sign = objects.property(Boolean).convention(Providers.notDefined())
         skipTag = objects.property(Boolean).convention(Providers.notDefined())
+        skipRelease = objects.property(Boolean).convention(Providers.notDefined())
         apiEndpoint = objects.property(String).convention(Providers.notDefined())
         connectTimeout = objects.property(Integer).convention(Providers.notDefined())
         readTimeout = objects.property(Integer).convention(Providers.notDefined())
@@ -173,6 +175,7 @@ abstract class AbstractGitService implements GitService {
             branch.present ||
             sign.present ||
             skipTag.present ||
+            skipRelease.present ||
             apiEndpoint.present ||
             connectTimeout.present ||
             readTimeout.present ||
@@ -248,6 +251,7 @@ abstract class AbstractGitService implements GitService {
         if (signatures.present) service.signatures = signatures.get()
         service.sign = sign.getOrElse(false)
         service.skipTag = skipTag.getOrElse(false)
+        service.skipRelease = skipRelease.getOrElse(false)
         service.overwrite = overwrite.getOrElse(false)
         service.update = update.getOrElse(false)
         if (service.update) {
