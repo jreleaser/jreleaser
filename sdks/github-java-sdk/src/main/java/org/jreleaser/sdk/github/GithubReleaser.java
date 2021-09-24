@@ -218,7 +218,9 @@ public class GithubReleaser extends AbstractReleaser {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
 
         String discussionCategoryName = github.getDiscussionCategoryName();
-        if (context.getModel().getProject().isSnapshot() || isBlank(discussionCategoryName)) return;
+        if (context.getModel().getProject().isSnapshot() ||
+            isBlank(discussionCategoryName) ||
+            github.isDraft()) return;
 
         context.getLogger().debug("linking release {} with discussion {}", tagName, discussionCategoryName);
 
