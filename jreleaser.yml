@@ -1,6 +1,7 @@
 environment:
   properties:
-    jdkPathPrefix: 'apps/jreleaser/build/jdks/zulu11.48.21-ca-jdk11.0.11'
+    jdkPathPrefix: 'apps/jreleaser/build/jdks'
+    jdkFilePrefix: 'zulu11.48.21-ca-jdk11.0.11'
 
 project:
   name: jreleaser
@@ -119,13 +120,13 @@ assemble:
         - jdk.security.jgss
         - org.openjsse
       targetJdks:
-        - path: '{{jdkPathPrefix}}-macosx_x64/zulu-11.jdk/Contents/Home'
+        - path: '{{jdkPathPrefix}}/zulu11Osx/{{jdkFilePrefix}}-macosx_x64/zulu-11.jdk/Contents/Home'
           platform: 'osx-x86_64'
-        - path: '{{jdkPathPrefix}}-linux_x64'
+        - path: '{{jdkPathPrefix}}/zulu11Linux/{{jdkFilePrefix}}-linux_x64'
           platform: 'linux-x86_64'
-        - path: '{{jdkPathPrefix}}-linux_musl_x64'
+        - path: '{{jdkPathPrefix}}/zulu11LinuxMusl/{{jdkFilePrefix}}-linux_musl_x64'
           platform: 'linux_musl-x86_64'
-        - path: '{{jdkPathPrefix}}-win_x64'
+        - path: '{{jdkPathPrefix}}/zulu11Windows/{{jdkFilePrefix}}-win_x64'
           platform: 'windows-x86_64'
       mainJar:
         path: 'apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
