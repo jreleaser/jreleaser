@@ -31,6 +31,7 @@ import org.jreleaser.model.Project;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JavaModuleVersion;
+import org.jreleaser.util.StringUtils;
 import org.jreleaser.util.Version;
 
 import java.io.IOException;
@@ -238,10 +239,19 @@ public class ChangelogGenerator {
 
         Comparable currentVersion = version(context, tag.get(), versionPattern);
 
-        Optional<Ref> previousTag = tags.stream()
-            .filter(ref -> extractTagName(ref).matches(tagPattern))
-            .filter(ref -> lessThan(version(context, ref, versionPattern), currentVersion))
-            .findFirst();
+        String previousTagName = gitService.getConfiguredPreviousTagName();
+        Optional<Ref> previousTag;
+
+        if (StringUtils.isNotBlank(previousTagName)) {
+            previousTag = tags.stream()
+                    .filter(ref -> extractTagName(ref).equals(previousTagName))
+                    .findFirst();
+        } else {
+            previousTag = tags.stream()
+                    .filter(ref -> extractTagName(ref).matches(tagPattern))
+                    .filter(ref -> lessThan(version(context, ref, versionPattern), currentVersion))
+                    .findFirst();
+        }
 
         if (previousTag.isPresent()) {
             context.getLogger().debug("found tag {}", extractTagName(previousTag.get()));

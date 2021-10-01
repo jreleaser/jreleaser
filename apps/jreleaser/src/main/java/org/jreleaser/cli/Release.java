@@ -75,6 +75,10 @@ public class Release extends AbstractPlatformAwareModelCommand {
         description = "The release tag.")
     String tagName;
 
+    @CommandLine.Option(names = {"--previous-tag-name"},
+        description = "The previous release tag.")
+    String previousTagName;
+
     @CommandLine.Option(names = {"--release-name"},
         description = "The release name.")
     String releaseName;
@@ -180,6 +184,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
             .projectSnapshotLabel(projectSnapshotLabel)
             .projectSnapshotFullChangelog(projectSnapshotFullChangelog)
             .tagName(tagName)
+            .previousTagName(previousTagName)
             .releaseName(releaseName)
             .milestoneName(milestoneName)
             .branch(branch)
