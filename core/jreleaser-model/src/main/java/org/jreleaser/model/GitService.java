@@ -44,6 +44,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     public static final String KEY_SKIP_RELEASE_SIGNATURES = "skipReleaseSignatures";
 
     public static final String TAG_NAME = "TAG_NAME";
+    public static final String PREVIOUS_TAG_NAME = "PREVIOUS_TAG_NAME";
     public static final String RELEASE_NAME = "RELEASE_NAME";
     public static final String OVERWRITE = "OVERWRITE";
     public static final String UPDATE = "UPDATE";
@@ -75,6 +76,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private String username;
     private String token;
     private String tagName;
+    private String previousTagName;
     private String releaseName;
     private String branch;
     private boolean sign;
@@ -123,6 +125,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.username = service.username;
         this.token = service.token;
         this.tagName = service.tagName;
+        this.previousTagName = service.previousTagName;
         this.releaseName = service.releaseName;
         this.branch = service.branch;
         this.sign = service.sign;
@@ -154,6 +157,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
 
     public String getConfiguredTagName() {
         return Env.resolve(TAG_NAME, tagName);
+    }
+
+    public String getConfiguredPreviousTagName() {
+        return Env.resolve(PREVIOUS_TAG_NAME, previousTagName);
     }
 
     public String getResolvedTagName(JReleaserModel model) {
@@ -461,6 +468,14 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
 
     public void setTagName(String tagName) {
         this.tagName = tagName;
+    }
+
+    public String getPreviousTagName() {
+        return previousTagName;
+    }
+
+    public void setPreviousTagName(String previousTagName) {
+        this.previousTagName = previousTagName;
     }
 
     public String getReleaseName() {

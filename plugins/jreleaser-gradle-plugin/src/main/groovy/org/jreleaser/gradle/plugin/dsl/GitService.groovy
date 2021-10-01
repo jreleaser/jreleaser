@@ -77,6 +77,8 @@ interface GitService extends Releaser {
 
     Property<String> getTagName()
 
+    Property<String> getPreviousTagName()
+
     Property<String> getReleaseName()
 
     Property<String> getBranch()

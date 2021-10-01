@@ -62,6 +62,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private String projectSnapshotLabel;
     private boolean projectSnapshotFullChangelog;
     private String tagName;
+    private String previousTagName;
     private String releaseName;
     private String branch;
     private String milestoneName;
@@ -127,6 +128,10 @@ public class JReleaserAutoConfigReleaseTask extends Task {
 
     public void setTagName(String tagName) {
         this.tagName = tagName;
+    }
+
+    public void setPreviousTagName(String previousTagName) {
+        this.previousTagName = previousTagName;
     }
 
     public void setReleaseName(String releaseName) {
@@ -237,6 +242,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .projectSnapshotLabel(projectSnapshotLabel)
             .projectSnapshotFullChangelog(projectSnapshotFullChangelog)
             .tagName(tagName)
+            .previousTagName(previousTagName)
             .releaseName(releaseName)
             .branch(branch)
             .milestoneName(milestoneName)

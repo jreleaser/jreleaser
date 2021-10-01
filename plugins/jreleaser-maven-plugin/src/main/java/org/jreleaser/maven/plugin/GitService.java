@@ -45,6 +45,7 @@ public abstract class GitService implements Releaser {
     private String username;
     private String token;
     private String tagName;
+    private String previousTagName;
     private String releaseName;
     private String branch;
     private boolean sign;
@@ -75,6 +76,7 @@ public abstract class GitService implements Releaser {
         this.username = service.username;
         this.token = service.token;
         this.tagName = service.tagName;
+        this.previousTagName = service.previousTagName;
         this.releaseName = service.releaseName;
         this.branch = service.branch;
         this.sign = service.sign;
@@ -296,6 +298,14 @@ public abstract class GitService implements Releaser {
 
     public void setTagName(String tagName) {
         this.tagName = tagName;
+    }
+
+    public String getPreviousTagName() {
+        return previousTagName;
+    }
+
+    public void setPreviousTagName(String previousTagName) {
+        this.previousTagName = previousTagName;
     }
 
     public String getReleaseName() {

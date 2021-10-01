@@ -67,6 +67,7 @@ public class ModelAutoConfigurer {
     private String projectSnapshotLabel;
     private boolean projectSnapshotFullChangelog;
     private String tagName;
+    private String previousTagName;
     private String releaseName;
     private String milestoneName;
     private String branch;
@@ -142,6 +143,11 @@ public class ModelAutoConfigurer {
 
     public ModelAutoConfigurer tagName(String tagName) {
         this.tagName = tagName;
+        return this;
+    }
+
+    public ModelAutoConfigurer previousTagName(String previousTagName) {
+        this.previousTagName = previousTagName;
         return this;
     }
 
@@ -331,6 +337,7 @@ public class ModelAutoConfigurer {
         if (projectSnapshotFullChangelog) logger.info("- project.snapshot.full.changelog: true");
         if (isNotBlank(username)) logger.info("- release.username: {}", username);
         if (isNotBlank(tagName)) logger.info("- release.tagName: {}", tagName);
+        if (isNotBlank(previousTagName)) logger.info("- release.previousTagName: {}", previousTagName);
         if (isNotBlank(branch)) logger.info("- release.branch: {}", branch);
         if (isNotBlank(releaseName)) logger.info("- release.releaseName: {}", releaseName);
         if (isNotBlank(milestoneName)) logger.info("- release.milestone.name: {}", milestoneName);
@@ -402,6 +409,7 @@ public class ModelAutoConfigurer {
 
             service.setUsername(username);
             service.setTagName(tagName);
+            service.setPreviousTagName(previousTagName);
             service.setReleaseName(releaseName);
             service.getMilestone().setName(milestoneName);
             service.setOverwrite(overwrite);

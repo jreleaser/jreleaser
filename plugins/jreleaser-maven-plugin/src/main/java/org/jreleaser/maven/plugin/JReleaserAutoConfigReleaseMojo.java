@@ -109,6 +109,11 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.tag.name")
     private String tagName;
     /**
+     * The previous release tag.
+     */
+    @Parameter(property = "jreleaser.previous.tag.name")
+    private String previousTagName;
+    /**
      * The release name.
      */
     @Parameter(property = "jreleaser.release.name")
@@ -236,6 +241,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .projectSnapshotLabel(projectSnapshotLabel)
             .projectSnapshotFullChangelog(projectSnapshotFullChangelog)
             .tagName(tagName)
+            .previousTagName(previousTagName)
             .releaseName(releaseName)
             .branch(branch)
             .milestoneName(milestoneName)

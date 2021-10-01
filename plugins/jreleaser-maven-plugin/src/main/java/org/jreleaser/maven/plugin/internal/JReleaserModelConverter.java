@@ -247,6 +247,7 @@ public final class JReleaserModelConverter {
         if (isNotBlank(service.getUsername())) s.setUsername(service.getUsername());
         if (isNotBlank(service.getToken())) s.setToken(service.getToken());
         if (isNotBlank(service.getTagName())) s.setTagName(service.getTagName());
+        if (isNotBlank(service.getPreviousTagName())) s.setPreviousTagName(service.getPreviousTagName());
         if (isNotBlank(service.getReleaseName())) s.setReleaseName(service.getReleaseName());
         if (isNotBlank(service.getBranch())) s.setBranch(service.getBranch());
         s.setCommitAuthor(convertCommitAuthor(service.getCommitAuthor()));
