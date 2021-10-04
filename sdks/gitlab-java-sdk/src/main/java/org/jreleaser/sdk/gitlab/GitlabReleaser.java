@@ -166,7 +166,7 @@ public class GitlabReleaser extends AbstractReleaser {
                 gitlab.getConnectTimeout(),
                 gitlab.getReadTimeout())
                 .findUser(email, name);
-        } catch (IOException e) {
+        } catch (RestAPIException | IOException e) {
             context.getLogger().trace(e);
             context.getLogger().debug("Could not find user matching {}", email);
         }

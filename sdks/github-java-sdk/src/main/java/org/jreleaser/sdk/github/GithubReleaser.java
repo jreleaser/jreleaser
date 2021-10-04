@@ -23,6 +23,7 @@ import org.jreleaser.model.releaser.spi.AbstractReleaser;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
+import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.sdk.github.api.GhRelease;
@@ -156,7 +157,7 @@ public class GithubReleaser extends AbstractReleaser {
                 github.getConnectTimeout(),
                 github.getReadTimeout())
                 .findUser(email, name);
-        } catch (IOException e) {
+        } catch (RestAPIException | IOException e) {
             context.getLogger().trace(e);
             context.getLogger().debug("Could not find user matching {}", email);
         }

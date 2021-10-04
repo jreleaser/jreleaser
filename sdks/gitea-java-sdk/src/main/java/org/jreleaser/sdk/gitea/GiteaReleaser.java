@@ -176,7 +176,7 @@ public class GiteaReleaser extends AbstractReleaser {
                 gitea.getConnectTimeout(),
                 gitea.getReadTimeout())
                 .findUser(email, name, host);
-        } catch (IOException e) {
+        } catch (RestAPIException | IOException e) {
             context.getLogger().trace(e);
             context.getLogger().debug("Could not find user matching {}", email);
         }
