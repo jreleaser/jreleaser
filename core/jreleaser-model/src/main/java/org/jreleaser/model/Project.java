@@ -386,13 +386,13 @@ public class Project implements Domain, ExtraProperties {
 
         String vn = (String) getExtraProperties().get(Constants.KEY_VERSION_NUMBER);
         String ev = getEffectiveVersion();
-        addExtraProperty(Constants.KEY_VERSION_WITH_UNDERSCORES, v.replace(".", "_").replace("-", "_"));
-        addExtraProperty(Constants.KEY_VERSION_WITH_DASHES, v.replace(".", "-").replace("_", "-"));
-        addExtraProperty(Constants.KEY_VERSION_NUMBER_WITH_UNDERSCORES, vn.replace(".", "_").replace("-", "_"));
-        addExtraProperty(Constants.KEY_VERSION_NUMBER_WITH_DASHES, vn.replace(".", "-").replace("_", "-"));
+        addExtraProperty(Constants.KEY_VERSION_WITH_UNDERSCORES, new MustacheUtils.UnderscoreFunction().apply(v));
+        addExtraProperty(Constants.KEY_VERSION_WITH_DASHES, new MustacheUtils.DashFunction().apply(v));
+        addExtraProperty(Constants.KEY_VERSION_NUMBER_WITH_UNDERSCORES, new MustacheUtils.UnderscoreFunction().apply(vn));
+        addExtraProperty(Constants.KEY_VERSION_NUMBER_WITH_DASHES, new MustacheUtils.DashFunction().apply(vn));
         if (isNotBlank(ev)) {
-            addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_UNDERSCORES, ev.replace(".", "_").replace("-", "_"));
-            addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_DASHES, ev.replace(".", "-").replace("_", "-"));
+            addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_UNDERSCORES, new MustacheUtils.UnderscoreFunction().apply(ev));
+            addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_DASHES, new MustacheUtils.DashFunction().apply(ev));
         }
     }
 

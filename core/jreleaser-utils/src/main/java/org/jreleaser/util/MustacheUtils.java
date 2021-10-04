@@ -123,7 +123,7 @@ public final class MustacheUtils {
         }
     }
 
-    private static class TimeFormatFunction implements Function<String, String> {
+    public static class TimeFormatFunction implements Function<String, String> {
         private final ZonedDateTime now;
 
         private TimeFormatFunction(ZonedDateTime now) {
@@ -137,52 +137,55 @@ public final class MustacheUtils {
         }
     }
 
-    private static class UnderscoreFunction implements Function<String,String> {
+    public static class UnderscoreFunction implements Function<String, String> {
         @Override
         public String apply(String input) {
             return input.replace(".", "_")
-                .replace("-", "_");
+                .replace("-", "_")
+                .replace("+", "_");
         }
     }
 
-    private static class DashFunction implements Function<String,String> {
+    public static class DashFunction implements Function<String, String> {
         @Override
         public String apply(String input) {
             return input.replace(".", "-")
-                .replace("_", "-");
+                .replace("_", "-")
+                .replace("+", "-");
         }
     }
 
-    private static class SlashFunction implements Function<String,String> {
+    public static class SlashFunction implements Function<String, String> {
         @Override
         public String apply(String input) {
             return input.replace(".", "/")
-                .replace("-", "/");
+                .replace("-", "/")
+                .replace("+", "/");
         }
     }
 
-    private static class UpperFunction implements Function<String,String> {
+    public static class UpperFunction implements Function<String, String> {
         @Override
         public String apply(String input) {
             return input.toUpperCase();
         }
     }
 
-    private static class LowerFunction implements Function<String,String> {
+    public static class LowerFunction implements Function<String, String> {
         @Override
         public String apply(String input) {
             return input.toLowerCase();
         }
     }
 
-    private static class CapitalizeFunction implements Function<String,String> {
+    public static class CapitalizeFunction implements Function<String, String> {
         @Override
         public String apply(String input) {
             return StringUtils.capitalize(input);
         }
     }
 
-    private static class UncapitalizeFunction implements Function<String,String> {
+    public static class UncapitalizeFunction implements Function<String, String> {
         @Override
         public String apply(String input) {
             return StringUtils.uncapitalize(input);
