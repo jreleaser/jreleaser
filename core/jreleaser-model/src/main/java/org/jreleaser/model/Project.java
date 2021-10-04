@@ -20,6 +20,7 @@ package org.jreleaser.model;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.JavaModuleVersion;
+import org.jreleaser.util.JavaRuntimeVersion;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.OsDetector;
 import org.jreleaser.util.PlatformUtils;
@@ -342,6 +343,24 @@ public class Project implements Domain, ExtraProperties {
                     }
                 } catch (IllegalArgumentException e) {
                     throw new JReleaserException("Version '" + v + "' does not follow the semver spec", e);
+                }
+            }
+            break;
+            case JAVA_RUNTIME: {
+                try {
+                    JavaRuntimeVersion parsedVersion = JavaRuntimeVersion.of(v);
+                    addExtraProperty(Constants.KEY_VERSION_NUMBER, parsedVersion.getVersion());
+                    if (parsedVersion.hasPrerelease()) {
+                        addExtraProperty(Constants.KEY_VERSION_PRERELEASE, parsedVersion.getPrerelease());
+                    }
+                    if (parsedVersion.hasBuild()) {
+                        addExtraProperty(Constants.KEY_VERSION_BUILD, parsedVersion.getBuild());
+                    }
+                    if (parsedVersion.hasOptional()) {
+                        addExtraProperty(Constants.KEY_VERSION_OPTIONAL, parsedVersion.getOptional());
+                    }
+                } catch (IllegalArgumentException e) {
+                    throw new JReleaserException("Version '" + v + "' does not follow the Java runtime spec", e);
                 }
             }
             break;

@@ -129,7 +129,7 @@ public class Version implements Comparable<Version> {
         if (jv.startsWith("1.")) {
             jv = jv.substring(2);
         }
-        return Integer.parseInt(jv.split("\\.")[0]);
+        return JavaRuntimeVersion.of(jv).feature();
     }
 
     public static Version of(String version) {

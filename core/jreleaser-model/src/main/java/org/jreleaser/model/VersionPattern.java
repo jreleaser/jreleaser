@@ -25,6 +25,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public enum VersionPattern {
     SEMVER,
+    JAVA_RUNTIME,
     JAVA_MODULE,
     CUSTOM;
 

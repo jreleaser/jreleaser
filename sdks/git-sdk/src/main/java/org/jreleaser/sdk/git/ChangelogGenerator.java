@@ -31,6 +31,7 @@ import org.jreleaser.model.Project;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JavaModuleVersion;
+import org.jreleaser.util.JavaRuntimeVersion;
 import org.jreleaser.util.StringUtils;
 import org.jreleaser.util.Version;
 
@@ -140,6 +141,14 @@ public class ChangelogGenerator {
         return Version.of("0.0.0");
     }
 
+    private static JavaRuntimeVersion javaRuntimeVersionOf(Ref tag, Pattern versionPattern) {
+        Matcher matcher = versionPattern.matcher(extractTagName(tag));
+        if (matcher.matches()) {
+            return JavaRuntimeVersion.of(matcher.group(1));
+        }
+        return JavaRuntimeVersion.of("0.0.0");
+    }
+
     private static JavaModuleVersion javaModuleVersionOf(Ref tag, Pattern versionPattern) {
         Matcher matcher = versionPattern.matcher(extractTagName(tag));
         if (matcher.matches()) {
@@ -160,6 +169,8 @@ public class ChangelogGenerator {
         switch (context.getModel().getProject().getVersionPattern()) {
             case SEMVER:
                 return semverOf(tag, versionPattern);
+            case JAVA_RUNTIME:
+                return javaRuntimeVersionOf(tag, versionPattern);
             case JAVA_MODULE:
                 return javaModuleVersionOf(tag, versionPattern);
             default:

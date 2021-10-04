@@ -40,6 +40,7 @@ public interface Constants {
     String KEY_VERSION_NUMBER = "versionNumber";
     String KEY_VERSION_PRERELEASE = "versionPrerelease";
     String KEY_VERSION_BUILD = "versionBuild";
+    String KEY_VERSION_OPTIONAL = "versionOptional";
     String KEY_VERSION_WITH_UNDERSCORES = "versionWithUnderscores";
     String KEY_VERSION_WITH_DASHES      = "versionWithDashes";
     String KEY_VERSION_NUMBER_WITH_UNDERSCORES = "versionNumberWithUnderscores";

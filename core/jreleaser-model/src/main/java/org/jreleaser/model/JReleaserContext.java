@@ -59,6 +59,7 @@ import static org.jreleaser.util.Constants.KEY_VERSION_BUILD;
 import static org.jreleaser.util.Constants.KEY_VERSION_MAJOR;
 import static org.jreleaser.util.Constants.KEY_VERSION_MINOR;
 import static org.jreleaser.util.Constants.KEY_VERSION_NUMBER;
+import static org.jreleaser.util.Constants.KEY_VERSION_OPTIONAL;
 import static org.jreleaser.util.Constants.KEY_VERSION_PATCH;
 import static org.jreleaser.util.Constants.KEY_VERSION_PRERELEASE;
 import static org.jreleaser.util.Constants.KEY_VERSION_TAG;
@@ -428,6 +429,7 @@ public class JReleaserContext {
         safePut(project.getPrefix() + capitalize(KEY_VERSION_PRERELEASE), resolvedExtraProperties, props);
         safePut(project.getPrefix() + capitalize(KEY_VERSION_TAG), resolvedExtraProperties, props);
         safePut(project.getPrefix() + capitalize(KEY_VERSION_BUILD), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_OPTIONAL), resolvedExtraProperties, props);
 
         Path output = getOutputDirectory().resolve("output.properties");
 
