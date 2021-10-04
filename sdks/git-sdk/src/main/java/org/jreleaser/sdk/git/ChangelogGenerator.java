@@ -67,6 +67,7 @@ import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
  */
 public class ChangelogGenerator {
     private static final String UNCATEGORIZED = "<<UNCATEGORIZED>>";
+    private static final String REGEX_PREFIX = "regex:";
 
     public static String generate(JReleaserContext context) throws IOException {
         if (!context.getModel().getRelease().getGitService().getChangelog().isEnabled()) {
@@ -413,13 +414,25 @@ public class ChangelogGenerator {
     private static void applyLabels(Commit commit, Set<Changelog.Labeler> labelers) {
         for (Changelog.Labeler labeler : labelers) {
             if (isNotBlank(labeler.getTitle())) {
-                if (commit.title.contains(labeler.getTitle()) || commit.title.matches(toSafeRegexPattern(labeler.getTitle()))) {
-                    commit.labels.add(labeler.getLabel());
+                if (labeler.getTitle().startsWith(REGEX_PREFIX)) {
+                    if (commit.title.matches(labeler.getTitle().substring(REGEX_PREFIX.length()))) {
+                        commit.labels.add(labeler.getLabel());
+                    }
+                } else {
+                    if (commit.title.contains(labeler.getTitle()) || commit.title.matches(toSafeRegexPattern(labeler.getTitle()))) {
+                        commit.labels.add(labeler.getLabel());
+                    }
                 }
             }
             if (isNotBlank(labeler.getBody())) {
-                if (commit.body.contains(labeler.getBody()) || commit.body.matches(toSafeRegexPattern(labeler.getBody()))) {
-                    commit.labels.add(labeler.getLabel());
+                if (labeler.getTitle().startsWith(REGEX_PREFIX)) {
+                    if (commit.body.matches(labeler.getBody().substring(REGEX_PREFIX.length()))) {
+                        commit.labels.add(labeler.getLabel());
+                    }
+                } else {
+                    if (commit.body.contains(labeler.getBody()) || commit.body.matches(toSafeRegexPattern(labeler.getBody()))) {
+                        commit.labels.add(labeler.getLabel());
+                    }
                 }
             }
         }
