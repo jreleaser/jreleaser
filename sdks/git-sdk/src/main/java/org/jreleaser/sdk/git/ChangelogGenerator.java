@@ -32,7 +32,6 @@ import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.JavaRuntimeVersion;
-import org.jreleaser.util.StringUtils;
 import org.jreleaser.util.Version;
 
 import java.io.IOException;
@@ -204,18 +203,33 @@ public class ChangelogGenerator {
             .filter(ref -> extractTagName(ref).equals(effectiveTagName))
             .findFirst();
 
+        Optional<Ref> previousTag = Optional.empty();
+        String previousTagName = gitService.getConfiguredPreviousTagName();
+        if (isNotBlank(previousTagName)) {
+            context.getLogger().debug("looking for previous tag '{}'", previousTagName);
+            previousTag = tags.stream()
+                .filter(ref -> extractTagName(ref).equals(previousTagName))
+                .findFirst();
+        }
+
         // tag: early-access
         if (context.getModel().getProject().isSnapshot()) {
             Project.Snapshot snapshot = context.getModel().getProject().getSnapshot();
             String effectiveLabel = snapshot.getEffectiveLabel();
             if (effectiveLabel.equals(effectiveTagName)) {
                 if (!tag.isPresent() || snapshot.isFullChangelog()) {
-                    context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
+                    if (previousTag.isPresent()) {
+                        tag = previousTag;
+                    }
 
-                    tag = tags.stream()
-                        .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
-                        .filter(ref -> extractTagName(ref).matches(tagPattern))
-                        .findFirst();
+                    if (!tag.isPresent()) {
+                        context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
+
+                        tag = tags.stream()
+                            .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
+                            .filter(ref -> extractTagName(ref).matches(tagPattern))
+                            .findFirst();
+                    }
                 }
 
                 if (tag.isPresent()) {
@@ -230,12 +244,17 @@ public class ChangelogGenerator {
 
         // tag: latest
         if (!tag.isPresent()) {
-            context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
-
-            tag = tags.stream()
-                .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
-                .filter(ref -> extractTagName(ref).matches(tagPattern))
-                .findFirst();
+            if (previousTag.isPresent()) {
+                tag = previousTag;
+            }
+            
+            if (!tag.isPresent()) {
+                context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
+                tag = tags.stream()
+                    .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
+                    .filter(ref -> extractTagName(ref).matches(tagPattern))
+                    .findFirst();
+            }
 
             if (tag.isPresent()) {
                 context.getLogger().debug("found tag {}", extractTagName(tag.get()));
@@ -247,22 +266,13 @@ public class ChangelogGenerator {
         }
 
         // tag: somewhere in the middle
-        context.getLogger().debug("looking for a tag before '{}' that matches '{}'", effectiveTagName, tagPattern);
-
         Comparable currentVersion = version(context, tag.get(), versionPattern);
-
-        String previousTagName = gitService.getConfiguredPreviousTagName();
-        Optional<Ref> previousTag;
-
-        if (StringUtils.isNotBlank(previousTagName)) {
+        if (!previousTag.isPresent()) {
+            context.getLogger().debug("looking for a tag before '{}' that matches '{}'", effectiveTagName, tagPattern);
             previousTag = tags.stream()
-                    .filter(ref -> extractTagName(ref).equals(previousTagName))
-                    .findFirst();
-        } else {
-            previousTag = tags.stream()
-                    .filter(ref -> extractTagName(ref).matches(tagPattern))
-                    .filter(ref -> lessThan(version(context, ref, versionPattern), currentVersion))
-                    .findFirst();
+                .filter(ref -> extractTagName(ref).matches(tagPattern))
+                .filter(ref -> lessThan(version(context, ref, versionPattern), currentVersion))
+                .findFirst();
         }
 
         if (previousTag.isPresent()) {
@@ -335,7 +345,7 @@ public class ChangelogGenerator {
             }
 
             changes.append(categories.get(UNCATEGORIZED).stream()
-                .map(c -> applyTemplate(changelog.getChange(), c.asContext(changelog.isLinks(), commitsUrl)))
+                .map(c -> applyTemplate(changelog.getFormat(), c.asContext(changelog.isLinks(), commitsUrl)))
                 .collect(Collectors.joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
