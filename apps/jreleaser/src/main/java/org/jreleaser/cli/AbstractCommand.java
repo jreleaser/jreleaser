@@ -28,42 +28,40 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command
+@CommandLine.Command(mixinStandardHelpOptions = true,
+    resourceBundle = "org.jreleaser.cli.Messages")
 abstract class AbstractCommand implements Callable<Integer> {
     protected JReleaserLogger logger;
 
-    @CommandLine.Option(names = {"-d", "--debug"},
-        description = "Set log level to debug.")
+    @CommandLine.Option(names = {"-d", "--debug"})
     boolean debug;
 
-    @CommandLine.Option(names = {"-i", "--info"},
-        description = "Set log level to info.")
+    @CommandLine.Option(names = {"-i", "--info"})
     boolean info;
 
-    @CommandLine.Option(names = {"-w", "--warn"},
-        description = "Set log level to warn.")
+    @CommandLine.Option(names = {"-w", "--warn"})
     boolean warn;
 
-    @CommandLine.Option(names = {"-q", "--quiet"},
-        description = "Log errors only.")
+    @CommandLine.Option(names = {"-q", "--quiet"})
     boolean quiet;
 
-    @CommandLine.Option(names = {"-b", "--basedir"},
-        description = "Base directory.")
+    @CommandLine.Option(names = {"-b", "--basedir"})
     Path basedir;
 
-    @CommandLine.Option(names = {"-od", "--output-directory"},
-        description = "Output directory.")
+    @CommandLine.Option(names = {"-od", "--output-directory"})
     Path outputdir;
 
     @CommandLine.Spec
     CommandLine.Model.CommandSpec spec;
+
+    ResourceBundle bundle = ResourceBundle.getBundle("org.jreleaser.cli.Messages");
 
     protected abstract Main parent();
 
@@ -116,7 +114,7 @@ abstract class AbstractCommand implements Callable<Integer> {
             return new PrintWriter(new FileOutputStream(
                 getOutputDirectory().resolve("trace.log").toFile()));
         } catch (IOException e) {
-            throw new IllegalStateException("Could not initialize trace file", e);
+            throw new IllegalStateException(bundle.getString("ERROR_trace_file_init"), e);
         }
     }
 

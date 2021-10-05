@@ -25,9 +25,7 @@ import picocli.CommandLine;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "checksum",
-    mixinStandardHelpOptions = true,
-    description = "Calculate checksums.")
+@CommandLine.Command(name = "checksum")
 public class Checksum extends AbstractPlatformAwareModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {

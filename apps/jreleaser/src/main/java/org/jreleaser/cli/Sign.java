@@ -25,9 +25,7 @@ import picocli.CommandLine;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "sign",
-    mixinStandardHelpOptions = true,
-    description = "Sign release artifacts.")
+@CommandLine.Command(name = "sign")
 public class Sign extends AbstractPlatformAwareModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {

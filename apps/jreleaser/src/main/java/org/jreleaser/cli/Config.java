@@ -25,16 +25,12 @@ import picocli.CommandLine;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "config",
-    mixinStandardHelpOptions = true,
-    description = "Display current configuration.")
+@CommandLine.Command(name = "config")
 public class Config extends AbstractPlatformAwareModelCommand {
-    @CommandLine.Option(names = {"-f", "--full"},
-        description = "Display full configuration.")
+    @CommandLine.Option(names = {"-f", "--full"})
     boolean full;
 
-    @CommandLine.Option(names = {"-a", "--assembly"},
-        description = "Display assembly configuration.")
+    @CommandLine.Option(names = {"-a", "--assembly"})
     boolean assembly;
 
     @Override

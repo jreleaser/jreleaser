@@ -25,16 +25,12 @@ import picocli.CommandLine;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "prepare",
-    mixinStandardHelpOptions = true,
-    description = "Prepare all distributions.")
+@CommandLine.Command(name = "prepare")
 public class Prepare extends AbstractPlatformAwareModelCommand {
-    @CommandLine.Option(names = {"-dn", "--distribution-name"},
-        description = "The name of the distribution.")
+    @CommandLine.Option(names = {"-dn", "--distribution-name"})
     String distributionName;
 
-    @CommandLine.Option(names = {"-tn", "--tool-name"},
-        description = "The name of the tool.")
+    @CommandLine.Option(names = {"-tn", "--tool-name"})
     String toolName;
 
     @Override

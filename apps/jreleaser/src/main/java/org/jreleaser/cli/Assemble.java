@@ -25,16 +25,12 @@ import picocli.CommandLine;
  * @author Andres Almiray
  * @since 0.2.0
  */
-@CommandLine.Command(name = "assemble",
-    mixinStandardHelpOptions = true,
-    description = "Assemble distributions.")
+@CommandLine.Command(name = "assemble")
 public class Assemble extends AbstractModelCommand {
-    @CommandLine.Option(names = {"-an", "--assembler-name"},
-        description = "The name of the assembler.")
+    @CommandLine.Option(names = {"-an", "--assembler-name"})
     String assemblerName;
 
-    @CommandLine.Option(names = {"-dn", "--distribution-name"},
-        description = "The name of the distribution.")
+    @CommandLine.Option(names = {"-dn", "--distribution-name"})
     String distributionName;
 
     @Override

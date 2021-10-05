@@ -26,7 +26,7 @@ import java.io.PrintWriter;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "jreleaser",
-    description = "jreleaser",
+    resourceBundle = "org.jreleaser.cli.Messages",
     mixinStandardHelpOptions = true,
     versionProvider = Versions.class,
     subcommands = {Init.class, Config.class, Template.class,

@@ -45,17 +45,14 @@ import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
  */
 @CommandLine.Command
 public abstract class AbstractModelCommand extends AbstractCommand {
-    @CommandLine.Option(names = {"-c", "--config-file"},
-        description = "The config file")
+    @CommandLine.Option(names = {"-c", "--config-file"})
     Path configFile;
 
-    @CommandLine.Option(names = {"-grs", "--git-root-search"},
-        description = "Searches for the Git root.")
+    @CommandLine.Option(names = {"-grs", "--git-root-search"})
     boolean gitRootSearch;
 
     @CommandLine.Option(names = {"-p", "--set-property"},
-        paramLabel = "<key=value>",
-        description = "Sets the value of a property. Repeatable.")
+        paramLabel = "<key=value>")
     String[] properties;
 
     @CommandLine.ParentCommand
@@ -75,9 +72,9 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         initLogger();
         logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
         JReleaserVersion.banner(logger.getTracer(), false);
-        logger.info("Configuring with {}", actualConfigFile);
+        logger.info(bundle.getString("TEXT_config_file"), actualConfigFile);
         logger.increaseIndent();
-        logger.info("- basedir set to {}", actualBasedir.toAbsolutePath());
+        logger.info(bundle.getString("TEXT_basedir_set"), actualBasedir.toAbsolutePath());
         logger.decreaseIndent();
         doExecute(createContext());
     }
@@ -98,9 +95,10 @@ public abstract class AbstractModelCommand extends AbstractCommand {
             spec.commandLine().getErr()
                 .println(spec.commandLine()
                     .getColorScheme()
-                    .errorText("Missing required option: '--config-file=<configFile>' " +
-                        "or local file named jreleaser[" +
-                        String.join("|", getSupportedConfigFormats()) + "]"));
+                    .errorText(String.format(
+                        bundle.getString("ERROR_missing_config_file"),
+                        String.join("|", getSupportedConfigFormats())
+                    )));
             spec.commandLine().usage(parent.out);
             throw new HaltExecutionException();
         }
@@ -124,7 +122,9 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         actualBasedir = null != basedir ? basedir : actualConfigFile.toAbsolutePath().getParent();
         if (!Files.exists(actualBasedir)) {
             spec.commandLine().getErr()
-                .println(spec.commandLine().getColorScheme().errorText("Missing required option: '--basedir=<basedir>'"));
+                .println(spec.commandLine().getColorScheme().errorText(String.format(
+                    bundle.getString("ERROR_missing_required_option"),
+                    "--basedir=<basedir>")));
             spec.commandLine().usage(parent.out);
             throw new HaltExecutionException();
         }
@@ -160,7 +160,9 @@ public abstract class AbstractModelCommand extends AbstractCommand {
                 return JReleaserContext.Configurer.CLI_JSON;
         }
         // should not happen!
-        throw new IllegalArgumentException("Invalid configuration format: " + configFile.getFileName());
+        throw new IllegalArgumentException(String.format(
+            bundle.getString("ERROR_invalid_config_format"),
+            configFile.getFileName()));
     }
 
     protected Path getOutputDirectory() {
@@ -200,7 +202,9 @@ public abstract class AbstractModelCommand extends AbstractCommand {
                 if (property.contains("=")) {
                     int d = property.indexOf('=');
                     if (d == 0 || d == properties.length - 1) {
-                        throw new IllegalArgumentException("Invalid property '" + property + "'");
+                        throw new IllegalArgumentException(String.format(
+                            bundle.getString("ERROR_invalid_property"),
+                            property));
                     }
                     props.put(property.substring(0, d),
                         property.substring(d + 1));

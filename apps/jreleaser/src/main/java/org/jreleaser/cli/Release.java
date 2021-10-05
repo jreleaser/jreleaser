@@ -35,135 +35,109 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "release",
-    mixinStandardHelpOptions = true,
-    description = "Create or update a release.")
+@CommandLine.Command(name = "release")
 public class Release extends AbstractPlatformAwareModelCommand {
-    @CommandLine.Option(names = {"-y", "--dryrun"},
-        description = "Skip remote operations.")
+    @CommandLine.Option(names = {"-y", "--dryrun"})
     boolean dryrun;
 
-    @CommandLine.Option(names = {"--auto-config"},
-        description = "Model auto configuration.")
-    boolean autoConfig;
+    @CommandLine.ArgGroup(exclusive = false, multiplicity = "1",
+        headingKey = "auto-config.header")
+    AutoConfigGroup autoConfigGroup;
 
-    @CommandLine.Option(names = {"--project-name"},
-        description = "The project name.")
-    String projectName;
+    static class AutoConfigGroup {
+        @CommandLine.Option(names = {"--auto-config"})
+        boolean autoConfig;
 
-    @CommandLine.Option(names = {"--project-version"},
-        description = "The project version.")
-    String projectVersion;
+        @CommandLine.Option(names = {"--project-name"})
+        String projectName;
 
-    @CommandLine.Option(names = {"--project-version-pattern"},
-        description = "The project version pattern.")
-    String projectVersionPattern;
+        @CommandLine.Option(names = {"--project-version"})
+        String projectVersion;
 
-    @CommandLine.Option(names = {"--project-snapshot-pattern"},
-        description = "The project snapshot pattern.")
-    String projectSnapshotPattern;
+        @CommandLine.Option(names = {"--project-version-pattern"})
+        String projectVersionPattern;
 
-    @CommandLine.Option(names = {"--project-snapshot-label"},
-        description = "The project snapshot label.")
-    String projectSnapshotLabel;
+        @CommandLine.Option(names = {"--project-snapshot-pattern"})
+        String projectSnapshotPattern;
 
-    @CommandLine.Option(names = {"--project-snapshot-full-changelog"},
-        description = "Calculate full changelog since last non-snapshot release.")
-    boolean projectSnapshotFullChangelog;
+        @CommandLine.Option(names = {"--project-snapshot-label"})
+        String projectSnapshotLabel;
 
-    @CommandLine.Option(names = {"--tag-name"},
-        description = "The release tag.")
-    String tagName;
+        @CommandLine.Option(names = {"--project-snapshot-full-changelog"})
+        boolean projectSnapshotFullChangelog;
 
-    @CommandLine.Option(names = {"--previous-tag-name"},
-        description = "The previous release tag.")
-    String previousTagName;
+        @CommandLine.Option(names = {"--tag-name"})
+        String tagName;
 
-    @CommandLine.Option(names = {"--release-name"},
-        description = "The release name.")
-    String releaseName;
+        @CommandLine.Option(names = {"--previous-tag-name"})
+        String previousTagName;
 
-    @CommandLine.Option(names = {"--milestone-name"},
-        description = "The milestone name.")
-    String milestoneName;
+        @CommandLine.Option(names = {"--release-name"})
+        String releaseName;
 
-    @CommandLine.Option(names = {"--prerelease"},
-        description = "If the release is a prerelease.")
-    boolean prerelease;
+        @CommandLine.Option(names = {"--milestone-name"})
+        String milestoneName;
 
-    @CommandLine.Option(names = {"--prerelease-pattern"},
-        description = "The prerelease pattern.")
-    String prereleasePattern;
+        @CommandLine.Option(names = {"--prerelease"})
+        boolean prerelease;
 
-    @CommandLine.Option(names = {"--draft"},
-        description = "If the release is a draft.")
-    boolean draft;
+        @CommandLine.Option(names = {"--prerelease-pattern"})
+        String prereleasePattern;
 
-    @CommandLine.Option(names = {"--overwrite"},
-        description = "Overwrite an existing release.")
-    boolean overwrite;
+        @CommandLine.Option(names = {"--draft"})
+        boolean draft;
 
-    @CommandLine.Option(names = {"--update"},
-        description = "Update an existing release.")
-    boolean update;
+        @CommandLine.Option(names = {"--overwrite"})
+        boolean overwrite;
 
-    @CommandLine.Option(names = {"--update-section"},
-        paramLabel = "<section>",
-        description = "Release section to be updated. Repeatable.")
-    String[] updateSections;
+        @CommandLine.Option(names = {"--update"})
+        boolean update;
 
-    @CommandLine.Option(names = {"--skip-tag"},
-        description = "Skip tagging the release.")
-    boolean skipTag;
+        @CommandLine.Option(names = {"--update-section"},
+            paramLabel = "<section>")
+        String[] updateSections;
 
-    @CommandLine.Option(names = {"--skip-release"},
-        description = "Skip creating a release.")
-    boolean skipRelease;
+        @CommandLine.Option(names = {"--skip-tag"})
+        boolean skipTag;
 
-    @CommandLine.Option(names = {"--branch"},
-        description = "The release branch.")
-    String branch;
+        @CommandLine.Option(names = {"--skip-release"})
+        boolean skipRelease;
 
-    @CommandLine.Option(names = {"--changelog"},
-        description = "Path to changelog file.")
-    String changelog;
+        @CommandLine.Option(names = {"--branch"})
+        String branch;
 
-    @CommandLine.Option(names = {"--changelog-formatted"},
-        description = "Format generated changelog.")
-    boolean changelogFormatted;
+        @CommandLine.Option(names = {"--changelog"})
+        String changelog;
 
-    @CommandLine.Option(names = {"--username"},
-        description = "Git username.")
-    String username;
+        @CommandLine.Option(names = {"--changelog-formatted"})
+        boolean changelogFormatted;
 
-    @CommandLine.Option(names = {"--commit-author-name"},
-        description = "Commit author name.")
-    String commitAuthorName;
+        @CommandLine.Option(names = {"--username"})
+        String username;
 
-    @CommandLine.Option(names = {"--commit-author-email"},
-        description = "Commit author e-mail.")
-    String commitAuthorEmail;
+        @CommandLine.Option(names = {"--commit-author-name"})
+        String commitAuthorName;
 
-    @CommandLine.Option(names = {"--signing-enabled"},
-        description = "Sign files.")
-    boolean signing;
+        @CommandLine.Option(names = {"--commit-author-email"})
+        String commitAuthorEmail;
 
-    @CommandLine.Option(names = {"--signing-armored"},
-        description = "Generate ascii armored signatures.")
-    boolean armored;
+        @CommandLine.Option(names = {"--signing-enabled"})
+        boolean signing;
 
-    @CommandLine.Option(names = {"--file"},
-        paramLabel = "<file>",
-        description = "Input file to be uploaded. Repeatable.")
-    String[] files;
+        @CommandLine.Option(names = {"--signing-armored"})
+        boolean armored;
 
-    @CommandLine.Option(names = {"--glob"},
-        paramLabel = "<file>",
-        description = "Input file to be uploaded (as glob). Repeatable.")
-    String[] globs;
+        @CommandLine.Option(names = {"--file"},
+            paramLabel = "<file>")
+        String[] files;
+
+        @CommandLine.Option(names = {"--glob"},
+            paramLabel = "<glob>")
+        String[] globs;
+    }
 
     protected void execute() {
-        if (!autoConfig) {
+        if (!autoConfigGroup.autoConfig) {
             super.execute();
             return;
         }
@@ -177,32 +151,32 @@ public class Release extends AbstractPlatformAwareModelCommand {
             .outputDirectory(getOutputDirectory())
             .dryrun(dryrun())
             .gitRootSearch(gitRootSearch)
-            .projectName(projectName)
-            .projectVersion(projectVersion)
-            .projectVersionPattern(projectVersionPattern)
-            .projectSnapshotPattern(projectSnapshotPattern)
-            .projectSnapshotLabel(projectSnapshotLabel)
-            .projectSnapshotFullChangelog(projectSnapshotFullChangelog)
-            .tagName(tagName)
-            .previousTagName(previousTagName)
-            .releaseName(releaseName)
-            .milestoneName(milestoneName)
-            .branch(branch)
-            .prerelease(prerelease)
-            .prereleasePattern(prereleasePattern)
-            .draft(draft)
-            .overwrite(overwrite)
-            .update(update)
+            .projectName(autoConfigGroup.projectName)
+            .projectVersion(autoConfigGroup.projectVersion)
+            .projectVersionPattern(autoConfigGroup.projectVersionPattern)
+            .projectSnapshotPattern(autoConfigGroup.projectSnapshotPattern)
+            .projectSnapshotLabel(autoConfigGroup.projectSnapshotLabel)
+            .projectSnapshotFullChangelog(autoConfigGroup.projectSnapshotFullChangelog)
+            .tagName(autoConfigGroup.tagName)
+            .previousTagName(autoConfigGroup.previousTagName)
+            .releaseName(autoConfigGroup.releaseName)
+            .milestoneName(autoConfigGroup.milestoneName)
+            .branch(autoConfigGroup.branch)
+            .prerelease(autoConfigGroup.prerelease)
+            .prereleasePattern(autoConfigGroup.prereleasePattern)
+            .draft(autoConfigGroup.draft)
+            .overwrite(autoConfigGroup.overwrite)
+            .update(autoConfigGroup.update)
             .updateSections(collectUpdateSections())
-            .skipTag(skipTag)
-            .skipRelease(skipRelease)
-            .changelog(changelog)
-            .changelogFormatted(changelogFormatted)
-            .username(username)
-            .commitAuthorName(commitAuthorName)
-            .commitAuthorEmail(commitAuthorEmail)
-            .signing(signing)
-            .armored(armored)
+            .skipTag(autoConfigGroup.skipTag)
+            .skipRelease(autoConfigGroup.skipRelease)
+            .changelog(autoConfigGroup.changelog)
+            .changelogFormatted(autoConfigGroup.changelogFormatted)
+            .username(autoConfigGroup.username)
+            .commitAuthorName(autoConfigGroup.commitAuthorName)
+            .commitAuthorEmail(autoConfigGroup.commitAuthorEmail)
+            .signing(autoConfigGroup.signing)
+            .armored(autoConfigGroup.armored)
             .files(collectFiles())
             .globs(collectGlobs())
             .selectedPlatforms(collectSelectedPlatforms())
@@ -213,24 +187,24 @@ public class Release extends AbstractPlatformAwareModelCommand {
 
     private List<String> collectFiles() {
         List<String> list = new ArrayList<>();
-        if (files != null && files.length > 0) {
-            Collections.addAll(list, files);
+        if (autoConfigGroup.files != null && autoConfigGroup.files.length > 0) {
+            Collections.addAll(list, autoConfigGroup.files);
         }
         return list;
     }
 
     private List<String> collectGlobs() {
         List<String> list = new ArrayList<>();
-        if (globs != null && globs.length > 0) {
-            Collections.addAll(list, globs);
+        if (autoConfigGroup.globs != null && autoConfigGroup.globs.length > 0) {
+            Collections.addAll(list, autoConfigGroup.globs);
         }
         return list;
     }
 
     private Set<UpdateSection> collectUpdateSections() {
         Set<UpdateSection> set = new LinkedHashSet<>();
-        if (updateSections != null && updateSections.length > 0) {
-            for (String updateSection : updateSections) {
+        if (autoConfigGroup.updateSections != null && autoConfigGroup.updateSections.length > 0) {
+            for (String updateSection : autoConfigGroup.updateSections) {
                 set.add(UpdateSection.of(updateSection.trim()));
             }
         }
@@ -240,7 +214,9 @@ public class Release extends AbstractPlatformAwareModelCommand {
     private void basedir() {
         actualBasedir = null != basedir ? basedir : Paths.get(".").normalize();
         if (!Files.exists(actualBasedir)) {
-            throw halt("Missing required option: '--basedir=<basedir>'");
+            throw halt(String.format(
+                bundle.getString("ERROR_missing_required_option"),
+                "--basedir=<basedir>"));
         }
     }
 

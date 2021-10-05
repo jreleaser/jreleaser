@@ -44,16 +44,12 @@ import static java.nio.file.StandardOpenOption.WRITE;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "init",
-    mixinStandardHelpOptions = true,
-    description = "Create a jreleaser config file.")
+@CommandLine.Command(name = "init")
 public class Init extends AbstractCommand {
-    @CommandLine.Option(names = {"-o", "--overwrite"},
-        description = "Overwrite existing files.")
+    @CommandLine.Option(names = {"-o", "--overwrite"})
     boolean overwrite;
 
-    @CommandLine.Option(names = {"-f", "--format"},
-        description = "Configuration file format.")
+    @CommandLine.Option(names = {"-f", "--format"})
     String format;
 
     @CommandLine.ParentCommand
@@ -75,8 +71,10 @@ public class Init extends AbstractCommand {
                 spec.commandLine().getErr()
                     .println(spec.commandLine()
                         .getColorScheme()
-                        .errorText("Unsupported file format. Must be one of [" +
-                            String.join("|", getSupportedConfigFormats()) + "]"));
+                        .errorText(String.format(
+                            bundle.getString("jreleaser.init.ERROR_invalid_format"),
+                            String.join("|", getSupportedConfigFormats())))
+                    );
                 spec.commandLine().usage(parent.out);
                 throw new HaltExecutionException();
             }
@@ -97,20 +95,22 @@ public class Init extends AbstractCommand {
             LocalDate now = LocalDate.now();
             content = content.replaceAll("@year@", now.getYear() + "");
 
-            logger.info("Writing file " + outputFile.toAbsolutePath());
+            logger.info(bundle.getString("jreleaser.init.TEXT_writing_file"), outputFile.toAbsolutePath());
 
             try {
                 Files.write(outputFile, content.getBytes(), (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
             } catch (FileAlreadyExistsException e) {
-                logger.error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());
+                logger.error(bundle.getString("jreleaser.init.ERROR_file_exists"), outputFile.toAbsolutePath());
                 return;
             }
 
             if (!quiet) {
-                logger.info("JReleaser initialized at " + outputDirectory.toAbsolutePath());
+                logger.info(String.format(
+                    bundle.getString("jreleaser.init.TEXT_success"),
+                    outputDirectory.toAbsolutePath()));
             }
         } catch (IllegalStateException | IOException e) {
-            throw new JReleaserException("Unexpected error", e);
+            throw new JReleaserException(bundle.getString("ERROR_unexpected_error"), e);
         }
     }
 

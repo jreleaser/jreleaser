@@ -25,12 +25,9 @@ import picocli.CommandLine;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "full-release",
-    mixinStandardHelpOptions = true,
-    description = "Perform a full release.")
+@CommandLine.Command(name = "full-release")
 public class FullRelease extends AbstractPlatformAwareModelCommand {
-    @CommandLine.Option(names = {"-y", "--dryrun"},
-        description = "Skip remote operations.")
+    @CommandLine.Option(names = {"-y", "--dryrun"})
     boolean dryrun;
 
     @Override

@@ -25,16 +25,12 @@ import picocli.CommandLine;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(name = "announce",
-    mixinStandardHelpOptions = true,
-    description = "Announce a release.")
+@CommandLine.Command(name = "announce")
 public class Announce extends AbstractPlatformAwareModelCommand {
-    @CommandLine.Option(names = {"-y", "--dryrun"},
-        description = "Skip remote operations.")
+    @CommandLine.Option(names = {"-y", "--dryrun"})
     boolean dryrun;
 
-    @CommandLine.Option(names = {"-an", "--announcer-name"},
-        description = "The name of the announcer.")
+    @CommandLine.Option(names = {"-an", "--announcer-name"})
     String announcerName;
 
     @Override

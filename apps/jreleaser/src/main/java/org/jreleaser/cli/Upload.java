@@ -25,20 +25,15 @@ import picocli.CommandLine;
  * @author Andres Almiray
  * @since 0.3.0
  */
-@CommandLine.Command(name = "upload",
-    mixinStandardHelpOptions = true,
-    description = "Upload all artifacts.")
+@CommandLine.Command(name = "upload")
 public class Upload extends AbstractPlatformAwareModelCommand {
-    @CommandLine.Option(names = {"-y", "--dryrun"},
-        description = "Skip remote operations.")
+    @CommandLine.Option(names = {"-y", "--dryrun"})
     boolean dryrun;
 
-    @CommandLine.Option(names = {"-ut", "--uploader-type"},
-        description = "The type of the uploader.")
+    @CommandLine.Option(names = {"-ut", "--uploader-type"})
     String uploaderType;
 
-    @CommandLine.Option(names = {"-un", "--uploader-name"},
-        description = "The name of the uploader.")
+    @CommandLine.Option(names = {"-un", "--uploader-name"})
     String uploaderName;
 
     @Override
