@@ -446,7 +446,7 @@ public class ChangelogGenerator {
                 }
             }
             if (isNotBlank(labeler.getBody())) {
-                if (labeler.getTitle().startsWith(REGEX_PREFIX)) {
+                if (labeler.getBody().startsWith(REGEX_PREFIX)) {
                     if (commit.body.matches(labeler.getBody().substring(REGEX_PREFIX.length()))) {
                         commit.labels.add(labeler.getLabel());
                     }
