@@ -26,20 +26,15 @@ import java.io.PrintWriter;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "jreleaser",
-    resourceBundle = "org.jreleaser.cli.Messages",
-    mixinStandardHelpOptions = true,
     versionProvider = Versions.class,
     subcommands = {Init.class, Config.class, Template.class,
         Assemble.class, Changelog.class,
         Checksum.class, Sign.class, Upload.class,
         Release.class, Prepare.class, Package.class,
         Publish.class, Announce.class, FullRelease.class})
-public class Main implements Runnable {
+public class Main extends BaseCommand implements Runnable {
     PrintWriter out;
     PrintWriter err;
-
-    @CommandLine.Spec
-    CommandLine.Model.CommandSpec spec;
 
     public void run() {
         Banner.display(out);

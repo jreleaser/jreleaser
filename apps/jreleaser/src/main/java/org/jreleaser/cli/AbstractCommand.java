@@ -28,16 +28,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command(mixinStandardHelpOptions = true,
-    resourceBundle = "org.jreleaser.cli.Messages")
-abstract class AbstractCommand implements Callable<Integer> {
+abstract class AbstractCommand extends BaseCommand implements Callable<Integer> {
     protected JReleaserLogger logger;
 
     @CommandLine.Option(names = {"-d", "--debug"})
@@ -57,11 +54,6 @@ abstract class AbstractCommand implements Callable<Integer> {
 
     @CommandLine.Option(names = {"-od", "--output-directory"})
     Path outputdir;
-
-    @CommandLine.Spec
-    CommandLine.Model.CommandSpec spec;
-
-    ResourceBundle bundle = ResourceBundle.getBundle("org.jreleaser.cli.Messages");
 
     protected abstract Main parent();
 
