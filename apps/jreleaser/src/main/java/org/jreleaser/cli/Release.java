@@ -40,7 +40,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"})
     boolean dryrun;
 
-    @CommandLine.ArgGroup(exclusive = false, multiplicity = "1",
+    @CommandLine.ArgGroup(exclusive = false, multiplicity = "0..1",
         headingKey = "auto-config.header")
     AutoConfigGroup autoConfigGroup;
 
@@ -137,7 +137,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
     }
 
     protected void execute() {
-        if (!autoConfigGroup.autoConfig) {
+        if (null == autoConfigGroup || !autoConfigGroup.autoConfig) {
             super.execute();
             return;
         }
