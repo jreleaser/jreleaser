@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
  * @since 0.8.0
  */
 @CommandLine.Command(mixinStandardHelpOptions = true,
+    versionProvider = Versions.class,
     resourceBundle = "org.jreleaser.cli.Messages")
 abstract class BaseCommand {
     @CommandLine.Spec
