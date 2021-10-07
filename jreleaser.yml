@@ -42,6 +42,12 @@ release:
           title: 'Merge pull'
         - label: 'merge_branch'
           title: 'Merge branch'
+        - label: 'translation'
+          title: '[translation]'
+        - label: 'task'
+          title: '[chore]'
+        - label: 'dependencies'
+          title: '[deps]'
         - label: 'feature'
           title: 'Resolves #'
           body: 'Resolves #'
@@ -51,10 +57,6 @@ release:
         - label: 'issue'
           title: 'Relates to #'
           body: 'Relates to #'
-        - label: 'task'
-          title: '[chore]'
-        - label: 'dependencies'
-          title: '[deps]'
       categories:
         - title: 'Merge'
           labels:
@@ -69,6 +71,9 @@ release:
         - title: '🧰 Tasks'
           labels:
             - 'task'
+        - title: '🌐 Translation'
+          labels:
+            - 'translation'
         - title: '⚙️  Dependencies'
           labels:
             - 'dependencies'
@@ -80,6 +85,7 @@ release:
       replacers:
         - search: '\[chore\] '
         - search: '\[deps\] '
+        - search: '\[translation\] '
 
 signing:
   active: always
