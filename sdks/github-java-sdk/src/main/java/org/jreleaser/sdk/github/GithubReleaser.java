@@ -64,6 +64,7 @@ public class GithubReleaser extends AbstractReleaser {
             String changelog = context.getChangelog();
 
             Github api = new Github(context.getLogger(),
+                github.getApiEndpoint(),
                 github.getResolvedToken(),
                 github.getConnectTimeout(),
                 github.getReadTimeout());
