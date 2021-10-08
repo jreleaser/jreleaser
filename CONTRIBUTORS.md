@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -23,6 +23,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://ve.linkedin.com/in/anyulled"><img src="https://avatars.githubusercontent.com/u/100741?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Anyul Rivas</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=anyulled" title="Code">💻</a> <a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Aanyulled" title="Bug reports">🐛</a></td>
     <td align="center"><a href="http://www.lengrand.fr/"><img src="https://avatars.githubusercontent.com/u/921666?v=4?s=100" width="100px;" alt=""/><br /><sub><b>julien Lengrand-Lambert</b></sub></a><br /><a href="#translation-jlengrand" title="Translation">🌍</a></td>
     <td align="center"><a href="http://twitter.com/marcelmfa"><img src="https://avatars.githubusercontent.com/u/1922887?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Marcel Maurício de Freitas Alencar</b></sub></a><br /><a href="#translation-marcelmfa" title="Translation">🌍</a></td>
+    <td align="center"><a href="http://www.andreabettich.me"><img src="https://avatars.githubusercontent.com/u/1693858?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Andrea Bettich</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=andreabettich" title="Code">💻</a></td>
   </tr>
 </table>
 
