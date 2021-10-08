@@ -87,6 +87,15 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "jlengrand",
+      "name": "julien Lengrand-Lambert",
+      "avatar_url": "https://avatars.githubusercontent.com/u/921666?v=4",
+      "profile": "http://www.lengrand.fr/",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
