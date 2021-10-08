@@ -106,6 +106,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "andreabettich",
+      "name": "Andrea Bettich",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1693858?v=4",
+      "profile": "http://www.andreabettich.me",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
