@@ -124,6 +124,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "scordio",
+      "name": "Stefano Cordio",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26772046?v=4",
+      "profile": "https://github.com/scordio",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
