@@ -142,6 +142,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "FDelporte",
+      "name": "Frank Delporte",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1415873?v=4",
+      "profile": "https://www.webtechie.be",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
