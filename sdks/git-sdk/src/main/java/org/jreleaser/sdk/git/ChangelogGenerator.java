@@ -306,12 +306,12 @@ public class ChangelogGenerator {
             .peek(c -> {
                 if (!changelog.getContributors().isEnabled()) return;
 
-                if (!changelog.getHide().containsContributor(c.author)) {
-                    contributors.add(new Contributor(c.author, c.authorEmail));
+                if (!changelog.getHide().containsContributor(c.author.name)) {
+                    contributors.add(new Contributor(c.author));
                 }
-                if (isNotBlank(c.committer) && !changelog.getHide().containsContributor(c.committer)) {
-                    contributors.add(new Contributor(c.committer, c.committerEmail));
-                }
+                c.commiters.stream()
+                    .filter(author -> !changelog.getHide().containsContributor(author.name))
+                    .forEach(author -> contributors.add(new Contributor(author)));
             })
             .peek(c -> applyLabels(c, changelog.getLabelers()))
             .filter(c -> checkLabels(c, changelog))
@@ -333,7 +333,7 @@ public class ChangelogGenerator {
                 .append(lineSeparator);
 
             changes.append(categories.get(categoryTitle).stream()
-                .map(c -> applyTemplate(changelog.getChange(), c.asContext(changelog.isLinks(), commitsUrl)))
+                .map(c -> applyTemplate(changelog.getFormat(), c.asContext(changelog.isLinks(), commitsUrl)))
                 .collect(Collectors.joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
@@ -473,15 +473,14 @@ public class ChangelogGenerator {
     }
 
     private static class Commit {
+        private static final Pattern CO_AUTHORED_BY_PATTERN = Pattern.compile("^[Cc]o-authored-by:\\s+(.*)\\s+<(.*)>.*$");
         private final Set<String> labels = new LinkedHashSet<>();
+        private final Set<Author> commiters = new LinkedHashSet<>();
         private String fullHash;
         private String shortHash;
         private String title;
         private String body;
-        private String author;
-        private String committer;
-        private String authorEmail;
-        private String committerEmail;
+        private Author author;
         private int time;
 
         Map<String, Object> asContext(boolean links, String commitsUrl) {
@@ -494,8 +493,14 @@ public class ChangelogGenerator {
             context.put("commitsUrl", commitsUrl);
             context.put("commitFullHash", fullHash);
             context.put("commitTitle", passThrough(title));
-            context.put("commitAuthor", passThrough(author));
+            context.put("commitAuthor", passThrough(author.name));
             return context;
+        }
+
+        private void addContributor(String name, String email) {
+            if (isNotBlank(name) && isNotBlank(email)) {
+                commiters.add(new Author(name, email));
+            }
         }
 
         static Commit of(RevCommit rc) {
@@ -503,13 +508,59 @@ public class ChangelogGenerator {
             c.fullHash = rc.getId().name();
             c.shortHash = rc.getId().abbreviate(7).name();
             c.body = rc.getFullMessage();
-            c.title = c.body.split(lineSeparator())[0];
-            c.author = rc.getAuthorIdent().getName();
-            c.committer = rc.getCommitterIdent().getName();
-            c.authorEmail = rc.getAuthorIdent().getEmailAddress();
-            c.committerEmail = rc.getCommitterIdent().getEmailAddress();
+            String[] lines = c.body.split(lineSeparator());
+            c.title = lines[0];
+            c.author = new Author(rc.getAuthorIdent().getName(), rc.getAuthorIdent().getEmailAddress());
+            c.addContributor(rc.getCommitterIdent().getName(), rc.getCommitterIdent().getEmailAddress());
             c.time = rc.getCommitTime();
+            for (String line : lines) {
+                Matcher m = CO_AUTHORED_BY_PATTERN.matcher(line);
+                if (m.matches()) {
+                    c.addContributor(m.group(1), m.group(2));
+                }
+            }
             return c;
+        }
+    }
+
+    private static class Author implements Comparable<Author> {
+        protected final String name;
+        protected final String email;
+
+        private Author(String name, String email) {
+            this.name = name;
+            this.email = email;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        @Override
+        public int compareTo(Author that) {
+            return name.compareTo(that.name);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Author that = (Author) o;
+            return name.equals(that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name);
+        }
+
+        @Override
+        public String toString() {
+            return name + " <" + email + ">";
         }
     }
 
@@ -517,6 +568,11 @@ public class ChangelogGenerator {
         private final String name;
         private final String email;
         private User user;
+
+        private Contributor(Author author) {
+            this.name = author.name;
+            this.email = author.email;
+        }
 
         private Contributor(String name, String email) {
             this.name = name;
@@ -555,7 +611,7 @@ public class ChangelogGenerator {
 
         @Override
         public int compareTo(Contributor that) {
-            return email.compareTo(that.email);
+            return name.compareTo(that.name);
         }
 
         @Override
@@ -563,12 +619,12 @@ public class ChangelogGenerator {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Contributor that = (Contributor) o;
-            return email.equals(that.email);
+            return name.equals(that.name);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(email);
+            return Objects.hash(name);
         }
 
         @Override
