@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -27,6 +27,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://twitter.com/yusuke"><img src="https://avatars.githubusercontent.com/u/74894?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yusuke Yamamoto</b></sub></a><br /><a href="#translation-yusuke" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/scordio"><img src="https://avatars.githubusercontent.com/u/26772046?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stefano Cordio</b></sub></a><br /><a href="#translation-scordio" title="Translation">🌍</a></td>
     <td align="center"><a href="https://rnayabed.github.io/"><img src="https://avatars.githubusercontent.com/u/25760501?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Debayan Sutradhar</b></sub></a><br /><a href="#translation-rnayabed" title="Translation">🌍</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://www.webtechie.be"><img src="https://avatars.githubusercontent.com/u/1415873?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Frank Delporte</b></sub></a><br /><a href="#translation-FDelporte" title="Translation">🌍</a></td>
   </tr>
 </table>
 
