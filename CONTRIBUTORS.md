@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-13-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -25,6 +25,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="http://twitter.com/marcelmfa"><img src="https://avatars.githubusercontent.com/u/1922887?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Marcel Maurício de Freitas Alencar</b></sub></a><br /><a href="#translation-marcelmfa" title="Translation">🌍</a></td>
     <td align="center"><a href="http://www.andreabettich.me"><img src="https://avatars.githubusercontent.com/u/1693858?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Andrea Bettich</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=andreabettich" title="Code">💻</a></td>
     <td align="center"><a href="https://twitter.com/yusuke"><img src="https://avatars.githubusercontent.com/u/74894?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yusuke Yamamoto</b></sub></a><br /><a href="#translation-yusuke" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/scordio"><img src="https://avatars.githubusercontent.com/u/26772046?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stefano Cordio</b></sub></a><br /><a href="#translation-scordio" title="Translation">🌍</a></td>
   </tr>
 </table>
 
