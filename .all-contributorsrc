@@ -115,6 +115,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "yusuke",
+      "name": "Yusuke Yamamoto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/74894?v=4",
+      "profile": "https://twitter.com/yusuke",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
