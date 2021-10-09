@@ -57,6 +57,8 @@ release:
         - label: 'issue'
           title: 'Relates to #'
           body: 'Relates to #'
+        - label: 'allcontributors'
+          title: 'docs: update'
       categories:
         - title: 'Merge'
           labels:
@@ -77,11 +79,16 @@ release:
         - title: '⚙️  Dependencies'
           labels:
             - 'dependencies'
+        - title: 'allcontributors'
+          labels:
+            - 'allcontributors'
       hide:
         categories:
           - 'Merge'
+          - 'allcontributors'
         contributors:
           - 'GitHub'
+          - 'allcontributors'
       replacers:
         - search: '\[chore\] '
         - search: '\[deps\] '
