@@ -15,25 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.workflow;
+package org.jreleaser.bundle;
 
-import org.jreleaser.bundle.RB;
-import org.jreleaser.engine.sign.Signer;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.util.signing.SigningException;
+import org.slf4j.helpers.MessageFormatter;
+
+import java.util.ResourceBundle;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.8.0
  */
-class SignWorkflowItem implements WorkflowItem {
-    @Override
-    public void invoke(JReleaserContext context) {
-        try {
-            Signer.sign(context);
-        } catch (SigningException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_release_sign"), e);
+public class RB {
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("org.jreleaser.bundle.Messages");
+
+    private RB() {
+        // noop
+    }
+
+    public static String $(String key, Object... args) {
+        if (null == args || args.length == 0) {
+            return BUNDLE.getString(key);
         }
+        return MessageFormatter.arrayFormat(BUNDLE.getString(key), args).getMessage();
     }
 }

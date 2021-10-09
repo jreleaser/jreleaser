@@ -33,6 +33,7 @@ import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
@@ -44,7 +45,6 @@ import org.jreleaser.util.signing.SigningException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,9 +73,9 @@ public class Signer {
     }
 
     public static void sign(JReleaserContext context) throws SigningException {
-        context.getLogger().info("Signing files");
+        context.getLogger().info(RB.$("signing.header"));
         if (!context.getModel().getSigning().isEnabled()) {
-            context.getLogger().info("Signing is not enabled. Skipping");
+            context.getLogger().info(RB.$("signing.not.enabled"));
             return;
         }
 
@@ -86,7 +86,7 @@ public class Signer {
 
         List<FilePair> files = collectArtifacts(context, keyring);
         if (files.isEmpty()) {
-            context.getLogger().info("No files configured for signing. Skipping");
+            context.getLogger().info(RB.$("signing.no.match"));
             context.getLogger().restorePrefix();
             context.getLogger().decreaseIndent();
             return;
@@ -97,7 +97,7 @@ public class Signer {
             .collect(Collectors.toList());
 
         if (files.isEmpty()) {
-            context.getLogger().info("All signatures are up-to-date and valid. Skipping");
+            context.getLogger().info(RB.$("signing.up.to.date"));
             context.getLogger().restorePrefix();
             context.getLogger().decreaseIndent();
             return;
@@ -111,15 +111,15 @@ public class Signer {
     }
 
     private static void verify(JReleaserContext context, Keyring keyring, List<FilePair> files) throws SigningException {
-        context.getLogger().debug("verifying {} signatures", files.size());
+        context.getLogger().debug(RB.$("signing.verify.signatures"), files.size());
 
         for (FilePair pair : files) {
             pair.setValid(verify(context, keyring, pair));
 
             if (!pair.isValid()) {
-                throw new SigningException("Could not verify file " +
-                    context.relativizeToBasedir(pair.inputFile) + " with signature " +
-                    context.relativizeToBasedir(pair.signatureFile));
+                throw new SigningException(RB.$("ERROR_signing_verify_file",
+                    context.relativizeToBasedir(pair.inputFile),
+                    context.relativizeToBasedir(pair.signatureFile)));
             }
         }
     }
@@ -163,8 +163,8 @@ public class Signer {
 
             return sig.verify();
         } catch (IOException | PGPException e) {
-            throw new SigningException("Error when verifying signature of " +
-                context.relativizeToBasedir(filePair.inputFile), e);
+            throw new SigningException(RB.$("ERROR_signing_verify_signature",
+                context.relativizeToBasedir(filePair.inputFile)), e);
         } finally {
             context.getLogger().restorePrefix();
         }
@@ -176,10 +176,10 @@ public class Signer {
         try {
             Files.createDirectories(signaturesDirectory);
         } catch (IOException e) {
-            throw new SigningException("Could not create signatures directory", e);
+            throw new SigningException(RB.$("ERROR_signing_create_signature_dir"), e);
         }
 
-        context.getLogger().debug("signing {} files into {}",
+        context.getLogger().debug(RB.$("signing.signing.files"),
             files.size(), context.relativizeToBasedir(signaturesDirectory));
 
         PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);
@@ -206,7 +206,7 @@ public class Signer {
 
             return signatureGenerator;
         } catch (PGPException e) {
-            throw new SigningException("Unexpected error when initializing signature generator", e);
+            throw new SigningException(RB.$("ERROR_unexpected_error_signature_gen"), e);
         }
     }
 
@@ -237,7 +237,7 @@ public class Signer {
             out.flush();
             out.close();
         } catch (IOException | PGPException e) {
-            throw new SigningException("Unexpected error when signing " + input.toAbsolutePath(), e);
+            throw new SigningException(RB.$("ERROR_unexpected_error_signing", input.toAbsolutePath()), e);
         }
     }
 
@@ -290,13 +290,13 @@ public class Signer {
 
     private static boolean isValid(JReleaserContext context, Keyring keyring, FilePair pair) {
         if (Files.notExists(pair.getSignatureFile())) {
-            context.getLogger().debug("signature does not exist: {}",
+            context.getLogger().debug(RB.$("signing.signature.not.exist"),
                 context.relativizeToBasedir(pair.getSignatureFile()));
             return false;
         }
 
         if (pair.inputFile.toFile().lastModified() > pair.signatureFile.toFile().lastModified()) {
-            context.getLogger().debug("{} is newer than {}",
+            context.getLogger().debug(RB.$("signing.file.newer"),
                 context.relativizeToBasedir(pair.inputFile),
                 context.relativizeToBasedir(pair.signatureFile));
             return false;
@@ -307,15 +307,6 @@ public class Signer {
         } catch (SigningException e) {
             return false;
         }
-    }
-
-    private static void deleteDirectory(Path outputDirectory) {
-        File dir = outputDirectory.toFile();
-        if (!dir.exists()) return;
-        for (File file : dir.listFiles()) {
-            file.delete();
-        }
-        dir.delete();
     }
 
     private static class FilePair {

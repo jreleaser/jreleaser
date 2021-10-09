@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.assemble;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
@@ -44,6 +45,6 @@ public class AssemblerProcessors {
             return assemblerProcessor;
         }
 
-        throw new JReleaserException("Unsupported assembler " + assembler.getType());
+        throw new JReleaserException(RB.$("ERROR_unsupported_assembler", assembler.getType()));
     }
 }

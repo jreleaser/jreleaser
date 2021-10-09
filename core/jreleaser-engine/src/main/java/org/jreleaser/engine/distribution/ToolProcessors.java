@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.distribution;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Tool;
@@ -44,6 +45,6 @@ public class ToolProcessors {
             return toolProcessor;
         }
 
-        throw new JReleaserException("Unsupported tool " + tool.getName());
+        throw new JReleaserException(RB.$("ERROR_unsupported_tool", tool.getName()));
     }
 }

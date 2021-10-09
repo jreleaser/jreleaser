@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Mattermost;
 import org.jreleaser.util.Errors;
@@ -50,13 +51,13 @@ public abstract class MattermostValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_MATTERMOST_TPL))) {
                 mattermost.setMessageTemplate(DEFAULT_MATTERMOST_TPL);
             } else {
-                mattermost.setMessage("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
+                mattermost.setMessage(RB.$("default_release_message"));
             }
         }
 
         if (isNotBlank(mattermost.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(mattermost.getMessageTemplate().trim()))) {
-            errors.configuration("mattermost.messageTemplate does not exist. " + mattermost.getMessageTemplate());
+            errors.configuration(RB.$("validation_directory_not_exist", "mattermost.messageTemplate", mattermost.getMessageTemplate()));
         }
 
         validateTimeout(mattermost);

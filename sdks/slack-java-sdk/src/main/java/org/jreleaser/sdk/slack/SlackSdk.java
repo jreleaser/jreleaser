@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.slack;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.slack.api.Message;
 import org.jreleaser.sdk.slack.api.SlackAPI;
@@ -54,7 +55,7 @@ public class SlackSdk {
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", token)))
             .target(SlackAPI.class, apiHost);
 
-        this.logger.debug("Slack dryrun set to {}", dryrun);
+        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void message(String channel, String message) throws SlackException {
@@ -77,7 +78,7 @@ public class SlackSdk {
             if (!dryrun) return runnable.call();
         } catch (Exception e) {
             logger.trace(e);
-            throw new SlackException("Slack operation failed", e);
+            throw new SlackException(RB.$("sdk.operation.failed", "Slack"), e);
         }
 
         return null;

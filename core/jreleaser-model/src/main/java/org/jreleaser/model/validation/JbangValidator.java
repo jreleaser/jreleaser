@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -99,13 +100,11 @@ public abstract class JbangValidator extends Validator {
         }
         if (isBlank(service.getReverseRepoHost()) &&
             !tool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
-            errors.configuration("distribution." + distribution.getName() +
-                ".jbang must define an extra property named '" +
-                KEY_REVERSE_REPO_HOST + "'");
+            errors.configuration(RB.$("validation_jbang_reverse_host", distribution.getName(), KEY_REVERSE_REPO_HOST));
         }
 
         if (isBlank(distribution.getJava().getMainClass())) {
-            errors.configuration("distribution." + distribution.getName() + ".java.mainClass must not be blank, required by jbang");
+            errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".java.mainClass"));
         }
     }
 
@@ -116,8 +115,8 @@ public abstract class JbangValidator extends Validator {
 
         map.forEach((alias, distributions) -> {
             if (distributions.size() > 1) {
-                errors.configuration("jbang.alias '" + alias + "' is defined for more than one distribution: " +
-                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", ")));
+                errors.configuration(RB.$("validation_jbang_multiple_definition", alias,
+                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", "))));
             }
         });
     }

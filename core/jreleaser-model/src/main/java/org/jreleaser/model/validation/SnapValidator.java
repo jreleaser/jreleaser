@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -74,19 +75,19 @@ public abstract class SnapValidator extends Validator {
         if (isBlank(tool.getBase())) {
             tool.setBase(parentTool.getBase());
             if (isBlank(tool.getBase())) {
-                errors.configuration("distribution." + distribution.getName() + ".snap.base must not be blank");
+                errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".snap.base"));
             }
         }
         if (isBlank(tool.getGrade())) {
             tool.setGrade(parentTool.getGrade());
             if (isBlank(tool.getGrade())) {
-                errors.configuration("distribution." + distribution.getName() + ".snap.grade must not be blank");
+                errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".snap.grade"));
             }
         }
         if (isBlank(tool.getConfinement())) {
             tool.setConfinement(parentTool.getConfinement());
             if (isBlank(tool.getConfinement())) {
-                errors.configuration("distribution." + distribution.getName() + ".snap.confinement must not be blank");
+                errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".snap.confinement"));
             }
         }
         if (!tool.isRemoteBuildSet() && parentTool.isRemoteBuildSet()) {
@@ -95,10 +96,10 @@ public abstract class SnapValidator extends Validator {
         if (!tool.isRemoteBuild() && isBlank(tool.getExportedLogin())) {
             tool.setExportedLogin(parentTool.getExportedLogin());
             if (isBlank(tool.getExportedLogin())) {
-                errors.configuration("distribution." + distribution.getName() + ".snap.exportedLogin must not be empty");
+                errors.configuration(RB.$("validation_must_not_be_empty", "distribution." + distribution.getName() + ".snap.exportedLogin"));
             } else if (!context.getBasedir().resolve(tool.getExportedLogin()).toFile().exists()) {
-                errors.configuration("distribution." + distribution.getName() + ".snap.exportedLogin does not exist. " +
-                    context.getBasedir().resolve(tool.getExportedLogin()));
+                errors.configuration(RB.$("validation_directory_not_exist", "distribution." + distribution.getName() + ".snap.exportedLogin",
+                    context.getBasedir().resolve(tool.getExportedLogin())));
             }
         }
 

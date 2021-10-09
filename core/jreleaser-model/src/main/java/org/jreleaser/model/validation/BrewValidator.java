@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Brew;
 import org.jreleaser.model.Cask;
@@ -159,19 +160,19 @@ public abstract class BrewValidator extends Validator {
             cask.disable();
             return;
         } else if (dmgFound > 1) {
-            errors.configuration("distribution." + distribution.getName() + ".brew has more than one .dmg artifact");
+            errors.configuration(RB.$("validation_brew_multiple_artifact", "distribution." + distribution.getName() + ".brew", ".dmg"));
             cask.disable();
             return;
         } else if (pkgFound > 1) {
-            errors.configuration("distribution." + distribution.getName() + ".brew has more than one .pkg artifact");
+            errors.configuration(RB.$("validation_brew_multiple_artifact", "distribution." + distribution.getName() + ".brew", ".pkg"));
             cask.disable();
             return;
         } else if (zipFound > 1) {
-            errors.configuration("distribution." + distribution.getName() + ".brew has more than one .zip artifact");
+            errors.configuration(RB.$("validation_brew_multiple_artifact", "distribution." + distribution.getName() + ".brew", ".zip"));
             cask.disable();
             return;
         } else if (dmgFound + pkgFound + zipFound > 1) {
-            errors.configuration("distribution." + distribution.getName() + ".brew can only have a single matching .dmg, .pkg, or .zip artifact");
+            errors.configuration(RB.$("validation_brew_single_artifact", "distribution." + distribution.getName() + ".brew"));
             cask.disable();
             return;
         }
@@ -217,8 +218,8 @@ public abstract class BrewValidator extends Validator {
 
         map.forEach((formulaName, distributions) -> {
             if (distributions.size() > 1) {
-                errors.configuration("brew.formulaName '" + formulaName + "' is defined for more than one distribution: " +
-                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", ")));
+                errors.configuration(RB.$("validation_brew_duplicate_definition", "brew.formulaName '" + formulaName + "'",
+                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", "))));
             }
         });
 
@@ -228,8 +229,8 @@ public abstract class BrewValidator extends Validator {
 
         map.forEach((caskName, distributions) -> {
             if (distributions.size() > 1) {
-                errors.configuration("brew.cask.name '" + caskName + "' is defined for more than one distribution: " +
-                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", ")));
+                errors.configuration(RB.$("validation_brew_duplicate_definition", "brew.cask.name '" + caskName + "'",
+                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", "))));
             }
         });
     }

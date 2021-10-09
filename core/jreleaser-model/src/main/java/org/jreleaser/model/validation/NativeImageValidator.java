@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.NativeImage;
@@ -52,7 +53,7 @@ public abstract class NativeImageValidator extends Validator {
         if (!nativeImage.resolveEnabled(context.getModel().getProject())) return;
 
         if (isBlank(nativeImage.getName())) {
-            errors.configuration("nativeImage.name must not be blank");
+            errors.configuration(RB.$("validation_must_not_be_blank", "nativeImage.name"));
             return;
         }
 
@@ -72,11 +73,11 @@ public abstract class NativeImageValidator extends Validator {
         }
 
         if (null == nativeImage.getMainJar()) {
-            errors.configuration("nativeImage." + nativeImage.getName() + ".mainJar is null");
+            errors.configuration(RB.$("validation_is_null", "nativeImage." + nativeImage.getName() + ".mainJar"));
             return;
         }
         if (isBlank(nativeImage.getMainJar().getPath())) {
-            errors.configuration("nativeImage." + nativeImage.getName() + ".mainJar.path must not be null");
+            errors.configuration(RB.$("validation_must_not_be_null", "nativeImage." + nativeImage.getName() + ".mainJar.path"));
         }
 
         validateGlobs(context,

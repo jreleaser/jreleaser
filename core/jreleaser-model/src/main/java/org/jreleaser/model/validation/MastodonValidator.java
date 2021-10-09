@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Mastodon;
 import org.jreleaser.util.Errors;
@@ -34,7 +35,7 @@ public abstract class MastodonValidator extends Validator {
         context.getLogger().debug("announce.mastodon");
 
         if (isBlank(mastodon.getHost())) {
-            errors.configuration("mastodon.host must not be blank.");
+            errors.configuration(RB.$("validation_must_not_be_blank", "mastodon.host"));
         }
 
         mastodon.setAccessToken(
@@ -46,7 +47,7 @@ public abstract class MastodonValidator extends Validator {
                 context.isDryrun()));
 
         if (isBlank(mastodon.getStatus())) {
-            mastodon.setStatus("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
+            mastodon.setStatus(RB.$("default_release_message"));
         }
 
         validateTimeout(mastodon);

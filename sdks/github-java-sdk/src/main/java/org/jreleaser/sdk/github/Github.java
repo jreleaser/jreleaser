@@ -19,6 +19,7 @@ package org.jreleaser.sdk.github;
 
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.JReleaserLogger;
 import org.kohsuke.github.GHAsset;
@@ -87,7 +88,7 @@ class Github {
     }
 
     GHRepository findRepository(String owner, String repo) throws IOException {
-        logger.debug("lookup repository {}/{}", owner, repo);
+        logger.debug(RB.$("git.repository.lookup"), owner, repo);
         try {
             return github.getRepository(owner + "/" + repo);
         } catch (GHFileNotFoundException e) {
@@ -97,7 +98,7 @@ class Github {
     }
 
     GHRepository createRepository(String owner, String repo) throws IOException {
-        logger.debug("creating repository {}/{}", owner, repo);
+        logger.debug(RB.$("git.repository.create"), owner, repo);
 
         GHOrganization organization = resolveOrganization(owner);
         if (null != organization) {
@@ -110,7 +111,7 @@ class Github {
     }
 
     Optional<GHMilestone> findMilestoneByName(String owner, String repo, String milestoneName) throws IOException {
-        logger.debug("lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
+        logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
         GHRepository repository = findRepository(owner, repo);
         PagedIterable<GHMilestone> milestones = repository.listMilestones(GHIssueState.OPEN);
@@ -120,26 +121,26 @@ class Github {
     }
 
     void closeMilestone(String owner, String repo, GHMilestone milestone) throws IOException {
-        logger.debug("closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
+        logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
         milestone.close();
     }
 
     GHRelease findReleaseByTag(String repo, String tagName) throws IOException {
-        logger.debug("fetching release on {} with tag {}", repo, tagName);
+        logger.debug(RB.$("git.fetch.release.on.tag"), repo, tagName);
         return github.getRepository(repo)
             .getReleaseByTagName(tagName);
     }
 
     void deleteTag(String repo, String tagName) throws IOException {
-        logger.debug("deleting tag {} from {}", tagName, repo);
+        logger.debug(RB.$("git.delete.tag.from.repository"), tagName, repo);
         github.getRepository(repo)
             .getRef(REFS_TAGS + tagName)
             .delete();
     }
 
     GHReleaseBuilder createRelease(String repo, String tagName) throws IOException {
-        logger.debug("creating release on {} with tag {}", repo, tagName);
+        logger.debug(RB.$("git.create.release.repository"), repo, tagName);
         return github.getRepository(repo)
             .createRelease(tagName);
     }
@@ -151,10 +152,10 @@ class Github {
                 continue;
             }
 
-            logger.info(" - uploading {}", asset.getFileName().toString());
+            logger.info(" " + RB.$("git.upload.asset"), asset.getFileName().toString());
             GHAsset ghasset = release.uploadAsset(asset.toFile(), MediaType.parse(tika.detect(asset)).toString());
             if (!"uploaded".equalsIgnoreCase(ghasset.getState())) {
-                logger.warn(" x failed to upload {}", asset.getFileName());
+                logger.warn(" " + RB.$("git.upload.asset.failure"), asset.getFileName());
             }
         }
     }
@@ -198,7 +199,7 @@ class Github {
         try {
             ghOrganization = github.getOrganization(organization);
         } catch (GHFileNotFoundException e) {
-            throw new IllegalStateException("Organization '" + organization + "' does not exist");
+            throw new IllegalStateException(RB.$("ERROR_git_organization_not_exist", organization));
         }
 
         GHTeam ghTeam = null;
@@ -206,11 +207,11 @@ class Github {
         try {
             ghTeam = ghOrganization.getTeamByName(team);
         } catch (IOException e) {
-            throw new IllegalStateException("Team '" + team + "' does not exist");
+            throw new IllegalStateException(RB.$("ERROR_git_team_not_exist"));
         }
 
         if (null == ghTeam) {
-            throw new IllegalStateException("Team '" + team + "' does not exist");
+            throw new IllegalStateException(RB.$("ERROR_git_team_not_exist"));
         }
 
         return ghTeam;

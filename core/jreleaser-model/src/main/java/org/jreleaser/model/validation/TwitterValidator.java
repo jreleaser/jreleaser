@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Twitter;
 import org.jreleaser.util.Errors;
@@ -69,7 +70,7 @@ public abstract class TwitterValidator extends Validator {
                 context.isDryrun()));
 
         if (isBlank(twitter.getStatus())) {
-            twitter.setStatus("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
+            twitter.setStatus(RB.$("default_release_message"));
         }
 
         validateTimeout(twitter);

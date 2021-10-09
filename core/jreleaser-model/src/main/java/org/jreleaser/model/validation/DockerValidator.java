@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
@@ -187,7 +188,7 @@ public abstract class DockerValidator extends Validator {
         validateRegistries(context, spec, docker, errors, element);
 
         if (spec.getMatchers().isEmpty()) {
-            errors.configuration(element + ".matchers must not be empty");
+            errors.configuration(RB.$("validation_must_not_be_empty", element + ".matchers"));
         }
     }
 
@@ -280,8 +281,7 @@ public abstract class DockerValidator extends Validator {
         self.setRegistries(registries);
 
         if (registries.isEmpty()) {
-            context.getLogger().warn(element +
-                " does not define any registries. Image publication will be disabled");
+            context.getLogger().warn(RB.$("validation_docker_no_registries", element));
             return;
         }
 
@@ -301,8 +301,8 @@ public abstract class DockerValidator extends Validator {
             }
 
             if (isBlank(registry.getUsername())) {
-                errors.configuration(element +
-                    ".registry." + serverName + ".username must not be blank");
+                errors.configuration(RB.$("validation_must_not_be_blank", element +
+                    ".registry." + serverName + ".username"));
             }
 
             registry.setPassword(

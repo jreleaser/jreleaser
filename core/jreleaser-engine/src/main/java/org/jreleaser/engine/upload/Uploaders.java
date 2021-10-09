@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.upload;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Upload;
@@ -33,7 +34,7 @@ public class Uploaders {
     public static void upload(JReleaserContext context) {
         Upload upload = context.getModel().getUpload();
         if (!upload.isEnabled()) {
-            context.getLogger().info("Uploading is not enabled. Skipping.");
+            context.getLogger().info(RB.$("uploaders.not.enabled"));
             return;
         }
 
@@ -41,35 +42,35 @@ public class Uploaders {
             Map<String, Uploader> uploaders = upload.findUploadersByType(context.getUploaderType());
 
             if (uploaders.isEmpty()) {
-                context.getLogger().debug("No uploaders match {}", context.getUploaderType());
+                context.getLogger().debug(RB.$("uploaders.no.match"), context.getUploaderType());
                 return;
             }
 
             if (context.hasUploaderName()) {
                 if (!uploaders.containsKey(context.getUploaderName())) {
-                    context.getLogger().error("Uploader {}/{} is not configured",
+                    context.getLogger().error(RB.$("uploaders.uploader.not.configured"),
                         context.getUploaderType(),
                         context.getUploaderName());
                     return;
                 }
 
-                context.getLogger().info("Uploading with {}/{}",
+                context.getLogger().info(RB.$("uploaders.upload.with"),
                     context.getUploaderType(),
                     context.getUploaderName());
                 upload(context, uploaders.get(context.getUploaderName()));
             } else {
-                context.getLogger().info("Uploading all artifacts with {}",
+                context.getLogger().info(RB.$("uploaders.upload.all.artifacts.with"),
                     context.getUploaderType());
                 uploaders.values().forEach(uploader -> upload(context, uploader));
             }
         } else if (context.hasUploaderName()) {
-            context.getLogger().info("Uploading all artifacts to {}",
+            context.getLogger().info(RB.$("uploaders.upload.all.artifacts.to"),
                 context.getUploaderName());
             upload.findAllUploaders().stream()
                 .filter(a -> context.getUploaderName().equals(a.getName()))
                 .forEach(uploader -> upload(context, uploader));
         } else {
-            context.getLogger().info("Uploading all artifacts");
+            context.getLogger().info(RB.$("uploaders.upload.all.artifacts"));
             upload.findAllUploaders().forEach(uploader -> upload(context, uploader));
         }
     }
@@ -83,7 +84,7 @@ public class Uploaders {
             context.getLogger().restorePrefix();
             context.getLogger().decreaseIndent();
         } catch (UploadException e) {
-            throw new JReleaserException("Unexpected error", e);
+            throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 

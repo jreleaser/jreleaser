@@ -17,6 +17,7 @@
  */
 package org.jreleaser.workflow;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 
@@ -44,7 +45,7 @@ class WorkflowImpl implements Workflow {
         JReleaserException exception = null;
 
         Instant start = Instant.now();
-        context.getLogger().info("dryrun set to {}", context.isDryrun());
+        context.getLogger().info(RB.$("workflow.dryrun"), context.isDryrun());
 
         for (WorkflowItem item : items) {
             try {
@@ -62,9 +63,9 @@ class WorkflowImpl implements Workflow {
         context.getLogger().reset();
         context.report();
         if (null == exception) {
-            context.getLogger().info("JReleaser succeeded after {}", formatDuration(duration));
+            context.getLogger().info(RB.$("workflow.success"), formatDuration(duration));
         } else {
-            context.getLogger().error("JReleaser failed after {}", formatDuration(duration));
+            context.getLogger().error(RB.$("workflow.failure"), formatDuration(duration));
             context.getLogger().trace(exception);
             throw exception;
         }

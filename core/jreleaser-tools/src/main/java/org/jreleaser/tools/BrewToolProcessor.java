@@ -17,6 +17,7 @@
  */
 package org.jreleaser.tools;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Brew;
 import org.jreleaser.model.Cask;
@@ -156,7 +157,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             }
 
             if (multiPlatforms.isEmpty()) {
-                throw new ToolProcessingException("There are no matching multi-platform binaries.");
+                throw new ToolProcessingException(RB.$("ERROR_brew_multiplatform_artifacts"));
             }
             props.put(Constants.KEY_BREW_MULTIPLATFORM, passThrough(String.join(System.lineSeparator() + "  ", multiPlatforms)));
         } else if ((distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||

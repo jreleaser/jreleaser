@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
@@ -108,25 +109,25 @@ public abstract class ProjectValidator extends Validator {
         }
 
         if (isBlank(project.getDescription())) {
-            errors.configuration("project.description must not be blank");
+            errors.configuration(RB.$("validation_must_not_be_blank", "project.description"));
         }
         if (isBlank(project.getDocsUrl())) {
             project.setDocsUrl(project.getWebsite());
         }
         if (isBlank(project.getWebsite())) {
-            errors.configuration("project.website must not be blank");
+            errors.configuration(RB.$("validation_must_not_be_blank", "project.website"));
         }
         if (isBlank(project.getDocsUrl())) {
-            errors.configuration("project.docsUrl must not be blank");
+            errors.configuration(RB.$("validation_must_not_be_blank", "project.docsUrl"));
         }
         if (isBlank(project.getLicense())) {
-            errors.configuration("project.license must not be blank");
+            errors.configuration(RB.$("validation_must_not_be_blank", "project.license"));
         }
         if (isBlank(project.getLongDescription())) {
             project.setLongDescription(project.getDescription());
         }
         if (project.getAuthors().isEmpty()) {
-            errors.configuration("project.authors must not be empty");
+            errors.configuration(RB.$("validation_must_not_be_blank", "project.authors"));
         }
         if (isBlank(project.getCopyright())) {
             if (project.getExtraProperties().containsKey("inceptionYear") &&
@@ -152,10 +153,10 @@ public abstract class ProjectValidator extends Validator {
             project.getJava().setArtifactId(project.getName());
         }
         if (isBlank(project.getJava().getGroupId())) {
-            errors.configuration("project.java.groupId must not be blank");
+            errors.configuration(RB.$("validation_must_not_be_blank", "project.java.groupId"));
         }
         if (isBlank(project.getJava().getArtifactId())) {
-            errors.configuration("project.java.artifactId must not be blank");
+            errors.configuration(RB.$("validation_must_not_be_blank", "project.java.artifactId"));
         }
         if (!project.getJava().isMultiProjectSet()) {
             project.getJava().setMultiProject(false);

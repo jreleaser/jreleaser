@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.twitter;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Twitter;
 import org.jreleaser.model.announcer.spi.AnnounceException;
@@ -48,17 +49,17 @@ public class TwitterAnnouncer implements Announcer {
         Twitter twitter = context.getModel().getAnnounce().getTwitter();
 
         String status = twitter.getResolvedStatus(context);
-        context.getLogger().info("Tweeting: {}", status);
-        context.getLogger().debug("status is {} chars long", status.length());
+        context.getLogger().info(RB.$("twitter.tweet"), status);
+        context.getLogger().debug(RB.$("twitter.tweet.size"), status.length());
 
         try {
             UpdateStatusTwitterCommand.builder(context.getLogger())
                 .connectTimeout(twitter.getConnectTimeout())
                 .readTimeout(twitter.getReadTimeout())
-                .consumerKey(context.isDryrun() ? "**UNDEFINED**" :twitter.getResolvedConsumerKey())
-                .consumerToken(context.isDryrun() ? "**UNDEFINED**" :twitter.getResolvedConsumerSecret())
-                .accessToken(context.isDryrun() ? "**UNDEFINED**" :twitter.getResolvedAccessToken())
-                .accessTokenSecret(context.isDryrun() ? "**UNDEFINED**" :twitter.getResolvedAccessTokenSecret())
+                .consumerKey(context.isDryrun() ? "**UNDEFINED**" : twitter.getResolvedConsumerKey())
+                .consumerToken(context.isDryrun() ? "**UNDEFINED**" : twitter.getResolvedConsumerSecret())
+                .accessToken(context.isDryrun() ? "**UNDEFINED**" : twitter.getResolvedAccessToken())
+                .accessTokenSecret(context.isDryrun() ? "**UNDEFINED**" : twitter.getResolvedAccessTokenSecret())
                 .status(status)
                 .dryrun(context.isDryrun())
                 .build()

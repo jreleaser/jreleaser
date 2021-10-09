@@ -41,6 +41,7 @@ import org.eclipse.jgit.lib.GpgSigner;
 import org.eclipse.jgit.lib.ObjectBuilder;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.transport.CredentialsProvider;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
 import org.jreleaser.util.signing.Keyring;
@@ -130,7 +131,7 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
 
             return signatureGenerator;
         } catch (PGPException e) {
-            throw new SigningException("Unexpected error when initializing signature generator", e);
+            throw new SigningException(RB.$("ERROR_unexpected_error_signature_gen"), e);
         }
     }
 

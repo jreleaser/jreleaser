@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.github;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Discussions;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.announcer.spi.AnnounceException;
@@ -78,8 +79,8 @@ public class DiscussionsAnnouncer implements Announcer {
                 discussions.getReadTimeout());
 
             if (api.findDiscussion(discussions.getOrganization(), discussions.getTeam(), title).isPresent()) {
-                throw new IllegalStateException("A discussion titled \"" + title + "\" has already been posted to " +
-                    discussions.getOrganization() + "/" + discussions.getTeam());
+                throw new IllegalStateException(RB.$("ERROR_git_discussion_duplicate",
+                    title, discussions.getOrganization(), discussions.getTeam()));
             }
 
             api.createDiscussion(discussions.getOrganization(), discussions.getTeam(), title, message);

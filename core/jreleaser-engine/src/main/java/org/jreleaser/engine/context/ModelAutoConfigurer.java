@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.context;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Codeberg;
@@ -307,9 +308,9 @@ public class ModelAutoConfigurer {
 
         logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
         JReleaserVersion.banner(logger.getTracer(), false);
-        logger.info("Auto configure is ON");
+        logger.info(RB.$("context.configurer.auto-config.on"));
         logger.increaseIndent();
-        logger.info("- basedir set to {}", basedir.toAbsolutePath());
+        logger.info(RB.$("context.configurer.basedir.set"), basedir.toAbsolutePath());
         dumpAutoConfig();
         logger.decreaseIndent();
         return createAutoConfiguredContext();
@@ -404,7 +405,7 @@ public class ModelAutoConfigurer {
                     ((Codeberg) service).setDraft(draft);
                     break;
                 default:
-                    throw new JReleaserException("Auto configuration does not support " + repository.getHttpUrl());
+                    throw new JReleaserException(RB.$("ERROR_context_configurer_unsupported_url", repository.getHttpUrl()));
             }
 
             service.setUsername(username);
@@ -416,7 +417,7 @@ public class ModelAutoConfigurer {
             service.setUpdate(update);
             if (!updateSections.isEmpty()) {
                 if (!service.isUpdate()) {
-                    throw new JReleaserException("release.updateSections is set but releasse.update is false");
+                    throw new JReleaserException(RB.$("ERROR_context_configurer_update_not_set"));
                 }
                 service.setUpdateSections(updateSections);
             }

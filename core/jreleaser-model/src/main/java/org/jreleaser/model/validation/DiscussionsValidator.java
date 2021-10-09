@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Discussions;
 import org.jreleaser.model.Github;
 import org.jreleaser.model.JReleaserContext;
@@ -39,21 +40,21 @@ public abstract class DiscussionsValidator extends Validator {
         context.getLogger().debug("announce.discussions");
 
         if (!Github.NAME.equals(context.getModel().getRelease().getGitService().getServiceName())) {
-            errors.configuration("discussions may only be used when releasing to GitHub");
+            errors.configuration(RB.$("validation_discussions_enabled"));
             discussions.disable();
             return;
         }
 
         if (isBlank(discussions.getOrganization())) {
-            errors.configuration("discussions.organization must not be blank.");
+            errors.configuration(RB.$("validation_must_not_be_blank", "discussions.organization"));
         }
 
         if (isBlank(discussions.getTeam())) {
-            errors.configuration("discussions.team must not be blank.");
+            errors.configuration(RB.$("validation_must_not_be_blank", "discussions.team"));
         }
 
         if (isBlank(discussions.getTitle())) {
-            discussions.setTitle("{{projectNameCapitalized}} {{projectVersion}} released!");
+            discussions.setTitle(RB.$("default_discussion_title"));
         }
 
         if (isBlank(discussions.getMessage()) && isBlank(discussions.getMessageTemplate())) {
@@ -64,13 +65,13 @@ public abstract class DiscussionsValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_DISCUSSIONS_TPL))) {
                 discussions.setMessageTemplate(DEFAULT_DISCUSSIONS_TPL);
             } else {
-                discussions.setMessage("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
+                discussions.setMessage(RB.$("default_release_message"));
             }
         }
 
         if (isNotBlank(discussions.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(discussions.getMessageTemplate().trim()))) {
-            errors.configuration("discussions.messageTemplate does not exist. " + discussions.getMessageTemplate());
+            errors.configuration(RB.$("validation_directory_not_exist", "discussions.messageTemplate", discussions.getMessageTemplate()));
         }
 
         validateTimeout(discussions);

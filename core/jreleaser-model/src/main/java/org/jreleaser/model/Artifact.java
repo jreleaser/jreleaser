@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Algorithm;
 
 import java.nio.file.Path;
@@ -95,7 +96,7 @@ public class Artifact implements Domain, ExtraProperties {
             }
             resolvedPath = basedir.resolve(Paths.get(path)).normalize();
             if (checkIfExists && !exists(resolvedPath)) {
-                throw new JReleaserException("Path does not exist. " + context.relativizeToBasedir(resolvedPath));
+                throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
             }
         }
         return resolvedPath;
@@ -114,7 +115,7 @@ public class Artifact implements Domain, ExtraProperties {
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
-                throw new JReleaserException("Artifact does not exist. " + context.relativizeToBasedir(resolvedPath));
+                throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
             }
         }
         return resolvedPath;
@@ -129,7 +130,7 @@ public class Artifact implements Domain, ExtraProperties {
             }
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
-                throw new JReleaserException("Path does not exist. " + context.relativizeToBasedir(resolvedPath));
+                throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
             }
         }
         return resolvedPath;

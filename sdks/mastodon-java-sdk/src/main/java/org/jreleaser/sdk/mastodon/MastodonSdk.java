@@ -19,6 +19,7 @@ package org.jreleaser.sdk.mastodon;
 
 import feign.form.FormEncoder;
 import feign.jackson.JacksonEncoder;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.mastodon.api.MastodonAPI;
@@ -33,10 +34,10 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.4.0
  */
 public class MastodonSdk {
+    private static final String API_V1 = "/api/v1";
     private final JReleaserLogger logger;
     private final MastodonAPI api;
     private final boolean dryrun;
-    private static final String API_V1 = "/api/v1";
 
     private MastodonSdk(JReleaserLogger logger,
                         String host,
@@ -62,7 +63,7 @@ public class MastodonSdk {
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", accessToken)))
             .target(MastodonAPI.class, host);
 
-        this.logger.debug("Mastodon dryrun set to {}", dryrun);
+        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void status(String status) throws MastodonException {
@@ -76,7 +77,7 @@ public class MastodonSdk {
             if (!dryrun) runnable.run();
         } catch (RestAPIException e) {
             logger.trace(e);
-            throw new MastodonException("Mastodon operation failed", e);
+            throw new MastodonException(RB.$("sdk.operation.failed", "Mastodon"), e);
         }
     }
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Webhook;
@@ -77,7 +78,7 @@ public abstract class WebhooksValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_TPL + webhook.getName() + ".tpl"))) {
                 webhook.setMessageTemplate(DEFAULT_TPL + webhook.getName() + ".tpl");
             } else {
-                webhook.setMessage("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
+                webhook.setMessage(RB.$("default_release_message"));
             }
         }
 
@@ -87,7 +88,8 @@ public abstract class WebhooksValidator extends Validator {
 
         if (isNotBlank(webhook.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(webhook.getMessageTemplate().trim()))) {
-            errors.configuration("webhook." + webhook.getName() + ".messageTemplate does not exist. " + webhook.getMessageTemplate());
+            errors.configuration(RB.$("validation_directory_not_exist",
+                "webhook." + webhook.getName() + ".messageTemplate", webhook.getMessageTemplate()));
         }
 
         validateTimeout(webhook);

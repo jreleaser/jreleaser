@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.distribution;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
@@ -33,7 +34,7 @@ public class Distributions {
         List<Distribution> activeDistributions = context.getModel().getActiveDistributions();
 
         if (activeDistributions.isEmpty()) {
-            context.getLogger().debug("No active distributions [{}]. Skipping", action.toLowerCase());
+            context.getLogger().debug(RB.$("distributions.not.enabled"), action.toLowerCase());
             return;
         }
 
@@ -41,7 +42,7 @@ public class Distributions {
             Distribution distribution = context.getModel().findDistribution(context.getDistributionName());
 
             if (null == distribution) {
-                context.getLogger().error("Distribution {} does not exist", context.getDistributionName());
+                context.getLogger().error(RB.$("distributions.no.match"), context.getDistributionName());
                 return;
             }
 
@@ -52,7 +53,7 @@ public class Distributions {
             }
             return;
         } else if (context.hasToolName()) {
-            context.getLogger().info("{} distributions", action);
+            context.getLogger().info(RB.$("distributions.apply.action"), action);
             for (Distribution distribution : activeDistributions) {
                 processDistribution(context, action, distribution, context.getToolName(), function);
             }
@@ -60,7 +61,7 @@ public class Distributions {
         }
 
         // process all
-        context.getLogger().info("{} distributions", action);
+        context.getLogger().info(RB.$("distributions.apply.action"), action);
         for (Distribution distribution : activeDistributions) {
             processDistribution(context, action, distribution, function);
         }
@@ -68,7 +69,7 @@ public class Distributions {
 
     private static void processDistribution(JReleaserContext context, String action, Distribution distribution, ToolProcessingFunction function) {
         context.getLogger().increaseIndent();
-        context.getLogger().info("- {} {} distribution", action, distribution.getName());
+        context.getLogger().info(RB.$("distributions.apply.action.to"), action, distribution.getName());
 
         for (String toolName : Distribution.supportedTools()) {
             processTool(context, distribution, toolName, function);
@@ -79,7 +80,7 @@ public class Distributions {
 
     private static void processDistribution(JReleaserContext context, String action, Distribution distribution, String toolName, ToolProcessingFunction function) {
         context.getLogger().increaseIndent();
-        context.getLogger().info("- {} {} distribution", action, distribution.getName());
+        context.getLogger().info(RB.$("distributions.apply.action.to"), action, distribution.getName());
 
         processTool(context, distribution, toolName, function);
 
@@ -96,7 +97,7 @@ public class Distributions {
 
             function.consume(processor);
         } catch (ToolProcessingException e) {
-            throw new JReleaserException("Unexpected error", e);
+            throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);
         }
         context.getLogger().restorePrefix();
         context.getLogger().decreaseIndent();

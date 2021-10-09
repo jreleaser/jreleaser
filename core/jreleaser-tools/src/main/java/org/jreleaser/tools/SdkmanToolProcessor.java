@@ -17,6 +17,7 @@
  */
 package org.jreleaser.tools;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
@@ -63,13 +64,13 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
         for (Artifact artifact : distribution.getArtifacts()) {
             // only zips are supported
             if (!artifact.getPath().endsWith(".zip")) {
-                context.getLogger().debug("Artifact {} is not suitable for Sdkman publication. Skipping.",
+                context.getLogger().debug(RB.$("sdkman.no.artifacts.match"),
                     artifact.getEffectivePath(context, distribution).getFileName());
                 continue;
             }
 
             if (isTrue(artifact.getExtraProperties().get("skipSdkman"))) {
-                context.getLogger().debug("Artifact {} is explicitly skipped.",
+                context.getLogger().debug(RB.$("sdkman.artifact.explicit.skip"),
                     artifact.getEffectivePath(context, distribution).getFileName());
                 continue;
             }
@@ -77,7 +78,7 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
             String platform = mapPlatform(artifact.getPlatform());
             String url = artifactUrl(distribution, artifact);
             if (platforms.containsKey(platform)) {
-                context.getLogger().warn("Platform {}: {} will replace {}", platform, url, platforms.get(platform));
+                context.getLogger().warn(RB.$("sdkman.platform.replacement"), platform, url, platforms.get(platform));
             }
             platforms.put(platform, url);
         }
@@ -88,7 +89,7 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
 
             switch (sdkman.getCommand()) {
                 case MAJOR:
-                    context.getLogger().info("publishing major release of '{}' candidate", candidate);
+                    context.getLogger().info(RB.$("sdkman.publish.major"), candidate);
                     MajorReleaseSdkmanCommand.builder(context.getLogger())
                         .connectTimeout(sdkman.getConnectTimeout())
                         .readTimeout(sdkman.getReadTimeout())
@@ -104,7 +105,7 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
                         .execute();
                     break;
                 case MINOR:
-                    context.getLogger().info("publishing minor release of '{}' candidate", candidate);
+                    context.getLogger().info(RB.$("sdkman.publish.minor"), candidate);
                     MinorReleaseSdkmanCommand.builder(context.getLogger())
                         .connectTimeout(sdkman.getConnectTimeout())
                         .readTimeout(sdkman.getReadTimeout())

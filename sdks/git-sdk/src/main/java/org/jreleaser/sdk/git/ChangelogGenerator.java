@@ -23,6 +23,7 @@ import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Changelog;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Gitlab;
@@ -89,14 +90,14 @@ public class ChangelogGenerator {
 
         try {
             Git git = GitSdk.of(context).open();
-            context.getLogger().debug("resolving commits");
+            context.getLogger().debug(RB.$("changelog.generator.resolve.commits"));
             Iterable<RevCommit> commits = resolveCommits(git, context);
 
             Comparator<RevCommit> revCommitComparator = Comparator.comparing(RevCommit::getCommitTime).reversed();
             if (changelog.getSort() == Changelog.Sort.ASC) {
                 revCommitComparator = Comparator.comparing(RevCommit::getCommitTime);
             }
-            context.getLogger().debug("sorting commits {}", changelog.getSort());
+            context.getLogger().debug(RB.$("changelog.generator.sort.commits"), changelog.getSort());
 
             if (changelog.resolveFormatted(context.getModel().getProject())) {
                 return formatChangelog(context, changelog, commits, revCommitComparator, commitSeparator);
@@ -198,7 +199,7 @@ public class ChangelogGenerator {
 
         ObjectId head = git.getRepository().resolve(Constants.HEAD);
 
-        context.getLogger().debug("looking for tag that matches '{}'", effectiveTagName);
+        context.getLogger().debug(RB.$("changelog.generator.lookup.tag"), effectiveTagName);
         Optional<Ref> tag = tags.stream()
             .filter(ref -> extractTagName(ref).equals(effectiveTagName))
             .findFirst();
@@ -206,7 +207,7 @@ public class ChangelogGenerator {
         Optional<Ref> previousTag = Optional.empty();
         String previousTagName = gitService.getConfiguredPreviousTagName();
         if (isNotBlank(previousTagName)) {
-            context.getLogger().debug("looking for previous tag '{}'", previousTagName);
+            context.getLogger().debug(RB.$("changelog.generator.lookup.previous.tag"), previousTagName);
             previousTag = tags.stream()
                 .filter(ref -> extractTagName(ref).equals(previousTagName))
                 .findFirst();
@@ -223,7 +224,7 @@ public class ChangelogGenerator {
                     }
 
                     if (!tag.isPresent()) {
-                        context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
+                        context.getLogger().debug(RB.$("changelog.generator.lookup.matching.tag"), tagPattern, effectiveTagName);
 
                         tag = tags.stream()
                             .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
@@ -233,7 +234,7 @@ public class ChangelogGenerator {
                 }
 
                 if (tag.isPresent()) {
-                    context.getLogger().debug("found tag {}", extractTagName(tag.get()));
+                    context.getLogger().debug(RB.$("changelog.generator.tag.found"), extractTagName(tag.get()));
                     ObjectId fromRef = getObjectId(git, tag.get());
                     return git.log().addRange(fromRef, head).call();
                 } else {
@@ -247,9 +248,9 @@ public class ChangelogGenerator {
             if (previousTag.isPresent()) {
                 tag = previousTag;
             }
-            
+
             if (!tag.isPresent()) {
-                context.getLogger().debug("looking for tags that match '{}', excluding '{}'", tagPattern, effectiveTagName);
+                context.getLogger().debug(RB.$("changelog.generator.lookup.matching.tag"), tagPattern, effectiveTagName);
                 tag = tags.stream()
                     .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
                     .filter(ref -> extractTagName(ref).matches(tagPattern))
@@ -257,7 +258,7 @@ public class ChangelogGenerator {
             }
 
             if (tag.isPresent()) {
-                context.getLogger().debug("found tag {}", extractTagName(tag.get()));
+                context.getLogger().debug(RB.$("changelog.generator.tag.found"), extractTagName(tag.get()));
                 ObjectId fromRef = getObjectId(git, tag.get());
                 return git.log().addRange(fromRef, head).call();
             }
@@ -268,7 +269,7 @@ public class ChangelogGenerator {
         // tag: somewhere in the middle
         Comparable currentVersion = version(context, tag.get(), versionPattern);
         if (!previousTag.isPresent()) {
-            context.getLogger().debug("looking for a tag before '{}' that matches '{}'", effectiveTagName, tagPattern);
+            context.getLogger().debug(RB.$("changelog.generator.lookup.before.tag"), effectiveTagName, tagPattern);
             previousTag = tags.stream()
                 .filter(ref -> extractTagName(ref).matches(tagPattern))
                 .filter(ref -> lessThan(version(context, ref, versionPattern), currentVersion))
@@ -276,7 +277,7 @@ public class ChangelogGenerator {
         }
 
         if (previousTag.isPresent()) {
-            context.getLogger().debug("found tag {}", extractTagName(previousTag.get()));
+            context.getLogger().debug(RB.$("changelog.generator.tag.found"), extractTagName(previousTag.get()));
             ObjectId fromRef = getObjectId(git, previousTag.get());
             ObjectId toRef = getObjectId(git, tag.get());
             return git.log().addRange(fromRef, toRef).call();

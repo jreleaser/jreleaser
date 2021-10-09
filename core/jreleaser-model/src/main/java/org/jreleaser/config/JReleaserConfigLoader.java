@@ -17,6 +17,7 @@
  */
 package org.jreleaser.config;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 
@@ -39,16 +40,16 @@ public class JReleaserConfigLoader {
                 try {
                     parser.validate(configFile);
                 } catch (IOException e) {
-                    throw new JReleaserException("Invalid config file. " + configFile, e);
+                    throw new JReleaserException(RB.$("ERROR_invalid_config_file", configFile), e);
                 }
                 try (InputStream inputStream = configFile.toUri().toURL().openStream()) {
                     return parser.parse(inputStream);
                 } catch (IOException e) {
-                    throw new JReleaserException("Unexpected error parsing config file. " + configFile, e);
+                    throw new JReleaserException(RB.$("ERROR_parsing_config_file", configFile), e);
                 }
             }
         }
-        throw new JReleaserException("Unsupported config format. " + configFile);
+        throw new JReleaserException(RB.$("ERROR_unsupported_config_format", configFile));
     }
 
     public static Map<String, String> loadProperties(Path file) throws IOException {
@@ -61,6 +62,6 @@ public class JReleaserConfigLoader {
                 }
             }
         }
-        throw new JReleaserException("Unsupported format. " + file);
+        throw new JReleaserException(RB.$("ERROR_unsupported_config_format", file));
     }
 }

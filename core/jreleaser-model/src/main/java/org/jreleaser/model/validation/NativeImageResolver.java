@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.NativeImage;
@@ -51,8 +52,8 @@ public abstract class NativeImageResolver extends Validator {
             .resolve(nativeImage.getResolvedImageName(context) + "-" + platform + ".zip");
 
         if (!Files.exists(image)) {
-            errors.assembly("Missing outputs for " + nativeImage.getType() + "." + nativeImage.getName() +
-                ". Distribution " + nativeImage.getName() + " has not been assembled.");
+            errors.assembly(RB.$("validation_missing_assembly",
+                nativeImage.getType(), nativeImage.getName(), nativeImage.getName()));
         } else {
             Artifact artifact = Artifact.of(image, platform);
             artifact.activate();

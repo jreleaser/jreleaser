@@ -17,6 +17,7 @@
  */
 package org.jreleaser.assemblers;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
@@ -61,13 +62,13 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         Path graalPath = assembler.getGraal().getEffectivePath(context, assembler);
         Version javaVersion = Version.of(readJavaVersion(graalPath));
         Version graalVersion = Version.of(readGraalVersion(graalPath));
-        context.getLogger().debug("java version is {}", javaVersion);
-        context.getLogger().debug("graal version is {}", graalVersion);
+        context.getLogger().debug(RB.$("assembler.graal.java"), javaVersion);
+        context.getLogger().debug(RB.$("assembler.graal.graal"), graalVersion);
 
         // copy jars to assembly
         Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path libDirectory = assembleDirectory.resolve("lib");
-        context.getLogger().debug("copying JARs to {}", context.relativizeToBasedir(libDirectory));
+        context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(libDirectory));
         Set<Path> jars = copyJars(context, libDirectory);
 
         // install native-image
@@ -88,7 +89,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
             .toAbsolutePath();
 
         if (!Files.exists(nativeImageExecutable)) {
-            context.getLogger().debug("installing native-image executable");
+            context.getLogger().debug(RB.$("assembler.graal.install.native.exec"));
             List<String> cmd = new ArrayList<>();
             cmd.add(graalPath.resolve("bin").resolve("gu").toAbsolutePath().toString());
             cmd.add("install");
@@ -109,7 +110,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
                 Files.deleteIfExists(image);
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Could not delete previous image " + executable, e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_delete_image", executable), e);
         }
 
         assembler.getArgs().stream()
@@ -148,14 +149,14 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
 
             return Artifact.of(imageZip, assembler.getGraal().getPlatform());
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Unexpected error", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
     private String readJavaVersion(Path path) throws AssemblerProcessingException {
         Path release = path.resolve("release");
         if (!Files.exists(release)) {
-            throw new AssemblerProcessingException("Invalid GraalVM [" + path.toAbsolutePath() + "] release file not found");
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release", path.toAbsolutePath()));
         }
 
         try {
@@ -168,17 +169,17 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
                 }
                 return version;
             } else {
-                throw new AssemblerProcessingException("Invalid GraalVM release file [" + release.toAbsolutePath() + "]");
+                throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release_file", release.toAbsolutePath()));
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Invalid GraalVM release file [" + release.toAbsolutePath() + "]", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release_file", release.toAbsolutePath()), e);
         }
     }
 
     private String readGraalVersion(Path path) throws AssemblerProcessingException {
         Path release = path.resolve("release");
         if (!Files.exists(release)) {
-            throw new AssemblerProcessingException("Invalid GraalVM [" + path.toAbsolutePath() + "] release file not found");
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release", path.toAbsolutePath()));
         }
 
         try {
@@ -191,10 +192,10 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
                 }
                 return version;
             } else {
-                throw new AssemblerProcessingException("Invalid GraalVM release file [" + release.toAbsolutePath() + "]");
+                throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release_file", release.toAbsolutePath()));
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Invalid GraalVM release file [" + release.toAbsolutePath() + "]", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release_file", release.toAbsolutePath()), e);
         }
     }
 
@@ -213,11 +214,11 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         try {
             Files.createDirectories(destination);
             for (Path path : paths) {
-                context.getLogger().debug("copying {}", path.getFileName());
+                context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
                 Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Unexpected error when copying files", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_jars"), e);
         }
 
         return paths;
@@ -237,11 +238,11 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
         try {
             Files.createDirectories(destination);
             for (Path path : paths) {
-                context.getLogger().debug("copying {}", path.getFileName());
+                context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
                 Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Unexpected error when copying files", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
         }
 
         return paths;

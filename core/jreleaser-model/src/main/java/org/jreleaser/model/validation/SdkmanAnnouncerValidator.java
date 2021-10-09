@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Sdkman;
@@ -68,7 +69,7 @@ public abstract class SdkmanAnnouncerValidator extends Validator {
         }
 
         if (context.getModel().getActiveDistributions().isEmpty()) {
-            context.getLogger().warn("There are no active distributions. Disabling Sdkman announcer");
+            context.getLogger().warn(RB.$("validation_skdman_disable"));
             sdkman.disable();
         }
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.util.Env;
@@ -127,7 +128,7 @@ public class Environment implements Domain {
 
     private void loadVariables(JReleaserContext context, Path file) {
         propertiesFile = file;
-        context.getLogger().info("Loading variables from {}", file.toAbsolutePath());
+        context.getLogger().info(RB.$("environment.load.variables"), file.toAbsolutePath());
         if (Files.exists(file)) {
             try {
                 if (file.getFileName().toString().endsWith(".properties")) {
@@ -136,10 +137,10 @@ public class Environment implements Domain {
                     vars.putAll(JReleaserConfigLoader.loadProperties(file));
                 }
             } catch (IOException e) {
-                context.getLogger().debug("Could not load variables from {}", file.toAbsolutePath(), e);
+                context.getLogger().debug(RB.$("environment.variables.load.error"), file.toAbsolutePath(), e);
             }
         } else {
-            context.getLogger().warn("Variables source {} does not exist", file.toAbsolutePath());
+            context.getLogger().warn(RB.$("environment.variables.source.missing"), file.toAbsolutePath());
         }
     }
 

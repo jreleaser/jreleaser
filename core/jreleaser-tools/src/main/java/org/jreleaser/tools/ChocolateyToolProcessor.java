@@ -17,6 +17,7 @@
  */
 package org.jreleaser.tools;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Chocolatey;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
@@ -52,7 +53,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
         }
 
         if (!PlatformUtils.isWindows()) {
-            context.getLogger().debug("must run on Windows", getToolName());
+            context.getLogger().debug(RB.$("ERROR_tool_requires_platform", "Windows"));
             return;
         }
 
@@ -105,10 +106,10 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
     }
 
     private void createChocolateyPackage(Distribution distribution, Map<String, Object> props) {
-        context.getLogger().warn("local build is not yet supported.");
+        context.getLogger().warn(RB.$("ERROR_tool_local_build_unsupported"));
     }
 
     private void publishChocolateyPackage(Distribution distribution, Map<String, Object> props) {
-        context.getLogger().warn("local publication is not yet supported.");
+        context.getLogger().warn(RB.$("ERROR_tool_local_publication_unsupported"));
     }
 }

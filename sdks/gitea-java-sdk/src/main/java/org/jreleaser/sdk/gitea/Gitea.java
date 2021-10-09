@@ -29,6 +29,7 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
@@ -95,7 +96,7 @@ class Gitea {
     }
 
     GtRepository findRepository(String owner, String repo) {
-        logger.debug("lookup repository {}/{}", owner, repo);
+        logger.debug(RB.$("git.repository.lookup"), owner, repo);
         try {
             return api.getRepository(owner, repo);
         } catch (RestAPIException e) {
@@ -108,7 +109,7 @@ class Gitea {
     }
 
     Optional<GtMilestone> findMilestoneByName(String owner, String repo, String milestoneName) {
-        logger.debug("lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
+        logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
         try {
             GtMilestone milestone = api.findMilestoneByTitle(owner, repo, milestoneName);
@@ -128,14 +129,14 @@ class Gitea {
     }
 
     void closeMilestone(String owner, String repo, GtMilestone milestone) throws IOException {
-        logger.debug("closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
+        logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
         api.updateMilestone(CollectionUtils.<String, Object>map()
             .e("state", "closed"), owner, repo, milestone.getId());
     }
 
     GtRepository createRepository(String owner, String repo) {
-        logger.debug("creating repository {}/{}", owner, repo);
+        logger.debug(RB.$("git.repository.create"), owner, repo);
 
         Map<String, Object> params = CollectionUtils.<String, Object>map()
             .e("name", repo)
@@ -162,7 +163,7 @@ class Gitea {
     }
 
     GtRelease findReleaseByTag(String owner, String repo, String tagName) {
-        logger.debug("fetching release on {}/{} with tag {}", owner, repo, tagName);
+        logger.debug(RB.$("git.fetch.release.by.tag"), owner, repo, tagName);
 
         try {
             return api.getReleaseByTagName(owner, repo, tagName);
@@ -176,7 +177,7 @@ class Gitea {
     }
 
     void deleteRelease(String owner, String repo, String tagName, Integer id) throws RestAPIException {
-        logger.debug("deleting release {} from {}/{} ({})", tagName, owner, repo, id);
+        logger.debug(RB.$("git.delete.release.from.id"), tagName, owner, repo, id);
 
         try {
             api.deleteRelease(owner, repo, id);
@@ -191,19 +192,19 @@ class Gitea {
     }
 
     void deleteTag(String owner, String repo, String tagName) throws RestAPIException {
-        logger.debug("deleting tag {} from {}/{}", tagName, owner, repo);
+        logger.debug(RB.$("git.delete.tag.from"), tagName, owner, repo);
 
         api.deleteTag(owner, repo, tagName);
     }
 
     GtRelease createRelease(String owner, String repo, GtRelease release) throws RestAPIException {
-        logger.debug("creating release on {}/{} with tag {}", owner, repo, release.getTagName());
+        logger.debug(RB.$("git.create.release"), owner, repo, release.getTagName());
 
         return api.createRelease(release, owner, repo);
     }
 
     void updateRelease(String owner, String repo, Integer id, GtRelease release) throws RestAPIException {
-        logger.debug("updating release on {}/{} with tag {}", owner, repo, release.getTagName());
+        logger.debug(RB.$("git.update.release"), owner, repo, release.getTagName());
 
         api.updateRelease(release, owner, repo, id);
     }
@@ -215,18 +216,18 @@ class Gitea {
                 continue;
             }
 
-            logger.info(" - uploading {}", asset.getFileName().toString());
+            logger.info(" " + RB.$("git.upload.asset"), asset.getFileName().toString());
             try {
                 api.uploadAsset(owner, repo, release.getId(), toFormData(asset));
             } catch (RestAPIException e) {
-                logger.error(" x failed to upload {}", asset.getFileName());
+                logger.error(" " + RB.$("git.upload.asset.failure"), asset.getFileName());
                 throw e;
             }
         }
     }
 
     Optional<User> findUser(String email, String name, String host) throws RestAPIException {
-        logger.debug("looking up user for {} <{}>", name, email);
+        logger.debug(RB.$("git.user.lookup"), name, email);
 
         GtSearchUser search = api.searchUser(CollectionUtils.<String, String>newMap("q", email));
         if (null != search.getData() && !search.getData().isEmpty()) {

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.changelog;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
@@ -35,7 +36,7 @@ public class Changelog {
         try {
             return ChangelogProvider.getChangelog(context).trim();
         } catch (IOException e) {
-            throw new JReleaserException("Unexpected error when creating changelog.", e);
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
         }
     }
 
@@ -48,7 +49,7 @@ public class Changelog {
             try {
                 return new String(Files.readAllBytes(changelogFile)).trim();
             } catch (IOException e) {
-                context.getLogger().warn("Could not read changelog from {}",
+                context.getLogger().warn(RB.$("ERROR_cannot_read_changelog"),
                     context.relativizeToBasedir(changelogFile));
             }
         }

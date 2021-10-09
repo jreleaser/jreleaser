@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.assemble;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
@@ -50,13 +51,13 @@ public class DistributionAssembler {
 
     public void assemble() throws AssemblerProcessingException {
         if (!assembler.isEnabled()) {
-            context.getLogger().debug("skipping for {} distribution", assembler.getName());
+            context.getLogger().debug(RB.$("assemblers.distribution.skip"), assembler.getName());
             return;
         }
 
         AssemblerProcessor<Assembler> assemblerProcessor = AssemblerProcessors.findProcessor(context, assembler);
 
-        context.getLogger().info("assembling {} distribution", assembler.getName());
+        context.getLogger().info(RB.$("assemblers.distribution.assemble"), assembler.getName());
 
         assemblerProcessor.assemble(initProps());
     }

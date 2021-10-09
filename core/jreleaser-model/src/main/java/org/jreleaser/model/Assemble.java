@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.jreleaser.util.StringUtils.isBlank;
-
 /**
  * @author Andres Almiray
  * @since 0.2.0
@@ -76,18 +74,6 @@ public class Assemble implements Domain, EnabledAware {
         this.jlink.put(jlink.getName(), jlink);
     }
 
-    public Jlink findJlink(String name) {
-        if (isBlank(name)) {
-            throw new JReleaserException("Jlink name must not be blank");
-        }
-
-        if (jlink.containsKey(name)) {
-            return jlink.get(name);
-        }
-
-        throw new JReleaserException("Jlink '" + name + "' not found");
-    }
-
     public List<NativeImage> getActiveNativeImages() {
         return nativeImage.values().stream()
             .filter(NativeImage::isEnabled)
@@ -105,18 +91,6 @@ public class Assemble implements Domain, EnabledAware {
 
     public void addNativeImage(NativeImage nativeImage) {
         this.nativeImage.put(nativeImage.getName(), nativeImage);
-    }
-
-    public NativeImage findNativeImage(String name) {
-        if (isBlank(name)) {
-            throw new JReleaserException("NativeImage name must not be blank");
-        }
-
-        if (nativeImage.containsKey(name)) {
-            return nativeImage.get(name);
-        }
-
-        throw new JReleaserException("NativeImage '" + name + "' not found");
     }
 
     @Override

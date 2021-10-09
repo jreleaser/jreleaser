@@ -17,6 +17,7 @@
  */
 package org.jreleaser.assemblers;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
@@ -72,10 +73,10 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
     @Override
     public void assemble(Map<String, Object> props) throws AssemblerProcessingException {
         try {
-            context.getLogger().debug("creating props for {}/{}", assembler.getType(), assembler.getName());
+            context.getLogger().debug(RB.$("tool.create.properties"), assembler.getType(), assembler.getName());
             Map<String, Object> newProps = fillProps(props);
 
-            context.getLogger().debug("resolving templates for {}/{}", assembler.getType(), assembler.getName());
+            context.getLogger().debug(RB.$("tool.resolve.templates"), assembler.getType(), assembler.getName());
             Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
                 assembler.getType(),
                 assembler.getType(),
@@ -83,9 +84,9 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
                 context.getBasedir().resolve(getAssembler().getTemplateDirectory()));
 
             for (Map.Entry<String, Reader> entry : templates.entrySet()) {
-                context.getLogger().debug("evaluating template {} for {}/{}", entry.getKey(), assembler.getName(), assembler.getType());
+                context.getLogger().debug(RB.$("tool.evaluate.template"), entry.getKey(), assembler.getName(), assembler.getType());
                 String content = applyTemplate(entry.getValue(), newProps);
-                context.getLogger().debug("writing template {} for {}/{}", entry.getKey(), assembler.getName(), assembler.getType());
+                context.getLogger().debug(RB.$("tool.write.template"), entry.getKey(), assembler.getName(), assembler.getType());
                 writeFile(context.getModel().getProject(), content, newProps, entry.getKey());
             }
 
@@ -108,15 +109,15 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
             Files.write(outputFile, content.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
             grantFullAccess(outputFile);
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Unexpected error when writing to " + outputFile.toAbsolutePath(), e);
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error_writing_file", outputFile.toAbsolutePath()), e);
         }
     }
 
     protected Map<String, Object> fillProps(Map<String, Object> props) throws AssemblerProcessingException {
         Map<String, Object> newProps = new LinkedHashMap<>(props);
-        context.getLogger().debug("filling git properties into props");
+        context.getLogger().debug(RB.$("tool.fill.git.properties"));
         context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel());
-        context.getLogger().debug("filling assembler properties into props");
+        context.getLogger().debug(RB.$("assembler.fill.assembler.properties"));
         fillAssemblerProperties(newProps);
         return newProps;
     }
@@ -140,13 +141,13 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
             error(err);
 
             if (exitValue == 0) return true;
-            throw new AssemblerProcessingException("Command execution error. exitValue = " + exitValue);
+            throw new AssemblerProcessingException(RB.$("ERROR_command_execution_exit_value", exitValue));
         } catch (ProcessInitException e) {
-            throw new AssemblerProcessingException("Unexpected error", e.getCause());
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e.getCause());
         } catch (AssemblerProcessingException e) {
             throw e;
         } catch (Exception e) {
-            throw new AssemblerProcessingException("Unexpected error", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
@@ -172,14 +173,14 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
             error(err);
 
             if (exitValue == 0) return true;
-            throw new AssemblerProcessingException("Command execution error. exitValue = " + exitValue);
+            throw new AssemblerProcessingException(RB.$("ERROR_command_execution_exit_value", exitValue));
         } catch (ProcessInitException e) {
-            throw new AssemblerProcessingException("Unexpected error", e.getCause());
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e.getCause());
         } catch (Exception e) {
             if (e instanceof AssemblerProcessingException) {
                 throw (AssemblerProcessingException) e;
             }
-            throw new AssemblerProcessingException("Unexpected error", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 

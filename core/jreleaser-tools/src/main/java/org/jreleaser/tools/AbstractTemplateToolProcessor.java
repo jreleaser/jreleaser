@@ -17,6 +17,7 @@
  */
 package org.jreleaser.tools;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
@@ -68,7 +69,7 @@ abstract class AbstractTemplateToolProcessor<T extends TemplateTool> extends Abs
         FileUtils.deleteFiles(prepareDirectory);
         Files.createDirectories(prepareDirectory);
 
-        context.getLogger().debug("resolving templates for {}/{}", distributionName, toolName);
+        context.getLogger().debug(RB.$("tool.resolve.templates"), distributionName, toolName);
         Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
             distribution.getType().name(),
             // leave this one be!
@@ -79,17 +80,17 @@ abstract class AbstractTemplateToolProcessor<T extends TemplateTool> extends Abs
         for (Map.Entry<String, Reader> entry : templates.entrySet()) {
             String filename = entry.getKey();
             if (filename.endsWith(".tpl")) {
-                context.getLogger().debug("evaluating template {} for {}/{}", filename, distributionName, toolName);
+                context.getLogger().debug(RB.$("tool.evaluate.template"), filename, distributionName, toolName);
                 String content = applyTemplate(entry.getValue(), props);
-                context.getLogger().debug("writing template {} for {}/{}", filename, distributionName, toolName);
+                context.getLogger().debug(RB.$("tool.write.template"), filename, distributionName, toolName);
                 writeFile(context.getModel().getProject(), distribution, content, props, prepareDirectory, filename);
             } else {
-                context.getLogger().debug("writing file {} for {}/{}", filename, distributionName, toolName);
+                context.getLogger().debug(RB.$("tool.write.file"), filename, distributionName, toolName);
                 writeFile(entry.getValue(), prepareDirectory.resolve(filename));
             }
         }
 
-        context.getLogger().debug("copying license files");
+        context.getLogger().debug(RB.$("tool.copy.license"));
         FileUtils.copyFiles(context.getLogger(),
             context.getBasedir(),
             prepareDirectory, path -> path.getFileName().startsWith("LICENSE"));
@@ -120,7 +121,7 @@ abstract class AbstractTemplateToolProcessor<T extends TemplateTool> extends Abs
             scanner.close();
             grantFullAccess(outputFile);
         } catch (IOException e) {
-            throw new ToolProcessingException("Unexpected error when writing to " + outputFile.toAbsolutePath(), e);
+            throw new ToolProcessingException(RB.$("ERROR_unexpected_error_writing_file", outputFile.toAbsolutePath()), e);
         }
     }
 
@@ -130,7 +131,7 @@ abstract class AbstractTemplateToolProcessor<T extends TemplateTool> extends Abs
             Files.write(outputFile, content.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
             grantFullAccess(outputFile);
         } catch (IOException e) {
-            throw new ToolProcessingException("Unexpected error when writing to " + outputFile.toAbsolutePath(), e);
+            throw new ToolProcessingException(RB.$("ERROR_unexpected_error_writing_file", outputFile.toAbsolutePath()), e);
         }
     }
 }

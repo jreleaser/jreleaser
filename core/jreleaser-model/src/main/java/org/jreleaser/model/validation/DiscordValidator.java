@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Discord;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
@@ -50,13 +51,13 @@ public abstract class DiscordValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_DISCORD_TPL))) {
                 discord.setMessageTemplate(DEFAULT_DISCORD_TPL);
             } else {
-                discord.setMessage("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
+                discord.setMessage(RB.$("default_release_message"));
             }
         }
 
         if (isNotBlank(discord.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(discord.getMessageTemplate().trim()))) {
-            errors.configuration("discord.messageTemplate does not exist. " + discord.getMessageTemplate());
+            errors.configuration(RB.$("validation_directory_not_exist", "discord.messageTemplate", discord.getMessageTemplate()));
         }
 
         validateTimeout(discord);

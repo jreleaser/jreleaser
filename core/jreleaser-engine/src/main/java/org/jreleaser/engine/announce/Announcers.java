@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.announce;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.announcer.spi.AnnounceException;
@@ -36,15 +37,15 @@ import java.util.stream.StreamSupport;
  */
 public class Announcers {
     public static void announce(JReleaserContext context) throws AnnounceException {
-        context.getLogger().info("Announcing release");
+        context.getLogger().info(RB.$("announcers.header"));
         if (!context.getModel().getAnnounce().isEnabled()) {
-            context.getLogger().info("Announcing is not enabled. Skipping.");
+            context.getLogger().info(RB.$("announcers.not.enabled"));
             return;
         }
 
         Map<String, Announcer> announcers = Announcers.findAnnouncers(context);
         if (announcers.isEmpty()) {
-            context.getLogger().info("No announcers have been configured. Skipping.");
+            context.getLogger().info(RB.$("announcers.not.configured"));
             return;
         }
 
@@ -52,7 +53,7 @@ public class Announcers {
             Announcer announcer = announcers.get(context.getAnnouncerName());
 
             if (null == announcer) {
-                context.getLogger().warn("Announcer [{}] not found. Skipping.", context.getAnnouncerName());
+                context.getLogger().warn(RB.$("announcers.announcer.not.found"), context.getAnnouncerName());
                 return;
             }
 
@@ -76,7 +77,7 @@ public class Announcers {
                 context.getLogger().warn(e.getMessage().trim());
             }
         } else {
-            context.getLogger().debug("disabled. Skipping");
+            context.getLogger().debug(RB.$("announcers.announcer.disabled"));
         }
 
         context.getLogger().restorePrefix();

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.assemblers;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
@@ -62,17 +63,16 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         // verify jdk
         Path jdkPath = assembler.getJdk().getEffectivePath(context, assembler);
         Version jdkVersion = Version.of(readJavaVersion(jdkPath));
-        context.getLogger().debug("jdk version is {}", jdkVersion);
+        context.getLogger().debug(RB.$("assembler.jlink.jdk"), jdkVersion);
 
         // verify jdks
         for (Artifact targetJdk : assembler.getTargetJdks()) {
             Path targetJdkPath = targetJdk.getEffectivePath(context, assembler);
             Version targetJdkVersion = Version.of(readJavaVersion(targetJdkPath));
-            context.getLogger().debug("target jdk version is {}", jdkVersion);
+            context.getLogger().debug(RB.$("assembler.jlink.target"), jdkVersion);
 
             if (jdkVersion.getMajor() != targetJdkVersion.getMajor()) {
-                throw new AssemblerProcessingException("Target JDK " + targetJdkVersion +
-                    " is not compatible with " + jdkVersion);
+                throw new AssemblerProcessingException(RB.$("ERROR_jlink_target_not_compatible", targetJdkVersion, jdkVersion));
             }
         }
 
@@ -81,7 +81,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
 
         // copy jars to assembly
         Path jarsDirectory = inputsDirectory.resolve("jars");
-        context.getLogger().debug("copying JARs to {}", context.relativizeToBasedir(jarsDirectory));
+        context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(jarsDirectory));
         Set<Path> jars = copyJars(context, jarsDirectory);
 
         // resolve module names
@@ -89,7 +89,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         if (isNotBlank(assembler.getModuleName())) {
             moduleNames.add(assembler.getModuleName());
         }
-        context.getLogger().debug("resolved moduleNames: {}", moduleNames);
+        context.getLogger().debug(RB.$("assembler.resolved.module.names"), moduleNames);
 
         // run jlink x jdk
         String imageName = assembler.getResolvedImageName(context);
@@ -112,7 +112,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         try {
             FileUtils.deleteFiles(imageDirectory);
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Could not delete previous image " + finalImageName, e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_delete_image", finalImageName), e);
         }
 
         // jlink it
@@ -143,8 +143,8 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
                     inputsDirectory.resolve("jars"),
                     jarsDirectory);
             } catch (IOException e) {
-                throw new AssemblerProcessingException("Could not copy JARs to " +
-                    context.relativizeToBasedir(jarsDirectory), e);
+                throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_jars",
+                    context.relativizeToBasedir(jarsDirectory)), e);
             }
             try {
                 if (PlatformUtils.isWindows(targetJdk.getPlatform())) {
@@ -156,8 +156,8 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
                     FileUtils.grantExecutableAccess(launcher);
                 }
             } catch (IOException e) {
-                throw new AssemblerProcessingException("Could not copy launcher to " +
-                    context.relativizeToBasedir(jarsDirectory), e);
+                throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_launcher",
+                    context.relativizeToBasedir(jarsDirectory)), e);
             }
         }
 
@@ -170,14 +170,14 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
 
             return Artifact.of(imageZip, targetJdk.getPlatform());
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Unexpected error", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
     private String readJavaVersion(Path path) throws AssemblerProcessingException {
         Path release = path.resolve("release");
         if (!Files.exists(release)) {
-            throw new AssemblerProcessingException("Invalid JDK [" + path.toAbsolutePath() + "] release file not found");
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_jdk_release", path.toAbsolutePath()));
         }
 
         try {
@@ -190,10 +190,10 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
                 }
                 return version;
             } else {
-                throw new AssemblerProcessingException("Invalid JDK release file [" + release.toAbsolutePath() + "]");
+                throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_jdk_release_file",release.toAbsolutePath()));
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Invalid JDK release file [" + release.toAbsolutePath() + "]", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_jdk_release_file",release.toAbsolutePath()), e);
         }
     }
 
@@ -212,11 +212,11 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         try {
             Files.createDirectories(jarsDirectory);
             for (Path path : paths) {
-                context.getLogger().debug("copying {}", path.getFileName());
+                context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
                 Files.copy(path, jarsDirectory.resolve(path.getFileName()), REPLACE_EXISTING);
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Unexpected error when copying JAR files", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_jars"), e);
         }
 
         return paths;
@@ -236,11 +236,11 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         try {
             Files.createDirectories(destination);
             for (Path path : paths) {
-                context.getLogger().debug("copying {}", path.getFileName());
+                context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
                 Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Unexpected error when copying files", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
         }
 
         return paths;
@@ -278,7 +278,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         try {
             Files.createDirectories(inputsDirectory);
         } catch (IOException e) {
-            throw new AssemblerProcessingException("Could not create directories", e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_create_directories"), e);
         }
 
         Path outputFile = "launcher.bat".equals(fileName) ?

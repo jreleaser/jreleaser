@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.artifactory;
 
 import feign.form.FormData;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.HttpUploader;
 import org.jreleaser.model.JReleaserContext;
@@ -66,7 +67,7 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<HttpUploader>
     public void upload(String name) throws UploadException {
         List<Artifact> artifacts = collectArtifacts();
         if (artifacts.isEmpty()) {
-            context.getLogger().info("No matching artifacts. Skipping");
+            context.getLogger().info(RB.$("artifacts.no.match"));
         }
 
         String username = uploader.getResolvedUsername();
@@ -114,8 +115,8 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<HttpUploader>
                     }
                 } catch (IOException e) {
                     context.getLogger().trace(e);
-                    throw new UploadException("Unexpected error when uploading " +
-                        context.getBasedir().relativize(path), e);
+                    throw new UploadException(RB.$("ERROR_unexpected_upload",
+                        context.getBasedir().relativize(path)), e);
                 }
             }
         }

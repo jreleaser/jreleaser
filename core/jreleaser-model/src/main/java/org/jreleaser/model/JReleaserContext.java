@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import org.bouncycastle.openpgp.PGPException;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Errors;
@@ -117,17 +118,17 @@ public class JReleaserContext {
         List<String> unmatchedPlatforms = new ArrayList<>(selectedPlatforms);
         unmatchedPlatforms.removeAll(this.selectedPlatforms);
         if (!unmatchedPlatforms.isEmpty()) {
-            logger.warn("Platform selection is in effect");
-            logger.error("The following platforms did not match: {}", unmatchedPlatforms);
-            logger.error("Please use `${name}` or `${name}-${arch}` from{}        name = {}{}        arch = {}",
+            logger.warn(RB.$("context.platform.selection.active"));
+            logger.error(RB.$("context.platform.selection.no.match"), unmatchedPlatforms);
+            logger.error(RB.$("context.platform.selection.valid"),
                 System.lineSeparator(), PlatformUtils.getSupportedOsNames(),
                 System.lineSeparator(), PlatformUtils.getSupportedOsArchs());
-            throw new JReleaserException("Unmatched platforms: " + unmatchedPlatforms);
+            throw new JReleaserException(RB.$("context.platform.selection.unmatched", unmatchedPlatforms));
         }
 
         if (!this.selectedPlatforms.isEmpty()) {
-            logger.warn("Platform selection is in effect");
-            logger.warn("Artifacts will be filtered by platform matching: {}", this.selectedPlatforms);
+            logger.warn(RB.$("context.platform.selection.active"));
+            logger.warn(RB.$("context.platform.selection.artifacts"), this.selectedPlatforms);
         }
     }
 
@@ -144,7 +145,7 @@ public class JReleaserContext {
 
         this.model.getEnvironment().initProps(this);
 
-        logger.info("Validating configuration");
+        logger.info(RB.$("context.configuration.validation"));
 
         if (mode == Mode.FULL) {
             adjustDistributions();
@@ -166,7 +167,7 @@ public class JReleaserContext {
     }
 
     private void adjustDistributions() {
-        logger.debug("adjusting distributions with assemblies");
+        logger.debug(RB.$("context.adjust.assemblies"));
 
         // resolve assemblers
         try {
@@ -434,11 +435,11 @@ public class JReleaserContext {
         Path output = getOutputDirectory().resolve("output.properties");
 
         try (FileOutputStream out = new FileOutputStream(output.toFile())) {
-            logger.info("Writing output properties to {}",
+            logger.info(RB.$("context.writing.properties"),
                 relativizeToBasedir(output));
             props.store(out, "JReleaser " + JReleaserVersion.getPlainVersion());
         } catch (IOException ignored) {
-            logger.warn("Could not write output properties to {}",
+            logger.warn(RB.$("context.writing.properties.error"),
                 relativizeToBasedir(output));
         }
     }
@@ -461,7 +462,7 @@ public class JReleaserContext {
                 model.getSigning().getResolvedSecretKey().getBytes()
             ).initialize(model.getSigning().isArmored());
         } catch (IOException | PGPException e) {
-            throw new SigningException("Could not initialize keyring", e);
+            throw new SigningException(RB.$("ERROR_signing_init_keyring"), e);
         }
     }
 

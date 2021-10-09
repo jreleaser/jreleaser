@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.teams;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Teams;
 import org.jreleaser.model.announcer.spi.AnnounceException;
@@ -59,7 +60,7 @@ public class TeamsAnnouncer implements Announcer {
         context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
         String message = teams.getResolvedMessageTemplate(context, props);
 
-        context.getLogger().info("sending message");
+        context.getLogger().info(RB.$("webhook.message.send"));
 
         if (!context.isDryrun()) {
             ClientUtils.webhook(context.getLogger(),

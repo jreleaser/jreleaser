@@ -17,6 +17,7 @@
  */
 package org.jreleaser.workflow;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.announce.Announcers;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
@@ -32,7 +33,7 @@ class AnnounceWorkflowItem implements WorkflowItem {
         try {
             Announcers.announce(context);
         } catch (AnnounceException e) {
-            throw new JReleaserException("Unexpected error when announcing release.", e);
+            throw new JReleaserException(RB.$("ERROR_unexpected_release_announce"), e);
         }
     }
 }

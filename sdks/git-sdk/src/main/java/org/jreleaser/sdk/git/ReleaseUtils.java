@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.git;
 
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
@@ -40,24 +41,23 @@ public final class ReleaseUtils {
             GitSdk git = GitSdk.of(context);
             Repository repository = git.getRemote();
 
-            context.getLogger().info("Tagging {}", repository.getHttpUrl());
+            context.getLogger().info(RB.$("git.tag"), repository.getHttpUrl());
             String tagName = service.getEffectiveTagName(context.getModel());
 
-            context.getLogger().debug("looking up tag {}", tagName);
+            context.getLogger().debug(RB.$("git.tag.lookup"), tagName);
             boolean tagged = git.findTag(tagName);
             boolean snapshot = context.getModel().getProject().isSnapshot();
             if (tagged) {
-                context.getLogger().debug("tag {} exists", tagName);
+                context.getLogger().debug(RB.$("git.tag.exists"), tagName);
                 if (service.isOverwrite() || snapshot) {
-                    context.getLogger().debug("tagging release {}", tagName);
+                    context.getLogger().debug(RB.$("git.tag.release"), tagName);
                     tagRelease(context, repository, tagName);
                 } else if (!context.isDryrun()) {
-                    throw new IllegalStateException("Generic release failed because tag " +
-                        tagName + " already exists. overwrite = false");
+                    throw new IllegalStateException(RB.$("ERROR_git_release_existing_tag", tagName));
                 }
             } else {
-                context.getLogger().debug("tag {} does not exist", tagName);
-                context.getLogger().debug("tagging release {}", tagName);
+                context.getLogger().debug(RB.$("git.tag.not.exist"), tagName);
+                context.getLogger().debug(RB.$("git.tag.release"), tagName);
                 tagRelease(context, repository, tagName);
             }
         } catch (IOException | IllegalStateException e) {
@@ -71,8 +71,8 @@ public final class ReleaseUtils {
             GitSdk gitSdk = GitSdk.of(context);
             gitSdk.tag(tagName, true, context);
 
-            context.getLogger().info("pushing to {}", repository.getHttpUrl());
-            context.getLogger().debug("pushing tag to remote, dryrun = {}", context.isDryrun());
+            context.getLogger().info(RB.$("git.push.release"), repository.getHttpUrl());
+            context.getLogger().debug(RB.$("git.push.tag"), context.isDryrun());
 
             UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
                 context.getModel().getRelease().getGitService().getResolvedUsername(),

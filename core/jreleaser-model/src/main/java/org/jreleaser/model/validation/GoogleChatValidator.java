@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.GoogleChat;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
@@ -50,13 +51,13 @@ public abstract class GoogleChatValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_GOOGLE_CHAT_TPL))) {
                 googleChat.setMessageTemplate(DEFAULT_GOOGLE_CHAT_TPL);
             } else {
-                googleChat.setMessage("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
+                googleChat.setMessage(RB.$("default_release_message"));
             }
         }
 
         if (isNotBlank(googleChat.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(googleChat.getMessageTemplate().trim()))) {
-            errors.configuration("googleChat.messageTemplate does not exist. " + googleChat.getMessageTemplate());
+            errors.configuration(RB.$("validation_directory_not_exist", "googleChat.messageTemplate", googleChat.getMessageTemplate()));
         }
 
         validateTimeout(googleChat);

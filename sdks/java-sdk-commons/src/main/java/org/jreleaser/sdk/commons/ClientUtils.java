@@ -28,6 +28,7 @@ import feign.jackson.JacksonEncoder;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserModelPrinter;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.announcer.spi.AnnounceException;
@@ -108,10 +109,10 @@ public final class ClientUtils {
             // create URL
             URL url = new URL(webhookUrl);
             // open connection
-            logger.debug("opening connection");
+            logger.debug(RB.$("webhook.connection.open"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             // set options
-            logger.debug("configuring connection");
+            logger.debug(RB.$("webhook.connection.configure"));
             connection.setConnectTimeout(connectTimeout * 1000);
             connection.setReadTimeout(readTimeout * 1000);
             connection.setAllowUserInteraction(false);
@@ -124,14 +125,14 @@ public final class ClientUtils {
             connection.setDoOutput(true);
 
             // write message
-            logger.debug("sending message");
+            logger.debug(RB.$("webhook.message.send"));
             try (OutputStream os = connection.getOutputStream()) {
                 byte[] input = message.getBytes(UTF_8);
                 os.write(input, 0, input.length);
             }
 
             // handle response
-            logger.debug("handling response");
+            logger.debug(RB.$("webhook.response.handle"));
             int status = connection.getResponseCode();
             if (status >= 400) {
                 String reason = connection.getResponseMessage();
@@ -188,10 +189,10 @@ public final class ClientUtils {
             logger.debug("url: {}", theUrl);
 
             // open connection
-            logger.debug("opening connection");
+            logger.debug(RB.$("webhook.connection.open"));
             HttpURLConnection connection = (HttpURLConnection) theUrl.openConnection();
             // set options
-            logger.debug("configuring connection");
+            logger.debug(RB.$("webhook.connection.configure"));
             connection.setConnectTimeout(connectTimeout * 1000);
             connection.setReadTimeout(readTimeout * 1000);
             connection.setAllowUserInteraction(false);
@@ -215,14 +216,14 @@ public final class ClientUtils {
             connection.setDoOutput(true);
 
             // write message
-            logger.debug("sending data");
+            logger.debug(RB.$("webhook.data.send"));
             try (OutputStream os = connection.getOutputStream()) {
                 os.write(data.getData(), 0, data.getData().length);
                 os.flush();
             }
 
             // handle response
-            logger.debug("handling response");
+            logger.debug(RB.$("webhook.response.handle"));
             int status = connection.getResponseCode();
             if (status >= 400) {
                 String reason = connection.getResponseMessage();

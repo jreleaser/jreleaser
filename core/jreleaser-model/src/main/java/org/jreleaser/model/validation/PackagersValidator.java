@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
@@ -65,7 +66,7 @@ public abstract class PackagersValidator extends Validator {
             errors);
 
         if (!packagers.getDocker().getSpecs().isEmpty()) {
-            errors.configuration("docker.specs can only be defined inside distributions.");
+            errors.configuration(RB.$("validation_packagers_docker_specs"));
         }
 
         packagers.getDocker().resolveEnabled(project);

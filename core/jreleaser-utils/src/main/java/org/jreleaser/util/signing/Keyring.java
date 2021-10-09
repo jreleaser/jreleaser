@@ -27,6 +27,7 @@ import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.operator.KeyFingerPrintCalculator;
 import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
+import org.jreleaser.bundle.RB;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -116,7 +117,7 @@ public abstract class Keyring {
             }
         }
 
-        throw new SigningException("Did not find public key for signing.");
+        throw new SigningException(RB.$("ERROR_public_key_not_found"));
     }
 
     /**

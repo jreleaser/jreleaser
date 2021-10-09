@@ -19,6 +19,7 @@ package org.jreleaser.sdk.webhooks;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Webhook;
 import org.jreleaser.model.announcer.spi.AnnounceException;
@@ -81,7 +82,7 @@ public class WebhooksAnnouncer implements Announcer {
             try {
                 message = objectMapper.writeValueAsString(CollectionUtils.newMap(webhook.getMessageProperty(), message));
             } catch (JsonProcessingException e) {
-                throw new AnnounceException("Unexpected error formatting message as JSON", e);
+                throw new AnnounceException(RB.$("ERROR_unexpected_json_format"), e);
             }
         } else {
             Map<String, Object> props = new LinkedHashMap<>();

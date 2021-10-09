@@ -21,6 +21,7 @@ import feign.Feign;
 import feign.Request;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.sdk.sdkman.api.Announce;
 import org.jreleaser.sdk.sdkman.api.Candidate;
@@ -72,7 +73,7 @@ public class Sdkman {
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(SdkmanAPI.class, apiHost);
 
-        this.logger.debug("Sdkman dryrun set to {}", dryrun);
+        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void announce(String candidate,
@@ -195,7 +196,7 @@ public class Sdkman {
             if (!dryrun) runnable.run();
         } catch (RuntimeException e) {
             logger.trace(e);
-            throw new SdkmanException("Sdkman vendor operation failed", e);
+            throw new SdkmanException(RB.$("sdk.operation.failed", "Sdkman"), e);
         }
     }
 }

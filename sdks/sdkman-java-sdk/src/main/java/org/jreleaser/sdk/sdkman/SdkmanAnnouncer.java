@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserCommand;
@@ -71,7 +72,7 @@ public class SdkmanAnnouncer implements Announcer {
             if (set == null || !set) {
                 announceProject();
             } else {
-                context.getLogger().debug("disabled. Skipping");
+                context.getLogger().debug(RB.$("announcers.announcer.disabled"));
             }
             return;
         }
@@ -87,7 +88,7 @@ public class SdkmanAnnouncer implements Announcer {
             String releaseNotesUrl = applyTemplate(sdkman.getReleaseNotesUrl(), props);
             String command = sdkman.getCommand().name().toLowerCase();
 
-            context.getLogger().info("announcing {} release of '{}' candidate", command, candidate);
+            context.getLogger().info(RB.$("sdkman.release.announce"), command, candidate);
             try {
                 AnnounceSdkmanCommand.builder(context.getLogger())
                     .connectTimeout(sdkman.getConnectTimeout())
@@ -107,7 +108,7 @@ public class SdkmanAnnouncer implements Announcer {
         }
 
         if (failures) {
-            throw new AnnounceException("Failed to announce some candidates.");
+            throw new AnnounceException(RB.$("ERROR_sdkman_announce"));
         }
     }
 
@@ -122,13 +123,13 @@ public class SdkmanAnnouncer implements Announcer {
                 if (!artifact.isActive()) continue;
                 // only zips are supported
                 if (!artifact.getPath().endsWith(".zip")) {
-                    context.getLogger().debug("Artifact {} is not suitable for Sdkman publication. Skipping.",
+                    context.getLogger().debug(RB.$("sdkman.no.artifacts.match"),
                         artifact.getEffectivePath(context, distribution).getFileName());
                     continue;
                 }
 
                 if (isTrue(artifact.getExtraProperties().get("skipSdkman"))) {
-                    context.getLogger().debug("Artifact {} is explicitly skipped.",
+                    context.getLogger().debug(RB.$("sdkman.artifact.explicit.skip"),
                         artifact.getEffectivePath(context, distribution).getFileName());
                     continue;
                 }
@@ -136,14 +137,14 @@ public class SdkmanAnnouncer implements Announcer {
                 String platform = mapPlatform(artifact.getPlatform());
                 String url = artifactUrl(distribution, artifact);
                 if (platforms.containsKey(platform)) {
-                    context.getLogger().warn("Platform {}: {} will replace {}", platform, url, platforms.get(platform));
+                    context.getLogger().warn(RB.$("sdkman.platform.replacement"), platform, url, platforms.get(platform));
                 }
                 platforms.put(platform, url);
             }
         }
 
         if (platforms.isEmpty()) {
-            context.getLogger().warn("No suitable artifacts were found. Skipping");
+            context.getLogger().warn(RB.$("sdkman.no.suitable.artifacts"));
             return;
         }
 
@@ -152,7 +153,7 @@ public class SdkmanAnnouncer implements Announcer {
             String releaseNotesUrl = applyTemplate(sdkman.getReleaseNotesUrl(), context.props());
 
             if (sdkman.isMajor()) {
-                context.getLogger().info("Announcing major release of '{}' candidate", candidate);
+                context.getLogger().info(RB.$("sdkman.release.announce.major"), candidate);
                 MajorReleaseSdkmanCommand.builder(context.getLogger())
                     .connectTimeout(sdkman.getConnectTimeout())
                     .readTimeout(sdkman.getReadTimeout())
@@ -166,7 +167,7 @@ public class SdkmanAnnouncer implements Announcer {
                     .build()
                     .execute();
             } else {
-                context.getLogger().info("Announcing minor release of '{}' candidate", candidate);
+                context.getLogger().info(RB.$("sdkman.release.announce.minor"), candidate);
                 MinorReleaseSdkmanCommand.builder(context.getLogger())
                     .connectTimeout(sdkman.getConnectTimeout())
                     .readTimeout(sdkman.getReadTimeout())

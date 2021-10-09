@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.twitter;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.util.JReleaserLogger;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
@@ -63,7 +64,7 @@ public class Twitter {
                 .build())
             .getInstance();
 
-        this.logger.debug("Twitter dryrun set to {}", dryrun);
+        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void updateStatus(String status) throws TwitterException {
@@ -75,7 +76,7 @@ public class Twitter {
             if (!dryrun) op.execute();
         } catch (twitter4j.TwitterException e) {
             logger.trace(e);
-            throw new TwitterException("Twitter operation failed", e);
+            throw new TwitterException(RB.$("sdk.operation.failed", "Twitter"), e);
         }
     }
 

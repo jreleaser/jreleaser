@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.jreleaser.util.StringUtils.isBlank;
-
 /**
  * @author Andres Almiray
  * @since 0.5.0
@@ -59,18 +57,6 @@ public class Webhooks extends AbstractAnnouncer {
 
     public void addWebhook(Webhook webhook) {
         this.webhooks.put(webhook.getName(), webhook);
-    }
-
-    public Webhook findWebhook(String name) {
-        if (isBlank(name)) {
-            throw new JReleaserException("Webhook name must not be blank");
-        }
-
-        if (webhooks.containsKey(name)) {
-            return webhooks.get(name);
-        }
-
-        throw new JReleaserException("Webhook '" + name + "' not found");
     }
 
     @Override

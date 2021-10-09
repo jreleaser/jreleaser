@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Changelog;
 import org.jreleaser.model.GenericGit;
@@ -59,7 +60,7 @@ public abstract class GitServiceValidator extends Validator {
             service.setEnabled(true);
         }
         if (isBlank(service.getOwner()) && !(service instanceof GenericGit)) {
-            errors.configuration(service.getServiceName() + ".owner must not be blank");
+            errors.configuration(RB.$("validation_must_not_be_blank", service.getServiceName() + ".owner"));
         }
         if (isBlank(service.getName())) {
             service.setName(project.getName());
@@ -195,7 +196,7 @@ public abstract class GitServiceValidator extends Validator {
                 if (context.isDryrun()) {
                     service.setSign(false);
                 } else {
-                    errors.configuration(service.getServiceName() + ".sign is set to `true` but signing is not enabled");
+                    errors.configuration(RB.$("validation_git_signing", service.getServiceName()));
                 }
             }
 
@@ -228,20 +229,20 @@ public abstract class GitServiceValidator extends Validator {
 
         if (isNotBlank(changelog.getContentTemplate()) &&
             !Files.exists(context.getBasedir().resolve(changelog.getContentTemplate().trim()))) {
-            errors.configuration("changelog.contentTemplate does not exist. " + changelog.getContentTemplate());
+            errors.configuration(RB.$("validation_directory_not_exist", "changelog.contentTemplate", changelog.getContentTemplate()));
         }
 
         if (changelog.getCategories().isEmpty()) {
-            changelog.getCategories().add(Changelog.Category.of("\uD83D\uDE80 Features", "feature", "enhancement"));
-            changelog.getCategories().add(Changelog.Category.of("\uD83D\uDC1B Bug Fixes", "bug", "fix"));
+            changelog.getCategories().add(Changelog.Category.of(RB.$("default_category_feature"), "feature", "enhancement"));
+            changelog.getCategories().add(Changelog.Category.of(RB.$("default_category_bug_fix"), "bug", "fix"));
         } else {
             int i = 0;
             for (Changelog.Category category : changelog.getCategories()) {
                 if (isBlank(category.getTitle())) {
-                    errors.configuration(service.getServiceName() + ".changelog.categories[" + i + "].title is missing");
+                    errors.configuration(RB.$("validation_is_missing", service.getServiceName() + ".changelog.categories[" + i + "].title"));
                 }
                 if (category.getLabels().isEmpty()) {
-                    errors.configuration(service.getServiceName() + ".changelog.categories[" + i + "].labels are missing");
+                    errors.configuration(RB.$("validation_ares_missing", service.getServiceName() + ".changelog.categories[" + i + "].labels"));
                 }
 
                 i++;
@@ -252,7 +253,7 @@ public abstract class GitServiceValidator extends Validator {
                 .collect(groupingBy(Changelog.Category::getTitle));
             byTitle.forEach((title, categories) -> {
                 if (categories.size() > 1) {
-                    errors.configuration(service.getServiceName() + ".changelog has more than one category with title: " + title);
+                    errors.configuration(RB.$("validation_changelog_multiple_categories", service.getServiceName(), title));
                 }
             });
         }
@@ -261,10 +262,10 @@ public abstract class GitServiceValidator extends Validator {
             int i = 0;
             for (Changelog.Labeler labeler : changelog.getLabelers()) {
                 if (isBlank(labeler.getLabel())) {
-                    errors.configuration(service.getServiceName() + ".changelog.labelers[" + i + "].label is missing");
+                    errors.configuration(RB.$("validation_is_missing", service.getServiceName() + ".changelog.labelers[" + i + "].label"));
                 }
                 if (isBlank(labeler.getTitle()) && isBlank(labeler.getBody())) {
-                    errors.configuration(service.getServiceName() + ".changelog.labelers[" + i + "] title or body is required");
+                    errors.configuration(RB.$("validation_git_required", service.getServiceName() + ".changelog.labelers[" + i + "] title", "body"));
                 }
 
                 i++;
@@ -275,10 +276,10 @@ public abstract class GitServiceValidator extends Validator {
             int i = 0;
             for (Changelog.Replacer replacer : changelog.getReplacers()) {
                 if (isBlank(replacer.getSearch())) {
-                    errors.configuration(service.getServiceName() + ".changelog.replacers[" + i + "].search is missing");
+                    errors.configuration(RB.$("validation_is_missing", service.getServiceName() + ".changelog.replacers[" + i + "].search"));
                 }
                 if (null == replacer.getReplace()) {
-                    errors.configuration(service.getServiceName() + ".changelog.replacers[" + i + "].replace is missing");
+                    errors.configuration(RB.$("validation_is_missing", service.getServiceName() + ".changelog.replacers[" + i + "].replace"));
                 }
 
                 i++;

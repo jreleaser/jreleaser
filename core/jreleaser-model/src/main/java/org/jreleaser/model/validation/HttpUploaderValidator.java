@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.HttpUploader;
 import org.jreleaser.model.JReleaserContext;
@@ -60,7 +61,7 @@ public abstract class HttpUploaderValidator extends Validator {
         }
 
         if (isBlank(http.getUploadUrl())) {
-            errors.configuration("http." + http.getName() + ".uploadUrl must not be blank.");
+            errors.configuration(RB.$("validation_must_not_be_blank", "http." + http.getName() + ".uploadUrl"));
         }
         if (isBlank(http.getDownloadUrl())) {
             http.setDownloadUrl(http.getUploadUrl());

@@ -26,6 +26,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.jreleaser.bundle.RB;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -149,17 +150,17 @@ public final class FileUtils {
             String destDirPath = destinationDir.getCanonicalPath();
             String destFilePath = file.getCanonicalPath();
             if (!destFilePath.startsWith(destDirPath + File.separator)) {
-                throw new IOException("Entry is outside of the target dir: " + entry.getName());
+                throw new IOException(RB.$("ERROR_files_unpack_outside_target", entry.getName()));
             }
 
             if (entry.isDirectory()) {
                 if (!file.isDirectory() && !file.mkdirs()) {
-                    throw new IOException("failed to create directory " + file);
+                    throw new IOException(RB.$("ERROR_files_unpack_fail_dir", file));
                 }
             } else {
                 File parent = file.getParentFile();
                 if (!parent.isDirectory() && !parent.mkdirs()) {
-                    throw new IOException("failed to create directory " + parent);
+                    throw new IOException(RB.$("ERROR_files_unpack_fail_dir", parent));
                 }
                 try (OutputStream o = Files.newOutputStream(file.toPath())) {
                     IOUtils.copy(in, o);
@@ -223,7 +224,7 @@ public final class FileUtils {
                 try {
                     Files.copy(child, target.resolve(child.getFileName()), REPLACE_EXISTING);
                 } catch (IOException e) {
-                    logger.error("Unable to copy: {}", child, e);
+                    logger.error(RB.$("ERROR_files_copy"), child, e);
                     if (null == thrown[0]) thrown[0] = e;
                 }
             });
@@ -279,7 +280,7 @@ public final class FileUtils {
             } catch (FileAlreadyExistsException ignored) {
                 // noop
             } catch (IOException e) {
-                logger.error("Unable to create: {}", newdir, e);
+                logger.error(RB.$("ERROR_files_create"), newdir, e);
                 success = false;
                 return SKIP_SUBTREE;
             }
@@ -295,7 +296,7 @@ public final class FileUtils {
                 Files.copy(file, newfile, REPLACE_EXISTING);
                 FileUtils.grantFullAccess(newfile);
             } catch (IOException e) {
-                logger.error("Unable to copy: {}", source, e);
+                logger.error(RB.$("ERROR_files_copy"), source, e);
                 success = false;
             }
             return CONTINUE;
@@ -311,7 +312,7 @@ public final class FileUtils {
                     FileTime time = Files.getLastModifiedTime(dir);
                     Files.setLastModifiedTime(newdir, time);
                 } catch (IOException e) {
-                    logger.warn("Unable to copy all attributes to: {}", newdir, e);
+                    logger.warn(RB.$("ERROR_files_copy_attributes"), newdir, e);
                 }
             }
             return CONTINUE;
@@ -320,9 +321,9 @@ public final class FileUtils {
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException e) {
             if (e instanceof FileSystemLoopException) {
-                logger.error("cycle detected: {}", file);
+                logger.error(RB.$("ERROR_files_cycle"), file);
             } else {
-                logger.error("Unable to copy: {}", file, e);
+                logger.error(RB.$("ERROR_files_copy"), file, e);
             }
             success = false;
             return CONTINUE;

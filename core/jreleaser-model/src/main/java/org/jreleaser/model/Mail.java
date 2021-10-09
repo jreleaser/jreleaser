@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Env;
 
 import java.io.IOException;
@@ -106,8 +107,8 @@ public class Mail extends AbstractAnnouncer {
             Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
             return applyTemplate(reader, props);
         } catch (IOException e) {
-            throw new JReleaserException("Unexpected error reading template " +
-                context.relativizeToBasedir(templatePath));
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
+                context.relativizeToBasedir(templatePath)));
         }
     }
 

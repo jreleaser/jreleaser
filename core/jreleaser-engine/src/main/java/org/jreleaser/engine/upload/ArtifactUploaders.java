@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.upload;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Uploader;
@@ -44,6 +45,6 @@ public class ArtifactUploaders {
             return artifactUploader;
         }
 
-        throw new JReleaserException("Unsupported uploader " + uploader.getType());
+        throw new JReleaserException(RB.$("ERROR_unsupported_uploader", uploader.getType()));
     }
 }

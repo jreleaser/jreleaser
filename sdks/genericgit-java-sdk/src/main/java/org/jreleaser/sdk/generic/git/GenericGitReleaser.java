@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.generic.git;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.AbstractReleaser;
 import org.jreleaser.model.releaser.spi.ReleaseException;
@@ -45,7 +46,7 @@ public class GenericGitReleaser extends AbstractReleaser {
 
     @Override
     protected void createRelease() throws ReleaseException {
-        context.getLogger().info("Releasing to a generic Git repository is not supported");
+        context.getLogger().info(RB.$("generic.git.warning"));
         ReleaseUtils.createTag(context);
     }
 

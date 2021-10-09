@@ -18,6 +18,7 @@
 package org.jreleaser.util;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.jreleaser.bundle.RB;
 
 import java.io.IOException;
 
@@ -53,7 +54,7 @@ public class ChecksumUtils {
             case SHA3_512:
                 return DigestUtils.sha3_512Hex(data);
             default:
-                throw new IOException("Unsupported algorithm " + algorithm.name());
+                throw new IOException(RB.$("ERROR_unsupported_algorithm", algorithm.name()));
         }
     }
 }

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Gitter;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
@@ -50,13 +51,13 @@ public abstract class GitterValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_GITTER_TPL))) {
                 gitter.setMessageTemplate(DEFAULT_GITTER_TPL);
             } else {
-                gitter.setMessage("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
+                gitter.setMessage(RB.$("default_release_message"));
             }
         }
 
         if (isNotBlank(gitter.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(gitter.getMessageTemplate().trim()))) {
-            errors.configuration("gitter.messageTemplate does not exist. " + gitter.getMessageTemplate());
+            errors.configuration(RB.$("validation_directory_not_exist", "gitter.messageTemplate", gitter.getMessageTemplate()));
         }
 
         validateTimeout(gitter);

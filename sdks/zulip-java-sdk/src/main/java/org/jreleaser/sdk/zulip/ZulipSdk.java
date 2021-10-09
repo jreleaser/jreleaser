@@ -20,6 +20,7 @@ package org.jreleaser.sdk.zulip;
 import feign.auth.BasicAuthRequestInterceptor;
 import feign.form.FormEncoder;
 import feign.jackson.JacksonEncoder;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.zulip.api.Message;
@@ -57,7 +58,7 @@ public class ZulipSdk {
             .requestInterceptor(new BasicAuthRequestInterceptor(account, apiKey))
             .target(ZulipAPI.class, apiHost);
 
-        this.logger.debug("Zulip dryrun set to {}", dryrun);
+        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void message(String channel,
@@ -73,7 +74,7 @@ public class ZulipSdk {
             if (!dryrun) runnable.run();
         } catch (RestAPIException e) {
             logger.trace(e);
-            throw new ZulipException("Zulip operation failed", e);
+            throw new ZulipException(RB.$("sdk.operation.failed", "Zulip"), e);
         }
     }
 

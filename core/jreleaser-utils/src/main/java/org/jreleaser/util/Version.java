@@ -17,6 +17,8 @@
  */
 package org.jreleaser.util;
 
+import org.jreleaser.bundle.RB;
+
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -175,7 +177,7 @@ public class Version implements Comparable<Version> {
                 isNotBlank(build) ? build : null);
         }
 
-        throw new IllegalArgumentException("Cannot parse version '" + version + "'");
+        throw new IllegalArgumentException(RB.$("ERROR_version_parse", version));
     }
 
     public static Version of(int major, int minor, int patch, String tag, String build) {

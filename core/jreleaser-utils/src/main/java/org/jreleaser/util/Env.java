@@ -17,6 +17,8 @@
  */
 package org.jreleaser.util;
 
+import org.jreleaser.bundle.RB;
+
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -52,9 +54,8 @@ public class Env {
             String prefixedKey = prefix(key);
             value = System.getenv(prefixedKey);
             if (isBlank(value)) {
-                errors.configuration(property + " must not be blank. Configure a value using the " +
-                    dsl + ", or define a " + prefixedKey +
-                    " environment variable, or define a key/value pair in " + configFilePath);
+                errors.configuration(RB.$("ERROR_environment_property_check",
+                    property, dsl, prefixedKey, configFilePath));
             }
         }
 

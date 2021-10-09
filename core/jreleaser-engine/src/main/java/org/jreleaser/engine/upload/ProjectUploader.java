@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.upload;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Uploader;
 import org.jreleaser.model.uploader.spi.ArtifactUploader;
@@ -44,13 +45,13 @@ public class ProjectUploader {
 
     public void upload() throws UploadException {
         if (!uploader.isEnabled()) {
-            context.getLogger().debug("skipping upload for {}", uploader.getName());
+            context.getLogger().debug(RB.$("uploaders.skip.upload"), uploader.getName());
             return;
         }
 
         ArtifactUploader artifactUploader = ArtifactUploaders.findUploader(context, uploader);
 
-        context.getLogger().info("uploading to {}", uploader.getName());
+        context.getLogger().info(RB.$("uploaders.upload.to"), uploader.getName());
 
         artifactUploader.upload(uploader.getName());
     }

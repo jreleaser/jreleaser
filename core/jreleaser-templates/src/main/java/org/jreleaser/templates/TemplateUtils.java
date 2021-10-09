@@ -17,6 +17,7 @@
  */
 package org.jreleaser.templates;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
 
@@ -83,8 +84,8 @@ public final class TemplateUtils {
             });
         } catch (IOException e) {
             String distributionTypeName = distributionType.toLowerCase().replace('_', '-');
-            throw new JReleaserException("Unexpected error reading templates for distribution " +
-                distributionTypeName + "/" + toolName + " from " + actualTemplateDirectory.toAbsolutePath());
+            throw new JReleaserException(RB.$("ERROR_unexpected_reading_templates_distribution",
+                distributionTypeName, toolName, actualTemplateDirectory.toAbsolutePath()));
         }
 
         return templates;
@@ -103,7 +104,7 @@ public final class TemplateUtils {
                 }
             });
         } catch (IOException e) {
-            throw new JReleaserException("Unexpected error reading templates from " + templateDirectory.toAbsolutePath());
+            throw new JReleaserException(RB.$("ERROR_unexpected_reading_templates_from", templateDirectory.toAbsolutePath()));
         }
 
         return templates;
@@ -114,10 +115,10 @@ public final class TemplateUtils {
 
         Map<String, Reader> templates = new LinkedHashMap<>();
 
-        logger.debug("resolving templates from classpath");
+        logger.debug(RB.$("templates.templates.resolve.classpath"));
         URL location = resolveLocation(TemplateUtils.class);
         if (null == location) {
-            throw new JReleaserException("could not find location of classpath templates");
+            throw new JReleaserException(RB.$("ERROR_classpath_template_resolve"));
         }
 
         try {
@@ -144,21 +145,21 @@ public final class TemplateUtils {
                 //     logger.error("templates for {}/{} were not found", distributionTypeName, toolName);
                 // }
             } else {
-                throw new JReleaserException("Could not find location of classpath templates");
+                throw new JReleaserException(RB.$("ERROR_classpath_template_resolve"));
             }
         } catch (URISyntaxException | IOException e) {
-            throw new JReleaserException("Unexpected error reading templates for distribution " +
-                distributionTypeName + "/" + toolName + " from classpath.");
+            throw new JReleaserException(RB.$("ERROR_unexpected_reading_templates_distribution",
+                distributionTypeName, toolName, "classpath"));
         }
 
         return templates;
     }
 
     public static Reader resolveTemplate(JReleaserLogger logger, String announcerName) {
-        logger.debug("resolving templates from classpath");
+        logger.debug(RB.$("templates.templates.resolve.classpath"));
         URL location = resolveLocation(TemplateUtils.class);
         if (null == location) {
-            throw new JReleaserException("could not find location of classpath templates");
+            throw new JReleaserException(RB.$("ERROR_classpath_template_resolve"));
         }
 
         try {
@@ -168,27 +169,27 @@ public final class TemplateUtils {
                 String templateEntryName = "META-INF/jreleaser/templates/announcers/" + announcerName + ".tpl";
                 JarFile jarFile = new JarFile(new File(location.toURI()));
 
-                logger.debug("searching for template matching {}*", templateEntryName);
+                logger.debug(RB.$("templates.search_matching_multiple"), templateEntryName);
                 for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
                     JarEntry entry = e.nextElement();
                     if (entry.isDirectory() || !entry.getName().equals(templateEntryName)) {
                         continue;
                     }
 
-                    logger.debug("found template {}", templateEntryName);
+                    logger.debug(RB.$("templates.found"), templateEntryName);
                     return new InputStreamReader(jarFile.getInputStream(entry));
                 }
             }
-            throw new JReleaserException("Could not find location of classpath templates");
+            throw new JReleaserException(RB.$("ERROR_classpath_template_resolve"));
         } catch (URISyntaxException | IOException e) {
-            throw new JReleaserException("Unexpected error reading templates for announcer " + announcerName + " from classpath.");
+            throw new JReleaserException(RB.$("ERROR_unexpected_reading_templates_announcer", announcerName));
         }
     }
 
     private static boolean findTemplate(JReleaserLogger logger, JarFile jarFile, String templatePrefix, Map<String, Reader> templates) throws IOException {
         boolean templatesFound = false;
 
-        logger.debug("searching for templates matching {}*", templatePrefix);
+        logger.debug(RB.$("templates.search_matching_multiple"), templatePrefix);
         for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
             JarEntry entry = e.nextElement();
             if (entry.isDirectory() || !entry.getName().startsWith(templatePrefix)) {
@@ -197,7 +198,7 @@ public final class TemplateUtils {
 
             String templateName = entry.getName().substring(templatePrefix.length());
             templates.put(templateName, new InputStreamReader(jarFile.getInputStream(entry)));
-            logger.debug("found template {}", templateName);
+            logger.debug(RB.$("templates.found"), templateName);
             templatesFound = true;
         }
 
@@ -205,33 +206,32 @@ public final class TemplateUtils {
     }
 
     public static Reader resolveTemplate(JReleaserLogger logger, Class<?> anchor, String templateKey) {
-        logger.debug("resolving template from classpath for {}@{}", anchor.getName(), templateKey);
+        logger.debug(RB.$("templates.template.resolve.classpath"), anchor.getName(), templateKey);
         URL location = resolveLocation(anchor);
         if (null == location) {
-            throw new JReleaserException("Could not find location of classpath templates");
+            throw new JReleaserException(RB.$("ERROR_classpath_template_resolve"));
         }
 
         try {
             if ("file".equals(location.getProtocol())) {
                 JarFile jarFile = new JarFile(new File(location.toURI()));
-                logger.debug("searching for template matching {}", templateKey);
+                logger.debug(RB.$("templates.search_matching"), templateKey);
                 for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
                     JarEntry entry = e.nextElement();
                     if (entry.isDirectory() || !entry.getName().equals(templateKey)) {
                         continue;
                     }
 
-                    logger.debug("found template {}", templateKey);
+                    logger.debug(RB.$("templates.found"), templateKey);
                     return new InputStreamReader(jarFile.getInputStream(entry));
                 }
-                throw new JReleaserException("Template for " +
-                    anchor.getName() + "@" + templateKey + " was not found");
+                throw new JReleaserException(RB.$("ERROR_template_not_found", anchor.getName(), templateKey));
             } else {
-                throw new JReleaserException("Could not find location of classpath templates");
+                throw new JReleaserException(RB.$("ERROR_classpath_template_resolve"));
             }
         } catch (URISyntaxException | IOException e) {
-            throw new JReleaserException("Unexpected error reading template for " +
-                anchor.getName() + "@" + templateKey + " from classpath.");
+            throw new JReleaserException(RB.$("ERROR_unexpected_reading_template_for",
+                anchor.getName() + "@" + templateKey, "classpath"));
         }
     }
 

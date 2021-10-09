@@ -17,6 +17,7 @@
  */
 package org.jreleaser.workflow;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.distribution.DistributionProcessor;
 import org.jreleaser.engine.distribution.Distributions;
 import org.jreleaser.model.JReleaserContext;
@@ -28,6 +29,6 @@ import org.jreleaser.model.JReleaserContext;
 class PackageWorkflowItem implements WorkflowItem {
     @Override
     public void invoke(JReleaserContext context) {
-        Distributions.process(context, "Packaging", DistributionProcessor::packageDistribution);
+        Distributions.process(context, RB.$("distributions.action.packaging.capitalize"), DistributionProcessor::packageDistribution);
     }
 }

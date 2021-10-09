@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Zulip;
 import org.jreleaser.util.Errors;
@@ -39,7 +40,7 @@ public abstract class ZulipValidator extends Validator {
         context.getLogger().debug("announce.zulip");
 
         if (isBlank(zulip.getAccount())) {
-            errors.configuration("zulip.account must not be blank.");
+            errors.configuration(RB.$("validation_must_not_be_blank", "zulip.account"));
         }
 
         zulip.setApiKey(
@@ -51,10 +52,10 @@ public abstract class ZulipValidator extends Validator {
                 context.isDryrun()));
 
         if (isBlank(zulip.getApiHost())) {
-            errors.configuration("zulip.apiHost must not be blank.");
+            errors.configuration(RB.$("validation_must_not_be_blank", "zulip.apiHost"));
         }
         if (isBlank(zulip.getSubject())) {
-            zulip.setSubject("{{projectNameCapitalized}} {{projectVersion}} released!");
+            zulip.setSubject(RB.$("default_discussion_title"));
         }
         if (isBlank(zulip.getChannel())) {
             zulip.setChannel("announce");
@@ -64,13 +65,13 @@ public abstract class ZulipValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_ZULIP_TPL))) {
                 zulip.setMessageTemplate(DEFAULT_ZULIP_TPL);
             } else {
-                zulip.setMessage("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
+                zulip.setMessage(RB.$("default_release_message"));
             }
         }
 
         if (isNotBlank(zulip.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(zulip.getMessageTemplate().trim()))) {
-            errors.configuration("zulip.messageTemplate does not exist. " + zulip.getMessageTemplate());
+            errors.configuration(RB.$("validation_directory_not_exist", "zulip.messageTemplate", zulip.getMessageTemplate()));
         }
 
         validateTimeout(zulip);

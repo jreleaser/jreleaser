@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.releaser.spi;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 
@@ -43,7 +44,7 @@ public abstract class AbstractReleaser implements Releaser {
 
         if (service.isSkipRelease()) {
             if (service.isSkipTag()) {
-                context.getLogger().info("Release and tag are skipped");
+                context.getLogger().info(RB.$("releaser.tag.and.release.skipped"));
             } else {
                 createTag();
             }

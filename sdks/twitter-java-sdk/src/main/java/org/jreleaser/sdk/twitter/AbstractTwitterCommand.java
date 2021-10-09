@@ -39,7 +39,7 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
                                      String accessToken,
                                      String accessTokenSecret,
                                      boolean dryrun) {
-        this.twitter = new Twitter(logger, apiHost,connectTimeout, readTimeout, consumerKey, consumerToken, accessToken, accessTokenSecret, dryrun);
+        this.twitter = new Twitter(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, accessToken, accessTokenSecret, dryrun);
         this.dryrun = dryrun;
     }
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.git;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Changelog;
 import org.jreleaser.model.JReleaserContext;
 
@@ -43,7 +44,7 @@ public class ChangelogProvider {
             .resolve("release")
             .resolve("CHANGELOG.md");
 
-        context.getLogger().info("Generating changelog: {}", context.getBasedir().relativize(changelogFile));
+        context.getLogger().info(RB.$("changelog.generator.generate"), context.getBasedir().relativize(changelogFile));
         context.getLogger().debug(content);
 
         Files.createDirectories(changelogFile.getParent());
@@ -65,10 +66,10 @@ public class ChangelogProvider {
             Path externalChangelogPath = context.getBasedir().resolve(Paths.get(externalChangelog));
             File externalChangelogFile = externalChangelogPath.toFile();
             if (!externalChangelogFile.exists()) {
-                throw new IllegalStateException("Changelog " + context.getBasedir().relativize(externalChangelogPath) + " does not exist");
+                throw new IllegalStateException(RB.$("ERROR_changelog_not_exist", context.getBasedir().relativize(externalChangelogPath)));
             }
 
-            context.getLogger().info("Reading changelog from {}", context.getBasedir().relativize(externalChangelogPath));
+            context.getLogger().info(RB.$("changelog.generator.read"), context.getBasedir().relativize(externalChangelogPath));
             return new String(Files.readAllBytes(externalChangelogPath));
         }
 

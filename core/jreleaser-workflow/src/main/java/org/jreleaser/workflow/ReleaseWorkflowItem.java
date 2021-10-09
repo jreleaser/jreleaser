@@ -17,6 +17,7 @@
  */
 package org.jreleaser.workflow;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
@@ -32,7 +33,7 @@ class ReleaseWorkflowItem implements WorkflowItem {
         try {
             Releasers.release(context);
         } catch (ReleaseException e) {
-            throw new JReleaserException("Unexpected error when creating release.", e);
+            throw new JReleaserException(RB.$("ERROR_unexpected_release_create"), e);
         }
     }
 }

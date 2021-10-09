@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.CommitAuthor;
 import org.jreleaser.model.CommitAuthorAware;
 import org.jreleaser.model.Distribution;
@@ -160,7 +161,7 @@ class Validator {
             if (isBlank(glob.getExclude()) &&
                 includeAll && isBaseDir) {
                 // too broad!
-                errors.configuration(property + "[" + i + "] must define a pattern");
+                errors.configuration(RB.$("validation_must_define_pattern", property + "[" + i + "]"));
             }
         }
     }

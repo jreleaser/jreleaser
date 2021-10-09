@@ -20,6 +20,7 @@ package org.jreleaser.tools;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -47,7 +48,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
     }
 
     protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        context.getLogger().info("setting up repository {}", tool.getRepositoryTap().getCanonicalRepoName());
+        context.getLogger().info(RB.$("repository.setup"), tool.getRepositoryTap().getCanonicalRepoName());
         if (context.isDryrun()) {
             return;
         }
@@ -56,7 +57,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
 
         try {
             // get the repository
-            context.getLogger().debug("locating repository {}", tool.getRepositoryTap().getCanonicalRepoName());
+            context.getLogger().debug(RB.$("repository.locate"), tool.getRepositoryTap().getCanonicalRepoName());
             Repository repository = context.getReleaser().maybeCreateRepository(
                 tool.getRepositoryTap().getOwner(),
                 tool.getRepositoryTap().getResolvedName(),
@@ -67,7 +68,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 resolveGitToken(gitService));
 
             // clone the repository
-            context.getLogger().debug("cloning {}", repository.getHttpUrl());
+            context.getLogger().debug(RB.$("repository.clone"), repository.getHttpUrl());
             Path directory = Files.createTempDirectory("jreleaser-" + tool.getRepositoryTap().getResolvedName());
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
@@ -84,7 +85,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 .call();
 
             // setup commit
-            context.getLogger().debug("setting up commit");
+            context.getLogger().debug(RB.$("repository.commit.setup"));
             CommitCommand commitCommand = git.commit()
                 .setAll(true)
                 .setMessage(distribution.getExecutable() + " " + gitService.getResolvedTagName(context.getModel()))
@@ -97,16 +98,16 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
 
             commitCommand.call();
 
-            context.getLogger().info("pushing to {}", tool.getRepositoryTap().getCanonicalRepoName());
+            context.getLogger().info(RB.$("repository.push"), tool.getRepositoryTap().getCanonicalRepoName());
             // push commit
-            context.getLogger().debug("pushing commit to remote");
+            context.getLogger().debug(RB.$("repository.commit.push"));
             git.push()
                 .setDryRun(false)
                 .setPushAll()
                 .setCredentialsProvider(credentialsProvider)
                 .call();
         } catch (Exception e) {
-            throw new ToolProcessingException("Unexpected error updating " + tool.getRepositoryTap().getCanonicalRepoName(), e);
+            throw new ToolProcessingException(RB.$("ERROR_unexpected_repository_update", tool.getRepositoryTap().getCanonicalRepoName()), e);
         }
     }
 
@@ -116,11 +117,11 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
     }
 
     protected void prepareWorkingCopy(Path source, Path destination) throws IOException {
-        context.getLogger().debug("copying files from {}", context.relativizeToBasedir(source));
+        context.getLogger().debug(RB.$("repository.copy.files"), context.relativizeToBasedir(source));
 
         if (!FileUtils.copyFilesRecursive(context.getLogger(), source, destination)) {
-            throw new IOException("Could not copy files from " +
-                context.relativizeToBasedir(source));
+            throw new IOException(RB.$("ERROR_repository_copy_files",
+                context.relativizeToBasedir(source)));
         }
     }
 

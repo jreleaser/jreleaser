@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.assemble;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Assemble;
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.JReleaserContext;
@@ -33,7 +34,7 @@ public class Assemblers {
     public static void assemble(JReleaserContext context) {
         Assemble assemble = context.getModel().getAssemble();
         if (!assemble.isEnabled()) {
-            context.getLogger().info("Assembling is not enabled. Skipping.");
+            context.getLogger().info(RB.$("assemblers.not.enabled"));
             return;
         }
 
@@ -41,35 +42,35 @@ public class Assemblers {
             Map<String, Assembler> assemblers = assemble.findAssemblersByType(context.getAssemblerName());
 
             if (assemblers.isEmpty()) {
-                context.getLogger().debug("No assemblers match {}", context.getAssemblerName());
+                context.getLogger().debug(RB.$("assemblers.no.match"), context.getAssemblerName());
                 return;
             }
 
             if (context.hasDistributionName()) {
                 if (!assemblers.containsKey(context.getDistributionName())) {
-                    context.getLogger().error("Distribution {} is not configured for assembling with {}",
+                    context.getLogger().error(RB.$("assemblers.distribution.not.configured"),
                         context.getDistributionName(),
                         context.getAssemblerName());
                     return;
                 }
 
-                context.getLogger().info("Assembling {} distribution with {}",
+                context.getLogger().info(RB.$("assemblers.assemble.distribution.with"),
                     context.getDistributionName(),
                     context.getAssemblerName());
                 assemble(context, assemblers.get(context.getDistributionName()));
             } else {
-                context.getLogger().info("Assembling all distributions with {}",
+                context.getLogger().info(RB.$("assemblers.assemble.all.distributions.with"),
                     context.getAssemblerName());
                 assemblers.values().forEach(assembler -> assemble(context, assembler));
             }
         } else if (context.hasDistributionName()) {
-            context.getLogger().info("Assembling {} distribution with all assemblers",
+            context.getLogger().info(RB.$("assemblers.assemble.distribution.with.all"),
                 context.getDistributionName());
             assemble.findAllAssemblers().stream()
                 .filter(a -> context.getDistributionName().equals(a.getName()))
                 .forEach(assembler -> assemble(context, assembler));
         } else {
-            context.getLogger().info("Assembling all distributions");
+            context.getLogger().info(RB.$("assemblers.assemble.all.distributions"));
             assemble.findAllAssemblers().forEach(assembler -> assemble(context, assembler));
         }
     }
@@ -83,7 +84,7 @@ public class Assemblers {
             context.getLogger().restorePrefix();
             context.getLogger().decreaseIndent();
         } catch (AssemblerProcessingException e) {
-            throw new JReleaserException("Unexpected error", e);
+            throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 

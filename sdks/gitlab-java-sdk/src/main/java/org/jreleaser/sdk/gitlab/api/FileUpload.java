@@ -85,7 +85,7 @@ public class FileUpload {
         LinkRequest link = new LinkRequest();
         link.setName(getName());
         link.setUrl(apiHost + getFullPath());
-        link.setFilepath("/"+getName());
+        link.setFilepath("/" + getName());
         return link;
     }
 }

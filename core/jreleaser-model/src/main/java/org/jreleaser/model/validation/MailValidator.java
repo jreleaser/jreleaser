@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Mail;
 import org.jreleaser.util.Errors;
@@ -41,7 +42,7 @@ public abstract class MailValidator extends Validator {
         }
 
         if (isBlank(mail.getHost())) {
-            errors.configuration("mail.host must not be blank.");
+            errors.configuration(RB.$("validation_must_not_be_blank", "mail.host"));
         }
 
         if (null == mail.getPort()) {
@@ -53,7 +54,7 @@ public abstract class MailValidator extends Validator {
         }
 
         if (isBlank(mail.getUsername())) {
-            errors.configuration("mail.username must not be blank.");
+            errors.configuration(RB.$("validation_must_not_be_blank", "mail.username"));
         }
 
         mail.setPassword(
@@ -65,7 +66,7 @@ public abstract class MailValidator extends Validator {
                 context.isDryrun()));
 
         if (isBlank(mail.getFrom())) {
-            errors.configuration("mail.from must not be blank.");
+            errors.configuration(RB.$("validation_must_not_be_blank", "mail.from"));
         }
 
         boolean to = isBlank(mail.getTo());
@@ -73,11 +74,11 @@ public abstract class MailValidator extends Validator {
         boolean bcc = isBlank(mail.getBcc());
 
         if (!to && !cc && !bcc) {
-            errors.configuration("mail.to, mail.cc, or mail.bcc must not be blank.");
+            errors.configuration(RB.$("validation_mail_not_blank", "mail.to, mail.cc,", "mail.bcc"));
         }
 
         if (isBlank(mail.getSubject())) {
-            mail.setSubject("{{projectNameCapitalized}} {{projectVersion}} released!");
+            mail.setSubject(RB.$("default_discussion_title"));
         }
 
         if (null == mail.getMimeType()) {
@@ -90,7 +91,7 @@ public abstract class MailValidator extends Validator {
 
         if (isNotBlank(mail.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(mail.getMessageTemplate().trim()))) {
-            errors.configuration("mail.messageTemplate does not exist. " + mail.getMessageTemplate());
+            errors.configuration(RB.$("validation_directory_not_exist", "mail.messageTemplate", mail.getMessageTemplate()));
         }
     }
 }

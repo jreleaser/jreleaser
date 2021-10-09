@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.util.Artifacts;
 
 import java.io.File;
@@ -113,7 +114,7 @@ public class Glob implements Domain, ExtraProperties {
                 }
                 path = context.getBasedir().resolve(Paths.get(directory)).normalize();
                 if (!exists(path)) {
-                    throw new JReleaserException("Path does not exist. " + context.relativizeToBasedir(path));
+                    throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(path)));
                 }
             }
 
@@ -121,11 +122,11 @@ public class Glob implements Domain, ExtraProperties {
             try {
                 java.nio.file.Files.walkFileTree(path, fileCollector);
             } catch (IOException e) {
-                throw new JReleaserException("Unnexpected error resolving glob " + this.asMap(true));
+                throw new JReleaserException(RB.$("ERROR_unexpected_glob_resolve", this.asMap(true)));
             }
 
             if (fileCollector.failed) {
-                throw new JReleaserException("Could not resolve glob " + this.asMap(true));
+                throw new JReleaserException(RB.$("ERROR_glob_resolve", this.asMap(true)));
             }
 
             artifacts = fileCollector.getFiles().stream()
@@ -288,8 +289,8 @@ public class Glob implements Domain, ExtraProperties {
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException e) {
             failed = true;
-            context.getLogger().error("Unexpected error visiting path " +
-                context.relativizeToBasedir(file), e);
+            context.getLogger().error(RB.$("ERROR_artifacts_unexpected_error_path",
+                context.relativizeToBasedir(file)), e);
             return CONTINUE;
         }
     }

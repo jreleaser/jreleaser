@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.util;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Files;
 import org.jreleaser.model.Glob;
@@ -54,11 +55,11 @@ public class Artifacts {
         if (null == dest) return src;
 
         if (!java.nio.file.Files.exists(dest)) {
-            context.getLogger().debug("artifact does not exist: {}",
+            context.getLogger().debug(RB.$("artifacts.not.exists"),
                 context.relativizeToBasedir(dest));
             copyFile(context, src, dest);
         } else if (src.toFile().lastModified() > dest.toFile().lastModified()) {
-            context.getLogger().debug("{} is newer than {}",
+            context.getLogger().debug(RB.$("artifacts.newer"),
                 context.relativizeToBasedir(src),
                 context.relativizeToBasedir(dest));
             copyFile(context, src, dest);
@@ -72,9 +73,9 @@ public class Artifacts {
             java.nio.file.Files.createDirectories(dest.getParent());
             java.nio.file.Files.copy(src, dest, REPLACE_EXISTING, COPY_ATTRIBUTES);
         } catch (IOException e) {
-            throw new JReleaserException("Unexpected error copying " +
-                context.relativizeToBasedir(src) + " to " +
-                context.relativizeToBasedir(dest));
+            throw new JReleaserException(RB.$("ERROR_artifacts_unexpected_error_copying",
+                context.relativizeToBasedir(src),
+                context.relativizeToBasedir(dest)));
         }
     }
 
@@ -123,12 +124,12 @@ public class Artifacts {
         try {
             java.nio.file.Files.walkFileTree(basedir, resolver);
             if (resolver.failed) {
-                throw new JReleaserException("Some globs failed to be resolved.");
+                throw new JReleaserException(RB.$("ERROR_artifacts_glob_resolution"));
             }
 
             return Artifact.sortArtifacts(resolver.artifacts);
         } catch (IOException e) {
-            throw new JReleaserException("Unexpected error when resolving globs", e);
+            throw new JReleaserException(RB.$("ERROR_artifacts_unexpected_error_globs"), e);
         }
     }
 
@@ -150,12 +151,12 @@ public class Artifacts {
         try {
             java.nio.file.Files.walkFileTree(basedir, resolver);
             if (resolver.failed) {
-                throw new JReleaserException("Some globs failed to be resolved.");
+                throw new JReleaserException(RB.$("ERROR_artifacts_glob_resolution"));
             }
 
             return Artifact.sortArtifacts(resolver.artifacts);
         } catch (IOException e) {
-            throw new JReleaserException("Unexpected error when resolving globs", e);
+            throw new JReleaserException(RB.$("ERROR_artifacts_unexpected_error_globs"), e);
         }
     }
 
@@ -192,7 +193,7 @@ public class Artifacts {
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException e) throws IOException {
             failed = true;
-            logger.error("Unexpected error visiting path " +
+            logger.error(RB.$("ERROR_artifacts_unexpected_error_path"),
                 basedir.toAbsolutePath().relativize(file.toAbsolutePath()), e);
             return CONTINUE;
         }

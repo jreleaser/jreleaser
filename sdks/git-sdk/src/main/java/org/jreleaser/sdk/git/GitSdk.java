@@ -27,6 +27,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.model.releaser.spi.Repository;
@@ -85,12 +86,12 @@ public class GitSdk {
             RemoteConfig remoteConfig = git.remoteList().call().stream()
                 .filter(rc -> remote.equals(rc.getName()))
                 .findFirst()
-                .orElseThrow(() -> new IOException("repository doesn't have a remote named '" + remote + "'"));
+                .orElseThrow(() -> new IOException(RB.$("ERROR_git_repository_remote", remote)));
 
             List<URIish> uris = remoteConfig.getURIs();
             if (uris.isEmpty()) {
                 // better be safe than sorry
-                throw new IOException("'" + remote + "' remote does not have a configured URL");
+                throw new IOException(RB.$("ERROR_git_repository_remote_missing_url", remote));
             }
 
             // grab the first one
@@ -111,7 +112,7 @@ public class GitSdk {
 
             String[] parts = uri.getPath().split("/");
             if (parts.length < 2) {
-                throw new IOException("Unparseable remote URL " + uri.getPath());
+                throw new IOException(RB.$("ERROR_git_repository_remote_url_parse", uri.getPath()));
             }
 
             String owner = parts[parts.length - 2];
@@ -124,7 +125,7 @@ public class GitSdk {
                 null,
                 uri.toString());
         } catch (GitAPIException e) {
-            throw new IOException("Could not determine 'origin' remote", e);
+            throw new IOException(RB.$("ERROR_git_repository_origin_remote"), e);
         }
     }
 
@@ -150,7 +151,7 @@ public class GitSdk {
                 .setTags(tagName)
                 .call();
         } catch (GitAPIException e) {
-            throw new IOException("Could not delete tag " + tagName, e);
+            throw new IOException(RB.$("ERROR_git_delete_tag", tagName), e);
         }
     }
 
@@ -162,7 +163,7 @@ public class GitSdk {
                 .map(GitSdk::extractTagName)
                 .anyMatch(tagName::matches);
         } catch (GitAPIException e) {
-            throw new IOException("Could not find tag " + tagName, e);
+            throw new IOException(RB.$("ERROR_git_find_tag", tagName), e);
         }
     }
 
@@ -183,7 +184,7 @@ public class GitSdk {
                 .setForceUpdate(force)
                 .call();
         } catch (GitAPIException e) {
-            throw new IOException("Could not create tag " + tagName, e);
+            throw new IOException(RB.$("ERROR_git_create_tag", tagName), e);
         }
     }
 

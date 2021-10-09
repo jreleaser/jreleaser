@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.context;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Codeberg;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Github;
@@ -45,7 +46,7 @@ public class ModelConfigurer {
             context.getModel().setCommit(GitSdk.of(context).head());
         } catch (IOException e) {
             context.getLogger().trace(e);
-            throw new JReleaserException("Could not determine git HEAD", e);
+            throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_head"), e);
         }
 
         Repository repository = null;
@@ -53,7 +54,7 @@ public class ModelConfigurer {
             repository = GitSdk.of(context).getRemote();
         } catch (IOException e) {
             context.getLogger().trace(e);
-            throw new JReleaserException("Could not determine remote", e);
+            throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_remote"), e);
         }
 
         if (isBlank(context.getModel().getProject().getResolvedName())) {
@@ -85,13 +86,13 @@ public class ModelConfigurer {
             switch (context.getMode()) {
                 case ASSEMBLE:
                     if (errors.hasConfigurationErrors()) {
-                        throw new JReleaserException("JReleaser has not been properly configured.");
+                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured"));
                     }
                     break;
                 case FULL:
                 default:
                     if (errors.hasErrors()) {
-                        throw new JReleaserException("JReleaser has not been properly configured.");
+                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured"));
                     }
                     break;
             }
@@ -100,7 +101,7 @@ public class ModelConfigurer {
             throw e;
         } catch (Exception e) {
             context.getLogger().trace(e);
-            throw new JReleaserException("JReleaser has not been properly configured.", e);
+            throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured"), e);
         }
     }
 
@@ -109,8 +110,7 @@ public class ModelConfigurer {
 
         if (service != null) {
             if (!(service instanceof Github)) {
-                context.getLogger().warn("Auto configure detected github but project has " +
-                    service.getServiceName() + " configured");
+                context.getLogger().warn(RB.$("ERROR_context_configurer_detected_git"), "github", service.getServiceName());
             }
         } else {
             context.getModel().getRelease().setGithub(new Github());
@@ -125,8 +125,7 @@ public class ModelConfigurer {
 
         if (service != null) {
             if (!(service instanceof Gitlab)) {
-                context.getLogger().warn("Auto configure detected gitlab but project has " +
-                    service.getServiceName() + " configured");
+                context.getLogger().warn(RB.$("ERROR_context_configurer_detected_git"), "gitlab", service.getServiceName());
             }
         } else {
             context.getModel().getRelease().setGitlab(new Gitlab());
@@ -141,8 +140,7 @@ public class ModelConfigurer {
 
         if (service != null) {
             if (!(service instanceof Codeberg)) {
-                context.getLogger().warn("Auto configure detected codeberg but project has " +
-                    service.getServiceName() + " configured");
+                context.getLogger().warn(RB.$("ERROR_context_configurer_detected_git"), "codeberg", service.getServiceName());
             }
         } else {
             context.getModel().getRelease().setCodeberg(new Codeberg());

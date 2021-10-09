@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.bundle.RB;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -62,10 +64,6 @@ public class Announce implements Domain, EnabledAware {
         setTwitter(announce.twitter);
         setZulip(announce.zulip);
         setConfiguredWebhooks(announce.webhooks);
-    }
-
-    void setConfiguredWebhooks(Webhooks webhooks) {
-        this.webhooks.setAll(webhooks);
     }
 
     @Override
@@ -119,7 +117,7 @@ public class Announce implements Domain, EnabledAware {
         return googleChat;
     }
 
-    public void setGoogleChat(GoogleChat googleChat){
+    public void setGoogleChat(GoogleChat googleChat) {
         this.googleChat.setAll(googleChat);
     }
 
@@ -183,6 +181,10 @@ public class Announce implements Domain, EnabledAware {
         return this.webhooks;
     }
 
+    void setConfiguredWebhooks(Webhooks webhooks) {
+        this.webhooks.setAll(webhooks);
+    }
+
     public Map<String, Webhook> getWebhooks() {
         return this.webhooks.getWebhooks();
     }
@@ -237,7 +239,7 @@ public class Announce implements Domain, EnabledAware {
         if (null != announcer) {
             return announcer;
         }
-        throw new JReleaserException("Announcer '" + name + "' has not been configured");
+        throw new JReleaserException(RB.$("ERROR_announcer_not_configured", name));
     }
 
     private <A extends Announcer> A resolveAnnouncer(String name) {
@@ -271,7 +273,7 @@ public class Announce implements Domain, EnabledAware {
             case Zulip.NAME:
                 return (A) getZulip();
             default:
-                throw new JReleaserException("Unsupported announcer '" + name + "'");
+                throw new JReleaserException(RB.$("ERROR_unsupported_announcer", name));
         }
     }
 

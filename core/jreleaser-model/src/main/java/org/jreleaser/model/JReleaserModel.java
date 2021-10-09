@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.MustacheUtils;
@@ -189,14 +190,14 @@ public class JReleaserModel implements Domain {
 
     public Distribution findDistribution(String name) {
         if (isBlank(name)) {
-            throw new JReleaserException("Distribution name must not be blank");
+            throw new JReleaserException(RB.$("ERROR_distribution_name_is_blank"));
         }
 
         if (distributions.containsKey(name)) {
             return distributions.get(name);
         }
 
-        throw new JReleaserException("Distribution '" + name + "' not found");
+        throw new JReleaserException(RB.$("ERROR_distribution_not_found", name));
     }
 
     public Map<String, Object> asMap(boolean full) {

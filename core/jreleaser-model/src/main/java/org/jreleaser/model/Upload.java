@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
-import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -77,18 +76,6 @@ public class Upload implements Domain, EnabledAware {
         this.artifactory.put(artifactory.getType(), artifactory);
     }
 
-    public Artifactory findArtifactory(String name) {
-        if (isBlank(name)) {
-            throw new JReleaserException("Artifactory name must not be blank");
-        }
-
-        if (artifactory.containsKey(name)) {
-            return artifactory.get(name);
-        }
-
-        throw new JReleaserException("Artifactory '" + name + "' not found");
-    }
-
     public List<HttpUploader> getActiveHttps() {
         return http.values().stream()
             .filter(HttpUploader::isEnabled)
@@ -106,18 +93,6 @@ public class Upload implements Domain, EnabledAware {
 
     public void addHttp(HttpUploader http) {
         this.http.put(http.getType(), http);
-    }
-
-    public HttpUploader findHttp(String name) {
-        if (isBlank(name)) {
-            throw new JReleaserException("HttpUploader name must not be blank");
-        }
-
-        if (http.containsKey(name)) {
-            return http.get(name);
-        }
-
-        throw new JReleaserException("HttpUploader '" + name + "' not found");
     }
 
     @Override

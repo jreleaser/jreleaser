@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Teams;
 import org.jreleaser.util.Errors;
@@ -52,7 +53,7 @@ public abstract class TeamsValidator extends Validator {
 
         if (isNotBlank(teams.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(teams.getMessageTemplate().trim()))) {
-            errors.configuration("teams.messageTemplate does not exist. " + teams.getMessageTemplate());
+            errors.configuration(RB.$("validation_directory_not_exist", "teams.messageTemplate", teams.getMessageTemplate()));
         }
 
         validateTimeout(teams);

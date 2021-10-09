@@ -21,6 +21,7 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheException;
 import com.github.mustachejava.MustacheFactory;
+import org.jreleaser.bundle.RB;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -115,7 +116,7 @@ public final class MustacheUtils {
                 try {
                     writer.write(value.substring(2, value.length() - 2));
                 } catch (IOException e) {
-                    throw new MustacheException("Failed to write value: " + value, e);
+                    throw new MustacheException(RB.$("ERROR_mustache_write_value", value), e);
                 }
             } else {
                 super.encode(value, writer);

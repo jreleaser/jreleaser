@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.JavaModuleVersion;
@@ -342,7 +343,7 @@ public class Project implements Domain, ExtraProperties {
                         addExtraProperty(Constants.KEY_VERSION_BUILD, parsedVersion.getBuild());
                     }
                 } catch (IllegalArgumentException e) {
-                    throw new JReleaserException("Version '" + v + "' does not follow the semver spec", e);
+                    throw new JReleaserException(RB.$("ERROR_version_invalid", v, "semver"), e);
                 }
             }
             break;
@@ -360,7 +361,7 @@ public class Project implements Domain, ExtraProperties {
                         addExtraProperty(Constants.KEY_VERSION_OPTIONAL, parsedVersion.getOptional());
                     }
                 } catch (IllegalArgumentException e) {
-                    throw new JReleaserException("Version '" + v + "' does not follow the Java runtime spec", e);
+                    throw new JReleaserException(RB.$("ERROR_version_invalid", v, "Java runtime"), e);
                 }
             }
             break;
@@ -375,7 +376,7 @@ public class Project implements Domain, ExtraProperties {
                         addExtraProperty(Constants.KEY_VERSION_BUILD, parsedVersion.getBuild());
                     }
                 } catch (IllegalArgumentException e) {
-                    throw new JReleaserException("Version '" + v + "' does not follow the Java module spec", e);
+                    throw new JReleaserException(RB.$("ERROR_version_invalid", v, "Java module"), e);
                 }
             }
             break;

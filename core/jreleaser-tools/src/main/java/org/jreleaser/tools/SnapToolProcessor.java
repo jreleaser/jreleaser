@@ -17,6 +17,7 @@
  */
 package org.jreleaser.tools;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -55,7 +56,7 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         }
 
         if (PlatformUtils.isWindows()) {
-            context.getLogger().debug("must not run on Windows", getToolName());
+            context.getLogger().debug(RB.$("ERROR_tool_excludes_platform", "Windows"));
             return;
         }
 
@@ -70,17 +71,17 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         }
 
         if (context.isDryrun()) {
-            context.getLogger().error("dryun is set to true. Skipping");
+            context.getLogger().error(RB.$("dryrun.set"));
             return;
         }
 
         if (PlatformUtils.isWindows()) {
-            context.getLogger().debug("must not run on Windows", getToolName());
+            context.getLogger().debug(RB.$("ERROR_tool_excludes_platform", "Windows"));
             return;
         }
 
         if (!login(distribution, props)) {
-            context.getLogger().error("could not log into snapcraft store");
+            context.getLogger().error(RB.$("ERROR_snap_login"));
             return;
         }
 

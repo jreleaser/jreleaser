@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.JReleaserContext;
@@ -57,7 +58,7 @@ public abstract class JlinkValidator extends Validator {
         if (!jlink.resolveEnabled(context.getModel().getProject())) return;
 
         if (isBlank(jlink.getName())) {
-            errors.configuration("jlink.name must not be blank");
+            errors.configuration(RB.$("validation_must_not_be_blank", "jlink.name"));
             return;
         }
 
@@ -93,14 +94,12 @@ public abstract class JlinkValidator extends Validator {
         Map<String, List<Artifact>> byPlatform = jlink.getTargetJdks().stream()
             .collect(groupingBy(jdk -> isBlank(jdk.getPlatform()) ? "<nil>" : jdk.getPlatform()));
         if (byPlatform.containsKey("<nil>")) {
-            errors.configuration("jlink." + jlink.getName() +
-                " defines JDKs without platform");
+            errors.configuration(RB.$("validation_jlink_jdk_platform", jlink.getName()));
         }
         // check platforms
         byPlatform.forEach((platform, jdks) -> {
             if (jdks.size() > 1) {
-                errors.configuration("jlink." + jlink.getName() +
-                    " has more than one JDK for " + platform);
+                errors.configuration(RB.$("validation_jlink_jdk_multiple_platforms", jlink.getName(), platform));
             }
         });
 
@@ -112,11 +111,11 @@ public abstract class JlinkValidator extends Validator {
         }
 
         if (null == jlink.getMainJar()) {
-            errors.configuration("jlink." + jlink.getName() + ".mainJar is null");
+            errors.configuration(RB.$("validation_is_null", "jlink." + jlink.getName() + ".mainJar"));
             return;
         }
         if (isBlank(jlink.getMainJar().getPath())) {
-            errors.configuration("jlink." + jlink.getName() + ".mainJar.path must not be null");
+            errors.configuration(RB.$("validation_must_not_be_null", "jlink." + jlink.getName() + ".mainJar.path"));
         }
 
         validateGlobs(context,
@@ -155,7 +154,7 @@ public abstract class JlinkValidator extends Validator {
         }
 
         if (isBlank(jlink.getJava().getGroupId())) {
-            errors.configuration("jlink." + jlink.getName() + ".java.groupId must not be blank");
+            errors.configuration(RB.$("validation_must_not_be_blank", "jlink." + jlink.getName() + ".java.groupId"));
         }
 
         return true;
@@ -165,16 +164,16 @@ public abstract class JlinkValidator extends Validator {
         if (mode == JReleaserContext.Mode.FULL) return;
 
         if (null == jdk) {
-            errors.configuration("jlink." + jlink.getName() + ".targetJdk[" + index + "] is null");
+            errors.configuration(RB.$("validation_is_null", "jlink." + jlink.getName() + ".targetJdk[" + index + "]"));
             return;
         }
         if (isBlank(jdk.getPath())) {
-            errors.configuration("jlink." + jlink.getName() + ".targetJdk[" + index + "].path must not be null");
+            errors.configuration(RB.$("validation_must_not_be_null", "jlink." + jlink.getName() + ".targetJdk[" + index + "].path"));
         }
         if (isNotBlank(jdk.getPlatform()) && !PlatformUtils.isSupported(jdk.getPlatform().trim())) {
-            context.getLogger().warn("jlink.{}.targetJdk[{}].platform ({}) is not supported. Please use `${name}` or `${name}-${arch}` from{}       name = {}{}       arch = {}",
+            context.getLogger().warn(RB.$("validation_jlink_platform",
                 jlink.getName(), index, jdk.getPlatform(), System.lineSeparator(),
-                PlatformUtils.getSupportedOsNames(), System.lineSeparator(), PlatformUtils.getSupportedOsArchs());
+                PlatformUtils.getSupportedOsNames(), System.lineSeparator(), PlatformUtils.getSupportedOsArchs()));
         }
     }
 }

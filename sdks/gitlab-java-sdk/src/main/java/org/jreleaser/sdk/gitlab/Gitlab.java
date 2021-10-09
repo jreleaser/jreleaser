@@ -28,6 +28,7 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
@@ -108,7 +109,7 @@ class Gitlab {
     }
 
     Optional<Milestone> findMilestoneByName(String owner, String repo, String identifier, String milestoneName) throws IOException {
-        logger.debug("lookup milestone '{}' on {}/{}", milestoneName, owner, repo);
+        logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
         Project project = getProject(repo, identifier);
 
@@ -132,7 +133,7 @@ class Gitlab {
     }
 
     void closeMilestone(String owner, String repo, String identifier, Milestone milestone) throws IOException {
-        logger.debug("closing milestone '{}' on {}/{}", milestone.getTitle(), owner, repo);
+        logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
         Project project = getProject(repo, identifier);
 
@@ -142,14 +143,14 @@ class Gitlab {
     }
 
     Project createProject(String owner, String repo) throws IOException {
-        logger.debug("creating project {}/{}", owner, repo);
+        logger.debug(RB.$("git.project.create"), owner, repo);
 
         return api.createProject(repo, "public");
     }
 
     User getCurrentUser() throws RestAPIException {
         if (null == user) {
-            logger.debug("fetching current user");
+            logger.debug(RB.$("git.fetch.current.user"));
             user = api.getCurrentUser();
         }
 
@@ -157,34 +158,32 @@ class Gitlab {
     }
 
     Project getProject(String projectName, String identifier) throws RestAPIException {
-
         if (null == project) {
-
             if (StringUtils.isNotBlank(identifier)) {
-                logger.debug("fetching project with GitLab id {}", identifier);
+                logger.debug(RB.$("git.fetch.gitlab.project_by_id"), identifier);
                 project = api.getProject(identifier.trim());
             } else {
                 User u = getCurrentUser();
 
-                logger.debug("fetching project {} for user {} ({})", projectName, u.getUsername(), u.getId());
+                logger.debug(RB.$("git.fetch.gitlab.project.by.user"), projectName, u.getUsername(), u.getId());
                 List<Project> projects = api.getProject(u.getId(), CollectionUtils.<String, Object>map()
                     .e("search", projectName));
 
                 if (projects == null || projects.isEmpty()) {
-                    throw new RestAPIException(404, "Project " + projectName + " does not exist or it's not visible");
+                    throw new RestAPIException(404, RB.$("ERROR_project_not_exist", projectName));
                 }
 
                 project = projects.get(0);
             }
 
-            logger.debug("found {} (ID: {})", project.getNameWithNamespace(), project.getId());
+            logger.debug(RB.$("git.gitlab.project.found"), project.getNameWithNamespace(), project.getId());
         }
 
         return project;
     }
 
     Release findReleaseByTag(String owner, String repoName, String identifier, String tagName) throws RestAPIException {
-        logger.debug("fetching release on {}/{} with tag {}", owner, repoName, tagName);
+        logger.debug(RB.$("git.fetch.release.by.tag"), owner, repoName, tagName);
 
         Project project = getProject(repoName, identifier);
 
@@ -200,7 +199,7 @@ class Gitlab {
     }
 
     void deleteTag(String owner, String repoName, String identifier, String tagName) throws RestAPIException {
-        logger.debug("deleting tag {} from {}/{}", tagName, owner, repoName);
+        logger.debug(RB.$("git.delete.tag.from"), tagName, owner, repoName);
 
         Project project = getProject(repoName, identifier);
 
@@ -208,7 +207,7 @@ class Gitlab {
     }
 
     void deleteRelease(String owner, String repoName, String identifier, String tagName) throws RestAPIException {
-        logger.debug("deleting release {} from {}/{}", tagName, owner, repoName);
+        logger.debug(RB.$("git.delete.release.from"), tagName, owner, repoName);
 
         Project project = getProject(repoName, identifier);
 
@@ -216,7 +215,7 @@ class Gitlab {
     }
 
     void createRelease(String owner, String repoName, String identifier, Release release) throws RestAPIException {
-        logger.debug("creating release on {}/{} with tag {}", owner, repoName, release.getTagName());
+        logger.debug(RB.$("git.create.release"), owner, repoName, release.getTagName());
 
         Project project = getProject(repoName, identifier);
 
@@ -224,7 +223,7 @@ class Gitlab {
     }
 
     void updateRelease(String owner, String repoName, String identifier, Release release) throws RestAPIException {
-        logger.debug("creating release on {}/{} with tag {}", owner, repoName, release.getTagName());
+        logger.debug(RB.$("git.update.release"), owner, repoName, release.getTagName());
 
         Project project = getProject(repoName, identifier);
 
@@ -232,7 +231,7 @@ class Gitlab {
     }
 
     List<FileUpload> uploadAssets(String owner, String repoName, String identifier, List<Path> assets) throws IOException, RestAPIException {
-        logger.debug("uploading assets to {}/{}", owner, repoName);
+        logger.debug(RB.$("git.upload.assets"), owner, repoName);
 
         List<FileUpload> uploads = new ArrayList<>();
 
@@ -244,13 +243,13 @@ class Gitlab {
                 continue;
             }
 
-            logger.info(" - uploading {}", asset.getFileName().toString());
+            logger.info(" " + RB.$("git.upload.asset"), asset.getFileName().toString());
             try {
                 FileUpload upload = api.uploadFile(project.getId(), toFormData(asset));
                 upload.setName(asset.getFileName().toString());
                 uploads.add(upload);
             } catch (IOException | RestAPIException e) {
-                logger.error(" x Failed to upload {}", asset.getFileName());
+                logger.error(" " + RB.$("git.upload.asset.failure"), asset.getFileName());
                 throw e;
             }
         }
@@ -259,23 +258,23 @@ class Gitlab {
     }
 
     void linkAssets(String owner, String repoName, Release release, String identifier, List<FileUpload> uploads) throws IOException, RestAPIException {
-        logger.debug("linking assets to {}/{} with tag {}", owner, repoName, release.getTagName());
+        logger.debug(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
 
         Project project = getProject(repoName, identifier);
 
         for (FileUpload upload : uploads) {
-            logger.debug(" - linking {}", upload.getName());
+            logger.debug(" " + RB.$("git.upload.asset.link"), upload.getName());
             try {
                 api.linkAsset(upload.toLinkRequest(apiHost), project.getId(), release.getTagName());
             } catch (RestAPIException e) {
-                logger.error(" x failed to link {}", upload.getName());
+                logger.error(" " + RB.$("git.upload.asset.link.failure"), upload.getName());
                 throw e;
             }
         }
     }
 
     Optional<org.jreleaser.model.releaser.spi.User> findUser(String email, String name) throws RestAPIException {
-        logger.debug("looking up user for {} <{}>", name, email);
+        logger.debug(RB.$("git.user.lookup"), name, email);
 
         List<User> users = api.searchUser(CollectionUtils.<String, String>newMap("scope", "users", "search", email));
         if (users != null && !users.isEmpty()) {

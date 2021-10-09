@@ -20,6 +20,7 @@ package org.jreleaser.announcers;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Article;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.GitService;
@@ -85,10 +86,10 @@ public class ArticleAnnouncer implements Announcer {
             Files.createDirectories(prepareDirectory);
         } catch (IOException e) {
             context.getLogger().trace(e);
-            throw new AnnounceException("Unexpected error when preparing " + context.relativizeToBasedir(templateDirectory), e);
+            throw new AnnounceException(RB.$("ERROR_unexpected_article_announcer", context.relativizeToBasedir(templateDirectory)), e);
         }
 
-        context.getLogger().debug("resolving templates for article announcer");
+        context.getLogger().debug(RB.$("announcer.article.resolve.templates"));
 
         Map<String, Object> props = context.props();
         props.put(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
@@ -104,23 +105,23 @@ public class ArticleAnnouncer implements Announcer {
                 }
 
                 Reader reader = Files.newBufferedReader(input);
-                context.getLogger().debug("evaluating template {}", context.relativizeToBasedir(input));
+                context.getLogger().debug(RB.$("announcer.article.eval.template"), context.relativizeToBasedir(input));
                 String content = applyTemplate(reader, props);
-                context.getLogger().debug("writing template {}", context.relativizeToBasedir(input));
+                context.getLogger().debug(RB.$("announcer.article.write.template"), context.relativizeToBasedir(input));
                 writeFile(content, output);
             }
         } catch (JReleaserException e) {
             context.getLogger().warn(e.getMessage());
             context.getLogger().trace(e);
-            throw new AnnounceException("Unexpected error resolving templates from " + context.relativizeToBasedir(templateDirectory), e);
+            throw new AnnounceException(RB.$("ERROR_unexpected_template_resolution", context.relativizeToBasedir(templateDirectory)), e);
         } catch (IOException e) {
             context.getLogger().trace(e);
-            throw new AnnounceException("Unexpected error resolving templates from " + context.relativizeToBasedir(templateDirectory), e);
+            throw new AnnounceException(RB.$("ERROR_unexpected_template_resolution", context.relativizeToBasedir(templateDirectory)), e);
         }
     }
 
     private void publishToRepository(Path prepareDirectory) throws AnnounceException {
-        context.getLogger().info("setting up repository {}", article.getRepository().getCanonicalRepoName());
+        context.getLogger().info(RB.$("repository.setup"), article.getRepository().getCanonicalRepoName());
         if (context.isDryrun()) {
             return;
         }
@@ -129,7 +130,7 @@ public class ArticleAnnouncer implements Announcer {
 
         try {
             // get the repository
-            context.getLogger().debug("locating repository {}", article.getRepository().getCanonicalRepoName());
+            context.getLogger().debug(RB.$("repository.locate"), article.getRepository().getCanonicalRepoName());
             Repository repository = context.getReleaser().maybeCreateRepository(
                 article.getRepository().getOwner(),
                 article.getRepository().getResolvedName(),
@@ -140,7 +141,7 @@ public class ArticleAnnouncer implements Announcer {
                 resolveGitToken(gitService));
 
             // clone the repository
-            context.getLogger().debug("cloning {}", repository.getHttpUrl());
+            context.getLogger().debug(RB.$("repository.clone"), repository.getHttpUrl());
             Path directory = Files.createTempDirectory("jreleaser-" + article.getRepository().getResolvedName());
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
@@ -157,7 +158,7 @@ public class ArticleAnnouncer implements Announcer {
                 .call();
 
             // setup commit
-            context.getLogger().debug("setting up commit");
+            context.getLogger().debug(RB.$("repository.commit.setup"));
             CommitCommand commitCommand = git.commit()
                 .setAll(true)
                 .setMessage(context.getModel().getProject().getResolvedName() + " " + gitService.getResolvedTagName(context.getModel()))
@@ -170,25 +171,25 @@ public class ArticleAnnouncer implements Announcer {
 
             commitCommand.call();
 
-            context.getLogger().info("pushing to {}", article.getRepository().getCanonicalRepoName());
+            context.getLogger().info(RB.$("repository.push"), article.getRepository().getCanonicalRepoName());
             // push commit
-            context.getLogger().debug("pushing commit to remote");
+            context.getLogger().debug(RB.$("repository.commit.push"));
             git.push()
                 .setDryRun(false)
                 .setPushAll()
                 .setCredentialsProvider(credentialsProvider)
                 .call();
         } catch (Exception e) {
-            throw new AnnounceException("Unexpected error updating " + article.getRepository().getCanonicalRepoName(), e);
+            throw new AnnounceException(RB.$("ERROR_unexpected_repository_update", article.getRepository().getCanonicalRepoName()), e);
         }
     }
 
     private void copyFiles(Path source, Path destination) throws IOException {
-        context.getLogger().debug("copying files from {}", context.relativizeToBasedir(source));
+        context.getLogger().debug(RB.$("repository.copy.files"), context.relativizeToBasedir(source));
 
         if (!FileUtils.copyFilesRecursive(context.getLogger(), source, destination)) {
-            throw new IOException("Could not copy files from " +
-                context.relativizeToBasedir(source));
+            throw new IOException(RB.$("ERROR_repository_copy_files",
+                context.relativizeToBasedir(source)));
         }
     }
 
@@ -207,7 +208,7 @@ public class ArticleAnnouncer implements Announcer {
             createDirectoriesWithFullAccess(outputFile.getParent());
             Files.write(outputFile, content.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
         } catch (IOException e) {
-            throw new AnnounceException("Unexpected error when writing to " + outputFile.toAbsolutePath(), e);
+            throw new AnnounceException(RB.$("ERROR_unexpected_error_writing_file", outputFile.toAbsolutePath()), e);
         }
     }
 }

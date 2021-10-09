@@ -27,6 +27,7 @@ import feign.httpclient.ApacheHttpClient;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
@@ -79,13 +80,13 @@ class XGithub {
     }
 
     void updateRelease(String owner, String repo, String tag, Long id, GhRelease release) throws RestAPIException {
-        logger.debug("updating release on {}/{} with tag {}", owner, repo, tag);
+        logger.debug(RB.$("git.update.release"), owner, repo, tag);
 
         api.updateRelease(release, owner, repo, id);
     }
 
     Optional<User> findUser(String email, String name) throws RestAPIException {
-        logger.debug("looking up user for {} <{}>", name, email);
+        logger.debug(RB.$("git.user.lookup"), name, email);
 
         GhSearchUser search = api.searchUser(CollectionUtils.<String, String>newMap("q", email));
         if (search.getTotalCount() > 0) {

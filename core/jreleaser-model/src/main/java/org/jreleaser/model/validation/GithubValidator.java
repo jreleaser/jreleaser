@@ -22,10 +22,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.GitService.DRAFT;
-import static org.jreleaser.model.GitService.PRERELEASE;
 import static org.jreleaser.model.GitService.PRERELEASE_PATTERN;
-import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_PATTERN;
-import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_PATTERN;
 
 /**
  * @author Andres Almiray

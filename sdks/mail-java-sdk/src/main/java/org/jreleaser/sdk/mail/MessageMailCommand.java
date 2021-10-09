@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.mail;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.Mail;
 import org.jreleaser.util.JReleaserLogger;
@@ -93,7 +94,7 @@ public class MessageMailCommand implements MailCommand {
 
     @Override
     public void execute() throws MailException {
-        logger.info("Sending e-mail announcement");
+        logger.info(RB.$("mail.message.send"));
         if (dryrun) return;
 
         Properties props = new Properties();
@@ -181,7 +182,7 @@ public class MessageMailCommand implements MailCommand {
         private String subject;
         private String message;
         private Mail.MimeType mimeType = Mail.MimeType.TEXT;
-        private Map<String, String> properties = new LinkedHashMap<>();
+        private final Map<String, String> properties = new LinkedHashMap<>();
 
         protected Builder(JReleaserLogger logger) {
             this.logger = logger;

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
@@ -39,7 +40,8 @@ public abstract class TemplateValidator extends Validator {
             tool.setTemplateDirectory(parentTool.getTemplateDirectory());
             if (isNotBlank(tool.getTemplateDirectory()) &&
                 !(context.getBasedir().resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
-                errors.configuration("distribution." + distribution.getName() + "." + tool.getName() + ".template does not exist. " + tool.getTemplateDirectory());
+                errors.configuration(RB.$("validation_directory_not_exist",
+                    "distribution." + distribution.getName() + "." + tool.getName() + ".template", tool.getTemplateDirectory()));
             } else {
                 tool.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + tool.getName());
             }
@@ -48,7 +50,8 @@ public abstract class TemplateValidator extends Validator {
 
         if (isNotBlank(tool.getTemplateDirectory()) &&
             !(context.getBasedir().resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
-            errors.configuration("distribution." + distribution.getName() + "." + tool.getName() + ".template does not exist. " + tool.getTemplateDirectory());
+            errors.configuration(RB.$("validation_directory_not_exist",
+                "distribution." + distribution.getName() + "." + tool.getName() + ".template", tool.getTemplateDirectory()));
         } else {
             tool.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + tool.getName());
         }
@@ -57,7 +60,8 @@ public abstract class TemplateValidator extends Validator {
     public static void validateTemplate(JReleaserContext context, Assembler assembler, Errors errors) {
         if (isNotBlank(assembler.getTemplateDirectory()) &&
             !(context.getBasedir().resolve(assembler.getTemplateDirectory().trim()).toFile().exists())) {
-            errors.configuration(assembler.getType() + "." + assembler.getName() + ".template does not exist. " + assembler.getTemplateDirectory());
+            errors.configuration(RB.$("validation_directory_not_exist",
+                assembler.getType() + "." + assembler.getName() + ".template", assembler.getTemplateDirectory()));
         } else {
             assembler.setTemplateDirectory("src/jreleaser/assemblers/" + assembler.getName() + "/" + assembler.getType());
         }
@@ -67,7 +71,8 @@ public abstract class TemplateValidator extends Validator {
                                         DockerSpec spec, Docker docker, Errors errors) {
         if (isNotBlank(spec.getTemplateDirectory()) &&
             !(context.getBasedir().resolve(spec.getTemplateDirectory().trim()).toFile().exists())) {
-            errors.configuration("distribution." + distribution.getName() + ".docker." + spec.getName() + ".template does not exist. " + spec.getTemplateDirectory());
+            errors.configuration(RB.$("validation_directory_not_exist",
+                "distribution." + distribution.getName() + ".docker." + spec.getName() + ".template", spec.getTemplateDirectory()));
         } else {
             spec.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + spec.getName() + "/" + docker.getName());
         }

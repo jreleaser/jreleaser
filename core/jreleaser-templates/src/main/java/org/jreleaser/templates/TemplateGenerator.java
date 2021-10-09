@@ -17,6 +17,7 @@
  */
 package org.jreleaser.templates;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Announce;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.util.JReleaserLogger;
@@ -80,11 +81,11 @@ public class TemplateGenerator {
 
     private Path generateAnnouncer() throws TemplateGenerationException {
         if (!Announce.supportedAnnouncers().contains(announcerName)) {
-            logger.error("Announcer {} is not supported", announcerName);
+            logger.error(RB.$("templates.announcer.not.supported"), announcerName);
             return null;
         }
 
-        logger.info("Creating output directory {}", outputDirectory.toAbsolutePath());
+        logger.info(RB.$("templates.create.directory"), outputDirectory.toAbsolutePath());
         try {
             Files.createDirectories(outputDirectory);
         } catch (IOException e) {
@@ -94,7 +95,7 @@ public class TemplateGenerator {
         Reader reader = TemplateUtils.resolveTemplate(logger, announcerName);
 
         Path outputFile = outputDirectory.resolve(announcerName + ".tpl");
-        logger.info("Writing file " + outputFile.toAbsolutePath());
+        logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());
 
         try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
              Scanner scanner = new Scanner(reader)) {
@@ -102,7 +103,7 @@ public class TemplateGenerator {
                 writer.write(scanner.nextLine() + System.lineSeparator());
             }
         } catch (FileAlreadyExistsException e) {
-            logger.error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());
+            logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
             return null;
         } catch (Exception e) {
             throw fail(e);
@@ -113,14 +114,14 @@ public class TemplateGenerator {
 
     private Path generateTool() throws TemplateGenerationException {
         if (!Distribution.supportedTools().contains(toolName)) {
-            logger.error("Tool {} is not supported", toolName);
+            logger.error(RB.$("ERROR_tool_not_supported"), toolName);
             return null;
         }
 
         Path output = outputDirectory.resolve(distributionName)
             .resolve(toolName + (snapshot ? "-snapshot" : "")).normalize();
 
-        logger.info("Creating output directory {}", output.toAbsolutePath());
+        logger.info(RB.$("templates.create.directory"), output.toAbsolutePath());
         try {
             Files.createDirectories(output);
         } catch (IOException e) {
@@ -130,7 +131,7 @@ public class TemplateGenerator {
         Map<String, Reader> templates = TemplateUtils.resolveTemplates(logger, distributionType.name(), toolName, snapshot);
         for (Map.Entry<String, Reader> template : templates.entrySet()) {
             Path outputFile = output.resolve(template.getKey());
-            logger.info("Writing file " + outputFile.toAbsolutePath());
+            logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());
 
             try {
                 Files.createDirectories(outputFile.getParent());
@@ -144,7 +145,7 @@ public class TemplateGenerator {
                     writer.write(scanner.nextLine() + System.lineSeparator());
                 }
             } catch (FileAlreadyExistsException e) {
-                logger.error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());
+                logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
                 return null;
             } catch (Exception e) {
                 throw fail(e);
@@ -155,10 +156,8 @@ public class TemplateGenerator {
     }
 
     private TemplateGenerationException fail(Exception e) throws TemplateGenerationException {
-        throw new TemplateGenerationException("Unexpected error when generating template. " +
-            "distributionType=" + distributionType +
-            ", distributionName=" + distributionName +
-            ", toolName=" + toolName, e);
+        throw new TemplateGenerationException(RB.$("ERROR_unexpected_template_fail",
+            distributionType, distributionName, toolName), e);
     }
 
     public static TemplateGeneratorBuilder builder() {

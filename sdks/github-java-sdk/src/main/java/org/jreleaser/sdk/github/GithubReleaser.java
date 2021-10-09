@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.github;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.AbstractReleaser;
@@ -57,7 +58,7 @@ public class GithubReleaser extends AbstractReleaser {
     @Override
     protected void createRelease() throws ReleaseException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
-        context.getLogger().info("Releasing to {}", github.getResolvedRepoUrl(context.getModel()));
+        context.getLogger().info(RB.$("git.releaser.releasing"), github.getResolvedRepoUrl(context.getModel()));
         String tagName = github.getEffectiveTagName(context.getModel());
 
         try {
@@ -69,31 +70,31 @@ public class GithubReleaser extends AbstractReleaser {
                 github.getConnectTimeout(),
                 github.getReadTimeout());
 
-            context.getLogger().debug("looking up release with tag {} at repository {}", tagName, github.getCanonicalRepoName());
+            context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, github.getCanonicalRepoName());
             GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);
             boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
-                context.getLogger().debug("release {} exists", tagName);
+                context.getLogger().debug(RB.$("git.releaser.release.exists"), tagName);
                 if (github.isOverwrite() || snapshot) {
-                    context.getLogger().debug("deleting release {}", tagName);
+                    context.getLogger().debug(RB.$("git.releaser.release.delete"), tagName);
                     if (!context.isDryrun()) {
                         release.delete();
                     }
-                    context.getLogger().debug("creating release {}", tagName);
+                    context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                     createRelease(api, tagName, changelog, true);
                 } else if (github.isUpdate()) {
-                    context.getLogger().debug("updating release {}", tagName);
+                    context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
                         boolean update = false;
                         GHReleaseUpdater updater = release.update();
                         if (github.getUpdateSections().contains(UpdateSection.TITLE)) {
                             update = true;
-                            context.getLogger().info("updating release title to {}", github.getEffectiveReleaseName());
+                            context.getLogger().info(RB.$("git.releaser.release.update.title"), github.getEffectiveReleaseName());
                             updater.name(github.getEffectiveReleaseName());
                         }
                         if (github.getUpdateSections().contains(UpdateSection.BODY)) {
                             update = true;
-                            context.getLogger().info("updating release body");
+                            context.getLogger().info(RB.$("git.releaser.release.update.body"));
                             updater.body(changelog);
                         }
                         if (update) updater.update();
@@ -105,17 +106,17 @@ public class GithubReleaser extends AbstractReleaser {
                     }
                 } else {
                     if (context.isDryrun()) {
-                        context.getLogger().debug("creating release {}", tagName);
+                        context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                         createRelease(api, tagName, changelog, false);
                         return;
                     }
 
-                    throw new IllegalStateException("Github release failed because release " +
-                        tagName + " already exists. overwrite = false; update = false");
+                    throw new IllegalStateException(RB.$("ERROR_git_releaser_cannot_release",
+                        "GitHub", tagName));
                 }
             } else {
-                context.getLogger().debug("release {} does not exist", tagName);
-                context.getLogger().debug("creating release {}", tagName);
+                context.getLogger().debug(RB.$("git.releaser.release.not.found"), tagName);
+                context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                 createRelease(api, tagName, changelog, snapshot);
             }
         } catch (IOException | IllegalStateException e) {
@@ -127,7 +128,7 @@ public class GithubReleaser extends AbstractReleaser {
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
-        context.getLogger().debug("looking up {}/{}", owner, repo);
+        context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
         Github api = new Github(context.getLogger(),
             github.getApiEndpoint(),
@@ -160,7 +161,7 @@ public class GithubReleaser extends AbstractReleaser {
                 .findUser(email, name);
         } catch (RestAPIException | IOException e) {
             context.getLogger().trace(e);
-            context.getLogger().debug("Could not find user matching {}", email);
+            context.getLogger().debug(RB.$("git.releaser.user.not.found"), email);
         }
 
         return Optional.empty();
@@ -176,7 +177,7 @@ public class GithubReleaser extends AbstractReleaser {
                     continue;
                 }
 
-                context.getLogger().info(" - uploading {}", asset.getFileName().toString());
+                context.getLogger().info(" " + RB.$("git.upload.asset"), asset.getFileName().toString());
             }
             return;
         }
@@ -187,7 +188,7 @@ public class GithubReleaser extends AbstractReleaser {
 
         // local tag
         if (deleteTags || !github.isSkipTag()) {
-            context.getLogger().debug("tagging local repository with {}", tagName);
+            context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName);
             GitSdk.of(context).tag(tagName, true, context);
         }
 
@@ -224,7 +225,7 @@ public class GithubReleaser extends AbstractReleaser {
             isBlank(discussionCategoryName) ||
             github.isDraft()) return;
 
-        context.getLogger().debug("linking release {} with discussion {}", tagName, discussionCategoryName);
+        context.getLogger().debug(RB.$("git.releaser.link.discussion"), tagName, discussionCategoryName);
 
         if (context.isDryrun()) return;
 
@@ -244,7 +245,7 @@ public class GithubReleaser extends AbstractReleaser {
                 ghRelease);
         } catch (IOException e) {
             context.getLogger().trace(e);
-            context.getLogger().warn("Could not update release {} with discussion category {}",
+            context.getLogger().warn(RB.$("git.releaser.link.discussion.error"),
                 tagName, discussionCategoryName);
         }
     }

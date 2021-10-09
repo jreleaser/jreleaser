@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.release;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Codeberg;
 import org.jreleaser.model.GenericGit;
 import org.jreleaser.model.Gitea;
@@ -49,27 +50,27 @@ public class Releasers {
             .build();
     }
 
-    private static <RB extends ReleaserBuilder> RB findReleaser(JReleaserContext context) {
+    private static <T extends ReleaserBuilder> T findReleaser(JReleaserContext context) {
         Map<String, ReleaserBuilder> builders = StreamSupport.stream(ServiceLoader.load(ReleaserBuilderFactory.class,
             Releasers.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(ReleaserBuilderFactory::getName, ReleaserBuilderFactory::getBuilder));
 
         if (null != context.getModel().getRelease().getGithub()) {
-            return (RB) builders.get(Github.NAME);
+            return (T) builders.get(Github.NAME);
         }
         if (null != context.getModel().getRelease().getGitlab()) {
-            return (RB) builders.get(Gitlab.NAME);
+            return (T) builders.get(Gitlab.NAME);
         }
         if (null != context.getModel().getRelease().getGitea()) {
-            return (RB) builders.get(Gitea.NAME);
+            return (T) builders.get(Gitea.NAME);
         }
         if (null != context.getModel().getRelease().getCodeberg()) {
-            return (RB) builders.get(Codeberg.NAME);
+            return (T) builders.get(Codeberg.NAME);
         }
         if (null != context.getModel().getRelease().getGeneric()) {
-            return (RB) builders.get(GenericGit.NAME);
+            return (T) builders.get(GenericGit.NAME);
         }
 
-        throw new JReleaserException("No suitable git releaser has been configured");
+        throw new JReleaserException(RB.$("ERROR_releaser_no_match"));
     }
 }

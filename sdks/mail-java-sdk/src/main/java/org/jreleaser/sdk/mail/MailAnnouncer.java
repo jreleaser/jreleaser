@@ -76,7 +76,7 @@ public class MailAnnouncer implements Announcer {
                 .port(mail.getPort())
                 .auth(mail.isAuth())
                 .username(mail.getUsername())
-                .password(context.isDryrun() ? "**UNDEFINED**" :mail.getResolvedPassword())
+                .password(context.isDryrun() ? "**UNDEFINED**" : mail.getResolvedPassword())
                 .from(mail.getFrom())
                 .to(mail.getTo())
                 .cc(mail.getCc())

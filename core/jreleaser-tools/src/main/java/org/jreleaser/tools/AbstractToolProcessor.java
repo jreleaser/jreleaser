@@ -17,6 +17,7 @@
  */
 package org.jreleaser.tools;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
@@ -86,10 +87,10 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     public void prepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
-            context.getLogger().debug("creating props for {}/{}", distributionName, getToolName());
+            context.getLogger().debug(RB.$("tool.create.properties"), distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
-                context.getLogger().warn("Skipping {} distribution", distributionName);
+                context.getLogger().warn(RB.$("tool.skip.distribution"), distributionName);
                 return;
             }
 
@@ -105,10 +106,10 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     public void packageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
-            context.getLogger().debug("creating props for {}/{}", distributionName, getToolName());
+            context.getLogger().debug(RB.$("tool.create.properties"), distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
-                context.getLogger().warn("skipping {} distribution", distributionName);
+                context.getLogger().warn(RB.$("tool.skip.distribution"), distributionName);
                 return;
             }
 
@@ -122,10 +123,10 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     public void publishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         try {
             String distributionName = distribution.getName();
-            context.getLogger().debug("creating props for {}/{}", distributionName, getToolName());
+            context.getLogger().debug(RB.$("tool.create.properties"), distributionName, getToolName());
             Map<String, Object> newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
-                context.getLogger().warn("skipping {} distribution", distributionName);
+                context.getLogger().warn(RB.$("tool.skip.distribution"), distributionName);
                 return;
             }
 
@@ -141,16 +142,16 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Map<String, Object> newProps = new LinkedHashMap<>(props);
-        context.getLogger().debug("filling distribution properties into props");
+        context.getLogger().debug(RB.$("tool.fill.distribution.properties"));
         fillDistributionProperties(newProps, distribution);
-        context.getLogger().debug("filling git properties into props");
+        context.getLogger().debug(RB.$("tool.fill.git.properties"));
         context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel());
-        context.getLogger().debug("filling artifact properties into props");
+        context.getLogger().debug(RB.$("tool.fill.artifact.properties"));
         if (!verifyAndAddArtifacts(newProps, distribution)) {
             // we can't continue with this tool
             return Collections.emptyMap();
         }
-        context.getLogger().debug("filling tool properties into props");
+        context.getLogger().debug(RB.$("tool.fill.tool.properties"));
         fillToolProperties(newProps, distribution);
         applyTemplates(newProps, tool.getResolvedExtraProperties());
         if (isBlank(context.getModel().getRelease().getGitService().getReverseRepoHost())) {
@@ -181,13 +182,13 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             error(err);
 
             if (exitValue == 0) return true;
-            throw new ToolProcessingException("Command execution error. exitValue = " + exitValue);
+            throw new ToolProcessingException(RB.$("ERROR_command_execution_exit_value", exitValue));
         } catch (ProcessInitException e) {
-            throw new ToolProcessingException("Unexpected error", e.getCause());
+            throw new ToolProcessingException(RB.$("ERROR_unexpected_error"), e.getCause());
         } catch (ToolProcessingException e) {
             throw e;
         } catch (Exception e) {
-            throw new ToolProcessingException("Unexpected error", e);
+            throw new ToolProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
@@ -214,14 +215,14 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         Path prepareDirectory = getPrepareDirectory(props);
         try {
             if (!FileUtils.copyFilesRecursive(context.getLogger(), prepareDirectory, outputDirectory)) {
-                throw new ToolProcessingException("Could not copy files from " +
-                    context.relativizeToBasedir(prepareDirectory) + " to " +
-                    context.relativizeToBasedir(outputDirectory));
+                throw new ToolProcessingException(RB.$("ERROR_copy_files_from_to",
+                    context.relativizeToBasedir(prepareDirectory),
+                    context.relativizeToBasedir(outputDirectory)));
             }
         } catch (IOException e) {
-            throw new ToolProcessingException("Unexpected error when copying files from " +
-                context.relativizeToBasedir(prepareDirectory) + " to " +
-                context.relativizeToBasedir(outputDirectory), e);
+            throw new ToolProcessingException(RB.$("ERROR_unexpected_copy_files_from_to",
+                context.relativizeToBasedir(prepareDirectory),
+                context.relativizeToBasedir(outputDirectory)), e);
         }
     }
 
@@ -239,7 +240,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
         if (activeArtifacts.size() == 0) {
             // we can't proceed
-            context.getLogger().warn("no suitable artifacts found in distribution {} to be packaged with {}",
+            context.getLogger().warn(RB.$("tool.no.matching.artifacts"),
                 distribution.getName(), capitalize(tool.getName()));
             return false;
         }

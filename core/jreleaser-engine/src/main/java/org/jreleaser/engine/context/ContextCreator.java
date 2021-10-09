@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.context;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.model.JReleaserContext;
@@ -84,14 +85,14 @@ public class ContextCreator {
 
     public static JReleaserModel resolveModel(JReleaserLogger logger, Path configFile) {
         try {
-            logger.info("Reading configuration");
+            logger.info(RB.$("context.creator.reading_configuration"));
             return JReleaserConfigLoader.loadConfig(configFile);
         } catch (JReleaserException e) {
             logger.trace(e);
             throw e;
         } catch (Exception e) {
             logger.trace(e);
-            throw new JReleaserException("Unexpected error when parsing configuration from " + configFile.toAbsolutePath(), e);
+            throw new JReleaserException(RB.$("ERROR_context_creator_parse_configuration", configFile.toAbsolutePath()), e);
         }
     }
 
@@ -99,9 +100,9 @@ public class ContextCreator {
         String version = context.getModel().getProject().getVersion();
         context.getModel().getProject().parseVersion();
 
-        context.getLogger().info("Project version set to {}", version);
-        context.getLogger().info("Release is{}snapshot", context.getModel().getProject().isSnapshot() ? " " : " not ");
-        context.getLogger().info("Timestamp is {}", context.getModel().getTimestamp());
-        context.getLogger().info("HEAD is at {}", context.getModel().getCommit().getShortHash());
+        context.getLogger().info(RB.$("context.creator.report.project-version"), version);
+        context.getLogger().info(RB.$("context.creator.report.release"), context.getModel().getProject().isSnapshot() ? " " : " " + RB.$("not") + " ");
+        context.getLogger().info(RB.$("context.creator.report.timestamp"), context.getModel().getTimestamp());
+        context.getLogger().info(RB.$("context.creator.report.head"), context.getModel().getCommit().getShortHash());
     }
 }

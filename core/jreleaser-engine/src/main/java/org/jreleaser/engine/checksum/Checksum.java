@@ -17,6 +17,7 @@
  */
 package org.jreleaser.engine.checksum;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
@@ -42,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Checksum {
     public static void collectAndWriteChecksums(JReleaserContext context) throws JReleaserException {
-        context.getLogger().info("Calculating checksums");
+        context.getLogger().info(RB.$("checksum.header"));
         context.getLogger().increaseIndent();
         context.getLogger().setPrefix("checksum");
 
@@ -73,7 +74,7 @@ public class Checksum {
         if (checksums.isEmpty()) {
             context.getLogger().restorePrefix();
             context.getLogger().decreaseIndent();
-            context.getLogger().info("No files configured for checksum. Skipping");
+            context.getLogger().info(RB.$("checksum.not.enabled"));
             return;
         }
 
@@ -105,7 +106,7 @@ public class Checksum {
                     Files.deleteIfExists(checksumsFilePath);
                 }
             } catch (IOException e) {
-                throw new JReleaserException("Unexpected error writing checksums to " + checksumsFilePath.toAbsolutePath(), e);
+                throw new JReleaserException(RB.$("ERROR_unexpected_error_checksum", checksumsFilePath.toAbsolutePath()), e);
             }
         });
 
@@ -135,25 +136,25 @@ public class Checksum {
                                  Path artifactPath,
                                  Path checksumPath) throws JReleaserException {
         if (!Files.exists(artifactPath)) {
-            throw new JReleaserException("Artifact does not exist. " + context.relativizeToBasedir(artifactPath));
+            throw new JReleaserException(RB.$("ERROR_artifact_does_not_exist", context.relativizeToBasedir(artifactPath)));
         }
 
         if (!Files.exists(checksumPath)) {
-            context.getLogger().debug("checksum does not exist: {}", context.relativizeToBasedir(checksumPath));
+            context.getLogger().debug(RB.$("checksum.not.exist"), context.relativizeToBasedir(checksumPath));
             calculateHash(context, artifactPath, checksumPath, algorithm);
         } else if (artifactPath.toFile().lastModified() > checksumPath.toFile().lastModified()) {
-            context.getLogger().debug("{} is newer than {}",
+            context.getLogger().debug(RB.$("checksum.file.newer"),
                 context.relativizeToBasedir(artifactPath),
                 context.relativizeToBasedir(checksumPath));
             calculateHash(context, artifactPath, checksumPath, algorithm);
         }
 
         try {
-            context.getLogger().debug("reading {}",
+            context.getLogger().debug(RB.$("checksum.reading"),
                 context.relativizeToBasedir(checksumPath));
             artifact.setHash(algorithm, new String(Files.readAllBytes(checksumPath)));
         } catch (IOException e) {
-            throw new JReleaserException("Unexpected error when reading hash from " + context.relativizeToBasedir(checksumPath), e);
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_hash_read", context.relativizeToBasedir(checksumPath)), e);
         }
     }
 
@@ -169,7 +170,7 @@ public class Checksum {
             Files.write(output, hashcode.getBytes());
             return hashcode;
         } catch (IOException e) {
-            throw new JReleaserException("Unexpected error calculating checksum for " + input, e);
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_calculate_checksum", input), e);
         }
     }
 }

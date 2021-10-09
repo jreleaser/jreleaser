@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -121,8 +122,8 @@ public abstract class SdkmanValidator extends Validator {
 
         map.forEach((candidate, distributions) -> {
             if (distributions.size() > 1) {
-                errors.configuration("sdkman.candidate '" + candidate + "' is defined for more than one distribution: " +
-                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", ")));
+                errors.configuration(RB.$("validation_sdkman_multiple_definition", candidate,
+                    distributions.stream().map(Distribution::getName).collect(Collectors.joining(", "))));
             }
         });
     }

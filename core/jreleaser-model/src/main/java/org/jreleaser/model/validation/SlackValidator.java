@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Slack;
 import org.jreleaser.util.Errors;
@@ -60,7 +61,7 @@ public abstract class SlackValidator extends Validator {
         String webhook = slack.getResolvedWebhook();
 
         if (!context.isDryrun() && isBlank(token) && isBlank(webhook)) {
-            errors.configuration("slack.token or slack.webhook must be provided");
+            errors.configuration(RB.$("validation_slack_token"));
             return;
         }
 
@@ -72,13 +73,13 @@ public abstract class SlackValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_SLACK_TPL))) {
                 slack.setMessageTemplate(DEFAULT_SLACK_TPL);
             } else {
-                slack.setMessage("\uD83D\uDE80 {{projectNameCapitalized}} {{projectVersion}} has been released! {{releaseNotesUrl}}");
+                slack.setMessage(RB.$("default_release_message"));
             }
         }
 
         if (isNotBlank(slack.getMessageTemplate()) &&
             !Files.exists(context.getBasedir().resolve(slack.getMessageTemplate().trim()))) {
-            errors.configuration("slack.messageTemplate does not exist. " + slack.getMessageTemplate());
+            errors.configuration(RB.$("validation_directory_not_exist", "slack.messageTemplate ", slack.getMessageTemplate()));
         }
 
         validateTimeout(slack);

@@ -17,12 +17,12 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Gitea;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.GitService.DRAFT;
-import static org.jreleaser.model.GitService.PRERELEASE;
 import static org.jreleaser.model.GitService.PRERELEASE_PATTERN;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -38,7 +38,7 @@ public abstract class GiteaValidator extends GitServiceValidator {
         validateGitService(context, mode, gitea, errors);
 
         if (isBlank(gitea.getApiEndpoint())) {
-            errors.configuration("gitea.apiEndpoint must not be blank");
+            errors.configuration(RB.$("validation_must_not_be_blank", "gitea.apiEndpoint"));
         }
 
         if (context.getModel().getProject().isSnapshot()) {

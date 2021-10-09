@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifactory;
 import org.jreleaser.model.JReleaserContext;
@@ -56,7 +57,7 @@ public abstract class ArtifactoryValidator extends Validator {
         }
 
         if (isBlank(artifactory.getUploadUrl())) {
-            errors.configuration("artifactory." + artifactory.getName() + ".uploadUrl must not be blank.");
+            errors.configuration(RB.$("validation_must_not_be_blank", "artifactory." + artifactory.getName() + ".uploadUrl"));
         }
         if (isBlank(artifactory.getDownloadUrl())) {
             artifactory.setDownloadUrl(artifactory.getUploadUrl());
@@ -90,7 +91,7 @@ public abstract class ArtifactoryValidator extends Validator {
                         context.isDryrun()));
                 break;
             case NONE:
-                errors.configuration("artifactory." + artifactory.getName() + ".authorization can not be NONE");
+                errors.configuration(RB.$("validation_value_cannot_be", "artifactory." + artifactory.getName() + ".authorization", "NONE"));
                 break;
         }
 

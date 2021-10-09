@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Assemble;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jlink;
@@ -59,7 +60,7 @@ public abstract class AssemblersValidator extends Validator {
         }
         byDistributionName.forEach((name, types) -> {
             if (types.size() > 1) {
-                errors.configuration("distribution." + name + " has more than 1 assembler: " + types);
+                errors.configuration(RB.$("validation_multiple_assemblers", "distribution." + name, types));
                 assemble.setEnabled(false);
             }
         });

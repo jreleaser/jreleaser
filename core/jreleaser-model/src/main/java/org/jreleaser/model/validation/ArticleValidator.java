@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Article;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -44,7 +45,7 @@ public abstract class ArticleValidator extends Validator {
         validateOwner(repository, service);
 
         if (isBlank(repository.getName())) {
-            errors.configuration("announce.article.repository.name must not be blank.");
+            errors.configuration(RB.$("validation_must_not_be_blank", "announce.article.repository.name"));
         }
 
         repository.setUsername(
@@ -74,19 +75,19 @@ public abstract class ArticleValidator extends Validator {
 
         File templateDirectoryFile = context.getBasedir().resolve(article.getTemplateDirectory().trim()).toFile();
         if (!(templateDirectoryFile.exists())) {
-            errors.configuration("announce.article.templateDirectory does not exist: " + article.getTemplateDirectory());
+            errors.configuration(RB.$("validation_directory_not_exist", "announce.article.templateDirectory", article.getTemplateDirectory()));
         }
 
         if (!templateDirectoryFile.isDirectory()) {
-            errors.configuration("announce.article.templateDirectory is not a directory: " + article.getTemplateDirectory());
+            errors.configuration(RB.$("validation_is_not_a_directory", "announce.article.templateDirectory", article.getTemplateDirectory()));
         }
 
         if (templateDirectoryFile.listFiles() == null || templateDirectoryFile.listFiles().length == 0) {
-            errors.configuration("announce.article.templateDirectory is empty: " + article.getTemplateDirectory());
+            errors.configuration(RB.$("validation_directory_is_empty", "announce.article.templateDirectory", article.getTemplateDirectory()));
         }
 
         if (article.getFiles().isEmpty()) {
-            errors.configuration("announce.article.files must not be empty.");
+            errors.configuration(RB.$("validation_must_not_be_empty", "announce.article.files"));
         }
     }
 }

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jlink;
@@ -55,8 +56,8 @@ public abstract class JlinkResolver extends Validator {
                 .toAbsolutePath();
 
             if (!Files.exists(image)) {
-                errors.assembly("Missing outputs for " + jlink.getType() + "." + jlink.getName() +
-                    ". Distribution " + jlink.getName() + " has not been assembled.");
+                errors.assembly(RB.$("validation_missing_assembly",
+                    jlink.getType(), jlink.getName(), jlink.getName()));
             } else {
                 Artifact artifact = Artifact.of(image, targetJdk.getPlatform());
                 artifact.activate();

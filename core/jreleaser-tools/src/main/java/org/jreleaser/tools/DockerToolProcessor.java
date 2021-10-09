@@ -17,6 +17,7 @@
  */
 package org.jreleaser.tools;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
@@ -80,7 +81,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
                              Path prepareDirectory,
                              DockerSpec spec) throws IOException, ToolProcessingException {
         Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
-        context.getLogger().debug("preparing {} spec", spec.getName());
+        context.getLogger().debug(RB.$("distributions.action.preparing") + " {} spec", spec.getName());
         super.doPrepareDistribution(distribution, newProps, distributionName,
             prepareDirectory.resolve(spec.getName()),
             spec.getTemplateDirectory(),
@@ -125,7 +126,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
         }
 
         for (DockerSpec spec : tool.getActiveSpecs()) {
-            context.getLogger().debug("packaging {} spec", spec.getName());
+            context.getLogger().debug(RB.$("distributions.action.packaging") + " {} spec", spec.getName());
             Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
             packageDocker(distribution, newProps, packageDirectory.resolve(spec.getName()),
                 spec, Collections.singletonList(spec.getArtifact()));
@@ -218,7 +219,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     public void publishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         if (tool.getActiveSpecs().isEmpty()) {
             if (tool.getRegistries().isEmpty()) {
-                context.getLogger().info("no configured registries. Skipping");
+                context.getLogger().info(RB.$("docker.no.registries"));
                 publishToRepository(distribution, props);
                 return;
             }
@@ -228,7 +229,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
         }
 
         for (DockerSpec spec : tool.getActiveSpecs()) {
-            context.getLogger().debug("publishing {} spec", spec.getName());
+            context.getLogger().debug(RB.$("distributions.action.publishing") + " {} spec", spec.getName());
             Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
             publishDocker(distribution, newProps, spec);
         }
@@ -268,7 +269,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
 
         ByteArrayInputStream in = new ByteArrayInputStream((registry.getResolvedPassword() + System.lineSeparator()).getBytes());
 
-        context.getLogger().debug("login into {}{}",
+        context.getLogger().debug(RB.$("docker.login"),
             registry.getServerName(),
             (isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : ""));
         if (!context.isDryrun()) executeCommandWithInput(cmd, in);
@@ -312,7 +313,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
             cmd.add(imageName);
             cmd.add(tag);
 
-            context.getLogger().debug("tagging {} as {}", imageName, tag);
+            context.getLogger().debug(RB.$("docker.tag"), imageName, tag);
             if (!context.isDryrun()) executeCommand(cmd);
         }
 
@@ -321,7 +322,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
         cmd.add(tag);
 
         context.getLogger().info(" - {}", tag);
-        context.getLogger().debug("pushing {} to {}{}",
+        context.getLogger().debug(RB.$("docker.push"),
             tag,
             registry.getServerName(),
             (isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : ""));
@@ -334,7 +335,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
             cmd.add(registry.getServerName());
         }
 
-        context.getLogger().debug("logout from {}{}",
+        context.getLogger().debug(RB.$("docker.logout"),
             registry.getServerName(),
             (isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : ""));
         if (!context.isDryrun()) executeCommand(cmd);

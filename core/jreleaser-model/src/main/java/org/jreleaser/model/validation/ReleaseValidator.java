@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Release;
 import org.jreleaser.util.Errors;
@@ -44,11 +45,11 @@ public abstract class ReleaseValidator extends Validator {
         if (validateGeneric(context, mode, release.getGeneric(), errors)) count++;
 
         if (0 == count) {
-            errors.configuration("No release provider has been configured");
+            errors.configuration(RB.$("validation_release_no_providers"));
             return;
         }
         if (count > 1) {
-            errors.configuration("Only one of release.[github|gitlab|gitea|codeberg|generic] can be enabled");
+            errors.configuration(RB.$("validation_release_requirement", "release.[github|gitlab|gitea|codeberg|generic]"));
         }
     }
 }

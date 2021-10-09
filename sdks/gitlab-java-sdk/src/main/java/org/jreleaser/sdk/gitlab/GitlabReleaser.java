@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.gitlab;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.AbstractReleaser;
@@ -54,7 +55,7 @@ public class GitlabReleaser extends AbstractReleaser {
     @Override
     protected void createRelease() throws ReleaseException {
         org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
-        context.getLogger().info("Releasing to {}", gitlab.getResolvedRepoUrl(context.getModel()));
+        context.getLogger().info(RB.$("git.releaser.releasing"), gitlab.getResolvedRepoUrl(context.getModel()));
         String tagName = gitlab.getEffectiveTagName(context.getModel());
 
         try {
@@ -66,31 +67,31 @@ public class GitlabReleaser extends AbstractReleaser {
                 gitlab.getConnectTimeout(),
                 gitlab.getReadTimeout());
 
-            context.getLogger().debug("looking up release with tag {} at repository {}", tagName, gitlab.getCanonicalRepoName());
+            context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, gitlab.getCanonicalRepoName());
             Release release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), tagName);
             boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
-                context.getLogger().debug("release {} exists", tagName);
+                context.getLogger().debug(RB.$("git.releaser.release.exists"), tagName);
                 if (gitlab.isOverwrite() || snapshot) {
-                    context.getLogger().debug("deleting release {}", tagName);
+                    context.getLogger().debug(RB.$("git.releaser.release.delete"), tagName);
                     if (!context.isDryrun()) {
                         api.deleteRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), tagName);
                     }
-                    context.getLogger().debug("creating release {}", tagName);
+                    context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                     createRelease(api, tagName, changelog, true);
                 } else if (gitlab.isUpdate()) {
-                    context.getLogger().debug("updating release {}", tagName);
+                    context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
                         boolean update = false;
                         Release updater = new Release();
                         if (gitlab.getUpdateSections().contains(UpdateSection.TITLE)) {
                             update = true;
-                            context.getLogger().info("updating release title to {}", gitlab.getEffectiveReleaseName());
+                            context.getLogger().info(RB.$("git.releaser.release.update.title"), gitlab.getEffectiveReleaseName());
                             updater.setName(gitlab.getEffectiveReleaseName());
                         }
                         if (gitlab.getUpdateSections().contains(UpdateSection.BODY)) {
                             update = true;
-                            context.getLogger().info("updating release body");
+                            context.getLogger().info(RB.$("git.releaser.release.update.body"));
                             updater.setDescription(changelog);
                         }
                         if (update) {
@@ -104,17 +105,17 @@ public class GitlabReleaser extends AbstractReleaser {
                     }
                 } else {
                     if (context.isDryrun()) {
-                        context.getLogger().debug("creating release {}", tagName);
+                        context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                         createRelease(api, tagName, changelog, false);
                         return;
                     }
 
-                    throw new IllegalStateException("Gitlab release failed because release " +
-                        tagName + " already exists. overwrite = false; update = false");
+                    throw new IllegalStateException(RB.$("ERROR_git_releaser_cannot_release",
+                        "GitLab", tagName));
                 }
             } else {
-                context.getLogger().debug("release {} does not exist", tagName);
-                context.getLogger().debug("creating release {}", tagName);
+                context.getLogger().debug(RB.$("git.releaser.release.not.found"), tagName);
+                context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                 createRelease(api, tagName, changelog, snapshot);
             }
         } catch (IOException | IllegalStateException e) {
@@ -126,7 +127,7 @@ public class GitlabReleaser extends AbstractReleaser {
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
         org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
-        context.getLogger().debug("looking up {}/{}", owner, repo);
+        context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
         Gitlab api = new Gitlab(context.getLogger(),
             gitlab.getApiEndpoint(),
@@ -168,7 +169,7 @@ public class GitlabReleaser extends AbstractReleaser {
                 .findUser(email, name);
         } catch (RestAPIException | IOException e) {
             context.getLogger().trace(e);
-            context.getLogger().debug("Could not find user matching {}", email);
+            context.getLogger().debug(RB.$("git.releaser.user.not.found"), email);
         }
 
         return Optional.empty();
@@ -184,7 +185,7 @@ public class GitlabReleaser extends AbstractReleaser {
                     continue;
                 }
 
-                context.getLogger().info(" - uploading {}", asset.getFileName().toString());
+                context.getLogger().info(" " + RB.$("git.upload.asset"), asset.getFileName().toString());
             }
             return;
         }
@@ -195,7 +196,7 @@ public class GitlabReleaser extends AbstractReleaser {
 
         // local tag
         if (deleteTags || !gitlab.isSkipTag()) {
-            context.getLogger().debug("tagging local repository with {}", tagName);
+            context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName);
             GitSdk.of(context).tag(tagName, true, context);
         }
 

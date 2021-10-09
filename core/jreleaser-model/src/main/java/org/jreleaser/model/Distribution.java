@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Version;
 
@@ -249,7 +250,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
 
     public <T extends Tool> T findTool(String name) {
         if (isBlank(name)) {
-            throw new JReleaserException("Tool name must not be blank");
+            throw new JReleaserException(RB.$("ERROR_tool_name_not_blank"));
         }
 
         return resolveTool(name);
@@ -260,7 +261,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         if (null != tool) {
             return tool;
         }
-        throw new JReleaserException("Tool '" + name + "' has not been configured");
+        throw new JReleaserException(RB.$("ERROR_tool_not_configured", name));
     }
 
     private <T extends Tool> T resolveTool(String name) {
@@ -280,7 +281,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
             case Snap.NAME:
                 return (T) getSnap();
             default:
-                throw new JReleaserException("Unsupported tool '" + name + "'");
+                throw new JReleaserException(RB.$("ERROR_unsupported_tool", name));
         }
     }
 
