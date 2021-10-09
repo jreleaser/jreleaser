@@ -15,3 +15,5 @@ Please check the translation files you want to add/fix/update:
 
  - [ ] CLI banner: (apps/jreleaser/src/main/resources/org/jreleaser/cli/Banner*.properties)
  - [ ] CLI bundle: (apps/jreleaser/src/main/resources/org/jreleaser/cli/Messages*.properties)
+
+A list of language codes can be found at https://sda.berkeley.edu/man41h/localelist.htm
