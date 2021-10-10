@@ -185,6 +185,4 @@ public class Announce implements EnabledAware {
     public void setZulip(Zulip zulip) {
         this.zulip.setAll(zulip);
     }
-
-
 }
