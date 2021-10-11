@@ -152,6 +152,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "torrespro",
+      "name": "Andrés Torres",
+      "avatar_url": "https://avatars.githubusercontent.com/u/674902?v=4",
+      "profile": "http://atorr.es",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
