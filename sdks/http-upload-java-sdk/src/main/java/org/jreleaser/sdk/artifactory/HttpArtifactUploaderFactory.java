@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.artifactory;
 
-import org.jreleaser.model.HttpUploader;
+import org.jreleaser.model.Http;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.uploader.spi.ArtifactUploaderFactory;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
@@ -27,10 +27,10 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
  * @since 0.4.0
  */
 @ServiceProviderFor(ArtifactUploaderFactory.class)
-public class HttpArtifactUploaderFactory implements ArtifactUploaderFactory<HttpUploader, HttpArtifactUploader> {
+public class HttpArtifactUploaderFactory implements ArtifactUploaderFactory<Http, HttpArtifactUploader> {
     @Override
     public String getName() {
-        return HttpUploader.TYPE;
+        return Http.TYPE;
     }
 
     @Override

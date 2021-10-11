@@ -21,7 +21,7 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class Artifactory extends AbstractUploader {
+public class Artifactory extends AbstractHttpUploader {
     public static final String NAME = "artifactory";
 
     private String target;

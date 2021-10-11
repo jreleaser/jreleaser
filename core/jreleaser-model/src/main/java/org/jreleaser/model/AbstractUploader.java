@@ -41,8 +41,6 @@ abstract class AbstractUploader implements Uploader {
     protected String name;
     protected boolean enabled;
     protected Active active;
-    private String uploadUrl;
-    private String downloadUrl;
     private int connectTimeout;
     private int readTimeout;
     private Boolean artifacts;
@@ -57,28 +55,12 @@ abstract class AbstractUploader implements Uploader {
         this.active = uploader.active;
         this.enabled = uploader.enabled;
         this.name = uploader.name;
-        this.uploadUrl = uploader.uploadUrl;
-        this.downloadUrl = uploader.downloadUrl;
         this.connectTimeout = uploader.connectTimeout;
         this.readTimeout = uploader.readTimeout;
         this.artifacts = uploader.artifacts;
         this.files = uploader.files;
         this.signatures = uploader.signatures;
         setExtraProperties(uploader.extraProperties);
-    }
-
-    @Override
-    public String getResolvedUploadUrl(JReleaserContext context, Artifact artifact) {
-        Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
-        p.putAll(getResolvedExtraProperties());
-        return applyTemplate(uploadUrl, p);
-    }
-
-    @Override
-    public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
-        Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
-        p.putAll(getResolvedExtraProperties());
-        return applyTemplate(downloadUrl, p);
     }
 
     @Override
@@ -115,26 +97,6 @@ abstract class AbstractUploader implements Uploader {
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String getUploadUrl() {
-        return uploadUrl;
-    }
-
-    @Override
-    public void setUploadUrl(String uploadUrl) {
-        this.uploadUrl = uploadUrl;
-    }
-
-    @Override
-    public String getDownloadUrl() {
-        return downloadUrl;
-    }
-
-    @Override
-    public void setDownloadUrl(String downloadUrl) {
-        this.downloadUrl = downloadUrl;
     }
 
     @Override
@@ -255,8 +217,6 @@ abstract class AbstractUploader implements Uploader {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
         props.put("active", active);
-        props.put("uploadUrl", uploadUrl);
-        props.put("downloadUrl", downloadUrl);
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
         props.put("artifacts", isArtifacts());

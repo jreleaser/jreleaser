@@ -33,4 +33,6 @@ interface Upload {
     NamedDomainObjectContainer<Artifactory> getArtifactory()
 
     NamedDomainObjectContainer<Http> getHttp()
+
+    NamedDomainObjectContainer<S3> getS3()
 }

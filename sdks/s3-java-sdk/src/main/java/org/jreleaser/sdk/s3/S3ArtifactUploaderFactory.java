@@ -15,34 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.sdk.s3;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
+import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.S3;
+import org.jreleaser.model.uploader.spi.ArtifactUploaderFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.4.0
+ * @since 0.8.0
  */
-@CompileStatic
-interface Http extends HttpUploader {
-    Property<String> getTarget()
+@ServiceProviderFor(ArtifactUploaderFactory.class)
+public class S3ArtifactUploaderFactory implements ArtifactUploaderFactory<S3, S3ArtifactUploader> {
+    @Override
+    public String getName() {
+        return S3.TYPE;
+    }
 
-    Property<String> getUsername()
-
-    Property<String> getPassword()
-
-    Property<org.jreleaser.model.HttpUploader.Method> getMethod()
-
-    Property<org.jreleaser.model.HttpUploader.Authorization> getAuthorization()
-
-    MapProperty<String, String> getHeaders()
-
-    void setHeader(String key, String value)
-
-    void setAuthorization(String authorization)
-
-    void setMethod(String method)
+    @Override
+    public S3ArtifactUploader getArtifactUploader(JReleaserContext context) {
+        return new S3ArtifactUploader(context);
+    }
 }

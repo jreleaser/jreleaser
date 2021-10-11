@@ -20,9 +20,9 @@ package org.jreleaser.sdk.artifactory;
 import feign.form.FormData;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
+import org.jreleaser.model.Http;
 import org.jreleaser.model.HttpUploader;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Uploader;
 import org.jreleaser.model.uploader.spi.UploadException;
 import org.jreleaser.sdk.commons.AbstractArtifactUploader;
 import org.jreleaser.sdk.commons.ClientUtils;
@@ -41,26 +41,26 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public class HttpArtifactUploader extends AbstractArtifactUploader<HttpUploader> {
-    private HttpUploader uploader;
+public class HttpArtifactUploader extends AbstractArtifactUploader<Http> {
+    private Http uploader;
 
     public HttpArtifactUploader(JReleaserContext context) {
         super(context);
     }
 
     @Override
-    public HttpUploader getUploader() {
+    public Http getUploader() {
         return uploader;
     }
 
     @Override
-    public void setUploader(HttpUploader uploader) {
+    public void setUploader(Http uploader) {
         this.uploader = uploader;
     }
 
     @Override
     public String getType() {
-        return HttpUploader.TYPE;
+        return Http.TYPE;
     }
 
     @Override
@@ -98,7 +98,7 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<HttpUploader>
 
                     resolveHeaders(artifact, headers);
 
-                    if (uploader.getMethod() == Uploader.Method.POST) {
+                    if (uploader.getMethod() == HttpUploader.Method.POST) {
                         ClientUtils.postFile(context.getLogger(),
                             uploader.getResolvedUploadUrl(context, artifact),
                             uploader.getConnectTimeout(),

@@ -37,6 +37,7 @@ class UploadImpl implements Upload {
     final Property<Boolean> enabled
     final NamedDomainObjectContainer<ArtifactoryImpl> artifactory
     final NamedDomainObjectContainer<HttpImpl> http
+    final NamedDomainObjectContainer<S3Impl> s3
 
     @Inject
     UploadImpl(ObjectFactory objects) {
@@ -59,6 +60,15 @@ class UploadImpl implements Upload {
                 return h
             }
         })
+
+        s3 = objects.domainObjectContainer(S3Impl, new NamedDomainObjectFactory<S3Impl>() {
+            @Override
+            S3Impl create(String name) {
+                S3Impl s = objects.newInstance(S3Impl, objects)
+                s.name = name
+                return s
+            }
+        })
     }
 
     @CompileDynamic
@@ -67,6 +77,7 @@ class UploadImpl implements Upload {
 
         artifactory.each { upload.addArtifactory(it.toModel()) }
         http.each { upload.addHttp(it.toModel()) }
+        s3.each { upload.addS3(it.toModel()) }
 
         upload
     }

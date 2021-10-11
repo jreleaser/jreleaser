@@ -67,6 +67,7 @@ enforce {
             "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion",
             "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
             "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion",
+            "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:$jacksonVersion",
             "commons-codec:commons-codec:$commonsCodecVersion",
             "org.apache.commons:commons-compress:$commonsCompressVersion",
             "org.hamcrest:hamcrest-core:$hamcrestVersion",
@@ -87,6 +88,7 @@ enforce {
             "org.ow2.asm:asm:$asmVersion",
             "junit:junit:4.13.2",
             "org.hamcrest:hamcrest:2.2",
-            "org.apache.httpcomponents:httpclient:4.5.12"
+            "org.apache.httpcomponents:httpclient:$httpclientVersion"
+
     }
 }

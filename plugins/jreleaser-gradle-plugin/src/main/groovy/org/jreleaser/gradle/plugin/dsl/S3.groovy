@@ -24,25 +24,23 @@ import org.gradle.api.provider.Property
 /**
  *
  * @author Andres Almiray
- * @since 0.4.0
+ * @since 0.8.0
  */
 @CompileStatic
-interface Http extends HttpUploader {
-    Property<String> getTarget()
+interface S3 extends Uploader {
+    Property<String> getRegion()
 
-    Property<String> getUsername()
+    Property<String> getBucket()
 
-    Property<String> getPassword()
+    Property<String> getAccessKeyId()
 
-    Property<org.jreleaser.model.HttpUploader.Method> getMethod()
+    Property<String> getSecretKey()
 
-    Property<org.jreleaser.model.HttpUploader.Authorization> getAuthorization()
+    Property<String> getSessionToken()
+
+    Property<String> getEndpoint()
 
     MapProperty<String, String> getHeaders()
 
     void setHeader(String key, String value)
-
-    void setAuthorization(String authorization)
-
-    void setMethod(String method)
 }

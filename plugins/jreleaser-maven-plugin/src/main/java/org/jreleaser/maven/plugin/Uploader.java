@@ -28,14 +28,6 @@ public interface Uploader extends Activatable, TimeoutAware, ExtraProperties {
 
     void setName(String name);
 
-    String getUploadUrl();
-
-    void setUploadUrl(String uploadUrl);
-
-    String getDownloadUrl();
-
-    void setDownloadUrl(String downloadUrl);
-
     Boolean isArtifacts();
 
     void setArtifacts(Boolean artifacts);
@@ -53,15 +45,4 @@ public interface Uploader extends Activatable, TimeoutAware, ExtraProperties {
     void setSignatures(Boolean signatures);
 
     boolean isSignaturesSet();
-
-    enum Method {
-        PUT,
-        POST
-    }
-
-    public enum Authorization {
-        NONE,
-        BASIC,
-        BEARER
-    }
 }

@@ -20,8 +20,6 @@ package org.jreleaser.model;
 import java.util.List;
 import java.util.Map;
 
-import static org.jreleaser.util.StringUtils.isBlank;
-
 /**
  * @author Andres Almiray
  * @since 0.3.0
@@ -32,14 +30,6 @@ public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProper
     String getName();
 
     void setName(String name);
-
-    String getUploadUrl();
-
-    void setUploadUrl(String uploadUrl);
-
-    String getDownloadUrl();
-
-    void setDownloadUrl(String downloadUrl);
 
     boolean isSnapshotSupported();
 
@@ -65,38 +55,5 @@ public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProper
 
     Map<String, Object> artifactProps(JReleaserContext context, Artifact artifact);
 
-    String getResolvedUploadUrl(JReleaserContext context, Artifact artifact);
-
     String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact);
-
-    enum Method {
-        PUT,
-        POST;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-
-        public static HttpUploader.Method of(String str) {
-            if (isBlank(str)) return null;
-            return HttpUploader.Method.valueOf(str.toUpperCase().trim());
-        }
-    }
-
-    enum Authorization {
-        NONE,
-        BASIC,
-        BEARER;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-
-        public static HttpUploader.Authorization of(String str) {
-            if (isBlank(str)) return null;
-            return HttpUploader.Authorization.valueOf(str.toUpperCase().trim());
-        }
-    }
 }

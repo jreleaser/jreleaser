@@ -15,34 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.maven.plugin;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
+import org.jreleaser.maven.plugin.Uploader;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.4.0
+ * @since 0.8.0
  */
-@CompileStatic
-interface Http extends HttpUploader {
-    Property<String> getTarget()
+public interface HttpUploader extends Uploader {
+    String getUploadUrl();
 
-    Property<String> getUsername()
+    void setUploadUrl(String uploadUrl);
 
-    Property<String> getPassword()
+    String getDownloadUrl();
 
-    Property<org.jreleaser.model.HttpUploader.Method> getMethod()
+    void setDownloadUrl(String downloadUrl);
 
-    Property<org.jreleaser.model.HttpUploader.Authorization> getAuthorization()
 
-    MapProperty<String, String> getHeaders()
+    enum Method {
+        PUT,
+        POST
+    }
 
-    void setHeader(String key, String value)
-
-    void setAuthorization(String authorization)
-
-    void setMethod(String method)
+    enum Authorization {
+        NONE,
+        BASIC,
+        BEARER
+    }
 }

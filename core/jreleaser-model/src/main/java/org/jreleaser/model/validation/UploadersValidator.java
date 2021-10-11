@@ -22,7 +22,8 @@ import org.jreleaser.model.Upload;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.ArtifactoryValidator.validateArtifactory;
-import static org.jreleaser.model.validation.HttpUploaderValidator.validateHttp;
+import static org.jreleaser.model.validation.HttpValidator.validateHttp;
+import static org.jreleaser.model.validation.S3Validator.validateS3;
 
 /**
  * @author Andres Almiray
@@ -39,10 +40,12 @@ public abstract class UploadersValidator extends Validator {
         Upload upload = context.getModel().getUpload();
         validateArtifactory(context, mode, errors);
         validateHttp(context, mode, errors);
+        validateS3(context, mode, errors);
 
         if (!upload.isEnabledSet()) {
             upload.setEnabled(!upload.getActiveArtifactories().isEmpty() ||
-                !upload.getActiveHttps().isEmpty());
+                !upload.getActiveHttps().isEmpty() ||
+                !upload.getActiveS3s().isEmpty());
         }
     }
 }

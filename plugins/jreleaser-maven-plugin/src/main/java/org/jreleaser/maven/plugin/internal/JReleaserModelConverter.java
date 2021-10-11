@@ -63,6 +63,7 @@ import org.jreleaser.maven.plugin.Plug;
 import org.jreleaser.maven.plugin.Project;
 import org.jreleaser.maven.plugin.Registry;
 import org.jreleaser.maven.plugin.Release;
+import org.jreleaser.maven.plugin.S3;
 import org.jreleaser.maven.plugin.Scoop;
 import org.jreleaser.maven.plugin.Sdkman;
 import org.jreleaser.maven.plugin.SdkmanAnnouncer;
@@ -80,6 +81,7 @@ import org.jreleaser.maven.plugin.Zulip;
 import org.jreleaser.model.ChocolateyBucket;
 import org.jreleaser.model.DockerRepository;
 import org.jreleaser.model.HomebrewTap;
+import org.jreleaser.model.HttpUploader;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JbangCatalog;
 import org.jreleaser.model.Repository;
@@ -185,7 +187,8 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Github g = new org.jreleaser.model.Github();
         convertGitService(github, g);
         g.setDraft(github.isDraft());
-        if (github.isPrereleaseEnabledSet()) g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(github.getPrereleaseEnabled()));
+        if (github.isPrereleaseEnabledSet())
+            g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(github.getPrereleaseEnabled()));
         g.setPrerelease(convertPrerelease(github.getPrerelease()));
         g.setDiscussionCategoryName(github.getDiscussionCategoryName());
         return g;
@@ -204,7 +207,8 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Gitea g = new org.jreleaser.model.Gitea();
         convertGitService(gitea, g);
         g.setDraft(gitea.isDraft());
-        if (gitea.isPrereleaseEnabledSet()) g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(gitea.getPrereleaseEnabled()));
+        if (gitea.isPrereleaseEnabledSet())
+            g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(gitea.getPrereleaseEnabled()));
         g.setPrerelease(convertPrerelease(gitea.getPrerelease()));
         return g;
     }
@@ -214,7 +218,8 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Codeberg g = new org.jreleaser.model.Codeberg();
         convertGitService(codeberg, g);
         g.setDraft(codeberg.isDraft());
-        if (codeberg.isPrereleaseEnabledSet()) g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(codeberg.getPrereleaseEnabled()));
+        if (codeberg.isPrereleaseEnabledSet())
+            g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(codeberg.getPrereleaseEnabled()));
         g.setPrerelease(convertPrerelease(codeberg.getPrerelease()));
         return g;
     }
@@ -364,6 +369,7 @@ public final class JReleaserModelConverter {
         if (upload.isEnabledSet()) u.setEnabled(upload.isEnabled());
         u.setArtifactory(convertArtifactory(upload.getArtifactory()));
         u.setHttp(convertHttp(upload.getHttp()));
+        u.setS3(convertS3(upload.getS3()));
         return u;
     }
 
@@ -395,12 +401,18 @@ public final class JReleaserModelConverter {
         if (from.isArtifactsSet()) into.setArtifacts(from.isArtifacts());
         if (from.isFilesSet()) into.setFiles(from.isFiles());
         if (from.isSignaturesSet()) into.setSignatures(from.isSignatures());
+        if (from instanceof HttpUploader) {
+            convertHttpUploader((HttpUploader) from, (org.jreleaser.model.HttpUploader) into);
+        }
+    }
+
+    private static void convertHttpUploader(HttpUploader from, org.jreleaser.model.HttpUploader into) {
         into.setUploadUrl(from.getUploadUrl());
         into.setDownloadUrl(from.getDownloadUrl());
     }
 
-    private static Map<String, org.jreleaser.model.HttpUploader> convertHttp(Map<String, Http> http) {
-        Map<String, org.jreleaser.model.HttpUploader> map = new LinkedHashMap<>();
+    private static Map<String, org.jreleaser.model.Http> convertHttp(Map<String, Http> http) {
+        Map<String, org.jreleaser.model.Http> map = new LinkedHashMap<>();
         for (Map.Entry<String, Http> e : http.entrySet()) {
             e.getValue().setName(e.getKey());
             map.put(e.getKey(), convertHttp(e.getValue()));
@@ -408,8 +420,8 @@ public final class JReleaserModelConverter {
         return map;
     }
 
-    private static org.jreleaser.model.HttpUploader convertHttp(Http http) {
-        org.jreleaser.model.HttpUploader h = new org.jreleaser.model.HttpUploader();
+    private static org.jreleaser.model.Http convertHttp(Http http) {
+        org.jreleaser.model.Http h = new org.jreleaser.model.Http();
         convertUploader(http, h);
         if (isNotBlank(http.getTarget())) h.setTarget(http.getTarget());
         h.setUsername(http.getUsername());
@@ -417,6 +429,28 @@ public final class JReleaserModelConverter {
         h.setAuthorization(http.resolveAuthorization().name());
         h.setMethod(http.resolveMethod().name());
         h.setHeaders(http.getHeaders());
+        return h;
+    }
+
+    private static Map<String, org.jreleaser.model.S3> convertS3(Map<String, S3> s3) {
+        Map<String, org.jreleaser.model.S3> map = new LinkedHashMap<>();
+        for (Map.Entry<String, S3> e : s3.entrySet()) {
+            e.getValue().setName(e.getKey());
+            map.put(e.getKey(), convertS3(e.getValue()));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.S3 convertS3(S3 s3) {
+        org.jreleaser.model.S3 h = new org.jreleaser.model.S3();
+        convertUploader(s3, h);
+        h.setRegion(s3.getRegion());
+        h.setBucket(s3.getBucket());
+        h.setAccessKeyId(s3.getAccessKeyId());
+        h.setSecretKey(s3.getSecretKey());
+        h.setSessionToken(s3.getSessionToken());
+        h.setEndpoint(s3.getEndpoint());
+        h.setHeaders(s3.getHeaders());
         return h;
     }
 
