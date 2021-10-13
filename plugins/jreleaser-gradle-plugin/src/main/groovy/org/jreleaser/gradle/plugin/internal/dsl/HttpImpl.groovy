@@ -24,7 +24,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Http
-import org.jreleaser.model.Uploader
+import org.jreleaser.model.HttpUploader
 
 import javax.inject.Inject
 
@@ -36,13 +36,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.3.0
  */
 @CompileStatic
-class HttpImpl extends AbstractUploader implements Http {
+class HttpImpl extends AbstractHttpUploader implements Http {
     String name
     final Property<String> target
     final Property<String> username
     final Property<String> password
-    final Property<Uploader.Method> method
-    final Property<Uploader.Authorization> authorization
+    final Property<HttpUploader.Method> method
+    final Property<HttpUploader.Authorization> authorization
     final MapProperty<String, String> headers
 
     @Inject
@@ -51,8 +51,8 @@ class HttpImpl extends AbstractUploader implements Http {
         target = objects.property(String).convention(Providers.notDefined())
         username = objects.property(String).convention(Providers.notDefined())
         password = objects.property(String).convention(Providers.notDefined())
-        method = objects.property(Uploader.Method).convention(Providers.notDefined())
-        authorization = objects.property(Uploader.Authorization).convention(Providers.notDefined())
+        method = objects.property(HttpUploader.Method).convention(Providers.notDefined())
+        authorization = objects.property(HttpUploader.Authorization).convention(Providers.notDefined())
         headers = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
@@ -77,19 +77,19 @@ class HttpImpl extends AbstractUploader implements Http {
 
     @Override
     void setAuthorization(String authorization) {
-        this.authorization.set(Uploader.Authorization.of(authorization))
+        this.authorization.set(HttpUploader.Authorization.of(authorization))
     }
 
     @Override
     void setMethod(String method) {
-        this.method.set(Uploader.Method.of(method))
+        this.method.set(HttpUploader.Method.of(method))
     }
 
-    org.jreleaser.model.HttpUploader toModel() {
-        org.jreleaser.model.HttpUploader http = new org.jreleaser.model.HttpUploader()
+    org.jreleaser.model.Http toModel() {
+        org.jreleaser.model.Http http = new org.jreleaser.model.Http()
         http.name = name
-        fillProperties(http)
         if (target.present) http.target = target.get()
+        fillProperties(http)
         if (username.present) http.username = username.get()
         if (password.present) http.password = password.get()
         if (method.present) http.method = method.get()

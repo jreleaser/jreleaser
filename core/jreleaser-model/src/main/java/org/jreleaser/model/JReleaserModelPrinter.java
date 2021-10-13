@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class JReleaserModelPrinter {
-    private static final String SECRET_KEYWORDS = "password,secret,credential,token,apikey,login,authorization,passphrase,consumerkey,publickey,webhook";
+    private static final String SECRET_KEYWORDS = "password,secret,credential,token,apikey,login,authorization,passphrase,consumerkey,publickey,accesskey,webhook";
 
     private final PrintWriter out;
 

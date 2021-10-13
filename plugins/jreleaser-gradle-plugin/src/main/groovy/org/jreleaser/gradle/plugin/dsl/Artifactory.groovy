@@ -26,14 +26,14 @@ import org.gradle.api.provider.Property
  * @since 0.3.0
  */
 @CompileStatic
-interface Artifactory extends Uploader {
+interface Artifactory extends HttpUploader {
     Property<String> getTarget()
 
     Property<String> getUsername()
 
     Property<String> getPassword()
 
-    Property<org.jreleaser.model.Uploader.Authorization> getAuthorization()
+    Property<org.jreleaser.model.HttpUploader.Authorization> getAuthorization()
 
     void setAuthorization(String authorization)
 }

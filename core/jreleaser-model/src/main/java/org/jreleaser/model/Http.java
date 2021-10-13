@@ -19,6 +19,7 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.Env;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
@@ -27,40 +28,44 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
- * @since 0.3.0
+ * @since 0.4.0
  */
-public class Artifactory extends AbstractHttpUploader {
-    public static final String TYPE = "artifactory";
+public class Http extends AbstractHttpUploader {
+    public static final String TYPE = "http";
 
+    private final Map<String, String> headers = new LinkedHashMap<>();
     private String username;
     private String password;
-    private HttpUploader.Authorization authorization;
+    private Authorization authorization;
+    private Method method;
 
-    public Artifactory() {
+    public Http() {
         super(TYPE);
     }
 
-    void setAll(Artifactory artifactory) {
-        super.setAll(artifactory);
-        this.username = artifactory.username;
-        this.password = artifactory.password;
-        this.authorization = artifactory.authorization;
+    void setAll(Http http) {
+        super.setAll(http);
+        this.username = http.username;
+        this.password = http.password;
+        this.authorization = http.authorization;
+        this.method = http.method;
+        setHeaders(http.headers);
     }
 
     public Authorization resolveAuthorization() {
         if (null == authorization) {
-            authorization = Authorization.BEARER;
+            authorization = Authorization.NONE;
         }
 
         return authorization;
     }
 
     public String getResolvedUsername() {
-        return Env.resolve("ARTIFACTORY_" + Env.toVar(name) + "_USERNAME", username);
+        return Env.resolve("HTTP_" + Env.toVar(name) + "_USERNAME", username);
     }
 
     public String getResolvedPassword() {
-        return Env.resolve("ARTIFACTORY_" + Env.toVar(name) + "_PASSWORD", password);
+        return Env.resolve("HTTP_" + Env.toVar(name) + "_PASSWORD", password);
     }
 
     public String getUsername() {
@@ -81,13 +86,13 @@ public class Artifactory extends AbstractHttpUploader {
 
     @Deprecated
     public String getTarget() {
-        System.out.println("artifactory.target has been deprecated since 0.6.0 and will be removed in the future. Use artifactory.uploadUrl instead");
+        System.out.println("http.target has been deprecated since 0.6.0 and will be removed in the future. Use http.uploadUrl instead");
         return getUploadUrl();
     }
 
     @Deprecated
     public void setTarget(String target) {
-        System.out.println("artifactory.target has been deprecated since 0.6.0 and will be removed in the future. Use artifactory.uploadUrl instead");
+        System.out.println("http.target has been deprecated since 0.6.0 and will be removed in the future. Use http.uploadUrl instead");
         setUploadUrl(target);
     }
 
@@ -103,10 +108,36 @@ public class Artifactory extends AbstractHttpUploader {
         this.authorization = Authorization.of(authorization);
     }
 
+    public Method getMethod() {
+        return method;
+    }
+
+    public void setMethod(Method method) {
+        this.method = method;
+    }
+
+    public void setMethod(String method) {
+        this.method = Http.Method.of(method);
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers.putAll(headers);
+    }
+
+    public void addHeaders(Map<String, String> headers) {
+        this.headers.putAll(headers);
+    }
+
     @Override
     protected void asMap(Map<String, Object> props, boolean full) {
         props.put("authorization", authorization);
+        props.put("method", method);
         props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
         props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
+        props.put("headers", headers);
     }
 }

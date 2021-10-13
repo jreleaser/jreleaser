@@ -19,9 +19,9 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
+import org.jreleaser.model.Http;
 import org.jreleaser.model.HttpUploader;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Uploader;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
@@ -33,21 +33,21 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public abstract class HttpUploaderValidator extends Validator {
+public abstract class HttpValidator extends Validator {
     public static void validateHttp(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
         context.getLogger().debug("http");
-        Map<String, HttpUploader> http = context.getModel().getUpload().getHttp();
+        Map<String, Http> http = context.getModel().getUpload().getHttp();
 
-        for (Map.Entry<String, HttpUploader> e : http.entrySet()) {
-            HttpUploader h = e.getValue();
+        for (Map.Entry<String, Http> e : http.entrySet()) {
+            Http h = e.getValue();
             if (isBlank(h.getName())) {
                 h.setName(e.getKey());
             }
-            validateHttpUploader(context, mode, h, errors);
+            validateHttp(context, mode, h, errors);
         }
     }
 
-    private static void validateHttpUploader(JReleaserContext context, JReleaserContext.Mode mode, HttpUploader http, Errors errors) {
+    private static void validateHttp(JReleaserContext context, JReleaserContext.Mode mode, Http http, Errors errors) {
         context.getLogger().debug("http.{}", http.getName());
 
         if (!http.isActiveSet()) {
@@ -68,7 +68,7 @@ public abstract class HttpUploaderValidator extends Validator {
         }
 
         if (null == http.getMethod()) {
-            http.setMethod(Uploader.Method.PUT);
+            http.setMethod(HttpUploader.Method.PUT);
         }
 
         switch (http.resolveAuthorization()) {

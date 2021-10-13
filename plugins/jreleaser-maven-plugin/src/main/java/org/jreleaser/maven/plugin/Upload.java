@@ -27,11 +27,14 @@ import java.util.Map;
 public class Upload implements EnabledAware {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
     private final Map<String, Http> http = new LinkedHashMap<>();
+    private final Map<String, S3> s3 = new LinkedHashMap<>();
     private Boolean enabled;
 
-    void setAll(Upload assemble) {
-        this.enabled = assemble.enabled;
-        setArtifactory(assemble.artifactory);
+    void setAll(Upload upload) {
+        this.enabled = upload.enabled;
+        setArtifactory(upload.artifactory);
+        setHttp(upload.http);
+        setS3(upload.s3);
     }
 
     @Override
@@ -65,5 +68,14 @@ public class Upload implements EnabledAware {
     public void setHttp(Map<String, Http> http) {
         this.http.clear();
         this.http.putAll(http);
+    }
+
+    public Map<String, S3> getS3() {
+        return s3;
+    }
+
+    public void setS3(Map<String, S3> s3) {
+        this.s3.clear();
+        this.s3.putAll(s3);
     }
 }

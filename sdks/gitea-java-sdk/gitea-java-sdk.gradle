@@ -25,5 +25,4 @@ dependencies {
     api("io.github.openfeign:feign-httpclient:$feignVersion") {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
-    api "org.slf4j:jcl-over-slf4j:$slf4jVersion"
 }
