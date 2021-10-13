@@ -247,10 +247,12 @@ public class Changelog implements EnabledAware {
     public static class Category {
         private final Set<String> labels = new LinkedHashSet<>();
         private String title;
+        private String format;
 
         void setAll(Category category) {
             this.title = category.title;
             setLabels(category.labels);
+            this.format = category.format;
         }
 
         public String getTitle() {
@@ -278,6 +280,14 @@ public class Changelog implements EnabledAware {
             }
         }
 
+        public String getFormat() {
+            return format;
+        }
+
+        public void setFormat(String format) {
+            this.format = format;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -291,9 +301,10 @@ public class Changelog implements EnabledAware {
             return Objects.hash(title);
         }
 
-        public static Category of(String title, String... labels) {
+        public static Category of(String title, String format, String... labels) {
             Category category = new Category();
             category.title = title;
+            category.format = format;
             category.labels.addAll(Arrays.asList(labels));
             return category;
         }

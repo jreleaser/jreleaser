@@ -89,6 +89,8 @@ interface Changelog {
         Property<String> getTitle()
 
         SetProperty<String> getLabels()
+
+        Property<String> getFormat()
     }
 
     interface Labeler {

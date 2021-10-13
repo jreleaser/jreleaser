@@ -33,6 +33,7 @@ import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.JavaRuntimeVersion;
+import org.jreleaser.util.StringUtils;
 import org.jreleaser.util.Version;
 
 import java.io.IOException;
@@ -332,8 +333,10 @@ public class ChangelogGenerator {
                 .append(categoryTitle)
                 .append(lineSeparator);
 
+            final String categoryFormat = resolveCommitFormat(changelog, category);
+
             changes.append(categories.get(categoryTitle).stream()
-                .map(c -> applyTemplate(changelog.getFormat(), c.asContext(changelog.isLinks(), commitsUrl)))
+                .map(c -> applyTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl)))
                 .collect(Collectors.joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
@@ -367,6 +370,13 @@ public class ChangelogGenerator {
         props.put(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors.toString()));
 
         return applyReplacers(context, changelog, stripMargin(applyTemplate(changelog.getResolvedContentTemplate(context), props)));
+    }
+
+    private static String resolveCommitFormat(Changelog changelog, Changelog.Category category) {
+        if (StringUtils.isNotBlank(category.getFormat())) {
+            return category.getFormat();
+        }
+        return changelog.getFormat();
     }
 
     private static String formatContributors(JReleaserContext context,
@@ -494,6 +504,7 @@ public class ChangelogGenerator {
             context.put("commitFullHash", fullHash);
             context.put("commitTitle", passThrough(title));
             context.put("commitAuthor", passThrough(author.name));
+            context.put("commitBody", passThrough(body));
             return context;
         }
 
