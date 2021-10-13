@@ -40,6 +40,10 @@ interface S3 extends Uploader {
 
     Property<String> getEndpoint()
 
+    Property<String> getPath()
+
+    Property<String> getDownloadUrl()
+
     MapProperty<String, String> getHeaders()
 
     void setHeader(String key, String value)

@@ -31,6 +31,7 @@ public class S3 extends AbstractUploader {
     private String region;
     private String bucket;
     private String path;
+    protected String downloadUrl;
     private String endpoint;
     private String accessKeyId;
     private String secretKey;
@@ -45,6 +46,7 @@ public class S3 extends AbstractUploader {
         this.region = s3.region;
         this.bucket = s3.bucket;
         this.path = s3.path;
+        this.downloadUrl = s3.downloadUrl;
         this.endpoint = s3.endpoint;
         this.accessKeyId = s3.accessKeyId;
         this.secretKey = s3.secretKey;
@@ -98,6 +100,14 @@ public class S3 extends AbstractUploader {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
     public String getEndpoint() {

@@ -39,6 +39,7 @@ public class S3 extends AbstractUploader {
     private String region;
     private String bucket;
     private String path;
+    private String downloadUrl;
     private String endpoint;
     private String accessKeyId;
     private String secretKey;
@@ -53,6 +54,7 @@ public class S3 extends AbstractUploader {
         this.region = s3.region;
         this.bucket = s3.bucket;
         this.path = s3.path;
+        this.downloadUrl = s3.downloadUrl;
         this.endpoint = s3.endpoint;
         this.accessKeyId = s3.accessKeyId;
         this.secretKey = s3.secretKey;
@@ -62,6 +64,14 @@ public class S3 extends AbstractUploader {
 
     @Override
     public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
+        if (isNotBlank(getResolvedDownloadUrl())) {
+            Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
+            p.putAll(getResolvedExtraProperties());
+            p.put("bucket", bucket);
+            p.put("region", region);
+            return applyTemplate(getResolvedDownloadUrl(), p);
+        }
+
         if (isBlank(getResolvedEndpoint())) {
             String url = "https://{{bucket}}.s3.{{region}}.amazonaws.com/" + getResolvedPath();
             Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
@@ -103,6 +113,10 @@ public class S3 extends AbstractUploader {
 
     public String getResolvedPath() {
         return Env.resolve("S3_" + Env.toVar(name) + "_PATH", path);
+    }
+
+    public String getResolvedDownloadUrl() {
+        return Env.resolve("S3_" + Env.toVar(name) + "_DOWNLOAD_URL", downloadUrl);
     }
 
     public String getResolvedEndpoint() {
@@ -157,6 +171,14 @@ public class S3 extends AbstractUploader {
         this.path = path;
     }
 
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
     public String getEndpoint() {
         return endpoint;
     }
@@ -185,6 +207,7 @@ public class S3 extends AbstractUploader {
         props.put("secretKey", isNotBlank(getResolvedSecretKey()) ? HIDE : UNSET);
         props.put("sessionToken", isNotBlank(getResolvedSessionToken()) ? HIDE : UNSET);
         props.put("path", getResolvedPath());
+        props.put("downloadUrl", getResolvedDownloadUrl());
         props.put("endpoint", getResolvedEndpoint());
         props.put("headers", headers);
     }

@@ -442,16 +442,18 @@ public final class JReleaserModelConverter {
     }
 
     private static org.jreleaser.model.S3 convertS3(S3 s3) {
-        org.jreleaser.model.S3 h = new org.jreleaser.model.S3();
-        convertUploader(s3, h);
-        h.setRegion(s3.getRegion());
-        h.setBucket(s3.getBucket());
-        h.setAccessKeyId(s3.getAccessKeyId());
-        h.setSecretKey(s3.getSecretKey());
-        h.setSessionToken(s3.getSessionToken());
-        h.setEndpoint(s3.getEndpoint());
-        h.setHeaders(s3.getHeaders());
-        return h;
+        org.jreleaser.model.S3 s = new org.jreleaser.model.S3();
+        convertUploader(s3, s);
+        s.setRegion(s3.getRegion());
+        s.setBucket(s3.getBucket());
+        s.setAccessKeyId(s3.getAccessKeyId());
+        s.setSecretKey(s3.getSecretKey());
+        s.setSessionToken(s3.getSessionToken());
+        s.setEndpoint(s3.getEndpoint());
+        s.setPath(s3.getPath());
+        s.setDownloadUrl(s3.getDownloadUrl());
+        s.setHeaders(s3.getHeaders());
+        return s;
     }
 
     private static org.jreleaser.model.Packagers convertPackagers(Packagers packagers) {

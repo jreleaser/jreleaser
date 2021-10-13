@@ -43,6 +43,8 @@ class S3Impl extends AbstractUploader implements S3 {
     final Property<String> secretKey
     final Property<String> sessionToken
     final Property<String> endpoint
+    final Property<String> path
+    final Property<String> downloadUrl
     final MapProperty<String, String> headers
 
     @Inject
@@ -54,6 +56,8 @@ class S3Impl extends AbstractUploader implements S3 {
         secretKey = objects.property(String).convention(Providers.notDefined())
         sessionToken = objects.property(String).convention(Providers.notDefined())
         endpoint = objects.property(String).convention(Providers.notDefined())
+        path = objects.property(String).convention(Providers.notDefined())
+        downloadUrl = objects.property(String).convention(Providers.notDefined())
         headers = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
@@ -67,6 +71,8 @@ class S3Impl extends AbstractUploader implements S3 {
             secretKey.present ||
             sessionToken.present ||
             endpoint.present ||
+            path.present ||
+            downloadUrl.present ||
             headers.present
     }
 
@@ -87,6 +93,8 @@ class S3Impl extends AbstractUploader implements S3 {
         if (secretKey.present) s3.secretKey = secretKey.get()
         if (sessionToken.present) s3.sessionToken = sessionToken.get()
         if (endpoint.present) s3.endpoint = endpoint.get()
+        if (path.present) s3.path = path.get()
+        if (downloadUrl.present) s3.downloadUrl = downloadUrl.get()
         if (headers.present) s3.headers.putAll(headers.get())
         s3
     }
