@@ -233,8 +233,8 @@ public abstract class GitServiceValidator extends Validator {
         }
 
         if (changelog.getCategories().isEmpty()) {
-            changelog.getCategories().add(Changelog.Category.of(RB.$("default_category_feature"), "feature", "enhancement"));
-            changelog.getCategories().add(Changelog.Category.of(RB.$("default_category_bug_fix"), "bug", "fix"));
+            changelog.getCategories().add(Changelog.Category.of(RB.$("default_category_feature"), "","feature", "enhancement"));
+            changelog.getCategories().add(Changelog.Category.of(RB.$("default_category_bug_fix"), "","bug", "fix"));
         } else {
             int i = 0;
             for (Changelog.Category category : changelog.getCategories()) {

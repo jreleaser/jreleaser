@@ -329,6 +329,7 @@ public final class JReleaserModelConverter {
             org.jreleaser.model.Changelog.Category c = new org.jreleaser.model.Changelog.Category();
             c.setTitle(category.getTitle());
             c.setLabels(category.getLabels());
+            c.setFormat(category.getFormat());
             list.add(c);
         }
         return list;
