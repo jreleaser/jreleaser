@@ -365,10 +365,6 @@ public class Changelog implements Domain, EnabledAware {
             return Objects.hash(title);
         }
 
-        public static Category of(String title, String... labels) {
-            return of(title, "", labels);
-        }
-
         public static Category of(String title, String format, String... labels) {
             Category category = new Category();
             category.title = title;
