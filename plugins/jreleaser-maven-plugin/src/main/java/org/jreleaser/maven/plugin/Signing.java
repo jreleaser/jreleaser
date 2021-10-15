@@ -17,11 +17,16 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Signing implements Activatable {
+    private final List<String> args = new ArrayList<>();
+
     private Active active;
     private boolean armored;
     private String publicKey;
@@ -31,6 +36,11 @@ public class Signing implements Activatable {
     private Boolean artifacts;
     private Boolean files;
     private Boolean checksums;
+    private String executable;
+    private String keyName;
+    private String homeDir;
+    private String publicKeyring;
+    private Boolean defaultKeyring;
 
     void setAll(Signing signing) {
         this.active = signing.active;
@@ -41,6 +51,12 @@ public class Signing implements Activatable {
         this.artifacts = signing.artifacts;
         this.files = signing.files;
         this.checksums = signing.checksums;
+        this.executable = signing.executable;
+        this.keyName = signing.keyName;
+        this.homeDir = signing.homeDir;
+        this.publicKeyring = signing.publicKeyring;
+        this.defaultKeyring = signing.defaultKeyring;
+        setArgs(signing.args);
     }
 
     @Override
@@ -138,8 +154,62 @@ public class Signing implements Activatable {
         this.checksums = checksums;
     }
 
+    public String getExecutable() {
+        return executable;
+    }
+
+    public void setExecutable(String executable) {
+        this.executable = executable;
+    }
+
+    public String getKeyName() {
+        return keyName;
+    }
+
+    public void setKeyName(String keyName) {
+        this.keyName = keyName;
+    }
+
+    public String getHomeDir() {
+        return homeDir;
+    }
+
+    public void setHomeDir(String homeDir) {
+        this.homeDir = homeDir;
+    }
+
+    public String getPublicKeyring() {
+        return publicKeyring;
+    }
+
+    public void setPublicKeyring(String publicKeyring) {
+        this.publicKeyring = publicKeyring;
+    }
+
+    public boolean isDefaultKeyringSet() {
+        return defaultKeyring != null;
+    }
+
+    public Boolean isDefaultKeyring() {
+        return defaultKeyring == null || defaultKeyring;
+    }
+
+    public void setDefaultKeyring(Boolean defaultKeyring) {
+        this.defaultKeyring = defaultKeyring;
+    }
+
+    public List<String> getArgs() {
+        return args;
+    }
+
+    public void setArgs(List<String> args) {
+        this.args.clear();
+        this.args.addAll(args);
+    }
+
     public enum Mode {
         MEMORY,
-        FILE
+        FILE,
+        COMMAND
     }
 }

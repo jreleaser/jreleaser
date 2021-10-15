@@ -26,4 +26,5 @@ dependencies {
     api "commons-codec:commons-codec:$commonsCodecVersion"
     api "org.apache.commons:commons-compress:$commonsCompressVersion"
     api "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+    api "org.zeroturnaround:zt-exec:$ztexecVersion"
 }

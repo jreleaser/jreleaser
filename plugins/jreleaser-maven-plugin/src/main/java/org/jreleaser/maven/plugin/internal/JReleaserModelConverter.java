@@ -757,6 +757,12 @@ public final class JReleaserModelConverter {
         if (signing.isArtifactsSet()) s.setArtifacts(signing.isArtifacts());
         if (signing.isFilesSet()) s.setFiles(signing.isFiles());
         if (signing.isChecksumsSet()) s.setChecksums(signing.isChecksums());
+        if (signing.isDefaultKeyringSet()) s.setDefaultKeyring(signing.isDefaultKeyring());
+        s.setExecutable(signing.getExecutable());
+        s.setKeyName(signing.getKeyName());
+        s.setHomeDir(signing.getHomeDir());
+        s.setPublicKeyring(signing.getPublicKeyring());
+        s.setArgs(signing.getArgs());
         return s;
     }
 

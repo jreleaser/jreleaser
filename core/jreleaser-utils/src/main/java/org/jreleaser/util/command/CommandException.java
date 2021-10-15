@@ -15,11 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-model')
-    api project(':git-sdk')
-    api project(':jreleaser-templates')
+package org.jreleaser.util.command;
 
-    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
-    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+/**
+ * @author Andres Almiray
+ * @since 0.8.0
+ */
+public class CommandException extends Exception {
+    public CommandException(String message) {
+        super(message);
+    }
+
+    public CommandException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public CommandException(Throwable cause) {
+        super(cause);
+    }
 }

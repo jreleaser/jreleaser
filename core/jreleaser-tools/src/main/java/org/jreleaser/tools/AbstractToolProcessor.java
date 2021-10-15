@@ -28,12 +28,14 @@ import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.StringUtils;
-import org.zeroturnaround.exec.ProcessExecutor;
-import org.zeroturnaround.exec.ProcessInitException;
+import org.jreleaser.util.command.Command;
+import org.jreleaser.util.command.CommandException;
+import org.jreleaser.util.command.CommandExecutor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -167,43 +169,52 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     protected abstract void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException;
 
-    protected boolean executeCommand(ProcessExecutor processExecutor) throws ToolProcessingException {
+    protected void executeCommand(Path directory, Command command) throws ToolProcessingException {
         try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ByteArrayOutputStream err = new ByteArrayOutputStream();
-
-            int exitValue = processExecutor
-                .redirectOutput(out)
-                .redirectError(err)
-                .execute()
-                .getExitValue();
-
-            info(out);
-            error(err);
-
-            if (exitValue == 0) return true;
-            throw new ToolProcessingException(RB.$("ERROR_command_execution_exit_value", exitValue));
-        } catch (ProcessInitException e) {
-            throw new ToolProcessingException(RB.$("ERROR_unexpected_error"), e.getCause());
-        } catch (ToolProcessingException e) {
-            throw e;
-        } catch (Exception e) {
+            int exitValue = new CommandExecutor(context.getLogger())
+                .executeCommand(directory, command);
+            if (exitValue != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
+            }
+        } catch (CommandException e) {
             throw new ToolProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
-    protected boolean executeCommand(Path directory, List<String> cmd) throws ToolProcessingException {
-        return executeCommand(new ProcessExecutor(cmd)
-            .directory(directory.toFile()));
+    protected void executeCommand(Command command) throws ToolProcessingException {
+        try {
+            int exitValue = new CommandExecutor(context.getLogger())
+                .executeCommand(command);
+            if (exitValue != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
+            }
+        } catch (CommandException e) {
+            throw new ToolProcessingException(RB.$("ERROR_unexpected_error"), e);
+        }
     }
 
-    protected boolean executeCommand(List<String> cmd) throws ToolProcessingException {
-        return executeCommand(new ProcessExecutor(cmd));
+    protected void executeCommandCapturing(Command command, OutputStream out) throws ToolProcessingException {
+        try {
+            int exitValue = new CommandExecutor(context.getLogger())
+                .executeCommandCapturing(command, out);
+            if (exitValue != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
+            }
+        } catch (CommandException e) {
+            throw new ToolProcessingException(RB.$("ERROR_unexpected_error"), e);
+        }
     }
 
-    protected boolean executeCommandWithInput(List<String> cmd, InputStream in) throws ToolProcessingException {
-        return executeCommand(new ProcessExecutor(cmd)
-            .redirectInput(in));
+    protected void executeCommandWithInput(Command command, InputStream in) throws ToolProcessingException {
+        try {
+            int exitValue = new CommandExecutor(context.getLogger())
+                .executeCommandWithInput(command, in);
+            if (exitValue != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
+            }
+        } catch (CommandException e) {
+            throw new ToolProcessingException(RB.$("ERROR_unexpected_error"), e);
+        }
     }
 
     protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {

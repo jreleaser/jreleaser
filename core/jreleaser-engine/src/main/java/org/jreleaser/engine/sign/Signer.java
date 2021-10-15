@@ -40,6 +40,8 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
 import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.util.Algorithm;
+import org.jreleaser.util.command.CommandException;
+import org.jreleaser.util.signing.GpgCommandSigner;
 import org.jreleaser.util.signing.Keyring;
 import org.jreleaser.util.signing.SigningException;
 
@@ -82,6 +84,41 @@ public class Signer {
         context.getLogger().increaseIndent();
         context.getLogger().setPrefix("sign");
 
+        if (context.getModel().getSigning().getMode() == Signing.Mode.COMMAND) {
+            cmdSign(context);
+        } else {
+            bcSign(context);
+        }
+
+        context.getLogger().restorePrefix();
+        context.getLogger().decreaseIndent();
+    }
+
+    private static void cmdSign(JReleaserContext context) throws SigningException {
+        List<FilePair> files = collectArtifacts(context);
+        if (files.isEmpty()) {
+            context.getLogger().info(RB.$("signing.no.match"));
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
+            return;
+        }
+
+        files = files.stream()
+            .filter(FilePair::isInvalid)
+            .collect(Collectors.toList());
+
+        if (files.isEmpty()) {
+            context.getLogger().info(RB.$("signing.up.to.date"));
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
+            return;
+        }
+
+        sign(context, files);
+        verify(context, files);
+    }
+
+    private static void bcSign(JReleaserContext context) throws SigningException {
         Keyring keyring = context.createKeyring();
 
         List<FilePair> files = collectArtifacts(context, keyring);
@@ -105,16 +142,32 @@ public class Signer {
 
         sign(context, keyring, files);
         verify(context, keyring, files);
-
-        context.getLogger().restorePrefix();
-        context.getLogger().decreaseIndent();
     }
 
     private static void verify(JReleaserContext context, Keyring keyring, List<FilePair> files) throws SigningException {
+        if (null == keyring) {
+            verify(context, files);
+            return;
+        }
+
         context.getLogger().debug(RB.$("signing.verify.signatures"), files.size());
 
         for (FilePair pair : files) {
             pair.setValid(verify(context, keyring, pair));
+
+            if (!pair.isValid()) {
+                throw new SigningException(RB.$("ERROR_signing_verify_file",
+                    context.relativizeToBasedir(pair.inputFile),
+                    context.relativizeToBasedir(pair.signatureFile)));
+            }
+        }
+    }
+
+    private static void verify(JReleaserContext context, List<FilePair> files) throws SigningException {
+        context.getLogger().debug(RB.$("signing.verify.signatures"), files.size());
+
+        for (FilePair pair : files) {
+            pair.setValid(verify(context, pair));
 
             if (!pair.isValid()) {
                 throw new SigningException(RB.$("ERROR_signing_verify_file",
@@ -167,6 +220,65 @@ public class Signer {
                 context.relativizeToBasedir(filePair.inputFile)), e);
         } finally {
             context.getLogger().restorePrefix();
+        }
+    }
+
+    private static boolean verify(JReleaserContext context, FilePair filePair) throws SigningException {
+        context.getLogger().setPrefix("verify");
+
+        try {
+            context.getLogger().debug("{}",
+                context.relativizeToBasedir(filePair.signatureFile));
+
+            GpgCommandSigner commandSigner = initCommandSigner(context);
+            return commandSigner.verify(filePair.signatureFile, filePair.inputFile);
+        } catch (CommandException e) {
+            throw new SigningException(RB.$("ERROR_signing_verify_signature",
+                context.relativizeToBasedir(filePair.inputFile)), e);
+        } finally {
+            context.getLogger().restorePrefix();
+        }
+    }
+
+    private static void sign(JReleaserContext context, List<FilePair> files) throws SigningException {
+        Path signaturesDirectory = context.getSignaturesDirectory();
+
+        try {
+            Files.createDirectories(signaturesDirectory);
+        } catch (IOException e) {
+            throw new SigningException(RB.$("ERROR_signing_create_signature_dir"), e);
+        }
+
+        context.getLogger().debug(RB.$("signing.signing.files"),
+            files.size(), context.relativizeToBasedir(signaturesDirectory));
+
+        GpgCommandSigner commandSigner = initCommandSigner(context);
+
+        for (FilePair pair : files) {
+            sign(context, commandSigner, pair.inputFile, pair.signatureFile);
+        }
+    }
+
+    private static GpgCommandSigner initCommandSigner(JReleaserContext context) {
+        GpgCommandSigner cmd = new GpgCommandSigner(context.getLogger());
+        Signing signing = context.getModel().getSigning();
+        cmd.setExecutable(signing.getExecutable());
+        cmd.setPassphrase(signing.getResolvedPassphrase());
+        cmd.setHomeDir(signing.getHomeDir());
+        cmd.setKeyName(signing.getKeyName());
+        cmd.setPublicKeyring(signing.getPublicKeyring());
+        cmd.setDefaultKeyring(signing.isDefaultKeyring());
+        cmd.setArgs(signing.getArgs());
+        return cmd;
+    }
+
+    private static void sign(JReleaserContext context, GpgCommandSigner commandSigner, Path input, Path output) throws SigningException {
+        try {
+            context.getLogger().info("{}", context.relativizeToBasedir(input));
+
+            commandSigner.sign(input, output);
+        } catch (CommandException e) {
+            throw new SigningException(RB.$("ERROR_unexpected_error_signing", input.toAbsolutePath()), e);
         }
     }
 
@@ -288,7 +400,15 @@ public class Signer {
         return files;
     }
 
+    private static List<FilePair> collectArtifacts(JReleaserContext context) {
+        return collectArtifacts(context, null);
+    }
+
     private static boolean isValid(JReleaserContext context, Keyring keyring, FilePair pair) {
+        if (null == keyring) {
+            return isValid(context, pair);
+        }
+
         if (Files.notExists(pair.getSignatureFile())) {
             context.getLogger().debug(RB.$("signing.signature.not.exist"),
                 context.relativizeToBasedir(pair.getSignatureFile()));
@@ -304,6 +424,27 @@ public class Signer {
 
         try {
             return verify(context, keyring, pair);
+        } catch (SigningException e) {
+            return false;
+        }
+    }
+
+    private static boolean isValid(JReleaserContext context, FilePair pair) {
+        if (Files.notExists(pair.getSignatureFile())) {
+            context.getLogger().debug(RB.$("signing.signature.not.exist"),
+                context.relativizeToBasedir(pair.getSignatureFile()));
+            return false;
+        }
+
+        if (pair.inputFile.toFile().lastModified() > pair.signatureFile.toFile().lastModified()) {
+            context.getLogger().debug(RB.$("signing.file.newer"),
+                context.relativizeToBasedir(pair.inputFile),
+                context.relativizeToBasedir(pair.signatureFile));
+            return false;
+        }
+
+        try {
+            return verify(context, pair);
         } catch (SigningException e) {
             return false;
         }

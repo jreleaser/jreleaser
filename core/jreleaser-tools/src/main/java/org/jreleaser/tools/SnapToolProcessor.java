@@ -27,11 +27,10 @@ import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
+import org.jreleaser.util.command.Command;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -80,11 +79,7 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
             return;
         }
 
-        if (!login(distribution, props)) {
-            context.getLogger().error(RB.$("ERROR_snap_login"));
-            return;
-        }
-
+        login(distribution, props);
         push(distribution, props);
     }
 
@@ -132,13 +127,12 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         writeFile(content, outputFile);
     }
 
-    private boolean login(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        List<String> cmd = new ArrayList<>();
-        cmd.add("snapcraft");
-        cmd.add("login");
-        cmd.add("--with");
-        cmd.add(context.getBasedir().resolve(distribution.getSnap().getExportedLogin()).toAbsolutePath().toString());
-        return executeCommand(cmd);
+    private void login(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        Command cmd = new Command("snapcraft")
+            .arg("login")
+            .arg("--with")
+            .arg(context.getBasedir().resolve(distribution.getSnap().getExportedLogin()).toAbsolutePath().toString());
+        executeCommand(cmd);
     }
 
     private void push(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
@@ -146,10 +140,9 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         String version = (String) props.get(Constants.KEY_PROJECT_EFFECTIVE_VERSION);
         String snapName = distribution.getName() + "-" + version + ".snap";
 
-        List<String> cmd = new ArrayList<>();
-        cmd.add("snapcraft");
-        cmd.add("push");
-        cmd.add(snapName);
+        Command cmd = new Command("snapcraft")
+            .arg("push")
+            .arg(snapName);
         executeCommand(packageDirectory, cmd);
     }
 
@@ -158,11 +151,10 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         String version = (String) props.get(Constants.KEY_PROJECT_EFFECTIVE_VERSION);
         String snapName = distribution.getName() + "-" + version + ".snap";
 
-        List<String> cmd = new ArrayList<>();
-        cmd.add("snapcraft");
-        cmd.add("snap");
-        cmd.add("--output");
-        cmd.add(snapName);
+        Command cmd = new Command("snapcraft")
+            .arg("snap")
+            .arg("--output")
+            .arg(snapName);
         executeCommand(packageDirectory, cmd);
     }
 }

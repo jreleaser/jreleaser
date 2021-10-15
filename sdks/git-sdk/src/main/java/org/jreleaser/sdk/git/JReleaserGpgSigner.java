@@ -44,6 +44,8 @@ import org.eclipse.jgit.transport.CredentialsProvider;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
+import org.jreleaser.util.command.CommandException;
+import org.jreleaser.util.signing.GpgCommandSigner;
 import org.jreleaser.util.signing.Keyring;
 import org.jreleaser.util.signing.SigningException;
 
@@ -105,80 +107,133 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
         if (!enabled) return;
 
         try {
-            Keyring keyring = context.createKeyring();
-            PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);
-            adjustCommiterId(signatureGenerator, committer, keyring);
-            signObject(signatureGenerator, object);
+            if (context.getModel().getSigning().resolveMode() == Signing.Mode.COMMAND) {
+                new CommandSigner(context).sign(object);
+            } else {
+                new BCSigner(context, committer).sign(object);
+            }
         } catch (SigningException e) {
             throw new JGitInternalException(e.getMessage(), e);
         }
     }
 
-    private PGPSignatureGenerator initSignatureGenerator(Signing signing, Keyring keyring) throws SigningException {
-        try {
-            PGPSecretKey secretKey = keyring.getSecretKey();
+    private interface Signer {
+        void sign(ObjectBuilder object) throws SigningException;
+    }
 
-            PGPPrivateKey privateKey = secretKey.extractPrivateKey(
-                new JcePBESecretKeyDecryptorBuilder()
-                    .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                    .build(signing.getResolvedPassphrase().toCharArray()));
+    private static abstract class AbstractSigner implements Signer {
+        protected final JReleaserContext context;
 
-            PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(
-                new JcaPGPContentSignerBuilder(secretKey.getPublicKey().getAlgorithm(), PGPUtil.SHA256)
-                    .setProvider(BouncyCastleProvider.PROVIDER_NAME));
-
-            signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, privateKey);
-
-            return signatureGenerator;
-        } catch (PGPException e) {
-            throw new SigningException(RB.$("ERROR_unexpected_error_signature_gen"), e);
+        protected AbstractSigner(JReleaserContext context) {
+            this.context = context;
         }
     }
 
-    private void adjustCommiterId(PGPSignatureGenerator signatureGenerator, PersonIdent committer, Keyring keyring)
-        throws SigningException {
-        PGPPublicKey publicKey = keyring.readPublicKey();
-        PGPSignatureSubpacketGenerator subpackets = new PGPSignatureSubpacketGenerator();
-        subpackets.setIssuerFingerprint(false, publicKey);
+    private static class CommandSigner extends AbstractSigner {
+        protected CommandSigner(JReleaserContext context) {
+            super(context);
+        }
 
-        String userId = committer.getEmailAddress();
-        Iterator<String> userIds = publicKey.getUserIDs();
-        if (userIds.hasNext()) {
-            String keyUserId = userIds.next();
-            if (isNotBlank(keyUserId)
-                && (isBlank(userId) || !keyUserId.contains(userId))) {
-                userId = extractSignerId(keyUserId);
+        @Override
+        public void sign(ObjectBuilder object) throws SigningException {
+            try {
+                Signing signing = context.getModel().getSigning();
+                GpgCommandSigner cmd = new GpgCommandSigner(context.getLogger());
+                cmd.setExecutable(signing.getExecutable());
+                cmd.setPassphrase(signing.getResolvedPassphrase());
+                cmd.setHomeDir(signing.getHomeDir());
+                cmd.setKeyName(signing.getKeyName());
+                cmd.setPublicKeyring(signing.getPublicKeyring());
+                cmd.setDefaultKeyring(signing.isDefaultKeyring());
+                cmd.setArgs(signing.getArgs());
+                object.setGpgSignature(new GpgSignature(cmd.sign(object.build())));
+            } catch (IOException | CommandException e) {
+                throw new SigningException(e.getMessage(), e);
             }
         }
-
-        if (isNotBlank(userId)) {
-            subpackets.addSignerUserID(false, userId);
-        }
-
-        signatureGenerator.setHashedSubpackets(subpackets.generate());
     }
 
-    private String extractSignerId(String pgpUserId) {
-        int from = pgpUserId.indexOf('<');
-        if (from >= 0) {
-            int to = pgpUserId.indexOf('>', from + 1);
-            if (to > from + 1) {
-                return pgpUserId.substring(from + 1, to);
+    private static class BCSigner extends AbstractSigner {
+        private final PersonIdent committer;
+
+        protected BCSigner(JReleaserContext context, PersonIdent committer) {
+            super(context);
+            this.committer = committer;
+        }
+
+        public void sign(ObjectBuilder object) throws SigningException {
+            Keyring keyring = context.createKeyring();
+            PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);
+            adjustCommitterId(signatureGenerator, committer, keyring);
+            signObject(signatureGenerator, object);
+        }
+
+        private PGPSignatureGenerator initSignatureGenerator(Signing signing, Keyring keyring) throws SigningException {
+            try {
+                PGPSecretKey secretKey = keyring.getSecretKey();
+
+                PGPPrivateKey privateKey = secretKey.extractPrivateKey(
+                    new JcePBESecretKeyDecryptorBuilder()
+                        .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                        .build(signing.getResolvedPassphrase().toCharArray()));
+
+                PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(
+                    new JcaPGPContentSignerBuilder(secretKey.getPublicKey().getAlgorithm(), PGPUtil.SHA256)
+                        .setProvider(BouncyCastleProvider.PROVIDER_NAME));
+
+                signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, privateKey);
+
+                return signatureGenerator;
+            } catch (PGPException e) {
+                throw new SigningException(RB.$("ERROR_unexpected_error_signature_gen"), e);
             }
         }
-        return pgpUserId;
-    }
 
-    private void signObject(PGPSignatureGenerator signatureGenerator, ObjectBuilder object) throws SigningException {
-        try {
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            try (BCPGOutputStream out = new BCPGOutputStream(new ArmoredOutputStream(buffer))) {
-                signatureGenerator.update(object.build());
-                signatureGenerator.generate().encode(out);
+        private void adjustCommitterId(PGPSignatureGenerator signatureGenerator, PersonIdent committer, Keyring keyring)
+            throws SigningException {
+            PGPPublicKey publicKey = keyring.readPublicKey();
+            PGPSignatureSubpacketGenerator subpackets = new PGPSignatureSubpacketGenerator();
+            subpackets.setIssuerFingerprint(false, publicKey);
+
+            String userId = committer.getEmailAddress();
+            Iterator<String> userIds = publicKey.getUserIDs();
+            if (userIds.hasNext()) {
+                String keyUserId = userIds.next();
+                if (isNotBlank(keyUserId)
+                    && (isBlank(userId) || !keyUserId.contains(userId))) {
+                    userId = extractSignerId(keyUserId);
+                }
             }
-            object.setGpgSignature(new GpgSignature(buffer.toByteArray()));
-        } catch (IOException | PGPException e) {
-            throw new SigningException(e.getMessage(), e);
+
+            if (isNotBlank(userId)) {
+                subpackets.addSignerUserID(false, userId);
+            }
+
+            signatureGenerator.setHashedSubpackets(subpackets.generate());
+        }
+
+        private String extractSignerId(String pgpUserId) {
+            int from = pgpUserId.indexOf('<');
+            if (from >= 0) {
+                int to = pgpUserId.indexOf('>', from + 1);
+                if (to > from + 1) {
+                    return pgpUserId.substring(from + 1, to);
+                }
+            }
+            return pgpUserId;
+        }
+
+        private void signObject(PGPSignatureGenerator signatureGenerator, ObjectBuilder object) throws SigningException {
+            try {
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                try (BCPGOutputStream out = new BCPGOutputStream(new ArmoredOutputStream(buffer))) {
+                    signatureGenerator.update(object.build());
+                    signatureGenerator.generate().encode(out);
+                }
+                object.setGpgSignature(new GpgSignature(buffer.toByteArray()));
+            } catch (IOException | PGPException e) {
+                throw new SigningException(e.getMessage(), e);
+            }
         }
     }
 }
