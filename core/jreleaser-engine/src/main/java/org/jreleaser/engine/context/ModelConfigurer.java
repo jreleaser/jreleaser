@@ -44,7 +44,7 @@ public class ModelConfigurer {
     public static void configure(JReleaserContext context) {
         try {
             context.getModel().setCommit(GitSdk.of(context).head());
-        } catch (IOException e) {
+        } catch (Exception e) {
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_head"), e);
         }
@@ -52,7 +52,7 @@ public class ModelConfigurer {
         Repository repository = null;
         try {
             repository = GitSdk.of(context).getRemote();
-        } catch (IOException e) {
+        } catch (Exception e) {
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_remote"), e);
         }
