@@ -128,17 +128,18 @@ public final class TemplateUtils {
                 String templatePrefix = "META-INF/jreleaser/templates/" +
                     distributionTypeName + "/" + toolName.toLowerCase() +
                     (snapshot ? "-snapshot" : "") + "/";
-                JarFile jarFile = new JarFile(new File(location.toURI()));
 
-                if (snapshot) {
-                    templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
-                    if (!templateFound) {
-                        templatePrefix = "META-INF/jreleaser/templates/" +
-                            distributionTypeName + "/" + toolName.toLowerCase() + "/";
+                try (JarFile jarFile = new JarFile(new File(location.toURI()))) {
+                    if (snapshot) {
+                        templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
+                        if (!templateFound) {
+                            templatePrefix = "META-INF/jreleaser/templates/" +
+                                distributionTypeName + "/" + toolName.toLowerCase() + "/";
+                            templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
+                        }
+                    } else {
                         templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
                     }
-                } else {
-                    templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
                 }
 
                 // if (!templateFound) {
@@ -196,10 +197,12 @@ public final class TemplateUtils {
                 continue;
             }
 
-            String templateName = entry.getName().substring(templatePrefix.length());
-            templates.put(templateName, new InputStreamReader(jarFile.getInputStream(entry)));
-            logger.debug(RB.$("templates.found"), templateName);
-            templatesFound = true;
+            try (InputStreamReader in = new InputStreamReader(jarFile.getInputStream(entry))) {
+                String templateName = entry.getName().substring(templatePrefix.length());
+                templates.put(templateName, in);
+                logger.debug(RB.$("templates.found"), templateName);
+                templatesFound = true;
+            }
         }
 
         return templatesFound;

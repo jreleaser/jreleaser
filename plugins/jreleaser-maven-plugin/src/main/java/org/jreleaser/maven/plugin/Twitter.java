@@ -32,11 +32,11 @@ public class Twitter extends AbstractAnnouncer {
 
     void setAll(Twitter twitter) {
         super.setAll(twitter);
-        this.consumerKey = consumerKey;
-        this.consumerSecret = consumerSecret;
-        this.accessToken = accessToken;
-        this.accessTokenSecret = accessTokenSecret;
-        this.status = status;
+        this.consumerKey = twitter.consumerKey;
+        this.consumerSecret = twitter.consumerSecret;
+        this.accessToken = twitter.accessToken;
+        this.accessTokenSecret = twitter.accessTokenSecret;
+        this.status = twitter.status;
     }
 
     public String getConsumerKey() {

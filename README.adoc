@@ -11,6 +11,9 @@ image:https://img.shields.io/github/downloads/{project-owner}/{project-name}/tot
 image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-slim?label={project-owner}-slim&logo=docker&logoColor=white[Docker Pulls {project-owner}-slim]
 image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-alpine?label={project-owner}-alpine&logo=docker&logoColor=white[Docker Pulls {project-owner}-alpine]
 
+image:https://img.shields.io/lgtm/alerts/g/{project-owner}/{project-owner}.svg?logo=lgtm&logoWidth=18[https://lgtm.com/projects/g/{project-owner}/{project-owner}/alerts]
+image:https://img.shields.io/lgtm/grade/java/g/{project-owner}/{project-owner}.svg?logo=lgtm&logoWidth=18[https://lgtm.com/projects/g/{project-owner}/{project-owner}/context:java]
+
 ---
 
 Release Java and non-Java projects quickly and easily with link:https://jreleaser.org[JReleaser]!
