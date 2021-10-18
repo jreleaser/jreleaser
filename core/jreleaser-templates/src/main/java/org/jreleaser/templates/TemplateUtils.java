@@ -129,17 +129,16 @@ public final class TemplateUtils {
                     distributionTypeName + "/" + toolName.toLowerCase() +
                     (snapshot ? "-snapshot" : "") + "/";
 
-                try (JarFile jarFile = new JarFile(new File(location.toURI()))) {
-                    if (snapshot) {
-                        templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
-                        if (!templateFound) {
-                            templatePrefix = "META-INF/jreleaser/templates/" +
-                                distributionTypeName + "/" + toolName.toLowerCase() + "/";
-                            templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
-                        }
-                    } else {
+                JarFile jarFile = new JarFile(new File(location.toURI()));
+                if (snapshot) {
+                    templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
+                    if (!templateFound) {
+                        templatePrefix = "META-INF/jreleaser/templates/" +
+                            distributionTypeName + "/" + toolName.toLowerCase() + "/";
                         templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
                     }
+                } else {
+                    templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
                 }
 
                 // if (!templateFound) {
@@ -197,12 +196,10 @@ public final class TemplateUtils {
                 continue;
             }
 
-            try (InputStreamReader in = new InputStreamReader(jarFile.getInputStream(entry))) {
-                String templateName = entry.getName().substring(templatePrefix.length());
-                templates.put(templateName, in);
-                logger.debug(RB.$("templates.found"), templateName);
-                templatesFound = true;
-            }
+            String templateName = entry.getName().substring(templatePrefix.length());
+            templates.put(templateName, new InputStreamReader(jarFile.getInputStream(entry)));
+            logger.debug(RB.$("templates.found"), templateName);
+            templatesFound = true;
         }
 
         return templatesFound;

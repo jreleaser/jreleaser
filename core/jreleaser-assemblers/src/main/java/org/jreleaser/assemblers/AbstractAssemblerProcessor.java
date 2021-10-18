@@ -81,7 +81,7 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
 
             for (Map.Entry<String, Reader> entry : templates.entrySet()) {
                 context.getLogger().debug(RB.$("tool.evaluate.template"), entry.getKey(), assembler.getName(), assembler.getType());
-                String content = applyTemplate(entry.getValue(), newProps);
+                String content = applyTemplate(entry.getValue(), newProps, entry.getKey());
                 context.getLogger().debug(RB.$("tool.write.template"), entry.getKey(), assembler.getName(), assembler.getType());
                 writeFile(context.getModel().getProject(), content, newProps, entry.getKey());
             }
