@@ -70,6 +70,7 @@ import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
 public class ChangelogGenerator {
     private static final String UNCATEGORIZED = "<<UNCATEGORIZED>>";
     private static final String REGEX_PREFIX = "regex:";
+    private static Set<String> unparseableTags = new LinkedHashSet<>();
 
     public static String generate(JReleaserContext context) throws IOException {
         if (!context.getModel().getRelease().getGitService().getChangelog().isEnabled()) {
@@ -134,26 +135,48 @@ public class ChangelogGenerator {
         return String.join(commitSeparator, lines);
     }
 
-    private static Version semverOf(Ref tag, Pattern versionPattern) {
-        Matcher matcher = versionPattern.matcher(extractTagName(tag));
+    private static void unparseableTag(JReleaserContext context, String tag, Exception exception) {
+        if(!unparseableTags.contains(tag)) {
+            unparseableTags.add(tag);
+            context.getLogger().warn(exception.getMessage());
+        }
+    }
+
+    private static Version semverOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
+        Matcher matcher = versionPattern.matcher(extractTagName(ref));
         if (matcher.matches()) {
-            return Version.of(matcher.group(1));
+            String tag = matcher.group(1);
+            try {
+                return Version.of(tag);
+            } catch (IllegalArgumentException e) {
+                unparseableTag(context, tag, e);
+            }
         }
         return Version.of("0.0.0");
     }
 
-    private static JavaRuntimeVersion javaRuntimeVersionOf(Ref tag, Pattern versionPattern) {
-        Matcher matcher = versionPattern.matcher(extractTagName(tag));
+    private static JavaRuntimeVersion javaRuntimeVersionOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
+        Matcher matcher = versionPattern.matcher(extractTagName(ref));
         if (matcher.matches()) {
-            return JavaRuntimeVersion.of(matcher.group(1));
+            String tag = matcher.group(1);
+            try {
+                return JavaRuntimeVersion.of(tag);
+            } catch (IllegalArgumentException e) {
+                unparseableTag(context, tag, e);
+            }
         }
         return JavaRuntimeVersion.of("0.0.0");
     }
 
-    private static JavaModuleVersion javaModuleVersionOf(Ref tag, Pattern versionPattern) {
-        Matcher matcher = versionPattern.matcher(extractTagName(tag));
+    private static JavaModuleVersion javaModuleVersionOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
+        Matcher matcher = versionPattern.matcher(extractTagName(ref));
         if (matcher.matches()) {
-            return JavaModuleVersion.of(matcher.group(1));
+            String tag = matcher.group(1);
+            try {
+                return JavaModuleVersion.of(tag);
+            } catch (IllegalArgumentException e) {
+                unparseableTag(context, tag, e);
+            }
         }
         return JavaModuleVersion.of("0.0.0");
     }
@@ -169,11 +192,11 @@ public class ChangelogGenerator {
     private static Comparable version(JReleaserContext context, Ref tag, Pattern versionPattern) {
         switch (context.getModel().getProject().getVersionPattern()) {
             case SEMVER:
-                return semverOf(tag, versionPattern);
+                return semverOf(context, tag, versionPattern);
             case JAVA_RUNTIME:
-                return javaRuntimeVersionOf(tag, versionPattern);
+                return javaRuntimeVersionOf(context, tag, versionPattern);
             case JAVA_MODULE:
-                return javaModuleVersionOf(tag, versionPattern);
+                return javaModuleVersionOf(context, tag, versionPattern);
             default:
                 return versionOf(tag, versionPattern);
         }
@@ -192,6 +215,7 @@ public class ChangelogGenerator {
         }
         Pattern versionPattern = vp;
 
+        unparseableTags.clear();
         tags.sort((tag1, tag2) -> {
             Comparable v1 = version(context, tag1, versionPattern);
             Comparable v2 = version(context, tag2, versionPattern);
