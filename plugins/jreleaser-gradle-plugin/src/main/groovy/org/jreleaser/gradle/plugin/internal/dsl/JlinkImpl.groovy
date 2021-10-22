@@ -42,7 +42,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class JlinkImpl extends AbstractAssembler implements Jlink {
+class JlinkImpl extends AbstractJavaAssembler implements Jlink {
     String name
     final Property<String> imageName
     final Property<String> imageNameTransform

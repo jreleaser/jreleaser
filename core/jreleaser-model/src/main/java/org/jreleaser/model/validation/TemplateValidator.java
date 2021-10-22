@@ -18,11 +18,11 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Assembler;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
 import org.jreleaser.model.DockerSpec;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JavaAssembler;
 import org.jreleaser.model.TemplateTool;
 import org.jreleaser.util.Errors;
 
@@ -57,7 +57,7 @@ public abstract class TemplateValidator extends Validator {
         }
     }
 
-    public static void validateTemplate(JReleaserContext context, Assembler assembler, Errors errors) {
+    public static void validateTemplate(JReleaserContext context, JavaAssembler assembler, Errors errors) {
         if (isNotBlank(assembler.getTemplateDirectory()) &&
             !(context.getBasedir().resolve(assembler.getTemplateDirectory().trim()).toFile().exists())) {
             errors.configuration(RB.$("validation_directory_not_exist",

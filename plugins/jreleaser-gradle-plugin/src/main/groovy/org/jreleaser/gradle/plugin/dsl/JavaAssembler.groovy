@@ -15,26 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.gradle.plugin.dsl
 
-import java.util.Set;
+import groovy.transform.CompileStatic
+import org.gradle.api.Action
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
 
 /**
+ *
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.8.0
  */
-public interface Assembler extends Activatable, ExtraProperties {
-    String getName();
+@CompileStatic
+interface JavaAssembler extends Assembler {
+    Property<String> getExecutable()
 
-    void setName(String name);
+    DirectoryProperty getTemplateDirectory()
 
-    boolean isExported();
+    Java getJava()
 
-    void setExported(boolean exported);
+    void java(Action<? super Java> action)
 
-    Set<Artifact> getOutputs();
-
-    void setOutputs(Set<Artifact> output);
-
-    void addOutput(Artifact artifact);
+    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
 }

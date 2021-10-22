@@ -32,7 +32,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Jlink extends AbstractAssembler {
+public class Jlink extends AbstractJavaAssembler {
     public static final String NAME = "jlink";
 
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
@@ -232,6 +232,7 @@ public class Jlink extends AbstractAssembler {
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
+        super.asMap(full, props);
         props.put("imageName", imageName);
         props.put("imageNameTransform", imageNameTransform);
         props.put("moduleName", moduleName);

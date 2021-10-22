@@ -15,26 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.maven.plugin;
+package org.jreleaser.gradle.plugin.dsl
 
-import java.util.Set;
+import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
+ *
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.8.0
  */
-public interface Assembler extends Activatable, ExtraProperties {
-    String getName();
+@CompileStatic
+interface FileSet {
+    Property<String> getInput()
 
-    void setName(String name);
+    Property<String> getOutput()
 
-    boolean isExported();
+    SetProperty<String> getIncludes()
 
-    void setExported(boolean exported);
+    SetProperty<String> getExcludes()
 
-    Set<Artifact> getOutputs();
+    void include(String str)
 
-    void setOutputs(Set<Artifact> output);
-
-    void addOutput(Artifact artifact);
+    void exclude(String str)
 }

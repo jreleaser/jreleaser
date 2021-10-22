@@ -15,24 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.validation;
+package org.jreleaser.assemblers;
 
+import org.jreleaser.model.Archive;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.util.Errors;
-
-import static org.jreleaser.model.validation.ArchiveResolver.resolveArchiveOutputs;
-import static org.jreleaser.model.validation.JlinkResolver.resolveJlinkOutputs;
-import static org.jreleaser.model.validation.NativeImageResolver.resolveNativeImageOutputs;
+import org.jreleaser.model.assembler.spi.AssemblerProcessorFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 /**
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.8.0
  */
-public abstract class AssemblersResolver extends Validator {
-    public static void resolveAssemblers(JReleaserContext context, Errors errors) {
-        context.getLogger().debug("assemble");
-        resolveArchiveOutputs(context, errors);
-        resolveJlinkOutputs(context, errors);
-        resolveNativeImageOutputs(context, errors);
+@ServiceProviderFor(AssemblerProcessorFactory.class)
+public class ArchiveAssemblerProcessorFactory implements AssemblerProcessorFactory<Archive, ArchiveAssemblerProcessor> {
+    @Override
+    public String getName() {
+        return Archive.NAME;
+    }
+
+    @Override
+    public ArchiveAssemblerProcessor getAssemblerProcessor(JReleaserContext context) {
+        return new ArchiveAssemblerProcessor(context);
     }
 }

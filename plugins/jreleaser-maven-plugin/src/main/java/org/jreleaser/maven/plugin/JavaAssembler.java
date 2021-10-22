@@ -17,24 +17,20 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.Set;
-
 /**
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.8.0
  */
-public interface Assembler extends Activatable, ExtraProperties {
-    String getName();
+public interface JavaAssembler extends Assembler {
+    String getExecutable();
 
-    void setName(String name);
+    void setExecutable(String executable);
 
-    boolean isExported();
+    String getTemplateDirectory();
 
-    void setExported(boolean exported);
+    void setTemplateDirectory(String templateDirectory);
 
-    Set<Artifact> getOutputs();
+    Java getJava();
 
-    void setOutputs(Set<Artifact> output);
-
-    void addOutput(Artifact artifact);
+    void setJava(Java java);
 }

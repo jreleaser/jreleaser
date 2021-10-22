@@ -30,6 +30,8 @@ import org.gradle.api.provider.Property
 interface Assemble {
     Property<Boolean> getEnabled()
 
+    NamedDomainObjectContainer<Jlink> getArchive()
+
     NamedDomainObjectContainer<Jlink> getJlink()
 
     NamedDomainObjectContainer<NativeImage> getNativeImage()

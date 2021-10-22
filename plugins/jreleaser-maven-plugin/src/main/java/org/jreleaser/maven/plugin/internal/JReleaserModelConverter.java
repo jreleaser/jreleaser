@@ -19,6 +19,7 @@ package org.jreleaser.maven.plugin.internal;
 
 import org.jreleaser.maven.plugin.Announce;
 import org.jreleaser.maven.plugin.Announcer;
+import org.jreleaser.maven.plugin.Archive;
 import org.jreleaser.maven.plugin.Article;
 import org.jreleaser.maven.plugin.Artifact;
 import org.jreleaser.maven.plugin.Artifactory;
@@ -39,6 +40,7 @@ import org.jreleaser.maven.plugin.Docker;
 import org.jreleaser.maven.plugin.DockerConfiguration;
 import org.jreleaser.maven.plugin.DockerSpec;
 import org.jreleaser.maven.plugin.Environment;
+import org.jreleaser.maven.plugin.FileSet;
 import org.jreleaser.maven.plugin.Files;
 import org.jreleaser.maven.plugin.GenericGit;
 import org.jreleaser.maven.plugin.GitService;
@@ -673,9 +675,52 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Assemble convertAssemble(Assemble assemble) {
         org.jreleaser.model.Assemble a = new org.jreleaser.model.Assemble();
         if (assemble.isEnabledSet()) a.setEnabled(assemble.isEnabled());
+        a.setArchive(convertArchive(assemble.getArchive()));
         a.setJlink(convertJlink(assemble.getJlink()));
         a.setNativeImage(convertNativeImage(assemble.getNativeImage()));
         return a;
+    }
+
+
+    private static Map<String, org.jreleaser.model.Archive> convertArchive(Map<String, Archive> archive) {
+        Map<String, org.jreleaser.model.Archive> map = new LinkedHashMap<>();
+        for (Map.Entry<String, Archive> e : archive.entrySet()) {
+            e.getValue().setName(e.getKey());
+            map.put(e.getKey(), convertArchive(e.getValue()));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.Archive convertArchive(Archive archive) {
+        org.jreleaser.model.Archive a = new org.jreleaser.model.Archive();
+        a.setExported(archive.isExported());
+        a.setName(archive.getName());
+        a.setActive(archive.resolveActive());
+        a.setExtraProperties(archive.getExtraProperties());
+        a.setArchiveName(archive.getArchiveName());
+        a.setDistributionType(archive.getDistributionType().name());
+        if (archive.isAttachPlatformSet()) a.setAttachPlatform(archive.isAttachPlatform());
+        a.setFormats(archive.getFormats().stream()
+            .map(Object::toString)
+            .map(org.jreleaser.model.Archive.Format::valueOf)
+            .collect(Collectors.toSet()));
+        a.setFileSets(convertFileSets(archive.getFileSets()));
+        return a;
+    }
+
+    private static List<org.jreleaser.model.FileSet> convertFileSets(List<FileSet> fileSets) {
+        return fileSets.stream()
+            .map(JReleaserModelConverter::convertFileSet)
+            .collect(Collectors.toList());
+    }
+
+    private static org.jreleaser.model.FileSet convertFileSet(FileSet fileSet) {
+        org.jreleaser.model.FileSet f = new org.jreleaser.model.FileSet();
+        f.setInput(fileSet.getInput());
+        f.setOutput(fileSet.getOutput());
+        f.setIncludes(fileSet.getIncludes());
+        f.setExcludes(fileSet.getExcludes());
+        return f;
     }
 
     private static Map<String, org.jreleaser.model.Jlink> convertJlink(Map<String, Jlink> jlink) {

@@ -30,7 +30,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class NativeImage extends AbstractAssembler {
+public class NativeImage extends AbstractJavaAssembler {
     public static final String NAME = "native-image";
 
     private final List<String> args = new ArrayList<>();
@@ -48,7 +48,7 @@ public class NativeImage extends AbstractAssembler {
 
     @Override
     public Distribution.DistributionType getDistributionType() {
-        return Distribution.DistributionType.JLINK;
+        return Distribution.DistributionType.NATIVE_IMAGE;
     }
 
     void setAll(NativeImage nativeImage) {
@@ -172,6 +172,7 @@ public class NativeImage extends AbstractAssembler {
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
+        super.asMap(full, props);
         props.put("imageName", imageName);
         props.put("imageNameTransform", imageNameTransform);
         props.put("graal", graal.asMap(full));

@@ -25,12 +25,14 @@ import java.util.Map;
  * @since 0.2.0
  */
 public class Assemble implements EnabledAware {
+    private final Map<String, Archive> archive = new LinkedHashMap<>();
     private final Map<String, Jlink> jlink = new LinkedHashMap<>();
     private final Map<String, NativeImage> nativeImage = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Assemble assemble) {
         this.enabled = assemble.enabled;
+        setArchive(assemble.archive);
         setJlink(assemble.jlink);
         setNativeImage(assemble.nativeImage);
     }
@@ -48,6 +50,15 @@ public class Assemble implements EnabledAware {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
+    }
+
+    public Map<String, Archive> getArchive() {
+        return archive;
+    }
+
+    public void setArchive(Map<String, Archive> archive) {
+        this.archive.clear();
+        this.archive.putAll(archive);
     }
 
     public Map<String, Jlink> getJlink() {

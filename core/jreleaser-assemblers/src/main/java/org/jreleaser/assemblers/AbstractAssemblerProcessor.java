@@ -20,7 +20,6 @@ package org.jreleaser.assemblers;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Project;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
 import org.jreleaser.model.assembler.spi.AssemblerProcessor;
 import org.jreleaser.util.Constants;
@@ -30,7 +29,6 @@ import org.jreleaser.util.command.CommandExecutor;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
@@ -39,10 +37,8 @@ import java.util.Map;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 
 /**
  * @author Andres Almiray
@@ -72,20 +68,6 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
             context.getLogger().debug(RB.$("tool.create.properties"), assembler.getType(), assembler.getName());
             Map<String, Object> newProps = fillProps(props);
 
-            context.getLogger().debug(RB.$("tool.resolve.templates"), assembler.getType(), assembler.getName());
-            Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
-                assembler.getType(),
-                assembler.getType(),
-                context.getModel().getProject().isSnapshot(),
-                context.getBasedir().resolve(getAssembler().getTemplateDirectory()));
-
-            for (Map.Entry<String, Reader> entry : templates.entrySet()) {
-                context.getLogger().debug(RB.$("tool.evaluate.template"), entry.getKey(), assembler.getName(), assembler.getType());
-                String content = applyTemplate(entry.getValue(), newProps, entry.getKey());
-                context.getLogger().debug(RB.$("tool.write.template"), entry.getKey(), assembler.getName(), assembler.getType());
-                writeFile(context.getModel().getProject(), content, newProps, entry.getKey());
-            }
-
             Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
             Files.createDirectories(assembleDirectory);
 
@@ -96,8 +78,6 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
     }
 
     protected abstract void doAssemble(Map<String, Object> props) throws AssemblerProcessingException;
-
-    protected abstract void writeFile(Project project, String content, Map<String, Object> props, String fileName) throws AssemblerProcessingException;
 
     protected void writeFile(String content, Path outputFile) throws AssemblerProcessingException {
         try {

@@ -19,8 +19,9 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.provider.ListProperty
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
  *
@@ -28,28 +29,22 @@ import org.gradle.api.provider.Property
  * @since 0.2.0
  */
 @CompileStatic
-interface NativeImage extends JavaAssembler {
-    Property<String> getImageName()
+interface Archive extends Assembler {
+    Property<String> getArchiveName()
 
-    Property<String> getImageNameTransform()
+    Property<org.jreleaser.model.Distribution.DistributionType> getDistributionType()
 
-    ListProperty<String> getArgs()
+    void setDistributionType(String distributionType)
 
-    void addArg(String arg)
+    Property<Boolean> getAttachPlatform()
 
-    void graal(Action<? super Artifact> action)
+    SetProperty<org.jreleaser.model.Archive.Format> getFormats()
 
-    void mainJar(Action<? super Artifact> action)
+    NamedDomainObjectContainer<FileSet> getFileSets()
 
-    void jars(Action<? super Glob> action)
+    void format(String format)
 
-    void files(Action<? super Glob> action)
+    void fileSet(Action<? super FileSet> action)
 
-    void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
-    void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
-    void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
-
-    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
+    void fileSet(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FileSet) Closure<Void> action)
 }

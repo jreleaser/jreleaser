@@ -50,7 +50,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
+public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlink> {
     private static final String KEY_JAVA_VERSION = "JAVA_VERSION";
 
     public JlinkAssemblerProcessor(JReleaserContext context) {

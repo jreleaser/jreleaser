@@ -35,6 +35,7 @@ import javax.inject.Inject
 @CompileStatic
 class AssembleImpl implements Assemble {
     final Property<Boolean> enabled
+    final NamedDomainObjectContainer<ArchiveImpl> archive
     final NamedDomainObjectContainer<JlinkImpl> jlink
     final NamedDomainObjectContainer<NativeImageImpl> nativeImage
 
@@ -42,12 +43,21 @@ class AssembleImpl implements Assemble {
     AssembleImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(true)
 
+        archive = objects.domainObjectContainer(ArchiveImpl, new NamedDomainObjectFactory<ArchiveImpl>() {
+            @Override
+            ArchiveImpl create(String name) {
+                ArchiveImpl archive = objects.newInstance(ArchiveImpl, objects)
+                archive.name = name
+                archive
+            }
+        })
+
         jlink = objects.domainObjectContainer(JlinkImpl, new NamedDomainObjectFactory<JlinkImpl>() {
             @Override
             JlinkImpl create(String name) {
                 JlinkImpl jlink = objects.newInstance(JlinkImpl, objects)
                 jlink.name = name
-                return jlink
+                jlink
             }
         })
 
@@ -56,7 +66,7 @@ class AssembleImpl implements Assemble {
             NativeImageImpl create(String name) {
                 NativeImageImpl nativeImage = objects.newInstance(NativeImageImpl, objects)
                 nativeImage.name = name
-                return nativeImage
+                nativeImage
             }
         })
     }
@@ -65,6 +75,7 @@ class AssembleImpl implements Assemble {
     org.jreleaser.model.Assemble toModel() {
         org.jreleaser.model.Assemble assemble = new org.jreleaser.model.Assemble()
 
+        archive.each { assemble.addArchive(it.toModel()) }
         jlink.each { assemble.addJlink(it.toModel()) }
         nativeImage.each { assemble.addNativeImage(it.toModel()) }
 
