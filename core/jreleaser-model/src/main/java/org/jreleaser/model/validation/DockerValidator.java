@@ -187,7 +187,11 @@ public abstract class DockerValidator extends Validator {
 
         validateRegistries(context, spec, docker, errors, element);
 
-        if (spec.getMatchers().isEmpty()) {
+        long artifactCount = distribution.getArtifacts().stream()
+            .filter(Artifact::isActive)
+            .count();
+
+        if (artifactCount > 1 && spec.getMatchers().isEmpty()) {
             errors.configuration(RB.$("validation_must_not_be_empty", element + ".matchers"));
         }
     }
