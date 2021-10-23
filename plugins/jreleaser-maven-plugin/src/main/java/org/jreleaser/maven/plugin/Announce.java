@@ -36,6 +36,7 @@ public class Announce implements EnabledAware {
     private final SdkmanAnnouncer sdkman = new SdkmanAnnouncer();
     private final Slack slack = new Slack();
     private final Teams teams = new Teams();
+    private final Telegram telegram = new Telegram();
     private final Twitter twitter = new Twitter();
     private final Map<String, Webhook> webhooks = new LinkedHashMap<>();
     private final Zulip zulip = new Zulip();
@@ -53,6 +54,7 @@ public class Announce implements EnabledAware {
         setSdkman(announce.sdkman);
         setSlack(announce.slack);
         setTeams(announce.teams);
+        setTelegram(announce.telegram);
         setTwitter(announce.twitter);
         setWebhooks(announce.webhooks);
         setZulip(announce.zulip);
@@ -159,6 +161,14 @@ public class Announce implements EnabledAware {
 
     public void setTeams(Teams teams) {
         this.teams.setAll(teams);
+    }
+
+    public Telegram getTelegram() {
+        return telegram;
+    }
+
+    public void setTelegram(Telegram telegram) {
+        this.telegram.setAll(telegram);
     }
 
     public Twitter getTwitter() {

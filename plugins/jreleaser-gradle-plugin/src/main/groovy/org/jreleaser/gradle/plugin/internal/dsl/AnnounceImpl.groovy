@@ -36,6 +36,7 @@ import org.jreleaser.gradle.plugin.dsl.Mattermost
 import org.jreleaser.gradle.plugin.dsl.SdkmanAnnouncer
 import org.jreleaser.gradle.plugin.dsl.Slack
 import org.jreleaser.gradle.plugin.dsl.Teams
+import org.jreleaser.gradle.plugin.dsl.Telegram
 import org.jreleaser.gradle.plugin.dsl.Twitter
 import org.jreleaser.gradle.plugin.dsl.Zulip
 import org.kordamp.gradle.util.ConfigureUtil
@@ -61,6 +62,7 @@ class AnnounceImpl implements Announce {
     final SdkmanAnnouncerImpl sdkman
     final SlackImpl slack
     final TeamsImpl teams
+    final TelegramImpl telegram
     final TwitterImpl twitter
     final ZulipImpl zulip
     final NamedDomainObjectContainer<WebhookImpl> webhooks
@@ -79,6 +81,7 @@ class AnnounceImpl implements Announce {
         sdkman = objects.newInstance(SdkmanAnnouncerImpl, objects)
         slack = objects.newInstance(SlackImpl, objects)
         teams = objects.newInstance(TeamsImpl, objects)
+        telegram = objects.newInstance(TelegramImpl, objects)
         twitter = objects.newInstance(TwitterImpl, objects)
         zulip = objects.newInstance(ZulipImpl, objects)
 
@@ -148,6 +151,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void telegram(Action<? super Telegram> action) {
+        action.execute(telegram)
+    }
+
+    @Override
     void twitter(Action<? super Twitter> action) {
         action.execute(twitter)
     }
@@ -213,6 +221,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void telegram(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Telegram) Closure<Void> action) {
+        ConfigureUtil.configure(action, telegram)
+    }
+
+    @Override
     void twitter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Twitter) Closure<Void> action) {
         ConfigureUtil.configure(action, twitter)
     }
@@ -236,6 +249,7 @@ class AnnounceImpl implements Announce {
         if (sdkman.isSet()) announce.sdkman = sdkman.toModel()
         if (slack.isSet()) announce.slack = slack.toModel()
         if (teams.isSet()) announce.teams = teams.toModel()
+        if (telegram.isSet()) announce.telegram = telegram.toModel()
         if (twitter.isSet()) announce.twitter = twitter.toModel()
         if (zulip.isSet()) announce.zulip = zulip.toModel()
 

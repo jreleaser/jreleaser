@@ -43,6 +43,7 @@ public class Announce implements Domain, EnabledAware {
     private final SdkmanAnnouncer sdkman = new SdkmanAnnouncer();
     private final Slack slack = new Slack();
     private final Teams teams = new Teams();
+    private final Telegram telegram = new Telegram();
     private final Twitter twitter = new Twitter();
     private final Webhooks webhooks = new Webhooks();
     private final Zulip zulip = new Zulip();
@@ -61,6 +62,7 @@ public class Announce implements Domain, EnabledAware {
         setSdkman(announce.sdkman);
         setSlack(announce.slack);
         setTeams(announce.teams);
+        setTelegram(announce.telegram);
         setTwitter(announce.twitter);
         setZulip(announce.zulip);
         setConfiguredWebhooks(announce.webhooks);
@@ -169,6 +171,14 @@ public class Announce implements Domain, EnabledAware {
         this.teams.setAll(teams);
     }
 
+    public Telegram getTelegram() {
+        return telegram;
+    }
+
+    public void setTelegram(Telegram telegram) {
+        this.telegram.setAll(telegram);
+    }
+
     public Twitter getTwitter() {
         return twitter;
     }
@@ -220,6 +230,7 @@ public class Announce implements Domain, EnabledAware {
         map.putAll(sdkman.asMap(full));
         map.putAll(slack.asMap(full));
         map.putAll(teams.asMap(full));
+        map.putAll(telegram.asMap(full));
         map.putAll(twitter.asMap(full));
         map.putAll(webhooks.asMap(full));
         map.putAll(zulip.asMap(full));
@@ -266,6 +277,8 @@ public class Announce implements Domain, EnabledAware {
                 return (A) getSlack();
             case Teams.NAME:
                 return (A) getTeams();
+            case Telegram.NAME:
+                return (A) getTelegram();
             case Twitter.NAME:
                 return (A) getTwitter();
             case Webhooks.NAME:
@@ -290,6 +303,7 @@ public class Announce implements Domain, EnabledAware {
         set.add(SdkmanAnnouncer.NAME);
         set.add(Slack.NAME);
         set.add(Teams.NAME);
+        set.add(Telegram.NAME);
         set.add(Twitter.NAME);
         set.add(Webhooks.NAME);
         set.add(Zulip.NAME);

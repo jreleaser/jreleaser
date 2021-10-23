@@ -75,6 +75,7 @@ import org.jreleaser.maven.plugin.Slot;
 import org.jreleaser.maven.plugin.Snap;
 import org.jreleaser.maven.plugin.Tap;
 import org.jreleaser.maven.plugin.Teams;
+import org.jreleaser.maven.plugin.Telegram;
 import org.jreleaser.maven.plugin.Twitter;
 import org.jreleaser.maven.plugin.Upload;
 import org.jreleaser.maven.plugin.Uploader;
@@ -485,6 +486,7 @@ public final class JReleaserModelConverter {
         if (announce.getSdkman().isSet()) a.setSdkman(convertSdkmanAnnouncer(announce.getSdkman()));
         if (announce.getSlack().isSet()) a.setSlack(convertSlack(announce.getSlack()));
         if (announce.getTeams().isSet()) a.setTeams(convertTeams(announce.getTeams()));
+        if (announce.getTelegram().isSet()) a.setTelegram(convertTelegram(announce.getTelegram()));
         if (announce.getTwitter().isSet()) a.setTwitter(convertTwitter(announce.getTwitter()));
         if (announce.getZulip().isSet()) a.setZulip(convertZulip(announce.getZulip()));
         a.setWebhooks(convertWebhooks(announce.getWebhooks()));
@@ -626,6 +628,16 @@ public final class JReleaserModelConverter {
         convertAnnouncer(teams, a);
         a.setWebhook(teams.getWebhook());
         a.setMessageTemplate(teams.getMessageTemplate());
+        return a;
+    }
+
+    private static org.jreleaser.model.Telegram convertTelegram(Telegram telegram) {
+        org.jreleaser.model.Telegram a = new org.jreleaser.model.Telegram();
+        convertAnnouncer(telegram, a);
+        a.setToken(telegram.getToken());
+        a.setChatId(telegram.getChatId());
+        a.setMessage(telegram.getMessage());
+        a.setMessageTemplate(telegram.getMessageTemplate());
         return a;
     }
 
