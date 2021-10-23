@@ -70,17 +70,22 @@ import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
 public class ChangelogGenerator {
     private static final String UNCATEGORIZED = "<<UNCATEGORIZED>>";
     private static final String REGEX_PREFIX = "regex:";
-    private static Set<String> unparseableTags = new LinkedHashSet<>();
+
+    private final Set<String> unparseableTags = new LinkedHashSet<>();
 
     public static String generate(JReleaserContext context) throws IOException {
         if (!context.getModel().getRelease().getGitService().getChangelog().isEnabled()) {
             return "";
         }
 
-        return createChangelog(context);
+        return new ChangelogGenerator().createChangelog(context);
     }
 
-    private static String createChangelog(JReleaserContext context) throws IOException {
+    private ChangelogGenerator() {
+
+    }
+
+    private String createChangelog(JReleaserContext context) throws IOException {
         GitService gitService = context.getModel().getRelease().getGitService();
         Changelog changelog = gitService.getChangelog();
 
@@ -119,7 +124,7 @@ public class ChangelogGenerator {
         }
     }
 
-    private static String formatCommit(RevCommit commit, String commitsUrl, Changelog changelog, String commitSeparator) {
+    private String formatCommit(RevCommit commit, String commitsUrl, Changelog changelog, String commitSeparator) {
         String commitHash = commit.getId().name();
         String abbreviation = commit.getId().abbreviate(7).name();
         String[] input = commit.getFullMessage().trim().split(lineSeparator());
@@ -135,14 +140,14 @@ public class ChangelogGenerator {
         return String.join(commitSeparator, lines);
     }
 
-    private static void unparseableTag(JReleaserContext context, String tag, Exception exception) {
-        if(!unparseableTags.contains(tag)) {
+    private void unparseableTag(JReleaserContext context, String tag, Exception exception) {
+        if (!unparseableTags.contains(tag)) {
             unparseableTags.add(tag);
             context.getLogger().warn(exception.getMessage());
         }
     }
 
-    private static Version semverOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
+    private Version semverOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
         Matcher matcher = versionPattern.matcher(extractTagName(ref));
         if (matcher.matches()) {
             String tag = matcher.group(1);
@@ -155,7 +160,7 @@ public class ChangelogGenerator {
         return Version.of("0.0.0");
     }
 
-    private static JavaRuntimeVersion javaRuntimeVersionOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
+    private JavaRuntimeVersion javaRuntimeVersionOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
         Matcher matcher = versionPattern.matcher(extractTagName(ref));
         if (matcher.matches()) {
             String tag = matcher.group(1);
@@ -168,7 +173,7 @@ public class ChangelogGenerator {
         return JavaRuntimeVersion.of("0.0.0");
     }
 
-    private static JavaModuleVersion javaModuleVersionOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
+    private JavaModuleVersion javaModuleVersionOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
         Matcher matcher = versionPattern.matcher(extractTagName(ref));
         if (matcher.matches()) {
             String tag = matcher.group(1);
@@ -181,7 +186,7 @@ public class ChangelogGenerator {
         return JavaModuleVersion.of("0.0.0");
     }
 
-    private static String versionOf(Ref tag, Pattern versionPattern) {
+    private String versionOf(Ref tag, Pattern versionPattern) {
         Matcher matcher = versionPattern.matcher(extractTagName(tag));
         if (matcher.matches()) {
             return matcher.group(1);
@@ -189,7 +194,7 @@ public class ChangelogGenerator {
         return "0.0.0";
     }
 
-    private static Comparable version(JReleaserContext context, Ref tag, Pattern versionPattern) {
+    private Comparable version(JReleaserContext context, Ref tag, Pattern versionPattern) {
         switch (context.getModel().getProject().getVersionPattern()) {
             case SEMVER:
                 return semverOf(context, tag, versionPattern);
@@ -202,7 +207,7 @@ public class ChangelogGenerator {
         }
     }
 
-    private static Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
+    private Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
         List<Ref> tags = git.tagList().call();
 
         GitService gitService = context.getModel().getRelease().getGitService();
@@ -312,16 +317,16 @@ public class ChangelogGenerator {
         return git.log().add(toRef).call();
     }
 
-    private static ObjectId getObjectId(Git git, Ref ref) throws IOException {
+    private ObjectId getObjectId(Git git, Ref ref) throws IOException {
         Ref peeled = git.getRepository().getRefDatabase().peel(ref);
         return peeled.getPeeledObjectId() != null ? peeled.getPeeledObjectId() : peeled.getObjectId();
     }
 
-    private static String formatChangelog(JReleaserContext context,
-                                          Changelog changelog,
-                                          Iterable<RevCommit> commits,
-                                          Comparator<RevCommit> revCommitComparator,
-                                          String lineSeparator) {
+    private String formatChangelog(JReleaserContext context,
+                                   Changelog changelog,
+                                   Iterable<RevCommit> commits,
+                                   Comparator<RevCommit> revCommitComparator,
+                                   String lineSeparator) {
         Set<Contributor> contributors = new LinkedHashSet<>();
         Map<String, List<Commit>> categories = new LinkedHashMap<>();
 
@@ -396,17 +401,17 @@ public class ChangelogGenerator {
         return applyReplacers(context, changelog, stripMargin(applyTemplate(changelog.getResolvedContentTemplate(context), props)));
     }
 
-    private static String resolveCommitFormat(Changelog changelog, Changelog.Category category) {
+    private String resolveCommitFormat(Changelog changelog, Changelog.Category category) {
         if (StringUtils.isNotBlank(category.getFormat())) {
             return category.getFormat();
         }
         return changelog.getFormat();
     }
 
-    private static String formatContributors(JReleaserContext context,
-                                             Changelog changelog,
-                                             Set<Contributor> contributors,
-                                             String lineSeparator) {
+    private String formatContributors(JReleaserContext context,
+                                      Changelog changelog,
+                                      Set<Contributor> contributors,
+                                      String lineSeparator) {
         List<String> list = new ArrayList<>();
         String format = changelog.getContributors().getFormat();
 
@@ -436,7 +441,7 @@ public class ChangelogGenerator {
         return String.join(separator, list);
     }
 
-    private static String applyReplacers(JReleaserContext context, Changelog changelog, String text) {
+    private String applyReplacers(JReleaserContext context, Changelog changelog, String text) {
         Map<String, Object> props = context.getModel().props();
         context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
         for (Changelog.Replacer replacer : changelog.getReplacers()) {
@@ -448,14 +453,14 @@ public class ChangelogGenerator {
         return text;
     }
 
-    private static String maybeExpand(Map<String, Object> props, String str) {
+    private String maybeExpand(Map<String, Object> props, String str) {
         if (str.contains("{{")) {
             return applyTemplate(str, props);
         }
         return str;
     }
 
-    private static String categorize(Commit commit, Changelog changelog) {
+    private String categorize(Commit commit, Changelog changelog) {
         if (!commit.labels.isEmpty()) {
             for (Changelog.Category category : changelog.getCategories()) {
                 if (CollectionUtils.intersects(category.getLabels(), commit.labels)) {
@@ -467,7 +472,7 @@ public class ChangelogGenerator {
         return UNCATEGORIZED;
     }
 
-    private static void applyLabels(Commit commit, Set<Changelog.Labeler> labelers) {
+    private void applyLabels(Commit commit, Set<Changelog.Labeler> labelers) {
         for (Changelog.Labeler labeler : labelers) {
             if (isNotBlank(labeler.getTitle())) {
                 if (labeler.getTitle().startsWith(REGEX_PREFIX)) {
@@ -494,7 +499,7 @@ public class ChangelogGenerator {
         }
     }
 
-    private static boolean checkLabels(Commit commit, Changelog changelog) {
+    private boolean checkLabels(Commit commit, Changelog changelog) {
         if (!changelog.getIncludeLabels().isEmpty()) {
             return CollectionUtils.intersects(changelog.getIncludeLabels(), commit.labels);
         }
