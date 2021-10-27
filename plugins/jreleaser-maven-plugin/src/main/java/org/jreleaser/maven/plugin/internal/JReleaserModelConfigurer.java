@@ -146,7 +146,8 @@ public final class JReleaserModelConfigurer {
 
     private static String resolveJavaVersion(String str) {
         if (str.startsWith("1.")) {
-            return str.substring(2);
+            // this can only be Java 8
+            return "8";
         }
         return str.split("\\.")[0];
     }

@@ -129,7 +129,8 @@ public class Version implements Comparable<Version> {
     public static int javaMajorVersion() {
         String jv = System.getProperty("java.version");
         if (jv.startsWith("1.")) {
-            jv = jv.substring(2);
+            // this can only be Java 8
+            return 8;
         }
         return JavaRuntimeVersion.of(jv).feature();
     }

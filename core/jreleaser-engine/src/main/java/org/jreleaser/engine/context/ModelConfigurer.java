@@ -31,8 +31,6 @@ import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
-import java.io.IOException;
-
 import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -86,13 +84,15 @@ public class ModelConfigurer {
             switch (context.getMode()) {
                 case ASSEMBLE:
                     if (errors.hasConfigurationErrors()) {
-                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured"));
+                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured") +
+                            System.lineSeparator() + errors.asString());
                     }
                     break;
                 case FULL:
                 default:
                     if (errors.hasErrors()) {
-                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured"));
+                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured") +
+                            System.lineSeparator() + errors.asString());
                     }
                     break;
             }
