@@ -3,7 +3,6 @@ class {{brewFormulaName}} < Formula
   homepage "{{projectWebsite}}"
   version "{{projectVersion}}"
   license "{{projectLicense}}"
-  bottle :unneeded
 
   {{brewMultiPlatform}}
 
