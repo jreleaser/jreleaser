@@ -303,6 +303,7 @@ public final class JReleaserModelConverter {
         c.setFormat(changelog.getFormat());
         c.setContent(changelog.getContent());
         c.setContentTemplate(changelog.getContentTemplate());
+        c.setPreset(changelog.getPreset());
         c.setCategories(convertCategories(changelog.getCategories()));
         c.setLabelers(convertLabelers(changelog.getLabelers()));
         c.setReplacers(convertReplacers(changelog.getReplacers()));

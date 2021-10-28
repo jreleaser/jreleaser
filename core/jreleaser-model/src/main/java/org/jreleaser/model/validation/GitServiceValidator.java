@@ -18,6 +18,7 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Changelog;
 import org.jreleaser.model.GenericGit;
@@ -28,9 +29,17 @@ import org.jreleaser.model.Project;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.util.Errors;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
+import java.util.Enumeration;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.groupingBy;
@@ -42,6 +51,7 @@ import static org.jreleaser.model.GitService.SKIP_TAG;
 import static org.jreleaser.model.GitService.TAG_NAME;
 import static org.jreleaser.model.GitService.UPDATE;
 import static org.jreleaser.model.Milestone.MILESTONE_NAME;
+import static org.jreleaser.util.ResourceUtils.resolveLocation;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -232,6 +242,10 @@ public abstract class GitServiceValidator extends Validator {
             errors.configuration(RB.$("validation_directory_not_exist", "changelog.contentTemplate", changelog.getContentTemplate()));
         }
 
+        if (isNotBlank(changelog.getPreset())) {
+            loadPreset(context, changelog, errors);
+        }
+
         if (changelog.getCategories().isEmpty()) {
             changelog.getCategories().add(Changelog.Category.of(RB.$("default_category_feature"), "", "feature", "enhancement"));
             changelog.getCategories().add(Changelog.Category.of(RB.$("default_category_bug_fix"), "", "bug", "fix"));
@@ -288,6 +302,72 @@ public abstract class GitServiceValidator extends Validator {
 
         if (!changelog.getContributors().isEnabledSet()) {
             changelog.getContributors().setEnabled(true);
+        }
+    }
+
+    private static void loadPreset(JReleaserContext context, Changelog changelog, Errors errors) {
+        URL location = resolveLocation(Changelog.class);
+
+        if (null == location) {
+            context.getLogger().warn(RB.$("ERROR_classpath_template_resolve"));
+            return;
+        }
+
+        try {
+            if ("file".equals(location.getProtocol())) {
+                String preset = changelog.getPreset().toLowerCase().trim();
+                String presetFileName = "META-INF/jreleaser/changelog/preset-" + preset + ".yml";
+
+                boolean found = false;
+                JarFile jarFile = new JarFile(new File(location.toURI()));
+                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
+                    JarEntry entry = e.nextElement();
+                    if (entry.isDirectory() || !entry.getName().equals(presetFileName)) {
+                        continue;
+                    }
+
+                    Changelog loaded = JReleaserConfigLoader.load(Changelog.class, presetFileName, jarFile.getInputStream(entry));
+
+                    LinkedHashSet<Changelog.Labeler> labelersCopy = new LinkedHashSet<>(changelog.getLabelers());
+                    labelersCopy.addAll(loaded.getLabelers());
+                    changelog.setLabelers(labelersCopy);
+
+                    LinkedHashSet<Changelog.Replacer> replacersCopy = new LinkedHashSet<>(changelog.getReplacers());
+                    replacersCopy.addAll(loaded.getReplacers());
+                    changelog.setReplacers(replacersCopy);
+
+                    Map<String, List<Changelog.Category>> categoriesByTitle = changelog.getCategories().stream()
+                        .collect(groupingBy(Changelog.Category::getTitle));
+                    Map<String, List<Changelog.Category>> loadedCategoriesByTitle = loaded.getCategories().stream()
+                        .collect(groupingBy(Changelog.Category::getTitle));
+                    categoriesByTitle.forEach((categoryTitle, categories) -> {
+                        if (loadedCategoriesByTitle.containsKey(categoryTitle)) {
+                            Changelog.Category loadedCategory = loadedCategoriesByTitle.remove(categoryTitle).get(0);
+                            categories.get(0).addLabels(loadedCategory.getLabels());
+                        }
+                    });
+
+                    loaded.getCategories().forEach(category -> {
+                        if (loadedCategoriesByTitle.containsKey(category.getTitle())) {
+                            changelog.getCategories().add(category);
+                        }
+                    });
+
+                    changelog.getHide().addCategories(loaded.getHide().getCategories());
+                    changelog.getHide().addContributors(loaded.getHide().getContributors());
+
+                    found = true;
+                    break;
+                }
+
+                if (!found) {
+                    context.getLogger().warn(RB.$("changelog.preset.not.found"), preset);
+                }
+            } else {
+                context.getLogger().warn(RB.$("ERROR_classpath_template_resolve"));
+            }
+        } catch (URISyntaxException | IOException e) {
+            context.getLogger().warn(RB.$("ERROR_classpath_template_resolve"));
         }
     }
 }

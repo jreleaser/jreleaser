@@ -51,6 +51,8 @@ interface Changelog {
 
     Property<String> getContent()
 
+    Property<String> getPreset()
+
     RegularFileProperty getContentTemplate()
 
     SetProperty<String> getIncludeLabels()

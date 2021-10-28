@@ -48,6 +48,15 @@ public interface JReleaserConfigParser {
     boolean supports(Path configFile);
 
     /**
+     * Whether the given resource format is supported or not.</p>
+     * Implementors would typically look at the file extension.
+     *
+     * @param resource the resource to inspect
+     * @return {@code true} if the given format is supported, {@code false} otherwise.
+     */
+    boolean supports(String resource);
+
+    /**
      * Checks the contents of the config file for syntax compliance.
      *
      * @param configFile the configuration file to inspect
@@ -62,6 +71,15 @@ public interface JReleaserConfigParser {
      * @throws IOException if an error occurs while reading from the {@code InputStream}.
      */
     JReleaserModel parse(InputStream inputStream) throws IOException;
+
+    /**
+     * Loads a resource into a given type.
+     *
+     * @param inputStream the resources' input source
+     * @return the parsed instance, should never return {@code null}.
+     * @throws IOException if an error occurs while reading from the {@code InputStream}.
+     */
+    <T> T load(Class<T> type, InputStream inputStream) throws IOException;
 
     /**
      * Reads and parses external configuration into a {@code Map} instance.

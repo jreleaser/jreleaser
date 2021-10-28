@@ -35,6 +35,7 @@ import java.util.Map;
 
 import static java.lang.System.lineSeparator;
 import static java.util.Arrays.asList;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -57,8 +58,12 @@ public class YamlJReleaserConfigParser implements JReleaserConfigParser {
 
     @Override
     public boolean supports(Path configFile) {
-        String fileName = configFile.getFileName().toString();
-        return fileName.endsWith(".yml") || fileName.endsWith(".yaml");
+        return supports(configFile.getFileName().toString());
+    }
+
+    @Override
+    public boolean supports(String resource) {
+        return isNotBlank(resource) && (resource.endsWith(".yml") || resource.endsWith(".yaml"));
     }
 
     @Override
@@ -83,6 +88,12 @@ public class YamlJReleaserConfigParser implements JReleaserConfigParser {
     public JReleaserModel parse(InputStream inputStream) throws IOException {
         YAMLMapper mapper = YAMLMapper.builder().build();
         return mapper.readValue(inputStream, JReleaserModel.class);
+    }
+
+    @Override
+    public <T> T load(Class<T> type, InputStream inputStream) throws IOException {
+        YAMLMapper mapper = YAMLMapper.builder().build();
+        return mapper.readValue(inputStream, type);
     }
 
     @Override

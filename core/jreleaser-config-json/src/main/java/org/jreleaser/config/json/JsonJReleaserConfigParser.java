@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -40,7 +42,12 @@ public class JsonJReleaserConfigParser implements JReleaserConfigParser {
 
     @Override
     public boolean supports(Path configFile) {
-        return configFile.getFileName().toString().endsWith(".json");
+        return supports(configFile.getFileName().toString());
+    }
+
+    @Override
+    public boolean supports(String resource) {
+        return isNotBlank(resource) && resource.endsWith(".json");
     }
 
     @Override
@@ -52,6 +59,12 @@ public class JsonJReleaserConfigParser implements JReleaserConfigParser {
     public JReleaserModel parse(InputStream inputStream) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(inputStream, JReleaserModel.class);
+    }
+
+    @Override
+    public <T> T load(Class<T> type, InputStream inputStream) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(inputStream, type);
     }
 
     @Override

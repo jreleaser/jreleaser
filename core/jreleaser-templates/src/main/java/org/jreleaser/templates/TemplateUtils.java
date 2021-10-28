@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
@@ -38,6 +37,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import static org.jreleaser.util.ResourceUtils.resolveLocation;
 
 /**
  * @author Andres Almiray
@@ -232,35 +233,6 @@ public final class TemplateUtils {
         } catch (URISyntaxException | IOException e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_reading_template_for",
                 anchor.getName() + "@" + templateKey, "classpath"));
-        }
-    }
-
-    private static URL resolveLocation(Class<?> klass) {
-        if (klass == null) return null;
-
-        try {
-            URL codeSourceLocation = klass.getProtectionDomain()
-                .getCodeSource()
-                .getLocation();
-            if (codeSourceLocation != null) return codeSourceLocation;
-        } catch (SecurityException | NullPointerException ignored) {
-            // noop
-        }
-
-        URL classResource = klass.getResource(klass.getSimpleName() + ".class");
-        if (classResource == null) return null;
-
-        String url = classResource.toString();
-        String suffix = klass.getCanonicalName().replace('.', '/') + ".class";
-        if (!url.endsWith(suffix)) return null;
-        String path = url.substring(0, url.length() - suffix.length());
-
-        if (path.startsWith("jar:")) path = path.substring(4, path.length() - 2);
-
-        try {
-            return new URL(path);
-        } catch (MalformedURLException ignored) {
-            return null;
         }
     }
 }

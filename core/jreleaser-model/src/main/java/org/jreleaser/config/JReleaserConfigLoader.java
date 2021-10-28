@@ -64,4 +64,19 @@ public class JReleaserConfigLoader {
         }
         throw new JReleaserException(RB.$("ERROR_unsupported_config_format", file));
     }
+
+    public static <T> T load(Class<T> type, String resource, InputStream inputStream) throws IOException {
+        ServiceLoader<JReleaserConfigParser> parsers = ServiceLoader.load(JReleaserConfigParser.class, JReleaserConfigParser.class.getClassLoader());
+
+        for (JReleaserConfigParser parser : parsers) {
+            if (parser.supports(resource)) {
+                try {
+                    return parser.load(type, inputStream);
+                } catch (IOException e) {
+                    throw new JReleaserException(RB.$("ERROR_load_resource", resource), e);
+                }
+            }
+        }
+        throw new JReleaserException(RB.$("ERROR_unsupported_config_format", resource));
+    }
 }

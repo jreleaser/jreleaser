@@ -58,6 +58,7 @@ public class Changelog implements Domain, EnabledAware {
     private String format;
     private String content;
     private String contentTemplate;
+    private String preset;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
@@ -68,6 +69,7 @@ public class Changelog implements Domain, EnabledAware {
         this.format = changelog.format;
         this.content = changelog.content;
         this.contentTemplate = changelog.contentTemplate;
+        this.preset = changelog.preset;
         setIncludeLabels(changelog.includeLabels);
         setExcludeLabels(changelog.excludeLabels);
         setCategories(changelog.categories);
@@ -239,6 +241,14 @@ public class Changelog implements Domain, EnabledAware {
         this.contentTemplate = contentTemplate;
     }
 
+    public String getPreset() {
+        return preset;
+    }
+
+    public void setPreset(String preset) {
+        this.preset = preset;
+    }
+
     public Hide getHide() {
         return hide;
     }
@@ -271,6 +281,7 @@ public class Changelog implements Domain, EnabledAware {
         map.put("links", links);
         map.put("sort", sort);
         map.put("formatted", formatted);
+        map.put("preset", preset);
         map.put("format", format);
         map.put("content", content);
         map.put("contentTemplate", contentTemplate);
@@ -340,6 +351,10 @@ public class Changelog implements Domain, EnabledAware {
 
         public void setLabels(Set<String> labels) {
             this.labels.clear();
+            this.labels.addAll(labels);
+        }
+
+        public void addLabels(Set<String> labels) {
             this.labels.addAll(labels);
         }
 
@@ -444,6 +459,20 @@ public class Changelog implements Domain, EnabledAware {
         }
 
         @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Labeler labeler = (Labeler) o;
+            return Objects.equals(title, labeler.title) &&
+                Objects.equals(body, labeler.body);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(title, body);
+        }
+
+        @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("label", label);
@@ -519,6 +548,10 @@ public class Changelog implements Domain, EnabledAware {
             this.categories.addAll(categories.stream().map(String::trim).collect(Collectors.toSet()));
         }
 
+        public void addCategories(Set<String> categories) {
+            this.categories.addAll(categories.stream().map(String::trim).collect(Collectors.toSet()));
+        }
+
         public void addCategory(String category) {
             if (isNotBlank(category)) {
                 this.categories.add(category.trim());
@@ -538,6 +571,10 @@ public class Changelog implements Domain, EnabledAware {
 
         public void setContributors(Set<String> contributors) {
             this.contributors.clear();
+            this.contributors.addAll(contributors.stream().map(String::trim).collect(Collectors.toSet()));
+        }
+
+        public void addContributors(Set<String> contributors) {
             this.contributors.addAll(contributors.stream().map(String::trim).collect(Collectors.toSet()));
         }
 

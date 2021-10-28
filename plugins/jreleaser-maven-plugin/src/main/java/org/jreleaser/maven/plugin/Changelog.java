@@ -52,6 +52,7 @@ public class Changelog implements EnabledAware {
     private String format;
     private String content;
     private String contentTemplate;
+    private String preset;
 
     void setAll(Changelog changelog) {
         this.enabled = changelog.enabled;
@@ -63,6 +64,7 @@ public class Changelog implements EnabledAware {
         this.format = changelog.format;
         this.content = changelog.content;
         this.contentTemplate = changelog.contentTemplate;
+        this.preset = changelog.preset;
         setIncludeLabels(changelog.includeLabels);
         setExcludeLabels(changelog.excludeLabels);
         setCategories(changelog.categories);
@@ -212,6 +214,14 @@ public class Changelog implements EnabledAware {
 
     public void setContentTemplate(String contentTemplate) {
         this.contentTemplate = contentTemplate;
+    }
+
+    public String getPreset() {
+        return preset;
+    }
+
+    public void setPreset(String preset) {
+        this.preset = preset;
     }
 
     @Deprecated
