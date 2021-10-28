@@ -76,6 +76,7 @@ subprojects {
     license {
         exclude('build/**')
         exclude('**/*.tpl')
+        exclude('META-INF/**/*.yml')
     }
 
     dependencies {
