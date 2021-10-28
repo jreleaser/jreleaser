@@ -218,9 +218,9 @@ class ChangelogImpl implements Changelog {
         changelog.setLabelers(labelers.collect([] as Set) { LabelerImpl labeler ->
             labeler.toModel()
         } as Set<org.jreleaser.model.Changelog.Labeler>)
-        changelog.setReplacers(replacers.collect([] as Set) { ReplacerImpl replacer ->
+        changelog.setReplacers(replacers.collect([] as List) { ReplacerImpl replacer ->
             replacer.toModel()
-        } as Set<org.jreleaser.model.Changelog.Replacer>)
+        } as List<org.jreleaser.model.Changelog.Replacer>)
         changelog.hide = hide.toModel()
         changelog.contributors = contributors.toModel()
         changelog

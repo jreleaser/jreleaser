@@ -1,0 +1,63 @@
+labelers:
+  - label: 'merge'
+    title: 'Merge pull'
+  - label: 'merge'
+    title: 'Merge branch'
+  - label: 'build'
+    title: 'regex:^(?:build(?:\(.*\))?!?):\s.*'
+  - label: 'chore'
+    title: 'regex:^(?:chore(?:\(.*\))?!?):\s.*'
+  - label: 'ci'
+    title: 'regex:^(?:ci(?:\(.*\))?!?):\s.*'
+  - label: 'docs'
+    title: 'regex:^(?:docs(?:\(.*\))?!?):\s.*'
+  - label: 'feat'
+    title: 'regex:^(?:feat(?:\(.*\))?!?):\s.*'
+  - label: 'fix'
+    title: 'regex:^(?:fix(?:\(.*\))?!?):\s.*'
+  - label: 'perf'
+    title: 'regex:^(?:perf(?:\(.*\))?!?):\s.*'
+  - label: 'refactor'
+    title: 'regex:^(?:refactor(?:\(.*\))?!?):\s.*'
+  - label: 'revert'
+    title: 'regex:^(?:revert(?:\(.*\))?!?):\s.*'
+  - label: 'style'
+    title: 'regex:^(?:style(?:\(.*\))?!?):\s.*'
+  - label: 'test'
+    title: 'regex:^(?:test(?:\(.*\))?!?):\s.*'
+
+categories:
+  - title: 'Merge'
+    labels:
+      - 'merge'
+  - title: 'Features'
+    labels:
+      - 'feat'
+  - title: 'Fixes'
+    labels:
+      - 'fix'
+  - title: 'Changes'
+    labels:
+      - 'perf'
+      - 'refactor'
+      - 'revert'
+      - 'style'
+  - title: 'Tasks'
+    labels:
+      - 'chore'
+  - title: 'Build'
+    labels:
+      - 'test'
+      - 'build'
+      - 'ci'
+  - title: 'Documentation'
+    labels:
+      - 'docs'
+
+replacers:
+  - search: '((?:build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(?:\(.*\))?)!(:\s.*)'
+    replace: '🚨 $1$2'
+  - search: '(?:build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(.*\)):\s(.*)'
+    replace: '$1 $2'
+  - search: '(?:build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test):\s(.*)'
+    replace: '$1'

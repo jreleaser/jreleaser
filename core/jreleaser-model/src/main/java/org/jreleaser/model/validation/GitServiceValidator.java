@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -332,7 +333,7 @@ public abstract class GitServiceValidator extends Validator {
                     labelersCopy.addAll(loaded.getLabelers());
                     changelog.setLabelers(labelersCopy);
 
-                    LinkedHashSet<Changelog.Replacer> replacersCopy = new LinkedHashSet<>(changelog.getReplacers());
+                    List<Changelog.Replacer> replacersCopy = new ArrayList<>(changelog.getReplacers());
                     replacersCopy.addAll(loaded.getReplacers());
                     changelog.setReplacers(replacersCopy);
 

@@ -38,7 +38,7 @@ public class Changelog implements EnabledAware {
     private final Set<String> includeLabels = new LinkedHashSet<>();
     private final Set<String> excludeLabels = new LinkedHashSet<>();
     private final List<Category> categories = new ArrayList<>();
-    private final Set<Replacer> replacers = new LinkedHashSet<>();
+    private final List<Replacer> replacers = new ArrayList<>();
     private final Set<Labeler> labelers = new LinkedHashSet<>();
     private final Contributors contributors = new Contributors();
     private final Hide hide = new Hide();
@@ -166,11 +166,11 @@ public class Changelog implements EnabledAware {
         this.categories.addAll(categories);
     }
 
-    public Set<Replacer> getReplacers() {
+    public List<Replacer> getReplacers() {
         return replacers;
     }
 
-    public void setReplacers(Set<Replacer> replacers) {
+    public void setReplacers(List<Replacer> replacers) {
         this.replacers.clear();
         this.replacers.addAll(replacers);
     }

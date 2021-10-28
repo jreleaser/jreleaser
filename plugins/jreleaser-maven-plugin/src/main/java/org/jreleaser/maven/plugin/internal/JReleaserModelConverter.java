@@ -351,8 +351,8 @@ public final class JReleaserModelConverter {
         return set;
     }
 
-    private static Set<org.jreleaser.model.Changelog.Replacer> convertReplacers(Set<Changelog.Replacer> replacers) {
-        Set<org.jreleaser.model.Changelog.Replacer> set = new LinkedHashSet<>();
+    private static List<org.jreleaser.model.Changelog.Replacer> convertReplacers(List<Changelog.Replacer> replacers) {
+        List<org.jreleaser.model.Changelog.Replacer> set = new ArrayList<>();
         for (Changelog.Replacer replacer : replacers) {
             org.jreleaser.model.Changelog.Replacer r = new org.jreleaser.model.Changelog.Replacer();
             r.setSearch(replacer.getSearch());
