@@ -132,7 +132,9 @@ public class Environment implements Domain {
         if (Files.exists(file)) {
             try {
                 if (file.getFileName().toString().endsWith(".properties")) {
-                    vars.load(new FileInputStream(file.toFile()));
+                    try (FileInputStream in = new FileInputStream(file.toFile())) {
+                        vars.load(in);
+                    }
                 } else {
                     vars.putAll(JReleaserConfigLoader.loadProperties(file));
                 }

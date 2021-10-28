@@ -6,8 +6,6 @@ class {{brewFormulaName}} < Formula
   sha256 "{{distributionChecksumSha256}}"
   license "{{projectLicense}}"
 
-  bottle :unneeded
-
   {{#brewHasLivecheck}}
   livecheck do
     {{#brewLivecheck}}

@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public class Http extends AbstractUploader {
+public class Http extends AbstractHttpUploader {
     public static final String NAME = "http";
 
     private final Map<String, String> headers = new LinkedHashMap<>();

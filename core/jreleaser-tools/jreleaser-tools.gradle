@@ -21,7 +21,6 @@ dependencies {
 
     // tools
     api project(':jreleaser-templates')
-    api "org.zeroturnaround:zt-exec:$ztexecVersion"
     api project(':sdkman-java-sdk')
 
     compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"

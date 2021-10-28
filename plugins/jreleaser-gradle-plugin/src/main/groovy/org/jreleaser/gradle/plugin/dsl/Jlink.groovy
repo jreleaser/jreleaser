@@ -29,7 +29,7 @@ import org.gradle.api.provider.SetProperty
  * @since 0.2.0
  */
 @CompileStatic
-interface Jlink extends Assembler {
+interface Jlink extends JavaAssembler {
     Property<String> getImageName()
 
     Property<String> getImageNameTransform()

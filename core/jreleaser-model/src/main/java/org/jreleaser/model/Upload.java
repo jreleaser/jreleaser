@@ -33,13 +33,15 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  */
 public class Upload implements Domain, EnabledAware {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
-    private final Map<String, HttpUploader> http = new LinkedHashMap<>();
+    private final Map<String, Http> http = new LinkedHashMap<>();
+    private final Map<String, S3> s3 = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Upload assemble) {
         this.enabled = assemble.enabled;
         setArtifactory(assemble.artifactory);
         setHttp(assemble.http);
+        setS3(assemble.s3);
     }
 
     @Override
@@ -76,23 +78,42 @@ public class Upload implements Domain, EnabledAware {
         this.artifactory.put(artifactory.getType(), artifactory);
     }
 
-    public List<HttpUploader> getActiveHttps() {
+    public List<Http> getActiveHttps() {
         return http.values().stream()
-            .filter(HttpUploader::isEnabled)
+            .filter(Http::isEnabled)
             .collect(Collectors.toList());
     }
 
-    public Map<String, HttpUploader> getHttp() {
+    public Map<String, Http> getHttp() {
         return http;
     }
 
-    public void setHttp(Map<String, HttpUploader> http) {
+    public void setHttp(Map<String, Http> http) {
         this.http.clear();
         this.http.putAll(http);
     }
 
-    public void addHttp(HttpUploader http) {
+    public void addHttp(Http http) {
         this.http.put(http.getType(), http);
+    }
+
+    public List<S3> getActiveS3s() {
+        return s3.values().stream()
+            .filter(S3::isEnabled)
+            .collect(Collectors.toList());
+    }
+
+    public Map<String, S3> getS3() {
+        return s3;
+    }
+
+    public void setS3(Map<String, S3> s3) {
+        this.s3.clear();
+        this.s3.putAll(s3);
+    }
+
+    public void addS3(S3 s3) {
+        this.s3.put(s3.getType(), s3);
     }
 
     @Override
@@ -114,6 +135,13 @@ public class Upload implements Domain, EnabledAware {
             .collect(Collectors.toList());
         if (!http.isEmpty()) map.put("http", http);
 
+        List<Map<String, Object>> s3 = this.s3.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(Collectors.toList());
+        if (!s3.isEmpty()) map.put("s3", s3);
+
         return map;
     }
 
@@ -121,8 +149,10 @@ public class Upload implements Domain, EnabledAware {
         switch (uploaderType) {
             case Artifactory.TYPE:
                 return (Map<String, A>) artifactory;
-            case HttpUploader.TYPE:
+            case Http.TYPE:
                 return (Map<String, A>) http;
+            case S3.TYPE:
+                return (Map<String, A>) s3;
         }
 
         return Collections.emptyMap();
@@ -132,6 +162,7 @@ public class Upload implements Domain, EnabledAware {
         List<A> uploaders = new ArrayList<>();
         uploaders.addAll((List<A>) getActiveArtifactories());
         uploaders.addAll((List<A>) getActiveHttps());
+        uploaders.addAll((List<A>) getActiveS3s());
         return uploaders;
     }
 

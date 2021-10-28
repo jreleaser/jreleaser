@@ -30,12 +30,14 @@ import java.util.stream.Collectors;
  * @since 0.2.0
  */
 public class Assemble implements Domain, EnabledAware {
+    private final Map<String, Archive> archive = new LinkedHashMap<>();
     private final Map<String, Jlink> jlink = new LinkedHashMap<>();
     private final Map<String, NativeImage> nativeImage = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Assemble assemble) {
         this.enabled = assemble.enabled;
+        setArchive(assemble.archive);
         setJlink(assemble.jlink);
         setNativeImage(assemble.nativeImage);
     }
@@ -53,6 +55,25 @@ public class Assemble implements Domain, EnabledAware {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
+    }
+
+    public List<Archive> getActiveArchives() {
+        return archive.values().stream()
+            .filter(Archive::isEnabled)
+            .collect(Collectors.toList());
+    }
+
+    public Map<String, Archive> getArchive() {
+        return archive;
+    }
+
+    public void setArchive(Map<String, Archive> archive) {
+        this.archive.clear();
+        this.archive.putAll(archive);
+    }
+
+    public void addArchive(Archive archive) {
+        this.archive.put(archive.getName(), archive);
     }
 
     public List<Jlink> getActiveJlinks() {
@@ -98,6 +119,13 @@ public class Assemble implements Domain, EnabledAware {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
 
+        List<Map<String, Object>> archive = this.archive.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(Collectors.toList());
+        if (!archive.isEmpty()) map.put("archive", archive);
+
         List<Map<String, Object>> jlink = this.jlink.values()
             .stream()
             .filter(d -> full || d.isEnabled())
@@ -117,6 +145,8 @@ public class Assemble implements Domain, EnabledAware {
 
     public <A extends Assembler> Map<String, A> findAssemblersByType(String assemblerName) {
         switch (assemblerName) {
+            case Archive.NAME:
+                return (Map<String, A>) archive;
             case Jlink.NAME:
                 return (Map<String, A>) jlink;
             case NativeImage.NAME:
@@ -128,6 +158,7 @@ public class Assemble implements Domain, EnabledAware {
 
     public <A extends Assembler> Collection<A> findAllAssemblers() {
         List<A> assemblers = new ArrayList<>();
+        assemblers.addAll((List<A>) getActiveArchives());
         assemblers.addAll((List<A>) getActiveJlinks());
         assemblers.addAll((List<A>) getActiveNativeImages());
         return assemblers;

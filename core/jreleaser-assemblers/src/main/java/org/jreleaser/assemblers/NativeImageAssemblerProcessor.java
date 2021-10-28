@@ -28,14 +28,13 @@ import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
+import org.jreleaser.util.command.Command;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -48,7 +47,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<NativeImage> {
+public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcessor<NativeImage> {
     private static final String KEY_JAVA_VERSION = "JAVA_VERSION";
     private static final String KEY_GRAALVM_VERSION = "GRAALVM_VERSION";
 
@@ -90,11 +89,9 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
 
         if (!Files.exists(nativeImageExecutable)) {
             context.getLogger().debug(RB.$("assembler.graal.install.native.exec"));
-            List<String> cmd = new ArrayList<>();
-            cmd.add(graalPath.resolve("bin").resolve("gu").toAbsolutePath().toString());
-            cmd.add("install");
-            cmd.add("native-image");
-            executeCommand(cmd);
+            executeCommand(new Command(graalPath.resolve("bin").resolve("gu").toAbsolutePath().toString())
+                .arg("install")
+                .arg("native-image"));
         }
     }
 
@@ -118,19 +115,19 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<Na
             .findFirst()
             .ifPresent(assembler.getArgs()::remove);
 
-        List<String> cmd = new ArrayList<>();
-        cmd.add(graalPath.resolve("bin").resolve("native-image").toAbsolutePath().toString());
-        cmd.addAll(assembler.getArgs());
-        cmd.add("-jar");
-        cmd.add(assembler.getMainJar().getEffectivePath(context).toAbsolutePath().toString());
+        Command cmd = new Command(graalPath.resolve("bin").resolve("native-image").toAbsolutePath().toString())
+            .args(assembler.getArgs())
+            .arg("-jar")
+            .arg(assembler.getMainJar().getEffectivePath(context).toAbsolutePath().toString());
+
         if (!jars.isEmpty()) {
-            cmd.add("-cp");
-            cmd.add(jars.stream()
-                .map(Path::getFileName)
-                .map(Path::toString)
-                .collect(Collectors.joining(File.pathSeparator)));
+            cmd.arg("-cp")
+                .arg(jars.stream()
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .collect(Collectors.joining(File.pathSeparator)));
         }
-        cmd.add("-H:Name=" + image.getFileName().toString());
+        cmd.arg("-H:Name=" + image.getFileName().toString());
         executeCommand(image.getParent(), cmd);
 
         try {

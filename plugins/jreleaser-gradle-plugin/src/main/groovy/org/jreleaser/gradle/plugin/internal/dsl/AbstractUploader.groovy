@@ -38,8 +38,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 abstract class AbstractUploader implements Uploader {
     final Property<Active> active
-    final Property<String> uploadUrl
-    final Property<String> downloadUrl
     final Property<Integer> connectTimeout
     final Property<Integer> readTimeout
     final Property<Boolean> artifacts
@@ -50,8 +48,6 @@ abstract class AbstractUploader implements Uploader {
     @Inject
     AbstractUploader(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
-        uploadUrl = objects.property(String).convention(Providers.notDefined())
-        downloadUrl = objects.property(String).convention(Providers.notDefined())
         connectTimeout = objects.property(Integer).convention(Providers.notDefined())
         readTimeout = objects.property(Integer).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
@@ -63,8 +59,6 @@ abstract class AbstractUploader implements Uploader {
     @Internal
     boolean isSet() {
         active.present ||
-            uploadUrl.present ||
-            downloadUrl.present ||
             connectTimeout.present ||
             readTimeout.present ||
             extraProperties.present ||
@@ -82,8 +76,6 @@ abstract class AbstractUploader implements Uploader {
 
     protected <U extends org.jreleaser.model.Uploader> void fillProperties(U uploader) {
         if (active.present) uploader.active = active.get()
-        if (uploadUrl.present) uploader.uploadUrl = uploadUrl.get()
-        if (downloadUrl.present) uploader.downloadUrl = downloadUrl.get()
         if (connectTimeout.present) uploader.connectTimeout = connectTimeout.get()
         if (readTimeout.present) uploader.readTimeout = readTimeout.get()
         if (extraProperties.present) uploader.extraProperties.putAll(extraProperties.get())

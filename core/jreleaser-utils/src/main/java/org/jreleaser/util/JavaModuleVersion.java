@@ -164,9 +164,9 @@ public class JavaModuleVersion implements Comparable<JavaModuleVersion> {
     }
 
     private int compareAsNumbers(String s1, String s2) {
-        Integer i1 = Integer.parseInt(s1);
-        Integer i2 = Integer.parseInt(s2);
-        return i1.compareTo(i2);
+        int i1 = Integer.parseInt(s1);
+        int i2 = Integer.parseInt(s2);
+        return Integer.compare(i1, i2);
     }
 
     public static JavaModuleVersion of(String version) {

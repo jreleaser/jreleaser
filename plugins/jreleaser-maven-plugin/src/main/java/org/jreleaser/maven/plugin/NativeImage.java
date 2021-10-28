@@ -24,7 +24,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class NativeImage extends AbstractAssembler {
+public class NativeImage extends AbstractJavaAssembler {
     private final List<String> args = new ArrayList<>();
     private final Artifact graal = new Artifact();
     private final Artifact mainJar = new Artifact();

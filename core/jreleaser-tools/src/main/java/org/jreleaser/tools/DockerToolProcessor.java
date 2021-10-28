@@ -30,6 +30,7 @@ import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
+import org.jreleaser.util.command.Command;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -148,16 +149,16 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
                 imageName = applyTemplate(imageName, props);
 
                 // command line
-                List<String> cmd = createBuildCommand(props, docker);
-                if (!cmd.contains("-q") && !cmd.contains("--quiet")) {
-                    cmd.add("-q");
+                Command cmd = createBuildCommand(props, docker);
+                if (!cmd.hasArg("-q") && !cmd.hasArg("--quiet")) {
+                    cmd.arg("-q");
                 }
-                cmd.add("-f");
-                cmd.add(workingDirectory.resolve("Dockerfile").toAbsolutePath().toString());
-                cmd.add("-t");
-                cmd.add(imageName);
-                cmd.add(workingDirectory.toAbsolutePath().toString());
-                context.getLogger().debug(String.join(" ", cmd));
+                cmd.arg("-f");
+                cmd.arg(workingDirectory.resolve("Dockerfile").toAbsolutePath().toString());
+                cmd.arg("-t");
+                cmd.arg(imageName);
+                cmd.arg(workingDirectory.toAbsolutePath().toString());
+                context.getLogger().debug(String.join(" ", cmd.getArgs()));
 
                 context.getLogger().info(" - {}", imageName);
                 // execute
@@ -193,26 +194,24 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
         return packageDirectory;
     }
 
-    private List<String> createBuildCommand(Map<String, Object> props, DockerConfiguration docker) {
-        List<String> cmd = createCommand("build");
+    private Command createBuildCommand(Map<String, Object> props, DockerConfiguration docker) {
+        Command cmd = createCommand("build");
         for (int i = 0; i < docker.getBuildArgs().size(); i++) {
             String arg = docker.getBuildArgs().get(i);
             if (arg.contains("{{")) {
-                cmd.add(applyTemplate(arg, props, "arg" + i));
+                cmd.arg(applyTemplate(arg, props, "arg" + i));
             } else {
-                cmd.add(arg);
+                cmd.arg(arg);
             }
         }
         return cmd;
     }
 
-    private List<String> createCommand(String name) {
-        List<String> cmd = new ArrayList<>();
-        cmd.add("docker" + (PlatformUtils.isWindows() ? ".exe" : ""));
-        cmd.add("-l");
-        cmd.add("error");
-        cmd.add(name);
-        return cmd;
+    private Command createCommand(String name) {
+        return new Command("docker" + (PlatformUtils.isWindows() ? ".exe" : ""))
+            .arg("-l")
+            .arg("error")
+            .arg(name);
     }
 
     @Override
@@ -258,14 +257,14 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     }
 
     private void login(Registry registry) throws ToolProcessingException {
-        List<String> cmd = createCommand("login");
+        Command cmd = createCommand("login");
         if (isNotBlank(registry.getServer())) {
-            cmd.add(registry.getServer());
+            cmd.arg(registry.getServer());
         }
-        cmd.add("-u");
-        cmd.add(registry.getResolvedUsername());
-        cmd.add("-p");
-        cmd.add(registry.getResolvedPassword());
+        cmd.arg("-u");
+        cmd.arg(registry.getResolvedUsername());
+        cmd.arg("-p");
+        cmd.arg(registry.getResolvedPassword());
 
         ByteArrayInputStream in = new ByteArrayInputStream((registry.getResolvedPassword() + System.lineSeparator()).getBytes());
 
@@ -309,17 +308,17 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
         }
 
         if (!tag.equals(imageName)) {
-            List<String> cmd = createCommand("tag");
-            cmd.add(imageName);
-            cmd.add(tag);
+            Command cmd = createCommand("tag")
+                .arg(imageName)
+                .arg(tag);
 
             context.getLogger().debug(RB.$("docker.tag"), imageName, tag);
             if (!context.isDryrun()) executeCommand(cmd);
         }
 
-        List<String> cmd = createCommand("push");
-        cmd.add("-q");
-        cmd.add(tag);
+        Command cmd = createCommand("push")
+            .arg("-q")
+            .arg(tag);
 
         context.getLogger().info(" - {}", tag);
         context.getLogger().debug(RB.$("docker.push"),
@@ -330,9 +329,9 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     }
 
     private void logout(Registry registry) throws ToolProcessingException {
-        List<String> cmd = createCommand("logout");
+        Command cmd = createCommand("logout");
         if (isNotBlank(registry.getServer())) {
-            cmd.add(registry.getServerName());
+            cmd.arg(registry.getServerName());
         }
 
         context.getLogger().debug(RB.$("docker.logout"),

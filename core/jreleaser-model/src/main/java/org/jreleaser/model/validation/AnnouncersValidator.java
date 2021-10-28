@@ -32,6 +32,7 @@ import static org.jreleaser.model.validation.MattermostValidator.validateMatterm
 import static org.jreleaser.model.validation.SdkmanAnnouncerValidator.validateSdkmanAnnouncer;
 import static org.jreleaser.model.validation.SlackValidator.validateSlack;
 import static org.jreleaser.model.validation.TeamsValidator.validateTeams;
+import static org.jreleaser.model.validation.TelegramValidator.validateTelegram;
 import static org.jreleaser.model.validation.TwitterValidator.validateTwitter;
 import static org.jreleaser.model.validation.WebhooksValidator.validateWebhooks;
 import static org.jreleaser.model.validation.ZulipValidator.validateZulip;
@@ -60,6 +61,7 @@ public abstract class AnnouncersValidator extends Validator {
         validateSdkmanAnnouncer(context, announce.getSdkman(), errors);
         validateSlack(context, announce.getSlack(), errors);
         validateTeams(context, announce.getTeams(), errors);
+        validateTelegram(context, announce.getTelegram(), errors);
         validateTwitter(context, announce.getTwitter(), errors);
         validateWebhooks(context, announce.getConfiguredWebhooks(), errors);
         validateZulip(context, announce.getZulip(), errors);
@@ -76,6 +78,7 @@ public abstract class AnnouncersValidator extends Validator {
                 announce.getSdkman().isEnabled() ||
                 announce.getSlack().isEnabled() ||
                 announce.getTeams().isEnabled() ||
+                announce.getTelegram().isEnabled() ||
                 announce.getTwitter().isEnabled() ||
                 announce.getConfiguredWebhooks().isEnabled() ||
                 announce.getZulip().isEnabled());

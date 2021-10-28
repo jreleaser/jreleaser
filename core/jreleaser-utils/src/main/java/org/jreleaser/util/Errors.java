@@ -18,6 +18,7 @@
 package org.jreleaser.util;
 
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -58,6 +59,12 @@ public class Errors {
     public void logErrors(PrintWriter writer) {
         assemblyErrors.forEach(e -> writer.println(e.message));
         configurationErrors.forEach(e -> writer.println(e.message));
+    }
+
+    public String asString() {
+        StringWriter writer = new StringWriter();
+        logErrors(new PrintWriter(writer));
+        return writer.toString();
     }
 
     public enum Kind {

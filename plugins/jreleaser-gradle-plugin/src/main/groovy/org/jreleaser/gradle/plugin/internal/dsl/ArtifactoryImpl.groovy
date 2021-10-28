@@ -23,7 +23,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Artifactory
-import org.jreleaser.model.Uploader
+import org.jreleaser.model.HttpUploader
 
 import javax.inject.Inject
 
@@ -33,12 +33,12 @@ import javax.inject.Inject
  * @since 0.3.0
  */
 @CompileStatic
-class ArtifactoryImpl extends AbstractUploader implements Artifactory {
+class ArtifactoryImpl extends AbstractHttpUploader implements Artifactory {
     String name
     final Property<String> target
     final Property<String> username
     final Property<String> password
-    final Property<Uploader.Authorization> authorization
+    final Property<HttpUploader.Authorization> authorization
 
     @Inject
     ArtifactoryImpl(ObjectFactory objects) {
@@ -46,7 +46,7 @@ class ArtifactoryImpl extends AbstractUploader implements Artifactory {
         target = objects.property(String).convention(Providers.notDefined())
         username = objects.property(String).convention(Providers.notDefined())
         password = objects.property(String).convention(Providers.notDefined())
-        authorization = objects.property(Uploader.Authorization).convention(Providers.notDefined())
+        authorization = objects.property(HttpUploader.Authorization).convention(Providers.notDefined())
     }
 
     @Override
@@ -61,14 +61,14 @@ class ArtifactoryImpl extends AbstractUploader implements Artifactory {
 
     @Override
     void setAuthorization(String authorization) {
-        this.authorization.set(Uploader.Authorization.of(authorization))
+        this.authorization.set(HttpUploader.Authorization.of(authorization))
     }
 
     org.jreleaser.model.Artifactory toModel() {
         org.jreleaser.model.Artifactory artifactory = new org.jreleaser.model.Artifactory()
         artifactory.name = name
-        fillProperties(artifactory)
         if (target.present) artifactory.target = target.get()
+        fillProperties(artifactory)
         if (username.present) artifactory.username = username.get()
         if (password.present) artifactory.password = password.get()
         if (authorization.present) artifactory.authorization = authorization.get()

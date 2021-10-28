@@ -41,7 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class NativeImageImpl extends AbstractAssembler implements NativeImage {
+class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     String name
     final Property<String> imageName
     final Property<String> imageNameTransform

@@ -28,7 +28,7 @@ import org.gradle.api.provider.Property
  * @since 0.2.0
  */
 @CompileStatic
-interface NativeImage extends Assembler {
+interface NativeImage extends JavaAssembler {
     Property<String> getImageName()
 
     Property<String> getImageNameTransform()

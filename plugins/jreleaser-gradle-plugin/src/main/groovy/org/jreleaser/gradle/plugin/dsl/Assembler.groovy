@@ -18,8 +18,6 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.model.Active
 
@@ -35,14 +33,4 @@ interface Assembler extends ExtraProperties {
     Property<Active> getActive()
 
     void setActive(String str)
-
-    Property<String> getExecutable()
-
-    DirectoryProperty getTemplateDirectory()
-
-    Java getJava()
-
-    void java(Action<? super Java> action)
-
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
 }

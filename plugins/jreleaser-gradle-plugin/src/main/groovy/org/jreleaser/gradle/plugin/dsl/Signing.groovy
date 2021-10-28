@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.model.Active
 
@@ -40,6 +41,14 @@ interface Signing {
 
     Property<String> getSecretKey()
 
+    Property<String> getExecutable()
+
+    Property<String> getKeyName()
+
+    Property<String> getHomeDir()
+
+    Property<String> getPublicKeyring()
+
     Property<org.jreleaser.model.Signing.Mode> getMode()
 
     void setMode(String mode)
@@ -49,4 +58,10 @@ interface Signing {
     Property<Boolean> getFiles()
 
     Property<Boolean> getChecksums()
+
+    Property<Boolean> getDefaultKeyring()
+
+    ListProperty<String> getArgs()
+
+    void addArg(String arg)
 }

@@ -128,8 +128,8 @@ public final class TemplateUtils {
                 String templatePrefix = "META-INF/jreleaser/templates/" +
                     distributionTypeName + "/" + toolName.toLowerCase() +
                     (snapshot ? "-snapshot" : "") + "/";
-                JarFile jarFile = new JarFile(new File(location.toURI()));
 
+                JarFile jarFile = new JarFile(new File(location.toURI()));
                 if (snapshot) {
                     templateFound = findTemplate(logger, jarFile, templatePrefix, templates);
                     if (!templateFound) {

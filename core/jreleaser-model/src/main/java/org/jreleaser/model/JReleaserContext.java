@@ -185,15 +185,17 @@ public class JReleaserContext {
             Distribution distribution = model.getDistributions().get(assembler.getName());
             if (null == distribution) {
                 distribution = new Distribution();
-                distribution.setType(assembler.getType());
+                distribution.setType(assembler.getDistributionType());
                 distribution.setName(assembler.getName());
                 model.getDistributions().put(assembler.getName(), distribution);
             }
             distribution.setName(assembler.getName());
-            distribution.setType(assembler.getType());
-            distribution.setExecutable(assembler.getExecutable());
+            distribution.setType(assembler.getDistributionType());
             distribution.setActive(assembler.getActive());
-            distribution.setJava(assembler.getJava());
+            if (assembler instanceof JavaAssembler) {
+                distribution.setExecutable(((JavaAssembler) assembler).getExecutable());
+                distribution.setJava(((JavaAssembler) assembler).getJava());
+            }
             mergeArtifacts(assembler, distribution);
 
             Map<String, Object> extraProperties = new LinkedHashMap<>(distribution.getExtraProperties());

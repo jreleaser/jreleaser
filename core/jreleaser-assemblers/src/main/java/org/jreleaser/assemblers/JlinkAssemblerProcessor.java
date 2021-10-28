@@ -28,15 +28,14 @@ import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
+import org.jreleaser.util.command.Command;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -51,7 +50,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
+public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlink> {
     private static final String KEY_JAVA_VERSION = "JAVA_VERSION";
 
     public JlinkAssemblerProcessor(JReleaserContext context) {
@@ -116,20 +115,19 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
         }
 
         // jlink it
-        List<String> cmd = new ArrayList<>();
-        cmd.add(jdkPath.resolve("bin").resolve("jlink").toAbsolutePath().toString());
-        cmd.addAll(assembler.getArgs());
-        cmd.add("--module-path");
-        cmd.add(targetJdk.getEffectivePath(context).resolve("jmods").toAbsolutePath().toString() + ":" +
-            assembleDirectory.resolve("jars").toAbsolutePath());
-        cmd.add("--add-modules");
-        cmd.add(String.join(",", moduleNames));
+        Command cmd = new Command(jdkPath.resolve("bin").resolve("jlink").toAbsolutePath().toString())
+            .args(assembler.getArgs())
+            .arg("--module-path")
+            .arg(targetJdk.getEffectivePath(context).resolve("jmods").toAbsolutePath().toString() + ":" +
+                assembleDirectory.resolve("jars").toAbsolutePath())
+            .arg("--add-modules")
+            .arg(String.join(",", moduleNames));
         if (isNotBlank(assembler.getModuleName())) {
-            cmd.add("--launcher");
-            cmd.add(assembler.getExecutable() + "=" + assembler.getModuleName() + "/" + assembler.getJava().getMainClass());
+            cmd.arg("--launcher")
+                .arg(assembler.getExecutable() + "=" + assembler.getModuleName() + "/" + assembler.getJava().getMainClass());
         }
-        cmd.add("--output");
-        cmd.add(imageDirectory.toString());
+        cmd.arg("--output")
+            .arg(imageDirectory.toString());
         executeCommand(cmd);
 
         if (isBlank(assembler.getModuleName())) {
@@ -190,10 +188,10 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
                 }
                 return version;
             } else {
-                throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_jdk_release_file",release.toAbsolutePath()));
+                throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_jdk_release_file", release.toAbsolutePath()));
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_jdk_release_file",release.toAbsolutePath()), e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_jdk_release_file", release.toAbsolutePath()), e);
         }
     }
 
@@ -251,13 +249,12 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<Jlink> {
             return assembler.getModuleNames();
         }
 
-        List<String> cmd = new ArrayList<>();
-        cmd.add(jdkPath.resolve("bin").resolve("jdeps").toAbsolutePath().toString());
-        cmd.add("--multi-release");
-        cmd.add("base");
-        cmd.add("--print-module-deps");
+        Command cmd = new Command(jdkPath.resolve("bin").resolve("jdeps").toAbsolutePath().toString())
+            .arg("--multi-release")
+            .arg("base")
+            .arg("--print-module-deps");
         for (Path jar : jars) {
-            cmd.add(jar.toAbsolutePath().toString());
+            cmd.arg(jar.toAbsolutePath().toString());
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();

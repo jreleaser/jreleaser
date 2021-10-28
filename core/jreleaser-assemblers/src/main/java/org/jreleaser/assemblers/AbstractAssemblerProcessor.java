@@ -20,33 +20,25 @@ package org.jreleaser.assemblers;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Project;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
 import org.jreleaser.model.assembler.spi.AssemblerProcessor;
 import org.jreleaser.util.Constants;
-import org.zeroturnaround.exec.ProcessExecutor;
-import org.zeroturnaround.exec.ProcessInitException;
+import org.jreleaser.util.command.Command;
+import org.jreleaser.util.command.CommandException;
+import org.jreleaser.util.command.CommandExecutor;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
-import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -76,20 +68,6 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
             context.getLogger().debug(RB.$("tool.create.properties"), assembler.getType(), assembler.getName());
             Map<String, Object> newProps = fillProps(props);
 
-            context.getLogger().debug(RB.$("tool.resolve.templates"), assembler.getType(), assembler.getName());
-            Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
-                assembler.getType(),
-                assembler.getType(),
-                context.getModel().getProject().isSnapshot(),
-                context.getBasedir().resolve(getAssembler().getTemplateDirectory()));
-
-            for (Map.Entry<String, Reader> entry : templates.entrySet()) {
-                context.getLogger().debug(RB.$("tool.evaluate.template"), entry.getKey(), assembler.getName(), assembler.getType());
-                String content = applyTemplate(entry.getValue(), newProps);
-                context.getLogger().debug(RB.$("tool.write.template"), entry.getKey(), assembler.getName(), assembler.getType());
-                writeFile(context.getModel().getProject(), content, newProps, entry.getKey());
-            }
-
             Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
             Files.createDirectories(assembleDirectory);
 
@@ -100,8 +78,6 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
     }
 
     protected abstract void doAssemble(Map<String, Object> props) throws AssemblerProcessingException;
-
-    protected abstract void writeFile(Project project, String content, Map<String, Object> props, String fileName) throws AssemblerProcessingException;
 
     protected void writeFile(String content, Path outputFile) throws AssemblerProcessingException {
         try {
@@ -126,77 +102,39 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
         props.putAll(assembler.props());
     }
 
-    protected boolean executeCommand(ProcessExecutor processExecutor) throws AssemblerProcessingException {
+    protected void executeCommand(Path directory, Command command) throws AssemblerProcessingException {
         try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ByteArrayOutputStream err = new ByteArrayOutputStream();
-
-            int exitValue = processExecutor
-                .redirectOutput(out)
-                .redirectError(err)
-                .execute()
-                .getExitValue();
-
-            info(out);
-            error(err);
-
-            if (exitValue == 0) return true;
-            throw new AssemblerProcessingException(RB.$("ERROR_command_execution_exit_value", exitValue));
-        } catch (ProcessInitException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e.getCause());
-        } catch (AssemblerProcessingException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
-        }
-    }
-
-    protected boolean executeCommand(Path directory, List<String> cmd) throws AssemblerProcessingException {
-        return executeCommand(new ProcessExecutor(cmd)
-            .directory(directory.toFile()));
-    }
-
-    protected boolean executeCommand(List<String> cmd) throws AssemblerProcessingException {
-        return executeCommand(new ProcessExecutor(cmd));
-    }
-
-    protected boolean executeCommandCapturing(List<String> cmd, OutputStream out) throws AssemblerProcessingException {
-        try {
-            ByteArrayOutputStream err = new ByteArrayOutputStream();
-
-            int exitValue = new ProcessExecutor(cmd)
-                .redirectOutput(out)
-                .redirectError(err)
-                .execute()
-                .getExitValue();
-
-            error(err);
-
-            if (exitValue == 0) return true;
-            throw new AssemblerProcessingException(RB.$("ERROR_command_execution_exit_value", exitValue));
-        } catch (ProcessInitException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e.getCause());
-        } catch (Exception e) {
-            if (e instanceof AssemblerProcessingException) {
-                throw (AssemblerProcessingException) e;
+            int exitValue = new CommandExecutor(context.getLogger())
+                .executeCommand(directory, command);
+            if (exitValue != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
             }
+        } catch (CommandException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
-    protected void info(ByteArrayOutputStream out) {
-        log(out, context.getLogger()::info);
+    protected void executeCommand(Command command) throws AssemblerProcessingException {
+        try {
+            int exitValue = new CommandExecutor(context.getLogger())
+                .executeCommand(command);
+            if (exitValue != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
+            }
+        } catch (CommandException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+        }
     }
 
-    protected void error(ByteArrayOutputStream err) {
-        log(err, context.getLogger()::error);
-    }
-
-    private void log(ByteArrayOutputStream stream, Consumer<? super String> consumer) {
-        String str = stream.toString();
-        if (isBlank(str)) return;
-
-        Arrays.stream(str.split(System.lineSeparator()))
-            .forEach(consumer);
+    protected void executeCommandCapturing(Command command, OutputStream out) throws AssemblerProcessingException {
+        try {
+            int exitValue = new CommandExecutor(context.getLogger())
+                .executeCommandCapturing(command, out);
+            if (exitValue != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
+            }
+        } catch (CommandException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+        }
     }
 }

@@ -27,6 +27,7 @@ dependencies {
     api project(':sdkman-java-sdk')
     api project(':slack-java-sdk')
     api project(':teams-java-sdk')
+    api project(':telegram-java-sdk')
     api project(':twitter-java-sdk')
     api project(':webhooks-java-sdk')
     api project(':zulip-java-sdk')
@@ -42,4 +43,5 @@ dependencies {
     // upload
     api project(':artifactory-java-sdk')
     api project(':http-upload-java-sdk')
+    api project(':s3-java-sdk')
 }

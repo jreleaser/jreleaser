@@ -19,8 +19,10 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.Env;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
@@ -37,6 +39,12 @@ public class Signing implements Domain, Activatable {
     public static final String GPG_PASSPHRASE = "GPG_PASSPHRASE";
     public static final String GPG_PUBLIC_KEY = "GPG_PUBLIC_KEY";
     public static final String GPG_SECRET_KEY = "GPG_SECRET_KEY";
+    public static final String GPG_EXECUTABLE = "GPG_EXECUTABLE";
+    public static final String GPG_KEYNAME = "GPG_KEYNAME";
+    public static final String GPG_HOMEDIR = "GPG_HOMEDIR";
+    public static final String GPG_PUBLIC_KEYRING = "GPG_PUBLIC_KEYRING";
+
+    private final List<String> args = new ArrayList<>();
 
     private Active active;
     private boolean enabled;
@@ -48,6 +56,11 @@ public class Signing implements Domain, Activatable {
     private Boolean artifacts;
     private Boolean files;
     private Boolean checksums;
+    private String executable;
+    private String keyName;
+    private String homeDir;
+    private String publicKeyring;
+    private Boolean defaultKeyring;
 
     void setAll(Signing signing) {
         this.active = signing.active;
@@ -60,6 +73,12 @@ public class Signing implements Domain, Activatable {
         this.artifacts = signing.artifacts;
         this.files = signing.files;
         this.checksums = signing.checksums;
+        this.executable = signing.executable;
+        this.keyName = signing.keyName;
+        this.homeDir = signing.homeDir;
+        this.publicKeyring = signing.publicKeyring;
+        this.defaultKeyring = signing.defaultKeyring;
+        setArgs(signing.args);
     }
 
     @Override
@@ -78,6 +97,13 @@ public class Signing implements Domain, Activatable {
         }
         enabled = active.check(project);
         return enabled;
+    }
+
+    public Mode resolveMode() {
+        if (null == mode) {
+            mode = Mode.MEMORY;
+        }
+        return mode;
     }
 
     @Override
@@ -196,6 +222,75 @@ public class Signing implements Domain, Activatable {
         this.checksums = checksums;
     }
 
+    public String getExecutable() {
+        return executable;
+    }
+
+    public void setExecutable(String executable) {
+        this.executable = executable;
+    }
+
+    public String getKeyName() {
+        return keyName;
+    }
+
+    public void setKeyName(String keyName) {
+        this.keyName = keyName;
+    }
+
+    public String getHomeDir() {
+        return homeDir;
+    }
+
+    public void setHomeDir(String homeDir) {
+        this.homeDir = homeDir;
+    }
+
+    public String getPublicKeyring() {
+        return publicKeyring;
+    }
+
+    public void setPublicKeyring(String publicKeyring) {
+        this.publicKeyring = publicKeyring;
+    }
+
+    public boolean isDefaultKeyringSet() {
+        return defaultKeyring != null;
+    }
+
+    public Boolean isDefaultKeyring() {
+        return defaultKeyring == null || defaultKeyring;
+    }
+
+    public void setDefaultKeyring(Boolean defaultKeyring) {
+        this.defaultKeyring = defaultKeyring;
+    }
+
+    public List<String> getArgs() {
+        return args;
+    }
+
+    public void setArgs(List<String> args) {
+        this.args.clear();
+        this.args.addAll(args);
+    }
+
+    public void addArgs(List<String> args) {
+        this.args.addAll(args);
+    }
+
+    public void addArg(String arg) {
+        if (isNotBlank(arg)) {
+            this.args.add(arg.trim());
+        }
+    }
+
+    public void removeArg(String arg) {
+        if (isNotBlank(arg)) {
+            this.args.remove(arg.trim());
+        }
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
@@ -208,16 +303,26 @@ public class Signing implements Domain, Activatable {
         props.put("artifacts", isArtifacts());
         props.put("files", isFiles());
         props.put("checksums", isChecksums());
-        props.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
-        props.put("secretKey", isNotBlank(secretKey) ? HIDE : UNSET);
         props.put("passphrase", isNotBlank(passphrase) ? HIDE : UNSET);
+        if (mode != Mode.COMMAND) {
+            props.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
+            props.put("secretKey", isNotBlank(secretKey) ? HIDE : UNSET);
+        } else {
+            props.put("executable", executable);
+            props.put("keyName", keyName);
+            props.put("homeDir", homeDir);
+            props.put("publicKeyring", publicKeyring);
+            props.put("defaultKeyring", isDefaultKeyring());
+            props.put("args", args);
+        }
 
         return props;
     }
 
     public enum Mode {
         MEMORY,
-        FILE;
+        FILE,
+        COMMAND;
 
         @Override
         public String toString() {

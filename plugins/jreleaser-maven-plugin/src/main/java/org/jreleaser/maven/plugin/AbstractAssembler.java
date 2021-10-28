@@ -29,12 +29,9 @@ import java.util.Set;
 abstract class AbstractAssembler implements Assembler {
     protected final Set<Artifact> output = new LinkedHashSet<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    private final Java java = new Java();
     protected String name;
     protected boolean enabled;
     protected Active active;
-    protected String executable;
-    protected String templateDirectory;
     protected Boolean exported;
 
     void setAll(AbstractAssembler assembler) {
@@ -42,10 +39,7 @@ abstract class AbstractAssembler implements Assembler {
         this.enabled = assembler.enabled;
         this.exported = assembler.exported;
         this.name = assembler.name;
-        this.executable = assembler.executable;
-        this.templateDirectory = assembler.templateDirectory;
         setOutputs(assembler.output);
-        setJava(assembler.java);
         setExtraProperties(assembler.extraProperties);
     }
 
@@ -67,26 +61,6 @@ abstract class AbstractAssembler implements Assembler {
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String getExecutable() {
-        return executable;
-    }
-
-    @Override
-    public void setExecutable(String executable) {
-        this.executable = executable;
-    }
-
-    @Override
-    public String getTemplateDirectory() {
-        return templateDirectory;
-    }
-
-    @Override
-    public void setTemplateDirectory(String templateDirectory) {
-        this.templateDirectory = templateDirectory;
     }
 
     @Override
@@ -120,16 +94,6 @@ abstract class AbstractAssembler implements Assembler {
         if (null != artifact) {
             this.output.add(artifact);
         }
-    }
-
-    @Override
-    public Java getJava() {
-        return java;
-    }
-
-    @Override
-    public void setJava(Java java) {
-        this.java.setAll(java);
     }
 
     @Override

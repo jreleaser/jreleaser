@@ -21,10 +21,13 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.jreleaser.bundle.RB;
 
@@ -53,6 +56,8 @@ import java.util.zip.ZipOutputStream;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -82,17 +87,18 @@ public final class FileUtils {
             Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-                    final String entryName = src.relativize(file).toString();
-                    final ZipArchiveEntry archiveEntry = new ZipArchiveEntry(file.toFile(), entryName);
+                    String entryName = src.relativize(file).toString();
+                    File inputFile = file.toFile();
+                    ZipArchiveEntry archiveEntry = new ZipArchiveEntry(inputFile, entryName);
 
                     archiveEntry.setMethod(ZipOutputStream.DEFLATED);
+                    if (inputFile.isFile() && Files.isExecutable(file)) {
+                        archiveEntry.setUnixMode(0100755);
+                    }
+
                     out.putArchiveEntry(archiveEntry);
 
-                    if (file.toFile().isFile()) {
-                        if (Files.isExecutable(file)) {
-                            archiveEntry.setUnixMode(0100770);
-                        }
-
+                    if (inputFile.isFile()) {
                         out.write(Files.readAllBytes(file));
                     }
                     out.closeArchiveEntry();
@@ -101,6 +107,44 @@ public final class FileUtils {
                 }
             });
         }
+    }
+
+    public static void tar(Path src, Path dest) throws IOException {
+        try (TarArchiveOutputStream out = new TarArchiveOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING))) {
+            tar(src, out);
+        }
+    }
+
+    public static void tgz(Path src, Path dest) throws IOException {
+        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
+            new GzipCompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
+            tar(src, out);
+        }
+    }
+
+    private static void tar(Path src, TarArchiveOutputStream out) throws IOException {
+        Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+                String entryName = src.relativize(file).toString();
+                File inputFile = file.toFile();
+                TarArchiveEntry archiveEntry = (TarArchiveEntry) out.createArchiveEntry(inputFile, entryName);
+
+                if (inputFile.isFile() && Files.isExecutable(file)) {
+                    archiveEntry.setMode(0100755);
+                }
+
+                out.putArchiveEntry(archiveEntry);
+
+                if (inputFile.isFile()) {
+                    out.write(Files.readAllBytes(file));
+                }
+
+                out.closeArchiveEntry();
+
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     public static void unpack(Path src, Path dest) throws IOException {
@@ -209,6 +253,11 @@ public final class FileUtils {
         Files.setPosixFilePermissions(path, perms);
     }
 
+    public static void copyPermissions(Path src, Path dest) throws IOException {
+        Set<PosixFilePermission> perms = Files.getPosixFilePermissions(src);
+        Files.setPosixFilePermissions(dest, perms);
+    }
+
     public static void copyFiles(JReleaserLogger logger, Path source, Path target) throws IOException {
         copyFiles(logger, source, target, null);
     }
@@ -294,7 +343,7 @@ public final class FileUtils {
             try {
                 Path newfile = target.resolve(source.relativize(file));
                 Files.copy(file, newfile, REPLACE_EXISTING);
-                FileUtils.grantFullAccess(newfile);
+                FileUtils.copyPermissions(file, newfile);
             } catch (IOException e) {
                 logger.error(RB.$("ERROR_files_copy"), source, e);
                 success = false;

@@ -18,6 +18,7 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Archive;
 import org.jreleaser.model.Assemble;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jlink;
@@ -29,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jreleaser.model.validation.ArchiveValidator.validateArchive;
 import static org.jreleaser.model.validation.JlinkValidator.validateJlink;
 import static org.jreleaser.model.validation.NativeImageValidator.validateNativeImage;
 
@@ -45,11 +47,16 @@ public abstract class AssemblersValidator extends Validator {
         context.getLogger().debug("assemble");
 
         Assemble assemble = context.getModel().getAssemble();
+        validateArchive(context, mode, errors);
         validateJlink(context, mode, errors);
         validateNativeImage(context, mode, errors);
 
         // validate unique distribution names between assemblers
         Map<String, List<String>> byDistributionName = new LinkedHashMap<>();
+        for (Archive archive : assemble.getActiveArchives()) {
+            List<String> types = byDistributionName.computeIfAbsent(archive.getName(), k -> new ArrayList<>());
+            types.add(archive.getType());
+        }
         for (Jlink jlink : assemble.getActiveJlinks()) {
             List<String> types = byDistributionName.computeIfAbsent(jlink.getName(), k -> new ArrayList<>());
             types.add(jlink.getType());
@@ -66,7 +73,8 @@ public abstract class AssemblersValidator extends Validator {
         });
 
         if (!assemble.isEnabledSet()) {
-            assemble.setEnabled(!assemble.getActiveJlinks().isEmpty() ||
+            assemble.setEnabled(!assemble.getActiveArchives().isEmpty() ||
+                !assemble.getActiveJlinks().isEmpty() ||
                 !assemble.getActiveNativeImages().isEmpty());
         }
     }

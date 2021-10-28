@@ -27,16 +27,16 @@ import org.gradle.api.provider.Property
  * @since 0.4.0
  */
 @CompileStatic
-interface Http extends Uploader {
+interface Http extends HttpUploader {
     Property<String> getTarget()
 
     Property<String> getUsername()
 
     Property<String> getPassword()
 
-    Property<org.jreleaser.model.Uploader.Method> getMethod()
+    Property<org.jreleaser.model.HttpUploader.Method> getMethod()
 
-    Property<org.jreleaser.model.Uploader.Authorization> getAuthorization()
+    Property<org.jreleaser.model.HttpUploader.Authorization> getAuthorization()
 
     MapProperty<String, String> getHeaders()
 

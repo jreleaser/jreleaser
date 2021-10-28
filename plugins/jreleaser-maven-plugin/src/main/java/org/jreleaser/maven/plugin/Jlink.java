@@ -28,7 +28,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Jlink extends AbstractAssembler {
+public class Jlink extends AbstractJavaAssembler {
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
     private final List<String> args = new ArrayList<>();

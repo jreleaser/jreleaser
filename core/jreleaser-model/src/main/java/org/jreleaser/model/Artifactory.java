@@ -29,12 +29,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class Artifactory extends AbstractUploader {
+public class Artifactory extends AbstractHttpUploader {
     public static final String TYPE = "artifactory";
 
     private String username;
     private String password;
-    private Authorization authorization;
+    private HttpUploader.Authorization authorization;
 
     public Artifactory() {
         super(TYPE);

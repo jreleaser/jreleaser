@@ -37,18 +37,6 @@ public interface Assembler extends Domain, Activatable, ExtraProperties {
 
     void setName(String name);
 
-    String getExecutable();
-
-    void setExecutable(String executable);
-
-    String getTemplateDirectory();
-
-    void setTemplateDirectory(String templateDirectory);
-
-    Java getJava();
-
-    void setJava(Java java);
-
     Set<Artifact> getOutputs();
 
     void setOutputs(Set<Artifact> output);

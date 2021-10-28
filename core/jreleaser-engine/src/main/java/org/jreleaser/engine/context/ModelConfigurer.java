@@ -31,8 +31,6 @@ import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
-import java.io.IOException;
-
 import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -44,7 +42,7 @@ public class ModelConfigurer {
     public static void configure(JReleaserContext context) {
         try {
             context.getModel().setCommit(GitSdk.of(context).head());
-        } catch (IOException e) {
+        } catch (Exception e) {
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_head"), e);
         }
@@ -52,7 +50,7 @@ public class ModelConfigurer {
         Repository repository = null;
         try {
             repository = GitSdk.of(context).getRemote();
-        } catch (IOException e) {
+        } catch (Exception e) {
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_remote"), e);
         }
@@ -86,13 +84,15 @@ public class ModelConfigurer {
             switch (context.getMode()) {
                 case ASSEMBLE:
                     if (errors.hasConfigurationErrors()) {
-                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured"));
+                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured") +
+                            System.lineSeparator() + errors.asString());
                     }
                     break;
                 case FULL:
                 default:
                     if (errors.hasErrors()) {
-                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured"));
+                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured") +
+                            System.lineSeparator() + errors.asString());
                     }
                     break;
             }

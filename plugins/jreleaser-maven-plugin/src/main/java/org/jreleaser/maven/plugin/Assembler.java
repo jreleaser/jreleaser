@@ -26,23 +26,11 @@ import java.util.Set;
 public interface Assembler extends Activatable, ExtraProperties {
     String getName();
 
+    void setName(String name);
+
     boolean isExported();
 
     void setExported(boolean exported);
-
-    void setName(String name);
-
-    String getExecutable();
-
-    void setExecutable(String executable);
-
-    String getTemplateDirectory();
-
-    void setTemplateDirectory(String templateDirectory);
-
-    Java getJava();
-
-    void setJava(Java java);
 
     Set<Artifact> getOutputs();
 

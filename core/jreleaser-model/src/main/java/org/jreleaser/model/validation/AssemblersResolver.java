@@ -20,6 +20,7 @@ package org.jreleaser.model.validation;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.validation.ArchiveResolver.resolveArchiveOutputs;
 import static org.jreleaser.model.validation.JlinkResolver.resolveJlinkOutputs;
 import static org.jreleaser.model.validation.NativeImageResolver.resolveNativeImageOutputs;
 
@@ -30,6 +31,7 @@ import static org.jreleaser.model.validation.NativeImageResolver.resolveNativeIm
 public abstract class AssemblersResolver extends Validator {
     public static void resolveAssemblers(JReleaserContext context, Errors errors) {
         context.getLogger().debug("assemble");
+        resolveArchiveOutputs(context, errors);
         resolveJlinkOutputs(context, errors);
         resolveNativeImageOutputs(context, errors);
     }

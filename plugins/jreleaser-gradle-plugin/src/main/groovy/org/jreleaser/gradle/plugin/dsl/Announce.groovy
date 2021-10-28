@@ -53,6 +53,8 @@ interface Announce {
 
     Teams getTeams()
 
+    Telegram getTelegram()
+
     Twitter getTwitter()
 
     Zulip getZulip()
@@ -81,6 +83,8 @@ interface Announce {
 
     void teams(Action<? super Teams> action)
 
+    void telegram(Action<? super Telegram> action)
+
     void twitter(Action<? super Twitter> action)
 
     void zulip(Action<? super Zulip> action)
@@ -106,6 +110,8 @@ interface Announce {
     void slack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Slack) Closure<Void> action)
 
     void teams(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Teams) Closure<Void> action)
+
+    void telegram(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Telegram) Closure<Void> action)
 
     void twitter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Twitter) Closure<Void> action)
 
