@@ -32,7 +32,7 @@ interface Docker extends DockerConfiguration, RepositoryTool {
 
     Tap getRepository()
 
-    void repository(Action<? super Tap> repository)
+    void repository(Action<? super Tap> action)
 
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 }

@@ -32,7 +32,7 @@ interface Jbang extends RepositoryTool {
 
     Tap getCatalog()
 
-    void catalog(Action<? super Tap> tap)
+    void catalog(Action<? super Tap> action)
 
     void catalog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 }

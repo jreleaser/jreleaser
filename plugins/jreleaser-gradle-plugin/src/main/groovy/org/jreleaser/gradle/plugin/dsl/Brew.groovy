@@ -44,13 +44,13 @@ interface Brew extends RepositoryTool {
 
     Tap getTap()
 
-    void tap(Action<? super Tap> tap)
+    void tap(Action<? super Tap> action)
 
     void tap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 
     Cask getCask()
 
-    void cask(Action<? super Cask> cask)
+    void cask(Action<? super Cask> action)
 
     void cask(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cask) Closure<Void> action)
 }
