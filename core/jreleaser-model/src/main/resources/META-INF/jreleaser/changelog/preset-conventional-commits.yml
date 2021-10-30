@@ -27,30 +27,30 @@ labelers:
     title: 'regex:^(?:test(?:\(.*\))?!?):\s.*'
 
 categories:
-  - title: 'Merge'
+  - title: '🔀 Merge'
     labels:
       - 'merge'
-  - title: 'Features'
+  - title: '🚀 Features'
     labels:
       - 'feat'
-  - title: 'Fixes'
+  - title: '🐛 Fixes'
     labels:
       - 'fix'
-  - title: 'Changes'
+  - title: '♻️  Changes'
     labels:
       - 'perf'
       - 'refactor'
       - 'revert'
       - 'style'
-  - title: 'Tasks'
+  - title: '🧰 Tasks'
     labels:
       - 'chore'
-  - title: 'Build'
+  - title: '🛠  Build'
     labels:
       - 'test'
       - 'build'
       - 'ci'
-  - title: 'Documentation'
+  - title: '📝 Documentation'
     labels:
       - 'docs'
 
