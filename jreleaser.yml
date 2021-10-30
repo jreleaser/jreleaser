@@ -48,6 +48,8 @@ release:
           title: '[chore]'
         - label: 'dependencies'
           title: '[deps]'
+        - label: 'build'
+          title: '[build]'
         - label: 'feature'
           title: 'Resolves #'
           body: 'Resolves #'
@@ -79,6 +81,9 @@ release:
         - title: '⚙️  Dependencies'
           labels:
             - 'dependencies'
+        - title: '🛠  Build'
+          labels:
+            - 'build'
         - title: 'allcontributors'
           labels:
             - 'allcontributors'
@@ -93,6 +98,7 @@ release:
         - search: '\[chore\] '
         - search: '\[deps\] '
         - search: '\[translation\] '
+        - search: '\[build\] '
 
 signing:
   active: always
