@@ -1,8 +1,8 @@
 class {{brewFormulaName}} < Formula
   desc "{{projectDescription}}"
   homepage "{{projectWebsite}}"
-  version "{{projectVersion}}"
   url "{{distributionUrl}}"
+  version "{{projectVersion}}"
   sha256 "{{distributionChecksumSha256}}"
   license "{{projectLicense}}"
 

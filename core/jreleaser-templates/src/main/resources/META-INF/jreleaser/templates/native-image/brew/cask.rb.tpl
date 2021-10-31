@@ -1,12 +1,11 @@
 cask "{{brewCaskName}}" do
-  version "{{projectVersion}}"
-  sha256 "{{distributionChecksumSha256}}"
-
-  url "{{distributionUrl}}",
-      verified: "{{repoHost}}"
-  name "{{brewCaskDisplayName}}"
   desc "{{projectDescription}}"
   homepage "{{projectWebsite}}"
+  url "{{distributionUrl}}",
+      verified: "{{repoHost}}"
+  version "{{projectVersion}}"
+  sha256 "{{distributionChecksumSha256}}"
+  name "{{brewCaskDisplayName}}"
   {{#brewCaskHasAppcast}}
   appcast {{brewCaskAppcast}}
   {{/brewCaskHasAppcast}}

@@ -82,6 +82,9 @@ abstract class AbstractTemplateToolProcessor<T extends TemplateTool> extends Abs
             if (filename.endsWith(".tpl")) {
                 context.getLogger().debug(RB.$("tool.evaluate.template"), filename, distributionName, toolName);
                 String content = applyTemplate(entry.getValue(), props);
+                if (!content.endsWith(System.lineSeparator())) {
+                    content += System.lineSeparator();
+                }
                 context.getLogger().debug(RB.$("tool.write.template"), filename, distributionName, toolName);
                 writeFile(context.getModel().getProject(), distribution, content, props, prepareDirectory, filename);
             } else {
