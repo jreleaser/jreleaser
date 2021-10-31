@@ -253,11 +253,11 @@ abstract class AbstractGitService implements GitService {
         if (files.present) service.files = files.get()
         if (checksums.present) service.checksums = checksums.get()
         if (signatures.present) service.signatures = signatures.get()
-        service.sign = sign.getOrElse(false)
-        service.skipTag = skipTag.getOrElse(false)
-        service.skipRelease = skipRelease.getOrElse(false)
-        service.overwrite = overwrite.getOrElse(false)
-        service.update = update.getOrElse(false)
+        if (sign.present) service.sign = sign.get()
+        if (skipTag.present) service.skipTag = skipTag.get()
+        if (skipRelease.present) service.skipRelease = skipRelease.get()
+        if (overwrite.present) service.overwrite = overwrite.get()
+        if (update.present) service.update = update.get()
         if (service.update) {
             service.updateSections = (Set<UpdateSection>) updateSections.getOrElse([] as Set<UpdateSection>)
         }

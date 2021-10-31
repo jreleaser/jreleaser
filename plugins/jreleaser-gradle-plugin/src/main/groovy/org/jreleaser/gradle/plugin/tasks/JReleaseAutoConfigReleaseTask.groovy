@@ -326,6 +326,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         commitAuthorName = objects.property(String).convention(Providers.notDefined())
         commitAuthorEmail = objects.property(String).convention(Providers.notDefined())
         prerelease = objects.property(Boolean).convention(false)
+        prereleasePattern = objects.property(String).convention(Providers.notDefined())
         draft = objects.property(Boolean).convention(false)
         overwrite = objects.property(Boolean).convention(false)
         update = objects.property(Boolean).convention(false)
