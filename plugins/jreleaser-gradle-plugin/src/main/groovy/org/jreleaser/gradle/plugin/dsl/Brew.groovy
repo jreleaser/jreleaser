@@ -42,11 +42,11 @@ interface Brew extends RepositoryTool {
 
     void addDependency(String key)
 
-    Tap getTap()
+    Tap getRepoTap()
 
-    void tap(Action<? super Tap> action)
+    void repoTap(Action<? super Tap> action)
 
-    void tap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
+    void repoTap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 
     Cask getCask()
 

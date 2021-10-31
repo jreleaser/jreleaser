@@ -45,7 +45,7 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
     final Property<String> formulaName
     final Property<Boolean> multiPlatform
     final CommitAuthorImpl commitAuthor
-    final TapImpl tap
+    final TapImpl repoTap
     final CaskImpl cask
     final MapProperty<String, String> dependencies
     final ListProperty<String> livecheck
@@ -55,7 +55,7 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
         super(objects)
         formulaName = objects.property(String).convention(Providers.notDefined())
         multiPlatform = objects.property(Boolean).convention(Providers.notDefined())
-        tap = objects.newInstance(TapImpl, objects)
+        repoTap = objects.newInstance(TapImpl, objects)
         cask = objects.newInstance(CaskImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
         dependencies = objects.mapProperty(String, String).convention(Providers.notDefined())
@@ -83,15 +83,15 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
             formulaName.present ||
             multiPlatform.present ||
             dependencies.present ||
-            tap.isSet() ||
+            repoTap.isSet() ||
             commitAuthor.isSet() ||
             livecheck.present ||
             cask.isSet()
     }
 
     @Override
-    void tap(Action<? super Tap> action) {
-        action.execute(tap)
+    void repoTap(Action<? super Tap> action) {
+        action.execute(repoTap)
     }
 
     @Override
@@ -105,8 +105,8 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
     }
 
     @Override
-    void tap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, tap)
+    void repoTap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, repoTap)
     }
 
     @Override
@@ -125,7 +125,7 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
         fillTemplateToolProperties(tool)
         if (formulaName.present) tool.formulaName = formulaName.get()
         if (multiPlatform.present) tool.multiPlatform = multiPlatform.get()
-        if (tap.isSet()) tool.tap = tap.toHomebrewTap()
+        if (repoTap.isSet()) tool.tap = repoTap.toHomebrewTap()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (dependencies.present) tool.dependencies = dependencies.get()
         if (livecheck.present) tool.livecheck = (livecheck.get() as List<String>)
