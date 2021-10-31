@@ -23,7 +23,7 @@ package org.jreleaser.model;
  */
 public class JbangCatalog extends AbstractRepositoryTap {
     public JbangCatalog() {
-        super("jbang-catalog");
+        super("jbang", "jbang-catalog");
     }
 
     @Override

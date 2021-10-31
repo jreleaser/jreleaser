@@ -106,7 +106,6 @@ public abstract class SnapValidator extends Validator {
         if (isBlank(snap.getName())) {
             snap.setName(distribution.getName() + "-snap");
         }
-        snap.setBasename(distribution.getName() + "-snap");
         if (isBlank(snap.getUsername())) {
             snap.setUsername(parentTool.getSnap().getUsername());
         }

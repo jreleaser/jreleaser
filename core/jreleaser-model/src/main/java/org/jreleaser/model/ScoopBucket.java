@@ -23,6 +23,6 @@ package org.jreleaser.model;
  */
 public class ScoopBucket extends AbstractRepositoryTap {
     public ScoopBucket() {
-        super("scoop");
+        super("scoop", "scoop");
     }
 }

@@ -23,6 +23,6 @@ package org.jreleaser.model;
  */
 public class SnapTap extends AbstractRepositoryTap {
     public SnapTap() {
-        super("snap");
+        super("snap", "snap");
     }
 }

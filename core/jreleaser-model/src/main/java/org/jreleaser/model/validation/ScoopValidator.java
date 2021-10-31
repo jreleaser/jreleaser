@@ -81,8 +81,6 @@ public abstract class ScoopValidator extends Validator {
         if (isBlank(bucket.getName())) {
             bucket.setName(parentTool.getBucket().getName());
         }
-        bucket.setBasename(parentTool.getBucket().getBasename());
-
         if (isBlank(bucket.getUsername())) {
             bucket.setUsername(parentTool.getBucket().getUsername());
         }

@@ -23,6 +23,6 @@ package org.jreleaser.model;
  */
 public class DockerRepository extends AbstractRepositoryTap {
     public DockerRepository() {
-        super("docker");
+        super("docker", "docker");
     }
 }

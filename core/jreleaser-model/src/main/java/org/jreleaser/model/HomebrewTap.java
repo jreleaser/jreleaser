@@ -23,6 +23,6 @@ package org.jreleaser.model;
  */
 public class HomebrewTap extends AbstractRepositoryTap {
     public HomebrewTap() {
-        super("homebrew-tap");
+        super("homebrew", "homebrew-tap");
     }
 }

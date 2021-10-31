@@ -32,14 +32,16 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class AbstractRepositoryTap implements RepositoryTap {
     protected String basename;
+    protected String tapName;
     protected String owner;
     protected String name;
     protected String branch;
     protected String username;
     protected String token;
 
-    AbstractRepositoryTap(String basename) {
+    AbstractRepositoryTap(String basename, String tapName) {
         this.basename = basename;
+        this.tapName = tapName;
     }
 
     @Override
@@ -47,8 +49,8 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
         return basename;
     }
 
-    public void setBasename(String basename) {
-        this.basename = basename;
+    public void setTapName(String tapName) {
+        this.tapName = tapName;
     }
 
     void setAll(AbstractRepositoryTap tap) {
@@ -69,7 +71,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
         if (isNotBlank(name)) {
             return name;
         }
-        return basename;
+        return tapName;
     }
 
     @Override

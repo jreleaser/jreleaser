@@ -23,6 +23,6 @@ package org.jreleaser.model;
  */
 public class Repository extends AbstractRepositoryTap {
     public Repository() {
-        super("article");
+        super("article", "article");
     }
 }

@@ -84,7 +84,7 @@ public abstract class PackagersValidator extends Validator {
         if (isBlank(packagers.getScoop().getBucket().getName())) {
             packagers.getScoop().getBucket().setName("scoop-" + model.getRelease().getGitService().getOwner());
         }
-        packagers.getScoop().getBucket().setBasename("scoop-" + model.getRelease().getGitService().getOwner());
+        packagers.getScoop().getBucket().setTapName("scoop-" + model.getRelease().getGitService().getOwner());
 
         packagers.getSnap().resolveEnabled(project);
         validatePackager(context,

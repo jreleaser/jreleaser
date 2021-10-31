@@ -23,6 +23,6 @@ package org.jreleaser.model;
  */
 public class ChocolateyBucket extends AbstractRepositoryTap {
     public ChocolateyBucket() {
-        super("chocolatey-bucket");
+        super("chocolatey", "chocolatey-bucket");
     }
 }

@@ -95,7 +95,6 @@ public abstract class DockerValidator extends Validator {
         if (isBlank(repository.getName())) {
             repository.setName(project.getName() + "-docker");
         }
-        repository.setBasename(project.getName() + "-docker");
         if (isBlank(repository.getUsername())) {
             repository.setUsername(parentTool.getRepository().getUsername());
         }
