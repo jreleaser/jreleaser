@@ -49,6 +49,13 @@ config {
             }
         }
     }
+
+    licensing {
+        mappings += [
+            gdsl: 'SLASHSTAR_STYLE',
+            dsld: 'SLASHSTAR_STYLE'
+        ]
+    }
 }
 
 allprojects {
