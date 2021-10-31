@@ -18,8 +18,8 @@
 
 before_install:
   - curl -s "https://get.sdkman.io" | bash
-  - sdk install java 11.0.10-zulu
-  - sdk use java 11.0.10-zulu
+  - sdk install java 11.0.13-zulu
+  - sdk use java 11.0.13-zulu
 
 install:
   - ./gradlew -Prelease=true publishToMavenLocal
