@@ -77,6 +77,12 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
     }
 
     @Override
+    Tap getTap() {
+        println('brew.tap has been deprecated since 0.9.0 and will be removed in the future. Use brew.repoTap instead')
+        return repoTap
+    }
+
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||

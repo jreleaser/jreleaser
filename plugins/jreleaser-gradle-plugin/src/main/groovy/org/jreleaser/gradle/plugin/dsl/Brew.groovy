@@ -42,6 +42,8 @@ interface Brew extends RepositoryTool {
 
     void addDependency(String key)
 
+    Tap getTap()
+
     Tap getRepoTap()
 
     void repoTap(Action<? super Tap> action)
