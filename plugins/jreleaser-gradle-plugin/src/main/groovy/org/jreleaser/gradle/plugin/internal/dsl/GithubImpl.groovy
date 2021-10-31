@@ -79,7 +79,7 @@ class GithubImpl extends AbstractGitService implements Github {
     org.jreleaser.model.Github toModel() {
         org.jreleaser.model.Github service = new org.jreleaser.model.Github()
         toModel(service)
-        service.draft = draft.getOrElse(false)
+        if (draft.present) service.draft = draft.get()
         service.prerelease = prerelease.toModel()
         if (discussionCategoryName.present) service.discussionCategoryName = discussionCategoryName.get()
         if (changelog.isSet()) service.changelog = changelog.toModel()

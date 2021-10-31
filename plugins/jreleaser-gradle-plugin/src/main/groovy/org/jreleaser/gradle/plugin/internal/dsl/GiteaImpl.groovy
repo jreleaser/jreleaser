@@ -76,7 +76,7 @@ class GiteaImpl extends AbstractGitService implements Gitea {
     org.jreleaser.model.Gitea toModel() {
         org.jreleaser.model.Gitea service = new org.jreleaser.model.Gitea()
         toModel(service)
-        service.draft = draft.getOrElse(false)
+        if (draft.present) service.draft = draft.get()
         service.prerelease = prerelease.toModel()
         if (changelog.isSet()) service.changelog = changelog.toModel()
         if (milestone.isSet()) service.milestone = milestone.toModel()
