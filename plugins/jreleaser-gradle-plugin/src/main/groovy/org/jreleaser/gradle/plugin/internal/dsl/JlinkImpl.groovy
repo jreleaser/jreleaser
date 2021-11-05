@@ -69,6 +69,8 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         java = objects.newInstance(JavaImpl, objects)
         jdk = objects.newInstance(ArtifactImpl, objects)
         mainJar = objects.newInstance(ArtifactImpl, objects)
+        jdk.setName('jdk')
+        mainJar.setName('mainJar')
 
         targetJdks = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
@@ -167,8 +169,8 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         jlink.name = name
         fillProperties(jlink)
         jlink.args = (List<String>) args.getOrElse([])
-        jlink.jdk = jdk.toModel()
-        jlink.mainJar = mainJar.toModel()
+        if (jdk.isSet()) jlink.jdk = jdk.toModel()
+        if (mainJar.isSet()) jlink.mainJar = mainJar.toModel()
         jlink.java = java.toModel()
         if (imageName.present) jlink.imageName = imageName.get()
         if (imageNameTransform.present) jlink.imageNameTransform = imageNameTransform.get()

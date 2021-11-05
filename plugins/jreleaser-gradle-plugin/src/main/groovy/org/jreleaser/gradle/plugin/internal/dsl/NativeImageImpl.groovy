@@ -63,6 +63,8 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         java = objects.newInstance(JavaImpl, objects)
         graal = objects.newInstance(ArtifactImpl, objects)
         mainJar = objects.newInstance(ArtifactImpl, objects)
+        graal.setName('graal')
+        mainJar.setName('mainJar')
         jars = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
             @Override
             GlobImpl create(String name) {
@@ -143,8 +145,8 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         if (imageName.present) nativeImage.imageName = imageName.get()
         if (imageNameTransform.present) nativeImage.imageNameTransform = imageNameTransform.get()
         nativeImage.args = (List<String>) args.getOrElse([])
-        nativeImage.graal = graal.toModel()
-        nativeImage.mainJar = mainJar.toModel()
+        if (graal.isSet())  nativeImage.graal = graal.toModel()
+        if (mainJar.isSet())  nativeImage.mainJar = mainJar.toModel()
         for (GlobImpl glob : jars) {
             nativeImage.addJar(glob.toModel())
         }

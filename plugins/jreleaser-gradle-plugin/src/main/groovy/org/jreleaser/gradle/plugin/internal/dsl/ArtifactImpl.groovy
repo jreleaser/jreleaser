@@ -53,6 +53,10 @@ class ArtifactImpl implements Artifact {
         this.path.set(new File(path))
     }
 
+    boolean isSet() {
+        path.present
+    }
+
     org.jreleaser.model.Artifact toModel() {
         org.jreleaser.model.Artifact artifact = new org.jreleaser.model.Artifact()
         if (path.present) {
