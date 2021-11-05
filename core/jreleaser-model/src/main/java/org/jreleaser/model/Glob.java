@@ -93,7 +93,7 @@ public class Glob implements Domain, ExtraProperties {
 
     public Set<Artifact> getResolvedArtifactsPattern(JReleaserContext context) {
         if (null == artifacts) {
-            artifacts = Artifacts.resolveFiles(context, Collections.singletonList(pattern));
+            artifacts = Artifacts.resolveFiles(context, resolveDirectory(context), Collections.singletonList(pattern));
             artifacts.forEach(artifact -> {
                 if (context.isPlatformSelected(artifact)) artifact.activate();
                 artifact.setExtraProperties(getExtraProperties());
@@ -101,6 +101,22 @@ public class Glob implements Domain, ExtraProperties {
         }
 
         return artifacts;
+    }
+
+    private Path resolveDirectory(JReleaserContext context) {
+        // resolve directory
+        Path path = context.getBasedir();
+        if (isNotBlank(directory)) {
+            if (directory.contains("{{")) {
+                directory = applyTemplate(directory, context.props());
+            }
+            path = context.getBasedir().resolve(Paths.get(directory)).normalize();
+            if (!exists(path)) {
+                throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(path)));
+            }
+        }
+
+        return path;
     }
 
     @Deprecated
@@ -170,9 +186,7 @@ public class Glob implements Domain, ExtraProperties {
         return directory;
     }
 
-    @Deprecated
     public void setDirectory(String directory) {
-        System.out.println("glob.directory has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
         this.directory = directory;
     }
 

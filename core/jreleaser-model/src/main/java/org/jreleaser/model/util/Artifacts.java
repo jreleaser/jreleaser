@@ -161,7 +161,11 @@ public class Artifacts {
     }
 
     public static Set<Artifact> resolveFiles(JReleaserContext context, Collection<String> globs) throws JReleaserException {
-        return resolveFiles(context.getLogger(), context.props(), context.getBasedir(), globs);
+        return resolveFiles(context, context.getBasedir(), globs);
+    }
+
+    public static Set<Artifact> resolveFiles(JReleaserContext context, Path directory, Collection<String> globs) throws JReleaserException {
+        return resolveFiles(context.getLogger(), context.props(), directory, globs);
     }
 
     private static class GlobResolver extends SimpleFileVisitor<Path> {
