@@ -208,9 +208,14 @@ public class JReleaserContext {
         for (Artifact incoming : assembler.getOutputs()) {
             Optional<Artifact> artifact = distribution.getArtifacts().stream()
                 .filter(a -> {
-                    Path p1 = incoming.getResolvedPath(this, assembler);
-                    Path p2 = a.getResolvedPath(this, distribution);
-                    return p1.equals(p2);
+                    if (isPlatformSelected(incoming)) incoming.activate();
+                    if (isPlatformSelected(a)) a.activate();
+                    if (incoming.isActive() && a.isActive()) {
+                        Path p1 = incoming.getResolvedPath(this, assembler);
+                        Path p2 = a.getResolvedPath(this, distribution);
+                        return p1.equals(p2);
+                    }
+                    return false;
                 })
                 .findFirst();
             if (artifact.isPresent()) {
