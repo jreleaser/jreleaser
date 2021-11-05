@@ -32,7 +32,7 @@ public class Artifact implements ExtraProperties {
 
     void setAll(Artifact artifact) {
         this.path = artifact.path;
-        this.path = artifact.transform;
+        this.transform = artifact.transform;
         this.platform = artifact.platform;
         setExtraProperties(artifact.extraProperties);
     }
