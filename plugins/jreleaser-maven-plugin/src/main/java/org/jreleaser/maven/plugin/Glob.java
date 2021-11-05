@@ -22,10 +22,19 @@ package org.jreleaser.maven.plugin;
  * @since 0.1.0
  */
 public class Glob {
+    private String pattern;
     private String directory;
     private String include;
     private String exclude;
     private Boolean recursive;
+
+    public String getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
 
     public String getDirectory() {
         return directory;

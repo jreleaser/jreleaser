@@ -34,6 +34,7 @@ import javax.inject.Inject
 @CompileStatic
 class GlobImpl implements Glob {
     String name
+    final Property<String> pattern
     final DirectoryProperty directory
     final Property<String> include
     final Property<String> exclude
@@ -41,6 +42,7 @@ class GlobImpl implements Glob {
 
     @Inject
     GlobImpl(ObjectFactory objects) {
+        pattern = objects.property(String).convention(Providers.notDefined())
         directory = objects.directoryProperty().convention(Providers.notDefined())
         include = objects.property(String).convention(Providers.notDefined())
         exclude = objects.property(String).convention(Providers.notDefined())
@@ -53,6 +55,7 @@ class GlobImpl implements Glob {
 
     org.jreleaser.model.Glob toModel() {
         org.jreleaser.model.Glob glob = new org.jreleaser.model.Glob()
+        if (pattern.present) glob.pattern = pattern.get()
         if (directory.present) {
             glob.directory = directory.asFile.get().absolutePath
         }

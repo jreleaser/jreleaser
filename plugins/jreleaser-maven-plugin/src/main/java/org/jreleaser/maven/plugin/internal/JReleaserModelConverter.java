@@ -888,9 +888,10 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Glob convertGlob(Glob glob) {
         org.jreleaser.model.Glob g = new org.jreleaser.model.Glob();
-        g.setDirectory(glob.getDirectory());
-        g.setInclude(glob.getInclude());
-        g.setExclude(glob.getExclude());
+        g.setPattern(glob.getPattern());
+        if (isNotBlank(glob.getDirectory())) g.setDirectory(glob.getDirectory());
+        if (isNotBlank(glob.getInclude())) g.setInclude(glob.getInclude());
+        if (isNotBlank(glob.getExclude())) g.setExclude(glob.getExclude());
         if (glob.isRecursiveSet()) g.setRecursive(glob.isRecursive());
         return g;
     }

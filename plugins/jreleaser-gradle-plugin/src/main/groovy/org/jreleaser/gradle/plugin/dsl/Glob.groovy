@@ -28,6 +28,8 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Glob {
+    Property<String> getPattern()
+
     DirectoryProperty getDirectory()
 
     Property<String> getInclude()
