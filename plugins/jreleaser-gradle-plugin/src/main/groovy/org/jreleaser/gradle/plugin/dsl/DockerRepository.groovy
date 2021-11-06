@@ -18,21 +18,24 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.Property
 
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.9.0
  */
 @CompileStatic
-interface Docker extends DockerConfiguration, RepositoryTool {
-    NamedDomainObjectContainer<DockerSpec> getSpecs()
+interface DockerRepository {
+    Property<String> getOwner()
 
-    DockerRepository getRepository()
+    Property<String> getName()
 
-    void repository(Action<? super DockerRepository> action)
+    Property<String> getUsername()
 
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DockerRepository) Closure<Void> action)
+    Property<String> getToken()
+
+    Property<String> getBranch()
+
+    Property<Boolean> getVersionedSubfolders()
 }

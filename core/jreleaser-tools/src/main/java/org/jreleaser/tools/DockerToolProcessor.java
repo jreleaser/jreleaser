@@ -33,11 +33,13 @@ import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.command.Command;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -236,7 +238,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     }
 
     private void publishToRepository(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        super.doPublishDistribution(distribution, props);
+        super.doPublishDistribution(distribution, fillProps(distribution, props));
     }
 
     @Override
@@ -399,10 +401,22 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     }
 
     private void copyDockerfiles(Path source, String imageName, Path directory) throws IOException {
-        String[] parts = imageName.split("/");
-        parts = parts[parts.length - 1].split(":");
+        Path destination = directory;
 
-        Path destination = directory.resolve(parts[0]).resolve(parts[1]);
+        if (tool.getRepository().isVersionedSubfolders()) {
+            String[] parts = imageName.split("/");
+            parts = parts[parts.length - 1].split(":");
+            destination = directory.resolve(parts[1]);
+        }
+
+        if (Files.exists(destination)) {
+            Files.walk(destination)
+                .filter(path -> !path.toString().contains(".git"))
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
+        }
+
         Files.createDirectories(destination);
         prepareWorkingCopy(source, destination);
     }

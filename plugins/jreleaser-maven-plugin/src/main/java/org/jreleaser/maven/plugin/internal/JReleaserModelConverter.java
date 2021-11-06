@@ -38,6 +38,7 @@ import org.jreleaser.maven.plugin.Discussions;
 import org.jreleaser.maven.plugin.Distribution;
 import org.jreleaser.maven.plugin.Docker;
 import org.jreleaser.maven.plugin.DockerConfiguration;
+import org.jreleaser.maven.plugin.DockerRepository;
 import org.jreleaser.maven.plugin.DockerSpec;
 import org.jreleaser.maven.plugin.Environment;
 import org.jreleaser.maven.plugin.FileSet;
@@ -82,7 +83,6 @@ import org.jreleaser.maven.plugin.Uploader;
 import org.jreleaser.maven.plugin.Webhook;
 import org.jreleaser.maven.plugin.Zulip;
 import org.jreleaser.model.ChocolateyBucket;
-import org.jreleaser.model.DockerRepository;
 import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.HttpUploader;
 import org.jreleaser.model.JReleaserModel;
@@ -983,9 +983,10 @@ public final class JReleaserModelConverter {
         d.setRegistries(convertRegistries(docker.getRegistries()));
     }
 
-    private static DockerRepository convertDockerRepository(Tap tap) {
-        DockerRepository t = new DockerRepository();
+    private static org.jreleaser.model.DockerRepository convertDockerRepository(DockerRepository tap) {
+        org.jreleaser.model.DockerRepository t = new org.jreleaser.model.DockerRepository();
         convertTap(tap, t);
+        if (tap.isVersionedSubfoldersSet()) t.setVersionedSubfolders(tap.isVersionedSubfolders());
         return t;
     }
 

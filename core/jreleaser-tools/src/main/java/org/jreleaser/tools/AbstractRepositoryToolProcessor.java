@@ -70,6 +70,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
             // clone the repository
             context.getLogger().debug(RB.$("repository.clone"), repository.getHttpUrl());
             Path directory = Files.createTempDirectory("jreleaser-" + tool.getRepositoryTap().getResolvedName());
+
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
                 .setBranch(tool.getRepositoryTap().getBranch())
@@ -91,12 +92,27 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 .setMessage(distribution.getExecutable() + " " + gitService.getResolvedTagName(context.getModel()))
                 .setAuthor(tool.getCommitAuthor().getName(), tool.getCommitAuthor().getEmail());
             commitCommand.setCredentialsProvider(credentialsProvider);
+
+            boolean signingEnabled = gitService.isSign();
+            String signingKey = "**********";
+            JReleaserGpgSigner signer = new JReleaserGpgSigner(context, signingEnabled);
+
             commitCommand = commitCommand
-                .setSign(gitService.isSign())
-                .setSigningKey("**********")
-                .setGpgSigner(new JReleaserGpgSigner(context, gitService.isSign()));
+                .setSign(signingEnabled)
+                .setSigningKey(signingKey)
+                .setGpgSigner(signer);
 
             commitCommand.call();
+
+            String tagName = gitService.getEffectiveTagName(context.getModel());
+            context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName);
+            git.tag()
+                .setSigned(signingEnabled)
+                .setSigningKey(signingKey)
+                .setGpgSigner(signer)
+                .setName(gitService.getEffectiveTagName(context.getModel()))
+                .setForceUpdate(true)
+                .call();
 
             context.getLogger().info(RB.$("repository.push"), tool.getRepositoryTap().getCanonicalRepoName());
             // push commit
@@ -105,6 +121,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 .setDryRun(false)
                 .setPushAll()
                 .setCredentialsProvider(credentialsProvider)
+                .setPushTags()
                 .call();
         } catch (Exception e) {
             throw new ToolProcessingException(RB.$("ERROR_unexpected_repository_update", tool.getRepositoryTap().getCanonicalRepoName()), e);

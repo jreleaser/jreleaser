@@ -27,7 +27,7 @@ import java.util.List;
 public class Docker extends AbstractDockerConfiguration implements RepositoryTool {
     private final List<DockerSpec> specs = new ArrayList<>();
     private final CommitAuthor commitAuthor = new CommitAuthor();
-    private final Tap repository = new Tap();
+    private final DockerRepository repository = new DockerRepository();
 
     private Boolean continueOnError;
 
@@ -64,11 +64,11 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
         this.commitAuthor.setAll(commitAuthor);
     }
 
-    public Tap getRepository() {
+    public DockerRepository getRepository() {
         return repository;
     }
 
-    public void setRepository(Tap repository) {
+    public void setRepository(DockerRepository repository) {
         this.repository.setAll(repository);
     }
 
@@ -83,6 +83,7 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
 
     public boolean isSet() {
         return super.isSet() ||
+            continueOnError != null ||
             commitAuthor.isSet() ||
             repository.isSet() ||
             !specs.isEmpty();

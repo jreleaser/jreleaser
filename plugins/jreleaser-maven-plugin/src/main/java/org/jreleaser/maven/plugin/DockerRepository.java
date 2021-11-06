@@ -15,22 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
-
-import java.util.Map;
+package org.jreleaser.maven.plugin;
 
 /**
  * @author Andres Almiray
- * @since 0.6.0
+ * @since 0.9.0
  */
-public class DockerRepository extends AbstractRepositoryTap {
+public class DockerRepository extends Tap {
     private Boolean versionedSubfolders;
 
-    public DockerRepository() {
-        super("docker", "docker");
-    }
-
-    @Override
     void setAll(AbstractRepositoryTap tap) {
         super.setAll(tap);
         this.versionedSubfolders = ((DockerRepository) tap).versionedSubfolders;
@@ -46,12 +39,5 @@ public class DockerRepository extends AbstractRepositoryTap {
 
     public boolean isVersionedSubfoldersSet() {
         return versionedSubfolders != null;
-    }
-
-    @Override
-    public Map<String, Object> asMap(boolean full) {
-        Map<String, Object> map = super.asMap(full);
-        map.put("versionedSubfolders", isVersionedSubfolders());
-        return map;
     }
 }

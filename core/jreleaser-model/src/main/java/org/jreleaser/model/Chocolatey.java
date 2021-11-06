@@ -52,7 +52,7 @@ public class Chocolatey extends AbstractRepositoryTool {
         this.username = username;
     }
 
-    public Boolean isRemoteBuild() {
+    public boolean isRemoteBuild() {
         return remoteBuild != null && remoteBuild;
     }
 

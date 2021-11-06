@@ -205,7 +205,7 @@ public class Snap extends AbstractRepositoryTool {
         this.exportedLogin = exportedLogin;
     }
 
-    public Boolean isRemoteBuild() {
+    public boolean isRemoteBuild() {
         return remoteBuild != null && remoteBuild;
     }
 

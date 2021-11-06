@@ -89,6 +89,9 @@ public abstract class DockerValidator extends Validator {
         if (isBlank(repository.getBranch())) {
             repository.setBranch(parentTool.getRepository().getBranch());
         }
+        if (!repository.isVersionedSubfoldersSet()) {
+            repository.setVersionedSubfolders(parentTool.getRepository().isVersionedSubfolders());
+        }
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
 

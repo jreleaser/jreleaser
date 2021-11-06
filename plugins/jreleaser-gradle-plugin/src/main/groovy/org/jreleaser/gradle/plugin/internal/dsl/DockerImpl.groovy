@@ -28,7 +28,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Docker
-import org.jreleaser.gradle.plugin.dsl.Tap
+import org.jreleaser.gradle.plugin.dsl.DockerRepository
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -42,14 +42,14 @@ import javax.inject.Inject
 class DockerImpl extends AbstractDockerConfiguration implements Docker {
     final NamedDomainObjectContainer<DockerSpecImpl> specs
     final Property<Boolean> continueOnError
-    final TapImpl repository
+    final DockerRepositoryImpl repository
     final CommitAuthorImpl commitAuthor
 
     @Inject
     DockerImpl(ObjectFactory objects) {
         super(objects)
         continueOnError = objects.property(Boolean).convention(Providers.notDefined())
-        repository = objects.newInstance(TapImpl, objects)
+        repository = objects.newInstance(DockerRepositoryImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
 
         specs = objects.domainObjectContainer(DockerSpecImpl, new NamedDomainObjectFactory<DockerSpecImpl>() {
@@ -66,14 +66,14 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     @Internal
     boolean isSet() {
         super.isSet() ||
-            continueOnError.present||
+            continueOnError.present ||
             !specs.isEmpty() ||
             repository.isSet() ||
             commitAuthor.isSet()
     }
 
     @Override
-    void repository(Action<? super Tap> action) {
+    void repository(Action<? super DockerRepository> action) {
         action.execute(repository)
     }
 
@@ -83,7 +83,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     }
 
     @Override
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DockerRepository) Closure<Void> action) {
         ConfigureUtil.configure(action, repository)
     }
 
@@ -97,7 +97,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
         org.jreleaser.model.Docker tool = new org.jreleaser.model.Docker()
         toModel(tool)
         if (continueOnError.present) tool.continueOnError = continueOnError.get()
-        if (repository.isSet()) tool.repository = repository.toDockerRepository()
+        if (repository.isSet()) tool.repository = repository.toModel()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
 
         specs.each { tool.addSpec(it.toModel()) }

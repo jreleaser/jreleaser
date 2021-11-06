@@ -221,12 +221,16 @@ public final class FileUtils {
     }
 
     public static void deleteFiles(Path path) throws IOException {
+        deleteFiles(path, false);
+    }
+
+    public static void deleteFiles(Path path, boolean keepRoot) throws IOException {
         if (Files.exists(path)) {
             Files.walk(path)
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)
                 .forEach(File::delete);
-            Files.deleteIfExists(path);
+            if (!keepRoot) Files.deleteIfExists(path);
         }
     }
 
