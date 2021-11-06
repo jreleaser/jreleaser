@@ -48,6 +48,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
     final Property<String> imageName
     final Property<String> imageNameTransform
     final Property<String> moduleName
+    final Property<Boolean> copyJars
     final ListProperty<String> args
     final SetProperty<String> moduleNames
     final JavaImpl java
@@ -65,6 +66,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         imageName = objects.property(String).convention(Providers.notDefined())
         imageNameTransform = objects.property(String).convention(Providers.notDefined())
         moduleName = objects.property(String).convention(Providers.notDefined())
+        copyJars = objects.property(Boolean).convention(Providers.notDefined())
         args = objects.listProperty(String).convention(Providers.notDefined())
         moduleNames = objects.setProperty(String).convention(Providers.notDefined())
         java = objects.newInstance(JavaImpl, objects)
@@ -107,6 +109,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
             imageName.present ||
             imageNameTransform.present ||
             moduleName.present ||
+            copyJars.present ||
             args.present ||
             java.isSet() ||
             jdk.isSet() ||
@@ -192,6 +195,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         if (imageName.present) jlink.imageName = imageName.get()
         if (imageNameTransform.present) jlink.imageNameTransform = imageNameTransform.get()
         if (moduleName.present) jlink.moduleName = moduleName.get()
+        if (copyJars.present) jlink.copyJars = copyJars.get()
         jlink.moduleNames = (Set<String>) moduleNames.getOrElse([] as Set)
         for (ArtifactImpl artifact : targetJdks) {
             jlink.addTargetJdk(artifact.toModel())

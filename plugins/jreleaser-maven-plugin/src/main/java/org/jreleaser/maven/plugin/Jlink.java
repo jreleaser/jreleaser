@@ -41,12 +41,14 @@ public class Jlink extends AbstractJavaAssembler {
     private String imageName;
     private String imageNameTransform;
     private String moduleName;
+    private Boolean copyJars;
 
     void setAll(Jlink jlink) {
         super.setAll(jlink);
         this.imageName = jlink.imageName;
         this.imageNameTransform = jlink.imageNameTransform;
         this.moduleName = jlink.moduleName;
+        this.copyJars = jlink.copyJars;
         setJava(jlink.java);
         setJdk(jlink.jdk);
         setMainJar(jlink.mainJar);
@@ -200,5 +202,17 @@ public class Jlink extends AbstractJavaAssembler {
     public void setFiles(List<Glob> files) {
         this.files.clear();
         this.files.addAll(files);
+    }
+
+    public Boolean isCopyJars() {
+        return copyJars == null || copyJars;
+    }
+
+    public void setCopyJars(Boolean copyJars) {
+        this.copyJars = copyJars;
+    }
+
+    public boolean isCopyJarsSet() {
+        return copyJars != null;
     }
 }

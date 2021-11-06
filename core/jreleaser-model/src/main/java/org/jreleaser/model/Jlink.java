@@ -46,6 +46,7 @@ public class Jlink extends AbstractJavaAssembler {
     private String imageName;
     private String imageNameTransform;
     private String moduleName;
+    private Boolean copyJars;
 
     public Jlink() {
         super(NAME);
@@ -61,6 +62,7 @@ public class Jlink extends AbstractJavaAssembler {
         this.imageName = jlink.imageName;
         this.imageNameTransform = jlink.imageNameTransform;
         this.moduleName = jlink.moduleName;
+        this.copyJars = jlink.copyJars;
         setJdk(jlink.jdk);
         setMainJar(jlink.mainJar);
         setTargetJdks(jlink.targetJdks);
@@ -230,6 +232,18 @@ public class Jlink extends AbstractJavaAssembler {
         }
     }
 
+    public Boolean isCopyJars() {
+        return copyJars == null || copyJars;
+    }
+
+    public void setCopyJars(Boolean copyJars) {
+        this.copyJars = copyJars;
+    }
+
+    public boolean isCopyJarsSet() {
+        return copyJars != null;
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
@@ -249,6 +263,7 @@ public class Jlink extends AbstractJavaAssembler {
         for (i = 0; i < jars.size(); i++) {
             mappedJars.put("glob " + i, jars.get(i).asMap(full));
         }
+        props.put("copyJars", isCopyJars());
         props.put("jars", mappedJars);
         Map<String, Map<String, Object>> mappedFiles = new LinkedHashMap<>();
         for (i = 0; i < files.size(); i++) {

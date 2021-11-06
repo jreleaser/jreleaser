@@ -19,7 +19,6 @@ package org.jreleaser.assemblers;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
-import org.jreleaser.model.FileSet;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jlink;
@@ -134,17 +133,21 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         if (isBlank(assembler.getModuleName())) {
             // non modular
             // copy jars & launcher
-            Path jarsDirectory = imageDirectory.resolve("jars");
 
-            try {
-                Files.createDirectory(jarsDirectory);
-                FileUtils.copyFiles(context.getLogger(),
-                    inputsDirectory.resolve("jars"),
-                    jarsDirectory);
-            } catch (IOException e) {
-                throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_jars",
-                    context.relativizeToBasedir(jarsDirectory)), e);
+            if (assembler.isCopyJars()) {
+                Path jarsDirectory = imageDirectory.resolve("jars");
+
+                try {
+                    Files.createDirectory(jarsDirectory);
+                    FileUtils.copyFiles(context.getLogger(),
+                        inputsDirectory.resolve("jars"),
+                        jarsDirectory);
+                } catch (IOException e) {
+                    throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_jars",
+                        context.relativizeToBasedir(jarsDirectory)), e);
+                }
             }
+
             try {
                 if (PlatformUtils.isWindows(targetJdk.getPlatform())) {
                     Files.copy(inputsDirectory.resolve(assembler.getExecutable().concat(".bat")),
@@ -156,7 +159,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
                 }
             } catch (IOException e) {
                 throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_launcher",
-                    context.relativizeToBasedir(jarsDirectory)), e);
+                    context.relativizeToBasedir(imageDirectory.resolve("bin"))), e);
             }
         }
 
