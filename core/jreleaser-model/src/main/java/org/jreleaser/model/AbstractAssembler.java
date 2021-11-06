@@ -19,9 +19,11 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.Constants;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +35,9 @@ import static org.jreleaser.util.MustacheUtils.applyTemplates;
  */
 abstract class AbstractAssembler implements Assembler {
     protected final Set<Artifact> outputs = new LinkedHashSet<>();
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    protected final List<FileSet> fileSets = new ArrayList<>();
+
     private final String type;
     protected String name;
     protected boolean enabled;
@@ -51,6 +55,7 @@ abstract class AbstractAssembler implements Assembler {
         this.name = assembler.name;
         setOutputs(assembler.outputs);
         setExtraProperties(assembler.extraProperties);
+        setFileSets(assembler.fileSets);
     }
 
     @Override
@@ -164,6 +169,29 @@ abstract class AbstractAssembler implements Assembler {
     }
 
     @Override
+    public List<FileSet> getFileSets() {
+        return fileSets;
+    }
+
+    @Override
+    public void setFileSets(List<FileSet> fileSets) {
+        this.fileSets.clear();
+        this.fileSets.addAll(fileSets);
+    }
+
+    @Override
+    public void addFileSets(List<FileSet> files) {
+        this.fileSets.addAll(files);
+    }
+
+    @Override
+    public void addFileSet(FileSet file) {
+        if (null != file) {
+            this.fileSets.add(file);
+        }
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
 
@@ -172,6 +200,11 @@ abstract class AbstractAssembler implements Assembler {
         props.put("exported", isExported());
         props.put("active", active);
         asMap(full, props);
+        Map<String, Map<String, Object>> mappedFileSets = new LinkedHashMap<>();
+        for (int i = 0; i < fileSets.size(); i++) {
+            mappedFileSets.put("fileSet " + i, fileSets.get(i).asMap(full));
+        }
+        props.put("fileSets", mappedFileSets);
         props.put("extraProperties", getResolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();

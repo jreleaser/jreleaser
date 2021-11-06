@@ -17,9 +17,7 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,7 +26,6 @@ import java.util.Set;
  */
 public class Archive extends AbstractAssembler {
     private final Set<Format> formats = new LinkedHashSet<>();
-    private final List<FileSet> fileSets = new ArrayList<>();
 
     private String archiveName;
     private Boolean attachPlatform;
@@ -48,7 +45,6 @@ public class Archive extends AbstractAssembler {
         this.distributionType = archive.distributionType;
         this.attachPlatform = archive.attachPlatform;
         setFormats(archive.formats);
-        setFileSets(archive.fileSets);
     }
 
     public String getArchiveName() {
@@ -82,25 +78,6 @@ public class Archive extends AbstractAssembler {
 
     public void addFormat(Format format) {
         this.formats.add(format);
-    }
-
-    public List<FileSet> getFileSets() {
-        return fileSets;
-    }
-
-    public void setFileSets(List<FileSet> fileSets) {
-        this.fileSets.clear();
-        this.fileSets.addAll(fileSets);
-    }
-
-    public void addFiles(List<FileSet> files) {
-        this.fileSets.addAll(files);
-    }
-
-    public void addFile(FileSet file) {
-        if (null != file) {
-            this.fileSets.add(file);
-        }
     }
 
     public enum Format {

@@ -74,16 +74,8 @@ public abstract class ArchiveValidator extends Validator {
         } else {
             int i = 0;
             for (FileSet fileSet : archive.getFileSets()) {
-                validateFileSet(context, mode, archive, fileSet, i, errors);
+                validateFileSet(context, mode, archive, fileSet, i++, errors);
             }
-        }
-    }
-
-    private static void validateFileSet(JReleaserContext context, JReleaserContext.Mode mode, Archive archive, FileSet fileSet, int index, Errors errors) {
-        if (mode == JReleaserContext.Mode.FULL) return;
-
-        if (isBlank(fileSet.getInput())) {
-            errors.configuration(RB.$("validation_must_not_be_null", "archive." + archive.getName() + ".fileSet[" + index + "].input"));
         }
     }
 }

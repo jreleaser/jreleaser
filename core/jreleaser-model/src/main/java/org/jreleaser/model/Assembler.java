@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,4 +45,12 @@ public interface Assembler extends Domain, Activatable, ExtraProperties {
     void addOutput(Artifact artifact);
 
     Map<String, Object> props();
+
+    List<FileSet> getFileSets();
+
+    void setFileSets(List<FileSet> fileSets);
+
+    void addFileSets(List<FileSet> files);
+
+    void addFileSet(FileSet file);
 }

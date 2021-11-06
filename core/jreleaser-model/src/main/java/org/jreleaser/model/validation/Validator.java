@@ -18,10 +18,12 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Assembler;
 import org.jreleaser.model.CommitAuthor;
 import org.jreleaser.model.CommitAuthorAware;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Environment;
+import org.jreleaser.model.FileSet;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
@@ -163,6 +165,14 @@ class Validator {
                 // too broad!
                 errors.configuration(RB.$("validation_must_define_pattern", property + "[" + i + "]"));
             }
+        }
+    }
+
+    static void validateFileSet(JReleaserContext context, JReleaserContext.Mode mode, Assembler assembler, FileSet fileSet, int index, Errors errors) {
+        if (mode == JReleaserContext.Mode.FULL) return;
+
+        if (isBlank(fileSet.getInput())) {
+            errors.configuration(RB.$("validation_must_not_be_null", assembler.getType() + "." + assembler.getName() + ".fileSet[" + index + "].input"));
         }
     }
 }

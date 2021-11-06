@@ -18,8 +18,6 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 
@@ -40,11 +38,5 @@ interface Archive extends Assembler {
 
     SetProperty<org.jreleaser.model.Archive.Format> getFormats()
 
-    NamedDomainObjectContainer<FileSet> getFileSets()
-
     void format(String format)
-
-    void fileSet(Action<? super FileSet> action)
-
-    void fileSet(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FileSet) Closure<Void> action)
 }

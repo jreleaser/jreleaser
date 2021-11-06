@@ -25,6 +25,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Glob
 import org.jreleaser.gradle.plugin.dsl.NativeImage
@@ -81,6 +82,19 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
                 glob
             }
         })
+    }
+
+    @Internal
+    boolean isSet() {
+        super.isSet() ||
+            imageName.present ||
+            imageNameTransform.present ||
+            args.present ||
+            java.isSet() ||
+            graal.isSet() ||
+            mainJar.isSet() ||
+            !jars.isEmpty() ||
+            !files.isEmpty()
     }
 
     @Override
@@ -145,8 +159,8 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         if (imageName.present) nativeImage.imageName = imageName.get()
         if (imageNameTransform.present) nativeImage.imageNameTransform = imageNameTransform.get()
         nativeImage.args = (List<String>) args.getOrElse([])
-        if (graal.isSet())  nativeImage.graal = graal.toModel()
-        if (mainJar.isSet())  nativeImage.mainJar = mainJar.toModel()
+        if (graal.isSet()) nativeImage.graal = graal.toModel()
+        if (mainJar.isSet()) nativeImage.mainJar = mainJar.toModel()
         for (GlobImpl glob : jars) {
             nativeImage.addJar(glob.toModel())
         }

@@ -18,18 +18,13 @@
 package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Archive
-import org.jreleaser.gradle.plugin.dsl.FileSet
 import org.jreleaser.model.Distribution.DistributionType
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -47,7 +42,6 @@ class ArchiveImpl extends AbstractAssembler implements Archive {
     final Property<DistributionType> distributionType
     final Property<Boolean> attachPlatform
     final SetProperty<org.jreleaser.model.Archive.Format> formats
-    final NamedDomainObjectContainer<FileSetImpl> fileSets
 
     @Inject
     ArchiveImpl(ObjectFactory objects) {
@@ -56,15 +50,6 @@ class ArchiveImpl extends AbstractAssembler implements Archive {
         distributionType = objects.property(DistributionType).convention(DistributionType.JAVA_BINARY)
         attachPlatform = objects.property(Boolean).convention(Providers.notDefined())
         formats = objects.setProperty(org.jreleaser.model.Archive.Format).convention(Providers.notDefined())
-
-        fileSets = objects.domainObjectContainer(FileSetImpl, new NamedDomainObjectFactory<FileSetImpl>() {
-            @Override
-            FileSetImpl create(String name) {
-                FileSetImpl fs = objects.newInstance(FileSetImpl, objects)
-                fs.name = name
-                fs
-            }
-        })
     }
 
     @Internal
@@ -73,8 +58,7 @@ class ArchiveImpl extends AbstractAssembler implements Archive {
             archiveName.present ||
             distributionType.present ||
             attachPlatform.present ||
-            formats.present ||
-            !fileSets.isEmpty()
+            formats.present
     }
 
     @Override
@@ -89,16 +73,6 @@ class ArchiveImpl extends AbstractAssembler implements Archive {
         }
     }
 
-    @Override
-    void fileSet(Action<? super FileSet> action) {
-        action.execute(fileSets.maybeCreate("fileSet-${fileSets.size()}".toString()))
-    }
-
-    @Override
-    void fileSet(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FileSet) Closure<Void> action) {
-        ConfigureUtil.configure(action, fileSets.maybeCreate("fileSet-${fileSets.size()}".toString()))
-    }
-
     org.jreleaser.model.Archive toModel() {
         org.jreleaser.model.Archive archive = new org.jreleaser.model.Archive()
         archive.name = name
@@ -106,9 +80,6 @@ class ArchiveImpl extends AbstractAssembler implements Archive {
         if (archiveName.present) archive.archiveName = archiveName.get()
         if (attachPlatform.present) archive.attachPlatform = attachPlatform.get()
         archive.distributionType = distributionType.get()
-        for (FileSetImpl fileSet : fileSets) {
-            archive.addFileSet(fileSet.toModel())
-        }
         archive.formats = (Set<org.jreleaser.model.Archive.Format>) formats.getOrElse([] as Set<org.jreleaser.model.Archive.Format>)
         archive
     }

@@ -18,6 +18,8 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 import org.jreleaser.model.Active
 
@@ -33,4 +35,10 @@ interface Assembler extends ExtraProperties {
     Property<Active> getActive()
 
     void setActive(String str)
+
+    NamedDomainObjectContainer<FileSet> getFileSets()
+
+    void fileSet(Action<? super FileSet> action)
+
+    void fileSet(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FileSet) Closure<Void> action)
 }

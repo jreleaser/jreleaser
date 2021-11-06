@@ -20,6 +20,7 @@ package org.jreleaser.model.validation;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
+import org.jreleaser.model.FileSet;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jlink;
 import org.jreleaser.model.Project;
@@ -87,7 +88,7 @@ public abstract class JlinkValidator extends Validator {
 
         int i = 0;
         for (Artifact targetJdk : jlink.getTargetJdks()) {
-            validateJdk(context, mode, jlink, targetJdk, i, errors);
+            validateJdk(context, mode, jlink, targetJdk, i++, errors);
         }
 
         // validate jdks.platform is unique
@@ -125,6 +126,13 @@ public abstract class JlinkValidator extends Validator {
 
         if (mode != JReleaserContext.Mode.FULL) {
             validateTemplate(context, jlink, errors);
+        }
+
+        if (!jlink.getFileSets().isEmpty()) {
+            i = 0;
+            for (FileSet fileSet : jlink.getFileSets()) {
+                validateFileSet(context, mode, jlink, fileSet, i++, errors);
+            }
         }
     }
 

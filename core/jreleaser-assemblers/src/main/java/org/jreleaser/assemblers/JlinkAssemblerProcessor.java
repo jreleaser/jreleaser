@@ -19,6 +19,7 @@ package org.jreleaser.assemblers;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
+import org.jreleaser.model.FileSet;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jlink;
@@ -162,6 +163,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         try {
             Path imageZip = assembleDirectory.resolve(finalImageName + ".zip");
             copyFiles(context, imageDirectory);
+            copyFileSets(context, imageDirectory);
             FileUtils.zip(workDirectory, imageZip);
 
             context.getLogger().debug("- {}", imageZip.getFileName());
@@ -252,6 +254,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         Command cmd = new Command(jdkPath.resolve("bin").resolve("jdeps").toAbsolutePath().toString())
             .arg("--multi-release")
             .arg("base")
+            .arg("--ignore-missing-deps")
             .arg("--print-module-deps");
         for (Path jar : jars) {
             cmd.arg(jar.toAbsolutePath().toString());

@@ -19,6 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
+import org.jreleaser.model.FileSet;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.NativeImage;
 import org.jreleaser.util.Errors;
@@ -87,6 +88,13 @@ public abstract class NativeImageValidator extends Validator {
 
         if (mode == JReleaserContext.Mode.ASSEMBLE) {
             validateTemplate(context, nativeImage, errors);
+        }
+
+        if (!nativeImage.getFileSets().isEmpty()) {
+            int i = 0;
+            for (FileSet fileSet : nativeImage.getFileSets()) {
+                validateFileSet(context, mode, nativeImage, fileSet, i++, errors);
+            }
         }
     }
 }

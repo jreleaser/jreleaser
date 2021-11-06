@@ -17,6 +17,7 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -37,4 +38,8 @@ public interface Assembler extends Activatable, ExtraProperties {
     void setOutputs(Set<Artifact> output);
 
     void addOutput(Artifact artifact);
+
+    List<FileSet> getFileSets();
+
+    void setFileSets(List<FileSet> fileSets);
 }

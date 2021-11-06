@@ -17,8 +17,10 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,7 +30,9 @@ import java.util.Set;
  */
 abstract class AbstractAssembler implements Assembler {
     protected final Set<Artifact> output = new LinkedHashSet<>();
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    protected final List<FileSet> fileSets = new ArrayList<>();
+
     protected String name;
     protected boolean enabled;
     protected Active active;
@@ -41,6 +45,7 @@ abstract class AbstractAssembler implements Assembler {
         this.name = assembler.name;
         setOutputs(assembler.output);
         setExtraProperties(assembler.extraProperties);
+        setFileSets(assembler.fileSets);
     }
 
     @Override
@@ -105,5 +110,26 @@ abstract class AbstractAssembler implements Assembler {
     public void setExtraProperties(Map<String, Object> extraProperties) {
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
+    public List<FileSet> getFileSets() {
+        return fileSets;
+    }
+
+    @Override
+    public void setFileSets(List<FileSet> fileSets) {
+        this.fileSets.clear();
+        this.fileSets.addAll(fileSets);
+    }
+
+    public void addFiles(List<FileSet> files) {
+        this.fileSets.addAll(files);
+    }
+
+    public void addFile(FileSet file) {
+        if (null != file) {
+            this.fileSets.add(file);
+        }
     }
 }

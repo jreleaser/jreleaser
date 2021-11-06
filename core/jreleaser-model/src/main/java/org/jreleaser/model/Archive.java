@@ -19,10 +19,7 @@ package org.jreleaser.model;
 
 import org.jreleaser.util.PlatformUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +34,6 @@ public class Archive extends AbstractAssembler {
     public static final String NAME = "archive";
 
     private final Set<Format> formats = new LinkedHashSet<>();
-    private final List<FileSet> fileSets = new ArrayList<>();
 
     private String archiveName;
     private Boolean attachPlatform;
@@ -66,7 +62,6 @@ public class Archive extends AbstractAssembler {
         this.distributionType = archive.distributionType;
         this.attachPlatform = archive.attachPlatform;
         setFormats(archive.formats);
-        setFileSets(archive.fileSets);
     }
 
     public String getResolvedArchiveName(JReleaserContext context) {
@@ -116,36 +111,12 @@ public class Archive extends AbstractAssembler {
         this.formats.add(Format.of(str));
     }
 
-    public List<FileSet> getFileSets() {
-        return fileSets;
-    }
-
-    public void setFileSets(List<FileSet> fileSets) {
-        this.fileSets.clear();
-        this.fileSets.addAll(fileSets);
-    }
-
-    public void addFileSets(List<FileSet> files) {
-        this.fileSets.addAll(files);
-    }
-
-    public void addFileSet(FileSet file) {
-        if (null != file) {
-            this.fileSets.add(file);
-        }
-    }
-
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("archiveName", archiveName);
         props.put("distributionType", distributionType);
         props.put("attachPlatform", isAttachPlatform());
         props.put("formats", formats);
-        Map<String, Map<String, Object>> mappedFileSets = new LinkedHashMap<>();
-        for (int i = 0; i < fileSets.size(); i++) {
-            mappedFileSets.put("fileSet " + i, fileSets.get(i).asMap(full));
-        }
-        props.put("fileSets", mappedFileSets);
     }
 
     public enum Format {

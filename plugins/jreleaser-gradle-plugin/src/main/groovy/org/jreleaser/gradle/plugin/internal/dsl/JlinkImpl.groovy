@@ -26,6 +26,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Glob
 import org.jreleaser.gradle.plugin.dsl.Jlink
@@ -98,6 +99,22 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
                 glob
             }
         })
+    }
+
+    @Internal
+    boolean isSet() {
+        super.isSet() ||
+            imageName.present ||
+            imageNameTransform.present ||
+            moduleName.present ||
+            args.present ||
+            java.isSet() ||
+            jdk.isSet() ||
+            mainJar.isSet() ||
+            !moduleNames.present ||
+            !targetJdks.isEmpty() ||
+            !jars.isEmpty() ||
+            !files.isEmpty()
     }
 
     @Override

@@ -764,6 +764,7 @@ public final class JReleaserModelConverter {
         a.setModuleName(jlink.getModuleName());
         a.setJars(convertGlobs(jlink.getJars()));
         a.setFiles(convertGlobs(jlink.getFiles()));
+        a.setFileSets(convertFileSets(jlink.getFileSets()));
         return a;
     }
 
@@ -791,6 +792,7 @@ public final class JReleaserModelConverter {
         a.setImageNameTransform(nativeImage.getImageNameTransform());
         a.setJars(convertGlobs(nativeImage.getJars()));
         a.setFiles(convertGlobs(nativeImage.getFiles()));
+        a.setFileSets(convertFileSets(nativeImage.getFileSets()));
         a.setArgs(nativeImage.getArgs());
         return a;
     }
