@@ -93,7 +93,6 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserTemplateTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Generates templates for a specific tool/announcer'
-                    t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(project.layout
                         .projectDirectory

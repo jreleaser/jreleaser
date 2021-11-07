@@ -18,11 +18,13 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -30,6 +32,7 @@ import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.options.OptionValues
 import org.jreleaser.model.Distribution
 import org.jreleaser.templates.TemplateGenerator
+import org.jreleaser.util.JReleaserLogger
 
 import javax.inject.Inject
 import java.nio.file.Path
@@ -40,7 +43,7 @@ import java.nio.file.Path
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserTemplateTask extends AbstractJReleaserTask {
+abstract class JReleaserTemplateTask extends DefaultTask {
     @Input
     @Optional
     final Property<Distribution.DistributionType> distributionType
@@ -66,9 +69,12 @@ abstract class JReleaserTemplateTask extends AbstractJReleaserTask {
     @Input
     final Property<Boolean> snapshot
 
+    @Internal
+    final Property<JReleaserLogger> jlogger
+
     @Inject
     JReleaserTemplateTask(ObjectFactory objects) {
-        super(objects)
+        jlogger = objects.property(JReleaserLogger)
         distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.JAVA_BINARY)
         distributionName = objects.property(String)
         toolName = objects.property(String)
@@ -117,7 +123,7 @@ abstract class JReleaserTemplateTask extends AbstractJReleaserTask {
     @TaskAction
     void generateTemplate() {
         Path output = TemplateGenerator.builder()
-            .logger(createContext().logger)
+            .logger(jlogger.get())
             .distributionName(distributionName.orNull)
             .distributionType(distributionType.orNull)
             .toolName(toolName.orNull)
