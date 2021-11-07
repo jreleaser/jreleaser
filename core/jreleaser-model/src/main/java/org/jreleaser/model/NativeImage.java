@@ -176,6 +176,7 @@ public class NativeImage extends AbstractJavaAssembler {
         props.put("imageName", imageName);
         props.put("imageNameTransform", imageNameTransform);
         props.put("graal", graal.asMap(full));
+        props.put("mainJar", mainJar.asMap(full));
         props.put("args", args);
         Map<String, Map<String, Object>> mappedJars = new LinkedHashMap<>();
         for (int i = 0; i < jars.size(); i++) {

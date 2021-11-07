@@ -264,6 +264,7 @@ public class Jlink extends AbstractJavaAssembler {
             mappedJars.put("glob " + i, jars.get(i).asMap(full));
         }
         props.put("copyJars", isCopyJars());
+        props.put("mainJar", mainJar.asMap(full));
         props.put("jars", mappedJars);
         Map<String, Map<String, Object>> mappedFiles = new LinkedHashMap<>();
         for (i = 0; i < files.size(); i++) {
