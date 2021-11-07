@@ -148,6 +148,7 @@ public final class FileUtils {
     }
 
     public static void unpack(Path src, Path dest) throws IOException {
+        deleteFiles(dest, true);
         File destinationDir = dest.toFile();
 
         try (InputStream fi = Files.newInputStream(src);
@@ -164,6 +165,7 @@ public final class FileUtils {
     }
 
     public static void unpackCompressed(Path src, Path dest) throws IOException {
+        deleteFiles(dest, true);
         File destinationDir = dest.toFile();
 
         try (InputStream fi = Files.newInputStream(src);
