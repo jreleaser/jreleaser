@@ -55,7 +55,7 @@ public class Env {
             value = System.getenv(prefixedKey);
             if (isBlank(value)) {
                 errors.configuration(RB.$("ERROR_environment_property_check",
-                    property, dsl, prefixedKey, configFilePath));
+                    property, dsl, prefixedKey, configFilePath, prefixedKey));
             }
         }
 
