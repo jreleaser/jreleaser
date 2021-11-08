@@ -118,11 +118,15 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         }
 
         // jlink it
+        String modulePath = targetJdk.getEffectivePath(context).resolve("jmods").toAbsolutePath().toString();
+        if (assembler.isCopyJars()) {
+            modulePath += assembleDirectory.resolve("jars").toAbsolutePath();
+        }
+
         Command cmd = new Command(jdkPath.resolve("bin").resolve("jlink").toAbsolutePath().toString())
             .args(assembler.getArgs())
             .arg("--module-path")
-            .arg(targetJdk.getEffectivePath(context).resolve("jmods").toAbsolutePath().toString() + ":" +
-                assembleDirectory.resolve("jars").toAbsolutePath())
+            .arg(modulePath)
             .arg("--add-modules")
             .arg(String.join(",", moduleNames));
         if (isNotBlank(assembler.getModuleName())) {

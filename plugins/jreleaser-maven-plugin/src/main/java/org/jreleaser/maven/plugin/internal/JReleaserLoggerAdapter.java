@@ -37,9 +37,13 @@ public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
 
     @Override
     public void debug(String message) {
-        String msg = formatMessage(message);
-        delegate.debug(msg);
-        trace(Level.DEBUG + msg);
+        String msg1 = formatMessage(message);
+        String msg2 = msg1;
+        if (isIndented()) {
+            msg1 = msg1.substring(1);
+        }
+        delegate.debug(msg1);
+        trace(Level.DEBUG + msg2);
     }
 
     @Override
@@ -58,16 +62,24 @@ public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
 
     @Override
     public void error(String message) {
-        String msg = formatMessage(message);
-        delegate.error(msg);
-        trace(Level.ERROR + msg);
+        String msg1 = formatMessage(message);
+        String msg2 = msg1;
+        if (isIndented()) {
+            msg1 = msg1.substring(1);
+        }
+        delegate.error(msg1);
+        trace(Level.ERROR + msg2);
     }
 
     @Override
     public void debug(String message, Object... args) {
-        String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
-        delegate.debug(msg);
-        trace(Level.DEBUG + msg);
+        String msg1 = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
+        String msg2 = msg1;
+        if (isIndented()) {
+            msg1 = msg1.substring(1);
+        }
+        delegate.debug(msg1);
+        trace(Level.DEBUG + msg2);
     }
 
     @Override
@@ -86,16 +98,24 @@ public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
 
     @Override
     public void error(String message, Object... args) {
-        String msg = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
-        delegate.error(msg);
-        trace(Level.ERROR + msg);
+        String msg1 = formatMessage(MessageFormatter.arrayFormat(message, args).getMessage());
+        String msg2 = msg1;
+        if (isIndented()) {
+            msg1 = msg1.substring(1);
+        }
+        delegate.error(msg1);
+        trace(Level.ERROR + msg2);
     }
 
     @Override
     public void debug(String message, Throwable throwable) {
-        String msg = formatMessage(message);
-        delegate.debug(msg, throwable);
-        trace(Level.DEBUG + msg, throwable);
+        String msg1 = formatMessage(message);
+        String msg2 = msg1;
+        if (isIndented()) {
+            msg1 = msg1.substring(1);
+        }
+        delegate.debug(msg1, throwable);
+        trace(Level.DEBUG + msg2, throwable);
     }
 
     @Override
@@ -114,9 +134,13 @@ public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
 
     @Override
     public void error(String message, Throwable throwable) {
-        String msg = formatMessage(message);
-        delegate.error(msg, throwable);
-        trace(Level.ERROR + msg, throwable);
+        String msg1 = formatMessage(message);
+        String msg2 = msg1;
+        if (isIndented()) {
+            msg1 = msg1.substring(1);
+        }
+        delegate.error(msg1, throwable);
+        trace(Level.ERROR + msg2, throwable);
     }
 
     public enum Level {

@@ -33,6 +33,10 @@ public abstract class AbstractJReleaserLogger implements JReleaserLogger {
         this.tracer = tracer;
     }
 
+    protected boolean isIndented() {
+        return !indent.equals("");
+    }
+
     @Override
     public PrintWriter getTracer() {
         return tracer;
