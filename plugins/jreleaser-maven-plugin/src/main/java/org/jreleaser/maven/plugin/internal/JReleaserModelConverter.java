@@ -54,6 +54,7 @@ import org.jreleaser.maven.plugin.GoogleChat;
 import org.jreleaser.maven.plugin.Http;
 import org.jreleaser.maven.plugin.Java;
 import org.jreleaser.maven.plugin.Jbang;
+import org.jreleaser.maven.plugin.Jdeps;
 import org.jreleaser.maven.plugin.Jlink;
 import org.jreleaser.maven.plugin.Jreleaser;
 import org.jreleaser.maven.plugin.Mail;
@@ -757,6 +758,7 @@ public final class JReleaserModelConverter {
         a.setTargetJdks(convertArtifacts(jlink.getTargetJdks()));
         a.setModuleNames(jlink.getModuleNames());
         a.setArgs(jlink.getArgs());
+        a.setJdeps(convertJdeps(jlink.getJdeps()));
         a.setJdk(convertArtifact(jlink.getJdk()));
         a.setMainJar(convertArtifact(jlink.getMainJar()));
         a.setImageName(jlink.getImageName());
@@ -767,6 +769,13 @@ public final class JReleaserModelConverter {
         a.setFiles(convertGlobs(jlink.getFiles()));
         a.setFileSets(convertFileSets(jlink.getFileSets()));
         return a;
+    }
+
+    private static org.jreleaser.model.Jdeps convertJdeps(Jdeps jdeps) {
+        org.jreleaser.model.Jdeps j = new org.jreleaser.model.Jdeps();
+        j.setMultiRelease(jdeps.getMultiRelease());
+        if (jdeps.isIgnoreMissingDepsSet()) j.setIgnoreMissingDeps(jdeps.isIgnoreMissingDeps());
+        return j;
     }
 
     private static Map<String, org.jreleaser.model.NativeImage> convertNativeImage(Map<String, NativeImage> nativeImage) {

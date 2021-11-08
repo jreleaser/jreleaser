@@ -29,6 +29,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Glob
+import org.jreleaser.gradle.plugin.dsl.Jdeps
 import org.jreleaser.gradle.plugin.dsl.Jlink
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
@@ -53,6 +54,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
     final SetProperty<String> moduleNames
     final JavaImpl java
 
+    private final JdepsImpl jdeps
     private final ArtifactImpl jdk
     private final ArtifactImpl mainJar
     private final NamedDomainObjectContainer<GlobImpl> jars
@@ -70,6 +72,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         args = objects.listProperty(String).convention(Providers.notDefined())
         moduleNames = objects.setProperty(String).convention(Providers.notDefined())
         java = objects.newInstance(JavaImpl, objects)
+        jdeps = objects.newInstance(JdepsImpl, objects)
         jdk = objects.newInstance(ArtifactImpl, objects)
         mainJar = objects.newInstance(ArtifactImpl, objects)
         jdk.setName('jdk')
@@ -112,6 +115,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
             copyJars.present ||
             args.present ||
             java.isSet() ||
+            jdeps.isSet() ||
             jdk.isSet() ||
             mainJar.isSet() ||
             !moduleNames.present ||
@@ -125,6 +129,11 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         if (isNotBlank(arg)) {
             args.add(arg.trim())
         }
+    }
+
+    @Override
+    void jdeps(Action<? super Jdeps> action) {
+        action.execute(jdeps)
     }
 
     @Override
@@ -160,6 +169,11 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
     }
 
     @Override
+    void jdeps(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jdeps) Closure<Void> action) {
+        ConfigureUtil.configure(action, jdeps)
+    }
+
+    @Override
     void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, jdk)
     }
@@ -189,6 +203,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         jlink.name = name
         fillProperties(jlink)
         jlink.args = (List<String>) args.getOrElse([])
+        if (jdeps.isSet()) jlink.jdeps = jdeps.toModel()
         if (jdk.isSet()) jlink.jdk = jdk.toModel()
         if (mainJar.isSet()) jlink.mainJar = mainJar.toModel()
         jlink.java = java.toModel()

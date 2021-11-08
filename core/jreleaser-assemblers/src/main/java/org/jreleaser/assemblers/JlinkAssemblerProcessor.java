@@ -254,21 +254,36 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             return assembler.getModuleNames();
         }
 
-        Command cmd = new Command(jdkPath.resolve("bin").resolve("jdeps").toAbsolutePath().toString())
-            .arg("--multi-release")
-            .arg("base")
-            .arg("--ignore-missing-deps")
-            .arg("--print-module-deps");
+        Command cmd = new Command(jdkPath.resolve("bin").resolve("jdeps").toAbsolutePath().toString());
+        String multiRelease = assembler.getJdeps().getMultiRelease();
+        if (isNotBlank(multiRelease)) {
+            cmd.arg("--multi-release")
+                .arg(multiRelease);
+        }
+        if (assembler.getJdeps().isIgnoreMissingDeps()) {
+            cmd.arg("--ignore-missing-deps");
+        }
+        cmd.arg("--print-module-deps");
         for (Path jar : jars) {
             cmd.arg(jar.toAbsolutePath().toString());
         }
 
+        context.getLogger().debug(String.join(" ", cmd.getArgs()));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         executeCommandCapturing(cmd, out);
 
-        return Arrays.stream(out.toString().split(System.lineSeparator()))
+        String output = out.toString().trim();
+        long lineCount = Arrays.stream(output.split(System.lineSeparator()))
             .map(String::trim)
-            .collect(Collectors.toSet());
+            .count();
+
+        if (lineCount == 1) {
+            return Arrays.stream(output.split(System.lineSeparator()))
+                .map(String::trim)
+                .collect(Collectors.toSet());
+        }
+
+        throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", output));
     }
 
     @Override

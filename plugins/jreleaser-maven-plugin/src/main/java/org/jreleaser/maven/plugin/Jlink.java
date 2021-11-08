@@ -33,6 +33,7 @@ public class Jlink extends AbstractJavaAssembler {
     private final Set<String> moduleNames = new LinkedHashSet<>();
     private final List<String> args = new ArrayList<>();
     private final Java java = new Java();
+    private final Jdeps jdeps = new Jdeps();
     private final Artifact jdk = new Artifact();
     private final Artifact mainJar = new Artifact();
     private final List<Glob> jars = new ArrayList<>();
@@ -50,6 +51,7 @@ public class Jlink extends AbstractJavaAssembler {
         this.moduleName = jlink.moduleName;
         this.copyJars = jlink.copyJars;
         setJava(jlink.java);
+        setJdeps(jlink.jdeps);
         setJdk(jlink.jdk);
         setMainJar(jlink.mainJar);
         setTargetJdks(jlink.targetJdks);
@@ -57,6 +59,14 @@ public class Jlink extends AbstractJavaAssembler {
         setArgs(jlink.args);
         setJars(jlink.jars);
         setFiles(jlink.files);
+    }
+
+    public Jdeps getJdeps() {
+        return jdeps;
+    }
+
+    public void setJdeps(Jdeps jdeps) {
+        this.jdeps.setAll(jdeps);
     }
 
     public Artifact getJdk() {

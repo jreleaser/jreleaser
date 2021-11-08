@@ -44,6 +44,8 @@ interface Jlink extends JavaAssembler {
 
     void addArg(String arg)
 
+    void jdeps(Action<? super Jdeps> action)
+
     void jdk(Action<? super Artifact> action)
 
     void mainJar(Action<? super Artifact> action)
@@ -53,6 +55,8 @@ interface Jlink extends JavaAssembler {
     void jars(Action<? super Glob> action)
 
     void files(Action<? super Glob> action)
+
+    void jdeps(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jdeps) Closure<Void> action)
 
     void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 

@@ -42,6 +42,7 @@ public class Jlink extends AbstractJavaAssembler {
     private final Artifact mainJar = new Artifact();
     private final List<Glob> jars = new ArrayList<>();
     private final List<Glob> files = new ArrayList<>();
+    private final Jdeps jdeps = new Jdeps();
 
     private String imageName;
     private String imageNameTransform;
@@ -63,6 +64,7 @@ public class Jlink extends AbstractJavaAssembler {
         this.imageNameTransform = jlink.imageNameTransform;
         this.moduleName = jlink.moduleName;
         this.copyJars = jlink.copyJars;
+        setJdeps(jlink.jdeps);
         setJdk(jlink.jdk);
         setMainJar(jlink.mainJar);
         setTargetJdks(jlink.targetJdks);
@@ -83,6 +85,14 @@ public class Jlink extends AbstractJavaAssembler {
         Map<String, Object> props = context.props();
         props.putAll(props());
         return applyTemplate(imageNameTransform, props);
+    }
+
+    public Jdeps getJdeps() {
+        return jdeps;
+    }
+
+    public void setJdeps(Jdeps jdeps) {
+        this.jdeps.setAll(jdeps);
     }
 
     public Artifact getJdk() {
@@ -252,6 +262,7 @@ public class Jlink extends AbstractJavaAssembler {
         props.put("moduleName", moduleName);
         props.put("moduleNames", moduleNames);
         props.put("args", args);
+        props.put("jdeps", jdeps.asMap(full));
         Map<String, Map<String, Object>> mappedJdks = new LinkedHashMap<>();
         int i = 0;
         for (Artifact targetJdk : getTargetJdks()) {
