@@ -89,9 +89,11 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
 
         if (!Files.exists(nativeImageExecutable)) {
             context.getLogger().debug(RB.$("assembler.graal.install.native.exec"));
-            executeCommand(new Command(graalPath.resolve("bin").resolve("gu").toAbsolutePath().toString())
+            Command cmd = new Command(graalPath.resolve("bin").resolve("gu").toAbsolutePath().toString())
                 .arg("install")
-                .arg("native-image"));
+                .arg("native-image");
+            context.getLogger().debug(String.join(" ", cmd.getArgs()));
+            executeCommand(cmd);
         }
     }
 
@@ -128,6 +130,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
                     .collect(Collectors.joining(File.pathSeparator)));
         }
         cmd.arg("-H:Name=" + image.getFileName().toString());
+        context.getLogger().debug(String.join(" ", cmd.getArgs()));
         executeCommand(image.getParent(), cmd);
 
         try {

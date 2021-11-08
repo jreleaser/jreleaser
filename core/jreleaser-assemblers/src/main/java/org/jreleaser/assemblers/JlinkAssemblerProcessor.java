@@ -85,10 +85,13 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
 
         // resolve module names
         Set<String> moduleNames = resolveModuleNames(context, jdkPath, jars);
+        context.getLogger().debug(RB.$("assembler.resolved.module.names"), moduleNames);
+        if (moduleNames.isEmpty()) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_no_module_names"));
+        }
         if (isNotBlank(assembler.getModuleName())) {
             moduleNames.add(assembler.getModuleName());
         }
-        context.getLogger().debug(RB.$("assembler.resolved.module.names"), moduleNames);
 
         // run jlink x jdk
         String imageName = assembler.getResolvedImageName(context);
@@ -128,7 +131,10 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         }
         cmd.arg("--output")
             .arg(imageDirectory.toString());
-        executeCommand(cmd);
+
+        context.getLogger().debug(String.join(" ", cmd.getArgs()));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        executeCommandCapturing(cmd, out);
 
         if (isBlank(assembler.getModuleName())) {
             // non modular
