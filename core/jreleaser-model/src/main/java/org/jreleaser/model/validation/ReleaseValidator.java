@@ -44,12 +44,14 @@ public abstract class ReleaseValidator extends Validator {
         if (validateCodeberg(context, mode, release.getCodeberg(), errors)) count++;
         if (validateGeneric(context, mode, release.getGeneric(), errors)) count++;
 
-        if (0 == count) {
-            errors.configuration(RB.$("validation_release_no_providers"));
-            return;
-        }
-        if (count > 1) {
-            errors.configuration(RB.$("validation_release_requirement", "release.[github|gitlab|gitea|codeberg|generic]"));
+        if (mode != JReleaserContext.Mode.ASSEMBLE) {
+            if (0 == count) {
+                errors.configuration(RB.$("validation_release_no_providers"));
+                return;
+            }
+            if (count > 1) {
+                errors.configuration(RB.$("validation_release_requirement", "release.[github|gitlab|gitea|codeberg|generic]"));
+            }
         }
     }
 }

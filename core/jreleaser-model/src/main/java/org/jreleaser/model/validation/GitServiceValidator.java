@@ -70,9 +70,13 @@ public abstract class GitServiceValidator extends Validator {
         if (!service.isEnabledSet()) {
             service.setEnabled(true);
         }
-        if (isBlank(service.getOwner()) && !(service instanceof GenericGit)) {
-            errors.configuration(RB.$("validation_must_not_be_blank", service.getServiceName() + ".owner"));
+
+        if (mode != JReleaserContext.Mode.ASSEMBLE) {
+            if (isBlank(service.getOwner()) && !(service instanceof GenericGit)) {
+                errors.configuration(RB.$("validation_must_not_be_blank", service.getServiceName() + ".owner"));
+            }
         }
+
         if (isBlank(service.getName())) {
             service.setName(project.getName());
         }
@@ -89,7 +93,7 @@ public abstract class GitServiceValidator extends Validator {
                 service.getServiceName().toUpperCase() + "_TOKEN",
                 service.getServiceName() + ".token",
                 service.getToken(),
-                errors));
+                mode != JReleaserContext.Mode.ASSEMBLE? errors: new Errors()));
 
         service.setTagName(
             checkProperty(context,
