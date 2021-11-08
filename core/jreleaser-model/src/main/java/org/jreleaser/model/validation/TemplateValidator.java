@@ -42,7 +42,8 @@ public abstract class TemplateValidator extends Validator {
                 !(context.getBasedir().resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
                 errors.configuration(RB.$("validation_directory_not_exist",
                     "distribution." + distribution.getName() + "." + tool.getName() + ".template", tool.getTemplateDirectory()));
-            } else {
+            }
+            if (isBlank(tool.getTemplateDirectory())) {
                 tool.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + tool.getName());
             }
             return;
@@ -52,7 +53,8 @@ public abstract class TemplateValidator extends Validator {
             !(context.getBasedir().resolve(tool.getTemplateDirectory().trim()).toFile().exists())) {
             errors.configuration(RB.$("validation_directory_not_exist",
                 "distribution." + distribution.getName() + "." + tool.getName() + ".template", tool.getTemplateDirectory()));
-        } else {
+        }
+        if (isBlank(tool.getTemplateDirectory())) {
             tool.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + tool.getName());
         }
     }
@@ -62,7 +64,8 @@ public abstract class TemplateValidator extends Validator {
             !(context.getBasedir().resolve(assembler.getTemplateDirectory().trim()).toFile().exists())) {
             errors.configuration(RB.$("validation_directory_not_exist",
                 assembler.getType() + "." + assembler.getName() + ".template", assembler.getTemplateDirectory()));
-        } else {
+        }
+        if (isBlank(assembler.getTemplateDirectory())) {
             assembler.setTemplateDirectory("src/jreleaser/assemblers/" + assembler.getName() + "/" + assembler.getType());
         }
     }
@@ -73,7 +76,8 @@ public abstract class TemplateValidator extends Validator {
             !(context.getBasedir().resolve(spec.getTemplateDirectory().trim()).toFile().exists())) {
             errors.configuration(RB.$("validation_directory_not_exist",
                 "distribution." + distribution.getName() + ".docker." + spec.getName() + ".template", spec.getTemplateDirectory()));
-        } else {
+        }
+        if (isBlank(spec.getTemplateDirectory())) {
             spec.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + spec.getName() + "/" + docker.getName());
         }
     }
