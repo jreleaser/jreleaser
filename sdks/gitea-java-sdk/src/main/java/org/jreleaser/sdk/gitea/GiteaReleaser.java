@@ -60,6 +60,13 @@ public class GiteaReleaser extends AbstractReleaser {
         String tagName = gitea.getEffectiveTagName(context.getModel());
 
         try {
+            String branch = gitea.getBranch();
+            List<String> branchNames = GitSdk.of(context)
+                .getLocalBranchNames();
+            if (!branchNames.contains(branch)) {
+                throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
+            }
+
             String changelog = context.getChangelog();
 
             Gitea api = new Gitea(context.getLogger(),

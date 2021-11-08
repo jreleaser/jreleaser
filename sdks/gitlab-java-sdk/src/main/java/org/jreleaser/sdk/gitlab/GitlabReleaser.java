@@ -59,6 +59,13 @@ public class GitlabReleaser extends AbstractReleaser {
         String tagName = gitlab.getEffectiveTagName(context.getModel());
 
         try {
+            String branch = gitlab.getBranch();
+            List<String> branchNames = GitSdk.of(context)
+                .getLocalBranchNames();
+            if (!branchNames.contains(branch)) {
+                throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
+            }
+
             String changelog = context.getChangelog();
 
             Gitlab api = new Gitlab(context.getLogger(),

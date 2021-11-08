@@ -39,6 +39,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -126,6 +127,19 @@ public class GitSdk {
                 uri.toString());
         } catch (GitAPIException e) {
             throw new IOException(RB.$("ERROR_git_repository_origin_remote"), e);
+        }
+    }
+
+    public List<String> getLocalBranchNames() throws IOException {
+        Git git = open();
+
+        try {
+            return git.branchList()
+                .call().stream()
+                .map(GitSdk::extractHeadName)
+                .collect(toList());
+        } catch (GitAPIException e) {
+            throw new IOException(RB.$("ERROR_git_repository_list_local_branch"), e);
         }
     }
 
