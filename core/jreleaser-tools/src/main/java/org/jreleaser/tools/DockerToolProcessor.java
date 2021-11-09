@@ -393,19 +393,19 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
 
         if (tool.getActiveSpecs().isEmpty()) {
             for (String imageName : tool.getImageNames()) {
-                copyDockerfiles(packageDirectory, applyTemplate(imageName, props), directory);
+                copyDockerfiles(packageDirectory, applyTemplate(imageName, props), directory, tool);
             }
         } else {
             for (DockerSpec spec : tool.getActiveSpecs()) {
                 Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
                 for (String imageName : spec.getImageNames()) {
-                    copyDockerfiles(packageDirectory.resolve(spec.getName()), applyTemplate(imageName, newProps), directory);
+                    copyDockerfiles(packageDirectory.resolve(spec.getName()), applyTemplate(imageName, newProps), directory, spec);
                 }
             }
         }
     }
 
-    private void copyDockerfiles(Path source, String imageName, Path directory) throws IOException {
+    private void copyDockerfiles(Path source, String imageName, Path directory, DockerConfiguration docker) throws IOException {
         Path destination = directory;
 
         if (tool.getRepository().isVersionedSubfolders()) {
@@ -424,5 +424,10 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
 
         Files.createDirectories(destination);
         prepareWorkingCopy(source, destination);
+
+        if (!docker.isUseLocalArtifact()) {
+            Path assembly = destination.resolve("assembly");
+            FileUtils.deleteFiles(assembly);
+        }
     }
 }
