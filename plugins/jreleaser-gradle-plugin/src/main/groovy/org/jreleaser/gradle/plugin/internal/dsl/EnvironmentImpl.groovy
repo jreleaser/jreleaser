@@ -23,6 +23,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.dsl.Environment
 
 import javax.inject.Inject
@@ -49,9 +50,32 @@ class EnvironmentImpl implements Environment {
 
     org.jreleaser.model.Environment toModel(Project project) {
         org.jreleaser.model.Environment environment = new org.jreleaser.model.Environment()
-        environment.propertiesSource = new org.jreleaser.model.Environment.MapPropertiesSource(project.properties)
+        environment.propertiesSource = new org.jreleaser.model.Environment.MapPropertiesSource(
+            filterProperties(project.properties))
         if (variables.present) environment.variables = variables.asFile.get().absolutePath
         if (properties.present) environment.properties.putAll(properties.get())
         environment
+    }
+
+    private Map<String, ?> filterProperties(Map<String, ?> inputs) {
+        Map<String, ?> outputs = [:]
+
+        inputs.each { key, value ->
+            if (key.startsWith('systemProp') || key.startsWith('VISITED_org_kordamp_gradle')) return
+
+            def val = value
+            if (value instanceof Provider) {
+                val = ((Provider) value).get()
+            }
+
+            if (value instanceof CharSequence ||
+                value instanceof Number ||
+                value instanceof Boolean ||
+                value instanceof File) {
+                outputs.put(key, val)
+            }
+        }
+
+        outputs
     }
 }

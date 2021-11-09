@@ -225,7 +225,8 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     JReleaserModel toModel(org.gradle.api.Project gradleProject, JReleaserLogger logger) {
         if (configFile.present) {
             JReleaserModel jreleaser = ContextCreator.resolveModel(logger, configFile.asFile.get().toPath())
-            jreleaser.environment.propertiesSource = new org.jreleaser.model.Environment.MapPropertiesSource(project.properties)
+            jreleaser.environment.propertiesSource = new org.jreleaser.model.Environment.MapPropertiesSource(
+                filterProperties(project.properties))
             return jreleaser
         }
 
@@ -242,5 +243,27 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.files = files.toModel()
         distributions.each { jreleaser.addDistribution(it.toModel()) }
         jreleaser
+    }
+
+    private Map<String, ?> filterProperties(Map<String, ?> inputs) {
+        Map<String, ?> outputs = [:]
+
+        inputs.each { key, value ->
+            if (key.startsWith('systemProp') || key.startsWith('VISITED_org_kordamp_gradle')) return
+
+            def val = value
+            if (value instanceof Provider) {
+                val = ((Provider) value).get()
+            }
+
+            if (value instanceof CharSequence ||
+                value instanceof Number ||
+                value instanceof Boolean ||
+                value instanceof File) {
+                outputs.put(key, val)
+            }
+        }
+
+        outputs
     }
 }
