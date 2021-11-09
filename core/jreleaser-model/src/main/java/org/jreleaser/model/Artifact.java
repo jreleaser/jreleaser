@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 import static java.nio.file.Files.exists;
 import static org.jreleaser.model.util.Artifacts.checkAndCopyFile;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.model.util.Artifacts.resolveForArtifact;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -91,9 +91,7 @@ public class Artifact implements Domain, ExtraProperties {
 
     public Path getResolvedPath(JReleaserContext context, Path basedir, boolean checkIfExists) {
         if (null == resolvedPath) {
-            if (path.contains("{{")) {
-                path = applyTemplate(path, artifactProps(context.props()));
-            }
+            path = resolveForArtifact(path, context, this);
             resolvedPath = basedir.resolve(Paths.get(path)).normalize();
             if (checkIfExists && !exists(resolvedPath)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
@@ -108,11 +106,7 @@ public class Artifact implements Domain, ExtraProperties {
 
     public Path getResolvedPath(JReleaserContext context, Distribution distribution) {
         if (null == resolvedPath) {
-            if (path.contains("{{")) {
-                Map<String, Object> props = context.props();
-                props.putAll(distribution.props());
-                path = applyTemplate(path, artifactProps(props));
-            }
+            path = resolveForArtifact(path, context, this, distribution);
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
@@ -123,11 +117,7 @@ public class Artifact implements Domain, ExtraProperties {
 
     public Path getResolvedPath(JReleaserContext context, Assembler assembler) {
         if (null == resolvedPath) {
-            if (path.contains("{{")) {
-                Map<String, Object> props = context.props();
-                props.putAll(assembler.props());
-                path = applyTemplate(path, artifactProps(props));
-            }
+            path = resolveForArtifact(path, context, this, assembler);
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (!exists(resolvedPath)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
@@ -142,9 +132,7 @@ public class Artifact implements Domain, ExtraProperties {
 
     public Path getResolvedTransform(JReleaserContext context, Path basedir) {
         if (null == resolvedTransform && isNotBlank(transform)) {
-            if (transform.contains("{{")) {
-                transform = applyTemplate(transform, artifactProps(context.props()));
-            }
+            transform = resolveForArtifact(transform, context, this);
             resolvedTransform = basedir.resolve(Paths.get(transform)).normalize();
         }
         return resolvedTransform;
@@ -156,11 +144,7 @@ public class Artifact implements Domain, ExtraProperties {
 
     public Path getResolvedTransform(JReleaserContext context, Distribution distribution) {
         if (null == resolvedTransform && isNotBlank(transform)) {
-            if (transform.contains("{{")) {
-                Map<String, Object> props = context.props();
-                props.putAll(distribution.props());
-                transform = applyTemplate(transform, artifactProps(props));
-            }
+            transform = resolveForArtifact(transform, context, this, distribution);
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
         }
         return resolvedTransform;
@@ -168,22 +152,10 @@ public class Artifact implements Domain, ExtraProperties {
 
     public Path getResolvedTransform(JReleaserContext context, Assembler assembler) {
         if (null == resolvedTransform && isNotBlank(transform)) {
-            if (transform.contains("{{")) {
-                Map<String, Object> props = context.props();
-                props.putAll(assembler.props());
-                transform = applyTemplate(transform, artifactProps(props));
-            }
+            transform = resolveForArtifact(transform, context, this, assembler);
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
         }
         return resolvedTransform;
-    }
-
-    private Map<String, Object> artifactProps(Map<String, Object> props) {
-        props.putAll(getExtraProperties());
-        props.putAll(getResolvedExtraProperties());
-        props.put("platform", platform);
-        props.put("artifactPlatform", platform);
-        return props;
     }
 
     public Path getResolvedTransform() {

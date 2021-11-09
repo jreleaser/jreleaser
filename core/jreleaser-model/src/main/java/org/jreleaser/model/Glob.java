@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.Files.exists;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -93,6 +92,8 @@ public class Glob implements Domain, ExtraProperties {
 
     public Set<Artifact> getResolvedArtifactsPattern(JReleaserContext context) {
         if (null == artifacts) {
+            setPattern(Artifacts.resolveForGlob(getPattern(), context, this));
+            normalizePattern();
             artifacts = Artifacts.resolveFiles(context, resolveDirectory(context), Collections.singletonList(pattern));
             artifacts.forEach(artifact -> {
                 if (context.isPlatformSelected(artifact)) artifact.activate();
@@ -107,9 +108,7 @@ public class Glob implements Domain, ExtraProperties {
         // resolve directory
         Path path = context.getBasedir();
         if (isNotBlank(directory)) {
-            if (directory.contains("{{")) {
-                directory = applyTemplate(directory, context.props());
-            }
+            directory = Artifacts.resolveForGlob(directory, context, this);
             path = context.getBasedir().resolve(Paths.get(directory)).normalize();
             if (!exists(path)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(path)));
@@ -125,9 +124,7 @@ public class Glob implements Domain, ExtraProperties {
             // resolve directory
             Path path = context.getBasedir();
             if (isNotBlank(directory)) {
-                if (directory.contains("{{")) {
-                    directory = applyTemplate(directory, context.props());
-                }
+                directory = Artifacts.resolveForGlob(directory, context, this);
                 path = context.getBasedir().resolve(Paths.get(directory)).normalize();
                 if (!exists(path)) {
                     throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(path)));
@@ -162,11 +159,12 @@ public class Glob implements Domain, ExtraProperties {
 
     public void setPattern(String pattern) {
         if (isBlank(pattern)) return;
+        this.pattern = pattern.trim();
+    }
 
-        if (pattern.startsWith(GLOB_PREFIX) || pattern.startsWith(REGEX_PREFIX)) {
-            this.pattern = pattern.trim();
-        } else {
-            this.pattern = GLOB_PREFIX + pattern.trim();
+    private void normalizePattern() {
+        if (!pattern.startsWith(GLOB_PREFIX) && !pattern.startsWith(REGEX_PREFIX)) {
+            this.pattern = GLOB_PREFIX + pattern;
         }
 
         if (this.pattern.startsWith(GLOB_PREFIX)) {

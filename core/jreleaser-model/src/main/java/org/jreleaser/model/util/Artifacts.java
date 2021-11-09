@@ -19,6 +19,9 @@ package org.jreleaser.model.util;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
+import org.jreleaser.model.Assembler;
+import org.jreleaser.model.Distribution;
+import org.jreleaser.model.FileSet;
 import org.jreleaser.model.Files;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
@@ -45,12 +48,80 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Artifacts {
+    private static String resolve(String input, Map<String, Object> props) {
+        if (isBlank(input)) return input;
+
+        int count = 0;
+
+        while (input.contains("{{")) {
+            input = applyTemplate(input, props);
+            count++;
+
+            if (input.contains("{{") && count >= 10) {
+                throw new JReleaserException(RB.$("ERROR_input_can_not_resolve", input));
+            }
+        }
+
+        return input;
+    }
+
+    public static String resolveForArtifact(String input, JReleaserContext context) {
+        return resolve(input, context.props());
+    }
+
+    public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact) {
+        return resolve(input, artifactProps(artifact, context.props()));
+    }
+
+    public static String resolveForGlob(String input, JReleaserContext context, Glob glob) {
+        return resolve(input, globProps(glob, context.props()));
+    }
+
+    public static String resolveForFileSet(String input, JReleaserContext context, FileSet fileSet) {
+        return resolve(input, fileSetProps(fileSet, context.props()));
+    }
+
+    public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Distribution distribution) {
+        Map<String, Object> props = context.props();
+        props.putAll(distribution.props());
+        props = artifactProps(artifact, props);
+        return resolve(input, props);
+    }
+
+    public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Assembler assembler) {
+        Map<String, Object> props = context.props();
+        props.putAll(assembler.props());
+        props = artifactProps(artifact, props);
+        return resolve(input, props);
+    }
+
+    public static Map<String, Object> artifactProps(Artifact artifact, Map<String, Object> props) {
+        props.putAll(artifact.getExtraProperties());
+        props.putAll(artifact.getResolvedExtraProperties());
+        props.put("platform", artifact.getPlatform());
+        props.put("artifactPlatform", artifact.getPlatform());
+        return props;
+    }
+
+    public static Map<String, Object> globProps(Glob glob, Map<String, Object> props) {
+        props.putAll(glob.getExtraProperties());
+        props.putAll(glob.getResolvedExtraProperties());
+        return props;
+    }
+
+    public static Map<String, Object> fileSetProps(FileSet fileSet, Map<String, Object> props) {
+        props.putAll(fileSet.getExtraProperties());
+        props.putAll(fileSet.getResolvedExtraProperties());
+        return props;
+    }
+
     public static Path checkAndCopyFile(JReleaserContext context, Path src, Path dest) throws JReleaserException {
         if (null == dest) return src;
 
