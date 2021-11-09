@@ -115,6 +115,20 @@ public class JReleaserContext {
             .filter(PlatformUtils::isSupported)
             .collect(Collectors.toList()));
 
+        try {
+            logger.increaseIndent();
+            logger.debug("- " + Constants.KEY_BASE_OUTPUT_DIRECTORY + " set to " + getOutputDirectory().getParent());
+            logger.debug("- " + Constants.KEY_OUTPUT_DIRECTORY + " set to " + getOutputDirectory());
+            logger.debug("- " + Constants.KEY_CHECKSUMS_DIRECTORY + " set to " + getChecksumsDirectory());
+            logger.debug("- " + Constants.KEY_SIGNATURES_DIRECTORY + " set to " + getSignaturesDirectory());
+            logger.debug("- " + Constants.KEY_PREPARE_DIRECTORY + " set to " + getPrepareDirectory());
+            logger.debug("- " + Constants.KEY_PACKAGE_DIRECTORY + " set to " + getPackageDirectory());
+            logger.debug("- " + Constants.KEY_ASSEMBLE_DIRECTORY + " set to " + getAssembleDirectory());
+            logger.debug("- " + Constants.KEY_ARTIFACTS_DIRECTORY + " set to " + getArtifactsDirectory());
+        } finally {
+            logger.decreaseIndent();
+        }
+
         List<String> unmatchedPlatforms = new ArrayList<>(selectedPlatforms);
         unmatchedPlatforms.removeAll(this.selectedPlatforms);
         if (!unmatchedPlatforms.isEmpty()) {
@@ -390,6 +404,7 @@ public class JReleaserContext {
 
     public Map<String, Object> props() {
         Map<String, Object> props = new LinkedHashMap<>(model.props());
+        props.put(Constants.KEY_BASE_OUTPUT_DIRECTORY, getOutputDirectory().getParent());
         props.put(Constants.KEY_OUTPUT_DIRECTORY, getOutputDirectory());
         props.put(Constants.KEY_CHECKSUMS_DIRECTORY, getChecksumsDirectory());
         props.put(Constants.KEY_SIGNATURES_DIRECTORY, getSignaturesDirectory());

@@ -195,6 +195,7 @@ public interface Constants {
     String KEY_SNAP_REPO_CLONE_URL = "snapRepoCloneUrl";
 
     // Directories
+    String KEY_BASE_OUTPUT_DIRECTORY = "baseOutputDirectory";
     String KEY_OUTPUT_DIRECTORY = "outputDirectory";
     String KEY_CHECKSUMS_DIRECTORY = "checksumDirectory";
     String KEY_SIGNATURES_DIRECTORY = "signaturesDirectory";
