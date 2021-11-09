@@ -144,6 +144,13 @@ public abstract class DockerValidator extends Validator {
 
         validateRegistries(context, tool, parentTool, errors, element);
 
+        if (!tool.isUseLocalArtifactSet() && parentTool.isUseLocalArtifactSet()) {
+            tool.setUseLocalArtifact(parentTool.isUseLocalArtifact());
+        }
+        if (distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {
+            tool.setUseLocalArtifact(true);
+        }
+
         for (Map.Entry<String, DockerSpec> e : tool.getSpecs().entrySet()) {
             DockerSpec spec = e.getValue();
             if (isBlank(spec.getName())) {
@@ -195,6 +202,13 @@ public abstract class DockerValidator extends Validator {
 
         if (artifactCount > 1 && spec.getMatchers().isEmpty()) {
             errors.configuration(RB.$("validation_must_not_be_empty", element + ".matchers"));
+        }
+
+        if (!spec.isUseLocalArtifactSet() && docker.isUseLocalArtifactSet()) {
+            spec.setUseLocalArtifact(docker.isUseLocalArtifact());
+        }
+        if (distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {
+            spec.setUseLocalArtifact(true);
         }
     }
 

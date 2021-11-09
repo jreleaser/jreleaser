@@ -157,7 +157,11 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
                     cmd.arg("-q");
                 }
                 cmd.arg("-f");
-                cmd.arg(workingDirectory.resolve("Dockerfile").toAbsolutePath().toString());
+                String dockerfile = "Dockerfile";
+                if (!docker.isUseLocalArtifact()) {
+                    dockerfile += "-remote";
+                }
+                cmd.arg(workingDirectory.resolve(dockerfile).toAbsolutePath().toString());
                 cmd.arg("-t");
                 cmd.arg(imageName);
                 cmd.arg(workingDirectory.toAbsolutePath().toString());

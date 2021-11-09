@@ -41,6 +41,8 @@ interface DockerConfiguration extends ExtraProperties {
 
     Property<String> getBaseImage()
 
+    Property<Boolean> getUseLocalArtifact()
+
     SetProperty<String> getImageNames()
 
     ListProperty<String> getBuildArgs()

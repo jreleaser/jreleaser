@@ -57,4 +57,10 @@ public interface DockerConfiguration extends ExtraProperties, Activatable {
     Set<Registry> getRegistries();
 
     void setRegistries(Set<Registry> registries);
+
+    void setUseLocalArtifact(Boolean useLocalArtifact);
+
+    boolean isUseLocalArtifact();
+
+    boolean isUseLocalArtifactSet();
 }

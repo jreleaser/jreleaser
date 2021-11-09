@@ -45,6 +45,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     final DirectoryProperty templateDirectory
     final MapProperty<String, Object> extraProperties
     final Property<String> baseImage
+    final Property<Boolean> useLocalArtifact
     final SetProperty<String> imageNames
     final ListProperty<String> buildArgs
     final ListProperty<String> preCommands
@@ -59,6 +60,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
         baseImage = objects.property(String).convention(Providers.notDefined())
+        useLocalArtifact = objects.property(Boolean).convention(Providers.notDefined())
         imageNames = objects.setProperty(String).convention(Providers.notDefined())
         buildArgs = objects.listProperty(String).convention(Providers.notDefined())
         preCommands = objects.listProperty(String).convention(Providers.notDefined())
@@ -116,6 +118,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
             templateDirectory.present ||
             extraProperties.present ||
             baseImage.present ||
+            useLocalArtifact.present ||
             imageNames.present ||
             buildArgs.present ||
             preCommands.present ||
@@ -131,6 +134,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         }
         if (extraProperties.present) docker.extraProperties.putAll(extraProperties.get())
         if (baseImage.present) docker.baseImage = baseImage.get()
+        if (useLocalArtifact.present) docker.useLocalArtifact = useLocalArtifact.get()
         if (imageNames.present) docker.imageNames.addAll(imageNames.get())
         if (buildArgs.present) docker.buildArgs.addAll(buildArgs.get())
         if (preCommands.present) docker.preCommands.addAll(preCommands.get())

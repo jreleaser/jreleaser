@@ -41,6 +41,7 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
     protected boolean enabled;
     protected Active active;
     protected String templateDirectory;
+    protected Boolean useLocalArtifact;
 
     protected String baseImage;
 
@@ -50,6 +51,7 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
         this.templateDirectory = docker.templateDirectory;
         setExtraProperties(docker.extraProperties);
         this.baseImage = docker.baseImage;
+        this.useLocalArtifact = docker.useLocalArtifact;
         setImageNames(docker.imageNames);
         setBuildArgs(docker.buildArgs);
         setPreCommands(docker.preCommands);
@@ -180,9 +182,25 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
         this.extraProperties.putAll(extraProperties);
     }
 
+    @Override
+    public void setUseLocalArtifact(Boolean useLocalArtifact) {
+        this.useLocalArtifact = useLocalArtifact;
+    }
+
+    @Override
+    public boolean isUseLocalArtifact() {
+        return useLocalArtifact == null || useLocalArtifact;
+    }
+
+    @Override
+    public boolean isUseLocalArtifactSet() {
+        return useLocalArtifact != null;
+    }
+
     public boolean isSet() {
         return null != active ||
             null != templateDirectory ||
+            null != useLocalArtifact ||
             !extraProperties.isEmpty() ||
             isNotBlank(baseImage) ||
             !imageNames.isEmpty() ||

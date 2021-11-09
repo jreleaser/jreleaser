@@ -75,4 +75,10 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
     void setRegistries(Set<Registry> registries);
 
     void addRegistry(Registry registry);
+
+    void setUseLocalArtifact(Boolean useLocalArtifact);
+
+    boolean isUseLocalArtifact();
+
+    boolean isUseLocalArtifactSet();
 }
