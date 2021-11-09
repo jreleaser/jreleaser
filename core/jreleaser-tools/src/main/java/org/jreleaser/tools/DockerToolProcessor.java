@@ -70,6 +70,13 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
         if (tool.getActiveSpecs().isEmpty()) {
             super.doPrepareDistribution(distribution, props, distributionName,
                 prepareDirectory, templateDirectory, toolName);
+
+            if (!tool.isUseLocalArtifact()) {
+                Files.move(prepareDirectory.resolve("Dockerfile-remote"),
+                    prepareDirectory.resolve("Dockerfile"),
+                    REPLACE_EXISTING);
+            }
+
             return;
         }
 
@@ -89,6 +96,12 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
             prepareDirectory.resolve(spec.getName()),
             spec.getTemplateDirectory(),
             spec.getName() + "/" + tool.getName());
+
+        if (!spec.isUseLocalArtifact()) {
+            Files.move(prepareDirectory.resolve(spec.getName()).resolve("Dockerfile-remote"),
+                prepareDirectory.resolve(spec.getName()).resolve("Dockerfile"),
+                REPLACE_EXISTING);
+        }
     }
 
     private Map<String, Object> fillSpecProps(Distribution distribution, Map<String, Object> props, DockerSpec spec) throws ToolProcessingException {
@@ -157,11 +170,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
                     cmd.arg("-q");
                 }
                 cmd.arg("-f");
-                String dockerfile = "Dockerfile";
-                if (!docker.isUseLocalArtifact()) {
-                    dockerfile += "-remote";
-                }
-                cmd.arg(workingDirectory.resolve(dockerfile).toAbsolutePath().toString());
+                cmd.arg(workingDirectory.resolve("Dockerfile").toAbsolutePath().toString());
                 cmd.arg("-t");
                 cmd.arg(imageName);
                 cmd.arg(workingDirectory.toAbsolutePath().toString());
