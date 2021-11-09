@@ -150,11 +150,12 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
     protected void copyFileSets(JReleaserContext context, Path destination) throws AssemblerProcessingException {
         try {
             for (FileSet fileSet : assembler.getFileSets()) {
-                Path src = context.getBasedir().resolve(fileSet.getInput());
+                Path src = context.getBasedir().resolve(fileSet.getResolvedInput(context));
                 Path dest = destination;
 
-                if (isNotBlank(fileSet.getOutput())) {
-                    dest = destination.resolve(fileSet.getOutput());
+                String output = fileSet.getResolvedOutput(context);
+                if (isNotBlank(output)) {
+                    dest = destination.resolve(output);
                 }
 
                 if (!FileUtils.copyFilesRecursive(context.getLogger(), src, dest, filter(fileSet))) {
@@ -169,11 +170,11 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
 
     private Predicate<Path> filter(final FileSet fileSet) {
         return new Predicate<Path>() {
-            private final Set<Pattern> includes = fileSet.getIncludes().stream()
+            private final Set<Pattern> includes = fileSet.getResolvedIncludes(context).stream()
                 .map(StringUtils::toSafePattern)
                 .collect(Collectors.toSet());
 
-            private final Set<Pattern> excludes = fileSet.getExcludes().stream()
+            private final Set<Pattern> excludes = fileSet.getResolvedExcludes(context).stream()
                 .map(StringUtils::toSafePattern)
                 .collect(Collectors.toSet());
 

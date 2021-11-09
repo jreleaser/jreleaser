@@ -27,6 +27,7 @@ import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
+import org.jreleaser.util.StringUtils;
 import org.jreleaser.util.Version;
 import org.jreleaser.util.command.Command;
 
@@ -290,6 +291,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         if (lineCount == 1) {
             return Arrays.stream(output.split(System.lineSeparator()))
                 .map(String::trim)
+                .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toSet());
         }
 

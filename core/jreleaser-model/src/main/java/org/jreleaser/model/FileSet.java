@@ -22,11 +22,15 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
+import static org.jreleaser.model.util.Artifacts.resolveForFileSet;
+
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
-public class FileSet implements Domain {
+public class FileSet implements Domain, ExtraProperties {
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<String> includes = new LinkedHashSet<>();
     private final Set<String> excludes = new LinkedHashSet<>();
 
@@ -38,6 +42,32 @@ public class FileSet implements Domain {
         this.output = fileSet.output;
         setIncludes(fileSet.includes);
         setExcludes(fileSet.excludes);
+        setExtraProperties(fileSet.extraProperties);
+    }
+
+    @Override
+    public String getPrefix() {
+        return "artifact";
+    }
+
+    public String getResolvedInput(JReleaserContext context) {
+        return resolveForFileSet(input, context, this);
+    }
+
+    public String getResolvedOutput(JReleaserContext context) {
+        return resolveForFileSet(output, context, this);
+    }
+
+    public Set<String> getResolvedIncludes(JReleaserContext context) {
+        return includes.stream()
+            .map(s -> resolveForFileSet(s, context, this))
+            .collect(toSet());
+    }
+
+    public Set<String> getResolvedExcludes(JReleaserContext context) {
+        return excludes.stream()
+            .map(s -> resolveForFileSet(s, context, this))
+            .collect(toSet());
     }
 
     public Set<String> getIncludes() {
@@ -75,12 +105,29 @@ public class FileSet implements Domain {
     }
 
     @Override
+    public Map<String, Object> getExtraProperties() {
+        return extraProperties;
+    }
+
+    @Override
+    public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
+    public void addExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("input", input);
         props.put("output", output);
         props.put("includes", includes);
         props.put("excludes", excludes);
+        props.put("extraProperties", getResolvedExtraProperties());
         return props;
     }
 }

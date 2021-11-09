@@ -27,7 +27,7 @@ import org.gradle.api.provider.SetProperty
  * @since 0.8.0
  */
 @CompileStatic
-interface FileSet {
+interface FileSet extends ExtraProperties {
     Property<String> getInput()
 
     Property<String> getOutput()

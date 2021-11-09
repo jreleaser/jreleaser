@@ -17,14 +17,17 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
-public class FileSet {
+public class FileSet implements ExtraProperties {
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<String> includes = new LinkedHashSet<>();
     private final Set<String> excludes = new LinkedHashSet<>();
 
@@ -36,6 +39,7 @@ public class FileSet {
         this.output = fileSet.output;
         setIncludes(fileSet.includes);
         setExcludes(fileSet.excludes);
+        setExtraProperties(fileSet.extraProperties);
     }
 
     public Set<String> getIncludes() {
@@ -70,5 +74,16 @@ public class FileSet {
 
     public void setOutput(String output) {
         this.output = output;
+    }
+
+    @Override
+    public Map<String, Object> getExtraProperties() {
+        return extraProperties;
+    }
+
+    @Override
+    public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
+        this.extraProperties.putAll(extraProperties);
     }
 }

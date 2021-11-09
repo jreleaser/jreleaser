@@ -734,6 +734,7 @@ public final class JReleaserModelConverter {
         f.setOutput(fileSet.getOutput());
         f.setIncludes(fileSet.getIncludes());
         f.setExcludes(fileSet.getExcludes());
+        f.setExtraProperties(fileSet.getExtraProperties());
         return f;
     }
 
@@ -990,6 +991,7 @@ public final class JReleaserModelConverter {
         d.setPostCommands(docker.getPostCommands());
         d.setLabels(docker.getLabels());
         d.setRegistries(convertRegistries(docker.getRegistries()));
+        if (docker.isUseLocalArtifactSet()) d.setUseLocalArtifact(docker.isUseLocalArtifact());
     }
 
     private static org.jreleaser.model.DockerRepository convertDockerRepository(DockerRepository tap) {

@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.internal.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.FileSet
@@ -40,6 +41,7 @@ class FileSetImpl implements FileSet {
     final Property<String> output
     final SetProperty<String> includes
     final SetProperty<String> excludes
+    final MapProperty<String, Object> extraProperties
 
     @Inject
     FileSetImpl(ObjectFactory objects) {
@@ -47,6 +49,7 @@ class FileSetImpl implements FileSet {
         output = objects.property(String).convention(Providers.notDefined())
         includes = objects.setProperty(String).convention(Providers.notDefined())
         excludes = objects.setProperty(String).convention(Providers.notDefined())
+        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
     void include(String str) {
@@ -62,11 +65,12 @@ class FileSetImpl implements FileSet {
     }
 
     org.jreleaser.model.FileSet toModel() {
-        org.jreleaser.model.FileSet f = new org.jreleaser.model.FileSet()
-        if (input.present) f.input = input.get()
-        if (output.present) f.output = output.get()
-        f.includes = (Set<String>) includes.getOrElse([] as Set<String>)
-        f.includes = (Set<String>) includes.getOrElse([] as Set<String>)
-        f
+        org.jreleaser.model.FileSet fileSet = new org.jreleaser.model.FileSet()
+        if (input.present) fileSet.input = input.get()
+        if (output.present) fileSet.output = output.get()
+        fileSet.includes = (Set<String>) includes.getOrElse([] as Set<String>)
+        fileSet.includes = (Set<String>) includes.getOrElse([] as Set<String>)
+        if (extraProperties.present) fileSet.extraProperties.putAll(extraProperties.get())
+        fileSet
     }
 }
