@@ -120,10 +120,10 @@ public class Template extends AbstractCommand {
                 .generate();
 
             if (null != output && !quiet) {
-                logger.info(bundle.getString("jreleaser.template.TEXT_success"), output.toAbsolutePath());
+                logger.info($("jreleaser.template.TEXT_success"), output.toAbsolutePath());
             }
         } catch (TemplateGenerationException e) {
-            throw new JReleaserException(bundle.getString("ERROR_unexpected_error"), e);
+            throw new JReleaserException($("ERROR_unexpected_error"), e);
         }
     }
 

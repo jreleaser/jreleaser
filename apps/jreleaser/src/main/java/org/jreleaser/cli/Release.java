@@ -214,9 +214,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
     private void basedir() {
         actualBasedir = null != basedir ? basedir : Paths.get(".").normalize();
         if (!Files.exists(actualBasedir)) {
-            throw halt(String.format(
-                bundle.getString("ERROR_missing_required_option"),
-                "--basedir=<basedir>"));
+            throw halt($("ERROR_missing_required_option", "--basedir=<basedir>"));
         }
     }
 

@@ -71,8 +71,7 @@ public class Init extends AbstractCommand {
                 spec.commandLine().getErr()
                     .println(spec.commandLine()
                         .getColorScheme()
-                        .errorText(String.format(
-                            bundle.getString("jreleaser.init.ERROR_invalid_format"),
+                        .errorText($("jreleaser.init.ERROR_invalid_format",
                             String.join("|", getSupportedConfigFormats())))
                     );
                 spec.commandLine().usage(parent.out);
@@ -95,22 +94,20 @@ public class Init extends AbstractCommand {
             LocalDate now = LocalDate.now();
             content = content.replaceAll("@year@", now.getYear() + "");
 
-            logger.info(bundle.getString("jreleaser.init.TEXT_writing_file"), outputFile.toAbsolutePath());
+            logger.info($("jreleaser.init.TEXT_writing_file"), outputFile.toAbsolutePath());
 
             try {
                 Files.write(outputFile, content.getBytes(), (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
             } catch (FileAlreadyExistsException e) {
-                logger.error(bundle.getString("jreleaser.init.ERROR_file_exists"), outputFile.toAbsolutePath());
+                logger.error($("jreleaser.init.ERROR_file_exists"), outputFile.toAbsolutePath());
                 return;
             }
 
             if (!quiet) {
-                logger.info(String.format(
-                    bundle.getString("jreleaser.init.TEXT_success"),
-                    outputDirectory.toAbsolutePath()));
+                logger.info($("jreleaser.init.TEXT_success"), outputDirectory.toAbsolutePath());
             }
         } catch (IllegalStateException | IOException e) {
-            throw new JReleaserException(bundle.getString("ERROR_unexpected_error"), e);
+            throw new JReleaserException($("ERROR_unexpected_error"), e);
         }
     }
 

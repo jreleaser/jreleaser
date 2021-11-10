@@ -106,7 +106,7 @@ abstract class AbstractCommand extends BaseCommand implements Callable<Integer> 
             return new PrintWriter(new FileOutputStream(
                 getOutputDirectory().resolve("trace.log").toFile()));
         } catch (IOException e) {
-            throw new IllegalStateException(bundle.getString("ERROR_trace_file_init"), e);
+            throw new IllegalStateException($("ERROR_trace_file_init"), e);
         }
     }
 

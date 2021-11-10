@@ -72,9 +72,9 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         initLogger();
         logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
         JReleaserVersion.banner(logger.getTracer(), false);
-        logger.info(bundle.getString("TEXT_config_file"), actualConfigFile);
+        logger.info($("TEXT_config_file"), actualConfigFile);
         logger.increaseIndent();
-        logger.info(bundle.getString("TEXT_basedir_set"), actualBasedir.toAbsolutePath());
+        logger.info($("TEXT_basedir_set"), actualBasedir.toAbsolutePath());
         logger.decreaseIndent();
         doExecute(createContext());
     }
@@ -95,8 +95,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
             spec.commandLine().getErr()
                 .println(spec.commandLine()
                     .getColorScheme()
-                    .errorText(String.format(
-                        bundle.getString("ERROR_missing_config_file"),
+                    .errorText($("ERROR_missing_config_file",
                         String.join("|", getSupportedConfigFormats())
                     )));
             spec.commandLine().usage(parent.out);
@@ -122,9 +121,8 @@ public abstract class AbstractModelCommand extends AbstractCommand {
         actualBasedir = null != basedir ? basedir : actualConfigFile.toAbsolutePath().getParent();
         if (!Files.exists(actualBasedir)) {
             spec.commandLine().getErr()
-                .println(spec.commandLine().getColorScheme().errorText(String.format(
-                    bundle.getString("ERROR_missing_required_option"),
-                    "--basedir=<basedir>")));
+                .println(spec.commandLine().getColorScheme().errorText(
+                    $("ERROR_missing_required_option", "--basedir=<basedir>")));
             spec.commandLine().usage(parent.out);
             throw new HaltExecutionException();
         }
@@ -160,9 +158,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
                 return JReleaserContext.Configurer.CLI_JSON;
         }
         // should not happen!
-        throw new IllegalArgumentException(String.format(
-            bundle.getString("ERROR_invalid_config_format"),
-            configFile.getFileName()));
+        throw new IllegalArgumentException($("ERROR_invalid_config_format", configFile.getFileName()));
     }
 
     protected Path getOutputDirectory() {
@@ -202,9 +198,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
                 if (property.contains("=")) {
                     int d = property.indexOf('=');
                     if (d == 0 || d == properties.length - 1) {
-                        throw new IllegalArgumentException(String.format(
-                            bundle.getString("ERROR_invalid_property"),
-                            property));
+                        throw new IllegalArgumentException($("ERROR_invalid_property", property));
                     }
                     props.put(property.substring(0, d),
                         property.substring(d + 1));

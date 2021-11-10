@@ -17,6 +17,7 @@
  */
 package org.jreleaser.cli;
 
+import org.slf4j.helpers.MessageFormatter;
 import picocli.CommandLine;
 
 import java.util.Map;
@@ -40,6 +41,13 @@ abstract class BaseCommand {
         descriptionKey = "system-property",
         mapFallbackValue = "")
     void setProperty(Map<String, String> props) {
-        props.forEach((k, v) -> System.setProperty(k, v));
+        props.forEach(System::setProperty);
+    }
+
+    protected String $(String key, Object... args) {
+        if (null == args || args.length == 0) {
+            return bundle.getString(key);
+        }
+        return MessageFormatter.arrayFormat(bundle.getString(key), args).getMessage();
     }
 }
