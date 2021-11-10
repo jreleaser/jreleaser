@@ -17,7 +17,9 @@
  */
 package org.jreleaser.util;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.jreleaser.bundle.RB;
 
 import java.io.IOException;
@@ -37,6 +39,12 @@ public class ChecksumUtils {
                 return DigestUtils.md2Hex(data);
             case MD5:
                 return DigestUtils.md5Hex(data);
+            case RMD160:
+                RIPEMD160Digest digest = new RIPEMD160Digest();
+                byte[] output = new byte[digest.getDigestSize()];
+                digest.update(data, 0, data.length);
+                digest.doFinal(output, 0);
+                return Hex.encodeHexString(output);
             case SHA_1:
                 return DigestUtils.sha1Hex(data);
             case SHA_256:

@@ -28,6 +28,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public enum Algorithm {
     MD2,
     MD5,
+    RMD160,
     SHA_1,
     SHA_256,
     SHA_384,
