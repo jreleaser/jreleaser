@@ -29,6 +29,7 @@ import org.jreleaser.util.PlatformUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
@@ -77,15 +78,6 @@ public abstract class JlinkValidator extends Validator {
             jlink.setExecutable(jlink.getName());
         }
 
-        if (isBlank(jlink.getJdk().getPath())) {
-            jlink.getJdk().setPath(System.getProperty("java.home"));
-            jlink.getJdk().setPlatform(PlatformUtils.getCurrentFull());
-        }
-
-        if (jlink.getTargetJdks().isEmpty()) {
-            jlink.addTargetJdk(jlink.getJdk());
-        }
-
         int i = 0;
         for (Artifact targetJdk : jlink.getTargetJdks()) {
             validateJdk(context, mode, jlink, targetJdk, i++, errors);
@@ -103,6 +95,29 @@ public abstract class JlinkValidator extends Validator {
                 errors.configuration(RB.$("validation_jlink_jdk_multiple_platforms", jlink.getName(), platform));
             }
         });
+
+        if (isBlank(jlink.getJdk().getPath())) {
+            if (jlink.getTargetJdks().isEmpty()) {
+                // Use current
+                jlink.getJdk().setPath(System.getProperty("java.home"));
+                jlink.getJdk().setPlatform(PlatformUtils.getCurrentFull());
+                jlink.addTargetJdk(jlink.getJdk());
+            } else {
+                // find a compatible JDK in targets
+                String currentPlatform = PlatformUtils.getCurrentFull();
+                Optional<Artifact> jdk = jlink.getTargetJdks().stream()
+                    .filter(j -> PlatformUtils.isCompatible(currentPlatform, j.getPlatform()))
+                    .findFirst();
+
+                if (jdk.isPresent()) {
+                    jlink.setJdk(jdk.get());
+                } else {
+                    // Can't tell if the current JDK will work but might as well use it
+                    jlink.getJdk().setPath(System.getProperty("java.home"));
+                    jlink.getJdk().setPlatform(PlatformUtils.getCurrentFull());
+                }
+            }
+        }
 
         if (jlink.getArgs().isEmpty()) {
             jlink.getArgs().add("--no-header-files");
