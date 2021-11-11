@@ -5,9 +5,9 @@ environment:
 
 project:
   name: jreleaser
-  description: Release Java projects quickly and easily with JReleaser
+  description: Release projects quickly and easily with JReleaser
   longDescription: |
-    JReleaser is a release automation tool for Java projects. Its goal is to simplify creating releases
+    JReleaser is a release automation tool. Its goal is to simplify creating releases
     and publishing artifacts to multiple package managers while providing customizable options.
 
     JReleaser takes inputs from popular builds tools (Ant, Maven, Gradle) such as JAR files, binary

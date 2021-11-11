@@ -61,7 +61,7 @@ public class GitlabReleaser extends AbstractReleaser {
         try {
             String branch = gitlab.getBranch();
             List<String> branchNames = GitSdk.of(context)
-                .getLocalBranchNames();
+                .getRemoteBranches();
             if (!branchNames.contains(branch)) {
                 throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
             }

@@ -62,7 +62,7 @@ public class GiteaReleaser extends AbstractReleaser {
         try {
             String branch = gitea.getBranch();
             List<String> branchNames = GitSdk.of(context)
-                .getLocalBranchNames();
+                .getRemoteBranches();
             if (!branchNames.contains(branch)) {
                 throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
             }

@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.git;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.lib.Constants;
@@ -32,6 +33,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.util.Env;
+import org.jreleaser.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +51,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public class GitSdk {
     public static final String REFS_TAGS = "refs/tags/";
     public static final String REFS_HEADS = "refs/heads/";
+    public static final String REFS_REMOTES = "refs/remotes/";
 
     private final File basedir;
     private final boolean gitRootSearch;
@@ -79,9 +82,7 @@ public class GitSdk {
     public Repository getRemote() throws IOException {
         Git git = open();
 
-        String remoteName = Env.resolve("DEFAULT_GIT_REMOTE", "");
-        if (isBlank(remoteName)) remoteName = "origin";
-        String remote = remoteName;
+        String remote = resolveDefaultGitRemoteName();
 
         try {
             RemoteConfig remoteConfig = git.remoteList().call().stream()
@@ -137,6 +138,22 @@ public class GitSdk {
             return git.branchList()
                 .call().stream()
                 .map(GitSdk::extractHeadName)
+                .filter(StringUtils::isNotBlank)
+                .collect(toList());
+        } catch (GitAPIException e) {
+            throw new IOException(RB.$("ERROR_git_repository_list_local_branch"), e);
+        }
+    }
+
+    public List<String> getRemoteBranches() throws IOException {
+        Git git = open();
+
+        try {
+            return git.branchList()
+                .setListMode(ListBranchCommand.ListMode.REMOTE)
+                .call().stream()
+                .map(GitSdk::extractRemoteName)
+                .filter(StringUtils::isNotBlank)
                 .collect(toList());
         } catch (GitAPIException e) {
             throw new IOException(RB.$("ERROR_git_repository_list_local_branch"), e);
@@ -202,6 +219,12 @@ public class GitSdk {
         }
     }
 
+    public static String resolveDefaultGitRemoteName() {
+        String remoteName = Env.resolve("DEFAULT_GIT_REMOTE", "");
+        if (isBlank(remoteName)) remoteName = "origin";
+        return remoteName;
+    }
+
     public static GitSdk of(JReleaserContext context) {
         return of(context.getBasedir().toFile(), context.isGitRootSearch());
     }
@@ -224,6 +247,17 @@ public class GitSdk {
     public static String extractHeadName(Ref ref) {
         if (ref.getTarget().getName().startsWith(REFS_HEADS)) {
             return ref.getTarget().getName().substring(REFS_HEADS.length());
+        }
+        return "";
+    }
+
+    public static String extractRemoteName(Ref ref) {
+        if (ref.getTarget().getName().startsWith(REFS_REMOTES)) {
+            String remoteAndBranch = ref.getTarget().getName().substring(REFS_REMOTES.length());
+            String remoteName = resolveDefaultGitRemoteName();
+            if (remoteAndBranch.startsWith(remoteName)) {
+                return remoteAndBranch.substring(remoteName.length() + 1);
+            }
         }
         return "";
     }
