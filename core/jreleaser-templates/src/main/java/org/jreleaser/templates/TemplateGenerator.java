@@ -48,7 +48,7 @@ public class TemplateGenerator {
     private final JReleaserLogger logger;
     private final String distributionName;
     private final Distribution.DistributionType distributionType;
-    private final String toolName;
+    private final String packagerName;
     private final String announcerName;
     private final Path outputDirectory;
     private final boolean overwrite;
@@ -57,7 +57,7 @@ public class TemplateGenerator {
     private TemplateGenerator(JReleaserLogger logger,
                               String distributionName,
                               Distribution.DistributionType distributionType,
-                              String toolName,
+                              String packagerName,
                               String announcerName,
                               Path outputDirectory,
                               boolean overwrite,
@@ -65,7 +65,7 @@ public class TemplateGenerator {
         this.logger = logger;
         this.distributionName = distributionName;
         this.distributionType = distributionType;
-        this.toolName = toolName;
+        this.packagerName = packagerName;
         this.announcerName = announcerName;
         this.outputDirectory = outputDirectory.resolve(isNotBlank(announcerName) ? "templates" : "distributions");
         this.overwrite = overwrite;
@@ -76,7 +76,7 @@ public class TemplateGenerator {
         if (isNotBlank(announcerName)) {
             return generateAnnouncer();
         }
-        return generateTool();
+        return generatePackager();
     }
 
     private Path generateAnnouncer() throws TemplateGenerationException {
@@ -112,14 +112,14 @@ public class TemplateGenerator {
         return outputFile;
     }
 
-    private Path generateTool() throws TemplateGenerationException {
-        if (!Distribution.supportedTools().contains(toolName)) {
-            logger.error(RB.$("ERROR_tool_not_supported"), toolName);
+    private Path generatePackager() throws TemplateGenerationException {
+        if (!Distribution.supportedPackager().contains(packagerName)) {
+            logger.error(RB.$("ERROR_packager_not_supported"), packagerName);
             return null;
         }
 
         Path output = outputDirectory.resolve(distributionName)
-            .resolve(toolName + (snapshot ? "-snapshot" : "")).normalize();
+            .resolve(packagerName + (snapshot ? "-snapshot" : "")).normalize();
 
         logger.info(RB.$("templates.create.directory"), output.toAbsolutePath());
         try {
@@ -128,7 +128,7 @@ public class TemplateGenerator {
             throw fail(e);
         }
 
-        Map<String, Reader> templates = TemplateUtils.resolveTemplates(logger, distributionType.name(), toolName, snapshot);
+        Map<String, Reader> templates = TemplateUtils.resolveTemplates(logger, distributionType.name(), packagerName, snapshot);
         for (Map.Entry<String, Reader> template : templates.entrySet()) {
             Path outputFile = output.resolve(template.getKey());
             logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());
@@ -157,7 +157,7 @@ public class TemplateGenerator {
 
     private TemplateGenerationException fail(Exception e) throws TemplateGenerationException {
         throw new TemplateGenerationException(RB.$("ERROR_unexpected_template_fail",
-            distributionType, distributionName, toolName), e);
+            distributionType, distributionName, packagerName), e);
     }
 
     public static TemplateGeneratorBuilder builder() {
@@ -168,7 +168,7 @@ public class TemplateGenerator {
         private JReleaserLogger logger;
         private String distributionName;
         private Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
-        private String toolName;
+        private String packagerName;
         private String announcerName;
         private Path outputDirectory;
         private boolean overwrite;
@@ -189,8 +189,8 @@ public class TemplateGenerator {
             return this;
         }
 
-        public TemplateGeneratorBuilder toolName(String toolName) {
-            this.toolName = toolName;
+        public TemplateGeneratorBuilder packagerName(String packagerName) {
+            this.packagerName = packagerName;
             return this;
         }
 
@@ -219,10 +219,10 @@ public class TemplateGenerator {
             if (isBlank(announcerName)) {
                 requireNonBlank(distributionName, "'distributionName' must not be blank");
                 requireNonNull(distributionType, "'distributionType' must not be null");
-                requireNonBlank(toolName, "'toolName' must not be blank");
+                requireNonBlank(packagerName, "'packagerName' must not be blank");
             }
             requireNonNull(outputDirectory, "'outputDirectory' must not be null");
-            return new TemplateGenerator(logger, distributionName, distributionType, toolName, announcerName, outputDirectory, overwrite, snapshot);
+            return new TemplateGenerator(logger, distributionName, distributionType, packagerName, announcerName, outputDirectory, overwrite, snapshot);
         }
     }
 }

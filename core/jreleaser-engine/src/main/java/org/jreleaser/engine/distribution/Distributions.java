@@ -38,32 +38,45 @@ public class Distributions {
             return;
         }
 
-        if (context.hasDistributionName()) {
-            Distribution distribution = context.getModel().findDistribution(context.getDistributionName());
+        if (!context.getIncludedDistributions().isEmpty()) {
+            for (String distributionName : context.getIncludedDistributions()) {
+                Distribution distribution = activeDistributions.stream()
+                    .filter(d -> distributionName.equals(d.getName()))
+                    .findFirst().orElse(null);
 
-            if (null == distribution) {
-                context.getLogger().error(RB.$("distributions.no.match"), context.getDistributionName());
-                return;
-            }
+                if (null == distribution) {
+                    context.getLogger().error(RB.$("distributions.no.match"), distributionName);
+                    return;
+                }
 
-            if (context.hasToolName()) {
-                processDistribution(context, action, distribution, context.getToolName(), function);
-            } else {
-                processDistribution(context, action, distribution, function);
+                if (!context.getIncludedPackagers().isEmpty()) {
+                    for (String packagerName : context.getIncludedPackagers()) {
+                        context.getLogger().info(RB.$("distributions.apply.action"), action);
+
+                        processDistribution(context, action, distribution, packagerName, function);
+                    }
+                } else {
+                    processDistribution(context, action, distribution, function);
+                }
             }
-            return;
-        } else if (context.hasToolName()) {
+        } else if (!context.getIncludedPackagers().isEmpty()) {
+            for (String packagerName : context.getIncludedPackagers()) {
+                context.getLogger().info(RB.$("distributions.apply.action"), action);
+                for (Distribution distribution : activeDistributions) {
+                    processDistribution(context, action, distribution, packagerName, function);
+                }
+            }
+        } else {
+            // process all
             context.getLogger().info(RB.$("distributions.apply.action"), action);
             for (Distribution distribution : activeDistributions) {
-                processDistribution(context, action, distribution, context.getToolName(), function);
-            }
-            return;
-        }
+                if (context.getExcludedDistributions().contains(distribution.getName())) {
+                    context.getLogger().info(RB.$("distributions.distribution.excluded"), distribution.getName());
+                    continue;
+                }
 
-        // process all
-        context.getLogger().info(RB.$("distributions.apply.action"), action);
-        for (Distribution distribution : activeDistributions) {
-            processDistribution(context, action, distribution, function);
+                processDistribution(context, action, distribution, function);
+            }
         }
     }
 
@@ -71,29 +84,30 @@ public class Distributions {
         context.getLogger().increaseIndent();
         context.getLogger().info(RB.$("distributions.apply.action.to"), action, distribution.getName());
 
-        for (String toolName : Distribution.supportedTools()) {
-            processTool(context, distribution, toolName, function);
+        for (String packagerName : Distribution.supportedPackager()) {
+            if (context.getExcludedPackagers().contains(packagerName)) continue;
+            processTool(context, distribution, packagerName, function);
         }
 
         context.getLogger().decreaseIndent();
     }
 
-    private static void processDistribution(JReleaserContext context, String action, Distribution distribution, String toolName, ToolProcessingFunction function) {
+    private static void processDistribution(JReleaserContext context, String action, Distribution distribution, String packagerName, ToolProcessingFunction function) {
         context.getLogger().increaseIndent();
         context.getLogger().info(RB.$("distributions.apply.action.to"), action, distribution.getName());
 
-        processTool(context, distribution, toolName, function);
+        processTool(context, distribution, packagerName, function);
 
         context.getLogger().decreaseIndent();
     }
 
-    private static void processTool(JReleaserContext context, Distribution distribution, String toolName, ToolProcessingFunction function) {
+    private static void processTool(JReleaserContext context, Distribution distribution, String packagerName, ToolProcessingFunction function) {
         context.getLogger().increaseIndent();
-        context.getLogger().setPrefix(toolName);
+        context.getLogger().setPrefix(packagerName);
         try {
             DistributionProcessor processor = createDistributionProcessor(context,
                 distribution,
-                toolName);
+                packagerName);
 
             function.consume(processor);
         } catch (ToolProcessingException e) {

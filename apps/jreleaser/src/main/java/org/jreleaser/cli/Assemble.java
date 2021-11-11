@@ -27,16 +27,63 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "assemble")
 public class Assemble extends AbstractModelCommand {
-    @CommandLine.Option(names = {"-an", "--assembler-name"})
-    String assemblerName;
+    @CommandLine.ArgGroup
+    Composite composite;
 
-    @CommandLine.Option(names = {"-dn", "--distribution-name"})
-    String distributionName;
+    static class Composite {
+        @CommandLine.ArgGroup(exclusive = false, order = 1,
+            headingKey = "include.filter.header")
+        Include include;
+
+        @CommandLine.ArgGroup(exclusive = false, order = 2,
+            headingKey = "exclude.filter.header")
+        Exclude exclude;
+
+        String[] includedAssemblers() {
+            return include != null ? include.includedAssemblers : null;
+        }
+
+        String[] includedDistributions() {
+            return include != null ? include.includedDistributions : null;
+        }
+
+        String[] excludedAssemblers() {
+            return exclude != null ? exclude.excludedAssemblers : null;
+        }
+
+        String[] excludedDistributions() {
+            return exclude != null ? exclude.excludedDistributions : null;
+        }
+    }
+
+    static class Include {
+        @CommandLine.Option(names = {"-an", "--assembler-name"},
+            paramLabel = "<assembler>")
+        String[] includedAssemblers;
+
+        @CommandLine.Option(names = {"-dn", "--distribution-name"},
+            paramLabel = "<distribution>")
+        String[] includedDistributions;
+    }
+
+    static class Exclude {
+        @CommandLine.Option(names = {"-xan", "--exclude-assembler"},
+            paramLabel = "<assembler>")
+        String[] excludedAssemblers;
+
+        @CommandLine.Option(names = {"-xdn", "--exclude-distribution"},
+            paramLabel = "<distribution>")
+        String[] excludedDistributions;
+    }
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setAssemblerName(assemblerName);
-        context.setDistributionName(distributionName);
+        if (null != composite) {
+            context.setIncludedAssemblers(collectEntries(composite.includedAssemblers(), true));
+            context.setIncludedDistributions(collectEntries(composite.includedDistributions()));
+            context.setExcludedAssemblers(collectEntries(composite.excludedAssemblers(), true));
+            context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
+        }
         Workflows.assemble(context).execute();
     }
 

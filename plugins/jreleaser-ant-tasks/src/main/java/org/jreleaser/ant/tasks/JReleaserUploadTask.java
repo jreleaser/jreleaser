@@ -20,26 +20,40 @@ package org.jreleaser.ant.tasks;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.3.0
  */
 public class JReleaserUploadTask extends AbstractPlatformAwareJReleaserTask {
-    private String uploaderType;
-    private String uploaderName;
+    private List<String> uploaderTypes;
+    private List<String> excludedUploaderTypes;
+    private List<String> uploaderNames;
+    private List<String> excludedUploaderNames;
 
-    public void setUploaderType(String uploaderType) {
-        this.uploaderType = uploaderType;
+    public void setUploaderTypes(List<String> uploaderTypes) {
+        this.uploaderTypes = uploaderTypes;
     }
 
-    public void setUploaderName(String uploaderName) {
-        this.uploaderName = uploaderName;
+    public void setExcludedUploaderTypes(List<String> excludedUploaderTypes) {
+        this.excludedUploaderTypes = excludedUploaderTypes;
+    }
+
+    public void setUploaderNames(List<String> uploaderNames) {
+        this.uploaderNames = uploaderNames;
+    }
+
+    public void setExcludedUploaderNames(List<String> excludedUploaderNames) {
+        this.excludedUploaderNames = excludedUploaderNames;
     }
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setUploaderType(uploaderType);
-        context.setUploaderName(uploaderName);
+        context.setIncludedUploaderTypes(uploaderTypes);
+        context.setExcludedUploaderTypes(excludedUploaderTypes);
+        context.setIncludedUploaderNames(uploaderNames);
+        context.setExcludedUploaderNames(excludedUploaderNames);
         Workflows.upload(context).execute();
     }
 }

@@ -54,7 +54,7 @@ abstract class JReleaserTemplateTask extends DefaultTask {
 
     @Input
     @Optional
-    final Property<String> toolName
+    final Property<String> packagerName
 
     @Input
     @Optional
@@ -77,7 +77,7 @@ abstract class JReleaserTemplateTask extends DefaultTask {
         jlogger = objects.property(JReleaserLogger)
         distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.JAVA_BINARY)
         distributionName = objects.property(String)
-        toolName = objects.property(String)
+        packagerName = objects.property(String)
         announcerName = objects.property(String).convention(Providers.notDefined())
         overwrite = objects.property(Boolean).convention(false)
         snapshot = objects.property(Boolean).convention(false)
@@ -100,9 +100,9 @@ abstract class JReleaserTemplateTask extends DefaultTask {
         this.distributionName.set(distributionName)
     }
 
-    @Option(option = 'tool-name', description = 'The name of the tool (OPTIONAL).')
-    void setToolName(String toolName) {
-        this.toolName.set(toolName)
+    @Option(option = 'packager-name', description = 'The name of the packager (OPTIONAL).')
+    void setPackagerName(String toolName) {
+        this.packagerName.set(toolName)
     }
 
     @Option(option = 'announcer-name', description = 'The name of the announcer (OPTIONAL).')
@@ -126,7 +126,7 @@ abstract class JReleaserTemplateTask extends DefaultTask {
             .logger(jlogger.get())
             .distributionName(distributionName.orNull)
             .distributionType(distributionType.orNull)
-            .toolName(toolName.orNull)
+            .packagerName(packagerName.orNull)
             .announcerName(announcerName.orNull)
             .outputDirectory(outputDirectory.get().asFile.toPath())
             .overwrite(overwrite.get())

@@ -33,10 +33,16 @@ import org.jreleaser.workflow.Workflows;
 @Mojo(name = "announce")
 public class JReleaserAnnounceMojo extends AbstractPlatformAwareJReleaserMojo {
     /**
-     * The name of the distribution.
+     * Include an announcer.
      */
-    @Parameter(property = "jreleaser.announcer.name")
-    private String announcerName;
+    @Parameter(property = "jreleaser.announcers")
+    private String[] includedAnnouncers;
+
+    /**
+     * Exclude an announcer.
+     */
+    @Parameter(property = "jreleaser.excluded.announcers")
+    private String[] excludedAnnouncers;
 
     /**
      * Skip execution.
@@ -53,7 +59,8 @@ public class JReleaserAnnounceMojo extends AbstractPlatformAwareJReleaserMojo {
         }
 
         JReleaserContext context = createContext();
-        context.setAnnouncerName(announcerName);
+        context.setIncludedAnnouncers(collectEntries(includedAnnouncers, true));
+        context.setExcludedAnnouncers(collectEntries(excludedAnnouncers, true));
         Workflows.announce(context).execute();
     }
 }

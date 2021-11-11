@@ -36,48 +36,52 @@ public class Template extends AbstractCommand {
     Composite composite;
 
     static class Composite {
-        @CommandLine.ArgGroup(exclusive = false, multiplicity = "0..1", order = 1,
+        @CommandLine.ArgGroup(exclusive = false, order = 1,
             headingKey = "announcer.header")
         Announcers announcers;
 
-        @CommandLine.ArgGroup(exclusive = false, multiplicity = "0..1", order = 2,
-            headingKey = "tool.header")
-        Tools tools;
+        @CommandLine.ArgGroup(exclusive = false, order = 2,
+            headingKey = "packager.header")
+        Packagers packagers;
 
         String announcerName() {
             return announcers != null ? announcers.announcerName : null;
         }
 
-        String toolName() {
-            return tools != null ? tools.toolName : null;
+        String packagerName() {
+            return packagers != null ? packagers.packagerName : null;
         }
 
         String distributionName() {
-            return tools != null ? tools.distributionName : null;
+            return packagers != null ? packagers.distributionName : null;
         }
 
         Distribution.DistributionType distributionType() {
-            return tools != null ? tools.distributionType : null;
+            return packagers != null ? packagers.distributionType : null;
         }
     }
 
     static class Announcers {
         @CommandLine.Option(names = {"-an", "--announcer-name"},
+            paramLabel = "<announcer>",
             descriptionKey = "announcer.name",
             required = true)
         String announcerName;
     }
 
-    static class Tools {
+    static class Packagers {
         @CommandLine.Option(names = {"-dn", "--distribution-name"},
+            paramLabel = "<distribution>",
             required = true)
         String distributionName;
 
-        @CommandLine.Option(names = {"-tn", "--tool-name"},
+        @CommandLine.Option(names = {"-pn", "--packager-name"},
+            paramLabel = "<packager>",
             required = true)
-        String toolName;
+        String packagerName;
 
         @CommandLine.Option(names = {"-dt", "--distribution-type"},
+            paramLabel = "<type>",
             required = true,
             defaultValue = "JAVA_BINARY")
         Distribution.DistributionType distributionType;
@@ -111,7 +115,7 @@ public class Template extends AbstractCommand {
                 .logger(logger)
                 .distributionName(composite.distributionName())
                 .distributionType(composite.distributionType())
-                .toolName(composite.toolName())
+                .packagerName(composite.packagerName())
                 .announcerName(composite.announcerName())
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)

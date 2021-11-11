@@ -33,16 +33,28 @@ import org.jreleaser.workflow.Workflows;
 @Mojo(name = "assemble")
 public class JReleaserAssembleMojo extends AbstractJReleaserMojo {
     /**
-     * The name of the distribution.
+     * Include an assembler.
      */
-    @Parameter(property = "jreleaser.distribution.name")
-    private String distributionName;
+    @Parameter(property = "jreleaser.assemblers")
+    private String[] includedAssemblers;
 
     /**
-     * The name of the assembler.
+     * Exclude an assembler.
      */
-    @Parameter(property = "jreleaser.assembler.name")
-    private String assemblerName;
+    @Parameter(property = "jreleaser.excluded.assemblers")
+    private String[] excludedAssemblers;
+
+    /**
+     * Include a distribution.
+     */
+    @Parameter(property = "jreleaser.distributions")
+    private String[] includedDistributions;
+
+    /**
+     * Exclude a distribution.
+     */
+    @Parameter(property = "jreleaser.excluded.distributions")
+    private String[] excludedDistributions;
 
     /**
      * Skip execution.
@@ -59,8 +71,10 @@ public class JReleaserAssembleMojo extends AbstractJReleaserMojo {
         }
 
         JReleaserContext context = createContext();
-        context.setDistributionName(distributionName);
-        context.setAssemblerName(assemblerName);
+        context.setIncludedAssemblers(collectEntries(includedAssemblers, true));
+        context.setIncludedDistributions(collectEntries(includedDistributions));
+        context.setExcludedAssemblers(collectEntries(excludedAssemblers, true));
+        context.setExcludedDistributions(collectEntries(excludedDistributions));
         Workflows.assemble(context).execute();
     }
 

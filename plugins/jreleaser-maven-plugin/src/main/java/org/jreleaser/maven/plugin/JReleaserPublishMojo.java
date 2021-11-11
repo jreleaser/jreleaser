@@ -33,16 +33,28 @@ import org.jreleaser.workflow.Workflows;
 @Mojo(name = "publish")
 public class JReleaserPublishMojo extends AbstractPlatformAwareJReleaserMojo {
     /**
-     * The name of the distribution.
+     * Include a packager.
      */
-    @Parameter(property = "jreleaser.distribution.name")
-    private String distributionName;
+    @Parameter(property = "jreleaser.packagers")
+    private String[] includedPackagers;
 
     /**
-     * The name of the tool.
+     * Exclude a packager.
      */
-    @Parameter(property = "jreleaser.tool.name")
-    private String toolName;
+    @Parameter(property = "jreleaser.excluded.packagers")
+    private String[] excludedPackagers;
+
+    /**
+     * Include a distribution.
+     */
+    @Parameter(property = "jreleaser.distributions")
+    private String[] includedDistributions;
+
+    /**
+     * Exclude a distribution.
+     */
+    @Parameter(property = "jreleaser.excluded.distributions")
+    private String[] excludedDistributions;
 
     /**
      * Skip execution.
@@ -59,8 +71,10 @@ public class JReleaserPublishMojo extends AbstractPlatformAwareJReleaserMojo {
         }
 
         JReleaserContext context = createContext();
-        context.setDistributionName(distributionName);
-        context.setToolName(toolName);
+        context.setIncludedPackagers(collectEntries(includedPackagers, true));
+        context.setIncludedDistributions(collectEntries(includedDistributions));
+        context.setExcludedPackagers(collectEntries(excludedPackagers, true));
+        context.setExcludedDistributions(collectEntries(excludedDistributions));
         Workflows.publish(context).execute();
     }
 }

@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
@@ -39,23 +40,34 @@ import javax.inject.Inject
 abstract class JReleaserAnnounceTask extends AbstractPlatformAwareJReleaserTask {
     @Input
     @Optional
-    final Property<String> announcerName
+    final ListProperty<String> announcers
+
+    @Input
+    @Optional
+    final ListProperty<String> excludedAnnouncers
 
     @Inject
     JReleaserAnnounceTask(ObjectFactory objects) {
         super(objects)
-        announcerName = objects.property(String).convention(Providers.notDefined())
+        announcers = objects.listProperty(String).convention([])
+        excludedAnnouncers = objects.listProperty(String).convention([])
     }
 
-    @Option(option = 'announcer-name', description = 'The name of the announcer (OPTIONAL).')
-    void setAnnouncerName(String toolName) {
-        this.announcerName.set(toolName)
+    @Option(option = 'announcer', description = 'Include an announcer (OPTIONAL).')
+    void setAnnouncer(List<String> announcers) {
+        this.announcers.set(announcers)
+    }
+
+    @Option(option = 'exclude-announcer', description = 'Exclude an announcer (OPTIONAL).')
+    void setExcludeAnnouncer(List<String> excludedAnnouncers) {
+        this.excludedAnnouncers.set(excludedAnnouncers)
     }
 
     @TaskAction
     void performAction() {
         JReleaserContext ctx = createContext()
-        ctx.distributionName = announcerName.orNull
+        ctx.includedAnnouncers = announcers.orNull
+        ctx.excludedAnnouncers = excludedAnnouncers.orNull
         Workflows.announce(ctx).execute()
     }
 }

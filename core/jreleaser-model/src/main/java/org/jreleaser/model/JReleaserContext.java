@@ -66,7 +66,6 @@ import static org.jreleaser.util.Constants.KEY_VERSION_PRERELEASE;
 import static org.jreleaser.util.Constants.KEY_VERSION_TAG;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -83,13 +82,19 @@ public class JReleaserContext {
     private final Configurer configurer;
     private final Errors errors = new Errors();
     private final List<String> selectedPlatforms = new ArrayList<>();
+    private final List<String> includedAnnouncers = new ArrayList<>();
+    private final List<String> includedAssemblers = new ArrayList<>();
+    private final List<String> includedDistributions = new ArrayList<>();
+    private final List<String> includedPackagers = new ArrayList<>();
+    private final List<String> includedUploaderTypes = new ArrayList<>();
+    private final List<String> includedUploaderNames = new ArrayList<>();
+    private final List<String> excludedAnnouncers = new ArrayList<>();
+    private final List<String> excludedAssemblers = new ArrayList<>();
+    private final List<String> excludedDistributions = new ArrayList<>();
+    private final List<String> excludedPackagers = new ArrayList<>();
+    private final List<String> excludedUploaderTypes = new ArrayList<>();
+    private final List<String> excludedUploaderNames = new ArrayList<>();
 
-    private String distributionName;
-    private String toolName;
-    private String announcerName;
-    private String uploaderName;
-    private String uploaderType;
-    private String assemblerName;
     private String changelog;
     private Releaser releaser;
     private JReleaserCommand command;
@@ -322,76 +327,112 @@ public class JReleaserContext {
         this.releaser = releaser;
     }
 
-    public boolean hasDistributionName() {
-        return isNotBlank(distributionName);
+    public List<String> getIncludedAnnouncers() {
+        return includedAnnouncers;
     }
 
-    public boolean hasToolName() {
-        return isNotBlank(toolName);
+    public void setIncludedAnnouncers(List<String> includedAnnouncers) {
+        this.includedAnnouncers.clear();
+        this.includedAnnouncers.addAll(includedAnnouncers);
     }
 
-    public boolean hasAnnouncerName() {
-        return isNotBlank(announcerName);
+    public List<String> getIncludedAssemblers() {
+        return includedAssemblers;
     }
 
-    public boolean hasUploaderName() {
-        return isNotBlank(uploaderName);
+    public void setIncludedAssemblers(List<String> includedAssemblerTypes) {
+        this.includedAssemblers.clear();
+        this.includedAssemblers.addAll(includedAssemblerTypes);
     }
 
-    public boolean hasUploaderType() {
-        return isNotBlank(uploaderType);
+    public List<String> getIncludedDistributions() {
+        return includedDistributions;
     }
 
-    public boolean hasAssemblerName() {
-        return isNotBlank(assemblerName);
+    public void setIncludedDistributions(List<String> includedDistributions) {
+        this.includedDistributions.clear();
+        this.includedDistributions.addAll(includedDistributions);
     }
 
-    public String getDistributionName() {
-        return distributionName;
+    public List<String> getIncludedPackagers() {
+        return includedPackagers;
     }
 
-    public void setDistributionName(String distributionName) {
-        this.distributionName = distributionName;
+    public void setIncludedPackagers(List<String> includedPackagers) {
+        this.includedPackagers.clear();
+        this.includedPackagers.addAll(includedPackagers);
     }
 
-    public String getToolName() {
-        return toolName;
+    public List<String> getIncludedUploaderTypes() {
+        return includedUploaderTypes;
     }
 
-    public void setToolName(String toolName) {
-        this.toolName = toolName;
+    public void setIncludedUploaderTypes(List<String> includedUploaderTypes) {
+        this.includedUploaderTypes.clear();
+        this.includedUploaderTypes.addAll(includedUploaderTypes);
     }
 
-    public String getAnnouncerName() {
-        return announcerName;
+    public List<String> getIncludedUploaderNames() {
+        return includedUploaderNames;
     }
 
-    public void setAnnouncerName(String announcerName) {
-        this.announcerName = announcerName;
+    public void setIncludedUploaderNames(List<String> includedUploaderNames) {
+        this.includedUploaderNames.clear();
+        this.includedUploaderNames.addAll(includedUploaderNames);
     }
 
-    public String getUploaderName() {
-        return uploaderName;
+    public List<String> getExcludedAnnouncers() {
+        return excludedAnnouncers;
     }
 
-    public void setUploaderName(String uploaderName) {
-        this.uploaderName = uploaderName;
+    public void setExcludedAnnouncers(List<String> excludedAnnouncers) {
+        this.excludedAnnouncers.clear();
+        this.excludedAnnouncers.addAll(excludedAnnouncers);
     }
 
-    public String getUploaderType() {
-        return uploaderType;
+    public List<String> getExcludedAssemblers() {
+        return excludedAssemblers;
     }
 
-    public void setUploaderType(String uploaderType) {
-        this.uploaderType = uploaderType;
+    public void setExcludedAssemblers(List<String> excludedAssemblerTypes) {
+        this.excludedAssemblers.clear();
+        this.excludedAssemblers.addAll(excludedAssemblerTypes);
     }
 
-    public String getAssemblerName() {
-        return assemblerName;
+    public List<String> getExcludedDistributions() {
+        return excludedDistributions;
     }
 
-    public void setAssemblerName(String assemblerName) {
-        this.assemblerName = assemblerName;
+    public void setExcludedDistributions(List<String> excludedDistributions) {
+        this.excludedDistributions.clear();
+        this.excludedDistributions.addAll(excludedDistributions);
+    }
+
+    public List<String> getExcludedPackagers() {
+        return excludedPackagers;
+    }
+
+    public void setExcludedPackagers(List<String> excludedPackagers) {
+        this.excludedPackagers.clear();
+        this.excludedPackagers.addAll(excludedPackagers);
+    }
+
+    public List<String> getExcludedUploaderTypes() {
+        return excludedUploaderTypes;
+    }
+
+    public void setExcludedUploaderTypes(List<String> excludedUploaderTypes) {
+        this.excludedUploaderTypes.clear();
+        this.excludedUploaderTypes.addAll(excludedUploaderTypes);
+    }
+
+    public List<String> getExcludedUploaderNames() {
+        return excludedUploaderNames;
+    }
+
+    public void setExcludedUploaderNames(List<String> excludedUploaderNames) {
+        this.excludedUploaderNames.clear();
+        this.excludedUploaderNames.addAll(excludedUploaderNames);
     }
 
     public JReleaserCommand getCommand() {
@@ -486,6 +527,20 @@ public class JReleaserContext {
         } catch (IOException | PGPException e) {
             throw new SigningException(RB.$("ERROR_signing_init_keyring"), e);
         }
+    }
+
+    public boolean isDistributionIncluded(Distribution distribution) {
+        String distributionName = distribution.getName();
+
+        if (!includedDistributions.isEmpty()) {
+            return includedDistributions.contains(distributionName);
+        }
+
+        if (!excludedDistributions.isEmpty()) {
+            return !excludedDistributions.contains(distributionName);
+        }
+
+        return true;
     }
 
     public enum Mode {

@@ -18,9 +18,8 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
-import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
@@ -39,35 +38,56 @@ import javax.inject.Inject
 abstract class JReleaserUploadTask extends AbstractPlatformAwareJReleaserTask {
     @Input
     @Optional
-    final Property<String> uploaderType
+    final ListProperty<String> uploaderTypes
 
     @Input
     @Optional
-    final Property<String> uploaderName
+    final ListProperty<String> excludedUploaderTypes
+
+    @Input
+    @Optional
+    final ListProperty<String> uploaderNames
+
+    @Input
+    @Optional
+    final ListProperty<String> excludedUploaderNames
 
     @Inject
     JReleaserUploadTask(ObjectFactory objects) {
         super(objects)
-        uploaderType = objects.property(String).convention(Providers.notDefined())
-        uploaderName = objects.property(String).convention(Providers.notDefined())
+        uploaderTypes = objects.listProperty(String).convention([])
+        excludedUploaderTypes = objects.listProperty(String).convention([])
+        uploaderNames = objects.listProperty(String).convention([])
+        excludedUploaderNames = objects.listProperty(String).convention([])
     }
 
-    @Option(option = 'uploader-type', description = 'The type of the uploader (OPTIONAL).')
-    void setUploaderType(String uploaderType) {
-        this.uploaderType.set(uploaderType)
+    @Option(option = 'uploader-type', description = 'Include an uploader by type (OPTIONAL).')
+    void setUploaderType(List<String> uploaderTypes) {
+        this.uploaderTypes.set(uploaderTypes)
     }
 
-    @Option(option = 'uploader-name', description = 'The name of the uploader (OPTIONAL).')
-    void setUploaderName(String uploaderName) {
-        this.uploaderName.set(uploaderName)
+    @Option(option = 'exclude-uploader-type', description = 'Exclude an uploader by type (OPTIONAL).')
+    void setExcludeUploaderType(List<String> excludedUploaderTypes) {
+        this.excludedUploaderTypes.set(excludedUploaderTypes)
     }
 
+    @Option(option = 'uploader-name', description = 'Include an uploader by name (OPTIONAL).')
+    void setUploaderName(List<String> uploaderNames) {
+        this.uploaderNames.set(uploaderNames)
+    }
+
+    @Option(option = 'exclude-uploader-name', description = 'Exclude an uploader by name (OPTIONAL).')
+    void setExcludeUploaderName(List<String> excludedUploaderNames) {
+        this.excludedUploaderNames.set(excludedUploaderNames)
+    }
 
     @TaskAction
     void performAction() {
         JReleaserContext ctx = createContext()
-        ctx.uploaderType = uploaderType.orNull
-        ctx.uploaderName = uploaderName.orNull
+        ctx.includedUploaderTypes = uploaderTypes.orNull
+        ctx.excludedUploaderTypes = excludedUploaderTypes.orNull
+        ctx.includedUploaderNames = uploaderNames.orNull
+        ctx.excludedUploaderNames = excludedUploaderNames.orNull
         Workflows.upload(ctx).execute()
     }
 }

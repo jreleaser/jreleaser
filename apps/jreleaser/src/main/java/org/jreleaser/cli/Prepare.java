@@ -27,16 +27,63 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "prepare")
 public class Prepare extends AbstractPlatformAwareModelCommand {
-    @CommandLine.Option(names = {"-dn", "--distribution-name"})
-    String distributionName;
+    @CommandLine.ArgGroup
+    Composite composite;
 
-    @CommandLine.Option(names = {"-tn", "--tool-name"})
-    String toolName;
+    static class Composite {
+        @CommandLine.ArgGroup(exclusive = false, order = 1,
+            headingKey = "include.filter.header")
+        Include include;
+
+        @CommandLine.ArgGroup(exclusive = false, order = 2,
+            headingKey = "exclude.filter.header")
+        Exclude exclude;
+
+        String[] includedPackagers() {
+            return include != null ? include.includedPackagers : null;
+        }
+
+        String[] includedDistributions() {
+            return include != null ? include.includedDistributions : null;
+        }
+
+        String[] excludedPackagers() {
+            return exclude != null ? exclude.excludedPackagers : null;
+        }
+
+        String[] excludedDistributions() {
+            return exclude != null ? exclude.excludedDistributions : null;
+        }
+    }
+
+    static class Include {
+        @CommandLine.Option(names = {"-dn", "--distribution-name"},
+            paramLabel = "<distribution>")
+        String[] includedDistributions;
+
+        @CommandLine.Option(names = {"-pn", "--packager-name"},
+            paramLabel = "<packager>")
+        String[] includedPackagers;
+    }
+
+    static class Exclude {
+        @CommandLine.Option(names = {"-xdn", "--exclude-distribution"},
+            paramLabel = "<distribution>")
+        String[] excludedDistributions;
+
+        @CommandLine.Option(names = {"-xpn", "--exclude-packager"},
+            paramLabel = "<packager>")
+        String[] excludedPackagers;
+    }
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setDistributionName(distributionName);
-        context.setToolName(toolName);
+        if (null != composite) {
+            context.setIncludedPackagers(collectEntries(composite.includedPackagers(), true));
+            context.setIncludedDistributions(collectEntries(composite.includedDistributions()));
+            context.setExcludedPackagers(collectEntries(composite.excludedPackagers(), true));
+            context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
+        }
         Workflows.prepare(context).execute();
     }
 }

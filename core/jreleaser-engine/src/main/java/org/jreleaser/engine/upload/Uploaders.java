@@ -38,40 +38,52 @@ public class Uploaders {
             return;
         }
 
-        if (context.hasUploaderType()) {
-            Map<String, Uploader> uploaders = upload.findUploadersByType(context.getUploaderType());
+        if (!context.getIncludedUploaderTypes().isEmpty()) {
+            for (String uploaderType : context.getIncludedUploaderTypes()) {
+                Map<String, Uploader> uploaders = upload.findUploadersByType(uploaderType);
 
-            if (uploaders.isEmpty()) {
-                context.getLogger().debug(RB.$("uploaders.no.match"), context.getUploaderType());
-                return;
-            }
-
-            if (context.hasUploaderName()) {
-                if (!uploaders.containsKey(context.getUploaderName())) {
-                    context.getLogger().error(RB.$("uploaders.uploader.not.configured"),
-                        context.getUploaderType(),
-                        context.getUploaderName());
+                if (uploaders.isEmpty()) {
+                    context.getLogger().debug(RB.$("uploaders.no.match"), uploaderType);
                     return;
                 }
 
-                context.getLogger().info(RB.$("uploaders.upload.with"),
-                    context.getUploaderType(),
-                    context.getUploaderName());
-                upload(context, uploaders.get(context.getUploaderName()));
-            } else {
-                context.getLogger().info(RB.$("uploaders.upload.all.artifacts.with"),
-                    context.getUploaderType());
-                uploaders.values().forEach(uploader -> upload(context, uploader));
+                if (!context.getIncludedUploaderNames().isEmpty()) {
+                    for (String uploaderName : context.getIncludedUploaderNames()) {
+                        if (!uploaders.containsKey(uploaderName)) {
+                            context.getLogger().error(RB.$("uploaders.uploader.not.configured"),
+                                uploaderType,
+                                uploaderName);
+                            continue;
+                        }
+
+                        context.getLogger().info(RB.$("uploaders.upload.with"),
+                            uploaderType,
+                            uploaderName);
+                        upload(context, uploaders.get(uploaderName));
+                    }
+                } else {
+                    context.getLogger().info(RB.$("uploaders.upload.all.artifacts.with"), uploaderType);
+                    uploaders.values().forEach(uploader -> upload(context, uploader));
+                }
             }
-        } else if (context.hasUploaderName()) {
-            context.getLogger().info(RB.$("uploaders.upload.all.artifacts.to"),
-                context.getUploaderName());
-            upload.findAllUploaders().stream()
-                .filter(a -> context.getUploaderName().equals(a.getName()))
-                .forEach(uploader -> upload(context, uploader));
+        } else if (!context.getIncludedUploaderNames().isEmpty()) {
+            for (String uploaderName : context.getIncludedUploaderNames()) {
+                context.getLogger().info(RB.$("uploaders.upload.all.artifacts.to"), uploaderName);
+                upload.findAllUploaders().stream()
+                    .filter(a -> uploaderName.equals(a.getName()))
+                    .forEach(uploader -> upload(context, uploader));
+            }
         } else {
             context.getLogger().info(RB.$("uploaders.upload.all.artifacts"));
-            upload.findAllUploaders().forEach(uploader -> upload(context, uploader));
+            for (Uploader uploader : upload.findAllUploaders()) {
+                if (context.getExcludedUploaderTypes().contains(uploader.getType()) ||
+                    context.getExcludedUploaderNames().contains(uploader.getName())) {
+                    context.getLogger().info(RB.$("uploaders.uploader.excluded"), uploader.getType(), uploader.getName());
+                    continue;
+                }
+
+                upload(context, uploader);
+            }
         }
     }
 

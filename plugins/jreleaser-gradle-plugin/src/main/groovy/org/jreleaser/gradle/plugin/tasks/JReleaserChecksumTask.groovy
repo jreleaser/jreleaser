@@ -19,7 +19,12 @@ package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
+import org.jreleaser.model.JReleaserContext
 import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
@@ -31,13 +36,40 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class JReleaserChecksumTask extends AbstractPlatformAwareJReleaserTask {
+    @Input
+    @Optional
+    final ListProperty<String> distributions
+
+    @Input
+    @Optional
+    final ListProperty<String> excludedDistributions
+
     @Inject
     JReleaserChecksumTask(ObjectFactory objects) {
         super(objects)
+        distributions = objects.listProperty(String).convention([])
+        excludedDistributions = objects.listProperty(String).convention([])
+    }
+
+    @Option(option = 'distribution', description = 'Include a distribution (OPTIONAL).')
+    void setDistribution(List<String> distributions) {
+        this.distributions.set(distributions)
+    }
+
+    @Option(option = 'exclude-distribution', description = 'Exclude a distribution (OPTIONAL).')
+    void setExcludeDistribution(List<String> excludedDistributions) {
+        this.excludedDistributions.set(excludedDistributions)
     }
 
     @TaskAction
     void performAction() {
-        Workflows.checksum(createContext()).execute()
+        Workflows.checksum(setupContext()).execute()
+    }
+
+    protected JReleaserContext setupContext() {
+        JReleaserContext ctx = createContext()
+        ctx.includedDistributions = distributions.orNull
+        ctx.excludedDistributions = excludedDistributions.orNull
+        ctx
     }
 }

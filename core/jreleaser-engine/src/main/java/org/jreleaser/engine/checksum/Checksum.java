@@ -61,6 +61,8 @@ public class Checksum {
         }
 
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
+            if (!context.isDistributionIncluded(distribution)) continue;
+
             for (Artifact artifact : distribution.getArtifacts()) {
                 if (!artifact.isActive()) continue;
                 for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
@@ -72,9 +74,9 @@ public class Checksum {
         }
 
         if (checksums.isEmpty()) {
-            context.getLogger().restorePrefix();
-            context.getLogger().decreaseIndent();
             context.getLogger().info(RB.$("checksum.not.enabled"));
+            context.getLogger().decreaseIndent();
+            context.getLogger().restorePrefix();
             return;
         }
 

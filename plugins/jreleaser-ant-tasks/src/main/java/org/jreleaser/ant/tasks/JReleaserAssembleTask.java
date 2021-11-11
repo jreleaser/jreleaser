@@ -20,26 +20,40 @@ package org.jreleaser.ant.tasks;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
 public class JReleaserAssembleTask extends AbstractJReleaserTask {
-    private String assemblerName;
-    private String distributionName;
+    private List<String> assemblers;
+    private List<String> excludedAssemblers;
+    private List<String> distributions;
+    private List<String> excludedDistributions;
 
-    public void setAssemblerName(String assemblerName) {
-        this.assemblerName = assemblerName;
+    public void setAssemblers(List<String> assemblers) {
+        this.assemblers = assemblers;
     }
 
-    public void setDistributionName(String distributionName) {
-        this.distributionName = distributionName;
+    public void setExcludedAssemblers(List<String> excludedAssemblers) {
+        this.excludedAssemblers = excludedAssemblers;
+    }
+
+    public void setDistributions(List<String> distributions) {
+        this.distributions = distributions;
+    }
+
+    public void setExcludedDistributions(List<String> excludedDistributions) {
+        this.excludedDistributions = excludedDistributions;
     }
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setAssemblerName(assemblerName);
-        context.setDistributionName(distributionName);
+        context.setIncludedAssemblers(assemblers);
+        context.setExcludedAssemblers(excludedAssemblers);
+        context.setIncludedDistributions(distributions);
+        context.setExcludedDistributions(excludedDistributions);
         Workflows.assemble(context).execute();
     }
 

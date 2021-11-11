@@ -31,11 +31,8 @@
     <property name="jreleaser.format" value="yml"/>
     <property name="jreleaser.distribution.name" value=""/>
     <property name="jreleaser.distribution.type" value="JAVA_BINARY"/>
-    <property name="jreleaser.tool.name" value=""/>
+    <property name="jreleaser.packager.name" value=""/>
     <property name="jreleaser.announcer.name" value=""/>
-    <property name="jreleaser.assembler.name" value=""/>
-    <property name="jreleaser.uploader.type" value=""/>
-    <property name="jreleaser.uploader.name" value=""/>
     <property name="jreleaser.overwrite" value="false"/>
     <property name="jreleaser.snapshot" value="false"/>
     <property name="jreleaser.full" value="false"/>
@@ -47,7 +44,7 @@
         <jreleaser:template skip="${jreleaser.skip}"
                             configFile="${jreleaser.config.file}"
                             distributionName="${jreleaser.distribution.name}"
-                            toolName="${jreleaser.tool.name}"
+                            packagerName="${jreleaser.packager.name}"
                             announcerName="${jreleaser.announcer.name}"
                             distributionType="${jreleaser.distribution.type}"
                             overwrite="${jreleaser.overwrite}"
@@ -61,7 +58,6 @@
                             gitRootSearch="${jreleaser.git.root.search}"
                             skip="${jreleaser.skip}"
                             configFile="${jreleaser.config.file}"
-                            announcerName="${jreleaser.announcer.name}"
                             outputDir="${jreleaser.outputdir"/>
     </target>
 
@@ -69,8 +65,6 @@
         <jreleaser:assembler skip="${jreleaser.skip}"
                              gitRootSearch="${jreleaser.git.root.search}"
                              configFile="${jreleaser.config.file}"
-                             distributionName="${jreleaser.distribution.name}"
-                             assemblerName="${jreleaser.assembler.name}"
                              outputDir="${jreleaser.outputdir"/>
     </target>
 
@@ -120,8 +114,15 @@
                            gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
                            configFile="${jreleaser.config.file}"
-                           distributionName="${jreleaser.distribution.name}"
-                           toolName="${jreleaser.tool.name}"
+                           outputDir="${jreleaser.outputdir"/>
+    </target>
+
+    <target name="jreleaser-publish">
+        <jreleaser:publish dryrun="${jreleaser.dryrun}"
+                           selectCurrentPlatform="${jreleaser.select.current.platform}"
+                           gitRootSearch="${jreleaser.git.root.search}"
+                           skip="${jreleaser.skip}"
+                           configFile="${jreleaser.config.file}"
                            outputDir="${jreleaser.outputdir"/>
     </target>
 
@@ -131,8 +132,6 @@
                            gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
                            configFile="${jreleaser.config.file}"
-                           distributionName="${jreleaser.distribution.name}"
-                           toolName="${jreleaser.tool.name}"
                            outputDir="${jreleaser.outputdir"/>
     </target>
 
@@ -160,19 +159,6 @@
                           gitRootSearch="${jreleaser.git.root.search}"
                           skip="${jreleaser.skip}"
                           configFile="${jreleaser.config.file}"
-                          uploaderType="${jreleaser.uploader.type}"
-                          uploaderName="${jreleaser.uploader.name}"
                           outputDir="${jreleaser.outputdir"/>
-    </target>
-
-    <target name="jreleaser-publish">
-        <jreleaser:publish dryrun="${jreleaser.dryrun}"
-                           selectCurrentPlatform="${jreleaser.select.current.platform}"
-                           gitRootSearch="${jreleaser.git.root.search}"
-                           skip="${jreleaser.skip}"
-                           configFile="${jreleaser.config.file}"
-                           distributionName="${jreleaser.distribution.name}"
-                           toolName="${jreleaser.tool.name}"
-                           outputDir="${jreleaser.outputdir"/>
     </target>
 </project>

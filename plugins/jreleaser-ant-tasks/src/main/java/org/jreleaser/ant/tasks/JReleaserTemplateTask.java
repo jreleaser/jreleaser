@@ -41,7 +41,7 @@ public class JReleaserTemplateTask extends Task {
     private Path outputDir;
     private String distributionName;
     private Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
-    private String toolName;
+    private String packagerName;
     private String announcerName;
     private boolean overwrite;
     private boolean snapshot;
@@ -59,8 +59,8 @@ public class JReleaserTemplateTask extends Task {
         this.distributionType = distributionType;
     }
 
-    public void setToolName(String toolName) {
-        this.toolName = toolName;
+    public void setPackagerName(String packagerName) {
+        this.packagerName = packagerName;
     }
 
     public void setAnnouncerName(String announcerName) {
@@ -95,7 +95,7 @@ public class JReleaserTemplateTask extends Task {
                 .logger(logger)
                 .distributionName(distributionName)
                 .distributionType(distributionType)
-                .toolName(toolName)
+                .packagerName(packagerName)
                 .announcerName(announcerName)
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)

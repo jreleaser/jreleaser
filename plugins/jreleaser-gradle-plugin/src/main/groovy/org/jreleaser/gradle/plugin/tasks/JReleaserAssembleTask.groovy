@@ -18,9 +18,8 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
-import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
@@ -39,27 +38,47 @@ import javax.inject.Inject
 abstract class JReleaserAssembleTask extends AbstractJReleaserTask {
     @Input
     @Optional
-    final Property<String> distributionName
+    final ListProperty<String> assemblers
 
     @Input
     @Optional
-    final Property<String> assemblerName
+    final ListProperty<String> excludedAssemblers
 
-    @Option(option = 'distribution-name', description = 'The name of the distribution (OPTIONAL).')
-    void setDistributionName(String distributionName) {
-        this.distributionName.set(distributionName)
-    }
+    @Input
+    @Optional
+    final ListProperty<String> distributions
 
-    @Option(option = 'assembler-name', description = 'The name of the assembler (OPTIONAL).')
-    void setAssemblerName(String assemblerName) {
-        this.assemblerName.set(assemblerName)
-    }
+    @Input
+    @Optional
+    final ListProperty<String> excludedDistributions
 
     @Inject
     JReleaserAssembleTask(ObjectFactory objects) {
         super(objects)
-        distributionName = objects.property(String).convention(Providers.notDefined())
-        assemblerName = objects.property(String).convention(Providers.notDefined())
+        assemblers = objects.listProperty(String).convention([])
+        excludedAssemblers = objects.listProperty(String).convention([])
+        distributions = objects.listProperty(String).convention([])
+        excludedDistributions = objects.listProperty(String).convention([])
+    }
+
+    @Option(option = 'assembler', description = 'Include an assembler (OPTIONAL).')
+    void setAssembler(List<String> assemblers) {
+        this.assemblers.set(assemblers)
+    }
+
+    @Option(option = 'exclude-assembler', description = 'Exclude an assembler (OPTIONAL).')
+    void setExcludeAssembler(List<String> excludedAssemblers) {
+        this.excludedAssemblers.set(excludedAssemblers)
+    }
+
+    @Option(option = 'distribution', description = 'Include a distribution (OPTIONAL).')
+    void setDistribution(List<String> distributions) {
+        this.distributions.set(distributions)
+    }
+
+    @Option(option = 'exclude-distribution', description = 'Exclude a distribution (OPTIONAL).')
+    void setExcludeDistribution(List<String> excludedDistributions) {
+        this.excludedDistributions.set(excludedDistributions)
     }
 
     @TaskAction
@@ -70,8 +89,10 @@ abstract class JReleaserAssembleTask extends AbstractJReleaserTask {
     protected JReleaserContext setupContext() {
         mode = JReleaserContext.Mode.ASSEMBLE
         JReleaserContext ctx = createContext()
-        ctx.distributionName = distributionName.orNull
-        ctx.assemblerName = assemblerName.orNull
+        ctx.includedAssemblers = assemblers.orNull
+        ctx.excludedAssemblers = excludedAssemblers.orNull
+        ctx.includedDistributions = distributions.orNull
+        ctx.excludedDistributions = excludedDistributions.orNull
         ctx
     }
 }

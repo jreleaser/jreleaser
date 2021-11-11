@@ -34,6 +34,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 
 import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -189,5 +191,22 @@ abstract class AbstractJReleaserTask extends Task {
 
     protected List<String> collectSelectedPlatforms() {
         return Collections.emptyList();
+    }
+
+    protected List<String> collectEntries(String[] input) {
+        return collectEntries(input, false);
+    }
+
+    protected List<String> collectEntries(String[] input, boolean lowerCase) {
+        List<String> list = new ArrayList<>();
+        if (input != null && input.length > 0) {
+            for (String s : input) {
+                if (isNotBlank(s)) {
+                    s = s.trim();
+                    list.add(lowerCase ? s.toLowerCase() : s);
+                }
+            }
+        }
+        return list;
     }
 }

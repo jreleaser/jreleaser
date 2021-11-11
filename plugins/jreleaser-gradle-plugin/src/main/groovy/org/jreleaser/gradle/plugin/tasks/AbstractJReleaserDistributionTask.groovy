@@ -18,9 +18,8 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
-import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
@@ -37,33 +36,55 @@ import javax.inject.Inject
 abstract class AbstractJReleaserDistributionTask extends AbstractPlatformAwareJReleaserTask {
     @Input
     @Optional
-    final Property<String> distributionName
+    final ListProperty<String> distributions
 
     @Input
     @Optional
-    final Property<String> toolName
+    final ListProperty<String> excludedDistributions
+
+    @Input
+    @Optional
+    final ListProperty<String> packagers
+
+    @Input
+    @Optional
+    final ListProperty<String> excludedPackagers
 
     @Inject
     AbstractJReleaserDistributionTask(ObjectFactory objects) {
         super(objects)
-        distributionName = objects.property(String).convention(Providers.notDefined())
-        toolName = objects.property(String).convention(Providers.notDefined())
+        distributions = objects.listProperty(String).convention([])
+        excludedDistributions = objects.listProperty(String).convention([])
+        packagers = objects.listProperty(String).convention([])
+        excludedPackagers = objects.listProperty(String).convention([])
     }
 
-    @Option(option = 'distribution-name', description = 'The name of the distribution (OPTIONAL).')
-    void setDistributionName(String distributionName) {
-        this.distributionName.set(distributionName)
+    @Option(option = 'distribution', description = 'Include a distribution (OPTIONAL).')
+    void setDistribution(List<String> distributions) {
+        this.distributions.set(distributions)
     }
 
-    @Option(option = 'tool-name', description = 'The name of the tool (OPTIONAL).')
-    void setToolName(String toolName) {
-        this.toolName.set(toolName)
+    @Option(option = 'exclude-distribution', description = 'Exclude a distribution (OPTIONAL).')
+    void setExcludeDistribution(List<String> excludedDistributions) {
+        this.excludedDistributions.set(excludedDistributions)
+    }
+
+    @Option(option = 'packager', description = 'Include a packager (OPTIONAL).')
+    void setPackager(List<String> packagers) {
+        this.packagers.set(packagers)
+    }
+
+    @Option(option = 'exclude-packager', description = 'Exclude a packager (OPTIONAL).')
+    void setExcludePackager(List<String> excludedPackagers) {
+        this.excludedPackagers.set(excludedPackagers)
     }
 
     protected JReleaserContext setupContext() {
         JReleaserContext ctx = createContext()
-        ctx.distributionName = distributionName.orNull
-        ctx.toolName = toolName.orNull
+        ctx.includedDistributions = distributions.orNull
+        ctx.excludedDistributions = excludedDistributions.orNull
+        ctx.includedPackagers = packagers.orNull
+        ctx.excludedPackagers = excludedPackagers.orNull
         ctx
     }
 }

@@ -27,8 +27,25 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "checksum")
 public class Checksum extends AbstractPlatformAwareModelCommand {
+    @CommandLine.ArgGroup(headingKey = "filter.header")
+    Composite composite;
+
+    static class Composite {
+        @CommandLine.Option(names = {"-dn", "--distribution-name"},
+            paramLabel = "<distribution>")
+        String[] includedDistributions;
+
+        @CommandLine.Option(names = {"-xdn", "--exclude-distribution"},
+            paramLabel = "<distribution>")
+        String[] excludedDistributions;
+    }
+
     @Override
     protected void doExecute(JReleaserContext context) {
+        if (null != composite) {
+            context.setIncludedDistributions(collectEntries(composite.includedDistributions));
+            context.setExcludedDistributions(collectEntries(composite.excludedDistributions));
+        }
         Workflows.checksum(context).execute();
     }
 }

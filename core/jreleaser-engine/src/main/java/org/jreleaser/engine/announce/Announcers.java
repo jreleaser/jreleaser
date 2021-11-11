@@ -49,20 +49,29 @@ public class Announcers {
             return;
         }
 
-        if (context.hasAnnouncerName()) {
-            Announcer announcer = announcers.get(context.getAnnouncerName());
+        if (!context.getIncludedAnnouncers().isEmpty()) {
+            for (String announcerName : context.getIncludedAnnouncers()) {
+                Announcer announcer = announcers.get(announcerName);
 
-            if (null == announcer) {
-                context.getLogger().warn(RB.$("announcers.announcer.not.found"), context.getAnnouncerName());
-                return;
+                if (null == announcer) {
+                    context.getLogger().warn(RB.$("announcers.announcer.not.found"), announcerName);
+                    continue;
+                }
+
+                announce(context, announcer);
             }
-
-            announce(context, announcer);
             return;
         }
 
         for (Map.Entry<String, Announcer> entry : announcers.entrySet()) {
-            announce(context, entry.getValue());
+            Announcer announcer = entry.getValue();
+
+            if (context.getExcludedAnnouncers().contains(announcer.getName())) {
+                context.getLogger().info(RB.$("announcers.announcer.excluded"), announcer.getName());
+                continue;
+            }
+
+            announce(context, announcer);
         }
     }
 
@@ -93,7 +102,8 @@ public class Announcers {
 
         Map<String, Announcer> announcers = new TreeMap<>();
         builders.forEach((name, builder) -> {
-            if (null != model.getAnnounce().findAnnouncer(name)) {
+            if (null != model.getAnnounce().findAnnouncer(name) &&
+                !context.getExcludedAnnouncers().contains(name)) {
                 announcers.put(name, builder.configureWith(context).build());
             }
         });

@@ -21,6 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
 /**
@@ -31,6 +32,18 @@ import org.jreleaser.workflow.Workflows;
  */
 @Mojo(name = "checksum")
 public class JReleaserChecksumMojo extends AbstractPlatformAwareJReleaserMojo {
+    /**
+     * Include a distribution.
+     */
+    @Parameter(property = "jreleaser.distributions")
+    private String[] includedDistributions;
+
+    /**
+     * Exclude a distribution.
+     */
+    @Parameter(property = "jreleaser.excluded.distributions")
+    private String[] excludedDistributions;
+
     /**
      * Skip execution.
      */
@@ -45,6 +58,9 @@ public class JReleaserChecksumMojo extends AbstractPlatformAwareJReleaserMojo {
             return;
         }
 
-        Workflows.checksum(createContext()).execute();
+        JReleaserContext context = createContext();
+        context.setIncludedDistributions(collectEntries(includedDistributions));
+        context.setExcludedDistributions(collectEntries(excludedDistributions));
+        Workflows.checksum(context).execute();
     }
 }

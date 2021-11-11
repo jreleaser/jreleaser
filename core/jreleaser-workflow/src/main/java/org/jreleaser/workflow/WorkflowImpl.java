@@ -46,6 +46,18 @@ class WorkflowImpl implements Workflow {
 
         Instant start = Instant.now();
         context.getLogger().info(RB.$("workflow.dryrun"), context.isDryrun());
+        logFilters("workflow.included.assemblers", context.getIncludedAssemblers());
+        logFilters("workflow.excluded.assemblers", context.getExcludedAssemblers());
+        logFilters("workflow.included.distributions", context.getIncludedDistributions());
+        logFilters("workflow.excluded.distributions", context.getExcludedDistributions());
+        logFilters("workflow.included.packagers", context.getIncludedPackagers());
+        logFilters("workflow.excluded.packagers", context.getExcludedPackagers());
+        logFilters("workflow.included.uploaderTypes", context.getIncludedUploaderTypes());
+        logFilters("workflow.excluded.uploaderTypes", context.getExcludedUploaderTypes());
+        logFilters("workflow.included.uploaderNames", context.getIncludedUploaderNames());
+        logFilters("workflow.excluded.uploaderNames", context.getExcludedUploaderNames());
+        logFilters("workflow.included.announcers", context.getIncludedAnnouncers());
+        logFilters("workflow.excluded.announcers", context.getExcludedAnnouncers());
 
         for (WorkflowItem item : items) {
             try {
@@ -68,6 +80,12 @@ class WorkflowImpl implements Workflow {
             context.getLogger().error(RB.$("workflow.failure"), formatDuration(duration));
             context.getLogger().trace(exception);
             throw exception;
+        }
+    }
+
+    private void logFilters(String key, List<String> input) {
+        if (!input.isEmpty()) {
+            context.getLogger().info(RB.$(key, input));
         }
     }
 }

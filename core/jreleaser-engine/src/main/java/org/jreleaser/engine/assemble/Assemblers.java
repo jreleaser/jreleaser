@@ -38,40 +38,52 @@ public class Assemblers {
             return;
         }
 
-        if (context.hasAssemblerName()) {
-            Map<String, Assembler> assemblers = assemble.findAssemblersByType(context.getAssemblerName());
+        if (!context.getIncludedAssemblers().isEmpty()) {
+            for (String assemblerType : context.getIncludedAssemblers()) {
+                Map<String, Assembler> assemblers = assemble.findAssemblersByType(assemblerType);
 
-            if (assemblers.isEmpty()) {
-                context.getLogger().debug(RB.$("assemblers.no.match"), context.getAssemblerName());
-                return;
-            }
-
-            if (context.hasDistributionName()) {
-                if (!assemblers.containsKey(context.getDistributionName())) {
-                    context.getLogger().error(RB.$("assemblers.distribution.not.configured"),
-                        context.getDistributionName(),
-                        context.getAssemblerName());
+                if (assemblers.isEmpty()) {
+                    context.getLogger().debug(RB.$("assemblers.no.match"), assemblerType);
                     return;
                 }
 
-                context.getLogger().info(RB.$("assemblers.assemble.distribution.with"),
-                    context.getDistributionName(),
-                    context.getAssemblerName());
-                assemble(context, assemblers.get(context.getDistributionName()));
-            } else {
-                context.getLogger().info(RB.$("assemblers.assemble.all.distributions.with"),
-                    context.getAssemblerName());
-                assemblers.values().forEach(assembler -> assemble(context, assembler));
+                if (!context.getIncludedDistributions().isEmpty()) {
+                    for (String distributionName : context.getIncludedDistributions()) {
+                        if (!assemblers.containsKey(distributionName)) {
+                            context.getLogger().error(RB.$("assemblers.distribution.not.configured"),
+                                distributionName,
+                                assemblerType);
+                            continue;
+                        }
+
+                        context.getLogger().info(RB.$("assemblers.assemble.distribution.with.all"), distributionName);
+                        assemble.findAllAssemblers().stream()
+                            .filter(a -> distributionName.equals(a.getName()))
+                            .forEach(assembler -> assemble(context, assembler));
+                    }
+                } else {
+                    context.getLogger().info(RB.$("assemblers.assemble.all.distributions.with"), assemblerType);
+                    assemblers.values().forEach(assembler -> assemble(context, assembler));
+                }
             }
-        } else if (context.hasDistributionName()) {
-            context.getLogger().info(RB.$("assemblers.assemble.distribution.with.all"),
-                context.getDistributionName());
-            assemble.findAllAssemblers().stream()
-                .filter(a -> context.getDistributionName().equals(a.getName()))
-                .forEach(assembler -> assemble(context, assembler));
+        } else if (!context.getIncludedDistributions().isEmpty()) {
+            for (String distributionName : context.getIncludedDistributions()) {
+                context.getLogger().info(RB.$("assemblers.assemble.distribution.with.all"), distributionName);
+                assemble.findAllAssemblers().stream()
+                    .filter(a -> distributionName.equals(a.getName()))
+                    .forEach(assembler -> assemble(context, assembler));
+            }
         } else {
             context.getLogger().info(RB.$("assemblers.assemble.all.distributions"));
-            assemble.findAllAssemblers().forEach(assembler -> assemble(context, assembler));
+            for (Assembler assembler : assemble.findAllAssemblers()) {
+                if (context.getExcludedAssemblers().contains(assembler.getType()) ||
+                    context.getExcludedDistributions().contains(assembler.getName())) {
+                    context.getLogger().info(RB.$("assemblers.assembler.excluded"), assembler.getType(), assembler.getName());
+                    continue;
+                }
+
+                assemble(context, assembler);
+            }
         }
     }
 

@@ -25,10 +25,7 @@ import picocli.CommandLine;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,9 +37,46 @@ public class Release extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"})
     boolean dryrun;
 
-    @CommandLine.ArgGroup(exclusive = false, multiplicity = "0..1",
-        headingKey = "auto-config.header")
-    AutoConfigGroup autoConfigGroup;
+    @CommandLine.ArgGroup
+    Composite composite;
+
+    static class Composite {
+        @CommandLine.ArgGroup(exclusive = false, order = 1,
+            headingKey = "include.filter.header")
+        Include include;
+
+        @CommandLine.ArgGroup(exclusive = false, order = 2,
+            headingKey = "exclude.filter.header")
+        Exclude exclude;
+
+        @CommandLine.ArgGroup(exclusive = false, order = 3,
+            headingKey = "auto-config.header")
+        AutoConfigGroup autoConfig;
+
+        String[] includedDistributions() {
+            return include != null ? include.includedDistributions : null;
+        }
+
+        String[] excludedDistributions() {
+            return exclude != null ? exclude.excludedDistributions : null;
+        }
+
+        boolean autoConfig() {
+            return autoConfig != null && autoConfig.autoConfig;
+        }
+    }
+
+    static class Include {
+        @CommandLine.Option(names = {"-dn", "--distribution-name"},
+            paramLabel = "<distribution>")
+        String[] includedDistributions;
+    }
+
+    static class Exclude {
+        @CommandLine.Option(names = {"-xdn", "--exclude-distribution"},
+            paramLabel = "<distribution>")
+        String[] excludedDistributions;
+    }
 
     static class AutoConfigGroup {
         @CommandLine.Option(names = {"--auto-config"})
@@ -136,8 +170,18 @@ public class Release extends AbstractPlatformAwareModelCommand {
         String[] globs;
     }
 
+    @Override
+    protected JReleaserContext createContext() {
+        JReleaserContext context = super.createContext();
+        if (null != composite) {
+            context.setIncludedDistributions(collectEntries(composite.includedDistributions()));
+            context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
+        }
+        return context;
+    }
+
     protected void execute() {
-        if (null == autoConfigGroup || !autoConfigGroup.autoConfig) {
+        if (composite == null || !composite.autoConfig()) {
             super.execute();
             return;
         }
@@ -151,60 +195,44 @@ public class Release extends AbstractPlatformAwareModelCommand {
             .outputDirectory(getOutputDirectory())
             .dryrun(dryrun())
             .gitRootSearch(gitRootSearch)
-            .projectName(autoConfigGroup.projectName)
-            .projectVersion(autoConfigGroup.projectVersion)
-            .projectVersionPattern(autoConfigGroup.projectVersionPattern)
-            .projectSnapshotPattern(autoConfigGroup.projectSnapshotPattern)
-            .projectSnapshotLabel(autoConfigGroup.projectSnapshotLabel)
-            .projectSnapshotFullChangelog(autoConfigGroup.projectSnapshotFullChangelog)
-            .tagName(autoConfigGroup.tagName)
-            .previousTagName(autoConfigGroup.previousTagName)
-            .releaseName(autoConfigGroup.releaseName)
-            .milestoneName(autoConfigGroup.milestoneName)
-            .branch(autoConfigGroup.branch)
-            .prerelease(autoConfigGroup.prerelease)
-            .prereleasePattern(autoConfigGroup.prereleasePattern)
-            .draft(autoConfigGroup.draft)
-            .overwrite(autoConfigGroup.overwrite)
-            .update(autoConfigGroup.update)
+            .projectName(composite.autoConfig.projectName)
+            .projectVersion(composite.autoConfig.projectVersion)
+            .projectVersionPattern(composite.autoConfig.projectVersionPattern)
+            .projectSnapshotPattern(composite.autoConfig.projectSnapshotPattern)
+            .projectSnapshotLabel(composite.autoConfig.projectSnapshotLabel)
+            .projectSnapshotFullChangelog(composite.autoConfig.projectSnapshotFullChangelog)
+            .tagName(composite.autoConfig.tagName)
+            .previousTagName(composite.autoConfig.previousTagName)
+            .releaseName(composite.autoConfig.releaseName)
+            .milestoneName(composite.autoConfig.milestoneName)
+            .branch(composite.autoConfig.branch)
+            .prerelease(composite.autoConfig.prerelease)
+            .prereleasePattern(composite.autoConfig.prereleasePattern)
+            .draft(composite.autoConfig.draft)
+            .overwrite(composite.autoConfig.overwrite)
+            .update(composite.autoConfig.update)
             .updateSections(collectUpdateSections())
-            .skipTag(autoConfigGroup.skipTag)
-            .skipRelease(autoConfigGroup.skipRelease)
-            .changelog(autoConfigGroup.changelog)
-            .changelogFormatted(autoConfigGroup.changelogFormatted)
-            .username(autoConfigGroup.username)
-            .commitAuthorName(autoConfigGroup.commitAuthorName)
-            .commitAuthorEmail(autoConfigGroup.commitAuthorEmail)
-            .signing(autoConfigGroup.signing)
-            .armored(autoConfigGroup.armored)
-            .files(collectFiles())
-            .globs(collectGlobs())
+            .skipTag(composite.autoConfig.skipTag)
+            .skipRelease(composite.autoConfig.skipRelease)
+            .changelog(composite.autoConfig.changelog)
+            .changelogFormatted(composite.autoConfig.changelogFormatted)
+            .username(composite.autoConfig.username)
+            .commitAuthorName(composite.autoConfig.commitAuthorName)
+            .commitAuthorEmail(composite.autoConfig.commitAuthorEmail)
+            .signing(composite.autoConfig.signing)
+            .armored(composite.autoConfig.armored)
+            .files(collectEntries(composite.autoConfig.files))
+            .globs(collectEntries(composite.autoConfig.globs))
             .selectedPlatforms(collectSelectedPlatforms())
             .autoConfigure();
 
         doExecute(context);
     }
 
-    private List<String> collectFiles() {
-        List<String> list = new ArrayList<>();
-        if (autoConfigGroup.files != null && autoConfigGroup.files.length > 0) {
-            Collections.addAll(list, autoConfigGroup.files);
-        }
-        return list;
-    }
-
-    private List<String> collectGlobs() {
-        List<String> list = new ArrayList<>();
-        if (autoConfigGroup.globs != null && autoConfigGroup.globs.length > 0) {
-            Collections.addAll(list, autoConfigGroup.globs);
-        }
-        return list;
-    }
-
     private Set<UpdateSection> collectUpdateSections() {
         Set<UpdateSection> set = new LinkedHashSet<>();
-        if (autoConfigGroup.updateSections != null && autoConfigGroup.updateSections.length > 0) {
-            for (String updateSection : autoConfigGroup.updateSections) {
+        if (composite.autoConfig.updateSections != null && composite.autoConfig.updateSections.length > 0) {
+            for (String updateSection : composite.autoConfig.updateSections) {
                 set.add(UpdateSection.of(updateSection.trim()));
             }
         }

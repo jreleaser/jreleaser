@@ -30,12 +30,27 @@ public class Announce extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"-y", "--dryrun"})
     boolean dryrun;
 
-    @CommandLine.Option(names = {"-an", "--announcer-name"})
-    String announcerName;
+    @CommandLine.ArgGroup(headingKey = "filter.header")
+    Composite composite;
+
+    static class Composite {
+        @CommandLine.Option(names = {"-an", "--announcer-name"},
+            paramLabel = "<announcer>",
+            required = true)
+        String[] includedAnnouncers;
+
+        @CommandLine.Option(names = {"-xan", "--exclude-announcer"},
+            paramLabel = "<announcer>",
+            required = true)
+        String[] excludedAnnouncers;
+    }
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setAnnouncerName(announcerName);
+        if (null != composite) {
+            context.setIncludedAnnouncers(collectEntries(composite.includedAnnouncers, true));
+            context.setExcludedAnnouncers(collectEntries(composite.excludedAnnouncers, true));
+        }
         Workflows.announce(context).execute();
     }
 

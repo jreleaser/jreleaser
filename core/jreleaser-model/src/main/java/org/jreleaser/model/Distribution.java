@@ -314,7 +314,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         return map;
     }
 
-    public static Set<String> supportedTools() {
+    public static Set<String> supportedPackager() {
         Set<String> set = new LinkedHashSet<>();
         set.add(Brew.NAME);
         set.add(Chocolatey.NAME);

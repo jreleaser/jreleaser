@@ -20,20 +20,28 @@ package org.jreleaser.ant.tasks;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class JReleaserAnnounceTask extends AbstractPlatformAwareJReleaserTask {
-    private String announcerName;
+    private List<String> announcers;
+    private List<String> excludedAnnouncers;
 
-    public void setAnnouncerName(String announcerName) {
-        this.announcerName = announcerName;
+    public void setAnnouncers(List<String> announcers) {
+        this.announcers = announcers;
+    }
+
+    public void setExcludedAnnouncers(List<String> excludedAnnouncers) {
+        this.excludedAnnouncers = excludedAnnouncers;
     }
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setAnnouncerName(announcerName);
+        context.setIncludedAnnouncers(announcers);
+        context.setExcludedAnnouncers(excludedAnnouncers);
         Workflows.announce(context).execute();
     }
 }

@@ -37,7 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Generate a tool/announcer template.
+ * Generate a packager/announcer template.
  *
  * @author Andres Almiray
  * @since 0.1.0
@@ -69,10 +69,10 @@ public class JReleaserTemplateMojo extends AbstractMojo {
     private final Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
 
     /**
-     * The name of the tool.
+     * The name of the packager.
      */
-    @Parameter(property = "jreleaser.template.tool.name")
-    private String toolName;
+    @Parameter(property = "jreleaser.template.packager.name")
+    private String packagerName;
 
     /**
      * The name of the announcer.
@@ -112,7 +112,7 @@ public class JReleaserTemplateMojo extends AbstractMojo {
                 .logger(getLogger())
                 .distributionName(distributionName)
                 .distributionType(distributionType)
-                .toolName(toolName)
+                .packagerName(packagerName)
                 .announcerName(announcerName)
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)
