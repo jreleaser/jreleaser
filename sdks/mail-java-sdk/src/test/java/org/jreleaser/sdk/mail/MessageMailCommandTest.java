@@ -24,11 +24,11 @@ import org.jreleaser.util.SimpleJReleaserLoggerAdapter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static javax.mail.Message.RecipientType.CC;
-import static javax.mail.Message.RecipientType.TO;
+import static jakarta.mail.Message.RecipientType.CC;
+import static jakarta.mail.Message.RecipientType.TO;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
