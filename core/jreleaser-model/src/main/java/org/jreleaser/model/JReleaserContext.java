@@ -50,6 +50,7 @@ import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.Constants.KEY_COMMIT_FULL_HASH;
 import static org.jreleaser.util.Constants.KEY_COMMIT_SHORT_HASH;
 import static org.jreleaser.util.Constants.KEY_MILESTONE_NAME;
+import static org.jreleaser.util.Constants.KEY_PLATFORM;
 import static org.jreleaser.util.Constants.KEY_PROJECT_NAME;
 import static org.jreleaser.util.Constants.KEY_PROJECT_SNAPSHOT;
 import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
@@ -472,6 +473,7 @@ public class JReleaserContext {
 
         SortedProperties props = new SortedProperties();
         props.put(KEY_TIMESTAMP, model.getTimestamp());
+        props.put(KEY_PLATFORM, PlatformUtils.getCurrentFull());
         props.put(KEY_COMMIT_SHORT_HASH, model.getCommit().getShortHash());
         props.put(KEY_COMMIT_FULL_HASH, model.getCommit().getFullHash());
         props.put(KEY_PROJECT_NAME, project.getName());

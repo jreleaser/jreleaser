@@ -30,6 +30,7 @@ public interface Constants {
     // General
     String KEY_ZONED_DATE_TIME_NOW = "__ZonedDateTime_now__";
     String KEY_TIMESTAMP = "timestamp";
+    String KEY_PLATFORM = "platform";
     String KEY_COMMIT_SHORT_HASH = "commitShortHash";
     String KEY_COMMIT_FULL_HASH = "commitFullHash";
 

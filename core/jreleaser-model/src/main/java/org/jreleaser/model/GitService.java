@@ -20,7 +20,6 @@ package org.jreleaser.model;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.MustacheUtils;
-import org.jreleaser.util.OsDetector;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 
@@ -756,12 +755,12 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         project.parseVersion();
         props.putAll(project.getResolvedExtraProperties());
 
-        String osName = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_NAME);
-        String osArch = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_ARCH);
+        String osName = PlatformUtils.getDetectedOs();
+        String osArch = PlatformUtils.getDetectedArch();
         props.put(Constants.KEY_OS_NAME, osName);
         props.put(Constants.KEY_OS_ARCH, osArch);
         props.put(Constants.KEY_OS_PLATFORM, osName + "-" + osArch);
-        props.put(Constants.KEY_OS_VERSION, PlatformUtils.getOsDetector().get(OsDetector.DETECTED_VERSION));
+        props.put(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
 
         props.put(Constants.KEY_REPO_HOST, host);
         props.put(Constants.KEY_REPO_OWNER, owner);

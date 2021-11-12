@@ -24,6 +24,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -104,5 +105,6 @@ public class ContextCreator {
         context.getLogger().info(RB.$("context.creator.report.release"), context.getModel().getProject().isSnapshot() ? " " : " " + RB.$("not") + " ");
         context.getLogger().info(RB.$("context.creator.report.timestamp"), context.getModel().getTimestamp());
         context.getLogger().info(RB.$("context.creator.report.head"), context.getModel().getCommit().getShortHash());
+        context.getLogger().info(RB.$("context.creator.report.platform"), PlatformUtils.getCurrentFull());
     }
 }

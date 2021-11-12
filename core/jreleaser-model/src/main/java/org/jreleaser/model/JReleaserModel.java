@@ -227,12 +227,12 @@ public class JReleaserModel implements Domain {
         fillProjectProperties(props, project);
         fillReleaseProperties(props, release);
 
-        String osName = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_NAME);
-        String osArch = PlatformUtils.getOsDetector().get(OsDetector.DETECTED_ARCH);
+        String osName = PlatformUtils.getDetectedOs();
+        String osArch = PlatformUtils.getDetectedArch();
         props.put(Constants.KEY_OS_NAME, osName);
         props.put(Constants.KEY_OS_ARCH, osArch);
         props.put(Constants.KEY_OS_PLATFORM, osName + "-" + osArch);
-        props.put(Constants.KEY_OS_VERSION, PlatformUtils.getOsDetector().get(OsDetector.DETECTED_VERSION));
+        props.put(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
 
         applyTemplates(props, project.getResolvedExtraProperties());
         props.put(Constants.KEY_ZONED_DATE_TIME_NOW, now);

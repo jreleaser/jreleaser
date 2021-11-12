@@ -25,13 +25,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -68,7 +65,7 @@ public final class PlatformUtils {
             "sparc_32",
             "sparc_64",
             "arm_32",
-            "aarch_64",
+            "aarch64",
             "mips_32",
             "mipsel_32",
             "mips_64",
@@ -166,7 +163,7 @@ public final class PlatformUtils {
     }
 
     public static String getCurrent() {
-        String platform = OS_DETECTOR.get(Detector.DETECTED_NAME);
+        String platform = getDetectedOs();
 
         if (isLinux(platform)) {
             Path release = Paths.get(System.getProperty("java.home"))
@@ -190,35 +187,15 @@ public final class PlatformUtils {
     }
 
     public static String getCurrentFull() {
-        return getCurrent() + "-" + OS_DETECTOR.get(Detector.DETECTED_ARCH);
+        return getCurrent() + "-" + getDetectedArch();
     }
 
     public static boolean isWindows() {
-        return "windows".equals(OS_DETECTOR.get(Detector.DETECTED_NAME));
+        return "windows".equals(getDetectedOs());
     }
 
     public static boolean isMac() {
-        return "osx".equals(OS_DETECTOR.get(Detector.DETECTED_NAME));
-    }
-
-    public static String getValue(String key) {
-        return OS_DETECTOR.get(key);
-    }
-
-    public static Set<String> keySet() {
-        return OS_DETECTOR.getProperties().keySet();
-    }
-
-    public static Collection<String> values() {
-        return OS_DETECTOR.getProperties().values();
-    }
-
-    public static Set<Map.Entry<String, String>> entrySet() {
-        return OS_DETECTOR.getProperties().entrySet();
-    }
-
-    public static OsDetector getOsDetector() {
-        return OS_DETECTOR;
+        return "osx".equals(getDetectedOs());
     }
 
     public static boolean isCompatible(String expected, String actual) {
@@ -229,5 +206,24 @@ public final class PlatformUtils {
 
         String[] parts = actual.split("-");
         return expected.equals(parts[0]);
+    }
+
+    public static String getDetectedOs() {
+        return OS_DETECTOR.get(Detector.DETECTED_NAME);
+    }
+
+    public static String getDetectedArch() {
+        return denormalizeArch(OS_DETECTOR.get(Detector.DETECTED_ARCH));
+    }
+
+    public static String getDetectedVersion() {
+        return OS_DETECTOR.get(OsDetector.DETECTED_VERSION);
+    }
+
+    private static String denormalizeArch(String value) {
+        if ("aarch_64".equals(value)) {
+            return "aarch64";
+        }
+        return value;
     }
 }
