@@ -61,8 +61,8 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         Path graalPath = assembler.getGraal().getEffectivePath(context, assembler);
         Version javaVersion = Version.of(readJavaVersion(graalPath));
         Version graalVersion = Version.of(readGraalVersion(graalPath));
-        context.getLogger().debug(RB.$("assembler.graal.java"), javaVersion);
-        context.getLogger().debug(RB.$("assembler.graal.graal"), graalVersion);
+        context.getLogger().debug(RB.$("assembler.graal.java"), javaVersion, graalPath.toAbsolutePath().toString());
+        context.getLogger().debug(RB.$("assembler.graal.graal"), graalVersion, graalPath.toAbsolutePath().toString());
 
         // copy jars to assembly
         Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);

@@ -32,6 +32,7 @@ import org.jreleaser.util.Version;
 import org.jreleaser.util.command.Command;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,13 +64,13 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         // verify jdk
         Path jdkPath = assembler.getJdk().getEffectivePath(context, assembler);
         Version jdkVersion = Version.of(readJavaVersion(jdkPath));
-        context.getLogger().debug(RB.$("assembler.jlink.jdk"), jdkVersion);
+        context.getLogger().debug(RB.$("assembler.jlink.jdk"), jdkVersion, jdkPath.toAbsolutePath().toString());
 
         // verify jdks
         for (Artifact targetJdk : assembler.getTargetJdks()) {
             Path targetJdkPath = targetJdk.getEffectivePath(context, assembler);
             Version targetJdkVersion = Version.of(readJavaVersion(targetJdkPath));
-            context.getLogger().debug(RB.$("assembler.jlink.target"), jdkVersion);
+            context.getLogger().debug(RB.$("assembler.jlink.target"), jdkVersion, targetJdkPath.toAbsolutePath().toString());
 
             if (jdkVersion.getMajor() != targetJdkVersion.getMajor()) {
                 throw new AssemblerProcessingException(RB.$("ERROR_jlink_target_not_compatible", targetJdkVersion, jdkVersion));
@@ -121,7 +122,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         // jlink it
         String modulePath = targetJdk.getEffectivePath(context).resolve("jmods").toAbsolutePath().toString();
         if (assembler.isCopyJars()) {
-            modulePath += assembleDirectory.resolve("jars").toAbsolutePath();
+            modulePath += File.pathSeparator + assembleDirectory.resolve("jars").toAbsolutePath();
         }
 
         Command cmd = new Command(jdkPath.resolve("bin").resolve("jlink").toAbsolutePath().toString())
