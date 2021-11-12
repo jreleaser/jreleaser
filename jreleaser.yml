@@ -1,7 +1,7 @@
 environment:
   properties:
     jdkPathPrefix: 'apps/jreleaser/build/jdks'
-    jdkFilePrefix: 'zulu11.48.21-ca-jdk11.0.11'
+    jdkFilePrefix: 'zulu17.30.15-ca-jdk17.0.1'
 
 project:
   name: jreleaser
@@ -124,29 +124,26 @@ assemble:
       #imageName: '{{distributionName}}-{{projectVersion}}'
       #imageNameTransform: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: 'jreleaser'
-      moduleNames:
-        - java.base
-        - java.desktop
-        - java.management
-        - java.naming
-        - java.rmi
-        - java.security.jgss
-        - java.security.sasl
-        - java.sql
-        - jdk.crypto.ec
-        - jdk.crypto.cryptoki
-        - jdk.security.auth
-        - jdk.security.jgss
-        - org.openjsse
+      jdeps:
+        multiRelease: base
+        ignoreMissingDeps: true
       targetJdks:
-        - path: '{{jdkPathPrefix}}/zulu11Osx/{{jdkFilePrefix}}-macosx_x64/zulu-11.jdk/Contents/Home'
+        - path: '{{jdkPathPrefix}}/zulu17Osx/{{jdkFilePrefix}}-macosx_x64/zulu-17.jdk/Contents/Home'
           platform: 'osx-x86_64'
-        - path: '{{jdkPathPrefix}}/zulu11Linux/{{jdkFilePrefix}}-linux_x64'
+        - path: '{{jdkPathPrefix}}/zulu17OsxArm/{{jdkFilePrefix}}-macosx_aarch64/zulu-17.jdk/Contents/Home'
+          platform: 'osx-aarch64'
+        - path: '{{jdkPathPrefix}}/zulu17Linux/{{jdkFilePrefix}}-linux_x64'
           platform: 'linux-x86_64'
-        - path: '{{jdkPathPrefix}}/zulu11LinuxMusl/{{jdkFilePrefix}}-linux_musl_x64'
+        - path: '{{jdkPathPrefix}}/zulu17LinuxArm/{{jdkFilePrefix}}-linux_aarch64'
+          platform: 'linux-aarch64'
+        - path: '{{jdkPathPrefix}}/zulu17LinuxMusl/{{jdkFilePrefix}}-linux_musl_x64'
           platform: 'linux_musl-x86_64'
-        - path: '{{jdkPathPrefix}}/zulu11Windows/{{jdkFilePrefix}}-win_x64'
+        - path: '{{jdkPathPrefix}}/zulu17LinuxMuslArm/{{jdkFilePrefix}}-linux_musl_aarch64'
+          platform: 'linux_musl-aarch64'
+        - path: '{{jdkPathPrefix}}/zulu17Windows/{{jdkFilePrefix}}-win_x64'
           platform: 'windows-x86_64'
+        - path: '{{jdkPathPrefix}}/zulu17WindowsArm/{{jdkFilePrefix}}-win_aarch64'
+          platform: 'windows-aarch64'
       mainJar:
         path: 'apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
       jars:
