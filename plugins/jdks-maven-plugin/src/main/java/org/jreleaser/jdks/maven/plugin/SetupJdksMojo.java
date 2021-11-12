@@ -24,24 +24,11 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.jreleaser.util.FileUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.executeMojo;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.executionEnvironment;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.goal;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
 
 /**
  * Downloads, verifies, and unpacks JDKs.
@@ -83,137 +70,20 @@ public class SetupJdksMojo extends AbstractJdksMojo {
         if (jdks == null || jdks.isEmpty()) return;
         validate();
 
+        JdkHelper jdkHelper = new JdkHelper(project, getLog(), outputDirectory,
+            session, pluginManager, archiverManager, true);
+
         if (isNotBlank(jdkName)) {
             // find the given JDK
             Jdk jdk = jdks.stream()
                 .filter(j -> j.getName().equals(jdkName))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Jdk " + jdkName + " was not found"));
-            setupJdk(jdk);
+            jdkHelper.setupJdk(jdk);
         } else {
             for (Jdk jdk : jdks) {
-                setupJdk(jdk);
+                jdkHelper.setupJdk(jdk);
             }
-        }
-    }
-
-    private void setupJdk(Jdk jdk) throws MojoExecutionException {
-        File jdkExtractDirectory = new File(outputDirectory, jdk.getName());
-
-        boolean downloaded = false;
-        if (!new File(jdkExtractDirectory, getFilename(jdk)).exists()) {
-            downloadJdk(jdkExtractDirectory, jdk);
-            downloaded = true;
-        }
-
-        verifyJdk(jdkExtractDirectory, jdk);
-
-        File jdkDir = new File(jdkExtractDirectory, getDirname(jdk));
-        if (jdkDir.exists()) {
-            if (downloaded) {
-                try {
-                    FileUtils.deleteFiles(jdkDir.toPath());
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Unexpected error", e);
-                }
-                extractJdk(jdkExtractDirectory, jdk);
-            }
-        } else {
-            extractJdk(jdkExtractDirectory, jdk);
-        }
-    }
-
-    private void downloadJdk(File jdkExtractDirectory, Jdk jdk) throws MojoExecutionException {
-        getLog().info("Downloading " + jdk.getUrl());
-
-        Boolean interactiveMode = session.getSettings().getInteractiveMode();
-        session.getSettings().setInteractiveMode(false);
-
-        try {
-            executeMojo(
-                plugin("com.googlecode.maven-download-plugin",
-                    "download-maven-plugin",
-                    "1.6.3"),
-                goal("wget"),
-                configuration(
-                    element("uri", jdk.getUrl()),
-                    element("followRedirects", "true"),
-                    element("outputDirectory", jdkExtractDirectory.getAbsolutePath())
-                ),
-                executionEnvironment(
-                    project,
-                    session,
-                    pluginManager));
-        } finally {
-            session.getSettings().setInteractiveMode(interactiveMode);
-        }
-    }
-
-    private void verifyJdk(File jdkExtractDirectory, Jdk jdk) throws MojoExecutionException {
-        String algorithm = "SHA-256";
-        String checksum = jdk.getChecksum();
-        if (checksum.contains("/")) {
-            String[] parts = checksum.split("/");
-            algorithm = parts[0];
-            checksum = parts[1];
-        }
-
-        String filename = getFilename(jdk);
-
-        try {
-            // calculate checksum
-            MessageDigest md = MessageDigest.getInstance(algorithm);
-            String calculatedChecksum;
-            try (FileInputStream fis = new FileInputStream(new File(jdkExtractDirectory, filename))) {
-                byte[] buf = new byte[1024];
-                int read;
-                while ((read = fis.read(buf)) != -1) {
-                    md.update(buf, 0, read);
-                }
-                calculatedChecksum = toHex(md.digest());
-            }
-
-            // verify checksum
-            getLog().info("Verifying " + filename);
-            if (!calculatedChecksum.equalsIgnoreCase(checksum)) {
-                throw new MojoExecutionException("Invalid checksum for file '" +
-                    filename + "'. Expected " + checksum.toLowerCase() +
-                    " but got " + calculatedChecksum.toLowerCase() + ".");
-            }
-        } catch (IOException | NoSuchAlgorithmException e) {
-            throw new MojoExecutionException("Unexpected error when verifying " + filename, e);
-        }
-    }
-
-    private String getFilename(Jdk jdk) {
-        int p = jdk.getUrl().lastIndexOf("/");
-        return jdk.getUrl().substring(p + 1);
-    }
-
-    private String getDirname(Jdk jdk) {
-        String filename = getFilename(jdk);
-        return filename.substring(0, filename.lastIndexOf('.'));
-    }
-
-    private String toHex(byte[] barr) {
-        StringBuilder result = new StringBuilder();
-        for (byte b : barr) {
-            result.append(String.format("%02X", b));
-        }
-        return result.toString();
-    }
-
-    private void extractJdk(File jdkExtractDirectory, Jdk jdk) throws MojoExecutionException {
-        File inputFile = new File(jdkExtractDirectory, getFilename(jdk));
-
-        try {
-            getLog().info("Extracting " + inputFile.getName());
-            UnArchiver unarchiver = archiverManager.getUnArchiver(inputFile);
-            unarchiver.setSourceFile(inputFile);
-            unarchiver.setDestDirectory(jdkExtractDirectory);
-            unarchiver.extract();
-        } catch (NoSuchArchiverException e) {
-            throw new MojoExecutionException("Unexpected error when extracting " + inputFile.getName(), e);
         }
     }
 }

@@ -15,43 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id 'de.benediktritter.maven-plugin-development' version '0.3.1'
-}
-
-config {
-    licensing {
-        exclude 'build/mavenPlugin/**'
-    }
-}
-
-mavenPlugin {
-    helpMojoPackage = 'org.jreleaser.maven.plugin'
-}
-
 dependencies {
-    api project(':disco-java-sdk')
-    api 'org.twdata.maven:mojo-executor:2.3.2'
-    api 'org.codehaus.plexus:plexus-archiver:4.2.5'
-
-    implementation "org.apache.maven:maven-plugin-api:$mavenVersion"
-
-    compileOnly "org.apache.maven:maven-core:$mavenVersion"
-    compileOnly "org.apache.maven.plugin-tools:maven-plugin-annotations:$mavenVersion"
-}
-
-license {
-    exclude '**/build/**/pom.xml'
-    exclude '**/HelpMojo.java'
+    api project(':jreleaser-utils')
+    api "io.github.openfeign:feign-core:$feignVersion"
+    api "io.github.openfeign:feign-jackson:$feignVersion"
+    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 }
 
 processResources {
     inputs.property('version', project.version)
     filesMatching(['**/*.properties']) {
         expand(
-            'version': project.version,
-            'id': 'jdks',
-            'name': project.pluginDisplayName
+            'version': project.version
         )
     }
 }
