@@ -65,7 +65,9 @@ public class MacportsToolProcessor extends AbstractRepositoryToolProcessor<Macpo
         props.put(Constants.KEY_MACPORTS_CATEGORIES, String.join(" ", tool.getCategories()));
         props.put(Constants.KEY_MACPORTS_MAINTAINERS, passThrough(String.join(LINE_SEPARATOR, tool.getResolvedMaintainers(context))));
         props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, passThrough(String.join(LINE_SEPARATOR, longDescription)));
-        props.put(Constants.KEY_MACPORTS_JAVA_VERSION, resolveJavaVersion(distribution));
+        if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY) {
+            props.put(Constants.KEY_MACPORTS_JAVA_VERSION, resolveJavaVersion(distribution));
+        }
 
         String distributionUrl = (String) props.get(Constants.KEY_DISTRIBUTION_URL);
         String artifactFilename = (String) props.get(Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME);

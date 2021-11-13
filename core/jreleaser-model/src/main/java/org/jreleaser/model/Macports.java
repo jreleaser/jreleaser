@@ -118,6 +118,7 @@ public class Macports extends AbstractRepositoryTool {
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
-        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY;
+        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
+            distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE;
     }
 }
