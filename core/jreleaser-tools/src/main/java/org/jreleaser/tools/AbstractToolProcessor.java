@@ -124,6 +124,11 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
     @Override
     public void publishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        if (context.getModel().getProject().isSnapshot() && !tool.isSnapshotSupported()) {
+            context.getLogger().info(RB.$("tool.publish.snapshot.not.supported"));
+            return;
+        }
+
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug(RB.$("tool.create.properties"), distributionName, getToolName());

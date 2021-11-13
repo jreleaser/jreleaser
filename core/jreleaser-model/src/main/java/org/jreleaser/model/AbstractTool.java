@@ -104,9 +104,6 @@ public abstract class AbstractTool implements Tool {
         if (null == active) {
             active = Active.NEVER;
         }
-        if (project.isSnapshot() && !isSnapshotSupported()) {
-            active = Active.NEVER;
-        }
         enabled = active.check(project);
 
         return enabled;
@@ -114,9 +111,6 @@ public abstract class AbstractTool implements Tool {
 
     public boolean resolveEnabled(Project project, Distribution distribution) {
         if (null == active) {
-            active = Active.NEVER;
-        }
-        if (project.isSnapshot() && !isSnapshotSupported()) {
             active = Active.NEVER;
         }
         enabled = active.check(project);
