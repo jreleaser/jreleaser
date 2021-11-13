@@ -18,6 +18,8 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -26,6 +28,16 @@ import org.gradle.api.provider.Property
  * @since 0.9.0
  */
 @CompileStatic
-interface DockerRepository extends Tap {
-    Property<Boolean> getVersionedSubfolders()
+interface Macports extends RepositoryTool {
+    Property<Integer> getRevision()
+
+    ListProperty<String> getCategories()
+
+    ListProperty<String> getMaintainers()
+
+    Tap getRepository()
+
+    void repository(Action<? super Tap> action)
+
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 }

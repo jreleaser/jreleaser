@@ -26,6 +26,7 @@ public class Packagers {
     private final Chocolatey chocolatey = new Chocolatey();
     private final Docker docker = new Docker();
     private final Jbang jbang = new Jbang();
+    private final Macports macports = new Macports();
     private final Scoop scoop = new Scoop();
     private final Sdkman sdkman = new Sdkman();
     private final Snap snap = new Snap();
@@ -35,6 +36,7 @@ public class Packagers {
         setChocolatey(packagers.chocolatey);
         setDocker(packagers.docker);
         setJbang(packagers.jbang);
+        setMacports(packagers.macports);
         setScoop(packagers.scoop);
         setSdkman(packagers.sdkman);
         setSnap(packagers.snap);
@@ -70,6 +72,14 @@ public class Packagers {
 
     public void setJbang(Jbang jbang) {
         this.jbang.setAll(jbang);
+    }
+
+    public Macports getMacports() {
+        return macports;
+    }
+
+    public void setMacports(Macports jbang) {
+        this.macports.setAll(macports);
     }
 
     public Scoop getScoop() {

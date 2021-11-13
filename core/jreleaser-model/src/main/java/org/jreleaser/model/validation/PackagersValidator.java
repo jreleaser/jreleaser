@@ -69,10 +69,16 @@ public abstract class PackagersValidator extends Validator {
             errors.configuration(RB.$("validation_packagers_docker_specs"));
         }
 
-        packagers.getDocker().resolveEnabled(project);
+        packagers.getJbang().resolveEnabled(project);
         validatePackager(context,
             packagers.getJbang(),
             packagers.getJbang().getCatalog(),
+            errors);
+
+        packagers.getMacports().resolveEnabled(project);
+        validatePackager(context,
+            packagers.getMacports(),
+            packagers.getMacports().getRepository(),
             errors);
 
         packagers.getScoop().resolveEnabled(project);

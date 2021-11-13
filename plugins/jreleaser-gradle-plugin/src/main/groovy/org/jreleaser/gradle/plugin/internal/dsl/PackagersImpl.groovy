@@ -24,6 +24,7 @@ import org.jreleaser.gradle.plugin.dsl.Brew
 import org.jreleaser.gradle.plugin.dsl.Chocolatey
 import org.jreleaser.gradle.plugin.dsl.Docker
 import org.jreleaser.gradle.plugin.dsl.Jbang
+import org.jreleaser.gradle.plugin.dsl.Macports
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Scoop
 import org.jreleaser.gradle.plugin.dsl.Sdkman
@@ -43,6 +44,7 @@ class PackagersImpl implements Packagers {
     final ChocolateyImpl chocolatey
     final DockerImpl docker
     final JbangImpl jbang
+    final MacportsImpl macports
     final ScoopImpl scoop
     final SdkmanImpl sdkman
     final SnapImpl snap
@@ -53,6 +55,7 @@ class PackagersImpl implements Packagers {
         chocolatey = objects.newInstance(ChocolateyImpl, objects)
         docker = objects.newInstance(DockerImpl, objects)
         jbang = objects.newInstance(JbangImpl, objects)
+        macports = objects.newInstance(MacportsImpl, objects)
         scoop = objects.newInstance(ScoopImpl, objects)
         sdkman = objects.newInstance(SdkmanImpl, objects)
         snap = objects.newInstance(SnapImpl, objects)
@@ -76,6 +79,11 @@ class PackagersImpl implements Packagers {
     @Override
     void jbang(Action<? super Jbang> action) {
         action.execute(jbang)
+    }
+
+    @Override
+    void macports(Action<? super Macports> action) {
+        action.execute(macports)
     }
 
     @Override
@@ -114,6 +122,11 @@ class PackagersImpl implements Packagers {
     }
 
     @Override
+    void macports(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Macports) Closure<Void> action) {
+        ConfigureUtil.configure(action, macports)
+    }
+
+    @Override
     void scoop(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scoop) Closure<Void> action) {
         ConfigureUtil.configure(action, scoop)
     }
@@ -134,6 +147,7 @@ class PackagersImpl implements Packagers {
         if (chocolatey.isSet()) packagers.chocolatey = chocolatey.toModel()
         if (docker.isSet()) packagers.docker = docker.toModel()
         if (jbang.isSet()) packagers.jbang = jbang.toModel()
+        if (macports.isSet()) packagers.macports = macports.toModel()
         if (scoop.isSet()) packagers.scoop = scoop.toModel()
         if (sdkman.isSet()) packagers.sdkman = sdkman.toModel()
         if (snap.isSet()) packagers.snap = snap.toModel()

@@ -36,6 +36,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -264,8 +265,20 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             artifactProps.keySet().stream()
                 .filter(k -> !props.containsKey(k))
                 .forEach(k -> props.put(k, artifactProps.get(k)));
-            String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
+
+            Path artifactPath = artifact.getEffectivePath(context);
+
+            long artifactSize = 0;
+            try {
+                artifactSize = Files.size(artifactPath);
+            } catch (IOException ignored) {
+                // this would be strange
+                context.getLogger().trace(ignored);
+            }
+
+            String artifactFileName = artifactPath.getFileName().toString();
             String artifactName = getFilename(artifactFileName);
+            props.put("artifact" + platform + "Size", artifactSize);
             props.put("artifact" + platform + "Name", artifactName);
             props.put("artifact" + platform + "FileName", artifactFileName);
             for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
@@ -282,15 +295,18 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 props.putAll(context.getModel().getUpload()
                     .resolveDownloadUrls(context, distribution, artifact, "distribution"));
                 props.put(Constants.KEY_DISTRIBUTION_URL, artifactUrl);
+                props.put(Constants.KEY_DISTRIBUTION_SIZE, artifactSize);
                 props.put(Constants.KEY_DISTRIBUTION_SHA_256, artifact.getHash(Algorithm.SHA_256));
                 for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                     props.put("distributionChecksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
                 }
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, artifactName);
+                props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_SIZE, artifactSize);
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM, artifact.getPlatform());
                 props.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
                 props.put(Constants.KEY_ARTIFACT_NAME, artifactName);
+                props.put(Constants.KEY_ARTIFACT_SIZE, artifactSize);
                 // add extra properties without clobbering existing keys
                 Map<String, Object> aprops = artifact.getResolvedExtraProperties();
                 applyTemplates(aprops, aprops);

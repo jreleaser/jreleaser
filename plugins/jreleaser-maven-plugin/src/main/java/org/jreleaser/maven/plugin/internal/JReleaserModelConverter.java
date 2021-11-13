@@ -57,6 +57,7 @@ import org.jreleaser.maven.plugin.Jbang;
 import org.jreleaser.maven.plugin.Jdeps;
 import org.jreleaser.maven.plugin.Jlink;
 import org.jreleaser.maven.plugin.Jreleaser;
+import org.jreleaser.maven.plugin.Macports;
 import org.jreleaser.maven.plugin.Mail;
 import org.jreleaser.maven.plugin.Mastodon;
 import org.jreleaser.maven.plugin.Mattermost;
@@ -88,6 +89,7 @@ import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.HttpUploader;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JbangCatalog;
+import org.jreleaser.model.MacportsRepository;
 import org.jreleaser.model.Repository;
 import org.jreleaser.model.RepositoryTap;
 import org.jreleaser.model.ScoopBucket;
@@ -468,6 +470,7 @@ public final class JReleaserModelConverter {
         if (packagers.getChocolatey().isSet()) p.setChocolatey(convertChocolatey(packagers.getChocolatey()));
         if (packagers.getDocker().isSet()) p.setDocker(convertDocker(packagers.getDocker()));
         if (packagers.getJbang().isSet()) p.setJbang(convertJbang(packagers.getJbang()));
+        if (packagers.getMacports().isSet()) p.setMacports(convertMacports(packagers.getMacports()));
         if (packagers.getScoop().isSet()) p.setScoop(convertScoop(packagers.getScoop()));
         if (packagers.getSdkman().isSet()) p.setSdkman(convertSdkman(packagers.getSdkman()));
         if (packagers.getSnap().isSet()) p.setSnap(convertSnap(packagers.getSnap()));
@@ -861,6 +864,7 @@ public final class JReleaserModelConverter {
         if (distribution.getChocolatey().isSet()) d.setChocolatey(convertChocolatey(distribution.getChocolatey()));
         if (distribution.getDocker().isSet()) d.setDocker(convertDocker(distribution.getDocker()));
         if (distribution.getJbang().isSet()) d.setJbang(convertJbang(distribution.getJbang()));
+        if (distribution.getMacports().isSet()) d.setMacports(convertMacports(distribution.getMacports()));
         if (distribution.getScoop().isSet()) d.setScoop(convertScoop(distribution.getScoop()));
         if (distribution.getSnap().isSet()) d.setSnap(convertSnap(distribution.getSnap()));
 
@@ -1056,6 +1060,26 @@ public final class JReleaserModelConverter {
         JbangCatalog t = new JbangCatalog();
         convertTap(catalog, t);
         return t;
+    }
+
+    private static org.jreleaser.model.Macports convertMacports(Macports tool) {
+        org.jreleaser.model.Macports t = new org.jreleaser.model.Macports();
+        t.setActive(tool.resolveActive());
+        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setTemplateDirectory(tool.getTemplateDirectory());
+        t.setExtraProperties(tool.getExtraProperties());
+        t.setRevision(tool.getRevision());
+        t.setCategories(tool.getCategories());
+        t.setMaintainers(tool.getMaintainers());
+        t.setRepository(convertMacportsRepository(tool.getRepository()));
+        t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
+        return t;
+    }
+
+    private static MacportsRepository convertMacportsRepository(Tap tap) {
+        MacportsRepository r = new MacportsRepository();
+        convertTap(tap, r);
+        return r;
     }
 
     private static org.jreleaser.model.Scoop convertScoop(Scoop tool) {

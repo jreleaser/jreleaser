@@ -15,17 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.tools;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.provider.Property
+import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Macports;
+import org.jreleaser.model.tool.spi.ToolProcessorFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 /**
- *
  * @author Andres Almiray
  * @since 0.9.0
  */
-@CompileStatic
-interface DockerRepository extends Tap {
-    Property<Boolean> getVersionedSubfolders()
+@ServiceProviderFor(ToolProcessorFactory.class)
+public class MacportsToolProcessorFactory implements ToolProcessorFactory<Macports, MacportsToolProcessor> {
+    @Override
+    public String getName() {
+        return Macports.NAME;
+    }
+
+    @Override
+    public MacportsToolProcessor getToolProcessor(JReleaserContext context) {
+        return new MacportsToolProcessor(context);
+    }
 }

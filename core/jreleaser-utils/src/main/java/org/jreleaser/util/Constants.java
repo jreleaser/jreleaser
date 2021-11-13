@@ -110,9 +110,11 @@ public interface Constants {
     String KEY_DISTRIBUTION_TAGS_BY_SPACE = "distributionTagsBySpace";
     String KEY_DISTRIBUTION_TAGS_BY_COMMA = "distributionTagsByComma";
     String KEY_DISTRIBUTION_URL = "distributionUrl";
+    String KEY_DISTRIBUTION_SIZE = "distributionSize";
     String KEY_DISTRIBUTION_SHA_256 = "distributionSha256";
     String KEY_DISTRIBUTION_ARTIFACT_PLATFORM = "distributionArtifactPlatform";
     String KEY_DISTRIBUTION_ARTIFACT_NAME = "distributionArtifactName";
+    String KEY_DISTRIBUTION_ARTIFACT_SIZE = "distributionArtifactSize";
     String KEY_DISTRIBUTION_ARTIFACT_FILE_NAME = "distributionArtifactFileName";
     String KEY_DISTRIBUTION_JAVA_VERSION = "distributionJavaVersion";
     String KEY_DISTRIBUTION_JAVA_VERSION_MAJOR = "distributionJavaVersionMajor";
@@ -128,6 +130,7 @@ public interface Constants {
     String KEY_ARTIFACT_PLATFORM = "artifactPlatform";
     String KEY_ARTIFACT_FILE_NAME = "artifactFileName";
     String KEY_ARTIFACT_NAME = "artifactName";
+    String KEY_ARTIFACT_SIZE = "artifactSize";
 
     // Brew
     String KEY_BREW_FORMULA_NAME = "brewFormulaName";
@@ -179,6 +182,15 @@ public interface Constants {
     String KEY_JBANG_DISTRIBUTION_GA = "jbangDistributionGA";
     String KEY_JBANG_CATALOG_REPO_URL = "jbangCatalogRepoUrl";
     String KEY_JBANG_CATALOG_REPO_CLONE_URL = "jbangCatalogRepoCloneUrl";
+
+    // Macports
+    String KEY_MACPORTS_REVISION = "macportsRevision";
+    String KEY_MACPORTS_CATEGORIES = "macportsCategories";
+    String KEY_MACPORTS_MAINTAINERS = "macportsMaintainers";
+    String KEY_MACPORTS_DISTRIBUTION_URL = "macportsDistributionUrl";
+    String KEY_MACPORTS_JAVA_VERSION = "macportsJavaVersion";
+    String KEY_MACPORTS_REPOSITORY_REPO_URL = "macportsRepositoryRepoUrl";
+    String KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL = "macportsRepositoryRepoCloneUrl";
 
     // Snap
     String KEY_SNAP_BASE = "snapBase";

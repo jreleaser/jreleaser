@@ -24,9 +24,9 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Tap
 import org.jreleaser.model.ChocolateyBucket
-import org.jreleaser.model.DockerRepository
 import org.jreleaser.model.HomebrewTap
 import org.jreleaser.model.JbangCatalog
+import org.jreleaser.model.MacportsRepository
 import org.jreleaser.model.Repository
 import org.jreleaser.model.RepositoryTap
 import org.jreleaser.model.ScoopBucket
@@ -79,6 +79,12 @@ class TapImpl implements Tap {
         tap
     }
 
+    MacportsRepository toMacportsRepository() {
+        MacportsRepository tap = new MacportsRepository()
+        convert(tap)
+        tap
+    }
+
     SnapTap toSnapTap() {
         SnapTap tap = new SnapTap()
         convert(tap)
@@ -87,12 +93,6 @@ class TapImpl implements Tap {
 
     Repository toRepository() {
         Repository tap = new Repository()
-        convert(tap)
-        tap
-    }
-
-    DockerRepository toDockerRepository() {
-        DockerRepository tap = new DockerRepository()
         convert(tap)
         tap
     }

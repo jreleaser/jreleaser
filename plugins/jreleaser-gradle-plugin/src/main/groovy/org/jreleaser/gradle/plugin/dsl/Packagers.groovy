@@ -35,6 +35,8 @@ interface Packagers {
 
     Jbang getJbang()
 
+    Macports getMacports()
+
     Scoop getScoop()
 
     Sdkman getSdkman()
@@ -49,6 +51,8 @@ interface Packagers {
 
     void jbang(Action<? super Jbang> action)
 
+    void macports(Action<? super Macports> action)
+
     void scoop(Action<? super Scoop> action)
 
     void sdkman(Action<? super Sdkman> action)
@@ -62,6 +66,8 @@ interface Packagers {
     void docker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Docker) Closure<Void> action)
 
     void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jbang) Closure<Void> action)
+
+    void macports(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Macports) Closure<Void> action)
 
     void scoop(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scoop) Closure<Void> action)
 

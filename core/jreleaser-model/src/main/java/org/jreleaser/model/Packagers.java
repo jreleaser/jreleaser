@@ -29,6 +29,7 @@ public class Packagers implements Domain {
     private final Chocolatey chocolatey = new Chocolatey();
     private final Docker docker = new Docker();
     private final Jbang jbang = new Jbang();
+    private final Macports macports = new Macports();
     private final Scoop scoop = new Scoop();
     private final Sdkman sdkman = new Sdkman();
     private final Snap snap = new Snap();
@@ -38,6 +39,7 @@ public class Packagers implements Domain {
             chocolatey.isEnabled() ||
             docker.isEnabled() ||
             jbang.isEnabled() ||
+            macports.isEnabled() ||
             scoop.isEnabled() ||
             sdkman.isEnabled() ||
             snap.isEnabled();
@@ -48,6 +50,7 @@ public class Packagers implements Domain {
         setChocolatey(packagers.chocolatey);
         setDocker(packagers.docker);
         setJbang(packagers.jbang);
+        setMacports(packagers.macports);
         setScoop(packagers.scoop);
         setSdkman(packagers.sdkman);
         setSnap(packagers.snap);
@@ -85,6 +88,14 @@ public class Packagers implements Domain {
         this.jbang.setAll(jbang);
     }
 
+    public Macports getMacports() {
+        return macports;
+    }
+
+    public void setMacports(Macports macports) {
+        this.macports.setAll(macports);
+    }
+
     public Scoop getScoop() {
         return scoop;
     }
@@ -116,6 +127,7 @@ public class Packagers implements Domain {
         map.putAll(chocolatey.asMap(full));
         map.putAll(docker.asMap(full));
         map.putAll(jbang.asMap(full));
+        map.putAll(macports.asMap(full));
         map.putAll(scoop.asMap(full));
         map.putAll(sdkman.asMap(full));
         map.putAll(snap.asMap(full));

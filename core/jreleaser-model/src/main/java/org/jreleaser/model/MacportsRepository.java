@@ -15,17 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
-
-import groovy.transform.CompileStatic
-import org.gradle.api.provider.Property
+package org.jreleaser.model;
 
 /**
- *
  * @author Andres Almiray
  * @since 0.9.0
  */
-@CompileStatic
-interface DockerRepository extends Tap {
-    Property<Boolean> getVersionedSubfolders()
+public class MacportsRepository extends AbstractRepositoryTap {
+    public MacportsRepository() {
+        super("macports", "macports");
+    }
 }

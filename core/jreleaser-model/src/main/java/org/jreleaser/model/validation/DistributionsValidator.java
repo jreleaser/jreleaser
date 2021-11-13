@@ -40,6 +40,7 @@ import static org.jreleaser.model.validation.BrewValidator.validateBrew;
 import static org.jreleaser.model.validation.ChocolateyValidator.validateChocolatey;
 import static org.jreleaser.model.validation.JbangValidator.postValidateJBang;
 import static org.jreleaser.model.validation.JbangValidator.validateJbang;
+import static org.jreleaser.model.validation.MacportsValidator.validateMacports;
 import static org.jreleaser.model.validation.ScoopValidator.validateScoop;
 import static org.jreleaser.model.validation.SdkmanValidator.postValidateSdkman;
 import static org.jreleaser.model.validation.SdkmanValidator.validateSdkman;
@@ -163,6 +164,7 @@ public abstract class DistributionsValidator extends Validator {
         validateChocolatey(context, distribution, distribution.getChocolatey(), errors);
         DockerValidator.validateDocker(context, distribution, distribution.getDocker(), errors);
         validateJbang(context, distribution, distribution.getJbang(), errors);
+        validateMacports(context, distribution, distribution.getMacports(), errors);
         validateScoop(context, distribution, distribution.getScoop(), errors);
         validateSdkman(context, distribution, distribution.getSdkman(), errors);
         validateSnap(context, distribution, distribution.getSnap(), errors);
