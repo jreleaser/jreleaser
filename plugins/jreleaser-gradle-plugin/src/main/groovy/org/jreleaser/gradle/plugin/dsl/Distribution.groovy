@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.jreleaser.model.Active
 import org.jreleaser.model.Distribution.DistributionType
 
 /**
@@ -30,11 +29,7 @@ import org.jreleaser.model.Distribution.DistributionType
  * @since 0.1.0
  */
 @CompileStatic
-interface Distribution extends ExtraProperties {
-    Property<Active> getActive()
-
-    void setActive(String str)
-
+interface Distribution extends Activatable, ExtraProperties {
     Property<DistributionType> getDistributionType()
 
     Property<String> getExecutable()

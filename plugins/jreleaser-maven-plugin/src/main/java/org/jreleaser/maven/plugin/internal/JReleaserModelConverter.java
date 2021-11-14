@@ -518,6 +518,7 @@ public final class JReleaserModelConverter {
     }
 
     private static void convertTap(Tap from, RepositoryTap into) {
+        into.setActive(from.resolveActive());
         into.setOwner(from.getOwner());
         into.setName(from.getName());
         into.setBranch(from.getBranch());

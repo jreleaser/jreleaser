@@ -62,6 +62,7 @@ public abstract class SnapValidator extends Validator {
 
         validateCommitAuthor(tool, parentTool);
         SnapTap snap = tool.getSnap();
+        snap.resolveEnabled(model.getProject());
         validateOwner(snap, parentTool.getSnap());
         if (isBlank(snap.getBranch())) {
             snap.setBranch(parentTool.getSnap().getBranch());

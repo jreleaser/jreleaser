@@ -57,6 +57,7 @@ public abstract class ScoopValidator extends Validator {
 
         validateCommitAuthor(tool, parentTool);
         ScoopBucket bucket = tool.getBucket();
+        bucket.resolveEnabled(model.getProject());
         validateOwner(bucket, parentTool.getBucket());
         if (isBlank(bucket.getBranch())) {
             bucket.setBranch(parentTool.getBucket().getBranch());

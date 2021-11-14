@@ -23,8 +23,11 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.DockerRepository
+import org.jreleaser.model.Active
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -33,6 +36,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 class DockerRepositoryImpl implements DockerRepository {
+    final Property<Active> active
     final Property<String> owner
     final Property<String> name
     final Property<String> branch
@@ -42,6 +46,7 @@ class DockerRepositoryImpl implements DockerRepository {
 
     @Inject
     DockerRepositoryImpl(ObjectFactory objects) {
+        active = objects.property(Active).convention(Providers.notDefined())
         owner = objects.property(String).convention(Providers.notDefined())
         name = objects.property(String).convention(Providers.notDefined())
         branch = objects.property(String).convention(Providers.notDefined())
@@ -50,9 +55,17 @@ class DockerRepositoryImpl implements DockerRepository {
         versionedSubfolders = objects.property(Boolean).convention(Providers.notDefined())
     }
 
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
+    }
+
     @Internal
     boolean isSet() {
-        owner.present ||
+        active.present ||
+            owner.present ||
             name.present ||
             branch.present ||
             username.present ||
@@ -62,6 +75,7 @@ class DockerRepositoryImpl implements DockerRepository {
 
     org.jreleaser.model.DockerRepository toModel() {
         org.jreleaser.model.DockerRepository tap = new org.jreleaser.model.DockerRepository()
+        if (active.present) tap.active = active.get()
         if (owner.present) tap.owner = owner.get()
         if (name.present) tap.name = name.get()
         if (branch.present) tap.branch = branch.get()

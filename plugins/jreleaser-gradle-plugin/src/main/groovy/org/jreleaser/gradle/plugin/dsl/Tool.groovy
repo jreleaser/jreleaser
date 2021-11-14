@@ -19,7 +19,6 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.jreleaser.model.Active
 
 /**
  *
@@ -27,10 +26,6 @@ import org.jreleaser.model.Active
  * @since 0.1.0
  */
 @CompileStatic
-interface Tool extends ExtraProperties {
-    Property<Active> getActive()
-
-    void setActive(String str)
-
+interface Tool extends Activatable, ExtraProperties {
     Property<Boolean> getContinueOnError()
 }

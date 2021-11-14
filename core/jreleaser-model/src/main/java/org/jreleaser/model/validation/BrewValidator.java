@@ -70,6 +70,7 @@ public abstract class BrewValidator extends Validator {
 
         validateCommitAuthor(tool, parentTool);
         HomebrewTap tap = tool.getTap();
+        tap.resolveEnabled(model.getProject());
         validateOwner(tap, parentTool.getTap());
         if (isBlank(tap.getBranch())) {
             tap.setBranch(parentTool.getTap().getBranch());

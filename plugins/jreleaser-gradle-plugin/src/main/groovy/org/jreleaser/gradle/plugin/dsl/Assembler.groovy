@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
-import org.jreleaser.model.Active
 
 /**
  *
@@ -29,12 +28,8 @@ import org.jreleaser.model.Active
  * @since 0.2.0
  */
 @CompileStatic
-interface Assembler extends ExtraProperties {
+interface Assembler extends Activatable, ExtraProperties {
     Property<Boolean> getExported()
-
-    Property<Active> getActive()
-
-    void setActive(String str)
 
     NamedDomainObjectContainer<FileSet> getFileSets()
 

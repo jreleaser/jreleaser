@@ -24,7 +24,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
-import org.jreleaser.model.Active
 
 /**
  *
@@ -32,11 +31,7 @@ import org.jreleaser.model.Active
  * @since 0.4.0
  */
 @CompileStatic
-interface DockerConfiguration extends ExtraProperties {
-    Property<Active> getActive()
-
-    void setActive(String str)
-
+interface DockerConfiguration extends Activatable, ExtraProperties {
     DirectoryProperty getTemplateDirectory()
 
     Property<String> getBaseImage()

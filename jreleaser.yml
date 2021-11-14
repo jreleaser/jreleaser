@@ -175,8 +175,9 @@ distributions:
     sdkman:
       active: release
     chocolatey:
-      active: release
+      active: always
       remoteBuild: true
+      title: JReleaser
     artifacts:
       - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'

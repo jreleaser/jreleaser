@@ -23,6 +23,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Tap
+import org.jreleaser.model.Active
 import org.jreleaser.model.ChocolateyBucket
 import org.jreleaser.model.HomebrewTap
 import org.jreleaser.model.JbangCatalog
@@ -34,6 +35,8 @@ import org.jreleaser.model.SnapTap
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.StringUtils.isNotBlank
+
 /**
  *
  * @author Andres Almiray
@@ -41,6 +44,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 class TapImpl implements Tap {
+    final Property<Active> active
     final Property<String> owner
     final Property<String> name
     final Property<String> branch
@@ -49,6 +53,7 @@ class TapImpl implements Tap {
 
     @Inject
     TapImpl(ObjectFactory objects) {
+        active = objects.property(Active).convention(Providers.notDefined())
         owner = objects.property(String).convention(Providers.notDefined())
         name = objects.property(String).convention(Providers.notDefined())
         branch = objects.property(String).convention(Providers.notDefined())
@@ -56,9 +61,17 @@ class TapImpl implements Tap {
         token = objects.property(String).convention(Providers.notDefined())
     }
 
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
+    }
+
     @Internal
     boolean isSet() {
-        owner.present ||
+        active.present ||
+            owner.present ||
             name.present ||
             branch.present ||
             username.present ||
@@ -66,6 +79,7 @@ class TapImpl implements Tap {
     }
 
     private void convert(RepositoryTap into) {
+        if (active.present) into.active = active.get()
         if (owner.present) into.owner = owner.get()
         if (name.present) into.name = name.get()
         if (branch.present) into.branch = branch.get()

@@ -55,6 +55,7 @@ abstract class AbstractAnnouncer implements Announcer {
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

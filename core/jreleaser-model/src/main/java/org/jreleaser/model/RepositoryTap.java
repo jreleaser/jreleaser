@@ -21,7 +21,7 @@ package org.jreleaser.model;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface RepositoryTap extends Domain, OwnerAware {
+public interface RepositoryTap extends Domain, OwnerAware, Activatable {
     String getBasename();
 
     String getCanonicalRepoName();

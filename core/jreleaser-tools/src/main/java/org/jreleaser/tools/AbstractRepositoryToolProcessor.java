@@ -24,6 +24,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.RepositoryTap;
 import org.jreleaser.model.RepositoryTool;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
@@ -48,7 +49,13 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
     }
 
     protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        context.getLogger().info(RB.$("repository.setup"), tool.getRepositoryTap().getCanonicalRepoName());
+        RepositoryTap tap = tool.getRepositoryTap();
+        if (!tap.isEnabled()) {
+            context.getLogger().info(RB.$("repository.disabled"), tap.getCanonicalRepoName());
+            return;
+        }
+
+        context.getLogger().info(RB.$("repository.setup"), tap.getCanonicalRepoName());
         if (context.isDryrun()) {
             return;
         }
@@ -57,10 +64,10 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
 
         try {
             // get the repository
-            context.getLogger().debug(RB.$("repository.locate"), tool.getRepositoryTap().getCanonicalRepoName());
+            context.getLogger().debug(RB.$("repository.locate"), tap.getCanonicalRepoName());
             Repository repository = context.getReleaser().maybeCreateRepository(
-                tool.getRepositoryTap().getOwner(),
-                tool.getRepositoryTap().getResolvedName(),
+                tap.getOwner(),
+                tap.getResolvedName(),
                 resolveGitToken(gitService));
 
             UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
@@ -69,11 +76,11 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
 
             // clone the repository
             context.getLogger().debug(RB.$("repository.clone"), repository.getHttpUrl());
-            Path directory = Files.createTempDirectory("jreleaser-" + tool.getRepositoryTap().getResolvedName());
+            Path directory = Files.createTempDirectory("jreleaser-" + tap.getResolvedName());
 
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
-                .setBranch(tool.getRepositoryTap().getBranch())
+                .setBranch(tap.getBranch())
                 .setDirectory(directory.toFile())
                 .setURI(repository.getHttpUrl())
                 .call();
@@ -114,7 +121,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 .setForceUpdate(true)
                 .call();
 
-            context.getLogger().info(RB.$("repository.push"), tool.getRepositoryTap().getCanonicalRepoName());
+            context.getLogger().info(RB.$("repository.push"), tap.getCanonicalRepoName());
             // push commit
             context.getLogger().debug(RB.$("repository.commit.push"));
             git.push()
@@ -124,7 +131,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 .setPushTags()
                 .call();
         } catch (Exception e) {
-            throw new ToolProcessingException(RB.$("ERROR_unexpected_repository_update", tool.getRepositoryTap().getCanonicalRepoName()), e);
+            throw new ToolProcessingException(RB.$("ERROR_unexpected_repository_update", tap.getCanonicalRepoName()), e);
         }
     }
 

@@ -48,18 +48,21 @@ public abstract class PackagersValidator extends Validator {
         Project project = model.getProject();
 
         packagers.getBrew().resolveEnabled(project);
+        packagers.getBrew().getTap().resolveEnabled(project);
         validatePackager(context,
             packagers.getBrew(),
             packagers.getBrew().getTap(),
             errors);
 
         packagers.getChocolatey().resolveEnabled(project);
+        packagers.getChocolatey().getBucket().resolveEnabled(project);
         validatePackager(context,
             packagers.getChocolatey(),
             packagers.getChocolatey().getBucket(),
             errors);
 
         packagers.getDocker().resolveEnabled(project);
+        packagers.getDocker().getRepository().resolveEnabled(project);
         validatePackager(context,
             packagers.getDocker(),
             packagers.getDocker().getRepository(),
@@ -70,18 +73,21 @@ public abstract class PackagersValidator extends Validator {
         }
 
         packagers.getJbang().resolveEnabled(project);
+        packagers.getJbang().getCatalog().resolveEnabled(project);
         validatePackager(context,
             packagers.getJbang(),
             packagers.getJbang().getCatalog(),
             errors);
 
         packagers.getMacports().resolveEnabled(project);
+        packagers.getMacports().getRepository().resolveEnabled(project);
         validatePackager(context,
             packagers.getMacports(),
             packagers.getMacports().getRepository(),
             errors);
 
         packagers.getScoop().resolveEnabled(project);
+        packagers.getScoop().getBucket().resolveEnabled(project);
         validatePackager(context,
             packagers.getScoop(),
             packagers.getScoop().getBucket(),
@@ -93,6 +99,7 @@ public abstract class PackagersValidator extends Validator {
         packagers.getScoop().getBucket().setTapName("scoop-" + model.getRelease().getGitService().getOwner());
 
         packagers.getSnap().resolveEnabled(project);
+        packagers.getSnap().getSnap().resolveEnabled(project);
         validatePackager(context,
             packagers.getSnap(),
             packagers.getSnap().getSnap(),

@@ -23,7 +23,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractRepositoryTap {
+abstract class AbstractRepositoryTap implements Activatable {
+    protected Active active;
     private String owner;
     private String name;
     private String branch;
@@ -31,11 +32,27 @@ abstract class AbstractRepositoryTap {
     private String token;
 
     void setAll(AbstractRepositoryTap tap) {
+        this.active = tap.active;
         this.owner = tap.owner;
         this.name = tap.name;
         this.branch = tap.branch;
         this.username = tap.username;
         this.token = tap.token;
+    }
+
+    @Override
+    public Active getActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public String resolveActive() {
+        return active != null ? active.name() : null;
     }
 
     public String getOwner() {
@@ -79,7 +96,8 @@ abstract class AbstractRepositoryTap {
     }
 
     public boolean isSet() {
-        return isNotBlank(owner) ||
+        return active != null ||
+            isNotBlank(owner) ||
             isNotBlank(name) ||
             isNotBlank(branch) ||
             isNotBlank(username) ||

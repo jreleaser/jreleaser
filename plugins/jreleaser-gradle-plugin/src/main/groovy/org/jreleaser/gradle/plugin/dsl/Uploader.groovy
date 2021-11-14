@@ -19,7 +19,6 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.jreleaser.model.Active
 
 /**
  *
@@ -27,9 +26,7 @@ import org.jreleaser.model.Active
  * @since 0.3.0
  */
 @CompileStatic
-interface Uploader extends ExtraProperties {
-    Property<Active> getActive()
-
+interface Uploader extends Activatable, ExtraProperties {
     Property<Integer> getConnectTimeout()
 
     Property<Integer> getReadTimeout()
@@ -39,6 +36,4 @@ interface Uploader extends ExtraProperties {
     Property<Boolean> getFiles()
 
     Property<Boolean> getSignatures()
-
-    void setActive(String str)
 }

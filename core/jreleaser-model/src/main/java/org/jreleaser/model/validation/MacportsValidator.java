@@ -78,6 +78,7 @@ public abstract class MacportsValidator extends Validator {
 
         validateCommitAuthor(tool, parentTool);
         MacportsRepository repository = tool.getRepository();
+        repository.resolveEnabled(model.getProject());
         validateOwner(repository, parentTool.getRepository());
         if (isBlank(repository.getBranch())) {
             repository.setBranch(parentTool.getRepository().getBranch());

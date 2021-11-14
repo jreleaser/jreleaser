@@ -19,15 +19,16 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.jreleaser.model.Active
 
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.9.0
  */
 @CompileStatic
-interface Announcer extends Activatable, ExtraProperties {
-    Property<Integer> getConnectTimeout()
+interface Activatable {
+    Property<Active> getActive()
 
-    Property<Integer> getReadTimeout()
+    void setActive(String str)
 }

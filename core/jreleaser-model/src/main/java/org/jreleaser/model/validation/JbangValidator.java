@@ -59,6 +59,7 @@ public abstract class JbangValidator extends Validator {
 
         validateCommitAuthor(tool, parentTool);
         JbangCatalog catalog = tool.getCatalog();
+        catalog.resolveEnabled(model.getProject());
         validateOwner(catalog, parentTool.getCatalog());
         if (isBlank(catalog.getBranch())) {
             catalog.setBranch(parentTool.getCatalog().getBranch());

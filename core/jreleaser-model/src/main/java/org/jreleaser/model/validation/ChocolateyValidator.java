@@ -54,6 +54,7 @@ public abstract class ChocolateyValidator extends Validator {
 
         validateCommitAuthor(tool, parentTool);
         ChocolateyBucket bucket = tool.getBucket();
+        bucket.resolveEnabled(model.getProject());
         validateOwner(bucket, parentTool.getBucket());
         if (isBlank(bucket.getBranch())) {
             bucket.setBranch(parentTool.getBucket().getBranch());

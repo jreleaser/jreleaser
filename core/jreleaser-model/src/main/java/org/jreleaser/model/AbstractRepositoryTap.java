@@ -31,6 +31,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class AbstractRepositoryTap implements RepositoryTap {
+    protected Active active;
+    protected boolean enabled;
     protected String basename;
     protected String tapName;
     protected String owner;
@@ -54,11 +56,52 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
     }
 
     void setAll(AbstractRepositoryTap tap) {
+        this.active = tap.active;
+        this.enabled = tap.enabled;
         this.owner = tap.owner;
         this.name = tap.name;
         this.branch = tap.branch;
         this.username = tap.username;
         this.token = tap.token;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void disable() {
+        active = Active.NEVER;
+        enabled = false;
+    }
+
+    public boolean resolveEnabled(Project project) {
+        if (null == active) {
+            active = Active.RELEASE;
+        }
+        enabled = active.check(project);
+        return enabled;
+    }
+
+    @Override
+    public Active getActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public void setActive(String str) {
+        this.active = Active.of(str);
+    }
+
+    @Override
+    public boolean isActiveSet() {
+        return active != null;
     }
 
     @Override
@@ -139,6 +182,8 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
+        map.put("enabled", isEnabled());
+        map.put("active", active);
         map.put("owner", owner);
         map.put("name", getResolvedName());
         map.put("branch", branch);

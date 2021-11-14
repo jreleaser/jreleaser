@@ -26,7 +26,7 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface Tap {
+interface Tap extends Activatable {
     Property<String> getOwner()
 
     Property<String> getName()
