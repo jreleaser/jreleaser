@@ -26,6 +26,12 @@ project:
     multiProject: true
   extraProperties:
     inceptionYear: 2020
+  tags:
+    - 'jreleaser'
+    - 'release'
+    - 'tool'
+    - 'java'
+    - 'git'
 
 release:
   github:
@@ -154,9 +160,9 @@ distributions:
     java:
       mainClass: org.jreleaser.cli.Main
     brew:
-      active: release
+      active: always
     scoop:
-      active: release
+      active: always
     snap:
       active: release
       remoteBuild: true
