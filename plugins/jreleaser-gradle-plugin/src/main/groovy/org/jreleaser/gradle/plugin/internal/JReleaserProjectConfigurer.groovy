@@ -24,11 +24,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.bundling.Tar
-import org.gradle.api.tasks.bundling.Zip
 import org.jreleaser.gradle.plugin.JReleaserExtension
-import org.jreleaser.gradle.plugin.dsl.Artifact
-import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.tasks.JReleaseAutoConfigReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserAssembleTask
@@ -84,6 +80,9 @@ class JReleaserProjectConfigurer {
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
+                    if (hasDistributionPlugin) {
+                        t.dependsOn('assembleDist')
+                    }
                 }
             })
 
@@ -111,9 +110,6 @@ class JReleaserProjectConfigurer {
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
-                    if (hasDistributionPlugin) {
-                        t.dependsOn('assembleDist')
-                    }
                 }
             })
 
@@ -273,6 +269,9 @@ class JReleaserProjectConfigurer {
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
+                    if (hasDistributionPlugin) {
+                        t.dependsOn('assembleDist')
+                    }
                 }
             })
 
@@ -298,35 +297,10 @@ class JReleaserProjectConfigurer {
         boolean hasDistributionPlugin = project.plugins.findPlugin('distribution')
 
         if (hasDistributionPlugin) {
-            Action<DistributionImpl> configurer = new Action<DistributionImpl>() {
-                @Override
-                void execute(DistributionImpl distribution) {
-                    if (distribution.artifacts.size() > 0) return
-                    distribution.artifact(new Action<Artifact>() {
-                        @Override
-                        void execute(Artifact artifact) {
-                            artifact.path.set(project.tasks
-                                .named('distZip', Zip)
-                                .flatMap({ tr -> tr.archiveFile }))
-                        }
-                    })
-                    distribution.artifact(new Action<Artifact>() {
-                        @Override
-                        void execute(Artifact artifact) {
-                            artifact.path.set(project.tasks
-                                .named('distTar', Tar)
-                                .flatMap({ tr -> tr.archiveFile }))
-                        }
-                    })
-                }
-            }
-
-            String distributionName = project.name
-            if (extension.distributions.findByName(distributionName)) {
-                extension.distributions.named(project.name, DistributionImpl, configurer)
-            } else {
-                extension.distributions.register(project.name, configurer)
-            }
+            project.logger.warn("""|🚨 WARNING 🚨
+                                   |Since v0.9.0 JReleaser no longer auto configures a default distribution
+                                   |with the outputs of 'distZip' and 'distTar' tasks.
+                                   |You must explicitly configure a distribution.""".stripMargin('|'))
         }
 
         return hasDistributionPlugin
