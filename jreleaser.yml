@@ -178,6 +178,8 @@ distributions:
       active: always
       remoteBuild: true
       title: JReleaser
+      bucket:
+        active: release
     artifacts:
       - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
