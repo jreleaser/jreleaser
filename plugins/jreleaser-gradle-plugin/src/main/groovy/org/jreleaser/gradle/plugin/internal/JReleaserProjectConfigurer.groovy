@@ -24,6 +24,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.provider.Provider
+import org.gradle.util.GradleVersion
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.tasks.JReleaseAutoConfigReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
@@ -337,7 +338,13 @@ class JReleaserProjectConfigurer {
         if (isBlank(model.project.java.mainClass)) {
             JavaApplication application = (JavaApplication) project.extensions.findByType(JavaApplication)
             if (application) {
-                model.project.java.mainClass = application.mainClass.orNull
+                List<Integer> version = GradleVersion.current().getVersion().split('\\.')
+                    .collect { Integer.parseInt(it) }
+                if (version[0] <= 6 && version[1] < 4) {
+                    model.project.java.mainClass = application.mainClassName
+                } else {
+                    model.project.java.mainClass = application.mainClass.orNull
+                }
             }
         }
     }
