@@ -69,6 +69,13 @@ public abstract class ChocolateyValidator extends Validator {
             tool.setRemoteBuild(parentTool.isRemoteBuild());
         }
 
+        if (isBlank(tool.getTitle())) {
+            tool.setTitle(parentTool.getTitle());
+        }
+        if (isBlank(tool.getTitle())) {
+            tool.setTitle(model.getProject().getName());
+        }
+
         if (!tool.isRemoteBuild()) {
             tool.setApiKey(
                 checkProperty(context,

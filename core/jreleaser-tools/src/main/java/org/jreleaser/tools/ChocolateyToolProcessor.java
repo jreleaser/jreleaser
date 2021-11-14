@@ -100,6 +100,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
             gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getResolvedName()));
 
         props.put(Constants.KEY_CHOCOLATEY_USERNAME, getTool().getUsername());
+        props.put(Constants.KEY_CHOCOLATEY_TITLE, getTool().getTitle());
     }
 
     @Override

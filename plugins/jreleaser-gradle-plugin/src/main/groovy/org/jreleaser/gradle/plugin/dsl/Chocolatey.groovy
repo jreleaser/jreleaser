@@ -32,6 +32,8 @@ interface Chocolatey extends RepositoryTool {
 
     Property<String> getApiKey()
 
+    Property<String> getTitle()
+
     Property<Boolean> getRemoteBuild()
 
     Tap getBucket()

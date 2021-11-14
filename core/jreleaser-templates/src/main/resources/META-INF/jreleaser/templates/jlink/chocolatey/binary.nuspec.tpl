@@ -8,7 +8,7 @@
     <authors>{{projectAuthorsByComma}}</authors>
     <description>{{projectLongDescription}}</description>
     <!-- optional -->
-    <title>{{projectName}}</title>
+    <title>{{chocolateyTitle}}</title>
     <projectUrl>{{projectWebsite}}</projectUrl>
     <copyright>{{projectCopyright}}</copyright>
     <licenseUrl>{{projectLicenseUrl}}</licenseUrl>

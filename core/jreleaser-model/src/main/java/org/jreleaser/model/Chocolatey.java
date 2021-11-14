@@ -38,6 +38,7 @@ public class Chocolatey extends AbstractRepositoryTool {
     private final ChocolateyBucket bucket = new ChocolateyBucket();
     private String username;
     private String apiKey;
+    private String title;
     private Boolean remoteBuild;
 
     public Chocolatey() {
@@ -48,6 +49,7 @@ public class Chocolatey extends AbstractRepositoryTool {
         super.setAll(choco);
         this.username = choco.username;
         this.apiKey = choco.apiKey;
+        this.title = choco.title;
         this.remoteBuild = choco.remoteBuild;
         setBucket(choco.bucket);
     }
@@ -70,6 +72,14 @@ public class Chocolatey extends AbstractRepositoryTool {
 
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public boolean isRemoteBuild() {
@@ -98,6 +108,7 @@ public class Chocolatey extends AbstractRepositoryTool {
         props.put("username", username);
         props.put("apiKey", isNotBlank(getResolvedApiKey()) ? HIDE : UNSET);
         props.put("remoteBuild", isRemoteBuild());
+        props.put("title", title);
         props.put("bucket", bucket.asMap(full));
     }
 

@@ -176,6 +176,7 @@ public interface Constants {
 
     // Chocolatey
     String KEY_CHOCOLATEY_USERNAME = "chocolateyUsername";
+    String KEY_CHOCOLATEY_TITLE = "chocolateyTitle";
     String KEY_CHOCOLATEY_BUCKET_REPO_URL = "chocolateyBucketRepoUrl";
     String KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL = "chocolateyBucketRepoCloneUrl";
 

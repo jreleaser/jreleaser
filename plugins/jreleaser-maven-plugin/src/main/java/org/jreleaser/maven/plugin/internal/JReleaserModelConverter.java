@@ -965,6 +965,7 @@ public final class JReleaserModelConverter {
         if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
         t.setUsername(tool.getUsername());
         t.setApiKey(tool.getApiKey());
+        t.setTitle(tool.getTitle());
         t.setRemoteBuild(tool.isRemoteBuild());
         t.setTemplateDirectory(tool.getTemplateDirectory());
         t.setExtraProperties(tool.getExtraProperties());
