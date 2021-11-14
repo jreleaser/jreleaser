@@ -38,6 +38,7 @@ public class Gitea extends GitService {
         setRepoUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
         setRepoCloneUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}.git");
         setCommitUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");
+        setSrcUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/src/{{repoBranch}}");
         setDownloadUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/{{artifactFileName}}");
         setReleaseNotesUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/tag/{{tagName}}");
         setLatestReleaseUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/latest");

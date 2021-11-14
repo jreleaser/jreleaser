@@ -53,6 +53,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class DistributionImpl implements Distribution {
     String name
     final Property<String> executable
+    final Property<String> executableExtension
     final Property<String> groupId
     final Property<String> artifactId
     final Property<Active> active
@@ -74,6 +75,7 @@ class DistributionImpl implements Distribution {
     DistributionImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
         executable = objects.property(String).convention(Providers.notDefined())
+        executableExtension = objects.property(String).convention(Providers.notDefined())
         groupId = objects.property(String).convention(Providers.notDefined())
         artifactId = objects.property(String).convention(Providers.notDefined())
         distributionType = objects.property(DistributionType).convention(DistributionType.JAVA_BINARY)
@@ -214,6 +216,7 @@ class DistributionImpl implements Distribution {
         distribution.name = name
         if (active.present) distribution.active = active.get()
         if (executable.present) distribution.executable = executable.get()
+        if (executableExtension.present) distribution.executableExtension = executableExtension.get()
         distribution.type = distributionType.get()
         distribution.java = java.toModel()
         for (ArtifactImpl artifact : artifacts) {

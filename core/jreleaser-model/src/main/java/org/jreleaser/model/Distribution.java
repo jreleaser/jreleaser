@@ -55,6 +55,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;
     private String executable;
+    private String executableExtension;
 
     void setAll(Distribution distribution) {
         super.setAll(distribution);
@@ -63,6 +64,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.name = distribution.name;
         this.type = distribution.type;
         this.executable = distribution.executable;
+        this.executableExtension = distribution.executableExtension;
         setJava(distribution.java);
         setTags(distribution.tags);
         setExtraProperties(distribution.extraProperties);
@@ -74,6 +76,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         applyTemplates(props, getResolvedExtraProperties());
         props.put(Constants.KEY_DISTRIBUTION_NAME, name);
         props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, executable);
+        props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE_EXTENSION, executableExtension);
         props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", tags));
         props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", tags));
         props.putAll(java.getResolvedExtraProperties());
@@ -168,6 +171,14 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
 
     public void setExecutable(String executable) {
         this.executable = executable;
+    }
+
+    public String getExecutableExtension() {
+        return executableExtension;
+    }
+
+    public void setExecutableExtension(String executableExtension) {
+        this.executableExtension = executableExtension;
     }
 
     public Set<Artifact> getArtifacts() {
@@ -296,6 +307,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         props.put("active", active);
         props.put("type", type);
         props.put("executable", executable);
+        props.put("executableExtension", executableExtension);
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         int i = 0;

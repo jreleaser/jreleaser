@@ -30,6 +30,8 @@ import org.gradle.api.provider.Property
 interface Chocolatey extends RepositoryTool {
     Property<String> getUsername()
 
+    Property<String> getApiKey()
+
     Property<Boolean> getRemoteBuild()
 
     Tap getBucket()

@@ -38,6 +38,7 @@ import javax.inject.Inject
 @CompileStatic
 class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
     final Property<String> username
+    final Property<String> apiKey
     final Property<Boolean> remoteBuild
     final CommitAuthorImpl commitAuthor
     final TapImpl bucket
@@ -46,6 +47,7 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
     ChocolateyImpl(ObjectFactory objects) {
         super(objects)
         username = objects.property(String).convention(Providers.notDefined())
+        apiKey = objects.property(String).convention(Providers.notDefined())
         remoteBuild = objects.property(Boolean).convention(Providers.notDefined())
         bucket = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
@@ -56,6 +58,7 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
     boolean isSet() {
         super.isSet() ||
             username.present ||
+            apiKey.present ||
             remoteBuild.present ||
             bucket.isSet() ||
             commitAuthor.isSet()
@@ -88,6 +91,7 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
         if (bucket.isSet()) tool.bucket = bucket.toChocolateyBucket()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (username.present) tool.username = username.get()
+        if (apiKey.present) tool.apiKey = apiKey.get()
         tool.remoteBuild = remoteBuild.getOrElse(false)
         tool
     }

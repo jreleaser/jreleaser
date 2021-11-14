@@ -11,7 +11,7 @@
     <title>{{projectName}}</title>
     <projectUrl>{{projectWebsite}}</projectUrl>
     <copyright>{{projectCopyright}}</copyright>
-    <license type="expression">{{projectLicense}}</license>
+    <licenseUrl>{{projectLicenseUrl}}</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>{{distributionTagsBySpace}}</tags>
     <summary>{{projectDescription}}</summary>

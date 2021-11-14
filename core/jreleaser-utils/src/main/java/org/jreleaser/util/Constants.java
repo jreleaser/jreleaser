@@ -62,6 +62,7 @@ public interface Constants {
     String KEY_PROJECT_COPYRIGHT = "projectCopyright";
     String KEY_PROJECT_VENDOR = "projectVendor";
     String KEY_PROJECT_LICENSE = "projectLicense";
+    String KEY_PROJECT_LICENSE_URL = "projectLicenseUrl";
     String KEY_PROJECT_AUTHORS_BY_SPACE = "projectAuthorsBySpace";
     String KEY_PROJECT_AUTHORS_BY_COMMA = "projectAuthorsByComma";
     String KEY_PROJECT_TAGS_BY_SPACE = "projectTagsBySpace";
@@ -95,6 +96,7 @@ public interface Constants {
     String KEY_REPO_URL = "repoUrl";
     String KEY_REPO_CLONE_URL = "repoCloneUrl";
     String KEY_COMMIT_URL = "commitsUrl";
+    String KEY_SRC_URL = "srcUrl";
     String KEY_RELEASE_NOTES_URL = "releaseNotesUrl";
     String KEY_LATEST_RELEASE_URL = "latestReleaseUrl";
     String KEY_ISSUE_TRACKER_URL = "issueTrackerUrl";
@@ -107,6 +109,7 @@ public interface Constants {
     // Distribution
     String KEY_DISTRIBUTION_NAME = "distributionName";
     String KEY_DISTRIBUTION_EXECUTABLE = "distributionExecutable";
+    String KEY_DISTRIBUTION_EXECUTABLE_EXTENSION = "distributionExecutableExtension";
     String KEY_DISTRIBUTION_TAGS_BY_SPACE = "distributionTagsBySpace";
     String KEY_DISTRIBUTION_TAGS_BY_COMMA = "distributionTagsByComma";
     String KEY_DISTRIBUTION_URL = "distributionUrl";

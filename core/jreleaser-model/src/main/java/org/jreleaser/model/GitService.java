@@ -68,6 +68,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private String repoUrl;
     private String repoCloneUrl;
     private String commitUrl;
+    private String srcUrl;
     private String downloadUrl;
     private String releaseNotesUrl;
     private String latestReleaseUrl;
@@ -117,6 +118,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.repoUrl = service.repoUrl;
         this.repoCloneUrl = service.repoCloneUrl;
         this.commitUrl = service.commitUrl;
+        this.srcUrl = service.srcUrl;
         this.downloadUrl = service.downloadUrl;
         this.releaseNotesUrl = service.releaseNotesUrl;
         this.latestReleaseUrl = service.latestReleaseUrl;
@@ -236,6 +238,11 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         return applyTemplate(commitUrl, props(model));
     }
 
+    public String getResolvedSrcUrl(JReleaserModel model) {
+        if (!releaseSupported) return "";
+        return applyTemplate(srcUrl, props(model));
+    }
+
     public String getResolvedDownloadUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
         return applyTemplate(downloadUrl, props(model));
@@ -319,6 +326,14 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
 
     public void setCommitUrl(String commitUrl) {
         this.commitUrl = commitUrl;
+    }
+
+    public String getSrcUrl() {
+        return srcUrl;
+    }
+
+    public void setSrcUrl(String srcUrl) {
+        this.srcUrl = srcUrl;
     }
 
     public String getDownloadUrl() {
@@ -677,6 +692,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
             props.put("repoUrl", repoUrl);
             props.put("repoCloneUrl", repoCloneUrl);
             props.put("commitUrl", commitUrl);
+            props.put("srcUrl", srcUrl);
             props.put("downloadUrl", downloadUrl);
             props.put("releaseNotesUrl", releaseNotesUrl);
             props.put("latestReleaseUrl", latestReleaseUrl);
@@ -727,6 +743,9 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
         if (isNotBlank(project.getLicense())) {
             props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+        }
+        if (isNotBlank(project.getLicense())) {
+            props.put(Constants.KEY_PROJECT_LICENSE_URL, project.getLicenseUrl());
         }
         if (isNotBlank(project.getDocsUrl())) {
             props.put(Constants.KEY_PROJECT_DOCS_URL, project.getDocsUrl());
@@ -792,6 +811,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(model));
         props.put(Constants.KEY_REPO_CLONE_URL, getResolvedRepoCloneUrl(model));
         props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(model));
+        props.put(Constants.KEY_SRC_URL, getResolvedSrcUrl(model));
         props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(model));
         props.put(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(model));
         props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model));

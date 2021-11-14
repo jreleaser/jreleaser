@@ -149,6 +149,7 @@ public final class JReleaserModelConverter {
         p.setLongDescription(project.getLongDescription());
         p.setWebsite(project.getWebsite());
         p.setLicense(project.getLicense());
+        p.setLicenseUrl(project.getLicenseUrl());
         p.setCopyright(project.getCopyright());
         p.setVendor(project.getVendor());
         p.setDocsUrl(project.getDocsUrl());
@@ -251,6 +252,7 @@ public final class JReleaserModelConverter {
         if (isNotBlank(service.getRepoUrl())) s.setRepoUrl(service.getRepoUrl());
         if (isNotBlank(service.getRepoCloneUrl())) s.setRepoCloneUrl(service.getRepoCloneUrl());
         if (isNotBlank(service.getCommitUrl())) s.setCommitUrl(service.getCommitUrl());
+        if (isNotBlank(service.getSrcUrl())) s.setCommitUrl(service.getSrcUrl());
         if (isNotBlank(service.getDownloadUrl())) s.setDownloadUrl(service.getDownloadUrl());
         if (isNotBlank(service.getReleaseNotesUrl())) s.setReleaseNotesUrl(service.getReleaseNotesUrl());
         if (isNotBlank(service.getLatestReleaseUrl())) s.setLatestReleaseUrl(service.getLatestReleaseUrl());
@@ -855,6 +857,7 @@ public final class JReleaserModelConverter {
         d.setName(distribution.getName());
         d.setType(distribution.getType().name());
         d.setExecutable(distribution.getExecutable());
+        d.setExecutableExtension(distribution.getExecutableExtension());
         d.setJava(convertJava(distribution.getJava()));
         d.setTags(distribution.getTags());
         d.setExtraProperties(distribution.getExtraProperties());
@@ -961,6 +964,7 @@ public final class JReleaserModelConverter {
         t.setActive(tool.resolveActive());
         if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
         t.setUsername(tool.getUsername());
+        t.setApiKey(tool.getApiKey());
         t.setRemoteBuild(tool.isRemoteBuild());
         t.setTemplateDirectory(tool.getTemplateDirectory());
         t.setExtraProperties(tool.getExtraProperties());

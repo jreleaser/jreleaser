@@ -26,18 +26,22 @@ import org.jreleaser.model.Project;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.PlatformUtils;
+import org.jreleaser.util.command.Command;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Chocolatey> {
+    private static final String CHOCOLATEY_PUSH_URL = "https://push.chocolatey.org/";
+
     public ChocolateyToolProcessor(JReleaserContext context) {
         super(context);
     }
@@ -46,18 +50,16 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
     protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws ToolProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
 
+        copyPreparedFiles(distribution, props);
+
         if (tool.isRemoteBuild()) {
-            // copy from prepare to package
-            copyPreparedFiles(distribution, props);
             return;
         }
 
         if (!PlatformUtils.isWindows()) {
-            context.getLogger().debug(RB.$("ERROR_tool_requires_platform", "Windows"));
+            context.getLogger().warn(RB.$("ERROR_tool_requires_platform", "Windows"));
             return;
         }
-
-        copyPreparedFiles(distribution, props);
 
         createChocolateyPackage(distribution, props);
     }
@@ -69,16 +71,28 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
 
     @Override
     protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        super.doPublishDistribution(distribution, props);
+
         if (tool.isRemoteBuild()) {
-            super.doPublishDistribution(distribution, props);
             return;
         }
+
+        if (!PlatformUtils.isWindows()) {
+            context.getLogger().warn(RB.$("ERROR_tool_requires_platform", "Windows"));
+            return;
+        }
+
         publishChocolateyPackage(distribution, props);
     }
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
+
+        if (!props.containsKey(Constants.KEY_PROJECT_LICENSE_URL) ||
+            isBlank((String) props.get(Constants.KEY_PROJECT_LICENSE_URL))) {
+            context.getLogger().warn(RB.$("ERROR_project_no_license_url"));
+        }
 
         props.put(Constants.KEY_CHOCOLATEY_BUCKET_REPO_URL,
             gitService.getResolvedRepoUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getResolvedName()));
@@ -99,17 +113,39 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
         fileName = trimTplExtension(fileName);
 
         Path outputFile = "binary.nuspec".equals(fileName) ?
-            outputDirectory.resolve(distribution.getExecutable().concat(".nuspec")) :
+            outputDirectory.resolve(distribution.getName().concat(".nuspec")) :
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
     }
 
-    private void createChocolateyPackage(Distribution distribution, Map<String, Object> props) {
-        context.getLogger().warn(RB.$("ERROR_tool_local_build_unsupported"));
+    private void createChocolateyPackage(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+
+        Command cmd = new Command("choco")
+            .arg("pack")
+            .arg(distribution.getName().concat(".nuspec"));
+
+        executeCommand(packageDirectory, cmd);
     }
 
-    private void publishChocolateyPackage(Distribution distribution, Map<String, Object> props) {
-        context.getLogger().warn(RB.$("ERROR_tool_local_publication_unsupported"));
+    private void publishChocolateyPackage(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+
+        Command cmd = new Command("choco")
+            .arg("apikey")
+            .arg("-k")
+            .arg(tool.getResolvedApiKey())
+            .arg("-source")
+            .arg(CHOCOLATEY_PUSH_URL);
+        executeCommand(packageDirectory, cmd);
+
+        cmd = new Command("choco")
+            .arg("push")
+            .arg("$(ls *.nupkg | % {$_.FullName})")
+            .arg("-s")
+            .arg(CHOCOLATEY_PUSH_URL);
+
+        executeCommand(packageDirectory, cmd);
     }
 }

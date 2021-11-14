@@ -64,6 +64,7 @@ public class Project implements Domain, ExtraProperties {
     private String longDescription;
     private String website;
     private String license;
+    private String licenseUrl;
     private String copyright;
     private String vendor;
     private String docsUrl;
@@ -76,6 +77,7 @@ public class Project implements Domain, ExtraProperties {
         this.longDescription = project.longDescription;
         this.website = project.website;
         this.license = project.license;
+        this.licenseUrl = project.licenseUrl;
         this.copyright = project.copyright;
         this.vendor = project.vendor;
         this.docsUrl = project.docsUrl;
@@ -196,6 +198,14 @@ public class Project implements Domain, ExtraProperties {
         this.license = license;
     }
 
+    public String getLicenseUrl() {
+        return licenseUrl;
+    }
+
+    public void setLicenseUrl(String licenseUrl) {
+        this.licenseUrl = licenseUrl;
+    }
+
     public String getCopyright() {
         return copyright;
     }
@@ -306,6 +316,7 @@ public class Project implements Domain, ExtraProperties {
         map.put("website", website);
         map.put("docsUrl", docsUrl);
         map.put("license", license);
+        map.put("licenseUrl", licenseUrl);
         map.put("copyright", copyright);
         map.put("vendor", vendor);
         map.put("authors", authors);
@@ -514,6 +525,9 @@ public class Project implements Domain, ExtraProperties {
             }
             if (isNotBlank(project.getLicense())) {
                 props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+            }
+            if (isNotBlank(project.getLicense())) {
+                props.put(Constants.KEY_PROJECT_LICENSE_URL, project.getLicenseUrl());
             }
             if (isNotBlank(project.getDocsUrl())) {
                 props.put(Constants.KEY_PROJECT_DOCS_URL, project.getDocsUrl());

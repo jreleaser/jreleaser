@@ -49,6 +49,7 @@ abstract class AbstractGitService implements GitService {
     final Property<String> repoUrl
     final Property<String> repoCloneUrl
     final Property<String> commitUrl
+    final Property<String> srcUrl
     final Property<String> downloadUrl
     final Property<String> releaseNotesUrl
     final Property<String> latestReleaseUrl
@@ -82,6 +83,7 @@ abstract class AbstractGitService implements GitService {
         repoUrl = objects.property(String).convention(Providers.notDefined())
         repoCloneUrl = objects.property(String).convention(Providers.notDefined())
         commitUrl = objects.property(String).convention(Providers.notDefined())
+        srcUrl = objects.property(String).convention(Providers.notDefined())
         downloadUrl = objects.property(String).convention(Providers.notDefined())
         releaseNotesUrl = objects.property(String).convention(Providers.notDefined())
         latestReleaseUrl = objects.property(String).convention(Providers.notDefined())
@@ -166,6 +168,7 @@ abstract class AbstractGitService implements GitService {
             repoUrl.present ||
             repoCloneUrl.present ||
             commitUrl.present ||
+            srcUrl.present ||
             downloadUrl.present ||
             releaseNotesUrl.present ||
             latestReleaseUrl.present ||
@@ -236,6 +239,7 @@ abstract class AbstractGitService implements GitService {
         if (repoUrl.present) service.repoUrl = repoUrl.get()
         if (repoCloneUrl.present) service.repoCloneUrl = repoCloneUrl.get()
         if (commitUrl.present) service.commitUrl = commitUrl.get()
+        if (srcUrl.present) service.srcUrl = srcUrl.get()
         if (downloadUrl.present) service.downloadUrl = downloadUrl.get()
         if (releaseNotesUrl.present) service.releaseNotesUrl = releaseNotesUrl.get()
         if (latestReleaseUrl.present) service.latestReleaseUrl = latestReleaseUrl.get()

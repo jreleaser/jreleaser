@@ -36,6 +36,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;
     private String executable;
+    private String executableExtension;
     private Active active;
 
     void setAll(Distribution distribution) {
@@ -44,6 +45,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.name = distribution.name;
         this.type = distribution.type;
         this.executable = distribution.executable;
+        this.executableExtension = distribution.executableExtension;
         this.java.setAll(distribution.java);
         setTags(distribution.tags);
         setExtraProperties(distribution.extraProperties);
@@ -93,6 +95,14 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
 
     public void setExecutable(String executable) {
         this.executable = executable;
+    }
+
+    public String getExecutableExtension() {
+        return executableExtension;
+    }
+
+    public void setExecutableExtension(String executableExtension) {
+        this.executableExtension = executableExtension;
     }
 
     public Java getJava() {

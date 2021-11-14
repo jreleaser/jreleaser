@@ -17,11 +17,15 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.Env;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -29,8 +33,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public class Chocolatey extends AbstractRepositoryTool {
     public static final String NAME = "chocolatey";
+    public static final String CHOCOLATEY_API_KEY = "CHOCOLATEY_API_KEY";
+
     private final ChocolateyBucket bucket = new ChocolateyBucket();
     private String username;
+    private String apiKey;
     private Boolean remoteBuild;
 
     public Chocolatey() {
@@ -40,8 +47,13 @@ public class Chocolatey extends AbstractRepositoryTool {
     void setAll(Chocolatey choco) {
         super.setAll(choco);
         this.username = choco.username;
+        this.apiKey = choco.apiKey;
         this.remoteBuild = choco.remoteBuild;
         setBucket(choco.bucket);
+    }
+
+    public String getResolvedApiKey() {
+        return Env.resolve(CHOCOLATEY_API_KEY, apiKey);
     }
 
     public String getUsername() {
@@ -50,6 +62,14 @@ public class Chocolatey extends AbstractRepositoryTool {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
     public boolean isRemoteBuild() {
@@ -76,6 +96,7 @@ public class Chocolatey extends AbstractRepositoryTool {
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
         props.put("username", username);
+        props.put("apiKey", isNotBlank(getResolvedApiKey()) ? HIDE : UNSET);
         props.put("remoteBuild", isRemoteBuild());
         props.put("bucket", bucket.asMap(full));
     }

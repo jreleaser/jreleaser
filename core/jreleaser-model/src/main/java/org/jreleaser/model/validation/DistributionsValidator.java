@@ -100,6 +100,9 @@ public abstract class DistributionsValidator extends Validator {
         if (isBlank(distribution.getExecutable())) {
             distribution.setExecutable(distribution.getName());
         }
+        if (isBlank(distribution.getExecutableExtension())) {
+            distribution.setExecutableExtension("bat");
+        }
 
         if (Distribution.JAVA_DISTRIBUTION_TYPES.contains(distribution.getType())) {
             context.getLogger().debug("distribution.{}.java", distribution.getName());

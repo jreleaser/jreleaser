@@ -42,6 +42,8 @@ interface GitService extends Releaser {
 
     Property<String> getCommitUrl()
 
+    Property<String> getSrcUrl()
+
     Property<String> getDownloadUrl()
 
     Property<String> getReleaseNotesUrl()

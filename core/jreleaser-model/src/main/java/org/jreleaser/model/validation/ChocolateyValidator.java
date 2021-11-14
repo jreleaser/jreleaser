@@ -25,6 +25,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.Chocolatey.CHOCOLATEY_API_KEY;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
@@ -66,6 +67,16 @@ public abstract class ChocolateyValidator extends Validator {
         }
         if (!tool.isRemoteBuildSet() && parentTool.isRemoteBuildSet()) {
             tool.setRemoteBuild(parentTool.isRemoteBuild());
+        }
+
+        if (!tool.isRemoteBuild()) {
+            tool.setApiKey(
+                checkProperty(context,
+                    CHOCOLATEY_API_KEY,
+                    "chocolatey.apiKey",
+                    tool.getApiKey(),
+                    errors,
+                    context.isDryrun()));
         }
 
         if (isBlank(bucket.getName())) {

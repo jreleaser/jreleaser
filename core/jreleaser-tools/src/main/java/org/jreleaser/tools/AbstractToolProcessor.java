@@ -204,6 +204,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             int exitValue = new CommandExecutor(context.getLogger())
                 .executeCommandCapturing(command, out);
             if (exitValue != 0) {
+                context.getLogger().error(out.toString().trim());
                 throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
             }
         } catch (CommandException e) {

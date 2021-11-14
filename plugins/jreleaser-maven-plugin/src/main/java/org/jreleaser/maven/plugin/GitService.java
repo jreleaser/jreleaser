@@ -38,6 +38,7 @@ public abstract class GitService implements Releaser {
     private String repoUrl;
     private String repoCloneUrl;
     private String commitUrl;
+    private String srcUrl;
     private String downloadUrl;
     private String releaseNotesUrl;
     private String latestReleaseUrl;
@@ -69,6 +70,7 @@ public abstract class GitService implements Releaser {
         this.repoUrl = service.repoUrl;
         this.repoCloneUrl = service.repoCloneUrl;
         this.commitUrl = service.commitUrl;
+        this.srcUrl = service.srcUrl;
         this.downloadUrl = service.downloadUrl;
         this.releaseNotesUrl = service.releaseNotesUrl;
         this.latestReleaseUrl = service.latestReleaseUrl;
@@ -158,6 +160,14 @@ public abstract class GitService implements Releaser {
 
     public void setCommitUrl(String commitUrl) {
         this.commitUrl = commitUrl;
+    }
+
+    public String getSrcUrl() {
+        return srcUrl;
+    }
+
+    public void setSrcUrl(String srcUrl) {
+        this.srcUrl = srcUrl;
     }
 
     public String getDownloadUrl() {

@@ -48,7 +48,9 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.zip.ZipOutputStream;
@@ -65,8 +67,30 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class FileUtils {
+    private static final String[] LICENSE_FILE_NAMES = {
+        "LICENSE",
+        "LICENSE.txt",
+        "LICENSE.md",
+        "LICENSE.adoc"
+    };
+
     private FileUtils() {
         //noop
+    }
+
+    public static Optional<Path> findLicenseFile(Path basedir) {
+        for (String licenseFilename : Arrays.asList(LICENSE_FILE_NAMES)) {
+            Path path = basedir.resolve(licenseFilename);
+            if (Files.exists(path)) {
+                return Optional.of(path);
+            }
+            path = basedir.resolve(licenseFilename.toLowerCase());
+            if (Files.exists(path)) {
+                return Optional.of(path);
+            }
+        }
+
+        return Optional.empty();
     }
 
     public static Path resolveOutputDirectory(Path basedir, Path outputdir, String baseOutput) {

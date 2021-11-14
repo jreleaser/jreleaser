@@ -39,6 +39,8 @@ interface Distribution extends ExtraProperties {
 
     Property<String> getExecutable()
 
+    Property<String> getExecutableExtension()
+
     ListProperty<String> getTags()
 
     void setDistributionType(String distributionType)

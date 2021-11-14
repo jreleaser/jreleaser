@@ -42,8 +42,8 @@ destroot {
         copy ${worksrcpath}/${d} ${target}
     }
 
-    # Remove extraneous bat files
-    foreach f [glob -directory ${target}/bin *.bat] {
+    # Remove extraneous files
+    foreach f [glob -directory ${target}/bin *.{{distributionExecutableExtension}}] {
         delete ${f}
     }
 

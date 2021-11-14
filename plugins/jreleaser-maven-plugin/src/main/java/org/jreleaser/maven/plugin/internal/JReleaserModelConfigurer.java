@@ -74,7 +74,11 @@ public final class JReleaserModelConfigurer {
             project.setAuthors(resolveAuthors(mavenProject.getDevelopers()));
         }
         if (isBlank(project.getLicense())) {
-            project.setLicense(resolveLicense(mavenProject.getLicenses()));
+            License license = resolveLicense(mavenProject.getLicenses());
+            if (null != license) {
+                project.setLicense(license.getName());
+                project.setLicenseUrl(license.getUrl());
+            }
         }
         if (!project.getExtraProperties().containsKey("inceptionYear") &&
             isNotBlank(mavenProject.getInceptionYear())) {
@@ -117,14 +121,14 @@ public final class JReleaserModelConfigurer {
         return authors;
     }
 
-    private static String resolveLicense(List<License> licenses) {
-        if (null == licenses || licenses.isEmpty()) return "";
+    private static License resolveLicense(List<License> licenses) {
+        if (null == licenses || licenses.isEmpty()) return null;
         for (License license : licenses) {
             if (isNotBlank(license.getName())) {
-                return license.getName();
+                return license;
             }
         }
-        return "";
+        return null;
     }
 
     private static String resolveJavaVersion(MavenProject mavenProject) {

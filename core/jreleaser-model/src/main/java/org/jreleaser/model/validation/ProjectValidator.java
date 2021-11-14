@@ -19,6 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.VersionPattern;
@@ -32,6 +33,7 @@ import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_LABEL;
 import static org.jreleaser.model.Project.PROJECT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.Project.PROJECT_VERSION;
 import static org.jreleaser.model.Project.PROJECT_VERSION_PATTERN;
+import static org.jreleaser.util.FileUtils.findLicenseFile;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -106,6 +108,17 @@ public abstract class ProjectValidator extends Validator {
 
         if (context.getModel().getActiveDistributions().isEmpty() && !context.getModel().getAnnounce().isEnabled()) {
             return;
+        }
+
+        if (isBlank(project.getLicenseUrl())) {
+            findLicenseFile(context.getBasedir())
+                .ifPresent(path -> {
+                    GitService service = context.getModel().getRelease().getGitService();
+                    String srcUrl = service.getResolvedSrcUrl(context.getModel());
+                    if (!srcUrl.endsWith("/")) srcUrl += "/";
+                    srcUrl += path.getFileName().toString();
+                    project.setLicenseUrl(srcUrl);
+                });
         }
 
         if (isBlank(project.getDescription())) {
