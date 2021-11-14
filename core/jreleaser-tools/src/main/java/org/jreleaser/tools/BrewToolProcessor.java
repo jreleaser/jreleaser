@@ -83,9 +83,9 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         props.put(Constants.KEY_BREW_FORMULA_NAME, tool.getResolvedFormulaName(props));
 
         props.put(Constants.KEY_HOMEBREW_TAP_REPO_URL,
-            gitService.getResolvedRepoUrl(context.getModel(), tool.getTap().getOwner(), tool.getTap().getName()));
+            gitService.getResolvedRepoUrl(context.getModel(), tool.getTap().getOwner(), tool.getTap().getResolvedName()));
         props.put(Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL,
-            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getTap().getOwner(), tool.getTap().getName()));
+            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getTap().getOwner(), tool.getTap().getResolvedName()));
 
         props.put(Constants.KEY_BREW_HAS_LIVECHECK, tool.hasLivecheck());
         if (tool.hasLivecheck()) {

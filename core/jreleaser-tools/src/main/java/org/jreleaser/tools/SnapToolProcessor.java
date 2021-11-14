@@ -95,9 +95,9 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
             MustacheUtils.passThrough("|" + System.lineSeparator() + desc));
 
         props.put(Constants.KEY_SNAP_REPO_URL,
-            gitService.getResolvedRepoUrl(context.getModel(), tool.getSnap().getOwner(), tool.getSnap().getName()));
+            gitService.getResolvedRepoUrl(context.getModel(), tool.getSnap().getOwner(), tool.getSnap().getResolvedName()));
         props.put(Constants.KEY_SNAP_REPO_CLONE_URL,
-            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getSnap().getOwner(), tool.getSnap().getName()));
+            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getSnap().getOwner(), tool.getSnap().getResolvedName()));
 
         props.put(Constants.KEY_SNAP_BASE, getTool().getBase());
         props.put(Constants.KEY_SNAP_GRADE, getTool().getGrade());

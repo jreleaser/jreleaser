@@ -69,9 +69,9 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
         GitService gitService = context.getModel().getRelease().getGitService();
 
         props.put(Constants.KEY_JBANG_CATALOG_REPO_URL,
-            gitService.getResolvedRepoUrl(context.getModel(), tool.getCatalog().getOwner(), tool.getCatalog().getName()));
+            gitService.getResolvedRepoUrl(context.getModel(), tool.getCatalog().getOwner(), tool.getCatalog().getResolvedName()));
         props.put(Constants.KEY_JBANG_CATALOG_REPO_CLONE_URL,
-            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getCatalog().getOwner(), tool.getCatalog().getName()));
+            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getCatalog().getOwner(), tool.getCatalog().getResolvedName()));
 
         String aliasName = sanitizeAlias(tool.getAlias());
         String scriptName = aliasName;

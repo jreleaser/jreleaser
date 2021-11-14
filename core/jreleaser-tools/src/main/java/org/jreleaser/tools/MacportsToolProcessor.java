@@ -55,9 +55,9 @@ public class MacportsToolProcessor extends AbstractRepositoryToolProcessor<Macpo
         GitService gitService = context.getModel().getRelease().getGitService();
 
         props.put(Constants.KEY_MACPORTS_REPOSITORY_REPO_URL,
-            gitService.getResolvedRepoUrl(context.getModel(), tool.getRepository().getOwner(), tool.getRepository().getName()));
+            gitService.getResolvedRepoUrl(context.getModel(), tool.getRepository().getOwner(), tool.getRepository().getResolvedName()));
         props.put(Constants.KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL,
-            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getRepository().getOwner(), tool.getRepository().getName()));
+            gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getRepository().getOwner(), tool.getRepository().getResolvedName()));
 
         List<String> longDescription = Arrays.asList(context.getModel().getProject().getLongDescription().split("\\n"));
 
