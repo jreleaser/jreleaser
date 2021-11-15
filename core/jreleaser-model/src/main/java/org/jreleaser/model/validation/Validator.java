@@ -118,7 +118,29 @@ class Validator {
         }
     }
 
-    static void validateTap(JReleaserContext context, Distribution distribution, RepositoryTap tap, String property) {
+    static void validateTap(JReleaserContext context, Distribution distribution,
+                            RepositoryTap tap, RepositoryTap parentTap, String property) {
+        validateOwner(tap, parentTap);
+
+        if (isBlank(tap.getCommitMessage()) && isNotBlank(parentTap.getCommitMessage())) {
+            tap.setCommitMessage(parentTap.getCommitMessage());
+        }
+        if (isBlank(tap.getCommitMessage())) {
+            tap.setCommitMessage("{{distributionName}} {{tagName}}");
+        }
+        if (isBlank(tap.getBranch()) && isNotBlank(parentTap.getBranch())) {
+            tap.setBranch(parentTap.getBranch());
+        }
+        if (isBlank(tap.getName()) && isNotBlank(parentTap.getName())) {
+            tap.setName(parentTap.getName());
+        }
+        if (isBlank(tap.getUsername()) && isNotBlank(parentTap.getUsername())) {
+            tap.setUsername(parentTap.getUsername());
+        }
+        if (isBlank(tap.getToken()) && isNotBlank(parentTap.getToken())) {
+            tap.setToken(parentTap.getToken());
+        }
+
         GitService service = context.getModel().getRelease().getGitService();
 
         tap.setUsername(

@@ -60,10 +60,7 @@ public abstract class JbangValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         JbangCatalog catalog = tool.getCatalog();
         catalog.resolveEnabled(model.getProject());
-        validateOwner(catalog, parentTool.getCatalog());
-        if (isBlank(catalog.getBranch())) {
-            catalog.setBranch(parentTool.getCatalog().getBranch());
-        }
+        validateTap(context, distribution, catalog, parentTool.getCatalog(), "jbang.catalog");
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
@@ -71,17 +68,6 @@ public abstract class JbangValidator extends Validator {
         if (isBlank(tool.getAlias())) {
             tool.setAlias(distribution.getExecutable());
         }
-        if (isBlank(catalog.getName())) {
-            catalog.setName(parentTool.getCatalog().getName());
-        }
-        if (isBlank(catalog.getUsername())) {
-            catalog.setUsername(parentTool.getCatalog().getUsername());
-        }
-        if (isBlank(catalog.getToken())) {
-            catalog.setToken(parentTool.getCatalog().getToken());
-        }
-
-        validateTap(context, distribution, catalog, "jbang.catalog");
 
         if (model.getProject().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
             !parentTool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {

@@ -86,27 +86,16 @@ public abstract class DockerValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         DockerRepository repository = tool.getRepository();
         repository.resolveEnabled(model.getProject());
-        validateOwner(repository, parentTool.getRepository());
-        if (isBlank(repository.getBranch())) {
-            repository.setBranch(parentTool.getRepository().getBranch());
-        }
         if (!repository.isVersionedSubfoldersSet()) {
             repository.setVersionedSubfolders(parentTool.getRepository().isVersionedSubfolders());
         }
-        mergeExtraProperties(tool, parentTool);
-        validateContinueOnError(tool, parentTool);
-
         if (isBlank(repository.getName())) {
             repository.setName(project.getName() + "-docker");
         }
-        if (isBlank(repository.getUsername())) {
-            repository.setUsername(parentTool.getRepository().getUsername());
-        }
-        if (isBlank(repository.getToken())) {
-            repository.setToken(parentTool.getRepository().getToken());
-        }
+        validateTap(context, distribution, repository, parentTool.getRepository(), "docker.repository");
 
-        validateTap(context, distribution, repository, "docker.repository");
+        mergeExtraProperties(tool, parentTool);
+        validateContinueOnError(tool, parentTool);
 
         if (isBlank(tool.getBaseImage())) {
             tool.setBaseImage(parentTool.getBaseImage());

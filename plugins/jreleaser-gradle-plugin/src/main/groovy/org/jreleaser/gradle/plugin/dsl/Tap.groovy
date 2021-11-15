@@ -36,4 +36,6 @@ interface Tap extends Activatable {
     Property<String> getToken()
 
     Property<String> getBranch()
+
+    Property<String> getCommitMessage()
 }

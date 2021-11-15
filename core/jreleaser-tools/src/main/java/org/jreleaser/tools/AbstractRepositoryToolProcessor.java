@@ -92,11 +92,14 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
                 .addFilepattern(".")
                 .call();
 
+            props.putAll(distribution.props());
+            context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
+
             // setup commit
             context.getLogger().debug(RB.$("repository.commit.setup"));
             CommitCommand commitCommand = git.commit()
                 .setAll(true)
-                .setMessage(distribution.getExecutable() + " " + gitService.getResolvedTagName(context.getModel()))
+                .setMessage(tool.getRepositoryTap().getResolvedCommitMessage(props))
                 .setAuthor(tool.getCommitAuthor().getName(), tool.getCommitAuthor().getEmail());
             commitCommand.setCredentialsProvider(credentialsProvider);
 

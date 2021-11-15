@@ -63,10 +63,10 @@ public abstract class SnapValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         SnapTap snap = tool.getSnap();
         snap.resolveEnabled(model.getProject());
-        validateOwner(snap, parentTool.getSnap());
-        if (isBlank(snap.getBranch())) {
-            snap.setBranch(parentTool.getSnap().getBranch());
+        if (isBlank(snap.getName())) {
+            snap.setName(distribution.getName() + "-snap");
         }
+        validateTap(context, distribution, snap, parentTool.getSnap(), "snap.snap");
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
@@ -103,18 +103,6 @@ public abstract class SnapValidator extends Validator {
                     context.getBasedir().resolve(tool.getExportedLogin())));
             }
         }
-
-        if (isBlank(snap.getName())) {
-            snap.setName(distribution.getName() + "-snap");
-        }
-        if (isBlank(snap.getUsername())) {
-            snap.setUsername(parentTool.getSnap().getUsername());
-        }
-        if (isBlank(snap.getToken())) {
-            snap.setToken(parentTool.getSnap().getToken());
-        }
-
-        validateTap(context, distribution, snap, "snap.snap");
 
         validateArtifactPlatforms(context, distribution, tool, errors);
     }

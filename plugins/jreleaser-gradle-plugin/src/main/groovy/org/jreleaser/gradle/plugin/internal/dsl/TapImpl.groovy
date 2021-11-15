@@ -50,6 +50,7 @@ class TapImpl implements Tap {
     final Property<String> branch
     final Property<String> username
     final Property<String> token
+    final Property<String> commitMessage
 
     @Inject
     TapImpl(ObjectFactory objects) {
@@ -59,6 +60,7 @@ class TapImpl implements Tap {
         branch = objects.property(String).convention(Providers.notDefined())
         username = objects.property(String).convention(Providers.notDefined())
         token = objects.property(String).convention(Providers.notDefined())
+        commitMessage = objects.property(String).convention(Providers.notDefined())
     }
 
     @Override
@@ -75,7 +77,8 @@ class TapImpl implements Tap {
             name.present ||
             branch.present ||
             username.present ||
-            token.present
+            token.present ||
+            commitMessage.present
     }
 
     private void convert(RepositoryTap into) {
@@ -85,6 +88,7 @@ class TapImpl implements Tap {
         if (branch.present) into.branch = branch.get()
         if (username.present) into.name = username.get()
         if (token.present) into.token = token.get()
+        if (commitMessage.present) into.commitMessage = commitMessage.get()
     }
 
     HomebrewTap toHomebrewTap() {

@@ -157,11 +157,14 @@ public class ArticleAnnouncer implements Announcer {
                 .addFilepattern(".")
                 .call();
 
+            Map<String, Object> props = context.props();
+            context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
+
             // setup commit
             context.getLogger().debug(RB.$("repository.commit.setup"));
             CommitCommand commitCommand = git.commit()
                 .setAll(true)
-                .setMessage(context.getModel().getProject().getResolvedName() + " " + gitService.getResolvedTagName(context.getModel()))
+                .setMessage(article.getRepository().getResolvedCommitMessage(props))
                 .setAuthor(article.getCommitAuthor().getName(), article.getCommitAuthor().getEmail());
             commitCommand.setCredentialsProvider(credentialsProvider);
             commitCommand = commitCommand

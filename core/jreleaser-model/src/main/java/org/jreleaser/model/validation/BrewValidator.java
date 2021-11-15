@@ -97,7 +97,7 @@ public abstract class BrewValidator extends Validator {
             tap.setToken(parentTool.getTap().getToken());
         }
 
-        validateTap(context, distribution, tap, "brew.tap");
+        validateTap(context, distribution, tap, parentTool.getTap(), "brew.tap");
 
         if (!tool.isMultiPlatformSet() && parentTool.isMultiPlatformSet()) {
             tool.setMultiPlatform(parentTool.isMultiPlatform());

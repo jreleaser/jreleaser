@@ -42,6 +42,7 @@ class DockerRepositoryImpl implements DockerRepository {
     final Property<String> branch
     final Property<String> username
     final Property<String> token
+    final Property<String> commitMessage
     final Property<Boolean> versionedSubfolders
 
     @Inject
@@ -52,6 +53,7 @@ class DockerRepositoryImpl implements DockerRepository {
         branch = objects.property(String).convention(Providers.notDefined())
         username = objects.property(String).convention(Providers.notDefined())
         token = objects.property(String).convention(Providers.notDefined())
+        commitMessage = objects.property(String).convention(Providers.notDefined())
         versionedSubfolders = objects.property(Boolean).convention(Providers.notDefined())
     }
 
@@ -70,7 +72,8 @@ class DockerRepositoryImpl implements DockerRepository {
             branch.present ||
             username.present ||
             versionedSubfolders.present ||
-            token.present
+            token.present ||
+            commitMessage.present
     }
 
     org.jreleaser.model.DockerRepository toModel() {
@@ -81,6 +84,7 @@ class DockerRepositoryImpl implements DockerRepository {
         if (branch.present) tap.branch = branch.get()
         if (username.present) tap.name = username.get()
         if (token.present) tap.token = token.get()
+        if (commitMessage.present) tap.commitMessage = commitMessage.get()
         if (versionedSubfolders.present) tap.versionedSubfolders = versionedSubfolders.get()
         tap
     }

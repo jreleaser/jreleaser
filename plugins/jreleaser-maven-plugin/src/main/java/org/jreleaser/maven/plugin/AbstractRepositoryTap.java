@@ -30,6 +30,7 @@ abstract class AbstractRepositoryTap implements Activatable {
     private String branch;
     private String username;
     private String token;
+    private String commitMessage;
 
     void setAll(AbstractRepositoryTap tap) {
         this.active = tap.active;
@@ -38,6 +39,7 @@ abstract class AbstractRepositoryTap implements Activatable {
         this.branch = tap.branch;
         this.username = tap.username;
         this.token = tap.token;
+        this.commitMessage = tap.commitMessage;
     }
 
     @Override
@@ -95,12 +97,21 @@ abstract class AbstractRepositoryTap implements Activatable {
         this.token = token;
     }
 
+    public String getCommitMessage() {
+        return commitMessage;
+    }
+
+    public void setCommitMessage(String commitMessage) {
+        this.commitMessage = commitMessage;
+    }
+
     public boolean isSet() {
         return active != null ||
             isNotBlank(owner) ||
             isNotBlank(name) ||
             isNotBlank(branch) ||
             isNotBlank(username) ||
-            isNotBlank(token);
+            isNotBlank(token) ||
+            isNotBlank(commitMessage);
     }
 }

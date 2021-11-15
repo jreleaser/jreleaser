@@ -524,6 +524,7 @@ public final class JReleaserModelConverter {
         into.setBranch(from.getBranch());
         into.setUsername(from.getUsername());
         into.setToken(from.getToken());
+        into.setCommitMessage(from.getCommitMessage());
     }
 
     private static void convertAnnouncer(Announcer from, org.jreleaser.model.Announcer into) {

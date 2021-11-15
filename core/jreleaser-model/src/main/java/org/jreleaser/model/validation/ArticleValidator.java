@@ -48,6 +48,10 @@ public abstract class ArticleValidator extends Validator {
             errors.configuration(RB.$("validation_must_not_be_blank", "announce.article.repository.name"));
         }
 
+        if (isBlank(article.getRepository().getCommitMessage())) {
+            article.getRepository().setCommitMessage("{{projectName}} {{tagName}}");
+        }
+
         repository.setUsername(
             checkProperty(context,
                 Env.toVar(repository.getBasename() + "_" + service.getServiceName()) + "_USERNAME",

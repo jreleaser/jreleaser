@@ -58,10 +58,7 @@ public abstract class ScoopValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         ScoopBucket bucket = tool.getBucket();
         bucket.resolveEnabled(model.getProject());
-        validateOwner(bucket, parentTool.getBucket());
-        if (isBlank(bucket.getBranch())) {
-            bucket.setBranch(parentTool.getBucket().getBranch());
-        }
+        validateTap(context, distribution, bucket, parentTool.getBucket(), "scoop.bucket");
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
@@ -78,18 +75,6 @@ public abstract class ScoopValidator extends Validator {
                 tool.setAutoupdateUrl(service.getDownloadUrl());
             }
         }
-
-        if (isBlank(bucket.getName())) {
-            bucket.setName(parentTool.getBucket().getName());
-        }
-        if (isBlank(bucket.getUsername())) {
-            bucket.setUsername(parentTool.getBucket().getUsername());
-        }
-        if (isBlank(bucket.getToken())) {
-            bucket.setToken(parentTool.getBucket().getToken());
-        }
-
-        validateTap(context, distribution, bucket, "scoop.bucket");
 
         validateArtifactPlatforms(context, distribution, tool, errors);
 

@@ -33,7 +33,6 @@ import java.util.Set;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
-import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -79,25 +78,10 @@ public abstract class MacportsValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         MacportsRepository repository = tool.getRepository();
         repository.resolveEnabled(model.getProject());
-        validateOwner(repository, parentTool.getRepository());
-        if (isBlank(repository.getBranch())) {
-            repository.setBranch(parentTool.getRepository().getBranch());
-        }
+        validateTap(context, distribution, repository, parentTool.getRepository(), "macports.repository");
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
-
-        if (isBlank(repository.getName())) {
-            repository.setName(parentTool.getRepository().getName());
-        }
-        if (isBlank(repository.getUsername())) {
-            repository.setUsername(parentTool.getRepository().getUsername());
-        }
-        if (isBlank(repository.getToken())) {
-            repository.setToken(parentTool.getRepository().getToken());
-        }
-
-        validateTap(context, distribution, repository, "macports.repository");
         validateArtifactPlatforms(context, distribution, tool, errors);
 
         // activate rmd160 checksum

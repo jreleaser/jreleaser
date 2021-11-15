@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import java.util.Map;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -47,4 +49,10 @@ public interface RepositoryTap extends Domain, OwnerAware, Activatable {
     String getToken();
 
     void setToken(String token);
+
+    String getCommitMessage();
+
+    void setCommitMessage(String commitMessage);
+
+    String getResolvedCommitMessage(Map<String, Object> props);
 }

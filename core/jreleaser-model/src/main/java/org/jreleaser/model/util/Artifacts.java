@@ -55,7 +55,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public class Artifacts {
-    private static String resolve(String input, Map<String, Object> props) {
+    public static String resolve(String input, Map<String, Object> props) {
         if (isBlank(input)) return input;
 
         int count = 0;

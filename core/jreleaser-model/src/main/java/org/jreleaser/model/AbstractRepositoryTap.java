@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.util.Env;
 
 import java.util.LinkedHashMap;
@@ -40,6 +41,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
     protected String branch;
     protected String username;
     protected String token;
+    protected String commitMessage;
 
     AbstractRepositoryTap(String basename, String tapName) {
         this.basename = basename;
@@ -63,6 +65,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
         this.branch = tap.branch;
         this.username = tap.username;
         this.token = tap.token;
+        this.commitMessage = tap.commitMessage;
     }
 
     @Override
@@ -115,6 +118,11 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
             return name;
         }
         return tapName;
+    }
+
+    @Override
+    public String getResolvedCommitMessage(Map<String, Object> props) {
+        return Artifacts.resolve(commitMessage, props);
     }
 
     @Override
@@ -180,6 +188,16 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
     }
 
     @Override
+    public String getCommitMessage() {
+        return commitMessage;
+    }
+
+    @Override
+    public void setCommitMessage(String commitMessage) {
+        this.commitMessage = commitMessage;
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
@@ -189,6 +207,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
         map.put("branch", branch);
         map.put("username", username);
         map.put("token", isNotBlank(token) ? HIDE : UNSET);
+        map.put("commitMessage", commitMessage);
         return map;
     }
 }

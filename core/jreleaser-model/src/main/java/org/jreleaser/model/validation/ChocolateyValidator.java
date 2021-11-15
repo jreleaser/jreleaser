@@ -55,10 +55,7 @@ public abstract class ChocolateyValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         ChocolateyBucket bucket = tool.getBucket();
         bucket.resolveEnabled(model.getProject());
-        validateOwner(bucket, parentTool.getBucket());
-        if (isBlank(bucket.getBranch())) {
-            bucket.setBranch(parentTool.getBucket().getBranch());
-        }
+        validateTap(context, distribution, bucket, parentTool.getBucket(), "chocolatey.bucket");
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
@@ -86,18 +83,6 @@ public abstract class ChocolateyValidator extends Validator {
                     errors,
                     context.isDryrun()));
         }
-
-        if (isBlank(bucket.getName())) {
-            bucket.setName(parentTool.getBucket().getName());
-        }
-        if (isBlank(bucket.getUsername())) {
-            bucket.setUsername(parentTool.getBucket().getUsername());
-        }
-        if (isBlank(bucket.getToken())) {
-            bucket.setToken(parentTool.getBucket().getToken());
-        }
-
-        validateTap(context, distribution, bucket, "chocolatey.bucket");
 
         validateArtifactPlatforms(context, distribution, tool, errors);
     }
