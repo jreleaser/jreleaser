@@ -190,7 +190,8 @@ public class Brew extends AbstractRepositoryTool {
     @Override
     public boolean supportsPlatform(String platform) {
         if (isMultiPlatform()) {
-            return isBlank(platform) || PlatformUtils.isMac(platform) || PlatformUtils.isLinux(platform);
+            return (isBlank(platform) || PlatformUtils.isMac(platform) || PlatformUtils.isLinux(platform)) &&
+                !PlatformUtils.isAlpineLinux(platform);
         }
         return isBlank(platform) || PlatformUtils.isMac(platform);
     }

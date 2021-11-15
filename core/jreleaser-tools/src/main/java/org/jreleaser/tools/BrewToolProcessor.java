@@ -130,7 +130,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             }
         } else if (tool.isMultiPlatform()) {
             List<String> multiPlatforms = new ArrayList<>();
-            for (Artifact artifact : distribution.getArtifacts()) {
+            for (Artifact artifact : collectArtifacts(distribution)) {
                 if (!artifact.isActive() ||
                     !artifact.getPath().endsWith(".zip") ||
                     isBlank(artifact.getPlatform()) ||
