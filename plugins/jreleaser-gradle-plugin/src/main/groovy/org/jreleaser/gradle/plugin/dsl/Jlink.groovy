@@ -40,6 +40,8 @@ interface Jlink extends JavaAssembler {
 
     SetProperty<String> getModuleNames()
 
+    SetProperty<String> getAdditionalModuleNames()
+
     ListProperty<String> getArgs()
 
     void addArg(String arg)

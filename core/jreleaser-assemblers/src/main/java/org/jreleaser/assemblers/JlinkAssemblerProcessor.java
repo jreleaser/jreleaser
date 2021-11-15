@@ -27,7 +27,6 @@ import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
-import org.jreleaser.util.StringUtils;
 import org.jreleaser.util.Version;
 import org.jreleaser.util.command.Command;
 
@@ -41,9 +40,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -91,9 +90,11 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         if (moduleNames.isEmpty()) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_no_module_names"));
         }
+        moduleNames.addAll(assembler.getAdditionalModuleNames());
         if (isNotBlank(assembler.getModuleName())) {
             moduleNames.add(assembler.getModuleName());
         }
+        context.getLogger().debug(RB.$("assembler.module.names"), moduleNames);
 
         // run jlink x jdk
         String imageName = assembler.getResolvedImageName(context);
@@ -289,11 +290,8 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             .map(String::trim)
             .count();
 
-        if (lineCount == 1) {
-            return Arrays.stream(output.split(System.lineSeparator()))
-                .map(String::trim)
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.toSet());
+        if (lineCount == 1 && isNotBlank(output)) {
+            return Arrays.stream(output.split(",")).collect(toSet());
         }
 
         throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", output));

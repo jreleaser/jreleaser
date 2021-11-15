@@ -764,6 +764,7 @@ public final class JReleaserModelConverter {
         a.setTemplateDirectory(jlink.getTemplateDirectory());
         a.setTargetJdks(convertArtifacts(jlink.getTargetJdks()));
         a.setModuleNames(jlink.getModuleNames());
+        a.setAdditionalModuleNames(jlink.getAdditionalModuleNames());
         a.setArgs(jlink.getArgs());
         a.setJdeps(convertJdeps(jlink.getJdeps()));
         a.setJdk(convertArtifact(jlink.getJdk()));

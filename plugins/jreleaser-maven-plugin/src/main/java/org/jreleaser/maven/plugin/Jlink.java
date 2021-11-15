@@ -31,6 +31,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Jlink extends AbstractJavaAssembler {
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
+    private final Set<String> additionalModuleNames = new LinkedHashSet<>();
     private final List<String> args = new ArrayList<>();
     private final Java java = new Java();
     private final Jdeps jdeps = new Jdeps();
@@ -56,6 +57,7 @@ public class Jlink extends AbstractJavaAssembler {
         setMainJar(jlink.mainJar);
         setTargetJdks(jlink.targetJdks);
         setModuleNames(jlink.moduleNames);
+        setAdditionalModuleNames(jlink.additionalModuleNames);
         setArgs(jlink.args);
         setJars(jlink.jars);
         setFiles(jlink.files);
@@ -150,6 +152,31 @@ public class Jlink extends AbstractJavaAssembler {
     public void removeModuleName(String moduleName) {
         if (isNotBlank(moduleName)) {
             this.moduleNames.remove(moduleName.trim());
+        }
+    }
+
+    public Set<String> getAdditionalModuleNames() {
+        return additionalModuleNames;
+    }
+
+    public void setAdditionalModuleNames(Set<String> additionalModuleNames) {
+        this.additionalModuleNames.clear();
+        this.additionalModuleNames.addAll(additionalModuleNames);
+    }
+
+    public void addAdditionalModuleNames(List<String> additionalModuleNames) {
+        this.additionalModuleNames.addAll(additionalModuleNames);
+    }
+
+    public void addAdditionalModuleName(String additionalModuleName) {
+        if (isNotBlank(additionalModuleName)) {
+            this.additionalModuleNames.add(additionalModuleName.trim());
+        }
+    }
+
+    public void removeAdditionalModuleName(String additionalModuleName) {
+        if (isNotBlank(additionalModuleName)) {
+            this.additionalModuleNames.remove(additionalModuleName.trim());
         }
     }
 
