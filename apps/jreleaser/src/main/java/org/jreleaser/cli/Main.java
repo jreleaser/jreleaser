@@ -17,6 +17,7 @@
  */
 package org.jreleaser.cli;
 
+import picocli.AutoComplete;
 import picocli.CommandLine;
 
 import java.io.PrintWriter;
@@ -30,7 +31,8 @@ import java.io.PrintWriter;
         Assemble.class, Changelog.class,
         Checksum.class, Sign.class, Upload.class,
         Release.class, Prepare.class, Package.class,
-        Publish.class, Announce.class, FullRelease.class})
+        Publish.class, Announce.class, FullRelease.class,
+        AutoComplete.GenerateCompletion.class})
 public class Main extends BaseCommand implements Runnable {
     PrintWriter out;
     PrintWriter err;
