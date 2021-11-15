@@ -53,7 +53,15 @@ import static org.jreleaser.util.StringUtils.isTrue;
 public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
     private static final String KEY_DISTRIBUTION_CHECKSUM_SHA_256 = "distributionChecksumSha256";
 
-    private static final String TPL_MAC_INTEL = "  if OS.mac?\n" +
+    private static final String TPL_MAC_ARM = "  if OS.mac? && Hardware::CPU.arm?\n" +
+        "    url \"{{distributionUrl}}\"\n" +
+        "    sha256 \"{{distributionChecksumSha256}}\"\n" +
+        "  end\n";
+    private static final String TPL_MAC_INTEL = "  if OS.mac? && Hardware::CPU.intel?\n" +
+        "    url \"{{distributionUrl}}\"\n" +
+        "    sha256 \"{{distributionChecksumSha256}}\"\n" +
+        "  end\n";
+    private static final String TPL_LINUX_ARM = "  if OS.linux? && Hardware::CPU.arm? && Hardware::CPU.is_64_bit?\n" +
         "    url \"{{distributionUrl}}\"\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
         "  end\n";
@@ -61,10 +69,6 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         "    url \"{{distributionUrl}}\"\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
         "  end\n";
-    private static final String TPL_LINUX_ARM = "  if OS.linux? && Hardware::CPU.arm?\n" +
-        "    url \"{{distributionUrl}}\"\n" +
-        "    sha256 \"{{distributionChecksumSha256}}\"\n" +
-        "  end";
 
     public BrewToolProcessor(JReleaserContext context) {
         super(context);
@@ -139,9 +143,13 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
                 String template = null;
                 String artifactUrl = resolveArtifactUrl(props, artifact);
                 if (PlatformUtils.isMac(artifact.getPlatform())) {
-                    template = TPL_MAC_INTEL;
+                    if (artifact.getPlatform().contains("aarch64")) {
+                        template = TPL_MAC_ARM;
+                    } else {
+                        template = TPL_MAC_INTEL;
+                    }
                 } else if (PlatformUtils.isLinux(artifact.getPlatform())) {
-                    if (artifact.getPlatform().contains("arm")) {
+                    if (artifact.getPlatform().contains("aarch64")) {
                         template = TPL_LINUX_ARM;
                     } else {
                         template = TPL_LINUX_INTEL;
