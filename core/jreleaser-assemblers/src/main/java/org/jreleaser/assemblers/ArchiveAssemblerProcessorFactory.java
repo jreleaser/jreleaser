@@ -30,7 +30,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
 public class ArchiveAssemblerProcessorFactory implements AssemblerProcessorFactory<Archive, ArchiveAssemblerProcessor> {
     @Override
     public String getName() {
-        return Archive.NAME;
+        return Archive.TYPE;
     }
 
     @Override

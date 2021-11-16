@@ -31,11 +31,11 @@ public class Checksum extends AbstractPlatformAwareModelCommand {
     Composite composite;
 
     static class Composite {
-        @CommandLine.Option(names = {"-dn", "--distribution-name"},
+        @CommandLine.Option(names = {"-d", "--distribution"},
             paramLabel = "<distribution>")
         String[] includedDistributions;
 
-        @CommandLine.Option(names = {"-xdn", "--exclude-distribution"},
+        @CommandLine.Option(names = {"-xd", "--exclude-distribution"},
             paramLabel = "<distribution>")
         String[] excludedDistributions;
     }

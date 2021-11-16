@@ -33,7 +33,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 public class Jlink extends AbstractJavaAssembler {
-    public static final String NAME = "jlink";
+    public static final String TYPE = "jlink";
 
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
@@ -51,7 +51,7 @@ public class Jlink extends AbstractJavaAssembler {
     private Boolean copyJars;
 
     public Jlink() {
-        super(NAME);
+        super(TYPE);
     }
 
     @Override

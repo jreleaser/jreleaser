@@ -51,7 +51,7 @@ public abstract class AbstractModelCommand extends AbstractCommand {
     @CommandLine.Option(names = {"-grs", "--git-root-search"})
     boolean gitRootSearch;
 
-    @CommandLine.Option(names = {"-p", "--set-property"},
+    @CommandLine.Option(names = {"-P", "--set-property"},
         paramLabel = "<key=value>")
     String[] properties;
 

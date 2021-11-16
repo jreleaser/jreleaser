@@ -60,21 +60,21 @@ public class Package extends AbstractPlatformAwareModelCommand {
     }
 
     static class Include {
-        @CommandLine.Option(names = {"-dn", "--distribution-name"},
+        @CommandLine.Option(names = {"-d", "--distribution"},
             paramLabel = "<distribution>")
         String[] includedDistributions;
 
-        @CommandLine.Option(names = {"-pn", "--packager-name"},
+        @CommandLine.Option(names = {"-p", "--packager"},
             paramLabel = "<packager>")
         String[] includedPackagers;
     }
 
     static class Exclude {
-        @CommandLine.Option(names = {"-xdn", "--exclude-distribution"},
+        @CommandLine.Option(names = {"-xd", "--exclude-distribution"},
             paramLabel = "<distribution>")
         String[] excludedDistributions;
 
-        @CommandLine.Option(names = {"-xpn", "--exclude-packager"},
+        @CommandLine.Option(names = {"-xp", "--exclude-packager"},
             paramLabel = "<packager>")
         String[] excludedPackagers;
     }

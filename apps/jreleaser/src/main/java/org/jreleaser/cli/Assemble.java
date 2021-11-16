@@ -57,21 +57,21 @@ public class Assemble extends AbstractModelCommand {
     }
 
     static class Include {
-        @CommandLine.Option(names = {"-an", "--assembler-name"},
+        @CommandLine.Option(names = {"-a", "--assembler"},
             paramLabel = "<assembler>")
         String[] includedAssemblers;
 
-        @CommandLine.Option(names = {"-dn", "--distribution-name"},
+        @CommandLine.Option(names = {"-d", "--distribution"},
             paramLabel = "<distribution>")
         String[] includedDistributions;
     }
 
     static class Exclude {
-        @CommandLine.Option(names = {"-xan", "--exclude-assembler"},
+        @CommandLine.Option(names = {"-xa", "--exclude-assembler"},
             paramLabel = "<assembler>")
         String[] excludedAssemblers;
 
-        @CommandLine.Option(names = {"-xdn", "--exclude-distribution"},
+        @CommandLine.Option(names = {"-xd", "--exclude-distribution"},
             paramLabel = "<distribution>")
         String[] excludedDistributions;
     }

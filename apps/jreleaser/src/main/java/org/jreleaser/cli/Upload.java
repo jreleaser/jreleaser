@@ -60,7 +60,7 @@ public class Upload extends AbstractPlatformAwareModelCommand {
     }
 
     static class Include {
-        @CommandLine.Option(names = {"-ut", "--uploader-type"},
+        @CommandLine.Option(names = {"-u", "--uploader"},
             paramLabel = "<uploader>")
         String[] includedUploaderTypes;
 
@@ -70,7 +70,7 @@ public class Upload extends AbstractPlatformAwareModelCommand {
     }
 
     static class Exclude {
-        @CommandLine.Option(names = {"-xut", "--exclude-uploader-type"},
+        @CommandLine.Option(names = {"-xu", "--exclude-uploader"},
             paramLabel = "<uploader>")
         String[] excludedUploaderTypes;
 

@@ -18,6 +18,7 @@
 package org.jreleaser.engine.announce;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Announce;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.announcer.spi.AnnounceException;
@@ -51,10 +52,21 @@ public class Announcers {
 
         if (!context.getIncludedAnnouncers().isEmpty()) {
             for (String announcerName : context.getIncludedAnnouncers()) {
+                // check if the announcer name is valid
+                if (!Announce.supportedAnnouncers().contains(announcerName)) {
+                    context.getLogger().warn(RB.$("ERROR_unsupported_announcer", announcerName));
+                    continue;
+                }
+
                 Announcer announcer = announcers.get(announcerName);
 
                 if (null == announcer) {
                     context.getLogger().warn(RB.$("announcers.announcer.not.found"), announcerName);
+                    continue;
+                }
+
+                if (!announcer.isEnabled()) {
+                    context.getLogger().warn(RB.$("announcers.announcer.not.enabled"), announcerName);
                     continue;
                 }
 

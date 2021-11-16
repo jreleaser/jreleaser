@@ -24,7 +24,10 @@ import org.jreleaser.model.Upload;
 import org.jreleaser.model.Uploader;
 import org.jreleaser.model.uploader.spi.UploadException;
 
+import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Andres Almiray
@@ -40,6 +43,12 @@ public class Uploaders {
 
         if (!context.getIncludedUploaderTypes().isEmpty()) {
             for (String uploaderType : context.getIncludedUploaderTypes()) {
+                // check if the uploaderType is valid
+                if (!Upload.supportedUploaders().contains(uploaderType)) {
+                    context.getLogger().warn(RB.$("ERROR_unsupported_uploader", uploaderType));
+                    continue;
+                }
+
                 Map<String, Uploader> uploaders = upload.findUploadersByType(uploaderType);
 
                 if (uploaders.isEmpty()) {
@@ -50,16 +59,20 @@ public class Uploaders {
                 if (!context.getIncludedUploaderNames().isEmpty()) {
                     for (String uploaderName : context.getIncludedUploaderNames()) {
                         if (!uploaders.containsKey(uploaderName)) {
-                            context.getLogger().error(RB.$("uploaders.uploader.not.configured"),
-                                uploaderType,
-                                uploaderName);
+                            context.getLogger().warn(RB.$("uploaders.uploader.not.configured"), uploaderType, uploaderName);
+                            continue;
+                        }
+
+                        Uploader uploader = uploaders.get(uploaderName);
+                        if (!uploader.isEnabled()) {
+                            context.getLogger().info(RB.$("uploaders.uploader.disabled"), uploaderType, uploaderName);
                             continue;
                         }
 
                         context.getLogger().info(RB.$("uploaders.upload.with"),
                             uploaderType,
                             uploaderName);
-                        upload(context, uploaders.get(uploaderName));
+                        upload(context, uploader);
                     }
                 } else {
                     context.getLogger().info(RB.$("uploaders.upload.all.artifacts.with"), uploaderType);
@@ -68,17 +81,26 @@ public class Uploaders {
             }
         } else if (!context.getIncludedUploaderNames().isEmpty()) {
             for (String uploaderName : context.getIncludedUploaderNames()) {
-                context.getLogger().info(RB.$("uploaders.upload.all.artifacts.to"), uploaderName);
-                upload.findAllUploaders().stream()
+                List<Uploader> filteredUploaders = upload.findAllActiveUploaders().stream()
                     .filter(a -> uploaderName.equals(a.getName()))
-                    .forEach(uploader -> upload(context, uploader));
+                    .collect(toList());
+
+                if (!filteredUploaders.isEmpty()) {
+                    context.getLogger().info(RB.$("uploaders.upload.all.artifacts.to"), uploaderName);
+                    filteredUploaders.forEach(uploader -> upload(context, uploader));
+                } else {
+                    context.getLogger().warn(RB.$("uploaders.uploader.not.configured2"), uploaderName);
+                }
             }
         } else {
             context.getLogger().info(RB.$("uploaders.upload.all.artifacts"));
-            for (Uploader uploader : upload.findAllUploaders()) {
-                if (context.getExcludedUploaderTypes().contains(uploader.getType()) ||
-                    context.getExcludedUploaderNames().contains(uploader.getName())) {
-                    context.getLogger().info(RB.$("uploaders.uploader.excluded"), uploader.getType(), uploader.getName());
+            for (Uploader uploader : upload.findAllActiveUploaders()) {
+                String uploaderType = uploader.getType();
+                String uploaderName = uploader.getName();
+
+                if (context.getExcludedUploaderTypes().contains(uploaderType) ||
+                    context.getExcludedUploaderNames().contains(uploaderName)) {
+                    context.getLogger().info(RB.$("uploaders.uploader.excluded"), uploaderType, uploaderName);
                     continue;
                 }
 

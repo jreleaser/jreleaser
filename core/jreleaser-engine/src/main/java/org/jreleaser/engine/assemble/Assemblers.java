@@ -40,6 +40,12 @@ public class Assemblers {
 
         if (!context.getIncludedAssemblers().isEmpty()) {
             for (String assemblerType : context.getIncludedAssemblers()) {
+                // check if the assemblerType is valid
+                if (!Assemble.supportedAssemblers().contains(assemblerType)) {
+                    context.getLogger().warn(RB.$("ERROR_unsupported_assembler", assemblerType));
+                    continue;
+                }
+
                 Map<String, Assembler> assemblers = assemble.findAssemblersByType(assemblerType);
 
                 if (assemblers.isEmpty()) {
@@ -50,9 +56,7 @@ public class Assemblers {
                 if (!context.getIncludedDistributions().isEmpty()) {
                     for (String distributionName : context.getIncludedDistributions()) {
                         if (!assemblers.containsKey(distributionName)) {
-                            context.getLogger().error(RB.$("assemblers.distribution.not.configured"),
-                                distributionName,
-                                assemblerType);
+                            context.getLogger().error(RB.$("assemblers.distribution.not.configured"), assemblerType, distributionName);
                             continue;
                         }
 
@@ -76,9 +80,11 @@ public class Assemblers {
         } else {
             context.getLogger().info(RB.$("assemblers.assemble.all.distributions"));
             for (Assembler assembler : assemble.findAllAssemblers()) {
-                if (context.getExcludedAssemblers().contains(assembler.getType()) ||
-                    context.getExcludedDistributions().contains(assembler.getName())) {
-                    context.getLogger().info(RB.$("assemblers.assembler.excluded"), assembler.getType(), assembler.getName());
+                String assemblerType = assembler.getType();
+                String distributionName = assembler.getName();
+                if (context.getExcludedAssemblers().contains(assemblerType) ||
+                    context.getExcludedDistributions().contains(distributionName)) {
+                    context.getLogger().info(RB.$("assemblers.assembler.excluded"), assemblerType, distributionName);
                     continue;
                 }
 

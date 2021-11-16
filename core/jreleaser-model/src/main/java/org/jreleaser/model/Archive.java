@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.8.0
  */
 public class Archive extends AbstractAssembler {
-    public static final String NAME = "archive";
+    public static final String TYPE = "archive";
 
     private final Set<Format> formats = new LinkedHashSet<>();
 
@@ -40,7 +40,7 @@ public class Archive extends AbstractAssembler {
     private Distribution.DistributionType distributionType;
 
     public Archive() {
-        super(NAME);
+        super(TYPE);
     }
 
     @Override

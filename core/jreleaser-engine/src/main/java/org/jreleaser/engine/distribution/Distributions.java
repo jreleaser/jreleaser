@@ -51,6 +51,11 @@ public class Distributions {
 
                 if (!context.getIncludedPackagers().isEmpty()) {
                     for (String packagerName : context.getIncludedPackagers()) {
+                        if (!Distribution.supportedPackagers().contains(packagerName)) {
+                            context.getLogger().warn(RB.$("ERROR_unsupported_packager", packagerName));
+                            continue;
+                        }
+
                         context.getLogger().info(RB.$("distributions.apply.action"), action);
 
                         processDistribution(context, action, distribution, packagerName, function);
@@ -61,6 +66,11 @@ public class Distributions {
             }
         } else if (!context.getIncludedPackagers().isEmpty()) {
             for (String packagerName : context.getIncludedPackagers()) {
+                if (!Distribution.supportedPackagers().contains(packagerName)) {
+                    context.getLogger().warn(RB.$("ERROR_unsupported_packager", packagerName));
+                    continue;
+                }
+
                 context.getLogger().info(RB.$("distributions.apply.action"), action);
                 for (Distribution distribution : activeDistributions) {
                     processDistribution(context, action, distribution, packagerName, function);
@@ -84,8 +94,11 @@ public class Distributions {
         context.getLogger().increaseIndent();
         context.getLogger().info(RB.$("distributions.apply.action.to"), action, distribution.getName());
 
-        for (String packagerName : Distribution.supportedPackager()) {
-            if (context.getExcludedPackagers().contains(packagerName)) continue;
+        for (String packagerName : Distribution.supportedPackagers()) {
+            if (context.getExcludedPackagers().contains(packagerName)) {
+                context.getLogger().info(RB.$("packagers.packager.excluded"), packagerName);
+                continue;
+            }
             processTool(context, distribution, packagerName, function);
         }
 

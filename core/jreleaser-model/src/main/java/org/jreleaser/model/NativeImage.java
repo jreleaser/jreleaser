@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 public class NativeImage extends AbstractJavaAssembler {
-    public static final String NAME = "native-image";
+    public static final String TYPE = "native-image";
 
     private final List<String> args = new ArrayList<>();
     private final Artifact graal = new Artifact();
@@ -43,7 +43,7 @@ public class NativeImage extends AbstractJavaAssembler {
     private String imageNameTransform;
 
     public NativeImage() {
-        super(NAME);
+        super(TYPE);
     }
 
     @Override

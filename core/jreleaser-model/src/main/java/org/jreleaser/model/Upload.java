@@ -20,8 +20,10 @@ package org.jreleaser.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.capitalize;
@@ -158,7 +160,7 @@ public class Upload implements Domain, EnabledAware {
         return Collections.emptyMap();
     }
 
-    public <A extends Uploader> List<A> findAllUploaders() {
+    public <A extends Uploader> List<A> findAllActiveUploaders() {
         List<A> uploaders = new ArrayList<>();
         uploaders.addAll((List<A>) getActiveArtifactories());
         uploaders.addAll((List<A>) getActiveHttps());
@@ -169,7 +171,7 @@ public class Upload implements Domain, EnabledAware {
     public Map<String, String> resolveDownloadUrls(JReleaserContext context, Distribution distribution, Artifact artifact, String prefix) {
         Map<String, String> urls = new LinkedHashMap<>();
 
-        List<Uploader> uploaders = findAllUploaders();
+        List<Uploader> uploaders = findAllActiveUploaders();
         for (Uploader uploader : uploaders) {
             List<String> keys = uploader.resolveSkipKeys();
             if (isSkip(distribution, keys) ||
@@ -214,5 +216,13 @@ public class Upload implements Domain, EnabledAware {
             }
         }
         return false;
+    }
+
+    public static Set<String> supportedUploaders() {
+        Set<String> set = new LinkedHashSet<>();
+        set.add(Artifactory.TYPE);
+        set.add(Http.TYPE);
+        set.add(S3.TYPE);
+        return Collections.unmodifiableSet(set);
     }
 }

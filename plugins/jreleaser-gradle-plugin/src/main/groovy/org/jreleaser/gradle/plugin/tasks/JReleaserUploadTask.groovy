@@ -61,12 +61,12 @@ abstract class JReleaserUploadTask extends AbstractPlatformAwareJReleaserTask {
         excludedUploaderNames = objects.listProperty(String).convention([])
     }
 
-    @Option(option = 'uploader-type', description = 'Include an uploader by type (OPTIONAL).')
+    @Option(option = 'uploader', description = 'Include an uploader by type (OPTIONAL).')
     void setUploaderType(List<String> uploaderTypes) {
         this.uploaderTypes.set(uploaderTypes)
     }
 
-    @Option(option = 'exclude-uploader-type', description = 'Exclude an uploader by type (OPTIONAL).')
+    @Option(option = 'exclude-uploader', description = 'Exclude an uploader by type (OPTIONAL).')
     void setExcludeUploaderType(List<String> excludedUploaderTypes) {
         this.excludedUploaderTypes.set(excludedUploaderTypes)
     }

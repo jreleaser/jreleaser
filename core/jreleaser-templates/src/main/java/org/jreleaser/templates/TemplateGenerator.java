@@ -113,7 +113,7 @@ public class TemplateGenerator {
     }
 
     private Path generatePackager() throws TemplateGenerationException {
-        if (!Distribution.supportedPackager().contains(packagerName)) {
+        if (!Distribution.supportedPackagers().contains(packagerName)) {
             logger.error(RB.$("ERROR_packager_not_supported"), packagerName);
             return null;
         }

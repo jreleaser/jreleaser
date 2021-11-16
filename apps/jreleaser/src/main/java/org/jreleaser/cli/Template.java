@@ -62,7 +62,7 @@ public class Template extends AbstractCommand {
     }
 
     static class Announcers {
-        @CommandLine.Option(names = {"-an", "--announcer-name"},
+        @CommandLine.Option(names = {"-a", "--announcer"},
             paramLabel = "<announcer>",
             descriptionKey = "announcer.name",
             required = true)
@@ -70,12 +70,12 @@ public class Template extends AbstractCommand {
     }
 
     static class Packagers {
-        @CommandLine.Option(names = {"-dn", "--distribution-name"},
+        @CommandLine.Option(names = {"-d", "--distribution"},
             paramLabel = "<distribution>",
             required = true)
         String distributionName;
 
-        @CommandLine.Option(names = {"-pn", "--packager-name"},
+        @CommandLine.Option(names = {"-p", "--packager"},
             paramLabel = "<packager>",
             required = true)
         String packagerName;

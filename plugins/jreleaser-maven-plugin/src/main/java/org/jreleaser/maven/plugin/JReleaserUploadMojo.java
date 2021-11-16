@@ -35,14 +35,14 @@ public class JReleaserUploadMojo extends AbstractPlatformAwareJReleaserMojo {
     /**
      * Include an uploader by type.
      */
-    @Parameter(property = "jreleaser.uploader.types")
-    private String[] includedUploaderTypes;
+    @Parameter(property = "jreleaser.uploaders")
+    private String[] includedUploaders;
 
     /**
      * Exclude an uploader by type.
      */
-    @Parameter(property = "jreleaser.excluded.uploader.types")
-    private String[] excludedUploaderTypes;
+    @Parameter(property = "jreleaser.excluded.uploaders")
+    private String[] excludedUploaders;
 
     /**
      * Include an uploader by name.
@@ -71,9 +71,9 @@ public class JReleaserUploadMojo extends AbstractPlatformAwareJReleaserMojo {
         }
 
         JReleaserContext context = createContext();
-        context.setIncludedUploaderTypes(collectEntries(includedUploaderTypes, true));
+        context.setIncludedUploaderTypes(collectEntries(includedUploaders, true));
         context.setIncludedUploaderNames(collectEntries(includedUploaderNames));
-        context.setExcludedUploaderTypes(collectEntries(excludedUploaderTypes, true));
+        context.setExcludedUploaderTypes(collectEntries(excludedUploaders, true));
         context.setExcludedUploaderNames(collectEntries(excludedUploaderNames));
         Workflows.upload(context).execute();
     }

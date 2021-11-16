@@ -34,12 +34,12 @@ public class Announce extends AbstractPlatformAwareModelCommand {
     Composite composite;
 
     static class Composite {
-        @CommandLine.Option(names = {"-an", "--announcer-name"},
+        @CommandLine.Option(names = {"-a", "--announcer"},
             paramLabel = "<announcer>",
             required = true)
         String[] includedAnnouncers;
 
-        @CommandLine.Option(names = {"-xan", "--exclude-announcer"},
+        @CommandLine.Option(names = {"-xa", "--exclude-announcer"},
             paramLabel = "<announcer>",
             required = true)
         String[] excludedAnnouncers;

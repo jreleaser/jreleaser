@@ -294,7 +294,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
             case Snap.NAME:
                 return (T) getSnap();
             default:
-                throw new JReleaserException(RB.$("ERROR_unsupported_tool", name));
+                throw new JReleaserException(RB.$("ERROR_unsupported_packager", name));
         }
     }
 
@@ -328,7 +328,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         return map;
     }
 
-    public static Set<String> supportedPackager() {
+    public static Set<String> supportedPackagers() {
         Set<String> set = new LinkedHashSet<>();
         set.add(Brew.NAME);
         set.add(Chocolatey.NAME);

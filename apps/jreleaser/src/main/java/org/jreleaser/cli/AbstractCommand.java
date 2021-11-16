@@ -41,7 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 abstract class AbstractCommand extends BaseCommand implements Callable<Integer> {
     protected JReleaserLogger logger;
 
-    @CommandLine.Option(names = {"-d", "--debug"})
+    @CommandLine.Option(names = {"-g", "--debug"})
     boolean debug;
 
     @CommandLine.Option(names = {"-i", "--info"})

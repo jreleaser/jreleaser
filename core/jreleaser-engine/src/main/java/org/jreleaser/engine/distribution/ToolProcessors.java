@@ -45,6 +45,6 @@ public class ToolProcessors {
             return toolProcessor;
         }
 
-        throw new JReleaserException(RB.$("ERROR_unsupported_tool", tool.getName()));
+        throw new JReleaserException(RB.$("ERROR_unsupported_packager", tool.getName()));
     }
 }

@@ -30,7 +30,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
 public class NativeImageAssemblerProcessorFactory implements AssemblerProcessorFactory<NativeImage, NativeImageAssemblerProcessor> {
     @Override
     public String getName() {
-        return NativeImage.NAME;
+        return NativeImage.TYPE;
     }
 
     @Override

@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -145,11 +147,11 @@ public class Assemble implements Domain, EnabledAware {
 
     public <A extends Assembler> Map<String, A> findAssemblersByType(String assemblerName) {
         switch (assemblerName) {
-            case Archive.NAME:
+            case Archive.TYPE:
                 return (Map<String, A>) archive;
-            case Jlink.NAME:
+            case Jlink.TYPE:
                 return (Map<String, A>) jlink;
-            case NativeImage.NAME:
+            case NativeImage.TYPE:
                 return (Map<String, A>) nativeImage;
         }
 
@@ -162,5 +164,13 @@ public class Assemble implements Domain, EnabledAware {
         assemblers.addAll((List<A>) getActiveJlinks());
         assemblers.addAll((List<A>) getActiveNativeImages());
         return assemblers;
+    }
+
+    public static Set<String> supportedAssemblers() {
+        Set<String> set = new LinkedHashSet<>();
+        set.add(Archive.TYPE);
+        set.add(Jlink.TYPE);
+        set.add(NativeImage.TYPE);
+        return Collections.unmodifiableSet(set);
     }
 }

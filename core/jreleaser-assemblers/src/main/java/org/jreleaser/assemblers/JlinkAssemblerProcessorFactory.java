@@ -30,7 +30,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
 public class JlinkAssemblerProcessorFactory implements AssemblerProcessorFactory<Jlink, JlinkAssemblerProcessor> {
     @Override
     public String getName() {
-        return Jlink.NAME;
+        return Jlink.TYPE;
     }
 
     @Override
