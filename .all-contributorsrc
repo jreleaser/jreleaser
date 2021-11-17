@@ -170,6 +170,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "dalexandrov",
+      "name": "Dmitry Aleksandrov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2016949?v=4",
+      "profile": "http://www.dmitryalexandrov.net",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
