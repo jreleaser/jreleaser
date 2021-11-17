@@ -39,11 +39,8 @@ public abstract class HttpValidator extends Validator {
         Map<String, Http> http = context.getModel().getUpload().getHttp();
 
         for (Map.Entry<String, Http> e : http.entrySet()) {
-            Http h = e.getValue();
-            if (isBlank(h.getName())) {
-                h.setName(e.getKey());
-            }
-            validateHttp(context, mode, h, errors);
+            e.getValue().setName(e.getKey());
+            validateHttp(context, mode, e.getValue(), errors);
         }
     }
 
@@ -53,7 +50,9 @@ public abstract class HttpValidator extends Validator {
         if (!http.isActiveSet()) {
             http.setActive(Active.NEVER);
         }
-        if (!http.resolveEnabled(context.getModel().getProject())) return;
+        if (!http.resolveEnabled(context.getModel().getProject()) || mode != JReleaserContext.Mode.FULL) {
+            return;
+        }
 
         if (!http.isArtifacts() && !http.isFiles() && !http.isSignatures()) {
             http.disable();
