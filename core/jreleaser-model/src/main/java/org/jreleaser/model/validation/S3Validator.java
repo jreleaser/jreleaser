@@ -46,7 +46,9 @@ public abstract class S3Validator extends Validator {
         if (!s3.isActiveSet()) {
             s3.setActive(Active.NEVER);
         }
-        if (!s3.resolveEnabled(context.getModel().getProject())) return;
+        if (!s3.resolveEnabled(context.getModel().getProject()) || mode != JReleaserContext.Mode.FULL) {
+            return;
+        }
 
         if (!s3.isArtifacts() && !s3.isFiles() && !s3.isSignatures()) {
             s3.disable();
