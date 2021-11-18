@@ -50,6 +50,7 @@ public class Main extends BaseCommand implements Runnable {
     public static int run(String... args) {
         Main cmd = new Main();
         CommandLine commandLine = new CommandLine(cmd);
+        commandLine.setCaseInsensitiveEnumValuesAllowed(true);
         cmd.out = commandLine.getOut();
         cmd.err = commandLine.getErr();
         return execute(commandLine, args);
@@ -58,6 +59,7 @@ public class Main extends BaseCommand implements Runnable {
     public static int run(PrintWriter out, PrintWriter err, String... args) {
         Main cmd = new Main();
         CommandLine commandLine = new CommandLine(cmd);
+        commandLine.setCaseInsensitiveEnumValuesAllowed(true);
         commandLine.setOut(out);
         commandLine.setErr(err);
         cmd.out = out;
