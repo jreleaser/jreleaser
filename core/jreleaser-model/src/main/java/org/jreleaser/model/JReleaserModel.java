@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.MustacheUtils;
-import org.jreleaser.util.OsDetector;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 

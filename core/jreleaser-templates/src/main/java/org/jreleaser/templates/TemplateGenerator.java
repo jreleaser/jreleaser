@@ -92,7 +92,7 @@ public class TemplateGenerator {
             throw fail(e);
         }
 
-        Reader reader = TemplateUtils.resolveTemplate(logger, announcerName);
+        Reader reader = TemplateUtils.resolveTemplate(logger,"announcers/" + announcerName + ".tpl");
 
         Path outputFile = outputDirectory.resolve(announcerName + ".tpl");
         logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());

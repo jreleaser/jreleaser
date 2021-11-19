@@ -98,7 +98,7 @@ public class Disco {
             if (isNotBlank(ephemeralIds.getMessage())) {
                 logger.warn(ephemeralIds.getMessage());
             } else {
-                logger.warn(RB.$("ERROR_disco_resolve_package", id));
+                logger.warn(RB.$("ERROR_disco_resolve_pkg", id));
             }
 
             return Collections.emptyList();

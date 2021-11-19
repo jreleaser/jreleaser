@@ -20,7 +20,6 @@ package org.jreleaser.ant.tasks;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.jreleaser.ant.tasks.internal.JReleaserLoggerAdapter;
-import org.jreleaser.cli.Main;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateUtils;
@@ -76,8 +75,7 @@ public class JReleaserInitTask extends Task {
             Path outputDirectory = getOutputDirectory();
             Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
-            Reader template = TemplateUtils.resolveTemplate(logger, Main.class,
-                "META-INF/jreleaser/templates/jreleaser." + format + ".tpl");
+            Reader template = TemplateUtils.resolveTemplate(logger, "jreleaser." + format + ".tpl");
 
             logger.info("Writing file " + outputFile.toAbsolutePath());
             try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);

@@ -17,13 +17,36 @@
  */
 dependencies {
     api project(':jreleaser-utils')
+
+    compileOnly project(':nativeimage-annotations')
+    annotationProcessor project(':nativeimage-processor')
 }
 
-processResources {
-    inputs.property('version', project.version)
-    filesMatching(['**/*.properties']) {
-        expand(
-            'version': project.version
-        )
-    }
+dependencies {
+    annotationProcessor "info.picocli:picocli-codegen:$picocliVersion"
 }
+
+compileJava {
+    options.compilerArgs += ["-Aproject=${project.name}"]
+}
+
+project.rootProject.gradle.addBuildListener(new BuildAdapter() {
+    @Override
+    void projectsEvaluated(Gradle gradle) {
+        gradle.rootProject.subprojects
+            .find { p -> p.name == 'jreleaser-model' }
+            .processResources {
+                inputs.property('build_date', gradle.rootProject.config.buildInfo.buildDate + ':' + gradle.rootProject.config.buildInfo.buildTime)
+                filesMatching(['**/*.properties']) {
+                    expand(
+                        'jreleaser_version': gradle.rootProject.version,
+                        'built_by': gradle.rootProject.config.buildInfo.buildBy,
+                        'created_by': gradle.rootProject.config.buildInfo.buildCreatedBy,
+                        'build_date': gradle.rootProject.config.buildInfo.buildDate,
+                        'build_time': gradle.rootProject.config.buildInfo.buildTime,
+                        'build_revision': gradle.rootProject.config.buildInfo.buildRevision
+                    )
+                }
+            }
+    }
+})

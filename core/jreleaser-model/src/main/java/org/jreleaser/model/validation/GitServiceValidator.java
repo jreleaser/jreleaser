@@ -29,18 +29,14 @@ import org.jreleaser.model.Project;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.util.Errors;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.groupingBy;
@@ -93,7 +89,7 @@ public abstract class GitServiceValidator extends Validator {
                 service.getServiceName().toUpperCase() + "_TOKEN",
                 service.getServiceName() + ".token",
                 service.getToken(),
-                mode != JReleaserContext.Mode.ASSEMBLE? errors: new Errors()));
+                mode != JReleaserContext.Mode.ASSEMBLE ? errors : new Errors()));
 
         service.setTagName(
             checkProperty(context,
@@ -323,15 +319,11 @@ public abstract class GitServiceValidator extends Validator {
                 String preset = changelog.getPreset().toLowerCase().trim();
                 String presetFileName = "META-INF/jreleaser/changelog/preset-" + preset + ".yml";
 
-                boolean found = false;
-                JarFile jarFile = new JarFile(new File(location.toURI()));
-                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
-                    JarEntry entry = e.nextElement();
-                    if (entry.isDirectory() || !entry.getName().equals(presetFileName)) {
-                        continue;
-                    }
+                InputStream inputStream = GitServiceValidator.class.getClassLoader()
+                    .getResourceAsStream(presetFileName);
 
-                    Changelog loaded = JReleaserConfigLoader.load(Changelog.class, presetFileName, jarFile.getInputStream(entry));
+                if (null != inputStream) {
+                    Changelog loaded = JReleaserConfigLoader.load(Changelog.class, presetFileName, inputStream);
 
                     LinkedHashSet<Changelog.Labeler> labelersCopy = new LinkedHashSet<>(changelog.getLabelers());
                     labelersCopy.addAll(loaded.getLabelers());
@@ -360,18 +352,13 @@ public abstract class GitServiceValidator extends Validator {
 
                     changelog.getHide().addCategories(loaded.getHide().getCategories());
                     changelog.getHide().addContributors(loaded.getHide().getContributors());
-
-                    found = true;
-                    break;
-                }
-
-                if (!found) {
+                } else {
                     context.getLogger().warn(RB.$("changelog.preset.not.found"), preset);
                 }
             } else {
                 context.getLogger().warn(RB.$("ERROR_classpath_template_resolve"));
             }
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             context.getLogger().warn(RB.$("ERROR_classpath_template_resolve"));
         }
     }

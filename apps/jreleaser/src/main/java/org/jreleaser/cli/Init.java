@@ -80,8 +80,7 @@ public class Init extends AbstractCommand {
 
             Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
-            Reader template = TemplateUtils.resolveTemplate(logger, Init.class,
-                "META-INF/jreleaser/templates/jreleaser." + format + ".tpl");
+            Reader template = TemplateUtils.resolveTemplate(logger, "jreleaser." + format + ".tpl");
 
             StringWriter sw = new StringWriter();
             try (Scanner scanner = new Scanner(template)) {

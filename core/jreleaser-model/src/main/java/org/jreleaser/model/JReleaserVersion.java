@@ -17,16 +17,9 @@
  */
 package org.jreleaser.model;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.ResourceBundle;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -35,6 +28,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class JReleaserVersion {
     private static final ResourceBundle bundle = ResourceBundle.getBundle(JReleaserVersion.class.getName());
     private static final String JRELEASER_VERSION = bundle.getString("jreleaser_version");
+    private static final String BUILD_DATE = bundle.getString("build_date");
+    private static final String BUILD_TIME = bundle.getString("build_time");
+    private static final String BUILD_REVISION = bundle.getString("build_revision");
 
     public static String getPlainVersion() {
         return JRELEASER_VERSION;
@@ -45,26 +41,14 @@ public class JReleaserVersion {
     }
 
     public static void banner(PrintStream out, boolean full) {
-        Manifest manifest = findMyManifest();
-        if (null != manifest) {
-            String version = manifest.getMainAttributes().getValue(Attributes.Name.SPECIFICATION_VERSION);
-            String buildDate = manifest.getMainAttributes().getValue("Build-Date");
-            String buildTime = manifest.getMainAttributes().getValue("Build-Time");
-            String buildRevision = manifest.getMainAttributes().getValue("Build-Revision");
-            boolean additionalInfo = isNotBlank(buildDate) || isNotBlank(buildTime) || isNotBlank(buildRevision);
-
-            if (full) {
-                out.printf("------------------------------------------------------------%n");
-                out.printf("jreleaser %s%n", version);
-            }
+        if (full) {
             out.printf("------------------------------------------------------------%n");
-            if (additionalInfo) {
-                if (isNotBlank(buildDate) && isNotBlank(buildTime)) {
-                    out.printf("Build time:   %s %s%n", buildDate, buildTime);
-                }
-                if (isNotBlank(buildRevision)) out.println("Revision:     " + buildRevision);
-                out.printf("------------------------------------------------------------%n");
-            }
+            out.printf("jreleaser %s%n", JRELEASER_VERSION);
+
+            out.printf("------------------------------------------------------------%n");
+            out.printf("Build time:   %s %s%n", BUILD_DATE, BUILD_TIME);
+            out.println("Revision:     " + BUILD_REVISION);
+            out.printf("------------------------------------------------------------%n");
         } else {
             out.printf("jreleaser %s%n", JRELEASER_VERSION);
         }
@@ -75,48 +59,16 @@ public class JReleaserVersion {
     }
 
     public static void banner(PrintWriter out, boolean full) {
-        Manifest manifest = findMyManifest();
-        if (null != manifest) {
-            String version = manifest.getMainAttributes().getValue(Attributes.Name.SPECIFICATION_VERSION);
-            String buildDate = manifest.getMainAttributes().getValue("Build-Date");
-            String buildTime = manifest.getMainAttributes().getValue("Build-Time");
-            String buildRevision = manifest.getMainAttributes().getValue("Build-Revision");
-            boolean additionalInfo = isNotBlank(buildDate) || isNotBlank(buildTime) || isNotBlank(buildRevision);
-
-            if (full) {
-                out.printf("------------------------------------------------------------%n");
-                out.printf("jreleaser %s%n", version);
-            }
+        if (full) {
             out.printf("------------------------------------------------------------%n");
-            if (additionalInfo) {
-                if (isNotBlank(buildDate) && isNotBlank(buildTime)) {
-                    out.printf("Build time:   %s %s%n", buildDate, buildTime);
-                }
-                if (isNotBlank(buildRevision)) out.println("Revision:     " + buildRevision);
-                out.printf("------------------------------------------------------------%n");
-            }
+            out.printf("jreleaser %s%n", JRELEASER_VERSION);
+
+            out.printf("------------------------------------------------------------%n");
+            out.printf("Build time:   %s %s%n", BUILD_DATE, BUILD_TIME);
+            out.println("Revision:     " + BUILD_REVISION);
+            out.printf("------------------------------------------------------------%n");
         } else {
             out.printf("jreleaser %s%n", JRELEASER_VERSION);
         }
-    }
-
-    private static Manifest findMyManifest() {
-        try {
-            Enumeration<URL> urls = JReleaserVersion.class.getClassLoader().getResources("META-INF/MANIFEST.MF");
-            while (urls.hasMoreElements()) {
-                URL url = urls.nextElement();
-                Manifest manifest = new Manifest(url.openStream());
-                if (manifest.getMainAttributes().containsKey(Attributes.Name.SPECIFICATION_TITLE)) {
-                    String specificationTitle = manifest.getMainAttributes().getValue(Attributes.Name.SPECIFICATION_TITLE);
-                    if ("jreleaser".equals(specificationTitle)) {
-                        return manifest;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // well, this sucks
-        }
-
-        return null;
     }
 }
