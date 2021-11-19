@@ -17,17 +17,6 @@
  */
 dependencies {
     api project(':jreleaser-utils')
-
-    compileOnly project(':nativeimage-annotations')
-    annotationProcessor project(':nativeimage-processor')
-}
-
-dependencies {
-    annotationProcessor "info.picocli:picocli-codegen:$picocliVersion"
-}
-
-compileJava {
-    options.compilerArgs += ["-Aproject=${project.name}"]
 }
 
 project.rootProject.gradle.addBuildListener(new BuildAdapter() {
