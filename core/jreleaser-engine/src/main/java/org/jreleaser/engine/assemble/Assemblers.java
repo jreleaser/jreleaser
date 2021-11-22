@@ -60,9 +60,10 @@ public class Assemblers {
                             continue;
                         }
 
-                        context.getLogger().info(RB.$("assemblers.assemble.distribution.with.all"), distributionName);
                         assemble.findAllAssemblers().stream()
                             .filter(a -> distributionName.equals(a.getName()))
+                            .peek(assembler -> context.getLogger().info(RB.$("assemblers.assemble.distribution.with"),
+                                distributionName, assembler.getName()))
                             .forEach(assembler -> assemble(context, assembler));
                     }
                 } else {
