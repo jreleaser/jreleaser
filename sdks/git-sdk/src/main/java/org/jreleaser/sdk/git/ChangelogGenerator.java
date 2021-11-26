@@ -60,6 +60,7 @@ import static org.jreleaser.util.Constants.KEY_CHANGELOG_CONTRIBUTORS;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.normalizeRegexPattern;
 import static org.jreleaser.util.StringUtils.stripMargin;
 import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
 
@@ -476,7 +477,8 @@ public class ChangelogGenerator {
         for (Changelog.Labeler labeler : labelers) {
             if (isNotBlank(labeler.getTitle())) {
                 if (labeler.getTitle().startsWith(REGEX_PREFIX)) {
-                    if (commit.title.matches(labeler.getTitle().substring(REGEX_PREFIX.length()))) {
+                    String regex = labeler.getTitle().substring(REGEX_PREFIX.length());
+                    if (commit.title.matches(normalizeRegexPattern(regex))) {
                         commit.labels.add(labeler.getLabel());
                     }
                 } else {
@@ -487,7 +489,8 @@ public class ChangelogGenerator {
             }
             if (isNotBlank(labeler.getBody())) {
                 if (labeler.getBody().startsWith(REGEX_PREFIX)) {
-                    if (commit.body.matches(labeler.getBody().substring(REGEX_PREFIX.length()))) {
+                    String regex = labeler.getBody().substring(REGEX_PREFIX.length());
+                    if (commit.body.matches(normalizeRegexPattern(regex))) {
                         commit.labels.add(labeler.getLabel());
                     }
                 } else {

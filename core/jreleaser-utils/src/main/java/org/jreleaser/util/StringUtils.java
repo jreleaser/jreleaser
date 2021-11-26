@@ -636,6 +636,19 @@ public class StringUtils {
         return b.toString();
     }
 
+    public static String normalizeRegexPattern(String str) {
+        StringBuilder b = new StringBuilder();
+        if (!str.startsWith("^")) {
+            b.append(".*");
+        }
+        b.append(str);
+        if (!str.endsWith("$")) {
+            b.append(".*");
+        }
+
+        return b.toString();
+    }
+
     public static Pattern toSafePattern(String str) {
         return Pattern.compile(toSafeRegexPattern(str));
     }
