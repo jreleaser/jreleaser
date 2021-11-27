@@ -31,13 +31,13 @@ mavenPlugin {
 
 dependencies {
     api project(':disco-java-sdk')
-    api 'org.twdata.maven:mojo-executor:2.3.2'
-    api 'org.codehaus.plexus:plexus-archiver:4.2.5'
+    api "org.twdata.maven:mojo-executor:$mojoExecutorVersion"
+    api "org.codehaus.plexus:plexus-archiver:$plexusArchiverVersion"
 
     implementation "org.apache.maven:maven-plugin-api:$mavenVersion"
 
     compileOnly "org.apache.maven:maven-core:$mavenVersion"
-    compileOnly "org.apache.maven.plugin-tools:maven-plugin-annotations:$mavenVersion"
+    compileOnly "org.apache.maven.plugin-tools:maven-plugin-annotations:$mvnAnnotationsVersion"
 }
 
 license {

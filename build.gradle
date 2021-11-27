@@ -87,11 +87,11 @@ subprojects {
     }
 
     dependencies {
-        testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
-        testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+        testImplementation "org.junit.jupiter:junit-jupiter:$junit5Version"
+        testImplementation "org.junit.jupiter:junit-jupiter-params:$junit5Version"
         testImplementation "org.hamcrest:hamcrest-library:$hamcrestVersion"
 
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit5Version"
     }
 
     test {
