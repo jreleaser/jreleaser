@@ -178,6 +178,11 @@ distributions:
       active: release
     macports:
       active: always
+      categories:
+        - devel
+        - java
+      maintainers:
+        - '@aalmiray'
       repository:
         active: release
         name: jreleaser-macports
