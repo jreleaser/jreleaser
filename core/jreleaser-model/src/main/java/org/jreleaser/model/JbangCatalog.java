@@ -28,6 +28,6 @@ public class JbangCatalog extends AbstractRepositoryTap {
 
     @Override
     public String getResolvedName() {
-        return basename;
+        return tapName;
     }
 }
