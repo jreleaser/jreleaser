@@ -127,9 +127,11 @@ public final class TemplateUtils {
         logger.debug(RB.$("templates.templates.resolve.classpath"));
 
         String templatePrefix = distributionTypeName + "." + toolName.toLowerCase() + (snapshot ? "-snapshot" : "");
+        logger.debug(RB.$("templates.template.resolve.classpath", templatePrefix));
         String values = TEMPLATES_INVENTORY.getProperty(templatePrefix);
         if (isBlank(values) && snapshot) {
             templatePrefix = distributionTypeName + "." + toolName.toLowerCase();
+            logger.debug(RB.$("templates.template.resolve.classpath", templatePrefix));
             values = TEMPLATES_INVENTORY.getProperty(templatePrefix);
         }
 
