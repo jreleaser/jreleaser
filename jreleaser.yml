@@ -127,8 +127,6 @@ assemble:
         version: 11
         mainClass: 'org.jreleaser.cli.Main'
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
-      #imageName: '{{distributionName}}-{{projectVersion}}'
-      #imageNameTransform: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: 'jreleaser'
       jdeps:
         multiRelease: base
@@ -160,11 +158,15 @@ distributions:
     java:
       mainClass: org.jreleaser.cli.Main
     brew:
-      active: release
+      active: always
+      tap:
+        active: release
     scoop:
-      active: release
+      active: always
+      bucket:
+        active: release
     snap:
-      active: release
+      active: always
       remoteBuild: true
       base: core18
       localPlugs:
@@ -174,6 +176,10 @@ distributions:
       active: always
     sdkman:
       active: release
+    macports:
+      active: always
+      repository:
+        active: release
     chocolatey:
       active: always
       remoteBuild: true
