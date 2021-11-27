@@ -285,7 +285,9 @@ class Gitlab {
         users = api.searchUser(CollectionUtils.<String, String>newMap("scope", "users", "search", name));
         if (users != null && !users.isEmpty()) {
             User user = users.get(0);
-            return Optional.of(new org.jreleaser.model.releaser.spi.User(user.getUsername(), email, user.getWebUrl()));
+            if (name.equals(user.getName())) {
+                return Optional.of(new org.jreleaser.model.releaser.spi.User(user.getUsername(), email, user.getWebUrl()));
+            }
         }
 
         return Optional.empty();

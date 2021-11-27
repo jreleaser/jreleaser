@@ -36,4 +36,8 @@ public interface GithubAPI {
     @RequestLine("GET /search/users")
     @Headers("Content-Type: application/json")
     GhSearchUser searchUser(@QueryMap Map<String, String> q);
+
+    @RequestLine("GET /users/{username}")
+    @Headers("Content-Type: application/json")
+    GhUser getUser(@Param("username") String username);
 }

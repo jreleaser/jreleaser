@@ -26,7 +26,6 @@ import feign.form.FormEncoder;
 import feign.httpclient.ApacheHttpClient;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
-import org.apache.tika.Tika;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.ClientUtils;
@@ -49,9 +48,6 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.6.0
  */
 class XGithub {
-    private static final String API_V1 = "/api/v1";
-    private final Tika tika = new Tika();
-
     private final JReleaserLogger logger;
     private final GithubAPI api;
 
@@ -99,7 +95,10 @@ class XGithub {
         search = api.searchUser(CollectionUtils.<String, String>newMap("q", query));
         if (search.getTotalCount() > 0) {
             GhUser user = search.getItems().get(0);
-            return Optional.of(new User(user.getLogin(), email, user.getHtmlUrl()));
+            GhUser test = api.getUser(user.getLogin());
+            if (name.equals(test.getName())) {
+                return Optional.of(new User(user.getLogin(), email, user.getHtmlUrl()));
+            }
         }
 
         return Optional.empty();

@@ -28,6 +28,7 @@ public class GhUser {
     private String id;
     private String login;
     private String htmlUrl;
+    private String name;
 
     public String getId() {
         return id;
@@ -51,5 +52,13 @@ public class GhUser {
 
     public void setHtmlUrl(String htmlUrl) {
         this.htmlUrl = htmlUrl;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
