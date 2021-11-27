@@ -174,12 +174,15 @@ distributions:
         - home
     jbang:
       active: always
+      catalog:
+        name: jbang-catalog
     sdkman:
       active: release
     macports:
       active: always
       repository:
         active: release
+        name: jreleaser-macports
     chocolatey:
       active: always
       remoteBuild: true
