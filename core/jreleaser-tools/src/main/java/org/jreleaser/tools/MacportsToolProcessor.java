@@ -74,6 +74,7 @@ public class MacportsToolProcessor extends AbstractRepositoryToolProcessor<Macpo
         if (distributionUrl.endsWith(artifactFilename)) {
             distributionUrl = distributionUrl.substring(0, distributionUrl.length() - artifactFilename.length());
         }
+        distributionUrl = distributionUrl.replace(context.getModel().getProject().getResolvedVersion(), "${version}");
         props.put(Constants.KEY_MACPORTS_DISTRIBUTION_URL, distributionUrl);
     }
 
