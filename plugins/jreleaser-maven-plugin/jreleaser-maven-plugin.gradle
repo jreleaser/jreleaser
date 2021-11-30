@@ -26,7 +26,7 @@ config {
 }
 
 mavenPlugin {
-    helpMojoPackage = 'org.jreleaser.maven.plugin'
+    helpMojoPackage = 'org.jreleaser.maven.plugin.help'
 }
 
 dependencies {

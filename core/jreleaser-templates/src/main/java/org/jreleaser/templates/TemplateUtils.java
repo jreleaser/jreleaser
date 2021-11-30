@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -135,8 +136,10 @@ public final class TemplateUtils {
             values = TEMPLATES_INVENTORY.getProperty(templatePrefix);
         }
 
-        for (String k : values.split(",")) {
-            templates.put(k, resolveTemplate(logger, distributionTypeName + "/" + toolName.toLowerCase() + "/" + k));
+        if (isNotBlank(values)) {
+            for (String k : values.split(",")) {
+                templates.put(k, resolveTemplate(logger, distributionTypeName + "/" + toolName.toLowerCase() + "/" + k));
+            }
         }
 
         return templates;

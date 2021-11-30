@@ -37,7 +37,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray
- * @since 1.0.0
+ * @since 0.9.1
  */
 public class CalVer implements Comparable<CalVer> {
     private static final Map<String, String> PATTERNS = new LinkedHashMap<>();

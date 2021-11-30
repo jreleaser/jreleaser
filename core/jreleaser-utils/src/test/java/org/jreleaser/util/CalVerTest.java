@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andres Almiray
- * @since 1.0.0
+ * @since 0.9.1
  */
 public class CalVerTest {
     @ParameterizedTest
