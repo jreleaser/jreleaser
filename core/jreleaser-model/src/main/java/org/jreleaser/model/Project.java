@@ -18,12 +18,12 @@
 package org.jreleaser.model;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.util.CalVer;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.JavaRuntimeVersion;
 import org.jreleaser.util.MustacheUtils;
-import org.jreleaser.util.OsDetector;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.Version;
 
@@ -59,7 +59,7 @@ public class Project implements Domain, ExtraProperties {
     private final Snapshot snapshot = new Snapshot();
     private String name;
     private String version;
-    private VersionPattern versionPattern;
+    private VersionPattern versionPattern = new VersionPattern();
     private String description;
     private String longDescription;
     private String website;
@@ -135,8 +135,8 @@ public class Project implements Domain, ExtraProperties {
         this.version = version;
     }
 
-    public VersionPattern getVersionPattern() {
-        return versionPattern;
+    public String getVersionPattern() {
+        return versionPattern.toString();
     }
 
     public void setVersionPattern(VersionPattern versionPattern) {
@@ -145,6 +145,10 @@ public class Project implements Domain, ExtraProperties {
 
     public void setVersionPattern(String str) {
         this.versionPattern = VersionPattern.of(str);
+    }
+
+    public VersionPattern versionPattern() {
+        return versionPattern;
     }
 
     public Snapshot getSnapshot() {
@@ -332,7 +336,7 @@ public class Project implements Domain, ExtraProperties {
         String v = getResolvedVersion();
         if (isBlank(v)) return;
 
-        switch (getVersionPattern()) {
+        switch (versionPattern().getType()) {
             case SEMVER: {
                 try {
                     Version parsedVersion = Version.of(v);
@@ -391,6 +395,33 @@ public class Project implements Domain, ExtraProperties {
                 }
             }
             break;
+            case CALVER: {
+                try {
+                    CalVer parsedVersion = CalVer.of(versionPattern().getFormat(), v);
+                    addExtraProperty(Constants.KEY_VERSION_NUMBER, v);
+                    addExtraProperty(Constants.KEY_VERSION_YEAR, parsedVersion.getYear());
+                    if (parsedVersion.hasMonth()) {
+                        addExtraProperty(Constants.KEY_VERSION_MONTH, parsedVersion.getMonth());
+                    }
+                    if (parsedVersion.hasDay()) {
+                        addExtraProperty(Constants.KEY_VERSION_DAY, parsedVersion.getDay());
+                    }
+                    if (parsedVersion.hasWeek()) {
+                        addExtraProperty(Constants.KEY_VERSION_WEEK, parsedVersion.getWeek());
+                    }
+                    if (parsedVersion.hasMinor()) {
+                        addExtraProperty(Constants.KEY_VERSION_MINOR, parsedVersion.getMinor());
+                    }
+                    if (parsedVersion.hasMicro()) {
+                        addExtraProperty(Constants.KEY_VERSION_MICRO, parsedVersion.getMicro());
+                    }
+                    if (parsedVersion.hasModifier()) {
+                        addExtraProperty(Constants.KEY_VERSION_MODIFIER, parsedVersion.getModifier());
+                    }
+                } catch (IllegalArgumentException e) {
+                    throw new JReleaserException(RB.$("ERROR_version_invalid", v, "calver"), e);
+                }
+            }
             default:
                 addExtraProperty(Constants.KEY_VERSION_NUMBER, v);
                 // noop

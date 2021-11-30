@@ -58,13 +58,19 @@ import static org.jreleaser.util.Constants.KEY_RELEASE_NAME;
 import static org.jreleaser.util.Constants.KEY_TAG_NAME;
 import static org.jreleaser.util.Constants.KEY_TIMESTAMP;
 import static org.jreleaser.util.Constants.KEY_VERSION_BUILD;
+import static org.jreleaser.util.Constants.KEY_VERSION_DAY;
 import static org.jreleaser.util.Constants.KEY_VERSION_MAJOR;
+import static org.jreleaser.util.Constants.KEY_VERSION_MICRO;
 import static org.jreleaser.util.Constants.KEY_VERSION_MINOR;
+import static org.jreleaser.util.Constants.KEY_VERSION_MODIFIER;
+import static org.jreleaser.util.Constants.KEY_VERSION_MONTH;
 import static org.jreleaser.util.Constants.KEY_VERSION_NUMBER;
 import static org.jreleaser.util.Constants.KEY_VERSION_OPTIONAL;
 import static org.jreleaser.util.Constants.KEY_VERSION_PATCH;
 import static org.jreleaser.util.Constants.KEY_VERSION_PRERELEASE;
 import static org.jreleaser.util.Constants.KEY_VERSION_TAG;
+import static org.jreleaser.util.Constants.KEY_VERSION_WEEK;
+import static org.jreleaser.util.Constants.KEY_VERSION_YEAR;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -496,6 +502,12 @@ public class JReleaserContext {
         safePut(project.getPrefix() + capitalize(KEY_VERSION_TAG), resolvedExtraProperties, props);
         safePut(project.getPrefix() + capitalize(KEY_VERSION_BUILD), resolvedExtraProperties, props);
         safePut(project.getPrefix() + capitalize(KEY_VERSION_OPTIONAL), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_YEAR), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_MONTH), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_DAY), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_WEEK), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_MICRO), resolvedExtraProperties, props);
+        safePut(project.getPrefix() + capitalize(KEY_VERSION_MODIFIER), resolvedExtraProperties, props);
 
         Path output = getOutputDirectory().resolve("output.properties");
 

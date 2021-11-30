@@ -142,7 +142,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Project p = new org.jreleaser.model.Project();
         p.setName(project.getName());
         p.setVersion(project.getVersion());
-        p.setVersionPattern(project.resolveVersionPattern());
+        p.setVersionPattern(project.getVersionPattern());
         if (isNotBlank(project.getSnapshotPattern())) p.setSnapshotPattern(project.getSnapshotPattern());
         p.setSnapshot(convertSnapshot(project.getSnapshot()));
         p.setDescription(project.getDescription());

@@ -42,6 +42,12 @@ public interface Constants {
     String KEY_VERSION_PRERELEASE = "versionPrerelease";
     String KEY_VERSION_BUILD = "versionBuild";
     String KEY_VERSION_OPTIONAL = "versionOptional";
+    String KEY_VERSION_YEAR = "versionYear";
+    String KEY_VERSION_MONTH = "versionMonth";
+    String KEY_VERSION_DAY = "versionDay";
+    String KEY_VERSION_WEEK = "versionWeek";
+    String KEY_VERSION_MICRO = "versionMicro";
+    String KEY_VERSION_MODIFIER = "versionModifier";
     String KEY_VERSION_WITH_UNDERSCORES = "versionWithUnderscores";
     String KEY_VERSION_WITH_DASHES      = "versionWithDashes";
     String KEY_VERSION_NUMBER_WITH_UNDERSCORES = "versionNumberWithUnderscores";

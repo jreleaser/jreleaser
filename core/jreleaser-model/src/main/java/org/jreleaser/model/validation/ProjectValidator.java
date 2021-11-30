@@ -64,7 +64,7 @@ public abstract class ProjectValidator extends Validator {
                 PROJECT_VERSION_PATTERN,
                 "project.versionPattern",
                 project.getVersionPattern(),
-                VersionPattern.SEMVER));
+                VersionPattern.Type.SEMVER.toString()));
 
         project.getSnapshot().setPattern(
             checkProperty(context,
@@ -86,6 +86,13 @@ public abstract class ProjectValidator extends Validator {
                 "project.snapshot.fullChangelog",
                 project.getSnapshot().getFullChangelog(),
                 false));
+
+        if (project.versionPattern().getType() == VersionPattern.Type.CALVER) {
+            if (isBlank(project.versionPattern().getFormat())) {
+                errors.configuration(RB.$("validation_version_format_missing",
+                    "project.versionPattern", VersionPattern.Type.CALVER.toString()));
+            }
+        }
 
         boolean javaDistributions = context.getModel().getDistributions().values().stream()
             .map(Distribution::getType)

@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.jreleaser.model.VersionPattern
 
 /**
  *
@@ -34,9 +33,7 @@ interface Project extends ExtraProperties {
 
     Property<String> getVersion()
 
-    Property<VersionPattern> getVersionPattern()
-
-    void setVersionPattern(String str)
+    Property<String> getVersionPattern()
 
     @Deprecated
     Property<String> getSnapshotPattern()

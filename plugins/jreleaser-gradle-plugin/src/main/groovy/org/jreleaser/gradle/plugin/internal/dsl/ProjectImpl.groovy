@@ -28,7 +28,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Project
-import org.jreleaser.model.VersionPattern
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -44,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class ProjectImpl implements Project {
     final Property<String> name
     final Property<String> version
-    final Property<VersionPattern> versionPattern
+    final Property<String> versionPattern
     final Property<String> snapshotPattern
     final Property<String> description
     final Property<String> longDescription
@@ -67,7 +66,7 @@ class ProjectImpl implements Project {
                 Provider<String> versionProvider) {
         name = objects.property(String).convention(nameProvider)
         version = objects.property(String).convention(versionProvider)
-        versionPattern = objects.property(VersionPattern).convention(Providers.notDefined())
+        versionPattern = objects.property(String).convention(Providers.notDefined())
         snapshotPattern = objects.property(String).convention(Providers.notDefined())
         description = objects.property(String).convention(descriptionProvider)
         longDescription = objects.property(String).convention(descriptionProvider)
@@ -83,13 +82,6 @@ class ProjectImpl implements Project {
 
         java = objects.newInstance(JavaImpl, objects)
         snapshot = objects.newInstance(SnapshotImpl, objects)
-    }
-
-    @Override
-    void setVersionPattern(String str) {
-        if (isNotBlank(str)) {
-            versionPattern.set(VersionPattern.of(str.trim()))
-        }
     }
 
     @Override

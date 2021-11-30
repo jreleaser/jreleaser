@@ -30,6 +30,7 @@ import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.releaser.spi.User;
+import org.jreleaser.util.CalVer;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.JavaRuntimeVersion;
@@ -73,14 +74,6 @@ public class ChangelogGenerator {
     private static final String REGEX_PREFIX = "regex:";
 
     private final Set<String> unparseableTags = new LinkedHashSet<>();
-
-    public static String generate(JReleaserContext context) throws IOException {
-        if (!context.getModel().getRelease().getGitService().getChangelog().isEnabled()) {
-            return "";
-        }
-
-        return new ChangelogGenerator().createChangelog(context);
-    }
 
     private ChangelogGenerator() {
 
@@ -187,6 +180,20 @@ public class ChangelogGenerator {
         return JavaModuleVersion.of("0.0.0");
     }
 
+    private CalVer calverOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
+        String format = context.getModel().getProject().versionPattern().getFormat();
+        Matcher matcher = versionPattern.matcher(extractTagName(ref));
+        if (matcher.matches()) {
+            String tag = matcher.group(1);
+            try {
+                return CalVer.of(format, tag);
+            } catch (IllegalArgumentException e) {
+                unparseableTag(context, tag, e);
+            }
+        }
+        return CalVer.defaultFor(format);
+    }
+
     private String versionOf(Ref tag, Pattern versionPattern) {
         Matcher matcher = versionPattern.matcher(extractTagName(tag));
         if (matcher.matches()) {
@@ -196,13 +203,16 @@ public class ChangelogGenerator {
     }
 
     private Comparable version(JReleaserContext context, Ref tag, Pattern versionPattern) {
-        switch (context.getModel().getProject().getVersionPattern()) {
+        switch (context.getModel().getProject().versionPattern().getType()) {
             case SEMVER:
                 return semverOf(context, tag, versionPattern);
             case JAVA_RUNTIME:
                 return javaRuntimeVersionOf(context, tag, versionPattern);
             case JAVA_MODULE:
                 return javaModuleVersionOf(context, tag, versionPattern);
+            case CALVER:
+                return calverOf(context, tag, versionPattern);
+            case CUSTOM:
             default:
                 return versionOf(tag, versionPattern);
         }
@@ -512,6 +522,14 @@ public class ChangelogGenerator {
         }
 
         return true;
+    }
+
+    public static String generate(JReleaserContext context) throws IOException {
+        if (!context.getModel().getRelease().getGitService().getChangelog().isEnabled()) {
+            return "";
+        }
+
+        return new ChangelogGenerator().createChangelog(context);
     }
 
     private static class Commit {

@@ -18,26 +18,87 @@
 package org.jreleaser.model;
 
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.5.0
  */
-public enum VersionPattern {
-    SEMVER,
-    JAVA_RUNTIME,
-    JAVA_MODULE,
-    CUSTOM;
+public class VersionPattern {
+    private Type type;
+    private String format;
+
+    public VersionPattern() {
+        this.type = Type.SEMVER;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
     @Override
     public String toString() {
-        return name().toLowerCase();
+        String s = type.toString();
+        switch (type) {
+            case CALVER:
+            case CUSTOM:
+                if (isNotBlank(format)) {
+                    s += ":" + format;
+                }
+        }
+        return s;
     }
 
     public static VersionPattern of(String str) {
         if (isBlank(str)) return null;
-        return VersionPattern.valueOf(str.replaceAll(" ", "_")
-            .replaceAll("-", "_")
-            .toUpperCase().trim());
+
+        String[] parts = str.trim().split(":");
+
+        VersionPattern vp = new VersionPattern();
+        switch (parts.length) {
+            case 1:
+                vp.setType(Type.of(parts[0]));
+                break;
+            case 2:
+                vp.setType(Type.of(parts[0]));
+                vp.setFormat(parts[1].trim());
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
+        return vp;
+    }
+
+    public enum Type {
+        SEMVER,
+        CALVER,
+        JAVA_RUNTIME,
+        JAVA_MODULE,
+        CUSTOM;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+
+        public static Type of(String str) {
+            if (isBlank(str)) return null;
+            return Type.valueOf(str.replaceAll(" ", "_")
+                .replaceAll("-", "_")
+                .toUpperCase().trim());
+        }
     }
 }

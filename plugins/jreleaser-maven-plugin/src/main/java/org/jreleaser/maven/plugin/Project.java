@@ -34,7 +34,7 @@ public class Project implements ExtraProperties {
     private final Snapshot snapshot = new Snapshot();
     private String name;
     private String version;
-    private VersionPattern versionPattern;
+    private String versionPattern;
     private String snapshotPattern;
     private String description;
     private String longDescription;
@@ -81,16 +81,12 @@ public class Project implements ExtraProperties {
         this.version = version;
     }
 
-    public VersionPattern getVersionPattern() {
+    public String getVersionPattern() {
         return versionPattern;
     }
 
-    public void setVersionPattern(VersionPattern versionPattern) {
+    public void setVersionPattern(String versionPattern) {
         this.versionPattern = versionPattern;
-    }
-
-    public String resolveVersionPattern() {
-        return versionPattern != null ? versionPattern.name() : null;
     }
 
     @Deprecated
