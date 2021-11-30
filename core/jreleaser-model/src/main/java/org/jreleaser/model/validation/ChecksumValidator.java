@@ -30,10 +30,6 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class ChecksumValidator extends Validator {
     public static void validateChecksum(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode != JReleaserContext.Mode.FULL) {
-            return;
-        }
-
         context.getLogger().debug("checksum");
         Checksum checksum = context.getModel().getChecksum();
 
