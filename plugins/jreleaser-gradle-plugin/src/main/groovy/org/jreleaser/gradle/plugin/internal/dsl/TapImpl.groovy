@@ -32,6 +32,7 @@ import org.jreleaser.model.Repository
 import org.jreleaser.model.RepositoryTap
 import org.jreleaser.model.ScoopBucket
 import org.jreleaser.model.SnapTap
+import org.jreleaser.model.SpecRepository
 
 import javax.inject.Inject
 
@@ -99,6 +100,12 @@ class TapImpl implements Tap {
 
     MacportsRepository toMacportsRepository() {
         MacportsRepository tap = new MacportsRepository()
+        convert(tap)
+        tap
+    }
+
+    SpecRepository toSpecRepository() {
+        SpecRepository tap = new SpecRepository()
         convert(tap)
         tap
     }

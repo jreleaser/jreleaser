@@ -105,6 +105,18 @@ public abstract class PackagersValidator extends Validator {
             packagers.getSnap().getSnap(),
             errors);
 
+        packagers.getSpec().resolveEnabled(project);
+        packagers.getSpec().getRepository().resolveEnabled(project);
+        validatePackager(context,
+            packagers.getSpec(),
+            packagers.getSpec().getRepository(),
+            errors);
+
+        if (isBlank(packagers.getSpec().getRepository().getName())) {
+            packagers.getSpec().getRepository().setName(model.getRelease().getGitService().getOwner() + "-spec");
+        }
+        packagers.getSpec().getRepository().setTapName(model.getRelease().getGitService().getOwner() + "-spec");
+
         validateSdkman(context, packagers.getSdkman(), errors);
     }
 

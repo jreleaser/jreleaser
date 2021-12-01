@@ -33,6 +33,7 @@ public class Packagers implements Domain {
     private final Scoop scoop = new Scoop();
     private final Sdkman sdkman = new Sdkman();
     private final Snap snap = new Snap();
+    private final Spec spec = new Spec();
 
     public boolean hasEnabledPackagers() {
         return brew.isEnabled() ||
@@ -42,7 +43,8 @@ public class Packagers implements Domain {
             macports.isEnabled() ||
             scoop.isEnabled() ||
             sdkman.isEnabled() ||
-            snap.isEnabled();
+            snap.isEnabled()||
+            spec.isEnabled();
     }
 
     void setAll(Packagers packagers) {
@@ -54,6 +56,7 @@ public class Packagers implements Domain {
         setScoop(packagers.scoop);
         setSdkman(packagers.sdkman);
         setSnap(packagers.snap);
+        setSpec(packagers.spec);
     }
 
     public Brew getBrew() {
@@ -120,6 +123,14 @@ public class Packagers implements Domain {
         this.snap.setAll(snap);
     }
 
+    public Spec getSpec() {
+        return spec;
+    }
+
+    public void setSpec(Spec spec) {
+        this.spec.setAll(spec);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -131,6 +142,7 @@ public class Packagers implements Domain {
         map.putAll(scoop.asMap(full));
         map.putAll(sdkman.asMap(full));
         map.putAll(snap.asMap(full));
+        map.putAll(spec.asMap(full));
         return map;
     }
 }

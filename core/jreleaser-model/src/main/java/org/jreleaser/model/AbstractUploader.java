@@ -22,10 +22,11 @@ import org.jreleaser.util.Constants;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.getFilename;
@@ -254,7 +255,22 @@ abstract class AbstractUploader implements Uploader {
         String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
         props.put(Constants.KEY_ARTIFACT_PLATFORM, platform);
         props.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
-        props.put(Constants.KEY_ARTIFACT_NAME, getFilename(artifactFileName));
+        props.put(Constants.KEY_ARTIFACT_NAME, getFilename(artifactFileName, getSupportedExtensions()));
         return props;
+    }
+
+    private Set<String> getSupportedExtensions() {
+        Set<String> set = new LinkedHashSet<>();
+        set.add(".tar.gz");
+        set.add(".tgz");
+        set.add(".tar");
+        set.add(".zip");
+        set.add(".rpm");
+        set.add(".dep");
+        set.add(".pkg");
+        set.add(".dmg");
+        set.add(".exe");
+        set.add(".msi");
+        return set;
     }
 }

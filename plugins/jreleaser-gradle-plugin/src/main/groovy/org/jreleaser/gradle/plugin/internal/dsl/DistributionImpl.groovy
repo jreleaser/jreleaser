@@ -33,9 +33,11 @@ import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Docker
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Jbang
+import org.jreleaser.gradle.plugin.dsl.Macports
 import org.jreleaser.gradle.plugin.dsl.Scoop
 import org.jreleaser.gradle.plugin.dsl.Sdkman
 import org.jreleaser.gradle.plugin.dsl.Snap
+import org.jreleaser.gradle.plugin.dsl.Spec
 import org.jreleaser.model.Active
 import org.jreleaser.model.Distribution.DistributionType
 import org.kordamp.gradle.util.ConfigureUtil
@@ -60,14 +62,16 @@ class DistributionImpl implements Distribution {
     final Property<DistributionType> distributionType
     final ListProperty<String> tags
     final MapProperty<String, Object> extraProperties
+    final JavaImpl java
     final BrewImpl brew
     final ChocolateyImpl chocolatey
     final DockerImpl docker
     final JbangImpl jbang
+    final MacportsImpl macports
     final ScoopImpl scoop
     final SdkmanImpl sdkman
     final SnapImpl snap
-    final JavaImpl java
+    final SpecImpl spec
 
     final NamedDomainObjectContainer<ArtifactImpl> artifacts
 
@@ -92,14 +96,15 @@ class DistributionImpl implements Distribution {
         })
 
         java = objects.newInstance(JavaImpl, objects)
-
         brew = objects.newInstance(BrewImpl, objects)
         chocolatey = objects.newInstance(ChocolateyImpl, objects)
         docker = objects.newInstance(DockerImpl, objects)
         jbang = objects.newInstance(JbangImpl, objects)
+        macports = objects.newInstance(MacportsImpl, objects)
         scoop = objects.newInstance(ScoopImpl, objects)
         sdkman = objects.newInstance(SdkmanImpl, objects)
         snap = objects.newInstance(SnapImpl, objects)
+        spec = objects.newInstance(SpecImpl, objects)
     }
 
     @Override
@@ -145,6 +150,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void macports(Action<? super Macports> action) {
+        action.execute(macports)
+    }
+
+    @Override
     void scoop(Action<? super Scoop> action) {
         action.execute(scoop)
     }
@@ -157,6 +167,11 @@ class DistributionImpl implements Distribution {
     @Override
     void snap(Action<? super Snap> action) {
         action.execute(snap)
+    }
+
+    @Override
+    void spec(Action<? super Spec> action) {
+        action.execute(spec)
     }
 
     @Override
@@ -197,6 +212,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void macports(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Macports) Closure<Void> action) {
+        ConfigureUtil.configure(action, macports)
+    }
+
+    @Override
     void scoop(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Scoop) Closure<Void> action) {
         ConfigureUtil.configure(action, scoop)
     }
@@ -209,6 +229,11 @@ class DistributionImpl implements Distribution {
     @Override
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snap) Closure<Void> action) {
         ConfigureUtil.configure(action, snap)
+    }
+
+    @Override
+    void spec(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Spec) Closure<Void> action) {
+        ConfigureUtil.configure(action, spec)
     }
 
     org.jreleaser.model.Distribution toModel() {
@@ -228,9 +253,11 @@ class DistributionImpl implements Distribution {
         if (chocolatey.isSet()) distribution.chocolatey = chocolatey.toModel()
         if (docker.isSet()) distribution.docker = docker.toModel()
         if (jbang.isSet()) distribution.jbang = jbang.toModel()
+        if (macports.isSet()) distribution.macports = macports.toModel()
         if (scoop.isSet()) distribution.scoop = scoop.toModel()
         if (sdkman.isSet()) distribution.sdkman = sdkman.toModel()
         if (snap.isSet()) distribution.snap = snap.toModel()
+        if (spec.isSet()) distribution.spec = spec.toModel()
         distribution
     }
 }

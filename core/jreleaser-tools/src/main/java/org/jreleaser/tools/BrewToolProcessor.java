@@ -187,7 +187,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         Map<String, Object> newProps = new LinkedHashMap<>(props);
         newProps.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
         newProps.put(Constants.KEY_ARTIFACT_PLATFORM, artifact.getPlatform());
-        newProps.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, getFilename(artifactFileName));
+        newProps.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, getFilename(artifactFileName, tool.getSupportedExtensions()));
         newProps.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM, artifact.getPlatform());
         return applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
     }

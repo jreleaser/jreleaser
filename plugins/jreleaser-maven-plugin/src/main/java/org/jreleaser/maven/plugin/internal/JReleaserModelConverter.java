@@ -76,6 +76,7 @@ import org.jreleaser.maven.plugin.Signing;
 import org.jreleaser.maven.plugin.Slack;
 import org.jreleaser.maven.plugin.Slot;
 import org.jreleaser.maven.plugin.Snap;
+import org.jreleaser.maven.plugin.Spec;
 import org.jreleaser.maven.plugin.Tap;
 import org.jreleaser.maven.plugin.Teams;
 import org.jreleaser.maven.plugin.Telegram;
@@ -94,6 +95,7 @@ import org.jreleaser.model.Repository;
 import org.jreleaser.model.RepositoryTap;
 import org.jreleaser.model.ScoopBucket;
 import org.jreleaser.model.SnapTap;
+import org.jreleaser.model.SpecRepository;
 import org.jreleaser.model.UpdateSection;
 
 import java.util.ArrayList;
@@ -476,6 +478,7 @@ public final class JReleaserModelConverter {
         if (packagers.getScoop().isSet()) p.setScoop(convertScoop(packagers.getScoop()));
         if (packagers.getSdkman().isSet()) p.setSdkman(convertSdkman(packagers.getSdkman()));
         if (packagers.getSnap().isSet()) p.setSnap(convertSnap(packagers.getSnap()));
+        if (packagers.getSpec().isSet()) p.setSpec(convertSpec(packagers.getSpec()));
         return p;
     }
 
@@ -873,6 +876,7 @@ public final class JReleaserModelConverter {
         if (distribution.getMacports().isSet()) d.setMacports(convertMacports(distribution.getMacports()));
         if (distribution.getScoop().isSet()) d.setScoop(convertScoop(distribution.getScoop()));
         if (distribution.getSnap().isSet()) d.setSnap(convertSnap(distribution.getSnap()));
+        if (distribution.getSpec().isSet()) d.setSpec(convertSpec(distribution.getSpec()));
 
         return d;
     }
@@ -1179,5 +1183,24 @@ public final class JReleaserModelConverter {
         p.setReads(slot.getReads());
         p.setWrites(slot.getWrites());
         return p;
+    }
+
+    private static org.jreleaser.model.Spec convertSpec(Spec tool) {
+        org.jreleaser.model.Spec t = new org.jreleaser.model.Spec();
+        t.setActive(tool.resolveActive());
+        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setTemplateDirectory(tool.getTemplateDirectory());
+        t.setExtraProperties(tool.getExtraProperties());
+        t.setRelease(tool.getRelease());
+        t.setRequires(tool.getRequires());
+        t.setRepository(convertSpecRepository(tool.getRepository()));
+        t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
+        return t;
+    }
+
+    private static SpecRepository convertSpecRepository(Tap tap) {
+        SpecRepository r = new SpecRepository();
+        convertTap(tap, r);
+        return r;
     }
 }

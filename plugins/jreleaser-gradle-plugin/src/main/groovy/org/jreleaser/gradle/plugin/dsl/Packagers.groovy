@@ -43,6 +43,8 @@ interface Packagers {
 
     Snap getSnap()
 
+    Spec getSpec()
+
     void brew(Action<? super Brew> action)
 
     void chocolatey(Action<? super Chocolatey> action)
@@ -59,6 +61,8 @@ interface Packagers {
 
     void snap(Action<? super Snap> action)
 
+    void spec(Action<? super Spec> action)
+
     void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Brew) Closure<Void> action)
 
     void chocolatey(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Chocolatey) Closure<Void> action)
@@ -74,4 +78,6 @@ interface Packagers {
     void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sdkman) Closure<Void> action)
 
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snap) Closure<Void> action)
+
+    void spec(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Spec) Closure<Void> action)
 }

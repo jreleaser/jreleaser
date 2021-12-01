@@ -29,6 +29,7 @@ import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Scoop
 import org.jreleaser.gradle.plugin.dsl.Sdkman
 import org.jreleaser.gradle.plugin.dsl.Snap
+import org.jreleaser.gradle.plugin.dsl.Spec
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -48,6 +49,7 @@ class PackagersImpl implements Packagers {
     final ScoopImpl scoop
     final SdkmanImpl sdkman
     final SnapImpl snap
+    final SpecImpl spec
 
     @Inject
     PackagersImpl(ObjectFactory objects) {
@@ -59,6 +61,7 @@ class PackagersImpl implements Packagers {
         scoop = objects.newInstance(ScoopImpl, objects)
         sdkman = objects.newInstance(SdkmanImpl, objects)
         snap = objects.newInstance(SnapImpl, objects)
+        spec = objects.newInstance(SpecImpl, objects)
     }
 
     @Override
@@ -102,6 +105,11 @@ class PackagersImpl implements Packagers {
     }
 
     @Override
+    void spec(Action<? super Spec> action) {
+        action.execute(spec)
+    }
+
+    @Override
     void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Brew) Closure<Void> action) {
         ConfigureUtil.configure(action, brew)
     }
@@ -141,6 +149,11 @@ class PackagersImpl implements Packagers {
         ConfigureUtil.configure(action, snap)
     }
 
+    @Override
+    void spec(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Spec) Closure<Void> action) {
+        ConfigureUtil.configure(action, spec)
+    }
+
     org.jreleaser.model.Packagers toModel() {
         org.jreleaser.model.Packagers packagers = new org.jreleaser.model.Packagers()
         if (brew.isSet()) packagers.brew = brew.toModel()
@@ -151,6 +164,7 @@ class PackagersImpl implements Packagers {
         if (scoop.isSet()) packagers.scoop = scoop.toModel()
         if (sdkman.isSet()) packagers.sdkman = sdkman.toModel()
         if (snap.isSet()) packagers.snap = snap.toModel()
+        if (spec.isSet()) packagers.spec = spec.toModel()
         packagers
     }
 }

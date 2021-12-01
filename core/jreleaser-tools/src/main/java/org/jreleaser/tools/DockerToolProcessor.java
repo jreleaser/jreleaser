@@ -198,7 +198,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
             Path artifactPath = artifact.getEffectivePath(context);
             if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE) {
                 if (artifactPath.toString().endsWith(".zip")) {
-                    FileUtils.unpack(artifactPath, assemblyDirectory);
+                    FileUtils.unpackArchive(artifactPath, assemblyDirectory);
                 } else {
                     Files.copy(artifactPath, assemblyDirectory.resolve(artifactPath.getFileName()), REPLACE_EXISTING);
                 }

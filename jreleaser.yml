@@ -7,14 +7,15 @@ project:
   name: jreleaser
   description: Release projects quickly and easily with JReleaser
   longDescription: |
-    JReleaser is a release automation tool. Its goal is to simplify creating releases
-    and publishing artifacts to multiple package managers while providing customizable options.
+    JReleaser is a release automation tool. Its goal is to simplify creating releases and
+    publishing artifacts to multiple package managers while providing customizable options.
 
-    JReleaser takes inputs from popular builds tools (Ant, Maven, Gradle) such as JAR files, binary
-    distributions (.zip, .tar), JLink images, or any other file that you’d like to publish as a Git
-    release on popular Git services such as Github or Gitlab. Distribution files can additionally be
-    published to be consumed by popular package managers as Homebrew, Snapcraft, or get ready to be
-    launched via JBang. Releases may be announced in a variety of channels such as Twitter, Zulip, or SDKMAN!
+    JReleaser takes inputs from popular builds tools (Ant, Maven, Gradle) such as JAR files,
+    binary distributions (.zip, .tar), JLink images, or any other file that you’d like to
+    publish as a Git release on popular Git services such as GitHub, GitLab, or Gitea.
+    Distribution files may additionally be published to be consumed by popular package managers
+    such as Homebrew, Chocolatey, Snapcraft, or get ready to be launched via JBang. Releases
+    may be announced in a variety of channels such as Twitter, Zulip, SDKMAN!, and more.
 
   website: https://jreleaser.org
   authors:
@@ -161,21 +162,14 @@ distributions:
       active: always
       tap:
         active: release
-    scoop:
-      active: always
-      bucket:
-        active: release
-    snap:
+    chocolatey:
       active: always
       remoteBuild: true
-      base: core18
-      localPlugs:
-        - network
-        - home
+      title: JReleaser
+      bucket:
+        active: release
     jbang:
       active: always
-    sdkman:
-      active: release
     macports:
       active: always
       categories:
@@ -186,12 +180,19 @@ distributions:
       repository:
         active: release
         name: jreleaser-macports
-    chocolatey:
+    scoop:
       active: always
-      remoteBuild: true
-      title: JReleaser
       bucket:
         active: release
+    sdkman:
+      active: release
+    snap:
+      active: always
+      remoteBuild: true
+      base: core18
+      localPlugs:
+        - network
+        - home
     artifacts:
       - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'

@@ -30,6 +30,7 @@ public class Packagers {
     private final Scoop scoop = new Scoop();
     private final Sdkman sdkman = new Sdkman();
     private final Snap snap = new Snap();
+    private final Spec spec = new Spec();
 
     void setAll(Packagers packagers) {
         setBrew(packagers.brew);
@@ -40,6 +41,7 @@ public class Packagers {
         setScoop(packagers.scoop);
         setSdkman(packagers.sdkman);
         setSnap(packagers.snap);
+        setSpec(packagers.spec);
     }
 
     public Brew getBrew() {
@@ -104,5 +106,13 @@ public class Packagers {
 
     public void setSnap(Snap snap) {
         this.snap.setAll(snap);
+    }
+
+    public Spec getSpec() {
+        return spec;
+    }
+
+    public void setSpec(Spec spec) {
+        this.spec.setAll(spec);
     }
 }

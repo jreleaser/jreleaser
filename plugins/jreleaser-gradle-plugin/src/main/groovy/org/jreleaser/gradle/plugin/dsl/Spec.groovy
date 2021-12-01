@@ -21,34 +21,21 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.jreleaser.model.Distribution.DistributionType
 
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.9.1
  */
 @CompileStatic
-interface Distribution extends Activatable, ExtraProperties, Packagers {
-    Property<DistributionType> getDistributionType()
+interface Spec extends RepositoryTool {
+    Property<String> getRelease()
 
-    Property<String> getExecutable()
+    ListProperty<String> getRequires()
 
-    Property<String> getExecutableExtension()
+    Tap getRepository()
 
-    ListProperty<String> getTags()
+    void repository(Action<? super Tap> action)
 
-    void setDistributionType(String distributionType)
-
-    void addTag(String tag)
-
-    Java getJava()
-
-    void artifact(Action<? super Artifact> action)
-
-    void java(Action<? super Java> action)
-
-    void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 }

@@ -283,7 +283,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             }
 
             String artifactFileName = artifactPath.getFileName().toString();
-            String artifactName = getFilename(artifactFileName);
+            String artifactName = getFilename(artifactFileName, tool.getSupportedExtensions());
             props.put("artifact" + platform + "Size", artifactSize);
             props.put("artifact" + platform + "Name", artifactName);
             props.put("artifact" + platform + "FileName", artifactFileName);
@@ -300,6 +300,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             if (0 == i) {
                 props.putAll(context.getModel().getUpload()
                     .resolveDownloadUrls(context, distribution, artifact, "distribution"));
+                props.put(Constants.KEY_DISTRIBUTION_ARTIFACT, artifact);
                 props.put(Constants.KEY_DISTRIBUTION_URL, artifactUrl);
                 props.put(Constants.KEY_DISTRIBUTION_SIZE, artifactSize);
                 props.put(Constants.KEY_DISTRIBUTION_SHA_256, artifact.getHash(Algorithm.SHA_256));

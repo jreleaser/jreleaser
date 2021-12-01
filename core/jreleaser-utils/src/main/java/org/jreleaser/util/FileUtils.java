@@ -48,8 +48,10 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -171,7 +173,13 @@ public final class FileUtils {
         });
     }
 
-    public static void unpack(Path src, Path dest) throws IOException {
+    public static void unpackArchive(Path src, Path dest) throws IOException {
+        String filename = src.getFileName().toString();
+        if (filename.endsWith(".tgz") || filename.endsWith(".tar.gz")) {
+            unpackArchiveCompressed(src, dest);
+            return;
+        }
+
         deleteFiles(dest, true);
         File destinationDir = dest.toFile();
 
@@ -179,16 +187,15 @@ public final class FileUtils {
              InputStream bi = new BufferedInputStream(fi);
              ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
 
-            String filename = src.getFileName().toString();
             // subtract .zip, .tar
             filename = filename.substring(0, filename.length() - 4);
-            unpack(filename + "/", destinationDir, in);
+            unpackArchive(filename + "/", destinationDir, in);
         } catch (ArchiveException e) {
             throw new IOException(e.getMessage(), e);
         }
     }
 
-    public static void unpackCompressed(Path src, Path dest) throws IOException {
+    public static void unpackArchiveCompressed(Path src, Path dest) throws IOException {
         deleteFiles(dest, true);
         File destinationDir = dest.toFile();
 
@@ -199,11 +206,11 @@ public final class FileUtils {
             String filename = src.getFileName().toString();
             // subtract .tar.gz
             filename = filename.substring(0, filename.length() - 7);
-            unpack(filename + "/", destinationDir, in);
+            unpackArchive(filename + "/", destinationDir, in);
         }
     }
 
-    private static void unpack(String basename, File destinationDir, ArchiveInputStream in) throws IOException {
+    private static void unpackArchive(String basename, File destinationDir, ArchiveInputStream in) throws IOException {
         ArchiveEntry entry = null;
         while ((entry = in.getNextEntry()) != null) {
             if (!in.canReadEntryData(entry)) {
@@ -244,6 +251,45 @@ public final class FileUtils {
                 }
             }
         }
+    }
+
+    public static List<String> inspectArchive(Path src) throws IOException {
+        String filename = src.getFileName().toString();
+        if (filename.endsWith(".tgz") || filename.endsWith(".tar.gz")) {
+            return inspectArchiveCompressed(src);
+        }
+
+        try (InputStream fi = Files.newInputStream(src);
+             InputStream bi = new BufferedInputStream(fi);
+             ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
+            return inspectArchive(in);
+        } catch (ArchiveException e) {
+            throw new IOException(e.getMessage(), e);
+        }
+    }
+
+    public static List<String> inspectArchiveCompressed(Path src) throws IOException {
+        try (InputStream fi = Files.newInputStream(src);
+             InputStream bi = new BufferedInputStream(fi);
+             InputStream gzi = new GzipCompressorInputStream(bi);
+             ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
+            return inspectArchive(in);
+        }
+    }
+
+    private static List<String> inspectArchive(ArchiveInputStream in) throws IOException {
+        List<String> entries = new ArrayList<>();
+
+        ArchiveEntry entry = null;
+        while ((entry = in.getNextEntry()) != null) {
+            if (!in.canReadEntryData(entry)) {
+                // log something?
+                continue;
+            }
+            entries.add(entry.getName());
+        }
+
+        return entries;
     }
 
     public static void deleteFiles(Path path) throws IOException {

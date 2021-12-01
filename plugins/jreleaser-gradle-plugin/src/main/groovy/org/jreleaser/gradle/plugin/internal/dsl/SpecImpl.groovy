@@ -22,40 +22,34 @@ import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.Macports
-import org.jreleaser.gradle.plugin.dsl.Cask
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
+import org.jreleaser.gradle.plugin.dsl.Spec
 import org.jreleaser.gradle.plugin.dsl.Tap
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
-import static org.jreleaser.util.StringUtils.isNotBlank
-
 /**
  *
  * @author Andres Almiray
- * @since 0.9.0
+ * @since 0.9.1
  */
 @CompileStatic
-class MacportsImpl extends AbstractRepositoryTool implements Macports {
-    final Property<Integer> revision
+class SpecImpl extends AbstractRepositoryTool implements Spec {
+    final Property<String> release
     final CommitAuthorImpl commitAuthor
     final TapImpl repository
-    final ListProperty<String> categories
-    final ListProperty<String> maintainers
+    final ListProperty<String> requires
 
     @Inject
-    MacportsImpl(ObjectFactory objects) {
+    SpecImpl(ObjectFactory objects) {
         super(objects)
-        revision = objects.property(Integer).convention(Providers.notDefined())
+        release = objects.property(String).convention(Providers.notDefined())
         repository = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
-        categories = objects.listProperty(String).convention(Providers.notDefined())
-        maintainers = objects.listProperty(String).convention(Providers.notDefined())
+        requires = objects.listProperty(String).convention(Providers.notDefined())
     }
 
     @Override
@@ -63,10 +57,9 @@ class MacportsImpl extends AbstractRepositoryTool implements Macports {
     boolean isSet() {
         super.isSet() ||
             commitAuthor.isSet() ||
-            revision.present ||
+            release.present ||
             repository.isSet() ||
-            categories.present ||
-            maintainers.present
+            requires.present
     }
 
     @Override
@@ -89,15 +82,14 @@ class MacportsImpl extends AbstractRepositoryTool implements Macports {
         ConfigureUtil.configure(action, commitAuthor)
     }
 
-    org.jreleaser.model.Macports toModel() {
-        org.jreleaser.model.Macports tool = new org.jreleaser.model.Macports()
+    org.jreleaser.model.Spec toModel() {
+        org.jreleaser.model.Spec tool = new org.jreleaser.model.Spec()
         fillToolProperties(tool)
         fillTemplateToolProperties(tool)
-        if (revision.present) tool.revision = revision.get()
-        if (repository.isSet()) tool.repository = repository.toMacportsRepository()
+        if (release.present) tool.release = release.get()
+        if (repository.isSet()) tool.repository = repository.toSpecRepository()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
-        if (categories.present) tool.categories = (categories.get() as List<String>)
-        if (maintainers.present) tool.maintainers = (maintainers.get() as List<String>)
+        if (requires.present) tool.requires = (requires.get() as List<String>)
         tool
     }
 }

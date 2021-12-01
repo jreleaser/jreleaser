@@ -21,6 +21,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -99,6 +100,17 @@ public class StringUtils {
         folderIndex = folderIndex < 0 ? 0 : folderIndex;
 
         return path.substring(folderIndex, extIndex);
+    }
+
+    public static String getFilename(String path, Collection<String> extensions) {
+        for (String extension : extensions) {
+            extension = extension.startsWith(".") ? extension : "." + extension;
+            if (path.endsWith(extension)) {
+                return path.substring(0, path.length() - extension.length());
+            }
+        }
+
+        return path;
     }
 
     /**

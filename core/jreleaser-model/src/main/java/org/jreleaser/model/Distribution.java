@@ -293,6 +293,8 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
                 return (T) getSdkman();
             case Snap.NAME:
                 return (T) getSnap();
+            case Spec.NAME:
+                return (T) getSpec();
             default:
                 throw new JReleaserException(RB.$("ERROR_unsupported_packager", name));
         }
@@ -338,6 +340,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         set.add(Scoop.NAME);
         set.add(Sdkman.NAME);
         set.add(Snap.NAME);
+        set.add(Spec.NAME);
         return Collections.unmodifiableSet(set);
     }
 

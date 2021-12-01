@@ -45,6 +45,7 @@ import static org.jreleaser.model.validation.ScoopValidator.validateScoop;
 import static org.jreleaser.model.validation.SdkmanValidator.postValidateSdkman;
 import static org.jreleaser.model.validation.SdkmanValidator.validateSdkman;
 import static org.jreleaser.model.validation.SnapValidator.validateSnap;
+import static org.jreleaser.model.validation.SpecValidator.validateSpec;
 import static org.jreleaser.util.StringUtils.getFilenameExtension;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -171,6 +172,7 @@ public abstract class DistributionsValidator extends Validator {
         validateScoop(context, distribution, distribution.getScoop(), errors);
         validateSdkman(context, distribution, distribution.getSdkman(), errors);
         validateSnap(context, distribution, distribution.getSnap(), errors);
+        validateSpec(context, distribution, distribution.getSpec(), errors);
     }
 
     private static boolean selectArtifactsByPlatform(JReleaserContext context, Distribution distribution) {

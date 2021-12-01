@@ -121,6 +121,7 @@ public interface Constants {
     String KEY_DISTRIBUTION_URL = "distributionUrl";
     String KEY_DISTRIBUTION_SIZE = "distributionSize";
     String KEY_DISTRIBUTION_SHA_256 = "distributionSha256";
+    String KEY_DISTRIBUTION_ARTIFACT = "distributionArtifact";
     String KEY_DISTRIBUTION_ARTIFACT_PLATFORM = "distributionArtifactPlatform";
     String KEY_DISTRIBUTION_ARTIFACT_NAME = "distributionArtifactName";
     String KEY_DISTRIBUTION_ARTIFACT_SIZE = "distributionArtifactSize";
@@ -216,6 +217,12 @@ public interface Constants {
     String KEY_SNAP_LOCAL_SLOTS = "snapLocalSlots";
     String KEY_SNAP_REPO_URL = "snapRepoUrl";
     String KEY_SNAP_REPO_CLONE_URL = "snapRepoCloneUrl";
+
+    // Spec
+    String KEY_SPEC_RELEASE = "specRelease";
+    String KEY_SPEC_REQUIRES = "specRequires";
+    String KEY_SPEC_DIRECTORIES = "specDirectories";
+    String KEY_SPEC_FILES = "specFiles";
 
     // Directories
     String KEY_BASE_OUTPUT_DIRECTORY = "baseOutputDirectory";

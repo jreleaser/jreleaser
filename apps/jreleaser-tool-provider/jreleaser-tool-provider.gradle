@@ -88,6 +88,8 @@ java {
 }
 
 task versionFile {
+    inputs.property('version', project.version)
+    outputs.file(project.layout.buildDirectory.file('VERSION'))
     doLast {
         project.layout.buildDirectory.file('VERSION').get().asFile.text = project.version
     }
