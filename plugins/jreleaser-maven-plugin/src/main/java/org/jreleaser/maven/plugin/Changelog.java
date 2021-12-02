@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,7 +38,7 @@ public class Changelog implements EnabledAware {
     private final Set<String> excludeLabels = new LinkedHashSet<>();
     private final List<Category> categories = new ArrayList<>();
     private final List<Replacer> replacers = new ArrayList<>();
-    private final Set<Labeler> labelers = new LinkedHashSet<>();
+    private final List<Labeler> labelers = new ArrayList<>();
     private final Contributors contributors = new Contributors();
     private final Hide hide = new Hide();
 
@@ -175,11 +174,11 @@ public class Changelog implements EnabledAware {
         this.replacers.addAll(replacers);
     }
 
-    public Set<Labeler> getLabelers() {
+    public List<Labeler> getLabelers() {
         return labelers;
     }
 
-    public void setLabelers(Set<Labeler> labelers) {
+    public void setLabelers(List<Labeler> labelers) {
         this.labelers.clear();
         this.labelers.addAll(labelers);
     }
@@ -258,11 +257,13 @@ public class Changelog implements EnabledAware {
         private final Set<String> labels = new LinkedHashSet<>();
         private String title;
         private String format;
+        private Integer order;
 
         void setAll(Category category) {
             this.title = category.title;
             setLabels(category.labels);
             this.format = category.format;
+            this.order = category.order;
         }
 
         public String getTitle() {
@@ -298,17 +299,12 @@ public class Changelog implements EnabledAware {
             this.format = format;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Category category = (Category) o;
-            return title.equals(category.title);
+        public Integer getOrder() {
+            return order;
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hash(title);
+        public void setOrder(Integer order) {
+            this.order = order;
         }
 
         public static Category of(String title, String format, String... labels) {
@@ -351,12 +347,14 @@ public class Changelog implements EnabledAware {
         private String branch;
         private String title;
         private String body;
+        private Integer order;
 
         void setAll(Labeler labeler) {
             this.label = labeler.label;
             this.branch = labeler.branch;
             this.title = labeler.title;
             this.body = labeler.body;
+            this.order = labeler.order;
         }
 
         public String getLabel() {
@@ -389,6 +387,14 @@ public class Changelog implements EnabledAware {
 
         public void setBody(String body) {
             this.body = body;
+        }
+
+        public Integer getOrder() {
+            return order;
+        }
+
+        public void setOrder(Integer order) {
+            this.order = order;
         }
     }
 

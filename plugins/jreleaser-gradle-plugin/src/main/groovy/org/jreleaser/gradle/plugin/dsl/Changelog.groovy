@@ -93,6 +93,8 @@ interface Changelog {
         SetProperty<String> getLabels()
 
         Property<String> getFormat()
+
+        Property<Integer> getOrder()
     }
 
     interface Labeler {
@@ -101,6 +103,8 @@ interface Changelog {
         Property<String> getTitle()
 
         Property<String> getBody()
+
+        Property<Integer> getOrder()
     }
 
     interface Replacer {

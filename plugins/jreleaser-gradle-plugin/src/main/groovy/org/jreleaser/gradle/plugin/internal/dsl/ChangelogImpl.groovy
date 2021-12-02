@@ -57,7 +57,7 @@ class ChangelogImpl implements Changelog {
     final ContributorsImpl contributors
 
     private final List<CategoryImpl> categories = []
-    private final Set<LabelerImpl> labelers = []
+    private final List<LabelerImpl> labelers = []
     private final Set<ReplacerImpl> replacers = []
     private final ObjectFactory objects
 
@@ -106,7 +106,7 @@ class ChangelogImpl implements Changelog {
             !categories.isEmpty() ||
             !labelers.isEmpty() ||
             !replacers.isEmpty() ||
-            contributors.isSet()||
+            contributors.isSet() ||
             hide.isSet()
     }
 
@@ -214,7 +214,7 @@ class ChangelogImpl implements Changelog {
         changelog.excludeLabels = (Set<String>) excludeLabels.getOrElse([] as Set)
         changelog.setCategories(categories.collect([]) { CategoryImpl category ->
             category.toModel()
-        } as List<org.jreleaser.model.Changelog.Category>)
+        } as Set<org.jreleaser.model.Changelog.Category>)
         changelog.setLabelers(labelers.collect([] as Set) { LabelerImpl labeler ->
             labeler.toModel()
         } as Set<org.jreleaser.model.Changelog.Labeler>)
@@ -231,12 +231,14 @@ class ChangelogImpl implements Changelog {
         final Property<String> title
         final SetProperty<String> labels
         final Property<String> format
+        final Property<Integer> order
 
         @Inject
         CategoryImpl(ObjectFactory objects) {
             title = objects.property(String).convention(Providers.notDefined())
             labels = objects.setProperty(String).convention(Providers.notDefined())
             format = objects.property(String).convention(Providers.notDefined())
+            order = objects.property(Integer).convention(Providers.notDefined())
         }
 
         org.jreleaser.model.Changelog.Category toModel() {
@@ -244,6 +246,7 @@ class ChangelogImpl implements Changelog {
             category.title = title.orNull
             category.labels = (Set<String>) labels.getOrElse([] as Set)
             category.format = format.orNull
+            category.order = order.orNull
             category
         }
     }
@@ -253,12 +256,14 @@ class ChangelogImpl implements Changelog {
         final Property<String> label
         final Property<String> title
         final Property<String> body
+        final Property<Integer> order
 
         @Inject
         LabelerImpl(ObjectFactory objects) {
             label = objects.property(String).convention(Providers.notDefined())
             title = objects.property(String).convention(Providers.notDefined())
             body = objects.property(String).convention(Providers.notDefined())
+            order = objects.property(Integer).convention(Providers.notDefined())
         }
 
         org.jreleaser.model.Changelog.Labeler toModel() {
@@ -266,6 +271,7 @@ class ChangelogImpl implements Changelog {
             labeler.label = label.orNull
             labeler.title = title.orNull
             labeler.body = body.orNull
+            labeler.order = order.orNull
             labeler
         }
     }

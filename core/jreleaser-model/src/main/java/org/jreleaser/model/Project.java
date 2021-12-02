@@ -136,7 +136,7 @@ public class Project implements Domain, ExtraProperties {
     }
 
     public String getVersionPattern() {
-        return versionPattern.toString();
+        return versionPattern != null ? versionPattern.toString() : "";
     }
 
     public void setVersionPattern(VersionPattern versionPattern) {

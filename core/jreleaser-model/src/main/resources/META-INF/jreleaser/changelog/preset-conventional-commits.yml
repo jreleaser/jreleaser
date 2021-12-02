@@ -1,56 +1,76 @@
 labelers:
   - label: 'merge'
     title: 'Merge pull'
+    order: 0
   - label: 'merge'
     title: 'Merge branch'
+    order: 5
   - label: 'build'
     title: 'regex:^(?:build(?:\(.*\))?!?):\s.*'
+    order: 10
   - label: 'chore'
     title: 'regex:^(?:chore(?:\(.*\))?!?):\s.*'
+    order: 20
   - label: 'ci'
     title: 'regex:^(?:ci(?:\(.*\))?!?):\s.*'
+    order: 30
   - label: 'docs'
     title: 'regex:^(?:docs(?:\(.*\))?!?):\s.*'
+    order: 40
   - label: 'feat'
     title: 'regex:^(?:feat(?:\(.*\))?!?):\s.*'
+    order: 50
   - label: 'fix'
     title: 'regex:^(?:fix(?:\(.*\))?!?):\s.*'
+    order: 60
   - label: 'perf'
     title: 'regex:^(?:perf(?:\(.*\))?!?):\s.*'
+    order: 70
   - label: 'refactor'
     title: 'regex:^(?:refactor(?:\(.*\))?!?):\s.*'
+    order: 80
   - label: 'revert'
     title: 'regex:^(?:revert(?:\(.*\))?!?):\s.*'
+    order: 90
   - label: 'style'
     title: 'regex:^(?:style(?:\(.*\))?!?):\s.*'
+    order: 100
   - label: 'test'
     title: 'regex:^(?:test(?:\(.*\))?!?):\s.*'
+    order: 110
 
 categories:
   - title: '🔀 Merge'
+    order: 0
     labels:
       - 'merge'
   - title: '🚀 Features'
+    order: 10
     labels:
       - 'feat'
   - title: '🐛 Fixes'
+    order: 20
     labels:
       - 'fix'
   - title: '♻️  Changes'
+    order: 30
     labels:
       - 'perf'
       - 'refactor'
       - 'revert'
       - 'style'
   - title: '🧰 Tasks'
+    order: 40
     labels:
       - 'chore'
   - title: '🛠  Build'
+    order: 50
     labels:
       - 'test'
       - 'build'
       - 'ci'
   - title: '📝 Documentation'
+    order: 60
     labels:
       - 'docs'
 

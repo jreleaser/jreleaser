@@ -31,12 +31,13 @@ import org.jreleaser.util.Errors;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.groupingBy;
@@ -48,7 +49,6 @@ import static org.jreleaser.model.GitService.SKIP_TAG;
 import static org.jreleaser.model.GitService.TAG_NAME;
 import static org.jreleaser.model.GitService.UPDATE;
 import static org.jreleaser.model.Milestone.MILESTONE_NAME;
-import static org.jreleaser.util.ResourceUtils.resolveLocation;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -307,56 +307,45 @@ public abstract class GitServiceValidator extends Validator {
     }
 
     private static void loadPreset(JReleaserContext context, Changelog changelog, Errors errors) {
-        URL location = resolveLocation(Changelog.class);
-
-        if (null == location) {
-            context.getLogger().warn(RB.$("ERROR_classpath_template_resolve"));
-            return;
-        }
-
         try {
-            if ("file".equals(location.getProtocol())) {
-                String preset = changelog.getPreset().toLowerCase().trim();
-                String presetFileName = "META-INF/jreleaser/changelog/preset-" + preset + ".yml";
+            String preset = changelog.getPreset().toLowerCase().trim();
+            String presetFileName = "META-INF/jreleaser/changelog/preset-" + preset + ".yml";
 
-                InputStream inputStream = GitServiceValidator.class.getClassLoader()
-                    .getResourceAsStream(presetFileName);
+            InputStream inputStream = GitServiceValidator.class.getClassLoader()
+                .getResourceAsStream(presetFileName);
 
-                if (null != inputStream) {
-                    Changelog loaded = JReleaserConfigLoader.load(Changelog.class, presetFileName, inputStream);
+            if (null != inputStream) {
+                Changelog loaded = JReleaserConfigLoader.load(Changelog.class, presetFileName, inputStream);
 
-                    LinkedHashSet<Changelog.Labeler> labelersCopy = new LinkedHashSet<>(changelog.getLabelers());
-                    labelersCopy.addAll(loaded.getLabelers());
-                    changelog.setLabelers(labelersCopy);
+                Set<Changelog.Labeler> labelersCopy = new TreeSet<>(Changelog.Labeler.ORDER);
+                labelersCopy.addAll(changelog.getLabelers());
+                labelersCopy.addAll(loaded.getLabelers());
+                changelog.setLabelers(labelersCopy);
 
-                    List<Changelog.Replacer> replacersCopy = new ArrayList<>(changelog.getReplacers());
-                    replacersCopy.addAll(loaded.getReplacers());
-                    changelog.setReplacers(replacersCopy);
+                List<Changelog.Replacer> replacersCopy = new ArrayList<>(changelog.getReplacers());
+                replacersCopy.addAll(loaded.getReplacers());
+                changelog.setReplacers(replacersCopy);
 
-                    Map<String, List<Changelog.Category>> categoriesByTitle = changelog.getCategories().stream()
-                        .collect(groupingBy(Changelog.Category::getTitle));
-                    Map<String, List<Changelog.Category>> loadedCategoriesByTitle = loaded.getCategories().stream()
-                        .collect(groupingBy(Changelog.Category::getTitle));
-                    categoriesByTitle.forEach((categoryTitle, categories) -> {
-                        if (loadedCategoriesByTitle.containsKey(categoryTitle)) {
-                            Changelog.Category loadedCategory = loadedCategoriesByTitle.remove(categoryTitle).get(0);
-                            categories.get(0).addLabels(loadedCategory.getLabels());
-                        }
-                    });
+                Map<String, List<Changelog.Category>> categoriesByTitle = changelog.getCategories().stream()
+                    .collect(groupingBy(Changelog.Category::getTitle));
+                Map<String, List<Changelog.Category>> loadedCategoriesByTitle = loaded.getCategories().stream()
+                    .collect(groupingBy(Changelog.Category::getTitle));
+                categoriesByTitle.forEach((categoryTitle, categories) -> {
+                    if (loadedCategoriesByTitle.containsKey(categoryTitle)) {
+                        Changelog.Category loadedCategory = loadedCategoriesByTitle.remove(categoryTitle).get(0);
+                        Changelog.Category category = categories.get(0);
+                        category.addLabels(loadedCategory.getLabels());
+                    }
+                });
 
-                    loaded.getCategories().forEach(category -> {
-                        if (loadedCategoriesByTitle.containsKey(category.getTitle())) {
-                            changelog.getCategories().add(category);
-                        }
-                    });
+                loadedCategoriesByTitle.values().forEach(list -> changelog.getCategories().add(list.get(0)));
+                // sort categories once again as order might have changed
+                changelog.setCategories(Changelog.Category.sort(changelog.getCategories()));
 
-                    changelog.getHide().addCategories(loaded.getHide().getCategories());
-                    changelog.getHide().addContributors(loaded.getHide().getContributors());
-                } else {
-                    context.getLogger().warn(RB.$("changelog.preset.not.found"), preset);
-                }
+                changelog.getHide().addCategories(loaded.getHide().getCategories());
+                changelog.getHide().addContributors(loaded.getHide().getContributors());
             } else {
-                context.getLogger().warn(RB.$("ERROR_classpath_template_resolve"));
+                context.getLogger().warn(RB.$("changelog.preset.not.found"), preset);
             }
         } catch (IOException e) {
             context.getLogger().warn(RB.$("ERROR_classpath_template_resolve"));

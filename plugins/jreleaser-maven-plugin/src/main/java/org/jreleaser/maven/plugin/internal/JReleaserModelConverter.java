@@ -99,6 +99,7 @@ import org.jreleaser.model.SpecRepository;
 import org.jreleaser.model.UpdateSection;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -334,25 +335,27 @@ public final class JReleaserModelConverter {
         return c;
     }
 
-    private static List<org.jreleaser.model.Changelog.Category> convertCategories(List<Changelog.Category> categories) {
-        List<org.jreleaser.model.Changelog.Category> list = new ArrayList<>();
+    private static Set<org.jreleaser.model.Changelog.Category> convertCategories(Collection<Changelog.Category> categories) {
+        Set<org.jreleaser.model.Changelog.Category> set = new LinkedHashSet<>();
         for (Changelog.Category category : categories) {
             org.jreleaser.model.Changelog.Category c = new org.jreleaser.model.Changelog.Category();
             c.setTitle(category.getTitle());
             c.setLabels(category.getLabels());
             c.setFormat(category.getFormat());
-            list.add(c);
+            c.setOrder(category.getOrder());
+            set.add(c);
         }
-        return list;
+        return set;
     }
 
-    private static Set<org.jreleaser.model.Changelog.Labeler> convertLabelers(Set<Changelog.Labeler> labelers) {
+    private static Set<org.jreleaser.model.Changelog.Labeler> convertLabelers(Collection<Changelog.Labeler> labelers) {
         Set<org.jreleaser.model.Changelog.Labeler> set = new LinkedHashSet<>();
         for (Changelog.Labeler labeler : labelers) {
             org.jreleaser.model.Changelog.Labeler l = new org.jreleaser.model.Changelog.Labeler();
             l.setLabel(labeler.getLabel());
             l.setTitle(labeler.getTitle());
             l.setBody(labeler.getBody());
+            l.setOrder(labeler.getOrder());
             set.add(l);
         }
         return set;

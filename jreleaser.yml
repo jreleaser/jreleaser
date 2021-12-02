@@ -193,6 +193,11 @@ distributions:
       localPlugs:
         - network
         - home
+    spec:
+      active: always
+      repository:
+        active: release
+        name: jreleaser-copr
     artifacts:
       - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'

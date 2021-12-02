@@ -144,39 +144,51 @@ labelers:
 
 categories:
   - title: 'Merge'
+    order: 0
     labels:
       - 'merge'
   - title: 'Added'
+    order: 10
     labels:
       - 'added'
   - title: 'Changed'
+    order: 20
     labels:
       - 'changed'
   - title: 'Breaking'
+    order: 30
     labels:
       - 'breaking_changes'
   - title: 'Deprecated'
+    order: 40
     labels:
       - 'deprecated'
   - title: 'Removed'
+    order: 50
     labels:
       - 'removed'
   - title: 'Fixed'
+    order: 60
     labels:
       - 'fixed'
   - title: 'Security'
+    order: 70
     labels:
       - 'security'
   - title: 'Dependencies'
+    order: 80
     labels:
       - 'dependencies'
   - title: 'Documentation'
+    order: 90
     labels:
       - 'documentation'
   - title: 'Miscellaneous'
+    order: 100
     labels:
       - 'misc'
   - title: 'Release'
+    order: 110
     labels:
       - 'release'
 

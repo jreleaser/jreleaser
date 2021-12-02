@@ -26,12 +26,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -44,9 +46,9 @@ import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
 public class Changelog implements Domain, EnabledAware {
     private final Set<String> includeLabels = new LinkedHashSet<>();
     private final Set<String> excludeLabels = new LinkedHashSet<>();
-    private final List<Category> categories = new ArrayList<>();
+    private final Set<Category> categories = new TreeSet<>(Category.ORDER);
     private final List<Replacer> replacers = new ArrayList<>();
-    private final Set<Labeler> labelers = new LinkedHashSet<>();
+    private final Set<Labeler> labelers = new TreeSet<>(Labeler.ORDER);
     private final Hide hide = new Hide();
     private final Contributors contributors = new Contributors();
 
@@ -179,11 +181,11 @@ public class Changelog implements Domain, EnabledAware {
         this.excludeLabels.addAll(excludeLabels.stream().map(String::trim).collect(Collectors.toSet()));
     }
 
-    public List<Category> getCategories() {
+    public Set<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(List<Category> categories) {
+    public void setCategories(Set<Category> categories) {
         this.categories.clear();
         this.categories.addAll(categories);
     }
@@ -319,13 +321,27 @@ public class Changelog implements Domain, EnabledAware {
     }
 
     public static class Category implements Domain {
+        public static Comparator<Category> ORDER = (o1, o2) -> {
+            if (null == o1.getOrder()) return 1;
+            if (null == o2.getOrder()) return -1;
+            return o1.getOrder().compareTo(o2.getOrder());
+        };
+
+        public static Set<Category> sort(Set<Category> categories) {
+            TreeSet<Category> tmp = new TreeSet<>(ORDER);
+            tmp.addAll(categories);
+            return tmp;
+        }
+
         private final Set<String> labels = new LinkedHashSet<>();
         private String title;
         private String format;
+        private Integer order;
 
         void setAll(Category category) {
             this.title = category.title;
             this.format = category.format;
+            this.order = category.order;
             setLabels(category.labels);
         }
 
@@ -358,12 +374,21 @@ public class Changelog implements Domain, EnabledAware {
             this.labels.addAll(labels);
         }
 
+        public Integer getOrder() {
+            return order;
+        }
+
+        public void setOrder(Integer order) {
+            this.order = order;
+        }
+
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("title", title);
             map.put("labels", labels);
             map.put("format", format);
+            map.put("order", order);
             return map;
         }
 
@@ -424,14 +449,22 @@ public class Changelog implements Domain, EnabledAware {
     }
 
     public static class Labeler implements Domain {
+        public static Comparator<Labeler> ORDER = (o1, o2) -> {
+            if (null == o1.getOrder()) return 1;
+            if (null == o2.getOrder()) return -1;
+            return o1.getOrder().compareTo(o2.getOrder());
+        };
+
         private String label;
         private String title;
         private String body;
+        private Integer order;
 
         void setAll(Labeler labeler) {
             this.label = labeler.label;
             this.title = labeler.title;
             this.body = labeler.body;
+            this.order = labeler.order;
         }
 
         public String getLabel() {
@@ -458,6 +491,14 @@ public class Changelog implements Domain, EnabledAware {
             this.body = body;
         }
 
+        public Integer getOrder() {
+            return order;
+        }
+
+        public void setOrder(Integer order) {
+            this.order = order;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -478,6 +519,7 @@ public class Changelog implements Domain, EnabledAware {
             map.put("label", label);
             map.put("title", title);
             map.put("body", body);
+            map.put("order", order);
             return map;
         }
     }
