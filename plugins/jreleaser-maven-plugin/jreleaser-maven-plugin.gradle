@@ -37,6 +37,7 @@ dependencies {
     api project(':jreleaser-config-yaml')
     api project(':jreleaser-config-toml')
     api project(':jreleaser-config-json')
+    api "org.jsoup:jsoup:$jsoupVersion"
 
     implementation "org.apache.maven:maven-plugin-api:$mavenVersion"
     implementation "org.apache.maven.shared:maven-shared-utils:$mavenSharedVersion"

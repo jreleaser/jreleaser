@@ -41,6 +41,10 @@ public class Webhook extends AbstractAnnouncer {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public String getWebhook() {
         return webhook;
     }
