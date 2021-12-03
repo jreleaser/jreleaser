@@ -79,40 +79,47 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path inputsDirectory = assembleDirectory.resolve("inputs");
 
-        // copy jars to assembly
-        Path jarsDirectory = inputsDirectory.resolve("jars");
-        context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(jarsDirectory));
-        Set<Path> jars = copyJars(context, jarsDirectory);
-
-        // resolve module names
-        Set<String> moduleNames = resolveModuleNames(context, jdkPath, jars);
-        context.getLogger().debug(RB.$("assembler.resolved.module.names"), moduleNames);
-        if (moduleNames.isEmpty()) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_no_module_names"));
-        }
-        moduleNames.addAll(assembler.getAdditionalModuleNames());
-        if (isNotBlank(assembler.getModuleName())) {
-            moduleNames.add(assembler.getModuleName());
-        }
-        context.getLogger().debug(RB.$("assembler.module.names"), moduleNames);
-
         // run jlink x jdk
         String imageName = assembler.getResolvedImageName(context);
         for (Artifact targetJdk : assembler.getTargetJdks()) {
+            String platform = targetJdk.getPlatform();
+            // copy jars to assembly
+            Path jarsDirectory = inputsDirectory.resolve("jars");
+            Path universalJarsDirectory = jarsDirectory.resolve("universal");
+            context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(universalJarsDirectory));
+            Set<Path> jars = copyJars(context, universalJarsDirectory, "");
+            Path platformJarsDirectory = inputsDirectory.resolve("jars").resolve(platform);
+            context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(platformJarsDirectory));
+            jars.addAll(copyJars(context, platformJarsDirectory, platform));
+
+            // resolve module names
+            Set<String> moduleNames = resolveModuleNames(context, jdkPath, jarsDirectory, platform);
+            context.getLogger().debug(RB.$("assembler.resolved.module.names"), moduleNames);
+            if (moduleNames.isEmpty()) {
+                throw new AssemblerProcessingException(RB.$("ERROR_assembler_no_module_names"));
+            }
+            moduleNames.addAll(assembler.getAdditionalModuleNames());
+            if (isNotBlank(assembler.getModuleName())) {
+                moduleNames.add(assembler.getModuleName());
+            }
+            context.getLogger().debug(RB.$("assembler.module.names"), moduleNames);
+
             Artifact image = jlink(assembleDirectory, jdkPath, targetJdk, moduleNames, imageName);
             if (isNotBlank(assembler.getImageNameTransform())) {
-                image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" + targetJdk.getPlatform() + ".zip");
+                image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" + platform + ".zip");
                 image.getEffectivePath(context);
             }
         }
     }
 
     private Artifact jlink(Path assembleDirectory, Path jdkPath, Artifact targetJdk, Set<String> moduleNames, String imageName) throws AssemblerProcessingException {
-        String finalImageName = imageName + "-" + targetJdk.getPlatform();
+        String platform = targetJdk.getPlatform();
+        String finalImageName = imageName + "-" + platform;
         context.getLogger().info("- {}", finalImageName);
 
         Path inputsDirectory = assembleDirectory.resolve("inputs");
-        Path workDirectory = assembleDirectory.resolve("work-" + targetJdk.getPlatform());
+        Path jarsDirectory = inputsDirectory.resolve("jars");
+        Path workDirectory = assembleDirectory.resolve("work-" + platform);
         Path imageDirectory = workDirectory.resolve(finalImageName).toAbsolutePath();
         try {
             FileUtils.deleteFiles(imageDirectory);
@@ -123,7 +130,18 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         // jlink it
         String modulePath = targetJdk.getEffectivePath(context).resolve("jmods").toAbsolutePath().toString();
         if (assembler.isCopyJars()) {
-            modulePath += File.pathSeparator + assembleDirectory.resolve("jars").toAbsolutePath();
+            modulePath += File.pathSeparator + jarsDirectory
+                .resolve("universal")
+                .toAbsolutePath();
+
+            try {
+                Path platformJarsDirectory = jarsDirectory.resolve(platform).toAbsolutePath();
+                if (Files.list(platformJarsDirectory).count() > 1) {
+                    modulePath += File.pathSeparator + platformJarsDirectory;
+                }
+            } catch (IOException e) {
+                throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error", e));
+            }
         }
 
         Command cmd = new Command(jdkPath.resolve("bin").resolve("jlink").toAbsolutePath().toString())
@@ -148,21 +166,24 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             // copy jars & launcher
 
             if (assembler.isCopyJars()) {
-                Path jarsDirectory = imageDirectory.resolve("jars");
+                Path outputJarsDirectory = imageDirectory.resolve("jars");
 
                 try {
-                    Files.createDirectory(jarsDirectory);
+                    Files.createDirectory(outputJarsDirectory);
                     FileUtils.copyFiles(context.getLogger(),
-                        inputsDirectory.resolve("jars"),
-                        jarsDirectory);
+                        jarsDirectory.resolve("universal"),
+                        outputJarsDirectory);
+                    FileUtils.copyFiles(context.getLogger(),
+                        jarsDirectory.resolve(platform),
+                        outputJarsDirectory);
                 } catch (IOException e) {
                     throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_jars",
-                        context.relativizeToBasedir(jarsDirectory)), e);
+                        context.relativizeToBasedir(outputJarsDirectory)), e);
                 }
             }
 
             try {
-                if (PlatformUtils.isWindows(targetJdk.getPlatform())) {
+                if (PlatformUtils.isWindows(platform)) {
                     Files.copy(inputsDirectory.resolve(assembler.getExecutable().concat(".bat")),
                         imageDirectory.resolve("bin").resolve(assembler.getExecutable().concat(".bat")));
                 } else {
@@ -184,7 +205,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
 
             context.getLogger().debug("- {}", imageZip.getFileName());
 
-            return Artifact.of(imageZip, targetJdk.getPlatform());
+            return Artifact.of(imageZip, platform);
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
@@ -213,15 +234,21 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         }
     }
 
-    private Set<Path> copyJars(JReleaserContext context, Path jarsDirectory) throws AssemblerProcessingException {
+    private Set<Path> copyJars(JReleaserContext context, Path jarsDirectory, String platform) throws AssemblerProcessingException {
         Set<Path> paths = new LinkedHashSet<>();
 
         // resolve all first
-        paths.add(assembler.getMainJar().getEffectivePath(context, assembler));
+        if (isBlank(platform)) {
+            paths.add(assembler.getMainJar().getEffectivePath(context, assembler));
+        }
+
         for (Glob glob : assembler.getJars()) {
-            glob.getResolvedArtifacts(context).stream()
-                .map(artifact -> artifact.getResolvedPath(context, assembler))
-                .forEach(paths::add);
+            if ((isBlank(platform) && isBlank(glob.getPlatform())) ||
+                (isNotBlank(platform) && PlatformUtils.isCompatible(platform, glob.getPlatform()))) {
+                glob.getResolvedArtifacts(context).stream()
+                    .map(artifact -> artifact.getResolvedPath(context, assembler))
+                    .forEach(paths::add);
+            }
         }
 
         // copy all next
@@ -262,7 +289,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         return paths;
     }
 
-    private Set<String> resolveModuleNames(JReleaserContext context, Path jdkPath, Set<Path> jars) throws AssemblerProcessingException {
+    private Set<String> resolveModuleNames(JReleaserContext context, Path jdkPath, Path jarsDirectory, String platform) throws AssemblerProcessingException {
         if (!assembler.getModuleNames().isEmpty()) {
             return assembler.getModuleNames();
         }
@@ -277,8 +304,19 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             cmd.arg("--ignore-missing-deps");
         }
         cmd.arg("--print-module-deps");
-        for (Path jar : jars) {
-            cmd.arg(jar.toAbsolutePath().toString());
+        cmd.arg("--class-path");
+        try {
+            Files.list(jarsDirectory.resolve("universal"))
+                .map(Path::toAbsolutePath)
+                .map(Object::toString)
+                .forEach(cmd::arg);
+
+            Files.list(jarsDirectory.resolve(platform))
+                .map(Path::toAbsolutePath)
+                .map(Object::toString)
+                .forEach(cmd::arg);
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", e.getMessage()));
         }
 
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
