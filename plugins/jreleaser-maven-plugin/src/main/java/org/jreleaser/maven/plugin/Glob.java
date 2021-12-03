@@ -23,6 +23,7 @@ package org.jreleaser.maven.plugin;
  */
 public class Glob {
     private String pattern;
+    private String platform;
     private String directory;
     private String include;
     private String exclude;
@@ -34,6 +35,14 @@ public class Glob {
 
     public void setPattern(String pattern) {
         this.pattern = pattern;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
     public String getDirectory() {

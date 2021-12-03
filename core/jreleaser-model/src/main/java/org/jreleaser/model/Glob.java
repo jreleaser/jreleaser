@@ -53,6 +53,7 @@ public class Glob implements Domain, ExtraProperties {
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
 
     private String pattern;
+    private String platform;
     private Set<Artifact> artifacts;
 
     private String directory;
@@ -62,6 +63,7 @@ public class Glob implements Domain, ExtraProperties {
 
     void setAll(Glob glob) {
         this.pattern = glob.pattern;
+        this.platform = glob.platform;
         setExtraProperties(glob.extraProperties);
     }
 
@@ -96,6 +98,7 @@ public class Glob implements Domain, ExtraProperties {
             normalizePattern();
             artifacts = Artifacts.resolveFiles(context, resolveDirectory(context), Collections.singletonList(pattern));
             artifacts.forEach(artifact -> {
+                artifact.setPlatform(platform);
                 if (context.isPlatformSelected(artifact)) artifact.activate();
                 artifact.setExtraProperties(getExtraProperties());
             });
@@ -143,7 +146,7 @@ public class Glob implements Domain, ExtraProperties {
             }
 
             artifacts = fileCollector.getFiles().stream()
-                .map(p -> Artifact.of(p, getExtraProperties()))
+                .map(p -> Artifact.of(p, platform, getExtraProperties()))
                 .peek(a -> {
                     if (context.isPlatformSelected(a)) a.activate();
                 })
@@ -178,6 +181,14 @@ public class Glob implements Domain, ExtraProperties {
                 this.pattern = REGEX_PREFIX + ".*" + File.separator + path;
             }
         }
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
     public String getDirectory() {
@@ -226,6 +237,7 @@ public class Glob implements Domain, ExtraProperties {
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("pattern", pattern);
+        props.put("platform", platform);
         props.put("extraProperties", getResolvedExtraProperties());
         props.put("directory", directory);
         props.put("include", include);

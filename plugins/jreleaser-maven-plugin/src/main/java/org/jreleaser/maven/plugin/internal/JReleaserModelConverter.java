@@ -942,6 +942,7 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Glob convertGlob(Glob glob) {
         org.jreleaser.model.Glob g = new org.jreleaser.model.Glob();
         g.setPattern(tr(glob.getPattern()));
+        g.setPlatform(tr(glob.getPlatform()));
         if (isNotBlank(glob.getDirectory())) g.setDirectory(tr(glob.getDirectory()));
         if (isNotBlank(glob.getInclude())) g.setInclude(glob.getInclude());
         if (isNotBlank(glob.getExclude())) g.setExclude(glob.getExclude());

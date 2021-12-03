@@ -30,6 +30,8 @@ import org.gradle.api.provider.Property
 interface Glob {
     Property<String> getPattern()
 
+    Property<String> getPlatform()
+
     DirectoryProperty getDirectory()
 
     Property<String> getInclude()
