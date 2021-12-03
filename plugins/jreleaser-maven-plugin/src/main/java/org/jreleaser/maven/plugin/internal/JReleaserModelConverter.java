@@ -106,6 +106,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -115,12 +116,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class JReleaserModelConverter {
+    private static final Pattern ESCAPED_ENTITY = Pattern.compile(".*&#(?:[xX][a-fA-F0-9]+|[0-9]+);.*");
+
     private JReleaserModelConverter() {
         // noop
     }
 
     private static String tr(String str) {
-        if (isNotBlank(str)) {
+        if (isNotBlank(str) && ESCAPED_ENTITY.matcher(str).matches()) {
             return Parser.unescapeEntities(str, true);
         }
         return str;
