@@ -23,6 +23,7 @@ dependencies {
     api("com.github.sbaudoin:yamllint:$yamllintVersion") {
         exclude group: 'commons-cli', module: 'commons-cli'
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
+        exclude group: 'org.reflections', module: 'reflections'
     }
 
     compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
