@@ -333,12 +333,17 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             .filter(Artifact::isActive)
             .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
             .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
+            .filter(artifact -> !isSkipped(artifact))
             // sort by platform, then by extension
             .sorted(Artifact.comparatorByPlatform().thenComparingInt(artifact -> {
                 String ext = "." + StringUtils.getFilenameExtension(artifact.getPath());
                 return fileExtensions.indexOf(ext);
             }))
             .collect(Collectors.toList());
+    }
+
+    protected boolean isSkipped(Artifact artifact) {
+        return false;
     }
 
     protected void info(ByteArrayOutputStream out) {

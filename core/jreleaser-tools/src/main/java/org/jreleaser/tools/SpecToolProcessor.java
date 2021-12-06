@@ -34,8 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.model.Spec.SKIP_SPEC;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.StringUtils.getFilename;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -79,7 +81,7 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
                     files.add(entry.replace(context.getModel().getProject().getResolvedVersion(),
                         "%{version}")
                         .replace(context.getModel().getProject().getEffectiveVersion(),
-                        "%{version}"));
+                            "%{version}"));
                 });
 
             props.put(Constants.KEY_SPEC_DIRECTORIES, directories);
@@ -116,5 +118,10 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
+    }
+
+    @Override
+    protected boolean isSkipped(Artifact artifact) {
+        return isTrue(artifact.getExtraProperties().get(SKIP_SPEC));
     }
 }

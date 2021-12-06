@@ -17,6 +17,9 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Active;
+import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -26,11 +29,16 @@ import org.jreleaser.model.SpecRepository;
 import org.jreleaser.util.Errors;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+import static org.jreleaser.model.Spec.SKIP_SPEC;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -85,5 +93,19 @@ public abstract class SpecValidator extends Validator {
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
         validateArtifactPlatforms(context, distribution, tool, errors);
+
+        List<Artifact> candidateArtifacts = distribution.getArtifacts().stream()
+            .filter(Artifact::isActive)
+            .filter(artifact -> tool.getSupportedExtensions().stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
+            .filter(artifact -> !isTrue(artifact.getExtraProperties().get(SKIP_SPEC)))
+            .collect(toList());
+
+        if (candidateArtifacts.size() == 0) {
+            tool.setActive(Active.NEVER);
+            tool.disable();
+        } else if(candidateArtifacts.size()> 1) {
+            errors.configuration(RB.$("validation_spec_multiple_artifacts", "distribution." + distribution.getName() + ".spec"));
+            tool.disable();
+        }
     }
 }

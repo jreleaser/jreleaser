@@ -31,6 +31,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public class Spec extends AbstractRepositoryTool {
     public static final String NAME = "spec";
+    public static final String SKIP_SPEC = "skipSpec";
+
     private final List<String> requires = new ArrayList<>();
     private final SpecRepository repository = new SpecRepository();
 
