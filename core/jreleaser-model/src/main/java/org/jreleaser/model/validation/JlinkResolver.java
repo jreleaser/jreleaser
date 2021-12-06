@@ -60,6 +60,7 @@ public abstract class JlinkResolver extends Validator {
                     jlink.getType(), jlink.getName(), jlink.getName()));
             } else {
                 Artifact artifact = Artifact.of(image, targetJdk.getPlatform());
+                artifact.setExtraProperties(jlink.getExtraProperties());
                 artifact.activate();
                 if (isNotBlank(jlink.getImageNameTransform())) {
                     artifact.setTransform(jlink.getResolvedImageNameTransform(context) + "-" + targetJdk.getPlatform() + ".zip");

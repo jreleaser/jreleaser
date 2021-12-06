@@ -56,6 +56,7 @@ public abstract class NativeImageResolver extends Validator {
                 nativeImage.getType(), nativeImage.getName(), nativeImage.getName()));
         } else {
             Artifact artifact = Artifact.of(image, platform);
+            artifact.setExtraProperties(nativeImage.getExtraProperties());
             artifact.activate();
             if (isNotBlank(nativeImage.getImageNameTransform())) {
                 artifact.setTransform(nativeImage.getResolvedImageNameTransform(context) + "-" + platform + ".zip");
