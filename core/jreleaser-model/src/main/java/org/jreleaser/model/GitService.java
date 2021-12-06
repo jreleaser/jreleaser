@@ -79,7 +79,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private String previousTagName;
     private String releaseName;
     private String branch;
-    private boolean sign;
+    private Boolean sign;
     private Boolean skipTag;
     private Boolean skipRelease;
     private Boolean overwrite;
@@ -519,10 +519,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public boolean isSign() {
-        return sign;
+        return sign != null && sign;
     }
 
-    public void setSign(boolean sign) {
+    public void setSign(Boolean sign) {
         this.sign = sign;
     }
 
@@ -704,7 +704,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
         props.put("branch", branch);
         props.put("commitAuthor", commitAuthor.asMap(full));
-        props.put("sign", sign);
+        props.put("sign", isSign());
         props.put("skipTag", isSkipTag());
         props.put("skipRelease", isSkipRelease());
         props.put("overwrite", isOverwrite());

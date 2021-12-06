@@ -53,7 +53,7 @@ public class Changelog implements Domain, EnabledAware {
     private final Contributors contributors = new Contributors();
 
     private Boolean enabled;
-    private boolean links;
+    private Boolean links;
     private Sort sort = Sort.DESC;
     private String external;
     private Active formatted;
@@ -118,10 +118,10 @@ public class Changelog implements Domain, EnabledAware {
     }
 
     public boolean isLinks() {
-        return links;
+        return links != null && links;
     }
 
-    public void setLinks(boolean links) {
+    public void setLinks(Boolean links) {
         this.links = links;
     }
 
@@ -280,7 +280,7 @@ public class Changelog implements Domain, EnabledAware {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("external", external);
-        map.put("links", links);
+        map.put("links", isLinks());
         map.put("sort", sort);
         map.put("formatted", formatted);
         map.put("preset", preset);

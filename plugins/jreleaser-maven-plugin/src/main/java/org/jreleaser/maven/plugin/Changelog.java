@@ -43,7 +43,7 @@ public class Changelog implements EnabledAware {
     private final Hide hide = new Hide();
 
     private Boolean enabled;
-    private boolean links;
+    private Boolean links;
     private Sort sort = Sort.DESC;
     private String external;
     private Active formatted;
@@ -88,11 +88,15 @@ public class Changelog implements EnabledAware {
         return enabled != null;
     }
 
-    public boolean isLinks() {
-        return links;
+    public Boolean isLinks() {
+        return links != null && links;
     }
 
-    public void setLinks(boolean links) {
+    public boolean isLinksSet() {
+        return links != null;
+    }
+
+    public void setLinks(Boolean links) {
         this.links = links;
     }
 

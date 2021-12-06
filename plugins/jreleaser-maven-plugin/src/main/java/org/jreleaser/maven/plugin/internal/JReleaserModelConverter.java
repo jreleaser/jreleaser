@@ -293,7 +293,7 @@ public final class JReleaserModelConverter {
         if (isNotBlank(service.getReleaseName())) s.setReleaseName(tr(service.getReleaseName()));
         if (isNotBlank(service.getBranch())) s.setBranch(tr(service.getBranch()));
         s.setCommitAuthor(convertCommitAuthor(service.getCommitAuthor()));
-        s.setSign(service.isSign());
+        if (service.isSignSet()) s.setSign(service.isSign());
         if (service.isSkipTagSet()) s.setSkipTag(service.isSkipTag());
         if (service.isSkipReleaseSet()) s.setSkipRelease(service.isSkipRelease());
         if (service.isOverwriteSet()) s.setOverwrite(service.isOverwrite());
@@ -328,6 +328,7 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Changelog convertChangelog(Changelog changelog) {
         org.jreleaser.model.Changelog c = new org.jreleaser.model.Changelog();
         if (changelog.isEnabledSet()) c.setEnabled(changelog.isEnabled());
+        if (changelog.isLinksSet()) c.setLinks(changelog.isLinks());
         c.setSort(changelog.getSort().name());
         c.setExternal(tr(changelog.getExternal()));
         c.setFormatted(tr(changelog.resolveFormatted()));

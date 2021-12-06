@@ -49,7 +49,7 @@ public abstract class GitService implements Releaser {
     private String previousTagName;
     private String releaseName;
     private String branch;
-    private boolean sign;
+    private Boolean sign;
     private Boolean skipTag;
     private Boolean skipRelease;
     private Boolean overwrite;
@@ -343,11 +343,15 @@ public abstract class GitService implements Releaser {
     }
 
     public boolean isSign() {
-        return sign;
+        return sign != null && sign;
     }
 
-    public void setSign(boolean sign) {
+    public void setSign(Boolean sign) {
         this.sign = sign;
+    }
+
+    public boolean isSignSet() {
+        return sign != null;
     }
 
     public Changelog getChangelog() {
