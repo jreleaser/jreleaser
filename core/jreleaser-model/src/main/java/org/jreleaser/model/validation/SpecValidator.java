@@ -104,7 +104,7 @@ public abstract class SpecValidator extends Validator {
             tool.setActive(Active.NEVER);
             tool.disable();
         } else if(candidateArtifacts.size()> 1) {
-            errors.configuration(RB.$("validation_spec_multiple_artifacts", "distribution." + distribution.getName() + ".spec"));
+            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".spec"));
             tool.disable();
         }
     }

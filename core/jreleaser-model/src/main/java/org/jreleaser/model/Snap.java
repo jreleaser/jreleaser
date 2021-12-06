@@ -34,6 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Snap extends AbstractRepositoryTool {
     public static final String NAME = "snap";
+    public static final String SKIP_SNAP = "skipSnap";
 
     private final Set<String> localPlugs = new LinkedHashSet<>();
     private final Set<String> localSlots = new LinkedHashSet<>();
