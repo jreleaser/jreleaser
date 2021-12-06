@@ -78,6 +78,9 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<Archiv
                 case TGZ:
                 case TAR_GZ:
                     FileUtils.tgz(workDirectory, archiveFile);
+                    break;
+                case TAR_BZ2:
+                    FileUtils.bz2(workDirectory, archiveFile);
             }
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);

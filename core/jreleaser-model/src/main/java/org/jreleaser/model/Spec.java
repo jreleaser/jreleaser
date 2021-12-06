@@ -98,6 +98,7 @@ public class Spec extends AbstractRepositoryTool {
     @Override
     public Set<String> getSupportedExtensions() {
         Set<String> set = new LinkedHashSet<>();
+        set.add(".tar.bz2");
         set.add(".tar.gz");
         set.add(".tgz");
         set.add(".tar");

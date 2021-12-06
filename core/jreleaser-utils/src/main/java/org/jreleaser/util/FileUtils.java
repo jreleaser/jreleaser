@@ -26,6 +26,8 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
@@ -75,6 +77,10 @@ public final class FileUtils {
         "LICENSE.md",
         "LICENSE.adoc"
     };
+
+    private static final String TGZ = ".tgz";
+    private static final String TAR_BZ2 = ".tar.bz2";
+    private static final String TAR_GZ = ".tar.gz";
 
     private FileUtils() {
         //noop
@@ -148,6 +154,13 @@ public final class FileUtils {
         }
     }
 
+    public static void bz2(Path src, Path dest) throws IOException {
+        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
+            new BZip2CompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
+            tar(src, out);
+        }
+    }
+
     private static void tar(Path src, TarArchiveOutputStream out) throws IOException {
         Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
             @Override
@@ -175,7 +188,7 @@ public final class FileUtils {
 
     public static void unpackArchive(Path src, Path dest) throws IOException {
         String filename = src.getFileName().toString();
-        if (filename.endsWith(".tgz") || filename.endsWith(".tar.gz")) {
+        if (filename.endsWith(TGZ) || filename.endsWith(TAR_GZ) || filename.endsWith(TAR_BZ2)) {
             unpackArchiveCompressed(src, dest);
             return;
         }
@@ -199,12 +212,15 @@ public final class FileUtils {
         deleteFiles(dest, true);
         File destinationDir = dest.toFile();
 
+        String filename = src.getFileName().toString();
+        boolean bzip2 = filename.endsWith(TAR_BZ2);
+        boolean tgz = filename.endsWith(TGZ);
         try (InputStream fi = Files.newInputStream(src);
              InputStream bi = new BufferedInputStream(fi);
-             InputStream gzi = new GzipCompressorInputStream(bi);
+             InputStream gzi = bzip2 ? new BZip2CompressorInputStream(bi) : new GzipCompressorInputStream(bi);
              ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
-            String filename = src.getFileName().toString();
-            // subtract .tar.gz
+            // subtract extension
+            int offset = bzip2 ? TAR_BZ2.length() : (tgz ? TGZ.length() : TAR_GZ.length());
             filename = filename.substring(0, filename.length() - 7);
             unpackArchive(filename + "/", destinationDir, in);
         }
@@ -255,7 +271,7 @@ public final class FileUtils {
 
     public static List<String> inspectArchive(Path src) throws IOException {
         String filename = src.getFileName().toString();
-        if (filename.endsWith(".tgz") || filename.endsWith(".tar.gz")) {
+        if (filename.endsWith(TGZ) || filename.endsWith(TAR_GZ) || filename.endsWith(TAR_BZ2)) {
             return inspectArchiveCompressed(src);
         }
 
@@ -269,9 +285,11 @@ public final class FileUtils {
     }
 
     public static List<String> inspectArchiveCompressed(Path src) throws IOException {
+        String filename = src.getFileName().toString();
+        boolean bzip2 = filename.endsWith(TAR_BZ2);
         try (InputStream fi = Files.newInputStream(src);
              InputStream bi = new BufferedInputStream(fi);
-             InputStream gzi = new GzipCompressorInputStream(bi);
+             InputStream gzi = bzip2 ? new BZip2CompressorInputStream(bi) : new GzipCompressorInputStream(bi);
              ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
             return inspectArchive(in);
         }

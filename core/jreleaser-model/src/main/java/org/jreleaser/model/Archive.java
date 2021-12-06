@@ -123,7 +123,8 @@ public class Archive extends AbstractAssembler {
         ZIP("zip"),
         TAR("tar"),
         TGZ("tgz"),
-        TAR_GZ("tar.gz");
+        TAR_GZ("tar.gz"),
+        TAR_BZ2("tar.bz2");
 
         private final String extension;
 
