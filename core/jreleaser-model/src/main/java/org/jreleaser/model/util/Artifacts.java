@@ -47,31 +47,14 @@ import java.util.Set;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.jreleaser.model.util.Templates.resolve;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
-import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Artifacts {
-    public static String resolve(String input, Map<String, Object> props) {
-        if (isBlank(input)) return input;
-
-        int count = 0;
-
-        while (input.contains("{{")) {
-            input = applyTemplate(input, props);
-            count++;
-
-            if (input.contains("{{") && count >= 10) {
-                throw new JReleaserException(RB.$("ERROR_input_can_not_resolve", input));
-            }
-        }
-
-        return input;
-    }
-
     public static String resolveForArtifact(String input, JReleaserContext context) {
         return resolve(input, context.props());
     }

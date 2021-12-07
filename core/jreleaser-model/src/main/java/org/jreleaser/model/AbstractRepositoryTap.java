@@ -17,7 +17,7 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.model.util.Templates;
 import org.jreleaser.util.Env;
 
 import java.util.LinkedHashMap;
@@ -122,7 +122,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
 
     @Override
     public String getResolvedCommitMessage(Map<String, Object> props) {
-        return Artifacts.resolve(commitMessage, props);
+        return Templates.resolve(commitMessage, props);
     }
 
     @Override

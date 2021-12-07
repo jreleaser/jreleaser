@@ -20,6 +20,7 @@
     <docsUrl>{{projectDocsUrl}}</docsUrl>
     <bugTrackerUrl>{{issueTrackerUrl}}</bugTrackerUrl>
     <releaseNotes>{{releaseNotesUrl}}</releaseNotes>
+    {{#chocolateyIconUrl}}<iconUrl>{{.}}</iconUrl>{{/chocolateyIconUrl}}
   </metadata>
   <files>
     <file src="tools\**" target="tools" />

@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static org.jreleaser.model.util.Templates.resolve;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -101,6 +102,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
 
         props.put(Constants.KEY_CHOCOLATEY_USERNAME, getTool().getUsername());
         props.put(Constants.KEY_CHOCOLATEY_TITLE, getTool().getTitle());
+        props.put(Constants.KEY_CHOCOLATEY_ICON_URL, resolve(getTool().getIconUrl(), props));
     }
 
     @Override

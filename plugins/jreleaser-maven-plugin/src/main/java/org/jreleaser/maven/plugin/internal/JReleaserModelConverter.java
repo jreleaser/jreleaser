@@ -1004,6 +1004,7 @@ public final class JReleaserModelConverter {
         t.setUsername(tr(tool.getUsername()));
         t.setApiKey(tr(tool.getApiKey()));
         t.setTitle(tr(tool.getTitle()));
+        t.setIconUrl(tr(tool.getIconUrl()));
         t.setRemoteBuild(tool.isRemoteBuild());
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
         t.setExtraProperties(tool.getExtraProperties());
