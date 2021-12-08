@@ -34,6 +34,10 @@ project:
     - 'java'
     - 'git'
 
+platform:
+  replacements:
+    aarch_64: aarch64
+
 release:
   github:
     overwrite: true
