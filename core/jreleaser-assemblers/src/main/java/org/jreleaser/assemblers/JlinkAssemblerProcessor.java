@@ -18,6 +18,7 @@
 package org.jreleaser.assemblers;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Archive;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
@@ -105,15 +106,22 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             }
             context.getLogger().debug(RB.$("assembler.module.names"), moduleNames);
 
-            Artifact image = jlink(assembleDirectory, jdkPath, targetJdk, moduleNames, imageName);
+            String str = targetJdk.getExtraProperties()
+                .getOrDefault("archiveFormat", "ZIP")
+                .toString();
+            Archive.Format archiveFormat = Archive.Format.of(str);
+
+            Artifact image = jlink(assembleDirectory, jdkPath, targetJdk, moduleNames, imageName, archiveFormat);
             if (isNotBlank(assembler.getImageNameTransform())) {
-                image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" + platformReplaced + ".zip");
+                image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" +
+                    platformReplaced + "."+
+                    archiveFormat.extension());
                 image.getEffectivePath(context);
             }
         }
     }
 
-    private Artifact jlink(Path assembleDirectory, Path jdkPath, Artifact targetJdk, Set<String> moduleNames, String imageName) throws AssemblerProcessingException {
+    private Artifact jlink(Path assembleDirectory, Path jdkPath, Artifact targetJdk, Set<String> moduleNames, String imageName, Archive.Format archiveFormat) throws AssemblerProcessingException {
         String platform = targetJdk.getPlatform();
         String platformReplaced = assembler.getPlatform().applyReplacements(platform);
         String finalImageName = imageName + "-" + platformReplaced;
@@ -200,14 +208,28 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         }
 
         try {
-            Path imageZip = assembleDirectory.resolve(finalImageName + ".zip");
+            Path imageArchive = assembleDirectory.resolve(finalImageName + "." + archiveFormat.extension());
             copyFiles(context, imageDirectory);
             copyFileSets(context, imageDirectory);
-            FileUtils.zip(workDirectory, imageZip);
 
-            context.getLogger().debug("- {}", imageZip.getFileName());
+            switch (archiveFormat) {
+                case ZIP:
+                    FileUtils.zip(workDirectory, imageArchive);
+                    break;
+                case TAR:
+                    FileUtils.tar(workDirectory, imageArchive);
+                    break;
+                case TGZ:
+                case TAR_GZ:
+                    FileUtils.tgz(workDirectory, imageArchive);
+                    break;
+                case TAR_BZ2:
+                    FileUtils.bz2(workDirectory, imageArchive);
+            }
 
-            return Artifact.of(imageZip, platform);
+            context.getLogger().debug("- {}", imageArchive.getFileName());
+
+            return Artifact.of(imageArchive, platform);
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

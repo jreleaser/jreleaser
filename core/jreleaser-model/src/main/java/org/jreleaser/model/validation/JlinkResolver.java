@@ -18,6 +18,7 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Archive;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jlink;
@@ -53,9 +54,13 @@ public abstract class JlinkResolver extends Validator {
 
             String platform = targetJdk.getPlatform();
             String platformReplaced = jlink.getPlatform().applyReplacements(platform);
+            String str = targetJdk.getExtraProperties()
+                .getOrDefault("archiveFormat", "ZIP")
+                .toString();
+            Archive.Format archiveFormat = Archive.Format.of(str);
 
             Path image = baseOutputDirectory
-                .resolve(imageName + "-" + platformReplaced + ".zip")
+                .resolve(imageName + "-" + platformReplaced + "." + archiveFormat.extension())
                 .toAbsolutePath();
 
             if (!Files.exists(image)) {
@@ -66,7 +71,9 @@ public abstract class JlinkResolver extends Validator {
                 artifact.setExtraProperties(jlink.getExtraProperties());
                 artifact.activate();
                 if (isNotBlank(jlink.getImageNameTransform())) {
-                    artifact.setTransform(jlink.getResolvedImageNameTransform(context) + "-" + platformReplaced + ".zip");
+                    artifact.setTransform(jlink.getResolvedImageNameTransform(context) + "-" +
+                        platformReplaced + "." +
+                        archiveFormat.extension());
                     artifact.getEffectivePath(context);
                 }
                 jlink.addOutput(artifact);

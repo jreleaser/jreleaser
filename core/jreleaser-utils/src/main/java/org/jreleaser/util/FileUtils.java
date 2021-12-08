@@ -162,6 +162,7 @@ public final class FileUtils {
     }
 
     private static void tar(Path src, TarArchiveOutputStream out) throws IOException {
+        out.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
         Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
