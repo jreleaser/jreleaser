@@ -20,6 +20,8 @@ package org.jreleaser.maven.plugin;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static org.jreleaser.util.StringUtils.isBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.8.0
@@ -84,6 +86,14 @@ public class Archive extends AbstractAssembler {
         ZIP,
         TAR,
         TGZ,
-        TAR_GZ
+        TAR_GZ,
+        TAR_BZ2;
+
+        public static Format of(String str) {
+            if (isBlank(str)) return null;
+            return Format.valueOf(str.replaceAll(" ", "_")
+                .replaceAll("-", "_")
+                .toUpperCase().trim());
+        }
     }
 }

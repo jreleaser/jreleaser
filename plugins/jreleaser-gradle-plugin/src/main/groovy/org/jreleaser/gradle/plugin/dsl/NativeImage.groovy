@@ -35,6 +35,10 @@ interface NativeImage extends JavaAssembler {
 
     ListProperty<String> getArgs()
 
+    Property<org.jreleaser.model.Archive.Format> getArchiveFormat()
+
+    void setArchiveFormat(String str)
+
     void addArg(String arg)
 
     void graal(Action<? super Artifact> action)

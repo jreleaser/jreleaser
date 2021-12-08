@@ -33,11 +33,13 @@ public class NativeImage extends AbstractJavaAssembler {
 
     private String imageName;
     private String imageNameTransform;
+    private Archive.Format archiveFormat;
 
     void setAll(NativeImage nativeImage) {
         super.setAll(nativeImage);
         this.imageName = nativeImage.imageName;
         this.imageNameTransform = nativeImage.imageNameTransform;
+        this.archiveFormat = nativeImage.archiveFormat;
         setGraal(nativeImage.graal);
         setMainJar(nativeImage.mainJar);
         setArgs(nativeImage.args);
@@ -59,6 +61,18 @@ public class NativeImage extends AbstractJavaAssembler {
 
     public void setImageNameTransform(String imageNameTransform) {
         this.imageNameTransform = imageNameTransform;
+    }
+
+    public Archive.Format getArchiveFormat() {
+        return archiveFormat;
+    }
+
+    public void setArchiveFormat(Archive.Format archiveFormat) {
+        this.archiveFormat = archiveFormat;
+    }
+
+    public void setArchiveFormat(String archiveFormat) {
+        this.archiveFormat = Archive.Format.of(archiveFormat);
     }
 
     public Artifact getGraal() {

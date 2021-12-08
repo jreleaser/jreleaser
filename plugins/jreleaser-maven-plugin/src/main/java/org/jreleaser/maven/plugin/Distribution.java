@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.util.StringUtils.isBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -79,9 +81,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     }
 
     public void setType(String type) {
-        this.type = DistributionType.valueOf(type.replaceAll(" ", "_")
-            .replaceAll("-", "_")
-            .toUpperCase());
+        this.type = DistributionType.of(type);
     }
 
     public String getName() {
@@ -159,6 +159,13 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         JLINK,
         SINGLE_JAR,
         NATIVE_IMAGE,
-        NATIVE_PACKAGE
+        NATIVE_PACKAGE;
+
+        public static DistributionType of(String str) {
+            if (isBlank(str)) return null;
+            return DistributionType.valueOf(str.replaceAll(" ", "_")
+                .replaceAll("-", "_")
+                .toUpperCase().trim());
+        }
     }
 }

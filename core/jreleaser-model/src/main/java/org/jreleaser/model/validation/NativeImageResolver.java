@@ -50,7 +50,9 @@ public abstract class NativeImageResolver extends Validator {
         Path image = context.getAssembleDirectory()
             .resolve(nativeImage.getName())
             .resolve(nativeImage.getType())
-            .resolve(nativeImage.getResolvedImageName(context) + "-" + platformReplaced + ".zip");
+            .resolve(nativeImage.getResolvedImageName(context) + "-" +
+                platformReplaced + "." +
+                nativeImage.getArchiveFormat().extension());
 
         if (!Files.exists(image)) {
             errors.assembly(RB.$("validation_missing_assembly",
@@ -60,7 +62,9 @@ public abstract class NativeImageResolver extends Validator {
             artifact.setExtraProperties(nativeImage.getExtraProperties());
             artifact.activate();
             if (isNotBlank(nativeImage.getImageNameTransform())) {
-                artifact.setTransform(nativeImage.getResolvedImageNameTransform(context) + "-" + platformReplaced + ".zip");
+                artifact.setTransform(nativeImage.getResolvedImageNameTransform(context) + "-" +
+                    platformReplaced + "." +
+                    nativeImage.getArchiveFormat().extension());
                 artifact.getEffectivePath(context);
             }
             nativeImage.addOutput(artifact);

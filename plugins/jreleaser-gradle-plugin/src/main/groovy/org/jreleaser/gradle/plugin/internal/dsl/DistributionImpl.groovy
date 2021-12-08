@@ -111,8 +111,10 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
-    void setDistributionType(String distributionType) {
-        this.distributionType.set(DistributionType.of(distributionType))
+    void setDistributionType(String str) {
+        if (isNotBlank(str)) {
+            this.distributionType.set(DistributionType.of(str.trim()))
+        }
     }
 
     @Override

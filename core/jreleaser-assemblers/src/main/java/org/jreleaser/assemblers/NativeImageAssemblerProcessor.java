@@ -78,7 +78,9 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         if (isNotBlank(assembler.getImageNameTransform())) {
             String platform = assembler.getGraal().getPlatform();
             String platformReplaced = assembler.getPlatform().applyReplacements(platform);
-            image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" + platformReplaced + ".zip");
+            image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" +
+                platformReplaced + "." +
+                assembler.getArchiveFormat().extension());
             image.getEffectivePath(context);
         }
     }
@@ -147,12 +149,25 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             copyFiles(context, distDirectory);
             copyFileSets(context, distDirectory);
 
-            Path imageZip = assembleDirectory.resolve(finalImageName + ".zip");
-            FileUtils.zip(tempDirectory, imageZip);
+            Path imageArchive = assembleDirectory.resolve(finalImageName + "." + assembler.getArchiveFormat().extension());
+            switch (assembler.getArchiveFormat()) {
+                case ZIP:
+                    FileUtils.zip(tempDirectory, imageArchive);
+                    break;
+                case TAR:
+                    FileUtils.tar(tempDirectory, imageArchive);
+                    break;
+                case TGZ:
+                case TAR_GZ:
+                    FileUtils.tgz(tempDirectory, imageArchive);
+                    break;
+                case TAR_BZ2:
+                    FileUtils.bz2(tempDirectory, imageArchive);
+            }
 
-            context.getLogger().debug("- {}", imageZip.getFileName());
+            context.getLogger().debug("- {}", imageArchive.getFileName());
 
-            return Artifact.of(imageZip, platform);
+            return Artifact.of(imageArchive, platform);
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

@@ -30,6 +30,7 @@ import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Glob
 import org.jreleaser.gradle.plugin.dsl.NativeImage
 import org.jreleaser.model.Active
+import org.jreleaser.model.Archive
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -46,6 +47,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     String name
     final Property<String> imageName
     final Property<String> imageNameTransform
+    final Property<Archive.Format> archiveFormat
     final ListProperty<String> args
     final JavaImpl java
     final PlatformImpl platform
@@ -61,6 +63,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
 
         imageName = objects.property(String).convention(Providers.notDefined())
         imageNameTransform = objects.property(String).convention(Providers.notDefined())
+        archiveFormat = objects.property(Archive.Format).convention(Archive.Format.ZIP)
         args = objects.listProperty(String).convention(Providers.notDefined())
         java = objects.newInstance(JavaImpl, objects)
         platform = objects.newInstance(PlatformImpl, objects)
@@ -84,6 +87,13 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
                 glob
             }
         })
+    }
+
+    @Override
+    void setArchiveFormat(String str) {
+        if (isNotBlank(str)) {
+            this.archiveFormat.set(Archive.Format.of(str.trim()))
+        }
     }
 
     @Internal
@@ -161,6 +171,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         nativeImage.platform = platform.toModel()
         if (imageName.present) nativeImage.imageName = imageName.get()
         if (imageNameTransform.present) nativeImage.imageNameTransform = imageNameTransform.get()
+        nativeImage.archiveFormat = archiveFormat.get()
         nativeImage.args = (List<String>) args.getOrElse([])
         if (graal.isSet()) nativeImage.graal = graal.toModel()
         if (mainJar.isSet()) nativeImage.mainJar = mainJar.toModel()

@@ -853,6 +853,7 @@ public final class JReleaserModelConverter {
         a.setMainJar(convertArtifact(nativeImage.getMainJar()));
         a.setImageName(tr(nativeImage.getImageName()));
         a.setImageNameTransform(tr(nativeImage.getImageNameTransform()));
+        a.setArchiveFormat(tr(nativeImage.getArchiveFormat().name()));
         a.setJars(convertGlobs(nativeImage.getJars()));
         a.setFiles(convertGlobs(nativeImage.getFiles()));
         a.setFileSets(convertFileSets(nativeImage.getFileSets()));

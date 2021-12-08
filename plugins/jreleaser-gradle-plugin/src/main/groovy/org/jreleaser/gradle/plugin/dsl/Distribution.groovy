@@ -38,7 +38,7 @@ interface Distribution extends Activatable, ExtraProperties, Packagers {
 
     ListProperty<String> getTags()
 
-    void setDistributionType(String distributionType)
+    void setDistributionType(String str)
 
     void addTag(String tag)
 

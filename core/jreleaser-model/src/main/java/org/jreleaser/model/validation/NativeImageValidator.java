@@ -19,6 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
+import org.jreleaser.model.Archive;
 import org.jreleaser.model.FileSet;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.NativeImage;
@@ -83,6 +84,9 @@ public abstract class NativeImageValidator extends Validator {
         }
         if (isBlank(nativeImage.getMainJar().getPath())) {
             errors.configuration(RB.$("validation_must_not_be_null", "nativeImage." + nativeImage.getName() + ".mainJar.path"));
+        }
+        if (null == nativeImage.getArchiveFormat()) {
+            nativeImage.setArchiveFormat(Archive.Format.ZIP);
         }
 
         validateGlobs(context,
