@@ -166,6 +166,7 @@ distributions:
       active: always
       remoteBuild: true
       title: JReleaser
+      iconUrl: 'https://rawcdn.githack.com/jreleaser/jreleaser/0934fa1fa3f0bd09c0c8c39fbdeb5df2ce507457/src/media/icon_128x128.png'
       bucket:
         active: release
     jbang:
