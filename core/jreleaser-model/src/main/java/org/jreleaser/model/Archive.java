@@ -69,7 +69,7 @@ public class Archive extends AbstractAssembler {
         props.putAll(props());
         String result = applyTemplate(archiveName, props);
         if (isAttachPlatform()) {
-            result += "-" + PlatformUtils.getCurrentFull();
+            result += "-" + getPlatform().applyReplacements(PlatformUtils.getCurrentFull());
         }
         return result;
     }

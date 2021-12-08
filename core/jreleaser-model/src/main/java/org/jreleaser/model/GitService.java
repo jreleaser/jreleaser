@@ -778,8 +778,9 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         String osArch = PlatformUtils.getDetectedArch();
         props.put(Constants.KEY_OS_NAME, osName);
         props.put(Constants.KEY_OS_ARCH, osArch);
-        props.put(Constants.KEY_OS_PLATFORM, osName + "-" + osArch);
         props.put(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
+        props.put(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
+        props.put(Constants.KEY_OS_PLATFORM_REPLACED, model.getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
 
         props.put(Constants.KEY_REPO_HOST, host);
         props.put(Constants.KEY_REPO_OWNER, owner);

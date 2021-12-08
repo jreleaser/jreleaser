@@ -42,6 +42,7 @@ class ArchiveImpl extends AbstractAssembler implements Archive {
     final Property<DistributionType> distributionType
     final Property<Boolean> attachPlatform
     final SetProperty<org.jreleaser.model.Archive.Format> formats
+    final PlatformImpl platform
 
     @Inject
     ArchiveImpl(ObjectFactory objects) {
@@ -50,6 +51,7 @@ class ArchiveImpl extends AbstractAssembler implements Archive {
         distributionType = objects.property(DistributionType).convention(DistributionType.JAVA_BINARY)
         attachPlatform = objects.property(Boolean).convention(Providers.notDefined())
         formats = objects.setProperty(org.jreleaser.model.Archive.Format).convention(Providers.notDefined())
+        platform = objects.newInstance(PlatformImpl, objects)
     }
 
     @Internal
@@ -79,6 +81,7 @@ class ArchiveImpl extends AbstractAssembler implements Archive {
         fillProperties(archive)
         if (archiveName.present) archive.archiveName = archiveName.get()
         if (attachPlatform.present) archive.attachPlatform = attachPlatform.get()
+        archive.platform = platform.toModel()
         archive.distributionType = distributionType.get()
         archive.formats = (Set<org.jreleaser.model.Archive.Format>) formats.getOrElse([] as Set<org.jreleaser.model.Archive.Format>)
         archive

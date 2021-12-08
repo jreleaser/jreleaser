@@ -29,6 +29,7 @@ import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Packagers
+import org.jreleaser.gradle.plugin.dsl.Platform
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
 import org.jreleaser.gradle.plugin.dsl.Signing
@@ -55,6 +56,8 @@ interface JReleaserExtension {
 
     Project getProject()
 
+    Platform getPlatform()
+
     Release getRelease()
 
     Upload getUpload()
@@ -75,6 +78,8 @@ interface JReleaserExtension {
 
     void project(Action<? super Project> action)
 
+    void platform(Action<? super Platform> action)
+
     void files(Action<? super Files> action)
 
     void release(Action<? super Release> action)
@@ -94,6 +99,8 @@ interface JReleaserExtension {
     void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action)
 
     void project(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Project) Closure<Void> action)
+
+    void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action)
 
     void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Files) Closure<Void> action)
 

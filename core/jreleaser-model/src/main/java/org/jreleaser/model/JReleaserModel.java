@@ -44,6 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class JReleaserModel implements Domain {
     private final Environment environment = new Environment();
     private final Project project = new Project();
+    private final Platform platform = new Platform();
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
     private final Announce announce = new Announce();
@@ -90,6 +91,14 @@ public class JReleaserModel implements Domain {
 
     public void setEnvironment(Environment environment) {
         this.environment.setAll(environment);
+    }
+
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform.setAll(platform);
     }
 
     public Project getProject() {
@@ -201,8 +210,9 @@ public class JReleaserModel implements Domain {
 
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
-        if (environment.isSet()) map.put("environment", environment.asMap(full));
+        if (full || environment.isSet()) map.put("environment", environment.asMap(full));
         map.put("project", project.asMap(full));
+        if (full || platform.isSet()) map.put("platform", platform.asMap(full));
         map.put("release", release.asMap(full));
         map.put("checksum", checksum.asMap(full));
         if (full || signing.isEnabled()) map.put("signing", signing.asMap(full));
@@ -230,8 +240,9 @@ public class JReleaserModel implements Domain {
         String osArch = PlatformUtils.getDetectedArch();
         props.put(Constants.KEY_OS_NAME, osName);
         props.put(Constants.KEY_OS_ARCH, osArch);
-        props.put(Constants.KEY_OS_PLATFORM, osName + "-" + osArch);
         props.put(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
+        props.put(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
+        props.put(Constants.KEY_OS_PLATFORM_REPLACED, getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
 
         applyTemplates(props, project.getResolvedExtraProperties());
         props.put(Constants.KEY_ZONED_DATE_TIME_NOW, now);

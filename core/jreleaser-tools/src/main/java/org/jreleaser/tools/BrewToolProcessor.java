@@ -126,7 +126,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
                 for (Artifact artifact : distribution.getArtifacts()) {
                     if (!artifact.isActive()) continue;
                     if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
-                        props.put(Constants.KEY_DISTRIBUTION_URL, resolveArtifactUrl(props, artifact));
+                        props.put(Constants.KEY_DISTRIBUTION_URL, resolveArtifactUrl(props, distribution, artifact));
                         props.put(Constants.KEY_BREW_CASK_HAS_BINARY, true);
                         break;
                     }
@@ -141,7 +141,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
                     isTrue(artifact.getExtraProperties().get("skipBrew"))) continue;
 
                 String template = null;
-                String artifactUrl = resolveArtifactUrl(props, artifact);
+                String artifactUrl = resolveArtifactUrl(props, distribution, artifact);
                 if (PlatformUtils.isMac(artifact.getPlatform())) {
                     if (artifact.getPlatform().contains("aarch64")) {
                         template = TPL_MAC_ARM;
@@ -182,13 +182,16 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             .collect(Collectors.toList()));
     }
 
-    private String resolveArtifactUrl(Map<String, Object> props, Artifact artifact) {
+    private String resolveArtifactUrl(Map<String, Object> props, Distribution distribution, Artifact artifact) {
         String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
         Map<String, Object> newProps = new LinkedHashMap<>(props);
         newProps.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
-        newProps.put(Constants.KEY_ARTIFACT_PLATFORM, artifact.getPlatform());
+        String platform = artifact.getPlatform();
+        if (isNotBlank(platform)) newProps.put(Constants.KEY_ARTIFACT_PLATFORM, platform);
+        if (isNotBlank(platform)) newProps.put(Constants.KEY_ARTIFACT_PLATFORM_REPLACED, distribution.getPlatform().applyReplacements(platform));
+        if (isNotBlank(platform)) newProps.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);
+        if (isNotBlank(platform)) newProps.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, distribution.getPlatform().applyReplacements(platform));
         newProps.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, getFilename(artifactFileName, tool.getSupportedExtensions()));
-        newProps.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM, artifact.getPlatform());
         return applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
     }
 

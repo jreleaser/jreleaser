@@ -18,28 +18,14 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.provider.Property
+import org.gradle.api.provider.MapProperty
 
 /**
  *
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 1.0.0
  */
 @CompileStatic
-interface Assembler extends Activatable, ExtraProperties {
-    Property<Boolean> getExported()
-
-    NamedDomainObjectContainer<FileSet> getFileSets()
-
-    Platform getPlatform()
-
-    void fileSet(Action<? super FileSet> action)
-
-    void platform(Action<? super Platform> action)
-
-    void fileSet(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FileSet) Closure<Void> action)
-
-    void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action)
+interface Platform {
+    MapProperty<String, String> getReplacements()
 }

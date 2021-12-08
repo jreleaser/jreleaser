@@ -591,8 +591,9 @@ public class Project implements Domain, ExtraProperties {
             String osArch = PlatformUtils.getDetectedArch();
             props.put(Constants.KEY_OS_NAME, osName);
             props.put(Constants.KEY_OS_ARCH, osArch);
-            props.put(Constants.KEY_OS_PLATFORM, osName + "-" + osArch);
             props.put(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
+            props.put(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
+            props.put(Constants.KEY_OS_PLATFORM_REPLACED, model.getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
 
             applyTemplates(props, project.getResolvedExtraProperties());
             props.put(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());

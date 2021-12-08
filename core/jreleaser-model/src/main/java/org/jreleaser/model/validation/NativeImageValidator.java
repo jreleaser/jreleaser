@@ -22,6 +22,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.FileSet;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.NativeImage;
+import org.jreleaser.model.Platform;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -58,6 +59,14 @@ public abstract class NativeImageValidator extends Validator {
             return;
         }
 
+        if (null == nativeImage.getMainJar()) {
+            errors.configuration(RB.$("validation_is_null", "nativeImage." + nativeImage.getName() + ".mainJar"));
+            return;
+        }
+
+        Platform platform = nativeImage.getPlatform().merge(context.getModel().getPlatform());
+        nativeImage.setPlatform(platform);
+
         if (isBlank(nativeImage.getExecutable())) {
             nativeImage.setExecutable(nativeImage.getName());
         }
@@ -71,11 +80,6 @@ public abstract class NativeImageValidator extends Validator {
         }
         if (isBlank(nativeImage.getGraal().getPlatform())) {
             nativeImage.getGraal().setPlatform(PlatformUtils.getCurrentFull());
-        }
-
-        if (null == nativeImage.getMainJar()) {
-            errors.configuration(RB.$("validation_is_null", "nativeImage." + nativeImage.getName() + ".mainJar"));
-            return;
         }
         if (isBlank(nativeImage.getMainJar().getPath())) {
             errors.configuration(RB.$("validation_must_not_be_null", "nativeImage." + nativeImage.getName() + ".mainJar.path"));

@@ -31,6 +31,7 @@ public interface Constants {
     String KEY_ZONED_DATE_TIME_NOW = "__ZonedDateTime_now__";
     String KEY_TIMESTAMP = "timestamp";
     String KEY_PLATFORM = "platform";
+    String KEY_PLATFORM_REPLACED = "platformReplaced";
     String KEY_COMMIT_SHORT_HASH = "commitShortHash";
     String KEY_COMMIT_FULL_HASH = "commitFullHash";
 
@@ -87,6 +88,7 @@ public interface Constants {
     String KEY_OS_NAME = "osName";
     String KEY_OS_ARCH = "osArch";
     String KEY_OS_PLATFORM = "osPlatform";
+    String KEY_OS_PLATFORM_REPLACED = "osPlatformReplaced";
     String KEY_OS_VERSION = "osVersion";
 
     // Release
@@ -123,6 +125,7 @@ public interface Constants {
     String KEY_DISTRIBUTION_SHA_256 = "distributionSha256";
     String KEY_DISTRIBUTION_ARTIFACT = "distributionArtifact";
     String KEY_DISTRIBUTION_ARTIFACT_PLATFORM = "distributionArtifactPlatform";
+    String KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED = "distributionArtifactPlatformReplaced";
     String KEY_DISTRIBUTION_ARTIFACT_NAME = "distributionArtifactName";
     String KEY_DISTRIBUTION_ARTIFACT_SIZE = "distributionArtifactSize";
     String KEY_DISTRIBUTION_ARTIFACT_FILE_NAME = "distributionArtifactFileName";
@@ -138,6 +141,7 @@ public interface Constants {
 
     // Artifact
     String KEY_ARTIFACT_PLATFORM = "artifactPlatform";
+    String KEY_ARTIFACT_PLATFORM_REPLACED = "artifactPlatformReplaced";
     String KEY_ARTIFACT_FILE_NAME = "artifactFileName";
     String KEY_ARTIFACT_NAME = "artifactName";
     String KEY_ARTIFACT_SIZE = "artifactSize";

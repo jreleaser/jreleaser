@@ -44,11 +44,17 @@ interface Distribution extends Activatable, ExtraProperties, Packagers {
 
     Java getJava()
 
+    Platform getPlatform()
+
     void artifact(Action<? super Artifact> action)
 
     void java(Action<? super Java> action)
 
+    void platform(Action<? super Platform> action)
+
     void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
+
+    void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action)
 }

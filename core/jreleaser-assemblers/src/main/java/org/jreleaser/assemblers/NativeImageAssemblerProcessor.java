@@ -76,7 +76,9 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         // run native-image
         Artifact image = nativeImage(assembleDirectory, graalPath, jars);
         if (isNotBlank(assembler.getImageNameTransform())) {
-            image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" + assembler.getGraal().getPlatform() + ".zip");
+            String platform = assembler.getGraal().getPlatform();
+            String platformReplaced = assembler.getPlatform().applyReplacements(platform);
+            image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" + platformReplaced + ".zip");
             image.getEffectivePath(context);
         }
     }
@@ -98,7 +100,9 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
     }
 
     private Artifact nativeImage(Path assembleDirectory, Path graalPath, Set<Path> jars) throws AssemblerProcessingException {
-        String finalImageName = assembler.getResolvedImageName(context) + "-" + assembler.getGraal().getPlatform();
+        String platform = assembler.getGraal().getPlatform();
+        String platformReplaced = assembler.getPlatform().applyReplacements(platform);
+        String finalImageName = assembler.getResolvedImageName(context) + "-" + platformReplaced;
 
         String executable = assembler.getExecutable();
         context.getLogger().info("- {}", finalImageName);
@@ -148,7 +152,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
 
             context.getLogger().debug("- {}", imageZip.getFileName());
 
-            return Artifact.of(imageZip, assembler.getGraal().getPlatform());
+            return Artifact.of(imageZip, platform);
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

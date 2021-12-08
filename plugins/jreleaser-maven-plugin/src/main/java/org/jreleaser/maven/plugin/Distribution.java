@@ -33,6 +33,8 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final Java java = new Java();
+    private final Platform platform = new Platform();
+
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;
     private String executable;
@@ -47,6 +49,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.executable = distribution.executable;
         this.executableExtension = distribution.executableExtension;
         this.java.setAll(distribution.java);
+        setPlatform(distribution.platform);
         setTags(distribution.tags);
         setExtraProperties(distribution.extraProperties);
         setArtifacts(distribution.artifacts);
@@ -111,6 +114,14 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
 
     public void setJava(Java java) {
         this.java.setAll(java);
+    }
+
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform.setAll(platform);
     }
 
     public Set<Artifact> getArtifacts() {

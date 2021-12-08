@@ -111,7 +111,6 @@ public class CalVerTest {
         );
     }
 
-
     private static Stream<Arguments> version_comparison() {
         return Stream.of(
             Arguments.of("YYYY", "2020", "2021"),

@@ -64,6 +64,7 @@ import org.jreleaser.maven.plugin.Mattermost;
 import org.jreleaser.maven.plugin.Milestone;
 import org.jreleaser.maven.plugin.NativeImage;
 import org.jreleaser.maven.plugin.Packagers;
+import org.jreleaser.maven.plugin.Platform;
 import org.jreleaser.maven.plugin.Plug;
 import org.jreleaser.maven.plugin.Project;
 import org.jreleaser.maven.plugin.Registry;
@@ -148,6 +149,7 @@ public final class JReleaserModelConverter {
         JReleaserModel jreleaserModel = new JReleaserModel();
         jreleaserModel.setEnvironment(convertEnvironment(jreleaser.getEnvironment()));
         jreleaserModel.setProject(convertProject(jreleaser.getProject()));
+        jreleaserModel.setPlatform(convertPlatform(jreleaser.getPlatform()));
         jreleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
         jreleaserModel.setUpload(convertUpload(jreleaser.getUpload()));
         jreleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
@@ -186,6 +188,12 @@ public final class JReleaserModelConverter {
         p.setAuthors(tr(project.getAuthors()));
         p.setExtraProperties(project.getExtraProperties());
         p.setJava(convertJava(project.getJava()));
+        return p;
+    }
+
+    private static org.jreleaser.model.Platform convertPlatform(Platform platform) {
+        org.jreleaser.model.Platform p = new org.jreleaser.model.Platform();
+        p.setReplacements(platform.getReplacements());
         return p;
     }
 
@@ -747,6 +755,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Archive convertArchive(Archive archive) {
         org.jreleaser.model.Archive a = new org.jreleaser.model.Archive();
+        a.setPlatform(convertPlatform(archive.getPlatform()));
         a.setExported(archive.isExported());
         a.setName(tr(archive.getName()));
         a.setActive(tr(archive.resolveActive()));
@@ -789,6 +798,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Jlink convertJlink(Jlink jlink) {
         org.jreleaser.model.Jlink a = new org.jreleaser.model.Jlink();
+        a.setPlatform(convertPlatform(jlink.getPlatform()));
         a.setExported(jlink.isExported());
         a.setName(tr(jlink.getName()));
         a.setActive(tr(jlink.resolveActive()));
@@ -831,6 +841,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.NativeImage convertNativeImage(NativeImage nativeImage) {
         org.jreleaser.model.NativeImage a = new org.jreleaser.model.NativeImage();
+        a.setPlatform(convertPlatform(nativeImage.getPlatform()));
         a.setExported(nativeImage.isExported());
         a.setName(tr(nativeImage.getName()));
         a.setActive(tr(nativeImage.resolveActive()));
@@ -895,6 +906,7 @@ public final class JReleaserModelConverter {
         d.setExecutable(tr(distribution.getExecutable()));
         d.setExecutableExtension(tr(distribution.getExecutableExtension()));
         d.setJava(convertJava(distribution.getJava()));
+        d.setPlatform(convertPlatform(distribution.getPlatform()));
         d.setTags(tr(distribution.getTags()));
         d.setExtraProperties(distribution.getExtraProperties());
         d.setArtifacts(convertArtifacts(distribution.getArtifacts()));

@@ -48,6 +48,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     final Property<String> imageNameTransform
     final ListProperty<String> args
     final JavaImpl java
+    final PlatformImpl platform
 
     private final ArtifactImpl graal
     private final ArtifactImpl mainJar
@@ -62,6 +63,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         imageNameTransform = objects.property(String).convention(Providers.notDefined())
         args = objects.listProperty(String).convention(Providers.notDefined())
         java = objects.newInstance(JavaImpl, objects)
+        platform = objects.newInstance(PlatformImpl, objects)
         graal = objects.newInstance(ArtifactImpl, objects)
         mainJar = objects.newInstance(ArtifactImpl, objects)
         graal.setName('graal')
@@ -156,6 +158,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         nativeImage.name = name
         fillProperties(nativeImage)
         nativeImage.java = java.toModel()
+        nativeImage.platform = platform.toModel()
         if (imageName.present) nativeImage.imageName = imageName.get()
         if (imageNameTransform.present) nativeImage.imageNameTransform = imageNameTransform.get()
         nativeImage.args = (List<String>) args.getOrElse([])

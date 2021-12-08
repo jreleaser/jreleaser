@@ -265,9 +265,11 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
         for (int i = 0; i < activeArtifacts.size(); i++) {
             Artifact artifact = activeArtifacts.get(i);
-            String platform = isNotBlank(artifact.getPlatform()) ? capitalize(artifact.getPlatform()) : "";
+            String platform = artifact.getPlatform();
+            String artifactPlatform = isNotBlank(platform) ? capitalize(platform) : "";
+            String artifactPlatformReplaced = isNotBlank(artifactPlatform) ? capitalize(distribution.getPlatform().applyReplacements(platform)) : "";
             // add extra properties without clobbering existing keys
-            Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact" + platform);
+            Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact" + artifactPlatform);
             artifactProps.keySet().stream()
                 .filter(k -> !props.containsKey(k))
                 .forEach(k -> props.put(k, artifactProps.get(k)));
@@ -284,18 +286,25 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
             String artifactFileName = artifactPath.getFileName().toString();
             String artifactName = getFilename(artifactFileName, tool.getSupportedExtensions());
-            props.put("artifact" + platform + "Size", artifactSize);
-            props.put("artifact" + platform + "Name", artifactName);
-            props.put("artifact" + platform + "FileName", artifactFileName);
+            props.put("artifact" + artifactPlatform + "Size", artifactSize);
+            props.put("artifact" + artifactPlatform + "Name", artifactName);
+            props.put("artifact" + artifactPlatform + "FileName", artifactFileName);
+            props.put("artifact" + artifactPlatformReplaced + "Size", artifactSize);
+            props.put("artifact" + artifactPlatformReplaced + "Name", artifactName);
+            props.put("artifact" + artifactPlatformReplaced + "FileName", artifactFileName);
             for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-                props.put("artifact" + platform + "Checksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
+                props.put("artifact" + artifactPlatform + "Checksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
+                props.put("artifact" + artifactPlatformReplaced + "Checksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
             }
             Map<String, Object> newProps = new LinkedHashMap<>(props);
             newProps.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
             String artifactUrl = applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
-            props.put("artifact" + platform + "Url", artifactUrl);
+            props.put("artifact" + artifactPlatform + "Url", artifactUrl);
+            props.put("artifact" + artifactPlatformReplaced + "Url", artifactUrl);
             props.putAll(context.getModel().getUpload()
-                .resolveDownloadUrls(context, distribution, artifact, "artifact" + platform));
+                .resolveDownloadUrls(context, distribution, artifact, "artifact" + artifactPlatform));
+            props.putAll(context.getModel().getUpload()
+                .resolveDownloadUrls(context, distribution, artifact, "artifact" + artifactPlatformReplaced));
 
             if (0 == i) {
                 props.putAll(context.getModel().getUpload()
@@ -310,7 +319,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, artifactName);
                 props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_SIZE, artifactSize);
-                props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM, artifact.getPlatform());
+                if(isNotBlank(platform)) props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);
+                if(isNotBlank(platform)) props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, distribution.getPlatform().applyReplacements(platform));
                 props.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
                 props.put(Constants.KEY_ARTIFACT_NAME, artifactName);
                 props.put(Constants.KEY_ARTIFACT_SIZE, artifactSize);

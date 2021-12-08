@@ -26,6 +26,10 @@ import java.util.Set;
  * @since 0.2.0
  */
 public interface Assembler extends Domain, Activatable, ExtraProperties {
+    Platform getPlatform();
+
+    void setPlatform(Platform platform);
+
     Distribution.DistributionType getDistributionType();
 
     String getType();

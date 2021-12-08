@@ -23,6 +23,7 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.FileSet;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jlink;
+import org.jreleaser.model.Platform;
 import org.jreleaser.model.Project;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
@@ -69,6 +70,9 @@ public abstract class JlinkValidator extends Validator {
             return;
         }
 
+        Platform platform = jlink.getPlatform().merge(context.getModel().getPlatform());
+        jlink.setPlatform(platform);
+
         if (isBlank(jlink.getImageName())) {
             jlink.setImageName(jlink.getJava().getGroupId() + "." +
                 jlink.getJava().getArtifactId() + "-" +
@@ -90,9 +94,9 @@ public abstract class JlinkValidator extends Validator {
             errors.configuration(RB.$("validation_jlink_jdk_platform", jlink.getName()));
         }
         // check platforms
-        byPlatform.forEach((platform, jdks) -> {
+        byPlatform.forEach((p, jdks) -> {
             if (jdks.size() > 1) {
-                errors.configuration(RB.$("validation_jlink_jdk_multiple_platforms", jlink.getName(), platform));
+                errors.configuration(RB.$("validation_jlink_jdk_multiple_platforms", jlink.getName(), p));
             }
         });
 

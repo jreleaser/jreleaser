@@ -50,6 +50,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final Java java = new Java();
+    private final Platform platform = new Platform();
     private Active active;
     private boolean enabled;
     private String name;
@@ -65,6 +66,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.type = distribution.type;
         this.executable = distribution.executable;
         this.executableExtension = distribution.executableExtension;
+        setPlatform(distribution.platform);
         setJava(distribution.java);
         setTags(distribution.tags);
         setExtraProperties(distribution.extraProperties);
@@ -118,6 +120,14 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         }
         enabled = active.check(project);
         return enabled;
+    }
+
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform.setAll(platform);
     }
 
     @Override
@@ -310,6 +320,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         props.put("type", type);
         props.put("executable", executable);
         props.put("executableExtension", executableExtension);
+        if (full || platform.isSet()) props.put("platform", platform.asMap(full));
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         int i = 0;

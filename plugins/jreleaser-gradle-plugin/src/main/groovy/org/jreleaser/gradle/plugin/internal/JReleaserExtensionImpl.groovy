@@ -35,6 +35,7 @@ import org.jreleaser.gradle.plugin.dsl.Checksum
 import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Packagers
+import org.jreleaser.gradle.plugin.dsl.Platform
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Release
 import org.jreleaser.gradle.plugin.dsl.Signing
@@ -46,6 +47,7 @@ import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.EnvironmentImpl
 import org.jreleaser.gradle.plugin.internal.dsl.FilesImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
+import org.jreleaser.gradle.plugin.internal.dsl.PlatformImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl
 import org.jreleaser.gradle.plugin.internal.dsl.SigningImpl
@@ -71,6 +73,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final Property<Boolean> gitRootSearch
     final EnvironmentImpl environment
     final ProjectImpl project
+    final PlatformImpl platform
     final ReleaseImpl release
     final UploadImpl upload
     final PackagersImpl packagers
@@ -96,6 +99,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         gitRootSearch = objects.property(Boolean).convention(false)
         environment = objects.newInstance(EnvironmentImpl, objects)
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)
+        platform = objects.newInstance(PlatformImpl, objects)
         release = objects.newInstance(ReleaseImpl, objects)
         upload = objects.newInstance(UploadImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)
@@ -129,6 +133,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     @Override
     void project(Action<? super Project> action) {
         action.execute(project)
+    }
+
+    @Override
+    void platform(Action<? super Platform> action) {
+        action.execute(platform)
     }
 
     @Override
@@ -179,6 +188,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     @Override
     void project(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Project) Closure<Void> action) {
         ConfigureUtil.configure(action, project)
+    }
+
+    @Override
+    void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action) {
+        ConfigureUtil.configure(action, platform)
     }
 
     @Override
@@ -233,6 +247,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         JReleaserModel jreleaser = new JReleaserModel()
         jreleaser.environment = environment.toModel(gradleProject)
         jreleaser.project = project.toModel()
+        jreleaser.platform = platform.toModel()
         jreleaser.release = release.toModel()
         jreleaser.upload = upload.toModel()
         jreleaser.packagers = packagers.toModel()

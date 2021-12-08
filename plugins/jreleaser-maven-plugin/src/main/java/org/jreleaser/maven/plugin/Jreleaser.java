@@ -27,6 +27,7 @@ import java.util.Map;
 public class Jreleaser {
     private final Environment environment = new Environment();
     private final Project project = new Project();
+    private final Platform platform = new Platform();
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
     private final Upload upload = new Upload();
@@ -51,6 +52,14 @@ public class Jreleaser {
 
     public void setProject(Project project) {
         this.project.setAll(project);
+    }
+
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform.setAll(platform);
     }
 
     public Release getRelease() {

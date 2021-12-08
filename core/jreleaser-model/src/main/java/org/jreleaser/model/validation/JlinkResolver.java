@@ -51,19 +51,22 @@ public abstract class JlinkResolver extends Validator {
         for (Artifact targetJdk : jlink.getTargetJdks()) {
             if (!context.isPlatformSelected(targetJdk)) continue;
 
+            String platform = targetJdk.getPlatform();
+            String platformReplaced = jlink.getPlatform().applyReplacements(platform);
+
             Path image = baseOutputDirectory
-                .resolve(imageName + "-" + targetJdk.getPlatform() + ".zip")
+                .resolve(imageName + "-" + platformReplaced + ".zip")
                 .toAbsolutePath();
 
             if (!Files.exists(image)) {
                 errors.assembly(RB.$("validation_missing_assembly",
                     jlink.getType(), jlink.getName(), jlink.getName()));
             } else {
-                Artifact artifact = Artifact.of(image, targetJdk.getPlatform());
+                Artifact artifact = Artifact.of(image, platform);
                 artifact.setExtraProperties(jlink.getExtraProperties());
                 artifact.activate();
                 if (isNotBlank(jlink.getImageNameTransform())) {
-                    artifact.setTransform(jlink.getResolvedImageNameTransform(context) + "-" + targetJdk.getPlatform() + ".zip");
+                    artifact.setTransform(jlink.getResolvedImageNameTransform(context) + "-" + platformReplaced + ".zip");
                     artifact.getEffectivePath(context);
                 }
                 jlink.addOutput(artifact);

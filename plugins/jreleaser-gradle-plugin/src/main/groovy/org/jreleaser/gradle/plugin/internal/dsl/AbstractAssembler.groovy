@@ -28,6 +28,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Assembler
 import org.jreleaser.gradle.plugin.dsl.FileSet
+import org.jreleaser.gradle.plugin.dsl.Platform
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -84,8 +85,18 @@ abstract class AbstractAssembler implements Assembler {
     }
 
     @Override
+    void platform(Action<? super Platform> action) {
+        action.execute(platform)
+    }
+
+    @Override
     void fileSet(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FileSet) Closure<Void> action) {
         ConfigureUtil.configure(action, fileSets.maybeCreate("fileSet-${fileSets.size()}".toString()))
+    }
+
+    @Override
+    void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action) {
+        ConfigureUtil.configure(action, platform)
     }
 
     protected <A extends org.jreleaser.model.Assembler> void fillProperties(A assembler) {

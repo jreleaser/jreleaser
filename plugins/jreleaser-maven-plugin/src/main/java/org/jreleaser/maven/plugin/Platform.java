@@ -17,33 +17,25 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.List;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 1.0.0
  */
-public interface Assembler extends Activatable, ExtraProperties {
-    Platform getPlatform();
+public class Platform {
+    private final Map<String, String> replacements = new LinkedHashMap<>();
 
-    void setPlatform(Platform platform);
+    void setAll(Platform environment) {
+        setReplacements(environment.replacements);
+    }
 
-    String getName();
+    public Map<String, String> getReplacements() {
+        return replacements;
+    }
 
-    void setName(String name);
-
-    boolean isExported();
-
-    void setExported(boolean exported);
-
-    Set<Artifact> getOutputs();
-
-    void setOutputs(Set<Artifact> output);
-
-    void addOutput(Artifact artifact);
-
-    List<FileSet> getFileSets();
-
-    void setFileSets(List<FileSet> fileSets);
+    public void setReplacements(Map<String, String> replacements) {
+        this.replacements.putAll(replacements);
+    }
 }

@@ -34,6 +34,7 @@ import org.jreleaser.gradle.plugin.dsl.Docker
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Jbang
 import org.jreleaser.gradle.plugin.dsl.Macports
+import org.jreleaser.gradle.plugin.dsl.Platform
 import org.jreleaser.gradle.plugin.dsl.Scoop
 import org.jreleaser.gradle.plugin.dsl.Sdkman
 import org.jreleaser.gradle.plugin.dsl.Snap
@@ -63,6 +64,7 @@ class DistributionImpl implements Distribution {
     final ListProperty<String> tags
     final MapProperty<String, Object> extraProperties
     final JavaImpl java
+    final PlatformImpl platform
     final BrewImpl brew
     final ChocolateyImpl chocolatey
     final DockerImpl docker
@@ -96,6 +98,7 @@ class DistributionImpl implements Distribution {
         })
 
         java = objects.newInstance(JavaImpl, objects)
+        platform = objects.newInstance(PlatformImpl, objects)
         brew = objects.newInstance(BrewImpl, objects)
         chocolatey = objects.newInstance(ChocolateyImpl, objects)
         docker = objects.newInstance(DockerImpl, objects)
@@ -127,6 +130,11 @@ class DistributionImpl implements Distribution {
     @Override
     void java(Action<? super Java> action) {
         action.execute(java)
+    }
+
+    @Override
+    void platform(Action<? super Platform> action) {
+        action.execute(platform)
     }
 
     @Override
@@ -192,6 +200,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action) {
+        ConfigureUtil.configure(action, platform)
+    }
+
+    @Override
     void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Brew) Closure<Void> action) {
         ConfigureUtil.configure(action, brew)
     }
@@ -244,6 +257,7 @@ class DistributionImpl implements Distribution {
         if (executableExtension.present) distribution.executableExtension = executableExtension.get()
         distribution.type = distributionType.get()
         distribution.java = java.toModel()
+        distribution.platform = platform.toModel()
         for (ArtifactImpl artifact : artifacts) {
             distribution.addArtifact(artifact.toModel())
         }

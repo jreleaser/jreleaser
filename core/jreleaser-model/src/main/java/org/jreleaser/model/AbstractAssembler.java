@@ -37,7 +37,7 @@ abstract class AbstractAssembler implements Assembler {
     protected final Set<Artifact> outputs = new LinkedHashSet<>();
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected final List<FileSet> fileSets = new ArrayList<>();
-
+    private final Platform platform = new Platform();
     private final String type;
     protected String name;
     protected boolean enabled;
@@ -53,6 +53,7 @@ abstract class AbstractAssembler implements Assembler {
         this.enabled = assembler.enabled;
         this.exported = assembler.exported;
         this.name = assembler.name;
+        setPlatform(assembler.platform);
         setOutputs(assembler.outputs);
         setExtraProperties(assembler.extraProperties);
         setFileSets(assembler.fileSets);
@@ -87,6 +88,16 @@ abstract class AbstractAssembler implements Assembler {
         }
         enabled = active.check(project);
         return enabled;
+    }
+
+    @Override
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    @Override
+    public void setPlatform(Platform platform) {
+        this.platform.setAll(platform);
     }
 
     @Override
@@ -199,6 +210,7 @@ abstract class AbstractAssembler implements Assembler {
         props.put("enabled", isEnabled());
         props.put("exported", isExported());
         props.put("active", active);
+        if (full || platform.isSet()) props.put("platform", platform.asMap(full));
         asMap(full, props);
         Map<String, Map<String, Object>> mappedFileSets = new LinkedHashMap<>();
         for (int i = 0; i < fileSets.size(); i++) {

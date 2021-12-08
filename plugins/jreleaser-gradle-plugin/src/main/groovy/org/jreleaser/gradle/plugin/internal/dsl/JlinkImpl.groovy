@@ -54,6 +54,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
     final SetProperty<String> moduleNames
     final SetProperty<String> additionalModuleNames
     final JavaImpl java
+    final PlatformImpl platform
 
     private final JdepsImpl jdeps
     private final ArtifactImpl jdk
@@ -74,6 +75,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         moduleNames = objects.setProperty(String).convention(Providers.notDefined())
         additionalModuleNames = objects.setProperty(String).convention(Providers.notDefined())
         java = objects.newInstance(JavaImpl, objects)
+        platform = objects.newInstance(PlatformImpl, objects)
         jdeps = objects.newInstance(JdepsImpl, objects)
         jdk = objects.newInstance(ArtifactImpl, objects)
         mainJar = objects.newInstance(ArtifactImpl, objects)
@@ -210,6 +212,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         if (jdk.isSet()) jlink.jdk = jdk.toModel()
         if (mainJar.isSet()) jlink.mainJar = mainJar.toModel()
         jlink.java = java.toModel()
+        jlink.platform = platform.toModel()
         if (imageName.present) jlink.imageName = imageName.get()
         if (imageNameTransform.present) jlink.imageNameTransform = imageNameTransform.get()
         if (moduleName.present) jlink.moduleName = moduleName.get()

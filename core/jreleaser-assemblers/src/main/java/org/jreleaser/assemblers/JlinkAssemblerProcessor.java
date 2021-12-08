@@ -83,6 +83,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         String imageName = assembler.getResolvedImageName(context);
         for (Artifact targetJdk : assembler.getTargetJdks()) {
             String platform = targetJdk.getPlatform();
+            String platformReplaced = assembler.getPlatform().applyReplacements(platform);
             // copy jars to assembly
             Path jarsDirectory = inputsDirectory.resolve("jars");
             Path universalJarsDirectory = jarsDirectory.resolve("universal");
@@ -106,7 +107,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
 
             Artifact image = jlink(assembleDirectory, jdkPath, targetJdk, moduleNames, imageName);
             if (isNotBlank(assembler.getImageNameTransform())) {
-                image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" + platform + ".zip");
+                image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" + platformReplaced + ".zip");
                 image.getEffectivePath(context);
             }
         }
@@ -114,7 +115,8 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
 
     private Artifact jlink(Path assembleDirectory, Path jdkPath, Artifact targetJdk, Set<String> moduleNames, String imageName) throws AssemblerProcessingException {
         String platform = targetJdk.getPlatform();
-        String finalImageName = imageName + "-" + platform;
+        String platformReplaced = assembler.getPlatform().applyReplacements(platform);
+        String finalImageName = imageName + "-" + platformReplaced;
         context.getLogger().info("- {}", finalImageName);
 
         Path inputsDirectory = assembleDirectory.resolve("inputs");

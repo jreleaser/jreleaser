@@ -23,6 +23,7 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.FileSet;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Platform;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
@@ -56,6 +57,9 @@ public abstract class ArchiveValidator extends Validator {
             errors.configuration(RB.$("validation_must_not_be_blank", "archive.name"));
             return;
         }
+
+        Platform platform = archive.getPlatform().merge(context.getModel().getPlatform());
+        archive.setPlatform(platform);
 
         if (null == archive.getDistributionType()) {
             archive.setDistributionType(Distribution.DistributionType.BINARY);

@@ -32,6 +32,7 @@ abstract class AbstractAssembler implements Assembler {
     protected final Set<Artifact> output = new LinkedHashSet<>();
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected final List<FileSet> fileSets = new ArrayList<>();
+    private final Platform platform = new Platform();
 
     protected String name;
     protected boolean enabled;
@@ -46,6 +47,7 @@ abstract class AbstractAssembler implements Assembler {
         setOutputs(assembler.output);
         setExtraProperties(assembler.extraProperties);
         setFileSets(assembler.fileSets);
+        setPlatform(assembler.platform);
     }
 
     @Override
@@ -131,5 +133,13 @@ abstract class AbstractAssembler implements Assembler {
         if (null != file) {
             this.fileSets.add(file);
         }
+    }
+
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform.setAll(platform);
     }
 }
