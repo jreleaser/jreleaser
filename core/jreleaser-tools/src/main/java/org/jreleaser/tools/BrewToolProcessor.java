@@ -143,13 +143,13 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
                 String template = null;
                 String artifactUrl = resolveArtifactUrl(props, distribution, artifact);
                 if (PlatformUtils.isMac(artifact.getPlatform())) {
-                    if (artifact.getPlatform().contains("aarch64")) {
+                    if (artifact.getPlatform().contains("aarch_64")) {
                         template = TPL_MAC_ARM;
                     } else {
                         template = TPL_MAC_INTEL;
                     }
                 } else if (PlatformUtils.isLinux(artifact.getPlatform())) {
-                    if (artifact.getPlatform().contains("aarch64")) {
+                    if (artifact.getPlatform().contains("aarch_64")) {
                         template = TPL_LINUX_ARM;
                     } else {
                         template = TPL_LINUX_INTEL;

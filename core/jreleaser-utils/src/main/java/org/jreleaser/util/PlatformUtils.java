@@ -65,7 +65,7 @@ public final class PlatformUtils {
             "sparc_32",
             "sparc_64",
             "arm_32",
-            "aarch64",
+            "aarch_64",
             "mips_32",
             "mipsel_32",
             "mips_64",
@@ -213,17 +213,10 @@ public final class PlatformUtils {
     }
 
     public static String getDetectedArch() {
-        return denormalizeArch(OS_DETECTOR.get(Detector.DETECTED_ARCH));
+        return OS_DETECTOR.get(Detector.DETECTED_ARCH);
     }
 
     public static String getDetectedVersion() {
         return OS_DETECTOR.get(OsDetector.DETECTED_VERSION);
-    }
-
-    private static String denormalizeArch(String value) {
-        if ("aarch_64".equals(value)) {
-            return "aarch64";
-        }
-        return value;
     }
 }

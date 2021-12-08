@@ -215,14 +215,14 @@ public class SdkmanAnnouncer implements Announcer {
             return "UNIVERSAL";
         }
         if (platform.contains("mac") || platform.contains("osx")) {
-            return platform.contains("aarch64") ? "MAC_ARM64" : "MAC_OSX";
+            return platform.contains("aarch_64") ? "MAC_ARM64" : "MAC_OSX";
         } else if (platform.contains("win")) {
             return "WINDOWS_64";
         } else if (platform.contains("linux")) {
             if (platform.contains("x86_32")) return "LINUX_32";
             if (platform.contains("x86_64")) return "LINUX_64";
             if (platform.contains("arm_32")) return "LINUX_ARM32";
-            if (platform.contains("aarch64")) return "LINUX_ARM64";
+            if (platform.contains("aarch_64")) return "LINUX_ARM64";
             return "LINUX_32";
         }
 
