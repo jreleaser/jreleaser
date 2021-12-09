@@ -201,7 +201,6 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             props.put(KEY_BREW_MULTIPLATFORM, passThrough(String.join(System.lineSeparator() + "  ", multiPlatforms)));
         } else if ((distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == Distribution.DistributionType.SINGLE_JAR) &&
-            !isTrue(tool.getExtraProperties().get("javaSkip")) &&
             !isTrue(tool.getExtraProperties().get("skipJava"))) {
             tool.addDependency("openjdk@" + props.get(KEY_DISTRIBUTION_JAVA_VERSION));
         }
