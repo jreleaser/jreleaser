@@ -28,6 +28,8 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Chocolatey extends RepositoryTool {
+    Property<String> getPackageName()
+
     Property<String> getUsername()
 
     Property<String> getApiKey()

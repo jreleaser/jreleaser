@@ -38,6 +38,7 @@ public class Spec extends AbstractRepositoryTool {
     private final List<String> requires = new ArrayList<>();
     private final SpecRepository repository = new SpecRepository();
 
+    private String packageName;
     private String release;
 
     public Spec() {
@@ -46,9 +47,18 @@ public class Spec extends AbstractRepositoryTool {
 
     void setAll(Spec spec) {
         super.setAll(spec);
+        this.packageName = spec.packageName;
         this.release = spec.release;
         setRepository(spec.repository);
         setRequires(spec.requires);
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public String getRelease() {
@@ -79,6 +89,7 @@ public class Spec extends AbstractRepositoryTool {
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
+        props.put("packageName", packageName);
         props.put("release", release);
         props.put("requires", requires);
         props.put("repository", repository.asMap(full));

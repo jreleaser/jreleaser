@@ -45,6 +45,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  */
 @CompileStatic
 class SnapImpl extends AbstractRepositoryTool implements Snap {
+    final Property<String> packageName
     final Property<String> base
     final Property<String> grade
     final Property<String> confinement
@@ -60,6 +61,7 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     @Inject
     SnapImpl(ObjectFactory objects) {
         super(objects)
+        packageName = objects.property(String).convention(Providers.notDefined())
         base = objects.property(String).convention(Providers.notDefined())
         grade = objects.property(String).convention(Providers.notDefined())
         confinement = objects.property(String).convention(Providers.notDefined())
@@ -107,6 +109,7 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     @Internal
     boolean isSet() {
         super.isSet() ||
+            packageName.present ||
             base.present ||
             grade.present ||
             confinement.present ||
@@ -145,6 +148,7 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
         fillToolProperties(tool)
         fillTemplateToolProperties(tool)
         if (snap.isSet()) tool.snap = snap.toSnapTap()
+        if (packageName.present) tool.packageName = packageName.get()
         if (base.present) tool.base = base.get()
         if (grade.present) tool.grade = grade.get()
         if (confinement.present) tool.confinement = confinement.get()

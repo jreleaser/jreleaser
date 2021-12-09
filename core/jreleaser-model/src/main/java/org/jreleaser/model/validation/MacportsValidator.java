@@ -33,6 +33,7 @@ import java.util.Set;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -83,6 +84,13 @@ public abstract class MacportsValidator extends Validator {
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
         validateArtifactPlatforms(context, distribution, tool, errors);
+
+        if (isBlank(tool.getPackageName())) {
+            tool.setPackageName(parentTool.getPackageName());
+            if (isBlank(tool.getPackageName())) {
+                tool.setPackageName(distribution.getName());
+            }
+        }
 
         // activate rmd160 checksum
         Set<String> fileExtensions = tool.getSupportedExtensions();

@@ -2,7 +2,7 @@
 
 PortSystem       1.0
 
-name             {{distributionName}}
+name             {{macportsPackageName}}
 version          {{projectVersion}}
 revision         {{macportsRevision}}
 

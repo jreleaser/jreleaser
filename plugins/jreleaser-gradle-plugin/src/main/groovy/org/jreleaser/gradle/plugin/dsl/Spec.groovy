@@ -29,6 +29,8 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Spec extends RepositoryTool {
+    Property<String> getPackageName()
+
     Property<String> getRelease()
 
     ListProperty<String> getRequires()

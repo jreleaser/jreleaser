@@ -25,14 +25,24 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Scoop extends AbstractRepositoryTool {
     private final Bucket bucket = new Bucket();
+    private String packageName;
     private String checkverUrl;
     private String autoupdateUrl;
 
     void setAll(Scoop scoop) {
         super.setAll(scoop);
+        this.packageName = scoop.packageName;
         this.checkverUrl = scoop.checkverUrl;
         this.autoupdateUrl = scoop.autoupdateUrl;
         setBucket(scoop.bucket);
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public String getCheckverUrl() {
@@ -62,6 +72,7 @@ public class Scoop extends AbstractRepositoryTool {
     @Override
     public boolean isSet() {
         return super.isSet() ||
+            isNotBlank(packageName) ||
             isNotBlank(checkverUrl) ||
             isNotBlank(autoupdateUrl) ||
             bucket.isSet();

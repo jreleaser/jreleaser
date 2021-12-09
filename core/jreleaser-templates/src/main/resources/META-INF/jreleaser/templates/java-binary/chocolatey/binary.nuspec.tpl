@@ -3,7 +3,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <!-- required -->
-    <id>{{distributionName}}</id>
+    <id>{{chocolateyPackageName}}</id>
     <version>{{projectVersion}}</version>
     <authors>{{projectAuthorsByComma}}</authors>
     <description>{{projectLongDescription}}</description>

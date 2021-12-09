@@ -4,7 +4,7 @@ $app_home = Join-Path $package '{{projectName}}-{{projectVersion}}'
 $app_bat = Join-Path $app_home 'bin/{{distributionExecutable}}.{{distributionExecutableExtension}}'
 
 Install-ChocolateyZipPackage `
-    -PackageName '{{distributionName}}' `
+    -PackageName '{{chocolateyPackageName}}' `
     -Url '{{distributionUrl}}' `
     -Checksum '{{distributionChecksumSha256}}' `
     -ChecksumType 'sha256' `

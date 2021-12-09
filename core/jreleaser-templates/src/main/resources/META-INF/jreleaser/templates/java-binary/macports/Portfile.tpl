@@ -3,7 +3,7 @@
 PortSystem       1.0
 PortGroup        java 1.0
 
-name             {{distributionName}}
+name             {{macportsPackageName}}
 version          {{projectVersion}}
 revision         {{macportsRevision}}
 

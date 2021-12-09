@@ -31,6 +31,8 @@ import org.gradle.api.provider.SetProperty
  */
 @CompileStatic
 interface Snap extends RepositoryTool {
+    Property<String> getPackageName()
+
     Property<String> getBase()
 
     Property<String> getGrade()

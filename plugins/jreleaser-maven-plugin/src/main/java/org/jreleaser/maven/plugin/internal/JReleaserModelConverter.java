@@ -1037,6 +1037,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Chocolatey t = new org.jreleaser.model.Chocolatey();
         t.setActive(tr(tool.resolveActive()));
         if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setPackageName(tr(tool.getPackageName()));
         t.setUsername(tr(tool.getUsername()));
         t.setApiKey(tr(tool.getApiKey()));
         t.setTitle(tr(tool.getTitle()));
@@ -1146,6 +1147,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Macports t = new org.jreleaser.model.Macports();
         t.setActive(tr(tool.resolveActive()));
         if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setPackageName(tr(tool.getPackageName()));
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
         t.setExtraProperties(tool.getExtraProperties());
         t.setRevision(tool.getRevision());
@@ -1166,6 +1168,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Scoop t = new org.jreleaser.model.Scoop();
         t.setActive(tr(tool.resolveActive()));
         if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setPackageName(tr(tool.getPackageName()));
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
         t.setExtraProperties(tool.getExtraProperties());
         t.setCheckverUrl(tr(tool.getCheckverUrl()));
@@ -1199,6 +1202,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Snap t = new org.jreleaser.model.Snap();
         t.setActive(tr(tool.resolveActive()));
         if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setPackageName(tr(tool.getPackageName()));
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
         t.setExtraProperties(tool.getExtraProperties());
         if (isNotBlank(tool.getBase())) t.setBase(tool.getBase());
@@ -1257,6 +1261,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Spec t = new org.jreleaser.model.Spec();
         t.setActive(tr(tool.resolveActive()));
         if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setPackageName(tr(tool.getPackageName()));
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
         t.setExtraProperties(tool.getExtraProperties());
         t.setRelease(tr(tool.getRelease()));

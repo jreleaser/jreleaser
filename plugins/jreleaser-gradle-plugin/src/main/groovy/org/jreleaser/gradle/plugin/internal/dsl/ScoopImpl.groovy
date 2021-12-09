@@ -37,6 +37,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 class ScoopImpl extends AbstractRepositoryTool implements Scoop {
+    final Property<String> packageName
     final Property<String> checkverUrl
     final Property<String> autoupdateUrl
     final CommitAuthorImpl commitAuthor
@@ -45,6 +46,7 @@ class ScoopImpl extends AbstractRepositoryTool implements Scoop {
     @Inject
     ScoopImpl(ObjectFactory objects) {
         super(objects)
+        packageName = objects.property(String).convention(Providers.notDefined())
         checkverUrl = objects.property(String).convention(Providers.notDefined())
         autoupdateUrl = objects.property(String).convention(Providers.notDefined())
         bucket = objects.newInstance(TapImpl, objects)
@@ -55,6 +57,7 @@ class ScoopImpl extends AbstractRepositoryTool implements Scoop {
     @Internal
     boolean isSet() {
         super.isSet() ||
+            packageName.present ||
             checkverUrl.present ||
             autoupdateUrl.present ||
             bucket.isSet() ||
@@ -85,6 +88,7 @@ class ScoopImpl extends AbstractRepositoryTool implements Scoop {
         org.jreleaser.model.Scoop tool = new org.jreleaser.model.Scoop()
         fillToolProperties(tool)
         fillTemplateToolProperties(tool)
+        if (packageName.present) tool.packageName = packageName.get()
         if (bucket.isSet()) tool.bucket = bucket.toScoopBucket()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
         if (checkverUrl.present) tool.checkverUrl = checkverUrl.get()

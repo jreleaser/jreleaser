@@ -1,4 +1,4 @@
-Name:      {{distributionName}}
+Name:      {{specPackageName}}
 Version:   {{projectVersion}}
 Release:   {{specRelease}}
 Summary:   {{projectDescription}}

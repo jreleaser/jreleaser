@@ -79,6 +79,12 @@ public abstract class SnapValidator extends Validator {
         mergeSnapPlugs(tool, parentTool);
         mergeSnapSlots(tool, parentTool);
 
+        if (isBlank(tool.getPackageName())) {
+            tool.setPackageName(parentTool.getPackageName());
+            if (isBlank(tool.getPackageName())) {
+                tool.setPackageName(distribution.getName());
+            }
+        }
         if (isBlank(tool.getBase())) {
             tool.setBase(parentTool.getBase());
             if (isBlank(tool.getBase())) {

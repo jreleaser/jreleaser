@@ -20,6 +20,8 @@ package org.jreleaser.maven.plugin;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.9.1
@@ -28,13 +30,23 @@ public class Spec extends AbstractRepositoryTool {
     private final List<String> requires = new ArrayList<>();
     private final Tap repository = new Tap();
 
+    private String packageName;
     private String release;
 
     void setAll(Spec spec) {
         super.setAll(spec);
+        this.packageName = spec.packageName;
         this.release = spec.release;
         setRepository(spec.repository);
         setRequires(spec.requires);
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public String getRelease() {
@@ -60,5 +72,14 @@ public class Spec extends AbstractRepositoryTool {
     public void setRequires(List<String> requires) {
         this.requires.clear();
         this.requires.addAll(requires);
+    }
+
+    @Override
+    public boolean isSet() {
+        return super.isSet() ||
+            isNotBlank(packageName) ||
+            isNotBlank(release) ||
+            !requires.isEmpty() ||
+            repository.isSet();
     }
 }

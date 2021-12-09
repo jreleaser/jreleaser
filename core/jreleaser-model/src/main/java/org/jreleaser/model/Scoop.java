@@ -32,6 +32,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public class Scoop extends AbstractRepositoryTool {
     public static final String NAME = "scoop";
     private final ScoopBucket bucket = new ScoopBucket();
+    private String packageName;
     private String checkverUrl;
     private String autoupdateUrl;
 
@@ -41,9 +42,18 @@ public class Scoop extends AbstractRepositoryTool {
 
     void setAll(Scoop scoop) {
         super.setAll(scoop);
+        this.packageName = scoop.packageName;
         this.checkverUrl = scoop.checkverUrl;
         this.autoupdateUrl = scoop.autoupdateUrl;
         setBucket(scoop.bucket);
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public String getCheckverUrl() {
@@ -73,6 +83,7 @@ public class Scoop extends AbstractRepositoryTool {
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
+        props.put("packageName", packageName);
         props.put("checkverUrl", checkverUrl);
         props.put("autoupdateUrl", autoupdateUrl);
         props.put("bucket", bucket.asMap(full));

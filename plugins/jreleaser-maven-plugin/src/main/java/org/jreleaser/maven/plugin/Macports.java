@@ -20,6 +20,8 @@ package org.jreleaser.maven.plugin;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.9.0
@@ -29,14 +31,24 @@ public class Macports extends AbstractRepositoryTool {
     private final List<String> maintainers = new ArrayList<>();
     private final Tap repository = new Tap();
 
+    private String packageName;
     private Integer revision;
 
     void setAll(Macports macports) {
         super.setAll(macports);
+        this.packageName = macports.packageName;
         this.revision = macports.revision;
         setRepository(macports.repository);
         setCategories(macports.categories);
         setMaintainers(macports.maintainers);
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public Integer getRevision() {
@@ -71,5 +83,15 @@ public class Macports extends AbstractRepositoryTool {
     public void setMaintainers(List<String> maintainers) {
         this.maintainers.clear();
         this.maintainers.addAll(maintainers);
+    }
+
+    @Override
+    public boolean isSet() {
+        return super.isSet() ||
+            isNotBlank(packageName) ||
+            null != revision ||
+            !categories.isEmpty() ||
+            !maintainers.isEmpty() ||
+            repository.isSet();
     }
 }

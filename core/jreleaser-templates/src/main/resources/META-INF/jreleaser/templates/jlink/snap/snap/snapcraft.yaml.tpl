@@ -1,4 +1,4 @@
-name: {{distributionName}}
+name: {{snapPackageName}}
 version: {{projectVersion}}
 summary: {{projectDescription}}
 description: {{projectLongDescription}}

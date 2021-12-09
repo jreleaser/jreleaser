@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static org.jreleaser.model.Snap.SKIP_SNAP;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_SNAP_PACKAGE_NAME;
 import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
@@ -102,17 +103,18 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         props.put(Constants.KEY_SNAP_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getSnap().getOwner(), tool.getSnap().getResolvedName()));
 
-        props.put(Constants.KEY_SNAP_BASE, getTool().getBase());
-        props.put(Constants.KEY_SNAP_GRADE, getTool().getGrade());
-        props.put(Constants.KEY_SNAP_CONFINEMENT, getTool().getConfinement());
-        props.put(Constants.KEY_SNAP_HAS_PLUGS, !getTool().getPlugs().isEmpty());
-        props.put(Constants.KEY_SNAP_PLUGS, getTool().getPlugs());
-        props.put(Constants.KEY_SNAP_HAS_SLOTS, !getTool().getSlots().isEmpty());
-        props.put(Constants.KEY_SNAP_SLOTS, getTool().getSlots());
-        props.put(Constants.KEY_SNAP_HAS_LOCAL_PLUGS, !getTool().getLocalPlugs().isEmpty());
-        props.put(Constants.KEY_SNAP_LOCAL_PLUGS, getTool().getLocalPlugs());
-        props.put(Constants.KEY_SNAP_HAS_LOCAL_SLOTS, !getTool().getLocalSlots().isEmpty());
-        props.put(Constants.KEY_SNAP_LOCAL_SLOTS, getTool().getLocalSlots());
+        props.put(KEY_SNAP_PACKAGE_NAME, tool.getPackageName());
+        props.put(Constants.KEY_SNAP_BASE, tool.getBase());
+        props.put(Constants.KEY_SNAP_GRADE, tool.getGrade());
+        props.put(Constants.KEY_SNAP_CONFINEMENT, tool.getConfinement());
+        props.put(Constants.KEY_SNAP_HAS_PLUGS, !tool.getPlugs().isEmpty());
+        props.put(Constants.KEY_SNAP_PLUGS, tool.getPlugs());
+        props.put(Constants.KEY_SNAP_HAS_SLOTS, !tool.getSlots().isEmpty());
+        props.put(Constants.KEY_SNAP_SLOTS, tool.getSlots());
+        props.put(Constants.KEY_SNAP_HAS_LOCAL_PLUGS, !tool.getLocalPlugs().isEmpty());
+        props.put(Constants.KEY_SNAP_LOCAL_PLUGS, tool.getLocalPlugs());
+        props.put(Constants.KEY_SNAP_HAS_LOCAL_SLOTS, !tool.getLocalSlots().isEmpty());
+        props.put(Constants.KEY_SNAP_LOCAL_SLOTS, tool.getLocalSlots());
     }
 
     @Override
@@ -141,7 +143,7 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
     private void push(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         String version = (String) props.get(Constants.KEY_PROJECT_EFFECTIVE_VERSION);
-        String snapName = distribution.getName() + "-" + version + ".snap";
+        String snapName = tool.getPackageName() + "-" + version + ".snap";
 
         Command cmd = new Command("snapcraft")
             .arg("push")
@@ -152,7 +154,7 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
     private void createSnap(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         String version = (String) props.get(Constants.KEY_PROJECT_EFFECTIVE_VERSION);
-        String snapName = distribution.getName() + "-" + version + ".snap";
+        String snapName = tool.getPackageName() + "-" + version + ".snap";
 
         Command cmd = new Command("snapcraft")
             .arg("snap")

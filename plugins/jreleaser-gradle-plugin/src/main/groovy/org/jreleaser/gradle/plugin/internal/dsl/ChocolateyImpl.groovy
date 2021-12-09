@@ -37,6 +37,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
+    final Property<String> packageName
     final Property<String> username
     final Property<String> apiKey
     final Property<String> title
@@ -48,6 +49,7 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
     @Inject
     ChocolateyImpl(ObjectFactory objects) {
         super(objects)
+        packageName = objects.property(String).convention(Providers.notDefined())
         username = objects.property(String).convention(Providers.notDefined())
         apiKey = objects.property(String).convention(Providers.notDefined())
         title = objects.property(String).convention(Providers.notDefined())
@@ -61,6 +63,7 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
     @Internal
     boolean isSet() {
         super.isSet() ||
+            packageName.present ||
             username.present ||
             apiKey.present ||
             title.present ||
@@ -96,6 +99,7 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
         fillTemplateToolProperties(tool)
         if (bucket.isSet()) tool.bucket = bucket.toChocolateyBucket()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
+        if (packageName.present) tool.packageName = packageName.get()
         if (username.present) tool.username = username.get()
         if (apiKey.present) tool.apiKey = apiKey.get()
         if (title.present) tool.title = title.get()

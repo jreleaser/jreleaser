@@ -178,6 +178,7 @@ public interface Constants {
     String KEY_DOCKER_POST_COMMANDS = "dockerPostCommands";
 
     // Scoop
+    String KEY_SCOOP_PACKAGE_NAME = "scoopPackageName";
     String KEY_SCOOP_CHECKVER_URL = "scoopCheckverUrl";
     String KEY_SCOOP_AUTOUPDATE_URL = "scoopAutoupdateUrl";
     String KEY_SCOOP_BUCKET_REPO_URL = "scoopBucketRepoUrl";
@@ -188,6 +189,7 @@ public interface Constants {
     String KEY_SDKMAN_RELEASE_NOTES_URL = "sdkmanReleaseNotesUrl";
 
     // Chocolatey
+    String KEY_CHOCOLATEY_PACKAGE_NAME = "chocolateyPackageName";
     String KEY_CHOCOLATEY_USERNAME = "chocolateyUsername";
     String KEY_CHOCOLATEY_TITLE = "chocolateyTitle";
     String KEY_CHOCOLATEY_ICON_URL = "chocolateyIconUrl";
@@ -202,6 +204,7 @@ public interface Constants {
     String KEY_JBANG_CATALOG_REPO_CLONE_URL = "jbangCatalogRepoCloneUrl";
 
     // Macports
+    String KEY_MACPORTS_PACKAGE_NAME = "macportsPackageName";
     String KEY_MACPORTS_REVISION = "macportsRevision";
     String KEY_MACPORTS_CATEGORIES = "macportsCategories";
     String KEY_MACPORTS_MAINTAINERS = "macportsMaintainers";
@@ -211,6 +214,7 @@ public interface Constants {
     String KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL = "macportsRepositoryRepoCloneUrl";
 
     // Snap
+    String KEY_SNAP_PACKAGE_NAME = "snapPackageName";
     String KEY_SNAP_BASE = "snapBase";
     String KEY_SNAP_GRADE = "snapGrade";
     String KEY_SNAP_CONFINEMENT = "snapConfinement";
@@ -226,6 +230,7 @@ public interface Constants {
     String KEY_SNAP_REPO_CLONE_URL = "snapRepoCloneUrl";
 
     // Spec
+    String KEY_SPEC_PACKAGE_NAME = "specPackageName";
     String KEY_SPEC_RELEASE = "specRelease";
     String KEY_SPEC_REQUIRES = "specRequires";
     String KEY_SPEC_DIRECTORIES = "specDirectories";

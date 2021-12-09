@@ -94,6 +94,13 @@ public abstract class SpecValidator extends Validator {
         validateContinueOnError(tool, parentTool);
         validateArtifactPlatforms(context, distribution, tool, errors);
 
+        if (isBlank(tool.getPackageName())) {
+            tool.setPackageName(parentTool.getPackageName());
+            if (isBlank(tool.getPackageName())) {
+                tool.setPackageName(distribution.getName());
+            }
+        }
+
         List<Artifact> candidateArtifacts = distribution.getArtifacts().stream()
             .filter(Artifact::isActive)
             .filter(artifact -> tool.getSupportedExtensions().stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))

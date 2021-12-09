@@ -36,6 +36,7 @@ public class Macports extends AbstractRepositoryTool {
     private final List<String> maintainers = new ArrayList<>();
     private final MacportsRepository repository = new MacportsRepository();
 
+    private String packageName;
     private Integer revision;
 
     public Macports() {
@@ -44,6 +45,7 @@ public class Macports extends AbstractRepositoryTool {
 
     void setAll(Macports macports) {
         super.setAll(macports);
+        this.packageName = macports.packageName;
         this.revision = macports.revision;
         setRepository(macports.repository);
         setCategories(macports.categories);
@@ -61,6 +63,14 @@ public class Macports extends AbstractRepositoryTool {
             }
         }
         return maintainers;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public Integer getRevision() {
@@ -100,6 +110,7 @@ public class Macports extends AbstractRepositoryTool {
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
+        props.put("packageName", packageName);
         props.put("revision", revision);
         props.put("categories", categories);
         props.put("maintainers", maintainers);

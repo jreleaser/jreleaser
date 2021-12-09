@@ -34,6 +34,7 @@ import java.util.Map;
 
 import static org.jreleaser.model.util.Templates.resolve;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_PACKAGE_NAME;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -100,6 +101,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
         props.put(Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getResolvedName()));
 
+        props.put(KEY_CHOCOLATEY_PACKAGE_NAME, getTool().getPackageName());
         props.put(Constants.KEY_CHOCOLATEY_USERNAME, getTool().getUsername());
         props.put(Constants.KEY_CHOCOLATEY_TITLE, getTool().getTitle());
         props.put(Constants.KEY_CHOCOLATEY_ICON_URL, resolve(getTool().getIconUrl(), props));
@@ -116,7 +118,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
         fileName = trimTplExtension(fileName);
 
         Path outputFile = "binary.nuspec".equals(fileName) ?
-            outputDirectory.resolve(distribution.getName().concat(".nuspec")) :
+            outputDirectory.resolve(tool.getPackageName().concat(".nuspec")) :
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);

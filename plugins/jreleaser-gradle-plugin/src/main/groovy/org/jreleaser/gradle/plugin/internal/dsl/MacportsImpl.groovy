@@ -42,6 +42,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  */
 @CompileStatic
 class MacportsImpl extends AbstractRepositoryTool implements Macports {
+    final Property<String> packageName
     final Property<Integer> revision
     final CommitAuthorImpl commitAuthor
     final TapImpl repository
@@ -51,6 +52,7 @@ class MacportsImpl extends AbstractRepositoryTool implements Macports {
     @Inject
     MacportsImpl(ObjectFactory objects) {
         super(objects)
+        packageName = objects.property(String).convention(Providers.notDefined())
         revision = objects.property(Integer).convention(Providers.notDefined())
         repository = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
@@ -62,6 +64,7 @@ class MacportsImpl extends AbstractRepositoryTool implements Macports {
     @Internal
     boolean isSet() {
         super.isSet() ||
+            packageName.present ||
             commitAuthor.isSet() ||
             revision.present ||
             repository.isSet() ||
@@ -93,6 +96,7 @@ class MacportsImpl extends AbstractRepositoryTool implements Macports {
         org.jreleaser.model.Macports tool = new org.jreleaser.model.Macports()
         fillToolProperties(tool)
         fillTemplateToolProperties(tool)
+        if (packageName.present) tool.packageName = packageName.get()
         if (revision.present) tool.revision = revision.get()
         if (repository.isSet()) tool.repository = repository.toMacportsRepository()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()

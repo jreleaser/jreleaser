@@ -28,6 +28,8 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Scoop extends RepositoryTool {
+    Property<String> getPackageName()
+
     Property<String> getCheckverUrl()
 
     Property<String> getAutoupdateUrl()

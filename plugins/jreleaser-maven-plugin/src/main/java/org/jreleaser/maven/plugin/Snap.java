@@ -35,6 +35,7 @@ public class Snap extends AbstractRepositoryTool {
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
     private final Tap snap = new Tap();
+    private String packageName;
     private String base;
     private String grade;
     private String confinement;
@@ -43,6 +44,7 @@ public class Snap extends AbstractRepositoryTool {
 
     void setAll(Snap snap) {
         super.setAll(snap);
+        this.packageName = snap.packageName;
         this.base = snap.base;
         this.grade = snap.grade;
         this.confinement = snap.confinement;
@@ -53,6 +55,14 @@ public class Snap extends AbstractRepositoryTool {
         setPlugs(plugs);
         setSlots(slots);
         setSnap(snap.snap);
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public String getBase() {
@@ -210,6 +220,7 @@ public class Snap extends AbstractRepositoryTool {
     @Override
     public boolean isSet() {
         return super.isSet() ||
+            isNotBlank(packageName) ||
             isNotBlank(base) ||
             isNotBlank(grade) ||
             isNotBlank(confinement) ||

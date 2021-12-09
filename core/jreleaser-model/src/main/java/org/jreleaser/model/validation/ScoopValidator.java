@@ -63,6 +63,12 @@ public abstract class ScoopValidator extends Validator {
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
 
+        if (isBlank(tool.getPackageName())) {
+            tool.setPackageName(parentTool.getPackageName());
+            if (isBlank(tool.getPackageName())) {
+                tool.setPackageName(distribution.getExecutable());
+            }
+        }
         if (isBlank(tool.getCheckverUrl())) {
             tool.setCheckverUrl(parentTool.getCheckverUrl());
             if (isBlank(tool.getCheckverUrl())) {

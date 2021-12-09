@@ -60,6 +60,13 @@ public abstract class ChocolateyValidator extends Validator {
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
 
+        if (isBlank(tool.getPackageName())) {
+            tool.setPackageName(parentTool.getPackageName());
+            if (isBlank(tool.getPackageName())) {
+                tool.setPackageName(distribution.getName());
+            }
+        }
+
         if (isBlank(tool.getUsername())) {
             tool.setUsername(service.getOwner());
         }

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_MACPORTS_PACKAGE_NAME;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 
 /**
@@ -61,6 +62,7 @@ public class MacportsToolProcessor extends AbstractRepositoryToolProcessor<Macpo
 
         List<String> longDescription = Arrays.asList(context.getModel().getProject().getLongDescription().split("\\n"));
 
+        props.put(KEY_MACPORTS_PACKAGE_NAME, tool.getPackageName());
         props.put(Constants.KEY_MACPORTS_REVISION, tool.getRevision());
         props.put(Constants.KEY_MACPORTS_CATEGORIES, String.join(" ", tool.getCategories()));
         props.put(Constants.KEY_MACPORTS_MAINTAINERS, passThrough(String.join(LINE_SEPARATOR, tool.getResolvedMaintainers(context))));
@@ -104,7 +106,7 @@ public class MacportsToolProcessor extends AbstractRepositoryToolProcessor<Macpo
         Path outputFile = "Portfile".equals(fileName) ?
             outputDirectory.resolve("ports")
                 .resolve(tool.getCategories().get(0))
-                .resolve(distribution.getName())
+                .resolve(tool.getPackageName())
                 .resolve(fileName) :
             outputDirectory.resolve(fileName);
 

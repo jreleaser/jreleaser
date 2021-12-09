@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_SCOOP_PACKAGE_NAME;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 
 /**
@@ -56,6 +57,7 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
         props.put(Constants.KEY_SCOOP_BUCKET_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getResolvedName()));
 
+        props.put(KEY_SCOOP_PACKAGE_NAME, tool.getPackageName());
         props.put(Constants.KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));
         props.put(Constants.KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(props));
     }
@@ -97,7 +99,7 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
         fileName = trimTplExtension(fileName);
 
         Path outputFile = "manifest.json".equals(fileName) ?
-            outputDirectory.resolve("bucket").resolve(distribution.getExecutable().concat(".json")) :
+            outputDirectory.resolve("bucket").resolve(tool.getPackageName().concat(".json")) :
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);

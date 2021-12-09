@@ -38,6 +38,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 class SpecImpl extends AbstractRepositoryTool implements Spec {
+    final Property<String> packageName
     final Property<String> release
     final CommitAuthorImpl commitAuthor
     final TapImpl repository
@@ -46,6 +47,7 @@ class SpecImpl extends AbstractRepositoryTool implements Spec {
     @Inject
     SpecImpl(ObjectFactory objects) {
         super(objects)
+        packageName = objects.property(String).convention(Providers.notDefined())
         release = objects.property(String).convention(Providers.notDefined())
         repository = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
@@ -56,6 +58,7 @@ class SpecImpl extends AbstractRepositoryTool implements Spec {
     @Internal
     boolean isSet() {
         super.isSet() ||
+            packageName.present ||
             commitAuthor.isSet() ||
             release.present ||
             repository.isSet() ||
@@ -86,6 +89,7 @@ class SpecImpl extends AbstractRepositoryTool implements Spec {
         org.jreleaser.model.Spec tool = new org.jreleaser.model.Spec()
         fillToolProperties(tool)
         fillTemplateToolProperties(tool)
+        if (packageName.present) tool.packageName = packageName.get()
         if (release.present) tool.release = release.get()
         if (repository.isSet()) tool.repository = repository.toSpecRepository()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()

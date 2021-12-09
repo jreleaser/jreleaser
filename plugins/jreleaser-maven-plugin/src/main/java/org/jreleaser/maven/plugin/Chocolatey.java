@@ -25,6 +25,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Chocolatey extends AbstractRepositoryTool {
     private final Bucket bucket = new Bucket();
+    private String packageName;
     private String username;
     private String apiKey;
     private String title;
@@ -33,12 +34,21 @@ public class Chocolatey extends AbstractRepositoryTool {
 
     void setAll(Chocolatey choco) {
         super.setAll(choco);
+        this.packageName = choco.packageName;
         this.username = choco.username;
         this.apiKey = choco.apiKey;
         this.title = choco.title;
         this.iconUrl = choco.iconUrl;
         this.remoteBuild = choco.remoteBuild;
         setBucket(choco.bucket);
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public String getUsername() {
@@ -96,6 +106,7 @@ public class Chocolatey extends AbstractRepositoryTool {
     @Override
     public boolean isSet() {
         return super.isSet() ||
+            isNotBlank(packageName) ||
             isNotBlank(username) ||
             isNotBlank(apiKey) ||
             isNotBlank(title) ||

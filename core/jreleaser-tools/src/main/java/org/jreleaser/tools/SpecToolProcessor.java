@@ -36,6 +36,7 @@ import java.util.Set;
 
 import static org.jreleaser.model.Spec.SKIP_SPEC;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_SPEC_PACKAGE_NAME;
 import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isTrue;
 
@@ -99,6 +100,7 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
+        props.put(KEY_SPEC_PACKAGE_NAME, tool.getPackageName());
         props.put(Constants.KEY_SPEC_RELEASE, tool.getRelease());
         props.put(Constants.KEY_SPEC_REQUIRES, tool.getRequires());
     }
@@ -114,7 +116,7 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
         fileName = trimTplExtension(fileName);
 
         Path outputFile = "app.spec".equals(fileName) ?
-            outputDirectory.resolve(distribution.getName().concat(".spec")) :
+            outputDirectory.resolve(tool.getPackageName().concat(".spec")) :
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
