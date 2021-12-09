@@ -17,8 +17,6 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.Constants;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -27,6 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCHIVE_FORMAT;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_NAME;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_NAME;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.getFilename;
@@ -253,9 +255,11 @@ abstract class AbstractUploader implements Uploader {
             .filter(k -> !k.startsWith("artifactSkip"))
             .forEach(k -> props.put(k, artifactProps.get(k)));
         String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
-        props.put(Constants.KEY_ARTIFACT_PLATFORM, platform);
-        props.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
-        props.put(Constants.KEY_ARTIFACT_NAME, getFilename(artifactFileName, getSupportedExtensions()));
+        String filename = getFilename(artifactFileName, getSupportedExtensions());
+        props.put(KEY_ARTIFACT_PLATFORM, platform);
+        props.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
+        props.put(KEY_ARTIFACT_NAME, filename);
+        props.put(KEY_ARTIFACT_ARCHIVE_FORMAT, artifactFileName.substring(filename.length()) + 1);
         return props;
     }
 

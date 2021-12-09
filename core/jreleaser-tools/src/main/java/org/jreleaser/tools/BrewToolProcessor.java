@@ -27,7 +27,6 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.util.Algorithm;
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
 
@@ -39,6 +38,38 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCHIVE_FORMAT;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_NAME;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_NAME;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM_REPLACED;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_APP;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_APPCAST;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_DISPLAY_NAME;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_HAS_APP;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_HAS_APPCAST;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_HAS_BINARY;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_HAS_PKG;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_HAS_UNINSTALL;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_HAS_ZAP;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_NAME;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_PKG;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_UNINSTALL;
+import static org.jreleaser.util.Constants.KEY_BREW_CASK_ZAP;
+import static org.jreleaser.util.Constants.KEY_BREW_DEPENDENCIES;
+import static org.jreleaser.util.Constants.KEY_BREW_FORMULA_NAME;
+import static org.jreleaser.util.Constants.KEY_BREW_HAS_LIVECHECK;
+import static org.jreleaser.util.Constants.KEY_BREW_LIVECHECK;
+import static org.jreleaser.util.Constants.KEY_BREW_MULTIPLATFORM;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_NAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_URL;
+import static org.jreleaser.util.Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL;
+import static org.jreleaser.util.Constants.KEY_HOMEBREW_TAP_REPO_URL;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.getFilename;
@@ -84,16 +115,16 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
-        props.put(Constants.KEY_BREW_FORMULA_NAME, tool.getResolvedFormulaName(props));
+        props.put(KEY_BREW_FORMULA_NAME, tool.getResolvedFormulaName(props));
 
-        props.put(Constants.KEY_HOMEBREW_TAP_REPO_URL,
+        props.put(KEY_HOMEBREW_TAP_REPO_URL,
             gitService.getResolvedRepoUrl(context.getModel(), tool.getTap().getOwner(), tool.getTap().getResolvedName()));
-        props.put(Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL,
+        props.put(KEY_HOMEBREW_TAP_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getTap().getOwner(), tool.getTap().getResolvedName()));
 
-        props.put(Constants.KEY_BREW_HAS_LIVECHECK, tool.hasLivecheck());
+        props.put(KEY_BREW_HAS_LIVECHECK, tool.hasLivecheck());
         if (tool.hasLivecheck()) {
-            props.put(Constants.KEY_BREW_LIVECHECK, tool.getLivecheck().stream()
+            props.put(KEY_BREW_LIVECHECK, tool.getLivecheck().stream()
                 .map(line -> applyTemplate(line, props))
                 .map(MustacheUtils::passThrough)
                 .collect(Collectors.toList()));
@@ -104,30 +135,30 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             boolean hasPkg = isNotBlank(cask.getPkgName());
             boolean hasApp = isNotBlank(cask.getAppName());
 
-            props.put(Constants.KEY_BREW_CASK_NAME, cask.getResolvedCaskName(props));
-            props.put(Constants.KEY_BREW_CASK_DISPLAY_NAME, cask.getResolvedDisplayName(props));
-            props.put(Constants.KEY_BREW_CASK_HAS_UNINSTALL, !cask.getUninstallItems().isEmpty());
-            props.put(Constants.KEY_BREW_CASK_HAS_PKG, hasPkg);
+            props.put(KEY_BREW_CASK_NAME, cask.getResolvedCaskName(props));
+            props.put(KEY_BREW_CASK_DISPLAY_NAME, cask.getResolvedDisplayName(props));
+            props.put(KEY_BREW_CASK_HAS_UNINSTALL, !cask.getUninstallItems().isEmpty());
+            props.put(KEY_BREW_CASK_HAS_PKG, hasPkg);
             if (hasPkg) {
-                props.put(Constants.KEY_BREW_CASK_PKG, cask.getResolvedPkgName(props));
+                props.put(KEY_BREW_CASK_PKG, cask.getResolvedPkgName(props));
             }
-            props.put(Constants.KEY_BREW_CASK_HAS_APP, hasApp);
+            props.put(KEY_BREW_CASK_HAS_APP, hasApp);
             if (hasApp) {
-                props.put(Constants.KEY_BREW_CASK_APP, cask.getResolvedAppName(props));
+                props.put(KEY_BREW_CASK_APP, cask.getResolvedAppName(props));
             }
-            props.put(Constants.KEY_BREW_CASK_UNINSTALL, cask.getUninstallItems());
-            props.put(Constants.KEY_BREW_CASK_HAS_ZAP, !cask.getZapItems().isEmpty());
-            props.put(Constants.KEY_BREW_CASK_ZAP, cask.getZapItems());
+            props.put(KEY_BREW_CASK_UNINSTALL, cask.getUninstallItems());
+            props.put(KEY_BREW_CASK_HAS_ZAP, !cask.getZapItems().isEmpty());
+            props.put(KEY_BREW_CASK_ZAP, cask.getZapItems());
             String appcast = cask.getResolvedAppcast(props);
-            props.put(Constants.KEY_BREW_CASK_HAS_APPCAST, isNotBlank(appcast));
-            props.put(Constants.KEY_BREW_CASK_APPCAST, appcast);
+            props.put(KEY_BREW_CASK_HAS_APPCAST, isNotBlank(appcast));
+            props.put(KEY_BREW_CASK_APPCAST, appcast);
 
             if (!hasApp && !hasPkg) {
                 for (Artifact artifact : distribution.getArtifacts()) {
                     if (!artifact.isActive()) continue;
                     if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
-                        props.put(Constants.KEY_DISTRIBUTION_URL, resolveArtifactUrl(props, distribution, artifact));
-                        props.put(Constants.KEY_BREW_CASK_HAS_BINARY, true);
+                        props.put(KEY_DISTRIBUTION_URL, resolveArtifactUrl(props, distribution, artifact));
+                        props.put(KEY_BREW_CASK_HAS_BINARY, true);
                         break;
                     }
                 }
@@ -158,7 +189,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
 
                 if (isNotBlank(template)) {
                     Map<String, Object> newProps = new LinkedHashMap<>(props);
-                    newProps.put(Constants.KEY_DISTRIBUTION_URL, artifactUrl);
+                    newProps.put(KEY_DISTRIBUTION_URL, artifactUrl);
                     newProps.put(KEY_DISTRIBUTION_CHECKSUM_SHA_256, artifact.getHash(Algorithm.SHA_256));
                     multiPlatforms.add(applyTemplate(template, newProps));
                 }
@@ -167,15 +198,15 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             if (multiPlatforms.isEmpty()) {
                 throw new ToolProcessingException(RB.$("ERROR_brew_multiplatform_artifacts"));
             }
-            props.put(Constants.KEY_BREW_MULTIPLATFORM, passThrough(String.join(System.lineSeparator() + "  ", multiPlatforms)));
+            props.put(KEY_BREW_MULTIPLATFORM, passThrough(String.join(System.lineSeparator() + "  ", multiPlatforms)));
         } else if ((distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == Distribution.DistributionType.SINGLE_JAR) &&
             !isTrue(tool.getExtraProperties().get("javaSkip")) &&
             !isTrue(tool.getExtraProperties().get("skipJava"))) {
-            tool.addDependency("openjdk@" + props.get(Constants.KEY_DISTRIBUTION_JAVA_VERSION));
+            tool.addDependency("openjdk@" + props.get(KEY_DISTRIBUTION_JAVA_VERSION));
         }
 
-        props.put(Constants.KEY_BREW_DEPENDENCIES, tool.getDependenciesAsList()
+        props.put(KEY_BREW_DEPENDENCIES, tool.getDependenciesAsList()
             .stream()
             // prevent Mustache from converting quotes into &quot;
             .map(dependency -> passThrough(dependency.toString()))
@@ -184,14 +215,21 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
 
     private String resolveArtifactUrl(Map<String, Object> props, Distribution distribution, Artifact artifact) {
         String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
+        String artifactName = getFilename(artifactFileName, tool.getSupportedExtensions());
+        String archiveFormat = artifactFileName.substring(artifactName.length() + 1);
         Map<String, Object> newProps = new LinkedHashMap<>(props);
-        newProps.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
+        newProps.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
+        newProps.put(KEY_ARTIFACT_NAME, artifactName);
+        newProps.put(KEY_ARTIFACT_ARCHIVE_FORMAT, archiveFormat);
         String platform = artifact.getPlatform();
-        if (isNotBlank(platform)) newProps.put(Constants.KEY_ARTIFACT_PLATFORM, platform);
-        if (isNotBlank(platform)) newProps.put(Constants.KEY_ARTIFACT_PLATFORM_REPLACED, distribution.getPlatform().applyReplacements(platform));
-        if (isNotBlank(platform)) newProps.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);
-        if (isNotBlank(platform)) newProps.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, distribution.getPlatform().applyReplacements(platform));
-        newProps.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, getFilename(artifactFileName, tool.getSupportedExtensions()));
+        if (isNotBlank(platform)) newProps.put(KEY_ARTIFACT_PLATFORM, platform);
+        String platformReplaced = distribution.getPlatform().applyReplacements(platform);
+        if (isNotBlank(platform)) newProps.put(KEY_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
+        if (isNotBlank(platform)) newProps.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);
+        if (isNotBlank(platform)) newProps.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
+        newProps.put(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
+        newProps.put(KEY_DISTRIBUTION_ARTIFACT_NAME, artifactName);
+        newProps.put(KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT, archiveFormat);
         return applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
     }
 

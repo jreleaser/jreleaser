@@ -25,7 +25,6 @@ import org.jreleaser.model.Tool;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.util.Algorithm;
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.StringUtils;
 import org.jreleaser.util.command.Command;
@@ -47,6 +46,25 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCHIVE_FORMAT;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_NAME;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_NAME;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM_REPLACED;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_SIZE;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_NAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_SIZE;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_SHA_256;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_SIZE;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_URL;
+import static org.jreleaser.util.Constants.KEY_REVERSE_REPO_HOST;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.capitalize;
@@ -163,8 +181,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         fillToolProperties(newProps, distribution);
         applyTemplates(newProps, tool.getResolvedExtraProperties());
         if (isBlank(context.getModel().getRelease().getGitService().getReverseRepoHost())) {
-            newProps.put(Constants.KEY_REVERSE_REPO_HOST,
-                tool.getExtraProperties().get(Constants.KEY_REVERSE_REPO_HOST));
+            newProps.put(KEY_REVERSE_REPO_HOST,
+                tool.getExtraProperties().get(KEY_REVERSE_REPO_HOST));
         }
         return newProps;
     }
@@ -267,7 +285,8 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             Artifact artifact = activeArtifacts.get(i);
             String platform = artifact.getPlatform();
             String artifactPlatform = isNotBlank(platform) ? capitalize(platform) : "";
-            String artifactPlatformReplaced = isNotBlank(artifactPlatform) ? capitalize(distribution.getPlatform().applyReplacements(platform)) : "";
+            String platformReplaced = distribution.getPlatform().applyReplacements(platform);
+            String artifactPlatformReplaced = isNotBlank(platformReplaced) ? capitalize(platformReplaced) : "";
             // add extra properties without clobbering existing keys
             Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact" + artifactPlatform);
             artifactProps.keySet().stream()
@@ -286,18 +305,23 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
             String artifactFileName = artifactPath.getFileName().toString();
             String artifactName = getFilename(artifactFileName, tool.getSupportedExtensions());
+            String archiveFormat = artifactFileName.substring(artifactName.length() + 1);
             props.put("artifact" + artifactPlatform + "Size", artifactSize);
             props.put("artifact" + artifactPlatform + "Name", artifactName);
-            props.put("artifact" + artifactPlatform + "FileName", artifactFileName);
+            props.put("artifact" + artifactPlatform + "FileName", archiveFormat);
+            props.put("artifact" + artifactPlatform + "ArchiveFormat", artifactFileName);
             props.put("artifact" + artifactPlatformReplaced + "Size", artifactSize);
             props.put("artifact" + artifactPlatformReplaced + "Name", artifactName);
             props.put("artifact" + artifactPlatformReplaced + "FileName", artifactFileName);
+            props.put("artifact" + artifactPlatformReplaced + "ArchiveFormat", archiveFormat);
             for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                 props.put("artifact" + artifactPlatform + "Checksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
                 props.put("artifact" + artifactPlatformReplaced + "Checksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
             }
             Map<String, Object> newProps = new LinkedHashMap<>(props);
-            newProps.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
+            newProps.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
+            newProps.put(KEY_ARTIFACT_NAME, artifactName);
+            newProps.put(KEY_ARTIFACT_ARCHIVE_FORMAT, archiveFormat);
             String artifactUrl = applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
             props.put("artifact" + artifactPlatform + "Url", artifactUrl);
             props.put("artifact" + artifactPlatformReplaced + "Url", artifactUrl);
@@ -309,21 +333,25 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             if (0 == i) {
                 props.putAll(context.getModel().getUpload()
                     .resolveDownloadUrls(context, distribution, artifact, "distribution"));
-                props.put(Constants.KEY_DISTRIBUTION_ARTIFACT, artifact);
-                props.put(Constants.KEY_DISTRIBUTION_URL, artifactUrl);
-                props.put(Constants.KEY_DISTRIBUTION_SIZE, artifactSize);
-                props.put(Constants.KEY_DISTRIBUTION_SHA_256, artifact.getHash(Algorithm.SHA_256));
+                props.put(KEY_DISTRIBUTION_ARTIFACT, artifact);
+                props.put(KEY_DISTRIBUTION_URL, artifactUrl);
+                props.put(KEY_DISTRIBUTION_SIZE, artifactSize);
+                props.put(KEY_DISTRIBUTION_SHA_256, artifact.getHash(Algorithm.SHA_256));
                 for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                     props.put("distributionChecksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
                 }
-                props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
-                props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_NAME, artifactName);
-                props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_SIZE, artifactSize);
-                if(isNotBlank(platform)) props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);
-                if(isNotBlank(platform)) props.put(Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, distribution.getPlatform().applyReplacements(platform));
-                props.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFileName);
-                props.put(Constants.KEY_ARTIFACT_NAME, artifactName);
-                props.put(Constants.KEY_ARTIFACT_SIZE, artifactSize);
+                props.put(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
+                props.put(KEY_DISTRIBUTION_ARTIFACT_NAME, artifactName);
+                props.put(KEY_DISTRIBUTION_ARTIFACT_SIZE, artifactSize);
+                props.put(KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT, archiveFormat);
+                if (isNotBlank(platform)) props.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);
+                if (isNotBlank(platform)) props.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
+                props.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
+                props.put(KEY_ARTIFACT_NAME, artifactName);
+                props.put(KEY_ARTIFACT_SIZE, artifactSize);
+                props.put(KEY_ARTIFACT_ARCHIVE_FORMAT, archiveFormat);
+                if (isNotBlank(platform)) props.put(KEY_ARTIFACT_PLATFORM, platform);
+                if (isNotBlank(platform)) props.put(KEY_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
                 // add extra properties without clobbering existing keys
                 Map<String, Object> aprops = artifact.getResolvedExtraProperties();
                 applyTemplates(aprops, aprops);
@@ -373,10 +401,10 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     protected Path getPrepareDirectory(Map<String, Object> props) {
-        return (Path) props.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
+        return (Path) props.get(KEY_DISTRIBUTION_PREPARE_DIRECTORY);
     }
 
     protected Path getPackageDirectory(Map<String, Object> props) {
-        return (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+        return (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
     }
 }

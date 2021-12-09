@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -67,6 +68,11 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
                     if (isSkip(artifact, keys)) continue;
                     Path path = artifact.getEffectivePath(context);
                     if (Files.exists(path) && 0 != path.toFile().length()) {
+                        String platform = artifact.getPlatform();
+                        String platformReplaced = distribution.getPlatform().applyReplacements(platform);
+                        if (isNotBlank(platformReplaced)) {
+                            artifact.getExtraProperties().put("platformReplaced", platformReplaced);
+                        }
                         artifacts.add(artifact);
                     }
                 }

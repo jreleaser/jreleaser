@@ -129,6 +129,7 @@ public interface Constants {
     String KEY_DISTRIBUTION_ARTIFACT_NAME = "distributionArtifactName";
     String KEY_DISTRIBUTION_ARTIFACT_SIZE = "distributionArtifactSize";
     String KEY_DISTRIBUTION_ARTIFACT_FILE_NAME = "distributionArtifactFileName";
+    String KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT = "distributionArtifactArchiveFormat";
     String KEY_DISTRIBUTION_JAVA_VERSION = "distributionJavaVersion";
     String KEY_DISTRIBUTION_JAVA_VERSION_MAJOR = "distributionJavaVersionMajor";
     String KEY_DISTRIBUTION_JAVA_VERSION_MINOR = "distributionJavaVersionMinor";
@@ -145,6 +146,7 @@ public interface Constants {
     String KEY_ARTIFACT_FILE_NAME = "artifactFileName";
     String KEY_ARTIFACT_NAME = "artifactName";
     String KEY_ARTIFACT_SIZE = "artifactSize";
+    String KEY_ARTIFACT_ARCHIVE_FORMAT = "artifactArchiveFormat";
 
     // Brew
     String KEY_BREW_FORMULA_NAME = "brewFormulaName";
