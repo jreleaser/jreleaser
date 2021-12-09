@@ -185,6 +185,10 @@ public class JReleaserContext {
             errors.configuration(e.toString());
         }
 
+        if (errors.hasWarnings()) {
+            logger.warn("== JReleaser ==");
+            errors.logWarnings(logger);
+        }
         if (errors.hasErrors()) {
             logger.error("== JReleaser ==");
             errors.logErrors(logger);

@@ -23,6 +23,7 @@ import org.jreleaser.maven.plugin.Archive;
 import org.jreleaser.maven.plugin.Article;
 import org.jreleaser.maven.plugin.Artifact;
 import org.jreleaser.maven.plugin.Artifactory;
+import org.jreleaser.maven.plugin.ArtifactoryRepository;
 import org.jreleaser.maven.plugin.Assemble;
 import org.jreleaser.maven.plugin.Brew;
 import org.jreleaser.maven.plugin.Bucket;
@@ -42,6 +43,7 @@ import org.jreleaser.maven.plugin.DockerRepository;
 import org.jreleaser.maven.plugin.DockerSpec;
 import org.jreleaser.maven.plugin.Environment;
 import org.jreleaser.maven.plugin.FileSet;
+import org.jreleaser.maven.plugin.FileType;
 import org.jreleaser.maven.plugin.Files;
 import org.jreleaser.maven.plugin.GenericGit;
 import org.jreleaser.maven.plugin.GitService;
@@ -435,11 +437,32 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Artifactory convertArtifactory(Artifactory artifactory) {
         org.jreleaser.model.Artifactory a = new org.jreleaser.model.Artifactory();
         convertUploader(artifactory, a);
-        if (isNotBlank(artifactory.getTarget())) a.setTarget(artifactory.getTarget());
+        a.setHost(tr(artifactory.getHost()));
         a.setUsername(tr(artifactory.getUsername()));
         a.setPassword(tr(artifactory.getPassword()));
         a.setAuthorization(tr(artifactory.resolveAuthorization().name()));
+        a.setRepositories(convertRepositories(artifactory.getRepositories()));
         return a;
+    }
+
+    private static List<org.jreleaser.model.ArtifactoryRepository> convertRepositories(List<ArtifactoryRepository> repositories) {
+        List<org.jreleaser.model.ArtifactoryRepository> list = new ArrayList<>();
+        for (ArtifactoryRepository repository : repositories) {
+            if (repository.isSet()) {
+                list.add(convertRepository(repository));
+            }
+        }
+        return list;
+    }
+
+    private static org.jreleaser.model.ArtifactoryRepository convertRepository(ArtifactoryRepository repository) {
+        org.jreleaser.model.ArtifactoryRepository r = new org.jreleaser.model.ArtifactoryRepository();
+        r.setActive(repository.resolveActive());
+        r.setPath(tr(repository.getPath()));
+        for (FileType fileType : repository.getFileTypes()) {
+            r.addFileType(org.jreleaser.util.FileType.of(fileType.name()));
+        }
+        return r;
     }
 
     private static void convertUploader(Uploader from, org.jreleaser.model.Uploader into) {

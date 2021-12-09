@@ -20,13 +20,12 @@ package org.jreleaser.model.validation;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifactory;
+import org.jreleaser.model.ArtifactoryRepository;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
-
-import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -58,12 +57,17 @@ public abstract class ArtifactoryValidator extends Validator {
             return;
         }
 
-        if (isBlank(artifactory.getUploadUrl())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "artifactory." + artifactory.getName() + ".uploadUrl"));
+        if (artifactory.getRepositories().isEmpty()) {
+            errors.configuration(RB.$("validation_artifactory_no_repositories", "artifactory." + artifactory.getName()));
+            return;
         }
-        if (isBlank(artifactory.getDownloadUrl())) {
-            artifactory.setDownloadUrl(artifactory.getUploadUrl());
-        }
+
+        artifactory.setHost(
+            checkProperty(context,
+                "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_HOST",
+                "artifactory.host",
+                artifactory.getHost(),
+                errors));
 
         switch (artifactory.resolveAuthorization()) {
             case BEARER:
@@ -98,5 +102,17 @@ public abstract class ArtifactoryValidator extends Validator {
         }
 
         validateTimeout(artifactory);
+
+        for (ArtifactoryRepository repository : artifactory.getRepositories()) {
+            if (!repository.isActiveSet()) {
+                repository.setActive(artifactory.getActive());
+            }
+            repository.resolveEnabled(context.getModel().getProject());
+        }
+
+        if (artifactory.getRepositories().stream().noneMatch(ArtifactoryRepository::isEnabled)) {
+            errors.warning(RB.$("validation_artifactory_disabled_repositories", "artifactory." + artifactory.getName()));
+            artifactory.disable();
+        }
     }
 }

@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.Env;
+import org.jreleaser.util.FileType;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -159,7 +160,7 @@ public class Sdkman extends AbstractTool implements TimeoutAware {
     @Override
     public Set<String> getSupportedExtensions() {
         Set<String> set = new LinkedHashSet<>();
-        set.add(".zip");
+        set.add(FileType.ZIP.extension());
         return set;
     }
 

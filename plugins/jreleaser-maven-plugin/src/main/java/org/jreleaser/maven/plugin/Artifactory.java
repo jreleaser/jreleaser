@@ -17,17 +17,22 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class Artifactory extends AbstractHttpUploader {
+public class Artifactory extends AbstractUploader {
     public static final String NAME = "artifactory";
 
-    private String target;
+    private final List<ArtifactoryRepository> repositories = new ArrayList<>();
+
+    private String host;
     private String username;
     private String password;
-    private Authorization authorization;
+    private HttpUploader.Authorization authorization;
 
     public Artifactory() {
         super(NAME);
@@ -35,26 +40,27 @@ public class Artifactory extends AbstractHttpUploader {
 
     void setAll(Artifactory artifactory) {
         super.setAll(artifactory);
-        this.target = artifactory.target;
+        this.host = artifactory.host;
         this.username = artifactory.username;
         this.password = artifactory.password;
         this.authorization = artifactory.authorization;
+        setRepositories(artifactory.repositories);
     }
 
-    public Authorization resolveAuthorization() {
+    public HttpUploader.Authorization resolveAuthorization() {
         if (null == authorization) {
-            authorization = Authorization.NONE;
+            authorization = HttpUploader.Authorization.NONE;
         }
 
         return authorization;
     }
 
-    public String getTarget() {
-        return target;
+    public String getHost() {
+        return host;
     }
 
-    public void setTarget(String target) {
-        this.target = target;
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public String getUsername() {
@@ -73,11 +79,20 @@ public class Artifactory extends AbstractHttpUploader {
         this.password = password;
     }
 
-    public Authorization getAuthorization() {
+    public HttpUploader.Authorization getAuthorization() {
         return authorization;
     }
 
-    public void setAuthorization(Authorization authorization) {
+    public void setAuthorization(HttpUploader.Authorization authorization) {
         this.authorization = authorization;
+    }
+
+    public List<ArtifactoryRepository> getRepositories() {
+        return repositories;
+    }
+
+    public void setRepositories(List<ArtifactoryRepository> repositories) {
+        this.repositories.clear();
+        this.repositories.addAll(repositories);
     }
 }

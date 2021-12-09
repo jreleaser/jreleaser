@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.Map;
@@ -89,8 +90,8 @@ public class Scoop extends AbstractRepositoryTool {
 
     @Override
     public Set<String> getSupportedExtensions() {
-        Set<String> extensions = super.getSupportedExtensions();
-        extensions.add(".jar");
-        return extensions;
+        Set<String> set = super.getSupportedExtensions();
+        set.add(FileType.JAR.extension());
+        return set;
     }
 }

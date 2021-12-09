@@ -15,30 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.maven.plugin;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.provider.Property
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.3.0
+ * @since 0.10.0
  */
-@CompileStatic
-interface Artifactory extends HttpUploader {
-    Property<String> getHost()
+public enum FileType {
+    DEB,
+    DMG,
+    EXE,
+    JAR,
+    MSI,
+    NUGET,
+    PKG,
+    RPM,
+    TAR,
+    TAR_BZ2,
+    TAR_GZ,
+    TGZ,
+    ZIP;
 
-    Property<String> getUsername()
-
-    Property<String> getPassword()
-
-    Property<org.jreleaser.model.HttpUploader.Authorization> getAuthorization()
-
-    void setAuthorization(String authorization)
-
-    void repository(Action<? super ArtifactoryRepository> action)
-
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactoryRepository) Closure<Void> action)
+    public static FileType of(String str) {
+        if (isBlank(str)) return null;
+        return FileType.valueOf(str.toUpperCase().trim()
+            .replace(".", "_"));
+    }
 }

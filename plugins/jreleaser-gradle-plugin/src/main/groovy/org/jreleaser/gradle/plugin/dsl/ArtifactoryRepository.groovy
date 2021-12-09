@@ -18,27 +18,20 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
+import org.jreleaser.util.FileType
 
 /**
  *
  * @author Andres Almiray
- * @since 0.3.0
+ * @since 0.10.0
  */
 @CompileStatic
-interface Artifactory extends HttpUploader {
-    Property<String> getHost()
+interface ArtifactoryRepository extends Activatable {
+    Property<String> getPath()
 
-    Property<String> getUsername()
+    SetProperty<FileType> getFileTypes()
 
-    Property<String> getPassword()
-
-    Property<org.jreleaser.model.HttpUploader.Authorization> getAuthorization()
-
-    void setAuthorization(String authorization)
-
-    void repository(Action<? super ArtifactoryRepository> action)
-
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactoryRepository) Closure<Void> action)
+    void setFileType(String str)
 }

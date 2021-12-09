@@ -30,6 +30,7 @@ import java.util.Set;
 public class Errors {
     private final Set<Error> assemblyErrors = new LinkedHashSet<>();
     private final Set<Error> configurationErrors = new LinkedHashSet<>();
+    private final Set<Error> warnings = new LinkedHashSet<>();
 
     public boolean hasErrors() {
         return !assemblyErrors.isEmpty() || !configurationErrors.isEmpty();
@@ -43,12 +44,28 @@ public class Errors {
         return !configurationErrors.isEmpty();
     }
 
+    public boolean hasWarnings() {
+        return !warnings.isEmpty();
+    }
+
     public void assembly(String message) {
         assemblyErrors.add(new Error(Kind.ASSEMBLY, message));
     }
 
     public void configuration(String message) {
         configurationErrors.add(new Error(Kind.CONFIGURATION, message));
+    }
+
+    public void warning(String message) {
+        warnings.add(new Error(Kind.CONFIGURATION, message));
+    }
+
+    public void logWarnings(JReleaserLogger logger) {
+        warnings.forEach(e -> logger.warn(e.message));
+    }
+
+    public void logWarnings(PrintWriter writer) {
+        warnings.forEach(e -> writer.println(e.message));
     }
 
     public void logErrors(JReleaserLogger logger) {
@@ -69,7 +86,8 @@ public class Errors {
 
     public enum Kind {
         ASSEMBLY,
-        CONFIGURATION
+        CONFIGURATION,
+        WARNING
     }
 
     public static class Error {

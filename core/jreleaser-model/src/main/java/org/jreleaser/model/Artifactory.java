@@ -17,10 +17,16 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.model.util.Templates;
 import org.jreleaser.util.Env;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -29,9 +35,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class Artifactory extends AbstractHttpUploader {
+public class Artifactory extends AbstractUploader {
     public static final String TYPE = "artifactory";
 
+    private final List<ArtifactoryRepository> repositories = new ArrayList<>();
+
+    private String host;
     private String username;
     private String password;
     private HttpUploader.Authorization authorization;
@@ -42,17 +51,23 @@ public class Artifactory extends AbstractHttpUploader {
 
     void setAll(Artifactory artifactory) {
         super.setAll(artifactory);
+        this.host = artifactory.host;
         this.username = artifactory.username;
         this.password = artifactory.password;
         this.authorization = artifactory.authorization;
+        setRepositories(artifactory.repositories);
     }
 
-    public Authorization resolveAuthorization() {
+    public HttpUploader.Authorization resolveAuthorization() {
         if (null == authorization) {
-            authorization = Authorization.BEARER;
+            authorization = HttpUploader.Authorization.BEARER;
         }
 
         return authorization;
+    }
+
+    public String getResolvedHost() {
+        return Env.resolve("ARTIFACTORY_" + Env.toVar(name) + "_HOST", host);
     }
 
     public String getResolvedUsername() {
@@ -61,6 +76,14 @@ public class Artifactory extends AbstractHttpUploader {
 
     public String getResolvedPassword() {
         return Env.resolve("ARTIFACTORY_" + Env.toVar(name) + "_PASSWORD", password);
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public String getUsername() {
@@ -79,34 +102,69 @@ public class Artifactory extends AbstractHttpUploader {
         this.password = password;
     }
 
-    @Deprecated
-    public String getTarget() {
-        System.out.println("artifactory.target has been deprecated since 0.6.0 and will be removed in the future. Use artifactory.uploadUrl instead");
-        return getUploadUrl();
-    }
-
-    @Deprecated
-    public void setTarget(String target) {
-        System.out.println("artifactory.target has been deprecated since 0.6.0 and will be removed in the future. Use artifactory.uploadUrl instead");
-        setUploadUrl(target);
-    }
-
-    public Authorization getAuthorization() {
+    public HttpUploader.Authorization getAuthorization() {
         return authorization;
     }
 
-    public void setAuthorization(Authorization authorization) {
+    public void setAuthorization(HttpUploader.Authorization authorization) {
         this.authorization = authorization;
     }
 
     public void setAuthorization(String authorization) {
-        this.authorization = Authorization.of(authorization);
+        this.authorization = HttpUploader.Authorization.of(authorization);
+    }
+
+    public List<ArtifactoryRepository> getRepositories() {
+        return repositories;
+    }
+
+    public void setRepositories(List<ArtifactoryRepository> repositories) {
+        this.repositories.clear();
+        this.repositories.addAll(repositories);
+    }
+
+    public void addRepository(ArtifactoryRepository repository) {
+        if (null != repository) {
+            this.repositories.add(repository);
+        }
     }
 
     @Override
     protected void asMap(Map<String, Object> props, boolean full) {
         props.put("authorization", authorization);
+        props.put("host", getResolvedHost());
         props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
         props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
+        List<Map<String, Object>> repositories = this.repositories.stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!repositories.isEmpty()) props.put("repositories", repositories);
+    }
+
+    @Override
+    public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
+        return resolveUrl(context, artifact);
+    }
+
+    public String getResolvedUploadUrl(JReleaserContext context, Artifact artifact) {
+        return resolveUrl(context, artifact);
+    }
+
+    private String resolveUrl(JReleaserContext context, Artifact artifact) {
+        Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
+        p.put("artifactoryHost", host);
+
+        Optional<ArtifactoryRepository> repository = repositories.stream()
+            .filter(r -> r.handles(artifact))
+            .findFirst();
+
+        if (repository.isPresent()) {
+            p.put("repositoryPath", repository.get().getPath());
+            String url = "{{artifactoryHost}}/{{repositoryPath}}";
+            return Templates.resolve(url, p);
+        }
+
+        return "";
     }
 }

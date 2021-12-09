@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.Collections;
@@ -107,10 +108,10 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
 
     @Override
     public Set<String> getSupportedExtensions() {
-        Set<String> extensions = new LinkedHashSet<>();
-        extensions.add(".zip");
-        extensions.add(".jar");
-        return extensions;
+        Set<String> set = new LinkedHashSet<>();
+        set.add(FileType.JAR.extension());
+        set.add(FileType.ZIP.extension());
+        return set;
     }
 
     public List<DockerSpec> getActiveSpecs() {

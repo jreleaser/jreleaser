@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.FileType;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -100,10 +102,10 @@ public class Spec extends AbstractRepositoryTool {
     @Override
     public Set<String> getSupportedExtensions() {
         Set<String> set = new LinkedHashSet<>();
-        set.add(".tar.bz2");
-        set.add(".tar.gz");
-        set.add(".tgz");
-        set.add(".tar");
+        set.add(FileType.TAR_BZ2.extension());
+        set.add(FileType.TAR_GZ.extension());
+        set.add(FileType.TGZ.extension());
+        set.add(FileType.TAR.extension());
         return set;
     }
 }

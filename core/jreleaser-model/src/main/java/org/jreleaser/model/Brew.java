@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
@@ -198,12 +199,12 @@ public class Brew extends AbstractRepositoryTool {
 
     @Override
     public Set<String> getSupportedExtensions() {
-        Set<String> extensions = new LinkedHashSet<>();
-        extensions.add(".dmg");
-        extensions.add(".pkg");
-        extensions.add(".zip");
-        extensions.add(".jar");
-        return extensions;
+        Set<String> set = new LinkedHashSet<>();
+        set.add(FileType.DMG.extension());
+        set.add(FileType.PKG.extension());
+        set.add(FileType.ZIP.extension());
+        set.add(FileType.JAR.extension());
+        return set;
     }
 
     public static class Dependency {

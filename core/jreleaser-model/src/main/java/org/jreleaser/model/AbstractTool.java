@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.FileType;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -60,7 +62,7 @@ public abstract class AbstractTool implements Tool {
     @Override
     public Set<String> getSupportedExtensions() {
         Set<String> set = new LinkedHashSet<>();
-        set.add(".zip");
+        set.add(FileType.ZIP.extension());
         return set;
     }
 

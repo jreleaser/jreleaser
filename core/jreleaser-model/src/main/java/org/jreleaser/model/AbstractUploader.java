@@ -17,13 +17,13 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.FileType;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCHIVE_FORMAT;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_NAME;
@@ -255,27 +255,11 @@ abstract class AbstractUploader implements Uploader {
             .filter(k -> !k.startsWith("artifactSkip"))
             .forEach(k -> props.put(k, artifactProps.get(k)));
         String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
-        String filename = getFilename(artifactFileName, getSupportedExtensions());
+        String filename = getFilename(artifactFileName, FileType.getSupportedExtensions());
         props.put(KEY_ARTIFACT_PLATFORM, platform);
         props.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
         props.put(KEY_ARTIFACT_NAME, filename);
         props.put(KEY_ARTIFACT_ARCHIVE_FORMAT, artifactFileName.substring(filename.length()) + 1);
         return props;
-    }
-
-    private Set<String> getSupportedExtensions() {
-        Set<String> set = new LinkedHashSet<>();
-        set.add(".tar.bz2");
-        set.add(".tar.gz");
-        set.add(".tgz");
-        set.add(".tar");
-        set.add(".zip");
-        set.add(".rpm");
-        set.add(".dep");
-        set.add(".pkg");
-        set.add(".dmg");
-        set.add(".exe");
-        set.add(".msi");
-        return set;
     }
 }
