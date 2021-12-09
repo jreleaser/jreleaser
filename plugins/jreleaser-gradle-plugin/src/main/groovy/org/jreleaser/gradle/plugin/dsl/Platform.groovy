@@ -23,7 +23,7 @@ import org.gradle.api.provider.MapProperty
 /**
  *
  * @author Andres Almiray
- * @since 1.0.0
+ * @since 0.10.0
  */
 @CompileStatic
 interface Platform {

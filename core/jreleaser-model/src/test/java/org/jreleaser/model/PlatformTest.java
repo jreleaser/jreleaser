@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 /**
  * @author Andres Almiray
- * @since 1.0.0
+ * @since 0.10.0
  */
 public class PlatformTest {
     @ParameterizedTest

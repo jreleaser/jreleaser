@@ -24,7 +24,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
- * @since 1.0.0
+ * @since 0.10.0
  */
 public class Platform implements Domain {
     private final Map<String, String> replacements = new LinkedHashMap<>();

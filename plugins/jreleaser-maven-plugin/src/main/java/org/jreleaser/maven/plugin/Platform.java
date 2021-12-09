@@ -22,7 +22,7 @@ import java.util.Map;
 
 /**
  * @author Andres Almiray
- * @since 1.0.0
+ * @since 0.10.0
  */
 public class Platform {
     private final Map<String, String> replacements = new LinkedHashMap<>();

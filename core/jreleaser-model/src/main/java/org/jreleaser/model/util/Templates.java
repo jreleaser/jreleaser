@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
- * @since 1.0.0
+ * @since 0.10.0
  */
 public class Templates {
     public static String resolve(String input, Map<String, Object> props) {

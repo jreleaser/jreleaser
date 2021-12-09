@@ -28,7 +28,7 @@ import javax.inject.Inject
 /**
  *
  * @author Andres Almiray
- * @since 1.0.0
+ * @since 0.10.0
  */
 @CompileStatic
 class PlatformImpl implements Platform {
