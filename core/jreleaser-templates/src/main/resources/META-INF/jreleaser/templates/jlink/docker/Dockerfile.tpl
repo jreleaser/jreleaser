@@ -1,3 +1,4 @@
+# [JRELEASER_VERSION]
 FROM {{dockerBaseImage}}
 
 {{#dockerLabels}}

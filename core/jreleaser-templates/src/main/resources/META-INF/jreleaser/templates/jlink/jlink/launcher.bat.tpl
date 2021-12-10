@@ -1,4 +1,5 @@
 @echo off
+rem [JRELEASER_VERSION]
 
 set ERROR_CODE=0
 
