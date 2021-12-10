@@ -18,7 +18,6 @@
 package org.jreleaser.templates;
 
 import org.jreleaser.model.JReleaserVersion;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -26,6 +25,10 @@ import java.io.Writer;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * @author Maarten Mulders
+ * @since 0.10.0
+ */
 public class VersionDecoratingWriter extends BufferedWriter {
     private static final String VERSION_MARKER = "[JRELEASER_VERSION]";
 
