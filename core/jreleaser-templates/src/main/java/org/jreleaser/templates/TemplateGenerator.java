@@ -22,6 +22,7 @@ import org.jreleaser.model.Announce;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.util.JReleaserLogger;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -97,10 +98,11 @@ public class TemplateGenerator {
         Path outputFile = outputDirectory.resolve(announcerName + ".tpl");
         logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());
 
-        try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
+        try (Writer fileWriter = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
+             BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter);
              Scanner scanner = new Scanner(reader)) {
             while (scanner.hasNextLine()) {
-                writer.write(scanner.nextLine() + System.lineSeparator());
+                decoratedWriter.write(scanner.nextLine() + System.lineSeparator());
             }
         } catch (FileAlreadyExistsException e) {
             logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
@@ -139,10 +141,11 @@ public class TemplateGenerator {
                 throw fail(e);
             }
 
-            try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
+            try (Writer fileWriter = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
+                 BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter);
                  Scanner scanner = new Scanner(template.getValue())) {
                 while (scanner.hasNextLine()) {
-                    writer.write(scanner.nextLine() + System.lineSeparator());
+                    decoratedWriter.write(scanner.nextLine() + System.lineSeparator());
                 }
             } catch (FileAlreadyExistsException e) {
                 logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
