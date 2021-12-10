@@ -1,3 +1,4 @@
+# [JRELEASER_VERSION]
 Name:      {{specPackageName}}
 Version:   {{projectVersion}}
 Release:   {{specRelease}}

@@ -1,3 +1,4 @@
+# [JRELEASER_VERSION]
 cask "{{brewCaskName}}" do
   desc "{{projectDescription}}"
   homepage "{{projectWebsite}}"

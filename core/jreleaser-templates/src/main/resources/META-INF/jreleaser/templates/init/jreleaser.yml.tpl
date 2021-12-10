@@ -1,3 +1,4 @@
+# [JRELEASER_VERSION]
 project:
   name: app
   version: 1.0.0-SNAPSHOT

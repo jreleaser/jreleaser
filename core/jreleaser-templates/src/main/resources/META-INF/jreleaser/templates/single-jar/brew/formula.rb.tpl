@@ -1,3 +1,4 @@
+# [JRELEASER_VERSION]
 class {{brewFormulaName}} < Formula
   desc "{{projectDescription}}"
   homepage "{{projectWebsite}}"

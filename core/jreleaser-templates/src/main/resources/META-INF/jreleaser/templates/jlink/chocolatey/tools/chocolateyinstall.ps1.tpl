@@ -1,3 +1,4 @@
+# [JRELEASER_VERSION]
 $tools = Split-Path $MyInvocation.MyCommand.Definition
 $package = Split-Path $tools
 $app_home = Join-Path $package '{{projectName}}-{{projectVersion}}'

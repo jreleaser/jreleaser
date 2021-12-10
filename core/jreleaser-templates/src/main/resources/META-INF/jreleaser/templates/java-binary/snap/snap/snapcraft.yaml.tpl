@@ -1,3 +1,4 @@
+# [JRELEASER_VERSION]
 name: {{snapPackageName}}
 version: {{projectVersion}}
 summary: {{projectDescription}}
