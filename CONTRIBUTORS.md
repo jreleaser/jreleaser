@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-18-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -33,6 +33,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="http://atorr.es"><img src="https://avatars.githubusercontent.com/u/674902?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Andrés Torres</b></sub></a><br /><a href="#translation-torrespro" title="Translation">🌍</a></td>
     <td align="center"><a href="http://m.3wa.com"><img src="https://avatars.githubusercontent.com/u/68015?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mac</b></sub></a><br /><a href="#translation-wmacgyver" title="Translation">🌍</a></td>
     <td align="center"><a href="http://www.dmitryalexandrov.net"><img src="https://avatars.githubusercontent.com/u/2016949?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dmitry Aleksandrov</b></sub></a><br /><a href="#translation-dalexandrov" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://maarten.mulders.it/"><img src="https://avatars.githubusercontent.com/u/430114?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Maarten Mulders</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=mthmulders" title="Code">💻</a> <a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Amthmulders" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
