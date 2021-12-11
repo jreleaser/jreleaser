@@ -89,10 +89,10 @@ release:
         - title: '🌐 Translation'
           labels:
             - 'translation'
-        - title: '⚙️  Dependencies'
+        - title: '⚙️ Dependencies'
           labels:
             - 'dependencies'
-        - title: '🛠  Build'
+        - title: '🛠 Build'
           labels:
             - 'build'
         - title: 'allcontributors'

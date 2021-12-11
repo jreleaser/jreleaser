@@ -63,7 +63,7 @@ categories:
     order: 40
     labels:
       - 'chore'
-  - title: '🛠  Build'
+  - title: '🛠 Build'
     order: 50
     labels:
       - 'test'
