@@ -193,6 +193,7 @@ public interface Constants {
     String KEY_SCOOP_PACKAGE_NAME = "scoopPackageName";
     String KEY_SCOOP_CHECKVER_URL = "scoopCheckverUrl";
     String KEY_SCOOP_AUTOUPDATE_URL = "scoopAutoupdateUrl";
+    String KEY_SCOOP_AUTOUPDATE_EXTRACT_DIR = "scoopAutoupdateExtractDir";
     String KEY_SCOOP_BUCKET_REPO_URL = "scoopBucketRepoUrl";
     String KEY_SCOOP_BUCKET_REPO_CLONE_URL = "scoopBucketRepoCloneUrl";
 

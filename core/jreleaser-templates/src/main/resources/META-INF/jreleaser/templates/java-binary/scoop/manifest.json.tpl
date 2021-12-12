@@ -5,7 +5,7 @@
   "license": "{{projectLicense}}",
   "url": "{{distributionUrl}}",
   "hash": "sha256:{{distributionChecksumSha256}}",
-  "extract_dir": "{{projectName}}-{{projectVersion}}",
+  "extract_dir": "{{distributionArtifactFileName}}",
   "env_add_path": "bin",
   "suggest": {
     "JDK": [
@@ -19,7 +19,7 @@
   },
   "autoupdate": {
     "url": "{{scoopAutoupdateUrl}}",
-    "extract_dir": "{{projectName}}-$version",
+    "extract_dir": "{{scoopAutoupdateExtractDir}}",
     "hash": {
       "url": "$url.sha256"
     }

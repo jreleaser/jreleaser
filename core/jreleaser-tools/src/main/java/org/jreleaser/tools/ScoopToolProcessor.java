@@ -30,8 +30,11 @@ import java.util.Map;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
+import static org.jreleaser.util.Constants.KEY_MACPORTS_DISTRIBUTION_URL;
 import static org.jreleaser.util.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
 import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
+import static org.jreleaser.util.Constants.KEY_SCOOP_AUTOUPDATE_EXTRACT_DIR;
 import static org.jreleaser.util.Constants.KEY_SCOOP_AUTOUPDATE_URL;
 import static org.jreleaser.util.Constants.KEY_SCOOP_BUCKET_REPO_CLONE_URL;
 import static org.jreleaser.util.Constants.KEY_SCOOP_BUCKET_REPO_URL;
@@ -67,6 +70,9 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
         props.put(KEY_SCOOP_PACKAGE_NAME, tool.getPackageName());
         props.put(KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));
         props.put(KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(props));
+        String autoupdateExtracDir = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME);
+        autoupdateExtracDir = autoupdateExtracDir.replace(context.getModel().getProject().getEffectiveVersion(), "$version");
+        props.put(KEY_SCOOP_AUTOUPDATE_EXTRACT_DIR, autoupdateExtracDir);
     }
 
     private Object resolveCheckverUrl(Map<String, Object> props) {

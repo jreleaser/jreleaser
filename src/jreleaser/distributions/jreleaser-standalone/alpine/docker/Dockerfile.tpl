@@ -10,18 +10,18 @@ LABEL {{.}}
 
 COPY assembly/* /
 
-RUN unzip {{distributionArtifactFileName}} && \
-    rm {{distributionArtifactFileName}} && \
-    chmod +x {{distributionArtifactName}}/bin/{{distributionExecutable}} && \
-    chmod +x {{distributionArtifactName}}/bin/java && \
-    mv /{{distributionExecutable}}-entrypoint.sh /{{distributionArtifactName}}/bin && \
-    chmod +x /{{distributionArtifactName}}/bin/{{distributionExecutable}}-entrypoint.sh
+RUN unzip {{distributionArtifactFile}} && \
+    rm {{distributionArtifactFile}} && \
+    chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutable}} && \
+    chmod +x {{distributionArtifactFileName}}/bin/java && \
+    mv /{{distributionExecutable}}-entrypoint.sh /{{distributionArtifactFileName}}/bin && \
+    chmod +x /{{distributionArtifactFileName}}/bin/{{distributionExecutable}}-entrypoint.sh
 
-ENV PATH="${PATH}:/{{distributionArtifactName}}/bin"
+ENV PATH="${PATH}:/{{distributionArtifactFileName}}/bin"
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENTRYPOINT ["/{{distributionArtifactName}}/bin/{{distributionExecutable}}-entrypoint.sh"]
-CMD ["/{{distributionArtifactName}}/bin/{{distributionExecutable}}"]
+ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutable}}-entrypoint.sh"]
+CMD ["/{{distributionArtifactFileName}}/bin/{{distributionExecutable}}"]
