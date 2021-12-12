@@ -147,7 +147,6 @@ public class Chocolatey extends AbstractRepositoryTool {
     @Override
     public boolean supportsDistribution(Distribution distribution) {
         return distribution.getType() != Distribution.DistributionType.SINGLE_JAR &&
-            distribution.getType() != Distribution.DistributionType.NATIVE_IMAGE &&
             distribution.getType() != Distribution.DistributionType.NATIVE_PACKAGE &&
             distribution.getType() != Distribution.DistributionType.BINARY;
     }
