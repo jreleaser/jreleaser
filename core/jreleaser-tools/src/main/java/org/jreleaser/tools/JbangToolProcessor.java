@@ -25,7 +25,6 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jbang;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.JsonUtils;
 
 import java.io.IOException;
@@ -34,6 +33,11 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_JBANG_ALIAS_NAME;
+import static org.jreleaser.util.Constants.KEY_JBANG_CATALOG_REPO_CLONE_URL;
+import static org.jreleaser.util.Constants.KEY_JBANG_CATALOG_REPO_URL;
+import static org.jreleaser.util.Constants.KEY_JBANG_DISTRIBUTION_GA;
+import static org.jreleaser.util.Constants.KEY_JBANG_SCRIPT_NAME;
 import static org.jreleaser.util.Constants.KEY_REVERSE_DOMAIN;
 import static org.jreleaser.util.Constants.KEY_REVERSE_REPO_HOST;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -68,9 +72,9 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
-        props.put(Constants.KEY_JBANG_CATALOG_REPO_URL,
+        props.put(KEY_JBANG_CATALOG_REPO_URL,
             gitService.getResolvedRepoUrl(context.getModel(), tool.getCatalog().getOwner(), tool.getCatalog().getResolvedName()));
-        props.put(Constants.KEY_JBANG_CATALOG_REPO_CLONE_URL,
+        props.put(KEY_JBANG_CATALOG_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getCatalog().getOwner(), tool.getCatalog().getResolvedName()));
 
         String aliasName = sanitizeAlias(tool.getAlias());
@@ -81,10 +85,10 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
         }
         scriptName = sanitizeScriptName(scriptName);
 
-        props.put(Constants.KEY_JBANG_ALIAS_NAME, aliasName);
-        props.put(Constants.KEY_JBANG_SCRIPT_NAME, scriptName);
+        props.put(KEY_JBANG_ALIAS_NAME, aliasName);
+        props.put(KEY_JBANG_SCRIPT_NAME, scriptName);
 
-        String jbangDistributionGA = (String) tool.getResolvedExtraProperties().get(Constants.KEY_JBANG_DISTRIBUTION_GA);
+        String jbangDistributionGA = (String) tool.getResolvedExtraProperties().get(KEY_JBANG_DISTRIBUTION_GA);
         if (isBlank(jbangDistributionGA)) {
             if (context.getModel().getProject().isSnapshot()) {
                 // if single
@@ -116,7 +120,7 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
                     distribution.getJava().getArtifactId();
             }
         }
-        props.put(Constants.KEY_JBANG_DISTRIBUTION_GA, jbangDistributionGA);
+        props.put(KEY_JBANG_DISTRIBUTION_GA, jbangDistributionGA);
     }
 
     private String sanitizeAlias(String alias) {
@@ -152,7 +156,7 @@ public class JbangToolProcessor extends AbstractRepositoryToolProcessor<Jbang> {
         throws ToolProcessingException {
         fileName = trimTplExtension(fileName);
 
-        String scriptName = (String) props.get(Constants.KEY_JBANG_SCRIPT_NAME);
+        String scriptName = (String) props.get(KEY_JBANG_SCRIPT_NAME);
         Path outputFile = "jbang.java".equals(fileName) ?
             outputDirectory.resolve(scriptName.concat(".java")) :
             outputDirectory.resolve(fileName);

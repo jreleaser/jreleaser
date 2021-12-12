@@ -213,7 +213,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
     }
 
     private String resolveArtifactUrl(Map<String, Object> props, Distribution distribution, Artifact artifact) {
-        String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
+        String artifactFileName = artifact.getEffectivePath(context, distribution).getFileName().toString();
         String artifactName = getFilename(artifactFileName, tool.getSupportedExtensions());
         String archiveFormat = artifactFileName.substring(artifactName.length() + 1);
         Map<String, Object> newProps = new LinkedHashMap<>(props);

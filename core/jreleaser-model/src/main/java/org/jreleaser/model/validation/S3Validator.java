@@ -95,7 +95,7 @@ public abstract class S3Validator extends Validator {
                 Env.toVar("S3_" + s3.getName()) + "_PATH",
                 "s3." + s3.getName() + ".path",
                 s3.getPath(),
-                "{{projectName}}/{{tagName}}/{{artifactFileName}}"));
+                "{{projectName}}/{{tagName}}/{{artifactFile}}"));
 
         s3.setDownloadUrl(
             checkProperty(context,

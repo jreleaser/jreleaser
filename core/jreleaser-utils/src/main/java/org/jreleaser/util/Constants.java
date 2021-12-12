@@ -127,8 +127,14 @@ public interface Constants {
     String KEY_DISTRIBUTION_ARTIFACT_PLATFORM = "distributionArtifactPlatform";
     String KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED = "distributionArtifactPlatformReplaced";
     String KEY_DISTRIBUTION_ARTIFACT_NAME = "distributionArtifactName";
+    String KEY_DISTRIBUTION_ARTIFACT_VERSION = "distributionArtifactVersion";
+    String KEY_DISTRIBUTION_ARTIFACT_OS = "distributionArtifactOs";
+    String KEY_DISTRIBUTION_ARTIFACT_ARCH = "distributionArtifactArch";
     String KEY_DISTRIBUTION_ARTIFACT_SIZE = "distributionArtifactSize";
+    String KEY_DISTRIBUTION_ARTIFACT_FILE = "distributionArtifactFile";
     String KEY_DISTRIBUTION_ARTIFACT_FILE_NAME = "distributionArtifactFileName";
+    String KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION = "distributionArtifactFileExtension";
+    String KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT = "distributionArtifactFileFormat";
     String KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT = "distributionArtifactArchiveFormat";
     String KEY_DISTRIBUTION_JAVA_VERSION = "distributionJavaVersion";
     String KEY_DISTRIBUTION_JAVA_VERSION_MAJOR = "distributionJavaVersionMajor";
@@ -143,8 +149,14 @@ public interface Constants {
     // Artifact
     String KEY_ARTIFACT_PLATFORM = "artifactPlatform";
     String KEY_ARTIFACT_PLATFORM_REPLACED = "artifactPlatformReplaced";
+    String KEY_ARTIFACT_FILE = "artifactFile";
     String KEY_ARTIFACT_FILE_NAME = "artifactFileName";
+    String KEY_ARTIFACT_FILE_EXTENSION = "artifactFileExtension";
+    String KEY_ARTIFACT_FILE_FORMAT = "artifactFileFormat";
     String KEY_ARTIFACT_NAME = "artifactName";
+    String KEY_ARTIFACT_VERSION = "artifactVersion";
+    String KEY_ARTIFACT_OS = "artifactOs";
+    String KEY_ARTIFACT_ARCH = "artifactArch";
     String KEY_ARTIFACT_SIZE = "artifactSize";
     String KEY_ARTIFACT_ARCHIVE_FORMAT = "artifactArchiveFormat";
 

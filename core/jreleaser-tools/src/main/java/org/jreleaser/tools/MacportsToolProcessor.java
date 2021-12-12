@@ -23,7 +23,6 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Macports;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
-import org.jreleaser.util.Constants;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -31,7 +30,17 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_URL;
+import static org.jreleaser.util.Constants.KEY_MACPORTS_CATEGORIES;
+import static org.jreleaser.util.Constants.KEY_MACPORTS_DISTRIBUTION_URL;
+import static org.jreleaser.util.Constants.KEY_MACPORTS_JAVA_VERSION;
+import static org.jreleaser.util.Constants.KEY_MACPORTS_MAINTAINERS;
 import static org.jreleaser.util.Constants.KEY_MACPORTS_PACKAGE_NAME;
+import static org.jreleaser.util.Constants.KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL;
+import static org.jreleaser.util.Constants.KEY_MACPORTS_REPOSITORY_REPO_URL;
+import static org.jreleaser.util.Constants.KEY_MACPORTS_REVISION;
+import static org.jreleaser.util.Constants.KEY_PROJECT_LONG_DESCRIPTION;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 
 /**
@@ -55,29 +64,29 @@ public class MacportsToolProcessor extends AbstractRepositoryToolProcessor<Macpo
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
-        props.put(Constants.KEY_MACPORTS_REPOSITORY_REPO_URL,
+        props.put(KEY_MACPORTS_REPOSITORY_REPO_URL,
             gitService.getResolvedRepoUrl(context.getModel(), tool.getRepository().getOwner(), tool.getRepository().getResolvedName()));
-        props.put(Constants.KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL,
+        props.put(KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getRepository().getOwner(), tool.getRepository().getResolvedName()));
 
         List<String> longDescription = Arrays.asList(context.getModel().getProject().getLongDescription().split("\\n"));
 
         props.put(KEY_MACPORTS_PACKAGE_NAME, tool.getPackageName());
-        props.put(Constants.KEY_MACPORTS_REVISION, tool.getRevision());
-        props.put(Constants.KEY_MACPORTS_CATEGORIES, String.join(" ", tool.getCategories()));
-        props.put(Constants.KEY_MACPORTS_MAINTAINERS, passThrough(String.join(LINE_SEPARATOR, tool.getResolvedMaintainers(context))));
-        props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, passThrough(String.join(LINE_SEPARATOR, longDescription)));
+        props.put(KEY_MACPORTS_REVISION, tool.getRevision());
+        props.put(KEY_MACPORTS_CATEGORIES, String.join(" ", tool.getCategories()));
+        props.put(KEY_MACPORTS_MAINTAINERS, passThrough(String.join(LINE_SEPARATOR, tool.getResolvedMaintainers(context))));
+        props.put(KEY_PROJECT_LONG_DESCRIPTION, passThrough(String.join(LINE_SEPARATOR, longDescription)));
         if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY) {
-            props.put(Constants.KEY_MACPORTS_JAVA_VERSION, resolveJavaVersion(distribution));
+            props.put(KEY_MACPORTS_JAVA_VERSION, resolveJavaVersion(distribution));
         }
 
-        String distributionUrl = (String) props.get(Constants.KEY_DISTRIBUTION_URL);
-        String artifactFilename = (String) props.get(Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME);
-        if (distributionUrl.endsWith(artifactFilename)) {
-            distributionUrl = distributionUrl.substring(0, distributionUrl.length() - artifactFilename.length());
+        String distributionUrl = (String) props.get(KEY_DISTRIBUTION_URL);
+        String artifactFile = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE);
+        if (distributionUrl.endsWith(artifactFile)) {
+            distributionUrl = distributionUrl.substring(0, distributionUrl.length() - artifactFile.length() - 1);
         }
         distributionUrl = distributionUrl.replace(context.getModel().getProject().getResolvedVersion(), "${version}");
-        props.put(Constants.KEY_MACPORTS_DISTRIBUTION_URL, distributionUrl);
+        props.put(KEY_MACPORTS_DISTRIBUTION_URL, distributionUrl);
     }
 
     private String resolveJavaVersion(Distribution distribution) {

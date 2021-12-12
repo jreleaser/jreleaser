@@ -11,16 +11,16 @@ LABEL {{.}}
 
 COPY assembly/ /
 
-RUN unzip {{distributionArtifactFileName}} && \
-    rm {{distributionArtifactFileName}} && \
-    chmod +x {{distributionArtifactName}}/bin/{{distributionExecutable}} && \
-    chmod +x {{distributionArtifactName}}/bin/java
+RUN unzip {{distributionArtifactFile}} && \
+    rm {{distributionArtifactFile}} && \
+    chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutable}} && \
+    chmod +x {{distributionArtifactFileName}}/bin/java
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENV JAVA_HOME="/{{distributionArtifactName}}"
+ENV JAVA_HOME="/{{distributionArtifactFileName}}"
 ENV PATH="${PATH}:${JAVA_HOME}/bin"
 
-ENTRYPOINT ["/{{distributionArtifactName}}/bin/{{distributionExecutable}}"]
+ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutable}}"]

@@ -65,7 +65,7 @@ public abstract class NativeImageResolver extends Validator {
                 artifact.setTransform(nativeImage.getResolvedImageNameTransform(context) + "-" +
                     platformReplaced + "." +
                     nativeImage.getArchiveFormat().extension());
-                artifact.getEffectivePath(context);
+                artifact.getEffectivePath(context, nativeImage);
             }
             nativeImage.addOutput(artifact);
         }

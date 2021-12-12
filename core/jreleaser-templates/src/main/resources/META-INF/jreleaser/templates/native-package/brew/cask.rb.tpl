@@ -30,7 +30,7 @@ cask "{{brewCaskName}}" do
   app "{{brewCaskApp}}"
   {{/brewCaskHasApp}}
   {{#brewCaskHasBinary}}
-  binary "{{distributionArtifactName}}/bin/{{distributionExecutable}}"
+  binary "{{distributionArtifactFileName}}/bin/{{distributionExecutable}}"
   {{/brewCaskHasBinary}}
   {{#brewCaskHasUninstall}}
   {{#brewCaskUninstall}}

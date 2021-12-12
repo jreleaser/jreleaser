@@ -9,15 +9,15 @@ LABEL {{.}}
 {{.}}
 {{/dockerPreCommands}}
 
-RUN curl -Ls "{{distributionUrl}}" --output {{distributionArtifactFileName}} && \
-    unzip {{distributionArtifactFileName}} && \
-    rm {{distributionArtifactFileName}} && \
-    chmod +x {{distributionArtifactName}}/bin/{{distributionExecutable}}
+RUN curl -Ls "{{distributionUrl}}" --output {{distributionArtifactFile}} && \
+    unzip {{distributionArtifactFile}} && \
+    rm {{distributionArtifactFile}} && \
+    chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutable}}
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENV PATH="${PATH}:/{{distributionArtifactName}}/bin"
+ENV PATH="${PATH}:/{{distributionArtifactFileName}}/bin"
 
-ENTRYPOINT ["/{{distributionArtifactName}}/bin/{{distributionExecutable}}"]
+ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutable}}"]

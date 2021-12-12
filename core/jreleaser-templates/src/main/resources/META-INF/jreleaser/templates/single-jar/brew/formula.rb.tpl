@@ -19,8 +19,8 @@ class {{brewFormulaName}} < Formula
   {{/brewDependencies}}
 
   def install
-    libexec.install "{{artifactFileName}}"
-    bin.write_jar_script libexec/"{{artifactFileName}}", "{{distributionExecutable}}"
+    libexec.install "{{artifactFile}}"
+    bin.write_jar_script libexec/"{{distributionArtifactFile}}", "{{distributionExecutable}}"
   end
 
   test do

@@ -15,7 +15,7 @@ RUN mkdir -p /{{distributionName}}/bin && \
     mkdir -p /{{distributionName}}/lib && \
     mv /{{distributionExecutable}} /{{distributionName}}/bin && \
     chmod +x /{{distributionName}}/bin/{{distributionExecutable}} && \
-    mv /{{artifactFileName}} /{{distributionName}}/lib
+    mv /{{distributionArtifactFile}} /{{distributionName}}/lib
 
 ENV PATH="${PATH}:/{{distributionName}}/bin"
 

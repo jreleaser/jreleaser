@@ -48,11 +48,13 @@ public class Artifact implements Domain, ExtraProperties {
     private String path;
     private String platform;
     private String transform;
+    private Path effectivePath;
     private Path resolvedPath;
     private Path resolvedTransform;
     private boolean active;
 
     void setAll(Artifact artifact) {
+        this.effectivePath = artifact.effectivePath;
         this.path = artifact.path;
         this.platform = artifact.platform;
         this.transform = artifact.transform;
@@ -71,22 +73,35 @@ public class Artifact implements Domain, ExtraProperties {
         this.active = true;
     }
 
+    public Path getEffectivePath() {
+        return effectivePath;
+    }
+
     public Path getEffectivePath(JReleaserContext context) {
-        Path rp = getResolvedPath(context);
-        Path tp = getResolvedTransform(context);
-        return checkAndCopyFile(context, rp, tp);
+        if (null == effectivePath) {
+            Path rp = getResolvedPath(context);
+            Path tp = getResolvedTransform(context);
+            effectivePath = checkAndCopyFile(context, rp, tp);
+        }
+        return effectivePath;
     }
 
     public Path getEffectivePath(JReleaserContext context, Distribution distribution) {
-        Path rp = getResolvedPath(context, distribution);
-        Path tp = getResolvedTransform(context, distribution);
-        return checkAndCopyFile(context, rp, tp);
+        if (null == effectivePath) {
+            Path rp = getResolvedPath(context, distribution);
+            Path tp = getResolvedTransform(context, distribution);
+            effectivePath = checkAndCopyFile(context, rp, tp);
+        }
+        return effectivePath;
     }
 
     public Path getEffectivePath(JReleaserContext context, Assembler assembler) {
-        Path rp = getResolvedPath(context, assembler);
-        Path tp = getResolvedTransform(context, assembler);
-        return checkAndCopyFile(context, rp, tp);
+        if (null == effectivePath) {
+            Path rp = getResolvedPath(context, assembler);
+            Path tp = getResolvedTransform(context, assembler);
+            effectivePath = checkAndCopyFile(context, rp, tp);
+        }
+        return effectivePath;
     }
 
     public Path getResolvedPath(JReleaserContext context, Path basedir, boolean checkIfExists) {
@@ -293,6 +308,7 @@ public class Artifact implements Domain, ExtraProperties {
         artifact.path = resolvedPath.toAbsolutePath().toString();
         artifact.platform = platform;
         artifact.resolvedPath = resolvedPath;
+        artifact.effectivePath = resolvedPath;
         artifact.setExtraProperties(props);
         return artifact;
     }
@@ -301,6 +317,7 @@ public class Artifact implements Domain, ExtraProperties {
         Artifact artifact = new Artifact();
         artifact.path = resolvedPath.toAbsolutePath().toString();
         artifact.resolvedPath = resolvedPath;
+        artifact.effectivePath = resolvedPath;
         artifact.setExtraProperties(props);
         return artifact;
     }
@@ -309,6 +326,7 @@ public class Artifact implements Domain, ExtraProperties {
         Artifact artifact = new Artifact();
         artifact.path = resolvedPath.toAbsolutePath().toString();
         artifact.resolvedPath = resolvedPath;
+        artifact.effectivePath = resolvedPath;
         return artifact;
     }
 
@@ -316,6 +334,7 @@ public class Artifact implements Domain, ExtraProperties {
         Artifact artifact = new Artifact();
         artifact.path = resolvedPath.toAbsolutePath().toString();
         artifact.resolvedPath = resolvedPath;
+        artifact.effectivePath = resolvedPath;
         artifact.platform = platform;
         return artifact;
     }

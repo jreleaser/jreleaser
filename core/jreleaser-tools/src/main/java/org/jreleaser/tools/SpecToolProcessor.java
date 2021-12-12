@@ -23,7 +23,6 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Spec;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
@@ -36,7 +35,12 @@ import java.util.Set;
 
 import static org.jreleaser.model.Spec.SKIP_SPEC;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT;
+import static org.jreleaser.util.Constants.KEY_SPEC_DIRECTORIES;
+import static org.jreleaser.util.Constants.KEY_SPEC_FILES;
 import static org.jreleaser.util.Constants.KEY_SPEC_PACKAGE_NAME;
+import static org.jreleaser.util.Constants.KEY_SPEC_RELEASE;
+import static org.jreleaser.util.Constants.KEY_SPEC_REQUIRES;
 import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isTrue;
 
@@ -56,7 +60,7 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
     }
 
     private void setupJavaBinary(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        Artifact artifact = (Artifact) props.get(Constants.KEY_DISTRIBUTION_ARTIFACT);
+        Artifact artifact = (Artifact) props.get(KEY_DISTRIBUTION_ARTIFACT);
         Path artifactPath = artifact.getResolvedPath();
         String artifactName = getFilename(artifactPath.getFileName().toString(), tool.getSupportedExtensions());
 
@@ -85,8 +89,8 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
                             "%{version}"));
                 });
 
-            props.put(Constants.KEY_SPEC_DIRECTORIES, directories);
-            props.put(Constants.KEY_SPEC_FILES, files);
+            props.put(KEY_SPEC_DIRECTORIES, directories);
+            props.put(KEY_SPEC_FILES, files);
         } catch (IOException e) {
             throw new ToolProcessingException("ERROR", e);
         }
@@ -101,8 +105,8 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         props.put(KEY_SPEC_PACKAGE_NAME, tool.getPackageName());
-        props.put(Constants.KEY_SPEC_RELEASE, tool.getRelease());
-        props.put(Constants.KEY_SPEC_REQUIRES, tool.getRequires());
+        props.put(KEY_SPEC_RELEASE, tool.getRelease());
+        props.put(KEY_SPEC_REQUIRES, tool.getRequires());
     }
 
     @Override

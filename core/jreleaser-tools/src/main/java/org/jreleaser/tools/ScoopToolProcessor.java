@@ -23,14 +23,21 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Scoop;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
-import org.jreleaser.util.Constants;
 
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
+import static org.jreleaser.util.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
+import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
+import static org.jreleaser.util.Constants.KEY_SCOOP_AUTOUPDATE_URL;
+import static org.jreleaser.util.Constants.KEY_SCOOP_BUCKET_REPO_CLONE_URL;
+import static org.jreleaser.util.Constants.KEY_SCOOP_BUCKET_REPO_URL;
+import static org.jreleaser.util.Constants.KEY_SCOOP_CHECKVER_URL;
 import static org.jreleaser.util.Constants.KEY_SCOOP_PACKAGE_NAME;
+import static org.jreleaser.util.Constants.KEY_TAG_NAME;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 
 /**
@@ -52,14 +59,14 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
-        props.put(Constants.KEY_SCOOP_BUCKET_REPO_URL,
+        props.put(KEY_SCOOP_BUCKET_REPO_URL,
             gitService.getResolvedRepoUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getResolvedName()));
-        props.put(Constants.KEY_SCOOP_BUCKET_REPO_CLONE_URL,
+        props.put(KEY_SCOOP_BUCKET_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getResolvedName()));
 
         props.put(KEY_SCOOP_PACKAGE_NAME, tool.getPackageName());
-        props.put(Constants.KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));
-        props.put(Constants.KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(props));
+        props.put(KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));
+        props.put(KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(props));
     }
 
     private Object resolveCheckverUrl(Map<String, Object> props) {
@@ -74,17 +81,17 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
             return getTool().getAutoupdateUrl();
         }
 
-        String artifactFilename = (String) props.get(Constants.KEY_ARTIFACT_FILE_NAME);
-        String projectVersion = (String) props.get(Constants.KEY_PROJECT_VERSION);
-        String tagName = (String) props.get(Constants.KEY_TAG_NAME);
-        artifactFilename = artifactFilename.replace(projectVersion, "$version");
+        String artifactFile = (String) props.get(KEY_ARTIFACT_FILE);
+        String projectVersion = (String) props.get(KEY_PROJECT_VERSION);
+        String tagName = (String) props.get(KEY_TAG_NAME);
+        artifactFile = artifactFile.replace(projectVersion, "$version");
         tagName = tagName.replace(projectVersion, "$version");
 
         Map<String, Object> copy = new LinkedHashMap<>(props);
-        copy.put(Constants.KEY_PROJECT_VERSION, "$version");
-        copy.put(Constants.KEY_PROJECT_EFFECTIVE_VERSION, "$version");
-        copy.put(Constants.KEY_TAG_NAME, tagName);
-        copy.put(Constants.KEY_ARTIFACT_FILE_NAME, artifactFilename);
+        copy.put(KEY_PROJECT_VERSION, "$version");
+        copy.put(KEY_PROJECT_EFFECTIVE_VERSION, "$version");
+        copy.put(KEY_TAG_NAME, tagName);
+        copy.put(KEY_ARTIFACT_FILE, artifactFile);
         return applyTemplate(getTool().getAutoupdateUrl(), copy);
     }
 

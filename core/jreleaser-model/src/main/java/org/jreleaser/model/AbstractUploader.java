@@ -17,22 +17,18 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.FileType;
+import org.jreleaser.model.util.Artifacts;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCHIVE_FORMAT;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_NAME;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_NAME;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
-import static org.jreleaser.util.StringUtils.getFilename;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -246,20 +242,13 @@ abstract class AbstractUploader implements Uploader {
     @Override
     public Map<String, Object> artifactProps(JReleaserContext context, Artifact artifact) {
         Map<String, Object> props = context.props();
+        Artifacts.artifactProps(artifact, props);
 
-        String platform = isNotBlank(artifact.getPlatform()) ? artifact.getPlatform() : "";
-        // add extra properties without clobbering existing keys
-        Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact");
-        artifactProps.keySet().stream()
-            .filter(k -> !props.containsKey(k))
-            .filter(k -> !k.startsWith("artifactSkip"))
-            .forEach(k -> props.put(k, artifactProps.get(k)));
-        String artifactFileName = artifact.getEffectivePath(context).getFileName().toString();
-        String filename = getFilename(artifactFileName, FileType.getSupportedExtensions());
-        props.put(KEY_ARTIFACT_PLATFORM, platform);
-        props.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
-        props.put(KEY_ARTIFACT_NAME, filename);
-        props.put(KEY_ARTIFACT_ARCHIVE_FORMAT, artifactFileName.substring(filename.length()) + 1);
+        Set<String> keys = new LinkedHashSet<>(props.keySet());
+        keys.stream()
+            .filter(k -> k.contains("skip") || k.contains("Skip"))
+            .forEach(props::remove);
+
         return props;
     }
 }

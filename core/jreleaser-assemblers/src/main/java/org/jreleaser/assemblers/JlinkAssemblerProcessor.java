@@ -116,7 +116,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
                 image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" +
                     platformReplaced + "."+
                     archiveFormat.extension());
-                image.getEffectivePath(context);
+                image.getEffectivePath(context, assembler);
             }
         }
     }
@@ -138,7 +138,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         }
 
         // jlink it
-        String modulePath = targetJdk.getEffectivePath(context).resolve("jmods").toAbsolutePath().toString();
+        String modulePath = targetJdk.getEffectivePath(context, assembler).resolve("jmods").toAbsolutePath().toString();
         if (assembler.isCopyJars()) {
             modulePath += File.pathSeparator + jarsDirectory
                 .resolve("universal")

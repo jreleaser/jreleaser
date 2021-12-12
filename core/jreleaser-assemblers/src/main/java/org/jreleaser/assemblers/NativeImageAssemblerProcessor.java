@@ -81,7 +81,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" +
                 platformReplaced + "." +
                 assembler.getArchiveFormat().extension());
-            image.getEffectivePath(context);
+            image.getEffectivePath(context, assembler);
         }
     }
 
@@ -126,7 +126,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         Command cmd = new Command(graalPath.resolve("bin").resolve("native-image").toAbsolutePath().toString())
             .args(assembler.getArgs())
             .arg("-jar")
-            .arg(assembler.getMainJar().getEffectivePath(context).toAbsolutePath().toString());
+            .arg(assembler.getMainJar().getEffectivePath(context, assembler).toAbsolutePath().toString());
 
         if (!jars.isEmpty()) {
             cmd.arg("-cp")

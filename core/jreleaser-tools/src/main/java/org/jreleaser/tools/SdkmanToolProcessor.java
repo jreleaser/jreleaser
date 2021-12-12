@@ -26,11 +26,13 @@ import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.sdk.sdkman.MajorReleaseSdkmanCommand;
 import org.jreleaser.sdk.sdkman.MinorReleaseSdkmanCommand;
 import org.jreleaser.sdk.sdkman.SdkmanException;
-import org.jreleaser.util.Constants;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
+import static org.jreleaser.util.Constants.KEY_SDKMAN_CANDIDATE;
+import static org.jreleaser.util.Constants.KEY_SDKMAN_RELEASE_NOTES_URL;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -130,8 +132,8 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
 
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
-        props.put(Constants.KEY_SDKMAN_CANDIDATE, tool.getCandidate());
-        props.put(Constants.KEY_SDKMAN_RELEASE_NOTES_URL, applyTemplate(tool.getReleaseNotesUrl(), props));
+        props.put(KEY_SDKMAN_CANDIDATE, tool.getCandidate());
+        props.put(KEY_SDKMAN_RELEASE_NOTES_URL, applyTemplate(tool.getReleaseNotesUrl(), props));
     }
 
     private String mapPlatform(String platform) {
@@ -167,7 +169,7 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
 
     private String artifactUrl(Distribution distribution, Artifact artifact) {
         Map<String, Object> newProps = context.props();
-        newProps.put("artifactFileName", artifact.getEffectivePath(context, distribution).getFileName().toString());
+        newProps.put(KEY_ARTIFACT_FILE, artifact.getEffectivePath(context, distribution).getFileName().toString());
         return applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps, "downloadUrl");
     }
 }

@@ -10,12 +10,12 @@ LABEL {{.}}
 {{/dockerPreCommands}}
 
 COPY assembly/ /
-RUN chmod +x {{distributionArtifactName}}/bin/{{distributionExecutable}}
+RUN chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutable}}
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENV PATH="${PATH}:/{{distributionArtifactName}}/bin"
+ENV PATH="${PATH}:/{{distributionArtifactFileName}}/bin"
 
-ENTRYPOINT ["/{{distributionArtifactName}}/bin/{{distributionExecutable}}"]
+ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutable}}"]

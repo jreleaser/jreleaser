@@ -24,7 +24,6 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.command.Command;
 
@@ -34,7 +33,14 @@ import java.util.Map;
 
 import static org.jreleaser.model.util.Templates.resolve;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL;
+import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_URL;
+import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_ICON_URL;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_PACKAGE_NAME;
+import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_TITLE;
+import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_USERNAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
+import static org.jreleaser.util.Constants.KEY_PROJECT_LICENSE_URL;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -91,20 +97,20 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
-        if (!props.containsKey(Constants.KEY_PROJECT_LICENSE_URL) ||
-            isBlank((String) props.get(Constants.KEY_PROJECT_LICENSE_URL))) {
+        if (!props.containsKey(KEY_PROJECT_LICENSE_URL) ||
+            isBlank((String) props.get(KEY_PROJECT_LICENSE_URL))) {
             context.getLogger().warn(RB.$("ERROR_project_no_license_url"));
         }
 
-        props.put(Constants.KEY_CHOCOLATEY_BUCKET_REPO_URL,
+        props.put(KEY_CHOCOLATEY_BUCKET_REPO_URL,
             gitService.getResolvedRepoUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getResolvedName()));
-        props.put(Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL,
+        props.put(KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(context.getModel(), tool.getBucket().getOwner(), tool.getBucket().getResolvedName()));
 
         props.put(KEY_CHOCOLATEY_PACKAGE_NAME, getTool().getPackageName());
-        props.put(Constants.KEY_CHOCOLATEY_USERNAME, getTool().getUsername());
-        props.put(Constants.KEY_CHOCOLATEY_TITLE, getTool().getTitle());
-        props.put(Constants.KEY_CHOCOLATEY_ICON_URL, resolve(getTool().getIconUrl(), props));
+        props.put(KEY_CHOCOLATEY_USERNAME, getTool().getUsername());
+        props.put(KEY_CHOCOLATEY_TITLE, getTool().getTitle());
+        props.put(KEY_CHOCOLATEY_ICON_URL, resolve(getTool().getIconUrl(), props));
     }
 
     @Override
@@ -125,7 +131,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
     }
 
     private void createChocolateyPackage(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+        Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
 
         Command cmd = new Command("choco")
             .arg("pack")
@@ -135,7 +141,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
     }
 
     private void publishChocolateyPackage(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
-        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+        Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
 
         Command cmd = new Command("choco")
             .arg("apikey")

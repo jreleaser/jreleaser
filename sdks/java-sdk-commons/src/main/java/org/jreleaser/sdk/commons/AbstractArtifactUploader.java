@@ -52,8 +52,8 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
         if (getUploader().isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
                 if (!artifact.isActive()) continue;
-                if (isSkip(artifact, keys)) continue;
                 Path path = artifact.getEffectivePath(context);
+                if (isSkip(artifact, keys)) continue;
                 if (Files.exists(path) && 0 != path.toFile().length()) {
                     artifacts.add(artifact);
                 }
@@ -65,8 +65,8 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
                 if (!context.isDistributionIncluded(distribution) || isSkip(distribution, keys)) continue;
                 for (Artifact artifact : distribution.getArtifacts()) {
                     if (!artifact.isActive()) continue;
+                    Path path = artifact.getEffectivePath(context, distribution);
                     if (isSkip(artifact, keys)) continue;
-                    Path path = artifact.getEffectivePath(context);
                     if (Files.exists(path) && 0 != path.toFile().length()) {
                         String platform = artifact.getPlatform();
                         String platformReplaced = distribution.getPlatform().applyReplacements(platform);

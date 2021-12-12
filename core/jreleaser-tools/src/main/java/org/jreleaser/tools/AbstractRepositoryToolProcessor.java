@@ -29,7 +29,6 @@ import org.jreleaser.model.RepositoryTool;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
 import org.jreleaser.sdk.git.JReleaserGpgSigner;
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
@@ -37,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -139,7 +139,7 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
     }
 
     protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws ToolProcessingException, IOException {
-        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+        Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         prepareWorkingCopy(packageDirectory, directory);
     }
 

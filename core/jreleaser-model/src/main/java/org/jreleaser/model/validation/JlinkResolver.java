@@ -74,7 +74,7 @@ public abstract class JlinkResolver extends Validator {
                     artifact.setTransform(jlink.getResolvedImageNameTransform(context) + "-" +
                         platformReplaced + "." +
                         archiveFormat.extension());
-                    artifact.getEffectivePath(context);
+                    artifact.getEffectivePath(context, jlink);
                 }
                 jlink.addOutput(artifact);
             }

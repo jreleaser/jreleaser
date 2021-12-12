@@ -51,7 +51,9 @@ public class Checksum {
 
         if (context.getModel().getChecksum().isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
-                if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_CHECKSUM)) continue;
+                if (!artifact.isActive()) continue;
+                artifact.getEffectivePath(context);
+                if (artifact.extraPropertyIsTrue(KEY_SKIP_CHECKSUM)) continue;
                 for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                     readHash(context, algorithm, artifact);
                     List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());
@@ -65,10 +67,11 @@ public class Checksum {
 
             for (Artifact artifact : distribution.getArtifacts()) {
                 if (!artifact.isActive()) continue;
+                artifact.getEffectivePath(context, distribution);
                 for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                     readHash(context, distribution, algorithm, artifact);
                     List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());
-                    list.add(artifact.getHash(algorithm) + "  " + artifact.getEffectivePath(context).getFileName());
+                    list.add(artifact.getHash(algorithm) + "  " + artifact.getEffectivePath(context, distribution).getFileName());
                 }
             }
         }

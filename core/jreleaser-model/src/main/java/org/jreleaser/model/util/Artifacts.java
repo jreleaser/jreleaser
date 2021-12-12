@@ -26,6 +26,7 @@ import org.jreleaser.model.Files;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
+import org.jreleaser.util.FileType;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
@@ -48,7 +49,21 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.model.util.Templates.resolve;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCH;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_EXTENSION;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_FORMAT;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_NAME;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_NAME;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_OS;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_VERSION;
+import static org.jreleaser.util.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
+import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.getFilename;
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -86,10 +101,64 @@ public class Artifacts {
     }
 
     public static Map<String, Object> artifactProps(Artifact artifact, Map<String, Object> props) {
+        if (artifact.getEffectivePath() != null) {
+            return resolvedArtifactProps(artifact, props);
+        }
+        return unresolvedArtifactProps(artifact, props);
+    }
+
+    public static Map<String, Object> unresolvedArtifactProps(Artifact artifact, Map<String, Object> props) {
         props.putAll(artifact.getExtraProperties());
         props.putAll(artifact.getResolvedExtraProperties());
         props.put("platform", artifact.getPlatform());
         props.put("artifactPlatform", artifact.getPlatform());
+        return props;
+    }
+
+    public static Map<String, Object> resolvedArtifactProps(Artifact artifact, Map<String, Object> props) {
+        props.putAll(artifact.getExtraProperties());
+        props.putAll(artifact.getResolvedExtraProperties());
+
+        String artifactFile = artifact.getEffectivePath().getFileName().toString();
+        String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
+        String artifactExtension = artifactFile.substring(artifactFileName.length() + 1);
+        String artifactFileFormat = artifactExtension.substring(1);
+
+        props.put(KEY_ARTIFACT_FILE, artifactFile);
+        props.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
+        props.put(KEY_ARTIFACT_FILE_EXTENSION, artifactExtension);
+        props.put(KEY_ARTIFACT_FILE_FORMAT, artifactFileFormat);
+
+        String artifactName = "";
+        String projectVersion = (String) props.get(KEY_PROJECT_EFFECTIVE_VERSION);
+        if (isNotBlank(projectVersion) && artifactFileName.contains(projectVersion)) {
+            artifactName = artifactFileName.substring(0, artifactFileName.indexOf(projectVersion));
+            if (artifactName.endsWith("-")) {
+                artifactName = artifactName.substring(0, artifactName.length() - 1);
+            }
+            props.put(KEY_ARTIFACT_VERSION, projectVersion);
+        }
+        projectVersion = (String) props.get(KEY_PROJECT_VERSION);
+        if (isBlank(artifactName) && isNotBlank(projectVersion) && artifactFileName.contains(projectVersion)) {
+            artifactName = artifactFileName.substring(0, artifactFileName.indexOf(projectVersion));
+            if (artifactName.endsWith("-")) {
+                artifactName = artifactName.substring(0, artifactName.length() - 1);
+            }
+            props.put(KEY_ARTIFACT_VERSION, projectVersion);
+        }
+        props.put(KEY_ARTIFACT_NAME, artifactName);
+
+        String platform = artifact.getPlatform();
+        if (isNotBlank(platform)) {
+            props.put("platform", platform);
+            props.put(KEY_ARTIFACT_PLATFORM, platform);
+            if (platform.contains("-")) {
+                String[] parts = platform.split("-");
+                props.put(KEY_ARTIFACT_OS, parts[0]);
+                props.put(KEY_ARTIFACT_ARCH, parts[1]);
+            }
+        }
+
         return props;
     }
 

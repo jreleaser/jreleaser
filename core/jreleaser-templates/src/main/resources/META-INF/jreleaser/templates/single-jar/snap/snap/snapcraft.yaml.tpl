@@ -11,7 +11,7 @@ type: app
 
 apps:
   {{distributionExecutable}}:
-    command: ${JAVA_HOME}/bin/java -jar $SNAP/{{artifactFileName}}
+    command: ${JAVA_HOME}/bin/java -jar $SNAP/{{distributionArtifactFile}}
     environment:
       JAVA_HOME: "$SNAP/usr/lib/jvm/java/jre/"
       PATH: "$PATH:$SNAP/usr/lib/jvm/java/jre/bin"
@@ -62,7 +62,7 @@ parts:
   {{distributionExecutable}}:
     plugin: nil
     override-build: |
-      wget -O $SNAPCRAFT_PART_INSTALL/{{artifactFileName}} {{distributionUrl}}
+      wget -O $SNAPCRAFT_PART_INSTALL/{{distributionArtifactFile}} {{distributionUrl}}
       snapcraftctl set-version "{{projectVersion}}"
     build-packages:
       - wget

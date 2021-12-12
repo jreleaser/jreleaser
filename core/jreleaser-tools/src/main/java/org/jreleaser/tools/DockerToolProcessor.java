@@ -27,7 +27,6 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Registry;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.command.Command;
@@ -47,6 +46,13 @@ import java.util.stream.Collectors;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY;
+import static org.jreleaser.util.Constants.KEY_DOCKER_BASE_IMAGE;
+import static org.jreleaser.util.Constants.KEY_DOCKER_LABELS;
+import static org.jreleaser.util.Constants.KEY_DOCKER_POST_COMMANDS;
+import static org.jreleaser.util.Constants.KEY_DOCKER_PRE_COMMANDS;
+import static org.jreleaser.util.Constants.KEY_DOCKER_SPEC_NAME;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -107,13 +113,13 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     private Map<String, Object> fillSpecProps(Distribution distribution, Map<String, Object> props, DockerSpec spec) throws ToolProcessingException {
         List<Artifact> artifacts = Collections.singletonList(spec.getArtifact());
         Map<String, Object> newProps = fillProps(distribution, props);
-        newProps.put(Constants.KEY_DOCKER_SPEC_NAME, spec.getName());
+        newProps.put(KEY_DOCKER_SPEC_NAME, spec.getName());
         fillDockerProperties(newProps, distribution, spec);
         verifyAndAddArtifacts(newProps, distribution, artifacts);
-        Path prepareDirectory = (Path) newProps.get(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY);
-        newProps.put(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, prepareDirectory.resolve(spec.getName()));
-        Path packageDirectory = (Path) newProps.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
-        newProps.put(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, packageDirectory.resolve(spec.getName()));
+        Path prepareDirectory = (Path) newProps.get(KEY_DISTRIBUTION_PREPARE_DIRECTORY);
+        newProps.put(KEY_DISTRIBUTION_PREPARE_DIRECTORY, prepareDirectory.resolve(spec.getName()));
+        Path packageDirectory = (Path) newProps.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+        newProps.put(KEY_DISTRIBUTION_PACKAGE_DIRECTORY, packageDirectory.resolve(spec.getName()));
         return newProps;
     }
 
@@ -195,7 +201,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
         Files.createDirectories(assemblyDirectory);
 
         for (Artifact artifact : artifacts) {
-            Path artifactPath = artifact.getEffectivePath(context);
+            Path artifactPath = artifact.getEffectivePath(context, distribution);
             if (distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE) {
                 if (artifactPath.toString().endsWith(".zip")) {
                     FileUtils.unpackArchive(artifactPath, assemblyDirectory);
@@ -364,17 +370,17 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     protected void fillDockerProperties(Map<String, Object> props,
                                         Distribution distribution,
                                         DockerConfiguration docker) throws ToolProcessingException {
-        props.put(Constants.KEY_DOCKER_BASE_IMAGE,
+        props.put(KEY_DOCKER_BASE_IMAGE,
             applyTemplate(docker.getBaseImage(), props, "baseImage"));
 
         List<String> labels = new ArrayList<>();
         docker.getLabels().forEach((label, value) -> labels.add(passThrough("\"" + label + "\"=\"" +
             applyTemplate(value, props, label) + "\"")));
-        props.put(Constants.KEY_DOCKER_LABELS, labels);
-        props.put(Constants.KEY_DOCKER_PRE_COMMANDS, docker.getPreCommands().stream()
+        props.put(KEY_DOCKER_LABELS, labels);
+        props.put(KEY_DOCKER_PRE_COMMANDS, docker.getPreCommands().stream()
             .map(c -> passThrough(applyTemplate(c, props)))
             .collect(Collectors.toList()));
-        props.put(Constants.KEY_DOCKER_POST_COMMANDS, docker.getPostCommands().stream()
+        props.put(KEY_DOCKER_POST_COMMANDS, docker.getPostCommands().stream()
             .map(c -> passThrough(applyTemplate(c, props)))
             .collect(Collectors.toList()));
     }
@@ -398,7 +404,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
 
     @Override
     protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws ToolProcessingException, IOException {
-        Path packageDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+        Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
 
         if (tool.getActiveSpecs().isEmpty()) {
             for (String imageName : tool.getImageNames()) {
