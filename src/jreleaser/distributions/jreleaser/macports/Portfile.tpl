@@ -19,6 +19,7 @@ long_description {{projectLongDescription}}
 homepage         {{projectWebsite}}
 
 master_sites     {{macportsDistributionUrl}}
+distname         {{macportsDistname}}
 use_zip          yes
 
 checksums        rmd160 {{distributionChecksumRmd160}} \

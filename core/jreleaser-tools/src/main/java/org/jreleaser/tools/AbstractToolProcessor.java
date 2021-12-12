@@ -330,6 +330,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 if (artifactName.endsWith("-")) {
                     artifactName = artifactName.substring(0, artifactName.length() - 1);
                 }
+                artifactVersion = projectVersion;
             }
             projectVersion = context.getModel().getProject().getVersion();
             if (isBlank(artifactName) && isNotBlank(projectVersion) && artifactFileName.contains(projectVersion)) {
@@ -337,6 +338,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 if (artifactName.endsWith("-")) {
                     artifactName = artifactName.substring(0, artifactName.length() - 1);
                 }
+                artifactVersion = projectVersion;
             }
 
             String artifactOs = "";

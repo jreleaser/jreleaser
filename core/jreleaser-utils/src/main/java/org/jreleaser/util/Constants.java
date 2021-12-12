@@ -222,6 +222,7 @@ public interface Constants {
     String KEY_MACPORTS_CATEGORIES = "macportsCategories";
     String KEY_MACPORTS_MAINTAINERS = "macportsMaintainers";
     String KEY_MACPORTS_DISTRIBUTION_URL = "macportsDistributionUrl";
+    String KEY_MACPORTS_DISTNAME = "macportsDistname";
     String KEY_MACPORTS_JAVA_VERSION = "macportsJavaVersion";
     String KEY_MACPORTS_REPOSITORY_REPO_URL = "macportsRepositoryRepoUrl";
     String KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL = "macportsRepositoryRepoCloneUrl";

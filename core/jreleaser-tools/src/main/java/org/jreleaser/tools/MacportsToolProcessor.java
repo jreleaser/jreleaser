@@ -31,8 +31,12 @@ import java.util.Map;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_NAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_VERSION;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_URL;
 import static org.jreleaser.util.Constants.KEY_MACPORTS_CATEGORIES;
+import static org.jreleaser.util.Constants.KEY_MACPORTS_DISTNAME;
 import static org.jreleaser.util.Constants.KEY_MACPORTS_DISTRIBUTION_URL;
 import static org.jreleaser.util.Constants.KEY_MACPORTS_JAVA_VERSION;
 import static org.jreleaser.util.Constants.KEY_MACPORTS_MAINTAINERS;
@@ -87,6 +91,12 @@ public class MacportsToolProcessor extends AbstractRepositoryToolProcessor<Macpo
         }
         distributionUrl = distributionUrl.replace(context.getModel().getProject().getEffectiveVersion(), "${version}");
         props.put(KEY_MACPORTS_DISTRIBUTION_URL, distributionUrl);
+
+        String artifactFileName = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME);
+        String artifactName = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_NAME);
+        String artifactVersion = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_VERSION);
+        props.put(KEY_MACPORTS_DISTNAME, artifactFileName.replace(artifactName, "${name}")
+            .replace(artifactVersion, "${version}"));
     }
 
     private String resolveJavaVersion(Distribution distribution) {
