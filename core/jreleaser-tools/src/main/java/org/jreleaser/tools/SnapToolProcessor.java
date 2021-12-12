@@ -39,9 +39,11 @@ import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.util.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
 import static org.jreleaser.util.Constants.KEY_PROJECT_LONG_DESCRIPTION;
+import static org.jreleaser.util.Constants.KEY_SNAP_ARCHITECTURES;
 import static org.jreleaser.util.Constants.KEY_SNAP_BASE;
 import static org.jreleaser.util.Constants.KEY_SNAP_CONFINEMENT;
 import static org.jreleaser.util.Constants.KEY_SNAP_GRADE;
+import static org.jreleaser.util.Constants.KEY_SNAP_HAS_ARCHITECTURES;
 import static org.jreleaser.util.Constants.KEY_SNAP_HAS_LOCAL_PLUGS;
 import static org.jreleaser.util.Constants.KEY_SNAP_HAS_LOCAL_SLOTS;
 import static org.jreleaser.util.Constants.KEY_SNAP_HAS_PLUGS;
@@ -130,6 +132,8 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
         props.put(KEY_SNAP_LOCAL_PLUGS, tool.getLocalPlugs());
         props.put(KEY_SNAP_HAS_LOCAL_SLOTS, !tool.getLocalSlots().isEmpty());
         props.put(KEY_SNAP_LOCAL_SLOTS, tool.getLocalSlots());
+        props.put(KEY_SNAP_HAS_ARCHITECTURES, !tool.getArchitectures().isEmpty());
+        props.put(KEY_SNAP_ARCHITECTURES, tool.getArchitectures());
     }
 
     @Override

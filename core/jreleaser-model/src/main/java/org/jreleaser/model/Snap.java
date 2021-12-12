@@ -42,7 +42,9 @@ public class Snap extends AbstractRepositoryTool {
     private final Set<String> localSlots = new LinkedHashSet<>();
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
+    private final List<Architecture> architectures = new ArrayList<>();
     private final SnapTap snap = new SnapTap();
+
     private String packageName;
     private String base = "core20";
     private String grade = "stable";
@@ -76,6 +78,7 @@ public class Snap extends AbstractRepositoryTool {
         setLocalSlots(snap.localSlots);
         setPlugs(snap.plugs);
         setSlots(snap.slots);
+        setArchitectures(snap.architectures);
         setSnap(snap.snap);
     }
 
@@ -211,6 +214,31 @@ public class Snap extends AbstractRepositoryTool {
         }
     }
 
+    public List<Architecture> getArchitectures() {
+        return architectures;
+    }
+
+    public void setArchitectures(List<Architecture> architectures) {
+        this.architectures.clear();
+        this.architectures.addAll(architectures);
+    }
+
+    public void addArchitecture(List<Architecture> architectures) {
+        this.architectures.addAll(architectures);
+    }
+
+    public void addArchitecture(Architecture architecture) {
+        if (null != architecture) {
+            this.architectures.add(architecture);
+        }
+    }
+
+    public void removeArchitecture(Architecture architecture) {
+        if (null != architecture) {
+            this.architectures.remove(architecture);
+        }
+    }
+
     public String getExportedLogin() {
         return exportedLogin;
     }
@@ -251,8 +279,24 @@ public class Snap extends AbstractRepositoryTool {
         props.put("snap", snap.asMap(full));
         props.put("localPlugs", localPlugs);
         props.put("localSlots", localSlots);
-        props.put("plugs", plugs);
-        props.put("slots", slots);
+
+        Map<String, Map<String, Object>> mapped = new LinkedHashMap<>();
+        for (int i = 0; i < plugs.size(); i++) {
+            mapped.put("plug " + i, plugs.get(i).asMap(full));
+        }
+        props.put("plugs", mapped);
+
+        mapped = new LinkedHashMap<>();
+        for (int i = 0; i < slots.size(); i++) {
+            mapped.put("slot " + i, slots.get(i).asMap(full));
+        }
+        props.put("slots", mapped);
+
+        mapped = new LinkedHashMap<>();
+        for (int i = 0; i < architectures.size(); i++) {
+            mapped.put("architecture " + i, architectures.get(i).asMap(full));
+        }
+        props.put("architectures", mapped);
     }
 
     @Override
@@ -420,6 +464,79 @@ public class Snap extends AbstractRepositoryTool {
     public static class SnapTap extends AbstractRepositoryTap {
         public SnapTap() {
             super("snap", "snap");
+        }
+    }
+
+    public static class Architecture implements Domain {
+        private final List<String> buildOn = new ArrayList<>();
+        private final List<String> runOn = new ArrayList<>();
+        private Boolean ignoreError;
+
+        public List<String> getBuildOn() {
+            return buildOn;
+        }
+
+        public void setBuildOn(List<String> buildOn) {
+            this.buildOn.clear();
+            this.buildOn.addAll(buildOn);
+        }
+
+        public void addBuildOn(List<String> buildOn) {
+            this.buildOn.addAll(buildOn);
+        }
+
+        public void addBuildOn(String str) {
+            if (isNotBlank(str)) {
+                this.buildOn.add(str.trim());
+            }
+        }
+
+        public List<String> getRunOn() {
+            return runOn;
+        }
+
+        public void setRunOn(List<String> runOn) {
+            this.runOn.clear();
+            this.runOn.addAll(runOn);
+        }
+
+        public void addRunOn(List<String> runOn) {
+            this.runOn.addAll(runOn);
+        }
+
+        public void addRunOn(String str) {
+            if (isNotBlank(str)) {
+                this.runOn.add(str.trim());
+            }
+        }
+
+        public boolean hasBuildOn() {
+            return !buildOn.isEmpty();
+        }
+
+        public boolean hasRunOn() {
+            return !runOn.isEmpty();
+        }
+
+        public boolean isIgnoreError() {
+            return ignoreError != null && ignoreError;
+        }
+
+        public void setIgnoreError(Boolean ignoreError) {
+            this.ignoreError = ignoreError;
+        }
+
+        public boolean isIgnoreErrorSet() {
+            return ignoreError != null;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("buildOn", buildOn);
+            map.put("runOn", runOn);
+            map.put("ignoreError", isIgnoreError());
+            return map;
         }
     }
 }

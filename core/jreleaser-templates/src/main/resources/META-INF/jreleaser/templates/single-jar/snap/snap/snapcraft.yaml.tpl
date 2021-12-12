@@ -9,6 +9,14 @@ confinement: {{snapConfinement}}
 base: {{snapBase}}
 type: app
 
+{{#hasArchitectures}}
+architectures:
+  {{#snapArchitectures}}
+  - build-on: {{buildOn}}
+    {{#hasRunOn}}run-on: {{runOn}}{{/hasRunOn}}
+    {{#ignoreError}}build-error: ignore{{/ignoreError}}
+  {{/snapArchitectures}}
+{{/hasArchitectures}}
 apps:
   {{distributionExecutable}}:
     command: ${JAVA_HOME}/bin/java -jar $SNAP/{{distributionArtifactFile}}

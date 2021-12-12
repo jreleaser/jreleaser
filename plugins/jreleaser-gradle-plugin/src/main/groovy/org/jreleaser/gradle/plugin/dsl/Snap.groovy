@@ -61,7 +61,11 @@ interface Snap extends RepositoryTool {
 
     void snap(Action<? super Tap> action)
 
+    void architecture(Action<? super Architecture> action)
+
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
+
+    void architecture(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Architecture) Closure<Void> action)
 
     @CompileStatic
     interface Slot {
@@ -83,5 +87,18 @@ interface Snap extends RepositoryTool {
         MapProperty<String, String> getAttributes()
 
         void addAttribute(String key, String value)
+    }
+
+    @CompileStatic
+    interface Architecture {
+        ListProperty<String> getBuildOn()
+
+        void addBuildOn(String str)
+
+        ListProperty<String> getRunOn()
+
+        void addRunOn(String str)
+
+        Property<String> getIgnoreError()
     }
 }

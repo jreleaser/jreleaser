@@ -1199,6 +1199,7 @@ public final class JReleaserModelConverter {
         t.setLocalSlots(tool.getLocalSlots());
         t.setPlugs(convertPlugs(tool.getPlugs()));
         t.setSlots(convertSlots(tool.getSlots()));
+        t.setArchitectures(convertArchitectures(tool.getArchitectures()));
         t.setSnap(convertSnapTap(tool.getSnap()));
         t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
         return t;
@@ -1226,20 +1227,36 @@ public final class JReleaserModelConverter {
     }
 
     private static List<org.jreleaser.model.Snap.Slot> convertSlots(List<Snap.Slot> slots) {
-        List<org.jreleaser.model.Snap.Slot> ps = new ArrayList<>();
+        List<org.jreleaser.model.Snap.Slot> ss = new ArrayList<>();
         for (Snap.Slot slot : slots) {
-            ps.add(convertSlot(slot));
+            ss.add(convertSlot(slot));
         }
-        return ps;
+        return ss;
     }
 
     private static org.jreleaser.model.Snap.Slot convertSlot(Snap.Slot slot) {
-        org.jreleaser.model.Snap.Slot p = new org.jreleaser.model.Snap.Slot();
-        p.setName(tr(slot.getName()));
-        p.setAttributes(slot.getAttributes());
-        p.setReads(tr(slot.getReads()));
-        p.setWrites(tr(slot.getWrites()));
-        return p;
+        org.jreleaser.model.Snap.Slot s = new org.jreleaser.model.Snap.Slot();
+        s.setName(tr(slot.getName()));
+        s.setAttributes(slot.getAttributes());
+        s.setReads(tr(slot.getReads()));
+        s.setWrites(tr(slot.getWrites()));
+        return s;
+    }
+
+    private static List<org.jreleaser.model.Snap.Architecture> convertArchitectures(List<Snap.Architecture> architectures) {
+        List<org.jreleaser.model.Snap.Architecture> as = new ArrayList<>();
+        for (Snap.Architecture architecture : architectures) {
+            as.add(convertArchitecture(architecture));
+        }
+        return as;
+    }
+
+    private static org.jreleaser.model.Snap.Architecture convertArchitecture(Snap.Architecture architecture) {
+        org.jreleaser.model.Snap.Architecture a = new org.jreleaser.model.Snap.Architecture();
+        a.setBuildOn(architecture.getBuildOn());
+        a.setRunOn(architecture.getRunOn());
+        if (architecture.isIgnoreErrorSet()) a.setIgnoreError(architecture.isIgnoreError());
+        return a;
     }
 
     private static org.jreleaser.model.Spec convertSpec(Spec tool) {

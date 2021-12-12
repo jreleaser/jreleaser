@@ -256,7 +256,7 @@ public abstract class GitServiceValidator extends Validator {
                     errors.configuration(RB.$("validation_is_missing", service.getServiceName() + ".changelog.categories[" + i + "].title"));
                 }
                 if (category.getLabels().isEmpty()) {
-                    errors.configuration(RB.$("validation_ares_missing", service.getServiceName() + ".changelog.categories[" + i + "].labels"));
+                    errors.configuration(RB.$("validation_are_missing", service.getServiceName() + ".changelog.categories[" + i + "].labels"));
                 }
 
                 i++;

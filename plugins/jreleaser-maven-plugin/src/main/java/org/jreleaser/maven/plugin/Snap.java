@@ -36,6 +36,7 @@ public class Snap extends AbstractRepositoryTool {
     private final Set<String> localSlots = new LinkedHashSet<>();
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
+    private final List<Architecture> architectures = new ArrayList<>();
     private final Tap snap = new Tap();
     private String packageName;
     private String base;
@@ -57,6 +58,7 @@ public class Snap extends AbstractRepositoryTool {
         setPlugs(plugs);
         setSlots(slots);
         setSnap(snap.snap);
+        setArchitectures(snap.architectures);
     }
 
     public String getPackageName() {
@@ -100,22 +102,6 @@ public class Snap extends AbstractRepositoryTool {
         this.localPlugs.addAll(localPlugs);
     }
 
-    public void addLocalPlugs(Set<String> localPlugs) {
-        this.localPlugs.addAll(localPlugs);
-    }
-
-    public void addLocalPlug(String localPlug) {
-        if (isNotBlank(localPlug)) {
-            this.localPlugs.add(localPlug.trim());
-        }
-    }
-
-    public void removeLocalPlug(String localPlug) {
-        if (isNotBlank(localPlug)) {
-            this.localPlugs.remove(localPlug.trim());
-        }
-    }
-
     public Set<String> getLocalSlots() {
         return localSlots;
     }
@@ -123,22 +109,6 @@ public class Snap extends AbstractRepositoryTool {
     public void setLocalSlots(Set<String> localSlots) {
         this.localSlots.clear();
         this.localSlots.addAll(localSlots);
-    }
-
-    public void addLocalSlots(Set<String> localSlots) {
-        this.localSlots.addAll(localSlots);
-    }
-
-    public void addLocalSlot(String localSlot) {
-        if (isNotBlank(localSlot)) {
-            this.localSlots.add(localSlot.trim());
-        }
-    }
-
-    public void removeLocalSlot(String localSlot) {
-        if (isNotBlank(localSlot)) {
-            this.localSlots.remove(localSlot.trim());
-        }
     }
 
     public List<Plug> getPlugs() {
@@ -150,22 +120,6 @@ public class Snap extends AbstractRepositoryTool {
         this.plugs.addAll(plugs);
     }
 
-    public void addPlugs(List<Plug> plugs) {
-        this.plugs.addAll(plugs);
-    }
-
-    public void addPlug(Plug plug) {
-        if (null != plug) {
-            this.plugs.add(plug);
-        }
-    }
-
-    public void removePlug(Plug plug) {
-        if (null != plug) {
-            this.plugs.remove(plug);
-        }
-    }
-
     public List<Slot> getSlots() {
         return slots;
     }
@@ -175,20 +129,13 @@ public class Snap extends AbstractRepositoryTool {
         this.slots.addAll(slots);
     }
 
-    public void addSlots(List<Slot> slots) {
-        this.slots.addAll(slots);
+    public List<Architecture> getArchitectures() {
+        return architectures;
     }
 
-    public void addSlot(Slot slot) {
-        if (null != slot) {
-            this.slots.add(slot);
-        }
-    }
-
-    public void removeSlot(Slot slot) {
-        if (null != slot) {
-            this.slots.remove(slot);
-        }
+    public void setArchitectures(List<Architecture> architectures) {
+        this.architectures.clear();
+        this.architectures.addAll(architectures);
     }
 
     public File getExportedLogin() {
@@ -257,14 +204,6 @@ public class Snap extends AbstractRepositoryTool {
             this.attributes.putAll(attributes);
         }
 
-        public void addAttributes(Map<String, String> attributes) {
-            this.attributes.putAll(attributes);
-        }
-
-        public void addAttribute(String key, String value) {
-            attributes.put(key, value);
-        }
-
         public List<String> getReads() {
             return reads;
         }
@@ -274,22 +213,6 @@ public class Snap extends AbstractRepositoryTool {
             this.reads.addAll(reads);
         }
 
-        public void addReads(List<String> read) {
-            this.reads.addAll(read);
-        }
-
-        public void addRead(String read) {
-            if (isNotBlank(read)) {
-                this.reads.add(read.trim());
-            }
-        }
-
-        public void removeRead(String read) {
-            if (isNotBlank(read)) {
-                this.reads.remove(read.trim());
-            }
-        }
-
         public List<String> getWrites() {
             return writes;
         }
@@ -297,22 +220,6 @@ public class Snap extends AbstractRepositoryTool {
         public void setWrites(List<String> writes) {
             this.writes.clear();
             this.writes.addAll(writes);
-        }
-
-        public void addWrites(List<String> write) {
-            this.writes.addAll(write);
-        }
-
-        public void addWrite(String write) {
-            if (isNotBlank(write)) {
-                this.writes.add(write.trim());
-            }
-        }
-
-        public void removeWrite(String write) {
-            if (isNotBlank(write)) {
-                this.writes.remove(write.trim());
-            }
         }
     }
 
@@ -336,20 +243,41 @@ public class Snap extends AbstractRepositoryTool {
             this.attributes.clear();
             this.attributes.putAll(attributes);
         }
+    }
 
-        public void addAttributes(Map<String, String> attributes) {
-            this.attributes.putAll(attributes);
+    public static class Architecture {
+        private final List<String> buildOn = new ArrayList<>();
+        private final List<String> runOn = new ArrayList<>();
+        private Boolean ignoreError;
+
+        public List<String> getBuildOn() {
+            return buildOn;
         }
 
-        public void addAttribute(String key, String value) {
-            attributes.put(key, value);
+        public void setBuildOn(List<String> buildOn) {
+            this.buildOn.clear();
+            this.buildOn.addAll(buildOn);
         }
 
-        public static Plug copyOf(Plug other) {
-            Plug copy = new Plug();
-            copy.setName(other.getName());
-            copy.setAttributes(other.getAttributes());
-            return copy;
+        public List<String> getRunOn() {
+            return runOn;
+        }
+
+        public void setRunOn(List<String> runOn) {
+            this.runOn.clear();
+            this.runOn.addAll(runOn);
+        }
+
+        public boolean isIgnoreError() {
+            return ignoreError != null && ignoreError;
+        }
+
+        public void setIgnoreError(Boolean ignoreError) {
+            this.ignoreError = ignoreError;
+        }
+
+        public boolean isIgnoreErrorSet() {
+            return ignoreError != null;
         }
     }
 }

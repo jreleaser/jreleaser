@@ -240,6 +240,8 @@ public interface Constants {
     String KEY_SNAP_LOCAL_PLUGS = "snapLocalPlugs";
     String KEY_SNAP_HAS_LOCAL_SLOTS = "snapHasLocalSlots";
     String KEY_SNAP_LOCAL_SLOTS = "snapLocalSlots";
+    String KEY_SNAP_HAS_ARCHITECTURES = "hasArchitectures";
+    String KEY_SNAP_ARCHITECTURES = "snapArchitectures";
     String KEY_SNAP_REPO_URL = "snapRepoUrl";
     String KEY_SNAP_REPO_CLONE_URL = "snapRepoCloneUrl";
 

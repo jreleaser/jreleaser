@@ -128,6 +128,14 @@ public abstract class SnapValidator extends Validator {
             errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".snap"));
             tool.disable();
         }
+
+        tool.addArchitecture(parentTool.getArchitectures());
+        for (int i = 0; i < tool.getArchitectures().size(); i++) {
+            Snap.Architecture arch = tool.getArchitectures().get(i);
+            if (!arch.hasBuildOn()) {
+                errors.configuration(RB.$("validation_snap_missing_buildon", "distribution." + distribution.getName() + ".snap.architectures", i));
+            }
+        }
     }
 
     private static void mergeSnapPlugs(Snap tool, Snap common) {

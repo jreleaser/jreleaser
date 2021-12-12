@@ -58,6 +58,8 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     final NamedDomainObjectContainer<PlugImpl> plugs
     final NamedDomainObjectContainer<SlotImpl> slots
 
+    private final NamedDomainObjectContainer<ArchitectureImpl> architectures
+
     @Inject
     SnapImpl(ObjectFactory objects) {
         super(objects)
@@ -87,6 +89,15 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
                 SlotImpl slot = objects.newInstance(SlotImpl, objects)
                 slot.name = name
                 return slot
+            }
+        })
+
+        architectures = objects.domainObjectContainer(ArchitectureImpl, new NamedDomainObjectFactory<ArchitectureImpl>() {
+            @Override
+            ArchitectureImpl create(String name) {
+                ArchitectureImpl architecture = objects.newInstance(ArchitectureImpl, objects)
+                architecture.name = name
+                architecture
             }
         })
     }
@@ -134,6 +145,11 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     }
 
     @Override
+    void architecture(Action<? super Architecture> action) {
+        action.execute(architectures.maybeCreate("architecture-${architectures.size()}".toString()))
+    }
+
+    @Override
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
         ConfigureUtil.configure(action, snap)
     }
@@ -141,6 +157,11 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     @Override
     void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
         ConfigureUtil.configure(action, commitAuthor)
+    }
+
+    @Override
+    void architecture(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Architecture) Closure<Void> action) {
+        ConfigureUtil.configure(action, architectures.maybeCreate("architecture-${architectures.size()}".toString()))
     }
 
     org.jreleaser.model.Snap toModel() {
@@ -166,6 +187,9 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
         tool.slots.addAll(slots.collect([]) { SlotImpl slot ->
             slot.toModel()
         } as Set<org.jreleaser.model.Snap.Slot>)
+        for (ArchitectureImpl architecture : architectures) {
+            tool.addArchitecture(architecture.toModel())
+        }
         tool
     }
 
@@ -244,6 +268,43 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
             plug.name = name
             plug.attributes.putAll(attributes.get())
             plug
+        }
+    }
+
+    @CompileStatic
+    static class ArchitectureImpl implements Architecture {
+        String name
+        final ListProperty<String> buildOn
+        final ListProperty<String> runOn
+        final Property<Boolean> ignoreError
+
+        @Inject
+        ArchitectureImpl(ObjectFactory objects) {
+            buildOn = objects.listProperty(String).convention(Providers.notDefined())
+            runOn = objects.listProperty(String).convention(Providers.notDefined())
+            ignoreError = objects.property(Boolean).convention(Providers.notDefined())
+        }
+
+        @Override
+        void addRunOn(String str) {
+            if (isNotBlank(str)) {
+                runOn.add(str.trim())
+            }
+        }
+
+        @Override
+        void addBuildOn(String str) {
+            if (isNotBlank(str)) {
+                buildOn.add(str.trim())
+            }
+        }
+
+        org.jreleaser.model.Snap.Architecture toModel() {
+            org.jreleaser.model.Snap.Architecture architecture = new org.jreleaser.model.Snap.Architecture()
+            architecture.buildOn = (List<String>) buildOn.getOrElse([])
+            architecture.runOn = (List<String>) runOn.getOrElse([])
+            architecture.ignoreError = ignoreError.getOrElse(false)
+            architecture
         }
     }
 }
