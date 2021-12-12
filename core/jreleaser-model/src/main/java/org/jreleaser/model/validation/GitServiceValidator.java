@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +47,7 @@ import static org.jreleaser.model.GitService.SKIP_RELEASE;
 import static org.jreleaser.model.GitService.SKIP_TAG;
 import static org.jreleaser.model.GitService.TAG_NAME;
 import static org.jreleaser.model.GitService.UPDATE;
-import static org.jreleaser.model.Milestone.MILESTONE_NAME;
+import static org.jreleaser.model.GitService.Milestone.MILESTONE_NAME;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 

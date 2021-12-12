@@ -24,10 +24,13 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Artifactory
-import org.jreleaser.gradle.plugin.dsl.ArtifactoryRepository
+import org.jreleaser.model.Active
 import org.jreleaser.model.HttpUploader
+import org.jreleaser.util.FileType
+import org.jreleaser.util.StringUtils
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -102,5 +105,42 @@ class ArtifactoryImpl extends AbstractHttpUploader implements Artifactory {
             artifactory.addRepository(repository.toModel())
         }
         artifactory
+    }
+
+    @CompileStatic
+    static class ArtifactoryRepositoryImpl implements ArtifactoryRepository {
+        String name
+        final Property<Active> active
+        final Property<String> path
+        final SetProperty<FileType> fileTypes
+
+        @Inject
+        ArtifactoryRepositoryImpl(ObjectFactory objects) {
+            active = objects.property(Active).convention(Providers.notDefined())
+            path = objects.property(String).convention(Providers.notDefined())
+            fileTypes = objects.setProperty(FileType).convention(Providers.notDefined())
+        }
+
+        @Override
+        void setActive(String str) {
+            if (StringUtils.isNotBlank(str)) {
+                active.set(Active.of(str.trim()))
+            }
+        }
+
+        @Override
+        void setFileType(String str) {
+            if (StringUtils.isNotBlank(str)) {
+                fileTypes.add(FileType.of(str.trim()))
+            }
+        }
+
+        org.jreleaser.model.Artifactory.ArtifactoryRepository toModel() {
+            org.jreleaser.model.Artifactory.ArtifactoryRepository repository = new org.jreleaser.model.Artifactory.ArtifactoryRepository()
+            if (active.present) repository.active = active.get()
+            if (path.present) repository.path = path.get()
+            repository.fileTypes = (Set<FileType>) fileTypes.getOrElse([] as Set<FileType>)
+            repository
+        }
     }
 }

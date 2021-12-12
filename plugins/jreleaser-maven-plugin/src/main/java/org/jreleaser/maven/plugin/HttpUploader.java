@@ -17,8 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import org.jreleaser.maven.plugin.Uploader;
-
 /**
  * @author Andres Almiray
  * @since 0.8.0

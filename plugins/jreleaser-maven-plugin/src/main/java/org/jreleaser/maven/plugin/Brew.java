@@ -20,7 +20,11 @@ package org.jreleaser.maven.plugin;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -108,5 +112,129 @@ public class Brew extends AbstractRepositoryTool {
             !livecheck.isEmpty() ||
             multiPlatform != null ||
             cask.isSet();
+    }
+
+    public static class Cask {
+        private final Map<String, List<String>> uninstall = new LinkedHashMap<>();
+        private final Map<String, List<String>> zap = new LinkedHashMap<>();
+
+        private String name;
+        private String displayName;
+        private String pkgName;
+        private String appName;
+        private String appcast;
+        private Boolean enabled;
+
+        void setAll(Cask cask) {
+            this.name = cask.name;
+            this.displayName = cask.displayName;
+            this.pkgName = cask.pkgName;
+            this.appName = cask.appName;
+            this.appcast = cask.appcast;
+            this.enabled = cask.enabled;
+            setUninstall(cask.uninstall);
+            setZap(cask.zap);
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public void setDisplayName(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getPkgName() {
+            return pkgName;
+        }
+
+        public void setPkgName(String pkgName) {
+            this.pkgName = pkgName;
+        }
+
+        public String getAppName() {
+            return appName;
+        }
+
+        public void setAppName(String appName) {
+            this.appName = appName;
+        }
+
+        public String getAppcast() {
+            return appcast;
+        }
+
+        public void setAppcast(String appcast) {
+            this.appcast = appcast;
+        }
+
+        public boolean isEnabled() {
+            return enabled != null && enabled;
+        }
+
+        public boolean isEnabledSet() {
+            return enabled != null;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public Map<String, List<String>> getUninstall() {
+            return uninstall;
+        }
+
+        public void setUninstall(Map<String, List<String>> uninstall) {
+            this.uninstall.clear();
+            this.uninstall.putAll(uninstall);
+        }
+
+        public Map<String, List<String>> getZap() {
+            return zap;
+        }
+
+        public void setZap(Map<String, List<String>> zap) {
+            this.zap.clear();
+            this.zap.putAll(zap);
+        }
+
+        public boolean isSet() {
+            return isNotBlank(name) ||
+                isNotBlank(displayName) ||
+                isNotBlank(pkgName) ||
+                isNotBlank(appName) ||
+                isNotBlank(appcast) ||
+                !uninstall.isEmpty() ||
+                !zap.isEmpty();
+        }
+    }
+
+    public static class Dependency {
+        private String key;
+        private String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
     }
 }

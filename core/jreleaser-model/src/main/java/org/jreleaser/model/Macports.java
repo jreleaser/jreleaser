@@ -132,4 +132,10 @@ public class Macports extends AbstractRepositoryTool {
         return distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE;
     }
+
+    public static class MacportsRepository extends AbstractRepositoryTap {
+        public MacportsRepository() {
+            super("macports", "macports");
+        }
+    }
 }

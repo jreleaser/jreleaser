@@ -25,12 +25,10 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Spec;
-import org.jreleaser.model.SpecRepository;
 import org.jreleaser.util.Errors;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Spec.SKIP_SPEC;
@@ -86,7 +84,7 @@ public abstract class SpecValidator extends Validator {
         }
 
         validateCommitAuthor(tool, parentTool);
-        SpecRepository repository = tool.getRepository();
+        Spec.SpecRepository repository = tool.getRepository();
         repository.resolveEnabled(model.getProject());
         validateTap(context, distribution, repository, parentTool.getRepository(), "spec.repository");
         validateTemplate(context, distribution, tool, parentTool, errors);

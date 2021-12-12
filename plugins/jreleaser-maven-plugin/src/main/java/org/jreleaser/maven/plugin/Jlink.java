@@ -252,4 +252,34 @@ public class Jlink extends AbstractJavaAssembler {
     public boolean isCopyJarsSet() {
         return copyJars != null;
     }
+
+    public static class Jdeps {
+        private String multiRelease;
+        private Boolean ignoreMissingDeps;
+
+        void setAll(Jdeps jdeps) {
+            this.multiRelease = jdeps.multiRelease;
+            this.ignoreMissingDeps = jdeps.ignoreMissingDeps;
+        }
+
+        public String getMultiRelease() {
+            return multiRelease;
+        }
+
+        public void setMultiRelease(String multiRelease) {
+            this.multiRelease = multiRelease;
+        }
+
+        public Boolean isIgnoreMissingDeps() {
+            return ignoreMissingDeps != null && ignoreMissingDeps;
+        }
+
+        public void setIgnoreMissingDeps(Boolean ignoreMissingDeps) {
+            this.ignoreMissingDeps = ignoreMissingDeps;
+        }
+
+        public boolean isIgnoreMissingDepsSet() {
+            return ignoreMissingDeps != null;
+        }
+    }
 }

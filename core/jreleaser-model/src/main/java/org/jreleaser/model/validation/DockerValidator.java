@@ -22,7 +22,6 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
 import org.jreleaser.model.DockerConfiguration;
-import org.jreleaser.model.DockerRepository;
 import org.jreleaser.model.DockerSpec;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -84,7 +83,7 @@ public abstract class DockerValidator extends Validator {
         }
 
         validateCommitAuthor(tool, parentTool);
-        DockerRepository repository = tool.getRepository();
+        Docker.DockerRepository repository = tool.getRepository();
         repository.resolveEnabled(model.getProject());
         if (!repository.isVersionedSubfoldersSet()) {
             repository.setVersionedSubfolders(parentTool.getRepository().isVersionedSubfolders());

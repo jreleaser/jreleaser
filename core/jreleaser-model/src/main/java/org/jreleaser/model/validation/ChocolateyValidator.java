@@ -18,7 +18,6 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.model.Chocolatey;
-import org.jreleaser.model.ChocolateyBucket;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -53,7 +52,7 @@ public abstract class ChocolateyValidator extends Validator {
         context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
 
         validateCommitAuthor(tool, parentTool);
-        ChocolateyBucket bucket = tool.getBucket();
+        Chocolatey.ChocolateyBucket bucket = tool.getBucket();
         bucket.resolveEnabled(model.getProject());
         validateTap(context, distribution, bucket, parentTool.getBucket(), "chocolatey.bucket");
         validateTemplate(context, distribution, tool, parentTool, errors);

@@ -88,4 +88,25 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
             repository.isSet() ||
             !specs.isEmpty();
     }
+
+    public static class DockerRepository extends Tap {
+        private Boolean versionedSubfolders;
+
+        void setAll(AbstractRepositoryTap tap) {
+            super.setAll(tap);
+            this.versionedSubfolders = ((DockerRepository) tap).versionedSubfolders;
+        }
+
+        public boolean isVersionedSubfolders() {
+            return versionedSubfolders != null && versionedSubfolders;
+        }
+
+        public void setVersionedSubfolders(Boolean versionedSubfolders) {
+            this.versionedSubfolders = versionedSubfolders;
+        }
+
+        public boolean isVersionedSubfoldersSet() {
+            return versionedSubfolders != null;
+        }
+    }
 }

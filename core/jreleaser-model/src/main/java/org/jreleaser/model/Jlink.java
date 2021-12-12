@@ -311,4 +311,42 @@ public class Jlink extends AbstractJavaAssembler {
         }
         props.put("files", mappedFiles);
     }
+
+    public static class Jdeps implements Domain {
+        private String multiRelease;
+        private Boolean ignoreMissingDeps;
+
+        void setAll(Jdeps jdeps) {
+            this.multiRelease = jdeps.multiRelease;
+            this.ignoreMissingDeps = jdeps.ignoreMissingDeps;
+        }
+
+        public String getMultiRelease() {
+            return multiRelease;
+        }
+
+        public void setMultiRelease(String multiRelease) {
+            this.multiRelease = multiRelease;
+        }
+
+        public Boolean isIgnoreMissingDeps() {
+            return ignoreMissingDeps != null && ignoreMissingDeps;
+        }
+
+        public void setIgnoreMissingDeps(Boolean ignoreMissingDeps) {
+            this.ignoreMissingDeps = ignoreMissingDeps;
+        }
+
+        public boolean isIgnoreMissingDepsSet() {
+            return ignoreMissingDeps != null;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put("multiRelease", multiRelease);
+            props.put("ignoreMissingDeps", isIgnoreMissingDeps());
+            return props;
+        }
+    }
 }

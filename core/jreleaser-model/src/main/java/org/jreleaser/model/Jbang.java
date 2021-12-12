@@ -89,4 +89,15 @@ public class Jbang extends AbstractRepositoryTool {
     public boolean isSnapshotSupported() {
         return true;
     }
+
+    public static class JbangCatalog extends AbstractRepositoryTap {
+        public JbangCatalog() {
+            super("jbang", "jbang-catalog");
+        }
+
+        @Override
+        public String getResolvedName() {
+            return tapName;
+        }
+    }
 }

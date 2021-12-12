@@ -21,6 +21,7 @@ import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -262,5 +263,163 @@ public class Snap extends AbstractRepositoryTool {
     @Override
     public boolean supportsPlatform(String platform) {
         return isBlank(platform) || PlatformUtils.isUnix(platform);
+    }
+
+    public static class Slot implements Domain {
+        private final Map<String, String> attributes = new LinkedHashMap<>();
+        private final List<String> reads = new ArrayList<>();
+        private final List<String> writes = new ArrayList<>();
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Map<String, String> getAttributes() {
+            return attributes;
+        }
+
+        public void setAttributes(Map<String, String> attributes) {
+            this.attributes.clear();
+            this.attributes.putAll(attributes);
+        }
+
+        public void addAttributes(Map<String, String> attributes) {
+            this.attributes.putAll(attributes);
+        }
+
+        public void addAttribute(String key, String value) {
+            attributes.put(key, value);
+        }
+
+        public List<String> getReads() {
+            return reads;
+        }
+
+        public void setReads(List<String> reads) {
+            this.reads.clear();
+            this.reads.addAll(reads);
+        }
+
+        public void addReads(List<String> read) {
+            this.reads.addAll(read);
+        }
+
+        public void addRead(String read) {
+            if (isNotBlank(read)) {
+                this.reads.add(read.trim());
+            }
+        }
+
+        public void removeRead(String read) {
+            if (isNotBlank(read)) {
+                this.reads.remove(read.trim());
+            }
+        }
+
+        public List<String> getWrites() {
+            return writes;
+        }
+
+        public void setWrites(List<String> writes) {
+            this.writes.clear();
+            this.writes.addAll(writes);
+        }
+
+        public void addWrites(List<String> write) {
+            this.writes.addAll(write);
+        }
+
+        public void addWrite(String write) {
+            if (isNotBlank(write)) {
+                this.writes.add(write.trim());
+            }
+        }
+
+        public void removeWrite(String write) {
+            if (isNotBlank(write)) {
+                this.writes.remove(write.trim());
+            }
+        }
+
+        public boolean getHasReads() {
+            return !reads.isEmpty();
+        }
+
+        public boolean getHasWrites() {
+            return !writes.isEmpty();
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put(name, attributes);
+            map.put("read", reads);
+            map.put("write", writes);
+            return map;
+        }
+
+        public static Slot copyOf(Slot other) {
+            Slot copy = new Slot();
+            copy.setName(other.getName());
+            copy.setAttributes(other.getAttributes());
+            copy.setReads(other.getReads());
+            copy.setWrites(other.getWrites());
+            return copy;
+        }
+    }
+
+    public static class Plug implements Domain {
+        private final Map<String, String> attributes = new LinkedHashMap<>();
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Map<String, String> getAttributes() {
+            return attributes;
+        }
+
+        public void setAttributes(Map<String, String> attributes) {
+            this.attributes.clear();
+            this.attributes.putAll(attributes);
+        }
+
+        public void addAttributes(Map<String, String> attributes) {
+            this.attributes.putAll(attributes);
+        }
+
+        public void addAttribute(String key, String value) {
+            attributes.put(key, value);
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put(name, attributes);
+            return map;
+        }
+
+        public static Plug copyOf(Plug other) {
+            Plug copy = new Plug();
+            copy.setName(other.getName());
+            copy.setAttributes(other.getAttributes());
+            return copy;
+        }
+    }
+
+    public static class SnapTap extends AbstractRepositoryTap {
+        public SnapTap() {
+            super("snap", "snap");
+        }
     }
 }

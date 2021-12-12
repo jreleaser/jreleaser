@@ -24,15 +24,16 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Tap
 import org.jreleaser.model.Active
-import org.jreleaser.model.ChocolateyBucket
-import org.jreleaser.model.HomebrewTap
-import org.jreleaser.model.JbangCatalog
-import org.jreleaser.model.MacportsRepository
+import org.jreleaser.model.Brew
+import org.jreleaser.model.Chocolatey
+import org.jreleaser.model.Jbang
+import org.jreleaser.model.Macports
+
 import org.jreleaser.model.Repository
 import org.jreleaser.model.RepositoryTap
-import org.jreleaser.model.ScoopBucket
-import org.jreleaser.model.SnapTap
-import org.jreleaser.model.SpecRepository
+import org.jreleaser.model.Scoop
+import org.jreleaser.model.Snap
+import org.jreleaser.model.Spec
 
 import javax.inject.Inject
 
@@ -92,26 +93,26 @@ class TapImpl implements Tap {
         if (commitMessage.present) into.commitMessage = commitMessage.get()
     }
 
-    HomebrewTap toHomebrewTap() {
-        HomebrewTap tap = new HomebrewTap()
+    Brew.HomebrewTap toHomebrewTap() {
+        Brew.HomebrewTap tap = new Brew.HomebrewTap()
         convert(tap)
         tap
     }
 
-    MacportsRepository toMacportsRepository() {
-        MacportsRepository tap = new MacportsRepository()
+    Macports.MacportsRepository toMacportsRepository() {
+        Macports.MacportsRepository tap = new Macports.MacportsRepository()
         convert(tap)
         tap
     }
 
-    SpecRepository toSpecRepository() {
-        SpecRepository tap = new SpecRepository()
+    Spec.SpecRepository toSpecRepository() {
+        Spec.SpecRepository tap = new Spec.SpecRepository()
         convert(tap)
         tap
     }
 
-    SnapTap toSnapTap() {
-        SnapTap tap = new SnapTap()
+    Snap.SnapTap toSnapTap() {
+        Snap.SnapTap tap = new Snap.SnapTap()
         convert(tap)
         tap
     }
@@ -122,20 +123,20 @@ class TapImpl implements Tap {
         tap
     }
 
-    ScoopBucket toScoopBucket() {
-        ScoopBucket tap = new ScoopBucket()
+    Scoop.ScoopBucket toScoopBucket() {
+        Scoop.ScoopBucket tap = new Scoop.ScoopBucket()
         convert(tap)
         tap
     }
 
-    ChocolateyBucket toChocolateyBucket() {
-        ChocolateyBucket tap = new ChocolateyBucket()
+    Chocolatey.ChocolateyBucket toChocolateyBucket() {
+        Chocolatey.ChocolateyBucket tap = new Chocolatey.ChocolateyBucket()
         convert(tap)
         tap
     }
 
-    JbangCatalog toJbangCatalog() {
-        JbangCatalog tap = new JbangCatalog()
+    Jbang.JbangCatalog toJbangCatalog() {
+        Jbang.JbangCatalog tap = new Jbang.JbangCatalog()
         convert(tap)
         tap
     }

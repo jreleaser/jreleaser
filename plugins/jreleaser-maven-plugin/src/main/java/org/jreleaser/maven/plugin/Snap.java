@@ -19,8 +19,10 @@ package org.jreleaser.maven.plugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -230,5 +232,124 @@ public class Snap extends AbstractRepositoryTool {
             !plugs.isEmpty() ||
             !slots.isEmpty() ||
             snap.isSet();
+    }
+
+    public static class Slot {
+        private final Map<String, String> attributes = new LinkedHashMap<>();
+        private final List<String> reads = new ArrayList<>();
+        private final List<String> writes = new ArrayList<>();
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Map<String, String> getAttributes() {
+            return attributes;
+        }
+
+        public void setAttributes(Map<String, String> attributes) {
+            this.attributes.clear();
+            this.attributes.putAll(attributes);
+        }
+
+        public void addAttributes(Map<String, String> attributes) {
+            this.attributes.putAll(attributes);
+        }
+
+        public void addAttribute(String key, String value) {
+            attributes.put(key, value);
+        }
+
+        public List<String> getReads() {
+            return reads;
+        }
+
+        public void setReads(List<String> reads) {
+            this.reads.clear();
+            this.reads.addAll(reads);
+        }
+
+        public void addReads(List<String> read) {
+            this.reads.addAll(read);
+        }
+
+        public void addRead(String read) {
+            if (isNotBlank(read)) {
+                this.reads.add(read.trim());
+            }
+        }
+
+        public void removeRead(String read) {
+            if (isNotBlank(read)) {
+                this.reads.remove(read.trim());
+            }
+        }
+
+        public List<String> getWrites() {
+            return writes;
+        }
+
+        public void setWrites(List<String> writes) {
+            this.writes.clear();
+            this.writes.addAll(writes);
+        }
+
+        public void addWrites(List<String> write) {
+            this.writes.addAll(write);
+        }
+
+        public void addWrite(String write) {
+            if (isNotBlank(write)) {
+                this.writes.add(write.trim());
+            }
+        }
+
+        public void removeWrite(String write) {
+            if (isNotBlank(write)) {
+                this.writes.remove(write.trim());
+            }
+        }
+    }
+
+    public static class Plug {
+        private final Map<String, String> attributes = new LinkedHashMap<>();
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Map<String, String> getAttributes() {
+            return attributes;
+        }
+
+        public void setAttributes(Map<String, String> attributes) {
+            this.attributes.clear();
+            this.attributes.putAll(attributes);
+        }
+
+        public void addAttributes(Map<String, String> attributes) {
+            this.attributes.putAll(attributes);
+        }
+
+        public void addAttribute(String key, String value) {
+            attributes.put(key, value);
+        }
+
+        public static Plug copyOf(Plug other) {
+            Plug copy = new Plug();
+            copy.setName(other.getName());
+            copy.setAttributes(other.getAttributes());
+            return copy;
+        }
     }
 }

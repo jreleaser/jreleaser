@@ -151,4 +151,10 @@ public class Chocolatey extends AbstractRepositoryTool {
             distribution.getType() != Distribution.DistributionType.NATIVE_PACKAGE &&
             distribution.getType() != Distribution.DistributionType.BINARY;
     }
+
+    public static class ChocolateyBucket extends AbstractRepositoryTap {
+        public ChocolateyBucket() {
+            super("chocolatey", "chocolatey-bucket");
+        }
+    }
 }

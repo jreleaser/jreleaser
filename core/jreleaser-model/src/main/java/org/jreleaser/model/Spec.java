@@ -119,4 +119,10 @@ public class Spec extends AbstractRepositoryTool {
         set.add(FileType.TAR.extension());
         return set;
     }
+
+    public static class SpecRepository extends AbstractRepositoryTap {
+        public SpecRepository() {
+            super("spec", "spec");
+        }
+    }
 }

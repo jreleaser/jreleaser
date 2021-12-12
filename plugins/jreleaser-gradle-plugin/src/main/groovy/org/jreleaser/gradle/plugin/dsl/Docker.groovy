@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.Property
 
 /**
  *
@@ -35,4 +36,9 @@ interface Docker extends DockerConfiguration, RepositoryTool {
     void repository(Action<? super DockerRepository> action)
 
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DockerRepository) Closure<Void> action)
+
+    @CompileStatic
+    interface DockerRepository extends Tap {
+        Property<Boolean> getVersionedSubfolders()
+    }
 }

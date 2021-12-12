@@ -24,10 +24,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.Plug;
-import org.jreleaser.model.Slot;
 import org.jreleaser.model.Snap;
-import org.jreleaser.model.SnapTap;
 import org.jreleaser.util.Errors;
 
 import java.util.ArrayList;
@@ -67,7 +64,7 @@ public abstract class SnapValidator extends Validator {
         context.getLogger().debug("distribution.{}.snap", distribution.getName());
 
         validateCommitAuthor(tool, parentTool);
-        SnapTap snap = tool.getSnap();
+        Snap.SnapTap snap = tool.getSnap();
         snap.resolveEnabled(model.getProject());
         if (isBlank(snap.getName())) {
             snap.setName(distribution.getName() + "-snap");
@@ -139,12 +136,12 @@ public abstract class SnapValidator extends Validator {
         localPlugs.addAll(common.getLocalPlugs());
         tool.setLocalPlugs(localPlugs);
 
-        Map<String, Plug> commonPlugs = common.getPlugs().stream()
-            .collect(Collectors.toMap(Plug::getName, Plug::copyOf));
-        Map<String, Plug> toolPlugs = tool.getPlugs().stream()
-            .collect(Collectors.toMap(Plug::getName, Plug::copyOf));
+        Map<String, Snap.Plug> commonPlugs = common.getPlugs().stream()
+            .collect(Collectors.toMap(Snap.Plug::getName, Snap.Plug::copyOf));
+        Map<String, Snap.Plug> toolPlugs = tool.getPlugs().stream()
+            .collect(Collectors.toMap(Snap.Plug::getName, Snap.Plug::copyOf));
         commonPlugs.forEach((name, cp) -> {
-            Plug tp = toolPlugs.remove(name);
+            Snap.Plug tp = toolPlugs.remove(name);
             if (null != tp) {
                 cp.getAttributes().putAll(tp.getAttributes());
             }
@@ -159,12 +156,12 @@ public abstract class SnapValidator extends Validator {
         localSlots.addAll(common.getLocalSlots());
         tool.setLocalSlots(localSlots);
 
-        Map<String, Slot> commonSlots = common.getSlots().stream()
-            .collect(Collectors.toMap(Slot::getName, Slot::copyOf));
-        Map<String, Slot> toolSlots = tool.getSlots().stream()
-            .collect(Collectors.toMap(Slot::getName, Slot::copyOf));
+        Map<String, Snap.Slot> commonSlots = common.getSlots().stream()
+            .collect(Collectors.toMap(Snap.Slot::getName, Snap.Slot::copyOf));
+        Map<String, Snap.Slot> toolSlots = tool.getSlots().stream()
+            .collect(Collectors.toMap(Snap.Slot::getName, Snap.Slot::copyOf));
         commonSlots.forEach((name, cp) -> {
-            Slot tp = toolSlots.remove(name);
+            Snap.Slot tp = toolSlots.remove(name);
             if (null != tp) {
                 cp.getAttributes().putAll(tp.getAttributes());
             }

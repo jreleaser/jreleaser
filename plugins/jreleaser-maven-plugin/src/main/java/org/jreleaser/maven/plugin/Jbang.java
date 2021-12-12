@@ -55,4 +55,7 @@ public class Jbang extends AbstractRepositoryTool {
             isNotBlank(alias) ||
             catalog.isSet();
     }
+
+    public static class Catalog extends Tap {
+    }
 }

@@ -528,4 +528,34 @@ public abstract class GitService implements Releaser {
             this.pattern = pattern;
         }
     }
+
+    public static class Milestone {
+        private Boolean close;
+        private String name;
+
+        void setAll(Milestone changelog) {
+            this.close = changelog.close;
+            this.name = changelog.name;
+        }
+
+        public Boolean isClose() {
+            return close == null || close;
+        }
+
+        public void setClose(Boolean close) {
+            this.close = close;
+        }
+
+        public boolean isCloseSet() {
+            return close != null;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 }

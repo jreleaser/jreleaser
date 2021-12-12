@@ -19,16 +19,20 @@ package org.jreleaser.model;
 
 import org.jreleaser.model.util.Templates;
 import org.jreleaser.util.Env;
+import org.jreleaser.util.FileType;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
+import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -166,5 +170,102 @@ public class Artifactory extends AbstractUploader {
         }
 
         return "";
+    }
+
+    public static class ArtifactoryRepository implements Domain, Activatable {
+        private final Set<FileType> fileTypes = new LinkedHashSet<>();
+
+        private Active active;
+        private boolean enabled;
+        private String path;
+
+        void setAll(ArtifactoryRepository repository) {
+            this.active = repository.active;
+            this.enabled = repository.enabled;
+            this.path = repository.path;
+            setFileTypes(repository.fileTypes);
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        @Override
+        public void disable() {
+            active = Active.NEVER;
+            enabled = false;
+        }
+
+        public boolean resolveEnabled(Project project) {
+            if (null == active) {
+                active = Active.RELEASE;
+            }
+            enabled = active.check(project);
+            return enabled;
+        }
+
+        @Override
+        public Active getActive() {
+            return active;
+        }
+
+        @Override
+        public void setActive(Active active) {
+            this.active = active;
+        }
+
+        @Override
+        public void setActive(String str) {
+            this.active = Active.of(str);
+        }
+
+        @Override
+        public boolean isActiveSet() {
+            return active != null;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public Set<FileType> getFileTypes() {
+            return fileTypes;
+        }
+
+        public void setFileTypes(Set<FileType> fileTypes) {
+            this.fileTypes.clear();
+            this.fileTypes.addAll(fileTypes);
+        }
+
+        public void addFileType(FileType fileType) {
+            this.fileTypes.add(fileType);
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("enabled", isEnabled());
+            map.put("active", active);
+            map.put("path", path);
+            map.put("fileTypes", fileTypes);
+            return map;
+        }
+
+        public boolean handles(Artifact artifact) {
+            if (!enabled) return false;
+            if (fileTypes.isEmpty()) return true;
+
+            String artifactFileName = artifact.getResolvedPath().getFileName().toString();
+            String artifactName = getFilename(artifactFileName, FileType.getSupportedExtensions());
+            String archiveFormat = artifactFileName.substring(artifactName.length() + 1);
+            FileType fileType = FileType.of(archiveFormat);
+
+            return fileTypes.contains(fileType);
+        }
     }
 }

@@ -20,7 +20,6 @@ package org.jreleaser.model.validation;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifactory;
-import org.jreleaser.model.ArtifactoryRepository;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
@@ -103,14 +102,14 @@ public abstract class ArtifactoryValidator extends Validator {
 
         validateTimeout(artifactory);
 
-        for (ArtifactoryRepository repository : artifactory.getRepositories()) {
+        for (Artifactory.ArtifactoryRepository repository : artifactory.getRepositories()) {
             if (!repository.isActiveSet()) {
                 repository.setActive(artifactory.getActive());
             }
             repository.resolveEnabled(context.getModel().getProject());
         }
 
-        if (artifactory.getRepositories().stream().noneMatch(ArtifactoryRepository::isEnabled)) {
+        if (artifactory.getRepositories().stream().noneMatch(Artifactory.ArtifactoryRepository::isEnabled)) {
             errors.warning(RB.$("validation_artifactory_disabled_repositories", "artifactory." + artifactory.getName()));
             artifactory.disable();
         }

@@ -105,4 +105,10 @@ public class Scoop extends AbstractRepositoryTool {
         set.add(FileType.JAR.extension());
         return set;
     }
+
+    public static class ScoopBucket extends AbstractRepositoryTap {
+        public ScoopBucket() {
+            super("scoop", "scoop");
+        }
+    }
 }

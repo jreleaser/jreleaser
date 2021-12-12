@@ -21,6 +21,8 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 
@@ -60,4 +62,26 @@ interface Snap extends RepositoryTool {
     void snap(Action<? super Tap> action)
 
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
+
+    @CompileStatic
+    interface Slot {
+        MapProperty<String, String> getAttributes()
+
+        void addAttribute(String key, String value)
+
+        ListProperty<String> getReads()
+
+        void addRead(String read)
+
+        ListProperty<String> getWrites()
+
+        void addWrite(String write)
+    }
+
+    @CompileStatic
+    interface Plug {
+        MapProperty<String, String> getAttributes()
+
+        void addAttribute(String key, String value)
+    }
 }

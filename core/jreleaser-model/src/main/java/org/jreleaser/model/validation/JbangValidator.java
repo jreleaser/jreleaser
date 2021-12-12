@@ -23,7 +23,6 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Jbang;
-import org.jreleaser.model.JbangCatalog;
 import org.jreleaser.util.Errors;
 
 import java.util.List;
@@ -58,7 +57,7 @@ public abstract class JbangValidator extends Validator {
         context.getLogger().debug("distribution.{}.jbang", distribution.getName());
 
         validateCommitAuthor(tool, parentTool);
-        JbangCatalog catalog = tool.getCatalog();
+        Jbang.JbangCatalog catalog = tool.getCatalog();
         catalog.resolveEnabled(model.getProject());
         validateTap(context, distribution, catalog, parentTool.getCatalog(), "jbang.catalog");
         validateTemplate(context, distribution, tool, parentTool, errors);

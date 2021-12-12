@@ -20,10 +20,8 @@ package org.jreleaser.model.validation;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Brew;
-import org.jreleaser.model.Cask;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
-import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.Errors;
@@ -69,7 +67,7 @@ public abstract class BrewValidator extends Validator {
         context.getLogger().debug("distribution.{}.brew", distribution.getName());
 
         validateCommitAuthor(tool, parentTool);
-        HomebrewTap tap = tool.getTap();
+        Brew.HomebrewTap tap = tool.getTap();
         tap.resolveEnabled(model.getProject());
         validateOwner(tap, parentTool.getTap());
         if (isBlank(tap.getBranch())) {
@@ -125,8 +123,8 @@ public abstract class BrewValidator extends Validator {
             return;
         }
 
-        Cask cask = tool.getCask();
-        Cask parentCask = parentTool.getCask();
+        Brew.Cask cask = tool.getCask();
+        Brew.Cask parentCask = parentTool.getCask();
 
         if (!cask.isEnabledSet() && parentCask.isEnabledSet()) {
             cask.setEnabled(parentCask.isEnabled());

@@ -20,7 +20,6 @@ package org.jreleaser.tools;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Brew;
-import org.jreleaser.model.Cask;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -130,7 +129,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
                 .collect(Collectors.toList()));
         }
 
-        Cask cask = tool.getCask();
+        Brew.Cask cask = tool.getCask();
         if (cask.isEnabled()) {
             boolean hasPkg = isNotBlank(cask.getPkgName());
             boolean hasApp = isNotBlank(cask.getAppName());

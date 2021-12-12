@@ -876,4 +876,68 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
             return map;
         }
     }
+
+    public static class Milestone implements Domain {
+        public static final String MILESTONE_NAME = "MILESTONE_NAME";
+
+        private Boolean close;
+        private String name;
+
+        private String cachedName;
+
+        void setAll(Milestone changelog) {
+            this.close = changelog.close;
+            this.name = changelog.name;
+        }
+
+        public String getConfiguredName() {
+            return Env.resolve(MILESTONE_NAME, cachedName);
+        }
+
+        public String getResolvedName(Map<String, Object> props) {
+            if (isBlank(cachedName)) {
+                cachedName = getConfiguredName();
+            }
+
+            if (isBlank(cachedName)) {
+                cachedName = applyTemplate(name, props);
+            } else if (cachedName.contains("{{")) {
+                cachedName = applyTemplate(cachedName, props);
+            }
+
+            return cachedName;
+        }
+
+        public String getEffectiveName() {
+            return cachedName;
+        }
+
+        public Boolean isClose() {
+            return close == null || close;
+        }
+
+        public void setClose(Boolean close) {
+            this.close = close;
+        }
+
+        public boolean isCloseSet() {
+            return close != null;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("name", name);
+            map.put("close", isClose());
+            return map;
+        }
+    }
 }

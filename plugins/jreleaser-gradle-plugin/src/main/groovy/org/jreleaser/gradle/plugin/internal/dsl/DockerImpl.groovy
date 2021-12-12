@@ -28,7 +28,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Docker
-import org.jreleaser.gradle.plugin.dsl.DockerRepository
+import org.jreleaser.model.Active
+import org.jreleaser.util.StringUtils
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -103,5 +104,61 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
         specs.each { tool.addSpec(it.toModel()) }
 
         tool
+    }
+
+    @CompileStatic
+    static class DockerRepositoryImpl implements DockerRepository {
+        final Property<Active> active
+        final Property<String> owner
+        final Property<String> name
+        final Property<String> branch
+        final Property<String> username
+        final Property<String> token
+        final Property<String> commitMessage
+        final Property<Boolean> versionedSubfolders
+
+        @Inject
+        DockerRepositoryImpl(ObjectFactory objects) {
+            active = objects.property(Active).convention(Providers.notDefined())
+            owner = objects.property(String).convention(Providers.notDefined())
+            name = objects.property(String).convention(Providers.notDefined())
+            branch = objects.property(String).convention(Providers.notDefined())
+            username = objects.property(String).convention(Providers.notDefined())
+            token = objects.property(String).convention(Providers.notDefined())
+            commitMessage = objects.property(String).convention(Providers.notDefined())
+            versionedSubfolders = objects.property(Boolean).convention(Providers.notDefined())
+        }
+
+        @Override
+        void setActive(String str) {
+            if (StringUtils.isNotBlank(str)) {
+                active.set(Active.of(str.trim()))
+            }
+        }
+
+        @Internal
+        boolean isSet() {
+            active.present ||
+                owner.present ||
+                name.present ||
+                branch.present ||
+                username.present ||
+                versionedSubfolders.present ||
+                token.present ||
+                commitMessage.present
+        }
+
+        org.jreleaser.model.Docker.DockerRepository toModel() {
+            org.jreleaser.model.Docker.DockerRepository tap = new org.jreleaser.model.Docker.DockerRepository()
+            if (active.present) tap.active = active.get()
+            if (owner.present) tap.owner = owner.get()
+            if (name.present) tap.name = name.get()
+            if (branch.present) tap.branch = branch.get()
+            if (username.present) tap.name = username.get()
+            if (token.present) tap.token = token.get()
+            if (commitMessage.present) tap.commitMessage = commitMessage.get()
+            if (versionedSubfolders.present) tap.versionedSubfolders = versionedSubfolders.get()
+            tap
+        }
     }
 }

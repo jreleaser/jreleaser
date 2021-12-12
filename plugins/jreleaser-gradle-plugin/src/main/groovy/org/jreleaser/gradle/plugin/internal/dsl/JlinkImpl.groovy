@@ -29,7 +29,6 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Glob
-import org.jreleaser.gradle.plugin.dsl.Jdeps
 import org.jreleaser.gradle.plugin.dsl.Jlink
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
@@ -229,5 +228,30 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
             jlink.addFile(glob.toModel())
         }
         jlink
+    }
+
+    @CompileStatic
+    static class JdepsImpl implements Jdeps {
+        final Property<String> multiRelease
+        final Property<Boolean> ignoreMissingDeps
+
+        @Inject
+        JdepsImpl(ObjectFactory objects) {
+            multiRelease = objects.property(String).convention(Providers.notDefined())
+            ignoreMissingDeps = objects.property(Boolean).convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            multiRelease.present ||
+                ignoreMissingDeps.present
+        }
+
+        org.jreleaser.model.Jlink.Jdeps toModel() {
+            org.jreleaser.model.Jlink.Jdeps jdeps = new org.jreleaser.model.Jlink.Jdeps()
+            if (multiRelease.present) jdeps.multiRelease = multiRelease.get()
+            if (ignoreMissingDeps.present) jdeps.ignoreMissingDeps = ignoreMissingDeps.get()
+            jdeps
+        }
     }
 }

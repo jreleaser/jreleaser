@@ -23,12 +23,9 @@ import org.jreleaser.maven.plugin.Archive;
 import org.jreleaser.maven.plugin.Article;
 import org.jreleaser.maven.plugin.Artifact;
 import org.jreleaser.maven.plugin.Artifactory;
-import org.jreleaser.maven.plugin.ArtifactoryRepository;
 import org.jreleaser.maven.plugin.Assemble;
 import org.jreleaser.maven.plugin.Brew;
 import org.jreleaser.maven.plugin.Bucket;
-import org.jreleaser.maven.plugin.Cask;
-import org.jreleaser.maven.plugin.Catalog;
 import org.jreleaser.maven.plugin.Changelog;
 import org.jreleaser.maven.plugin.Checksum;
 import org.jreleaser.maven.plugin.Chocolatey;
@@ -39,7 +36,6 @@ import org.jreleaser.maven.plugin.Discussions;
 import org.jreleaser.maven.plugin.Distribution;
 import org.jreleaser.maven.plugin.Docker;
 import org.jreleaser.maven.plugin.DockerConfiguration;
-import org.jreleaser.maven.plugin.DockerRepository;
 import org.jreleaser.maven.plugin.DockerSpec;
 import org.jreleaser.maven.plugin.Environment;
 import org.jreleaser.maven.plugin.FileSet;
@@ -56,18 +52,15 @@ import org.jreleaser.maven.plugin.GoogleChat;
 import org.jreleaser.maven.plugin.Http;
 import org.jreleaser.maven.plugin.Java;
 import org.jreleaser.maven.plugin.Jbang;
-import org.jreleaser.maven.plugin.Jdeps;
 import org.jreleaser.maven.plugin.Jlink;
 import org.jreleaser.maven.plugin.Jreleaser;
 import org.jreleaser.maven.plugin.Macports;
 import org.jreleaser.maven.plugin.Mail;
 import org.jreleaser.maven.plugin.Mastodon;
 import org.jreleaser.maven.plugin.Mattermost;
-import org.jreleaser.maven.plugin.Milestone;
 import org.jreleaser.maven.plugin.NativeImage;
 import org.jreleaser.maven.plugin.Packagers;
 import org.jreleaser.maven.plugin.Platform;
-import org.jreleaser.maven.plugin.Plug;
 import org.jreleaser.maven.plugin.Project;
 import org.jreleaser.maven.plugin.Registry;
 import org.jreleaser.maven.plugin.Release;
@@ -77,7 +70,6 @@ import org.jreleaser.maven.plugin.Sdkman;
 import org.jreleaser.maven.plugin.SdkmanAnnouncer;
 import org.jreleaser.maven.plugin.Signing;
 import org.jreleaser.maven.plugin.Slack;
-import org.jreleaser.maven.plugin.Slot;
 import org.jreleaser.maven.plugin.Snap;
 import org.jreleaser.maven.plugin.Spec;
 import org.jreleaser.maven.plugin.Tap;
@@ -88,17 +80,10 @@ import org.jreleaser.maven.plugin.Upload;
 import org.jreleaser.maven.plugin.Uploader;
 import org.jreleaser.maven.plugin.Webhook;
 import org.jreleaser.maven.plugin.Zulip;
-import org.jreleaser.model.ChocolateyBucket;
-import org.jreleaser.model.HomebrewTap;
 import org.jreleaser.model.HttpUploader;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.JbangCatalog;
-import org.jreleaser.model.MacportsRepository;
 import org.jreleaser.model.Repository;
 import org.jreleaser.model.RepositoryTap;
-import org.jreleaser.model.ScoopBucket;
-import org.jreleaser.model.SnapTap;
-import org.jreleaser.model.SpecRepository;
 import org.jreleaser.model.UpdateSection;
 import org.jsoup.parser.Parser;
 
@@ -409,8 +394,8 @@ public final class JReleaserModelConverter {
         return set;
     }
 
-    private static org.jreleaser.model.Milestone convertMilestone(Milestone milestone) {
-        org.jreleaser.model.Milestone m = new org.jreleaser.model.Milestone();
+    private static org.jreleaser.model.GitService.Milestone convertMilestone(GitService.Milestone milestone) {
+        org.jreleaser.model.GitService.Milestone m = new org.jreleaser.model.GitService.Milestone();
         m.setClose(milestone.isClose());
         if (isNotBlank(milestone.getName())) m.setName(tr(milestone.getName()));
         return m;
@@ -445,9 +430,9 @@ public final class JReleaserModelConverter {
         return a;
     }
 
-    private static List<org.jreleaser.model.ArtifactoryRepository> convertRepositories(List<ArtifactoryRepository> repositories) {
-        List<org.jreleaser.model.ArtifactoryRepository> list = new ArrayList<>();
-        for (ArtifactoryRepository repository : repositories) {
+    private static List<org.jreleaser.model.Artifactory.ArtifactoryRepository> convertRepositories(List<Artifactory.ArtifactoryRepository> repositories) {
+        List<org.jreleaser.model.Artifactory.ArtifactoryRepository> list = new ArrayList<>();
+        for (Artifactory.ArtifactoryRepository repository : repositories) {
             if (repository.isSet()) {
                 list.add(convertRepository(repository));
             }
@@ -455,8 +440,8 @@ public final class JReleaserModelConverter {
         return list;
     }
 
-    private static org.jreleaser.model.ArtifactoryRepository convertRepository(ArtifactoryRepository repository) {
-        org.jreleaser.model.ArtifactoryRepository r = new org.jreleaser.model.ArtifactoryRepository();
+    private static org.jreleaser.model.Artifactory.ArtifactoryRepository convertRepository(Artifactory.ArtifactoryRepository repository) {
+        org.jreleaser.model.Artifactory.ArtifactoryRepository r = new org.jreleaser.model.Artifactory.ArtifactoryRepository();
         r.setActive(repository.resolveActive());
         r.setPath(tr(repository.getPath()));
         for (FileType fileType : repository.getFileTypes()) {
@@ -846,8 +831,8 @@ public final class JReleaserModelConverter {
         return a;
     }
 
-    private static org.jreleaser.model.Jdeps convertJdeps(Jdeps jdeps) {
-        org.jreleaser.model.Jdeps j = new org.jreleaser.model.Jdeps();
+    private static org.jreleaser.model.Jlink.Jdeps convertJdeps(Jlink.Jdeps jdeps) {
+        org.jreleaser.model.Jlink.Jdeps j = new org.jreleaser.model.Jlink.Jdeps();
         j.setMultiRelease(jdeps.getMultiRelease());
         if (jdeps.isIgnoreMissingDepsSet()) j.setIgnoreMissingDeps(jdeps.isIgnoreMissingDeps());
         return j;
@@ -1014,8 +999,8 @@ public final class JReleaserModelConverter {
         return t;
     }
 
-    private static org.jreleaser.model.Cask convertCask(Cask cask) {
-        org.jreleaser.model.Cask c = new org.jreleaser.model.Cask();
+    private static org.jreleaser.model.Brew.Cask convertCask(Brew.Cask cask) {
+        org.jreleaser.model.Brew.Cask c = new org.jreleaser.model.Brew.Cask();
         c.setName(tr(cask.getName()));
         c.setDisplayName(tr(cask.getDisplayName()));
         c.setPkgName(tr(cask.getPkgName()));
@@ -1027,8 +1012,8 @@ public final class JReleaserModelConverter {
         return c;
     }
 
-    private static HomebrewTap convertHomebrewTap(Tap tap) {
-        HomebrewTap t = new HomebrewTap();
+    private static org.jreleaser.model.Brew.HomebrewTap convertHomebrewTap(Tap tap) {
+        org.jreleaser.model.Brew.HomebrewTap t = new org.jreleaser.model.Brew.HomebrewTap();
         convertTap(tap, t);
         return t;
     }
@@ -1079,8 +1064,8 @@ public final class JReleaserModelConverter {
         if (docker.isUseLocalArtifactSet()) d.setUseLocalArtifact(docker.isUseLocalArtifact());
     }
 
-    private static org.jreleaser.model.DockerRepository convertDockerRepository(DockerRepository tap) {
-        org.jreleaser.model.DockerRepository t = new org.jreleaser.model.DockerRepository();
+    private static org.jreleaser.model.Docker.DockerRepository convertDockerRepository(Docker.DockerRepository tap) {
+        org.jreleaser.model.Docker.DockerRepository t = new org.jreleaser.model.Docker.DockerRepository();
         convertTap(tap, t);
         if (tap.isVersionedSubfoldersSet()) t.setVersionedSubfolders(tap.isVersionedSubfolders());
         return t;
@@ -1119,8 +1104,8 @@ public final class JReleaserModelConverter {
         return r;
     }
 
-    private static ChocolateyBucket convertChocolateyBucket(Bucket bucket) {
-        ChocolateyBucket b = new ChocolateyBucket();
+    private static org.jreleaser.model.Chocolatey.ChocolateyBucket convertChocolateyBucket(Bucket bucket) {
+        org.jreleaser.model.Chocolatey.ChocolateyBucket b = new org.jreleaser.model.Chocolatey.ChocolateyBucket();
         convertTap(bucket, b);
         return b;
     }
@@ -1137,8 +1122,8 @@ public final class JReleaserModelConverter {
         return t;
     }
 
-    private static JbangCatalog convertJbangCatalog(Catalog catalog) {
-        JbangCatalog t = new JbangCatalog();
+    private static org.jreleaser.model.Jbang.JbangCatalog convertJbangCatalog(Jbang.Catalog catalog) {
+        org.jreleaser.model.Jbang.JbangCatalog t = new org.jreleaser.model.Jbang.JbangCatalog();
         convertTap(catalog, t);
         return t;
     }
@@ -1158,8 +1143,8 @@ public final class JReleaserModelConverter {
         return t;
     }
 
-    private static MacportsRepository convertMacportsRepository(Tap tap) {
-        MacportsRepository r = new MacportsRepository();
+    private static org.jreleaser.model.Macports.MacportsRepository convertMacportsRepository(Tap tap) {
+        org.jreleaser.model.Macports.MacportsRepository r = new org.jreleaser.model.Macports.MacportsRepository();
         convertTap(tap, r);
         return r;
     }
@@ -1178,8 +1163,8 @@ public final class JReleaserModelConverter {
         return t;
     }
 
-    private static ScoopBucket convertScoopBucket(Bucket bucket) {
-        ScoopBucket b = new ScoopBucket();
+    private static org.jreleaser.model.Scoop.ScoopBucket convertScoopBucket(Bucket bucket) {
+        org.jreleaser.model.Scoop.ScoopBucket b = new org.jreleaser.model.Scoop.ScoopBucket();
         convertTap(bucket, b);
         return b;
     }
@@ -1219,37 +1204,37 @@ public final class JReleaserModelConverter {
         return t;
     }
 
-    private static SnapTap convertSnapTap(Tap tap) {
-        SnapTap t = new SnapTap();
+    private static org.jreleaser.model.Snap.SnapTap convertSnapTap(Tap tap) {
+        org.jreleaser.model.Snap.SnapTap t = new org.jreleaser.model.Snap.SnapTap();
         convertTap(tap, t);
         return t;
     }
 
-    private static List<org.jreleaser.model.Plug> convertPlugs(List<Plug> plugs) {
-        List<org.jreleaser.model.Plug> ps = new ArrayList<>();
-        for (Plug plug : plugs) {
+    private static List<org.jreleaser.model.Snap.Plug> convertPlugs(List<Snap.Plug> plugs) {
+        List<org.jreleaser.model.Snap.Plug> ps = new ArrayList<>();
+        for (Snap.Plug plug : plugs) {
             ps.add(convertArtifact(plug));
         }
         return ps;
     }
 
-    private static org.jreleaser.model.Plug convertArtifact(Plug plug) {
-        org.jreleaser.model.Plug p = new org.jreleaser.model.Plug();
+    private static org.jreleaser.model.Snap.Plug convertArtifact(Snap.Plug plug) {
+        org.jreleaser.model.Snap.Plug p = new org.jreleaser.model.Snap.Plug();
         p.setName(tr(plug.getName()));
         p.setAttributes(plug.getAttributes());
         return p;
     }
 
-    private static List<org.jreleaser.model.Slot> convertSlots(List<Slot> slots) {
-        List<org.jreleaser.model.Slot> ps = new ArrayList<>();
-        for (Slot slot : slots) {
+    private static List<org.jreleaser.model.Snap.Slot> convertSlots(List<Snap.Slot> slots) {
+        List<org.jreleaser.model.Snap.Slot> ps = new ArrayList<>();
+        for (Snap.Slot slot : slots) {
             ps.add(convertSlot(slot));
         }
         return ps;
     }
 
-    private static org.jreleaser.model.Slot convertSlot(Slot slot) {
-        org.jreleaser.model.Slot p = new org.jreleaser.model.Slot();
+    private static org.jreleaser.model.Snap.Slot convertSlot(Snap.Slot slot) {
+        org.jreleaser.model.Snap.Slot p = new org.jreleaser.model.Snap.Slot();
         p.setName(tr(slot.getName()));
         p.setAttributes(slot.getAttributes());
         p.setReads(tr(slot.getReads()));
@@ -1271,8 +1256,8 @@ public final class JReleaserModelConverter {
         return t;
     }
 
-    private static SpecRepository convertSpecRepository(Tap tap) {
-        SpecRepository r = new SpecRepository();
+    private static org.jreleaser.model.Spec.SpecRepository convertSpecRepository(Tap tap) {
+        org.jreleaser.model.Spec.SpecRepository r = new org.jreleaser.model.Spec.SpecRepository();
         convertTap(tap, r);
         return r;
     }

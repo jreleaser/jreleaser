@@ -18,7 +18,11 @@
 package org.jreleaser.maven.plugin;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -94,5 +98,56 @@ public class Artifactory extends AbstractUploader {
     public void setRepositories(List<ArtifactoryRepository> repositories) {
         this.repositories.clear();
         this.repositories.addAll(repositories);
+    }
+
+    public static class ArtifactoryRepository implements Activatable {
+        private final Set<FileType> fileTypes = new LinkedHashSet<>();
+
+        private Active active;
+        private String path;
+
+        void setAll(ArtifactoryRepository repository) {
+            this.active = repository.active;
+            this.path = repository.path;
+            setFileTypes(repository.fileTypes);
+        }
+
+        @Override
+        public Active getActive() {
+            return active;
+        }
+
+        @Override
+        public void setActive(Active active) {
+            this.active = active;
+        }
+
+        @Override
+        public String resolveActive() {
+            return active != null ? active.name() : null;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public Set<FileType> getFileTypes() {
+            return fileTypes;
+        }
+
+        public void setFileTypes(Set<FileType> fileTypes) {
+            this.fileTypes.clear();
+            this.fileTypes.addAll(fileTypes);
+        }
+
+        public boolean isSet() {
+            return active != null ||
+                isNotBlank(path) ||
+                !fileTypes.isEmpty();
+        }
     }
 }

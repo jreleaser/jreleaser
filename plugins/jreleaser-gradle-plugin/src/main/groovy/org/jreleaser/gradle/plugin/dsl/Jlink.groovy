@@ -69,4 +69,11 @@ interface Jlink extends JavaAssembler {
     void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
 
     void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
+
+    @CompileStatic
+    interface Jdeps {
+        Property<String> getMultiRelease()
+
+        Property<Boolean> getIgnoreMissingDeps()
+    }
 }

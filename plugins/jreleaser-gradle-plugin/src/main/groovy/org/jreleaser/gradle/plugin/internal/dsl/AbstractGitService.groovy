@@ -27,7 +27,7 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Changelog
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.GitService
-import org.jreleaser.gradle.plugin.dsl.Milestone
+
 import org.jreleaser.model.UpdateSection
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -289,6 +289,31 @@ abstract class AbstractGitService implements GitService {
             if (pattern.present) prerelease.pattern = pattern.get()
             if (enabled.present) prerelease.enabled = enabled.get()
             prerelease
+        }
+    }
+
+    @CompileStatic
+    static class MilestoneImpl implements Milestone {
+        final Property<Boolean> close
+        final Property<String> name
+
+        @Inject
+        MilestoneImpl(ObjectFactory objects) {
+            close = objects.property(Boolean).convention(Providers.notDefined())
+            name = objects.property(String).convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            close.present ||
+                name.present
+        }
+
+        org.jreleaser.model.GitService.Milestone toModel() {
+            org.jreleaser.model.GitService.Milestone milestone = new org.jreleaser.model.GitService.Milestone()
+            if (close.present) milestone.close = close.get()
+            if (name.present) milestone.name = name.get()
+            milestone
         }
     }
 }

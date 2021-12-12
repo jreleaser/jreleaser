@@ -20,6 +20,8 @@ package org.jreleaser.gradle.plugin.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
+import org.jreleaser.util.FileType
 
 /**
  *
@@ -41,4 +43,13 @@ interface Artifactory extends HttpUploader {
     void repository(Action<? super ArtifactoryRepository> action)
 
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactoryRepository) Closure<Void> action)
+
+    @CompileStatic
+    interface ArtifactoryRepository extends Activatable {
+        Property<String> getPath()
+
+        SetProperty<FileType> getFileTypes()
+
+        void setFileType(String str)
+    }
 }

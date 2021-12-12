@@ -23,7 +23,6 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Scoop;
-import org.jreleaser.model.ScoopBucket;
 import org.jreleaser.util.Errors;
 
 import java.util.Set;
@@ -56,7 +55,7 @@ public abstract class ScoopValidator extends Validator {
         context.getLogger().debug("distribution.{}.scoop", distribution.getName());
 
         validateCommitAuthor(tool, parentTool);
-        ScoopBucket bucket = tool.getBucket();
+        Scoop.ScoopBucket bucket = tool.getBucket();
         bucket.resolveEnabled(model.getProject());
         validateTap(context, distribution, bucket, parentTool.getBucket(), "scoop.bucket");
         validateTemplate(context, distribution, tool, parentTool, errors);

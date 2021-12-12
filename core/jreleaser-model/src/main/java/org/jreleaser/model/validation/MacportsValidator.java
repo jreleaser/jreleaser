@@ -23,7 +23,6 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Macports;
-import org.jreleaser.model.MacportsRepository;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.Errors;
 
@@ -77,7 +76,7 @@ public abstract class MacportsValidator extends Validator {
         }
 
         validateCommitAuthor(tool, parentTool);
-        MacportsRepository repository = tool.getRepository();
+        Macports.MacportsRepository repository = tool.getRepository();
         repository.resolveEnabled(model.getProject());
         validateTap(context, distribution, repository, parentTool.getRepository(), "macports.repository");
         validateTemplate(context, distribution, tool, parentTool, errors);

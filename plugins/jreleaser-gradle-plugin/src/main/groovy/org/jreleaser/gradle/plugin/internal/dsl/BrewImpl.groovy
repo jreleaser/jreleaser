@@ -26,7 +26,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Brew
-import org.jreleaser.gradle.plugin.dsl.Cask
+
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Tap
 import org.kordamp.gradle.util.ConfigureUtil
@@ -137,5 +137,54 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
         if (livecheck.present) tool.livecheck = (livecheck.get() as List<String>)
         if (cask.isSet()) tool.cask = cask.toModel()
         tool
+    }
+
+    @CompileStatic
+    static class CaskImpl implements Cask {
+        final Property<String> name
+        final Property<String> displayName
+        final Property<String> pkgName
+        final Property<String> appName
+        final Property<String> appcast
+        final Property<Boolean> enabled
+        final MapProperty<String,List<String>> uninstall
+        final MapProperty<String,List<String>> zap
+
+        @Inject
+        CaskImpl(ObjectFactory objects) {
+            displayName = objects.property(String).convention(Providers.notDefined())
+            name = objects.property(String).convention(Providers.notDefined())
+            pkgName = objects.property(String).convention(Providers.notDefined())
+            appName = objects.property(String).convention(Providers.notDefined())
+            appcast = objects.property(String).convention(Providers.notDefined())
+            enabled = objects.property(Boolean).convention(Providers.notDefined())
+            uninstall = (objects.mapProperty(String,List).convention(Providers.notDefined()) as MapProperty<String, List<String>>)
+            zap = (objects.mapProperty(String,List).convention(Providers.notDefined()) as MapProperty<String, List<String>>)
+        }
+
+        @Internal
+        boolean isSet() {
+            displayName.present ||
+                name.present ||
+                pkgName.present ||
+                appName.present ||
+                appcast.present ||
+                enabled.present ||
+                uninstall.present ||
+                zap.present
+        }
+
+        org.jreleaser.model.Brew.Cask toModel() {
+            org.jreleaser.model.Brew.Cask cask = new org.jreleaser.model.Brew.Cask()
+            if (displayName.present) cask.displayName = displayName.get()
+            if (name.present) cask.name = name.get()
+            if (pkgName.present) cask.pkgName = pkgName.get()
+            if (appName.present) cask.appName = appName.get()
+            if (appcast.present) cask.appcast = appcast.get()
+            if (enabled.present) cask.enabled = enabled.get()
+            if (uninstall.present) cask.uninstall = uninstall.get()
+            if (zap.present) cask.zap = zap.get()
+            cask
+        }
     }
 }

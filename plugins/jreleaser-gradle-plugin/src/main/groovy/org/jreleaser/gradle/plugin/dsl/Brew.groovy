@@ -55,4 +55,23 @@ interface Brew extends RepositoryTool {
     void cask(Action<? super Cask> action)
 
     void cask(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cask) Closure<Void> action)
+
+    @CompileStatic
+    interface Cask {
+        Property<String> getName()
+
+        Property<String> getDisplayName()
+
+        Property<String> getPkgName()
+
+        Property<String> getAppName()
+
+        Property<String> getAppcast()
+
+        Property<Boolean> getEnabled()
+
+        MapProperty<String, List<String>> getUninstall()
+
+        MapProperty<String, List<String>> getZap()
+    }
 }
