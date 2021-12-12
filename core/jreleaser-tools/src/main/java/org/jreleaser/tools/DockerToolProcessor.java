@@ -81,6 +81,8 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
                 Files.move(prepareDirectory.resolve("Dockerfile-remote"),
                     prepareDirectory.resolve("Dockerfile"),
                     REPLACE_EXISTING);
+            } else {
+                Files.deleteIfExists(prepareDirectory.resolve("Dockerfile-remote"));
             }
 
             return;
@@ -107,6 +109,8 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
             Files.move(prepareDirectory.resolve(spec.getName()).resolve("Dockerfile-remote"),
                 prepareDirectory.resolve(spec.getName()).resolve("Dockerfile"),
                 REPLACE_EXISTING);
+        } else {
+            Files.deleteIfExists(prepareDirectory.resolve("Dockerfile-remote"));
         }
     }
 
