@@ -189,6 +189,15 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "michael-simons",
+      "name": "Michael Simons",
+      "avatar_url": "https://avatars.githubusercontent.com/u/526383?v=4",
+      "profile": "http://michael-simons.eu",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
