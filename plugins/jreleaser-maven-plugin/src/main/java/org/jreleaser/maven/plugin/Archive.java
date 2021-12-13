@@ -87,6 +87,7 @@ public class Archive extends AbstractAssembler {
         TAR,
         TGZ,
         TAR_GZ,
+        TAR_XZ,
         TAR_BZ2;
 
         public static Format of(String str) {

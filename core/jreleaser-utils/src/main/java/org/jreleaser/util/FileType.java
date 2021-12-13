@@ -38,6 +38,7 @@ public enum FileType {
     TAR("tar"),
     TAR_BZ2("tar.bz2"),
     TAR_GZ("tar.gz"),
+    TAR_XZ("tar.xz"),
     TGZ("tgz"),
     ZIP("zip");
 

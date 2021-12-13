@@ -79,6 +79,9 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<Archiv
                 case TAR_GZ:
                     FileUtils.tgz(workDirectory, archiveFile);
                     break;
+                case TAR_XZ:
+                    FileUtils.xz(workDirectory, archiveFile);
+                    break;
                 case TAR_BZ2:
                     FileUtils.bz2(workDirectory, archiveFile);
             }

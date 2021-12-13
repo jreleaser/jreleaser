@@ -118,7 +118,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             Artifact image = jlink(assembleDirectory, jdkPath, targetJdk, moduleNames, imageName, archiveFormat);
             if (isNotBlank(assembler.getImageNameTransform())) {
                 image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" +
-                    platformReplaced + "."+
+                    platformReplaced + "." +
                     archiveFormat.extension());
                 image.getEffectivePath(context, assembler);
             }
@@ -226,6 +226,9 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
                 case TGZ:
                 case TAR_GZ:
                     FileUtils.tgz(workDirectory, imageArchive);
+                    break;
+                case TAR_XZ:
+                    FileUtils.xz(workDirectory, imageArchive);
                     break;
                 case TAR_BZ2:
                     FileUtils.bz2(workDirectory, imageArchive);

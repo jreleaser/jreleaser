@@ -30,6 +30,8 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
+import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.jreleaser.bundle.RB;
 
@@ -64,6 +66,11 @@ import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static org.jreleaser.util.FileType.TAR_BZ2;
+import static org.jreleaser.util.FileType.TAR_GZ;
+import static org.jreleaser.util.FileType.TAR_XZ;
+import static org.jreleaser.util.FileType.TGZ;
+import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -77,10 +84,6 @@ public final class FileUtils {
         "LICENSE.md",
         "LICENSE.adoc"
     };
-
-    private static final String TGZ = ".tgz";
-    private static final String TAR_BZ2 = ".tar.bz2";
-    private static final String TAR_GZ = ".tar.gz";
 
     private FileUtils() {
         //noop
@@ -161,6 +164,13 @@ public final class FileUtils {
         }
     }
 
+    public static void xz(Path src, Path dest) throws IOException {
+        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
+            new XZCompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
+            tar(src, out);
+        }
+    }
+
     private static void tar(Path src, TarArchiveOutputStream out) throws IOException {
         out.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
         Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
@@ -189,7 +199,8 @@ public final class FileUtils {
 
     public static void unpackArchive(Path src, Path dest) throws IOException {
         String filename = src.getFileName().toString();
-        if (filename.endsWith(TGZ) || filename.endsWith(TAR_GZ) || filename.endsWith(TAR_BZ2)) {
+        if (filename.endsWith(TGZ.extension()) || filename.endsWith(TAR_GZ.extension()) ||
+            filename.endsWith(TAR_BZ2.extension()) || filename.endsWith(TAR_XZ.extension())) {
             unpackArchiveCompressed(src, dest);
             return;
         }
@@ -214,17 +225,34 @@ public final class FileUtils {
         File destinationDir = dest.toFile();
 
         String filename = src.getFileName().toString();
-        boolean bzip2 = filename.endsWith(TAR_BZ2);
-        boolean tgz = filename.endsWith(TGZ);
+        String artifactFileName = getFilename(filename, FileType.getSupportedExtensions());
+        String artifactExtension = artifactFileName.substring(artifactFileName.length() + 1);
+        String artifactFileFormat = artifactExtension.substring(1);
+        FileType fileType = FileType.of(artifactFileFormat);
+
         try (InputStream fi = Files.newInputStream(src);
              InputStream bi = new BufferedInputStream(fi);
-             InputStream gzi = bzip2 ? new BZip2CompressorInputStream(bi) : new GzipCompressorInputStream(bi);
+             InputStream gzi = resolveCompressorInputStream(fileType, bi);
              ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
             // subtract extension
-            int offset = bzip2 ? TAR_BZ2.length() : (tgz ? TGZ.length() : TAR_GZ.length());
-            filename = filename.substring(0, filename.length() - 7);
+            int offset = fileType.extension().length();
+            filename = filename.substring(0, filename.length() - offset);
             unpackArchive(filename + "/", destinationDir, in);
         }
+    }
+
+    private static InputStream resolveCompressorInputStream(FileType fileType, InputStream in) throws IOException {
+        switch (fileType) {
+            case TGZ:
+            case TAR_GZ:
+                return new GzipCompressorInputStream(in);
+            case TAR_BZ2:
+                return new BZip2CompressorInputStream(in);
+            case TAR_XZ:
+                return new XZCompressorInputStream(in);
+        }
+
+        return null;
     }
 
     private static void unpackArchive(String basename, File destinationDir, ArchiveInputStream in) throws IOException {
@@ -272,7 +300,8 @@ public final class FileUtils {
 
     public static List<String> inspectArchive(Path src) throws IOException {
         String filename = src.getFileName().toString();
-        if (filename.endsWith(TGZ) || filename.endsWith(TAR_GZ) || filename.endsWith(TAR_BZ2)) {
+        if (filename.endsWith(TGZ.extension()) || filename.endsWith(TAR_GZ.extension()) ||
+            filename.endsWith(TAR_BZ2.extension()) || filename.endsWith(TAR_XZ.extension())) {
             return inspectArchiveCompressed(src);
         }
 
@@ -287,10 +316,14 @@ public final class FileUtils {
 
     public static List<String> inspectArchiveCompressed(Path src) throws IOException {
         String filename = src.getFileName().toString();
-        boolean bzip2 = filename.endsWith(TAR_BZ2);
+        String artifactFileName = getFilename(filename, FileType.getSupportedExtensions());
+        String artifactExtension = artifactFileName.substring(artifactFileName.length() + 1);
+        String artifactFileFormat = artifactExtension.substring(1);
+        FileType fileType = FileType.of(artifactFileFormat);
+
         try (InputStream fi = Files.newInputStream(src);
              InputStream bi = new BufferedInputStream(fi);
-             InputStream gzi = bzip2 ? new BZip2CompressorInputStream(bi) : new GzipCompressorInputStream(bi);
+             InputStream gzi = resolveCompressorInputStream(fileType, bi);
              ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
             return inspectArchive(in);
         }

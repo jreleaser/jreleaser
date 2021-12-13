@@ -61,6 +61,7 @@ public class Snap extends AbstractRepositoryTool {
         Set<String> set = new LinkedHashSet<>();
         set.add(FileType.TAR_BZ2.extension());
         set.add(FileType.TAR_GZ.extension());
+        set.add(FileType.TAR_XZ.extension());
         set.add(FileType.TGZ.extension());
         set.add(FileType.TAR.extension());
         return set;
