@@ -63,6 +63,7 @@
 
     <target name="jreleaser-assemble">
         <jreleaser:assembler skip="${jreleaser.skip}"
+                             selectCurrentPlatform="${jreleaser.select.current.platform}"
                              gitRootSearch="${jreleaser.git.root.search}"
                              configFile="${jreleaser.config.file}"
                              outputDir="${jreleaser.outputdir"/>

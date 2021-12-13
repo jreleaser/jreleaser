@@ -26,7 +26,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class JReleaserAssembleTask extends AbstractJReleaserTask {
+public class JReleaserAssembleTask extends AbstractPlatformAwareJReleaserTask {
     private List<String> assemblers;
     private List<String> excludedAssemblers;
     private List<String> distributions;

@@ -26,7 +26,7 @@ import picocli.CommandLine;
  * @since 0.2.0
  */
 @CommandLine.Command(name = "assemble")
-public class Assemble extends AbstractModelCommand {
+public class Assemble extends AbstractPlatformAwareModelCommand {
     @CommandLine.ArgGroup
     Composite composite;
 

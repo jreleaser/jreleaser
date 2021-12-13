@@ -31,7 +31,7 @@ import org.jreleaser.workflow.Workflows;
  * @since 0.2.0
  */
 @Mojo(name = "assemble")
-public class JReleaserAssembleMojo extends AbstractJReleaserMojo {
+public class JReleaserAssembleMojo extends AbstractPlatformAwareJReleaserMojo {
     /**
      * Include an assembler.
      */

@@ -35,7 +35,7 @@ import javax.inject.Inject
  * @since 0.2.0
  */
 @CompileStatic
-abstract class JReleaserAssembleTask extends AbstractJReleaserTask {
+abstract class JReleaserAssembleTask extends AbstractPlatformAwareJReleaserTask {
     @Input
     @Optional
     final ListProperty<String> assemblers

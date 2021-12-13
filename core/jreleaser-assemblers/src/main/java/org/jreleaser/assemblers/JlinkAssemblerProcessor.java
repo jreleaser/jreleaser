@@ -68,6 +68,8 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
 
         // verify jdks
         for (Artifact targetJdk : assembler.getTargetJdks()) {
+            if (!context.isPlatformSelected(targetJdk)) continue;
+
             Path targetJdkPath = targetJdk.getEffectivePath(context, assembler);
             Version targetJdkVersion = Version.of(readJavaVersion(targetJdkPath));
             context.getLogger().debug(RB.$("assembler.jlink.target"), jdkVersion, targetJdkPath.toAbsolutePath().toString());
@@ -83,6 +85,8 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         // run jlink x jdk
         String imageName = assembler.getResolvedImageName(context);
         for (Artifact targetJdk : assembler.getTargetJdks()) {
+            if (!context.isPlatformSelected(targetJdk)) continue;
+
             String platform = targetJdk.getPlatform();
             String platformReplaced = assembler.getPlatform().applyReplacements(platform);
             // copy jars to assembly
