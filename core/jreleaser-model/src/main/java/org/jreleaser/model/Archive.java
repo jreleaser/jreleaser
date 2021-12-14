@@ -122,10 +122,12 @@ public class Archive extends AbstractAssembler {
     public enum Format {
         ZIP("zip"),
         TAR("tar"),
-        TGZ("tgz"),
+        TAR_BZ2("tar.bz2"),
         TAR_GZ("tar.gz"),
         TAR_XZ("tar.xz"),
-        TAR_BZ2("tar.bz2");
+        TBZ2("tbz2"),
+        TGZ("tgz"),
+        TXZ("txz");
 
         private final String extension;
 

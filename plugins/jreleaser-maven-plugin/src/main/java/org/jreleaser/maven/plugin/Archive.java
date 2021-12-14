@@ -85,10 +85,12 @@ public class Archive extends AbstractAssembler {
     public enum Format {
         ZIP,
         TAR,
-        TGZ,
+        TAR_BZ2,
         TAR_GZ,
         TAR_XZ,
-        TAR_BZ2;
+        TBZ2,
+        TGZ,
+        TXZ;
 
         public static Format of(String str) {
             if (isBlank(str)) return null;

@@ -36,7 +36,9 @@ public enum FileType {
     TAR_BZ2,
     TAR_GZ,
     TAR_XZ,
+    TBZ2,
     TGZ,
+    TXZ,
     ZIP;
 
     public static FileType of(String str) {

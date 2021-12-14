@@ -116,7 +116,9 @@ public class Spec extends AbstractRepositoryTool {
         set.add(FileType.TAR_BZ2.extension());
         set.add(FileType.TAR_GZ.extension());
         set.add(FileType.TAR_XZ.extension());
+        set.add(FileType.TBZ2.extension());
         set.add(FileType.TGZ.extension());
+        set.add(FileType.TXZ.extension());
         set.add(FileType.TAR.extension());
         return set;
     }

@@ -69,7 +69,9 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static org.jreleaser.util.FileType.TAR_BZ2;
 import static org.jreleaser.util.FileType.TAR_GZ;
 import static org.jreleaser.util.FileType.TAR_XZ;
+import static org.jreleaser.util.FileType.TBZ2;
 import static org.jreleaser.util.FileType.TGZ;
+import static org.jreleaser.util.FileType.TXZ;
 import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -83,6 +85,15 @@ public final class FileUtils {
         "LICENSE.txt",
         "LICENSE.md",
         "LICENSE.adoc"
+    };
+
+    private static final String[] TAR_COMPRESSED_EXTENSIONS = {
+        TAR_BZ2.extension(),
+        TAR_GZ.extension(),
+        TAR_XZ.extension(),
+        TBZ2.extension(),
+        TGZ.extension(),
+        TXZ.extension()
     };
 
     private FileUtils() {
@@ -145,7 +156,8 @@ public final class FileUtils {
     }
 
     public static void tar(Path src, Path dest) throws IOException {
-        try (TarArchiveOutputStream out = new TarArchiveOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING))) {
+        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
+            Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING))) {
             tar(src, out);
         }
     }
@@ -199,10 +211,11 @@ public final class FileUtils {
 
     public static void unpackArchive(Path src, Path dest) throws IOException {
         String filename = src.getFileName().toString();
-        if (filename.endsWith(TGZ.extension()) || filename.endsWith(TAR_GZ.extension()) ||
-            filename.endsWith(TAR_BZ2.extension()) || filename.endsWith(TAR_XZ.extension())) {
-            unpackArchiveCompressed(src, dest);
-            return;
+        for (String extension : TAR_COMPRESSED_EXTENSIONS) {
+            if (filename.endsWith(extension)) {
+                unpackArchiveCompressed(src, dest);
+                return;
+            }
         }
 
         deleteFiles(dest, true);
@@ -246,8 +259,10 @@ public final class FileUtils {
             case TGZ:
             case TAR_GZ:
                 return new GzipCompressorInputStream(in);
+            case TBZ2:
             case TAR_BZ2:
                 return new BZip2CompressorInputStream(in);
+            case TXZ:
             case TAR_XZ:
                 return new XZCompressorInputStream(in);
         }
@@ -287,8 +302,7 @@ public final class FileUtils {
                 try (OutputStream o = Files.newOutputStream(file.toPath())) {
                     IOUtils.copy(in, o);
                     // TODO: make it a generic solution
-                    // zipEntry.unixMode returns 0 most times even if the
-                    // entry is executable
+                    // zipEntry.unixMode returns 0 most times even if the entry is executable
                     // https://github.com/jreleaser/jreleaser/issues/358
                     if ("bin".equalsIgnoreCase(file.getParentFile().getName())) {
                         grantExecutableAccess(file.toPath());
@@ -300,9 +314,10 @@ public final class FileUtils {
 
     public static List<String> inspectArchive(Path src) throws IOException {
         String filename = src.getFileName().toString();
-        if (filename.endsWith(TGZ.extension()) || filename.endsWith(TAR_GZ.extension()) ||
-            filename.endsWith(TAR_BZ2.extension()) || filename.endsWith(TAR_XZ.extension())) {
-            return inspectArchiveCompressed(src);
+        for (String extension : TAR_COMPRESSED_EXTENSIONS) {
+            if (filename.endsWith(extension)) {
+                return inspectArchiveCompressed(src);
+            }
         }
 
         try (InputStream fi = Files.newInputStream(src);

@@ -227,9 +227,11 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
                 case TAR_GZ:
                     FileUtils.tgz(workDirectory, imageArchive);
                     break;
+                case TXZ:
                 case TAR_XZ:
                     FileUtils.xz(workDirectory, imageArchive);
                     break;
+                case TBZ2:
                 case TAR_BZ2:
                     FileUtils.bz2(workDirectory, imageArchive);
             }

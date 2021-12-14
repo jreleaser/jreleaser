@@ -161,9 +161,11 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
                 case TAR_GZ:
                     FileUtils.tgz(tempDirectory, imageArchive);
                     break;
+                case TXZ:
                 case TAR_XZ:
                     FileUtils.xz(tempDirectory, imageArchive);
                     break;
+                case TBZ2:
                 case TAR_BZ2:
                     FileUtils.bz2(tempDirectory, imageArchive);
             }
