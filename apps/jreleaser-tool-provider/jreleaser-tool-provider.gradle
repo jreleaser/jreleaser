@@ -84,7 +84,7 @@ tasks.withType(JavaCompile) { JavaCompile c ->
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
-        vendor = JvmVendorSpec.AZUL
+        vendor = JvmVendorSpec.ADOPTOPENJDK
     }
 }
 
