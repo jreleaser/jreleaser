@@ -77,13 +77,14 @@ tasks.shadowJar.dependsOn tasks.relocateShadowJar
 jar.finalizedBy shadowJar
 
 tasks.withType(JavaCompile) { JavaCompile c ->
-    c.sourceCompatibility = JavaVersion.VERSION_1_9
-    c.targetCompatibility = JavaVersion.VERSION_1_9
+    c.sourceCompatibility = JavaVersion.VERSION_11
+    c.targetCompatibility = JavaVersion.VERSION_11
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(9)
+        languageVersion = JavaLanguageVersion.of(17)
+        vendor = JvmVendorSpec.AZUL
     }
 }
 
