@@ -60,7 +60,7 @@ public abstract class TelegramValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_TELEGRAM_TPL))) {
                 telegram.setMessageTemplate(DEFAULT_TELEGRAM_TPL);
             } else {
-                telegram.setMessage(RB.$("default_release_message"));
+                telegram.setMessage(RB.$("default.release.message"));
             }
         }
 

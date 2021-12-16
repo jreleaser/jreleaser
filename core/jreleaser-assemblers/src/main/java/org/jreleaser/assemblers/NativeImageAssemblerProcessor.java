@@ -19,7 +19,6 @@ package org.jreleaser.assemblers;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
-import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.NativeImage;
 import org.jreleaser.model.Project;
@@ -34,13 +33,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
+import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -48,7 +47,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcessor<NativeImage> {
-    private static final String KEY_JAVA_VERSION = "JAVA_VERSION";
     private static final String KEY_GRAALVM_VERSION = "GRAALVM_VERSION";
 
     public NativeImageAssemblerProcessor(JReleaserContext context) {
@@ -64,11 +62,16 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         context.getLogger().debug(RB.$("assembler.graal.java"), javaVersion, graalPath.toAbsolutePath().toString());
         context.getLogger().debug(RB.$("assembler.graal.graal"), graalVersion, graalPath.toAbsolutePath().toString());
 
+        String platform = assembler.getGraal().getPlatform();
         // copy jars to assembly
         Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
-        Path libDirectory = assembleDirectory.resolve("lib");
-        context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(libDirectory));
-        Set<Path> jars = copyJars(context, libDirectory);
+        Path jarsDirectory = assembleDirectory.resolve("jars");
+        Path universalJarsDirectory = jarsDirectory.resolve("universal");
+        context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(universalJarsDirectory));
+        Set<Path> jars = copyJars(context, assembler, universalJarsDirectory, "");
+        Path platformJarsDirectory = jarsDirectory.resolve(platform);
+        context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(platformJarsDirectory));
+        jars.addAll(copyJars(context, assembler, platformJarsDirectory, platform));
 
         // install native-image
         installNativeImage(graalPath);
@@ -76,7 +79,6 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         // run native-image
         Artifact image = nativeImage(assembleDirectory, graalPath, jars);
         if (isNotBlank(assembler.getImageNameTransform())) {
-            String platform = assembler.getGraal().getPlatform();
             String platformReplaced = assembler.getPlatform().applyReplacements(platform);
             image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" +
                 platformReplaced + "." +
@@ -178,29 +180,6 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         }
     }
 
-    private String readJavaVersion(Path path) throws AssemblerProcessingException {
-        Path release = path.resolve("release");
-        if (!Files.exists(release)) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release", path.toAbsolutePath()));
-        }
-
-        try {
-            Properties props = new Properties();
-            props.load(Files.newInputStream(release));
-            if (props.containsKey(KEY_JAVA_VERSION)) {
-                String version = props.getProperty(KEY_JAVA_VERSION);
-                if (version.startsWith("\"") && version.endsWith("\"")) {
-                    return version.substring(1, version.length() - 1);
-                }
-                return version;
-            } else {
-                throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release_file", release.toAbsolutePath()));
-            }
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release_file", release.toAbsolutePath()), e);
-        }
-    }
-
     private String readGraalVersion(Path path) throws AssemblerProcessingException {
         Path release = path.resolve("release");
         if (!Files.exists(release)) {
@@ -222,55 +201,6 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release_file", release.toAbsolutePath()), e);
         }
-    }
-
-    private Set<Path> copyJars(JReleaserContext context, Path destination) throws AssemblerProcessingException {
-        Set<Path> paths = new LinkedHashSet<>();
-
-        // resolve all first
-        paths.add(assembler.getMainJar().getEffectivePath(context, assembler));
-        for (Glob glob : assembler.getJars()) {
-            glob.getResolvedArtifacts(context).stream()
-                .map(artifact -> artifact.getResolvedPath(context, assembler))
-                .forEach(paths::add);
-        }
-
-        // copy all next
-        try {
-            Files.createDirectories(destination);
-            for (Path path : paths) {
-                context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
-                Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
-            }
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_jars"), e);
-        }
-
-        return paths;
-    }
-
-    private Set<Path> copyFiles(JReleaserContext context, Path destination) throws AssemblerProcessingException {
-        Set<Path> paths = new LinkedHashSet<>();
-
-        // resolve all first
-        for (Glob glob : assembler.getFiles()) {
-            glob.getResolvedArtifacts(context).stream()
-                .map(artifact -> artifact.getResolvedPath(context, assembler))
-                .forEach(paths::add);
-        }
-
-        // copy all next
-        try {
-            Files.createDirectories(destination);
-            for (Path path : paths) {
-                context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
-                Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
-            }
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
-        }
-
-        return paths;
     }
 
     @Override

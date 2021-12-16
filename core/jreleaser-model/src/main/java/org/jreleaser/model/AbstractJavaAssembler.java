@@ -20,6 +20,9 @@ package org.jreleaser.model;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Version;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.util.CollectionUtils.safePut;
@@ -30,7 +33,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.8.0
  */
 abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAssembler {
-    private final Java java = new Java();
+    protected final Artifact mainJar = new Artifact();
+    protected final List<Glob> jars = new ArrayList<>();
+    protected final List<Glob> files = new ArrayList<>();
+    protected final Java java = new Java();
+
     protected String executable;
     protected String templateDirectory;
 
@@ -43,6 +50,9 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
         this.executable = assembler.executable;
         this.templateDirectory = assembler.templateDirectory;
         setJava(assembler.java);
+        setMainJar(assembler.mainJar);
+        setJars(assembler.jars);
+        setFiles(assembler.files);
     }
 
     @Override
@@ -103,9 +113,76 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
     }
 
     @Override
+    public Artifact getMainJar() {
+        return mainJar;
+    }
+
+    @Override
+    public void setMainJar(Artifact mainJar) {
+        this.mainJar.setAll(mainJar);
+    }
+
+    @Override
+    public List<Glob> getJars() {
+        return jars;
+    }
+
+    @Override
+    public void setJars(List<Glob> jars) {
+        this.jars.clear();
+        this.jars.addAll(jars);
+    }
+
+    @Override
+    public void addJars(List<Glob> jars) {
+        this.jars.addAll(jars);
+    }
+
+    @Override
+    public void addJar(Glob jar) {
+        if (null != jar) {
+            this.jars.add(jar);
+        }
+    }
+
+    @Override
+    public List<Glob> getFiles() {
+        return files;
+    }
+
+    @Override
+    public void setFiles(List<Glob> files) {
+        this.files.clear();
+        this.files.addAll(files);
+    }
+
+    @Override
+    public void addFiles(List<Glob> files) {
+        this.files.addAll(files);
+    }
+
+    @Override
+    public void addFile(Glob file) {
+        if (null != file) {
+            this.files.add(file);
+        }
+    }
+
+    @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("executable", executable);
         props.put("templateDirectory", templateDirectory);
+        props.put("mainJar", mainJar.asMap(full));
+        Map<String, Map<String, Object>> mappedJars = new LinkedHashMap<>();
+        for (int i = 0; i < jars.size(); i++) {
+            mappedJars.put("glob " + i, jars.get(i).asMap(full));
+        }
+        props.put("jars", mappedJars);
+        Map<String, Map<String, Object>> mappedFiles = new LinkedHashMap<>();
+        for (int i = 0; i < files.size(); i++) {
+            mappedFiles.put("glob " + i, files.get(i).asMap(full));
+        }
+        props.put("files", mappedFiles);
         props.put("extraProperties", getResolvedExtraProperties());
         if (java.isEnabled()) {
             props.put("java", java.asMap(full));

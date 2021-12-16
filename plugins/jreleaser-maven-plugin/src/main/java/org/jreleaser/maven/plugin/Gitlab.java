@@ -24,11 +24,6 @@ package org.jreleaser.maven.plugin;
 public class Gitlab extends GitService {
     private String identifier;
 
-    void setAll(Gitlab service) {
-        super.setAll(service);
-        this.identifier = service.identifier;
-    }
-
     public String getIdentifier() {
         return identifier;
     }

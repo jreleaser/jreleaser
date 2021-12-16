@@ -51,7 +51,7 @@ public abstract class GoogleChatValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_GOOGLE_CHAT_TPL))) {
                 googleChat.setMessageTemplate(DEFAULT_GOOGLE_CHAT_TPL);
             } else {
-                googleChat.setMessage(RB.$("default_release_message"));
+                googleChat.setMessage(RB.$("default.release.message"));
             }
         }
 

@@ -159,4 +159,19 @@ public final class TemplateUtils {
             throw new JReleaserException(RB.$("ERROR_unexpected_reading_template_for", templateKey, "classpath"));
         }
     }
+
+    public static InputStream resolveResource(JReleaserLogger logger, String key) {
+        logger.debug(RB.$("templates.resource.resolve.classpath"), key);
+
+        try {
+            InputStream inputStream = TemplateUtils.class.getClassLoader()
+                .getResourceAsStream(key);
+            if (null == inputStream) {
+                throw new JReleaserException(RB.$("ERROR_resource_not_found", key));
+            }
+            return inputStream;
+        } catch (Exception e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_reading_resource_for", key, "classpath"), e);
+        }
+    }
 }

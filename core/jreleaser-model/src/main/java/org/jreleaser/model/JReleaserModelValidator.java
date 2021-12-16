@@ -20,6 +20,7 @@ package org.jreleaser.model;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.AnnouncersValidator.validateAnnouncers;
+import static org.jreleaser.model.validation.AssemblersValidator.postValidateAssemblers;
 import static org.jreleaser.model.validation.AssemblersValidator.validateAssemblers;
 import static org.jreleaser.model.validation.ChecksumValidator.validateChecksum;
 import static org.jreleaser.model.validation.DistributionsValidator.validateDistributions;
@@ -63,5 +64,6 @@ public final class JReleaserModelValidator {
         validateFiles(context, mode, errors);
         validateAnnouncers(context, mode, errors);
         postValidateProject(context, mode, errors);
+        postValidateAssemblers(context, mode, errors);
     }
 }

@@ -27,25 +27,10 @@ import java.util.List;
 public class NativeImage extends AbstractJavaAssembler {
     private final List<String> args = new ArrayList<>();
     private final Artifact graal = new Artifact();
-    private final Artifact mainJar = new Artifact();
-    private final List<Glob> jars = new ArrayList<>();
-    private final List<Glob> files = new ArrayList<>();
 
     private String imageName;
     private String imageNameTransform;
     private Archive.Format archiveFormat;
-
-    void setAll(NativeImage nativeImage) {
-        super.setAll(nativeImage);
-        this.imageName = nativeImage.imageName;
-        this.imageNameTransform = nativeImage.imageNameTransform;
-        this.archiveFormat = nativeImage.archiveFormat;
-        setGraal(nativeImage.graal);
-        setMainJar(nativeImage.mainJar);
-        setArgs(nativeImage.args);
-        setJars(nativeImage.jars);
-        setFiles(nativeImage.files);
-    }
 
     public String getImageName() {
         return imageName;
@@ -83,14 +68,6 @@ public class NativeImage extends AbstractJavaAssembler {
         this.graal.setAll(graal);
     }
 
-    public Artifact getMainJar() {
-        return mainJar;
-    }
-
-    public void setMainJar(Artifact mainJar) {
-        this.mainJar.setAll(mainJar);
-    }
-
     public List<String> getArgs() {
         return args;
     }
@@ -98,23 +75,5 @@ public class NativeImage extends AbstractJavaAssembler {
     public void setArgs(List<String> args) {
         this.args.clear();
         this.args.addAll(args);
-    }
-
-    public List<Glob> getJars() {
-        return jars;
-    }
-
-    public void setJars(List<Glob> jars) {
-        this.jars.clear();
-        this.jars.addAll(jars);
-    }
-
-    public List<Glob> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<Glob> files) {
-        this.files.clear();
-        this.files.addAll(files);
     }
 }

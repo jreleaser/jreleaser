@@ -41,14 +41,6 @@ public class Archive extends AbstractAssembler {
         this.distributionType = distributionType;
     }
 
-    void setAll(Archive archive) {
-        super.setAll(archive);
-        this.archiveName = archive.archiveName;
-        this.distributionType = archive.distributionType;
-        this.attachPlatform = archive.attachPlatform;
-        setFormats(archive.formats);
-    }
-
     public String getArchiveName() {
         return archiveName;
     }

@@ -19,15 +19,12 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Artifact
-import org.jreleaser.gradle.plugin.dsl.Glob
 import org.jreleaser.gradle.plugin.dsl.NativeImage
 import org.jreleaser.model.Active
 import org.jreleaser.model.Archive
@@ -53,9 +50,6 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     final PlatformImpl platform
 
     private final ArtifactImpl graal
-    private final ArtifactImpl mainJar
-    private final NamedDomainObjectContainer<GlobImpl> jars
-    private final NamedDomainObjectContainer<GlobImpl> files
 
     @Inject
     NativeImageImpl(ObjectFactory objects) {
@@ -68,25 +62,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         java = objects.newInstance(JavaImpl, objects)
         platform = objects.newInstance(PlatformImpl, objects)
         graal = objects.newInstance(ArtifactImpl, objects)
-        mainJar = objects.newInstance(ArtifactImpl, objects)
         graal.setName('graal')
-        mainJar.setName('mainJar')
-        jars = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
-            @Override
-            GlobImpl create(String name) {
-                GlobImpl glob = objects.newInstance(GlobImpl, objects)
-                glob.name = name
-                glob
-            }
-        })
-        files = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
-            @Override
-            GlobImpl create(String name) {
-                GlobImpl glob = objects.newInstance(GlobImpl, objects)
-                glob.name = name
-                glob
-            }
-        })
     }
 
     @Override
@@ -103,10 +79,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
             imageNameTransform.present ||
             args.present ||
             java.isSet() ||
-            graal.isSet() ||
-            mainJar.isSet() ||
-            !jars.isEmpty() ||
-            !files.isEmpty()
+            graal.isSet()
     }
 
     @Override
@@ -122,38 +95,8 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     }
 
     @Override
-    void mainJar(Action<? super Artifact> action) {
-        action.execute(mainJar)
-    }
-
-    @Override
-    void jars(Action<? super Glob> action) {
-        action.execute(jars.maybeCreate("jars-${jars.size()}".toString()))
-    }
-
-    @Override
-    void files(Action<? super Glob> action) {
-        action.execute(files.maybeCreate("files-${files.size()}".toString()))
-    }
-
-    @Override
     void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, graal)
-    }
-
-    @Override
-    void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, mainJar)
-    }
-
-    @Override
-    void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
-        ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
-    }
-
-    @Override
-    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
-        ConfigureUtil.configure(action, files.maybeCreate("files-${files.size()}".toString()))
     }
 
     @Override
@@ -174,13 +117,6 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         nativeImage.archiveFormat = archiveFormat.get()
         nativeImage.args = (List<String>) args.getOrElse([])
         if (graal.isSet()) nativeImage.graal = graal.toModel()
-        if (mainJar.isSet()) nativeImage.mainJar = mainJar.toModel()
-        for (GlobImpl glob : jars) {
-            nativeImage.addJar(glob.toModel())
-        }
-        for (GlobImpl glob : files) {
-            nativeImage.addFile(glob.toModel())
-        }
         nativeImage
     }
 }

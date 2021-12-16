@@ -51,7 +51,7 @@ public abstract class GitterValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_GITTER_TPL))) {
                 gitter.setMessageTemplate(DEFAULT_GITTER_TPL);
             } else {
-                gitter.setMessage(RB.$("default_release_message"));
+                gitter.setMessage(RB.$("default.release.message"));
             }
         }
 

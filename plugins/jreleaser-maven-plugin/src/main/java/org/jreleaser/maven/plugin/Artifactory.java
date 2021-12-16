@@ -42,15 +42,6 @@ public class Artifactory extends AbstractUploader {
         super(NAME);
     }
 
-    void setAll(Artifactory artifactory) {
-        super.setAll(artifactory);
-        this.host = artifactory.host;
-        this.username = artifactory.username;
-        this.password = artifactory.password;
-        this.authorization = artifactory.authorization;
-        setRepositories(artifactory.repositories);
-    }
-
     public HttpUploader.Authorization resolveAuthorization() {
         if (null == authorization) {
             authorization = HttpUploader.Authorization.NONE;

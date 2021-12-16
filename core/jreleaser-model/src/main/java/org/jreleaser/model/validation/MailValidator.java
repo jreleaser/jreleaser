@@ -78,7 +78,7 @@ public abstract class MailValidator extends Validator {
         }
 
         if (isBlank(mail.getSubject())) {
-            mail.setSubject(RB.$("default_discussion_title"));
+            mail.setSubject(RB.$("default.discussion.title"));
         }
 
         if (null == mail.getMimeType()) {

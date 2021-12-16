@@ -356,18 +356,34 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     }
 
     public enum DistributionType {
-        BINARY,
-        JAVA_BINARY,
-        JLINK,
-        SINGLE_JAR,
-        NATIVE_IMAGE,
-        NATIVE_PACKAGE;
+        BINARY("binary"),
+        JAVA_BINARY("java"),
+        JLINK("jlink"),
+        SINGLE_JAR("uberjar"),
+        NATIVE_IMAGE("graal"),
+        NATIVE_PACKAGE("jpackage");
+
+        private String alias;
+
+        DistributionType(String alias) {
+            this.alias = alias.toUpperCase();
+        }
 
         public static DistributionType of(String str) {
             if (isBlank(str)) return null;
-            return DistributionType.valueOf(str.replaceAll(" ", "_")
+
+            String value = str.replaceAll(" ", "_")
                 .replaceAll("-", "_")
-                .toUpperCase().trim());
+                .toUpperCase().trim();
+
+            // try alias
+            for (DistributionType type : DistributionType.values()) {
+                if (type.alias.equals(value)) {
+                    return type;
+                }
+            }
+
+            return DistributionType.valueOf(value);
         }
     }
 }

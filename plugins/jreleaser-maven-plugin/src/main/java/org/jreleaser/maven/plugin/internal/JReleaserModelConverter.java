@@ -24,6 +24,7 @@ import org.jreleaser.maven.plugin.Article;
 import org.jreleaser.maven.plugin.Artifact;
 import org.jreleaser.maven.plugin.Artifactory;
 import org.jreleaser.maven.plugin.Assemble;
+import org.jreleaser.maven.plugin.Assembler;
 import org.jreleaser.maven.plugin.Brew;
 import org.jreleaser.maven.plugin.Bucket;
 import org.jreleaser.maven.plugin.Changelog;
@@ -51,8 +52,10 @@ import org.jreleaser.maven.plugin.Glob;
 import org.jreleaser.maven.plugin.GoogleChat;
 import org.jreleaser.maven.plugin.Http;
 import org.jreleaser.maven.plugin.Java;
+import org.jreleaser.maven.plugin.JavaAssembler;
 import org.jreleaser.maven.plugin.Jbang;
 import org.jreleaser.maven.plugin.Jlink;
+import org.jreleaser.maven.plugin.Jpackage;
 import org.jreleaser.maven.plugin.Jreleaser;
 import org.jreleaser.maven.plugin.Macports;
 import org.jreleaser.maven.plugin.Mail;
@@ -747,10 +750,10 @@ public final class JReleaserModelConverter {
         if (assemble.isEnabledSet()) a.setEnabled(assemble.isEnabled());
         a.setArchive(convertArchive(assemble.getArchive()));
         a.setJlink(convertJlink(assemble.getJlink()));
+        a.setJpackage(convertJpackage(assemble.getJpackage()));
         a.setNativeImage(convertNativeImage(assemble.getNativeImage()));
         return a;
     }
-
 
     private static Map<String, org.jreleaser.model.Archive> convertArchive(Map<String, Archive> archive) {
         Map<String, org.jreleaser.model.Archive> map = new LinkedHashMap<>();
@@ -763,11 +766,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Archive convertArchive(Archive archive) {
         org.jreleaser.model.Archive a = new org.jreleaser.model.Archive();
-        a.setPlatform(convertPlatform(archive.getPlatform()));
-        a.setExported(archive.isExported());
-        a.setName(tr(archive.getName()));
-        a.setActive(tr(archive.resolveActive()));
-        a.setExtraProperties(archive.getExtraProperties());
+        convertAssembler(archive, a);
         a.setArchiveName(tr(archive.getArchiveName()));
         a.setDistributionType(tr(archive.getDistributionType().name()));
         if (archive.isAttachPlatformSet()) a.setAttachPlatform(archive.isAttachPlatform());
@@ -777,6 +776,14 @@ public final class JReleaserModelConverter {
             .collect(Collectors.toSet()));
         a.setFileSets(convertFileSets(archive.getFileSets()));
         return a;
+    }
+
+    private static void convertAssembler(Assembler from, org.jreleaser.model.Assembler into) {
+        into.setExported(from.isExported());
+        into.setName(tr(from.getName()));
+        into.setActive(tr(from.resolveActive()));
+        into.setExtraProperties(from.getExtraProperties());
+        into.setPlatform(convertPlatform(from.getPlatform()));
     }
 
     private static List<org.jreleaser.model.FileSet> convertFileSets(List<FileSet> fileSets) {
@@ -806,28 +813,104 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Jlink convertJlink(Jlink jlink) {
         org.jreleaser.model.Jlink a = new org.jreleaser.model.Jlink();
-        a.setPlatform(convertPlatform(jlink.getPlatform()));
-        a.setExported(jlink.isExported());
-        a.setName(tr(jlink.getName()));
-        a.setActive(tr(jlink.resolveActive()));
-        a.setJava(convertJava(jlink.getJava()));
-        a.setExecutable(tr(jlink.getExecutable()));
-        a.setExtraProperties(jlink.getExtraProperties());
-        a.setTemplateDirectory(tr(jlink.getTemplateDirectory()));
+        convertJavaAssembler(jlink, a);
         a.setTargetJdks(convertArtifacts(jlink.getTargetJdks()));
         a.setModuleNames(tr(jlink.getModuleNames()));
         a.setAdditionalModuleNames(tr(jlink.getAdditionalModuleNames()));
         a.setArgs(tr(jlink.getArgs()));
         a.setJdeps(convertJdeps(jlink.getJdeps()));
         a.setJdk(convertArtifact(jlink.getJdk()));
-        a.setMainJar(convertArtifact(jlink.getMainJar()));
         a.setImageName(tr(jlink.getImageName()));
         a.setImageNameTransform(tr(jlink.getImageNameTransform()));
         a.setModuleName(tr(jlink.getModuleName()));
         if (jlink.isCopyJarsSet()) a.setCopyJars(jlink.isCopyJars());
-        a.setJars(convertGlobs(jlink.getJars()));
-        a.setFiles(convertGlobs(jlink.getFiles()));
-        a.setFileSets(convertFileSets(jlink.getFileSets()));
+        return a;
+    }
+
+    private static Map<String, org.jreleaser.model.Jpackage> convertJpackage(Map<String, Jpackage> jpackage) {
+        Map<String, org.jreleaser.model.Jpackage> map = new LinkedHashMap<>();
+        for (Map.Entry<String, Jpackage> e : jpackage.entrySet()) {
+            e.getValue().setName(tr(e.getKey()));
+            map.put(e.getValue().getName(), convertJpackage(e.getValue()));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.Jpackage convertJpackage(Jpackage jpackage) {
+        org.jreleaser.model.Jpackage a = new org.jreleaser.model.Jpackage();
+        convertJavaAssembler(jpackage, a);
+        a.setJlink(tr(jpackage.getJlink()));
+        a.setRuntimeImages(convertArtifacts(jpackage.getRuntimeImages()));
+        a.setApplicationPackage(convertApplicationPackage(jpackage.getApplicationPackage()));
+        a.setLauncher(convertLauncher(jpackage.getLauncher()));
+        a.setLinux(convertLinux(jpackage.getLinux()));
+        a.setWindows(convertWindows(jpackage.getWindows()));
+        a.setOsx(convertOsx(jpackage.getOsx()));
+        return a;
+    }
+
+    private static org.jreleaser.model.Jpackage.ApplicationPackage convertApplicationPackage(Jpackage.ApplicationPackage applicationPackage) {
+        org.jreleaser.model.Jpackage.ApplicationPackage a = new org.jreleaser.model.Jpackage.ApplicationPackage();
+        a.setFileAssociations(tr(applicationPackage.getFileAssociations()));
+        a.setAppVersion(tr(applicationPackage.getAppVersion()));
+        a.setVendor(tr(applicationPackage.getVendor()));
+        a.setCopyright(tr(applicationPackage.getCopyright()));
+        a.setLicenseFile(tr(applicationPackage.getLicenseFile()));
+        a.setResourceDir(tr(applicationPackage.getResourceDir()));
+        return a;
+    }
+
+    private static org.jreleaser.model.Jpackage.Launcher convertLauncher(Jpackage.Launcher launcher) {
+        org.jreleaser.model.Jpackage.Launcher a = new org.jreleaser.model.Jpackage.Launcher();
+        a.setArguments(tr(launcher.getArguments()));
+        a.setJavaOptions(tr(launcher.getJavaOptions()));
+        a.addLaunchers(tr(launcher.getLaunchers()));
+        return a;
+    }
+
+    private static void convertPackager(Jpackage.PlatformPackager from, org.jreleaser.model.Jpackage.PlatformPackager into) {
+        into.setIcon(tr(from.getIcon()));
+        into.setJdk(convertArtifact(from.getJdk()));
+        into.setTypes(tr(from.getTypes()));
+        into.setInstallDir(tr(from.getInstallDir()));
+    }
+
+    private static org.jreleaser.model.Jpackage.Linux convertLinux(Jpackage.Linux linux) {
+        org.jreleaser.model.Jpackage.Linux a = new org.jreleaser.model.Jpackage.Linux();
+        convertPackager(linux, a);
+        if (linux.isShortcutSet()) a.setShortcut(linux.isShortcut());
+        a.setPackageName(tr(linux.getPackageName()));
+        a.setMaintainer(tr(linux.getMaintainer()));
+        a.setMenuGroup(tr(linux.getMenuGroup()));
+        a.setLicense(tr(linux.getLicense()));
+        a.setAppRelease(tr(linux.getAppRelease()));
+        a.setAppCategory(tr(linux.getAppCategory()));
+        a.setPackageDeps(tr(linux.getPackageDeps()));
+        return a;
+    }
+
+    private static org.jreleaser.model.Jpackage.Windows convertWindows(Jpackage.Windows windows) {
+        org.jreleaser.model.Jpackage.Windows a = new org.jreleaser.model.Jpackage.Windows();
+        convertPackager(windows, a);
+        if (windows.isConsoleSet()) a.setConsole(windows.isConsole());
+        if (windows.isDirChooserSet()) a.setDirChooser(windows.isDirChooser());
+        if (windows.isMenuSet()) a.setMenu(windows.isMenu());
+        if (windows.isPerUserInstallSet()) a.setPerUserInstall(windows.isPerUserInstall());
+        if (windows.isShortcutSet()) a.setShortcut(windows.isShortcut());
+        a.setMenuGroup(tr(windows.getMenuGroup()));
+        a.setUpgradeUuid(tr(windows.getUpgradeUuid()));
+        return a;
+    }
+
+    private static org.jreleaser.model.Jpackage.Osx convertOsx(Jpackage.Osx osx) {
+        org.jreleaser.model.Jpackage.Osx a = new org.jreleaser.model.Jpackage.Osx();
+        convertPackager(osx, a);
+        a.setPackageName(tr(osx.getPackageName()));
+        a.setPackageIdentifier(tr(osx.getPackageIdentifier()));
+        a.setPackageSigningPrefix(tr(osx.getPackageSigningPrefix()));
+        a.setSigningKeychain(tr(osx.getSigningKeychain()));
+        a.setSigningKeyUsername(tr(osx.getSigningKeyUsername()));
+        if (osx.isSignSet()) a.setSign(osx.isSign());
         return a;
     }
 
@@ -847,24 +930,23 @@ public final class JReleaserModelConverter {
         return map;
     }
 
+    private static void convertJavaAssembler(JavaAssembler from, org.jreleaser.model.JavaAssembler into) {
+        convertAssembler(from, into);
+        into.setExecutable(tr(from.getExecutable()));
+        into.setJava(convertJava(from.getJava()));
+        into.setTemplateDirectory(tr(from.getTemplateDirectory()));
+        into.setMainJar(convertArtifact(from.getMainJar()));
+        into.setJars(convertGlobs(from.getJars()));
+        into.setFiles(convertGlobs(from.getFiles()));
+        into.setFileSets(convertFileSets(from.getFileSets()));
+    }
+
     private static org.jreleaser.model.NativeImage convertNativeImage(NativeImage nativeImage) {
         org.jreleaser.model.NativeImage a = new org.jreleaser.model.NativeImage();
-        a.setPlatform(convertPlatform(nativeImage.getPlatform()));
-        a.setExported(nativeImage.isExported());
-        a.setName(tr(nativeImage.getName()));
-        a.setActive(tr(nativeImage.resolveActive()));
-        a.setJava(convertJava(nativeImage.getJava()));
-        a.setExecutable(tr(nativeImage.getExecutable()));
-        a.setExtraProperties(nativeImage.getExtraProperties());
-        a.setTemplateDirectory(tr(nativeImage.getTemplateDirectory()));
+        convertJavaAssembler(nativeImage, a);
         a.setGraal(convertArtifact(nativeImage.getGraal()));
-        a.setMainJar(convertArtifact(nativeImage.getMainJar()));
         a.setImageName(tr(nativeImage.getImageName()));
         a.setImageNameTransform(tr(nativeImage.getImageNameTransform()));
-        a.setArchiveFormat(tr(nativeImage.getArchiveFormat().name()));
-        a.setJars(convertGlobs(nativeImage.getJars()));
-        a.setFiles(convertGlobs(nativeImage.getFiles()));
-        a.setFileSets(convertFileSets(nativeImage.getFileSets()));
         a.setArgs(tr(nativeImage.getArgs()));
         return a;
     }

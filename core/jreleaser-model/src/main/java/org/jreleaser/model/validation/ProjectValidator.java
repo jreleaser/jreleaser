@@ -100,21 +100,30 @@ public abstract class ProjectValidator extends Validator {
                 type == Distribution.DistributionType.SINGLE_JAR ||
                 type == Distribution.DistributionType.NATIVE_IMAGE ||
                 type == Distribution.DistributionType.NATIVE_PACKAGE);
-        boolean jlinkAssemblers = !context.getModel().getAssemble().getJlink().isEmpty();
+        boolean javaAssemblers = !context.getModel().getAssemble().getJlink().isEmpty() ||
+            !context.getModel().getAssemble().getJpackage().isEmpty() ||
+            !context.getModel().getAssemble().getNativeImage().isEmpty();
 
-        if ((mode == JReleaserContext.Mode.FULL && javaDistributions) || jlinkAssemblers) {
+        if ((mode == JReleaserContext.Mode.FULL && javaDistributions) || javaAssemblers) {
             validateJava(context, project, errors);
         }
     }
 
     public static void postValidateProject(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode != JReleaserContext.Mode.FULL) return;
-
         context.getLogger().debug("project");
         Project project = context.getModel().getProject();
 
-        if (context.getModel().getActiveDistributions().isEmpty() && !context.getModel().getAnnounce().isEnabled()) {
-            return;
+        if (isBlank(project.getCopyright())) {
+            if (project.getExtraProperties().containsKey("inceptionYear") &&
+                !project.getAuthors().isEmpty()) {
+                project.setCopyright(
+                    project.getExtraProperties().get("inceptionYear") + " " +
+                        String.join(",", project.getAuthors()));
+            } else {
+                context.nag("0.4.0", "project.copyright must not be blank");
+                project.setCopyright("");
+                // errors.configuration("project.copyright must not be blank");
+            }
         }
 
         if (isBlank(project.getLicenseUrl())) {
@@ -126,6 +135,12 @@ public abstract class ProjectValidator extends Validator {
                     srcUrl += path.getFileName().toString();
                     project.setLicenseUrl(srcUrl);
                 });
+        }
+
+        if (mode != JReleaserContext.Mode.FULL) return;
+
+        if (context.getModel().getActiveDistributions().isEmpty() && !context.getModel().getAnnounce().isEnabled()) {
+            return;
         }
 
         if (isBlank(project.getDescription())) {
@@ -148,18 +163,6 @@ public abstract class ProjectValidator extends Validator {
         }
         if (project.getAuthors().isEmpty()) {
             errors.configuration(RB.$("validation_must_not_be_blank", "project.authors"));
-        }
-        if (isBlank(project.getCopyright())) {
-            if (project.getExtraProperties().containsKey("inceptionYear") &&
-                !project.getAuthors().isEmpty()) {
-                project.setCopyright(
-                    project.getExtraProperties().get("inceptionYear") + " " +
-                        String.join(",", project.getAuthors()));
-            } else {
-                context.nag("0.4.0", "project.copyright must not be blank");
-                project.setCopyright("");
-                // errors.configuration("project.copyright must not be blank");
-            }
         }
     }
 

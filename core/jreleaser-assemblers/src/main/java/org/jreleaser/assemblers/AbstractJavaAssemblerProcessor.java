@@ -18,6 +18,7 @@
 package org.jreleaser.assemblers;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JavaAssembler;
 import org.jreleaser.model.Project;
@@ -28,8 +29,11 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 
@@ -79,6 +83,30 @@ abstract class AbstractJavaAssemblerProcessor<A extends JavaAssembler> extends A
         } catch (IllegalArgumentException | IOException e) {
             throw new AssemblerProcessingException(e);
         }
+    }
+
+    protected Set<Path> copyFiles(JReleaserContext context, Path destination) throws AssemblerProcessingException {
+        Set<Path> paths = new LinkedHashSet<>();
+
+        // resolve all first
+        for (Glob glob : assembler.getFiles()) {
+            glob.getResolvedArtifacts(context).stream()
+                .map(artifact -> artifact.getResolvedPath(context, assembler))
+                .forEach(paths::add);
+        }
+
+        // copy all next
+        try {
+            Files.createDirectories(destination);
+            for (Path path : paths) {
+                context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
+                Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
+        }
+
+        return paths;
     }
 
     protected abstract void writeFile(Project project, String content, Map<String, Object> props, String fileName) throws AssemblerProcessingException;

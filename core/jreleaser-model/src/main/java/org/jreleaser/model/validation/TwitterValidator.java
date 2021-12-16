@@ -70,7 +70,7 @@ public abstract class TwitterValidator extends Validator {
                 context.isDryrun()));
 
         if (isBlank(twitter.getStatus())) {
-            twitter.setStatus(RB.$("default_release_message"));
+            twitter.setStatus(RB.$("default.release.message"));
         }
 
         validateTimeout(twitter);

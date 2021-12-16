@@ -183,6 +183,9 @@ public class Artifact implements Domain, ExtraProperties {
 
     public void setPath(String path) {
         this.path = path;
+        this.resolvedPath = null;
+        this.effectivePath = null;
+        this.resolvedTransform = null;
     }
 
     public String getHash() {

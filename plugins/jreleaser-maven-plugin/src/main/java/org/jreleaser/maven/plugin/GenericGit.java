@@ -22,10 +22,4 @@ package org.jreleaser.maven.plugin;
  * @since 0.4.0
  */
 public class GenericGit extends GitService {
-    public GenericGit() {
-    }
-
-    void setAll(GenericGit service) {
-        super.setAll(service);
-    }
 }

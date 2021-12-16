@@ -78,7 +78,7 @@ public abstract class WebhooksValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_TPL + webhook.getName() + ".tpl"))) {
                 webhook.setMessageTemplate(DEFAULT_TPL + webhook.getName() + ".tpl");
             } else {
-                webhook.setMessage(RB.$("default_release_message"));
+                webhook.setMessage(RB.$("default.release.message"));
             }
         }
 

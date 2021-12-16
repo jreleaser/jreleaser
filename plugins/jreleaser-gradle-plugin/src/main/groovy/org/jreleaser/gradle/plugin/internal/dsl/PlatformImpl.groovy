@@ -39,6 +39,10 @@ class PlatformImpl implements Platform {
         replacements = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
+    boolean isSet() {
+        replacements.present
+    }
+
     org.jreleaser.model.Platform toModel() {
         org.jreleaser.model.Platform environment = new org.jreleaser.model.Platform()
         if (replacements.present) environment.properties.putAll(replacements.get())

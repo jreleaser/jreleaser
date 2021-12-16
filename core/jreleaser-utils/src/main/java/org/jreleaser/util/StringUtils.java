@@ -670,4 +670,117 @@ public class StringUtils {
         if (o instanceof Boolean) return (Boolean) o;
         return "true".equalsIgnoreCase(String.valueOf(o).trim());
     }
+
+    /**
+     * Applies single or double quotes to a string if it contains whitespace characters
+     *
+     * @param str the String to be surrounded by quotes
+     * @return a copy of the original String, surrounded by quotes
+     */
+    public static String quote(String str) {
+        if (isBlank(str)) {
+            return str;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            if (Character.isWhitespace(str.charAt(i))) {
+                str = applyQuotes(str);
+                break;
+            }
+        }
+        return str;
+    }
+
+    /**
+     * Removes single or double quotes from a String
+     *
+     * @param str the String from which quotes will be removed
+     * @return the unquoted String
+     */
+    public static String unquote(String str) {
+        if (isBlank(str)) {
+            return str;
+        }
+        if ((str.startsWith("'") && str.endsWith("'")) ||
+            (str.startsWith("\"") && str.endsWith("\""))) {
+            return str.substring(1, str.length() - 1);
+        }
+        return str;
+    }
+
+    private static String applyQuotes(String string) {
+        if (string == null || string.length() == 0) {
+            return "\"\"";
+        }
+
+        char b;
+        char c = 0;
+        int i;
+        int len = string.length();
+        StringBuilder sb = new StringBuilder(len * 2);
+        String t;
+        char[] chars = string.toCharArray();
+        char[] buffer = new char[1030];
+        int bufferIndex = 0;
+        sb.append('"');
+        for (i = 0; i < len; i += 1) {
+            if (bufferIndex > 1024) {
+                sb.append(buffer, 0, bufferIndex);
+                bufferIndex = 0;
+            }
+            b = c;
+            c = chars[i];
+            switch (c) {
+                case '\\':
+                case '"':
+                    buffer[bufferIndex++] = '\\';
+                    buffer[bufferIndex++] = c;
+                    break;
+                case '/':
+                    if (b == '<') {
+                        buffer[bufferIndex++] = '\\';
+                    }
+                    buffer[bufferIndex++] = c;
+                    break;
+                default:
+                    if (c < ' ') {
+                        switch (c) {
+                            case '\b':
+                                buffer[bufferIndex++] = '\\';
+                                buffer[bufferIndex++] = 'b';
+                                break;
+                            case '\t':
+                                buffer[bufferIndex++] = '\\';
+                                buffer[bufferIndex++] = 't';
+                                break;
+                            case '\n':
+                                buffer[bufferIndex++] = '\\';
+                                buffer[bufferIndex++] = 'n';
+                                break;
+                            case '\f':
+                                buffer[bufferIndex++] = '\\';
+                                buffer[bufferIndex++] = 'f';
+                                break;
+                            case '\r':
+                                buffer[bufferIndex++] = '\\';
+                                buffer[bufferIndex++] = 'r';
+                                break;
+                            default:
+                                t = "000" + Integer.toHexString(c);
+                                int tLength = t.length();
+                                buffer[bufferIndex++] = '\\';
+                                buffer[bufferIndex++] = 'u';
+                                buffer[bufferIndex++] = t.charAt(tLength - 4);
+                                buffer[bufferIndex++] = t.charAt(tLength - 3);
+                                buffer[bufferIndex++] = t.charAt(tLength - 2);
+                                buffer[bufferIndex++] = t.charAt(tLength - 1);
+                        }
+                    } else {
+                        buffer[bufferIndex++] = c;
+                    }
+            }
+        }
+        sb.append(buffer, 0, bufferIndex);
+        sb.append('"');
+        return sb.toString();
+    }
 }

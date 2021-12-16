@@ -22,6 +22,7 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.Assemble;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jlink;
+import org.jreleaser.model.Jpackage;
 import org.jreleaser.model.NativeImage;
 import org.jreleaser.util.Errors;
 
@@ -32,6 +33,8 @@ import java.util.Map;
 
 import static org.jreleaser.model.validation.ArchiveValidator.validateArchive;
 import static org.jreleaser.model.validation.JlinkValidator.validateJlink;
+import static org.jreleaser.model.validation.JpackageValidator.postValidateJpackage;
+import static org.jreleaser.model.validation.JpackageValidator.validateJpackage;
 import static org.jreleaser.model.validation.NativeImageValidator.validateNativeImage;
 
 /**
@@ -49,9 +52,10 @@ public abstract class AssemblersValidator extends Validator {
         Assemble assemble = context.getModel().getAssemble();
         validateArchive(context, mode, errors);
         validateJlink(context, mode, errors);
+        validateJpackage(context, mode, errors);
         validateNativeImage(context, mode, errors);
 
-        // validate unique distribution names between assemblers
+        // validate unique distribution names between exported assemblers
         Map<String, List<String>> byDistributionName = new LinkedHashMap<>();
         for (Archive archive : assemble.getActiveArchives()) {
             List<String> types = byDistributionName.computeIfAbsent(archive.getName(), k -> new ArrayList<>());
@@ -59,11 +63,15 @@ public abstract class AssemblersValidator extends Validator {
         }
         for (Jlink jlink : assemble.getActiveJlinks()) {
             List<String> types = byDistributionName.computeIfAbsent(jlink.getName(), k -> new ArrayList<>());
-            types.add(jlink.getType());
+            if (jlink.isExported()) types.add(jlink.getType());
+        }
+        for (Jpackage jpackage : assemble.getActiveJpackages()) {
+            List<String> types = byDistributionName.computeIfAbsent(jpackage.getName(), k -> new ArrayList<>());
+            if (jpackage.isExported()) types.add(jpackage.getType());
         }
         for (NativeImage nativeImage : assemble.getActiveNativeImages()) {
             List<String> types = byDistributionName.computeIfAbsent(nativeImage.getName(), k -> new ArrayList<>());
-            types.add(nativeImage.getType());
+            if (nativeImage.isExported()) types.add(nativeImage.getType());
         }
         byDistributionName.forEach((name, types) -> {
             if (types.size() > 1) {
@@ -75,7 +83,18 @@ public abstract class AssemblersValidator extends Validator {
         if (!assemble.isEnabledSet()) {
             assemble.setEnabled(!assemble.getActiveArchives().isEmpty() ||
                 !assemble.getActiveJlinks().isEmpty() ||
+                !assemble.getActiveJpackages().isEmpty() ||
                 !assemble.getActiveNativeImages().isEmpty());
         }
+    }
+
+    public static void postValidateAssemblers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        if (mode != JReleaserContext.Mode.ASSEMBLE && mode != JReleaserContext.Mode.FULL) {
+            return;
+        }
+
+        context.getLogger().debug("assemble");
+
+        postValidateJpackage(context, mode, errors);
     }
 }

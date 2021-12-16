@@ -55,7 +55,7 @@ public abstract class ZulipValidator extends Validator {
             errors.configuration(RB.$("validation_must_not_be_blank", "zulip.apiHost"));
         }
         if (isBlank(zulip.getSubject())) {
-            zulip.setSubject(RB.$("default_discussion_title"));
+            zulip.setSubject(RB.$("default.discussion.title"));
         }
         if (isBlank(zulip.getChannel())) {
             zulip.setChannel("announce");
@@ -65,7 +65,7 @@ public abstract class ZulipValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_ZULIP_TPL))) {
                 zulip.setMessageTemplate(DEFAULT_ZULIP_TPL);
             } else {
-                zulip.setMessage(RB.$("default_release_message"));
+                zulip.setMessage(RB.$("default.release.message"));
             }
         }
 

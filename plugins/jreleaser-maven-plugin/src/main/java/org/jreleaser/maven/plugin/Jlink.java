@@ -22,8 +22,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.jreleaser.util.StringUtils.isNotBlank;
-
 /**
  * @author Andres Almiray
  * @since 0.2.0
@@ -36,32 +34,11 @@ public class Jlink extends AbstractJavaAssembler {
     private final Java java = new Java();
     private final Jdeps jdeps = new Jdeps();
     private final Artifact jdk = new Artifact();
-    private final Artifact mainJar = new Artifact();
-    private final List<Glob> jars = new ArrayList<>();
-    private final List<Glob> files = new ArrayList<>();
 
     private String imageName;
     private String imageNameTransform;
     private String moduleName;
     private Boolean copyJars;
-
-    void setAll(Jlink jlink) {
-        super.setAll(jlink);
-        this.imageName = jlink.imageName;
-        this.imageNameTransform = jlink.imageNameTransform;
-        this.moduleName = jlink.moduleName;
-        this.copyJars = jlink.copyJars;
-        setJava(jlink.java);
-        setJdeps(jlink.jdeps);
-        setJdk(jlink.jdk);
-        setMainJar(jlink.mainJar);
-        setTargetJdks(jlink.targetJdks);
-        setModuleNames(jlink.moduleNames);
-        setAdditionalModuleNames(jlink.additionalModuleNames);
-        setArgs(jlink.args);
-        setJars(jlink.jars);
-        setFiles(jlink.files);
-    }
 
     public Jdeps getJdeps() {
         return jdeps;
@@ -77,14 +54,6 @@ public class Jlink extends AbstractJavaAssembler {
 
     public void setJdk(Artifact jdk) {
         this.jdk.setAll(jdk);
-    }
-
-    public Artifact getMainJar() {
-        return mainJar;
-    }
-
-    public void setMainJar(Artifact mainJar) {
-        this.mainJar.setAll(mainJar);
     }
 
     public String getImageName() {
@@ -120,16 +89,6 @@ public class Jlink extends AbstractJavaAssembler {
         this.targetJdks.addAll(targetJdks);
     }
 
-    public void addTargetJdks(Set<Artifact> targetJdks) {
-        this.targetJdks.addAll(targetJdks);
-    }
-
-    public void addTargetJdk(Artifact jdk) {
-        if (null != jdk) {
-            this.targetJdks.add(jdk);
-        }
-    }
-
     public Set<String> getModuleNames() {
         return moduleNames;
     }
@@ -137,22 +96,6 @@ public class Jlink extends AbstractJavaAssembler {
     public void setModuleNames(Set<String> moduleNames) {
         this.moduleNames.clear();
         this.moduleNames.addAll(moduleNames);
-    }
-
-    public void addModuleNames(List<String> moduleNames) {
-        this.moduleNames.addAll(moduleNames);
-    }
-
-    public void addModuleName(String moduleName) {
-        if (isNotBlank(moduleName)) {
-            this.moduleNames.add(moduleName.trim());
-        }
-    }
-
-    public void removeModuleName(String moduleName) {
-        if (isNotBlank(moduleName)) {
-            this.moduleNames.remove(moduleName.trim());
-        }
     }
 
     public Set<String> getAdditionalModuleNames() {
@@ -164,22 +107,6 @@ public class Jlink extends AbstractJavaAssembler {
         this.additionalModuleNames.addAll(additionalModuleNames);
     }
 
-    public void addAdditionalModuleNames(List<String> additionalModuleNames) {
-        this.additionalModuleNames.addAll(additionalModuleNames);
-    }
-
-    public void addAdditionalModuleName(String additionalModuleName) {
-        if (isNotBlank(additionalModuleName)) {
-            this.additionalModuleNames.add(additionalModuleName.trim());
-        }
-    }
-
-    public void removeAdditionalModuleName(String additionalModuleName) {
-        if (isNotBlank(additionalModuleName)) {
-            this.additionalModuleNames.remove(additionalModuleName.trim());
-        }
-    }
-
     public List<String> getArgs() {
         return args;
     }
@@ -187,22 +114,6 @@ public class Jlink extends AbstractJavaAssembler {
     public void setArgs(List<String> args) {
         this.args.clear();
         this.args.addAll(args);
-    }
-
-    public void addArgs(List<String> args) {
-        this.args.addAll(args);
-    }
-
-    public void addArg(String arg) {
-        if (isNotBlank(arg)) {
-            this.args.add(arg.trim());
-        }
-    }
-
-    public void removeArg(String arg) {
-        if (isNotBlank(arg)) {
-            this.args.remove(arg.trim());
-        }
     }
 
     public Java getJava() {
@@ -220,25 +131,6 @@ public class Jlink extends AbstractJavaAssembler {
     public void setJars(List<Glob> jars) {
         this.jars.clear();
         this.jars.addAll(jars);
-    }
-
-    public void addJars(List<Glob> jars) {
-        this.jars.addAll(jars);
-    }
-
-    public void addJar(Glob jar) {
-        if (null != jar) {
-            this.jars.add(jar);
-        }
-    }
-
-    public List<Glob> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<Glob> files) {
-        this.files.clear();
-        this.files.addAll(files);
     }
 
     public Boolean isCopyJars() {

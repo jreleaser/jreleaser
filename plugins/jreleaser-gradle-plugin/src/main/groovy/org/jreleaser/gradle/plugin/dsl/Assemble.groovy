@@ -34,5 +34,7 @@ interface Assemble {
 
     NamedDomainObjectContainer<Jlink> getJlink()
 
+    NamedDomainObjectContainer<Jlink> getJpackage()
+
     NamedDomainObjectContainer<NativeImage> getNativeImage()
 }

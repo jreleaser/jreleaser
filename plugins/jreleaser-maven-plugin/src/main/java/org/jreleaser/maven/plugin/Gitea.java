@@ -26,13 +26,6 @@ public class Gitea extends GitService {
     private boolean draft;
     private Boolean prereleaseEnabled;
 
-    void setAll(Gitea service) {
-        super.setAll(service);
-        this.draft = service.draft;
-        this.prereleaseEnabled = service.prereleaseEnabled;
-        setPrerelease(service.prerelease);
-    }
-
     public boolean isDraft() {
         return draft;
     }

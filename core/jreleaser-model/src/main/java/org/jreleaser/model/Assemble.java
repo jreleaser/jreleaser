@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.jreleaser.util.StringUtils.isBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.2.0
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 public class Assemble implements Domain, EnabledAware {
     private final Map<String, Archive> archive = new LinkedHashMap<>();
     private final Map<String, Jlink> jlink = new LinkedHashMap<>();
+    private final Map<String, Jpackage> jpackage = new LinkedHashMap<>();
     private final Map<String, NativeImage> nativeImage = new LinkedHashMap<>();
     private Boolean enabled;
 
@@ -41,6 +44,7 @@ public class Assemble implements Domain, EnabledAware {
         this.enabled = assemble.enabled;
         setArchive(assemble.archive);
         setJlink(assemble.jlink);
+        setJpackage(assemble.jpackage);
         setNativeImage(assemble.nativeImage);
     }
 
@@ -97,6 +101,37 @@ public class Assemble implements Domain, EnabledAware {
         this.jlink.put(jlink.getName(), jlink);
     }
 
+    public Jlink findJlink(String name) {
+        if (isBlank(name)) {
+            throw new JReleaserException("Jlink name must not be blank");
+        }
+
+        if (jlink.containsKey(name)) {
+            return jlink.get(name);
+        }
+
+        throw new JReleaserException("Jlink '" + name + "' not found");
+    }
+
+    public List<Jpackage> getActiveJpackages() {
+        return jpackage.values().stream()
+        .filter(Jpackage::isEnabled)
+        .collect(Collectors.toList());
+    }
+    
+    public Map<String, Jpackage> getJpackage() {
+        return jpackage;
+    }
+    
+    public void setJpackage(Map<String, Jpackage> jpackage) {
+        this.jpackage.clear();
+        this.jpackage.putAll(jpackage);
+    }
+    
+    public void addJpackage(Jpackage jpackage) {
+        this.jpackage.put(jpackage.getName(), jpackage);
+    }
+    
     public List<NativeImage> getActiveNativeImages() {
         return nativeImage.values().stream()
             .filter(NativeImage::isEnabled)
@@ -135,6 +170,13 @@ public class Assemble implements Domain, EnabledAware {
             .collect(Collectors.toList());
         if (!jlink.isEmpty()) map.put("jlink", jlink);
 
+        List<Map<String, Object>> jpackage = this.jpackage.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(Collectors.toList());
+        if (!jpackage.isEmpty()) map.put("jpackage", jpackage);
+
         List<Map<String, Object>> nativeImage = this.nativeImage.values()
             .stream()
             .filter(d -> full || d.isEnabled())
@@ -151,6 +193,8 @@ public class Assemble implements Domain, EnabledAware {
                 return (Map<String, A>) archive;
             case Jlink.TYPE:
                 return (Map<String, A>) jlink;
+            case Jpackage.TYPE:
+                return (Map<String, A>) jpackage;
             case NativeImage.TYPE:
                 return (Map<String, A>) nativeImage;
         }
@@ -162,6 +206,7 @@ public class Assemble implements Domain, EnabledAware {
         List<A> assemblers = new ArrayList<>();
         assemblers.addAll((List<A>) getActiveArchives());
         assemblers.addAll((List<A>) getActiveJlinks());
+        assemblers.addAll((List<A>) getActiveJpackages());
         assemblers.addAll((List<A>) getActiveNativeImages());
         return assemblers;
     }
@@ -170,6 +215,7 @@ public class Assemble implements Domain, EnabledAware {
         Set<String> set = new LinkedHashSet<>();
         set.add(Archive.TYPE);
         set.add(Jlink.TYPE);
+        set.add(Jpackage.TYPE);
         set.add(NativeImage.TYPE);
         return Collections.unmodifiableSet(set);
     }

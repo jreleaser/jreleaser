@@ -20,7 +20,6 @@ package org.jreleaser.assemblers;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.Artifact;
-import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jlink;
 import org.jreleaser.model.Project;
@@ -37,13 +36,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.stream.Collectors.toSet;
+import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
+import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -53,8 +51,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlink> {
-    private static final String KEY_JAVA_VERSION = "JAVA_VERSION";
-
     public JlinkAssemblerProcessor(JReleaserContext context) {
         super(context);
     }
@@ -93,10 +89,10 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             Path jarsDirectory = inputsDirectory.resolve("jars");
             Path universalJarsDirectory = jarsDirectory.resolve("universal");
             context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(universalJarsDirectory));
-            Set<Path> jars = copyJars(context, universalJarsDirectory, "");
-            Path platformJarsDirectory = inputsDirectory.resolve("jars").resolve(platform);
+            Set<Path> jars = copyJars(context, assembler, universalJarsDirectory, "");
+            Path platformJarsDirectory = jarsDirectory.resolve(platform);
             context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(platformJarsDirectory));
-            jars.addAll(copyJars(context, platformJarsDirectory, platform));
+            jars.addAll(copyJars(context, assembler, platformJarsDirectory, platform));
 
             // resolve module names
             Set<String> moduleNames = resolveModuleNames(context, jdkPath, jarsDirectory, platform);
@@ -143,7 +139,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
 
         // jlink it
         String modulePath = targetJdk.getEffectivePath(context, assembler).resolve("jmods").toAbsolutePath().toString();
-        if (assembler.isCopyJars()) {
+        if (isNotBlank(assembler.getModuleName()) || assembler.isCopyJars()) {
             modulePath += File.pathSeparator + jarsDirectory
                 .resolve("universal")
                 .toAbsolutePath();
@@ -244,84 +240,6 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         }
     }
 
-    private String readJavaVersion(Path path) throws AssemblerProcessingException {
-        Path release = path.resolve("release");
-        if (!Files.exists(release)) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_jdk_release", path.toAbsolutePath()));
-        }
-
-        try {
-            Properties props = new Properties();
-            props.load(Files.newInputStream(release));
-            if (props.containsKey(KEY_JAVA_VERSION)) {
-                String version = props.getProperty(KEY_JAVA_VERSION);
-                if (version.startsWith("\"") && version.endsWith("\"")) {
-                    return version.substring(1, version.length() - 1);
-                }
-                return version;
-            } else {
-                throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_jdk_release_file", release.toAbsolutePath()));
-            }
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_jdk_release_file", release.toAbsolutePath()), e);
-        }
-    }
-
-    private Set<Path> copyJars(JReleaserContext context, Path jarsDirectory, String platform) throws AssemblerProcessingException {
-        Set<Path> paths = new LinkedHashSet<>();
-
-        // resolve all first
-        if (isBlank(platform)) {
-            paths.add(assembler.getMainJar().getEffectivePath(context, assembler));
-        }
-
-        for (Glob glob : assembler.getJars()) {
-            if ((isBlank(platform) && isBlank(glob.getPlatform())) ||
-                (isNotBlank(platform) && PlatformUtils.isCompatible(platform, glob.getPlatform()))) {
-                glob.getResolvedArtifacts(context).stream()
-                    .map(artifact -> artifact.getResolvedPath(context, assembler))
-                    .forEach(paths::add);
-            }
-        }
-
-        // copy all next
-        try {
-            Files.createDirectories(jarsDirectory);
-            for (Path path : paths) {
-                context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
-                Files.copy(path, jarsDirectory.resolve(path.getFileName()), REPLACE_EXISTING);
-            }
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_jars"), e);
-        }
-
-        return paths;
-    }
-
-    private Set<Path> copyFiles(JReleaserContext context, Path destination) throws AssemblerProcessingException {
-        Set<Path> paths = new LinkedHashSet<>();
-
-        // resolve all first
-        for (Glob glob : assembler.getFiles()) {
-            glob.getResolvedArtifacts(context).stream()
-                .map(artifact -> artifact.getResolvedPath(context, assembler))
-                .forEach(paths::add);
-        }
-
-        // copy all next
-        try {
-            Files.createDirectories(destination);
-            for (Path path : paths) {
-                context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
-                Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
-            }
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
-        }
-
-        return paths;
-    }
-
     private Set<String> resolveModuleNames(JReleaserContext context, Path jdkPath, Path jarsDirectory, String platform) throws AssemblerProcessingException {
         if (!assembler.getModuleNames().isEmpty()) {
             return assembler.getModuleNames();
@@ -337,7 +255,14 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             cmd.arg("--ignore-missing-deps");
         }
         cmd.arg("--print-module-deps");
-        cmd.arg("--class-path");
+        if (isNotBlank(assembler.getModuleName())) {
+            cmd.arg("--module")
+                .arg(assembler.getModuleName())
+                .arg("--module-path");
+        } else {
+            cmd.arg("--class-path");
+        }
+
         try {
             Files.list(jarsDirectory.resolve("universal"))
                 .map(Path::toAbsolutePath)

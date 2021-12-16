@@ -19,11 +19,15 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.Artifact
+import org.jreleaser.gradle.plugin.dsl.Glob
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.JavaAssembler
 import org.kordamp.gradle.util.ConfigureUtil
@@ -40,17 +44,44 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
     final Property<String> executable
     final DirectoryProperty templateDirectory
 
+    private final ArtifactImpl mainJar
+    private final NamedDomainObjectContainer<GlobImpl> jars
+    private final NamedDomainObjectContainer<GlobImpl> files
+
     @Inject
     AbstractJavaAssembler(ObjectFactory objects) {
         super(objects)
         executable = objects.property(String).convention(Providers.notDefined())
         templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
+        mainJar = objects.newInstance(ArtifactImpl, objects)
+        mainJar.setName('mainJar')
+
+        jars = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
+            @Override
+            GlobImpl create(String name) {
+                GlobImpl glob = objects.newInstance(GlobImpl, objects)
+                glob.name = name
+                glob
+            }
+        })
+
+        files = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
+            @Override
+            GlobImpl create(String name) {
+                GlobImpl glob = objects.newInstance(GlobImpl, objects)
+                glob.name = name
+                glob
+            }
+        })
     }
 
     @Internal
     boolean isSet() {
         super.isSet() ||
-            executable.present
+            executable.present ||
+            mainJar.isSet() ||
+            !jars.isEmpty() ||
+            !files.isEmpty()
     }
 
     @Override
@@ -59,12 +90,49 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
     }
 
     @Override
+    void mainJar(Action<? super Artifact> action) {
+        action.execute(mainJar)
+    }
+
+    @Override
+    void jars(Action<? super Glob> action) {
+        action.execute(jars.maybeCreate("jars-${jars.size()}".toString()))
+    }
+
+    @Override
+    void files(Action<? super Glob> action) {
+        action.execute(files.maybeCreate("files-${files.size()}".toString()))
+    }
+
+    @Override
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
         ConfigureUtil.configure(action, java)
     }
 
+    @Override
+    void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, mainJar)
+    }
+
+    @Override
+    void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
+        ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
+    }
+
+    @Override
+    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
+        ConfigureUtil.configure(action, files.maybeCreate("files-${files.size()}".toString()))
+    }
+
     protected <A extends org.jreleaser.model.JavaAssembler> void fillProperties(A assembler) {
         super.fillProperties(assembler)
+        if (mainJar.isSet()) assembler.mainJar = mainJar.toModel()
+        for (GlobImpl glob : jars) {
+            assembler.addJar(glob.toModel())
+        }
+        for (GlobImpl glob : files) {
+            assembler.addFile(glob.toModel())
+        }
         if (executable.present) assembler.executable = executable.get()
         if (templateDirectory.present) {
             assembler.templateDirectory = templateDirectory.get().asFile.toPath().toString()

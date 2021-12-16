@@ -27,6 +27,7 @@ import java.util.Map;
 public class Assemble implements EnabledAware {
     private final Map<String, Archive> archive = new LinkedHashMap<>();
     private final Map<String, Jlink> jlink = new LinkedHashMap<>();
+    private final Map<String, Jpackage> jpackage = new LinkedHashMap<>();
     private final Map<String, NativeImage> nativeImage = new LinkedHashMap<>();
     private Boolean enabled;
 
@@ -34,6 +35,7 @@ public class Assemble implements EnabledAware {
         this.enabled = assemble.enabled;
         setArchive(assemble.archive);
         setJlink(assemble.jlink);
+        setJpackage(assemble.jpackage);
         setNativeImage(assemble.nativeImage);
     }
 
@@ -68,6 +70,15 @@ public class Assemble implements EnabledAware {
     public void setJlink(Map<String, Jlink> jlink) {
         this.jlink.clear();
         this.jlink.putAll(jlink);
+    }
+
+    public Map<String, Jpackage> getJpackage() {
+        return jpackage;
+    }
+
+    public void setJpackage(Map<String, Jpackage> jpackage) {
+        this.jpackage.clear();
+        this.jpackage.putAll(jpackage);
     }
 
     public Map<String, NativeImage> getNativeImage() {

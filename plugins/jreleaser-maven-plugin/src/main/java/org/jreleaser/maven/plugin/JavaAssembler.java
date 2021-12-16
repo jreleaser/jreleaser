@@ -17,6 +17,8 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.8.0
@@ -33,4 +35,16 @@ public interface JavaAssembler extends Assembler {
     Java getJava();
 
     void setJava(Java java);
+
+    Artifact getMainJar();
+
+    void setMainJar(Artifact mainJar);
+
+    List<Glob> getJars();
+
+    void setJars(List<Glob> jars);
+
+    List<Glob> getFiles();
+
+    void setFiles(List<Glob> files);
 }

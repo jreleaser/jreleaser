@@ -38,16 +38,6 @@ public class Http extends AbstractHttpUploader {
         super(NAME);
     }
 
-    void setAll(Http http) {
-        super.setAll(http);
-        this.username = http.username;
-        this.password = http.password;
-        this.target = http.target;
-        this.authorization = http.authorization;
-        this.method = http.method;
-        setHeaders(http.headers);
-    }
-
     public Authorization resolveAuthorization() {
         if (null == authorization) {
             authorization = Authorization.NONE;

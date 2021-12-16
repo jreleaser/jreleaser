@@ -57,9 +57,6 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
 
     private final JdepsImpl jdeps
     private final ArtifactImpl jdk
-    private final ArtifactImpl mainJar
-    private final NamedDomainObjectContainer<GlobImpl> jars
-    private final NamedDomainObjectContainer<GlobImpl> files
     final NamedDomainObjectContainer<ArtifactImpl> targetJdks
 
     @Inject
@@ -77,9 +74,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         platform = objects.newInstance(PlatformImpl, objects)
         jdeps = objects.newInstance(JdepsImpl, objects)
         jdk = objects.newInstance(ArtifactImpl, objects)
-        mainJar = objects.newInstance(ArtifactImpl, objects)
         jdk.setName('jdk')
-        mainJar.setName('mainJar')
 
         targetJdks = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
@@ -87,24 +82,6 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
                 ArtifactImpl artifact = objects.newInstance(ArtifactImpl, objects)
                 artifact.name = name
                 artifact
-            }
-        })
-
-        jars = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
-            @Override
-            GlobImpl create(String name) {
-                GlobImpl glob = objects.newInstance(GlobImpl, objects)
-                glob.name = name
-                glob
-            }
-        })
-
-        files = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
-            @Override
-            GlobImpl create(String name) {
-                GlobImpl glob = objects.newInstance(GlobImpl, objects)
-                glob.name = name
-                glob
             }
         })
     }
@@ -120,12 +97,10 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
             java.isSet() ||
             jdeps.isSet() ||
             jdk.isSet() ||
-            mainJar.isSet() ||
             !moduleNames.present ||
             !additionalModuleNames.present ||
             !targetJdks.isEmpty() ||
-            !jars.isEmpty() ||
-            !files.isEmpty()
+            platform.isSet()
     }
 
     @Override
@@ -146,23 +121,8 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
     }
 
     @Override
-    void mainJar(Action<? super Artifact> action) {
-        action.execute(mainJar)
-    }
-
-    @Override
     void targetJdk(Action<? super Artifact> action) {
         action.execute(targetJdks.maybeCreate("targetJdk-${targetJdks.size()}".toString()))
-    }
-
-    @Override
-    void jars(Action<? super Glob> action) {
-        action.execute(jars.maybeCreate("jars-${jars.size()}".toString()))
-    }
-
-    @Override
-    void files(Action<? super Glob> action) {
-        action.execute(files.maybeCreate("files-${files.size()}".toString()))
     }
 
     @Override
@@ -183,23 +143,8 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
     }
 
     @Override
-    void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, mainJar)
-    }
-
-    @Override
     void targetJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, targetJdks.maybeCreate("targetJdk-${targetJdks.size()}".toString()))
-    }
-
-    @Override
-    void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
-        ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
-    }
-
-    @Override
-    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
-        ConfigureUtil.configure(action, files.maybeCreate("files-${files.size()}".toString()))
     }
 
     org.jreleaser.model.Jlink toModel() {
@@ -209,7 +154,6 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         jlink.args = (List<String>) args.getOrElse([])
         if (jdeps.isSet()) jlink.jdeps = jdeps.toModel()
         if (jdk.isSet()) jlink.jdk = jdk.toModel()
-        if (mainJar.isSet()) jlink.mainJar = mainJar.toModel()
         jlink.java = java.toModel()
         jlink.platform = platform.toModel()
         if (imageName.present) jlink.imageName = imageName.get()
@@ -220,12 +164,6 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         jlink.additionalModuleNames = (Set<String>) additionalModuleNames.getOrElse([] as Set)
         for (ArtifactImpl artifact : targetJdks) {
             jlink.addTargetJdk(artifact.toModel())
-        }
-        for (GlobImpl glob : jars) {
-            jlink.addJar(glob.toModel())
-        }
-        for (GlobImpl glob : files) {
-            jlink.addFile(glob.toModel())
         }
         jlink
     }

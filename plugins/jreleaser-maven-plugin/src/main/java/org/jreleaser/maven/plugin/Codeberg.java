@@ -22,7 +22,5 @@ package org.jreleaser.maven.plugin;
  * @since 0.4.0
  */
 public class Codeberg extends Gitea {
-    void setAll(Codeberg service) {
-        super.setAll(service);
-    }
+
 }

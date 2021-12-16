@@ -15,44 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
+package org.jreleaser.assemblers;
 
-import java.util.List;
+import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Jpackage;
+import org.jreleaser.model.assembler.spi.AssemblerProcessorFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 /**
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 0.10.0
  */
-public interface JavaAssembler extends Assembler {
-    String getExecutable();
+@ServiceProviderFor(AssemblerProcessorFactory.class)
+public class JpackageAssemblerProcessorFactory implements AssemblerProcessorFactory<Jpackage, JpackageAssemblerProcessor> {
+    @Override
+    public String getName() {
+        return Jpackage.TYPE;
+    }
 
-    void setExecutable(String executable);
-
-    String getTemplateDirectory();
-
-    void setTemplateDirectory(String templateDirectory);
-
-    Java getJava();
-
-    void setJava(Java java);
-
-    Artifact getMainJar();
-
-    void setMainJar(Artifact mainJar);
-
-    List<Glob> getJars();
-
-    void setJars(List<Glob> jars);
-
-    void addJars(List<Glob> jars);
-
-    void addJar(Glob jar);
-
-    List<Glob> getFiles();
-
-    void setFiles(List<Glob> files);
-
-    void addFiles(List<Glob> files);
-
-    void addFile(Glob file);
+    @Override
+    public JpackageAssemblerProcessor getAssemblerProcessor(JReleaserContext context) {
+        return new JpackageAssemblerProcessor(context);
+    }
 }

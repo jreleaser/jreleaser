@@ -51,7 +51,7 @@ public abstract class MattermostValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_MATTERMOST_TPL))) {
                 mattermost.setMessageTemplate(DEFAULT_MATTERMOST_TPL);
             } else {
-                mattermost.setMessage(RB.$("default_release_message"));
+                mattermost.setMessage(RB.$("default.release.message"));
             }
         }
 

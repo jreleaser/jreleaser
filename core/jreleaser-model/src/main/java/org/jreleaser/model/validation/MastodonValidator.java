@@ -47,7 +47,7 @@ public abstract class MastodonValidator extends Validator {
                 context.isDryrun()));
 
         if (isBlank(mastodon.getStatus())) {
-            mastodon.setStatus(RB.$("default_release_message"));
+            mastodon.setStatus(RB.$("default.release.message"));
         }
 
         validateTimeout(mastodon);

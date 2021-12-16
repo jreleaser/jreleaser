@@ -101,14 +101,14 @@ public abstract class JlinkValidator extends Validator {
         });
 
         if (isBlank(jlink.getJdk().getPath())) {
+            String currentPlatform = PlatformUtils.getCurrentFull();
             if (jlink.getTargetJdks().isEmpty()) {
                 // Use current
                 jlink.getJdk().setPath(System.getProperty("java.home"));
-                jlink.getJdk().setPlatform(PlatformUtils.getCurrentFull());
+                jlink.getJdk().setPlatform(currentPlatform);
                 jlink.addTargetJdk(jlink.getJdk());
             } else {
                 // find a compatible JDK in targets
-                String currentPlatform = PlatformUtils.getCurrentFull();
                 Optional<Artifact> jdk = jlink.getTargetJdks().stream()
                     .filter(j -> PlatformUtils.isCompatible(currentPlatform, j.getPlatform()))
                     .findFirst();
@@ -118,7 +118,7 @@ public abstract class JlinkValidator extends Validator {
                 } else {
                     // Can't tell if the current JDK will work but might as well use it
                     jlink.getJdk().setPath(System.getProperty("java.home"));
-                    jlink.getJdk().setPlatform(PlatformUtils.getCurrentFull());
+                    jlink.getJdk().setPlatform(currentPlatform);
                 }
             }
         }

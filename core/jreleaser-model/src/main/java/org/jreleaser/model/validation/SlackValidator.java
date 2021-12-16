@@ -73,7 +73,7 @@ public abstract class SlackValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_SLACK_TPL))) {
                 slack.setMessageTemplate(DEFAULT_SLACK_TPL);
             } else {
-                slack.setMessage(RB.$("default_release_message"));
+                slack.setMessage(RB.$("default.release.message"));
             }
         }
 

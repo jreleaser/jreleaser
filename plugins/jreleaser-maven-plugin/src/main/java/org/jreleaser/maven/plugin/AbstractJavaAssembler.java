@@ -17,12 +17,19 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAssembler {
-    private final Java java = new Java();
+    protected final Artifact mainJar = new Artifact();
+    protected final List<Glob> jars = new ArrayList<>();
+    protected final List<Glob> files = new ArrayList<>();
+    protected final Java java = new Java();
+
     protected String executable;
     protected String templateDirectory;
 
@@ -31,6 +38,9 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
         this.executable = assembler.executable;
         this.templateDirectory = assembler.templateDirectory;
         setJava(assembler.java);
+        setMainJar(assembler.mainJar);
+        setJars(assembler.jars);
+        setFiles(assembler.files);
     }
 
     @Override
@@ -53,7 +63,6 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
         this.templateDirectory = templateDirectory;
     }
 
-
     @Override
     public Java getJava() {
         return java;
@@ -62,5 +71,37 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
     @Override
     public void setJava(Java java) {
         this.java.setAll(java);
+    }
+
+    @Override
+    public Artifact getMainJar() {
+        return mainJar;
+    }
+
+    @Override
+    public void setMainJar(Artifact mainJar) {
+        this.mainJar.setAll(mainJar);
+    }
+
+    @Override
+    public List<Glob> getJars() {
+        return jars;
+    }
+
+    @Override
+    public void setJars(List<Glob> jars) {
+        this.jars.clear();
+        this.jars.addAll(jars);
+    }
+
+    @Override
+    public List<Glob> getFiles() {
+        return files;
+    }
+
+    @Override
+    public void setFiles(List<Glob> files) {
+        this.files.clear();
+        this.files.addAll(files);
     }
 }

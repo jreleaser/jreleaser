@@ -97,6 +97,16 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
         }
     }
 
+    protected void writeFile(byte[] content, Path outputFile) throws AssemblerProcessingException {
+        try {
+            createDirectoriesWithFullAccess(outputFile.getParent());
+            Files.write(outputFile, content, CREATE, WRITE, TRUNCATE_EXISTING);
+            grantFullAccess(outputFile);
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error_writing_file", outputFile.toAbsolutePath()), e);
+        }
+    }
+
     protected Map<String, Object> fillProps(Map<String, Object> props) throws AssemblerProcessingException {
         Map<String, Object> newProps = new LinkedHashMap<>(props);
         context.getLogger().debug(RB.$("tool.fill.git.properties"));

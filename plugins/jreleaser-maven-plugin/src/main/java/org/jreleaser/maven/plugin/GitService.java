@@ -62,43 +62,6 @@ public abstract class GitService implements Releaser {
     private Boolean checksums;
     private Boolean signatures;
 
-    void setAll(GitService service) {
-        this.enabled = service.enabled;
-        this.host = service.host;
-        this.owner = service.owner;
-        this.name = service.name;
-        this.repoUrl = service.repoUrl;
-        this.repoCloneUrl = service.repoCloneUrl;
-        this.commitUrl = service.commitUrl;
-        this.srcUrl = service.srcUrl;
-        this.downloadUrl = service.downloadUrl;
-        this.releaseNotesUrl = service.releaseNotesUrl;
-        this.latestReleaseUrl = service.latestReleaseUrl;
-        this.issueTrackerUrl = service.issueTrackerUrl;
-        this.username = service.username;
-        this.token = service.token;
-        this.tagName = service.tagName;
-        this.previousTagName = service.previousTagName;
-        this.releaseName = service.releaseName;
-        this.branch = service.branch;
-        this.sign = service.sign;
-        this.skipTag = service.skipTag;
-        this.skipRelease = service.skipRelease;
-        this.overwrite = service.overwrite;
-        this.update = service.update;
-        this.apiEndpoint = service.apiEndpoint;
-        this.connectTimeout = service.connectTimeout;
-        this.readTimeout = service.readTimeout;
-        this.artifacts = service.artifacts;
-        this.files = service.files;
-        this.checksums = service.checksums;
-        this.signatures = service.signatures;
-        setCommitAuthor(service.commitAuthor);
-        setChangelog(service.changelog);
-        setMilestone(service.milestone);
-        setUpdateSections(service.updateSections);
-    }
-
     @Override
     public boolean isEnabled() {
         return enabled != null && enabled;

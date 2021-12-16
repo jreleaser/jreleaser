@@ -54,7 +54,7 @@ public abstract class DiscussionsValidator extends Validator {
         }
 
         if (isBlank(discussions.getTitle())) {
-            discussions.setTitle(RB.$("default_discussion_title"));
+            discussions.setTitle(RB.$("default.discussion.title"));
         }
 
         if (isBlank(discussions.getMessage()) && isBlank(discussions.getMessageTemplate())) {
@@ -65,7 +65,7 @@ public abstract class DiscussionsValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_DISCUSSIONS_TPL))) {
                 discussions.setMessageTemplate(DEFAULT_DISCUSSIONS_TPL);
             } else {
-                discussions.setMessage(RB.$("default_release_message"));
+                discussions.setMessage(RB.$("default.release.message"));
             }
         }
 

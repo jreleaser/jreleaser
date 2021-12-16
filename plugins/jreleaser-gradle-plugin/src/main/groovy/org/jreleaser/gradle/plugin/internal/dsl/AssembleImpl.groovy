@@ -37,6 +37,7 @@ class AssembleImpl implements Assemble {
     final Property<Boolean> enabled
     final NamedDomainObjectContainer<ArchiveImpl> archive
     final NamedDomainObjectContainer<JlinkImpl> jlink
+    final NamedDomainObjectContainer<JpackageImpl> jpackage
     final NamedDomainObjectContainer<NativeImageImpl> nativeImage
 
     @Inject
@@ -61,6 +62,15 @@ class AssembleImpl implements Assemble {
             }
         })
 
+        jpackage = objects.domainObjectContainer(JpackageImpl, new NamedDomainObjectFactory<JpackageImpl>() {
+            @Override
+            JpackageImpl create(String name) {
+                JpackageImpl jpackage = objects.newInstance(JpackageImpl, objects)
+                jpackage.name = name
+                jpackage
+            }
+        })
+
         nativeImage = objects.domainObjectContainer(NativeImageImpl, new NamedDomainObjectFactory<NativeImageImpl>() {
             @Override
             NativeImageImpl create(String name) {
@@ -77,6 +87,7 @@ class AssembleImpl implements Assemble {
 
         archive.each { assemble.addArchive(it.toModel()) }
         jlink.each { assemble.addJlink(it.toModel()) }
+        jpackage.each { assemble.addJpackage(it.toModel()) }
         nativeImage.each { assemble.addNativeImage(it.toModel()) }
 
         assemble

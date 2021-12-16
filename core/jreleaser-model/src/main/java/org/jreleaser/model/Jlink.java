@@ -40,9 +40,6 @@ public class Jlink extends AbstractJavaAssembler {
     private final Set<String> additionalModuleNames = new LinkedHashSet<>();
     private final List<String> args = new ArrayList<>();
     private final Artifact jdk = new Artifact();
-    private final Artifact mainJar = new Artifact();
-    private final List<Glob> jars = new ArrayList<>();
-    private final List<Glob> files = new ArrayList<>();
     private final Jdeps jdeps = new Jdeps();
 
     private String imageName;
@@ -67,13 +64,10 @@ public class Jlink extends AbstractJavaAssembler {
         this.copyJars = jlink.copyJars;
         setJdeps(jlink.jdeps);
         setJdk(jlink.jdk);
-        setMainJar(jlink.mainJar);
         setTargetJdks(jlink.targetJdks);
         setModuleNames(jlink.moduleNames);
         setAdditionalModuleNames(jlink.additionalModuleNames);
         setArgs(jlink.args);
-        setJars(jlink.jars);
-        setFiles(jlink.files);
     }
 
     public String getResolvedImageName(JReleaserContext context) {
@@ -103,14 +97,6 @@ public class Jlink extends AbstractJavaAssembler {
 
     public void setJdk(Artifact jdk) {
         this.jdk.setAll(jdk);
-    }
-
-    public Artifact getMainJar() {
-        return mainJar;
-    }
-
-    public void setMainJar(Artifact mainJar) {
-        this.mainJar.setAll(mainJar);
     }
 
     public String getImageName() {
@@ -231,44 +217,6 @@ public class Jlink extends AbstractJavaAssembler {
         }
     }
 
-    public List<Glob> getJars() {
-        return jars;
-    }
-
-    public void setJars(List<Glob> jars) {
-        this.jars.clear();
-        this.jars.addAll(jars);
-    }
-
-    public void addJars(List<Glob> jars) {
-        this.jars.addAll(jars);
-    }
-
-    public void addJar(Glob jar) {
-        if (null != jar) {
-            this.jars.add(jar);
-        }
-    }
-
-    public List<Glob> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<Glob> files) {
-        this.files.clear();
-        this.files.addAll(files);
-    }
-
-    public void addFiles(List<Glob> files) {
-        this.files.addAll(files);
-    }
-
-    public void addFile(Glob file) {
-        if (null != file) {
-            this.files.add(file);
-        }
-    }
-
     public Boolean isCopyJars() {
         return copyJars == null || copyJars;
     }
@@ -298,18 +246,7 @@ public class Jlink extends AbstractJavaAssembler {
         }
         props.put("jdk", jdk.asMap(full));
         props.put("targetJdks", mappedJdks);
-        Map<String, Map<String, Object>> mappedJars = new LinkedHashMap<>();
-        for (i = 0; i < jars.size(); i++) {
-            mappedJars.put("glob " + i, jars.get(i).asMap(full));
-        }
         props.put("copyJars", isCopyJars());
-        props.put("mainJar", mainJar.asMap(full));
-        props.put("jars", mappedJars);
-        Map<String, Map<String, Object>> mappedFiles = new LinkedHashMap<>();
-        for (i = 0; i < files.size(); i++) {
-            mappedFiles.put("glob " + i, files.get(i).asMap(full));
-        }
-        props.put("files", mappedFiles);
     }
 
     public static class Jdeps implements Domain {

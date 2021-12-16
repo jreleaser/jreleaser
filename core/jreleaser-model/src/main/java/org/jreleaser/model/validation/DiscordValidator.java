@@ -51,7 +51,7 @@ public abstract class DiscordValidator extends Validator {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_DISCORD_TPL))) {
                 discord.setMessageTemplate(DEFAULT_DISCORD_TPL);
             } else {
-                discord.setMessage(RB.$("default_release_message"));
+                discord.setMessage(RB.$("default.release.message"));
             }
         }
 

@@ -27,14 +27,6 @@ public class Github extends GitService {
     private Boolean prereleaseEnabled;
     private String discussionCategoryName;
 
-    void setAll(Github service) {
-        super.setAll(service);
-        this.draft = service.draft;
-        this.discussionCategoryName = service.discussionCategoryName;
-        this.prereleaseEnabled = service.prereleaseEnabled;
-        setPrerelease(service.prerelease);
-    }
-
     public boolean isDraft() {
         return draft;
     }
