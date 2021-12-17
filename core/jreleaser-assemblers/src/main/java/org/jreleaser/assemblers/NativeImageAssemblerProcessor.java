@@ -77,14 +77,12 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         installNativeImage(graalPath);
 
         // run native-image
-        Artifact image = nativeImage(assembleDirectory, graalPath, jars);
+        String imageName = assembler.getResolvedImageName(context);
         if (isNotBlank(assembler.getImageNameTransform())) {
-            String platformReplaced = assembler.getPlatform().applyReplacements(platform);
-            image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" +
-                platformReplaced + "." +
-                assembler.getArchiveFormat().extension());
-            image.getEffectivePath(context, assembler);
+            imageName = assembler.getResolvedImageNameTransform(context);
         }
+
+        nativeImage(assembleDirectory, graalPath, jars, imageName);
     }
 
     private void installNativeImage(Path graalPath) throws AssemblerProcessingException {
@@ -103,10 +101,10 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         }
     }
 
-    private Artifact nativeImage(Path assembleDirectory, Path graalPath, Set<Path> jars) throws AssemblerProcessingException {
+    private Artifact nativeImage(Path assembleDirectory, Path graalPath, Set<Path> jars, String imageName) throws AssemblerProcessingException {
         String platform = assembler.getGraal().getPlatform();
         String platformReplaced = assembler.getPlatform().applyReplacements(platform);
-        String finalImageName = assembler.getResolvedImageName(context) + "-" + platformReplaced;
+        String finalImageName = imageName + "-" + platformReplaced;
 
         String executable = assembler.getExecutable();
         context.getLogger().info("- {}", finalImageName);

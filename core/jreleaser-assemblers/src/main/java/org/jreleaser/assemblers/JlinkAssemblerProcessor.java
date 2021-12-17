@@ -80,6 +80,10 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
 
         // run jlink x jdk
         String imageName = assembler.getResolvedImageName(context);
+        if (isNotBlank(assembler.getImageNameTransform())) {
+            imageName = assembler.getResolvedImageNameTransform(context);
+        }
+
         for (Artifact targetJdk : assembler.getTargetJdks()) {
             if (!context.isPlatformSelected(targetJdk)) continue;
 
@@ -111,13 +115,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
                 .toString();
             Archive.Format archiveFormat = Archive.Format.of(str);
 
-            Artifact image = jlink(assembleDirectory, jdkPath, targetJdk, moduleNames, imageName, archiveFormat);
-            if (isNotBlank(assembler.getImageNameTransform())) {
-                image.setTransform(assembler.getResolvedImageNameTransform(context) + "-" +
-                    platformReplaced + "." +
-                    archiveFormat.extension());
-                image.getEffectivePath(context, assembler);
-            }
+            jlink(assembleDirectory, jdkPath, targetJdk, moduleNames, imageName, archiveFormat);
         }
     }
 

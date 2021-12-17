@@ -48,6 +48,9 @@ public abstract class JlinkResolver extends Validator {
             .resolve(jlink.getType());
 
         String imageName = jlink.getResolvedImageName(context);
+        if (isNotBlank(jlink.getImageNameTransform())) {
+            imageName = jlink.getResolvedImageNameTransform(context);
+        }
 
         for (Artifact targetJdk : jlink.getTargetJdks()) {
             if (!context.isPlatformSelected(targetJdk)) continue;
@@ -70,12 +73,6 @@ public abstract class JlinkResolver extends Validator {
                 Artifact artifact = Artifact.of(image, platform);
                 artifact.setExtraProperties(jlink.getExtraProperties());
                 artifact.activate();
-                if (isNotBlank(jlink.getImageNameTransform())) {
-                    artifact.setTransform(jlink.getResolvedImageNameTransform(context) + "-" +
-                        platformReplaced + "." +
-                        archiveFormat.extension());
-                    artifact.getEffectivePath(context, jlink);
-                }
                 jlink.addOutput(artifact);
             }
         }

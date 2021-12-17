@@ -44,13 +44,18 @@ public abstract class NativeImageResolver extends Validator {
     private static void resolveNativeImageOutputs(JReleaserContext context, NativeImage nativeImage, Errors errors) {
         if (!context.isPlatformSelected(nativeImage.getGraal())) return;
 
+        String imageName = nativeImage.getResolvedImageName(context);
+        if (isNotBlank(nativeImage.getImageNameTransform())) {
+            imageName = nativeImage.getResolvedImageNameTransform(context);
+        }
+
         String platform = nativeImage.getGraal().getPlatform();
         String platformReplaced = nativeImage.getPlatform().applyReplacements(platform);
 
         Path image = context.getAssembleDirectory()
             .resolve(nativeImage.getName())
             .resolve(nativeImage.getType())
-            .resolve(nativeImage.getResolvedImageName(context) + "-" +
+            .resolve(imageName + "-" +
                 platformReplaced + "." +
                 nativeImage.getArchiveFormat().extension());
 
@@ -61,12 +66,6 @@ public abstract class NativeImageResolver extends Validator {
             Artifact artifact = Artifact.of(image, platform);
             artifact.setExtraProperties(nativeImage.getExtraProperties());
             artifact.activate();
-            if (isNotBlank(nativeImage.getImageNameTransform())) {
-                artifact.setTransform(nativeImage.getResolvedImageNameTransform(context) + "-" +
-                    platformReplaced + "." +
-                    nativeImage.getArchiveFormat().extension());
-                artifact.getEffectivePath(context, nativeImage);
-            }
             nativeImage.addOutput(artifact);
         }
     }
