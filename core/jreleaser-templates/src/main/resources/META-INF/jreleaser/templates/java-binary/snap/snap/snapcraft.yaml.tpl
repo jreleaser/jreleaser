@@ -76,8 +76,6 @@ parts:
       - openjdk-{{distributionJavaVersion}}-jre
       - ca-certificates
       - ca-certificates-java
-    organize:
-      'usr/lib/jvm/java-{{distributionJavaVersion}}-openjdk*': 'usr/lib/jvm/java'
     prime:
-      - -usr/lib/jvm/java/lib/security/cacerts
-      - -usr/lib/jvm/java/jre/lib/security/cacerts
+      - -usr/lib/jvm/java-*/lib/security/cacerts
+      - -usr/lib/jvm/java-*/jre/lib/security/cacerts
