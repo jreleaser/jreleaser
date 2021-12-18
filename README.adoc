@@ -87,6 +87,14 @@ Requires Java 8
 port install jreleaser
 ----
 
+*Chocolatey*
+
+Requires Java 8
+[source]
+----
+choco install jreleaser
+----
+
 *Curl*
 
 Requires Java 11
