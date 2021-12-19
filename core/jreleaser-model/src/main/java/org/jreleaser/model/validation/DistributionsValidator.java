@@ -25,6 +25,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Tool;
 import org.jreleaser.util.Errors;
+import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
@@ -46,7 +47,6 @@ import static org.jreleaser.model.validation.SdkmanValidator.postValidateSdkman;
 import static org.jreleaser.model.validation.SdkmanValidator.validateSdkman;
 import static org.jreleaser.model.validation.SnapValidator.validateSnap;
 import static org.jreleaser.model.validation.SpecValidator.validateSpec;
-import static org.jreleaser.util.StringUtils.getFilenameExtension;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -152,10 +152,7 @@ public abstract class DistributionsValidator extends Validator {
         byPlatform.forEach((p, artifacts) -> {
             String platform = "<nil>".equals(p) ? "no" : p;
             artifacts.stream()
-                .collect(groupingBy(artifact -> {
-                    String ext = getFilenameExtension(artifact.getPath());
-                    return isNotBlank(ext) ? ext : "";
-                }))
+                .collect(groupingBy(artifact -> FileType.getFileType(artifact.getPath())))
                 .forEach((ext, matches) -> {
                     if (matches.size() > 1) {
                         errors.configuration(RB.$("validation_distributions_multiple",

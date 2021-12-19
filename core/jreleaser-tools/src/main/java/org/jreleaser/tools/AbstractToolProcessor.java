@@ -28,7 +28,6 @@ import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.FileUtils;
-import org.jreleaser.util.StringUtils;
 import org.jreleaser.util.command.Command;
 import org.jreleaser.util.command.CommandException;
 import org.jreleaser.util.command.CommandExecutor;
@@ -49,7 +48,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCH;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCHIVE_FORMAT;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_EXTENSION;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_FORMAT;
@@ -62,7 +60,6 @@ import static org.jreleaser.util.Constants.KEY_ARTIFACT_SIZE;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_VERSION;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_ARCH;
-import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT;
@@ -442,7 +439,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             .filter(artifact -> !isSkipped(artifact))
             // sort by platform, then by extension
             .sorted(Artifact.comparatorByPlatform().thenComparingInt(artifact -> {
-                String ext = "." + StringUtils.getFilenameExtension(artifact.getPath());
+                String ext = FileType.getFileNameExtension(artifact.getPath());
                 return fileExtensions.indexOf(ext);
             }))
             .collect(Collectors.toList());

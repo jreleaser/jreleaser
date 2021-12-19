@@ -17,6 +17,7 @@
  */
 package org.jreleaser.util;
 
+import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -83,5 +84,43 @@ public enum FileType {
             set.add(value.extension());
         }
         return set;
+    }
+
+    public static String getFileType(Path path) {
+        if (null != path) {
+            return getFileType(path.getFileName().toString());
+        }
+        return "";
+    }
+
+    public static String getFileType(String path) {
+        if (isBlank(path)) return "";
+
+        for (FileType value : values()) {
+            if (path.endsWith(value.extension())) {
+                return value.type();
+            }
+        }
+
+        return "";
+    }
+
+    public static String getFileNameExtension(Path path) {
+        if (null != path) {
+            return getFileNameExtension(path.getFileName().toString());
+        }
+        return "";
+    }
+
+    public static String getFileNameExtension(String path) {
+        if (isBlank(path)) return "";
+
+        for (FileType value : values()) {
+            if (path.endsWith(value.extension())) {
+                return value.extension();
+            }
+        }
+
+        return "";
     }
 }
