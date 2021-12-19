@@ -1008,6 +1008,7 @@ public final class JReleaserModelConverter {
         if (distribution.getJbang().isSet()) d.setJbang(convertJbang(distribution.getJbang()));
         if (distribution.getMacports().isSet()) d.setMacports(convertMacports(distribution.getMacports()));
         if (distribution.getScoop().isSet()) d.setScoop(convertScoop(distribution.getScoop()));
+        if (distribution.getSdkman().isSet()) d.setSdkman(convertSdkman(distribution.getSdkman()));
         if (distribution.getSnap().isSet()) d.setSnap(convertSnap(distribution.getSnap()));
         if (distribution.getSpec().isSet()) d.setSpec(convertSpec(distribution.getSpec()));
 
