@@ -95,6 +95,13 @@ Requires Java 8
 choco install jreleaser
 ----
 
+*Flatpak*
+[source]
+----
+flatpak install --user flathub org.jreleaser.cli
+flatpak run org.jreleaser.cli
+----
+
 *Curl*
 
 Requires Java 11
