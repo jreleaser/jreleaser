@@ -64,6 +64,7 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
         Map<String, String> platforms = new LinkedHashMap<>();
         // collect artifacts by supported SDKMAN! platform
         for (Artifact artifact : distribution.getArtifacts()) {
+            if (!artifact.isActive()) continue;
             // only zips are supported
             if (!artifact.getPath().endsWith(".zip")) {
                 context.getLogger().debug(RB.$("sdkman.no.artifacts.match"),
