@@ -27,6 +27,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class EphemeralId {
     private String filename;
     private String directDownloadUri;
+    private String checksum;
+    private String checksumType;
 
     public String getFilename() {
         return filename;
@@ -42,5 +44,21 @@ public class EphemeralId {
 
     public void setDirectDownloadUri(String directDownloadUri) {
         this.directDownloadUri = directDownloadUri;
+    }
+
+    public String getChecksum() {
+        return checksum;
+    }
+
+    public void setChecksum(String checksum) {
+        this.checksum = checksum;
+    }
+
+    public String getChecksumType() {
+        return checksumType;
+    }
+
+    public void setChecksumType(String checksumType) {
+        this.checksumType = checksumType;
     }
 }

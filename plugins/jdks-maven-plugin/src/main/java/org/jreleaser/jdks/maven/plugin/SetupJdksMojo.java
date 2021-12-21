@@ -71,7 +71,7 @@ public class SetupJdksMojo extends AbstractJdksMojo {
         validate();
 
         JdkHelper jdkHelper = new JdkHelper(project, getLog(), outputDirectory,
-            session, pluginManager, archiverManager, true);
+            session, pluginManager, archiverManager);
 
         if (isNotBlank(jdkName)) {
             // find the given JDK

@@ -48,6 +48,20 @@ public enum Algorithm {
     @JsonCreator
     public static Algorithm of(String str) {
         if (isBlank(str)) return null;
-        return Algorithm.valueOf(str.toUpperCase().trim());
+
+        String value = str.toUpperCase().trim();
+
+        switch (value) {
+            case "SHA1":
+                return SHA_1;
+            case "SHA256":
+                return SHA_256;
+            case "SHA384":
+                return SHA_384;
+            case "SHA512":
+                return SHA_512;
+        }
+
+        return Algorithm.valueOf(value);
     }
 }

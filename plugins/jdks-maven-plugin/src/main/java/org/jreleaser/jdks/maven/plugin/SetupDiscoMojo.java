@@ -94,7 +94,7 @@ public class SetupDiscoMojo extends AbstractMojo {
         Disco disco = initializeDisco();
 
         JdkHelper jdkHelper = new JdkHelper(project, getLog(), outputDirectory,
-            session, pluginManager, archiverManager, false);
+            session, pluginManager, archiverManager);
 
         for (Pkg pkg : pkgs) {
             Jdk jdk = resolvePkg(pkg, disco);
@@ -169,6 +169,8 @@ public class SetupDiscoMojo extends AbstractMojo {
         jdk.setName(pkg.getName());
         jdk.setPlatform(pkg.getPlatform());
         jdk.setUrl(result.get(0).getDirectDownloadUri());
+        jdk.setChecksum(result.get(0).getChecksum());
+        jdk.setChecksumType(result.get(0).getChecksumType());
         return jdk;
     }
 }

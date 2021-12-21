@@ -30,6 +30,7 @@ public class Jdk {
     private String platform;
     private String url;
     private String checksum;
+    private String checksumType = "sha256";
 
     public String getName() {
         return name;
@@ -63,6 +64,14 @@ public class Jdk {
         this.checksum = checksum;
     }
 
+    public String getChecksumType() {
+        return checksumType;
+    }
+
+    public void setChecksumType(String checksumType) {
+        this.checksumType = checksumType;
+    }
+
     public void validate(Errors errors) {
         if (isBlank(name)) {
             errors.configuration("jdk.name is missing");
@@ -77,6 +86,9 @@ public class Jdk {
         }
         if (isBlank(checksum)) {
             errors.configuration("jdk." + name + ".checksum is missing");
+        }
+        if (isBlank(checksumType)) {
+            errors.configuration("jdk." + name + ".checksumType is missing");
         }
     }
 }

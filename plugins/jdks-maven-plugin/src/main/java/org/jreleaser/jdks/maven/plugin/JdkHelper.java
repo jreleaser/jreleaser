@@ -25,11 +25,15 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.jreleaser.util.Algorithm;
+import org.jreleaser.util.ChecksumUtils;
 import org.jreleaser.util.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -54,18 +58,16 @@ public class JdkHelper {
     private final MavenSession session;
     private final BuildPluginManager pluginManager;
     private final ArchiverManager archiverManager;
-    private final boolean checksum;
 
     public JdkHelper(MavenProject project, Log log, File outputDirectory,
                      MavenSession session, BuildPluginManager pluginManager,
-                     ArchiverManager archiverManager, boolean checksum) {
+                     ArchiverManager archiverManager) {
         this.project = project;
         this.log = log;
         this.outputDirectory = outputDirectory;
         this.session = session;
         this.pluginManager = pluginManager;
         this.archiverManager = archiverManager;
-        this.checksum = checksum;
     }
 
     public void setupJdk(Jdk jdk) throws MojoExecutionException {
@@ -77,7 +79,7 @@ public class JdkHelper {
             downloaded = true;
         }
 
-        if (checksum) verifyJdk(jdkExtractDirectory, jdk);
+        verifyJdk(jdkExtractDirectory, jdk);
 
         File jdkDir = new File(jdkExtractDirectory, getDirname(jdk));
         if (jdkDir.exists()) {
@@ -126,11 +128,11 @@ public class JdkHelper {
     }
 
     private void verifyJdk(File jdkExtractDirectory, Jdk jdk) throws MojoExecutionException {
-        String algorithm = "SHA-256";
+        String algo = Algorithm.SHA_256.formatted();
         String checksum = jdk.getChecksum();
         if (checksum.contains("/")) {
             String[] parts = checksum.split("/");
-            algorithm = parts[0];
+            algo = parts[0];
             checksum = parts[1];
         }
 
@@ -138,16 +140,8 @@ public class JdkHelper {
 
         try {
             // calculate checksum
-            MessageDigest md = MessageDigest.getInstance(algorithm);
-            String calculatedChecksum;
-            try (FileInputStream fis = new FileInputStream(new File(jdkExtractDirectory, filename))) {
-                byte[] buf = new byte[1024];
-                int read;
-                while ((read = fis.read(buf)) != -1) {
-                    md.update(buf, 0, read);
-                }
-                calculatedChecksum = toHex(md.digest());
-            }
+            Path input = new File(jdkExtractDirectory, filename).toPath();
+            String calculatedChecksum = ChecksumUtils.checksum(Algorithm.of(algo), Files.readAllBytes(input));
 
             // verify checksum
             log.info("Verifying " + filename);
@@ -156,7 +150,7 @@ public class JdkHelper {
                     filename + "'. Expected " + checksum.toLowerCase() +
                     " but got " + calculatedChecksum.toLowerCase() + ".");
             }
-        } catch (IOException | NoSuchAlgorithmException e) {
+        } catch (Exception e) {
             throw new MojoExecutionException("Unexpected error when verifying " + filename, e);
         }
     }
