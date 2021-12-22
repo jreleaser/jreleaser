@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static org.jreleaser.model.Chocolatey.SKIP_CHOCOLATEY;
 import static org.jreleaser.model.util.Templates.resolve;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL;
@@ -160,5 +161,10 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
             .arg(CHOCOLATEY_PUSH_URL);
 
         executeCommand(packageDirectory, cmd);
+    }
+
+    @Override
+    protected boolean isSkipped(Artifact artifact) {
+        return isTrue(artifact.getExtraProperties().get(SKIP_CHOCOLATEY));
     }
 }

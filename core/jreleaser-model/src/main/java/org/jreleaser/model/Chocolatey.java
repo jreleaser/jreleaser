@@ -34,6 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Chocolatey extends AbstractRepositoryTool {
     public static final String NAME = "chocolatey";
     public static final String CHOCOLATEY_API_KEY = "CHOCOLATEY_API_KEY";
+    public static final String SKIP_CHOCOLATEY = "skipChocolatey";
 
     private final ChocolateyBucket bucket = new ChocolateyBucket();
     private String packageName;
