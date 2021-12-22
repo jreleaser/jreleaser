@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
@@ -27,8 +29,10 @@ import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.Errors;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
@@ -91,14 +95,21 @@ public abstract class MacportsValidator extends Validator {
             }
         }
 
-        // activate rmd160 checksum
         Set<String> fileExtensions = tool.getSupportedExtensions();
-        long count = distribution.getArtifacts().stream()
+        List<Artifact> candidateArtifacts = distribution.getArtifacts().stream()
             .filter(Artifact::isActive)
             .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
             .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
-            .count();
-        if (count > 0) {
+            .collect(toList());
+
+        if (candidateArtifacts.size() == 0) {
+            tool.setActive(Active.NEVER);
+            tool.disable();
+        } else if(candidateArtifacts.size()> 1) {
+            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".macports"));
+            tool.disable();
+        } else {
+            // activate rmd160 checksum
             context.getModel().getChecksum().getAlgorithms().add(Algorithm.RMD160);
         }
     }

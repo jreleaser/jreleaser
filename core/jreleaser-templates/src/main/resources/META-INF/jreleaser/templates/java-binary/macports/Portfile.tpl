@@ -34,14 +34,14 @@ use_configure    no
 build {}
 
 destroot {
-    set target ${destroot}${prefix}/share/java/${name}
+    set target ${destroot}${prefix}/share/${name}
 
-    # Create the target java directory
+    # Create the target directory
     xinstall -m 755 -d ${target}
 
     # Copy over the needed elements of our directory tree
-    foreach d { bin lib } {
-        copy ${worksrcpath}/${d} ${target}
+    foreach f [glob -dir ${worksrcpath} *] {
+        copy ${f} ${target}
     }
 
     # Remove extraneous files
@@ -49,7 +49,7 @@ destroot {
         delete ${f}
     }
 
-    ln -s ../share/java/${name}/bin/{{distributionExecutable}} ${destroot}${prefix}/bin/{{distributionExecutable}}
+    ln -s ../share/${name}/bin/{{distributionExecutable}} ${destroot}${prefix}/bin/{{distributionExecutable}}
 }
 
 livecheck.type   none

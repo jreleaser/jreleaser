@@ -124,13 +124,16 @@ public class Macports extends AbstractRepositoryTool {
 
     @Override
     public boolean supportsPlatform(String platform) {
-        return isBlank(platform) || PlatformUtils.isMac(platform);
+        return isBlank(platform) ||
+            (PlatformUtils.isMac(platform) && PlatformUtils.isIntel(platform));
     }
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
         return distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
-            distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE;
+            distribution.getType() == Distribution.DistributionType.JLINK ||
+            distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE ||
+            distribution.getType() == Distribution.DistributionType.BINARY;
     }
 
     public static class MacportsRepository extends AbstractRepositoryTap {
