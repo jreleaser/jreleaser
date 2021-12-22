@@ -18,6 +18,7 @@
 package org.jreleaser.tools;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Chocolatey;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
@@ -42,6 +43,7 @@ import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_USERNAME;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.util.Constants.KEY_PROJECT_LICENSE_URL;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray

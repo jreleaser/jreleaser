@@ -141,14 +141,13 @@ public class Chocolatey extends AbstractRepositoryTool {
 
     @Override
     public boolean supportsPlatform(String platform) {
-        return isBlank(platform) || PlatformUtils.isWindows(platform);
+        return isBlank(platform) || (PlatformUtils.isWindows(platform) && PlatformUtils.isIntel(platform));
     }
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
         return distribution.getType() != Distribution.DistributionType.SINGLE_JAR &&
-            distribution.getType() != Distribution.DistributionType.NATIVE_PACKAGE &&
-            distribution.getType() != Distribution.DistributionType.BINARY;
+            distribution.getType() != Distribution.DistributionType.NATIVE_PACKAGE;
     }
 
     public static class ChocolateyBucket extends AbstractRepositoryTap {
