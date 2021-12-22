@@ -41,18 +41,22 @@ labelers:
 
 categories:
   - title: '🔀 Merge'
+    key: 'merge'
     order: 0
     labels:
       - 'merge'
   - title: '🚀 Features'
+    key: 'features'
     order: 10
     labels:
       - 'feat'
   - title: '🐛 Fixes'
+    key: 'fixes'
     order: 20
     labels:
       - 'fix'
-  - title: '♻️  Changes'
+  - title: '🔄️ Changes'
+    key: 'changes'
     order: 30
     labels:
       - 'perf'
@@ -60,16 +64,19 @@ categories:
       - 'revert'
       - 'style'
   - title: '🧰 Tasks'
+    key: 'tasks'
     order: 40
     labels:
       - 'chore'
   - title: '🛠  Build'
+    key: 'build'
     order: 50
     labels:
       - 'test'
       - 'build'
       - 'ci'
   - title: '📝 Documentation'
+    key: 'docs'
     order: 60
     labels:
       - 'docs'

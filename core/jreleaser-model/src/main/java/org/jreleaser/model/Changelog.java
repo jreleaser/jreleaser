@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
 
@@ -334,11 +335,13 @@ public class Changelog implements Domain, EnabledAware {
         }
 
         private final Set<String> labels = new LinkedHashSet<>();
+        private String key;
         private String title;
         private String format;
         private Integer order;
 
         void setAll(Category category) {
+            this.key = category.key;
             this.title = category.title;
             this.format = category.format;
             this.order = category.order;
@@ -353,12 +356,23 @@ public class Changelog implements Domain, EnabledAware {
             this.format = format;
         }
 
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
         public String getTitle() {
             return title;
         }
 
         public void setTitle(String title) {
             this.title = title;
+            if (isBlank(this.key)) {
+                this.key = title;
+            }
         }
 
         public Set<String> getLabels() {
@@ -385,6 +399,7 @@ public class Changelog implements Domain, EnabledAware {
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
+            map.put("key", key);
             map.put("title", title);
             map.put("labels", labels);
             map.put("format", format);
@@ -397,7 +412,7 @@ public class Changelog implements Domain, EnabledAware {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Category category = (Category) o;
-            return title.equals(category.title);
+            return key.equals(category.key);
         }
 
         @Override
@@ -405,8 +420,9 @@ public class Changelog implements Domain, EnabledAware {
             return Objects.hash(title);
         }
 
-        public static Category of(String title, String format, String... labels) {
+        public static Category of(String key, String title, String format, String... labels) {
             Category category = new Category();
+            category.key = key;
             category.title = title;
             category.format = format;
             category.labels.addAll(Arrays.asList(labels));

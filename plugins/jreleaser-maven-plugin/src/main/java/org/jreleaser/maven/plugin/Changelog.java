@@ -259,15 +259,25 @@ public class Changelog implements EnabledAware {
 
     public static class Category {
         private final Set<String> labels = new LinkedHashSet<>();
+        private String key;
         private String title;
         private String format;
         private Integer order;
 
         void setAll(Category category) {
+            this.key = category.key;
             this.title = category.title;
             setLabels(category.labels);
             this.format = category.format;
             this.order = category.order;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
         }
 
         public String getTitle() {
@@ -309,14 +319,6 @@ public class Changelog implements EnabledAware {
 
         public void setOrder(Integer order) {
             this.order = order;
-        }
-
-        public static Category of(String title, String format, String... labels) {
-            Category category = new Category();
-            category.title = title;
-            category.format = format;
-            category.labels.addAll(Arrays.asList(labels));
-            return category;
         }
     }
 

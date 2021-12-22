@@ -247,8 +247,8 @@ public abstract class GitServiceValidator extends Validator {
         }
 
         if (changelog.getCategories().isEmpty()) {
-            changelog.getCategories().add(Changelog.Category.of(RB.$("default.category.feature"), "", "feature", "enhancement"));
-            changelog.getCategories().add(Changelog.Category.of(RB.$("default.category.bug.fix"), "", "bug", "fix"));
+            changelog.getCategories().add(Changelog.Category.of("feature", RB.$("default.category.feature"), "", "feature", "enhancement"));
+            changelog.getCategories().add(Changelog.Category.of("fix", RB.$("default.category.bug.fix"), "", "bug", "fix"));
         } else {
             int i = 0;
             for (Changelog.Category category : changelog.getCategories()) {
@@ -325,19 +325,19 @@ public abstract class GitServiceValidator extends Validator {
                 replacersCopy.addAll(loaded.getReplacers());
                 changelog.setReplacers(replacersCopy);
 
-                Map<String, List<Changelog.Category>> categoriesByTitle = changelog.getCategories().stream()
-                    .collect(groupingBy(Changelog.Category::getTitle));
-                Map<String, List<Changelog.Category>> loadedCategoriesByTitle = loaded.getCategories().stream()
-                    .collect(groupingBy(Changelog.Category::getTitle));
-                categoriesByTitle.forEach((categoryTitle, categories) -> {
-                    if (loadedCategoriesByTitle.containsKey(categoryTitle)) {
-                        Changelog.Category loadedCategory = loadedCategoriesByTitle.remove(categoryTitle).get(0);
+                Map<String, List<Changelog.Category>> categoriesByKey = changelog.getCategories().stream()
+                    .collect(groupingBy(Changelog.Category::getKey));
+                Map<String, List<Changelog.Category>> loadedCategoriesByKey = loaded.getCategories().stream()
+                    .collect(groupingBy(Changelog.Category::getKey));
+                categoriesByKey.forEach((categoryKey, categories) -> {
+                    if (loadedCategoriesByKey.containsKey(categoryKey)) {
+                        Changelog.Category loadedCategory = loadedCategoriesByKey.remove(categoryKey).get(0);
                         Changelog.Category category = categories.get(0);
                         category.addLabels(loadedCategory.getLabels());
                     }
                 });
 
-                loadedCategoriesByTitle.values().forEach(list -> changelog.getCategories().add(list.get(0)));
+                loadedCategoriesByKey.values().forEach(list -> changelog.getCategories().add(list.get(0)));
                 // sort categories once again as order might have changed
                 changelog.setCategories(Changelog.Category.sort(changelog.getCategories()));
 

@@ -88,6 +88,8 @@ interface Changelog {
     void contributors(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Contributors) Closure<Void> action)
 
     interface Category {
+        Property<String> getKey()
+
         Property<String> getTitle()
 
         SetProperty<String> getLabels()

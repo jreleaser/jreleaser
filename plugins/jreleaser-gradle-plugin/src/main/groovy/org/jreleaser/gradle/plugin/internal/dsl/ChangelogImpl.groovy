@@ -228,6 +228,7 @@ class ChangelogImpl implements Changelog {
 
     @CompileStatic
     static class CategoryImpl implements Category {
+        final Property<String> key
         final Property<String> title
         final SetProperty<String> labels
         final Property<String> format
@@ -235,6 +236,7 @@ class ChangelogImpl implements Changelog {
 
         @Inject
         CategoryImpl(ObjectFactory objects) {
+            key = objects.property(String).convention(Providers.notDefined())
             title = objects.property(String).convention(Providers.notDefined())
             labels = objects.setProperty(String).convention(Providers.notDefined())
             format = objects.property(String).convention(Providers.notDefined())
@@ -243,6 +245,7 @@ class ChangelogImpl implements Changelog {
 
         org.jreleaser.model.Changelog.Category toModel() {
             org.jreleaser.model.Changelog.Category category = new org.jreleaser.model.Changelog.Category()
+            category.key = key.orNull
             category.title = title.orNull
             category.labels = (Set<String>) labels.getOrElse([] as Set)
             category.format = format.orNull

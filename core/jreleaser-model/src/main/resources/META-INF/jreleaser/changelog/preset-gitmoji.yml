@@ -143,51 +143,63 @@ labelers:
     title: 'regex:^(🔖|:bookmark:).*'
 
 categories:
-  - title: 'Merge'
+  - title: '🔀 Merge'
+    key: 'merge'
     order: 0
     labels:
       - 'merge'
-  - title: 'Added'
+  - title: '🚀 Added'
+    key: 'added'
     order: 10
     labels:
       - 'added'
-  - title: 'Changed'
+  - title: '🔄️ Changed'
+    key: 'changed'
     order: 20
     labels:
       - 'changed'
-  - title: 'Breaking'
+  - title: '🚨 Breaking'
+    key: 'breaking'
     order: 30
     labels:
       - 'breaking_changes'
-  - title: 'Deprecated'
+  - title: '💥 Deprecated'
+    key: 'deprecated'
     order: 40
     labels:
       - 'deprecated'
-  - title: 'Removed'
+  - title: '🗑 Removed'
+    key: 'removed'
     order: 50
     labels:
       - 'removed'
-  - title: 'Fixed'
+  - title: '🐛 Fixed'
+    key: 'fixed'
     order: 60
     labels:
       - 'fixed'
-  - title: 'Security'
+  - title: '🔒️ Security'
+    key: 'security'
     order: 70
     labels:
       - 'security'
-  - title: 'Dependencies'
+  - title: '📦 Dependencies'
+    key: 'deps'
     order: 80
     labels:
       - 'dependencies'
-  - title: 'Documentation'
+  - title: '📝 Documentation'
+    key: 'docs'
     order: 90
     labels:
       - 'documentation'
-  - title: 'Miscellaneous'
+  - title: '🎲 Miscellaneous'
+    key: 'misc'
     order: 100
     labels:
       - 'misc'
-  - title: 'Release'
+  - title: '🏁 Release'
+    key: 'release'
     order: 110
     labels:
       - 'release'

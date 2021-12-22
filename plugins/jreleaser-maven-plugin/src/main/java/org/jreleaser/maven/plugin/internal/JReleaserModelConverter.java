@@ -364,6 +364,7 @@ public final class JReleaserModelConverter {
         Set<org.jreleaser.model.Changelog.Category> set = new LinkedHashSet<>();
         for (Changelog.Category category : categories) {
             org.jreleaser.model.Changelog.Category c = new org.jreleaser.model.Changelog.Category();
+            c.setKey(tr(category.getKey()));
             c.setTitle(tr(category.getTitle()));
             c.setLabels(category.getLabels());
             c.setFormat(tr(category.getFormat()));
