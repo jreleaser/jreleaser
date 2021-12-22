@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.FileType;
+import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -102,12 +103,16 @@ public class Spec extends AbstractRepositoryTool {
 
     @Override
     public boolean supportsPlatform(String platform) {
-        return isBlank(platform);
+        return isBlank(platform) ||
+            (PlatformUtils.isLinux(platform) && PlatformUtils.isIntel(platform) && !PlatformUtils.isAlpineLinux(platform));
     }
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
-        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY;
+        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
+            distribution.getType() == Distribution.DistributionType.JLINK ||
+            distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE ||
+            distribution.getType() == Distribution.DistributionType.BINARY;
     }
 
     @Override
@@ -120,6 +125,7 @@ public class Spec extends AbstractRepositoryTool {
         set.add(FileType.TGZ.extension());
         set.add(FileType.TXZ.extension());
         set.add(FileType.TAR.extension());
+        set.add(FileType.ZIP.extension());
         return set;
     }
 

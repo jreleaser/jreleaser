@@ -250,6 +250,7 @@ public interface Constants {
     String KEY_SPEC_RELEASE = "specRelease";
     String KEY_SPEC_REQUIRES = "specRequires";
     String KEY_SPEC_DIRECTORIES = "specDirectories";
+    String KEY_SPEC_BINARIES = "specBinaries";
     String KEY_SPEC_FILES = "specFiles";
 
     // Directories

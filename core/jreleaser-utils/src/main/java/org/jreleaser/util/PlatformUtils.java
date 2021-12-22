@@ -106,6 +106,34 @@ public final class PlatformUtils {
         }
     }
 
+    public static boolean isIntel(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        switch (parts.length) {
+            case 1:
+            case 2:
+                return "x86_64".equals(parts[1]) ||
+                    "x86_32".equals(parts[1]);
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isArm(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        switch (parts.length) {
+            case 1:
+            case 2:
+                return "arm_32".equals(parts[1]) ||
+                    "aarch_64".equals(parts[1]);
+            default:
+                return false;
+        }
+    }
+
     public static boolean isWindows(String osNameOrClassifier) {
         if (isBlank(osNameOrClassifier)) return false;
         String[] parts = osNameOrClassifier.split("-");

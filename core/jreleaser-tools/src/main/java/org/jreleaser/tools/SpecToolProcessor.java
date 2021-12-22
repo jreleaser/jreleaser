@@ -36,6 +36,7 @@ import java.util.Set;
 import static org.jreleaser.model.Spec.SKIP_SPEC;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT;
+import static org.jreleaser.util.Constants.KEY_SPEC_BINARIES;
 import static org.jreleaser.util.Constants.KEY_SPEC_DIRECTORIES;
 import static org.jreleaser.util.Constants.KEY_SPEC_FILES;
 import static org.jreleaser.util.Constants.KEY_SPEC_PACKAGE_NAME;
@@ -68,17 +69,33 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
             List<String> entries = FileUtils.inspectArchive(artifactPath);
 
             Set<String> directories = new LinkedHashSet<>();
+            List<String> binaries = new ArrayList<>();
             List<String> files = new ArrayList<>();
 
             entries.stream()
-                // skip Windows
+                // skip Windows executables
                 .filter(e -> !e.endsWith(distribution.getExecutableExtension()))
-                // skip executable
-                .filter(e -> !e.endsWith("bin/" + distribution.getExecutable()))
                 // skip directories
                 .filter(e -> !e.endsWith("/"))
                 // remove root from name
                 .map(e -> e.substring(artifactName.length() + 1))
+                // match only binaries
+                .filter(e -> e.startsWith("bin/"))
+                .sorted()
+                .forEach(entry -> {
+                    String[] parts = entry.split("/");
+                    binaries.add(parts[1]);
+                });
+
+            entries.stream()
+                // skip Windows executables
+                .filter(e -> !e.endsWith(distribution.getExecutableExtension()))
+                // skip directories
+                .filter(e -> !e.endsWith("/"))
+                // remove root from name
+                .map(e -> e.substring(artifactName.length() + 1))
+                // skip executables
+                .filter(e -> !e.startsWith("bin/"))
                 .sorted()
                 .forEach(entry -> {
                     String[] parts = entry.split("/");
@@ -90,6 +107,7 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
                 });
 
             props.put(KEY_SPEC_DIRECTORIES, directories);
+            props.put(KEY_SPEC_BINARIES, binaries);
             props.put(KEY_SPEC_FILES, files);
         } catch (IOException e) {
             throw new ToolProcessingException("ERROR", e);

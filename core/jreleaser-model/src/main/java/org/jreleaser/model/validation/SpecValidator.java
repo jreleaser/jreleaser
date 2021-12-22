@@ -26,6 +26,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Spec;
 import org.jreleaser.util.Errors;
+import org.jreleaser.util.PlatformUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -102,6 +103,7 @@ public abstract class SpecValidator extends Validator {
         List<Artifact> candidateArtifacts = distribution.getArtifacts().stream()
             .filter(Artifact::isActive)
             .filter(artifact -> tool.getSupportedExtensions().stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
+            .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
             .filter(artifact -> !isTrue(artifact.getExtraProperties().get(SKIP_SPEC)))
             .collect(toList());
 

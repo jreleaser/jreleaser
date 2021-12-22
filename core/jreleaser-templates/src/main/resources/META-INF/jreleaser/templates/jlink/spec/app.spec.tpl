@@ -8,7 +8,7 @@ License:   {{projectLicense}}
 URL:       {{projectWebsite}}
 Source0:   {{distributionUrl}}
 
-BuildArch: noarch
+BuildArch: x86_64
 {{#specRequires}}
 Requires:  {{.}}
 {{/specRequires}}
