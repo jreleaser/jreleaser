@@ -131,7 +131,10 @@ public class VersionTest {
             Arguments.of("0.1.2", "0.1.3"),
             Arguments.of("0", "0.1"),
             Arguments.of("0", "0.1.2"),
-            Arguments.of("0.1", "0.1.2")
+            Arguments.of("0.1", "0.1.2"),
+            Arguments.of("0.1.0.Alpha1", "0.1.0.Alpha2"),
+            Arguments.of("0.1.0+1", "0.1.0+2"),
+            Arguments.of("0.1.0.Alpha1+1", "0.1.0.Alpha1+2")
         );
     }
 }

@@ -32,22 +32,28 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.2.0
  */
 public class Version implements Comparable<Version> {
-    private static final Pattern FULL_SEMVER_PATTERN = Pattern.compile("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:[\\.\\-]((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
-    private static final Pattern MAJOR_MINOR_PATTERN = Pattern.compile("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:[\\.\\-]((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
-    private static final Pattern MAJOR_PATTERN = Pattern.compile("^(0|[1-9]\\d*)(?:[\\.\\-]((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
+    private static final Pattern FULL_SEMVER_PATTERN = Pattern.compile("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:([\\.\\-])((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
+    private static final Pattern MAJOR_MINOR_PATTERN = Pattern.compile("^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:([\\.\\-])((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
+    private static final Pattern MAJOR_PATTERN = Pattern.compile("^(0|[1-9]\\d*)(?:([\\.\\-])((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$");
 
     private final int major;
     private final int minor;
     private final int patch;
+    private final String tagsep;
     private final String tag;
     private final String build;
 
-    private Version(int major, int minor, int patch, String tag, String build) {
+    private Version(int major, int minor, int patch, String tagsep, String tag, String build) {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
+        this.tagsep = isNotBlank(tagsep) ? tagsep.trim() : null;
         this.tag = isNotBlank(tag) ? tag.trim() : null;
         this.build = isNotBlank(build) ? build.trim() : null;
+
+        if (isNotBlank(tagsep)) {
+            requireState(tagsep.equals(".") || tagsep.equals("-"), "Argument 'tagsep' must not be '.' or '-'");
+        }
     }
 
     public boolean hasMinor() {
@@ -92,7 +98,7 @@ public class Version implements Comparable<Version> {
         b.append(major);
         if (hasMinor()) b.append(".").append(minor);
         if (hasPatch()) b.append(".").append(patch);
-        if (hasTag()) b.append("-").append(tag);
+        if (hasTag()) b.append(tagsep).append(tag);
         if (hasBuild()) b.append("+").append(build);
         return b.toString();
     }
@@ -123,6 +129,14 @@ public class Version implements Comparable<Version> {
                 result = patch - other.patch;
             }
         }
+
+        if (result == 0 && isNotBlank(tag)) {
+            result = tag.compareTo(other.tag);
+        }
+        if (result == 0 && isNotBlank(build)) {
+            result = build.compareTo(other.build);
+        }
+
         return result;
     }
 
@@ -144,12 +158,14 @@ public class Version implements Comparable<Version> {
             String major = m.group(1);
             String minor = m.group(2);
             String patch = m.group(3);
-            String tag = m.group(4);
-            String build = m.group(5);
+            String tagsep = m.group(4);
+            String tag = m.group(5);
+            String build = m.group(6);
 
             return of(Integer.parseInt(major),
                 Integer.parseInt(minor),
                 Integer.parseInt(patch),
+                isNotBlank(tagsep) ? tagsep : null,
                 isNotBlank(tag) ? tag : null,
                 isNotBlank(build) ? build : null);
         }
@@ -158,11 +174,13 @@ public class Version implements Comparable<Version> {
         if (m.matches()) {
             String major = m.group(1);
             String minor = m.group(2);
-            String tag = m.group(3);
-            String build = m.group(4);
+            String tagsep = m.group(3);
+            String tag = m.group(4);
+            String build = m.group(5);
 
             return of(Integer.parseInt(major),
                 Integer.parseInt(minor),
+                isNotBlank(tagsep) ? tagsep : null,
                 isNotBlank(tag) ? tag : null,
                 isNotBlank(build) ? build : null);
         }
@@ -170,10 +188,12 @@ public class Version implements Comparable<Version> {
         m = MAJOR_PATTERN.matcher(version);
         if (m.matches()) {
             String major = m.group(1);
-            String tag = m.group(2);
-            String build = m.group(3);
+            String tagsep = m.group(2);
+            String tag = m.group(3);
+            String build = m.group(4);
 
             return of(Integer.parseInt(major),
+                isNotBlank(tagsep) ? tagsep : null,
                 isNotBlank(tag) ? tag : null,
                 isNotBlank(build) ? build : null);
         }
@@ -182,20 +202,32 @@ public class Version implements Comparable<Version> {
     }
 
     public static Version of(int major, int minor, int patch, String tag, String build) {
+        return of(major, minor, patch, ".", tag, build);
+    }
+
+    public static Version of(int major, int minor, int patch, String tagsep, String tag, String build) {
         requireState(major > -1, "Argument 'major' must not be negative");
         requireState(minor > -1, "Argument 'minor' must not be negative");
         requireState(patch > -1, "Argument 'patch' must not be negative");
-        return new Version(major, minor, patch, tag, build);
+        return new Version(major, minor, patch, tagsep, tag, build);
     }
 
     public static Version of(int major, int minor, String tag, String build) {
+        return of(major, minor, ".", tag, build);
+    }
+
+    public static Version of(int major, int minor, String tagsep, String tag, String build) {
         requireState(major > -1, "Argument 'major' must not be negative");
         requireState(minor > -1, "Argument 'minor' must not be negative");
-        return new Version(major, minor, -1, tag, build);
+        return new Version(major, minor, -1, tagsep, tag, build);
     }
 
     public static Version of(int major, String tag, String build) {
+        return of(major, ".", tag, build);
+    }
+
+    public static Version of(int major, String tagsep, String tag, String build) {
         requireState(major > -1, "Argument 'major' must not be negative");
-        return new Version(major, -1, -1, tag, build);
+        return new Version(major, -1, -1, tagsep, tag, build);
     }
 }
