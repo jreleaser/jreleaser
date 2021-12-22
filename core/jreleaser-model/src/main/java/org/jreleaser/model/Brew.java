@@ -42,6 +42,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Brew extends AbstractRepositoryTool {
     public static final String NAME = "brew";
+    public static final String SKIP_BREW = "skipBrew";
+
     private final List<Dependency> dependencies = new ArrayList<>();
     private final List<String> livecheck = new ArrayList<>();
     private final HomebrewTap tap = new HomebrewTap();

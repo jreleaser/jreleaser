@@ -118,6 +118,7 @@ public abstract class SnapValidator extends Validator {
         List<Artifact> candidateArtifacts = distribution.getArtifacts().stream()
             .filter(Artifact::isActive)
             .filter(artifact -> tool.getSupportedExtensions().stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
+            .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
             .filter(artifact -> !isTrue(artifact.getExtraProperties().get(SKIP_SNAP)))
             .collect(toList());
 

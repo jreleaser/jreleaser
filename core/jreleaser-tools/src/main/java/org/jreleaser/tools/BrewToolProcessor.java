@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.jreleaser.model.Brew.SKIP_BREW;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCHIVE_FORMAT;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_NAME;
@@ -155,7 +156,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             if (!hasApp && !hasPkg) {
                 for (Artifact artifact : distribution.getArtifacts()) {
                     if (!artifact.isActive()) continue;
-                    if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
+                    if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW))) {
                         props.put(KEY_DISTRIBUTION_URL, resolveArtifactUrl(props, distribution, artifact));
                         props.put(KEY_BREW_CASK_HAS_BINARY, true);
                         break;
@@ -168,7 +169,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
                 if (!artifact.isActive() ||
                     !artifact.getPath().endsWith(".zip") ||
                     isBlank(artifact.getPlatform()) ||
-                    isTrue(artifact.getExtraProperties().get("skipBrew"))) continue;
+                    isTrue(artifact.getExtraProperties().get(SKIP_BREW))) continue;
 
                 String template = null;
                 String artifactUrl = resolveArtifactUrl(props, distribution, artifact);

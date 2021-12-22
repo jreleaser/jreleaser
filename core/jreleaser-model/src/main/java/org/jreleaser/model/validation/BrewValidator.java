@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.model.Brew.SKIP_BREW;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
@@ -143,12 +144,12 @@ public abstract class BrewValidator extends Validator {
         String pkgName = "";
         for (Artifact artifact : distribution.getArtifacts()) {
             if (!artifact.isActive() || !PlatformUtils.isMac(artifact.getPlatform())) continue;
-            if (artifact.getPath().endsWith(".dmg") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
+            if (artifact.getPath().endsWith(".dmg") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW))) {
                 dmgFound++;
-            } else if (artifact.getPath().endsWith(".pkg") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
+            } else if (artifact.getPath().endsWith(".pkg") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW))) {
                 pkgFound++;
                 pkgName = artifact.getEffectivePath(context).getFileName().toString();
-            } else if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get("skipBrew"))) {
+            } else if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW))) {
                 zipFound++;
             }
         }

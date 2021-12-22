@@ -26,7 +26,6 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Spec;
 import org.jreleaser.util.Errors;
-import org.jreleaser.util.PlatformUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -110,7 +109,7 @@ public abstract class SpecValidator extends Validator {
         if (candidateArtifacts.size() == 0) {
             tool.setActive(Active.NEVER);
             tool.disable();
-        } else if(candidateArtifacts.size()> 1) {
+        } else if (candidateArtifacts.size() > 1) {
             errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".spec"));
             tool.disable();
         }
