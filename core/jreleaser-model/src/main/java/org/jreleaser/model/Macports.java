@@ -32,6 +32,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Macports extends AbstractRepositoryTool {
     public static final String NAME = "macports";
+    public static final String SKIP_MACPORTS = "skipMacports";
+
     private final List<String> categories = new ArrayList<>();
     private final List<String> maintainers = new ArrayList<>();
     private final MacportsRepository repository = new MacportsRepository();

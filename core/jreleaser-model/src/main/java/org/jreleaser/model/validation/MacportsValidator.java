@@ -33,10 +33,12 @@ import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
+import static org.jreleaser.model.Macports.SKIP_MACPORTS;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -100,12 +102,13 @@ public abstract class MacportsValidator extends Validator {
             .filter(Artifact::isActive)
             .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
             .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
+            .filter(artifact -> !isTrue(artifact.getExtraProperties().get(SKIP_MACPORTS)))
             .collect(toList());
 
         if (candidateArtifacts.size() == 0) {
             tool.setActive(Active.NEVER);
             tool.disable();
-        } else if(candidateArtifacts.size()> 1) {
+        } else if (candidateArtifacts.size() > 1) {
             errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".macports"));
             tool.disable();
         } else {
