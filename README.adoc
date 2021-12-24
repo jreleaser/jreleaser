@@ -102,6 +102,12 @@ flatpak install --user flathub org.jreleaser.cli
 flatpak run org.jreleaser.cli
 ----
 
+*GoFish*
+[source]
+----
+gofish install jreleaser
+----
+
 *Curl*
 
 Requires Java 11
