@@ -110,6 +110,7 @@ gofish install jreleaser
 
 *AppImage*
 [source]
+[subs="attributes"]
 ----
 curl https://github.com/jreleaser/jreleaser-appimage/releases/download/v{project-version}/jreleaser-{project-version}-x86_64.AppImage --output jreleaser
 chmod +x jreleaser
