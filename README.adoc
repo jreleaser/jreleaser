@@ -108,6 +108,13 @@ flatpak run org.jreleaser.cli
 gofish install jreleaser
 ----
 
+*AppImage*
+[source]
+----
+curl https://github.com/jreleaser/jreleaser-appimage/releases/download/v{project-version}/jreleaser-{project-version}-x86_64.AppImage --output jreleaser
+chmod +x jreleaser
+----
+
 *Curl*
 
 Requires Java 11
