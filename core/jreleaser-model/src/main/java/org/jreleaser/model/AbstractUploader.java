@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.util.Artifacts;
 
 import java.util.Arrays;
@@ -35,9 +36,12 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @since 0.3.0
  */
 abstract class AbstractUploader implements Uploader {
+    @JsonIgnore
     protected final String type;
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    @JsonIgnore
     protected String name;
+    @JsonIgnore
     protected boolean enabled;
     protected Active active;
     private int connectTimeout;

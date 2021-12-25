@@ -32,7 +32,8 @@ import java.io.PrintWriter;
         Checksum.class, Sign.class, Upload.class,
         Release.class, Prepare.class, Package.class,
         Publish.class, Announce.class, FullRelease.class,
-        AutoComplete.GenerateCompletion.class})
+        AutoComplete.GenerateCompletion.class,
+        JsonSchema.class})
 public class Main extends BaseCommand implements Runnable {
     PrintWriter out;
     PrintWriter err;

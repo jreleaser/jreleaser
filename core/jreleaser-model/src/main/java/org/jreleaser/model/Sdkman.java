@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.FileType;
 
@@ -45,6 +46,7 @@ public class Sdkman extends AbstractTool implements TimeoutAware {
     private String consumerToken;
     private int connectTimeout;
     private int readTimeout;
+    @JsonIgnore
     private boolean published;
 
     public Sdkman() {

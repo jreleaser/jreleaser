@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Algorithm;
 
@@ -43,15 +44,20 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Artifact implements Domain, ExtraProperties {
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    @JsonIgnore
     private final Map<Algorithm, String> hashes = new LinkedHashMap<>();
 
     private String path;
     private String platform;
     private String transform;
-    private Path effectivePath;
-    private Path resolvedPath;
-    private Path resolvedTransform;
+    @JsonIgnore
     private boolean active;
+    @JsonIgnore
+    private Path effectivePath;
+    @JsonIgnore
+    private Path resolvedPath;
+    @JsonIgnore
+    private Path resolvedTransform;
 
     void setAll(Artifact artifact) {
         this.effectivePath = artifact.effectivePath;

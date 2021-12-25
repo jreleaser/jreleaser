@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.FileType;
 
 import java.util.Collections;
@@ -30,11 +31,14 @@ import java.util.Set;
  * @since 0.1.0
  */
 public abstract class AbstractTool implements Tool {
+    @JsonIgnore
     protected final String name;
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    @JsonIgnore
     protected boolean enabled;
     protected Active active;
     protected Boolean continueOnError;
+    @JsonIgnore
     protected boolean failed;
 
     protected AbstractTool(String name) {

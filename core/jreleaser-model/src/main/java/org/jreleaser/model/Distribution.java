@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Version;
@@ -52,6 +53,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     private final Java java = new Java();
     private final Platform platform = new Platform();
     private Active active;
+    @JsonIgnore
     private boolean enabled;
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;

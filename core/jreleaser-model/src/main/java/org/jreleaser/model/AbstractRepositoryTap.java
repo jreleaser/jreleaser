@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.util.Templates;
 import org.jreleaser.util.Env;
 
@@ -33,8 +34,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class AbstractRepositoryTap implements RepositoryTap {
     protected Active active;
+    @JsonIgnore
     protected boolean enabled;
+    @JsonIgnore
     protected String basename;
+    @JsonIgnore
     protected String tapName;
     protected String owner;
     protected String name;

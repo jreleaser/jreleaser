@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.util.Artifacts;
 
@@ -54,11 +55,15 @@ public class Glob implements Domain, ExtraProperties {
 
     private String pattern;
     private String platform;
+    @JsonIgnore
     private Set<Artifact> artifacts;
 
     private String directory;
+    @JsonIgnore
     private String include;
+    @JsonIgnore
     private String exclude;
+    @JsonIgnore
     private Boolean recursive;
 
     void setAll(Glob glob) {

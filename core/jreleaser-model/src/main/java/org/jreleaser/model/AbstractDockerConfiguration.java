@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -40,6 +42,7 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
     protected final List<String> preCommands = new ArrayList<>();
     protected final List<String> postCommands = new ArrayList<>();
     protected final Set<Registry> registries = new LinkedHashSet<>();
+    @JsonIgnore
     protected boolean enabled;
     protected Active active;
     protected String templateDirectory;

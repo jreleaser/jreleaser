@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.config.JReleaserConfigParser;
@@ -43,9 +44,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Environment implements Domain {
     private final Map<String, Object> properties = new LinkedHashMap<>();
+    @JsonIgnore
     private PropertiesSource propertiesSource;
     private String variables;
     private Properties vars;
+    @JsonIgnore
     private Path propertiesFile;
 
     void setAll(Environment environment) {

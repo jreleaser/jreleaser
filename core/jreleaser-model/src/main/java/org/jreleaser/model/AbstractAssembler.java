@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.Constants;
 
 import java.util.ArrayList;
@@ -34,12 +35,16 @@ import static org.jreleaser.util.MustacheUtils.applyTemplates;
  * @since 0.2.0
  */
 abstract class AbstractAssembler implements Assembler {
+    @JsonIgnore
     protected final Set<Artifact> outputs = new LinkedHashSet<>();
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected final List<FileSet> fileSets = new ArrayList<>();
     private final Platform platform = new Platform();
+    @JsonIgnore
     private final String type;
+    @JsonIgnore
     protected String name;
+    @JsonIgnore
     protected boolean enabled;
     protected Active active;
     protected Boolean exported;

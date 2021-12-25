@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,7 +29,9 @@ import java.util.Map;
  */
 abstract class AbstractAnnouncer implements Announcer {
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    @JsonIgnore
     protected String name;
+    @JsonIgnore
     protected boolean enabled;
     protected Active active;
     private int connectTimeout;

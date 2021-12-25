@@ -44,7 +44,7 @@ import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
  * @since 0.1.0
  */
 @CommandLine.Command
-public abstract class AbstractModelCommand extends AbstractCommand {
+public abstract class AbstractModelCommand extends AbstractLoggingCommand {
     @CommandLine.Option(names = {"-c", "--config-file"})
     Path configFile;
 

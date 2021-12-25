@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.MustacheUtils;
@@ -54,10 +55,12 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     public static final String BRANCH = "BRANCH";
     public static final String PRERELEASE_PATTERN = "PRERELEASE_PATTERN";
 
+    @JsonIgnore
     private final String serviceName;
     private final Changelog changelog = new Changelog();
     private final Milestone milestone = new Milestone();
     private final CommitAuthor commitAuthor = new CommitAuthor();
+    @JsonIgnore
     private final boolean releaseSupported;
     private final Set<UpdateSection> updateSections = new LinkedHashSet<>();
 
@@ -92,7 +95,9 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private Boolean checksums;
     private Boolean signatures;
 
+    @JsonIgnore
     private String cachedTagName;
+    @JsonIgnore
     private String cachedReleaseName;
 
     protected GitService(String serviceName, boolean releaseSupported) {
@@ -883,6 +888,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         private Boolean close;
         private String name;
 
+        @JsonIgnore
         private String cachedName;
 
         void setAll(Milestone changelog) {

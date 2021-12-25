@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.Env;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class Signing implements Domain, Activatable {
     private final List<String> args = new ArrayList<>();
 
     private Active active;
+    @JsonIgnore
     private boolean enabled;
     private Boolean armored;
     private String publicKey;

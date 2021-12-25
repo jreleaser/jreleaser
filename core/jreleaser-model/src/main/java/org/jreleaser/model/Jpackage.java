@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.PlatformUtils;
 
@@ -351,6 +352,7 @@ public class Jpackage extends AbstractJavaAssembler {
         private final List<String> validTypes = new ArrayList<>();
         private final String platform;
 
+        @JsonIgnore
         private boolean enabled;
         private String icon;
         private String installDir;

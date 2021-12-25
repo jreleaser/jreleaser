@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -32,6 +34,7 @@ public class Files implements Domain {
     private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final List<Glob> globs = new ArrayList<>();
     private final Set<Artifact> paths = new LinkedHashSet<>();
+    @JsonIgnore
     private boolean resolved;
 
     public boolean isEmpty() {

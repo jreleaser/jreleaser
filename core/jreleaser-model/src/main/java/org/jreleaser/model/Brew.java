@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
@@ -282,9 +283,13 @@ public class Brew extends AbstractRepositoryTool {
         private String appName;
         private String appcast;
 
+        @JsonIgnore
         private String cachedCaskName;
+        @JsonIgnore
         private String cachedDisplayName;
+        @JsonIgnore
         private String cachedAppName;
+        @JsonIgnore
         private String cachedPkgName;
 
         void setAll(Cask cask) {

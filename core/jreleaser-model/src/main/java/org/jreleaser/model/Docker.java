@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
@@ -40,6 +41,7 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
     private final DockerRepository repository = new DockerRepository();
 
     private Boolean continueOnError;
+    @JsonIgnore
     private boolean failed;
 
     void setAll(Docker docker) {

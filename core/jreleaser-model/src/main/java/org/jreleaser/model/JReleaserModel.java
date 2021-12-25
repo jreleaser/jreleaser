@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.util.Constants;
@@ -55,8 +56,11 @@ public class JReleaserModel implements Domain {
     private final Files files = new Files();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
 
+    @JsonIgnore
     private final ZonedDateTime now;
+    @JsonIgnore
     private final String timestamp;
+    @JsonIgnore
     private Commit commit;
 
     public JReleaserModel() {

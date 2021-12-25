@@ -28,10 +28,10 @@ import java.nio.file.Paths;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.10.0
  */
 @CommandLine.Command(name = "template")
-public class Template extends AbstractCommand {
+public class Template extends AbstractLoggingCommand {
     @CommandLine.ArgGroup(exclusive = true, multiplicity = "1")
     Composite composite;
 

@@ -45,7 +45,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "init")
-public class Init extends AbstractCommand {
+public class Init extends AbstractLoggingCommand {
     @CommandLine.Option(names = {"-o", "--overwrite"})
     boolean overwrite;
 
