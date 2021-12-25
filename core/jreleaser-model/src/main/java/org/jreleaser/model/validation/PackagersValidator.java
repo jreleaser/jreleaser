@@ -72,6 +72,18 @@ public abstract class PackagersValidator extends Validator {
             errors.configuration(RB.$("validation_packagers_docker_specs"));
         }
 
+        packagers.getGofish().resolveEnabled(project);
+        packagers.getGofish().getRepository().resolveEnabled(project);
+        validatePackager(context,
+            packagers.getGofish(),
+            packagers.getGofish().getRepository(),
+            errors);
+
+        if (isBlank(packagers.getGofish().getRepository().getName())) {
+            packagers.getGofish().getRepository().setName(model.getRelease().getGitService().getOwner() + "-fish-food");
+        }
+        packagers.getGofish().getRepository().setTapName(model.getRelease().getGitService().getOwner() + "-fish-food");
+
         packagers.getJbang().resolveEnabled(project);
         packagers.getJbang().getCatalog().resolveEnabled(project);
         validatePackager(context,

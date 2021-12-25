@@ -33,6 +33,8 @@ interface Packagers {
 
     Docker getDocker()
 
+    Gofish getGofish()
+
     Jbang getJbang()
 
     Macports getMacports()
@@ -51,6 +53,8 @@ interface Packagers {
 
     void docker(Action<? super Docker> action)
 
+    void gofish(Action<? super Gofish> action)
+
     void jbang(Action<? super Jbang> action)
 
     void macports(Action<? super Macports> action)
@@ -68,6 +72,8 @@ interface Packagers {
     void chocolatey(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Chocolatey) Closure<Void> action)
 
     void docker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Docker) Closure<Void> action)
+
+    void gofish(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Gofish) Closure<Void> action)
 
     void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jbang) Closure<Void> action)
 

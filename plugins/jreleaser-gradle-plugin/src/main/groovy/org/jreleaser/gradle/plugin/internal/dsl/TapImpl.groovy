@@ -26,6 +26,7 @@ import org.jreleaser.gradle.plugin.dsl.Tap
 import org.jreleaser.model.Active
 import org.jreleaser.model.Brew
 import org.jreleaser.model.Chocolatey
+import org.jreleaser.model.Gofish
 import org.jreleaser.model.Jbang
 import org.jreleaser.model.Macports
 
@@ -101,6 +102,12 @@ class TapImpl implements Tap {
 
     Macports.MacportsRepository toMacportsRepository() {
         Macports.MacportsRepository tap = new Macports.MacportsRepository()
+        convert(tap)
+        tap
+    }
+
+    Gofish.GofishRepository toGofishRepository() {
+        Gofish.GofishRepository tap = new Gofish.GofishRepository()
         convert(tap)
         tap
     }

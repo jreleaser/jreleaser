@@ -39,6 +39,8 @@ import static org.jreleaser.model.GitService.KEY_SKIP_RELEASE_SIGNATURES;
 import static org.jreleaser.model.validation.BrewValidator.postValidateBrew;
 import static org.jreleaser.model.validation.BrewValidator.validateBrew;
 import static org.jreleaser.model.validation.ChocolateyValidator.validateChocolatey;
+import static org.jreleaser.model.validation.DockerValidator.validateDocker;
+import static org.jreleaser.model.validation.GofishValidator.validateGofish;
 import static org.jreleaser.model.validation.JbangValidator.postValidateJBang;
 import static org.jreleaser.model.validation.JbangValidator.validateJbang;
 import static org.jreleaser.model.validation.MacportsValidator.validateMacports;
@@ -163,7 +165,8 @@ public abstract class DistributionsValidator extends Validator {
 
         validateBrew(context, distribution, distribution.getBrew(), errors);
         validateChocolatey(context, distribution, distribution.getChocolatey(), errors);
-        DockerValidator.validateDocker(context, distribution, distribution.getDocker(), errors);
+        validateDocker(context, distribution, distribution.getDocker(), errors);
+        validateGofish(context, distribution, distribution.getGofish(), errors);
         validateJbang(context, distribution, distribution.getJbang(), errors);
         validateMacports(context, distribution, distribution.getMacports(), errors);
         validateScoop(context, distribution, distribution.getScoop(), errors);

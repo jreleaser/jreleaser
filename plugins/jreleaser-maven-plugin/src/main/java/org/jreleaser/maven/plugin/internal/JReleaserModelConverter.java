@@ -49,6 +49,7 @@ import org.jreleaser.maven.plugin.Github;
 import org.jreleaser.maven.plugin.Gitlab;
 import org.jreleaser.maven.plugin.Gitter;
 import org.jreleaser.maven.plugin.Glob;
+import org.jreleaser.maven.plugin.Gofish;
 import org.jreleaser.maven.plugin.GoogleChat;
 import org.jreleaser.maven.plugin.Http;
 import org.jreleaser.maven.plugin.Java;
@@ -523,6 +524,7 @@ public final class JReleaserModelConverter {
         if (packagers.getBrew().isSet()) p.setBrew(convertBrew(packagers.getBrew()));
         if (packagers.getChocolatey().isSet()) p.setChocolatey(convertChocolatey(packagers.getChocolatey()));
         if (packagers.getDocker().isSet()) p.setDocker(convertDocker(packagers.getDocker()));
+        if (packagers.getGofish().isSet()) p.setGofish(convertGofish(packagers.getGofish()));
         if (packagers.getJbang().isSet()) p.setJbang(convertJbang(packagers.getJbang()));
         if (packagers.getMacports().isSet()) p.setMacports(convertMacports(packagers.getMacports()));
         if (packagers.getScoop().isSet()) p.setScoop(convertScoop(packagers.getScoop()));
@@ -1006,6 +1008,7 @@ public final class JReleaserModelConverter {
         if (distribution.getBrew().isSet()) d.setBrew(convertBrew(distribution.getBrew()));
         if (distribution.getChocolatey().isSet()) d.setChocolatey(convertChocolatey(distribution.getChocolatey()));
         if (distribution.getDocker().isSet()) d.setDocker(convertDocker(distribution.getDocker()));
+        if (distribution.getGofish().isSet()) d.setGofish(convertGofish(distribution.getGofish()));
         if (distribution.getJbang().isSet()) d.setJbang(convertJbang(distribution.getJbang()));
         if (distribution.getMacports().isSet()) d.setMacports(convertMacports(distribution.getMacports()));
         if (distribution.getScoop().isSet()) d.setScoop(convertScoop(distribution.getScoop()));
@@ -1341,6 +1344,23 @@ public final class JReleaserModelConverter {
         a.setRunOn(architecture.getRunOn());
         if (architecture.isIgnoreErrorSet()) a.setIgnoreError(architecture.isIgnoreError());
         return a;
+    }
+
+    private static org.jreleaser.model.Gofish convertGofish(Gofish tool) {
+        org.jreleaser.model.Gofish t = new org.jreleaser.model.Gofish();
+        t.setActive(tr(tool.resolveActive()));
+        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
+        t.setExtraProperties(tool.getExtraProperties());
+        t.setRepository(convertGofishRepository(tool.getRepository()));
+        t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
+        return t;
+    }
+
+    private static org.jreleaser.model.Gofish.GofishRepository convertGofishRepository(Tap tap) {
+        org.jreleaser.model.Gofish.GofishRepository r = new org.jreleaser.model.Gofish.GofishRepository();
+        convertTap(tap, r);
+        return r;
     }
 
     private static org.jreleaser.model.Spec convertSpec(Spec tool) {

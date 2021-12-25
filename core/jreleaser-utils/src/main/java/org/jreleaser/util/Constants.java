@@ -253,6 +253,9 @@ public interface Constants {
     String KEY_SPEC_BINARIES = "specBinaries";
     String KEY_SPEC_FILES = "specFiles";
 
+    // Gofish
+    String KEY_GOFISH_PACKAGES = "gofishPackages";
+
     // Directories
     String KEY_BASE_OUTPUT_DIRECTORY = "baseOutputDirectory";
     String KEY_OUTPUT_DIRECTORY = "outputDirectory";

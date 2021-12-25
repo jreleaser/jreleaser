@@ -290,6 +290,12 @@ public class Artifact implements Domain, ExtraProperties {
         mergeExtraProperties(other.extraProperties);
     }
 
+    public Artifact copy() {
+        Artifact copy = new Artifact();
+        copy.setAll(this);
+        return copy;
+    }
+
     public static Set<Artifact> sortArtifacts(Set<Artifact> artifacts) {
         return artifacts.stream()
             .sorted(Artifact.comparatorByPlatform())

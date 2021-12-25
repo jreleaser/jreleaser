@@ -25,6 +25,7 @@ public class Packagers {
     private final Brew brew = new Brew();
     private final Chocolatey chocolatey = new Chocolatey();
     private final Docker docker = new Docker();
+    private final Gofish gofish = new Gofish();
     private final Jbang jbang = new Jbang();
     private final Macports macports = new Macports();
     private final Scoop scoop = new Scoop();
@@ -36,6 +37,7 @@ public class Packagers {
         setBrew(packagers.brew);
         setChocolatey(packagers.chocolatey);
         setDocker(packagers.docker);
+        setGofish(packagers.gofish);
         setJbang(packagers.jbang);
         setMacports(packagers.macports);
         setScoop(packagers.scoop);
@@ -66,6 +68,14 @@ public class Packagers {
 
     public void setDocker(Docker docker) {
         this.docker.setAll(docker);
+    }
+
+    public Gofish getGofish() {
+        return gofish;
+    }
+
+    public void setGofish(Gofish docker) {
+        this.gofish.setAll(gofish);
     }
 
     public Jbang getJbang() {

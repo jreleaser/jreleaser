@@ -293,6 +293,8 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
                 return (T) getChocolatey();
             case Docker.NAME:
                 return (T) getDocker();
+            case Gofish.NAME:
+                return (T) getGofish();
             case Jbang.NAME:
                 return (T) getJbang();
             case Macports.NAME:
@@ -346,6 +348,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         set.add(Brew.NAME);
         set.add(Chocolatey.NAME);
         set.add(Docker.NAME);
+        set.add(Gofish.NAME);
         set.add(Jbang.NAME);
         set.add(Macports.NAME);
         set.add(Scoop.NAME);
