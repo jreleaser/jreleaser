@@ -17,7 +17,6 @@
  */
 package org.jreleaser.tools;
 
-import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Brew;
 import org.jreleaser.model.Distribution;
@@ -39,8 +38,9 @@ import java.util.stream.Collectors;
 import static org.jreleaser.model.Brew.SKIP_BREW;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCHIVE_FORMAT;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_FORMAT;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_NAME;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_NAME;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM_REPLACED;
 import static org.jreleaser.util.Constants.KEY_BREW_CASK_APP;
@@ -62,14 +62,16 @@ import static org.jreleaser.util.Constants.KEY_BREW_HAS_LIVECHECK;
 import static org.jreleaser.util.Constants.KEY_BREW_LIVECHECK;
 import static org.jreleaser.util.Constants.KEY_BREW_MULTIPLATFORM;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
-import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_NAME;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_URL;
 import static org.jreleaser.util.Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL;
 import static org.jreleaser.util.Constants.KEY_HOMEBREW_TAP_REPO_URL;
+import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.getFilename;
@@ -100,6 +102,14 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         "    url \"{{distributionUrl}}\"\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
         "  end\n";
+
+    private static final String CASK_RB = "cask.rb";
+    private static final String CASKS = "Casks";
+    private static final String FORMULA = "Formula";
+    private static final String FORMULA_RB = "formula.rb";
+    private static final String FORMULA_MULTI_RB = "formula-multi.rb";
+    private static final String RB = ".rb";
+    private static final String SKIP_JAVA = "skipJava";
 
     public BrewToolProcessor(JReleaserContext context) {
         super(context);
@@ -154,9 +164,8 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             props.put(KEY_BREW_CASK_APPCAST, appcast);
 
             if (!hasApp && !hasPkg) {
-                for (Artifact artifact : distribution.getArtifacts()) {
-                    if (!artifact.isActive()) continue;
-                    if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW))) {
+                for (Artifact artifact : collectArtifacts(distribution)) {
+                    if (artifact.getPath().endsWith(ZIP.extension())) {
                         props.put(KEY_DISTRIBUTION_URL, resolveArtifactUrl(props, distribution, artifact));
                         props.put(KEY_BREW_CASK_HAS_BINARY, true);
                         break;
@@ -166,21 +175,19 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         } else if (tool.isMultiPlatform()) {
             List<String> multiPlatforms = new ArrayList<>();
             for (Artifact artifact : collectArtifacts(distribution)) {
-                if (!artifact.isActive() ||
-                    !artifact.getPath().endsWith(".zip") ||
-                    isBlank(artifact.getPlatform()) ||
-                    isTrue(artifact.getExtraProperties().get(SKIP_BREW))) continue;
+                if (!artifact.getPath().endsWith(ZIP.extension()) || isBlank(artifact.getPlatform())) continue;
 
                 String template = null;
                 String artifactUrl = resolveArtifactUrl(props, distribution, artifact);
+
                 if (PlatformUtils.isMac(artifact.getPlatform())) {
-                    if (artifact.getPlatform().contains("aarch_64")) {
+                    if (PlatformUtils.isArm(artifact.getPlatform())) {
                         template = TPL_MAC_ARM;
                     } else {
                         template = TPL_MAC_INTEL;
                     }
                 } else if (PlatformUtils.isLinux(artifact.getPlatform())) {
-                    if (artifact.getPlatform().contains("aarch_64")) {
+                    if (PlatformUtils.isArm(artifact.getPlatform())) {
                         template = TPL_LINUX_ARM;
                     } else {
                         template = TPL_LINUX_INTEL;
@@ -196,12 +203,12 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             }
 
             if (multiPlatforms.isEmpty()) {
-                throw new ToolProcessingException(RB.$("ERROR_brew_multiplatform_artifacts"));
+                throw new ToolProcessingException(org.jreleaser.bundle.RB.$("ERROR_brew_multiplatform_artifacts"));
             }
             props.put(KEY_BREW_MULTIPLATFORM, passThrough(String.join(System.lineSeparator() + "  ", multiPlatforms)));
         } else if ((distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == Distribution.DistributionType.SINGLE_JAR) &&
-            !isTrue(tool.getExtraProperties().get("skipJava"))) {
+            !isTrue(tool.getExtraProperties().get(SKIP_JAVA))) {
             tool.addDependency("openjdk@" + props.get(KEY_DISTRIBUTION_JAVA_VERSION));
         }
 
@@ -212,23 +219,32 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             .collect(Collectors.toList()));
     }
 
+    @Override
+    protected boolean isSkipped(Artifact artifact) {
+        return isTrue(artifact.getExtraProperties().get(SKIP_BREW));
+    }
+
     private String resolveArtifactUrl(Map<String, Object> props, Distribution distribution, Artifact artifact) {
-        String artifactFileName = artifact.getEffectivePath(context, distribution).getFileName().toString();
-        String artifactName = getFilename(artifactFileName, tool.getSupportedExtensions());
-        String archiveFormat = artifactFileName.substring(artifactName.length() + 1);
+        String artifactFile = artifact.getEffectivePath(context, distribution).getFileName().toString();
+        String artifactFileName = getFilename(artifactFile, tool.getSupportedExtensions());
+        String artifactExtension = artifactFile.substring(artifactFileName.length() + 1);
+        String artifactFileFormat = artifactExtension.substring(1);
+
         Map<String, Object> newProps = new LinkedHashMap<>(props);
+        newProps.put(KEY_ARTIFACT_FILE, artifactFile);
         newProps.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
-        newProps.put(KEY_ARTIFACT_NAME, artifactName);
-        newProps.put(KEY_ARTIFACT_ARCHIVE_FORMAT, archiveFormat);
+        newProps.put(KEY_ARTIFACT_FILE_FORMAT, artifactFileFormat);
+        newProps.put(KEY_ARTIFACT_ARCHIVE_FORMAT, artifactFileFormat);
         String platform = artifact.getPlatform();
         if (isNotBlank(platform)) newProps.put(KEY_ARTIFACT_PLATFORM, platform);
         String platformReplaced = distribution.getPlatform().applyReplacements(platform);
         if (isNotBlank(platform)) newProps.put(KEY_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
         if (isNotBlank(platform)) newProps.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);
         if (isNotBlank(platform)) newProps.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
+        newProps.put(KEY_DISTRIBUTION_ARTIFACT_FILE, artifactFile);
         newProps.put(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
-        newProps.put(KEY_DISTRIBUTION_ARTIFACT_NAME, artifactName);
-        newProps.put(KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT, archiveFormat);
+        newProps.put(KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT, artifactFileFormat);
+        newProps.put(KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT, artifactFileFormat);
         return applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
     }
 
@@ -243,21 +259,21 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         fileName = trimTplExtension(fileName);
 
         if (tool.getCask().isEnabled()) {
-            if ("formula.rb".equals(fileName) || "formula-multi.rb".equals(fileName)) return;
-            Path outputFile = "cask.rb".equals(fileName) ?
-                outputDirectory.resolve("Casks").resolve(tool.getCask().getResolvedCaskName(props).concat(".rb")) :
+            if (FORMULA_RB.equals(fileName) || FORMULA_MULTI_RB.equals(fileName)) return;
+            Path outputFile = CASK_RB.equals(fileName) ?
+                outputDirectory.resolve(CASKS).resolve(tool.getCask().getResolvedCaskName(props).concat(RB)) :
                 outputDirectory.resolve(fileName);
             writeFile(content, outputFile);
         } else if (tool.isMultiPlatform()) {
-            if ("cask.rb".equals(fileName) || "formula.rb".equals(fileName)) return;
-            Path outputFile = "formula-multi.rb".equals(fileName) ?
-                outputDirectory.resolve("Formula").resolve(distribution.getExecutable().concat(".rb")) :
+            if (CASK_RB.equals(fileName) || FORMULA_RB.equals(fileName)) return;
+            Path outputFile = FORMULA_MULTI_RB.equals(fileName) ?
+                outputDirectory.resolve(FORMULA).resolve(distribution.getExecutable().concat(RB)) :
                 outputDirectory.resolve(fileName);
             writeFile(content, outputFile);
         } else {
-            if ("cask.rb".equals(fileName) || "formula-multi.rb".equals(fileName)) return;
-            Path outputFile = "formula.rb".equals(fileName) ?
-                outputDirectory.resolve("Formula").resolve(distribution.getExecutable().concat(".rb")) :
+            if (CASK_RB.equals(fileName) || FORMULA_MULTI_RB.equals(fileName)) return;
+            Path outputFile = FORMULA_RB.equals(fileName) ?
+                outputDirectory.resolve(FORMULA).resolve(distribution.getExecutable().concat(RB)) :
                 outputDirectory.resolve(fileName);
             writeFile(content, outputFile);
         }
