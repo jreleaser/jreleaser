@@ -1,7 +1,7 @@
 //usr/bin/env jbang "$0" "$@" ; exit $?
 //JAVA {{distributionJavaVersion}}+
 //DEPS {{jbangDistributionGA}}:{{projectVersion}}
-// [JRELEASER_VERSION]
+// {{jreleaserCreationStamp}}
 
 public class {{jbangScriptName}} {
     public static void main(String... args) throws Exception {

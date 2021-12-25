@@ -22,20 +22,27 @@ import org.jreleaser.model.JReleaserVersion;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatterBuilder;
+
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
 /**
  * @author Maarten Mulders
  * @since 0.10.0
  */
 public class VersionDecoratingWriter extends BufferedWriter {
-    private static final String VERSION_MARKER = "[JRELEASER_VERSION]";
+    private static final String VERSION_MARKER = "{{jreleaserCreationStamp}}";
 
     private static final String JRELEASER_VERSION = JReleaserVersion.getPlainVersion();
 
     private static final String VERSION_BANNER = String.format("Generated with JReleaser %s at %s",
-            JRELEASER_VERSION, DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(OffsetDateTime.now())
+        JRELEASER_VERSION, ZonedDateTime.now().format(new DateTimeFormatterBuilder()
+            .append(ISO_LOCAL_DATE_TIME)
+            .optionalStart()
+            .appendOffset("+HH:MM", "Z")
+            .optionalEnd()
+            .toFormatter())
     );
 
     public VersionDecoratingWriter(final Writer out) {

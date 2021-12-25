@@ -1,4 +1,4 @@
-# [JRELEASER_VERSION]
+# {{jreleaserCreationStamp}}
 [project]
   name = "app"
   version = "1.0.0-SNAPSHOT"

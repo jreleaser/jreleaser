@@ -1,4 +1,4 @@
--- [JRELEASER_VERSION]
+-- {{jreleaserCreationStamp}}
 
 local name = "{{distributionExecutable}}"
 local version = "{{projectVersion}}"

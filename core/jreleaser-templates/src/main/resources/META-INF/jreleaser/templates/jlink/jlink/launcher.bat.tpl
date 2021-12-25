@@ -1,5 +1,5 @@
 @echo off
-rem [JRELEASER_VERSION]
+rem {{jreleaserCreationStamp}}
 
 set ERROR_CODE=0
 

@@ -233,6 +233,11 @@ public class JReleaserModel implements Domain {
 
     public Map<String, Object> props() {
         Map<String, Object> props = new LinkedHashMap<>();
+
+        String jreleaserCreationStamp = String.format("Generated with JReleaser %s at %s",
+            JReleaserVersion.getPlainVersion(), timestamp);
+        props.put("jreleaserCreationStamp", jreleaserCreationStamp);
+
         fillProjectProperties(props, project);
         fillReleaseProperties(props, release);
 

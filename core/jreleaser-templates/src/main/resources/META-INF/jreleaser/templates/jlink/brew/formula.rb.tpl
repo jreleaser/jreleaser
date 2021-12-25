@@ -1,4 +1,4 @@
-# [JRELEASER_VERSION]
+# {{jreleaserCreationStamp}}
 class {{brewFormulaName}} < Formula
   desc "{{projectDescription}}"
   homepage "{{projectWebsite}}"

@@ -2,7 +2,7 @@
 //JAVA {{distributionJavaVersion}}+
 //REPOS jitpack
 //DEPS {{jbangDistributionGA}}:{{repoBranch}}-SNAPSHOT
-// [JRELEASER_VERSION]
+// {{jreleaserCreationStamp}}
 
 public class {{jbangScriptName}} {
     public static void main(String... args) throws Exception {

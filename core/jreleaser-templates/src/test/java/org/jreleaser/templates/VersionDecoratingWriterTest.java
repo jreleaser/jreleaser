@@ -41,10 +41,10 @@ class VersionDecoratingWriterTest {
 
     @Test
     void should_replace_marker() throws IOException {
-        writer.write("# [JRELEASER_VERSION]");
+        writer.write("# {{jreleaserCreationStamp}}");
         writer.flush();
 
-        assertThat(sink.toString(), not(containsString("[JRELEASER_VERSION]")));
+        assertThat(sink.toString(), not(containsString("{{jreleaserCreationStamp}}")));
         assertThat(sink.toString(), containsString(JReleaserVersion.getPlainVersion()));
     }
 }

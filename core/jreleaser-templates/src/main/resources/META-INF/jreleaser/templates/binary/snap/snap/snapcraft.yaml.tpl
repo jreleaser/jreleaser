@@ -1,4 +1,4 @@
-# [JRELEASER_VERSION]
+# {{jreleaserCreationStamp}}
 name: {{snapPackageName}}
 version: {{projectVersion}}
 summary: {{projectDescription}}

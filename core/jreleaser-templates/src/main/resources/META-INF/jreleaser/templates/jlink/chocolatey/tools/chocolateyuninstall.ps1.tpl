@@ -1,4 +1,4 @@
-# [JRELEASER_VERSION]
+# {{jreleaserCreationStamp}}
 $tools = Split-Path $MyInvocation.MyCommand.Definition
 $package = Split-Path $tools
 $app_home = Join-Path $package '{{distributionArtifactFileName}}'

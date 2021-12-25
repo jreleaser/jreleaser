@@ -1,4 +1,4 @@
-# [JRELEASER_VERSION]
+# {{jreleaserCreationStamp}}
 FROM {{dockerBaseImage}}
 
 {{#dockerLabels}}

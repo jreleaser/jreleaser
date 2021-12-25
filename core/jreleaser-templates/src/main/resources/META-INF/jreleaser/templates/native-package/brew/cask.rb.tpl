@@ -1,4 +1,4 @@
-# [JRELEASER_VERSION]
+# {{jreleaserCreationStamp}}
 cask "{{brewCaskName}}" do
   desc "{{projectDescription}}"
   homepage "{{projectWebsite}}"

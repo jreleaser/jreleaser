@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# [JRELEASER_VERSION]
+# {{jreleaserCreationStamp}}
 
 ##############################################################################
 ##
