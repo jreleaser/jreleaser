@@ -130,9 +130,9 @@ assemble:
       active: always
       java:
         version: 11
-        mainClass: 'org.jreleaser.cli.Main'
+        mainClass: org.jreleaser.cli.Main
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
-      executable: 'jreleaser'
+      executable: jreleaser
       jdeps:
         multiRelease: base
         ignoreMissingDeps: true
@@ -162,10 +162,6 @@ distributions:
   jreleaser:
     java:
       mainClass: org.jreleaser.cli.Main
-    brew:
-      active: always
-      tap:
-        active: release
     chocolatey:
       active: always
       remoteBuild: true
@@ -223,6 +219,12 @@ distributions:
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.jar'
 
   jreleaser-standalone:
+    brew:
+      active: always
+      formulaName: jreleaser
+      multiPlatform: true
+      tap:
+        active: release
     docker:
       active: always
       registries:
@@ -250,6 +252,10 @@ distributions:
             platform: 'linux_musl-x86_64'
           preCommands:
             - 'RUN apk add unzip'
+    gofish:
+      active: always
+      repository:
+        active: release
 
 files:
   artifacts:
