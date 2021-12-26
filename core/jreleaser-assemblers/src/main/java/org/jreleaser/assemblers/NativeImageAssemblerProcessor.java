@@ -131,7 +131,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         if (!jars.isEmpty()) {
             cmd.arg("-cp")
                 .arg(jars.stream()
-                    .map(Path::getFileName)
+                    .map(path -> context.relativize(image.getParent(), path))
                     .map(Path::toString)
                     .collect(Collectors.joining(File.pathSeparator)));
         }
