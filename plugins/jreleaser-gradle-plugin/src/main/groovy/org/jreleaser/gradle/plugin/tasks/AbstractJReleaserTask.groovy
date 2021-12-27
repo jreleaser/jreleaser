@@ -24,6 +24,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.model.JReleaserContext
@@ -33,6 +34,9 @@ import org.jreleaser.util.JReleaserLogger
 import org.jreleaser.util.StringUtils
 
 import javax.inject.Inject
+
+import static org.jreleaser.model.JReleaserContext.Configurer
+import static org.jreleaser.model.JReleaserContext.Mode
 
 /**
  *
@@ -56,16 +60,21 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     final Property<JReleaserLogger> jlogger
 
     @Internal
-    JReleaserContext.Mode mode
+    Mode mode
 
     @Inject
     AbstractJReleaserTask(ObjectFactory objects) {
         model = objects.property(JReleaserModel)
         jlogger = objects.property(JReleaserLogger)
-        mode = JReleaserContext.Mode.FULL
+        mode = Mode.FULL
         dryrun = objects.property(Boolean).convention(false)
         gitRootSearch = objects.property(Boolean).convention(false)
         outputDirectory = objects.directoryProperty()
+    }
+
+    @Option(option = 'dryrun', description = 'Skip remote operations (OPTIONAL).')
+    void setDryrun(boolean dryrun) {
+        this.dryrun.set(dryrun)
     }
 
     protected JReleaserContext createContext() {
@@ -93,18 +102,18 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         []
     }
 
-    protected org.jreleaser.model.JReleaserContext.Configurer resolveConfigurer(JReleaserExtension extension) {
-        if (!extension.configFile.present) return JReleaserContext.Configurer.GRADLE
+    protected Configurer resolveConfigurer(JReleaserExtension extension) {
+        if (!extension.configFile.present) return Configurer.GRADLE
 
         File configFile = extension.configFile.get().asFile
         switch (StringUtils.getFilenameExtension(configFile.name)) {
             case 'yml':
             case 'yaml':
-                return JReleaserContext.Configurer.CLI_YAML
+                return Configurer.CLI_YAML
             case 'toml':
-                return JReleaserContext.Configurer.CLI_TOML
+                return Configurer.CLI_TOML
             case 'json':
-                return JReleaserContext.Configurer.CLI_JSON
+                return Configurer.CLI_JSON
         }
         // should not happen!
         throw new IllegalArgumentException('Invalid configuration format: ' + configFile.name)
