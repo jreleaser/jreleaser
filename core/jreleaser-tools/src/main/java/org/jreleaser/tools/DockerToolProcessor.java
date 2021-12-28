@@ -410,33 +410,37 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
 
         if (tool.getActiveSpecs().isEmpty()) {
             for (String imageName : tool.getImageNames()) {
-                copyDockerfiles(packageDirectory, applyTemplate(imageName, props), directory, tool);
+                copyDockerfiles(packageDirectory, applyTemplate(imageName, props), directory, tool, false);
             }
         } else {
             for (DockerSpec spec : tool.getActiveSpecs()) {
                 Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
                 for (String imageName : spec.getImageNames()) {
-                    copyDockerfiles(packageDirectory.resolve(spec.getName()), applyTemplate(imageName, newProps), directory, spec);
+                    copyDockerfiles(packageDirectory.resolve(spec.getName()), applyTemplate(imageName, newProps), directory, spec, true);
                 }
             }
         }
     }
 
-    private void copyDockerfiles(Path source, String imageName, Path directory, DockerConfiguration docker) throws IOException {
+    private void copyDockerfiles(Path source, String imageName, Path directory, DockerConfiguration docker, boolean isSpec) throws IOException {
         Path destination = directory;
 
+        String[] parts = imageName.split("/");
+        parts = parts[parts.length - 1].split(":");
+        if (isSpec) {
+            destination = directory.resolve(parts[0]);
+        }
+
         if (tool.getRepository().isVersionedSubfolders()) {
-            String[] parts = imageName.split("/");
-            parts = parts[parts.length - 1].split(":");
             destination = directory.resolve(parts[1]);
         }
 
-        Files.createDirectories(destination);
-        prepareWorkingCopy(source, destination);
+        Path assembly = destination.resolve("assembly");
+        FileUtils.deleteFiles(assembly);
 
-        if (!docker.isUseLocalArtifact()) {
-            Path assembly = destination.resolve("assembly");
-            FileUtils.deleteFiles(assembly);
-        }
+        Files.createDirectories(destination);
+        prepareWorkingCopy(source, destination,
+            path -> !docker.isUseLocalArtifact() &&
+                "assembly".equals(path.getFileName().toString()));
     }
 }
