@@ -19,11 +19,17 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.Archive
 import org.jreleaser.gradle.plugin.dsl.Assemble
+import org.jreleaser.gradle.plugin.dsl.Jlink
+import org.jreleaser.gradle.plugin.dsl.Jpackage
+import org.jreleaser.gradle.plugin.dsl.NativeImage
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -79,6 +85,46 @@ class AssembleImpl implements Assemble {
                 nativeImage
             }
         })
+    }
+
+    @Override
+    void archive(Action<? super NamedDomainObjectContainer<? extends Archive>> action) {
+        action.execute(archive)
+    }
+
+    @Override
+    void jlink(Action<? super NamedDomainObjectContainer<? extends Jlink>> action) {
+        action.execute(jlink)
+    }
+
+    @Override
+    void jpackage(Action<? super NamedDomainObjectContainer<? extends Jpackage>> action) {
+        action.execute(jpackage)
+    }
+
+    @Override
+    void nativeImage(Action<? super NamedDomainObjectContainer<? extends NativeImage>> action) {
+        action.execute(nativeImage)
+    }
+
+    @Override
+    void archive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, archive)
+    }
+
+    @Override
+    void jlink(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, jlink)
+    }
+
+    @Override
+    void jpackage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, jpackage)
+    }
+
+    @Override
+    void nativeImage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, nativeImage)
     }
 
     @CompileDynamic

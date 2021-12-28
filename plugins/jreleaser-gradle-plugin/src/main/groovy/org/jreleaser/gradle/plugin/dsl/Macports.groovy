@@ -30,6 +30,7 @@ import org.gradle.api.provider.Property
 @CompileStatic
 interface Macports extends RepositoryTool {
     Property<String> getPackageName()
+
     Property<Integer> getRevision()
 
     ListProperty<String> getCategories()

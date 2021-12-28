@@ -38,6 +38,7 @@ import org.jreleaser.gradle.plugin.dsl.Slack
 import org.jreleaser.gradle.plugin.dsl.Teams
 import org.jreleaser.gradle.plugin.dsl.Telegram
 import org.jreleaser.gradle.plugin.dsl.Twitter
+import org.jreleaser.gradle.plugin.dsl.Webhook
 import org.jreleaser.gradle.plugin.dsl.Zulip
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -166,6 +167,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void webhooks(Action<? super NamedDomainObjectContainer<? extends Webhook>> action) {
+        action.execute(webhooks)
+    }
+
+    @Override
     void article(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Article) Closure<Void> action) {
         ConfigureUtil.configure(action, article)
     }
@@ -233,6 +239,11 @@ class AnnounceImpl implements Announce {
     @Override
     void zulip(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Zulip) Closure<Void> action) {
         ConfigureUtil.configure(action, zulip)
+    }
+
+    @Override
+    void webhooks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, webhooks)
     }
 
     org.jreleaser.model.Announce toModel() {

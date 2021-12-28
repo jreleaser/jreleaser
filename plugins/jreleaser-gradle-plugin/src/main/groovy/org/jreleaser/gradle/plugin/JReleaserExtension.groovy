@@ -96,6 +96,8 @@ interface JReleaserExtension {
 
     void checksum(Action<? super Checksum> action)
 
+    void distributions(Action<? super NamedDomainObjectContainer<? extends Distribution>> action)
+
     void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action)
 
     void project(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Project) Closure<Void> action)
@@ -117,4 +119,6 @@ interface JReleaserExtension {
     void signing(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Signing) Closure<Void> action)
 
     void checksum(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Checksum) Closure<Void> action)
+
+    void distributions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 }

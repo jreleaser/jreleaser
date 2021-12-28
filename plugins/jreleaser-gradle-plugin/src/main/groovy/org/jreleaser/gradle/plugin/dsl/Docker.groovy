@@ -35,7 +35,11 @@ interface Docker extends DockerConfiguration, RepositoryTool {
 
     void repository(Action<? super DockerRepository> action)
 
+    void specs(Action<? super NamedDomainObjectContainer<? extends DockerSpec>> action)
+
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DockerRepository) Closure<Void> action)
+
+    void specs(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     @CompileStatic
     interface DockerRepository extends Tap {

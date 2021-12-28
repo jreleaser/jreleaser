@@ -150,8 +150,18 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     }
 
     @Override
-    void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, snap)
+    void plugs(Action<? super NamedDomainObjectContainer<? extends Plug>> action) {
+        action.execute(plugs)
+    }
+
+    @Override
+    void slots(Action<? super NamedDomainObjectContainer<? extends Slot>> action) {
+        action.execute(slots)
+    }
+
+    @Override
+    void plugs(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, plugs)
     }
 
     @Override
@@ -162,6 +172,16 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     @Override
     void architecture(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Architecture) Closure<Void> action) {
         ConfigureUtil.configure(action, architectures.maybeCreate("architecture-${architectures.size()}".toString()))
+    }
+
+    @Override
+    void slots(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, slots)
+    }
+
+    @Override
+    void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, snap)
     }
 
     org.jreleaser.model.Snap toModel() {

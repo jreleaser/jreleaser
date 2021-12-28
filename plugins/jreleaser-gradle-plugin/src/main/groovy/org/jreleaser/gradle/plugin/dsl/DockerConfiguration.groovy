@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
@@ -59,4 +60,8 @@ interface DockerConfiguration extends Activatable, ExtraProperties {
     void addLabel(String key, String value)
 
     NamedDomainObjectContainer<Registry> getRegistries()
+
+    void registries(Action<? super NamedDomainObjectContainer<? extends Registry>> action)
+
+    void registries(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 }

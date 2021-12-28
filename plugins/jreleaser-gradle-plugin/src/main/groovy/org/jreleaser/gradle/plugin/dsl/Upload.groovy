@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 
@@ -35,4 +36,16 @@ interface Upload {
     NamedDomainObjectContainer<Http> getHttp()
 
     NamedDomainObjectContainer<S3> getS3()
+
+    void artifactory(Action<? super NamedDomainObjectContainer<? extends Artifactory>> action)
+
+    void http(Action<? super NamedDomainObjectContainer<? extends Http>> action)
+
+    void s3(Action<? super NamedDomainObjectContainer<? extends S3>> action)
+
+    void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void s3(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 }

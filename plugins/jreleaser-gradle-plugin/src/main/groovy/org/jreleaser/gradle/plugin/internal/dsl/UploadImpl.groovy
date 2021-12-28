@@ -19,11 +19,16 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.Artifactory
+import org.jreleaser.gradle.plugin.dsl.Http
+import org.jreleaser.gradle.plugin.dsl.S3
 import org.jreleaser.gradle.plugin.dsl.Upload
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -69,6 +74,36 @@ class UploadImpl implements Upload {
                 return s
             }
         })
+    }
+
+    @Override
+    void artifactory(Action<? super NamedDomainObjectContainer<? extends Artifactory>> action) {
+        action.execute(artifactory)
+    }
+
+    @Override
+    void http(Action<? super NamedDomainObjectContainer<? extends Http>> action) {
+        action.execute(http)
+    }
+
+    @Override
+    void s3(Action<? super NamedDomainObjectContainer<? extends S3>> action) {
+        action.execute(s3)
+    }
+
+    @Override
+    void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, artifactory)
+    }
+
+    @Override
+    void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, http)
+    }
+
+    @Override
+    void s3(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, s3)
     }
 
     @CompileDynamic

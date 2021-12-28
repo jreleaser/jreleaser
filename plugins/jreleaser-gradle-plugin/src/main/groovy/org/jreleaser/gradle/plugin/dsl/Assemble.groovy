@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 
@@ -30,11 +31,27 @@ import org.gradle.api.provider.Property
 interface Assemble {
     Property<Boolean> getEnabled()
 
-    NamedDomainObjectContainer<Jlink> getArchive()
+    NamedDomainObjectContainer<Archive> getArchive()
 
     NamedDomainObjectContainer<Jlink> getJlink()
 
-    NamedDomainObjectContainer<Jlink> getJpackage()
+    NamedDomainObjectContainer<Jpackage> getJpackage()
 
     NamedDomainObjectContainer<NativeImage> getNativeImage()
+
+    void archive(Action<? super NamedDomainObjectContainer<? extends Archive>> action)
+
+    void jlink(Action<? super NamedDomainObjectContainer<? extends Jlink>> action)
+
+    void jpackage(Action<? super NamedDomainObjectContainer<? extends Jpackage>> action)
+
+    void nativeImage(Action<? super NamedDomainObjectContainer<? extends NativeImage>> action)
+
+    void archive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void jlink(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void jpackage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void nativeImage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 }

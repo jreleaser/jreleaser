@@ -32,6 +32,7 @@ import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Assemble
 import org.jreleaser.gradle.plugin.dsl.Checksum
+import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Packagers
@@ -181,6 +182,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
+    void distributions(Action<? super NamedDomainObjectContainer<? extends Distribution>> action) {
+        action.execute(distributions)
+    }
+
+    @Override
     void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action) {
         ConfigureUtil.configure(action, environment)
     }
@@ -233,6 +239,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     @Override
     void checksum(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Checksum) Closure<Void> action) {
         ConfigureUtil.configure(action, checksum)
+    }
+
+    @Override
+    void distributions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, distributions)
     }
 
     @CompileDynamic

@@ -28,6 +28,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.Docker
+import org.jreleaser.gradle.plugin.dsl.DockerSpec
 import org.jreleaser.model.Active
 import org.jreleaser.util.StringUtils
 import org.kordamp.gradle.util.ConfigureUtil
@@ -79,6 +80,11 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     }
 
     @Override
+    void specs(Action<? super NamedDomainObjectContainer<? extends DockerSpec>> action) {
+        action.execute(specs)
+    }
+
+    @Override
     void commitAuthor(Action<? super CommitAuthor> action) {
         action.execute(commitAuthor)
     }
@@ -86,6 +92,11 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     @Override
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DockerRepository) Closure<Void> action) {
         ConfigureUtil.configure(action, repository)
+    }
+
+    @Override
+    void specs(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, specs)
     }
 
     @Override

@@ -89,6 +89,8 @@ interface Announce {
 
     void zulip(Action<? super Zulip> action)
 
+    void webhooks(Action<? super NamedDomainObjectContainer<? extends Webhook>> action)
+
     void article(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Article) Closure<Void> action)
 
     void discord(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Discord) Closure<Void> action)
@@ -116,4 +118,6 @@ interface Announce {
     void twitter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Twitter) Closure<Void> action)
 
     void zulip(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Zulip) Closure<Void> action)
+
+    void webhooks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 }
