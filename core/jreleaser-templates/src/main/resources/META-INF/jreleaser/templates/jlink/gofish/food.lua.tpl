@@ -19,8 +19,8 @@ food = {
             resources = {
                 {
                     path = {{packagePath}},
-                    installpath = {{packageInstallPath}},
-                    executable = true
+                    installpath = {{packageInstallPath}}{{#packageNotWindows}},{{/packageNotWindows}}
+                    {{#packageNotWindows}}executable = true{{/packageNotWindows}}
                 }
             }
         },

@@ -107,6 +107,7 @@ public class GofishToolProcessor extends AbstractRepositoryToolProcessor<Gofish>
     }
 
     private static class GofishPackage {
+        private final boolean packageNotWindows;
         private final String packageOs;
         private final String packageArch;
         private final String packageUrl;
@@ -152,6 +153,8 @@ public class GofishToolProcessor extends AbstractRepositoryToolProcessor<Gofish>
                     artifactArch = parts[1];
                 }
             }
+
+            packageNotWindows = !PlatformUtils.isWindows(platform);
             packageOs = "osx".equals(artifactOs) ? "darwin" : artifactOs;
             packageArch = "x86_64".equals(artifactArch) ? "amd64" : "arm64";
 
@@ -162,6 +165,10 @@ public class GofishToolProcessor extends AbstractRepositoryToolProcessor<Gofish>
             String url = applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
             packageUrl = url.replace(executable, "\" .. name .. \"")
                 .replace(projectVersion, "\" .. version .. \"");
+        }
+
+        public boolean isPackageNotWindows() {
+            return packageNotWindows;
         }
 
         public String getPackageOs() {
