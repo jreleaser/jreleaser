@@ -78,7 +78,7 @@ public abstract class TemplateValidator extends Validator {
                 "distribution." + distribution.getName() + ".docker." + spec.getName() + ".template", spec.getTemplateDirectory()));
         }
         if (isBlank(spec.getTemplateDirectory())) {
-            spec.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + spec.getName() + "/" + docker.getName());
+            spec.setTemplateDirectory("src/jreleaser/distributions/" + distribution.getName() + "/" + docker.getName() + "/" + spec.getName());
         }
     }
 }
