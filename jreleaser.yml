@@ -227,7 +227,7 @@ distributions:
         active: release
         commitMessage: 'jreleaser {{tagName}}'
     docker:
-      active: never
+      active: always
       repository:
         active: always
         commitMessage: 'jreleaser {{tagName}}'

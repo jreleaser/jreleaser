@@ -1,0 +1,59 @@
+= JReleaser Docker Images
+
+== jreleaser-slim
+
+image:https://dockeri.co/image/jreleaser/jreleaser-slim[link="https://hub.docker.com/r/jreleaser/jreleaser-slim"]
+
+Wraps the link:https://jreleaser.org/guide/latest/tools/jreleaser-cli.html[JReleaser CLI] with an Ubuntu based Docker image:
+link:https://hub.docker.com/r/jreleaser/jreleaser-slim[jreleaser/jreleaser-slim]. +
+This image may be used to run JReleaser without having a pre-installed Java runtime on your system.
+
+IMPORTANT: Additional packaging options such as link:https://jreleaser.org/guide/latest/configuration/packagers/snap.html[Snapcraft] and
+link:https://jreleaser.org/guide/latest/configuration/packagers/chocolatey.html[Chocolatey] are not available in this mode.
+
+Every command exposed by link:https://jreleaser.org/guide/latest/tools/jreleaser-cli.html[JReleaser CLI] can be invoked with this image.
+
+You must mount the working directory at the `/workspace` volume, for example assuming the current directory is the
+starting point:
+
+[source]
+----
+$ docker run -it --rm -v `(pwd)`:/workspace \
+  jreleaser/jreleaser-slim:<tag> <command> [<args>]
+----
+
+NOTE: The `jreleaser` command will be automatically executed inside `/workspace`.
+
+You may also need to map environment variables to the container, such as `JRELEASER_PROJECT_VERSION`,
+`JRELEASER_GITHUB_TOKEN`, or others depending on your setup.
+
+You can find the tag listing link:https://hub.docker.com/r/jreleaser/jreleaser-slim/tags[here].
+
+== jreleaser-alpine
+
+image:https://dockeri.co/image/jreleaser/jreleaser-alpine[link="https://hub.docker.com/r/jreleaser/jreleaser-alpine"]
+
+Wraps the link:https://jreleaser.org/guide/latest/tools/jreleaser-cli.html[JReleaser CLI] with an Alpine based Docker image:
+link:https://hub.docker.com/r/jreleaser/jreleaser-alpine[jreleaser/jreleaser-alpine]. +
+This image may be used to run JReleaser without having a pre-installed Java runtime on your system.
+
+IMPORTANT: Additional packaging options such as link:https://jreleaser.org/guide/latest/configuration/packagers/snap.html[Snapcraft] and
+link:https://jreleaser.org/guide/latest/configuration/packagers/chocolatey.html[Chocolatey] are not available in this mode.
+
+Every command exposed by link:https://jreleaser.org/guide/latest/tools/jreleaser-cli.html[JReleaser CLI] can be invoked with this image.
+
+You must mount the working directory at the `/workspace` volume, for example assuming the current directory is the
+starting point:
+
+[source]
+----
+$ docker run -it --rm -v `(pwd)`:/workspace \
+  jreleaser/jreleaser-alpine:<tag> <command> [<args>]
+----
+
+NOTE: The `jreleaser` command will be automatically executed inside `/workspace`.
+
+You may also need to map environment variables to the container, such as `JRELEASER_PROJECT_VERSION`,
+`JRELEASER_GITHUB_TOKEN`, or others depending on your setup.
+
+You can find the tag listing link:https://hub.docker.com/r/jreleaser/jreleaser-alpine/tags[here].
