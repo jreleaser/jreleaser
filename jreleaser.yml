@@ -225,8 +225,12 @@ distributions:
       multiPlatform: true
       tap:
         active: release
+        commitMessage: 'jreleaser {{tagName}}'
     docker:
       active: always
+      repository:
+        active: release
+        commitMessage: 'jreleaser {{tagName}}'
       registries:
         - serverName: DEFAULT
           username: jreleaser
@@ -256,6 +260,7 @@ distributions:
       active: always
       repository:
         active: release
+        commitMessage: 'jreleaser {{tagName}}'
 
 files:
   artifacts:
