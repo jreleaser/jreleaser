@@ -52,19 +52,19 @@ abstract class AbstractTemplateToolProcessor<T extends TemplateTool> extends Abs
     protected void doPrepareDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         try {
             doPrepareDistribution(distribution, props, distribution.getName(),
-                getPrepareDirectory(props), getTool().getTemplateDirectory(), getToolName());
+                getPrepareDirectory(props), getTool().getTemplateDirectory(), getToolName(), true);
         } catch (IOException e) {
             throw new ToolProcessingException(e);
         }
     }
-
 
     protected void doPrepareDistribution(Distribution distribution,
                                          Map<String, Object> props,
                                          String distributionName,
                                          Path prepareDirectory,
                                          String templateDirectory,
-                                         String toolName) throws IOException, ToolProcessingException {
+                                         String toolName,
+                                         boolean copyLicense) throws IOException, ToolProcessingException {
         // cleanup from previous session
         FileUtils.deleteFiles(prepareDirectory);
         Files.createDirectories(prepareDirectory);
@@ -93,10 +93,12 @@ abstract class AbstractTemplateToolProcessor<T extends TemplateTool> extends Abs
             }
         }
 
-        context.getLogger().debug(RB.$("tool.copy.license"));
-        FileUtils.copyFiles(context.getLogger(),
-            context.getBasedir(),
-            prepareDirectory, path -> path.getFileName().startsWith("LICENSE"));
+        if (copyLicense) {
+            context.getLogger().debug(RB.$("tool.copy.license"));
+            FileUtils.copyFiles(context.getLogger(),
+                context.getBasedir(),
+                prepareDirectory, path -> path.getFileName().startsWith("LICENSE"));
+        }
     }
 
     protected void doPackageDistribution(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {

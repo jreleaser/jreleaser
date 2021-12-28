@@ -34,7 +34,9 @@ import org.jreleaser.util.FileUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -147,6 +149,15 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
         context.getLogger().debug(RB.$("repository.copy.files"), context.relativizeToBasedir(source));
 
         if (!FileUtils.copyFilesRecursive(context.getLogger(), source, destination)) {
+            throw new IOException(RB.$("ERROR_repository_copy_files",
+                context.relativizeToBasedir(source)));
+        }
+    }
+
+    protected void prepareWorkingCopy(Path source, Path destination, Predicate<Path> filter) throws IOException {
+        context.getLogger().debug(RB.$("repository.copy.files"), context.relativizeToBasedir(source));
+
+        if (!FileUtils.copyFilesRecursive(context.getLogger(), source, destination, filter)) {
             throw new IOException(RB.$("ERROR_repository_copy_files",
                 context.relativizeToBasedir(source)));
         }

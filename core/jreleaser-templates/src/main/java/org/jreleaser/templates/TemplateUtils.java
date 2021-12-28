@@ -67,7 +67,7 @@ public final class TemplateUtils {
 
     public static Map<String, Reader> resolveAndMergeTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot, Path templateDirectory) {
         Map<String, Reader> templates = resolveTemplates(logger, distributionType, toolName, snapshot);
-        if (null != templateDirectory && templateDirectory.toFile().exists()) {
+        if (null != templateDirectory && Files.exists(templateDirectory)) {
             templates.putAll(resolveTemplates(distributionType, toolName, snapshot, templateDirectory));
         }
         return templates;

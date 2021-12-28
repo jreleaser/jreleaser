@@ -78,9 +78,7 @@ public abstract class DockerValidator extends Validator {
             spec.resolveEnabled(context.getModel().getProject(), distribution);
         }
 
-        if (tool.getActiveSpecs().isEmpty()) {
-            validateTemplate(context, distribution, tool, parentTool, errors);
-        }
+        validateTemplate(context, distribution, tool, parentTool, errors);
 
         validateCommitAuthor(tool, parentTool);
         Docker.DockerRepository repository = tool.getRepository();

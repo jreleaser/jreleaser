@@ -32,6 +32,7 @@ import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.command.Command;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,9 +41,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY;
@@ -60,6 +61,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker> {
+    private static final String ROOT = "ROOT";
+
     public DockerToolProcessor(JReleaserContext context) {
         super(context);
     }
@@ -70,10 +73,11 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
                                          String distributionName,
                                          Path prepareDirectory,
                                          String templateDirectory,
-                                         String toolName) throws IOException, ToolProcessingException {
+                                         String toolName,
+                                         boolean copyLicense) throws IOException, ToolProcessingException {
         if (tool.getActiveSpecs().isEmpty()) {
             super.doPrepareDistribution(distribution, props, distributionName,
-                prepareDirectory, templateDirectory, toolName);
+                prepareDirectory, templateDirectory, toolName, true);
 
             if (!tool.isUseLocalArtifact()) {
                 Files.move(prepareDirectory.resolve("Dockerfile-remote"),
@@ -85,6 +89,16 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
 
             return;
         }
+
+        // copy root files
+        String rootTemplateDirectory = getTool().getTemplateDirectory() + File.separator + ROOT;
+        super.doPrepareDistribution(distribution, props, distributionName,
+            prepareDirectory.resolve(ROOT),
+            rootTemplateDirectory,
+            tool.getName(),
+            false);
+        Files.deleteIfExists(prepareDirectory.resolve(ROOT).resolve("Dockerfile"));
+        Files.deleteIfExists(prepareDirectory.resolve(ROOT).resolve("Dockerfile-remote"));
 
         for (DockerSpec spec : tool.getActiveSpecs()) {
             prepareSpec(distribution, props, distributionName, prepareDirectory, spec);
@@ -101,14 +115,15 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
         super.doPrepareDistribution(distribution, newProps, distributionName,
             prepareDirectory.resolve(spec.getName()),
             spec.getTemplateDirectory(),
-            spec.getName() + "/" + tool.getName());
+            spec.getName() + "/" + tool.getName(),
+            false);
 
         if (!spec.isUseLocalArtifact()) {
             Files.move(prepareDirectory.resolve(spec.getName()).resolve("Dockerfile-remote"),
                 prepareDirectory.resolve(spec.getName()).resolve("Dockerfile"),
                 REPLACE_EXISTING);
         } else {
-            Files.deleteIfExists(prepareDirectory.resolve("Dockerfile-remote"));
+            Files.deleteIfExists(prepareDirectory.resolve(spec.getName()).resolve("Dockerfile-remote"));
         }
     }
 
@@ -144,11 +159,15 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
                 .filter(Artifact::isActive)
                 .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
                 .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
-                .collect(Collectors.toList());
+                .collect(toList());
 
             packageDocker(distribution, props, packageDirectory, getTool(), artifacts);
             return;
         }
+
+        Path rootPrepareDirectory = getPrepareDirectory(props).resolve(ROOT);
+        Path rootPackageDirectory = getPackageDirectory(props).resolve(ROOT);
+        copyFiles(rootPrepareDirectory, rootPackageDirectory);
 
         for (DockerSpec spec : tool.getActiveSpecs()) {
             context.getLogger().debug(RB.$("distributions.action.packaging") + " {} spec", spec.getName());
@@ -381,10 +400,10 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
         props.put(KEY_DOCKER_LABELS, labels);
         props.put(KEY_DOCKER_PRE_COMMANDS, docker.getPreCommands().stream()
             .map(c -> passThrough(applyTemplate(c, props)))
-            .collect(Collectors.toList()));
+            .collect(toList()));
         props.put(KEY_DOCKER_POST_COMMANDS, docker.getPostCommands().stream()
             .map(c -> passThrough(applyTemplate(c, props)))
-            .collect(Collectors.toList()));
+            .collect(toList()));
     }
 
     @Override
@@ -408,12 +427,17 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
     protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws ToolProcessingException, IOException {
         Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
 
-        if (tool.getActiveSpecs().isEmpty()) {
+        List<DockerSpec> activeSpecs = tool.getActiveSpecs();
+
+        if (activeSpecs.isEmpty()) {
             for (String imageName : tool.getImageNames()) {
                 copyDockerfiles(packageDirectory, applyTemplate(imageName, props), directory, tool, false);
             }
         } else {
-            for (DockerSpec spec : tool.getActiveSpecs()) {
+            // copy files that do not belong to specs
+            prepareWorkingCopy(packageDirectory.resolve(ROOT), directory);
+
+            for (DockerSpec spec : activeSpecs) {
                 Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
                 for (String imageName : spec.getImageNames()) {
                     copyDockerfiles(packageDirectory.resolve(spec.getName()), applyTemplate(imageName, newProps), directory, spec, true);

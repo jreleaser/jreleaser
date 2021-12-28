@@ -254,22 +254,26 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
+        Path prepareDirectory = getPrepareDirectory(props);
         Path packageDirectory = getPackageDirectory(props);
-        copyPreparedFiles(distribution, props, packageDirectory);
+        copyFiles(prepareDirectory, packageDirectory);
     }
 
-    protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props, Path outputDirectory) throws ToolProcessingException {
-        Path prepareDirectory = getPrepareDirectory(props);
+    protected void copyFiles(Path src, Path dest) throws ToolProcessingException {
         try {
-            if (!FileUtils.copyFilesRecursive(context.getLogger(), prepareDirectory, outputDirectory)) {
+            if (!Files.exists(dest)) {
+                Files.createDirectories(dest);
+            }
+
+            if (!FileUtils.copyFilesRecursive(context.getLogger(), src, dest)) {
                 throw new ToolProcessingException(RB.$("ERROR_copy_files_from_to",
-                    context.relativizeToBasedir(prepareDirectory),
-                    context.relativizeToBasedir(outputDirectory)));
+                    context.relativizeToBasedir(src),
+                    context.relativizeToBasedir(dest)));
             }
         } catch (IOException e) {
             throw new ToolProcessingException(RB.$("ERROR_unexpected_copy_files_from_to",
-                context.relativizeToBasedir(prepareDirectory),
-                context.relativizeToBasedir(outputDirectory)), e);
+                context.relativizeToBasedir(src),
+                context.relativizeToBasedir(dest)), e);
         }
     }
 
