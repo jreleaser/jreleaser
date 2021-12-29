@@ -63,9 +63,9 @@ interface Snap extends RepositoryTool {
 
     void architecture(Action<? super Architecture> action)
 
-    void plugs(Action<? super NamedDomainObjectContainer<? extends Plug>> action)
+    void plugs(Action<? super NamedDomainObjectContainer<Plug>> action)
 
-    void slots(Action<? super NamedDomainObjectContainer<? extends Slot>> action)
+    void slots(Action<? super NamedDomainObjectContainer<Slot>> action)
 
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 

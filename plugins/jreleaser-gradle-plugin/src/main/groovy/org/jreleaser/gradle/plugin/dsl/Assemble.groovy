@@ -39,13 +39,13 @@ interface Assemble {
 
     NamedDomainObjectContainer<NativeImage> getNativeImage()
 
-    void archive(Action<? super NamedDomainObjectContainer<? extends Archive>> action)
+    void archive(Action<? super NamedDomainObjectContainer<Archive>> action)
 
-    void jlink(Action<? super NamedDomainObjectContainer<? extends Jlink>> action)
+    void jlink(Action<? super NamedDomainObjectContainer<Jlink>> action)
 
-    void jpackage(Action<? super NamedDomainObjectContainer<? extends Jpackage>> action)
+    void jpackage(Action<? super NamedDomainObjectContainer<Jpackage>> action)
 
-    void nativeImage(Action<? super NamedDomainObjectContainer<? extends NativeImage>> action)
+    void nativeImage(Action<? super NamedDomainObjectContainer<NativeImage>> action)
 
     void archive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 

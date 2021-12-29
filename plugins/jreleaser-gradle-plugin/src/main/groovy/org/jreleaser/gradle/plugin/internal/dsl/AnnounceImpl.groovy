@@ -66,7 +66,7 @@ class AnnounceImpl implements Announce {
     final TelegramImpl telegram
     final TwitterImpl twitter
     final ZulipImpl zulip
-    final NamedDomainObjectContainer<WebhookImpl> webhooks
+    final NamedDomainObjectContainer<Webhook> webhooks
 
     @Inject
     AnnounceImpl(ObjectFactory objects) {
@@ -86,9 +86,9 @@ class AnnounceImpl implements Announce {
         twitter = objects.newInstance(TwitterImpl, objects)
         zulip = objects.newInstance(ZulipImpl, objects)
 
-        webhooks = objects.domainObjectContainer(WebhookImpl, new NamedDomainObjectFactory<WebhookImpl>() {
+        webhooks = objects.domainObjectContainer(Webhook, new NamedDomainObjectFactory<Webhook>() {
             @Override
-            WebhookImpl create(String name) {
+            Webhook create(String name) {
                 WebhookImpl webhook = objects.newInstance(WebhookImpl, objects)
                 webhook.name = name
                 return webhook
@@ -167,7 +167,7 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
-    void webhooks(Action<? super NamedDomainObjectContainer<? extends Webhook>> action) {
+    void webhooks(Action<? super NamedDomainObjectContainer<Webhook>> action) {
         action.execute(webhooks)
     }
 
@@ -265,7 +265,7 @@ class AnnounceImpl implements Announce {
         if (zulip.isSet()) announce.zulip = zulip.toModel()
 
         webhooks.toList().each { webhook ->
-            announce.addWebhook(webhook.toModel())
+            announce.addWebhook(((WebhookImpl) webhook).toModel())
         }
 
         announce

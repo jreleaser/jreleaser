@@ -96,7 +96,7 @@ interface JReleaserExtension {
 
     void checksum(Action<? super Checksum> action)
 
-    void distributions(Action<? super NamedDomainObjectContainer<? extends Distribution>> action)
+    void distributions(Action<? super NamedDomainObjectContainer<Distribution>> action)
 
     void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action)
 

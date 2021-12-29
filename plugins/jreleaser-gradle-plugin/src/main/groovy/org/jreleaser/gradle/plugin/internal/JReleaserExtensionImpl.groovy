@@ -83,7 +83,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final ChecksumImpl checksum
     final SigningImpl signing
     final FilesImpl files
-    final NamedDomainObjectContainer<DistributionImpl> distributions
+    final NamedDomainObjectContainer<Distribution> distributions
 
     private final ProjectLayout layout
 
@@ -110,9 +110,9 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         signing = objects.newInstance(SigningImpl, objects)
         files = objects.newInstance(FilesImpl, objects)
 
-        distributions = objects.domainObjectContainer(DistributionImpl, new NamedDomainObjectFactory<DistributionImpl>() {
+        distributions = objects.domainObjectContainer(Distribution, new NamedDomainObjectFactory<Distribution>() {
             @Override
-            DistributionImpl create(String name) {
+            Distribution create(String name) {
                 DistributionImpl distribution = objects.newInstance(DistributionImpl, objects)
                 distribution.name = name
                 return distribution
@@ -182,7 +182,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
-    void distributions(Action<? super NamedDomainObjectContainer<? extends Distribution>> action) {
+    void distributions(Action<? super NamedDomainObjectContainer<Distribution>> action) {
         action.execute(distributions)
     }
 
@@ -267,7 +267,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.signing = signing.toModel()
         jreleaser.checksum = checksum.toModel()
         jreleaser.files = files.toModel()
-        distributions.each { jreleaser.addDistribution(it.toModel()) }
+        distributions.each { jreleaser.addDistribution(((DistributionImpl) it).toModel()) }
         jreleaser
     }
 

@@ -55,8 +55,8 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     final CommitAuthorImpl commitAuthor
     final SetProperty<String> localPlugs
     final SetProperty<String> localSlots
-    final NamedDomainObjectContainer<PlugImpl> plugs
-    final NamedDomainObjectContainer<SlotImpl> slots
+    final NamedDomainObjectContainer<Plug> plugs
+    final NamedDomainObjectContainer<Slot> slots
 
     private final NamedDomainObjectContainer<ArchitectureImpl> architectures
 
@@ -74,18 +74,18 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
         snap = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
 
-        plugs = objects.domainObjectContainer(PlugImpl, new NamedDomainObjectFactory<PlugImpl>() {
+        plugs = objects.domainObjectContainer(Plug, new NamedDomainObjectFactory<Plug>() {
             @Override
-            PlugImpl create(String name) {
+            Plug create(String name) {
                 PlugImpl plug = objects.newInstance(PlugImpl, objects)
                 plug.name = name
                 return plug
             }
         })
 
-        slots = objects.domainObjectContainer(SlotImpl, new NamedDomainObjectFactory<SlotImpl>() {
+        slots = objects.domainObjectContainer(Slot, new NamedDomainObjectFactory<Slot>() {
             @Override
-            SlotImpl create(String name) {
+            Slot create(String name) {
                 SlotImpl slot = objects.newInstance(SlotImpl, objects)
                 slot.name = name
                 return slot
@@ -150,12 +150,12 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
     }
 
     @Override
-    void plugs(Action<? super NamedDomainObjectContainer<? extends Plug>> action) {
+    void plugs(Action<? super NamedDomainObjectContainer<Plug>> action) {
         action.execute(plugs)
     }
 
     @Override
-    void slots(Action<? super NamedDomainObjectContainer<? extends Slot>> action) {
+    void slots(Action<? super NamedDomainObjectContainer<Slot>> action) {
         action.execute(slots)
     }
 
@@ -201,11 +201,11 @@ class SnapImpl extends AbstractRepositoryTool implements Snap {
         tool.remoteBuild = remoteBuild.getOrElse(false)
         tool.localPlugs = (Set<String>) localPlugs.getOrElse([] as Set<String>)
         tool.localSlots = (Set<String>) localSlots.getOrElse([] as Set<String>)
-        tool.plugs.addAll(plugs.collect([]) { PlugImpl plug ->
-            plug.toModel()
+        tool.plugs.addAll(plugs.collect([]) { Plug plug ->
+            ((PlugImpl) plug).toModel()
         } as Set<org.jreleaser.model.Snap.Plug>)
-        tool.slots.addAll(slots.collect([]) { SlotImpl slot ->
-            slot.toModel()
+        tool.slots.addAll(slots.collect([]) { Slot slot ->
+            ((SlotImpl) slot).toModel()
         } as Set<org.jreleaser.model.Snap.Slot>)
         for (ArchitectureImpl architecture : architectures) {
             tool.addArchitecture(architecture.toModel())

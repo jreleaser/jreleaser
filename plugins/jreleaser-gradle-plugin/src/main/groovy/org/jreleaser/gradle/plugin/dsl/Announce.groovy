@@ -89,7 +89,7 @@ interface Announce {
 
     void zulip(Action<? super Zulip> action)
 
-    void webhooks(Action<? super NamedDomainObjectContainer<? extends Webhook>> action)
+    void webhooks(Action<? super NamedDomainObjectContainer<Webhook>> action)
 
     void article(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Article) Closure<Void> action)
 

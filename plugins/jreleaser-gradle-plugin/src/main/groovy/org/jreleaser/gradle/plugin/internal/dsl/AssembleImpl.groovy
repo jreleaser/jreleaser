@@ -41,45 +41,45 @@ import javax.inject.Inject
 @CompileStatic
 class AssembleImpl implements Assemble {
     final Property<Boolean> enabled
-    final NamedDomainObjectContainer<ArchiveImpl> archive
-    final NamedDomainObjectContainer<JlinkImpl> jlink
-    final NamedDomainObjectContainer<JpackageImpl> jpackage
-    final NamedDomainObjectContainer<NativeImageImpl> nativeImage
+    final NamedDomainObjectContainer<Archive> archive
+    final NamedDomainObjectContainer<Jlink> jlink
+    final NamedDomainObjectContainer<Jpackage> jpackage
+    final NamedDomainObjectContainer<NativeImage> nativeImage
 
     @Inject
     AssembleImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(true)
 
-        archive = objects.domainObjectContainer(ArchiveImpl, new NamedDomainObjectFactory<ArchiveImpl>() {
+        archive = objects.domainObjectContainer(Archive, new NamedDomainObjectFactory<Archive>() {
             @Override
-            ArchiveImpl create(String name) {
+            Archive create(String name) {
                 ArchiveImpl archive = objects.newInstance(ArchiveImpl, objects)
                 archive.name = name
                 archive
             }
         })
 
-        jlink = objects.domainObjectContainer(JlinkImpl, new NamedDomainObjectFactory<JlinkImpl>() {
+        jlink = objects.domainObjectContainer(Jlink, new NamedDomainObjectFactory<Jlink>() {
             @Override
-            JlinkImpl create(String name) {
+            Jlink create(String name) {
                 JlinkImpl jlink = objects.newInstance(JlinkImpl, objects)
                 jlink.name = name
                 jlink
             }
         })
 
-        jpackage = objects.domainObjectContainer(JpackageImpl, new NamedDomainObjectFactory<JpackageImpl>() {
+        jpackage = objects.domainObjectContainer(Jpackage, new NamedDomainObjectFactory<Jpackage>() {
             @Override
-            JpackageImpl create(String name) {
+            Jpackage create(String name) {
                 JpackageImpl jpackage = objects.newInstance(JpackageImpl, objects)
                 jpackage.name = name
                 jpackage
             }
         })
 
-        nativeImage = objects.domainObjectContainer(NativeImageImpl, new NamedDomainObjectFactory<NativeImageImpl>() {
+        nativeImage = objects.domainObjectContainer(NativeImage, new NamedDomainObjectFactory<NativeImage>() {
             @Override
-            NativeImageImpl create(String name) {
+            NativeImage create(String name) {
                 NativeImageImpl nativeImage = objects.newInstance(NativeImageImpl, objects)
                 nativeImage.name = name
                 nativeImage
@@ -88,22 +88,22 @@ class AssembleImpl implements Assemble {
     }
 
     @Override
-    void archive(Action<? super NamedDomainObjectContainer<? extends Archive>> action) {
+    void archive(Action<? super NamedDomainObjectContainer<Archive>> action) {
         action.execute(archive)
     }
 
     @Override
-    void jlink(Action<? super NamedDomainObjectContainer<? extends Jlink>> action) {
+    void jlink(Action<? super NamedDomainObjectContainer<Jlink>> action) {
         action.execute(jlink)
     }
 
     @Override
-    void jpackage(Action<? super NamedDomainObjectContainer<? extends Jpackage>> action) {
+    void jpackage(Action<? super NamedDomainObjectContainer<Jpackage>> action) {
         action.execute(jpackage)
     }
 
     @Override
-    void nativeImage(Action<? super NamedDomainObjectContainer<? extends NativeImage>> action) {
+    void nativeImage(Action<? super NamedDomainObjectContainer<NativeImage>> action) {
         action.execute(nativeImage)
     }
 
@@ -131,10 +131,10 @@ class AssembleImpl implements Assemble {
     org.jreleaser.model.Assemble toModel() {
         org.jreleaser.model.Assemble assemble = new org.jreleaser.model.Assemble()
 
-        archive.each { assemble.addArchive(it.toModel()) }
-        jlink.each { assemble.addJlink(it.toModel()) }
-        jpackage.each { assemble.addJpackage(it.toModel()) }
-        nativeImage.each { assemble.addNativeImage(it.toModel()) }
+        archive.each { assemble.addArchive(((ArchiveImpl) it).toModel()) }
+        jlink.each { assemble.addJlink(((JlinkImpl) it).toModel()) }
+        jpackage.each { assemble.addJpackage(((JpackageImpl) it).toModel()) }
+        nativeImage.each { assemble.addNativeImage(((NativeImageImpl) it).toModel()) }
 
         assemble
     }

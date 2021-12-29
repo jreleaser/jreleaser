@@ -61,7 +61,7 @@ interface DockerConfiguration extends Activatable, ExtraProperties {
 
     NamedDomainObjectContainer<Registry> getRegistries()
 
-    void registries(Action<? super NamedDomainObjectContainer<? extends Registry>> action)
+    void registries(Action<? super NamedDomainObjectContainer<Registry>> action)
 
     void registries(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 }

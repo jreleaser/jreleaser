@@ -40,35 +40,35 @@ import javax.inject.Inject
 @CompileStatic
 class UploadImpl implements Upload {
     final Property<Boolean> enabled
-    final NamedDomainObjectContainer<ArtifactoryImpl> artifactory
-    final NamedDomainObjectContainer<HttpImpl> http
-    final NamedDomainObjectContainer<S3Impl> s3
+    final NamedDomainObjectContainer<Artifactory> artifactory
+    final NamedDomainObjectContainer<Http> http
+    final NamedDomainObjectContainer<S3> s3
 
     @Inject
     UploadImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(true)
 
-        artifactory = objects.domainObjectContainer(ArtifactoryImpl, new NamedDomainObjectFactory<ArtifactoryImpl>() {
+        artifactory = objects.domainObjectContainer(Artifactory, new NamedDomainObjectFactory<Artifactory>() {
             @Override
-            ArtifactoryImpl create(String name) {
+            Artifactory create(String name) {
                 ArtifactoryImpl a = objects.newInstance(ArtifactoryImpl, objects)
                 a.name = name
                 return a
             }
         })
 
-        http = objects.domainObjectContainer(HttpImpl, new NamedDomainObjectFactory<HttpImpl>() {
+        http = objects.domainObjectContainer(Http, new NamedDomainObjectFactory<Http>() {
             @Override
-            HttpImpl create(String name) {
+            Http create(String name) {
                 HttpImpl h = objects.newInstance(HttpImpl, objects)
                 h.name = name
                 return h
             }
         })
 
-        s3 = objects.domainObjectContainer(S3Impl, new NamedDomainObjectFactory<S3Impl>() {
+        s3 = objects.domainObjectContainer(S3, new NamedDomainObjectFactory<S3>() {
             @Override
-            S3Impl create(String name) {
+            S3 create(String name) {
                 S3Impl s = objects.newInstance(S3Impl, objects)
                 s.name = name
                 return s
@@ -77,17 +77,17 @@ class UploadImpl implements Upload {
     }
 
     @Override
-    void artifactory(Action<? super NamedDomainObjectContainer<? extends Artifactory>> action) {
+    void artifactory(Action<? super NamedDomainObjectContainer<Artifactory>> action) {
         action.execute(artifactory)
     }
 
     @Override
-    void http(Action<? super NamedDomainObjectContainer<? extends Http>> action) {
+    void http(Action<? super NamedDomainObjectContainer<Http>> action) {
         action.execute(http)
     }
 
     @Override
-    void s3(Action<? super NamedDomainObjectContainer<? extends S3>> action) {
+    void s3(Action<? super NamedDomainObjectContainer<S3>> action) {
         action.execute(s3)
     }
 
@@ -110,9 +110,9 @@ class UploadImpl implements Upload {
     org.jreleaser.model.Upload toModel() {
         org.jreleaser.model.Upload upload = new org.jreleaser.model.Upload()
 
-        artifactory.each { upload.addArtifactory(it.toModel()) }
-        http.each { upload.addHttp(it.toModel()) }
-        s3.each { upload.addS3(it.toModel()) }
+        artifactory.each { upload.addArtifactory(((ArtifactoryImpl) it).toModel()) }
+        http.each { upload.addHttp(((HttpImpl) it).toModel()) }
+        s3.each { upload.addS3(((S3Impl) it).toModel()) }
 
         upload
     }

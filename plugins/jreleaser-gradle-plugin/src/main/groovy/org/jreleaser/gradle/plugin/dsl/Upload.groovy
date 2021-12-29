@@ -37,11 +37,11 @@ interface Upload {
 
     NamedDomainObjectContainer<S3> getS3()
 
-    void artifactory(Action<? super NamedDomainObjectContainer<? extends Artifactory>> action)
+    void artifactory(Action<? super NamedDomainObjectContainer<Artifactory>> action)
 
-    void http(Action<? super NamedDomainObjectContainer<? extends Http>> action)
+    void http(Action<? super NamedDomainObjectContainer<Http>> action)
 
-    void s3(Action<? super NamedDomainObjectContainer<? extends S3>> action)
+    void s3(Action<? super NamedDomainObjectContainer<S3>> action)
 
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
