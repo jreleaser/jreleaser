@@ -116,13 +116,13 @@ abstract class AbstractRepositoryToolProcessor<T extends RepositoryTool> extends
 
             commitCommand.call();
 
-            String tagName = gitService.getEffectiveTagName(context.getModel());
+            String tagName = tap.getResolvedTagName(props);
             context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName);
             git.tag()
                 .setSigned(signingEnabled)
                 .setSigningKey(signingKey)
                 .setGpgSigner(signer)
-                .setName(gitService.getEffectiveTagName(context.getModel()))
+                .setName(tagName)
                 .setForceUpdate(true)
                 .call();
 

@@ -73,6 +73,10 @@ public abstract class ArticleValidator extends Validator {
                 repository.getBranch(),
                 "HEAD"));
 
+        if (isBlank(repository.getTagName())) {
+            repository.setTagName(service.getTagName());
+        }
+
         if (isBlank(article.getTemplateDirectory())) {
             article.setTemplateDirectory("src/jreleaser/templates/article");
         }

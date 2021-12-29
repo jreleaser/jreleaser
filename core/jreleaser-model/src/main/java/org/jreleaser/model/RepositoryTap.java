@@ -38,6 +38,10 @@ public interface RepositoryTap extends Domain, OwnerAware, Activatable {
 
     void setName(String name);
 
+    String getTagName();
+
+    void setTagName(String tagName);
+
     String getBranch();
 
     void setBranch(String branch);
@@ -55,4 +59,6 @@ public interface RepositoryTap extends Domain, OwnerAware, Activatable {
     void setCommitMessage(String commitMessage);
 
     String getResolvedCommitMessage(Map<String, Object> props);
+
+    String getResolvedTagName(Map<String, Object> props);
 }

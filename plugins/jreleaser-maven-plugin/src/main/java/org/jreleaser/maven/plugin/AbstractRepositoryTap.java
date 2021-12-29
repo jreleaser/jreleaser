@@ -27,6 +27,7 @@ abstract class AbstractRepositoryTap implements Activatable {
     protected Active active;
     private String owner;
     private String name;
+    private String tagName;
     private String branch;
     private String username;
     private String token;
@@ -36,6 +37,7 @@ abstract class AbstractRepositoryTap implements Activatable {
         this.active = tap.active;
         this.owner = tap.owner;
         this.name = tap.name;
+        this.tagName = tap.tagName;
         this.branch = tap.branch;
         this.username = tap.username;
         this.token = tap.token;
@@ -71,6 +73,14 @@ abstract class AbstractRepositoryTap implements Activatable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTagName() {
+        return tagName;
+    }
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
     }
 
     public String getBranch() {
@@ -109,6 +119,7 @@ abstract class AbstractRepositoryTap implements Activatable {
         return active != null ||
             isNotBlank(owner) ||
             isNotBlank(name) ||
+            isNotBlank(tagName) ||
             isNotBlank(branch) ||
             isNotBlank(username) ||
             isNotBlank(token) ||

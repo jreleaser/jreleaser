@@ -70,10 +70,7 @@ public abstract class BrewValidator extends Validator {
         validateCommitAuthor(tool, parentTool);
         Brew.HomebrewTap tap = tool.getTap();
         tap.resolveEnabled(model.getProject());
-        validateOwner(tap, parentTool.getTap());
-        if (isBlank(tap.getBranch())) {
-            tap.setBranch(parentTool.getTap().getBranch());
-        }
+        validateTap(context, distribution, tap, parentTool.getTap(), "brew.tap");
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
@@ -85,18 +82,6 @@ public abstract class BrewValidator extends Validator {
         if (isBlank(tool.getFormulaName())) {
             tool.setFormulaName(distribution.getName());
         }
-
-        if (isBlank(tap.getName())) {
-            tap.setName(parentTool.getTap().getName());
-        }
-        if (isBlank(tap.getUsername())) {
-            tap.setUsername(parentTool.getTap().getUsername());
-        }
-        if (isBlank(tap.getToken())) {
-            tap.setToken(parentTool.getTap().getToken());
-        }
-
-        validateTap(context, distribution, tap, parentTool.getTap(), "brew.tap");
 
         if (!tool.isMultiPlatformSet() && parentTool.isMultiPlatformSet()) {
             tool.setMultiPlatform(parentTool.isMultiPlatform());

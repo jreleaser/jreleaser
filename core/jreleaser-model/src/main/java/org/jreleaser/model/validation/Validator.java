@@ -128,6 +128,9 @@ class Validator {
         if (isBlank(tap.getCommitMessage())) {
             tap.setCommitMessage("{{distributionName}} {{tagName}}");
         }
+        if (isBlank(tap.getTagName()) && isNotBlank(parentTap.getTagName())) {
+            tap.setTagName(parentTap.getTagName());
+        }
         if (isBlank(tap.getBranch()) && isNotBlank(parentTap.getBranch())) {
             tap.setBranch(parentTap.getBranch());
         }

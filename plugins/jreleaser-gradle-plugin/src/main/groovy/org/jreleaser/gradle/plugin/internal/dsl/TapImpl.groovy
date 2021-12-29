@@ -50,6 +50,7 @@ class TapImpl implements Tap {
     final Property<Active> active
     final Property<String> owner
     final Property<String> name
+    final Property<String> tagName
     final Property<String> branch
     final Property<String> username
     final Property<String> token
@@ -60,6 +61,7 @@ class TapImpl implements Tap {
         active = objects.property(Active).convention(Providers.notDefined())
         owner = objects.property(String).convention(Providers.notDefined())
         name = objects.property(String).convention(Providers.notDefined())
+        tagName = objects.property(String).convention(Providers.notDefined())
         branch = objects.property(String).convention(Providers.notDefined())
         username = objects.property(String).convention(Providers.notDefined())
         token = objects.property(String).convention(Providers.notDefined())
@@ -78,6 +80,7 @@ class TapImpl implements Tap {
         active.present ||
             owner.present ||
             name.present ||
+            tagName.present ||
             branch.present ||
             username.present ||
             token.present ||
@@ -88,6 +91,7 @@ class TapImpl implements Tap {
         if (active.present) into.active = active.get()
         if (owner.present) into.owner = owner.get()
         if (name.present) into.name = name.get()
+        if (tagName.present) into.tagName = tagName.get()
         if (branch.present) into.branch = branch.get()
         if (username.present) into.name = username.get()
         if (token.present) into.token = token.get()

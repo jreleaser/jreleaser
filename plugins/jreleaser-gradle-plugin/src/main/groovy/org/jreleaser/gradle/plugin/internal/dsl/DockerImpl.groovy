@@ -122,6 +122,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
         final Property<Active> active
         final Property<String> owner
         final Property<String> name
+        final Property<String> tagName
         final Property<String> branch
         final Property<String> username
         final Property<String> token
@@ -133,6 +134,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
             active = objects.property(Active).convention(Providers.notDefined())
             owner = objects.property(String).convention(Providers.notDefined())
             name = objects.property(String).convention(Providers.notDefined())
+            tagName = objects.property(String).convention(Providers.notDefined())
             branch = objects.property(String).convention(Providers.notDefined())
             username = objects.property(String).convention(Providers.notDefined())
             token = objects.property(String).convention(Providers.notDefined())
@@ -152,6 +154,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
             active.present ||
                 owner.present ||
                 name.present ||
+                tagName.present ||
                 branch.present ||
                 username.present ||
                 versionedSubfolders.present ||
@@ -164,6 +167,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
             if (active.present) tap.active = active.get()
             if (owner.present) tap.owner = owner.get()
             if (name.present) tap.name = name.get()
+            if (tagName.present) tap.tagName = tagName.get()
             if (branch.present) tap.branch = branch.get()
             if (username.present) tap.name = username.get()
             if (token.present) tap.token = token.get()

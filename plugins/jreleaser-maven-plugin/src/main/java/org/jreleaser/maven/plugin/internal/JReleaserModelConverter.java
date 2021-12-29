@@ -576,6 +576,7 @@ public final class JReleaserModelConverter {
         into.setActive(tr(from.resolveActive()));
         into.setOwner(tr(from.getOwner()));
         into.setName(tr(from.getName()));
+        into.setTagName(tr(from.getTagName()));
         into.setBranch(tr(from.getBranch()));
         into.setUsername(tr(from.getUsername()));
         into.setToken(tr(from.getToken()));

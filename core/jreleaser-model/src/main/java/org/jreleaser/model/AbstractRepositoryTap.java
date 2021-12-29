@@ -26,6 +26,7 @@ import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -42,6 +43,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
     protected String tapName;
     protected String owner;
     protected String name;
+    protected String tagName;
     protected String branch;
     protected String username;
     protected String token;
@@ -66,6 +68,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
         this.enabled = tap.enabled;
         this.owner = tap.owner;
         this.name = tap.name;
+        this.tagName = tap.tagName;
         this.branch = tap.branch;
         this.username = tap.username;
         this.token = tap.token;
@@ -130,6 +133,11 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
     }
 
     @Override
+    public String getResolvedTagName(Map<String, Object> props) {
+        return Templates.resolve(tagName, props);
+    }
+
+    @Override
     public String getResolvedUsername(GitService service) {
         return Env.resolve(Env.toVar(basename + "_"
             + service.getServiceName()) + "_USERNAME", username);
@@ -159,6 +167,16 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getTagName() {
+        return tagName;
+    }
+
+    @Override
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
     }
 
     @Override
@@ -208,6 +226,7 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
         map.put("active", active);
         map.put("owner", owner);
         map.put("name", getResolvedName());
+        map.put("tagName", tagName);
         map.put("branch", branch);
         map.put("username", username);
         map.put("token", isNotBlank(token) ? HIDE : UNSET);
