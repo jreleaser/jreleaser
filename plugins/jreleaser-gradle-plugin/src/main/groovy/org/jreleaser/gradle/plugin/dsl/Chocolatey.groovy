@@ -38,6 +38,8 @@ interface Chocolatey extends RepositoryTool {
 
     Property<String> getIconUrl()
 
+    Property<String> getSource()
+
     Property<Boolean> getRemoteBuild()
 
     Tap getBucket()

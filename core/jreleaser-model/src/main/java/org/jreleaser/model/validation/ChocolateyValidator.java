@@ -31,6 +31,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Chocolatey.CHOCOLATEY_API_KEY;
+import static org.jreleaser.model.Chocolatey.DEFAULT_CHOCOLATEY_PUSH_URL;
 import static org.jreleaser.model.Chocolatey.SKIP_CHOCOLATEY;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
@@ -86,6 +87,17 @@ public abstract class ChocolateyValidator extends Validator {
         }
         if (isBlank(tool.getTitle())) {
             tool.setTitle(model.getProject().getName());
+        }
+
+        if (isBlank(tool.getIconUrl())) {
+            tool.setIconUrl(parentTool.getIconUrl());
+        }
+
+        if (isBlank(tool.getSource())) {
+            tool.setSource(parentTool.getSource());
+        }
+        if (isBlank(tool.getSource())) {
+            tool.setSource(DEFAULT_CHOCOLATEY_PUSH_URL);
         }
 
         if (!tool.isRemoteBuild()) {

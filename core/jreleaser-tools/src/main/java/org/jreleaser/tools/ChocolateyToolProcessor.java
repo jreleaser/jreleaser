@@ -40,6 +40,7 @@ import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_URL;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_ICON_URL;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_PACKAGE_NAME;
+import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_SOURCE;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_TITLE;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_USERNAME;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
@@ -52,8 +53,6 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @since 0.1.0
  */
 public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Chocolatey> {
-    private static final String CHOCOLATEY_PUSH_URL = "https://push.chocolatey.org/";
-
     public ChocolateyToolProcessor(JReleaserContext context) {
         super(context);
     }
@@ -115,6 +114,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
         props.put(KEY_CHOCOLATEY_USERNAME, getTool().getUsername());
         props.put(KEY_CHOCOLATEY_TITLE, getTool().getTitle());
         props.put(KEY_CHOCOLATEY_ICON_URL, resolve(getTool().getIconUrl(), props));
+        props.put(KEY_CHOCOLATEY_SOURCE, tool.getSource());
     }
 
     @Override
@@ -157,14 +157,14 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
             .arg("-k")
             .arg(tool.getResolvedApiKey())
             .arg("-source")
-            .arg(CHOCOLATEY_PUSH_URL);
+            .arg(tool.getSource());
         executeCommand(packageDirectory, cmd);
 
         cmd = new Command("choco")
             .arg("push")
             .arg("$(ls *.nupkg | % {$_.FullName})")
             .arg("-s")
-            .arg(CHOCOLATEY_PUSH_URL);
+            .arg(tool.getSource());
 
         executeCommand(packageDirectory, cmd);
     }

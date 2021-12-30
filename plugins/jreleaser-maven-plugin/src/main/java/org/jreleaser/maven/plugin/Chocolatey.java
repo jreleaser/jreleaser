@@ -30,6 +30,7 @@ public class Chocolatey extends AbstractRepositoryTool {
     private String apiKey;
     private String title;
     private String iconUrl;
+    private String source;
     private Boolean remoteBuild;
 
     void setAll(Chocolatey choco) {
@@ -39,6 +40,7 @@ public class Chocolatey extends AbstractRepositoryTool {
         this.apiKey = choco.apiKey;
         this.title = choco.title;
         this.iconUrl = choco.iconUrl;
+        this.source = choco.source;
         this.remoteBuild = choco.remoteBuild;
         setBucket(choco.bucket);
     }
@@ -83,6 +85,14 @@ public class Chocolatey extends AbstractRepositoryTool {
         this.iconUrl = iconUrl;
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
     public Boolean getRemoteBuild() {
         return remoteBuild;
     }
@@ -111,6 +121,7 @@ public class Chocolatey extends AbstractRepositoryTool {
             isNotBlank(apiKey) ||
             isNotBlank(title) ||
             isNotBlank(iconUrl) ||
+            isNotBlank(source) ||
             null != remoteBuild ||
             bucket.isSet();
     }

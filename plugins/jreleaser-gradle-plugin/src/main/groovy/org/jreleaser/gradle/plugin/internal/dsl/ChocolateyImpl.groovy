@@ -42,6 +42,7 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
     final Property<String> apiKey
     final Property<String> title
     final Property<String> iconUrl
+    final Property<String> source
     final Property<Boolean> remoteBuild
     final CommitAuthorImpl commitAuthor
     final TapImpl bucket
@@ -54,6 +55,7 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
         apiKey = objects.property(String).convention(Providers.notDefined())
         title = objects.property(String).convention(Providers.notDefined())
         iconUrl = objects.property(String).convention(Providers.notDefined())
+        source = objects.property(String).convention(Providers.notDefined())
         remoteBuild = objects.property(Boolean).convention(Providers.notDefined())
         bucket = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
@@ -68,6 +70,7 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
             apiKey.present ||
             title.present ||
             iconUrl.present ||
+            source.present ||
             remoteBuild.present ||
             bucket.isSet() ||
             commitAuthor.isSet()
@@ -104,6 +107,7 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
         if (apiKey.present) tool.apiKey = apiKey.get()
         if (title.present) tool.title = title.get()
         if (iconUrl.present) tool.iconUrl = iconUrl.get()
+        if (source.present) tool.source = source.get()
         tool.remoteBuild = remoteBuild.getOrElse(false)
         tool
     }

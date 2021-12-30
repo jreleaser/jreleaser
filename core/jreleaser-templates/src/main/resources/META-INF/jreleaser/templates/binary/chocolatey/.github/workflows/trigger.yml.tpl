@@ -22,5 +22,5 @@ jobs:
       - name: Publish
         run: |
           powershell
-          choco apikey -k ${{ secrets.CHOCOLATEY_API_KEY  }} -source https://push.chocolatey.org/
-          choco push $(ls *.nupkg | % {$_.FullName}) -s https://push.chocolatey.org/
+          choco apikey -k ${{ secrets.CHOCOLATEY_API_KEY  }} -s {{chocolateySource}}
+          choco push $(ls *.nupkg | % {$_.FullName}) -s {{chocolateySource}}
