@@ -22,6 +22,7 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Chocolatey;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
+import org.jreleaser.model.Github;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
@@ -122,8 +123,13 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
                              String content,
                              Map<String, Object> props,
                              Path outputDirectory,
-                             String fileName)
-        throws ToolProcessingException {
+                             String fileName) throws ToolProcessingException {
+        GitService gitService = context.getModel().getRelease().getGitService();
+        if (fileName.contains(".github") && (!tool.isRemoteBuild() || !(gitService instanceof Github))) {
+            // skip
+            return;
+        }
+
         fileName = trimTplExtension(fileName);
 
         Path outputFile = "binary.nuspec".equals(fileName) ?
@@ -138,7 +144,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
 
         Command cmd = new Command("choco")
             .arg("pack")
-            .arg(distribution.getName().concat(".nuspec"));
+            .arg(tool.getPackageName().concat(".nuspec"));
 
         executeCommand(packageDirectory, cmd);
     }
