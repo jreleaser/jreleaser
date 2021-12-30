@@ -278,6 +278,7 @@ public class CalVer implements Comparable<CalVer> {
     }
 
     private static int parseInt(String str) {
+        if ("0".equals(str)) return 0;
         if (str.startsWith("0")) {
             return Integer.parseInt(str.substring(1));
         }

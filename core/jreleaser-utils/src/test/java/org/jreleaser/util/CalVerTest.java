@@ -87,6 +87,7 @@ public class CalVerTest {
             Arguments.of("YYYY.MM.DD_MICRO", "2021.1.2_3", "2021", "1", "2", null, null, "3", null),
             Arguments.of("YYYY.MODIFIER", "2021.ALPHA1", "2021", null, null, null, null, null, "ALPHA1"),
             Arguments.of("YYYY.MINOR.MICRO.MODIFIER", "2021.1.2.ALPHA1", "2021", null, null, null, "1", "2", "ALPHA1"),
+            Arguments.of("YYYY.MINOR.MICRO.MODIFIER", "2022.0.0.beta2", "2022", null, null, null, "0", "0", "beta2"),
             Arguments.of("YYYY.MODIFIER", "2021.FOO-BAR", "2021", null, null, null, null, null, "FOO-BAR")
         );
     }
