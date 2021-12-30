@@ -88,6 +88,16 @@ public class CalVerTest {
             Arguments.of("YYYY.MODIFIER", "2021.ALPHA1", "2021", null, null, null, null, null, "ALPHA1"),
             Arguments.of("YYYY.MINOR.MICRO.MODIFIER", "2021.1.2.ALPHA1", "2021", null, null, null, "1", "2", "ALPHA1"),
             Arguments.of("YYYY.MINOR.MICRO.MODIFIER", "2022.0.0.beta2", "2022", null, null, null, "0", "0", "beta2"),
+            Arguments.of("YYYY.MINOR.MICRO-MODIFIER", "2021.1.2-ALPHA1", "2021", null, null, null, "1", "2", "ALPHA1"),
+            Arguments.of("YYYY.MINOR.MICRO-MODIFIER", "2022.0.0-beta2", "2022", null, null, null, "0", "0", "beta2"),
+            Arguments.of("YYYY.MINOR.MICRO_MODIFIER", "2021.1.2_ALPHA1", "2021", null, null, null, "1", "2", "ALPHA1"),
+            Arguments.of("YYYY.MINOR.MICRO_MODIFIER", "2022.0.0_beta2", "2022", null, null, null, "0", "0", "beta2"),
+            Arguments.of("YYYY.MINOR.MICRO[.MODIFIER]", "2022.1.1.beta2", "2022", null, null, null, "1", "1", "beta2"),
+            Arguments.of("YYYY.MINOR.MICRO[.MODIFIER]", "2022.1.1", "2022", null, null, null, "1", "1", null),
+            Arguments.of("YYYY.MINOR.MICRO[-MODIFIER]", "2022.1.1-beta2", "2022", null, null, null, "1", "1", "beta2"),
+            Arguments.of("YYYY.MINOR.MICRO[-MODIFIER]", "2022.1.1", "2022", null, null, null, "1", "1", null),
+            Arguments.of("YYYY.MINOR.MICRO[_MODIFIER]", "2022.1.1_beta2", "2022", null, null, null, "1", "1", "beta2"),
+            Arguments.of("YYYY.MINOR.MICRO[_MODIFIER]", "2022.1.1", "2022", null, null, null, "1", "1", null),
             Arguments.of("YYYY.MODIFIER", "2021.FOO-BAR", "2021", null, null, null, null, null, "FOO-BAR")
         );
     }

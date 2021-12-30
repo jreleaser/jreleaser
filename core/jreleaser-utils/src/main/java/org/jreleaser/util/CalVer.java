@@ -58,6 +58,8 @@ public class CalVer implements Comparable<CalVer> {
     private static final String MINOR = "MINOR";
     private static final String MICRO = "MICRO";
     private static final String MODIFIER = "MODIFIER";
+    private static final String MODIFIER_OP = "[MODIFIER]";
+    private static final String MODIFIER_OP2 = "MODIFIER]";
 
     private static final String[] YEARS = {YEAR_ZERO, YEAR_SHORT, YEAR_LONG};
     private static final String[] MONTHS = {MONTH_ZERO, MONTH_SHORT};
@@ -77,7 +79,8 @@ public class CalVer implements Comparable<CalVer> {
         PATTERNS.put(DAY_ZERO, "(0[1-9]|[1-2][0-9]|3[0-1])");
         PATTERNS.put(MINOR, "(0|[1-9]\\d*)");
         PATTERNS.put(MICRO, "(0|[1-9]\\d*)");
-        PATTERNS.put(MODIFIER, "([a-zA-Z-][0-9a-zA-Z-]*)");
+        PATTERNS.put(MODIFIER, "([a-zA-Z\\-][0-9a-zA-Z\\-]*)");
+        PATTERNS.put(MODIFIER_OP, "([a-zA-Z\\-][0-9a-zA-Z\\-]*))?");
     }
 
     private final String year;
@@ -291,7 +294,7 @@ public class CalVer implements Comparable<CalVer> {
 
         List<String> tokens = new ArrayList<>();
 
-        List<Character> delims = newList('.', '_', '-');
+        List<Character> delims = newList('.', '_', '-', '[');
         String f = format.trim();
         String y = null;
         String m = null;
@@ -302,32 +305,35 @@ public class CalVer implements Comparable<CalVer> {
         String o = null;
         int i = 0;
 
-        String s = take(f, i, delims);
-        if (binarySearch(YEARS, s) < 0) {
+        Tuple s = take(f, i, delims);
+        if (binarySearch(YEARS, s.token) < 0) {
             throw new IllegalArgumentException(RB.$("ERROR_calver_year", f));
         }
-        y = s;
+        y = s.token;
         tokens.add(y);
+        if (isNotBlank(s.sep)) tokens.add(s.sep);
         i = y.length() + 1;
 
         s = take(f, i, delims);
-        if (binarySearch(MONTHS, s) >= 0) {
+        if (binarySearch(MONTHS, s.token) >= 0) {
             // cannot have weeks
             if (f.contains(WEEK_ZERO) || f.contains(WEEK_SHORT)) {
                 throw new IllegalArgumentException(RB.$("ERROR_calver_month", f));
             }
-            m = s;
+            m = s.token;
             tokens.add(m);
+            if (isNotBlank(s.sep)) tokens.add(s.sep);
             i += m.length() + 1;
 
             s = take(f, i, delims);
-            if (binarySearch(DAYS, s) >= 0) {
-                d = s;
+            if (binarySearch(DAYS, s.token) >= 0) {
+                d = s.token;
                 tokens.add(d);
+                if (isNotBlank(s.sep)) tokens.add(s.sep);
                 i += d.length() + 1;
                 s = take(f, i, delims);
             }
-        } else if (binarySearch(WEEKS, s) >= 0) {
+        } else if (binarySearch(WEEKS, s.token) >= 0) {
             // cannot have months nor days
             if (f.contains(MONTH_ZERO) || f.contains(MONTH_SHORT)) {
                 throw new IllegalArgumentException(RB.$("ERROR_calver_week_month", f));
@@ -335,8 +341,9 @@ public class CalVer implements Comparable<CalVer> {
             if (f.contains(DAY_ZERO) || f.contains(DAY_SHORT)) {
                 throw new IllegalArgumentException(RB.$("ERROR_calver_week_day", f));
             }
-            w = s;
+            w = s.token;
             tokens.add(w);
+            if (isNotBlank(s.sep)) tokens.add(s.sep);
             i += w.length() + 1;
 
             s = take(f, i, delims);
@@ -344,45 +351,56 @@ public class CalVer implements Comparable<CalVer> {
 
         boolean micro = false;
         boolean done = false;
-        if (binarySearch(NUMBERS, s) >= 0) {
-            tokens.add(s);
-            i += s.length() + 1;
-            micro = MICRO.equals(s);
-            n = !micro ? s : null;
-            r = micro ? s : null;
+        if (binarySearch(NUMBERS, s.token) >= 0) {
+            tokens.add(s.token);
+            if (isNotBlank(s.sep)) tokens.add(s.sep);
+            i += s.token.length() + 1;
+            micro = MICRO.equals(s.token);
+            n = !micro ? s.token : null;
+            r = micro ? s.token : null;
             s = take(f, i, delims);
-            done = isBlank(s);
+            done = isBlank(s.token);
         } else {
-            o = take(f, i, emptyList());
+            s = take(f, i, emptyList());
+            o = s.token;
             if (isNotBlank(o)) tokens.add(o);
             done = true;
         }
 
         if (!done) {
-            if (binarySearch(NUMBERS, s) >= 0) {
+            if (binarySearch(NUMBERS, s.token) >= 0) {
                 if (micro) {
-                    if (MICRO.equals(s)) {
+                    if (MICRO.equals(s.token)) {
                         throw new IllegalArgumentException(RB.$("ERROR_calver_micro_duplicate", f));
                     } else {
                         throw new IllegalArgumentException(RB.$("ERROR_calver_micro_minor", f));
                     }
-                } else if (MINOR.equals(s)) {
+                } else if (MINOR.equals(s.token)) {
                     throw new IllegalArgumentException(RB.$("ERROR_calver_minor_duplicate", f));
                 }
-                tokens.add(s);
-                r = s;
+                tokens.add(s.token);
+                if (isNotBlank(s.sep)) tokens.add(s.sep);
+                r = s.token;
                 i += r.length() + 1;
-                o = take(f, i, emptyList());
+                s = take(f, i, emptyList());
+                o = s.token;
                 if (isNotBlank(o)) tokens.add(o);
             } else {
-                o = take(f, i, emptyList());
+                s = take(f, i, emptyList());
+                o = s.token;
                 if (isNotBlank(o)) tokens.add(o);
             }
         }
 
+        if (tokens.size() > 0 && tokens.get(tokens.size() - 1).endsWith(MODIFIER_OP2)) {
+            String sep = tokens.remove(tokens.size() - 2);
+            String mod = "(?:" + sep + PATTERNS.get(MODIFIER_OP);
+            tokens.set(tokens.size() - 1, mod);
+        }
+
         Pattern pattern = Pattern.compile("^" + tokens.stream()
-            .map(PATTERNS::get)
-            .collect(Collectors.joining("[\\._-]")) + "$");
+            .map(t -> PATTERNS.getOrDefault(t, t))
+            .collect(Collectors.joining("")) + "$");
 
         Matcher matcher = pattern.matcher(version.trim());
 
@@ -432,17 +450,37 @@ public class CalVer implements Comparable<CalVer> {
             .replace(MODIFIER, "A"));
     }
 
-    private static String take(String str, int index, List<Character> delims) {
+    private static Tuple take(String str, int index, List<Character> delims) {
         StringBuilder b = new StringBuilder();
 
         for (int i = index; i < str.length(); i++) {
             char c = str.charAt(i);
             if (delims.contains(c)) {
-                break;
+                if (c == '[' && str.length() > i + 1) {
+                    c = str.charAt(i + 1);
+                }
+                return new Tuple(b.toString(), c);
             }
             b.append(c);
         }
 
-        return b.toString();
+        return new Tuple(b.toString(), (char) 0);
+    }
+
+    private static class Tuple {
+        private final String token;
+        private final String sep;
+
+        private Tuple(String token, char sep) {
+            this.token = token;
+            this.sep = sep != ((char) 0) ? escape(sep) : "";
+        }
+
+        private static String escape(char sep) {
+            if ('.' == sep) {
+                return "\\.";
+            }
+            return String.valueOf(sep);
+        }
     }
 }
