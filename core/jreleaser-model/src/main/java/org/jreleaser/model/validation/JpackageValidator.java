@@ -181,7 +181,7 @@ public abstract class JpackageValidator extends Validator {
             applicationPackage.setCopyright(project.getCopyright());
         }
 
-        if (mode != JReleaserContext.Mode.FULL) {
+        if (mode == JReleaserContext.Mode.ASSEMBLE) {
             validateTemplate(context, jpackage, errors);
         }
         

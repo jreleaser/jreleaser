@@ -40,6 +40,6 @@ public class Config extends AbstractPlatformAwareModelCommand {
     }
 
     protected JReleaserContext.Mode getMode() {
-        return assembly ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.FULL;
+        return assembly ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.CONFIG;
     }
 }

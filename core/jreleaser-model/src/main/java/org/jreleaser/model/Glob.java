@@ -118,7 +118,7 @@ public class Glob implements Domain, ExtraProperties {
         if (isNotBlank(directory)) {
             directory = Artifacts.resolveForGlob(directory, context, this);
             path = context.getBasedir().resolve(Paths.get(directory)).normalize();
-            if (!exists(path)) {
+            if (context.getMode().validatePaths() && !exists(path)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(path)));
             }
         }
@@ -134,7 +134,7 @@ public class Glob implements Domain, ExtraProperties {
             if (isNotBlank(directory)) {
                 directory = Artifacts.resolveForGlob(directory, context, this);
                 path = context.getBasedir().resolve(Paths.get(directory)).normalize();
-                if (!exists(path)) {
+                if (context.getMode().validatePaths() && !exists(path)) {
                     throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(path)));
                 }
             }

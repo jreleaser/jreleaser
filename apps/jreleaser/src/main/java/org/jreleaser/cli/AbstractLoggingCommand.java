@@ -18,8 +18,6 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.cli.internal.ColorizedJReleaserLoggerAdapter;
-import org.jreleaser.cli.internal.Colorizer;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
 import picocli.CommandLine;
 
@@ -30,7 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;

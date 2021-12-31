@@ -20,7 +20,6 @@ package org.jreleaser.maven.plugin;
 import org.jreleaser.model.Active;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;

@@ -37,7 +37,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class PackagersValidator extends Validator {
     public static void validatePackagers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode != JReleaserContext.Mode.FULL) {
+        if (!mode.validateConfig()) {
             return;
         }
 

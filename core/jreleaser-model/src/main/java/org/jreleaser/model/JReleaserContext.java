@@ -174,7 +174,7 @@ public class JReleaserContext {
 
         logger.info(RB.$("context.configuration.validation"));
 
-        if (mode == Mode.FULL) {
+        if (mode.validateConfig()) {
             adjustDistributions();
         }
 
@@ -564,9 +564,22 @@ public class JReleaserContext {
     }
 
     public enum Mode {
+        CONFIG,
         ASSEMBLE,
         FULL,
-        CHANGELOG
+        CHANGELOG;
+
+        public boolean validateAssembly() {
+            return this == ASSEMBLE;
+        }
+
+        public boolean validateConfig() {
+            return this == CONFIG || this == FULL;
+        }
+
+        public boolean validatePaths() {
+            return this == FULL;
+        }
     }
 
     public enum Configurer {

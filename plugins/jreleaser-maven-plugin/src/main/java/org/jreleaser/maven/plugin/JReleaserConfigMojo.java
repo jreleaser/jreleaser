@@ -65,6 +65,6 @@ public class JReleaserConfigMojo extends AbstractPlatformAwareJReleaserMojo {
     }
 
     protected JReleaserContext.Mode getMode() {
-        return assembly ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.FULL;
+        return assembly ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.CONFIG;
     }
 }

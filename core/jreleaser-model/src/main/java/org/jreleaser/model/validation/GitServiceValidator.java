@@ -41,13 +41,13 @@ import java.util.TreeSet;
 import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.GitService.BRANCH;
+import static org.jreleaser.model.GitService.Milestone.MILESTONE_NAME;
 import static org.jreleaser.model.GitService.OVERWRITE;
 import static org.jreleaser.model.GitService.RELEASE_NAME;
 import static org.jreleaser.model.GitService.SKIP_RELEASE;
 import static org.jreleaser.model.GitService.SKIP_TAG;
 import static org.jreleaser.model.GitService.TAG_NAME;
 import static org.jreleaser.model.GitService.UPDATE;
-import static org.jreleaser.model.GitService.Milestone.MILESTONE_NAME;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -201,7 +201,7 @@ public abstract class GitServiceValidator extends Validator {
             }
         }
 
-        if (mode != JReleaserContext.Mode.ASSEMBLE) {
+        if (mode.validateConfig()) {
             if (service.isSign() && !model.getSigning().isEnabled()) {
                 if (context.isDryrun()) {
                     service.setSign(false);
@@ -210,6 +210,8 @@ public abstract class GitServiceValidator extends Validator {
                 }
             }
 
+        }
+        if (mode != JReleaserContext.Mode.ASSEMBLE) {
             validateChangelog(context, service, errors);
         }
     }

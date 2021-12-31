@@ -17,11 +17,6 @@
  */
 package org.jreleaser.sdk.mail;
 
-import org.jreleaser.bundle.RB;
-import org.jreleaser.model.JReleaserVersion;
-import org.jreleaser.model.Mail;
-import org.jreleaser.util.JReleaserLogger;
-
 import jakarta.mail.Message;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
@@ -29,6 +24,11 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import org.jreleaser.bundle.RB;
+import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.Mail;
+import org.jreleaser.util.JReleaserLogger;
+
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;

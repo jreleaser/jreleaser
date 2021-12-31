@@ -28,7 +28,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Artifact
-import org.jreleaser.gradle.plugin.dsl.Glob
 import org.jreleaser.gradle.plugin.dsl.Jlink
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil

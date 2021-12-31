@@ -29,7 +29,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.DockerConfiguration
-import org.jreleaser.gradle.plugin.dsl.NativeImage
 import org.jreleaser.gradle.plugin.dsl.Registry
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil

@@ -143,7 +143,7 @@ public abstract class JlinkValidator extends Validator {
             "jlink." + jlink.getName() + ".jars",
             errors);
 
-        if (mode != JReleaserContext.Mode.FULL) {
+        if (mode == JReleaserContext.Mode.ASSEMBLE) {
             validateTemplate(context, jlink, errors);
         }
 

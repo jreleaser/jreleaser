@@ -18,7 +18,6 @@
 package org.jreleaser.engine.changelog;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.sdk.git.ChangelogProvider;

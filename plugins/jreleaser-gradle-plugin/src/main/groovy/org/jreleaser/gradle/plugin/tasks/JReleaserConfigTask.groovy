@@ -60,7 +60,7 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
 
     @TaskAction
     void displayConfig() {
-        mode = assembly.get() ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.FULL
+        mode = assembly.get() ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.CONFIG
 
         JReleaserContext context = createContext()
         println '== JReleaser =='

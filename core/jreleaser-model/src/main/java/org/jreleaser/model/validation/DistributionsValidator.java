@@ -58,7 +58,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class DistributionsValidator extends Validator {
     public static void validateDistributions(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode != JReleaserContext.Mode.FULL) {
+        if (mode.validateConfig()) {
             return;
         }
 

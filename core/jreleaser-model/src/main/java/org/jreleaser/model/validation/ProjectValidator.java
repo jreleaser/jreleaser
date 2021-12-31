@@ -104,7 +104,7 @@ public abstract class ProjectValidator extends Validator {
             !context.getModel().getAssemble().getJpackage().isEmpty() ||
             !context.getModel().getAssemble().getNativeImage().isEmpty();
 
-        if ((mode == JReleaserContext.Mode.FULL && javaDistributions) || javaAssemblers) {
+        if ((mode.validateConfig() && javaDistributions) || javaAssemblers) {
             validateJava(context, project, errors);
         }
     }
@@ -137,7 +137,7 @@ public abstract class ProjectValidator extends Validator {
                 });
         }
 
-        if (mode != JReleaserContext.Mode.FULL) return;
+        if (!mode.validateConfig()) return;
 
         if (context.getModel().getActiveDistributions().isEmpty() && !context.getModel().getAnnounce().isEnabled()) {
             return;

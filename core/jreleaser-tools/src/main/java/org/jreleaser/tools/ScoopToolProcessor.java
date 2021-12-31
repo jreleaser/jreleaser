@@ -31,7 +31,6 @@ import java.util.Map;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
-import static org.jreleaser.util.Constants.KEY_MACPORTS_DISTRIBUTION_URL;
 import static org.jreleaser.util.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
 import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
 import static org.jreleaser.util.Constants.KEY_SCOOP_AUTOUPDATE_EXTRACT_DIR;

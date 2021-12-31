@@ -50,7 +50,7 @@ public abstract class HttpValidator extends Validator {
         if (!http.isActiveSet()) {
             http.setActive(Active.NEVER);
         }
-        if (!http.resolveEnabled(context.getModel().getProject()) || mode != JReleaserContext.Mode.FULL) {
+        if (!http.resolveEnabled(context.getModel().getProject())) {
             return;
         }
 

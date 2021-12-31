@@ -122,14 +122,14 @@ public class Artifact implements Domain, ExtraProperties {
     }
 
     public Path getResolvedPath(JReleaserContext context) {
-        return getResolvedPath(context, context.getBasedir(), true);
+        return getResolvedPath(context, context.getBasedir(), context.getMode().validatePaths());
     }
 
     public Path getResolvedPath(JReleaserContext context, Distribution distribution) {
         if (null == resolvedPath) {
             path = resolveForArtifact(path, context, this, distribution);
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
-            if (!exists(resolvedPath)) {
+            if (context.getMode().validatePaths() && !exists(resolvedPath)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
             }
         }
@@ -140,7 +140,7 @@ public class Artifact implements Domain, ExtraProperties {
         if (null == resolvedPath) {
             path = resolveForArtifact(path, context, this, assembler);
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
-            if (!exists(resolvedPath)) {
+            if (context.getMode().validatePaths() && !exists(resolvedPath)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
             }
         }

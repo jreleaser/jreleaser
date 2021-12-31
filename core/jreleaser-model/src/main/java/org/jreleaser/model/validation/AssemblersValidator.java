@@ -89,7 +89,7 @@ public abstract class AssemblersValidator extends Validator {
     }
 
     public static void postValidateAssemblers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode != JReleaserContext.Mode.ASSEMBLE && mode != JReleaserContext.Mode.FULL) {
+        if (mode == JReleaserContext.Mode.CHANGELOG) {
             return;
         }
 

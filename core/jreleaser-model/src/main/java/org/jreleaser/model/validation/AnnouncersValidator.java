@@ -43,7 +43,7 @@ import static org.jreleaser.model.validation.ZulipValidator.validateZulip;
  */
 public abstract class AnnouncersValidator extends Validator {
     public static void validateAnnouncers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode != JReleaserContext.Mode.FULL) {
+        if (!mode.validateConfig()) {
             return;
         }
 

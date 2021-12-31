@@ -47,7 +47,7 @@ public abstract class ArtifactoryValidator extends Validator {
         if (!artifactory.isActiveSet()) {
             artifactory.setActive(Active.NEVER);
         }
-        if (!artifactory.resolveEnabled(context.getModel().getProject()) || mode != JReleaserContext.Mode.FULL) {
+        if (!artifactory.resolveEnabled(context.getModel().getProject())) {
             return;
         }
 

@@ -26,7 +26,7 @@ import org.jreleaser.util.Errors;
  */
 public abstract class FilesValidator extends Validator {
     public static void validateFiles(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode != JReleaserContext.Mode.FULL) {
+        if (!mode.validateConfig()) {
             return;
         }
 

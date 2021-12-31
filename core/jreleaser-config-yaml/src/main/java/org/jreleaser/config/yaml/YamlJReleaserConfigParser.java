@@ -21,7 +21,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.github.sbaudoin.yamllint.Format;
 import com.github.sbaudoin.yamllint.LintProblem;
 import com.github.sbaudoin.yamllint.Linter;
-import com.github.sbaudoin.yamllint.YamlLintConfig;
 import com.github.sbaudoin.yamllint.YamlLintConfigException;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.config.yaml.lint.YamlLintConfig2;

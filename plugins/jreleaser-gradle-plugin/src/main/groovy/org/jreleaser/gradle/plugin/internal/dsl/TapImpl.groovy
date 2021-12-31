@@ -29,7 +29,6 @@ import org.jreleaser.model.Chocolatey
 import org.jreleaser.model.Gofish
 import org.jreleaser.model.Jbang
 import org.jreleaser.model.Macports
-
 import org.jreleaser.model.Repository
 import org.jreleaser.model.RepositoryTap
 import org.jreleaser.model.Scoop

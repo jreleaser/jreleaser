@@ -194,7 +194,7 @@ class Validator {
     }
 
     static void validateFileSet(JReleaserContext context, JReleaserContext.Mode mode, Assembler assembler, FileSet fileSet, int index, Errors errors) {
-        if (mode == JReleaserContext.Mode.FULL) return;
+        if (mode != JReleaserContext.Mode.ASSEMBLE) return;
 
         if (isBlank(fileSet.getInput())) {
             errors.configuration(RB.$("validation_must_not_be_null", assembler.getType() + "." + assembler.getName() + ".fileSet[" + index + "].input"));
