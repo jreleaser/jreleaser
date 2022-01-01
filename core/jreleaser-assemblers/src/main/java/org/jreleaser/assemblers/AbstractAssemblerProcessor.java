@@ -25,7 +25,6 @@ import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
 import org.jreleaser.model.assembler.spi.AssemblerProcessor;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
-import org.jreleaser.util.StringUtils;
 import org.jreleaser.util.command.Command;
 import org.jreleaser.util.command.CommandException;
 import org.jreleaser.util.command.CommandExecutor;
@@ -34,16 +33,17 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -168,7 +168,7 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
                     dest = destination.resolve(output);
                 }
 
-                if (!FileUtils.copyFilesRecursive(context.getLogger(), src, dest, filter(fileSet))) {
+                if (!FileUtils.copyFilesRecursive(context.getLogger(), src, dest, filter(src, fileSet))) {
                     throw new IOException(RB.$("ERROR_repository_copy_files",
                         context.relativizeToBasedir(src)));
                 }
@@ -178,32 +178,88 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
         }
     }
 
-    private Predicate<Path> filter(final FileSet fileSet) {
+    private Predicate<Path> filter(final Path src, final FileSet fileSet) {
         return new Predicate<Path>() {
-            private final Set<Pattern> includes = fileSet.getResolvedIncludes(context).stream()
-                .map(StringUtils::toSafePattern)
-                .collect(Collectors.toSet());
+            private final Set<String> includes = fileSet.getResolvedIncludes(context);
+            private final Set<Pattern> includePatterns = includes.stream()
+                .map(AbstractAssemblerProcessor::toSafePattern)
+                .collect(toSet());
 
-            private final Set<Pattern> excludes = fileSet.getResolvedExcludes(context).stream()
-                .map(StringUtils::toSafePattern)
-                .collect(Collectors.toSet());
+            private final Set<String> excludes = fileSet.getResolvedExcludes(context);
+            private final Set<Pattern> excludePatterns = excludes.stream()
+                .map(AbstractAssemblerProcessor::toSafePattern)
+                .collect(toSet());
 
             @Override
+            // filter logic is inverted, `true` means it will be skipped.
             public boolean test(Path path) {
-                // filter logic is inverted, `true` means it will be skipped.
-                if (!includes.isEmpty()) {
-                    for (Pattern pattern : includes) {
-                        if (!pattern.matcher(path.getFileName().toString()).matches()) return true;
+                // Do not filter top directory
+                if (Files.isDirectory(path) &&
+                    path.normalize().toAbsolutePath().equals(src.normalize().toAbsolutePath())) return false;
+
+                boolean included = matches(path, includes, includePatterns, true);
+                boolean excluded = matches(path, excludes, excludePatterns, false);
+
+                return excluded || !included;
+            }
+
+            private boolean matches(Path path, Set<String> inputs, Set<Pattern> patterns, boolean checkForHidden) {
+                String filename = path.getFileName().toString();
+                boolean matches = false;
+
+                if (hasNestedPattern(inputs)) {
+                    for (String s : inputs) {
+                        if (!s.contains("**")) continue;
+                        s = s.replace("**", ".*");
+                        Path p = src.relativize(Paths.get(s));
+                        if (Files.isDirectory(path)) p = p.getParent();
+                        Pattern pt = Pattern.compile(p.toString());
+                        String rp = src.relativize(path).toString();
+                        if (pt.matcher(rp).matches()) {
+                            matches = true;
+                            break;
+                        }
                     }
-                }
-                if (!excludes.isEmpty()) {
-                    for (Pattern pattern : excludes) {
-                        if (pattern.matcher(path.getFileName().toString()).matches()) return true;
+                } else if (!inputs.isEmpty()) {
+                    // Try exact match first
+                    for (String fname : inputs) {
+                        if (filename.equals(fname)) {
+                            matches = true;
+                            break;
+                        }
+                    }
+
+                    // Try pattern next
+                    if (!matches) {
+                        for (Pattern pattern : patterns) {
+                            if (pattern.matcher(filename).matches()) {
+                                matches = true;
+                                break;
+                            }
+                        }
+                    }
+                } else if (checkForHidden) {
+                    try {
+                        matches = !Files.isHidden(path);
+                    } catch (IOException e) {
+                        // ignored?
                     }
                 }
 
-                return false;
+                return matches;
+            }
+
+            private boolean hasNestedPattern(Set<String> patterns) {
+                return patterns.stream().anyMatch(str -> str.contains("**"));
             }
         };
+    }
+
+    public static String toSafeRegexPattern(String str) {
+        return str.replace("*", ".*");
+    }
+
+    public static Pattern toSafePattern(String str) {
+        return Pattern.compile(toSafeRegexPattern(str));
     }
 }
