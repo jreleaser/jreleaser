@@ -250,7 +250,7 @@ public class GithubReleaser extends AbstractReleaser {
                 tagName,
                 release.getId(),
                 ghRelease);
-        } catch (IOException e) {
+        } catch (RestAPIException | IOException e) {
             context.getLogger().trace(e);
             context.getLogger().warn(RB.$("git.releaser.link.discussion.error"),
                 tagName, discussionCategoryName);
