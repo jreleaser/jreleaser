@@ -163,6 +163,10 @@ public class Environment implements Domain {
         return Optional.empty();
     }
 
+    public boolean getBooleanProperty(String key) {
+        return properties.containsKey(key) && Boolean.parseBoolean(String.valueOf(properties.get(key)));
+    }
+
     public interface PropertiesSource {
         Map<String, String> getProperties();
     }

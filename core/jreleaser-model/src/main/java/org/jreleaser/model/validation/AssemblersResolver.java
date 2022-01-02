@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Environment;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
@@ -31,10 +32,21 @@ import static org.jreleaser.model.validation.NativeImageResolver.resolveNativeIm
  */
 public abstract class AssemblersResolver extends Validator {
     public static void resolveAssemblers(JReleaserContext context, Errors errors) {
+        Environment environment = context.getModel().getEnvironment();
+        if (environment.getBooleanProperty("skipAssembleResolvers")) return;
+
         context.getLogger().debug("assemble");
-        resolveArchiveOutputs(context, errors);
-        resolveJlinkOutputs(context, errors);
-        resolveJpackageOutputs(context, errors);
-        resolveNativeImageOutputs(context, errors);
+        if (!environment.getBooleanProperty("skipArchiveResolver")) {
+            resolveArchiveOutputs(context, errors);
+        }
+        if (!environment.getBooleanProperty("skipJlinkResolver")) {
+            resolveJlinkOutputs(context, errors);
+        }
+        if (!environment.getBooleanProperty("skipJpackageResolver")) {
+            resolveJpackageOutputs(context, errors);
+        }
+        if (!environment.getBooleanProperty("skipNativeImageResolver")) {
+            resolveNativeImageOutputs(context, errors);
+        }
     }
 }
