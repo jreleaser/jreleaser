@@ -426,6 +426,16 @@ public final class FileUtils {
         }
     }
 
+    public static void copyFiles(Path source, Path target, Set<Path> paths) throws IOException {
+        for (Path path : paths) {
+            Path srcPath = source.resolve(path);
+            Path targetPath = target.resolve(path);
+
+            Files.createDirectories(targetPath.getParent());
+            Files.copy(srcPath, targetPath, REPLACE_EXISTING);
+        }
+    }
+
     public static boolean copyFilesRecursive(JReleaserLogger logger, Path source, Path target) throws IOException {
         return copyFilesRecursive(logger, source, target, null);
     }
