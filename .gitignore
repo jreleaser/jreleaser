@@ -6,8 +6,11 @@
 build/
 out/
 target/
-.classpath
-.project
 tmp/
 .DS_Store
 .tmp
+# Eclipse
+bin
+.classpath
+.project
+.settings
