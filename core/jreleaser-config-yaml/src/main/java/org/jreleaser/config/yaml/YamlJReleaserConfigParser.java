@@ -21,9 +21,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.github.sbaudoin.yamllint.Format;
 import com.github.sbaudoin.yamllint.LintProblem;
 import com.github.sbaudoin.yamllint.Linter;
+import com.github.sbaudoin.yamllint.YamlLintConfig;
 import com.github.sbaudoin.yamllint.YamlLintConfigException;
 import org.jreleaser.config.JReleaserConfigParser;
-import org.jreleaser.config.yaml.lint.YamlLintConfig2;
 import org.jreleaser.model.JReleaserModel;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
@@ -68,9 +68,9 @@ public class YamlJReleaserConfigParser implements JReleaserConfigParser {
 
     @Override
     public void validate(Path configFile) throws IOException {
-        YamlLintConfig2 config = null;
+        YamlLintConfig config = null;
         try {
-            config = new YamlLintConfig2(YAML_LINT_CONFIG);
+            config = new YamlLintConfig(YAML_LINT_CONFIG);
         } catch (YamlLintConfigException e) {
             return;
         }
