@@ -366,16 +366,16 @@ public class ChangelogGenerator {
 
         StringBuilder changes = new StringBuilder();
         for (Changelog.Category category : changelog.getCategories()) {
-            String categoryTitle = category.getTitle();
-            if (!categories.containsKey(categoryTitle) || changelog.getHide().containsCategory(categoryTitle)) continue;
+            String categoryKey = category.getKey();
+            if (!categories.containsKey(categoryKey) || changelog.getHide().containsCategory(categoryKey)) continue;
 
             changes.append("## ")
-                .append(categoryTitle)
+                .append(category.getTitle())
                 .append(lineSeparator);
 
             final String categoryFormat = resolveCommitFormat(changelog, category);
 
-            changes.append(categories.get(categoryTitle).stream()
+            changes.append(categories.get(categoryKey).stream()
                 .map(c -> applyTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl)))
                 .collect(Collectors.joining(lineSeparator)))
                 .append(lineSeparator)
@@ -475,7 +475,7 @@ public class ChangelogGenerator {
         if (!commit.labels.isEmpty()) {
             for (Changelog.Category category : changelog.getCategories()) {
                 if (CollectionUtils.intersects(category.getLabels(), commit.labels)) {
-                    return category.getTitle();
+                    return category.getKey();
                 }
             }
         }
