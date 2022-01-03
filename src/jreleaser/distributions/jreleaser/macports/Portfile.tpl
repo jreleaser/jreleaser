@@ -1,4 +1,5 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# {{jreleaserCreationStamp}}
 
 PortSystem       1.0
 PortGroup        github 1.0
@@ -40,7 +41,7 @@ destroot {
     copy {*}[glob -dir ${worksrcpath} *] ${target}
 
     # Remove extraneous files
-    delete {*}[glob -directory ${target}/bin *.bat]
+    delete {*}[glob -directory ${target}/bin *.{{distributionExecutableExtension}}]
 
     ln -s ../share/${name}/bin/{{distributionExecutable}} ${destroot}${prefix}/bin/{{distributionExecutable}}
 }

@@ -37,9 +37,7 @@ destroot {
     xinstall -m 755 -d ${target}
 
     # Copy over the needed elements of our directory tree
-    foreach f [glob -dir ${worksrcpath} *] {
-        copy ${f} ${target}
-    }
+    copy {*}[glob -dir ${worksrcpath} *] ${target}
 
     ln -s ../share/${name}/bin/{{distributionExecutable}} ${destroot}${prefix}/bin/{{distributionExecutable}}
 }

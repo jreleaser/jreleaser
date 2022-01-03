@@ -1,3 +1,4 @@
+# {{jreleaserCreationStamp}}
 FROM {{dockerBaseImage}}
 
 {{#dockerLabels}}

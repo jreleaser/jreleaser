@@ -40,14 +40,10 @@ destroot {
     xinstall -m 755 -d ${target}
 
     # Copy over the needed elements of our directory tree
-    foreach f [glob -dir ${worksrcpath} *] {
-        copy ${f} ${target}
-    }
+    copy {*}[glob -dir ${worksrcpath} *] ${target}
 
     # Remove extraneous files
-    foreach f [glob -directory ${target}/bin *.{{distributionExecutableExtension}}] {
-        delete ${f}
-    }
+    delete {*}[glob -directory ${target}/bin *.{{distributionExecutableExtension}}]
 
     ln -s ../share/${name}/bin/{{distributionExecutable}} ${destroot}${prefix}/bin/{{distributionExecutable}}
 }
