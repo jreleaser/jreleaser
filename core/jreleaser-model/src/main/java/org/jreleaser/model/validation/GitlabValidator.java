@@ -17,9 +17,14 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Uploader;
 import org.jreleaser.util.Errors;
+
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Andres Almiray
@@ -31,6 +36,13 @@ public abstract class GitlabValidator extends GitServiceValidator {
         context.getLogger().debug("release.gitlab");
 
         validateGitService(context, mode, gitlab, errors);
+
+        for (Map.Entry<String, String> e : gitlab.getUploadLinks().entrySet()) {
+            Optional<? extends Uploader> uploader = context.getModel().getUpload().getUploader(e.getKey(), e.getValue());
+            if (!uploader.isPresent()) {
+                errors.configuration(RB.$("validation_gitlab_non_matching_uploader", e.getKey(), e.getValue()));
+            }
+        }
 
         return gitlab.isEnabled();
     }

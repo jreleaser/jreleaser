@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -27,6 +28,7 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Gitlab extends GitService {
-
     Property<String> getIdentifier()
+
+    MapProperty<String, String> getUploadLinks()
 }

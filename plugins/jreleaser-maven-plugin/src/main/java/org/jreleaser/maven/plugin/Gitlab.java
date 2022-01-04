@@ -17,11 +17,15 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Gitlab extends GitService {
+    private final Map<String, String> uploadLinks = new LinkedHashMap<>();
     private String identifier;
 
     public String getIdentifier() {
@@ -30,5 +34,14 @@ public class Gitlab extends GitService {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public Map<String, String> getUploadLinks() {
+        return uploadLinks;
+    }
+
+    public void setUploadLinks(Map<String, String> uploadLinks) {
+        this.uploadLinks.clear();
+        this.uploadLinks.putAll(uploadLinks);
     }
 }

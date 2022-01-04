@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,53 @@ public class Upload implements Domain, EnabledAware {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
+    }
+
+    public Optional<? extends Uploader> getUploader(String type, String name) {
+        switch (type) {
+            case Artifactory.TYPE:
+                return Optional.ofNullable(artifactory.get(name));
+            case Http.TYPE:
+                return Optional.ofNullable(http.get(name));
+            case S3.TYPE:
+                return Optional.ofNullable(s3.get(name));
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<? extends Uploader> getActiveUploader(String type, String name) {
+        switch (type) {
+            case Artifactory.TYPE:
+                return getActiveArtifactory(name);
+            case Http.TYPE:
+                return getActiveHttp(name);
+            case S3.TYPE:
+                return getActiveS3(name);
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<Artifactory> getActiveArtifactory(String name) {
+        return artifactory.values().stream()
+            .filter(Uploader::isEnabled)
+            .filter(a -> name.equals(a.name))
+            .findFirst();
+    }
+
+    public Optional<Http> getActiveHttp(String name) {
+        return http.values().stream()
+            .filter(Uploader::isEnabled)
+            .filter(a -> name.equals(a.name))
+            .findFirst();
+    }
+
+    public Optional<S3> getActiveS3(String name) {
+        return s3.values().stream()
+            .filter(Uploader::isEnabled)
+            .filter(a -> name.equals(a.name))
+            .findFirst();
     }
 
     public List<Artifactory> getActiveArtifactories() {

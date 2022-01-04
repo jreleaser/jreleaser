@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jreleaser.util.Constants.KEY_IDENTIFIER;
@@ -27,6 +28,10 @@ import static org.jreleaser.util.Constants.KEY_IDENTIFIER;
  */
 public class Gitlab extends GitService {
     public static final String NAME = "gitlab";
+    public static final String SKIP_GITLAB_LINKS = "skipGitlabLinks";
+
+    private final Map<String, String> uploadLinks = new LinkedHashMap<>();
+    private String identifier;
 
     public Gitlab() {
         super(NAME, true);
@@ -41,11 +46,10 @@ public class Gitlab extends GitService {
         setIssueTrackerUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/issues");
     }
 
-    private String identifier;
-
     void setAll(Gitlab service) {
         super.setAll(service);
         this.identifier = service.identifier;
+        setUploadLinks(service.uploadLinks);
     }
 
     @Override
@@ -61,10 +65,20 @@ public class Gitlab extends GitService {
         this.identifier = identifier;
     }
 
+    public Map<String, String> getUploadLinks() {
+        return uploadLinks;
+    }
+
+    public void setUploadLinks(Map<String, String> uploadLinks) {
+        this.uploadLinks.clear();
+        this.uploadLinks.putAll(uploadLinks);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = super.asMap(full);
         map.put("identifier", identifier);
+        map.put("uploadLinks", uploadLinks);
         return map;
     }
 

@@ -28,6 +28,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.10.0
  */
 public enum FileType {
+    ASC("asc"),
     DEB("deb"),
     DMG("dmg"),
     EXE("exe"),
@@ -36,6 +37,7 @@ public enum FileType {
     NUGET("nuget"),
     PKG("pkg"),
     RPM("rpm"),
+    SIG("sig"),
     TAR("tar"),
     TAR_BZ2("tar.bz2"),
     TAR_GZ("tar.gz"),

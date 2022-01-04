@@ -18,17 +18,23 @@
 package org.jreleaser.sdk.gitlab;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Artifact;
+import org.jreleaser.model.Distribution;
+import org.jreleaser.model.ExtraProperties;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.Uploader;
 import org.jreleaser.model.releaser.spi.AbstractReleaser;
 import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
+import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
+import org.jreleaser.sdk.gitlab.api.LinkRequest;
 import org.jreleaser.sdk.gitlab.api.Milestone;
 import org.jreleaser.sdk.gitlab.api.Project;
 import org.jreleaser.sdk.gitlab.api.Release;
@@ -36,8 +42,14 @@ import org.jreleaser.sdk.gitlab.api.Release;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -107,8 +119,14 @@ public class GitlabReleaser extends AbstractReleaser {
                         }
 
                         if (gitlab.getUpdateSections().contains(UpdateSection.ASSETS)) {
-                            List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), assets);
-                            api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), uploads);
+                            if (!assets.isEmpty()) {
+                                Collection<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), assets);
+                                api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), uploads);
+                            }
+                            if (!gitlab.getUploadLinks().isEmpty()) {
+                                Collection<LinkRequest> links = collectUploadLinks(gitlab);
+                                api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), links);
+                            }
                         }
                     }
                 } else {
@@ -186,15 +204,25 @@ public class GitlabReleaser extends AbstractReleaser {
     private void createRelease(Gitlab api, String tagName, String changelog, boolean deleteTags) throws IOException {
         org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
 
-        if (context.isDryrun()) {
-            for (Asset asset : assets) {
-                if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
-                    // do not upload empty or non existent files
-                    continue;
-                }
+        Collection<LinkRequest> links = collectUploadLinks(gitlab);
 
-                context.getLogger().info(" " + RB.$("git.upload.asset"), asset.getFilename());
+        if (context.isDryrun()) {
+            if (!assets.isEmpty()) {
+                for (Asset asset : assets) {
+                    if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
+                        // do not upload empty or non existent files
+                        continue;
+                    }
+
+                    context.getLogger().info(" " + RB.$("git.upload.asset"), asset.getFilename());
+                }
             }
+            if (!links.isEmpty()) {
+                for (LinkRequest link : links) {
+                    context.getLogger().info(" " + RB.$("git.upload.asset"), link.getName());
+                }
+            }
+
             return;
         }
 
@@ -208,8 +236,6 @@ public class GitlabReleaser extends AbstractReleaser {
             GitSdk.of(context).tag(tagName, true, context);
         }
 
-        List<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), assets);
-
         Release release = new Release();
         release.setName(gitlab.getEffectiveReleaseName());
         release.setTagName(tagName);
@@ -218,7 +244,14 @@ public class GitlabReleaser extends AbstractReleaser {
 
         // remote tag/release
         api.createRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), release);
-        api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), uploads);
+
+        if (!assets.isEmpty()) {
+            Collection<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), assets);
+            api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), uploads);
+        }
+        if (!links.isEmpty()) {
+            api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), links);
+        }
 
         if (gitlab.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
             Optional<Milestone> milestone = api.findMilestoneByName(
@@ -235,6 +268,85 @@ public class GitlabReleaser extends AbstractReleaser {
         }
     }
 
+    private Collection<LinkRequest> collectUploadLinks(org.jreleaser.model.Gitlab gitlab) {
+        List<LinkRequest> links = new ArrayList<>();
+
+        for (Map.Entry<String, String> e : gitlab.getUploadLinks().entrySet()) {
+            Optional<? extends Uploader> uploader = context.getModel().getUpload().getActiveUploader(e.getKey(), e.getValue());
+            if (uploader.isPresent()) {
+                collectUploadLinks(uploader.get(), links);
+            }
+        }
+
+        return links;
+    }
+
+    private void collectUploadLinks(Uploader uploader, List<LinkRequest> links) {
+        List<String> keys = uploader.resolveSkipKeys();
+        keys.add(org.jreleaser.model.Gitlab.SKIP_GITLAB_LINKS);
+
+        List<Artifact> artifacts = new ArrayList<>();
+
+        if (uploader.isFiles()) {
+            for (Artifact artifact : Artifacts.resolveFiles(context)) {
+                if (!artifact.isActive()) continue;
+                Path path = artifact.getEffectivePath(context);
+                if (isSkip(artifact, keys)) continue;
+                if (Files.exists(path) && 0 != path.toFile().length()) {
+                    artifacts.add(artifact);
+                }
+            }
+        }
+
+        if (uploader.isArtifacts()) {
+            for (Distribution distribution : context.getModel().getActiveDistributions()) {
+                if (!context.isDistributionIncluded(distribution) || isSkip(distribution, keys)) continue;
+                for (Artifact artifact : distribution.getArtifacts()) {
+                    if (!artifact.isActive()) continue;
+                    Path path = artifact.getEffectivePath(context, distribution);
+                    if (isSkip(artifact, keys)) continue;
+                    if (Files.exists(path) && 0 != path.toFile().length()) {
+                        String platform = artifact.getPlatform();
+                        String platformReplaced = distribution.getPlatform().applyReplacements(platform);
+                        if (isNotBlank(platformReplaced)) {
+                            artifact.getExtraProperties().put("platformReplaced", platformReplaced);
+                        }
+                        artifacts.add(artifact);
+                    }
+                }
+            }
+        }
+
+        if (uploader.isSignatures() && context.getModel().getSigning().isEnabled()) {
+            String extension = context.getModel().getSigning().isArmored() ? ".asc" : ".sig";
+
+            List<Artifact> signatures = new ArrayList<>();
+            for (Artifact artifact : artifacts) {
+                if (artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
+                Path signaturePath = context.getSignaturesDirectory()
+                    .resolve(artifact.getEffectivePath(context).getFileName() + extension);
+                if (Files.exists(signaturePath) && 0 != signaturePath.toFile().length()) {
+                    signatures.add(Artifact.of(signaturePath));
+                }
+            }
+
+            artifacts.addAll(signatures);
+        }
+
+        for (Artifact artifact : artifacts) {
+            links.add(toLinkRequest(artifact.getEffectivePath(), uploader.getResolvedDownloadUrl(context, artifact)));
+        }
+    }
+
+    private boolean isSkip(ExtraProperties props, List<String> keys) {
+        for (String key : keys) {
+            if (props.extraPropertyIsTrue(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void deleteTags(Gitlab api, String owner, String repo, String identifier, String tagName) {
         // delete remote tag
         try {
@@ -242,5 +354,13 @@ public class GitlabReleaser extends AbstractReleaser {
         } catch (RestAPIException ignored) {
             //noop
         }
+    }
+
+    private static LinkRequest toLinkRequest(Path path, String url) {
+        LinkRequest link = new LinkRequest();
+        link.setName(path.getFileName().toString());
+        link.setUrl(url);
+        link.setFilepath("/" + link.getName());
+        return link;
     }
 }

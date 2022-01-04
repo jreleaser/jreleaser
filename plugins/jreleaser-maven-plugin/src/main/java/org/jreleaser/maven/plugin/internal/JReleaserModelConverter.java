@@ -234,6 +234,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Gitlab g = new org.jreleaser.model.Gitlab();
         convertGitService(gitlab, g);
         g.setIdentifier(tr(gitlab.getIdentifier()));
+        g.setUploadLinks(gitlab.getUploadLinks());
         return g;
     }
 

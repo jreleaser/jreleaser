@@ -34,6 +34,7 @@ import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
 import org.jreleaser.sdk.gitlab.api.GitlabAPI;
+import org.jreleaser.sdk.gitlab.api.LinkRequest;
 import org.jreleaser.sdk.gitlab.api.Milestone;
 import org.jreleaser.sdk.gitlab.api.Project;
 import org.jreleaser.sdk.gitlab.api.Release;
@@ -46,6 +47,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -231,7 +233,7 @@ class Gitlab {
         api.updateRelease(release, project.getId());
     }
 
-    List<FileUpload> uploadAssets(String owner, String repoName, String identifier, List<Asset> assets) throws IOException, RestAPIException {
+    Collection<FileUpload> uploadAssets(String owner, String repoName, String identifier, List<Asset> assets) throws IOException, RestAPIException {
         logger.debug(RB.$("git.upload.assets"), owner, repoName);
 
         List<FileUpload> uploads = new ArrayList<>();
@@ -258,7 +260,7 @@ class Gitlab {
         return uploads;
     }
 
-    void linkAssets(String owner, String repoName, Release release, String identifier, List<FileUpload> uploads) throws IOException, RestAPIException {
+    void linkReleaseAssets(String owner, String repoName, Release release, String identifier, Collection<FileUpload> uploads) throws IOException, RestAPIException {
         logger.debug(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
 
         Project project = getProject(repoName, identifier);
@@ -269,6 +271,22 @@ class Gitlab {
                 api.linkAsset(upload.toLinkRequest(apiHost), project.getId(), release.getTagName());
             } catch (RestAPIException e) {
                 logger.error(" " + RB.$("git.upload.asset.link.failure"), upload.getName());
+                throw e;
+            }
+        }
+    }
+
+    void linkAssets(String owner, String repoName, Release release, String identifier, Collection<LinkRequest> links) throws IOException, RestAPIException {
+        logger.debug(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
+
+        Project project = getProject(repoName, identifier);
+
+        for (LinkRequest link : links) {
+            logger.info(" " + RB.$("git.upload.asset.link"), link.getName());
+            try {
+                api.linkAsset(link, project.getId(), release.getTagName());
+            } catch (RestAPIException e) {
+                logger.error(" " + RB.$("git.upload.asset.link.failure"), link.getName());
                 throw e;
             }
         }

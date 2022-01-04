@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.internal.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Gitlab
@@ -37,6 +38,7 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
     final MilestoneImpl milestone
     final CommitAuthorImpl commitAuthor
     final Property<String> identifier
+    final MapProperty<String, String> uploadLinks
 
     @Inject
     GitlabImpl(ObjectFactory objects) {
@@ -47,6 +49,7 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
 
         identifier = objects.property(String).convention(Providers.notDefined())
+        uploadLinks = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
     @Override
@@ -55,7 +58,9 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
         super.isSet() ||
             changelog.isSet() ||
             milestone.isSet() ||
-            commitAuthor.isSet()
+            commitAuthor.isSet() ||
+            identifier.present ||
+            uploadLinks.present
     }
 
     org.jreleaser.model.Gitlab toModel() {
@@ -65,6 +70,7 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
         if (milestone.isSet()) service.milestone = milestone.toModel()
         if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
         if (identifier.present) service.identifier = identifier.get()
+        if (uploadLinks.present) service.uploadLinks.putAll(uploadLinks.get())
         service
     }
 }

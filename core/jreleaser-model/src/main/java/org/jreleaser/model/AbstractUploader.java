@@ -19,8 +19,8 @@ package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.util.CollectionUtils;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -240,7 +240,7 @@ abstract class AbstractUploader implements Uploader {
         String skipUpload = "skipUpload";
         String skipUploadByType = skipUpload + capitalize(type);
         String skipUploadByName = skipUploadByType + getClassNameForLowerCaseHyphenSeparatedName(name);
-        return Arrays.asList(skipUpload, skipUploadByType, skipUploadByName);
+        return CollectionUtils.newList(skipUpload, skipUploadByType, skipUploadByName);
     }
 
     @Override
