@@ -30,6 +30,7 @@ import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
@@ -209,18 +210,18 @@ class Gitea {
         api.updateRelease(release, owner, repo, id);
     }
 
-    void uploadAssets(String owner, String repo, GtRelease release, List<Path> assets) throws IOException {
-        for (Path asset : assets) {
-            if (0 == asset.toFile().length() || !Files.exists(asset)) {
+    void uploadAssets(String owner, String repo, GtRelease release, List<Asset> assets) throws IOException {
+        for (Asset asset : assets) {
+            if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                 // do not upload empty or non existent files
                 continue;
             }
 
-            logger.info(" " + RB.$("git.upload.asset"), asset.getFileName().toString());
+            logger.info(" " + RB.$("git.upload.asset"), asset.getFilename());
             try {
-                api.uploadAsset(owner, repo, release.getId(), toFormData(asset));
+                api.uploadAsset(owner, repo, release.getId(), toFormData(asset.getPath()));
             } catch (RestAPIException e) {
-                logger.error(" " + RB.$("git.upload.asset.failure"), asset.getFileName());
+                logger.error(" " + RB.$("git.upload.asset.failure"), asset.getFilename());
                 throw e;
             }
         }

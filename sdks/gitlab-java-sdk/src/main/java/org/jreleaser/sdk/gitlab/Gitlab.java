@@ -29,6 +29,7 @@ import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
@@ -230,26 +231,26 @@ class Gitlab {
         api.updateRelease(release, project.getId());
     }
 
-    List<FileUpload> uploadAssets(String owner, String repoName, String identifier, List<Path> assets) throws IOException, RestAPIException {
+    List<FileUpload> uploadAssets(String owner, String repoName, String identifier, List<Asset> assets) throws IOException, RestAPIException {
         logger.debug(RB.$("git.upload.assets"), owner, repoName);
 
         List<FileUpload> uploads = new ArrayList<>();
 
         Project project = getProject(repoName, identifier);
 
-        for (Path asset : assets) {
-            if (0 == asset.toFile().length() || !Files.exists(asset)) {
+        for (Asset asset : assets) {
+            if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                 // do not upload empty or non existent files
                 continue;
             }
 
-            logger.info(" " + RB.$("git.upload.asset"), asset.getFileName().toString());
+            logger.info(" " + RB.$("git.upload.asset"), asset.getFilename());
             try {
-                FileUpload upload = api.uploadFile(project.getId(), toFormData(asset));
-                upload.setName(asset.getFileName().toString());
+                FileUpload upload = api.uploadFile(project.getId(), toFormData(asset.getPath()));
+                upload.setName(asset.getFilename());
                 uploads.add(upload);
             } catch (IOException | RestAPIException e) {
-                logger.error(" " + RB.$("git.upload.asset.failure"), asset.getFileName());
+                logger.error(" " + RB.$("git.upload.asset.failure"), asset.getFilename());
                 throw e;
             }
         }

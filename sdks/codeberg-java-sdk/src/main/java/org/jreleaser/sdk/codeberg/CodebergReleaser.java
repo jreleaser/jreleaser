@@ -19,10 +19,10 @@ package org.jreleaser.sdk.codeberg;
 
 import org.jreleaser.model.Gitea;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.gitea.GiteaReleaser;
 
-import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -30,7 +30,7 @@ import java.util.List;
  * @since 0.4.0
  */
 public class CodebergReleaser extends GiteaReleaser {
-    public CodebergReleaser(JReleaserContext context, List<Path> assets) {
+    public CodebergReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);
     }
 

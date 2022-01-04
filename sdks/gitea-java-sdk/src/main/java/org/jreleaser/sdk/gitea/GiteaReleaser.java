@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.AbstractReleaser;
+import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
@@ -33,7 +34,6 @@ import org.jreleaser.sdk.gitea.api.GtRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +44,7 @@ import static org.jreleaser.util.StringUtils.capitalize;
  * @since 0.1.0
  */
 public class GiteaReleaser extends AbstractReleaser {
-    public GiteaReleaser(JReleaserContext context, List<Path> assets) {
+    public GiteaReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);
     }
 
@@ -196,13 +196,13 @@ public class GiteaReleaser extends AbstractReleaser {
         org.jreleaser.model.Gitea gitea = resolveGiteaFromModel();
 
         if (context.isDryrun()) {
-            for (Path asset : assets) {
-                if (0 == asset.toFile().length() || !Files.exists(asset)) {
+            for (Asset asset : assets) {
+                if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                     // do not upload empty or non existent files
                     continue;
                 }
 
-                context.getLogger().info(" " + RB.$("git.upload.asset"), asset.getFileName().toString());
+                context.getLogger().info(" " + RB.$("git.upload.asset"), asset.getFilename());
             }
             return;
         }

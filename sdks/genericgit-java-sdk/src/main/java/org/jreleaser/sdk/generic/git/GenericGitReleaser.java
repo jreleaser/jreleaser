@@ -20,13 +20,13 @@ package org.jreleaser.sdk.generic.git;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.AbstractReleaser;
+import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.git.ReleaseUtils;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +35,7 @@ import java.util.Optional;
  * @since 0.4.0
  */
 public class GenericGitReleaser extends AbstractReleaser {
-    public GenericGitReleaser(JReleaserContext context, List<Path> assets) {
+    public GenericGitReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);
     }
 

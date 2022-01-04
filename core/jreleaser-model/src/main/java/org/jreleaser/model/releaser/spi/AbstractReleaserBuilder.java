@@ -43,12 +43,12 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @since 0.1.0
  */
 public abstract class AbstractReleaserBuilder<R extends Releaser> implements ReleaserBuilder<R> {
-    protected final List<Path> assets = new ArrayList<>();
+    protected final List<Asset> assets = new ArrayList<>();
     protected JReleaserContext context;
 
     @Override
-    public ReleaserBuilder<R> addReleaseAsset(Path asset) {
-        if (null != asset && asset.toFile().exists()) {
+    public ReleaserBuilder<R> addReleaseAsset(Asset asset) {
+        if (null != asset) {
             this.assets.add(asset);
         }
         return this;
@@ -58,7 +58,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
     public ReleaserBuilder<R> addReleaseAssets(Path assets) {
         if (assets.toFile().exists()) {
             for (File asset : assets.toFile().listFiles()) {
-                addReleaseAsset(asset.toPath().toAbsolutePath());
+                addReleaseAsset(Asset.file(Artifact.of(asset.toPath().toAbsolutePath())));
             }
         }
 
@@ -66,7 +66,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
     }
 
     @Override
-    public ReleaserBuilder<R> setReleaseAssets(List<Path> assets) {
+    public ReleaserBuilder<R> setReleaseAssets(List<Asset> assets) {
         if (null != assets) {
             this.assets.addAll(assets);
         }
@@ -82,17 +82,17 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
         this.context = context;
         GitService service = context.getModel().getRelease().getGitService();
 
-        List<Artifact> artifacts = new ArrayList<>();
+        List<Asset> assets = new ArrayList<>();
         if (service.isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
                 if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE)) continue;
                 Path path = artifact.getEffectivePath(context);
-                artifacts.add(Artifact.of(path, artifact.getExtraProperties()));
+                assets.add(Asset.file(Artifact.of(path, artifact.getExtraProperties())));
                 if (service.isChecksums() && isIndividual(context, artifact) &&
                     !artifact.extraPropertyIsTrue(KEY_SKIP_CHECKSUM)) {
                     for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-                        artifacts.add(Artifact.of(context.getChecksumsDirectory()
-                            .resolve(path.getFileName() + "." + algorithm.formatted())));
+                        assets.add(Asset.checksum(Artifact.of(context.getChecksumsDirectory()
+                            .resolve(path.getFileName() + "." + algorithm.formatted()))));
                     }
                 }
             }
@@ -107,12 +107,12 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
                 for (Artifact artifact : distribution.getArtifacts()) {
                     if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE)) continue;
                     Path path = artifact.getEffectivePath(context, distribution);
-                    artifacts.add(Artifact.of(path, artifact.getExtraProperties()));
+                    assets.add(Asset.file(Artifact.of(path, artifact.getExtraProperties()), distribution));
                     if (service.isChecksums() && isIndividual(context, distribution, artifact)) {
                         for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-                            artifacts.add(Artifact.of(context.getChecksumsDirectory()
+                            assets.add(Asset.checksum(Artifact.of(context.getChecksumsDirectory()
                                 .resolve(distribution.getName())
-                                .resolve(path.getFileName() + "." + algorithm.formatted())));
+                                .resolve(path.getFileName() + "." + algorithm.formatted()))));
                         }
                     }
                 }
@@ -124,27 +124,25 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
                 Path checksums = context.getChecksumsDirectory()
                     .resolve(context.getModel().getChecksum().getResolvedName(context, algorithm));
                 if (Files.exists(checksums)) {
-                    artifacts.add(Artifact.of(checksums));
+                    assets.add(Asset.checksum(Artifact.of(checksums)));
                 }
             }
         }
 
         if (context.getModel().getSigning().isEnabled() && service.isSignatures()) {
-            List<Artifact> artifactsCopy = new ArrayList<>(artifacts);
-            for (Artifact artifact : artifactsCopy) {
-                if (artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING) ||
-                    artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE_SIGNATURES)) continue;
+            List<Asset> assetsCopy = new ArrayList<>(assets);
+            for (Asset asset : assetsCopy) {
+                if (asset.getArtifact().extraPropertyIsTrue(KEY_SKIP_SIGNING) ||
+                    asset.getArtifact().extraPropertyIsTrue(KEY_SKIP_RELEASE_SIGNATURES)) continue;
                 Path signature = context.getSignaturesDirectory()
-                    .resolve(artifact.getResolvedPath().getFileName().toString() + (context.getModel().getSigning().isArmored() ? ".asc" : ".sig"));
+                    .resolve(asset.getFilename() + (context.getModel().getSigning().isArmored() ? ".asc" : ".sig"));
                 if (Files.exists(signature)) {
-                    artifacts.add(Artifact.of(signature));
+                    assets.add(Asset.signature(Artifact.of(signature)));
                 }
             }
         }
 
-        artifacts.stream()
-            .map(Artifact::getResolvedPath)
-            .forEach(this::addReleaseAsset);
+        assets.forEach(this::addReleaseAsset);
 
         return this;
     }

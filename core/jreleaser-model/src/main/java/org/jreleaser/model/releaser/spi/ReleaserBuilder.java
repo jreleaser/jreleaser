@@ -29,11 +29,11 @@ import java.util.List;
 public interface ReleaserBuilder<R extends Releaser> {
     ReleaserBuilder<R> configureWith(JReleaserContext context);
 
-    ReleaserBuilder<R> addReleaseAsset(Path asset);
+    ReleaserBuilder<R> addReleaseAsset(Asset asset);
 
     ReleaserBuilder<R> addReleaseAssets(Path assets);
 
-    ReleaserBuilder<R> setReleaseAssets(List<Path> assets);
+    ReleaserBuilder<R> setReleaseAssets(List<Asset> assets);
 
     R build();
 }

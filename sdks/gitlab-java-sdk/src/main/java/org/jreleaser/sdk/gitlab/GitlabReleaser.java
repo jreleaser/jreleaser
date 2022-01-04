@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.AbstractReleaser;
+import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
@@ -43,7 +44,7 @@ import java.util.Optional;
  * @since 0.1.0
  */
 public class GitlabReleaser extends AbstractReleaser {
-    public GitlabReleaser(JReleaserContext context, List<Path> assets) {
+    public GitlabReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);
     }
 
@@ -186,13 +187,13 @@ public class GitlabReleaser extends AbstractReleaser {
         org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
 
         if (context.isDryrun()) {
-            for (Path asset : assets) {
-                if (0 == asset.toFile().length() || !Files.exists(asset)) {
+            for (Asset asset : assets) {
+                if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                     // do not upload empty or non existent files
                     continue;
                 }
 
-                context.getLogger().info(" " + RB.$("git.upload.asset"), asset.getFileName().toString());
+                context.getLogger().info(" " + RB.$("git.upload.asset"), asset.getFilename());
             }
             return;
         }

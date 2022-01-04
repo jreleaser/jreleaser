@@ -21,6 +21,7 @@ import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.util.JReleaserLogger;
 import org.kohsuke.github.GHAsset;
 import org.kohsuke.github.GHDiscussion;
@@ -43,7 +44,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -145,17 +145,17 @@ class Github {
             .createRelease(tagName);
     }
 
-    void uploadAssets(GHRelease release, List<Path> assets) throws IOException {
-        for (Path asset : assets) {
-            if (0 == asset.toFile().length() || !Files.exists(asset)) {
+    void uploadAssets(GHRelease release, List<Asset> assets) throws IOException {
+        for (Asset asset : assets) {
+            if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                 // do not upload empty or non existent files
                 continue;
             }
 
-            logger.info(" " + RB.$("git.upload.asset"), asset.getFileName().toString());
-            GHAsset ghasset = release.uploadAsset(asset.toFile(), MediaType.parse(tika.detect(asset)).toString());
+            logger.info(" " + RB.$("git.upload.asset"), asset.getFilename());
+            GHAsset ghasset = release.uploadAsset(asset.getPath().toFile(), MediaType.parse(tika.detect(asset.getPath())).toString());
             if (!"uploaded".equalsIgnoreCase(ghasset.getState())) {
-                logger.warn(" " + RB.$("git.upload.asset.failure"), asset.getFileName());
+                logger.warn(" " + RB.$("git.upload.asset.failure"), asset.getFilename());
             }
         }
     }

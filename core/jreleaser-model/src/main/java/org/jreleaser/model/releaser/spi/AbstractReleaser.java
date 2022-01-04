@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +30,9 @@ import java.util.List;
  */
 public abstract class AbstractReleaser implements Releaser {
     protected final JReleaserContext context;
-    protected final List<Path> assets = new ArrayList<>();
+    protected final List<Asset> assets = new ArrayList<>();
 
-    protected AbstractReleaser(JReleaserContext context, List<Path> assets) {
+    protected AbstractReleaser(JReleaserContext context, List<Asset> assets) {
         this.context = context;
         this.assets.addAll(assets);
     }
@@ -56,4 +55,5 @@ public abstract class AbstractReleaser implements Releaser {
     protected abstract void createTag() throws ReleaseException;
 
     protected abstract void createRelease() throws ReleaseException;
+
 }
