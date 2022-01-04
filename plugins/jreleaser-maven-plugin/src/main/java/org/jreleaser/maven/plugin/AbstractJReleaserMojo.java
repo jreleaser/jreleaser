@@ -113,7 +113,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
             Path basedir = resolveBasedir();
 
             logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
-            JReleaserVersion.banner(logger.getTracer(), false);
+            JReleaserVersion.banner(logger.getTracer());
             if (null != configFile) {
                 logger.info("Configuring with {}", configFile.getAbsolutePath());
             }

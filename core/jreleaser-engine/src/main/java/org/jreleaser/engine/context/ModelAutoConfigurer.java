@@ -307,7 +307,7 @@ public class ModelAutoConfigurer {
         requireNonNull(outputDirectory, "Argument 'outputDirectory' ust not be null");
 
         logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
-        JReleaserVersion.banner(logger.getTracer(), false);
+        JReleaserVersion.banner(logger.getTracer());
         logger.info(RB.$("context.configurer.auto-config.on"));
         logger.increaseIndent();
         logger.info(RB.$("context.configurer.basedir.set"), basedir.toAbsolutePath());

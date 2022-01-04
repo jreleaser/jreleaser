@@ -81,7 +81,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         JReleaserLogger logger = jlogger.get()
 
         logger.info('JReleaser {}', JReleaserVersion.getPlainVersion())
-        JReleaserVersion.banner(logger.getTracer(), false)
+        JReleaserVersion.banner(logger.getTracer())
         logger.increaseIndent()
         logger.info('- basedir set to {}', project.projectDir.toPath().toAbsolutePath())
         logger.decreaseIndent()

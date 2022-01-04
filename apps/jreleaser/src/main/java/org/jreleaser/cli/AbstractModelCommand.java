@@ -71,7 +71,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
         resolveBasedir();
         initLogger();
         logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
-        JReleaserVersion.banner(logger.getTracer(), false);
+        JReleaserVersion.banner(logger.getTracer());
         logger.info($("TEXT_config_file"), actualConfigFile);
         logger.increaseIndent();
         logger.info($("TEXT_basedir_set"), actualBasedir.toAbsolutePath());
