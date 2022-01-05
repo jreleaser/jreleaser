@@ -144,7 +144,11 @@ public class GitlabReleaser extends AbstractReleaser {
                 context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                 createRelease(api, tagName, changelog, snapshot);
             }
-        } catch (IOException | IllegalStateException e) {
+        } catch (RestAPIException e) {
+            context.getLogger().trace(e.getStatus() + " " + e.getReason());
+            context.getLogger().trace(e);
+            throw new ReleaseException(e);
+        }  catch (IOException | IllegalStateException e) {
             context.getLogger().trace(e);
             throw new ReleaseException(e);
         }
