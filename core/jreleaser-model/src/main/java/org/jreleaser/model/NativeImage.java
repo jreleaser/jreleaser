@@ -30,7 +30,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 public class NativeImage extends AbstractJavaAssembler {
-    public static final String TYPE = "native-image";
+    public static final String TYPE = "nativeImage";
 
     private final List<String> args = new ArrayList<>();
     private final Artifact graal = new Artifact();
