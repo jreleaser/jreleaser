@@ -18,8 +18,11 @@
 package org.jreleaser.model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -34,6 +37,7 @@ public class NativeImage extends AbstractJavaAssembler {
 
     private final List<String> args = new ArrayList<>();
     private final Artifact graal = new Artifact();
+    private final Set<Artifact> graalJdks = new LinkedHashSet<>();
 
     private String imageName;
     private String imageNameTransform;
@@ -54,6 +58,7 @@ public class NativeImage extends AbstractJavaAssembler {
         this.imageNameTransform = nativeImage.imageNameTransform;
         this.archiveFormat = nativeImage.archiveFormat;
         setGraal(nativeImage.graal);
+        setGraalJdks(nativeImage.graalJdks);
         setArgs(nativeImage.args);
     }
 
@@ -106,6 +111,25 @@ public class NativeImage extends AbstractJavaAssembler {
         this.graal.setAll(graal);
     }
 
+    public Set<Artifact> getGraalJdks() {
+        return Artifact.sortArtifacts(graalJdks);
+    }
+
+    public void setGraalJdks(Set<Artifact> graalJdks) {
+        this.graalJdks.clear();
+        this.graalJdks.addAll(graalJdks);
+    }
+
+    public void addGraalJdks(Set<Artifact> graalJdks) {
+        this.graalJdks.addAll(graalJdks);
+    }
+
+    public void addGraalJdk(Artifact jdk) {
+        if (null != jdk) {
+            this.graalJdks.add(jdk);
+        }
+    }
+
     public List<String> getArgs() {
         return args;
     }
@@ -137,7 +161,13 @@ public class NativeImage extends AbstractJavaAssembler {
         props.put("imageName", imageName);
         props.put("imageNameTransform", imageNameTransform);
         props.put("archiveFormat", archiveFormat);
+        Map<String, Map<String, Object>> mappedJdks = new LinkedHashMap<>();
+        int i = 0;
+        for (Artifact graalJdk : getGraalJdks()) {
+            mappedJdks.put("jdk " + (i++), graalJdk.asMap(full));
+        }
         props.put("graal", graal.asMap(full));
+        props.put("graalJdks", mappedJdks);
         props.put("args", args);
     }
 }

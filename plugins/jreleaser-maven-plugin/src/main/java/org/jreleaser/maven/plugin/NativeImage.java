@@ -18,7 +18,9 @@
 package org.jreleaser.maven.plugin;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -27,6 +29,7 @@ import java.util.List;
 public class NativeImage extends AbstractJavaAssembler {
     private final List<String> args = new ArrayList<>();
     private final Artifact graal = new Artifact();
+    private final Set<Artifact> graalJdks = new LinkedHashSet<>();
 
     private String imageName;
     private String imageNameTransform;
@@ -66,6 +69,15 @@ public class NativeImage extends AbstractJavaAssembler {
 
     public void setGraal(Artifact graal) {
         this.graal.setAll(graal);
+    }
+
+    public Set<Artifact> getGraalJdks() {
+        return graalJdks;
+    }
+
+    public void setGraalJdks(Set<Artifact> graalJdks) {
+        this.graalJdks.clear();
+        this.graalJdks.addAll(graalJdks);
     }
 
     public List<String> getArgs() {

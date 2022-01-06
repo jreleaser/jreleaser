@@ -130,7 +130,7 @@ public class GithubReleaser extends AbstractReleaser {
             context.getLogger().trace(e.getStatus() + " " + e.getReason());
             context.getLogger().trace(e);
             throw new ReleaseException(e);
-        }  catch (IOException | IllegalStateException e) {
+        } catch (IOException | IllegalStateException e) {
             context.getLogger().trace(e);
             throw new ReleaseException(e);
         }

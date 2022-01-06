@@ -19,6 +19,8 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -50,6 +52,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     final PlatformImpl platform
 
     private final ArtifactImpl graal
+    final NamedDomainObjectContainer<ArtifactImpl> graalJdks
 
     @Inject
     NativeImageImpl(ObjectFactory objects) {
@@ -63,6 +66,15 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         platform = objects.newInstance(PlatformImpl, objects)
         graal = objects.newInstance(ArtifactImpl, objects)
         graal.setName('graal')
+
+        graalJdks = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
+            @Override
+            ArtifactImpl create(String name) {
+                ArtifactImpl artifact = objects.newInstance(ArtifactImpl, objects)
+                artifact.name = name
+                artifact
+            }
+        })
     }
 
     @Override
@@ -79,7 +91,8 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
             imageNameTransform.present ||
             args.present ||
             java.isSet() ||
-            graal.isSet()
+            graal.isSet() ||
+            !graalJdks.isEmpty()
     }
 
     @Override
@@ -95,6 +108,11 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     }
 
     @Override
+    void graalJdk(Action<? super Artifact> action) {
+        action.execute(graalJdks.maybeCreate("graalJdk-${graalJdks.size()}".toString()))
+    }
+
+    @Override
     void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, graal)
     }
@@ -104,6 +122,11 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
         }
+    }
+
+    @Override
+    void graalJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, graalJdks.maybeCreate("graalJdk-${graalJdks.size()}".toString()))
     }
 
     org.jreleaser.model.NativeImage toModel() {
@@ -117,6 +140,9 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         nativeImage.archiveFormat = archiveFormat.get()
         nativeImage.args = (List<String>) args.getOrElse([])
         if (graal.isSet()) nativeImage.graal = graal.toModel()
+        for (ArtifactImpl artifact : graalJdks) {
+            nativeImage.addGraalJdk(artifact.toModel())
+        }
         nativeImage
     }
 }

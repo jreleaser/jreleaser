@@ -950,6 +950,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.NativeImage a = new org.jreleaser.model.NativeImage();
         convertJavaAssembler(nativeImage, a);
         a.setGraal(convertArtifact(nativeImage.getGraal()));
+        a.setGraalJdks(convertArtifacts(nativeImage.getGraalJdks()));
         a.setImageName(tr(nativeImage.getImageName()));
         a.setImageNameTransform(tr(nativeImage.getImageNameTransform()));
         a.setArgs(tr(nativeImage.getArgs()));

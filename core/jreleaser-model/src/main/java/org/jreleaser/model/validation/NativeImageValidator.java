@@ -20,6 +20,7 @@ package org.jreleaser.model.validation;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Archive;
+import org.jreleaser.model.Artifact;
 import org.jreleaser.model.FileSet;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.NativeImage;
@@ -27,10 +28,14 @@ import org.jreleaser.model.Platform;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -76,12 +81,46 @@ public abstract class NativeImageValidator extends Validator {
                 context.getModel().getProject().getResolvedVersion());
         }
 
+        int i = 0;
+        for (Artifact graalJdk : nativeImage.getGraalJdks()) {
+            validateJdk(context, mode, nativeImage, graalJdk, i++, errors);
+        }
+
+        // validate jdks.platform is unique
+        Map<String, List<Artifact>> byPlatform = nativeImage.getGraalJdks().stream()
+            .collect(groupingBy(jdk -> isBlank(jdk.getPlatform()) ? "<nil>" : jdk.getPlatform()));
+        if (byPlatform.containsKey("<nil>")) {
+            errors.configuration(RB.$("validation_nativeimage_jdk_platform", nativeImage.getName()));
+        }
+        // check platforms
+        byPlatform.forEach((p, jdks) -> {
+            if (jdks.size() > 1) {
+                errors.configuration(RB.$("validation_nativeimage_jdk_multiple_platforms", nativeImage.getName(), p));
+            }
+        });
+
         if (isBlank(nativeImage.getGraal().getPath())) {
-            nativeImage.getGraal().setPath(System.getProperty("java.home"));
+            String currentPlatform = PlatformUtils.getCurrentFull();
+            if (nativeImage.getGraalJdks().isEmpty()) {
+                // Use current
+                nativeImage.getGraal().setPath(System.getProperty("java.home"));
+                nativeImage.getGraal().setPlatform(currentPlatform);
+            } else {
+                // find a compatible JDK in targets
+                Optional<Artifact> jdk = nativeImage.getGraalJdks().stream()
+                    .filter(j -> PlatformUtils.isCompatible(currentPlatform, j.getPlatform()))
+                    .findFirst();
+
+                if (jdk.isPresent()) {
+                    nativeImage.setGraal(jdk.get());
+                } else {
+                    // Can't tell if the current JDK will work but might as well use it
+                    nativeImage.getGraal().setPath(System.getProperty("java.home"));
+                    nativeImage.getGraal().setPlatform(currentPlatform);
+                }
+            }
         }
-        if (isBlank(nativeImage.getGraal().getPlatform())) {
-            nativeImage.getGraal().setPlatform(PlatformUtils.getCurrentFull());
-        }
+
         if (isBlank(nativeImage.getMainJar().getPath())) {
             errors.configuration(RB.$("validation_must_not_be_null", "nativeImage." + nativeImage.getName() + ".mainJar.path"));
         }
@@ -99,10 +138,27 @@ public abstract class NativeImageValidator extends Validator {
         }
 
         if (!nativeImage.getFileSets().isEmpty()) {
-            int i = 0;
+            i = 0;
             for (FileSet fileSet : nativeImage.getFileSets()) {
                 validateFileSet(context, mode, nativeImage, fileSet, i++, errors);
             }
+        }
+    }
+
+    private static void validateJdk(JReleaserContext context, JReleaserContext.Mode mode, NativeImage nativeImage, Artifact jdk, int index, Errors errors) {
+        if (mode == JReleaserContext.Mode.FULL) return;
+
+        if (null == jdk) {
+            errors.configuration(RB.$("validation_is_null", "nativeImage." + nativeImage.getName() + ".graalJdk[" + index + "]"));
+            return;
+        }
+        if (isBlank(jdk.getPath())) {
+            errors.configuration(RB.$("validation_must_not_be_null", "nativeImage." + nativeImage.getName() + ".graalJdk[" + index + "].path"));
+        }
+        if (isNotBlank(jdk.getPlatform()) && !PlatformUtils.isSupported(jdk.getPlatform().trim())) {
+            context.getLogger().warn(RB.$("validation_nativeimage_platform",
+                nativeImage.getName(), index, jdk.getPlatform(), System.lineSeparator(),
+                PlatformUtils.getSupportedOsNames(), System.lineSeparator(), PlatformUtils.getSupportedOsArchs()));
         }
     }
 }
