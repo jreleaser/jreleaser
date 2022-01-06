@@ -320,7 +320,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
             String artifactFile = artifact.getEffectivePath().getFileName().toString();
             String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
-            String artifactFileExtension = artifactFile.substring(artifactFileName.length() + 1);
+            String artifactFileExtension = artifactFile.substring(artifactFileName.length());
             String artifactFileFormat = artifactFileExtension.substring(1);
 
             String artifactName = "";

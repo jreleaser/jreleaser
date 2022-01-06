@@ -29,6 +29,7 @@ import java.util.Set;
 public class NativeImage extends AbstractJavaAssembler {
     private final List<String> args = new ArrayList<>();
     private final Artifact graal = new Artifact();
+    private final Upx upx = new Upx();
     private final Set<Artifact> graalJdks = new LinkedHashSet<>();
 
     private String imageName;
@@ -87,5 +88,58 @@ public class NativeImage extends AbstractJavaAssembler {
     public void setArgs(List<String> args) {
         this.args.clear();
         this.args.addAll(args);
+    }
+
+    public NativeImage.Upx getUpx() {
+        return upx;
+    }
+
+    public void setUpx(NativeImage.Upx upx) {
+        this.upx.setAll(upx);
+    }
+
+    public static class Upx implements Activatable {
+        private final List<String> args = new ArrayList<>();
+
+        private Active active;
+        private String version;
+
+        void setAll(NativeImage.Upx upx) {
+            this.active = upx.active;
+            this.version = upx.version;
+            setArgs(upx.args);
+        }
+
+        @Override
+        public Active getActive() {
+            return active;
+        }
+
+        @Override
+        public void setActive(Active active) {
+            this.active = active;
+        }
+
+        @Override
+        public String resolveActive() {
+            return active != null ? active.name() : null;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public List<String> getArgs() {
+            return args;
+        }
+
+        public void setArgs(List<String> args) {
+            this.args.clear();
+            this.args.addAll(args);
+        }
     }
 }

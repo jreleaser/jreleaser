@@ -15,12 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-model')
-    api project(':git-sdk')
-    api project(':tool-sdk')
-    api project(':jreleaser-templates')
+package org.jreleaser.sdk.tool;
 
-    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
-    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+/**
+ * @author Andres Almiray
+ * @since 1.0.0
+ */
+public class ToolException extends RuntimeException {
+    public ToolException(String message) {
+        super(message);
+    }
+
+    public ToolException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ToolException(Throwable cause) {
+        super(cause);
+    }
 }

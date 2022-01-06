@@ -52,6 +52,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     final PlatformImpl platform
 
     private final ArtifactImpl graal
+    private final UpxImpl upx
     final NamedDomainObjectContainer<ArtifactImpl> graalJdks
 
     @Inject
@@ -66,6 +67,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         platform = objects.newInstance(PlatformImpl, objects)
         graal = objects.newInstance(ArtifactImpl, objects)
         graal.setName('graal')
+        upx = objects.newInstance(UpxImpl, objects)
 
         graalJdks = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
@@ -92,6 +94,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
             args.present ||
             java.isSet() ||
             graal.isSet() ||
+            upx.isSet() ||
             !graalJdks.isEmpty()
     }
 
@@ -108,6 +111,11 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     }
 
     @Override
+    void upx(Action<? super Upx> action) {
+        action.execute(upx)
+    }
+
+    @Override
     void graalJdk(Action<? super Artifact> action) {
         action.execute(graalJdks.maybeCreate("graalJdk-${graalJdks.size()}".toString()))
     }
@@ -118,15 +126,20 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     }
 
     @Override
-    void setActive(String str) {
-        if (isNotBlank(str)) {
-            active.set(Active.of(str.trim()))
-        }
+    void upx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
+        ConfigureUtil.configure(action, upx)
     }
 
     @Override
     void graalJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, graalJdks.maybeCreate("graalJdk-${graalJdks.size()}".toString()))
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
     }
 
     org.jreleaser.model.NativeImage toModel() {
@@ -140,9 +153,53 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         nativeImage.archiveFormat = archiveFormat.get()
         nativeImage.args = (List<String>) args.getOrElse([])
         if (graal.isSet()) nativeImage.graal = graal.toModel()
+        if (upx.isSet()) nativeImage.upx = upx.toModel()
         for (ArtifactImpl artifact : graalJdks) {
             nativeImage.addGraalJdk(artifact.toModel())
         }
         nativeImage
+    }
+
+    @CompileStatic
+    static class UpxImpl implements NativeImage.Upx {
+        final Property<Active> active
+        final Property<String> version
+        final ListProperty<String> args
+
+        @Inject
+        UpxImpl(ObjectFactory objects) {
+            active = objects.property(Active).convention(Providers.notDefined())
+            version = objects.property(String).convention(Providers.notDefined())
+            args = objects.listProperty(String).convention(Providers.notDefined())
+        }
+
+        @Override
+        void setActive(String str) {
+            if (isNotBlank(str)) {
+                active.set(Active.of(str.trim()))
+            }
+        }
+
+        @Override
+        void addArg(String arg) {
+            if (isNotBlank(arg)) {
+                args.add(arg.trim())
+            }
+        }
+
+        @Internal
+        boolean isSet() {
+            active.present ||
+                version.present ||
+                args.present
+        }
+
+        org.jreleaser.model.NativeImage.Upx toModel() {
+            org.jreleaser.model.NativeImage.Upx upx = new org.jreleaser.model.NativeImage.Upx()
+            if (active.present) upx.active = active.get()
+            if (version.present) upx.version = version.get()
+            upx.args = (List<String>) args.getOrElse([])
+            upx
+        }
     }
 }

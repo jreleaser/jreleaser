@@ -210,10 +210,14 @@ public final class FileUtils {
     }
 
     public static void unpackArchive(Path src, Path dest) throws IOException {
+        unpackArchive(src, dest, true);
+    }
+
+    public static void unpackArchive(Path src, Path dest, boolean removeRootEntry) throws IOException {
         String filename = src.getFileName().toString();
         for (String extension : TAR_COMPRESSED_EXTENSIONS) {
             if (filename.endsWith(extension)) {
-                unpackArchiveCompressed(src, dest);
+                unpackArchiveCompressed(src, dest, removeRootEntry);
                 return;
             }
         }
@@ -227,19 +231,23 @@ public final class FileUtils {
 
             // subtract .zip, .tar
             filename = filename.substring(0, filename.length() - 4);
-            unpackArchive(filename + "/", destinationDir, in);
+            unpackArchive(removeRootEntry ? filename + "/" : "", destinationDir, in);
         } catch (ArchiveException e) {
             throw new IOException(e.getMessage(), e);
         }
     }
 
     public static void unpackArchiveCompressed(Path src, Path dest) throws IOException {
+        unpackArchiveCompressed(src, dest, true);
+    }
+
+    public static void unpackArchiveCompressed(Path src, Path dest, boolean removeRootEntry) throws IOException {
         deleteFiles(dest, true);
         File destinationDir = dest.toFile();
 
         String filename = src.getFileName().toString();
         String artifactFileName = getFilename(filename, FileType.getSupportedExtensions());
-        String artifactExtension = artifactFileName.substring(artifactFileName.length() + 1);
+        String artifactExtension = filename.substring(artifactFileName.length());
         String artifactFileFormat = artifactExtension.substring(1);
         FileType fileType = FileType.of(artifactFileFormat);
 
@@ -247,10 +255,7 @@ public final class FileUtils {
              InputStream bi = new BufferedInputStream(fi);
              InputStream gzi = resolveCompressorInputStream(fileType, bi);
              ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
-            // subtract extension
-            int offset = fileType.extension().length();
-            filename = filename.substring(0, filename.length() - offset);
-            unpackArchive(filename + "/", destinationDir, in);
+            unpackArchive(removeRootEntry ? artifactFileName + "/" : "", destinationDir, in);
         }
     }
 
@@ -279,7 +284,7 @@ public final class FileUtils {
             }
 
             String entryName = entry.getName();
-            if (entryName.startsWith(basename) && entryName.length() > basename.length() + 1) {
+            if (isNotBlank(basename) && entryName.startsWith(basename) && entryName.length() > basename.length() + 1) {
                 entryName = entryName.substring(basename.length());
             }
 

@@ -43,9 +43,21 @@ interface NativeImage extends JavaAssembler {
 
     void graal(Action<? super Artifact> action)
 
+    void upx(Action<? super Upx> action)
+
     void graalJdk(Action<? super Artifact> action)
 
     void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
+    void upx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action)
+
     void graalJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
+
+    interface Upx extends Activatable {
+        Property<String> getVersion()
+
+        ListProperty<String> getArgs()
+
+        void addArg(String arg)
+    }
 }

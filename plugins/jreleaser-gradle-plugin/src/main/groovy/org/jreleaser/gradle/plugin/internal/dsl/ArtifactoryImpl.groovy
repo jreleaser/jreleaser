@@ -30,10 +30,11 @@ import org.jreleaser.gradle.plugin.dsl.Artifactory
 import org.jreleaser.model.Active
 import org.jreleaser.model.HttpUploader
 import org.jreleaser.util.FileType
-import org.jreleaser.util.StringUtils
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -123,14 +124,14 @@ class ArtifactoryImpl extends AbstractHttpUploader implements Artifactory {
 
         @Override
         void setActive(String str) {
-            if (StringUtils.isNotBlank(str)) {
+            if (isNotBlank(str)) {
                 active.set(Active.of(str.trim()))
             }
         }
 
         @Override
         void setFileType(String str) {
-            if (StringUtils.isNotBlank(str)) {
+            if (isNotBlank(str)) {
                 fileTypes.add(FileType.of(str.trim()))
             }
         }

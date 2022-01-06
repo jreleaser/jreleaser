@@ -121,7 +121,7 @@ public class Artifacts {
 
         String artifactFile = artifact.getEffectivePath().getFileName().toString();
         String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
-        String artifactExtension = artifactFile.substring(artifactFileName.length() + 1);
+        String artifactExtension = artifactFile.substring(artifactFileName.length());
         String artifactFileFormat = artifactExtension.substring(1);
 
         props.put(KEY_ARTIFACT_FILE, artifactFile);

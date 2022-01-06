@@ -143,6 +143,16 @@ public abstract class NativeImageValidator extends Validator {
                 validateFileSet(context, mode, nativeImage, fileSet, i++, errors);
             }
         }
+
+        NativeImage.Upx upx = nativeImage.getUpx();
+        if (!upx.isActiveSet()) {
+            upx.setActive(Active.NEVER);
+        }
+        if (!upx.resolveEnabled(context.getModel().getProject())) return;
+
+        if (isBlank(upx.getVersion())) {
+            errors.configuration(RB.$("validation_is_missing", "nativeImage." + nativeImage.getName() + ".upx.version"));
+        }
     }
 
     private static void validateJdk(JReleaserContext context, JReleaserContext.Mode mode, NativeImage nativeImage, Artifact jdk, int index, Errors errors) {

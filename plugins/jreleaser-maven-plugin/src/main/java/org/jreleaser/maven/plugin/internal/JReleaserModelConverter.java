@@ -954,6 +954,15 @@ public final class JReleaserModelConverter {
         a.setImageName(tr(nativeImage.getImageName()));
         a.setImageNameTransform(tr(nativeImage.getImageNameTransform()));
         a.setArgs(tr(nativeImage.getArgs()));
+        a.setUpx(convertUpx(nativeImage.getUpx()));
+        return a;
+    }
+
+    private static org.jreleaser.model.NativeImage.Upx convertUpx(NativeImage.Upx upx) {
+        org.jreleaser.model.NativeImage.Upx a = new org.jreleaser.model.NativeImage.Upx();
+        a.setActive(tr(upx.resolveActive()));
+        a.setVersion(tr(upx.getVersion()));
+        a.setArgs(tr(upx.getArgs()));
         return a;
     }
 

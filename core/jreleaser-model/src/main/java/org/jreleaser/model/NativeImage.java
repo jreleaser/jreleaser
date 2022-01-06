@@ -17,7 +17,10 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,6 +41,7 @@ public class NativeImage extends AbstractJavaAssembler {
     private final List<String> args = new ArrayList<>();
     private final Artifact graal = new Artifact();
     private final Set<Artifact> graalJdks = new LinkedHashSet<>();
+    private final Upx upx = new Upx();
 
     private String imageName;
     private String imageNameTransform;
@@ -60,6 +64,7 @@ public class NativeImage extends AbstractJavaAssembler {
         setGraal(nativeImage.graal);
         setGraalJdks(nativeImage.graalJdks);
         setArgs(nativeImage.args);
+        setUpx(nativeImage.upx);
     }
 
     public String getResolvedImageName(JReleaserContext context) {
@@ -155,6 +160,14 @@ public class NativeImage extends AbstractJavaAssembler {
         }
     }
 
+    public Upx getUpx() {
+        return upx;
+    }
+
+    public void setUpx(Upx upx) {
+        this.upx.setAll(upx);
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
@@ -169,5 +182,99 @@ public class NativeImage extends AbstractJavaAssembler {
         props.put("graal", graal.asMap(full));
         props.put("graalJdks", mappedJdks);
         props.put("args", args);
+        props.put("upx", upx.asMap(full));
+    }
+
+    public static class Upx implements Domain, Activatable {
+        private final List<String> args = new ArrayList<>();
+
+        @JsonIgnore
+        private boolean enabled;
+        private Active active;
+        private String version;
+
+        void setAll(Upx upx) {
+            this.active = upx.active;
+            this.enabled = upx.enabled;
+            this.version = upx.version;
+            setArgs(upx.args);
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void disable() {
+            active = Active.NEVER;
+            enabled = false;
+        }
+
+        public boolean resolveEnabled(Project project) {
+            if (null == active) {
+                active = Active.NEVER;
+            }
+            enabled = active.check(project);
+            return enabled;
+        }
+
+        @Override
+        public Active getActive() {
+            return active;
+        }
+
+        @Override
+        public void setActive(Active active) {
+            this.active = active;
+        }
+
+        @Override
+        public void setActive(String str) {
+            this.active = Active.of(str);
+        }
+
+        @Override
+        public boolean isActiveSet() {
+            return active != null;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public List<String> getArgs() {
+            return args;
+        }
+
+        public void setArgs(List<String> args) {
+            this.args.clear();
+            this.args.addAll(args);
+        }
+
+        public void addArgs(List<String> args) {
+            this.args.addAll(args);
+        }
+
+        public void addArg(String arg) {
+            if (isNotBlank(arg)) {
+                this.args.add(arg.trim());
+            }
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            if (!full && !isEnabled()) return Collections.emptyMap();
+
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put("enabled", isEnabled());
+            props.put("active", active);
+            props.put("version", version);
+
+            return props;
+        }
     }
 }

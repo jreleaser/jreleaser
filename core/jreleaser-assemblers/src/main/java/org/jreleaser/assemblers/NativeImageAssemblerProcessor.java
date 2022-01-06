@@ -23,6 +23,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.NativeImage;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
+import org.jreleaser.sdk.tool.Tool;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -139,6 +141,10 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
         executeCommand(image.getParent(), cmd);
 
+        if (assembler.getUpx().isEnabled()) {
+            upx(image);
+        }
+
         try {
             Path tempDirectory = Files.createTempDirectory("jreleaser");
             Path distDirectory = tempDirectory.resolve(finalImageName);
@@ -176,6 +182,33 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
+    }
+
+    private void upx(Path image) throws AssemblerProcessingException {
+        Tool upx = new Tool(context.getLogger(), "upx", assembler.getUpx().getVersion(), PlatformUtils.getCurrentFull());
+
+        if (!upx.verify()) {
+            // download
+            if (upx.isEnabled()) {
+                try {
+                    Path tempDirectory = Files.createTempDirectory("jreleaser");
+                    upx.download(tempDirectory);
+                } catch (Exception e) {
+                    throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+                }
+            }
+            if (!upx.verify()) {
+                context.getLogger().warn(RB.$("assembler.native.image.upx.verify", assembler.getUpx().getVersion()));
+                return;
+            }
+        }
+
+        Command cmd = upx.asCommand();
+        cmd.args(assembler.getUpx().getArgs());
+        cmd.arg(image.getFileName().toString());
+
+        context.getLogger().info("upx {}", image.getFileName().toString());
+        executeCommand(image.getParent(), cmd);
     }
 
     private String readGraalVersion(Path path) throws AssemblerProcessingException {
