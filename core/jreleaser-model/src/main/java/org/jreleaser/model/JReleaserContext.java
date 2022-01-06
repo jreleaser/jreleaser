@@ -24,6 +24,7 @@ import org.jreleaser.util.Constants;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.PlatformUtils;
+import org.jreleaser.util.StringUtils;
 import org.jreleaser.util.Version;
 import org.jreleaser.util.signing.FilesKeyring;
 import org.jreleaser.util.signing.InMemoryKeyring;
@@ -339,13 +340,27 @@ public class JReleaserContext {
         this.releaser = releaser;
     }
 
+    private List<String> normalize(List<String> list) {
+        if (list == null || list.isEmpty()) return Collections.emptyList();
+
+        for (int i = 0; i < list.size(); i++) {
+            String s = list.get(i).trim();
+            if (!s.contains("-")) {
+                s = StringUtils.getHyphenatedName(s);
+            }
+            list.set(i, s.toLowerCase());
+        }
+
+        return list;
+    }
+
     public List<String> getIncludedAnnouncers() {
         return includedAnnouncers;
     }
 
     public void setIncludedAnnouncers(List<String> includedAnnouncers) {
         this.includedAnnouncers.clear();
-        this.includedAnnouncers.addAll(includedAnnouncers);
+        this.includedAnnouncers.addAll(normalize(includedAnnouncers));
     }
 
     public List<String> getIncludedAssemblers() {
@@ -354,7 +369,7 @@ public class JReleaserContext {
 
     public void setIncludedAssemblers(List<String> includedAssemblerTypes) {
         this.includedAssemblers.clear();
-        this.includedAssemblers.addAll(includedAssemblerTypes);
+        this.includedAssemblers.addAll(normalize(includedAssemblerTypes));
     }
 
     public List<String> getIncludedDistributions() {
@@ -381,7 +396,7 @@ public class JReleaserContext {
 
     public void setIncludedUploaderTypes(List<String> includedUploaderTypes) {
         this.includedUploaderTypes.clear();
-        this.includedUploaderTypes.addAll(includedUploaderTypes);
+        this.includedUploaderTypes.addAll(normalize(includedUploaderTypes));
     }
 
     public List<String> getIncludedUploaderNames() {
@@ -399,7 +414,7 @@ public class JReleaserContext {
 
     public void setExcludedAnnouncers(List<String> excludedAnnouncers) {
         this.excludedAnnouncers.clear();
-        this.excludedAnnouncers.addAll(excludedAnnouncers);
+        this.excludedAnnouncers.addAll(normalize(excludedAnnouncers));
     }
 
     public List<String> getExcludedAssemblers() {
@@ -408,7 +423,7 @@ public class JReleaserContext {
 
     public void setExcludedAssemblers(List<String> excludedAssemblerTypes) {
         this.excludedAssemblers.clear();
-        this.excludedAssemblers.addAll(excludedAssemblerTypes);
+        this.excludedAssemblers.addAll(normalize(excludedAssemblerTypes));
     }
 
     public List<String> getExcludedDistributions() {
@@ -426,7 +441,7 @@ public class JReleaserContext {
 
     public void setExcludedPackagers(List<String> excludedPackagers) {
         this.excludedPackagers.clear();
-        this.excludedPackagers.addAll(excludedPackagers);
+        this.excludedPackagers.addAll(normalize(excludedPackagers));
     }
 
     public List<String> getExcludedUploaderTypes() {
@@ -435,7 +450,7 @@ public class JReleaserContext {
 
     public void setExcludedUploaderTypes(List<String> excludedUploaderTypes) {
         this.excludedUploaderTypes.clear();
-        this.excludedUploaderTypes.addAll(excludedUploaderTypes);
+        this.excludedUploaderTypes.addAll(normalize(excludedUploaderTypes));
     }
 
     public List<String> getExcludedUploaderNames() {

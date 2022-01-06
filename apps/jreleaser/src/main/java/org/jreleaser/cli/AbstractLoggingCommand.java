@@ -19,6 +19,7 @@ package org.jreleaser.cli;
 
 import org.jreleaser.cli.internal.ColorizedJReleaserLoggerAdapter;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.StringUtils;
 import picocli.CommandLine;
 
 import java.io.FileOutputStream;
@@ -97,7 +98,9 @@ abstract class AbstractLoggingCommand extends AbstractCommand implements Callabl
         if (input != null && input.length > 0) {
             for (String s : input) {
                 if (isNotBlank(s)) {
-                    s = s.trim();
+                    if (!s.contains("-") && lowerCase) {
+                        s = StringUtils.getHyphenatedName(s);
+                    }
                     list.add(lowerCase ? s.toLowerCase() : s);
                 }
             }
