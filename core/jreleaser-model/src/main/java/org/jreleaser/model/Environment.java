@@ -23,6 +23,7 @@ import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.util.Env;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -112,10 +113,10 @@ public class Environment implements Domain {
 
             String home = System.getenv("JRELEASER_USER_HOME");
             if (isBlank(home)) {
-                home = System.getProperty("user.home");
+                home = System.getProperty("user.home") + File.separator + ".jreleaser";
             }
 
-            Path configDirectory = Paths.get(home).resolve(".jreleaser");
+            Path configDirectory = Paths.get(home);
             loadVariables(context, resolveConfigFileAt(configDirectory)
                 .orElse(configDirectory.resolve("config.properties")));
 

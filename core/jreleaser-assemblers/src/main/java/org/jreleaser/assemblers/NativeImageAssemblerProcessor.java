@@ -191,8 +191,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             // download
             if (upx.isEnabled()) {
                 try {
-                    Path tempDirectory = Files.createTempDirectory("jreleaser");
-                    upx.download(tempDirectory);
+                    upx.download();
                 } catch (Exception e) {
                     throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
                 }

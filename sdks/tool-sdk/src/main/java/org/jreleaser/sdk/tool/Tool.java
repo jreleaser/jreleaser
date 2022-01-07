@@ -25,6 +25,7 @@ import org.jreleaser.util.command.CommandException;
 import org.jreleaser.util.command.CommandExecutor;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,6 +55,7 @@ public class Tool {
     private static final String COMMAND_VERSION = "command.version";
     private static final String COMMAND_VERIFY = "command.verify";
     private static final String EXECUTABLE_PATH = ".executable.path";
+    private static final String UNPACK = "unpack";
 
     private final JReleaserLogger logger;
     private final String name;
@@ -130,31 +132,59 @@ public class Tool {
         return false;
     }
 
-    public void download(Path dest) throws ToolException {
-        String downloadUrl = properties.getProperty(DOWNLOAD_URL);
+    public void download() throws ToolException {
         String filename = properties.getProperty(platform + FILENAME);
-        String executablePath = properties.getProperty(platform + EXECUTABLE_PATH);
-        String exec = properties.getProperty(platform + EXECUTABLE);
 
         if (isBlank(filename)) {
             executable = null;
             return;
         }
 
+        Path caches = resolveJReleaserCacheDir();
+        Path dest = caches.resolve(name).resolve(version);
+
+        boolean unpack = Boolean.parseBoolean(properties.getProperty(UNPACK));
+        String downloadUrl = properties.getProperty(DOWNLOAD_URL);
+        String executablePath = properties.getProperty(platform + EXECUTABLE_PATH);
+        String exec = properties.getProperty(platform + EXECUTABLE);
+
         Map<String, Object> props = props();
         filename = applyTemplate(filename, props);
-        downloadUrl = applyTemplate(downloadUrl, props) + filename;
         executablePath = applyTemplate(executablePath, props);
-        Path destination = dest.resolve(filename);
 
+        Path test = dest;
+        if (unpack) {
+            test = dest.resolve(executablePath);
+        }
+        test = test.resolve(exec).toAbsolutePath();
+
+        if (Files.exists(test)) {
+            executable = test;
+            logger.debug(RB.$("tool.cached", executable));
+            return;
+        }
+
+        downloadUrl = applyTemplate(downloadUrl, props) + filename;
         try (InputStream stream = new URL(downloadUrl).openStream()) {
+            Path tmp = Files.createTempDirectory("jreleaser");
+            Path destination = tmp.resolve(filename);
+
             logger.debug(RB.$("tool.located", filename));
             logger.debug(RB.$("tool.downloading", downloadUrl));
             Files.copy(stream, destination, REPLACE_EXISTING);
             logger.debug(RB.$("tool.downloaded", filename));
-            FileUtils.unpackArchive(destination, dest.resolve(name), false);
-            logger.debug(RB.$("tool.unpacked", filename));
-            executable = dest.resolve(name).resolve(executablePath).resolve(exec).toAbsolutePath();
+
+            Files.createDirectories(dest);
+            if (unpack) {
+                FileUtils.unpackArchive(destination, dest, false);
+                logger.debug(RB.$("tool.unpacked", filename));
+                executable = dest.resolve(executablePath).resolve(exec).toAbsolutePath();
+            } else {
+                Path executableFile = dest.resolve(exec);
+                Files.move(destination, executableFile);
+                executable = executableFile.toAbsolutePath();
+            }
+            logger.debug(RB.$("tool.cached", executable));
         } catch (FileNotFoundException e) {
             logger.debug(RB.$("tool.not.found", filename));
             throw new ToolException(RB.$("tool.not.found", filename), e);
@@ -185,5 +215,14 @@ public class Tool {
         } catch (CommandException e) {
             throw new ToolException(RB.$("ERROR_unexpected_error"), e);
         }
+    }
+
+    private Path resolveJReleaserCacheDir() {
+        String home = System.getenv("JRELEASER_USER_HOME");
+        if (isBlank(home)) {
+            home = System.getProperty("user.home") + File.separator + ".jreleaser";
+        }
+
+        return Paths.get(home).resolve("caches");
     }
 }
