@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.jreleaser.model.Active
 import org.jreleaser.model.UpdateSection
 
 /**
@@ -118,6 +119,10 @@ interface GitService extends Releaser {
     SetProperty<UpdateSection> getUpdateSections()
 
     void updateSection(String str)
+
+    Property<Active> getUploadAssets()
+
+    void setUploadAssets(String str)
 
     void changelog(Action<? super Changelog> action)
 

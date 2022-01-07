@@ -26,7 +26,6 @@ import java.util.Map;
 public class Gitea extends GitService {
     public static final String NAME = "gitea";
 
-    private final Prerelease prerelease = new Prerelease();
     private Boolean draft;
 
     public Gitea() {
@@ -48,7 +47,6 @@ public class Gitea extends GitService {
     void setAll(Gitea service) {
         super.setAll(service);
         this.draft = service.draft;
-        setPrerelease(service.prerelease);
     }
 
     public boolean isDraft() {
@@ -63,14 +61,6 @@ public class Gitea extends GitService {
         return draft != null;
     }
 
-    public Prerelease getPrerelease() {
-        return prerelease;
-    }
-
-    public void setPrerelease(Prerelease prerelease) {
-        this.prerelease.setAll(prerelease);
-    }
-
     @Override
     public String getReverseRepoHost() {
         return null;
@@ -80,7 +70,6 @@ public class Gitea extends GitService {
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = super.asMap(full);
         map.put("draft", isDraft());
-        map.put("prerelease", prerelease.asMap(full));
         return map;
     }
 }

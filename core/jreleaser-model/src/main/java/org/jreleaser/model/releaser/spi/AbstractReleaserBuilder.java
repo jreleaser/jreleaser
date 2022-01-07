@@ -18,6 +18,7 @@
 package org.jreleaser.model.releaser.spi;
 
 import org.jreleaser.model.Artifact;
+import org.jreleaser.model.Checksum;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -81,8 +82,13 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
     public ReleaserBuilder<R> configureWith(JReleaserContext context) {
         this.context = context;
         GitService service = context.getModel().getRelease().getGitService();
+        if (!service.resolveUploadAssetsEnabled(context.getModel().getProject())) {
+            return this;
+        }
 
         List<Asset> assets = new ArrayList<>();
+        Checksum checksum = context.getModel().getChecksum();
+
         if (service.isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
                 if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE)) continue;
@@ -90,7 +96,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
                 assets.add(Asset.file(Artifact.of(path, artifact.getExtraProperties())));
                 if (service.isChecksums() && isIndividual(context, artifact) &&
                     !artifact.extraPropertyIsTrue(KEY_SKIP_CHECKSUM)) {
-                    for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+                    for (Algorithm algorithm : checksum.getAlgorithms()) {
                         assets.add(Asset.checksum(Artifact.of(context.getChecksumsDirectory()
                             .resolve(path.getFileName() + "." + algorithm.formatted()))));
                     }
@@ -109,7 +115,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
                     Path path = artifact.getEffectivePath(context, distribution);
                     assets.add(Asset.file(Artifact.of(path, artifact.getExtraProperties()), distribution));
                     if (service.isChecksums() && isIndividual(context, distribution, artifact)) {
-                        for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+                        for (Algorithm algorithm : checksum.getAlgorithms()) {
                             assets.add(Asset.checksum(Artifact.of(context.getChecksumsDirectory()
                                 .resolve(distribution.getName())
                                 .resolve(path.getFileName() + "." + algorithm.formatted()))));
@@ -120,9 +126,9 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
         }
 
         if (service.isChecksums()) {
-            for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+            for (Algorithm algorithm : checksum.getAlgorithms()) {
                 Path checksums = context.getChecksumsDirectory()
-                    .resolve(context.getModel().getChecksum().getResolvedName(context, algorithm));
+                    .resolve(checksum.getResolvedName(context, algorithm));
                 if (Files.exists(checksums)) {
                     assets.add(Asset.checksum(Artifact.of(checksums)));
                 }

@@ -25,6 +25,8 @@ public enum Active {
     ALWAYS,
     NEVER,
     RELEASE,
+    PRERELEASE,
+    RELEASE_PRERELEASE,
     SNAPSHOT;
 
     @Override

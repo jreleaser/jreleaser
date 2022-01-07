@@ -36,6 +36,7 @@ public abstract class GitlabValidator extends GitServiceValidator {
         context.getLogger().debug("release.gitlab");
 
         validateGitService(context, mode, gitlab, errors);
+        gitlab.getPrerelease().disable();
 
         for (Map.Entry<String, String> e : gitlab.getUploadLinks().entrySet()) {
             Optional<? extends Uploader> uploader = context.getModel().getUpload().getUploader(e.getKey(), e.getValue());

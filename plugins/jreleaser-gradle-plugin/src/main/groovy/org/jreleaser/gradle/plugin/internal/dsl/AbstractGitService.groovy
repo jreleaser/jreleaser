@@ -27,6 +27,7 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Changelog
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.GitService
+import org.jreleaser.model.Active
 import org.jreleaser.model.UpdateSection
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -72,6 +73,7 @@ abstract class AbstractGitService implements GitService {
     final Property<Boolean> overwrite
     final Property<Boolean> update
     final SetProperty<UpdateSection> updateSections
+    final Property<Active> uploadAssets
 
     @Inject
     AbstractGitService(ObjectFactory objects) {
@@ -107,6 +109,7 @@ abstract class AbstractGitService implements GitService {
         overwrite = objects.property(Boolean).convention(Providers.notDefined())
         update = objects.property(Boolean).convention(Providers.notDefined())
         updateSections = objects.setProperty(UpdateSection).convention(Providers.notDefined())
+        uploadAssets = objects.property(Active).convention(Providers.notDefined())
     }
 
     @Deprecated
@@ -190,7 +193,15 @@ abstract class AbstractGitService implements GitService {
             signatures.present ||
             overwrite.present ||
             update.present ||
-            updateSections.present
+            updateSections.present ||
+            uploadAssets.present
+    }
+
+    @Override
+    void setUploadAssets(String str) {
+        if (isNotBlank(str)) {
+            uploadAssets.set(Active.of(str.trim()))
+        }
     }
 
     @Override
@@ -256,6 +267,7 @@ abstract class AbstractGitService implements GitService {
         if (files.present) service.files = files.get()
         if (checksums.present) service.checksums = checksums.get()
         if (signatures.present) service.signatures = signatures.get()
+        if (uploadAssets.present) service.uploadAssets = uploadAssets.get()
         if (sign.present) service.sign = sign.get()
         if (skipTag.present) service.skipTag = skipTag.get()
         if (skipRelease.present) service.skipRelease = skipRelease.get()

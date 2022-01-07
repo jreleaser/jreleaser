@@ -61,6 +61,7 @@ public abstract class GitService implements Releaser {
     private Boolean files;
     private Boolean checksums;
     private Boolean signatures;
+    private Active uploadAssets;
 
     @Override
     public boolean isEnabled() {
@@ -464,6 +465,18 @@ public abstract class GitService implements Releaser {
 
     public void setSignatures(Boolean signatures) {
         this.signatures = signatures;
+    }
+
+    public Active getUploadAssets() {
+        return uploadAssets;
+    }
+
+    public void setUploadAssets(Active uploadAssets) {
+        this.uploadAssets = uploadAssets;
+    }
+
+    public String resolveUploadAssets() {
+        return uploadAssets != null ? uploadAssets.name() : null;
     }
 
     public static class Prerelease {

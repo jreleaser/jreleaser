@@ -60,11 +60,12 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private final Changelog changelog = new Changelog();
     private final Milestone milestone = new Milestone();
     private final CommitAuthor commitAuthor = new CommitAuthor();
+    private final Prerelease prerelease = new Prerelease();
     @JsonIgnore
     private final boolean releaseSupported;
     private final Set<UpdateSection> updateSections = new LinkedHashSet<>();
 
-    protected Boolean enabled;
+    private Boolean enabled;
     private String host;
     private String owner;
     private String name;
@@ -94,6 +95,8 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private Boolean files;
     private Boolean checksums;
     private Boolean signatures;
+    private Active uploadAssets;
+    private Boolean uploadAssetsEnabled;
 
     @JsonIgnore
     private String cachedTagName;
@@ -146,7 +149,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.files = service.files;
         this.checksums = service.checksums;
         this.signatures = service.signatures;
+        this.uploadAssets = service.uploadAssets;
+        this.uploadAssetsEnabled = service.uploadAssetsEnabled;
         setCommitAuthor(service.commitAuthor);
+        setPrerelease(service.prerelease);
         setChangelog(service.changelog);
         setMilestone(service.milestone);
         setUpdateSections(service.updateSections);
@@ -266,6 +272,14 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     public String getResolvedIssueTrackerUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
         return applyTemplate(issueTrackerUrl, props(model));
+    }
+
+    public boolean resolveUploadAssetsEnabled(Project project) {
+        if (null == uploadAssets) {
+            uploadAssets = Active.ALWAYS;
+        }
+        uploadAssetsEnabled = uploadAssets.check(project, this);
+        return uploadAssetsEnabled;
     }
 
     @Override
@@ -523,6 +537,14 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.commitAuthor.setAll(commitAuthor);
     }
 
+    public Prerelease getPrerelease() {
+        return prerelease;
+    }
+
+    public void setPrerelease(Prerelease prerelease) {
+        this.prerelease.setAll(prerelease);
+    }
+
     public boolean isSign() {
         return sign != null && sign;
     }
@@ -680,6 +702,22 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.signatures = signatures;
     }
 
+    public Active getUploadAssets() {
+        return uploadAssets;
+    }
+
+    public void setUploadAssets(Active uploadAssets) {
+        this.uploadAssets = uploadAssets;
+    }
+
+    public void setUploadAssets(String str) {
+        this.uploadAssets = Active.of(str);
+    }
+
+    public boolean isUploadAssetsSet() {
+        return uploadAssets != null;
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> props = new LinkedHashMap<>();
@@ -690,6 +728,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put("username", username);
         props.put("token", isNotBlank(getResolvedToken()) ? Constants.HIDE : Constants.UNSET);
         if (releaseSupported) {
+            props.put("uploadAssets", uploadAssets);
             props.put("artifacts", isArtifacts());
             props.put("files", isFiles());
             props.put("checksums", isChecksums());
@@ -724,6 +763,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         if (releaseSupported) {
             props.put("milestone", milestone.asMap(full));
         }
+        props.put("prerelease", prerelease.asMap(full));
         return props;
     }
 
@@ -838,6 +878,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         void setAll(Prerelease prerelease) {
             this.enabled = prerelease.enabled;
             this.pattern = prerelease.pattern;
+        }
+
+        public void disable() {
+            enabled = false;
         }
 
         public boolean isEnabled() {

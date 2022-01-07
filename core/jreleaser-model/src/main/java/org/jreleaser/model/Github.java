@@ -26,7 +26,6 @@ import java.util.Map;
 public class Github extends GitService {
     public static final String NAME = "github";
 
-    private final Prerelease prerelease = new Prerelease();
     private Boolean draft;
     private String discussionCategoryName;
 
@@ -48,7 +47,6 @@ public class Github extends GitService {
         super.setAll(service);
         this.draft = service.draft;
         this.discussionCategoryName = service.discussionCategoryName;
-        setPrerelease(service.prerelease);
     }
 
     public boolean isDraft() {
@@ -61,14 +59,6 @@ public class Github extends GitService {
 
     public boolean isDraftSet() {
         return draft != null;
-    }
-
-    public Prerelease getPrerelease() {
-        return prerelease;
-    }
-
-    public void setPrerelease(Prerelease prerelease) {
-        this.prerelease.setAll(prerelease);
     }
 
     public String getDiscussionCategoryName() {
@@ -88,7 +78,6 @@ public class Github extends GitService {
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = super.asMap(full);
         map.put("draft", isDraft());
-        map.put("prerelease", prerelease.asMap(full));
         map.put("discussionCategoryName", discussionCategoryName);
         return map;
     }

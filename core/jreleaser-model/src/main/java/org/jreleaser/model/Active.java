@@ -29,6 +29,8 @@ public enum Active {
     ALWAYS(project -> true),
     NEVER(project -> false),
     RELEASE(Project::isRelease),
+    PRERELEASE(project -> true),
+    RELEASE_PRERELEASE(Project::isRelease),
     SNAPSHOT(Project::isSnapshot);
 
     private final Predicate<Project> test;
@@ -37,8 +39,16 @@ public enum Active {
         this.test = test;
     }
 
-    boolean check(Project project) {
+    public boolean check(Project project) {
         return test.test(project);
+    }
+
+    public boolean check(Project project, GitService service) {
+        boolean p = this.test.test(project);
+        if (p) {
+            return service.getPrerelease().isEnabled();
+        }
+        return p;
     }
 
     @Override
@@ -48,6 +58,9 @@ public enum Active {
 
     public static Active of(String str) {
         if (isBlank(str)) return null;
-        return Active.valueOf(str.toUpperCase().trim());
+        return Active.valueOf(str.toUpperCase().trim()
+            .replace("+", "_")
+            .replace("-", "_")
+            .replace(" ", "_"));
     }
 }

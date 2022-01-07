@@ -310,6 +310,7 @@ public final class JReleaserModelConverter {
         if (service.isFilesSet()) s.setFiles(service.isFiles());
         if (service.isChecksumsSet()) s.setChecksums(service.isChecksums());
         if (service.isSignaturesSet()) s.setSignatures(service.isSignatures());
+        s.setUploadAssets(tr(service.resolveUploadAssets()));
     }
 
     private static Set<org.jreleaser.model.UpdateSection> convertUpdateSections(Set<UpdateSection> updateSections) {
