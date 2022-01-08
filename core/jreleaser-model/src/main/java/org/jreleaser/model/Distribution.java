@@ -20,7 +20,7 @@ package org.jreleaser.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Constants;
-import org.jreleaser.util.Version;
+import org.jreleaser.util.SemVer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -89,7 +89,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         safePut(Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass(), props, true);
         if (isNotBlank(java.getVersion())) {
             props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, java.getVersion());
-            Version jv = Version.of(java.getVersion());
+            SemVer jv = SemVer.of(java.getVersion());
             safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor(), props, true);
             safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor(), props, true);
             safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch(), props, true);

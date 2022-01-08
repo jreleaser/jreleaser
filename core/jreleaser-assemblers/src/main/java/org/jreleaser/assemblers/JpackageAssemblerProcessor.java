@@ -29,7 +29,7 @@ import org.jreleaser.templates.TemplateUtils;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
-import org.jreleaser.util.Version;
+import org.jreleaser.util.SemVer;
 import org.jreleaser.util.command.Command;
 
 import java.io.ByteArrayOutputStream;
@@ -62,7 +62,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
 
         // verify jdk
         Path jdkPath = packager.getJdk().getEffectivePath(context, assembler);
-        Version jdkVersion = Version.of(readJavaVersion(jdkPath));
+        SemVer jdkVersion = SemVer.of(readJavaVersion(jdkPath));
         context.getLogger().debug(RB.$("assembler.jpackage.jdk"), jdkVersion, jdkPath.toAbsolutePath().toString());
         if (jdkVersion.getMajor() < 16) {
             throw new AssemblerProcessingException(RB.$("ERROR_jpackage_minimum_jdk_required", jdkVersion.toString()));

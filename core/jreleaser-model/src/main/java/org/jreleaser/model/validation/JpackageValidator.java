@@ -26,7 +26,7 @@ import org.jreleaser.model.Jpackage;
 import org.jreleaser.model.Project;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
-import org.jreleaser.util.Version;
+import org.jreleaser.util.SemVer;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -161,7 +161,7 @@ public abstract class JpackageValidator extends Validator {
 
         // validate appVersion
         try {
-            Version v = Version.of(applicationPackage.getAppVersion());
+            SemVer v = SemVer.of(applicationPackage.getAppVersion());
             if (isNotBlank(v.getBuild()) && isNotBlank(v.getTag()) &&
                 v.getMajor() <= 0) {
                 errors.configuration(RB.$("validation_jpackage_invalid_appversion", applicationPackage.getAppVersion()));

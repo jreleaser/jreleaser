@@ -25,7 +25,7 @@ import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.JavaRuntimeVersion;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
-import org.jreleaser.util.Version;
+import org.jreleaser.util.SemVer;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -339,7 +339,7 @@ public class Project implements Domain, ExtraProperties {
         switch (versionPattern().getType()) {
             case SEMVER: {
                 try {
-                    Version parsedVersion = Version.of(v);
+                    SemVer parsedVersion = SemVer.of(v);
                     StringBuilder vn = new StringBuilder().append(parsedVersion.getMajor());
                     addExtraProperty(Constants.KEY_VERSION_MAJOR, parsedVersion.getMajor());
                     if (parsedVersion.hasMinor()) {
@@ -576,7 +576,7 @@ public class Project implements Domain, ExtraProperties {
                 props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
                 props.put(Constants.KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());
                 props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
-                Version jv = Version.of(project.getJava().getVersion());
+                SemVer jv = SemVer.of(project.getJava().getVersion());
                 props.put(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
                 if (jv.hasMinor()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
                 if (jv.hasPatch()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());

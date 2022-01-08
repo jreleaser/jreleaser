@@ -23,7 +23,7 @@ import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
-import org.jreleaser.util.Version;
+import org.jreleaser.util.SemVer;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatterBuilder;
@@ -305,7 +305,7 @@ public class JReleaserModel implements Domain {
             props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
             props.put(Constants.KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());
             props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
-            Version jv = Version.of(project.getJava().getVersion());
+            SemVer jv = SemVer.of(project.getJava().getVersion());
             props.put(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
             if (jv.hasMinor()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
             if (jv.hasPatch()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());

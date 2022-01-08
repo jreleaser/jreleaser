@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public class JavaRuntimeVersion implements Comparable<JavaRuntimeVersion> {
+public class JavaRuntimeVersion implements Version<JavaRuntimeVersion> {
     private static final Pattern PBO = Pattern.compile("(?:\\-([a-zA-Z0-9]+))?\\+(0|[1-9]\\d*)(?:\\-([\\-a-zA-Z0-9\\.]+))?");
     private static final Pattern PO = Pattern.compile("\\-([a-zA-Z0-9]+)(?:\\-([-a-zA-Z0-9.]+))?");
     private static final Pattern O = Pattern.compile("\\+\\-([-a-zA-Z0-9.]+)");
@@ -40,12 +40,14 @@ public class JavaRuntimeVersion implements Comparable<JavaRuntimeVersion> {
     private final String prerelease;
     private final String build;
     private final String optional;
+    private final Pattern pattern;
 
-    private JavaRuntimeVersion(String version, String prerelease, String build, String optional) {
+    private JavaRuntimeVersion(String version, String prerelease, String build, String optional, Pattern pattern) {
         this.version = version;
         this.prerelease = isNotBlank(prerelease) ? prerelease.trim() : null;
         this.build = isNotBlank(build) ? build.trim() : null;
         this.optional = isNotBlank(optional) ? optional.trim() : null;
+        this.pattern = pattern;
     }
 
     public int feature() {
@@ -115,7 +117,8 @@ public class JavaRuntimeVersion implements Comparable<JavaRuntimeVersion> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JavaRuntimeVersion v = (JavaRuntimeVersion) o;
-        return Objects.equals(version, v.version) &&
+        return pattern.pattern().equals(v.pattern.pattern()) &&
+            Objects.equals(version, v.version) &&
             Objects.equals(prerelease, v.prerelease) &&
             Objects.equals(build, v.build) &&
             Objects.equals(optional, v.optional);
@@ -123,7 +126,7 @@ public class JavaRuntimeVersion implements Comparable<JavaRuntimeVersion> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(version, prerelease, build, optional);
+        return Objects.hash(pattern.pattern(), version, prerelease, build, optional);
     }
 
     @Override
@@ -135,6 +138,11 @@ public class JavaRuntimeVersion implements Comparable<JavaRuntimeVersion> {
         c = compareStringsInvert(this.build, that.build);
         if (c != 0) return c;
         return compareStringsInvert(this.optional, that.optional);
+    }
+
+    @Override
+    public boolean equalsSpec(JavaRuntimeVersion version) {
+        return pattern.pattern().equals(version.pattern.pattern());
     }
 
     private int compareVersion(String v1, String v2) {
@@ -213,12 +221,12 @@ public class JavaRuntimeVersion implements Comparable<JavaRuntimeVersion> {
 
             Matcher m = O.matcher(s);
             if (m.matches()) {
-                return new JavaRuntimeVersion(v, p, b, m.group(1));
+                return new JavaRuntimeVersion(v, p, b, m.group(1), O);
             }
 
             m = PO.matcher(s);
             if (m.matches()) {
-                return new JavaRuntimeVersion(v, m.group(1), b, m.group(2));
+                return new JavaRuntimeVersion(v, m.group(1), b, m.group(2), PO);
             }
 
             m = PBO.matcher(s);
@@ -229,7 +237,7 @@ public class JavaRuntimeVersion implements Comparable<JavaRuntimeVersion> {
             }
         }
 
-        return new JavaRuntimeVersion(v, p, b, o);
+        return new JavaRuntimeVersion(v, p, b, o, PBO);
     }
 
     private static String take(String str, int index, List<Character> delims) {
@@ -247,7 +255,11 @@ public class JavaRuntimeVersion implements Comparable<JavaRuntimeVersion> {
     }
 
     public static JavaRuntimeVersion of(String version, String tag, String build, String optional) {
+        return of(version, tag, build, optional, PBO);
+    }
+
+    private static JavaRuntimeVersion of(String version, String tag, String build, String optional, Pattern pattern) {
         requireNonBlank(version, "Argument 'version' must not be blank");
-        return new JavaRuntimeVersion(version, tag, build, optional);
+        return new JavaRuntimeVersion(version, tag, build, optional, pattern);
     }
 }

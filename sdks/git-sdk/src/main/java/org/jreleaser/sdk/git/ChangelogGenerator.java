@@ -32,8 +32,10 @@ import org.jreleaser.model.Project;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.util.CalVer;
 import org.jreleaser.util.CollectionUtils;
+import org.jreleaser.util.CustomVersion;
 import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.JavaRuntimeVersion;
+import org.jreleaser.util.SemVer;
 import org.jreleaser.util.StringUtils;
 import org.jreleaser.util.Version;
 
@@ -141,17 +143,17 @@ public class ChangelogGenerator {
         }
     }
 
-    private Version semverOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
+    private SemVer semverOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
         Matcher matcher = versionPattern.matcher(extractTagName(ref));
         if (matcher.matches()) {
             String tag = matcher.group(1);
             try {
-                return Version.of(tag);
+                return SemVer.of(tag);
             } catch (IllegalArgumentException e) {
                 unparseableTag(context, tag, e);
             }
         }
-        return Version.of("0.0.0");
+        return SemVer.of("0.0.0");
     }
 
     private JavaRuntimeVersion javaRuntimeVersionOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
@@ -194,15 +196,15 @@ public class ChangelogGenerator {
         return CalVer.defaultFor(format);
     }
 
-    private String versionOf(Ref tag, Pattern versionPattern) {
+    private CustomVersion versionOf(Ref tag, Pattern versionPattern) {
         Matcher matcher = versionPattern.matcher(extractTagName(tag));
         if (matcher.matches()) {
-            return matcher.group(1);
+            return CustomVersion.of(matcher.group(1));
         }
-        return "0.0.0";
+        return CustomVersion.of("0.0.0");
     }
 
-    private Comparable version(JReleaserContext context, Ref tag, Pattern versionPattern) {
+    private Version version(JReleaserContext context, Ref tag, Pattern versionPattern) {
         switch (context.getModel().getProject().versionPattern().getType()) {
             case SEMVER:
                 return semverOf(context, tag, versionPattern);
@@ -215,6 +217,43 @@ public class ChangelogGenerator {
             case CUSTOM:
             default:
                 return versionOf(tag, versionPattern);
+        }
+    }
+
+    private Version defaultVersion(JReleaserContext context) {
+        switch (context.getModel().getProject().versionPattern().getType()) {
+            case SEMVER:
+                return SemVer.of("0.0.0");
+            case JAVA_RUNTIME:
+                return JavaRuntimeVersion.of("0.0.0");
+            case JAVA_MODULE:
+                return JavaModuleVersion.of("0.0.0");
+            case CALVER:
+                String format = context.getModel().getProject().versionPattern().getFormat();
+                return CalVer.defaultFor(format);
+            case CUSTOM:
+            default:
+                return CustomVersion.of("0.0.0");
+        }
+    }
+
+    private Version currentVersion(JReleaserContext context) {
+        Project project = context.getModel().getProject();
+        String version = project.getResolvedVersion();
+
+        switch (project.versionPattern().getType()) {
+            case SEMVER:
+                return SemVer.of(version);
+            case JAVA_RUNTIME:
+                return JavaRuntimeVersion.of(version);
+            case JAVA_MODULE:
+                return JavaModuleVersion.of(version);
+            case CALVER:
+                String format = project.versionPattern().getFormat();
+                return CalVer.of(format, version);
+            case CUSTOM:
+            default:
+                return CustomVersion.of(version);
         }
     }
 
@@ -233,8 +272,8 @@ public class ChangelogGenerator {
 
         unparseableTags.clear();
         tags.sort((tag1, tag2) -> {
-            Comparable v1 = version(context, tag1, versionPattern);
-            Comparable v2 = version(context, tag2, versionPattern);
+            Version v1 = version(context, tag1, versionPattern);
+            Version v2 = version(context, tag2, versionPattern);
             return v2.compareTo(v1);
         });
 
@@ -254,6 +293,8 @@ public class ChangelogGenerator {
                 .findFirst();
         }
 
+        Version currentVersion = currentVersion(context);
+
         // tag: early-access
         if (context.getModel().getProject().isSnapshot()) {
             Project.Snapshot snapshot = context.getModel().getProject().getSnapshot();
@@ -269,7 +310,7 @@ public class ChangelogGenerator {
 
                         tag = tags.stream()
                             .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
-                            .filter(ref -> extractTagName(ref).matches(tagPattern))
+                            .filter(ref -> currentVersion.equalsSpec(version(context, ref, versionPattern)))
                             .findFirst();
                     }
                 }
@@ -294,7 +335,7 @@ public class ChangelogGenerator {
                 context.getLogger().debug(RB.$("changelog.generator.lookup.matching.tag"), tagPattern, effectiveTagName);
                 tag = tags.stream()
                     .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
-                    .filter(ref -> extractTagName(ref).matches(tagPattern))
+                    .filter(ref -> currentVersion.equalsSpec(version(context, ref, versionPattern)))
                     .findFirst();
             }
 
@@ -308,7 +349,6 @@ public class ChangelogGenerator {
         }
 
         // tag: somewhere in the middle
-        Comparable currentVersion = version(context, tag.get(), versionPattern);
         if (!previousTag.isPresent()) {
             context.getLogger().debug(RB.$("changelog.generator.lookup.before.tag"), effectiveTagName, tagPattern);
             previousTag = tags.stream()

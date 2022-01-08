@@ -27,14 +27,13 @@ import org.jreleaser.sdk.tool.Tool;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
-import org.jreleaser.util.Version;
+import org.jreleaser.util.SemVer;
 import org.jreleaser.util.command.Command;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -59,8 +58,8 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
     protected void doAssemble(Map<String, Object> props) throws AssemblerProcessingException {
         // verify graal
         Path graalPath = assembler.getGraal().getEffectivePath(context, assembler);
-        Version javaVersion = Version.of(readJavaVersion(graalPath));
-        Version graalVersion = Version.of(readGraalVersion(graalPath));
+        SemVer javaVersion = SemVer.of(readJavaVersion(graalPath));
+        SemVer graalVersion = SemVer.of(readGraalVersion(graalPath));
         context.getLogger().debug(RB.$("assembler.graal.java"), javaVersion, graalPath.toAbsolutePath().toString());
         context.getLogger().debug(RB.$("assembler.graal.graal"), graalVersion, graalPath.toAbsolutePath().toString());
 

@@ -27,7 +27,7 @@ import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
-import org.jreleaser.util.Version;
+import org.jreleaser.util.SemVer;
 import org.jreleaser.util.command.Command;
 
 import java.io.ByteArrayOutputStream;
@@ -59,7 +59,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
     protected void doAssemble(Map<String, Object> props) throws AssemblerProcessingException {
         // verify jdk
         Path jdkPath = assembler.getJdk().getEffectivePath(context, assembler);
-        Version jdkVersion = Version.of(readJavaVersion(jdkPath));
+        SemVer jdkVersion = SemVer.of(readJavaVersion(jdkPath));
         context.getLogger().debug(RB.$("assembler.jlink.jdk"), jdkVersion, jdkPath.toAbsolutePath().toString());
 
         // verify jdks
@@ -67,7 +67,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             if (!context.isPlatformSelected(targetJdk)) continue;
 
             Path targetJdkPath = targetJdk.getEffectivePath(context, assembler);
-            Version targetJdkVersion = Version.of(readJavaVersion(targetJdkPath));
+            SemVer targetJdkVersion = SemVer.of(readJavaVersion(targetJdkPath));
             context.getLogger().debug(RB.$("assembler.jlink.target"), jdkVersion, targetJdkPath.toAbsolutePath().toString());
 
             if (jdkVersion.getMajor() != targetJdkVersion.getMajor()) {

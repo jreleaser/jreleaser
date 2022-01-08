@@ -25,7 +25,7 @@ import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
-import org.jreleaser.util.Version;
+import org.jreleaser.util.SemVer;
 import org.jreleaser.util.signing.FilesKeyring;
 import org.jreleaser.util.signing.InMemoryKeyring;
 import org.jreleaser.util.signing.Keyring;
@@ -621,7 +621,7 @@ public class JReleaserContext {
         // Java 11 calls entrySet() when storing properties
         @Override
         public Set<Map.Entry<Object, Object>> entrySet() {
-            int javaMajorVersion = Version.javaMajorVersion();
+            int javaMajorVersion = SemVer.javaMajorVersion();
             if (javaMajorVersion < 11) {
                 return super.entrySet();
             }
@@ -636,7 +636,7 @@ public class JReleaserContext {
         // Java 8 calls keys() when storing properties
         @Override
         public synchronized Enumeration<Object> keys() {
-            int javaMajorVersion = Version.javaMajorVersion();
+            int javaMajorVersion = SemVer.javaMajorVersion();
             if (javaMajorVersion >= 11) {
                 return super.keys();
             }

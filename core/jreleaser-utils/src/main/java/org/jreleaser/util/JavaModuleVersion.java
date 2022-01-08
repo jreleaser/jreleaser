@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @author Andres Almiray
  * @since 0.5.0
  */
-public class JavaModuleVersion implements Comparable<JavaModuleVersion> {
+public class JavaModuleVersion implements Version<JavaModuleVersion> {
     private final String version;
     private final String prerelease;
     private final String build;
@@ -98,6 +98,20 @@ public class JavaModuleVersion implements Comparable<JavaModuleVersion> {
         c = comparePrerelease(this.prerelease, that.prerelease);
         if (c != 0) return c;
         return compareBuild(this.build, that.build);
+    }
+
+    @Override
+    public boolean equalsSpec(JavaModuleVersion version) {
+        return check(prerelease, version.prerelease) &&
+            check(build, version.build);
+    }
+
+    private boolean check(String s1, String s2) {
+        if (isBlank(s1)) {
+            return isBlank(s2);
+        } else {
+            return isNotBlank(s2);
+        }
     }
 
     private int compareVersion(String v1, String v2) {

@@ -39,7 +39,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @author Andres Almiray
  * @since 0.9.1
  */
-public class CalVer implements Comparable<CalVer> {
+public class CalVer implements Version<CalVer> {
     private static final Map<String, String> PATTERNS = new LinkedHashMap<>();
 
     private static final String YEAR = "YEAR";
@@ -278,6 +278,11 @@ public class CalVer implements Comparable<CalVer> {
         }
 
         return result;
+    }
+
+    @Override
+    public  boolean equalsSpec(CalVer version) {
+        return pattern.equals(version.pattern);
     }
 
     private static int parseInt(String str) {

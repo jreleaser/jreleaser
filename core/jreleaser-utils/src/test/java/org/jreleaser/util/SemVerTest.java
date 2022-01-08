@@ -35,12 +35,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class VersionTest {
+public class SemVerTest {
     @ParameterizedTest
     @MethodSource("version_parsing")
     public void testVersionParsing(String input, int major, int minor, int patch, String tag, String build) {
         // given:
-        Version version = Version.of(input);
+        SemVer version = SemVer.of(input);
 
         // then:
         assertThat(version.getMajor(), equalTo(major));
@@ -55,7 +55,7 @@ public class VersionTest {
     @MethodSource("same_version")
     public void testVersionIdentity(String input) {
         // given:
-        Version version = Version.of(input);
+        SemVer version = SemVer.of(input);
 
         // then:
         assertThat(version, equalTo(version));
@@ -69,8 +69,8 @@ public class VersionTest {
     @MethodSource("version_comparison")
     public void testVersionComparison(String input1, String input2) {
         // given:
-        Version v1 = Version.of(input1);
-        Version v2 = Version.of(input2);
+        SemVer v1 = SemVer.of(input1);
+        SemVer v2 = SemVer.of(input2);
 
         // then:
         assertTrue(lessThan(v1, v2));
