@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.S3;
@@ -24,6 +25,9 @@ import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
+
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -110,6 +114,10 @@ public abstract class S3Validator extends Validator {
                 "s3." + s3.getName() + ".endpoint",
                 s3.getEndpoint(),
                 ""));
+
+        if (isNotBlank(s3.getResolvedEndpoint()) && isBlank(s3.getResolvedDownloadUrl())) {
+            errors.configuration(RB.$("validation_s3_missing_download_url", "s3." + s3.getName()));
+        }
 
         validateTimeout(s3);
     }
