@@ -212,6 +212,9 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
 
         try {
             Path imageArchive = assembleDirectory.resolve(finalImageName + "." + archiveFormat.extension());
+            FileUtils.copyFiles(context.getLogger(),
+                context.getBasedir(),
+                imageDirectory, path -> path.getFileName().startsWith("LICENSE"));
             copyFiles(context, imageDirectory);
             copyFileSets(context, imageDirectory);
 

@@ -161,6 +161,9 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             Path binDirectory = distDirectory.resolve("bin");
             Files.createDirectories(binDirectory);
             Files.copy(image, binDirectory.resolve(image.getFileName()));
+            FileUtils.copyFiles(context.getLogger(),
+                context.getBasedir(),
+                distDirectory, path -> path.getFileName().startsWith("LICENSE"));
             copyFiles(context, distDirectory);
             copyFileSets(context, distDirectory);
 
