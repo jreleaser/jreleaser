@@ -17,7 +17,6 @@
  */
 package org.jreleaser.util.command;
 
-import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.File;
@@ -72,14 +71,13 @@ public class Command {
         return this;
     }
 
-    public List<String> asCommandLine(JReleaserLogger logger) throws IOException {
+    public List<String> asCommandLine() throws IOException {
         if (!supportsArgsfile) return getArgs();
 
         if (PlatformUtils.isWindows()) {
             File argsFile = File.createTempFile("jreleaser-command", "args");
             argsFile.deleteOnExit();
             Files.write(argsFile.toPath(), (Iterable<String>) args.stream().skip(1)::iterator);
-            logger.debug(argsFile + ": " + String.join(" ", args));
 
             String cmd = args.get(0);
             args.clear();

@@ -84,7 +84,7 @@ public class CommandExecutor {
 
     private ProcessExecutor createProcessExecutor(Command command) throws CommandException {
         try {
-            return new ProcessExecutor(command.asCommandLine(logger));
+            return new ProcessExecutor(command.asCommandLine());
         } catch (IOException e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e);
         }
