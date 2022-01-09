@@ -40,10 +40,9 @@ abstract class AbstractCommand extends BaseCommand implements Callable<Integer> 
             return 1;
         } catch (JReleaserException e) {
             Colorizer colorizer = new Colorizer(parent().out);
-            colorizer.println(e.getMessage());
-            if (e.getCause() != null) {
-                colorizer.println(e.getCause().getMessage());
-            }
+            String message = e.getMessage();
+            colorizer.println(message);
+            printDetails(e.getCause(), message, colorizer);
             return 1;
         } catch (Exception e) {
             e.printStackTrace(new Colorizer(parent().out));
@@ -51,6 +50,16 @@ abstract class AbstractCommand extends BaseCommand implements Callable<Integer> 
         }
 
         return 0;
+    }
+
+    protected void printDetails(Throwable throwable, String message, Colorizer colorizer) {
+        if (throwable == null) return;
+        String myMessage = throwable.getMessage();
+        if (!message.equals(myMessage)) {
+            colorizer.println(myMessage);
+        } else {
+            printDetails(throwable.getCause(), message, colorizer);
+        }
     }
 
     protected abstract void execute();
