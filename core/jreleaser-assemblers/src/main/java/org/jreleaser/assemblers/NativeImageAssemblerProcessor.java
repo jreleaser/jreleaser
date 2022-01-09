@@ -34,6 +34,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -129,19 +131,39 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             .findFirst()
             .ifPresent(assembler.getArgs()::remove);
 
-        Command cmd = new Command(graalPath.resolve("bin").resolve("native-image").toAbsolutePath().toString())
-            .args(assembler.getArgs())
-            .arg("-jar")
-            .arg(assembler.getMainJar().getEffectivePath(context, assembler).toAbsolutePath().toString());
+        Path nativeImageExecutable = graalPath
+            .resolve("bin")
+            .resolve(PlatformUtils.isWindows() ? "native-image.exe" : "native-image")
+            .toAbsolutePath();
+
+        Command cmd = new Command(nativeImageExecutable.toString());
+        List<String> args = new ArrayList<>(assembler.getArgs());
+        args.add("-jar");
+        args.add(assembler.getMainJar().getEffectivePath(context, assembler).toAbsolutePath().toString());
 
         if (!jars.isEmpty()) {
-            cmd.arg("-cp")
-                .arg(jars.stream()
-                    .map(path -> context.relativize(image.getParent(), path))
-                    .map(Path::toString)
-                    .collect(Collectors.joining(File.pathSeparator)));
+            args.add("-cp");
+            args.add(jars.stream()
+                .map(Path::toAbsolutePath)
+                .map(Path::toString)
+                .collect(Collectors.joining(File.pathSeparator)));
         }
-        cmd.arg("-H:Name=" + image.getFileName().toString());
+        args.add("-H:Name=" + image.getFileName().toString());
+
+        if (PlatformUtils.isWindows()) {
+            try {
+                File argsFile = File.createTempFile("native-image", "args");
+                argsFile.deleteOnExit();
+                Files.write(argsFile.toPath(), args);
+                context.getLogger().debug(String.join(" ", args));
+                args.clear();
+                args.add("@" + argsFile);
+            } catch (IOException e) {
+                throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+            }
+        }
+        cmd.args(args);
+
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
         executeCommand(image.getParent(), cmd);
 
