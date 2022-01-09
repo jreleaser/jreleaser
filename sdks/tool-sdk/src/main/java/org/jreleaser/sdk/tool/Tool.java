@@ -46,6 +46,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.0.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class Tool {
     private static final String BASE_TEMPLATE_PREFIX = "META-INF/jreleaser/tools/";
     private static final String DOWNLOAD_URL = "download.url";
@@ -126,8 +127,12 @@ public class Tool {
 
             Pattern pattern = Pattern.compile(verify);
             return pattern.matcher(out.toString()).find();
-        } catch (ToolException ignored) {
-            // noop
+        } catch (CommandException e) {
+            if (null != e.getCause()) {
+                logger.debug(e.getCause().getMessage());
+            } else {
+                logger.debug(e.getMessage());
+            }
         }
         return false;
     }
@@ -204,16 +209,12 @@ public class Tool {
         return props;
     }
 
-    private void executeCommandCapturing(Command command, OutputStream out) throws ToolException {
-        try {
-            int exitValue = new CommandExecutor(logger)
-                .executeCommandCapturing(command, out);
-            if (exitValue != 0) {
-                logger.error(out.toString().trim());
-                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-            }
-        } catch (CommandException e) {
-            throw new ToolException(RB.$("ERROR_unexpected_error"), e);
+    private void executeCommandCapturing(Command command, OutputStream out) throws CommandException {
+        int exitValue = new CommandExecutor(logger)
+            .executeCommandCapturing(command, out);
+        if (exitValue != 0) {
+            logger.error(out.toString().trim());
+            throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
         }
     }
 
