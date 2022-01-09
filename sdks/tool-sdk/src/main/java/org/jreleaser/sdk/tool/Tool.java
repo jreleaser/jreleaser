@@ -46,7 +46,6 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.0.0
  */
-@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class Tool {
     private static final String BASE_TEMPLATE_PREFIX = "META-INF/jreleaser/tools/";
     private static final String DOWNLOAD_URL = "download.url";
