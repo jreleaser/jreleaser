@@ -20,6 +20,7 @@ package org.jreleaser.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.util.PlatformUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -177,12 +178,20 @@ public class Glob implements Domain, ExtraProperties {
 
         if (this.pattern.startsWith(GLOB_PREFIX)) {
             String path = this.pattern.substring(GLOB_PREFIX.length());
-            if (!Paths.get(path).isAbsolute()) {
+            String test = path;
+            if (PlatformUtils.isWindows()) {
+                test = test.replace("*", "x");
+            }
+            if (!Paths.get(test).isAbsolute()) {
                 this.pattern = GLOB_PREFIX + "**" + File.separator + path;
             }
         } else {
             String path = this.pattern.substring(REGEX_PREFIX.length());
-            if (!Paths.get(path).isAbsolute()) {
+            String test = path;
+            if (PlatformUtils.isWindows()) {
+                test = test.replace("*", "x");
+            }
+            if (!Paths.get(test).isAbsolute()) {
                 this.pattern = REGEX_PREFIX + ".*" + File.separator + path;
             }
         }
