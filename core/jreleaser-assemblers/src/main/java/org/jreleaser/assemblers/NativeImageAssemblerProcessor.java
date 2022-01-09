@@ -93,8 +93,13 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             .toAbsolutePath();
 
         if (!Files.exists(nativeImageExecutable)) {
+            Path guExecutable = graalPath
+                .resolve("bin")
+                .resolve(PlatformUtils.isWindows() ? "gu.exe" : "gu")
+                .toAbsolutePath();
+
             context.getLogger().debug(RB.$("assembler.graal.install.native.exec"));
-            Command cmd = new Command(graalPath.resolve("bin").resolve("gu").toAbsolutePath().toString())
+            Command cmd = new Command(guExecutable.toString())
                 .arg("install")
                 .arg("native-image");
             context.getLogger().debug(String.join(" ", cmd.getArgs()));
