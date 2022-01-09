@@ -50,11 +50,13 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.FileTime;
+import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -306,15 +308,80 @@ public final class FileUtils {
                 }
                 try (OutputStream o = Files.newOutputStream(file.toPath())) {
                     IOUtils.copy(in, o);
-                    // TODO: make it a generic solution
-                    // zipEntry.unixMode returns 0 most times even if the entry is executable
-                    // https://github.com/jreleaser/jreleaser/issues/358
-                    if ("bin".equalsIgnoreCase(file.getParentFile().getName())) {
-                        grantExecutableAccess(file.toPath());
-                    }
+                    chmod(file, getEntryMode(entry));
                 }
             }
         }
+    }
+
+    private static int getEntryMode(ArchiveEntry entry) {
+        if (entry instanceof TarArchiveEntry) {
+            return getEntryMode(entry, ((TarArchiveEntry) entry).getMode());
+        }
+        return getEntryMode(entry, ((ZipArchiveEntry) entry).getUnixMode());
+    }
+
+    private static int getEntryMode(ArchiveEntry entry, int mode) {
+        int unixMode = mode & 0777;
+        if (unixMode == 0) {
+            if (entry.isDirectory()) {
+                unixMode = 0755;
+            } else {
+                unixMode = 0644;
+            }
+        }
+        return unixMode;
+    }
+
+    public static void chmod(File file, int mode) throws IOException {
+        chmod(file.toPath(), mode);
+    }
+
+    public static void chmod(Path path, int mode) throws IOException {
+        PosixFileAttributeView fileAttributeView = Files.getFileAttributeView(path, PosixFileAttributeView.class);
+        fileAttributeView.setPermissions(convertToPermissionsSet(mode));
+    }
+
+    private static Set<PosixFilePermission> convertToPermissionsSet(int mode) {
+        Set<PosixFilePermission> result = EnumSet.noneOf(PosixFilePermission.class);
+
+        if ((mode & 256) == 256) {
+            result.add(PosixFilePermission.OWNER_READ);
+        }
+
+        if ((mode & 128) == 128) {
+            result.add(PosixFilePermission.OWNER_WRITE);
+        }
+
+        if ((mode & 64) == 64) {
+            result.add(PosixFilePermission.OWNER_EXECUTE);
+        }
+
+        if ((mode & 32) == 32) {
+            result.add(PosixFilePermission.GROUP_READ);
+        }
+
+        if ((mode & 16) == 16) {
+            result.add(PosixFilePermission.GROUP_WRITE);
+        }
+
+        if ((mode & 8) == 8) {
+            result.add(PosixFilePermission.GROUP_EXECUTE);
+        }
+
+        if ((mode & 4) == 4) {
+            result.add(PosixFilePermission.OTHERS_READ);
+        }
+
+        if ((mode & 2) == 2) {
+            result.add(PosixFilePermission.OTHERS_WRITE);
+        }
+
+        if ((mode & 1) == 1) {
+            result.add(PosixFilePermission.OTHERS_EXECUTE);
+        }
+
+        return result;
     }
 
     public static List<String> inspectArchive(Path src) throws IOException {
