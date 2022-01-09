@@ -89,7 +89,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
     private void installNativeImage(Path graalPath) throws AssemblerProcessingException {
         Path nativeImageExecutable = graalPath
             .resolve("bin")
-            .resolve(PlatformUtils.isWindows() ? "native-image.exe" : "native-image")
+            .resolve(PlatformUtils.isWindows() ? "native-image.cmd" : "native-image")
             .toAbsolutePath();
 
         if (!Files.exists(nativeImageExecutable)) {
@@ -131,7 +131,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
 
         Path nativeImageExecutable = graalPath
             .resolve("bin")
-            .resolve(PlatformUtils.isWindows() ? "native-image.exe" : "native-image")
+            .resolve(PlatformUtils.isWindows() ? "native-image.cmd" : "native-image")
             .toAbsolutePath();
 
         Command cmd = new Command(nativeImageExecutable.toString(), true)
