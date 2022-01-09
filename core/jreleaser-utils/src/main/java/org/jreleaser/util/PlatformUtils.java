@@ -187,7 +187,7 @@ public final class PlatformUtils {
         if (isBlank(osNameOrClassifier)) return false;
         String[] parts = osNameOrClassifier.split("-");
 
-        return "linux_musl".equals(parts[0]);
+        return "linux_musl".equalsIgnoreCase(parts[0]);
     }
 
     public static String getCurrent() {
@@ -219,21 +219,21 @@ public final class PlatformUtils {
     }
 
     public static boolean isWindows() {
-        return "windows".equals(getDetectedOs());
+        return "windows".equalsIgnoreCase(getDetectedOs());
     }
 
     public static boolean isMac() {
-        return "osx".equals(getDetectedOs());
+        return "osx".equalsIgnoreCase(getDetectedOs());
     }
 
     public static boolean isCompatible(String expected, String actual) {
         if (expected.contains("-")) {
             // expected is strict
-            return expected.equals(actual);
+            return expected.equalsIgnoreCase(actual);
         }
 
         String[] parts = actual.split("-");
-        return expected.equals(parts[0]);
+        return expected.equalsIgnoreCase(parts[0]);
     }
 
     public static String getDetectedOs() {
