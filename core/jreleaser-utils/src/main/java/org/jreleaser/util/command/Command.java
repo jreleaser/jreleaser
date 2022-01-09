@@ -17,6 +17,12 @@
  */
 package org.jreleaser.util.command;
 
+import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.PlatformUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,13 +34,24 @@ import java.util.List;
  */
 public class Command {
     private final List<String> args = new ArrayList<>();
+    private final boolean supportsArgsfile;
 
     public Command() {
-
+        this.supportsArgsfile = false;
     }
 
     public Command(String arg) {
+        this.supportsArgsfile = false;
         this.args.add(arg);
+    }
+
+    public Command(String arg, boolean supportsArgsfile) {
+        this.supportsArgsfile = supportsArgsfile;
+        this.args.add(arg);
+    }
+
+    public boolean isSupportsArgsfile() {
+        return supportsArgsfile;
     }
 
     public List<String> getArgs() {
@@ -53,5 +70,23 @@ public class Command {
     public Command args(Collection<String> args) {
         this.args.addAll(args);
         return this;
+    }
+
+    public List<String> asCommandLine(JReleaserLogger logger) throws IOException {
+        if (!supportsArgsfile) return getArgs();
+
+        if (PlatformUtils.isWindows()) {
+            File argsFile = File.createTempFile("jreleaser-command", "args");
+            argsFile.deleteOnExit();
+            Files.write(argsFile.toPath(), (Iterable<String>) args.stream().skip(1)::iterator);
+            logger.debug(argsFile + ": " + String.join(" ", args));
+
+            String cmd = args.get(0);
+            args.clear();
+            args.add(cmd);
+            args.add("@" + argsFile);
+        }
+
+        return getArgs();
     }
 }

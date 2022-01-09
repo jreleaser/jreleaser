@@ -152,7 +152,12 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             }
         }
 
-        Command cmd = new Command(jdkPath.resolve("bin").resolve("jlink").toAbsolutePath().toString())
+        Path jlinkExecutable = jdkPath
+            .resolve("bin")
+            .resolve(PlatformUtils.isWindows() ? "jlink.exe" : "jlink")
+            .toAbsolutePath();
+
+        Command cmd = new Command(jlinkExecutable.toString(), true)
             .args(assembler.getArgs())
             .arg("--module-path")
             .arg(modulePath)
@@ -243,7 +248,12 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             return assembler.getModuleNames();
         }
 
-        Command cmd = new Command(jdkPath.resolve("bin").resolve("jdeps").toAbsolutePath().toString());
+        Path jdepsExecutable = jdkPath
+            .resolve("bin")
+            .resolve(PlatformUtils.isWindows() ? "jdeps.exe" : "jdeps")
+            .toAbsolutePath();
+
+        Command cmd = new Command(jdepsExecutable.toAbsolutePath().toString());
         String multiRelease = assembler.getJdeps().getMultiRelease();
         if (isNotBlank(multiRelease)) {
             cmd.arg("--multi-release")

@@ -23,6 +23,7 @@ import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessInitException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
@@ -73,19 +74,27 @@ public class CommandExecutor {
     }
 
     public int executeCommand(Path directory, Command command) throws CommandException {
-        return executeCommand(new ProcessExecutor(command.getArgs())
+        return executeCommand(createProcessExecutor(command)
             .directory(directory.toFile()));
     }
 
     public int executeCommand(Command command) throws CommandException {
-        return executeCommand(new ProcessExecutor(command.getArgs()));
+        return executeCommand(createProcessExecutor(command));
+    }
+
+    private ProcessExecutor createProcessExecutor(Command command) throws CommandException {
+        try {
+            return new ProcessExecutor(command.asCommandLine(logger));
+        } catch (IOException e) {
+            throw new CommandException(RB.$("ERROR_unexpected_error"), e);
+        }
     }
 
     public int executeCommandCapturing(Command command, OutputStream out) throws CommandException {
         try {
             ByteArrayOutputStream err = new ByteArrayOutputStream();
 
-            int exitValue = new ProcessExecutor(command.getArgs())
+            int exitValue = createProcessExecutor(command)
                 .redirectOutput(out)
                 .redirectError(err)
                 .execute()
@@ -98,13 +107,15 @@ public class CommandExecutor {
             return exitValue;
         } catch (ProcessInitException e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e.getCause());
+        } catch (CommandException e) {
+            throw e;
         } catch (Exception e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
     public int executeCommandWithInput(Command command, InputStream in) throws CommandException {
-        return executeCommand(new ProcessExecutor(command.getArgs())
+        return executeCommand(createProcessExecutor(command)
             .redirectInput(in));
     }
 

@@ -178,7 +178,13 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
 
         String appName = assembler.getName();
         String appVersion = assembler.getApplicationPackage().getAppVersion();
-        Command cmd = new Command(jdkPath.resolve("bin").resolve("jpackage").toAbsolutePath().toString())
+
+        Path jpackageExecutable = jdkPath
+            .resolve("bin")
+            .resolve(PlatformUtils.isWindows() ? "jpackage.exe" : "jpackage")
+            .toAbsolutePath();
+
+        Command cmd = new Command(jpackageExecutable.toAbsolutePath().toString(), true)
             .arg("--type")
             .arg(type)
             .arg("--dest")
