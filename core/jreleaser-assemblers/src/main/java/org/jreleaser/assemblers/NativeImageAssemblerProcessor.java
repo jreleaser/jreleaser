@@ -101,6 +101,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             context.getLogger().debug(RB.$("assembler.graal.install.native.exec"));
             Command cmd = new Command(guExecutable.toString())
                 .arg("install")
+                .arg("-n")
                 .arg("native-image");
             context.getLogger().debug(String.join(" ", cmd.getArgs()));
             executeCommand(cmd);
