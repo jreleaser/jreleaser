@@ -102,9 +102,17 @@ public abstract class JlinkValidator extends Validator {
 
         if (isBlank(jlink.getJdk().getPath())) {
             String currentPlatform = PlatformUtils.getCurrentFull();
+            String javaHome = System.getProperty("java.home");
+
             if (jlink.getTargetJdks().isEmpty()) {
+                if (isBlank(javaHome)) {
+                    // Can only happen when running as native-image, fail for now
+                    // TODO: native-image
+                    errors.configuration(RB.$("validation_java_home_missing"));
+                    return;
+                }
                 // Use current
-                jlink.getJdk().setPath(System.getProperty("java.home"));
+                jlink.getJdk().setPath(javaHome);
                 jlink.getJdk().setPlatform(currentPlatform);
                 jlink.addTargetJdk(jlink.getJdk());
             } else {
@@ -116,8 +124,14 @@ public abstract class JlinkValidator extends Validator {
                 if (jdk.isPresent()) {
                     jlink.setJdk(jdk.get());
                 } else {
+                    if (isBlank(javaHome)) {
+                        // Can only happen when running as native-image, fail for now
+                        // TODO: native-image
+                        errors.configuration(RB.$("validation_java_home_missing"));
+                        return;
+                    }
                     // Can't tell if the current JDK will work but might as well use it
-                    jlink.getJdk().setPath(System.getProperty("java.home"));
+                    jlink.getJdk().setPath(javaHome);
                     jlink.getJdk().setPlatform(currentPlatform);
                 }
             }

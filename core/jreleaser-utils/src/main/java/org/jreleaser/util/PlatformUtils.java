@@ -194,8 +194,14 @@ public final class PlatformUtils {
         String platform = getDetectedOs();
 
         if (isLinux(platform)) {
-            Path release = Paths.get(System.getProperty("java.home"))
-                .resolve("release");
+            String javaHome = System.getProperty("java.home");
+            if (isBlank(javaHome)) {
+                // Can only happen when running as native-image, ignore for now
+                // TODO: native-image
+                return platform;
+            }
+
+            Path release = Paths.get(javaHome).resolve("release");
 
             try {
                 Properties props = new Properties();

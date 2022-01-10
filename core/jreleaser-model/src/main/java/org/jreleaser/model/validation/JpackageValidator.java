@@ -147,7 +147,14 @@ public abstract class JpackageValidator extends Validator {
         });
 
         if (isBlank(packager.getJdk().getPath())) {
-            packager.getJdk().setPath(System.getProperty("java.home"));
+            String javaHome = System.getProperty("java.home");
+            if (isBlank(javaHome)) {
+                // Can only happen when running as native-image, fail for now
+                // TODO: native-image
+                errors.configuration(RB.$("validation_java_home_missing"));
+                return;
+            }
+            packager.getJdk().setPath(javaHome);
             packager.getJdk().setPlatform(PlatformUtils.getCurrentFull());
         }
 
