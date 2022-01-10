@@ -90,21 +90,18 @@ public class GiteaReleaser extends AbstractReleaser {
                 } else if (gitea.isUpdate()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
-                        boolean update = false;
                         GtRelease updater = new GtRelease();
+                        updater.setPrerelease(gitea.getPrerelease().isEnabled());
+                        updater.setDraft(gitea.isDraft());
                         if (gitea.getUpdateSections().contains(UpdateSection.TITLE)) {
-                            update = true;
                             context.getLogger().info(RB.$("git.releaser.release.update.title"), gitea.getEffectiveReleaseName());
                             updater.setName(gitea.getEffectiveReleaseName());
                         }
                         if (gitea.getUpdateSections().contains(UpdateSection.BODY)) {
-                            update = true;
                             context.getLogger().info(RB.$("git.releaser.release.update.body"));
                             updater.setBody(changelog);
                         }
-                        if (update) {
-                            api.updateRelease(gitea.getOwner(), gitea.getName(), release.getId(), updater);
-                        }
+                        api.updateRelease(gitea.getOwner(), gitea.getName(), release.getId(), updater);
 
                         if (gitea.getUpdateSections().contains(UpdateSection.ASSETS)) {
                             api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);

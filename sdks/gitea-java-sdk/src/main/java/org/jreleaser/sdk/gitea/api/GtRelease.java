@@ -31,7 +31,8 @@ public class GtRelease {
     private String tagName;
     private String url;
     private String body;
-    private boolean prerelease;
+    private Boolean prerelease;
+    private Boolean draft;
     private String targetCommitish;
 
     public Integer getId() {
@@ -82,12 +83,20 @@ public class GtRelease {
         this.body = body;
     }
 
-    public boolean isPrerelease() {
+    public Boolean isPrerelease() {
         return prerelease;
     }
 
-    public void setPrerelease(boolean prerelease) {
+    public void setPrerelease(Boolean prerelease) {
         this.prerelease = prerelease;
+    }
+
+    public Boolean getDraft() {
+        return draft;
+    }
+
+    public void setDraft(Boolean draft) {
+        this.draft = draft;
     }
 
     public String getTargetCommitish() {

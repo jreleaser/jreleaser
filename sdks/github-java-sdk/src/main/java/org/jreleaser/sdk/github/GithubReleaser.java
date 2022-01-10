@@ -92,19 +92,18 @@ public class GithubReleaser extends AbstractReleaser {
                 } else if (github.isUpdate()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
-                        boolean update = false;
                         GHReleaseUpdater updater = release.update();
+                        updater.prerelease(github.getPrerelease().isEnabled());
+                        updater.draft(github.isDraft());
                         if (github.getUpdateSections().contains(UpdateSection.TITLE)) {
-                            update = true;
                             context.getLogger().info(RB.$("git.releaser.release.update.title"), github.getEffectiveReleaseName());
                             updater.name(github.getEffectiveReleaseName());
                         }
                         if (github.getUpdateSections().contains(UpdateSection.BODY)) {
-                            update = true;
                             context.getLogger().info(RB.$("git.releaser.release.update.body"));
                             updater.body(changelog);
                         }
-                        if (update) updater.update();
+                        updater.update();
 
                         if (github.getUpdateSections().contains(UpdateSection.ASSETS)) {
                             api.uploadAssets(release, assets);
