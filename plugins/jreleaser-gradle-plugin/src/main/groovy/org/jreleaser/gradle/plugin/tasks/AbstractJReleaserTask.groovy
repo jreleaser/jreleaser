@@ -77,6 +77,11 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         this.dryrun.set(dryrun)
     }
 
+    @Option(option = 'git-root-search', description = 'Searches for the Git root (OPTIONAL).')
+    void setGitRootSearch(boolean gitRootSearch) {
+        this.gitRootSearch.set(gitRootSearch)
+    }
+
     protected JReleaserContext createContext() {
         JReleaserLogger logger = jlogger.get()
 
