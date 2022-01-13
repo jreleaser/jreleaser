@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
@@ -59,4 +60,26 @@ interface Signing extends Activatable {
     ListProperty<String> getArgs()
 
     void addArg(String arg)
+
+    Command getCommand()
+
+    void command(Action<? super Command> action)
+
+    void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Command) Closure<Void> action)
+
+    interface Command {
+        Property<String> getExecutable()
+
+        Property<String> getKeyName()
+
+        Property<String> getHomeDir()
+
+        Property<String> getPublicKeyring()
+
+        Property<Boolean> getDefaultKeyring()
+
+        ListProperty<String> getArgs()
+
+        void addArg(String arg)
+    }
 }

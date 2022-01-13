@@ -25,7 +25,7 @@ import java.util.List;
  * @since 0.1.0
  */
 public class Signing implements Activatable {
-    private final List<String> args = new ArrayList<>();
+    private final Command command = new Command();
 
     private Active active;
     private boolean armored;
@@ -36,11 +36,6 @@ public class Signing implements Activatable {
     private Boolean artifacts;
     private Boolean files;
     private Boolean checksums;
-    private String executable;
-    private String keyName;
-    private String homeDir;
-    private String publicKeyring;
-    private Boolean defaultKeyring;
 
     void setAll(Signing signing) {
         this.active = signing.active;
@@ -51,12 +46,7 @@ public class Signing implements Activatable {
         this.artifacts = signing.artifacts;
         this.files = signing.files;
         this.checksums = signing.checksums;
-        this.executable = signing.executable;
-        this.keyName = signing.keyName;
-        this.homeDir = signing.homeDir;
-        this.publicKeyring = signing.publicKeyring;
-        this.defaultKeyring = signing.defaultKeyring;
-        setArgs(signing.args);
+        this.command.setAll(signing.command);
     }
 
     @Override
@@ -154,62 +144,119 @@ public class Signing implements Activatable {
         this.checksums = checksums;
     }
 
-    public String getExecutable() {
-        return executable;
+    public Command getCommand() {
+        return command;
+    }
+
+    public void setCommand(Command command) {
+        this.command.setAll(command);
     }
 
     public void setExecutable(String executable) {
-        this.executable = executable;
-    }
-
-    public String getKeyName() {
-        return keyName;
+        System.out.println("signing.executable has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.executable instead");
+        this.command.setExecutable(executable);
     }
 
     public void setKeyName(String keyName) {
-        this.keyName = keyName;
-    }
-
-    public String getHomeDir() {
-        return homeDir;
+        System.out.println("signing.keyName has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.keyName instead");
+        this.command.setKeyName(keyName);
     }
 
     public void setHomeDir(String homeDir) {
-        this.homeDir = homeDir;
-    }
-
-    public String getPublicKeyring() {
-        return publicKeyring;
+        System.out.println("signing.homeDir has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.homeDir instead");
+        this.command.setHomeDir(homeDir);
     }
 
     public void setPublicKeyring(String publicKeyring) {
-        this.publicKeyring = publicKeyring;
-    }
-
-    public boolean isDefaultKeyringSet() {
-        return defaultKeyring != null;
-    }
-
-    public Boolean isDefaultKeyring() {
-        return defaultKeyring == null || defaultKeyring;
+        System.out.println("signing.publicKeyring has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.publicKeyring instead");
+        this.command.setPublicKeyring(publicKeyring);
     }
 
     public void setDefaultKeyring(Boolean defaultKeyring) {
-        this.defaultKeyring = defaultKeyring;
-    }
-
-    public List<String> getArgs() {
-        return args;
+        System.out.println("signing.defaultKeyring has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.defaultKeyring instead");
+        this.command.setDefaultKeyring(defaultKeyring);
     }
 
     public void setArgs(List<String> args) {
-        this.args.clear();
-        this.args.addAll(args);
+        System.out.println("signing.args has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.args instead");
+        this.command.setArgs(args);
     }
 
     public enum Mode {
         MEMORY,
         FILE,
         COMMAND
+    }
+
+    public static class Command {
+        private final List<String> args = new ArrayList<>();
+
+        private String executable;
+        private String keyName;
+        private String homeDir;
+        private String publicKeyring;
+        private Boolean defaultKeyring;
+
+        void setAll(Command command) {
+            this.executable = command.executable;
+            this.keyName = command.keyName;
+            this.homeDir = command.homeDir;
+            this.publicKeyring = command.publicKeyring;
+            this.defaultKeyring = command.defaultKeyring;
+            setArgs(command.args);
+        }
+
+        public String getExecutable() {
+            return executable;
+        }
+
+        public void setExecutable(String executable) {
+            this.executable = executable;
+        }
+
+        public String getKeyName() {
+            return keyName;
+        }
+
+        public void setKeyName(String keyName) {
+            this.keyName = keyName;
+        }
+
+        public String getHomeDir() {
+            return homeDir;
+        }
+
+        public void setHomeDir(String homeDir) {
+            this.homeDir = homeDir;
+        }
+
+        public String getPublicKeyring() {
+            return publicKeyring;
+        }
+
+        public void setPublicKeyring(String publicKeyring) {
+            this.publicKeyring = publicKeyring;
+        }
+
+        public boolean isDefaultKeyringSet() {
+            return defaultKeyring != null;
+        }
+
+        public Boolean isDefaultKeyring() {
+            return defaultKeyring == null || defaultKeyring;
+        }
+
+        public void setDefaultKeyring(Boolean defaultKeyring) {
+            this.defaultKeyring = defaultKeyring;
+        }
+
+        public List<String> getArgs() {
+            return args;
+        }
+
+        public void setArgs(List<String> args) {
+            this.args.clear();
+            this.args.addAll(args);
+        }
     }
 }

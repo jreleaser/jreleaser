@@ -987,13 +987,20 @@ public final class JReleaserModelConverter {
         if (signing.isArtifactsSet()) s.setArtifacts(signing.isArtifacts());
         if (signing.isFilesSet()) s.setFiles(signing.isFiles());
         if (signing.isChecksumsSet()) s.setChecksums(signing.isChecksums());
-        if (signing.isDefaultKeyringSet()) s.setDefaultKeyring(signing.isDefaultKeyring());
-        s.setExecutable(tr(signing.getExecutable()));
-        s.setKeyName(tr(signing.getKeyName()));
-        s.setHomeDir(tr(signing.getHomeDir()));
-        s.setPublicKeyring(tr(signing.getPublicKeyring()));
-        s.setArgs(tr(signing.getArgs()));
+        s.setCommand(convertSigningCommand(signing.getCommand()));
+
         return s;
+    }
+
+    private static org.jreleaser.model.Signing.Command convertSigningCommand(Signing.Command command) {
+        org.jreleaser.model.Signing.Command c = new org.jreleaser.model.Signing.Command();
+        if (command.isDefaultKeyringSet()) c.setDefaultKeyring(command.isDefaultKeyring());
+        c.setExecutable(tr(command.getExecutable()));
+        c.setKeyName(tr(command.getKeyName()));
+        c.setHomeDir(tr(command.getHomeDir()));
+        c.setPublicKeyring(tr(command.getPublicKeyring()));
+        c.setArgs(tr(command.getArgs()));
+        return c;
     }
 
     private static Map<String, org.jreleaser.model.Distribution> convertDistributions(Map<String, Distribution> distributions) {
