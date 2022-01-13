@@ -46,7 +46,9 @@ public enum Active {
     public boolean check(Project project, GitService service) {
         boolean p = this.test.test(project);
         if (p) {
-            return service.getPrerelease().isEnabled();
+            if (this == PRERELEASE || this == RELEASE_PRERELEASE) {
+                return service.getPrerelease().isEnabled();
+            }
         }
         return p;
     }
