@@ -24,9 +24,9 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.jreleaser.jdks.gradle.plugin.Jdk
+import org.jreleaser.jdks.gradle.plugin.tasks.UnpackTask
 import org.jreleaser.util.Errors
 
 import javax.inject.Inject
@@ -51,7 +51,7 @@ class JdkImpl implements Jdk {
 
     TaskProvider<Download> downloadTask
     TaskProvider<Verify> verifyTask
-    TaskProvider<Copy> unpackTask
+    TaskProvider<UnpackTask> unpackTask
 
     @Inject
     JdkImpl(ObjectFactory objects) {

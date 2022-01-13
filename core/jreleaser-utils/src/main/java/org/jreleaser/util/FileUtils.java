@@ -36,6 +36,7 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.jreleaser.bundle.RB;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +47,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
@@ -306,12 +308,39 @@ public final class FileUtils {
                 if (!parent.isDirectory() && !parent.mkdirs()) {
                     throw new IOException(RB.$("ERROR_files_unpack_fail_dir", parent));
                 }
-                try (OutputStream o = Files.newOutputStream(file.toPath())) {
-                    IOUtils.copy(in, o);
-                    chmod(file, getEntryMode(entry));
+
+                if (isSymbolicLink(entry)) {
+                    Files.createSymbolicLink(file.toPath(), Paths.get(getLinkName(in, entry)));
+                } else {
+                    try (OutputStream o = Files.newOutputStream(file.toPath())) {
+                        IOUtils.copy(in, o);
+                        Files.setLastModifiedTime(file.toPath(), FileTime.from(entry.getLastModifiedDate().toInstant()));
+                        chmod(file, getEntryMode(entry));
+                    }
                 }
             }
         }
+    }
+
+    private static boolean isSymbolicLink(ArchiveEntry entry) {
+        if (entry instanceof ZipArchiveEntry) {
+            return ((ZipArchiveEntry) entry).isUnixSymlink();
+        } else if (entry instanceof TarArchiveEntry) {
+            return ((TarArchiveEntry) entry).isSymbolicLink();
+        }
+        return false;
+    }
+
+    private static String getLinkName(ArchiveInputStream in, ArchiveEntry entry) throws IOException {
+        if (entry instanceof ZipArchiveEntry) {
+            try (OutputStream o = new ByteArrayOutputStream()) {
+                IOUtils.copy(in, o);
+                return o.toString();
+            }
+        } else if (entry instanceof TarArchiveEntry) {
+            return ((TarArchiveEntry) entry).getLinkName();
+        }
+        return "";
     }
 
     private static int getEntryMode(ArchiveEntry entry) {
