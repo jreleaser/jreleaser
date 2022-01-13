@@ -139,13 +139,13 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
             try {
                 Signing signing = context.getModel().getSigning();
                 GpgCommandSigner cmd = new GpgCommandSigner(context.getLogger());
-                cmd.setExecutable(signing.getExecutable());
+                cmd.setExecutable(signing.getCommand().getExecutable());
                 cmd.setPassphrase(signing.getResolvedPassphrase());
-                cmd.setHomeDir(signing.getHomeDir());
-                cmd.setKeyName(signing.getKeyName());
-                cmd.setPublicKeyring(signing.getPublicKeyring());
-                cmd.setDefaultKeyring(signing.isDefaultKeyring());
-                cmd.setArgs(signing.getArgs());
+                cmd.setHomeDir(signing.getCommand().getHomeDir());
+                cmd.setKeyName(signing.getCommand().getKeyName());
+                cmd.setPublicKeyring(signing.getCommand().getPublicKeyring());
+                cmd.setDefaultKeyring(signing.getCommand().isDefaultKeyring());
+                cmd.setArgs(signing.getCommand().getArgs());
                 object.setGpgSignature(new GpgSignature(cmd.sign(object.build())));
             } catch (IOException | CommandException e) {
                 throw new SigningException(e.getMessage(), e);

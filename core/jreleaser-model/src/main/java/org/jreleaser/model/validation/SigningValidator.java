@@ -17,10 +17,8 @@
  */
 package org.jreleaser.model.validation;
 
-import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -31,7 +29,6 @@ import static org.jreleaser.model.Signing.GPG_PASSPHRASE;
 import static org.jreleaser.model.Signing.GPG_PUBLIC_KEY;
 import static org.jreleaser.model.Signing.GPG_PUBLIC_KEYRING;
 import static org.jreleaser.model.Signing.GPG_SECRET_KEY;
-import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -61,32 +58,32 @@ public abstract class SigningValidator extends Validator {
                 context.isDryrun()));
 
         if (signing.resolveMode() == Signing.Mode.COMMAND) {
-            signing.setExecutable(
+            signing.getCommand().setExecutable(
                 checkProperty(context,
                     GPG_EXECUTABLE,
-                    "signing.executable",
-                    signing.getExecutable(),
+                    "signing.command.executable",
+                    signing.getCommand().getExecutable(),
                     "gpg" + (PlatformUtils.isWindows() ? ".exe" : "")));
 
-            signing.setHomeDir(
+            signing.getCommand().setHomeDir(
                 checkProperty(context,
                     GPG_HOMEDIR,
-                    "signing.homeDir",
-                    signing.getHomeDir(),
+                    "signing.command.homeDir",
+                    signing.getCommand().getHomeDir(),
                     ""));
 
-            signing.setKeyName(
+            signing.getCommand().setKeyName(
                 checkProperty(context,
                     GPG_KEYNAME,
-                    "signing.keyName",
-                    signing.getKeyName(),
+                    "signing.command.keyName",
+                    signing.getCommand().getKeyName(),
                     ""));
 
-            signing.setPublicKeyring(
+            signing.getCommand().setPublicKeyring(
                 checkProperty(context,
                     GPG_PUBLIC_KEYRING,
-                    "signing.publicKeyRing",
-                    signing.getPublicKeyring(),
+                    "signing.command.publicKeyRing",
+                    signing.getCommand().getPublicKeyring(),
                     ""));
         } else {
             signing.setPublicKey(
@@ -104,15 +101,6 @@ public abstract class SigningValidator extends Validator {
                     signing.getSecretKey(),
                     errors,
                     context.isDryrun()));
-        }
-
-        if (context.isDryrun() &&
-            (isBlank(Env.resolve(GPG_EXECUTABLE, signing.getExecutable())) ||
-                isBlank(Env.resolve(GPG_PASSPHRASE, signing.getPassphrase())) ||
-                isBlank(Env.resolve(GPG_PUBLIC_KEY, signing.getPublicKey())) ||
-                isBlank(Env.resolve(GPG_SECRET_KEY, signing.getSecretKey())))) {
-            signing.setActive(Active.NEVER);
-            signing.disable();
         }
     }
 }

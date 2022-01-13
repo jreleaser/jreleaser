@@ -262,13 +262,13 @@ public class Signer {
     private static GpgCommandSigner initCommandSigner(JReleaserContext context) {
         GpgCommandSigner cmd = new GpgCommandSigner(context.getLogger());
         Signing signing = context.getModel().getSigning();
-        cmd.setExecutable(signing.getExecutable());
+        cmd.setExecutable(signing.getCommand().getExecutable());
         cmd.setPassphrase(signing.getResolvedPassphrase());
-        cmd.setHomeDir(signing.getHomeDir());
-        cmd.setKeyName(signing.getKeyName());
-        cmd.setPublicKeyring(signing.getPublicKeyring());
-        cmd.setDefaultKeyring(signing.isDefaultKeyring());
-        cmd.setArgs(signing.getArgs());
+        cmd.setHomeDir(signing.getCommand().getHomeDir());
+        cmd.setKeyName(signing.getCommand().getKeyName());
+        cmd.setPublicKeyring(signing.getCommand().getPublicKeyring());
+        cmd.setDefaultKeyring(signing.getCommand().isDefaultKeyring());
+        cmd.setArgs(signing.getCommand().getArgs());
         return cmd;
     }
 
