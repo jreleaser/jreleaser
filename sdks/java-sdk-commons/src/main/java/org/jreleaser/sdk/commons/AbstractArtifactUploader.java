@@ -21,6 +21,7 @@ import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.ExtraProperties;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Signing;
 import org.jreleaser.model.Uploader;
 import org.jreleaser.model.uploader.spi.ArtifactUploader;
 import org.jreleaser.model.util.Artifacts;
@@ -79,8 +80,9 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
             }
         }
 
-        if (getUploader().isSignatures() && context.getModel().getSigning().isEnabled()) {
-            String extension = context.getModel().getSigning().isArmored() ? ".asc" : ".sig";
+        Signing signing = context.getModel().getSigning();
+        if (getUploader().isSignatures() && signing.isEnabled()) {
+            String extension = signing.getSignatureExtension();
 
             List<Artifact> signatures = new ArrayList<>();
             for (Artifact artifact : artifacts) {
@@ -90,6 +92,10 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
                 if (Files.exists(signaturePath) && 0 != signaturePath.toFile().length()) {
                     signatures.add(Artifact.of(signaturePath));
                 }
+            }
+            if (!signatures.isEmpty() && signing.getMode() == Signing.Mode.COSIGN) {
+                Path publicKeyFile = signing.getCosign().getResolvedPublicKeyFilePath(context);
+                signatures.add(Artifact.of(publicKeyFile));
             }
 
             artifacts.addAll(signatures);

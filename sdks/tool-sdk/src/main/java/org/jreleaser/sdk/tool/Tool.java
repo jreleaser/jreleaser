@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -154,7 +155,7 @@ public class Tool {
 
         Map<String, Object> props = props();
         filename = applyTemplate(filename, props);
-        executablePath = applyTemplate(executablePath, props);
+        if (isNotBlank(executablePath)) executablePath = applyTemplate(executablePath, props);
 
         Path test = dest;
         if (unpack) {
@@ -186,6 +187,7 @@ public class Tool {
             } else {
                 Path executableFile = dest.resolve(exec);
                 Files.move(destination, executableFile);
+                FileUtils.grantExecutableAccess(executableFile);
                 executable = executableFile.toAbsolutePath();
             }
             logger.debug(RB.$("tool.cached", executable));

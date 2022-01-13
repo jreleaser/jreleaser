@@ -20,6 +20,9 @@ package org.jreleaser.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.Env;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -37,6 +40,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class Signing implements Domain, Activatable {
     public static final String KEY_SKIP_SIGNING = "skipSigning";
+    public static final String COSIGN_PASSWORD = "COSIGN_PASSWORD";
+    public static final String COSIGN_PRIVATE_KEY = "COSIGN_PRIVATE_KEY";
+    public static final String COSIGN_PUBLIC_KEY = "COSIGN_PUBLIC_KEY";
     public static final String GPG_PASSPHRASE = "GPG_PASSPHRASE";
     public static final String GPG_PUBLIC_KEY = "GPG_PUBLIC_KEY";
     public static final String GPG_SECRET_KEY = "GPG_SECRET_KEY";
@@ -45,7 +51,9 @@ public class Signing implements Domain, Activatable {
     public static final String GPG_HOMEDIR = "GPG_HOMEDIR";
     public static final String GPG_PUBLIC_KEYRING = "GPG_PUBLIC_KEYRING";
 
+    private final List<String> args = new ArrayList<>();
     private final Command command = new Command();
+    private final Cosign cosign = new Cosign();
 
     private Active active;
     @JsonIgnore
@@ -70,7 +78,8 @@ public class Signing implements Domain, Activatable {
         this.artifacts = signing.artifacts;
         this.files = signing.files;
         this.checksums = signing.checksums;
-        this.command.setAll(signing.command);
+        setCommand(signing.command);
+        setCosign(signing.cosign);
     }
 
     @Override
@@ -128,6 +137,10 @@ public class Signing implements Domain, Activatable {
 
     public String getResolvedPassphrase() {
         return Env.resolve(GPG_PASSPHRASE, passphrase);
+    }
+
+    public String getResolvedCosignPassword() {
+        return Env.resolve(COSIGN_PASSWORD, passphrase);
     }
 
     public Boolean isArmored() {
@@ -222,6 +235,14 @@ public class Signing implements Domain, Activatable {
         this.command.setAll(command);
     }
 
+    public Cosign getCosign() {
+        return cosign;
+    }
+
+    public void setCosign(Cosign cosign) {
+        this.cosign.setAll(cosign);
+    }
+
     public void setExecutable(String executable) {
         System.out.println("signing.executable has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.executable instead");
         this.command.setExecutable(executable);
@@ -273,6 +294,8 @@ public class Signing implements Domain, Activatable {
 
         if (mode == Mode.COMMAND) {
             props.put("command", command.asMap(full));
+        } else if (mode == Mode.COSIGN) {
+            props.put("cosign", cosign.asMap(full));
         } else {
             props.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
             props.put("secretKey", isNotBlank(secretKey) ? HIDE : UNSET);
@@ -281,10 +304,20 @@ public class Signing implements Domain, Activatable {
         return props;
     }
 
+    public String getSignatureExtension() {
+        String extension = ".sig";
+        if (mode != Signing.Mode.COSIGN) {
+            extension = isArmored() ? ".asc" : ".sig";
+        }
+
+        return extension;
+    }
+
     public enum Mode {
         MEMORY,
         FILE,
-        COMMAND;
+        COMMAND,
+        COSIGN;
 
         @Override
         public String toString() {
@@ -396,6 +429,90 @@ public class Signing implements Domain, Activatable {
             props.put("args", args);
 
             return props;
+        }
+    }
+
+    public static class Cosign implements Domain {
+        private String version;
+        private String privateKeyFile;
+        private String publicKeyFile;
+
+        void setAll(Cosign cosign) {
+            this.version = cosign.version;
+            this.privateKeyFile = cosign.privateKeyFile;
+            this.publicKeyFile = cosign.publicKeyFile;
+        }
+
+        public String getResolvedPrivateKeyFile() {
+            return Env.resolve(COSIGN_PRIVATE_KEY, privateKeyFile);
+        }
+
+        public String getResolvedPublicKeyFile() {
+            return Env.resolve(COSIGN_PUBLIC_KEY, publicKeyFile);
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public String getPrivateKeyFile() {
+            return privateKeyFile;
+        }
+
+        public void setPrivateKeyFile(String privateKeyFile) {
+            this.privateKeyFile = privateKeyFile;
+        }
+
+        public String getPublicKeyFile() {
+            return publicKeyFile;
+        }
+
+        public void setPublicKeyFile(String publicKeyFile) {
+            this.publicKeyFile = publicKeyFile;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> props = new LinkedHashMap<>();
+
+            props.put("version", version);
+            props.put("privateKeyFile", null != privateKeyFile ? HIDE : UNSET);
+            props.put("publicKeyFile", publicKeyFile);
+
+            return props;
+        }
+
+        public Path getResolvedPrivateKeyFilePath(JReleaserContext context) {
+            String privateKey = getResolvedPrivateKeyFile();
+
+            if (isNotBlank(privateKey)) {
+                return context.getBasedir().resolve(privateKey);
+            }
+
+            return resolveJReleaserHomeDir().resolve("cosign.key");
+        }
+
+        public Path getResolvedPublicKeyFilePath(JReleaserContext context) {
+            String publicKey = getResolvedPublicKeyFile();
+
+            if (isNotBlank(publicKey)) {
+                return context.getBasedir().resolve(publicKey);
+            }
+
+            return resolveJReleaserHomeDir().resolve("cosign.pub");
+        }
+
+        private Path resolveJReleaserHomeDir() {
+            String home = System.getenv("JRELEASER_USER_HOME");
+            if (isBlank(home)) {
+                home = System.getProperty("user.home") + File.separator + ".jreleaser";
+            }
+
+            return Paths.get(home);
         }
     }
 }

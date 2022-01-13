@@ -19,13 +19,12 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.Artifact
-import org.jreleaser.gradle.plugin.dsl.Jpackage
 import org.jreleaser.gradle.plugin.dsl.Signing
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
@@ -51,6 +50,7 @@ class SigningImpl implements Signing {
     final Property<Boolean> files
     final Property<Boolean> checksums
     final Command command
+    final Cosign cosign
 
     @Inject
     SigningImpl(ObjectFactory objects) {
@@ -64,6 +64,7 @@ class SigningImpl implements Signing {
         files = objects.property(Boolean).convention(Providers.notDefined())
         checksums = objects.property(Boolean).convention(Providers.notDefined())
         command = objects.newInstance(CommandImpl, objects)
+        cosign = objects.newInstance(CosignImpl, objects)
     }
 
     @Internal
@@ -76,7 +77,8 @@ class SigningImpl implements Signing {
             files.present ||
             checksums.present ||
             secretKey.present ||
-            ((CommandImpl)command).isSet()
+            ((CommandImpl) command).isSet() ||
+            ((CosignImpl) cosign).isSet()
     }
 
     @Override
@@ -141,8 +143,18 @@ class SigningImpl implements Signing {
     }
 
     @Override
+    void cosign(Action<? super Cosign> action) {
+        action.execute(cosign)
+    }
+
+    @Override
     void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Command) Closure<Void> action) {
         ConfigureUtil.configure(action, command)
+    }
+
+    @Override
+    void cosign(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cosign) Closure<Void> action) {
+        ConfigureUtil.configure(action, cosign)
     }
 
     org.jreleaser.model.Signing toModel() {
@@ -156,7 +168,8 @@ class SigningImpl implements Signing {
         if (artifacts.present) signing.artifacts = artifacts.get()
         if (files.present) signing.files = files.get()
         if (checksums.present) signing.checksums = checksums.get()
-        signing.command = ((CommandImpl)command).toModel()
+        signing.command = ((CommandImpl) command).toModel()
+        signing.cosign = ((CosignImpl) cosign).toModel()
         signing.args = (List<String>) args.getOrElse([])
         signing
     }
@@ -205,6 +218,34 @@ class SigningImpl implements Signing {
             if (defaultKeyring.present) command.defaultKeyring = defaultKeyring.get()
             command.args = (List<String>) args.getOrElse([])
             command
+        }
+    }
+
+    private static class CosignImpl implements Cosign {
+        final Property<String> version
+        final RegularFileProperty privateKeyFile
+        final RegularFileProperty publicKeyFile
+
+        @Inject
+        CosignImpl(ObjectFactory objects) {
+            version = objects.property(String).convention(Providers.notDefined())
+            privateKeyFile = objects.fileProperty().convention(Providers.notDefined())
+            publicKeyFile = objects.fileProperty().convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            return version.present ||
+                privateKeyFile.present ||
+                publicKeyFile.present
+        }
+
+        org.jreleaser.model.Signing.Cosign toModel() {
+            org.jreleaser.model.Signing.Cosign cosign = new org.jreleaser.model.Signing.Cosign()
+            if (version.present) cosign.version = version.get()
+            if (privateKeyFile.present) cosign.privateKeyFile = privateKeyFile.get().asFile.toPath().toString()
+            if (publicKeyFile.present) cosign.publicKeyFile = publicKeyFile.get().asFile.toPath().toString()
+            cosign
         }
     }
 }

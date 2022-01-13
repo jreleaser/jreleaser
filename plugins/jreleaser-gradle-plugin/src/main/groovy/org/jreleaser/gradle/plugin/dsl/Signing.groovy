@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
@@ -63,9 +64,15 @@ interface Signing extends Activatable {
 
     Command getCommand()
 
+    Cosign getCosign()
+
     void command(Action<? super Command> action)
 
+    void cosign(Action<? super Cosign> action)
+
     void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Command) Closure<Void> action)
+
+    void cosign(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cosign) Closure<Void> action)
 
     interface Command {
         Property<String> getExecutable()
@@ -81,5 +88,13 @@ interface Signing extends Activatable {
         ListProperty<String> getArgs()
 
         void addArg(String arg)
+    }
+
+    interface Cosign {
+        Property<String> getVersion()
+
+        RegularFileProperty getPrivateKeyFile()
+
+        RegularFileProperty getPublicKeyFile()
     }
 }

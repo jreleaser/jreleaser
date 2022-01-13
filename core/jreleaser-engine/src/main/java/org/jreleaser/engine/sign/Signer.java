@@ -57,10 +57,12 @@ import java.nio.file.Path;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.bouncycastle.bcpg.CompressionAlgorithmTags.UNCOMPRESSED;
 import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -86,6 +88,8 @@ public class Signer {
 
         if (context.getModel().getSigning().getMode() == Signing.Mode.COMMAND) {
             cmdSign(context);
+        } else if (context.getModel().getSigning().getMode() == Signing.Mode.COSIGN) {
+            cosignSign(context);
         } else {
             bcSign(context);
         }
@@ -95,7 +99,7 @@ public class Signer {
     }
 
     private static void cmdSign(JReleaserContext context) throws SigningException {
-        List<FilePair> files = collectArtifacts(context);
+        List<FilePair> files = collectArtifacts(context, pair -> isValid(context, null, pair));
         if (files.isEmpty()) {
             context.getLogger().info(RB.$("signing.no.match"));
             context.getLogger().restorePrefix();
@@ -118,10 +122,65 @@ public class Signer {
         verify(context, files);
     }
 
+    private static void cosignSign(JReleaserContext context) throws SigningException {
+        Signing signing = context.getModel().getSigning();
+
+        Cosign cosign = new Cosign(context, signing.getCosign().getVersion());
+        if (!cosign.setup()) {
+            context.getLogger().warn(RB.$("cosign_unavailable"));
+            return;
+        }
+
+        String privateKey = signing.getCosign().getResolvedPrivateKeyFile();
+        String publicKey = signing.getCosign().getResolvedPublicKeyFile();
+
+        Path privateKeyFile = isNotBlank(privateKey) ? context.getBasedir().resolve(privateKey) : null;
+        Path publicKeyFile = isNotBlank(publicKey) ? context.getBasedir().resolve(publicKey) : null;
+        byte[] password = (signing.getResolvedCosignPassword() + System.lineSeparator()).getBytes();
+
+        boolean forceSign = false;
+        if (null == privateKeyFile) {
+            privateKeyFile = signing.getCosign().getResolvedPrivateKeyFilePath(context);
+            publicKeyFile = privateKeyFile.resolveSibling("cosign.pub");
+            if (!Files.exists(privateKeyFile)) {
+                privateKeyFile = cosign.generateKeyPair(password);
+                forceSign = true;
+            }
+        }
+        Path thePublicKeyFile = publicKeyFile;
+
+        List<FilePair> files = collectArtifacts(context, forceSign, pair -> isValid(context, cosign, thePublicKeyFile, pair));
+        if (files.isEmpty()) {
+            context.getLogger().info(RB.$("signing.no.match"));
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
+            return;
+        }
+
+        files = files.stream()
+            .filter(FilePair::isInvalid)
+            .collect(Collectors.toList());
+
+        if (files.isEmpty()) {
+            context.getLogger().info(RB.$("signing.up.to.date"));
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
+            return;
+        }
+
+        if (!cosign.checkPassword(privateKeyFile, password)) {
+            context.getLogger().warn(RB.$("cosign_unavailable"));
+            return;
+        }
+
+        sign(context, files, cosign, privateKeyFile, password);
+        verify(context, files, cosign, publicKeyFile);
+    }
+
     private static void bcSign(JReleaserContext context) throws SigningException {
         Keyring keyring = context.createKeyring();
 
-        List<FilePair> files = collectArtifacts(context, keyring);
+        List<FilePair> files = collectArtifacts(context, pair -> isValid(context, keyring, pair));
         if (files.isEmpty()) {
             context.getLogger().info(RB.$("signing.no.match"));
             context.getLogger().restorePrefix();
@@ -240,6 +299,45 @@ public class Signer {
         }
     }
 
+    private static void sign(JReleaserContext context, List<FilePair> files,
+                             Cosign cosign, Path privateKeyFile, byte[] password) throws SigningException {
+        Path signaturesDirectory = context.getSignaturesDirectory();
+
+        try {
+            Files.createDirectories(signaturesDirectory);
+        } catch (IOException e) {
+            throw new SigningException(RB.$("ERROR_signing_create_signature_dir"), e);
+        }
+
+        context.getLogger().debug(RB.$("signing.signing.files"),
+            files.size(), context.relativizeToBasedir(signaturesDirectory));
+
+        for (FilePair pair : files) {
+            cosign.signBlob(privateKeyFile, password, pair.inputFile, signaturesDirectory);
+        }
+    }
+
+    private static void verify(JReleaserContext context, List<FilePair> files,
+                               Cosign cosign, Path publicKeyFile) throws SigningException {
+        context.getLogger().debug(RB.$("signing.verify.signatures"), files.size());
+
+        context.getLogger().setPrefix("verify");
+        try {
+            for (FilePair pair : files) {
+                cosign.verifyBlob(publicKeyFile, pair.signatureFile, pair.inputFile);
+                pair.setValid(true);
+
+                if (!pair.isValid()) {
+                    throw new SigningException(RB.$("ERROR_signing_verify_file",
+                        context.relativizeToBasedir(pair.inputFile),
+                        context.relativizeToBasedir(pair.signatureFile)));
+                }
+            }
+        } finally {
+            context.getLogger().restorePrefix();
+        }
+    }
+
     private static void sign(JReleaserContext context, List<FilePair> files) throws SigningException {
         Path signaturesDirectory = context.getSignaturesDirectory();
 
@@ -353,24 +451,33 @@ public class Signer {
         }
     }
 
-    private static List<FilePair> collectArtifacts(JReleaserContext context, Keyring keyring) {
+    private static List<FilePair> collectArtifacts(JReleaserContext context, Function<FilePair, Boolean> validator) {
+        return collectArtifacts(context, false, validator);
+    }
+
+    private static List<FilePair> collectArtifacts(JReleaserContext context, boolean forceSign, Function<FilePair, Boolean> validator) {
         List<FilePair> files = new ArrayList<>();
 
+        Signing signing = context.getModel().getSigning();
         Path signaturesDirectory = context.getSignaturesDirectory();
-        String extension = context.getModel().getSigning().isArmored() ? ".asc" : ".sig";
 
-        if (context.getModel().getSigning().isFiles()) {
+        String extension = ".sig";
+        if (signing.getMode() != Signing.Mode.COSIGN) {
+            extension = signing.isArmored() ? ".asc" : ".sig";
+        }
+
+        if (signing.isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
                 if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
                 Path input = artifact.getEffectivePath(context);
                 Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
                 FilePair pair = new FilePair(input, output);
-                pair.setValid(isValid(context, keyring, pair));
+                if (!forceSign) pair.setValid(validator.apply(pair));
                 files.add(pair);
             }
         }
 
-        if (context.getModel().getSigning().isArtifacts()) {
+        if (signing.isArtifacts()) {
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
                 if (!context.isDistributionIncluded(distribution)) continue;
                 if (distribution.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
@@ -379,20 +486,20 @@ public class Signer {
                     Path input = artifact.getEffectivePath(context, distribution);
                     Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
                     FilePair pair = new FilePair(input, output);
-                    pair.setValid(isValid(context, keyring, pair));
+                    if (!forceSign) pair.setValid(validator.apply(pair));
                     files.add(pair);
                 }
             }
         }
 
-        if (context.getModel().getSigning().isChecksums()) {
+        if (signing.isChecksums()) {
             for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
                 Path checksums = context.getChecksumsDirectory()
                     .resolve(context.getModel().getChecksum().getResolvedName(context, algorithm));
                 if (Files.exists(checksums)) {
                     Path output = signaturesDirectory.resolve(checksums.getFileName().toString().concat(extension));
                     FilePair pair = new FilePair(checksums, output);
-                    pair.setValid(isValid(context, keyring, pair));
+                    if (!forceSign) pair.setValid(validator.apply(pair));
                     files.add(pair);
                 }
             }
@@ -401,8 +508,26 @@ public class Signer {
         return files;
     }
 
-    private static List<FilePair> collectArtifacts(JReleaserContext context) {
-        return collectArtifacts(context, null);
+    private static boolean isValid(JReleaserContext context, Cosign cosign, Path publicKeyFile, FilePair pair) {
+        if (Files.notExists(pair.getSignatureFile())) {
+            context.getLogger().debug(RB.$("signing.signature.not.exist"),
+                context.relativizeToBasedir(pair.getSignatureFile()));
+            return false;
+        }
+
+        if (pair.inputFile.toFile().lastModified() > pair.signatureFile.toFile().lastModified()) {
+            context.getLogger().debug(RB.$("signing.file.newer"),
+                context.relativizeToBasedir(pair.inputFile),
+                context.relativizeToBasedir(pair.signatureFile));
+            return false;
+        }
+
+        try {
+            cosign.verifyBlob(publicKeyFile, pair.signatureFile, pair.inputFile);
+            return true;
+        } catch (SigningException e) {
+            return false;
+        }
     }
 
     private static boolean isValid(JReleaserContext context, Keyring keyring, FilePair pair) {

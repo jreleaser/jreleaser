@@ -988,7 +988,7 @@ public final class JReleaserModelConverter {
         if (signing.isFilesSet()) s.setFiles(signing.isFiles());
         if (signing.isChecksumsSet()) s.setChecksums(signing.isChecksums());
         s.setCommand(convertSigningCommand(signing.getCommand()));
-
+        s.setCosign(convertCosign(signing.getCosign()));
         return s;
     }
 
@@ -1000,6 +1000,14 @@ public final class JReleaserModelConverter {
         c.setHomeDir(tr(command.getHomeDir()));
         c.setPublicKeyring(tr(command.getPublicKeyring()));
         c.setArgs(tr(command.getArgs()));
+        return c;
+    }
+
+    private static org.jreleaser.model.Signing.Cosign convertCosign(Signing.Cosign cosign) {
+        org.jreleaser.model.Signing.Cosign c = new org.jreleaser.model.Signing.Cosign();
+        c.setVersion(tr(cosign.getVersion()));
+        c.setPrivateKeyFile(tr(cosign.getPrivateKeyFile()));
+        c.setPublicKeyFile(tr(cosign.getPublicKeyFile()));
         return c;
     }
 

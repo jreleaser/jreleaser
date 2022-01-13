@@ -17,11 +17,15 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
+import static org.jreleaser.model.Signing.COSIGN_PASSWORD;
+import static org.jreleaser.model.Signing.COSIGN_PUBLIC_KEY;
+import static org.jreleaser.model.Signing.COSIGN_PRIVATE_KEY;
 import static org.jreleaser.model.Signing.GPG_EXECUTABLE;
 import static org.jreleaser.model.Signing.GPG_HOMEDIR;
 import static org.jreleaser.model.Signing.GPG_KEYNAME;
@@ -29,6 +33,7 @@ import static org.jreleaser.model.Signing.GPG_PASSPHRASE;
 import static org.jreleaser.model.Signing.GPG_PUBLIC_KEY;
 import static org.jreleaser.model.Signing.GPG_PUBLIC_KEYRING;
 import static org.jreleaser.model.Signing.GPG_SECRET_KEY;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -49,9 +54,11 @@ public abstract class SigningValidator extends Validator {
             signing.setArmored(true);
         }
 
+        boolean cosign = signing.resolveMode() == Signing.Mode.COSIGN;
+
         signing.setPassphrase(
             checkProperty(context,
-                GPG_PASSPHRASE,
+                cosign ? COSIGN_PASSWORD : GPG_PASSPHRASE,
                 "signing.passphrase",
                 signing.getPassphrase(),
                 errors,
@@ -84,6 +91,24 @@ public abstract class SigningValidator extends Validator {
                     GPG_PUBLIC_KEYRING,
                     "signing.command.publicKeyRing",
                     signing.getCommand().getPublicKeyring(),
+                    ""));
+        } else if (signing.resolveMode() == Signing.Mode.COSIGN) {
+            if (isBlank(signing.getCosign().getVersion())) {
+                errors.configuration(RB.$("validation_is_missing", "signing.cosign.version"));
+            }
+
+            signing.getCosign().setPrivateKeyFile(
+                checkProperty(context,
+                    COSIGN_PRIVATE_KEY,
+                    "signing.cosign.privateKeyFile",
+                    signing.getCosign().getPrivateKeyFile(),
+                    ""));
+
+            signing.getCosign().setPublicKeyFile(
+                checkProperty(context,
+                    COSIGN_PUBLIC_KEY,
+                    "signing.cosign.publicKeyFile",
+                    signing.getCosign().getPublicKeyFile(),
                     ""));
         } else {
             signing.setPublicKey(

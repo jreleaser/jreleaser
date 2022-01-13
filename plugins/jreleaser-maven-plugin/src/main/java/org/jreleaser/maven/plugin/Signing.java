@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class Signing implements Activatable {
     private final Command command = new Command();
+    private final Cosign cosign = new Cosign();
 
     private Active active;
     private boolean armored;
@@ -46,7 +47,8 @@ public class Signing implements Activatable {
         this.artifacts = signing.artifacts;
         this.files = signing.files;
         this.checksums = signing.checksums;
-        this.command.setAll(signing.command);
+        setCommand(signing.command);
+        setCosign(signing.cosign);
     }
 
     @Override
@@ -152,6 +154,14 @@ public class Signing implements Activatable {
         this.command.setAll(command);
     }
 
+    public Cosign getCosign() {
+        return cosign;
+    }
+
+    public void setCosign(Cosign cosign) {
+        this.cosign.setAll(cosign);
+    }
+
     public void setExecutable(String executable) {
         System.out.println("signing.executable has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.executable instead");
         this.command.setExecutable(executable);
@@ -185,7 +195,8 @@ public class Signing implements Activatable {
     public enum Mode {
         MEMORY,
         FILE,
-        COMMAND
+        COMMAND,
+        COSIGN
     }
 
     public static class Command {
@@ -257,6 +268,42 @@ public class Signing implements Activatable {
         public void setArgs(List<String> args) {
             this.args.clear();
             this.args.addAll(args);
+        }
+    }
+
+    public static class Cosign  {
+        private String version;
+        private String privateKeyFile;
+        private String publicKeyFile;
+
+        void setAll(Cosign cosign) {
+            this.version = cosign.version;
+            this.privateKeyFile = cosign.privateKeyFile;
+            this.publicKeyFile = cosign.publicKeyFile;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public String getPrivateKeyFile() {
+            return privateKeyFile;
+        }
+
+        public void setPrivateKeyFile(String privateKeyFile) {
+            this.privateKeyFile = privateKeyFile;
+        }
+
+        public String getPublicKeyFile() {
+            return publicKeyFile;
+        }
+
+        public void setPublicKeyFile(String publicKeyFile) {
+            this.publicKeyFile = publicKeyFile;
         }
     }
 }

@@ -26,6 +26,7 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
+import org.jreleaser.model.Signing;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.util.Errors;
 
@@ -201,7 +202,18 @@ public abstract class GitServiceValidator extends Validator {
             }
         }
 
+        if (mode != JReleaserContext.Mode.ASSEMBLE) {
+            validateChangelog(context, service, errors);
+        }
+
         if (mode.validateConfig()) {
+            if (service.isSign()) {
+                if (model.getSigning().getMode() == Signing.Mode.COSIGN) {
+                    service.setSign(false);
+                    errors.warning(RB.$("validation_git_signing_cosign", service.getServiceName()));
+                    return;
+                }
+            }
             if (service.isSign() && !model.getSigning().isEnabled()) {
                 if (context.isDryrun()) {
                     service.setSign(false);
@@ -209,10 +221,6 @@ public abstract class GitServiceValidator extends Validator {
                     errors.configuration(RB.$("validation_git_signing", service.getServiceName()));
                 }
             }
-
-        }
-        if (mode != JReleaserContext.Mode.ASSEMBLE) {
-            validateChangelog(context, service, errors);
         }
     }
 
