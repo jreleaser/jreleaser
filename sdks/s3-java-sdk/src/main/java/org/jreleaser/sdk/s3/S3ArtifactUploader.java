@@ -101,9 +101,10 @@ public class S3ArtifactUploader extends AbstractArtifactUploader<S3> {
             context.getLogger().info(" - {}", path.getFileName());
 
             try {
-                if (!context.isDryrun()) {
-                    String bucketPath = uploader.getResolvedPath(context, artifact);
+                String bucketPath = uploader.getResolvedPath(context, artifact);
+                context.getLogger().debug("   {}", bucketPath);
 
+                if (!context.isDryrun()) {
                     context.getLogger().debug(RB.$("s3.object.check"), bucketName, bucketPath);
                     if (s3.doesObjectExist(bucketName, bucketPath)) {
                         context.getLogger().debug(RB.$("s3.object.create"), bucketName, bucketPath);

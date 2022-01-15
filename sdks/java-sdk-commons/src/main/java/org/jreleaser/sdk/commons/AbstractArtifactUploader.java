@@ -90,7 +90,7 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
                 Path signaturePath = context.getSignaturesDirectory()
                     .resolve(artifact.getEffectivePath(context).getFileName() + extension);
                 if (Files.exists(signaturePath) && 0 != signaturePath.toFile().length()) {
-                    signatures.add(Artifact.of(signaturePath));
+                    signatures.add(Artifact.of(signaturePath, artifact.getExtraProperties()));
                 }
             }
             if (!signatures.isEmpty() && signing.getMode() == Signing.Mode.COSIGN) {

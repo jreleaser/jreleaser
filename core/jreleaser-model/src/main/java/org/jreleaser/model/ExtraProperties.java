@@ -75,7 +75,7 @@ public interface ExtraProperties extends Serializable {
         return props;
     }
 
-    default String getProperty(String key) {
+    default String getExtraProperty(String key) {
         if (getExtraProperties().containsKey(key)) {
             return String.valueOf(getExtraProperties().get(key));
         }

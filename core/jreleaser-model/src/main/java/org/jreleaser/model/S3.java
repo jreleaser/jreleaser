@@ -25,6 +25,7 @@ import java.util.Map;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -90,10 +91,16 @@ public class S3 extends AbstractUploader {
     }
 
     public String getResolvedPath(JReleaserContext context, Artifact artifact) {
-        String path = getResolvedPath();
+        String artifactPath = getResolvedPath();
+
+        String customPathKey = "s3" + capitalize(getName()) + "Path";
+        if (artifact.getExtraProperties().containsKey(customPathKey)) {
+            artifactPath = artifact.getExtraProperty(customPathKey);
+        }
+
         Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
         p.putAll(getResolvedExtraProperties());
-        return applyTemplate(path, p);
+        return applyTemplate(artifactPath, p);
     }
 
     public String getResolvedRegion() {

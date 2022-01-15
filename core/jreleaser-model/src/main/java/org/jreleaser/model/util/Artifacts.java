@@ -30,10 +30,10 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.SdkmanAnnouncer;
 import org.jreleaser.model.Tool;
+import org.jreleaser.model.Upload;
 import org.jreleaser.model.Uploader;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.JReleaserLogger;
-import org.jreleaser.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -46,7 +46,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +57,6 @@ import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.model.util.Templates.resolve;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCH;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCHIVE_FORMAT;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_EXTENSION;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_FORMAT;
@@ -78,6 +76,7 @@ import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_RE
 import static org.jreleaser.util.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
 import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -260,12 +259,12 @@ public class Artifacts {
     }
 
     public static String resolveDownloadUrl(JReleaserContext context, String packager, Distribution distribution, Artifact artifact) {
-        List<String> keys = Collections.singletonList("skip" + StringUtils.capitalize(packager));
+        List<String> keys = Collections.singletonList("skip" + capitalize(packager));
         if (isSkip(artifact, keys)) return "";
 
-        String downloadUrl = artifact.getProperty(packager + DOWNLOAD_URL_SUFFIX);
+        String downloadUrl = artifact.getExtraProperty(packager + DOWNLOAD_URL_SUFFIX);
         if (isBlank(downloadUrl)) {
-            downloadUrl = artifact.getProperty(DOWNLOAD_URL_KEY);
+            downloadUrl = artifact.getExtraProperty(DOWNLOAD_URL_KEY);
         }
 
         Tool tool = distribution.findTool(packager);
@@ -274,10 +273,10 @@ public class Artifacts {
         }
 
         if (isBlank(downloadUrl)) {
-            downloadUrl = distribution.getProperty(packager + DOWNLOAD_URL_SUFFIX);
+            downloadUrl = distribution.getExtraProperty(packager + DOWNLOAD_URL_SUFFIX);
         }
         if (isBlank(downloadUrl)) {
-            downloadUrl = distribution.getProperty(DOWNLOAD_URL_KEY);
+            downloadUrl = distribution.getExtraProperty(DOWNLOAD_URL_KEY);
         }
 
         GitService service = context.getModel().getRelease().getGitService();
@@ -313,12 +312,12 @@ public class Artifacts {
 
     public static String resolveDownloadUrl(JReleaserContext context, SdkmanAnnouncer announcer, Distribution distribution, Artifact artifact) {
         String packager = SdkmanAnnouncer.NAME;
-        List<String> keys = Collections.singletonList("skip" + StringUtils.capitalize(packager));
+        List<String> keys = Collections.singletonList("skip" + capitalize(packager));
         if (isSkip(artifact, keys)) return "";
 
-        String downloadUrl = artifact.getProperty(packager + DOWNLOAD_URL_SUFFIX);
+        String downloadUrl = artifact.getExtraProperty(packager + DOWNLOAD_URL_SUFFIX);
         if (isBlank(downloadUrl)) {
-            downloadUrl = artifact.getProperty(DOWNLOAD_URL_KEY);
+            downloadUrl = artifact.getExtraProperty(DOWNLOAD_URL_KEY);
         }
 
         if (isBlank(downloadUrl)) {
@@ -326,10 +325,10 @@ public class Artifacts {
         }
 
         if (isBlank(downloadUrl)) {
-            downloadUrl = distribution.getProperty(packager + DOWNLOAD_URL_SUFFIX);
+            downloadUrl = distribution.getExtraProperty(packager + DOWNLOAD_URL_SUFFIX);
         }
         if (isBlank(downloadUrl)) {
-            downloadUrl = distribution.getProperty(DOWNLOAD_URL_KEY);
+            downloadUrl = distribution.getExtraProperty(DOWNLOAD_URL_KEY);
         }
 
         GitService service = context.getModel().getRelease().getGitService();
@@ -364,18 +363,38 @@ public class Artifacts {
     }
 
     private static String resolveDownloadUrlFromUploader(JReleaserContext context, ExtraProperties props, Artifact artifact) {
-        String coords = props.getProperty(DOWNLOAD_FROM_UPLOADER_KEY);
-        if (isBlank(coords)) return null;
+        Upload upload = context.getModel().getUpload();
+
+        String coords = props.getExtraProperty(DOWNLOAD_FROM_UPLOADER_KEY);
+        if (isBlank(coords)) {
+            // search for "<uploaderType><uploaderName>Path"
+            for (Uploader up : upload.findAllActiveUploaders()) {
+                List<String> keys = up.resolveSkipKeys();
+                String key = up.getType() + capitalize(up.getName()) + "Path";
+                if (artifact.getExtraProperties().containsKey(key) && !isSkip(props, keys)) {
+                    return up.getResolvedDownloadUrl(context, artifact);
+                }
+            }
+        }
 
         String[] parts = coords.split(":");
         if (parts.length != 2) return null;
 
-        Optional<? extends Uploader> uploader = context.getModel().getUpload()
+        Optional<? extends Uploader> uploader = upload
             .getActiveUploader(parts[0], parts[1]);
         if (uploader.isPresent()) {
             List<String> keys = uploader.get().resolveSkipKeys();
             if (!isSkip(props, keys)) {
                 return uploader.get().getResolvedDownloadUrl(context, artifact);
+            }
+        } else {
+            // search for "<uploaderType><uploaderName>Path"
+            for (Uploader up : upload.findAllActiveUploaders()) {
+                List<String> keys = up.resolveSkipKeys();
+                String key = up.getType() + capitalize(up.getName()) + "Path";
+                if (artifact.getExtraProperties().containsKey(key) && !isSkip(props, keys)) {
+                    return up.getResolvedDownloadUrl(context, artifact);
+                }
             }
         }
 
