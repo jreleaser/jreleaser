@@ -50,12 +50,20 @@ public class Upload extends AbstractPlatformAwareModelCommand {
             return include != null ? include.includedUploaderNames : null;
         }
 
+        String[] includedDistributions() {
+            return include != null ? include.includedDistributions : null;
+        }
+
         String[] excludedUploaderTypes() {
             return exclude != null ? exclude.excludedUploaderTypes : null;
         }
 
         String[] excludedUploaderNames() {
             return exclude != null ? exclude.excludedUploaderNames : null;
+        }
+
+        String[] excludedDistributions() {
+            return exclude != null ? exclude.excludedDistributions : null;
         }
     }
 
@@ -67,6 +75,10 @@ public class Upload extends AbstractPlatformAwareModelCommand {
         @CommandLine.Option(names = {"-un", "--uploader-name"},
             paramLabel = "<name>")
         String[] includedUploaderNames;
+
+        @CommandLine.Option(names = {"-d", "--distribution"},
+            paramLabel = "<distribution>")
+        String[] includedDistributions;
     }
 
     static class Exclude {
@@ -77,6 +89,10 @@ public class Upload extends AbstractPlatformAwareModelCommand {
         @CommandLine.Option(names = {"-xun", "--exclude-uploader-name"},
             paramLabel = "<name>")
         String[] excludedUploaderNames;
+
+        @CommandLine.Option(names = {"-xd", "--exclude-distribution"},
+            paramLabel = "<distribution>")
+        String[] excludedDistributions;
     }
 
     @Override
@@ -84,8 +100,10 @@ public class Upload extends AbstractPlatformAwareModelCommand {
         if (null != composite) {
             context.setIncludedUploaderTypes(collectEntries(composite.includedUploaderTypes(), true));
             context.setIncludedUploaderNames(collectEntries(composite.includedUploaderNames()));
+            context.setIncludedDistributions(collectEntries(composite.includedDistributions()));
             context.setExcludedUploaderTypes(collectEntries(composite.excludedUploaderTypes(), true));
             context.setExcludedUploaderNames(collectEntries(composite.excludedUploaderNames()));
+            context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
         }
         Workflows.upload(context).execute();
     }

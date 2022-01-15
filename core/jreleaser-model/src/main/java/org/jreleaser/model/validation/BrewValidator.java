@@ -200,8 +200,8 @@ public abstract class BrewValidator extends Validator {
     }
 
     public static void postValidateBrew(JReleaserContext context, Errors errors) {
-        Map<String, List<Distribution>> map = context.getModel().getDistributions().values().stream()
-            .filter(d -> d.isEnabled() && d.getBrew().isEnabled())
+        Map<String, List<Distribution>> map = context.getModel().getActiveDistributions().stream()
+            .filter(d -> d.getBrew().isEnabled())
             .collect(groupingBy(d -> d.getBrew().getResolvedFormulaName(context)));
 
         map.forEach((formulaName, distributions) -> {
@@ -211,8 +211,8 @@ public abstract class BrewValidator extends Validator {
             }
         });
 
-        map = context.getModel().getDistributions().values().stream()
-            .filter(d -> d.isEnabled() && d.getBrew().getCask().isEnabled())
+        map = context.getModel().getActiveDistributions().stream()
+            .filter(d -> d.getBrew().getCask().isEnabled())
             .collect(groupingBy(d -> d.getBrew().getCask().getResolvedCaskName(context)));
 
         map.forEach((caskName, distributions) -> {

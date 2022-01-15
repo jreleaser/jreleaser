@@ -70,7 +70,12 @@ public abstract class DistributionsValidator extends Validator {
             if (isBlank(distribution.getName())) {
                 distribution.setName(e.getKey());
             }
-            validateDistribution(context, distribution, errors);
+            if (context.isDistributionIncluded(distribution)) {
+                validateDistribution(context, distribution, errors);
+            } else {
+                distribution.setActive(Active.NEVER);
+                distribution.resolveEnabled(context.getModel().getProject());
+            }
         }
 
         postValidateBrew(context, errors);

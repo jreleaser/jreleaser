@@ -111,7 +111,7 @@ public abstract class SdkmanValidator extends Validator {
     }
 
     public static void postValidateSdkman(JReleaserContext context, Errors errors) {
-        Map<String, List<Distribution>> map = context.getModel().getDistributions().values().stream()
+        Map<String, List<Distribution>> map = context.getModel().getActiveDistributions().stream()
             .peek(distribution -> {
                 if (distribution.getSdkman().getExtraProperties().containsKey(MAGIC_SET)) {
                     boolean set = (boolean) distribution.getSdkman().getExtraProperties().remove(MAGIC_SET);
@@ -120,7 +120,7 @@ public abstract class SdkmanValidator extends Validator {
                     }
                 }
             })
-            .filter(d -> d.isEnabled() && d.getSdkman().isEnabled())
+            .filter(d -> d.getSdkman().isEnabled())
             .collect(groupingBy(d -> d.getSdkman().getCandidate()));
 
         map.forEach((candidate, distributions) -> {

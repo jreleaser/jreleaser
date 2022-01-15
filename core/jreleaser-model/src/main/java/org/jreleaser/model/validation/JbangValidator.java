@@ -98,8 +98,8 @@ public abstract class JbangValidator extends Validator {
     }
 
     public static void postValidateJBang(JReleaserContext context, Errors errors) {
-        Map<String, List<Distribution>> map = context.getModel().getDistributions().values().stream()
-            .filter(d -> d.isEnabled() && d.getJbang().isEnabled())
+        Map<String, List<Distribution>> map = context.getModel().getActiveDistributions().stream()
+            .filter(d -> d.getJbang().isEnabled())
             .collect(groupingBy(d -> d.getJbang().getAlias()));
 
         map.forEach((alias, distributions) -> {

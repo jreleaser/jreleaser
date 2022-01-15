@@ -63,8 +63,6 @@ public class Checksum {
         }
 
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
-            if (!context.isDistributionIncluded(distribution)) continue;
-
             for (Artifact artifact : distribution.getArtifacts()) {
                 if (!artifact.isActive()) continue;
                 artifact.getEffectivePath(context, distribution);

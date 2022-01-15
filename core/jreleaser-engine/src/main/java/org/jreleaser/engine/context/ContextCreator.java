@@ -19,12 +19,10 @@ package org.jreleaser.engine.context;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.config.JReleaserConfigLoader;
-import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.JReleaserLogger;
-import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -75,11 +73,6 @@ public class ContextCreator {
             selectedPlatforms);
 
         ModelConfigurer.configure(context);
-        if (mode != JReleaserContext.Mode.ASSEMBLE) {
-            context.setReleaser(Releasers.releaserFor(context));
-        }
-
-        report(context);
 
         return context;
     }
@@ -95,16 +88,5 @@ public class ContextCreator {
             logger.trace(e);
             throw new JReleaserException(RB.$("ERROR_context_creator_parse_configuration", configFile.toAbsolutePath()), e);
         }
-    }
-
-    private static void report(JReleaserContext context) {
-        String version = context.getModel().getProject().getVersion();
-        context.getModel().getProject().parseVersion();
-
-        context.getLogger().info(RB.$("context.creator.report.project-version"), version);
-        context.getLogger().info(RB.$("context.creator.report.release"), context.getModel().getProject().isSnapshot() ? " " : " " + RB.$("not") + " ");
-        context.getLogger().info(RB.$("context.creator.report.timestamp"), context.getModel().getTimestamp());
-        context.getLogger().info(RB.$("context.creator.report.head"), context.getModel().getCommit().getShortHash());
-        context.getLogger().info(RB.$("context.creator.report.platform"), PlatformUtils.getCurrentFull());
     }
 }

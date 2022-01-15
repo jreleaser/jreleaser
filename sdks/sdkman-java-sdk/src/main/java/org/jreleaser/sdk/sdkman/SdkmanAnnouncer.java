@@ -61,7 +61,6 @@ public class SdkmanAnnouncer implements Announcer {
     @Override
     public void announce() throws AnnounceException {
         Map<String, Distribution> distributions = context.getModel().getActiveDistributions().stream()
-            .filter(context::isDistributionIncluded)
             .filter(d -> d.getSdkman().isEnabled())
             .filter(d -> !JReleaserCommand.supportsPublish(context.getCommand()) || d.getSdkman().isPublished())
             .collect(Collectors.toMap(distribution -> {
@@ -120,8 +119,7 @@ public class SdkmanAnnouncer implements Announcer {
         Map<String, String> platforms = new LinkedHashMap<>();
         // collect artifacts by supported SDKMAN! platform
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
-            if (!context.isDistributionIncluded(distribution) ||
-                !isDistributionSupported(distribution)) {
+            if (!isDistributionSupported(distribution)) {
                 continue;
             }
             for (Artifact artifact : distribution.getArtifacts()) {

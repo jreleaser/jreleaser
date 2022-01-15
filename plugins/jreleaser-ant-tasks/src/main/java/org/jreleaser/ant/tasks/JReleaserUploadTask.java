@@ -31,6 +31,8 @@ public class JReleaserUploadTask extends AbstractPlatformAwareJReleaserTask {
     private List<String> excludedUploaderTypes;
     private List<String> uploaderNames;
     private List<String> excludedUploaderNames;
+    private List<String> distributions;
+    private List<String> excludedDistributions;
 
     public void setUploaderTypes(List<String> uploaderTypes) {
         this.uploaderTypes = uploaderTypes;
@@ -48,12 +50,22 @@ public class JReleaserUploadTask extends AbstractPlatformAwareJReleaserTask {
         this.excludedUploaderNames = excludedUploaderNames;
     }
 
+    public void setDistributions(List<String> distributions) {
+        this.distributions = distributions;
+    }
+
+    public void setExcludedDistributions(List<String> excludedDistributions) {
+        this.excludedDistributions = excludedDistributions;
+    }
+
     @Override
     protected void doExecute(JReleaserContext context) {
         context.setIncludedUploaderTypes(uploaderTypes);
         context.setExcludedUploaderTypes(excludedUploaderTypes);
         context.setIncludedUploaderNames(uploaderNames);
         context.setExcludedUploaderNames(excludedUploaderNames);
+        context.setIncludedDistributions(distributions);
+        context.setExcludedDistributions(excludedDistributions);
         Workflows.upload(context).execute();
     }
 }

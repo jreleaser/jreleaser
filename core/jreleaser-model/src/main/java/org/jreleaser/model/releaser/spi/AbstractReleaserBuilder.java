@@ -107,8 +107,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
 
         if (service.isArtifacts()) {
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
-                if (!context.isDistributionIncluded(distribution) ||
-                    distribution.extraPropertyIsTrue(KEY_SKIP_RELEASE)) {
+                if (distribution.extraPropertyIsTrue(KEY_SKIP_RELEASE)) {
                     continue;
                 }
                 for (Artifact artifact : distribution.getArtifacts()) {

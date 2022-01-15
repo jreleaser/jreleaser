@@ -35,7 +35,7 @@ import javax.inject.Inject
  * @since 0.3.0
  */
 @CompileStatic
-abstract class JReleaserUploadTask extends AbstractPlatformAwareJReleaserTask {
+abstract class JReleaserUploadTask extends AbstractJReleaserDistributionTask {
     @Input
     @Optional
     final ListProperty<String> uploaderTypes
@@ -83,7 +83,7 @@ abstract class JReleaserUploadTask extends AbstractPlatformAwareJReleaserTask {
 
     @TaskAction
     void performAction() {
-        JReleaserContext ctx = createContext()
+        JReleaserContext ctx = setupContext()
         ctx.includedUploaderTypes = uploaderTypes.orNull
         ctx.excludedUploaderTypes = excludedUploaderTypes.orNull
         ctx.includedUploaderNames = uploaderNames.orNull

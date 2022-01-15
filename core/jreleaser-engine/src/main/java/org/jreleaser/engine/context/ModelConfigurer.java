@@ -24,12 +24,10 @@ import org.jreleaser.model.Github;
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.JReleaserModelPrinter;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.Env;
-import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -71,37 +69,6 @@ public class ModelConfigurer {
                 break;
             default:
                 autoConfigureOther(context, repository);
-        }
-
-        try {
-            Errors errors = context.validateModel();
-
-            if (context.getMode() != JReleaserContext.Mode.CHANGELOG) {
-                new JReleaserModelPrinter.Plain(context.getLogger().getTracer())
-                    .print(context.getModel().asMap(true));
-            }
-
-            switch (context.getMode()) {
-                case ASSEMBLE:
-                    if (errors.hasConfigurationErrors()) {
-                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured") +
-                            System.lineSeparator() + errors.asString());
-                    }
-                    break;
-                case FULL:
-                default:
-                    if (errors.hasErrors()) {
-                        throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured") +
-                            System.lineSeparator() + errors.asString());
-                    }
-                    break;
-            }
-        } catch (JReleaserException e) {
-            context.getLogger().trace(e);
-            throw e;
-        } catch (Exception e) {
-            context.getLogger().trace(e);
-            throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured"), e);
         }
     }
 

@@ -77,7 +77,7 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
 
         if (getUploader().isArtifacts()) {
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
-                if (!context.isDistributionIncluded(distribution) || isSkip(distribution, keys)) continue;
+                if (isSkip(distribution, keys)) continue;
                 for (Artifact artifact : distribution.getArtifacts()) {
                     if (!artifact.isActive()) continue;
                     Path path = artifact.getEffectivePath(context, distribution);

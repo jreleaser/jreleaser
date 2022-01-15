@@ -479,7 +479,6 @@ public class Signer {
 
         if (signing.isArtifacts()) {
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
-                if (!context.isDistributionIncluded(distribution)) continue;
                 if (distribution.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
                 for (Artifact artifact : distribution.getArtifacts()) {
                     if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;

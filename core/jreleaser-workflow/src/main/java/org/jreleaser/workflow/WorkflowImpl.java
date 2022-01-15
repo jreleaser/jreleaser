@@ -18,6 +18,7 @@
 package org.jreleaser.workflow;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.engine.context.ModelValidator;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
 
@@ -38,6 +39,7 @@ class WorkflowImpl implements Workflow {
 
     public WorkflowImpl(JReleaserContext context, List<WorkflowItem> items) {
         this.context = context;
+        ModelValidator.validate(context);
         this.items.addAll(items);
     }
 

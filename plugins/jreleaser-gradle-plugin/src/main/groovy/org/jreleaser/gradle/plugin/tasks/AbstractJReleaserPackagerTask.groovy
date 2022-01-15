@@ -33,36 +33,36 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class AbstractJReleaserDistributionTask extends AbstractPlatformAwareJReleaserTask {
+abstract class AbstractJReleaserPackagerTask extends AbstractJReleaserDistributionTask {
     @Input
     @Optional
-    final ListProperty<String> distributions
+    final ListProperty<String> packagers
 
     @Input
     @Optional
-    final ListProperty<String> excludedDistributions
+    final ListProperty<String> excludedPackagers
 
     @Inject
-    AbstractJReleaserDistributionTask(ObjectFactory objects) {
+    AbstractJReleaserPackagerTask(ObjectFactory objects) {
         super(objects)
-        distributions = objects.listProperty(String).convention([])
-        excludedDistributions = objects.listProperty(String).convention([])
+        packagers = objects.listProperty(String).convention([])
+        excludedPackagers = objects.listProperty(String).convention([])
     }
 
-    @Option(option = 'distribution', description = 'Include a distribution (OPTIONAL).')
-    void setDistribution(List<String> distributions) {
-        this.distributions.set(distributions)
+    @Option(option = 'packager', description = 'Include a packager (OPTIONAL).')
+    void setPackager(List<String> packagers) {
+        this.packagers.set(packagers)
     }
 
-    @Option(option = 'exclude-distribution', description = 'Exclude a distribution (OPTIONAL).')
-    void setExcludeDistribution(List<String> excludedDistributions) {
-        this.excludedDistributions.set(excludedDistributions)
+    @Option(option = 'exclude-packager', description = 'Exclude a packager (OPTIONAL).')
+    void setExcludePackager(List<String> excludedPackagers) {
+        this.excludedPackagers.set(excludedPackagers)
     }
 
     protected JReleaserContext setupContext() {
-        JReleaserContext ctx = createContext()
-        ctx.includedDistributions = distributions.orNull
-        ctx.excludedDistributions = excludedDistributions.orNull
+        JReleaserContext ctx = super.setupContext()
+        ctx.includedPackagers = packagers.orNull
+        ctx.excludedPackagers = excludedPackagers.orNull
         ctx
     }
 }
