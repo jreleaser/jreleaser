@@ -467,6 +467,7 @@ public final class JReleaserModelConverter {
         if (from.isArtifactsSet()) into.setArtifacts(from.isArtifacts());
         if (from.isFilesSet()) into.setFiles(from.isFiles());
         if (from.isSignaturesSet()) into.setSignatures(from.isSignatures());
+        if (from.isChecksumsSet()) into.setChecksums(from.isChecksums());
         if (from instanceof HttpUploader) {
             convertHttpUploader((HttpUploader) from, (org.jreleaser.model.HttpUploader) into);
         }

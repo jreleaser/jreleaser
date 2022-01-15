@@ -148,13 +148,15 @@ public class Artifacts {
 
         String artifactFile = artifact.getEffectivePath().getFileName().toString();
         String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
-        String artifactExtension = artifactFile.substring(artifactFileName.length());
-        String artifactFileFormat = artifactExtension.substring(1);
-
         props.put(KEY_ARTIFACT_FILE, artifactFile);
         props.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
-        props.put(KEY_ARTIFACT_FILE_EXTENSION, artifactExtension);
-        props.put(KEY_ARTIFACT_FILE_FORMAT, artifactFileFormat);
+
+        if (!artifactFile.equals(artifactFileName)) {
+            String artifactExtension = artifactFile.substring(artifactFileName.length());
+            String artifactFileFormat = artifactExtension.substring(1);
+            props.put(KEY_ARTIFACT_FILE_EXTENSION, artifactExtension);
+            props.put(KEY_ARTIFACT_FILE_FORMAT, artifactFileFormat);
+        }
 
         String artifactName = "";
         String projectVersion = (String) props.get(KEY_PROJECT_EFFECTIVE_VERSION);
@@ -195,13 +197,20 @@ public class Artifacts {
 
         String artifactFile = artifact.getEffectivePath().getFileName().toString();
         String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
-        String artifactExtension = artifactFile.substring(artifactFileName.length());
-        String artifactFileFormat = artifactExtension.substring(1);
-
         props.put(KEY_ARTIFACT_FILE, artifactFile);
         props.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
-        props.put(KEY_ARTIFACT_FILE_EXTENSION, artifactExtension);
-        props.put(KEY_ARTIFACT_FILE_FORMAT, artifactFileFormat);
+        props.put(KEY_DISTRIBUTION_ARTIFACT_FILE, artifactFile);
+        props.put(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
+
+        if (!artifactFile.equals(artifactFileName)) {
+            String artifactExtension = artifactFile.substring(artifactFileName.length());
+            String artifactFileFormat = artifactExtension.substring(1);
+            props.put(KEY_ARTIFACT_FILE_EXTENSION, artifactExtension);
+            props.put(KEY_ARTIFACT_FILE_FORMAT, artifactFileFormat);
+            props.put(KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION, artifactExtension);
+            props.put(KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT, artifactFileFormat);
+            props.put(KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT, artifactFileFormat);
+        }
 
         String artifactName = "";
         String projectVersion = (String) props.get(KEY_PROJECT_EFFECTIVE_VERSION);
@@ -234,14 +243,9 @@ public class Artifacts {
         }
 
         String platformReplaced = distribution.getPlatform().applyReplacements(platform);
-        if (isNotBlank(platform)) props.put(KEY_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
+        if (isNotBlank(platformReplaced)) props.put(KEY_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
         if (isNotBlank(platform)) props.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);
-        if (isNotBlank(platform)) props.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
-        props.put(KEY_DISTRIBUTION_ARTIFACT_FILE, artifactFile);
-        props.put(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
-        props.put(KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION, artifactExtension);
-        props.put(KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT, artifactFileFormat);
-        props.put(KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT, artifactFileFormat);
+        if (isNotBlank(platformReplaced)) props.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
 
         return props;
     }

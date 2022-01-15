@@ -36,4 +36,6 @@ interface Uploader extends Activatable, ExtraProperties {
     Property<Boolean> getFiles()
 
     Property<Boolean> getSignatures()
+
+    Property<Boolean> getChecksums()
 }

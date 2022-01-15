@@ -51,6 +51,12 @@ public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProper
 
     boolean isSignaturesSet();
 
+    boolean isChecksumsSet();
+
+    Boolean isChecksums();
+
+    void setChecksums(Boolean checksums);
+
     List<String> resolveSkipKeys();
 
     Map<String, Object> artifactProps(JReleaserContext context, Artifact artifact);

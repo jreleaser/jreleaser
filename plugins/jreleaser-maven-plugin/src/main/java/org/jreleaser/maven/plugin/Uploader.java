@@ -45,4 +45,10 @@ public interface Uploader extends Activatable, TimeoutAware, ExtraProperties {
     void setSignatures(Boolean signatures);
 
     boolean isSignaturesSet();
+
+    boolean isChecksumsSet();
+
+    Boolean isChecksums();
+
+    void setChecksums(Boolean checksums);
 }

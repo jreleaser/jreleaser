@@ -36,6 +36,7 @@ abstract class AbstractUploader implements Uploader {
     private Boolean artifacts;
     private Boolean files;
     private Boolean signatures;
+    private Boolean checksums;
 
     protected AbstractUploader(String type) {
         this.type = type;
@@ -50,6 +51,7 @@ abstract class AbstractUploader implements Uploader {
         this.artifacts = uploader.artifacts;
         this.files = uploader.files;
         this.signatures = uploader.signatures;
+        this.checksums = uploader.checksums;
         setExtraProperties(uploader.extraProperties);
     }
 
@@ -157,5 +159,20 @@ abstract class AbstractUploader implements Uploader {
     @Override
     public boolean isSignaturesSet() {
         return signatures != null;
+    }
+
+    @Override
+    public boolean isChecksumsSet() {
+        return checksums != null;
+    }
+
+    @Override
+    public Boolean isChecksums() {
+        return checksums == null || checksums;
+    }
+
+    @Override
+    public void setChecksums(Boolean checksums) {
+        this.checksums = checksums;
     }
 }
