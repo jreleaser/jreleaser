@@ -88,7 +88,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Artifacts {
     private static final String DOWNLOAD_URL_SUFFIX = "DownloadUrl";
     private static final String DOWNLOAD_URL_KEY = "downloadUrl";
-    private static final String DOWNLOAD_FROM_UPLOADER_KEY = "downloadFromUploader";
+    private static final String DOWNLOAD_URL_FROM_KEY = "downloadUrlFrom";
 
     public static String resolveForArtifact(String input, JReleaserContext context) {
         return resolve(input, context.props());
@@ -369,7 +369,7 @@ public class Artifacts {
     private static String resolveDownloadUrlFromUploader(JReleaserContext context, ExtraProperties props, Artifact artifact) {
         Upload upload = context.getModel().getUpload();
 
-        String coords = props.getExtraProperty(DOWNLOAD_FROM_UPLOADER_KEY);
+        String coords = props.getExtraProperty(DOWNLOAD_URL_FROM_KEY);
         if (isBlank(coords)) {
             // search for "<uploaderType><uploaderName>Path"
             for (Uploader up : upload.findAllActiveUploaders()) {
