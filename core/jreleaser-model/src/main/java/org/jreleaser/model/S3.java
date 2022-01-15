@@ -64,8 +64,13 @@ public class S3 extends AbstractUploader {
 
     @Override
     public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
+        return getResolvedDownloadUrl(context.props(), artifact);
+    }
+
+    @Override
+    public String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact) {
         if (isNotBlank(getResolvedDownloadUrl())) {
-            Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
+            Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
             p.putAll(getResolvedExtraProperties());
             p.put("bucket", bucket);
             p.put("region", region);
@@ -74,7 +79,7 @@ public class S3 extends AbstractUploader {
 
         if (isBlank(getResolvedEndpoint())) {
             String url = "https://{{bucket}}.s3.{{region}}.amazonaws.com/" + getResolvedPath();
-            Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
+            Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
             p.putAll(getResolvedExtraProperties());
             p.put("bucket", bucket);
             p.put("region", region);

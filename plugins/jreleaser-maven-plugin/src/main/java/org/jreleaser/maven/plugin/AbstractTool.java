@@ -20,6 +20,8 @@ package org.jreleaser.maven.plugin;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -28,10 +30,12 @@ abstract class AbstractTool implements Tool {
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected Active active;
     protected Boolean continueOnError;
+    protected String downloadUrl;
 
     void setAll(AbstractTool tool) {
         this.active = tool.active;
         this.continueOnError = tool.continueOnError;
+        this.downloadUrl = tool.downloadUrl;
         setExtraProperties(tool.extraProperties);
     }
 
@@ -66,6 +70,16 @@ abstract class AbstractTool implements Tool {
     }
 
     @Override
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    @Override
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+    @Override
     public Map<String, Object> getExtraProperties() {
         return extraProperties;
     }
@@ -78,6 +92,7 @@ abstract class AbstractTool implements Tool {
 
     public boolean isSet() {
         return null != active ||
+            isNotBlank(downloadUrl) ||
             !extraProperties.isEmpty();
     }
 }

@@ -64,6 +64,9 @@ public abstract class SdkmanValidator extends Validator {
 
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
+        if (isBlank(tool.getDownloadUrl())) {
+            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        }
 
         if (null == tool.getCommand()) {
             tool.setCommand(parentTool.getCommand());

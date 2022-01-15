@@ -433,7 +433,7 @@ public final class FileUtils {
     public static List<String> inspectArchiveCompressed(Path src) throws IOException {
         String filename = src.getFileName().toString();
         String artifactFileName = getFilename(filename, FileType.getSupportedExtensions());
-        String artifactExtension = artifactFileName.substring(artifactFileName.length() + 1);
+        String artifactExtension = filename.substring(artifactFileName.length());
         String artifactFileFormat = artifactExtension.substring(1);
         FileType fileType = FileType.of(artifactFileFormat);
 

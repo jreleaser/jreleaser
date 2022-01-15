@@ -24,6 +24,7 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
+import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
@@ -37,12 +38,6 @@ import java.util.stream.Collectors;
 
 import static org.jreleaser.model.Brew.SKIP_BREW;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCHIVE_FORMAT;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_FORMAT;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_NAME;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM;
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM_REPLACED;
 import static org.jreleaser.util.Constants.KEY_BREW_CASK_APP;
 import static org.jreleaser.util.Constants.KEY_BREW_CASK_APPCAST;
 import static org.jreleaser.util.Constants.KEY_BREW_CASK_DISPLAY_NAME;
@@ -61,12 +56,6 @@ import static org.jreleaser.util.Constants.KEY_BREW_FORMULA_NAME;
 import static org.jreleaser.util.Constants.KEY_BREW_HAS_LIVECHECK;
 import static org.jreleaser.util.Constants.KEY_BREW_LIVECHECK;
 import static org.jreleaser.util.Constants.KEY_BREW_MULTIPLATFORM;
-import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT;
-import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
-import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT;
-import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
-import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM;
-import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_URL;
 import static org.jreleaser.util.Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL;
@@ -74,7 +63,6 @@ import static org.jreleaser.util.Constants.KEY_HOMEBREW_TAP_REPO_URL;
 import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.passThrough;
-import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.isTrue;
@@ -225,27 +213,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
     }
 
     private String resolveArtifactUrl(Map<String, Object> props, Distribution distribution, Artifact artifact) {
-        String artifactFile = artifact.getEffectivePath(context, distribution).getFileName().toString();
-        String artifactFileName = getFilename(artifactFile, tool.getSupportedExtensions());
-        String artifactExtension = artifactFile.substring(artifactFileName.length() + 1);
-        String artifactFileFormat = artifactExtension.substring(1);
-
-        Map<String, Object> newProps = new LinkedHashMap<>(props);
-        newProps.put(KEY_ARTIFACT_FILE, artifactFile);
-        newProps.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
-        newProps.put(KEY_ARTIFACT_FILE_FORMAT, artifactFileFormat);
-        newProps.put(KEY_ARTIFACT_ARCHIVE_FORMAT, artifactFileFormat);
-        String platform = artifact.getPlatform();
-        if (isNotBlank(platform)) newProps.put(KEY_ARTIFACT_PLATFORM, platform);
-        String platformReplaced = distribution.getPlatform().applyReplacements(platform);
-        if (isNotBlank(platform)) newProps.put(KEY_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
-        if (isNotBlank(platform)) newProps.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);
-        if (isNotBlank(platform)) newProps.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
-        newProps.put(KEY_DISTRIBUTION_ARTIFACT_FILE, artifactFile);
-        newProps.put(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
-        newProps.put(KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT, artifactFileFormat);
-        newProps.put(KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT, artifactFileFormat);
-        return applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
+        return Artifacts.resolveDownloadUrl(context, Brew.NAME, distribution, artifact);
     }
 
     @Override

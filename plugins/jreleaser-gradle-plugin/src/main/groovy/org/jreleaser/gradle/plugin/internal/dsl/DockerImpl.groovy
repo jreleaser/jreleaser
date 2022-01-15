@@ -44,6 +44,7 @@ import javax.inject.Inject
 class DockerImpl extends AbstractDockerConfiguration implements Docker {
     final NamedDomainObjectContainer<DockerSpecImpl> specs
     final Property<Boolean> continueOnError
+    final Property<String> downloadUrl
     final DockerRepositoryImpl repository
     final CommitAuthorImpl commitAuthor
 
@@ -51,6 +52,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     DockerImpl(ObjectFactory objects) {
         super(objects)
         continueOnError = objects.property(Boolean).convention(Providers.notDefined())
+        downloadUrl = objects.property(String).convention(Providers.notDefined())
         repository = objects.newInstance(DockerRepositoryImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
 
@@ -69,6 +71,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     boolean isSet() {
         super.isSet() ||
             continueOnError.present ||
+            downloadUrl.present ||
             !specs.isEmpty() ||
             repository.isSet() ||
             commitAuthor.isSet()
@@ -109,6 +112,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
         org.jreleaser.model.Docker tool = new org.jreleaser.model.Docker()
         toModel(tool)
         if (continueOnError.present) tool.continueOnError = continueOnError.get()
+        if (downloadUrl.present) tool.downloadUrl = downloadUrl.get()
         if (repository.isSet()) tool.repository = repository.toModel()
         if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
 

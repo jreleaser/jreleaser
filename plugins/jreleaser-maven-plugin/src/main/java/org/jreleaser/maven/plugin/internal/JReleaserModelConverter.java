@@ -79,6 +79,7 @@ import org.jreleaser.maven.plugin.Spec;
 import org.jreleaser.maven.plugin.Tap;
 import org.jreleaser.maven.plugin.Teams;
 import org.jreleaser.maven.plugin.Telegram;
+import org.jreleaser.maven.plugin.Tool;
 import org.jreleaser.maven.plugin.Twitter;
 import org.jreleaser.maven.plugin.Upload;
 import org.jreleaser.maven.plugin.Uploader;
@@ -674,6 +675,7 @@ public final class JReleaserModelConverter {
         a.setConsumerToken(tr(sdkman.getConsumerToken()));
         a.setCandidate(tr(sdkman.getCandidate()));
         a.setReleaseNotesUrl(tr(sdkman.getReleaseNotesUrl()));
+        a.setDownloadUrl(tr(sdkman.getDownloadUrl()));
         a.setMajor(sdkman.isMajor());
         a.setCommand(sdkman.resolveCommand());
         return a;
@@ -1090,12 +1092,17 @@ public final class JReleaserModelConverter {
         return g;
     }
 
+    private static void convertTool(Tool from, org.jreleaser.model.Tool into) {
+        into.setActive(tr(from.resolveActive()));
+        into.setDownloadUrl(tr(from.getDownloadUrl()));
+        if (from.isContinueOnErrorSet()) into.setContinueOnError(from.isContinueOnError());
+        into.setExtraProperties(from.getExtraProperties());
+    }
+
     private static org.jreleaser.model.Brew convertBrew(Brew tool) {
         org.jreleaser.model.Brew t = new org.jreleaser.model.Brew();
-        t.setActive(tr(tool.resolveActive()));
+        convertTool(tool, t);
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
-        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
-        t.setExtraProperties(tool.getExtraProperties());
         t.setTap(convertHomebrewTap(tool.getTap()));
         t.setFormulaName(tr(tool.getFormulaName()));
         if (tool.isMultiPlatformSet()) t.setMultiPlatform(tool.isMultiPlatform());
@@ -1135,8 +1142,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Chocolatey convertChocolatey(Chocolatey tool) {
         org.jreleaser.model.Chocolatey t = new org.jreleaser.model.Chocolatey();
-        t.setActive(tr(tool.resolveActive()));
-        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        convertTool(tool, t);
         t.setPackageName(tr(tool.getPackageName()));
         t.setUsername(tr(tool.getUsername()));
         t.setApiKey(tr(tool.getApiKey()));
@@ -1145,10 +1151,15 @@ public final class JReleaserModelConverter {
         t.setSource(tr(tool.getSource()));
         t.setRemoteBuild(tool.isRemoteBuild());
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
-        t.setExtraProperties(tool.getExtraProperties());
         t.setBucket(convertChocolateyBucket(tool.getBucket()));
         t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
         return t;
+    }
+
+    private static org.jreleaser.model.Chocolatey.ChocolateyBucket convertChocolateyBucket(Bucket bucket) {
+        org.jreleaser.model.Chocolatey.ChocolateyBucket b = new org.jreleaser.model.Chocolatey.ChocolateyBucket();
+        convertTap(bucket, b);
+        return b;
     }
 
     private static org.jreleaser.model.Docker convertDocker(Docker docker) {
@@ -1166,6 +1177,7 @@ public final class JReleaserModelConverter {
 
             dd.setRepository(convertDockerRepository(kk.getRepository()));
             dd.setCommitAuthor(convertCommitAuthor(kk.getCommitAuthor()));
+            dd.setDownloadUrl(tr(kk.getDownloadUrl()));
         }
         d.setActive(tr(docker.resolveActive()));
         d.setTemplateDirectory(tr(docker.getTemplateDirectory()));
@@ -1220,18 +1232,10 @@ public final class JReleaserModelConverter {
         return r;
     }
 
-    private static org.jreleaser.model.Chocolatey.ChocolateyBucket convertChocolateyBucket(Bucket bucket) {
-        org.jreleaser.model.Chocolatey.ChocolateyBucket b = new org.jreleaser.model.Chocolatey.ChocolateyBucket();
-        convertTap(bucket, b);
-        return b;
-    }
-
     private static org.jreleaser.model.Jbang convertJbang(Jbang tool) {
         org.jreleaser.model.Jbang t = new org.jreleaser.model.Jbang();
-        t.setActive(tr(tool.resolveActive()));
-        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        convertTool(tool, t);
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
-        t.setExtraProperties(tool.getExtraProperties());
         t.setAlias(tr(tool.getAlias()));
         t.setCatalog(convertJbangCatalog(tool.getCatalog()));
         t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
@@ -1246,11 +1250,9 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Macports convertMacports(Macports tool) {
         org.jreleaser.model.Macports t = new org.jreleaser.model.Macports();
-        t.setActive(tr(tool.resolveActive()));
-        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        convertTool(tool, t);
         t.setPackageName(tr(tool.getPackageName()));
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
-        t.setExtraProperties(tool.getExtraProperties());
         t.setRevision(tool.getRevision());
         t.setCategories(tr(tool.getCategories()));
         t.setMaintainers(tr(tool.getMaintainers()));
@@ -1267,11 +1269,9 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Scoop convertScoop(Scoop tool) {
         org.jreleaser.model.Scoop t = new org.jreleaser.model.Scoop();
-        t.setActive(tr(tool.resolveActive()));
-        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        convertTool(tool, t);
         t.setPackageName(tr(tool.getPackageName()));
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
-        t.setExtraProperties(tool.getExtraProperties());
         t.setCheckverUrl(tr(tool.getCheckverUrl()));
         t.setAutoupdateUrl(tr(tool.getAutoupdateUrl()));
         t.setBucket(convertScoopBucket(tool.getBucket()));
@@ -1287,9 +1287,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Sdkman convertSdkman(Sdkman tool) {
         org.jreleaser.model.Sdkman t = new org.jreleaser.model.Sdkman();
-        t.setActive(tr(tool.resolveActive()));
-        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
-        t.setExtraProperties(tool.getExtraProperties());
+        convertTool(tool, t);
         t.setConsumerKey(tr(tool.getConsumerKey()));
         t.setConsumerToken(tr(tool.getConsumerToken()));
         t.setCandidate(tr(tool.getCandidate()));
@@ -1301,11 +1299,9 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Snap convertSnap(Snap tool) {
         org.jreleaser.model.Snap t = new org.jreleaser.model.Snap();
-        t.setActive(tr(tool.resolveActive()));
-        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        convertTool(tool, t);
         t.setPackageName(tr(tool.getPackageName()));
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
-        t.setExtraProperties(tool.getExtraProperties());
         if (isNotBlank(tool.getBase())) t.setBase(tool.getBase());
         if (isNotBlank(tool.getGrade())) t.setGrade(tool.getGrade());
         if (isNotBlank(tool.getConfinement())) t.setConfinement(tool.getConfinement());
@@ -1377,10 +1373,8 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Gofish convertGofish(Gofish tool) {
         org.jreleaser.model.Gofish t = new org.jreleaser.model.Gofish();
-        t.setActive(tr(tool.resolveActive()));
-        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        convertTool(tool, t);
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
-        t.setExtraProperties(tool.getExtraProperties());
         t.setRepository(convertGofishRepository(tool.getRepository()));
         t.setCommitAuthor(convertCommitAuthor(tool.getCommitAuthor()));
         return t;
@@ -1394,11 +1388,9 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Spec convertSpec(Spec tool) {
         org.jreleaser.model.Spec t = new org.jreleaser.model.Spec();
-        t.setActive(tr(tool.resolveActive()));
-        if (tool.isContinueOnErrorSet()) t.setContinueOnError(tool.isContinueOnError());
+        convertTool(tool, t);
         t.setPackageName(tr(tool.getPackageName()));
         t.setTemplateDirectory(tr(tool.getTemplateDirectory()));
-        t.setExtraProperties(tool.getExtraProperties());
         t.setRelease(tr(tool.getRelease()));
         t.setRequires(tr(tool.getRequires()));
         t.setRepository(convertSpecRepository(tool.getRepository()));

@@ -28,6 +28,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
     private String consumerToken;
     private String candidate;
     private String releaseNotesUrl;
+    private String downloadUrl;
     private boolean major = true;
     private Sdkman.Command command;
 
@@ -37,6 +38,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         this.consumerToken = sdkman.consumerToken;
         this.candidate = sdkman.candidate;
         this.releaseNotesUrl = sdkman.releaseNotesUrl;
+        this.downloadUrl = sdkman.downloadUrl;
         this.major = sdkman.major;
         this.command = sdkman.command;
     }
@@ -71,6 +73,14 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
 
     public void setReleaseNotesUrl(String releaseNotesUrl) {
         this.releaseNotesUrl = releaseNotesUrl;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
     public boolean isMajor() {
@@ -108,6 +118,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
             isNotBlank(consumerToken) ||
             isNotBlank(candidate) ||
             isNotBlank(releaseNotesUrl) ||
+            isNotBlank(downloadUrl) ||
             null != command;
     }
 }

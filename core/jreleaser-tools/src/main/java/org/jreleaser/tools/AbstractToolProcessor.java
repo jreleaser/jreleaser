@@ -76,7 +76,6 @@ import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_SHA_256;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_SIZE;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_URL;
 import static org.jreleaser.util.Constants.KEY_REVERSE_REPO_HOST;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getFilename;
@@ -296,8 +295,14 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             return false;
         }
 
+        int count = 0;
         for (int i = 0; i < activeArtifacts.size(); i++) {
             Artifact artifact = activeArtifacts.get(i);
+
+            String artifactUrl = Artifacts.resolveDownloadUrl(context, tool.getName(), distribution, artifact);
+            if (isBlank(artifactUrl)) continue;
+            count++;
+
             String platform = artifact.getPlatform();
             String artifactPlatform = isNotBlank(platform) ? capitalize(platform) : "";
             String platformReplaced = distribution.getPlatform().applyReplacements(platform);
@@ -376,9 +381,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 safePut(props, "artifact" + artifactPlatform + "Checksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
                 safePut(props, "artifact" + artifactPlatformReplaced + "Checksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
             }
-            Map<String, Object> newProps = new LinkedHashMap<>(props);
-            Artifacts.artifactProps(artifact, newProps);
-            String artifactUrl = applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
+
             safePut(props, "artifact" + artifactPlatform + "Url", artifactUrl);
             safePut(props, "artifact" + artifactPlatformReplaced + "Url", artifactUrl);
             props.putAll(context.getModel().getUpload()
@@ -386,7 +389,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             props.putAll(context.getModel().getUpload()
                 .resolveDownloadUrls(context, distribution, artifact, "artifact" + artifactPlatformReplaced));
 
-            if (0 == i) {
+            if (count == 1) {
                 props.putAll(context.getModel().getUpload()
                     .resolveDownloadUrls(context, distribution, artifact, "distribution"));
                 safePut(props, KEY_DISTRIBUTION_ARTIFACT, artifact);
@@ -423,14 +426,15 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
 
                 // add extra properties without clobbering existing keys
                 Map<String, Object> aprops = artifact.getResolvedExtraProperties();
-                applyTemplates(aprops, aprops);
+                Map<String, Object> bprops = new LinkedHashMap<>(aprops);
+                applyTemplates(aprops, bprops);
                 aprops.keySet().stream()
                     .filter(k -> !props.containsKey(k))
                     .forEach(k -> props.put(k, aprops.get(k)));
             }
         }
 
-        return true;
+        return count > 0;
     }
 
     protected List<Artifact> collectArtifacts(Distribution distribution) {

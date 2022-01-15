@@ -62,8 +62,8 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
 
     private void setupJavaBinary(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Artifact artifact = (Artifact) props.get(KEY_DISTRIBUTION_ARTIFACT);
-        Path artifactPath = artifact.getResolvedPath();
-        String artifactName = getFilename(artifactPath.getFileName().toString(), tool.getSupportedExtensions());
+        Path artifactPath = artifact.getResolvedPath(context, distribution);
+        String artifactFileName = getFilename(artifactPath.getFileName().toString(), tool.getSupportedExtensions());
 
         try {
             List<String> entries = FileUtils.inspectArchive(artifactPath);
@@ -78,7 +78,7 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
                 // skip directories
                 .filter(e -> !e.endsWith("/"))
                 // remove root from name
-                .map(e -> e.substring(artifactName.length() + 1))
+                .map(e -> e.substring(artifactFileName.length() + 1))
                 // match only binaries
                 .filter(e -> e.startsWith("bin/"))
                 .sorted()
@@ -93,7 +93,7 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
                 // skip directories
                 .filter(e -> !e.endsWith("/"))
                 // remove root from name
-                .map(e -> e.substring(artifactName.length() + 1))
+                .map(e -> e.substring(artifactFileName.length() + 1))
                 // skip executables
                 .filter(e -> !e.startsWith("bin/"))
                 .sorted()

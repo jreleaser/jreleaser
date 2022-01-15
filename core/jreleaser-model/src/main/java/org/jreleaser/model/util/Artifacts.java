@@ -21,13 +21,19 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.Distribution;
+import org.jreleaser.model.ExtraProperties;
 import org.jreleaser.model.FileSet;
 import org.jreleaser.model.Files;
+import org.jreleaser.model.GitService;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.SdkmanAnnouncer;
+import org.jreleaser.model.Tool;
+import org.jreleaser.model.Uploader;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -40,9 +46,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
@@ -50,6 +58,7 @@ import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.model.util.Templates.resolve;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCH;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCHIVE_FORMAT;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_EXTENSION;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_FORMAT;
@@ -57,7 +66,15 @@ import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_NAME;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_NAME;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_OS;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM;
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_PLATFORM_REPLACED;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_VERSION;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED;
 import static org.jreleaser.util.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
 import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
@@ -70,6 +87,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Artifacts {
+    private static final String DOWNLOAD_URL_SUFFIX = "DownloadUrl";
+    private static final String DOWNLOAD_URL_KEY = "downloadUrl";
+    private static final String DOWNLOAD_FROM_UPLOADER_KEY = "downloadFromUploader";
+
     public static String resolveForArtifact(String input, JReleaserContext context) {
         return resolve(input, context.props());
     }
@@ -103,6 +124,13 @@ public class Artifacts {
     public static Map<String, Object> artifactProps(Artifact artifact, Map<String, Object> props) {
         if (artifact.getEffectivePath() != null) {
             return resolvedArtifactProps(artifact, props);
+        }
+        return unresolvedArtifactProps(artifact, props);
+    }
+
+    public static Map<String, Object> artifactProps(Artifact artifact, Distribution distribution, Map<String, Object> props) {
+        if (artifact.getEffectivePath() != null) {
+            return resolvedArtifactProps(artifact, distribution, props);
         }
         return unresolvedArtifactProps(artifact, props);
     }
@@ -162,6 +190,63 @@ public class Artifacts {
         return props;
     }
 
+    public static Map<String, Object> resolvedArtifactProps(Artifact artifact, Distribution distribution, Map<String, Object> props) {
+        props.putAll(artifact.getExtraProperties());
+        props.putAll(artifact.getResolvedExtraProperties());
+
+        String artifactFile = artifact.getEffectivePath().getFileName().toString();
+        String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
+        String artifactExtension = artifactFile.substring(artifactFileName.length());
+        String artifactFileFormat = artifactExtension.substring(1);
+
+        props.put(KEY_ARTIFACT_FILE, artifactFile);
+        props.put(KEY_ARTIFACT_FILE_NAME, artifactFileName);
+        props.put(KEY_ARTIFACT_FILE_EXTENSION, artifactExtension);
+        props.put(KEY_ARTIFACT_FILE_FORMAT, artifactFileFormat);
+
+        String artifactName = "";
+        String projectVersion = (String) props.get(KEY_PROJECT_EFFECTIVE_VERSION);
+        if (isNotBlank(projectVersion) && artifactFileName.contains(projectVersion)) {
+            artifactName = artifactFileName.substring(0, artifactFileName.indexOf(projectVersion));
+            if (artifactName.endsWith("-")) {
+                artifactName = artifactName.substring(0, artifactName.length() - 1);
+            }
+            props.put(KEY_ARTIFACT_VERSION, projectVersion);
+        }
+        projectVersion = (String) props.get(KEY_PROJECT_VERSION);
+        if (isBlank(artifactName) && isNotBlank(projectVersion) && artifactFileName.contains(projectVersion)) {
+            artifactName = artifactFileName.substring(0, artifactFileName.indexOf(projectVersion));
+            if (artifactName.endsWith("-")) {
+                artifactName = artifactName.substring(0, artifactName.length() - 1);
+            }
+            props.put(KEY_ARTIFACT_VERSION, projectVersion);
+        }
+        props.put(KEY_ARTIFACT_NAME, artifactName);
+
+        String platform = artifact.getPlatform();
+        if (isNotBlank(platform)) {
+            props.put("platform", platform);
+            props.put(KEY_ARTIFACT_PLATFORM, platform);
+            if (platform.contains("-")) {
+                String[] parts = platform.split("-");
+                props.put(KEY_ARTIFACT_OS, parts[0]);
+                props.put(KEY_ARTIFACT_ARCH, parts[1]);
+            }
+        }
+
+        String platformReplaced = distribution.getPlatform().applyReplacements(platform);
+        if (isNotBlank(platform)) props.put(KEY_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
+        if (isNotBlank(platform)) props.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);
+        if (isNotBlank(platform)) props.put(KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
+        props.put(KEY_DISTRIBUTION_ARTIFACT_FILE, artifactFile);
+        props.put(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
+        props.put(KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION, artifactExtension);
+        props.put(KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT, artifactFileFormat);
+        props.put(KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT, artifactFileFormat);
+
+        return props;
+    }
+
     public static Map<String, Object> globProps(Glob glob, Map<String, Object> props) {
         props.putAll(glob.getExtraProperties());
         props.putAll(glob.getResolvedExtraProperties());
@@ -172,6 +257,138 @@ public class Artifacts {
         props.putAll(fileSet.getExtraProperties());
         props.putAll(fileSet.getResolvedExtraProperties());
         return props;
+    }
+
+    public static String resolveDownloadUrl(JReleaserContext context, String packager, Distribution distribution, Artifact artifact) {
+        List<String> keys = Collections.singletonList("skip" + StringUtils.capitalize(packager));
+        if (isSkip(artifact, keys)) return "";
+
+        String downloadUrl = artifact.getProperty(packager + DOWNLOAD_URL_SUFFIX);
+        if (isBlank(downloadUrl)) {
+            downloadUrl = artifact.getProperty(DOWNLOAD_URL_KEY);
+        }
+
+        Tool tool = distribution.findTool(packager);
+        if (isBlank(downloadUrl)) {
+            downloadUrl = tool.getDownloadUrl();
+        }
+
+        if (isBlank(downloadUrl)) {
+            downloadUrl = distribution.getProperty(packager + DOWNLOAD_URL_SUFFIX);
+        }
+        if (isBlank(downloadUrl)) {
+            downloadUrl = distribution.getProperty(DOWNLOAD_URL_KEY);
+        }
+
+        GitService service = context.getModel().getRelease().getGitService();
+        if (isBlank(downloadUrl)) {
+            if (!service.isSkipRelease() && service.isArtifacts() && service.resolveUploadAssetsEnabled(context.getModel().getProject())) {
+                downloadUrl = service.getDownloadUrl();
+            }
+        }
+
+        if (isBlank(downloadUrl)) {
+            downloadUrl = resolveDownloadUrlFromUploader(context, artifact, artifact);
+        }
+        if (isBlank(downloadUrl)) {
+            downloadUrl = resolveDownloadUrlFromUploader(context, tool, artifact);
+        }
+        if (isBlank(downloadUrl)) {
+            downloadUrl = resolveDownloadUrlFromUploader(context, distribution, artifact);
+        }
+
+        if (isBlank(downloadUrl)) {
+            context.getLogger().warn(RB.$("ERROR_artifacts_download_url_missing",
+                artifact.getEffectivePath(context, distribution).getFileName().toString()));
+            return "";
+        }
+
+        Map<String, Object> props = context.props();
+        props.putAll(tool.getResolvedExtraProperties());
+        props.putAll(distribution.props());
+        artifactProps(artifact, distribution, props);
+
+        return resolve(downloadUrl, props);
+    }
+
+    public static String resolveDownloadUrl(JReleaserContext context, SdkmanAnnouncer announcer, Distribution distribution, Artifact artifact) {
+        String packager = SdkmanAnnouncer.NAME;
+        List<String> keys = Collections.singletonList("skip" + StringUtils.capitalize(packager));
+        if (isSkip(artifact, keys)) return "";
+
+        String downloadUrl = artifact.getProperty(packager + DOWNLOAD_URL_SUFFIX);
+        if (isBlank(downloadUrl)) {
+            downloadUrl = artifact.getProperty(DOWNLOAD_URL_KEY);
+        }
+
+        if (isBlank(downloadUrl)) {
+            downloadUrl = announcer.getDownloadUrl();
+        }
+
+        if (isBlank(downloadUrl)) {
+            downloadUrl = distribution.getProperty(packager + DOWNLOAD_URL_SUFFIX);
+        }
+        if (isBlank(downloadUrl)) {
+            downloadUrl = distribution.getProperty(DOWNLOAD_URL_KEY);
+        }
+
+        GitService service = context.getModel().getRelease().getGitService();
+        if (isBlank(downloadUrl)) {
+            if (!service.isSkipRelease() && service.isArtifacts() && service.resolveUploadAssetsEnabled(context.getModel().getProject())) {
+                downloadUrl = service.getDownloadUrl();
+            }
+        }
+
+        if (isBlank(downloadUrl)) {
+            downloadUrl = resolveDownloadUrlFromUploader(context, artifact, artifact);
+        }
+        if (isBlank(downloadUrl)) {
+            downloadUrl = resolveDownloadUrlFromUploader(context, announcer, artifact);
+        }
+        if (isBlank(downloadUrl)) {
+            downloadUrl = resolveDownloadUrlFromUploader(context, distribution, artifact);
+        }
+
+        if (isBlank(downloadUrl)) {
+            context.getLogger().warn(RB.$("ERROR_artifacts_download_url_missing",
+                artifact.getEffectivePath(context, distribution).getFileName().toString()));
+            return "";
+        }
+
+        Map<String, Object> props = context.props();
+        props.putAll(announcer.getResolvedExtraProperties());
+        props.putAll(distribution.props());
+        artifactProps(artifact, distribution, props);
+
+        return resolve(downloadUrl, props);
+    }
+
+    private static String resolveDownloadUrlFromUploader(JReleaserContext context, ExtraProperties props, Artifact artifact) {
+        String coords = props.getProperty(DOWNLOAD_FROM_UPLOADER_KEY);
+        if (isBlank(coords)) return null;
+
+        String[] parts = coords.split(":");
+        if (parts.length != 2) return null;
+
+        Optional<? extends Uploader> uploader = context.getModel().getUpload()
+            .getActiveUploader(parts[0], parts[1]);
+        if (uploader.isPresent()) {
+            List<String> keys = uploader.get().resolveSkipKeys();
+            if (!isSkip(props, keys)) {
+                return uploader.get().getResolvedDownloadUrl(context, artifact);
+            }
+        }
+
+        return null;
+    }
+
+    private static boolean isSkip(ExtraProperties props, List<String> keys) {
+        for (String key : keys) {
+            if (props.extraPropertyIsTrue(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Path checkAndCopyFile(JReleaserContext context, Path src, Path dest) throws JReleaserException {

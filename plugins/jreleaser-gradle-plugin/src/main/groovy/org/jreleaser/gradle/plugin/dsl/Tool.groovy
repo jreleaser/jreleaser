@@ -28,4 +28,6 @@ import org.gradle.api.provider.Property
 @CompileStatic
 interface Tool extends Activatable, ExtraProperties {
     Property<Boolean> getContinueOnError()
+
+    Property<String> getDownloadUrl()
 }

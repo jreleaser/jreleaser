@@ -23,6 +23,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Sdkman;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
+import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.sdk.sdkman.MajorReleaseSdkmanCommand;
 import org.jreleaser.sdk.sdkman.MinorReleaseSdkmanCommand;
 import org.jreleaser.sdk.sdkman.SdkmanException;
@@ -30,7 +31,6 @@ import org.jreleaser.sdk.sdkman.SdkmanException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_SDKMAN_CANDIDATE;
 import static org.jreleaser.util.Constants.KEY_SDKMAN_RELEASE_NOTES_URL;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
@@ -169,8 +169,6 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
     }
 
     private String artifactUrl(Distribution distribution, Artifact artifact) {
-        Map<String, Object> newProps = context.props();
-        newProps.put(KEY_ARTIFACT_FILE, artifact.getEffectivePath(context, distribution).getFileName().toString());
-        return applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps, "downloadUrl");
+        return Artifacts.resolveDownloadUrl(context, Sdkman.NAME, distribution, artifact);
     }
 }

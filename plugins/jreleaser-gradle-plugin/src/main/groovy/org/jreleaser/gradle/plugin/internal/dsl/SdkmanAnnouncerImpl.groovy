@@ -39,6 +39,7 @@ class SdkmanAnnouncerImpl extends AbstractAnnouncer implements org.jreleaser.gra
     final Property<String> consumerToken
     final Property<String> candidate
     final Property<String> releaseNotesUrl
+    final Property<String> downloadUrl
     final Property<Boolean> major
     final Property<org.jreleaser.model.Sdkman.Command> command
 
@@ -49,6 +50,7 @@ class SdkmanAnnouncerImpl extends AbstractAnnouncer implements org.jreleaser.gra
         consumerToken = objects.property(String).convention(Providers.notDefined())
         candidate = objects.property(String).convention(Providers.notDefined())
         releaseNotesUrl = objects.property(String).convention(Providers.notDefined())
+        downloadUrl = objects.property(String).convention(Providers.notDefined())
         major = objects.property(Boolean).convention(Providers.notDefined())
         command = objects.property(org.jreleaser.model.Sdkman.Command).convention(Providers.notDefined())
     }
@@ -68,6 +70,7 @@ class SdkmanAnnouncerImpl extends AbstractAnnouncer implements org.jreleaser.gra
             consumerToken.present ||
             candidate.present ||
             releaseNotesUrl.present ||
+            downloadUrl.present ||
             major.present ||
             command.present
     }
@@ -79,6 +82,7 @@ class SdkmanAnnouncerImpl extends AbstractAnnouncer implements org.jreleaser.gra
         if (consumerToken.present) sdkman.consumerToken = consumerToken.get()
         if (candidate.present) sdkman.candidate = candidate.get()
         if (releaseNotesUrl.present) sdkman.releaseNotesUrl = releaseNotesUrl.get()
+        if (downloadUrl.present) sdkman.downloadUrl = downloadUrl.get()
         if (command.present) sdkman.command = command.get()
         sdkman.major = major.getOrElse(true)
         sdkman

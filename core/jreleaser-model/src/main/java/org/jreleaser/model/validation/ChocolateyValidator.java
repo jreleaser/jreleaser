@@ -67,6 +67,9 @@ public abstract class ChocolateyValidator extends Validator {
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
+        if (isBlank(tool.getDownloadUrl())) {
+            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        }
 
         if (isBlank(tool.getPackageName())) {
             tool.setPackageName(parentTool.getPackageName());

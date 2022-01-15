@@ -20,6 +20,8 @@ package org.jreleaser.maven.plugin;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -30,10 +32,12 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
     private final DockerRepository repository = new DockerRepository();
 
     private Boolean continueOnError;
+    private String downloadUrl;
 
     void setAll(Docker docker) {
         super.setAll(docker);
         this.continueOnError = docker.continueOnError;
+        this.downloadUrl = docker.downloadUrl;
         setSpecs(docker.specs);
         setCommitAuthor(docker.commitAuthor);
         setRepository(docker.repository);
@@ -47,6 +51,16 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
     @Override
     public void setContinueOnError(Boolean continueOnError) {
         this.continueOnError = continueOnError;
+    }
+
+    @Override
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    @Override
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
     @Override
@@ -84,6 +98,7 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
     public boolean isSet() {
         return super.isSet() ||
             continueOnError != null ||
+            isNotBlank(downloadUrl) ||
             commitAuthor.isSet() ||
             repository.isSet() ||
             !specs.isEmpty();

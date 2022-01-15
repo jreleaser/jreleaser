@@ -60,11 +60,11 @@ public class Cosign {
                 } catch (Exception e) {
                     throw new SigningException(RB.$("ERROR_unexpected_error"), e);
                 }
+                if (cosign.verify()) return true;
             }
-            if (!cosign.verify()) {
-                context.getLogger().warn(RB.$("cosign_verify_error", cosign.getVersion()));
-                return false;
-            }
+
+            context.getLogger().warn(RB.$("cosign_verify_error", cosign.getVersion()));
+            return false;
         }
 
         return true;

@@ -17,12 +17,14 @@
  */
 package org.jreleaser.tools;
 
+import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Scoop;
 import org.jreleaser.model.tool.spi.ToolProcessingException;
+import org.jreleaser.model.util.Artifacts;
 
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
@@ -30,6 +32,8 @@ import java.util.Map;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
 import static org.jreleaser.util.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
 import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
@@ -41,6 +45,7 @@ import static org.jreleaser.util.Constants.KEY_SCOOP_CHECKVER_URL;
 import static org.jreleaser.util.Constants.KEY_SCOOP_PACKAGE_NAME;
 import static org.jreleaser.util.Constants.KEY_TAG_NAME;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -68,10 +73,10 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
 
         props.put(KEY_SCOOP_PACKAGE_NAME, tool.getPackageName());
         props.put(KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));
-        props.put(KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(props));
-        String autoupdateExtracDir = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME);
-        autoupdateExtracDir = autoupdateExtracDir.replace(context.getModel().getProject().getEffectiveVersion(), "$version");
-        props.put(KEY_SCOOP_AUTOUPDATE_EXTRACT_DIR, autoupdateExtracDir);
+        props.put(KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(props, distribution));
+        String autoupdateExtractDir = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME);
+        autoupdateExtractDir = autoupdateExtractDir.replace(context.getModel().getProject().getEffectiveVersion(), "$version");
+        props.put(KEY_SCOOP_AUTOUPDATE_EXTRACT_DIR, autoupdateExtractDir);
     }
 
     private Object resolveCheckverUrl(Map<String, Object> props) {
@@ -81,14 +86,17 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
         return applyTemplate(getTool().getCheckverUrl(), props);
     }
 
-    private Object resolveAutoupdateUrl(Map<String, Object> props) {
-        if (!getTool().getAutoupdateUrl().contains("{{")) {
-            return getTool().getAutoupdateUrl();
+    private Object resolveAutoupdateUrl(Map<String, Object> props, Distribution distribution) {
+        String url = getTool().getAutoupdateUrl();
+        if (isBlank(url)) {
+            Artifact artifact = (Artifact) props.get(KEY_DISTRIBUTION_ARTIFACT);
+            url = Artifacts.resolveDownloadUrl(context, Scoop.NAME, distribution, artifact);
         }
 
-        String artifactFile = (String) props.get(KEY_ARTIFACT_FILE);
+        String artifactFile = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE);
         String projectVersion = (String) props.get(KEY_PROJECT_VERSION);
         String tagName = (String) props.get(KEY_TAG_NAME);
+        url = url.replace(projectVersion, "$version");
         artifactFile = artifactFile.replace(projectVersion, "$version");
         tagName = tagName.replace(projectVersion, "$version");
 
@@ -97,7 +105,7 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
         copy.put(KEY_PROJECT_EFFECTIVE_VERSION, "$version");
         copy.put(KEY_TAG_NAME, tagName);
         copy.put(KEY_ARTIFACT_FILE, artifactFile);
-        return applyTemplate(getTool().getAutoupdateUrl(), copy);
+        return applyTemplate(url, copy);
     }
 
     @Override

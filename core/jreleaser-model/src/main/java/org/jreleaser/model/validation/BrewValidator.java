@@ -74,6 +74,9 @@ public abstract class BrewValidator extends Validator {
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
+        if (isBlank(tool.getDownloadUrl())) {
+            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        }
 
         List<Brew.Dependency> dependencies = new ArrayList<>(parentTool.getDependenciesAsList());
         dependencies.addAll(tool.getDependenciesAsList());

@@ -73,6 +73,9 @@ public abstract class SnapValidator extends Validator {
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
+        if (isBlank(tool.getDownloadUrl())) {
+            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        }
         mergeSnapPlugs(tool, parentTool);
         mergeSnapSlots(tool, parentTool);
 

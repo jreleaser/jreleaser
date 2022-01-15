@@ -25,7 +25,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Sdkman;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
-import org.jreleaser.util.Constants;
+import org.jreleaser.model.util.Artifacts;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -230,8 +230,6 @@ public class SdkmanAnnouncer implements Announcer {
     }
 
     private String artifactUrl(Distribution distribution, Artifact artifact) {
-        Map<String, Object> newProps = context.props();
-        newProps.put(Constants.KEY_ARTIFACT_FILE, artifact.getEffectivePath(context, distribution).getFileName().toString());
-        return applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps, "downloadUrl");
+        return Artifacts.resolveDownloadUrl(context, context.getModel().getAnnounce().getSdkman(), distribution, artifact);
     }
 }

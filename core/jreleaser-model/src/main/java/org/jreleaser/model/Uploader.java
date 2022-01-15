@@ -55,5 +55,9 @@ public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProper
 
     Map<String, Object> artifactProps(JReleaserContext context, Artifact artifact);
 
+    Map<String, Object> artifactProps(Map<String, Object> props, Artifact artifact);
+
     String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact);
+
+    String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact);
 }

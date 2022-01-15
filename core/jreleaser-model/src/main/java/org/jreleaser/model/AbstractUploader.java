@@ -245,7 +245,11 @@ abstract class AbstractUploader implements Uploader {
 
     @Override
     public Map<String, Object> artifactProps(JReleaserContext context, Artifact artifact) {
-        Map<String, Object> props = context.props();
+        return artifactProps(context.props(), artifact);
+    }
+
+    @Override
+    public Map<String, Object> artifactProps(Map<String, Object> props, Artifact artifact) {
         Artifacts.artifactProps(artifact, props);
 
         Set<String> keys = new LinkedHashSet<>(props.keySet());

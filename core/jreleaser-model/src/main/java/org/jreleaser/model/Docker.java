@@ -41,12 +41,14 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
     private final DockerRepository repository = new DockerRepository();
 
     private Boolean continueOnError;
+    private String downloadUrl;
     @JsonIgnore
     private boolean failed;
 
     void setAll(Docker docker) {
         super.setAll(docker);
         this.continueOnError = docker.continueOnError;
+        this.downloadUrl = docker.downloadUrl;
         this.failed = docker.failed;
         setSpecs(docker.specs);
         setCommitAuthor(docker.commitAuthor);
@@ -76,6 +78,16 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
     @Override
     public boolean isContinueOnErrorSet() {
         return continueOnError != null;
+    }
+
+    @Override
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    @Override
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
     @Override
@@ -152,6 +164,7 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("commitAuthor", commitAuthor.asMap(full));
         props.put("repository", repository.asMap(full));
+        props.put("downloadUrl", downloadUrl);
         props.put("continueOnError", isContinueOnError());
         List<Map<String, Object>> specs = this.specs.values()
             .stream()

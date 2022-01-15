@@ -38,6 +38,7 @@ public abstract class AbstractTool implements Tool {
     protected boolean enabled;
     protected Active active;
     protected Boolean continueOnError;
+    protected String downloadUrl;
     @JsonIgnore
     protected boolean failed;
 
@@ -50,6 +51,7 @@ public abstract class AbstractTool implements Tool {
         this.enabled = tool.enabled;
         this.failed = tool.failed;
         this.continueOnError = tool.continueOnError;
+        this.downloadUrl = tool.downloadUrl;
         setExtraProperties(tool.extraProperties);
     }
 
@@ -168,6 +170,16 @@ public abstract class AbstractTool implements Tool {
     }
 
     @Override
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    @Override
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
 
@@ -175,6 +187,7 @@ public abstract class AbstractTool implements Tool {
         props.put("enabled", isEnabled());
         props.put("active", active);
         props.put("continueOnError", isContinueOnError());
+        props.put("downloadUrl", downloadUrl);
         asMap(full, props);
         props.put("extraProperties", getResolvedExtraProperties());
 

@@ -27,4 +27,8 @@ public interface Tool extends ExtraProperties, Activatable {
     void setContinueOnError(Boolean continueOnError);
 
     boolean isContinueOnErrorSet();
+
+    String getDownloadUrl();
+
+    void setDownloadUrl(String downloadUrl);
 }

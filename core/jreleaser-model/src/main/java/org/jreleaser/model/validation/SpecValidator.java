@@ -90,6 +90,9 @@ public abstract class SpecValidator extends Validator {
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
+        if (isBlank(tool.getDownloadUrl())) {
+            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        }
         validateArtifactPlatforms(context, distribution, tool, errors);
 
         if (isBlank(tool.getPackageName())) {

@@ -39,19 +39,22 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 abstract class AbstractTool implements Tool {
     final Property<Active> active
     final Property<Boolean> continueOnError
+    final Property<String> downloadUrl
     final MapProperty<String, Object> extraProperties
 
     @Inject
     AbstractTool(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
         continueOnError = objects.property(Boolean).convention(Providers.notDefined())
+        downloadUrl = objects.property(String).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
     @Internal
     boolean isSet() {
         active.present ||
-            continueOnError.present||
+            continueOnError.present ||
+            downloadUrl.present ||
             extraProperties.present
     }
 
@@ -65,6 +68,7 @@ abstract class AbstractTool implements Tool {
     protected <T extends org.jreleaser.model.Tool> void fillToolProperties(T tool) {
         if (active.present) tool.active = active.get()
         if (continueOnError.present) tool.continueOnError = continueOnError.get()
+        if (downloadUrl.present) tool.downloadUrl = downloadUrl.get()
         if (extraProperties.present) tool.extraProperties.putAll(extraProperties.get())
     }
 }

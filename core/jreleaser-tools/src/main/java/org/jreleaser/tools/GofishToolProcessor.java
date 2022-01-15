@@ -29,7 +29,6 @@ import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +36,6 @@ import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Gofish.SKIP_GOFISH;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_GOFISH_PACKAGES;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getFilename;
@@ -160,9 +158,7 @@ public class GofishToolProcessor extends AbstractRepositoryToolProcessor<Gofish>
 
             packageChecksum = artifact.getHash(Algorithm.SHA_256);
 
-            Map<String, Object> newProps = new LinkedHashMap<>(props);
-            Artifacts.artifactProps(artifact, newProps);
-            String url = applyTemplate(context.getModel().getRelease().getGitService().getDownloadUrl(), newProps);
+            String url = Artifacts.resolveDownloadUrl(context, Gofish.NAME, distribution, artifact);
             packageUrl = url.replace(executable, "\" .. name .. \"")
                 .replace(projectVersion, "\" .. version .. \"");
         }

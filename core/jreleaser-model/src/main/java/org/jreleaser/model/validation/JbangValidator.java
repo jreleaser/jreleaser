@@ -63,6 +63,9 @@ public abstract class JbangValidator extends Validator {
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
+        if (isBlank(tool.getDownloadUrl())) {
+            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        }
 
         if (isBlank(tool.getAlias())) {
             tool.setAlias(distribution.getExecutable());

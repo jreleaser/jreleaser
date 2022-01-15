@@ -38,6 +38,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
     private String consumerToken;
     private String candidate;
     private String releaseNotesUrl;
+    private String downloadUrl;
     private Sdkman.Command command;
 
     public SdkmanAnnouncer() {
@@ -50,6 +51,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         this.consumerToken = sdkman.consumerToken;
         this.candidate = sdkman.candidate;
         this.releaseNotesUrl = sdkman.releaseNotesUrl;
+        this.downloadUrl = sdkman.downloadUrl;
         this.command = sdkman.command;
     }
 
@@ -98,6 +100,14 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         this.releaseNotesUrl = releaseNotesUrl;
     }
 
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
     public Sdkman.Command getCommand() {
         return command;
     }
@@ -130,6 +140,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         props.put("consumerToken", isNotBlank(getResolvedConsumerToken()) ? HIDE : UNSET);
         props.put("candidate", candidate);
         props.put("releaseNotesUrl", releaseNotesUrl);
+        props.put("downloadUrl", downloadUrl);
         props.put("command", command);
     }
 }

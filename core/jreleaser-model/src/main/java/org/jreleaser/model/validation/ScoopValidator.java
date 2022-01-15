@@ -61,6 +61,9 @@ public abstract class ScoopValidator extends Validator {
         validateTemplate(context, distribution, tool, parentTool, errors);
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
+        if (isBlank(tool.getDownloadUrl())) {
+            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        }
 
         if (isBlank(tool.getPackageName())) {
             tool.setPackageName(parentTool.getPackageName());
@@ -76,9 +79,6 @@ public abstract class ScoopValidator extends Validator {
         }
         if (isBlank(tool.getAutoupdateUrl())) {
             tool.setAutoupdateUrl(parentTool.getAutoupdateUrl());
-            if (isBlank(tool.getAutoupdateUrl())) {
-                tool.setAutoupdateUrl(service.getDownloadUrl());
-            }
         }
 
         validateArtifactPlatforms(context, distribution, tool, errors);

@@ -28,6 +28,10 @@ public interface Tool extends Domain, ExtraProperties, Activatable {
 
     Set<String> getSupportedExtensions();
 
+    String getDownloadUrl();
+
+    void setDownloadUrl(String downloadUrl);
+
     boolean supportsPlatform(String platform);
 
     boolean supportsDistribution(Distribution distribution);

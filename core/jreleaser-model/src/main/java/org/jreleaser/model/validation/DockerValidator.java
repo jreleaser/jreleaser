@@ -93,6 +93,9 @@ public abstract class DockerValidator extends Validator {
 
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
+        if (isBlank(tool.getDownloadUrl())) {
+            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        }
 
         if (isBlank(tool.getBaseImage())) {
             tool.setBaseImage(parentTool.getBaseImage());
