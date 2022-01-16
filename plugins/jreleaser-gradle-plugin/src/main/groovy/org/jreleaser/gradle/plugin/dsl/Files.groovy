@@ -26,7 +26,7 @@ import org.gradle.api.Action
  * @since 0.1.0
  */
 @CompileStatic
-interface Files {
+interface Files extends Activatable {
     void artifact(Action<? super Artifact> action)
 
     void glob(Action<? super Glob> action)

@@ -1052,6 +1052,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Files convertFiles(Files files) {
         org.jreleaser.model.Files fs = new org.jreleaser.model.Files();
+        fs.setActive(tr(files.resolveActive()));
         fs.setArtifacts(convertArtifacts(files.getArtifacts()));
         fs.setGlobs(convertGlobs(files.getGlobs()));
         return fs;

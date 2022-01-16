@@ -30,12 +30,61 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Files implements Domain {
+public class Files implements Domain, Activatable {
     private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final List<Glob> globs = new ArrayList<>();
+    @JsonIgnore
     private final Set<Artifact> paths = new LinkedHashSet<>();
     @JsonIgnore
     private boolean resolved;
+    private Active active;
+    @JsonIgnore
+    private boolean enabled;
+
+    void setAll(Files files) {
+        this.active = files.active;
+        this.enabled = files.enabled;
+        setArtifacts(files.artifacts);
+        setGlobs(files.globs);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void disable() {
+        active = Active.NEVER;
+        enabled = false;
+    }
+
+    public boolean resolveEnabled(Project project) {
+        if (null == active) {
+            active = Active.NEVER;
+        }
+        enabled = active.check(project);
+        return enabled;
+    }
+
+    @Override
+    public Active getActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public void setActive(String str) {
+        this.active = Active.of(str);
+    }
+
+    @Override
+    public boolean isActiveSet() {
+        return active != null;
+    }
 
     public boolean isEmpty() {
         return artifacts.isEmpty() && globs.isEmpty();
@@ -53,11 +102,6 @@ public class Files implements Domain {
         this.paths.clear();
         this.paths.addAll(paths);
         this.resolved = true;
-    }
-
-    void setAll(Files files) {
-        setArtifacts(files.artifacts);
-        setGlobs(files.globs);
     }
 
     public Set<Artifact> getArtifacts() {
@@ -101,6 +145,8 @@ public class Files implements Domain {
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
+        map.put("enabled", isEnabled());
+        map.put("active", active);
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         int i = 0;

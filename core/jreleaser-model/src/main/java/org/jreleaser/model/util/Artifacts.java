@@ -444,12 +444,12 @@ public class Artifacts {
 
     public static Set<Artifact> resolveFiles(JReleaserContext context) throws JReleaserException {
         Files files = context.getModel().getFiles();
+        Set<Artifact> paths = new LinkedHashSet<>();
+        if (!files.isEnabled()) return paths;
 
         if (files.arePathsResolved()) {
             return files.getPaths();
         }
-
-        Set<Artifact> paths = new LinkedHashSet<>();
 
         // resolve artifacts
         for (Artifact artifact : files.getArtifacts()) {

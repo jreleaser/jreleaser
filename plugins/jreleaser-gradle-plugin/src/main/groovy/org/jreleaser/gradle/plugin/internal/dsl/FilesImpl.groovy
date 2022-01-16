@@ -21,13 +21,18 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Glob
+import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -36,11 +41,13 @@ import javax.inject.Inject
  */
 @CompileStatic
 class FilesImpl implements Files {
+    final Property<Active> active
     private final NamedDomainObjectContainer<ArtifactImpl> artifacts
     private final NamedDomainObjectContainer<GlobImpl> globs
 
     @Inject
     FilesImpl(ObjectFactory objects) {
+        active = objects.property(Active).convention(Providers.notDefined())
         artifacts = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
             ArtifactImpl create(String name) {
@@ -58,6 +65,13 @@ class FilesImpl implements Files {
                 glob
             }
         })
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
     }
 
     @Override
@@ -82,6 +96,7 @@ class FilesImpl implements Files {
 
     org.jreleaser.model.Files toModel() {
         org.jreleaser.model.Files files = new org.jreleaser.model.Files()
+        if (active.present) files.active = active.get()
         for (ArtifactImpl artifact : artifacts) {
             files.addArtifact(artifact.toModel())
         }

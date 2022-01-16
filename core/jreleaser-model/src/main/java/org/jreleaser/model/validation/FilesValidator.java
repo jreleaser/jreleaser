@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.model.Active;
+import org.jreleaser.model.Files;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
@@ -31,12 +33,18 @@ public abstract class FilesValidator extends Validator {
         }
 
         context.getLogger().debug("files");
+        Files files = context.getModel().getFiles();
 
-        context.getModel().getFiles().getArtifacts()
+        if (!files.isActiveSet()) {
+            files.setActive(Active.ALWAYS);
+        }
+        if (!files.resolveEnabled(context.getModel().getProject())) return;
+
+        files.getArtifacts()
             .forEach(artifact -> {
                 if (context.isPlatformSelected(artifact)) artifact.activate();
             });
 
-        validateGlobs(context, context.getModel().getFiles().getGlobs(), "files.glob", errors);
+        validateGlobs(context, files.getGlobs(), "files.glob", errors);
     }
 }

@@ -26,13 +26,30 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Files {
+public class Files implements Activatable{
     private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final List<Glob> globs = new ArrayList<>();
+    private Active active;
 
     void setAll(Files files) {
+        this.active = files.active;
         setArtifacts(files.artifacts);
         setGlobs(files.globs);
+    }
+
+    @Override
+    public Active getActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public String resolveActive() {
+        return active != null ? active.name() : null;
     }
 
     public Set<Artifact> getArtifacts() {
