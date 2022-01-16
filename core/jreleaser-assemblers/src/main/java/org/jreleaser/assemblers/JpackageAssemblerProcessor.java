@@ -24,7 +24,6 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jpackage;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
-import org.jreleaser.model.util.Templates;
 import org.jreleaser.templates.TemplateUtils;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
@@ -46,6 +45,7 @@ import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -112,7 +112,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             ext = ".icns";
         }
 
-        String icon = Templates.resolve(packager.getIcon(), props);
+        String icon = resolveTemplate(packager.getIcon(), props);
         try {
             if (isNotBlank(icon) && Files.exists(context.getBasedir().resolve(icon)) && icon.endsWith(ext)) {
                 Path iconPath = context.getBasedir().resolve(icon);
@@ -219,7 +219,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
         }
 
         // ApplicationPackage
-        String licenseFile = Templates.resolve(assembler.getApplicationPackage().getLicenseFile(), props);
+        String licenseFile = resolveTemplate(assembler.getApplicationPackage().getLicenseFile(), props);
         if (isNotBlank(licenseFile)) {
             Path licenseFilePath = context.getBasedir().resolve(licenseFile);
             if (Files.exists(licenseFilePath)) {
@@ -228,7 +228,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             }
         }
 
-        String resourceDir = Templates.resolve(assembler.getApplicationPackage().getResourceDir(), props);
+        String resourceDir = resolveTemplate(assembler.getApplicationPackage().getResourceDir(), props);
         if (isNotBlank(resourceDir)) {
             Path resourceDirPath = context.getBasedir().resolve(resourceDir);
             if (Files.exists(resourceDirPath)) {
@@ -239,7 +239,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
 
         if (!assembler.getApplicationPackage().getFileAssociations().isEmpty()) {
             for (String filename : assembler.getApplicationPackage().getFileAssociations()) {
-                Path path = context.getBasedir().resolve(Templates.resolve(filename, props));
+                Path path = context.getBasedir().resolve(resolveTemplate(filename, props));
                 if (Files.exists(path)) {
                     cmd.arg("--file-associations")
                         .arg(path.toAbsolutePath().toString());
@@ -274,7 +274,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
     }
 
     private void customize(String type, Jpackage.PlatformPackager packager, Path inputsDirectory, Command cmd, Map<String, Object> props) {
-        String installDir = Templates.resolve(packager.getInstallDir(), props);
+        String installDir = resolveTemplate(packager.getInstallDir(), props);
         if (isNotBlank(installDir)) {
             cmd.arg("--install-dir")
                 .arg(installDir);
@@ -302,9 +302,9 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             cmd.arg("--mac-sign");
         }
 
-        String signingKeychain = Templates.resolve(packager.getSigningKeychain(), props);
+        String signingKeychain = resolveTemplate(packager.getSigningKeychain(), props);
         if (isNotBlank(signingKeychain)) {
-            Path path = context.getBasedir().resolve(Templates.resolve(signingKeychain, props));
+            Path path = context.getBasedir().resolve(resolveTemplate(signingKeychain, props));
             if (Files.exists(path)) {
                 cmd.arg("--mac-signing-keychain")
                     .arg(path.toAbsolutePath().toString());

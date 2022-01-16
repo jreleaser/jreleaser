@@ -20,7 +20,7 @@ package org.jreleaser.workflow;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.context.ModelValidator;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
+import org.jreleaser.util.JReleaserException;
 
 import java.time.Duration;
 import java.time.Instant;

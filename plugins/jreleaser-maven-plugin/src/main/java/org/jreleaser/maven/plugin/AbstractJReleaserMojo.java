@@ -27,9 +27,9 @@ import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.StringUtils;
 

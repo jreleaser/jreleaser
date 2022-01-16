@@ -17,9 +17,9 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.model.util.Templates;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.FileType;
+import org.jreleaser.util.Templates;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -171,7 +171,7 @@ public class Artifactory extends AbstractUploader {
         if (repository.isPresent()) {
             p.put("repositoryPath", repository.get().getPath());
             String url = "{{artifactoryHost}}/{{repositoryPath}}";
-            return Templates.resolve(url, p);
+            return Templates.resolveTemplate(url, p);
         }
 
         return "";

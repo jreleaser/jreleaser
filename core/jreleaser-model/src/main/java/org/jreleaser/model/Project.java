@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.util.CalVer;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
+import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.JavaModuleVersion;
 import org.jreleaser.util.JavaRuntimeVersion;
 import org.jreleaser.util.MustacheUtils;
@@ -32,11 +33,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -482,9 +483,9 @@ public class Project implements Domain, ExtraProperties {
             }
 
             if (isBlank(cachedLabel)) {
-                cachedLabel = applyTemplate(label, props(model));
+                cachedLabel = resolveTemplate(label, props(model));
             } else if (cachedLabel.contains("{{")) {
-                cachedLabel = applyTemplate(cachedLabel, props(model));
+                cachedLabel = resolveTemplate(cachedLabel, props(model));
             }
 
             return cachedLabel;

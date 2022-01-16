@@ -19,10 +19,10 @@ package org.jreleaser.engine.distribution;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Tool;
 import org.jreleaser.model.tool.spi.ToolProcessor;
 import org.jreleaser.model.tool.spi.ToolProcessorFactory;
+import org.jreleaser.util.JReleaserException;
 
 import java.util.Map;
 import java.util.ServiceLoader;

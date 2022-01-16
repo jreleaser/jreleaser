@@ -19,10 +19,10 @@ package org.jreleaser.engine.upload;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Upload;
 import org.jreleaser.model.Uploader;
 import org.jreleaser.model.uploader.spi.UploadException;
+import org.jreleaser.util.JReleaserException;
 
 import java.util.List;
 import java.util.Map;

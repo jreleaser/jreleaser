@@ -20,6 +20,7 @@ package org.jreleaser.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.SemVer;
 
 import java.util.ArrayList;

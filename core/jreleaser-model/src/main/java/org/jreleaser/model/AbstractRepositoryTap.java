@@ -18,7 +18,6 @@
 package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.model.util.Templates;
 import org.jreleaser.util.Env;
 
 import java.util.LinkedHashMap;
@@ -27,6 +26,7 @@ import java.util.Map;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -128,12 +128,12 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
 
     @Override
     public String getResolvedCommitMessage(Map<String, Object> props) {
-        return Templates.resolve(commitMessage, props);
+        return resolveTemplate(commitMessage, props);
     }
 
     @Override
     public String getResolvedTagName(Map<String, Object> props) {
-        return Templates.resolve(tagName, props);
+        return resolveTemplate(tagName, props);
     }
 
     @Override

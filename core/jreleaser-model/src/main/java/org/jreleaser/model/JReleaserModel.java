@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.SemVer;

@@ -23,9 +23,9 @@ import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -61,7 +61,7 @@ public class Twitter extends AbstractAnnouncer {
         Map<String, Object> props = context.props();
         applyTemplates(props, getResolvedExtraProperties());
         context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
-        return applyTemplate(status, props);
+        return resolveTemplate(status, props);
     }
 
     public String getResolvedConsumerKey() {

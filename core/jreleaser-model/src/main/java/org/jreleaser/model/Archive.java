@@ -23,8 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -67,7 +67,7 @@ public class Archive extends AbstractAssembler {
     public String getResolvedArchiveName(JReleaserContext context) {
         Map<String, Object> props = context.props();
         props.putAll(props());
-        String result = applyTemplate(archiveName, props);
+        String result = resolveTemplate(archiveName, props);
         if (isAttachPlatform()) {
             result += "-" + getPlatform().applyReplacements(PlatformUtils.getCurrentFull());
         }

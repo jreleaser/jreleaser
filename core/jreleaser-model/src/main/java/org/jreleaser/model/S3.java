@@ -24,10 +24,10 @@ import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -75,7 +75,7 @@ public class S3 extends AbstractUploader {
             p.putAll(getResolvedExtraProperties());
             p.put("bucket", bucket);
             p.put("region", region);
-            return applyTemplate(getResolvedDownloadUrl(), p);
+            return resolveTemplate(getResolvedDownloadUrl(), p);
         }
 
         if (isBlank(getResolvedEndpoint())) {
@@ -84,7 +84,7 @@ public class S3 extends AbstractUploader {
             p.putAll(getResolvedExtraProperties());
             p.put("bucket", bucket);
             p.put("region", region);
-            return applyTemplate(url, p);
+            return resolveTemplate(url, p);
         }
 
         return "";
@@ -100,7 +100,7 @@ public class S3 extends AbstractUploader {
 
         Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
         p.putAll(getResolvedExtraProperties());
-        return applyTemplate(artifactPath, p);
+        return resolveTemplate(artifactPath, p);
     }
 
     public String getResolvedRegion() {

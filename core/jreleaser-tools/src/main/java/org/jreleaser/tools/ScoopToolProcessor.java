@@ -44,8 +44,8 @@ import static org.jreleaser.util.Constants.KEY_SCOOP_BUCKET_REPO_URL;
 import static org.jreleaser.util.Constants.KEY_SCOOP_CHECKVER_URL;
 import static org.jreleaser.util.Constants.KEY_SCOOP_PACKAGE_NAME;
 import static org.jreleaser.util.Constants.KEY_TAG_NAME;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -83,7 +83,7 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
         if (!getTool().getCheckverUrl().contains("{{")) {
             return getTool().getCheckverUrl();
         }
-        return applyTemplate(getTool().getCheckverUrl(), props);
+        return resolveTemplate(getTool().getCheckverUrl(), props);
     }
 
     private Object resolveAutoupdateUrl(Map<String, Object> props, Distribution distribution) {
@@ -105,7 +105,7 @@ public class ScoopToolProcessor extends AbstractRepositoryToolProcessor<Scoop> {
         copy.put(KEY_PROJECT_EFFECTIVE_VERSION, "$version");
         copy.put(KEY_TAG_NAME, tagName);
         copy.put(KEY_ARTIFACT_FILE, artifactFile);
-        return applyTemplate(url, copy);
+        return resolveTemplate(url, copy);
     }
 
     @Override

@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.JReleaserException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

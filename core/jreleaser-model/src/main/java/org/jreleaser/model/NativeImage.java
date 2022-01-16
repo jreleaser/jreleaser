@@ -27,9 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -70,14 +70,14 @@ public class NativeImage extends AbstractJavaAssembler {
     public String getResolvedImageName(JReleaserContext context) {
         Map<String, Object> props = context.props();
         props.putAll(props());
-        return applyTemplate(imageName, props);
+        return resolveTemplate(imageName, props);
     }
 
     public String getResolvedImageNameTransform(JReleaserContext context) {
         if (isBlank(imageNameTransform)) return null;
         Map<String, Object> props = context.props();
         props.putAll(props());
-        return applyTemplate(imageNameTransform, props);
+        return resolveTemplate(imageNameTransform, props);
     }
 
     public String getImageName() {

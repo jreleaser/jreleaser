@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.util.JReleaserException;
+
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;

@@ -23,11 +23,11 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.Github;
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.Env;
+import org.jreleaser.util.JReleaserException;
 
 import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.util.StringUtils.isBlank;

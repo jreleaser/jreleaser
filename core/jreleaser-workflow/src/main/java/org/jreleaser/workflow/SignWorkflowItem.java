@@ -20,7 +20,7 @@ package org.jreleaser.workflow;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.sign.Signer;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
+import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.signing.SigningException;
 
 /**

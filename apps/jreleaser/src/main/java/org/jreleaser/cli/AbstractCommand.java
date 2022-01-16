@@ -18,7 +18,7 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.cli.internal.Colorizer;
-import org.jreleaser.model.JReleaserException;
+import org.jreleaser.util.JReleaserException;
 
 import java.util.concurrent.Callable;
 

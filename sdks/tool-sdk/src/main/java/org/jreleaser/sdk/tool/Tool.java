@@ -39,9 +39,9 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -123,7 +123,7 @@ public class Tool {
 
             String verify = properties.getProperty(COMMAND_VERIFY).trim();
             Map<String, Object> props = props();
-            verify = applyTemplate(verify, props);
+            verify = resolveTemplate(verify, props);
 
             Pattern pattern = Pattern.compile(verify);
             return pattern.matcher(out.toString()).find();
@@ -154,8 +154,8 @@ public class Tool {
         String exec = properties.getProperty(platform + EXECUTABLE);
 
         Map<String, Object> props = props();
-        filename = applyTemplate(filename, props);
-        if (isNotBlank(executablePath)) executablePath = applyTemplate(executablePath, props);
+        filename = resolveTemplate(filename, props);
+        if (isNotBlank(executablePath)) executablePath = resolveTemplate(executablePath, props);
 
         Path test = dest;
         if (unpack) {
@@ -169,7 +169,7 @@ public class Tool {
             return;
         }
 
-        downloadUrl = applyTemplate(downloadUrl, props) + filename;
+        downloadUrl = resolveTemplate(downloadUrl, props) + filename;
         try (InputStream stream = new URL(downloadUrl).openStream()) {
             Path tmp = Files.createTempDirectory("jreleaser");
             Path destination = tmp.resolve(filename);

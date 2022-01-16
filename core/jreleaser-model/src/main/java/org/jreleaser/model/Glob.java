@@ -20,6 +20,7 @@ package org.jreleaser.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.File;

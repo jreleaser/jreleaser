@@ -21,8 +21,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.jreleaser.ant.tasks.internal.JReleaserLoggerAdapter;
 import org.jreleaser.config.JReleaserConfigParser;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateUtils;
+import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.FileOutputStream;

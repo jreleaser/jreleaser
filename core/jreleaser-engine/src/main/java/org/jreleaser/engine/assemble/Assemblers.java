@@ -21,8 +21,8 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Assemble;
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
+import org.jreleaser.util.JReleaserException;
 
 import java.util.Map;
 

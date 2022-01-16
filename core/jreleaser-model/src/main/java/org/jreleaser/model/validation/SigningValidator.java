@@ -24,8 +24,8 @@ import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
 import static org.jreleaser.model.Signing.COSIGN_PASSWORD;
-import static org.jreleaser.model.Signing.COSIGN_PUBLIC_KEY;
 import static org.jreleaser.model.Signing.COSIGN_PRIVATE_KEY;
+import static org.jreleaser.model.Signing.COSIGN_PUBLIC_KEY;
 import static org.jreleaser.model.Signing.GPG_EXECUTABLE;
 import static org.jreleaser.model.Signing.GPG_HOMEDIR;
 import static org.jreleaser.model.Signing.GPG_KEYNAME;

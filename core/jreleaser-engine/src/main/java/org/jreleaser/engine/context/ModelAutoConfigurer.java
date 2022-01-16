@@ -25,13 +25,13 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.Github;
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.sdk.git.GitSdk;
+import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;

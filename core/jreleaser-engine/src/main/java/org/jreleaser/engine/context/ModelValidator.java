@@ -20,9 +20,9 @@ package org.jreleaser.engine.context;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModelPrinter;
 import org.jreleaser.util.Errors;
+import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.PlatformUtils;
 
 /**

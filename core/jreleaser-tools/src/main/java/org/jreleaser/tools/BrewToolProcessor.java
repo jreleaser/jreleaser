@@ -61,11 +61,11 @@ import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_URL;
 import static org.jreleaser.util.Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL;
 import static org.jreleaser.util.Constants.KEY_HOMEBREW_TAP_REPO_URL;
 import static org.jreleaser.util.FileType.ZIP;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.isTrue;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -123,7 +123,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
         props.put(KEY_BREW_HAS_LIVECHECK, tool.hasLivecheck());
         if (tool.hasLivecheck()) {
             props.put(KEY_BREW_LIVECHECK, tool.getLivecheck().stream()
-                .map(line -> applyTemplate(line, props))
+                .map(line -> resolveTemplate(line, props))
                 .map(MustacheUtils::passThrough)
                 .collect(Collectors.toList()));
         }
@@ -186,7 +186,7 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
                     Map<String, Object> newProps = new LinkedHashMap<>(props);
                     newProps.put(KEY_DISTRIBUTION_URL, artifactUrl);
                     newProps.put(KEY_DISTRIBUTION_CHECKSUM_SHA_256, artifact.getHash(Algorithm.SHA_256));
-                    multiPlatforms.add(applyTemplate(template, newProps));
+                    multiPlatforms.add(resolveTemplate(template, newProps));
                 }
             }
 

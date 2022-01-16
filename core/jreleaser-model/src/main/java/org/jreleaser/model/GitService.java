@@ -29,11 +29,11 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -181,9 +181,9 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
 
         if (isBlank(cachedTagName)) {
-            cachedTagName = applyTemplate(tagName, props(model));
+            cachedTagName = resolveTemplate(tagName, props(model));
         } else if (cachedTagName.contains("{{")) {
-            cachedTagName = applyTemplate(cachedTagName, props(model));
+            cachedTagName = resolveTemplate(cachedTagName, props(model));
         }
 
         return cachedTagName;
@@ -206,9 +206,9 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
 
         if (isBlank(cachedReleaseName)) {
-            cachedReleaseName = applyTemplate(releaseName, props(model));
+            cachedReleaseName = resolveTemplate(releaseName, props(model));
         } else if (cachedReleaseName.contains("{{")) {
-            cachedReleaseName = applyTemplate(cachedReleaseName, props(model));
+            cachedReleaseName = resolveTemplate(cachedReleaseName, props(model));
         }
 
         return cachedReleaseName;
@@ -220,12 +220,12 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
 
     public String getResolvedRepoUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(repoUrl, props(model));
+        return resolveTemplate(repoUrl, props(model));
     }
 
     public String getResolvedRepoCloneUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(repoCloneUrl, props(model));
+        return resolveTemplate(repoCloneUrl, props(model));
     }
 
     public String getResolvedRepoUrl(JReleaserModel model, String repoOwner, String repoName) {
@@ -233,7 +233,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         Map<String, Object> props = props(model);
         props.put(Constants.KEY_REPO_OWNER, repoOwner);
         props.put(Constants.KEY_REPO_NAME, repoName);
-        return applyTemplate(repoUrl, props);
+        return resolveTemplate(repoUrl, props);
     }
 
     public String getResolvedRepoCloneUrl(JReleaserModel model, String repoOwner, String repoName) {
@@ -241,37 +241,37 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         Map<String, Object> props = props(model);
         props.put(Constants.KEY_REPO_OWNER, repoOwner);
         props.put(Constants.KEY_REPO_NAME, repoName);
-        return applyTemplate(repoCloneUrl, props);
+        return resolveTemplate(repoCloneUrl, props);
     }
 
     public String getResolvedCommitUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(commitUrl, props(model));
+        return resolveTemplate(commitUrl, props(model));
     }
 
     public String getResolvedSrcUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(srcUrl, props(model));
+        return resolveTemplate(srcUrl, props(model));
     }
 
     public String getResolvedDownloadUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(downloadUrl, props(model));
+        return resolveTemplate(downloadUrl, props(model));
     }
 
     public String getResolvedReleaseNotesUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(releaseNotesUrl, props(model));
+        return resolveTemplate(releaseNotesUrl, props(model));
     }
 
     public String getResolvedLatestReleaseUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(latestReleaseUrl, props(model));
+        return resolveTemplate(latestReleaseUrl, props(model));
     }
 
     public String getResolvedIssueTrackerUrl(JReleaserModel model) {
         if (!releaseSupported) return "";
-        return applyTemplate(issueTrackerUrl, props(model));
+        return resolveTemplate(issueTrackerUrl, props(model));
     }
 
     public boolean resolveUploadAssetsEnabled(Project project) {
@@ -950,9 +950,9 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
             }
 
             if (isBlank(cachedName)) {
-                cachedName = applyTemplate(name, props);
+                cachedName = resolveTemplate(name, props);
             } else if (cachedName.contains("{{")) {
-                cachedName = applyTemplate(cachedName, props);
+                cachedName = resolveTemplate(cachedName, props);
             }
 
             return cachedName;

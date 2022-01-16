@@ -19,6 +19,7 @@ package org.jreleaser.model;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Env;
+import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -32,6 +33,7 @@ import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -85,14 +87,14 @@ public class Mail extends AbstractAnnouncer {
         Map<String, Object> props = context.props();
         applyTemplates(props, getResolvedExtraProperties());
         props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
-        return applyTemplate(subject, props);
+        return resolveTemplate(subject, props);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
         Map<String, Object> props = context.props();
         applyTemplates(props, getResolvedExtraProperties());
         props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
-        return applyTemplate(message, props);
+        return resolveTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {

@@ -24,7 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -49,7 +49,7 @@ public class Checksum implements Domain {
     public String getResolvedName(JReleaserContext context) {
         Map<String, Object> props = context.props();
         context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
-        return applyTemplate(name, props);
+        return resolveTemplate(name, props);
     }
 
     public String getResolvedName(JReleaserContext context, Algorithm algorithm) {

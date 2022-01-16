@@ -66,6 +66,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.normalizeRegexPattern;
 import static org.jreleaser.util.StringUtils.stripMargin;
 import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -416,8 +417,8 @@ public class ChangelogGenerator {
             final String categoryFormat = resolveCommitFormat(changelog, category);
 
             changes.append(categories.get(categoryKey).stream()
-                .map(c -> applyTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl)))
-                .collect(Collectors.joining(lineSeparator)))
+                    .map(c -> resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl)))
+                    .collect(Collectors.joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
         }
@@ -429,8 +430,8 @@ public class ChangelogGenerator {
             }
 
             changes.append(categories.get(UNCATEGORIZED).stream()
-                .map(c -> applyTemplate(changelog.getFormat(), c.asContext(changelog.isLinks(), commitsUrl)))
-                .collect(Collectors.joining(lineSeparator)))
+                    .map(c -> resolveTemplate(changelog.getFormat(), c.asContext(changelog.isLinks(), commitsUrl)))
+                    .collect(Collectors.joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
         }
@@ -482,9 +483,9 @@ public class ChangelogGenerator {
                 .filter(c -> c.getUser() != null)
                 .findFirst();
             if (contributor.isPresent()) {
-                list.add(applyTemplate(contributorFormat, contributor.get().asContext()));
+                list.add(resolveTemplate(contributorFormat, contributor.get().asContext()));
             } else {
-                list.add(applyTemplate(contributorFormat, cs.get(0).asContext()));
+                list.add(resolveTemplate(contributorFormat, cs.get(0).asContext()));
             }
         });
 
@@ -496,19 +497,12 @@ public class ChangelogGenerator {
         Map<String, Object> props = context.getModel().props();
         context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
         for (Changelog.Replacer replacer : changelog.getReplacers()) {
-            String search = maybeExpand(props, replacer.getSearch());
-            String replace = maybeExpand(props, replacer.getReplace());
+            String search = resolveTemplate(replacer.getSearch(), props);
+            String replace = resolveTemplate(replacer.getReplace(), props);
             text = text.replaceAll(search, replace);
         }
 
         return text;
-    }
-
-    private String maybeExpand(Map<String, Object> props, String str) {
-        if (str.contains("{{")) {
-            return applyTemplate(str, props);
-        }
-        return str;
     }
 
     private String categorize(Commit commit, Changelog changelog) {

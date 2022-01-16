@@ -19,6 +19,7 @@ package org.jreleaser.model;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -27,6 +28,7 @@ import java.util.Map;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -57,13 +59,13 @@ public class Discussions extends AbstractAnnouncer {
     public String getResolvedTitle(JReleaserContext context) {
         Map<String, Object> props = context.props();
         applyTemplates(props, getResolvedExtraProperties());
-        return applyTemplate(title, props);
+        return resolveTemplate(title, props);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
         Map<String, Object> props = context.props();
         applyTemplates(props, getResolvedExtraProperties());
-        return applyTemplate(message, props);
+        return resolveTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {

@@ -25,13 +25,13 @@ import org.jreleaser.model.Article;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.JReleaserGpgSigner;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
+import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.io.Reader;

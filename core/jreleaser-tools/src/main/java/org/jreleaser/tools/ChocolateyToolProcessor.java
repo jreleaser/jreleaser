@@ -34,7 +34,6 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import static org.jreleaser.model.Chocolatey.SKIP_CHOCOLATEY;
-import static org.jreleaser.model.util.Templates.resolve;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_URL;
@@ -47,6 +46,7 @@ import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.util.Constants.KEY_PROJECT_LICENSE_URL;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isTrue;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -113,7 +113,7 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
         props.put(KEY_CHOCOLATEY_PACKAGE_NAME, getTool().getPackageName());
         props.put(KEY_CHOCOLATEY_USERNAME, getTool().getUsername());
         props.put(KEY_CHOCOLATEY_TITLE, getTool().getTitle());
-        props.put(KEY_CHOCOLATEY_ICON_URL, resolve(getTool().getIconUrl(), props));
+        props.put(KEY_CHOCOLATEY_ICON_URL, resolveTemplate(getTool().getIconUrl(), props));
         props.put(KEY_CHOCOLATEY_SOURCE, tool.getSource());
     }
 

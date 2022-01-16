@@ -24,11 +24,11 @@ import org.jreleaser.model.Gitea;
 import org.jreleaser.model.Github;
 import org.jreleaser.model.Gitlab;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.model.releaser.spi.ReleaserBuilder;
 import org.jreleaser.model.releaser.spi.ReleaserBuilderFactory;
+import org.jreleaser.util.JReleaserException;
 
 import java.util.Map;
 import java.util.ServiceLoader;

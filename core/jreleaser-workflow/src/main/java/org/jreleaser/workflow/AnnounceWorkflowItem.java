@@ -20,8 +20,8 @@ package org.jreleaser.workflow;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.announce.Announcers;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.announcer.spi.AnnounceException;
+import org.jreleaser.util.JReleaserException;
 
 /**
  * @author Andres Almiray

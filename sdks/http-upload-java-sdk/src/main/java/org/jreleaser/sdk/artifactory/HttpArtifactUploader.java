@@ -34,8 +34,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -125,7 +125,7 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<Http> {
     private void resolveHeaders(Artifact artifact, Map<String, String> headers) {
         Map<String, Object> props = uploader.artifactProps(context, artifact);
         uploader.getHeaders().forEach((k, v) -> {
-            String value = applyTemplate(v, props);
+            String value = resolveTemplate(v, props);
             if (isNotBlank(value)) headers.put(k, value);
         });
     }

@@ -33,10 +33,10 @@ import java.util.Map;
 
 import static org.jreleaser.util.Constants.KEY_SDKMAN_CANDIDATE;
 import static org.jreleaser.util.Constants.KEY_SDKMAN_RELEASE_NOTES_URL;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.isTrue;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -88,7 +88,7 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
 
         try {
             String candidate = isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
-            String releaseNotesUrl = applyTemplate(sdkman.getReleaseNotesUrl(), props);
+            String releaseNotesUrl = resolveTemplate(sdkman.getReleaseNotesUrl(), props);
 
             switch (sdkman.getCommand()) {
                 case MAJOR:
@@ -134,7 +134,7 @@ public class SdkmanToolProcessor extends AbstractToolProcessor<Sdkman> {
     @Override
     protected void fillToolProperties(Map<String, Object> props, Distribution distribution) throws ToolProcessingException {
         props.put(KEY_SDKMAN_CANDIDATE, tool.getCandidate());
-        props.put(KEY_SDKMAN_RELEASE_NOTES_URL, applyTemplate(tool.getReleaseNotesUrl(), props));
+        props.put(KEY_SDKMAN_RELEASE_NOTES_URL, resolveTemplate(tool.getReleaseNotesUrl(), props));
     }
 
     private String mapPlatform(String platform) {

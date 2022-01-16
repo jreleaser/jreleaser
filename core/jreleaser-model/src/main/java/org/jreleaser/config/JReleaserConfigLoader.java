@@ -18,8 +18,8 @@
 package org.jreleaser.config;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.io.InputStream;

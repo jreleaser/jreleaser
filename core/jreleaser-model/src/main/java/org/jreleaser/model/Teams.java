@@ -19,6 +19,7 @@ package org.jreleaser.model;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Env;
+import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.io.Reader;

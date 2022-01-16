@@ -18,8 +18,8 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.config.JReleaserConfigParser;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateUtils;
+import org.jreleaser.util.JReleaserException;
 import picocli.CommandLine;
 
 import java.io.IOException;

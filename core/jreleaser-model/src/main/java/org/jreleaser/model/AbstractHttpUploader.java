@@ -20,7 +20,7 @@ package org.jreleaser.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -49,14 +49,14 @@ abstract class AbstractHttpUploader extends AbstractUploader implements HttpUplo
     public String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact) {
         Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
         p.putAll(getResolvedExtraProperties());
-        return applyTemplate(downloadUrl, p);
+        return resolveTemplate(downloadUrl, p);
     }
 
     @Override
     public String getResolvedUploadUrl(JReleaserContext context, Artifact artifact) {
         Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
         p.putAll(getResolvedExtraProperties());
-        return applyTemplate(uploadUrl, p);
+        return resolveTemplate(uploadUrl, p);
     }
 
     @Override

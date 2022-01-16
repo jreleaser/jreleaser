@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -31,11 +30,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.getNaturalName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -70,11 +69,7 @@ public class Brew extends AbstractRepositoryTool {
 
     public String getResolvedFormulaName(JReleaserContext context) {
         if (isBlank(cachedFormulaName)) {
-            if (formulaName.contains("{{")) {
-                cachedFormulaName = applyTemplate(formulaName, context.props());
-            } else {
-                cachedFormulaName = formulaName;
-            }
+            cachedFormulaName = resolveTemplate(formulaName, context.props());
             cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
         }
         return cachedFormulaName;
@@ -82,14 +77,10 @@ public class Brew extends AbstractRepositoryTool {
 
     public String getResolvedFormulaName(Map<String, Object> props) {
         if (isBlank(cachedFormulaName)) {
-            if (formulaName.contains("{{")) {
-                cachedFormulaName = applyTemplate(formulaName, props);
-            } else {
-                cachedFormulaName = formulaName;
-            }
+            cachedFormulaName = resolveTemplate(formulaName, props);
             cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
         } else if (cachedFormulaName.contains("{{")) {
-            cachedFormulaName = applyTemplate(cachedFormulaName, props);
+            cachedFormulaName = resolveTemplate(cachedFormulaName, props);
             cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
         }
         return cachedFormulaName;
@@ -325,18 +316,14 @@ public class Brew extends AbstractRepositoryTool {
 
         public String getResolvedAppcast(Map<String, Object> props) {
             if (isNotBlank(appcast)) {
-                return applyTemplate(new StringReader(appcast), props);
+                return resolveTemplate(appcast, props);
             }
             return appcast;
         }
 
         public String getResolvedCaskName(JReleaserContext context) {
             if (isBlank(cachedCaskName)) {
-                if (name.contains("{{")) {
-                    cachedCaskName = applyTemplate(new StringReader(name), context.getModel().props());
-                } else {
-                    cachedCaskName = name;
-                }
+                cachedCaskName = resolveTemplate(name, context.getModel().props());
                 cachedCaskName = cachedCaskName.toLowerCase();
             }
             return cachedCaskName;
@@ -344,14 +331,10 @@ public class Brew extends AbstractRepositoryTool {
 
         public String getResolvedCaskName(Map<String, Object> props) {
             if (isBlank(cachedCaskName)) {
-                if (name.contains("{{")) {
-                    cachedCaskName = applyTemplate(new StringReader(name), props);
-                } else {
-                    cachedCaskName = name;
-                }
+                cachedCaskName = resolveTemplate(name, props);
                 cachedCaskName = getClassNameForLowerCaseHyphenSeparatedName(cachedCaskName);
             } else if (cachedCaskName.contains("{{")) {
-                cachedCaskName = applyTemplate(new StringReader(cachedCaskName), props);
+                cachedCaskName = resolveTemplate(cachedCaskName, props);
                 cachedCaskName = getClassNameForLowerCaseHyphenSeparatedName(cachedCaskName);
             }
             return cachedCaskName;
@@ -359,11 +342,7 @@ public class Brew extends AbstractRepositoryTool {
 
         public String getResolvedDisplayName(JReleaserContext context) {
             if (isBlank(cachedDisplayName)) {
-                if (displayName.contains("{{")) {
-                    cachedDisplayName = applyTemplate(new StringReader(displayName), context.getModel().props());
-                } else {
-                    cachedDisplayName = displayName;
-                }
+                cachedDisplayName = resolveTemplate(displayName, context.getModel().props());
                 cachedDisplayName = getClassNameForLowerCaseHyphenSeparatedName(cachedDisplayName);
             }
             return cachedDisplayName;
@@ -371,14 +350,10 @@ public class Brew extends AbstractRepositoryTool {
 
         public String getResolvedDisplayName(Map<String, Object> props) {
             if (isBlank(cachedDisplayName)) {
-                if (displayName.contains("{{")) {
-                    cachedDisplayName = applyTemplate(new StringReader(displayName), props);
-                } else {
-                    cachedDisplayName = displayName;
-                }
+                cachedDisplayName = resolveTemplate(displayName, props);
                 cachedDisplayName = getNaturalName(getClassNameForLowerCaseHyphenSeparatedName(cachedDisplayName));
             } else if (cachedDisplayName.contains("{{")) {
-                cachedDisplayName = applyTemplate(new StringReader(cachedDisplayName), props);
+                cachedDisplayName = resolveTemplate(cachedDisplayName, props);
                 cachedDisplayName = getNaturalName(getClassNameForLowerCaseHyphenSeparatedName(cachedDisplayName));
             }
             return cachedDisplayName;
@@ -386,48 +361,32 @@ public class Brew extends AbstractRepositoryTool {
 
         public String getResolvedAppName(JReleaserContext context) {
             if (isBlank(cachedAppName)) {
-                if (appName.contains("{{")) {
-                    cachedAppName = applyTemplate(new StringReader(appName), context.getModel().props());
-                } else {
-                    cachedAppName = appName;
-                }
+                cachedAppName = resolveTemplate(appName, context.getModel().props());
             }
             return cachedAppName;
         }
 
         public String getResolvedAppName(Map<String, Object> props) {
             if (isBlank(cachedAppName)) {
-                if (appName.contains("{{")) {
-                    cachedAppName = applyTemplate(new StringReader(appName), props);
-                } else {
-                    cachedAppName = appName;
-                }
+                cachedAppName = resolveTemplate(appName, props);
             } else if (cachedAppName.contains("{{")) {
-                cachedAppName = applyTemplate(new StringReader(cachedAppName), props);
+                cachedAppName = resolveTemplate(cachedAppName, props);
             }
             return cachedAppName;
         }
 
         public String getResolvedPkgName(JReleaserContext context) {
             if (isBlank(cachedPkgName)) {
-                if (pkgName.contains("{{")) {
-                    cachedPkgName = applyTemplate(new StringReader(pkgName), context.getModel().props());
-                } else {
-                    cachedPkgName = pkgName;
-                }
+                cachedPkgName = resolveTemplate(pkgName, context.getModel().props());
             }
             return cachedPkgName;
         }
 
         public String getResolvedPkgName(Map<String, Object> props) {
             if (isBlank(cachedPkgName)) {
-                if (pkgName.contains("{{")) {
-                    cachedPkgName = applyTemplate(new StringReader(pkgName), props);
-                } else {
-                    cachedPkgName = pkgName;
-                }
+                cachedPkgName = resolveTemplate(pkgName, props);
             } else if (cachedPkgName.contains("{{")) {
-                cachedPkgName = applyTemplate(new StringReader(cachedPkgName), props);
+                cachedPkgName = resolveTemplate(cachedPkgName, props);
             }
             return cachedPkgName;
         }

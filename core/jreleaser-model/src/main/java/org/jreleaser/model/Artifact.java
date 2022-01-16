@@ -20,6 +20,7 @@ package org.jreleaser.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Algorithm;
+import org.jreleaser.util.JReleaserException;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

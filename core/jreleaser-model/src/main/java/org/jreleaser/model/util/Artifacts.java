@@ -27,12 +27,12 @@ import org.jreleaser.model.Files;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.SdkmanAnnouncer;
 import org.jreleaser.model.Tool;
 import org.jreleaser.model.Upload;
 import org.jreleaser.model.Uploader;
 import org.jreleaser.util.FileType;
+import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
@@ -55,7 +55,6 @@ import java.util.Set;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static org.jreleaser.model.util.Templates.resolve;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_ARCH;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE_EXTENSION;
@@ -75,11 +74,11 @@ import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED;
 import static org.jreleaser.util.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
 import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -91,33 +90,33 @@ public class Artifacts {
     private static final String DOWNLOAD_URL_FROM_KEY = "downloadUrlFrom";
 
     public static String resolveForArtifact(String input, JReleaserContext context) {
-        return resolve(input, context.props());
+        return resolveTemplate(input, context.props());
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact) {
-        return resolve(input, artifactProps(artifact, context.props()));
+        return resolveTemplate(input, artifactProps(artifact, context.props()));
     }
 
     public static String resolveForGlob(String input, JReleaserContext context, Glob glob) {
-        return resolve(input, globProps(glob, context.props()));
+        return resolveTemplate(input, globProps(glob, context.props()));
     }
 
     public static String resolveForFileSet(String input, JReleaserContext context, FileSet fileSet) {
-        return resolve(input, fileSetProps(fileSet, context.props()));
+        return resolveTemplate(input, fileSetProps(fileSet, context.props()));
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Distribution distribution) {
         Map<String, Object> props = context.props();
         props.putAll(distribution.props());
         props = artifactProps(artifact, props);
-        return resolve(input, props);
+        return resolveTemplate(input, props);
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Assembler assembler) {
         Map<String, Object> props = context.props();
         props.putAll(assembler.props());
         props = artifactProps(artifact, props);
-        return resolve(input, props);
+        return resolveTemplate(input, props);
     }
 
     public static Map<String, Object> artifactProps(Artifact artifact, Map<String, Object> props) {
@@ -311,7 +310,7 @@ public class Artifacts {
         props.putAll(distribution.props());
         artifactProps(artifact, distribution, props);
 
-        return resolve(downloadUrl, props);
+        return resolveTemplate(downloadUrl, props);
     }
 
     public static String resolveDownloadUrl(JReleaserContext context, SdkmanAnnouncer announcer, Distribution distribution, Artifact artifact) {
@@ -363,7 +362,7 @@ public class Artifacts {
         props.putAll(distribution.props());
         artifactProps(artifact, distribution, props);
 
-        return resolve(downloadUrl, props);
+        return resolveTemplate(downloadUrl, props);
     }
 
     private static String resolveDownloadUrlFromUploader(JReleaserContext context, ExtraProperties props, Artifact artifact) {
@@ -507,7 +506,7 @@ public class Artifacts {
         FileSystem fileSystem = FileSystems.getDefault();
         List<PathMatcher> matchers = new ArrayList<>();
         for (String glob : globs) {
-            matchers.add(fileSystem.getPathMatcher(applyTemplate(glob, props)));
+            matchers.add(fileSystem.getPathMatcher(resolveTemplate(glob, props)));
         }
 
         GlobResolver resolver = new GlobResolver(logger, basedir, matchers);

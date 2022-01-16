@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.util.JReleaserException;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

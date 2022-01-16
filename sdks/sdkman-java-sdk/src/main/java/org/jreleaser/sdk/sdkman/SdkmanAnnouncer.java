@@ -32,10 +32,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.util.Constants.MAGIC_SET;
-import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.isTrue;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -86,7 +86,7 @@ public class SdkmanAnnouncer implements Announcer {
             Sdkman sdkman = distribution.getSdkman();
             Map<String, Object> props = context.props();
             props.putAll(distribution.props());
-            String releaseNotesUrl = applyTemplate(sdkman.getReleaseNotesUrl(), props);
+            String releaseNotesUrl = resolveTemplate(sdkman.getReleaseNotesUrl(), props);
             String command = sdkman.getCommand().name().toLowerCase();
 
             context.getLogger().info(RB.$("sdkman.release.announce"), command, candidate);
@@ -153,7 +153,7 @@ public class SdkmanAnnouncer implements Announcer {
 
         try {
             String candidate = isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
-            String releaseNotesUrl = applyTemplate(sdkman.getReleaseNotesUrl(), context.props());
+            String releaseNotesUrl = resolveTemplate(sdkman.getReleaseNotesUrl(), context.props());
 
             if (sdkman.isMajor()) {
                 context.getLogger().info(RB.$("sdkman.release.announce.major"), candidate);
