@@ -23,6 +23,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.jreleaser.engine.context.ModelValidator
 import org.jreleaser.gradle.plugin.internal.JReleaserModelPrinter
 import org.jreleaser.model.JReleaserContext
 
@@ -63,7 +64,7 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
         mode = assembly.get() ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.CONFIG
 
         JReleaserContext context = createContext()
-        println '== JReleaser =='
+        ModelValidator.validate(context)
         new JReleaserModelPrinter(project)
             .print(context.model.asMap(full.get()))
         context.report()

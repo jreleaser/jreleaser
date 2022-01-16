@@ -124,14 +124,6 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         return enabled;
     }
 
-    public Platform getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(Platform platform) {
-        this.platform.setAll(platform);
-    }
-
     @Override
     public Active getActive() {
         return active;
@@ -148,13 +140,21 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     }
 
     @Override
-    public String getPrefix() {
-        return "distribution";
+    public boolean isActiveSet() {
+        return active != null;
+    }
+
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(Platform platform) {
+        this.platform.setAll(platform);
     }
 
     @Override
-    public boolean isActiveSet() {
-        return active != null;
+    public String getPrefix() {
+        return "distribution";
     }
 
     public DistributionType getType() {

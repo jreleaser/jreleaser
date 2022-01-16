@@ -105,7 +105,7 @@ public class Changelog implements Domain, EnabledAware {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return enabled != null && enabled;
     }
 
     @Override

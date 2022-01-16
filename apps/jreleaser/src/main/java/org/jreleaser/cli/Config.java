@@ -18,6 +18,7 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.cli.internal.JReleaserModelPrinter;
+import org.jreleaser.engine.context.ModelValidator;
 import org.jreleaser.model.JReleaserContext;
 import picocli.CommandLine;
 
@@ -35,6 +36,7 @@ public class Config extends AbstractPlatformAwareModelCommand {
 
     @Override
     protected void doExecute(JReleaserContext context) {
+        ModelValidator.validate(context);
         new JReleaserModelPrinter(parent.out).print(context.getModel().asMap(full));
         context.report();
     }
