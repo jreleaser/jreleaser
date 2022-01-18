@@ -27,7 +27,7 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "full-release")
 public class FullRelease extends AbstractPlatformAwareModelCommand {
-    @CommandLine.Option(names = {"-y", "--dryrun"})
+    @CommandLine.Option(names = {"--dry-run"})
     boolean dryrun;
 
     @Override

@@ -57,7 +57,7 @@ public class Assemble extends AbstractPlatformAwareModelCommand {
     }
 
     static class Include {
-        @CommandLine.Option(names = {"-a", "--assembler"},
+        @CommandLine.Option(names = {"-s", "--assembler"},
             paramLabel = "<assembler>")
         String[] includedAssemblers;
 
@@ -67,7 +67,7 @@ public class Assemble extends AbstractPlatformAwareModelCommand {
     }
 
     static class Exclude {
-        @CommandLine.Option(names = {"-xa", "--exclude-assembler"},
+        @CommandLine.Option(names = {"-xs", "--exclude-assembler"},
             paramLabel = "<assembler>")
         String[] excludedAssemblers;
 

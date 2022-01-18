@@ -25,7 +25,7 @@
 
     <property name="jreleaser.skip" value="false"/>
     <property name="jreleaser.config.file" value=""/>
-    <property name="jreleaser.dryrun" value="false"/>
+    <property name="jreleaser.dry.run" value="false"/>
     <property name="jreleaser.git.root.search" value="false"/>
     <property name="jreleaser.overwrite" value="false"/>
     <property name="jreleaser.format" value="yml"/>
@@ -53,7 +53,7 @@
     </target>
 
     <target name="jreleaser-announce">
-        <jreleaser:announce dryrun="${jreleaser.dryrun}"
+        <jreleaser:announce dryrun="${jreleaser.dry.run}"
                             selectCurrentPlatform="${jreleaser.select.current.platform}"
                             gitRootSearch="${jreleaser.git.root.search}"
                             skip="${jreleaser.skip}"
@@ -70,7 +70,7 @@
     </target>
 
     <target name="jreleaser-changelog">
-        <jreleaser:changelog dryrun="${jreleaser.dryrun}"
+        <jreleaser:changelog dryrun="${jreleaser.dry.run}"
                              gitRootSearch="${jreleaser.git.root.search}"
                              skip="${jreleaser.skip}"
                              configFile="${jreleaser.config.file}"
@@ -78,7 +78,7 @@
     </target>
 
     <target name="jreleaser-checksum">
-        <jreleaser:checksum dryrun="${jreleaser.dryrun}"
+        <jreleaser:checksum dryrun="${jreleaser.dry.run}"
                             selectCurrentPlatform="${jreleaser.select.current.platform}"
                             gitRootSearch="${jreleaser.git.root.search}"
                             skip="${jreleaser.skip}"
@@ -96,7 +96,7 @@
     </target>
 
     <target name="jreleaser-full-release">
-        <jreleaser:full-release dryrun="${jreleaser.dryrun}"
+        <jreleaser:full-release dryrun="${jreleaser.dry.run}"
                                 selectCurrentPlatform="${jreleaser.select.current.platform}"
                                 gitRootSearch="${jreleaser.git.root.search}"
                                 skip="${jreleaser.skip}"
@@ -110,7 +110,7 @@
     </target>
 
     <target name="jreleaser-package">
-        <jreleaser:package dryrun="${jreleaser.dryrun}"
+        <jreleaser:package dryrun="${jreleaser.dry.run}"
                            selectCurrentPlatform="${jreleaser.select.current.platform}"
                            gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
@@ -119,7 +119,7 @@
     </target>
 
     <target name="jreleaser-publish">
-        <jreleaser:publish dryrun="${jreleaser.dryrun}"
+        <jreleaser:publish dryrun="${jreleaser.dry.run}"
                            selectCurrentPlatform="${jreleaser.select.current.platform}"
                            gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
@@ -128,7 +128,7 @@
     </target>
 
     <target name="jreleaser-prepare">
-        <jreleaser:prepare dryrun="${jreleaser.dryrun}"
+        <jreleaser:prepare dryrun="${jreleaser.dry.run}"
                            selectCurrentPlatform="${jreleaser.select.current.platform}"
                            gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
@@ -137,7 +137,7 @@
     </target>
 
     <target name="jreleaser-release">
-        <jreleaser:release dryrun="${jreleaser.dryrun}"
+        <jreleaser:release dryrun="${jreleaser.dry.run}"
                            selectCurrentPlatform="${jreleaser.select.current.platform}"
                            gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
@@ -146,7 +146,7 @@
     </target>
 
     <target name="jreleaser-sign">
-        <jreleaser:sign dryrun="${jreleaser.dryrun}"
+        <jreleaser:sign dryrun="${jreleaser.dry.run}"
                         selectCurrentPlatform="${jreleaser.select.current.platform}"
                         gitRootSearch="${jreleaser.git.root.search}"
                         skip="${jreleaser.skip}"
@@ -155,7 +155,7 @@
     </target>
 
     <target name="jreleaser-upload">
-        <jreleaser:upload dryrun="${jreleaser.dryrun}"
+        <jreleaser:upload dryrun="${jreleaser.dry.run}"
                           selectCurrentPlatform="${jreleaser.select.current.platform}"
                           gitRootSearch="${jreleaser.git.root.search}"
                           skip="${jreleaser.skip}"

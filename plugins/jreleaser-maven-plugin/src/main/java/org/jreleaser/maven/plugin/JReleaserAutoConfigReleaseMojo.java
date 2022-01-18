@@ -64,7 +64,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     /**
      * Skips remote operations.
      */
-    @Parameter(property = "jreleaser.dryrun")
+    @Parameter(property = "jreleaser.dry.run")
     private boolean dryrun;
 
     /**

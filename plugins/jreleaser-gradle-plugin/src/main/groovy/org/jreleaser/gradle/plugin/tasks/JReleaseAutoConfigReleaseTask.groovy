@@ -214,7 +214,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         this.commitAuthorEmail.set(commitAuthorEmail)
     }
 
-    @Option(option = 'dryrun', description = 'Skip remote operations (OPTIONAL).')
+    @Option(option = 'dry-run', description = 'Skip remote operations (OPTIONAL).')
     void setDryrun(boolean dryrun) {
         this.dryrun.set(dryrun)
     }

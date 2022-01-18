@@ -34,7 +34,7 @@ import java.util.Set;
  */
 @CommandLine.Command(name = "release")
 public class Release extends AbstractPlatformAwareModelCommand {
-    @CommandLine.Option(names = {"-y", "--dryrun"})
+    @CommandLine.Option(names = {"--dry-run"})
     boolean dryrun;
 
     @CommandLine.ArgGroup

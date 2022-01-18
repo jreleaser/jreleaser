@@ -27,7 +27,7 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "announce")
 public class Announce extends AbstractPlatformAwareModelCommand {
-    @CommandLine.Option(names = {"-y", "--dryrun"})
+    @CommandLine.Option(names = {"--dry-run"})
     boolean dryrun;
 
     @CommandLine.ArgGroup(headingKey = "filter.header")

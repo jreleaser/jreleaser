@@ -68,7 +68,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     /**
      * Skips remote operations.
      */
-    @Parameter(property = "jreleaser.dryrun")
+    @Parameter(property = "jreleaser.dry.run")
     protected boolean dryrun;
 
     /**
