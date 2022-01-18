@@ -85,6 +85,7 @@ public class VersionPattern {
     public enum Type {
         SEMVER,
         CALVER,
+        CHRONVER,
         JAVA_RUNTIME,
         JAVA_MODULE,
         CUSTOM;

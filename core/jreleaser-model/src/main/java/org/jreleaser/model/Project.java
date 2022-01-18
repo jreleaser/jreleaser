@@ -19,6 +19,7 @@ package org.jreleaser.model;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.CalVer;
+import org.jreleaser.util.ChronVer;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.JReleaserException;
@@ -423,6 +424,22 @@ public class Project implements Domain, ExtraProperties {
                     throw new JReleaserException(RB.$("ERROR_version_invalid", v, "calver"), e);
                 }
             }
+            break;
+            case CHRONVER: {
+                try {
+                    ChronVer parsedVersion = ChronVer.of(v);
+                    addExtraProperty(Constants.KEY_VERSION_NUMBER, v);
+                    addExtraProperty(Constants.KEY_VERSION_YEAR, parsedVersion.getYear());
+                    addExtraProperty(Constants.KEY_VERSION_MONTH, parsedVersion.getMonth());
+                    addExtraProperty(Constants.KEY_VERSION_DAY, parsedVersion.getDay());
+                    if (parsedVersion.hasChangeset()) {
+                        addExtraProperty(Constants.KEY_VERSION_MODIFIER, parsedVersion.getChangeset().toString());
+                    }
+                } catch (IllegalArgumentException e) {
+                    throw new JReleaserException(RB.$("ERROR_version_invalid", v, "chronver"), e);
+                }
+            }
+            break;
             default:
                 addExtraProperty(Constants.KEY_VERSION_NUMBER, v);
                 // noop

@@ -31,6 +31,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.util.CalVer;
+import org.jreleaser.util.ChronVer;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.CustomVersion;
 import org.jreleaser.util.JavaModuleVersion;
@@ -197,6 +198,19 @@ public class ChangelogGenerator {
         return CalVer.defaultFor(format);
     }
 
+    private ChronVer chronVer(JReleaserContext context, Ref ref, Pattern versionPattern) {
+        Matcher matcher = versionPattern.matcher(extractTagName(ref));
+        if (matcher.matches()) {
+            String tag = matcher.group(1);
+            try {
+                return ChronVer.of(tag);
+            } catch (IllegalArgumentException e) {
+                unparseableTag(context, tag, e);
+            }
+        }
+        return ChronVer.of("2000.01.01");
+    }
+
     private CustomVersion versionOf(Ref tag, Pattern versionPattern) {
         Matcher matcher = versionPattern.matcher(extractTagName(tag));
         if (matcher.matches()) {
@@ -215,26 +229,11 @@ public class ChangelogGenerator {
                 return javaModuleVersionOf(context, tag, versionPattern);
             case CALVER:
                 return calverOf(context, tag, versionPattern);
+            case CHRONVER:
+                return chronVer(context, tag, versionPattern);
             case CUSTOM:
             default:
                 return versionOf(tag, versionPattern);
-        }
-    }
-
-    private Version defaultVersion(JReleaserContext context) {
-        switch (context.getModel().getProject().versionPattern().getType()) {
-            case SEMVER:
-                return SemVer.of("0.0.0");
-            case JAVA_RUNTIME:
-                return JavaRuntimeVersion.of("0.0.0");
-            case JAVA_MODULE:
-                return JavaModuleVersion.of("0.0.0");
-            case CALVER:
-                String format = context.getModel().getProject().versionPattern().getFormat();
-                return CalVer.defaultFor(format);
-            case CUSTOM:
-            default:
-                return CustomVersion.of("0.0.0");
         }
     }
 
@@ -252,6 +251,8 @@ public class ChangelogGenerator {
             case CALVER:
                 String format = project.versionPattern().getFormat();
                 return CalVer.of(format, version);
+            case CHRONVER:
+                return ChronVer.of(version);
             case CUSTOM:
             default:
                 return CustomVersion.of(version);
