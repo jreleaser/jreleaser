@@ -118,7 +118,10 @@ public class CalVerTest {
             Arguments.of("YY.MINOR", "21.A"),
             Arguments.of("YY.MICRO", "21.A"),
             Arguments.of("YY.MODIFIER", "21.A/B"),
-            Arguments.of("YY.MODIFIER", "21/A")
+            Arguments.of("YY.MODIFIER", "21/A"),
+            Arguments.of("YYYY.0M.DD", "2001.02.29"),
+            Arguments.of("YYYY.0M.DD", "2001.09.31"),
+            Arguments.of("YYYY.0M.DD", "2001.01.32")
         );
     }
 

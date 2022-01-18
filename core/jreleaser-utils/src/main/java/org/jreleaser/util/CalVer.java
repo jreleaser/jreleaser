@@ -19,6 +19,7 @@ package org.jreleaser.util;
 
 import org.jreleaser.bundle.RB;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -123,6 +124,13 @@ public class CalVer implements Version<CalVer> {
         this.dayAsInt = isBlank(this.day) ? -1 : parseInt(this.day);
         this.minorAsInt = isBlank(this.minor) ? -1 : parseInt(this.minor);
         this.microAsInt = isBlank(this.micro) ? -1 : parseInt(this.micro);
+
+        if (yearAsInt != -1 && monthAsInt != -1 && dayAsInt != -1) {
+            // validate num of days per month
+            if (dayAsInt > YearMonth.of(yearAsInt, monthAsInt).lengthOfMonth()) {
+                throw new IllegalArgumentException(RB.$("ERROR_version_parse", this));
+            }
+        }
     }
 
     public boolean hasYear() {
@@ -281,7 +289,7 @@ public class CalVer implements Version<CalVer> {
     }
 
     @Override
-    public  boolean equalsSpec(CalVer version) {
+    public boolean equalsSpec(CalVer version) {
         return pattern.equals(version.pattern);
     }
 
