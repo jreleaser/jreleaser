@@ -31,8 +31,12 @@ import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
+import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
 import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
 import static org.jreleaser.util.CollectionUtils.newSet;
+import static org.jreleaser.util.FileType.DEB;
+import static org.jreleaser.util.FileType.JAR;
+import static org.jreleaser.util.FileType.RPM;
 import static org.jreleaser.util.FileType.TAR;
 import static org.jreleaser.util.FileType.TAR_BZ2;
 import static org.jreleaser.util.FileType.TAR_GZ;
@@ -68,7 +72,8 @@ public class Snap extends AbstractRepositoryPackager {
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
         SUPPORTED.put(NATIVE_IMAGE, extensions);
-        SUPPORTED.put(SINGLE_JAR, extensions);
+        SUPPORTED.put(NATIVE_PACKAGE, newSet(DEB.extension(), RPM.extension()));
+        SUPPORTED.put(SINGLE_JAR, newSet(JAR.extension()));
     }
 
     private final Set<String> localPlugs = new LinkedHashSet<>();
