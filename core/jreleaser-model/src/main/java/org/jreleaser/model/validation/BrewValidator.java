@@ -18,6 +18,7 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Brew;
 import org.jreleaser.model.Distribution;
@@ -67,6 +68,29 @@ public abstract class BrewValidator extends Validator {
 
         context.getLogger().debug("distribution.{}.brew", distribution.getName());
 
+        Brew.Cask cask = preValidateCask(distribution, tool, parentTool);
+
+        if (!tool.isMultiPlatformSet() && parentTool.isMultiPlatformSet()) {
+            tool.setMultiPlatform(parentTool.isMultiPlatform());
+        }
+        if (tool.isMultiPlatform() &&
+            (distribution.getType() == Distribution.DistributionType.SINGLE_JAR ||
+                distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
+                distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE)) {
+            tool.setMultiPlatform(false);
+        }
+        if (tool.isMultiPlatform()) {
+            tool.getCask().disable();
+        }
+
+        validateCask(context, distribution, tool, cask, errors);
+        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        if (candidateArtifacts.size() == 0) {
+            tool.setActive(Active.NEVER);
+            tool.disable();
+            return;
+        }
+
         validateCommitAuthor(tool, parentTool);
         Brew.HomebrewTap tap = tool.getTap();
         tap.resolveEnabled(model.getProject());
@@ -86,40 +110,29 @@ public abstract class BrewValidator extends Validator {
             tool.setFormulaName(distribution.getName());
         }
 
-        if (!tool.isMultiPlatformSet() && parentTool.isMultiPlatformSet()) {
-            tool.setMultiPlatform(parentTool.isMultiPlatform());
-        }
-        if (tool.isMultiPlatform() &&
-            (distribution.getType() == Distribution.DistributionType.SINGLE_JAR ||
-                distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
-                distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE)) {
-            tool.setMultiPlatform(false);
-        }
-        if (tool.isMultiPlatform()) {
-            tool.getCask().disable();
-        }
-
-        validateCask(context, distribution, tool, parentTool, errors);
-
-        if (!tool.getCask().isEnabled()) {
-            validateArtifactPlatforms(context, distribution, tool, errors);
+        if (!cask.isEnabled()) {
+            validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
         }
     }
 
-    private static void validateCask(JReleaserContext context, Distribution distribution, Brew tool, Brew parentTool, Errors errors) {
+    private static Brew.Cask preValidateCask(Distribution distribution, Brew tool, Brew parentTool) {
+        Brew.Cask cask = tool.getCask();
         if (distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {
             tool.getCask().disable();
-            return;
+            return cask;
         }
 
-        Brew.Cask cask = tool.getCask();
         Brew.Cask parentCask = parentTool.getCask();
 
         if (!cask.isEnabledSet() && parentCask.isEnabledSet()) {
             cask.setEnabled(parentCask.isEnabled());
         }
 
-        if (cask.isEnabledSet() && !cask.isEnabled()) {
+        return cask;
+    }
+
+    private static void validateCask(JReleaserContext context, Distribution distribution, Brew tool, Brew.Cask cask, Errors errors) {
+        if (cask == null || (cask.isEnabledSet() && !cask.isEnabled())) {
             return;
         }
 
@@ -141,7 +154,6 @@ public abstract class BrewValidator extends Validator {
                 zipFound++;
             }
         }
-
 
         if (dmgFound == 0 && pkgFound == 0 && zipFound == 0) {
             // no artifacts found, disable cask

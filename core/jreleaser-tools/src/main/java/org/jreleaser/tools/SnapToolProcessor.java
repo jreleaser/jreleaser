@@ -18,7 +18,6 @@
 package org.jreleaser.tools;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -34,7 +33,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.jreleaser.model.Snap.SKIP_SNAP;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.util.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
@@ -55,7 +53,6 @@ import static org.jreleaser.util.Constants.KEY_SNAP_PLUGS;
 import static org.jreleaser.util.Constants.KEY_SNAP_REPO_CLONE_URL;
 import static org.jreleaser.util.Constants.KEY_SNAP_REPO_URL;
 import static org.jreleaser.util.Constants.KEY_SNAP_SLOTS;
-import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -180,10 +177,5 @@ public class SnapToolProcessor extends AbstractRepositoryToolProcessor<Snap> {
             .arg("--output")
             .arg(snapName);
         executeCommand(packageDirectory, cmd);
-    }
-
-    @Override
-    protected boolean isSkipped(Artifact artifact) {
-        return isTrue(artifact.getExtraProperties().get(SKIP_SNAP));
     }
 }

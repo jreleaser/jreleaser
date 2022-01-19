@@ -19,15 +19,21 @@ package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.Env;
-import org.jreleaser.util.FileType;
 
-import java.util.LinkedHashSet;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JLINK;
+import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
+import static org.jreleaser.util.CollectionUtils.newSet;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
+import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isFalse;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -38,6 +44,16 @@ public class Sdkman extends AbstractTool implements TimeoutAware {
     public static final String SDKMAN_CONSUMER_KEY = "SDKMAN_CONSUMER_KEY";
     public static final String SDKMAN_CONSUMER_TOKEN = "SDKMAN_CONSUMER_TOKEN";
     public static final String NAME = "sdkman";
+    public static final String SKIP_SDKMAN = "skipSdkman";
+
+    private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+
+    static {
+        Set<String> extensions = newSet(ZIP.extension());
+        SUPPORTED.put(JAVA_BINARY, extensions);
+        SUPPORTED.put(JLINK, extensions);
+        SUPPORTED.put(NATIVE_IMAGE, extensions);
+    }
 
     protected Command command;
     private String candidate;
@@ -64,6 +80,7 @@ public class Sdkman extends AbstractTool implements TimeoutAware {
         this.readTimeout = sdkman.readTimeout;
         this.published = sdkman.published;
     }
+
     public String getResolvedConsumerKey() {
         return Env.resolve(SDKMAN_CONSUMER_KEY, consumerKey);
     }
@@ -160,22 +177,23 @@ public class Sdkman extends AbstractTool implements TimeoutAware {
     }
 
     @Override
-    public Set<String> getSupportedExtensions() {
-        Set<String> set = new LinkedHashSet<>();
-        set.add(FileType.ZIP.extension());
-        return set;
-    }
-
-    @Override
     public boolean supportsPlatform(String platform) {
         return true;
     }
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
-        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
-            distribution.getType() == Distribution.DistributionType.JLINK ||
-            distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE;
+        return SUPPORTED.containsKey(distribution.getType());
+    }
+
+    @Override
+    public Set<String> getSupportedExtensions(Distribution distribution) {
+        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+    }
+
+    @Override
+    protected boolean isNotSkipped(Artifact artifact) {
+        return isFalse(artifact.getExtraProperties().get(SKIP_SDKMAN));
     }
 
     public enum Command {

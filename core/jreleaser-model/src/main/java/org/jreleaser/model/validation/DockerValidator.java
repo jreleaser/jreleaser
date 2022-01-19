@@ -18,6 +18,7 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Docker;
@@ -69,6 +70,13 @@ public abstract class DockerValidator extends Validator {
 
         String element = "distribution." + distribution.getName() + ".docker";
         context.getLogger().debug(element);
+
+        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        if (candidateArtifacts.size() == 0) {
+            tool.setActive(Active.NEVER);
+            tool.disable();
+            return;
+        }
 
         // check specs for active status
         for (DockerSpec spec : tool.getSpecs().values()) {
@@ -130,7 +138,7 @@ public abstract class DockerValidator extends Validator {
         }
         validateLabels(tool);
 
-        validateArtifactPlatforms(context, distribution, tool, errors);
+        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
 
         validateRegistries(context, tool, parentTool, errors, element);
 

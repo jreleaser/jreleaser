@@ -20,11 +20,14 @@ package org.jreleaser.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.FileType;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import static java.util.Comparator.naturalOrder;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author Andres Almiray
@@ -66,11 +69,23 @@ public abstract class AbstractTool implements Tool {
     }
 
     @Override
-    public Set<String> getSupportedExtensions() {
-        Set<String> set = new LinkedHashSet<>();
-        set.add(FileType.ZIP.extension());
-        return set;
+    public List<Artifact> resolveCandidateArtifacts(JReleaserContext context, Distribution distribution) {
+        List<String> fileExtensions = new ArrayList<>(getSupportedExtensions(distribution));
+        fileExtensions.sort(naturalOrder());
+
+        return distribution.getArtifacts().stream()
+            .filter(Artifact::isActive)
+            .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getResolvedPath(context, distribution).toString().endsWith(ext)))
+            .filter(artifact -> supportsPlatform(artifact.getPlatform()))
+            .filter(this::isNotSkipped)
+            .sorted(Artifact.comparatorByPlatform().thenComparingInt(artifact -> {
+                String ext = FileType.getFileNameExtension(artifact.getResolvedPath(context, distribution));
+                return fileExtensions.indexOf(ext);
+            }))
+            .collect(toList());
     }
+
+    protected abstract boolean isNotSkipped(Artifact artifact);
 
     @Override
     public boolean isSnapshotSupported() {
@@ -197,9 +212,4 @@ public abstract class AbstractTool implements Tool {
     }
 
     protected abstract void asMap(boolean full, Map<String, Object> props);
-
-    @Override
-    public boolean supportsDistribution(Distribution distribution) {
-        return true;
-    }
 }

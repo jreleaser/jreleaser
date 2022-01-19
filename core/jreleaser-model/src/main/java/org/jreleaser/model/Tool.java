@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -26,8 +27,6 @@ import java.util.Set;
 public interface Tool extends Domain, ExtraProperties, Activatable {
     String getName();
 
-    Set<String> getSupportedExtensions();
-
     String getDownloadUrl();
 
     void setDownloadUrl(String downloadUrl);
@@ -35,6 +34,10 @@ public interface Tool extends Domain, ExtraProperties, Activatable {
     boolean supportsPlatform(String platform);
 
     boolean supportsDistribution(Distribution distribution);
+
+    Set<String> getSupportedExtensions(Distribution distribution);
+
+    List<Artifact> resolveCandidateArtifacts(JReleaserContext context, Distribution distribution);
 
     boolean isSnapshotSupported();
 

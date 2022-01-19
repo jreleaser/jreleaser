@@ -20,10 +20,20 @@ package org.jreleaser.model;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JLINK;
+import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
+import static org.jreleaser.util.CollectionUtils.newSet;
+import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isFalse;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -33,6 +43,16 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Macports extends AbstractRepositoryTool {
     public static final String NAME = "macports";
     public static final String SKIP_MACPORTS = "skipMacports";
+
+    private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+
+    static {
+        Set<String> extensions = newSet(ZIP.extension());
+        SUPPORTED.put(BINARY, extensions);
+        SUPPORTED.put(JAVA_BINARY, extensions);
+        SUPPORTED.put(JLINK, extensions);
+        SUPPORTED.put(NATIVE_IMAGE, extensions);
+    }
 
     private final List<String> categories = new ArrayList<>();
     private final List<String> maintainers = new ArrayList<>();
@@ -132,10 +152,17 @@ public class Macports extends AbstractRepositoryTool {
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
-        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
-            distribution.getType() == Distribution.DistributionType.JLINK ||
-            distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE ||
-            distribution.getType() == Distribution.DistributionType.BINARY;
+        return SUPPORTED.containsKey(distribution.getType());
+    }
+
+    @Override
+    public Set<String> getSupportedExtensions(Distribution distribution) {
+        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+    }
+
+    @Override
+    protected boolean isNotSkipped(Artifact artifact) {
+        return isFalse(artifact.getExtraProperties().get(SKIP_MACPORTS));
     }
 
     public static class MacportsRepository extends AbstractRepositoryTap {

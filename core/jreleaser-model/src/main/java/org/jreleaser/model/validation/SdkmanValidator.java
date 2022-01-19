@@ -18,6 +18,8 @@
 package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Active;
+import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -61,6 +63,13 @@ public abstract class SdkmanValidator extends Validator {
         }
 
         context.getLogger().debug("distribution.{}.sdkman", distribution.getName());
+
+        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        if (candidateArtifacts.size() == 0) {
+            tool.setActive(Active.NEVER);
+            tool.disable();
+            return;
+        }
 
         mergeExtraProperties(tool, parentTool);
         validateContinueOnError(tool, parentTool);
@@ -107,7 +116,7 @@ public abstract class SdkmanValidator extends Validator {
 
         validateTimeout(tool);
 
-        validateArtifactPlatforms(context, distribution, tool, errors);
+        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
     }
 
     public static void postValidateSdkman(JReleaserContext context, Errors errors) {

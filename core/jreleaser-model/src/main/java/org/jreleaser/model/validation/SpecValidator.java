@@ -30,13 +30,10 @@ import org.jreleaser.util.Errors;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-import static org.jreleaser.model.Spec.SKIP_SPEC;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -61,6 +58,17 @@ public abstract class SpecValidator extends Validator {
         }
 
         context.getLogger().debug("distribution.{}.spec", distribution.getName());
+
+        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        if (candidateArtifacts.size() == 0) {
+            tool.setActive(Active.NEVER);
+            tool.disable();
+            return;
+        } else if (candidateArtifacts.size() > 1) {
+            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".spec"));
+            tool.disable();
+            return;
+        }
 
         if (isBlank(tool.getRelease())) {
             tool.setRelease(parentTool.getRelease());
@@ -93,28 +101,13 @@ public abstract class SpecValidator extends Validator {
         if (isBlank(tool.getDownloadUrl())) {
             tool.setDownloadUrl(parentTool.getDownloadUrl());
         }
-        validateArtifactPlatforms(context, distribution, tool, errors);
+        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
 
         if (isBlank(tool.getPackageName())) {
             tool.setPackageName(parentTool.getPackageName());
             if (isBlank(tool.getPackageName())) {
                 tool.setPackageName(distribution.getName());
             }
-        }
-
-        List<Artifact> candidateArtifacts = distribution.getArtifacts().stream()
-            .filter(Artifact::isActive)
-            .filter(artifact -> tool.getSupportedExtensions().stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
-            .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
-            .filter(artifact -> !isTrue(artifact.getExtraProperties().get(SKIP_SPEC)))
-            .collect(toList());
-
-        if (candidateArtifacts.size() == 0) {
-            tool.setActive(Active.NEVER);
-            tool.disable();
-        } else if (candidateArtifacts.size() > 1) {
-            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".spec"));
-            tool.disable();
         }
     }
 }

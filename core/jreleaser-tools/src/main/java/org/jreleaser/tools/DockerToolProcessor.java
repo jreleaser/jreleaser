@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.stream.Collectors.toList;
@@ -154,13 +153,7 @@ public class DockerToolProcessor extends AbstractRepositoryToolProcessor<Docker>
                                          Map<String, Object> props,
                                          Path packageDirectory) throws ToolProcessingException {
         if (tool.getActiveSpecs().isEmpty()) {
-            Set<String> fileExtensions = tool.getSupportedExtensions();
-            List<Artifact> artifacts = distribution.getArtifacts().stream()
-                .filter(Artifact::isActive)
-                .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
-                .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
-                .collect(toList());
-
+            List<Artifact> artifacts = tool.resolveCandidateArtifacts(context, distribution);
             packageDocker(distribution, props, packageDirectory, getTool(), artifacts);
             return;
         }

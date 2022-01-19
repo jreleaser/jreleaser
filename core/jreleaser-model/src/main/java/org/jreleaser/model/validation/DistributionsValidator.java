@@ -31,7 +31,6 @@ import org.jreleaser.util.PlatformUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -259,6 +258,7 @@ public abstract class DistributionsValidator extends Validator {
         }
     }
 
+    /*
     public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Tool tool, Errors errors) {
         // validate distribution type
         if (distribution.getType() == Distribution.DistributionType.BINARY ||
@@ -267,11 +267,39 @@ public abstract class DistributionsValidator extends Validator {
             distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE) {
             // ensure all artifacts define a platform
 
-            Set<String> fileExtensions = tool.getSupportedExtensions();
+            Set<String> fileExtensions = tool.getSupportedExtensions(distribution);
             String noPlatform = "<nil>";
             Map<String, List<Artifact>> byPlatform = distribution.getArtifacts().stream()
                 .filter(Artifact::isActive)
                 .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
+                .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? noPlatform : artifact.getPlatform()));
+
+            if (byPlatform.containsKey(noPlatform)) {
+                errors.configuration(RB.$("validation_distributions_platform_check",
+                    distribution.getName(), distribution.getType(), tool.getName()));
+            }
+
+            if (byPlatform.keySet().stream()
+                .noneMatch(tool::supportsPlatform)) {
+                context.getLogger().warn(RB.$("validation_distributions_disable",
+                    distribution.getName(), tool.getName()));
+                tool.disable();
+            }
+        }
+    }
+     */
+
+    public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Tool tool,
+                                                 List<Artifact> candidateArtifacts, Errors errors) {
+        // validate distribution type
+        if (distribution.getType() == Distribution.DistributionType.BINARY ||
+            distribution.getType() == Distribution.DistributionType.JLINK ||
+            distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE ||
+            distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE) {
+            // ensure all artifacts define a platform
+
+            String noPlatform = "<nil>";
+            Map<String, List<Artifact>> byPlatform = candidateArtifacts.stream()
                 .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? noPlatform : artifact.getPlatform()));
 
             if (byPlatform.containsKey(noPlatform)) {

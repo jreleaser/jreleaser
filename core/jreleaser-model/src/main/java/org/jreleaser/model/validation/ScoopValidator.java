@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
@@ -25,7 +27,7 @@ import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Scoop;
 import org.jreleaser.util.Errors;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.jreleaser.model.Checksum.INDIVIDUAL_CHECKSUM;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
@@ -54,6 +56,20 @@ public abstract class ScoopValidator extends Validator {
 
         context.getLogger().debug("distribution.{}.scoop", distribution.getName());
 
+        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        if (candidateArtifacts.size() == 0) {
+            tool.setActive(Active.NEVER);
+            tool.disable();
+            return;
+        } else if (candidateArtifacts.size() > 1) {
+            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".scoop"));
+            tool.disable();
+            return;
+        }
+
+        // activate individual checksums on matching artifacts
+        candidateArtifacts.forEach(artifact -> artifact.getExtraProperties().put(INDIVIDUAL_CHECKSUM, true));
+
         validateCommitAuthor(tool, parentTool);
         Scoop.ScoopBucket bucket = tool.getBucket();
         bucket.resolveEnabled(model.getProject());
@@ -81,14 +97,6 @@ public abstract class ScoopValidator extends Validator {
             tool.setAutoupdateUrl(parentTool.getAutoupdateUrl());
         }
 
-        validateArtifactPlatforms(context, distribution, tool, errors);
-
-        // activate individual checksums on matching artifacts
-        Set<String> fileExtensions = tool.getSupportedExtensions();
-        distribution.getArtifacts().stream()
-            .filter(Artifact::isActive)
-            .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
-            .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
-            .forEach(artifact -> artifact.getExtraProperties().put(INDIVIDUAL_CHECKSUM, true));
+        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
     }
 }

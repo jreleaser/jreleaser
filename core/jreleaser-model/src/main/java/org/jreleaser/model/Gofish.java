@@ -17,14 +17,26 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
-import java.util.LinkedHashSet;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JLINK;
+import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
+import static org.jreleaser.util.CollectionUtils.newSet;
+import static org.jreleaser.util.FileType.TAR;
+import static org.jreleaser.util.FileType.TAR_GZ;
+import static org.jreleaser.util.FileType.TAR_XZ;
+import static org.jreleaser.util.FileType.TGZ;
+import static org.jreleaser.util.FileType.TXZ;
+import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isFalse;
 
 /**
  * @author Andres Almiray
@@ -33,6 +45,23 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public class Gofish extends AbstractRepositoryTool {
     public static final String NAME = "gofish";
     public static final String SKIP_GOFISH = "skipGofish";
+
+    private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+
+    static {
+        Set<String> extensions = newSet(
+            TAR_GZ.extension(),
+            TAR_XZ.extension(),
+            TGZ.extension(),
+            TXZ.extension(),
+            TAR.extension(),
+            ZIP.extension());
+
+        SUPPORTED.put(BINARY, extensions);
+        SUPPORTED.put(JAVA_BINARY, extensions);
+        SUPPORTED.put(JLINK, extensions);
+        SUPPORTED.put(NATIVE_IMAGE, extensions);
+    }
 
     private final GofishRepository repository = new GofishRepository();
 
@@ -74,22 +103,17 @@ public class Gofish extends AbstractRepositoryTool {
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
-        return distribution.getType() == Distribution.DistributionType.JAVA_BINARY ||
-            distribution.getType() == Distribution.DistributionType.JLINK ||
-            distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE ||
-            distribution.getType() == Distribution.DistributionType.BINARY;
+        return SUPPORTED.containsKey(distribution.getType());
     }
 
     @Override
-    public Set<String> getSupportedExtensions() {
-        Set<String> set = new LinkedHashSet<>();
-        set.add(FileType.TAR_GZ.extension());
-        set.add(FileType.TAR_XZ.extension());
-        set.add(FileType.TGZ.extension());
-        set.add(FileType.TXZ.extension());
-        set.add(FileType.TAR.extension());
-        set.add(FileType.ZIP.extension());
-        return set;
+    public Set<String> getSupportedExtensions(Distribution distribution) {
+        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+    }
+
+    @Override
+    protected boolean isNotSkipped(Artifact artifact) {
+        return isFalse(artifact.getExtraProperties().get(SKIP_GOFISH));
     }
 
     public static class GofishRepository extends AbstractRepositoryTap {

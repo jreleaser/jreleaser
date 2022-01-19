@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.jreleaser.model.Brew.SKIP_BREW;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_BREW_CASK_APP;
 import static org.jreleaser.util.Constants.KEY_BREW_CASK_APPCAST;
@@ -205,11 +204,6 @@ public class BrewToolProcessor extends AbstractRepositoryToolProcessor<Brew> {
             // prevent Mustache from converting quotes into &quot;
             .map(dependency -> passThrough(dependency.toString()))
             .collect(Collectors.toList()));
-    }
-
-    @Override
-    protected boolean isSkipped(Artifact artifact) {
-        return isTrue(artifact.getExtraProperties().get(SKIP_BREW));
     }
 
     private String resolveArtifactUrl(Map<String, Object> props, Distribution distribution, Artifact artifact) {

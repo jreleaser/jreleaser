@@ -17,7 +17,6 @@
  */
 package org.jreleaser.tools;
 
-import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
@@ -30,7 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.jreleaser.model.Macports.SKIP_MACPORTS;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
@@ -48,7 +46,6 @@ import static org.jreleaser.util.Constants.KEY_MACPORTS_REPOSITORY_REPO_URL;
 import static org.jreleaser.util.Constants.KEY_MACPORTS_REVISION;
 import static org.jreleaser.util.Constants.KEY_PROJECT_LONG_DESCRIPTION;
 import static org.jreleaser.util.MustacheUtils.passThrough;
-import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -133,10 +130,5 @@ public class MacportsToolProcessor extends AbstractRepositoryToolProcessor<Macpo
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
-    }
-
-    @Override
-    protected boolean isSkipped(Artifact artifact) {
-        return isTrue(artifact.getExtraProperties().get(SKIP_MACPORTS));
     }
 }

@@ -38,7 +38,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -87,6 +86,20 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T> {
+    private static final String ARTIFACT = "artifact";
+    private static final String DISTRIBUTION = "distribution";
+    private static final String NAME = "Name";
+    private static final String VERSION = "Version";
+    private static final String OS = "Os";
+    private static final String ARCH = "Arch";
+    private static final String FILE = "File";
+    private static final String SIZE = "Size";
+    private static final String FILE_NAME = "FileName";
+    private static final String FILE_EXTENSION = "FileExtension";
+    private static final String FILE_FORMAT = "FileFormat";
+    private static final String CHECKSUM = "Checksum";
+    private static final String URL = "Url";
+
     protected final JReleaserContext context;
     protected T tool;
 
@@ -296,9 +309,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
         }
 
         int count = 0;
-        for (int i = 0; i < activeArtifacts.size(); i++) {
-            Artifact artifact = activeArtifacts.get(i);
-
+        for (Artifact artifact : activeArtifacts) {
             String artifactUrl = Artifacts.resolveDownloadUrl(context, tool.getName(), distribution, artifact);
             if (isBlank(artifactUrl)) continue;
             count++;
@@ -308,7 +319,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
             String platformReplaced = distribution.getPlatform().applyReplacements(platform);
             String artifactPlatformReplaced = isNotBlank(platformReplaced) ? capitalize(platformReplaced) : "";
             // add extra properties without clobbering existing keys
-            Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact" + artifactPlatform);
+            Map<String, Object> artifactProps = artifact.getResolvedExtraProperties(ARTIFACT + artifactPlatform);
             artifactProps.keySet().stream()
                 .filter(k -> !props.containsKey(k))
                 .forEach(k -> props.put(k, artifactProps.get(k)));
@@ -357,47 +368,47 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
                 }
             }
 
-            safePut(props, "artifact" + artifactPlatform + "Name", artifactName);
-            safePut(props, "artifact" + artifactPlatform + "Version", artifactVersion);
-            safePut(props, "artifact" + artifactPlatform + "Os", artifactOs);
-            safePut(props, "artifact" + artifactPlatform + "Arch", artifactArch);
-            safePut(props, "artifact" + artifactPlatform + "File", artifactFile);
-            safePut(props, "artifact" + artifactPlatform + "Size", artifactSize);
-            safePut(props, "artifact" + artifactPlatform + "FileName", artifactFileName);
-            safePut(props, "artifact" + artifactPlatform + "FileExtension", artifactFileExtension);
-            safePut(props, "artifact" + artifactPlatform + "FileFormat", artifactFileFormat);
+            safePut(props, ARTIFACT + artifactPlatform + NAME, artifactName);
+            safePut(props, ARTIFACT + artifactPlatform + VERSION, artifactVersion);
+            safePut(props, ARTIFACT + artifactPlatform + OS, artifactOs);
+            safePut(props, ARTIFACT + artifactPlatform + ARCH, artifactArch);
+            safePut(props, ARTIFACT + artifactPlatform + FILE, artifactFile);
+            safePut(props, ARTIFACT + artifactPlatform + SIZE, artifactSize);
+            safePut(props, ARTIFACT + artifactPlatform + FILE_NAME, artifactFileName);
+            safePut(props, ARTIFACT + artifactPlatform + FILE_EXTENSION, artifactFileExtension);
+            safePut(props, ARTIFACT + artifactPlatform + FILE_FORMAT, artifactFileFormat);
 
-            safePut(props, "artifact" + artifactPlatformReplaced + "Name", artifactName);
-            safePut(props, "artifact" + artifactPlatformReplaced + "Version", artifactVersion);
-            safePut(props, "artifact" + artifactPlatformReplaced + "Os", artifactOs);
-            safePut(props, "artifact" + artifactPlatformReplaced + "Arch", artifactArch);
-            safePut(props, "artifact" + artifactPlatformReplaced + "File", artifactFile);
-            safePut(props, "artifact" + artifactPlatformReplaced + "Size", artifactSize);
-            safePut(props, "artifact" + artifactPlatformReplaced + "FileName", artifactFileName);
-            safePut(props, "artifact" + artifactPlatformReplaced + "FileExtension", artifactFileExtension);
-            safePut(props, "artifact" + artifactPlatformReplaced + "FileFormat", artifactFileFormat);
+            safePut(props, ARTIFACT + artifactPlatformReplaced + NAME, artifactName);
+            safePut(props, ARTIFACT + artifactPlatformReplaced + VERSION, artifactVersion);
+            safePut(props, ARTIFACT + artifactPlatformReplaced + OS, artifactOs);
+            safePut(props, ARTIFACT + artifactPlatformReplaced + ARCH, artifactArch);
+            safePut(props, ARTIFACT + artifactPlatformReplaced + FILE, artifactFile);
+            safePut(props, ARTIFACT + artifactPlatformReplaced + SIZE, artifactSize);
+            safePut(props, ARTIFACT + artifactPlatformReplaced + FILE_NAME, artifactFileName);
+            safePut(props, ARTIFACT + artifactPlatformReplaced + FILE_EXTENSION, artifactFileExtension);
+            safePut(props, ARTIFACT + artifactPlatformReplaced + FILE_FORMAT, artifactFileFormat);
 
             for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-                safePut(props, "artifact" + artifactPlatform + "Checksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
-                safePut(props, "artifact" + artifactPlatformReplaced + "Checksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
+                safePut(props, ARTIFACT + artifactPlatform + CHECKSUM + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
+                safePut(props, ARTIFACT + artifactPlatformReplaced + CHECKSUM + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
             }
 
-            safePut(props, "artifact" + artifactPlatform + "Url", artifactUrl);
-            safePut(props, "artifact" + artifactPlatformReplaced + "Url", artifactUrl);
+            safePut(props, ARTIFACT + artifactPlatform + URL, artifactUrl);
+            safePut(props, ARTIFACT + artifactPlatformReplaced + URL, artifactUrl);
             props.putAll(context.getModel().getUpload()
-                .resolveDownloadUrls(context, distribution, artifact, "artifact" + artifactPlatform));
+                .resolveDownloadUrls(context, distribution, artifact, ARTIFACT + artifactPlatform));
             props.putAll(context.getModel().getUpload()
-                .resolveDownloadUrls(context, distribution, artifact, "artifact" + artifactPlatformReplaced));
+                .resolveDownloadUrls(context, distribution, artifact, ARTIFACT + artifactPlatformReplaced));
 
             if (count == 1) {
                 props.putAll(context.getModel().getUpload()
-                    .resolveDownloadUrls(context, distribution, artifact, "distribution"));
+                    .resolveDownloadUrls(context, distribution, artifact, DISTRIBUTION));
                 safePut(props, KEY_DISTRIBUTION_ARTIFACT, artifact);
                 safePut(props, KEY_DISTRIBUTION_URL, artifactUrl);
                 safePut(props, KEY_DISTRIBUTION_SIZE, artifactSize);
                 safePut(props, KEY_DISTRIBUTION_SHA_256, artifact.getHash(Algorithm.SHA_256));
                 for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-                    safePut(props, "distributionChecksum" + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
+                    safePut(props, DISTRIBUTION + CHECKSUM + capitalize(algorithm.formatted()), artifact.getHash(algorithm));
                 }
 
                 safePut(props, KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);
@@ -438,23 +449,7 @@ abstract class AbstractToolProcessor<T extends Tool> implements ToolProcessor<T>
     }
 
     protected List<Artifact> collectArtifacts(Distribution distribution) {
-        List<String> fileExtensions = new ArrayList<>(tool.getSupportedExtensions());
-
-        return distribution.getArtifacts().stream()
-            .filter(Artifact::isActive)
-            .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
-            .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
-            .filter(artifact -> !isSkipped(artifact))
-            // sort by platform, then by extension
-            .sorted(Artifact.comparatorByPlatform().thenComparingInt(artifact -> {
-                String ext = FileType.getFileNameExtension(artifact.getPath());
-                return fileExtensions.indexOf(ext);
-            }))
-            .collect(Collectors.toList());
-    }
-
-    protected boolean isSkipped(Artifact artifact) {
-        return false;
+        return tool.resolveCandidateArtifacts(context, distribution);
     }
 
     protected void info(ByteArrayOutputStream out) {

@@ -21,25 +21,47 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.naturalOrder;
+import static java.util.stream.Collectors.toList;
+import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JLINK;
+import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
+import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
+import static org.jreleaser.util.CollectionUtils.newSet;
+import static org.jreleaser.util.FileType.JAR;
+import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isFalse;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class Docker extends AbstractDockerConfiguration implements RepositoryTool {
+    public static final String SKIP_DOCKER = "skipDocker";
+    private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+
+    static {
+        Set<String> extensions = newSet(ZIP.extension());
+        SUPPORTED.put(BINARY, extensions);
+        SUPPORTED.put(JAVA_BINARY, extensions);
+        SUPPORTED.put(JLINK, extensions);
+        SUPPORTED.put(NATIVE_IMAGE, extensions);
+        SUPPORTED.put(SINGLE_JAR, newSet(JAR.extension()));
+    }
+
     private final Map<String, DockerSpec> specs = new LinkedHashMap<>();
     private final CommitAuthor commitAuthor = new CommitAuthor();
     private final DockerRepository repository = new DockerRepository();
-
     private Boolean continueOnError;
     private String downloadUrl;
     @JsonIgnore
@@ -97,7 +119,33 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
-        return true;
+        return SUPPORTED.containsKey(distribution.getType());
+    }
+
+    @Override
+    public Set<String> getSupportedExtensions(Distribution distribution) {
+        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+    }
+
+    @Override
+    public List<Artifact> resolveCandidateArtifacts(JReleaserContext context, Distribution distribution) {
+        List<String> fileExtensions = new ArrayList<>(getSupportedExtensions(distribution));
+        fileExtensions.sort(naturalOrder());
+
+        return distribution.getArtifacts().stream()
+            .filter(Artifact::isActive)
+            .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getResolvedPath(context, distribution).toString().endsWith(ext)))
+            .filter(artifact -> supportsPlatform(artifact.getPlatform()))
+            .filter(this::isNotSkipped)
+            .sorted(Artifact.comparatorByPlatform().thenComparingInt(artifact -> {
+                String ext = FileType.getFileNameExtension(artifact.getResolvedPath(context, distribution));
+                return fileExtensions.indexOf(ext);
+            }))
+            .collect(toList());
+    }
+
+    protected boolean isNotSkipped(Artifact artifact) {
+        return isFalse(artifact.getExtraProperties().get(SKIP_DOCKER));
     }
 
     @Override
@@ -118,14 +166,6 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
     @Override
     public void setCommitAuthor(CommitAuthor commitAuthor) {
         this.commitAuthor.setAll(commitAuthor);
-    }
-
-    @Override
-    public Set<String> getSupportedExtensions() {
-        Set<String> set = new LinkedHashSet<>();
-        set.add(FileType.JAR.extension());
-        set.add(FileType.ZIP.extension());
-        return set;
     }
 
     public List<DockerSpec> getActiveSpecs() {

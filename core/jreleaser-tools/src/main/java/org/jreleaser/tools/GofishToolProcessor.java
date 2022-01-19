@@ -33,14 +33,12 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
-import static org.jreleaser.model.Gofish.SKIP_GOFISH;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_GOFISH_PACKAGES;
 import static org.jreleaser.util.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isNotBlank;
-import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -97,11 +95,6 @@ public class GofishToolProcessor extends AbstractRepositoryToolProcessor<Gofish>
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
-    }
-
-    @Override
-    protected boolean isSkipped(Artifact artifact) {
-        return isTrue(artifact.getExtraProperties().get(SKIP_GOFISH));
     }
 
     private static class GofishPackage {

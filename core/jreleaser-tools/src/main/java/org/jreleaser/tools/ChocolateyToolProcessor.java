@@ -18,7 +18,6 @@
 package org.jreleaser.tools;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Chocolatey;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
@@ -33,7 +32,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static org.jreleaser.model.Chocolatey.SKIP_CHOCOLATEY;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_URL;
@@ -45,7 +43,6 @@ import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_USERNAME;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.util.Constants.KEY_PROJECT_LICENSE_URL;
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isTrue;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
@@ -167,10 +164,5 @@ public class ChocolateyToolProcessor extends AbstractRepositoryToolProcessor<Cho
             .arg(tool.getSource());
 
         executeCommand(packageDirectory, cmd);
-    }
-
-    @Override
-    protected boolean isSkipped(Artifact artifact) {
-        return isTrue(artifact.getExtraProperties().get(SKIP_CHOCOLATEY));
     }
 }

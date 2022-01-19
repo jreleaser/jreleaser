@@ -671,6 +671,10 @@ public class StringUtils {
         return "true".equalsIgnoreCase(String.valueOf(o).trim());
     }
 
+    public static boolean isFalse(Object o) {
+        return !isTrue(o);
+    }
+
     /**
      * Applies single or double quotes to a string if it contains whitespace characters
      *

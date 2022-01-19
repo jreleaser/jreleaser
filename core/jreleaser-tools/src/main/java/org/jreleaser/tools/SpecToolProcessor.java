@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jreleaser.model.Spec.SKIP_SPEC;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT;
 import static org.jreleaser.util.Constants.KEY_SPEC_BINARIES;
@@ -43,7 +42,6 @@ import static org.jreleaser.util.Constants.KEY_SPEC_PACKAGE_NAME;
 import static org.jreleaser.util.Constants.KEY_SPEC_RELEASE;
 import static org.jreleaser.util.Constants.KEY_SPEC_REQUIRES;
 import static org.jreleaser.util.StringUtils.getFilename;
-import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -63,7 +61,7 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
     private void setupJavaBinary(Distribution distribution, Map<String, Object> props) throws ToolProcessingException {
         Artifact artifact = (Artifact) props.get(KEY_DISTRIBUTION_ARTIFACT);
         Path artifactPath = artifact.getResolvedPath(context, distribution);
-        String artifactFileName = getFilename(artifactPath.getFileName().toString(), tool.getSupportedExtensions());
+        String artifactFileName = getFilename(artifactPath.getFileName().toString(), tool.getSupportedExtensions(distribution));
 
         try {
             List<String> entries = FileUtils.inspectArchive(artifactPath);
@@ -142,10 +140,5 @@ public class SpecToolProcessor extends AbstractRepositoryToolProcessor<Spec> {
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
-    }
-
-    @Override
-    protected boolean isSkipped(Artifact artifact) {
-        return isTrue(artifact.getExtraProperties().get(SKIP_SPEC));
     }
 }

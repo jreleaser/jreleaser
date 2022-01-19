@@ -29,13 +29,10 @@ import org.jreleaser.util.Errors;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-import static org.jreleaser.model.Gofish.SKIP_GOFISH;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -61,6 +58,19 @@ public abstract class GofishValidator extends Validator {
 
         context.getLogger().debug("distribution.{}.gofish", distribution.getName());
 
+        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        if (candidateArtifacts.size() == 0) {
+            tool.setActive(Active.NEVER);
+            tool.disable();
+            return;
+        } else if (candidateArtifacts.stream()
+            .filter(artifact -> isBlank(artifact.getPlatform()))
+            .count() > 1) {
+            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".gofish"));
+            tool.disable();
+            return;
+        }
+
         validateCommitAuthor(tool, parentTool);
         Gofish.GofishRepository repository = tool.getRepository();
         repository.resolveEnabled(model.getProject());
@@ -71,23 +81,6 @@ public abstract class GofishValidator extends Validator {
         if (isBlank(tool.getDownloadUrl())) {
             tool.setDownloadUrl(parentTool.getDownloadUrl());
         }
-        validateArtifactPlatforms(context, distribution, tool, errors);
-
-        List<Artifact> candidateArtifacts = distribution.getArtifacts().stream()
-            .filter(Artifact::isActive)
-            .filter(artifact -> tool.getSupportedExtensions().stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
-            .filter(artifact -> tool.supportsPlatform(artifact.getPlatform()))
-            .filter(artifact -> !isTrue(artifact.getExtraProperties().get(SKIP_GOFISH)))
-            .collect(toList());
-
-        if (candidateArtifacts.size() == 0) {
-            tool.setActive(Active.NEVER);
-            tool.disable();
-        } else if (candidateArtifacts.stream()
-            .filter(artifact -> isBlank(artifact.getPlatform()))
-            .count() > 1) {
-            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".gofish"));
-            tool.disable();
-        }
+        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
     }
 }

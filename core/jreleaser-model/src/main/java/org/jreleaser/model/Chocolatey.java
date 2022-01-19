@@ -20,11 +20,21 @@ package org.jreleaser.model;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.PlatformUtils;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
+import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JLINK;
+import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
+import static org.jreleaser.util.CollectionUtils.newSet;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
+import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isFalse;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -32,10 +42,20 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Chocolatey extends AbstractRepositoryTool {
-    public static final String NAME = "chocolatey";
     public static final String CHOCOLATEY_API_KEY = "CHOCOLATEY_API_KEY";
+    public static final String NAME = "chocolatey";
     public static final String SKIP_CHOCOLATEY = "skipChocolatey";
     public static final String DEFAULT_CHOCOLATEY_PUSH_URL = "https://push.chocolatey.org/";
+
+    private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+
+    static {
+        Set<String> extensions = newSet(ZIP.extension());
+        SUPPORTED.put(BINARY, extensions);
+        SUPPORTED.put(JAVA_BINARY, extensions);
+        SUPPORTED.put(JLINK, extensions);
+        SUPPORTED.put(NATIVE_IMAGE, extensions);
+    }
 
     private final ChocolateyBucket bucket = new ChocolateyBucket();
     private String packageName;
@@ -159,8 +179,17 @@ public class Chocolatey extends AbstractRepositoryTool {
 
     @Override
     public boolean supportsDistribution(Distribution distribution) {
-        return distribution.getType() != Distribution.DistributionType.SINGLE_JAR &&
-            distribution.getType() != Distribution.DistributionType.NATIVE_PACKAGE;
+        return SUPPORTED.containsKey(distribution.getType());
+    }
+
+    @Override
+    public Set<String> getSupportedExtensions(Distribution distribution) {
+        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+    }
+
+    @Override
+    protected boolean isNotSkipped(Artifact artifact) {
+        return isFalse(artifact.getExtraProperties().get(SKIP_CHOCOLATEY));
     }
 
     public static class ChocolateyBucket extends AbstractRepositoryTap {

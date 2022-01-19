@@ -17,13 +17,23 @@
  */
 package org.jreleaser.model;
 
-import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JLINK;
+import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
+import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
+import static org.jreleaser.util.CollectionUtils.newSet;
+import static org.jreleaser.util.FileType.JAR;
+import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isFalse;
 
 /**
  * @author Andres Almiray
@@ -31,6 +41,19 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public class Scoop extends AbstractRepositoryTool {
     public static final String NAME = "scoop";
+    public static final String SKIP_SCOOP = "skipScoop";
+
+    private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+
+    static {
+        Set<String> extensions = newSet(ZIP.extension());
+        SUPPORTED.put(BINARY, extensions);
+        SUPPORTED.put(JAVA_BINARY, extensions);
+        SUPPORTED.put(JLINK, extensions);
+        SUPPORTED.put(NATIVE_IMAGE, extensions);
+        SUPPORTED.put(SINGLE_JAR, newSet(JAR.extension()));
+    }
+
     private final ScoopBucket bucket = new ScoopBucket();
     private String packageName;
     private String checkverUrl;
@@ -100,10 +123,18 @@ public class Scoop extends AbstractRepositoryTool {
     }
 
     @Override
-    public Set<String> getSupportedExtensions() {
-        Set<String> set = super.getSupportedExtensions();
-        set.add(FileType.JAR.extension());
-        return set;
+    public boolean supportsDistribution(Distribution distribution) {
+        return SUPPORTED.containsKey(distribution.getType());
+    }
+
+    @Override
+    public Set<String> getSupportedExtensions(Distribution distribution) {
+        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+    }
+
+    @Override
+    protected boolean isNotSkipped(Artifact artifact) {
+        return isFalse(artifact.getExtraProperties().get(SKIP_SCOOP));
     }
 
     public static class ScoopBucket extends AbstractRepositoryTap {
