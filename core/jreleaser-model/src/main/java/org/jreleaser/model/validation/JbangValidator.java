@@ -40,55 +40,55 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class JbangValidator extends Validator {
-    public static void validateJbang(JReleaserContext context, Distribution distribution, Jbang tool, Errors errors) {
+    public static void validateJbang(JReleaserContext context, Distribution distribution, Jbang packager, Errors errors) {
         JReleaserModel model = context.getModel();
-        Jbang parentTool = model.getPackagers().getJbang();
+        Jbang parentPackager = model.getPackagers().getJbang();
 
-        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
-            tool.setActive(parentTool.getActive());
+        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
+            packager.setActive(parentPackager.getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
-            tool.disable();
+            packager.disable();
             return;
         }
 
         context.getLogger().debug("distribution.{}.jbang", distribution.getName());
 
-        validateCommitAuthor(tool, parentTool);
-        Jbang.JbangCatalog catalog = tool.getCatalog();
+        validateCommitAuthor(packager, parentPackager);
+        Jbang.JbangCatalog catalog = packager.getCatalog();
         catalog.resolveEnabled(model.getProject());
-        validateTap(context, distribution, catalog, parentTool.getCatalog(), "jbang.catalog");
-        validateTemplate(context, distribution, tool, parentTool, errors);
-        mergeExtraProperties(tool, parentTool);
-        validateContinueOnError(tool, parentTool);
-        if (isBlank(tool.getDownloadUrl())) {
-            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        validateTap(context, distribution, catalog, parentPackager.getCatalog(), "jbang.catalog");
+        validateTemplate(context, distribution, packager, parentPackager, errors);
+        mergeExtraProperties(packager, parentPackager);
+        validateContinueOnError(packager, parentPackager);
+        if (isBlank(packager.getDownloadUrl())) {
+            packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }
 
-        if (isBlank(tool.getAlias())) {
-            tool.setAlias(distribution.getExecutable());
+        if (isBlank(packager.getAlias())) {
+            packager.setAlias(distribution.getExecutable());
         }
 
         if (model.getProject().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
-            !parentTool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
-            parentTool.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
+            !parentPackager.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
+            parentPackager.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
                 model.getProject().getExtraProperties().get(KEY_REVERSE_REPO_HOST));
         }
-        if (parentTool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
+        if (parentPackager.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
             !distribution.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
             distribution.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
-                parentTool.getExtraProperties().get(KEY_REVERSE_REPO_HOST));
+                parentPackager.getExtraProperties().get(KEY_REVERSE_REPO_HOST));
         }
 
         if (distribution.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&
-            !tool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
-            tool.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
+            !packager.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
+            packager.getExtraProperties().put(KEY_REVERSE_REPO_HOST,
                 distribution.getExtraProperties().get(KEY_REVERSE_REPO_HOST));
         }
         if (isBlank(service.getReverseRepoHost()) &&
-            !tool.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
+            !packager.getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST)) {
             errors.configuration(RB.$("validation_jbang_reverse_host", distribution.getName(), KEY_REVERSE_REPO_HOST));
         }
 

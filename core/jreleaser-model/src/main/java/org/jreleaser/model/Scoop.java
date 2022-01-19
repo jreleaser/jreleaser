@@ -39,8 +39,8 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Scoop extends AbstractRepositoryTool {
-    public static final String NAME = "scoop";
+public class Scoop extends AbstractRepositoryPackager {
+    public static final String TYPE = "scoop";
     public static final String SKIP_SCOOP = "skipScoop";
 
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
@@ -60,7 +60,7 @@ public class Scoop extends AbstractRepositoryTool {
     private String autoupdateUrl;
 
     public Scoop() {
-        super(NAME);
+        super(TYPE);
     }
 
     void setAll(Scoop scoop) {

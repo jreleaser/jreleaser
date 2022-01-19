@@ -46,7 +46,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Docker extends AbstractDockerConfiguration implements RepositoryTool {
+public class Docker extends AbstractDockerConfiguration implements RepositoryPackager {
     public static final String SKIP_DOCKER = "skipDocker";
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
@@ -154,8 +154,8 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public String getType() {
+        return TYPE;
     }
 
     @Override
@@ -196,7 +196,7 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryToo
         if (!full && !isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put(getName(), super.asMap(full));
+        map.put(getType(), super.asMap(full));
         return map;
     }
 

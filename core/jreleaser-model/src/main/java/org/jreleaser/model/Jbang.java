@@ -30,8 +30,8 @@ import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Jbang extends AbstractRepositoryTool {
-    public static final String NAME = "jbang";
+public class Jbang extends AbstractRepositoryPackager {
+    public static final String TYPE = "jbang";
 
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
@@ -45,7 +45,7 @@ public class Jbang extends AbstractRepositoryTool {
     private String alias;
 
     public Jbang() {
-        super(NAME);
+        super(TYPE);
     }
 
     void setAll(Jbang jbang) {

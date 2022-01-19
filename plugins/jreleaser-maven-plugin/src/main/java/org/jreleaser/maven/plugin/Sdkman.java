@@ -24,7 +24,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public class Sdkman extends AbstractTool {
+public class Sdkman extends AbstractPackager {
     private Command command;
     private String candidate;
     private String releaseNotesUrl;

@@ -26,7 +26,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.9.1
  */
-public class Spec extends AbstractRepositoryTool {
+public class Spec extends AbstractRepositoryPackager {
     private final List<String> requires = new ArrayList<>();
     private final Tap repository = new Tap();
 

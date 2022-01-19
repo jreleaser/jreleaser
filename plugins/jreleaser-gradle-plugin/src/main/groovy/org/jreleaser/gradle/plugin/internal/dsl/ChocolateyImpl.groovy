@@ -36,7 +36,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
+class ChocolateyImpl extends AbstractRepositoryPackager implements Chocolatey {
     final Property<String> packageName
     final Property<String> username
     final Property<String> apiKey
@@ -97,18 +97,18 @@ class ChocolateyImpl extends AbstractRepositoryTool implements Chocolatey {
     }
 
     org.jreleaser.model.Chocolatey toModel() {
-        org.jreleaser.model.Chocolatey tool = new org.jreleaser.model.Chocolatey()
-        fillToolProperties(tool)
-        fillTemplateToolProperties(tool)
-        if (bucket.isSet()) tool.bucket = bucket.toChocolateyBucket()
-        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
-        if (packageName.present) tool.packageName = packageName.get()
-        if (username.present) tool.username = username.get()
-        if (apiKey.present) tool.apiKey = apiKey.get()
-        if (title.present) tool.title = title.get()
-        if (iconUrl.present) tool.iconUrl = iconUrl.get()
-        if (source.present) tool.source = source.get()
-        tool.remoteBuild = remoteBuild.getOrElse(false)
-        tool
+        org.jreleaser.model.Chocolatey packager = new org.jreleaser.model.Chocolatey()
+        fillPackagerProperties(packager)
+        fillTemplatePackagerProperties(packager)
+        if (bucket.isSet()) packager.bucket = bucket.toChocolateyBucket()
+        if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
+        if (packageName.present) packager.packageName = packageName.get()
+        if (username.present) packager.username = username.get()
+        if (apiKey.present) packager.apiKey = apiKey.get()
+        if (title.present) packager.title = title.get()
+        if (iconUrl.present) packager.iconUrl = iconUrl.get()
+        if (source.present) packager.source = source.get()
+        packager.remoteBuild = remoteBuild.getOrElse(false)
+        packager
     }
 }

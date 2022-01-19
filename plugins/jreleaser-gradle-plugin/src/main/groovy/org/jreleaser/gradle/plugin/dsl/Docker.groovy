@@ -28,7 +28,7 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface Docker extends DockerConfiguration, RepositoryTool {
+interface Docker extends DockerConfiguration, RepositoryPackager {
     NamedDomainObjectContainer<DockerSpec> getSpecs()
 
     DockerRepository getRepository()

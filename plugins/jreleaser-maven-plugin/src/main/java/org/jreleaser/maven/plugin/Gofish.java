@@ -21,7 +21,7 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public class Gofish extends AbstractRepositoryTool {
+public class Gofish extends AbstractRepositoryPackager {
     private final Tap repository = new Tap();
 
     void setAll(Gofish spec) {

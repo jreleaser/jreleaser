@@ -40,73 +40,73 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.9.1
  */
 public abstract class SpecValidator extends Validator {
-    public static void validateSpec(JReleaserContext context, Distribution distribution, Spec tool, Errors errors) {
+    public static void validateSpec(JReleaserContext context, Distribution distribution, Spec packager, Errors errors) {
         JReleaserModel model = context.getModel();
-        Spec parentTool = model.getPackagers().getSpec();
+        Spec parentPackager = model.getPackagers().getSpec();
 
-        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
-            tool.setActive(parentTool.getActive());
+        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
+            packager.setActive(parentPackager.getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) {
-            tool.disable();
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+            packager.disable();
             return;
         }
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
-            tool.disable();
+            packager.disable();
             return;
         }
 
         context.getLogger().debug("distribution.{}.spec", distribution.getName());
 
-        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
-            tool.setActive(Active.NEVER);
-            tool.disable();
+            packager.setActive(Active.NEVER);
+            packager.disable();
             return;
         } else if (candidateArtifacts.size() > 1) {
-            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".spec"));
-            tool.disable();
+            errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".spec"));
+            packager.disable();
             return;
         }
 
-        if (isBlank(tool.getRelease())) {
-            tool.setRelease(parentTool.getRelease());
+        if (isBlank(packager.getRelease())) {
+            packager.setRelease(parentPackager.getRelease());
         }
-        if (isBlank(tool.getRelease())) {
-            tool.setRelease("1");
+        if (isBlank(packager.getRelease())) {
+            packager.setRelease("1");
         }
 
         try {
-            Integer.parseInt(tool.getRelease());
-            tool.setRelease(tool.getRelease() + "%{?dist}");
+            Integer.parseInt(packager.getRelease());
+            packager.setRelease(packager.getRelease() + "%{?dist}");
         } catch (NumberFormatException ignored) {
             // ok?
         }
 
-        if (tool.getRequires().isEmpty()) {
-            tool.setRequires(parentTool.getRequires());
+        if (packager.getRequires().isEmpty()) {
+            packager.setRequires(parentPackager.getRequires());
         }
-        if (tool.getRequires().isEmpty()) {
-            tool.setRequires(Collections.singletonList("java"));
+        if (packager.getRequires().isEmpty()) {
+            packager.setRequires(Collections.singletonList("java"));
         }
 
-        validateCommitAuthor(tool, parentTool);
-        Spec.SpecRepository repository = tool.getRepository();
+        validateCommitAuthor(packager, parentPackager);
+        Spec.SpecRepository repository = packager.getRepository();
         repository.resolveEnabled(model.getProject());
-        validateTap(context, distribution, repository, parentTool.getRepository(), "spec.repository");
-        validateTemplate(context, distribution, tool, parentTool, errors);
-        mergeExtraProperties(tool, parentTool);
-        validateContinueOnError(tool, parentTool);
-        if (isBlank(tool.getDownloadUrl())) {
-            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        validateTap(context, distribution, repository, parentPackager.getRepository(), "spec.repository");
+        validateTemplate(context, distribution, packager, parentPackager, errors);
+        mergeExtraProperties(packager, parentPackager);
+        validateContinueOnError(packager, parentPackager);
+        if (isBlank(packager.getDownloadUrl())) {
+            packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }
-        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
+        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
 
-        if (isBlank(tool.getPackageName())) {
-            tool.setPackageName(parentTool.getPackageName());
-            if (isBlank(tool.getPackageName())) {
-                tool.setPackageName(distribution.getName());
+        if (isBlank(packager.getPackageName())) {
+            packager.setPackageName(parentPackager.getPackageName());
+            if (isBlank(packager.getPackageName())) {
+                packager.setPackageName(distribution.getName());
             }
         }
     }

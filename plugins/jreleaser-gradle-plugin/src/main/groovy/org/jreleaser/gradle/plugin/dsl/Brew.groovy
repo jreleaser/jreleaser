@@ -29,7 +29,7 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface Brew extends RepositoryTool {
+interface Brew extends RepositoryPackager {
     Property<String> getFormulaName()
 
     Property<Boolean> getMultiPlatform()

@@ -41,71 +41,71 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.9.0
  */
 public abstract class MacportsValidator extends Validator {
-    public static void validateMacports(JReleaserContext context, Distribution distribution, Macports tool, Errors errors) {
+    public static void validateMacports(JReleaserContext context, Distribution distribution, Macports packager, Errors errors) {
         JReleaserModel model = context.getModel();
-        Macports parentTool = model.getPackagers().getMacports();
+        Macports parentPackager = model.getPackagers().getMacports();
 
-        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
-            tool.setActive(parentTool.getActive());
+        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
+            packager.setActive(parentPackager.getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) {
-            tool.disable();
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+            packager.disable();
             return;
         }
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
-            tool.disable();
+            packager.disable();
             return;
         }
 
         context.getLogger().debug("distribution.{}.macports", distribution.getName());
 
-        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
-            tool.setActive(Active.NEVER);
-            tool.disable();
+            packager.setActive(Active.NEVER);
+            packager.disable();
             return;
         } else if (candidateArtifacts.size() > 1) {
-            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".macports"));
-            tool.disable();
+            errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".macports"));
+            packager.disable();
             return;
         } else {
             // activate rmd160 checksum
             context.getModel().getChecksum().getAlgorithms().add(Algorithm.RMD160);
         }
 
-        if (null == tool.getRevision()) {
-            tool.setRevision(parentTool.getRevision());
+        if (null == packager.getRevision()) {
+            packager.setRevision(parentPackager.getRevision());
         }
-        if (null == tool.getRevision()) {
-            tool.setRevision(0);
-        }
-
-        if (tool.getMaintainers().isEmpty()) {
-            tool.setMaintainers(parentTool.getMaintainers());
-        }
-        if (tool.getCategories().isEmpty()) {
-            tool.setCategories(parentTool.getCategories());
-        }
-        if (tool.getCategories().isEmpty()) {
-            tool.setCategories(Collections.singletonList("devel"));
+        if (null == packager.getRevision()) {
+            packager.setRevision(0);
         }
 
-        validateCommitAuthor(tool, parentTool);
-        Macports.MacportsRepository repository = tool.getRepository();
+        if (packager.getMaintainers().isEmpty()) {
+            packager.setMaintainers(parentPackager.getMaintainers());
+        }
+        if (packager.getCategories().isEmpty()) {
+            packager.setCategories(parentPackager.getCategories());
+        }
+        if (packager.getCategories().isEmpty()) {
+            packager.setCategories(Collections.singletonList("devel"));
+        }
+
+        validateCommitAuthor(packager, parentPackager);
+        Macports.MacportsRepository repository = packager.getRepository();
         repository.resolveEnabled(model.getProject());
-        validateTap(context, distribution, repository, parentTool.getRepository(), "macports.repository");
-        validateTemplate(context, distribution, tool, parentTool, errors);
-        mergeExtraProperties(tool, parentTool);
-        validateContinueOnError(tool, parentTool);
+        validateTap(context, distribution, repository, parentPackager.getRepository(), "macports.repository");
+        validateTemplate(context, distribution, packager, parentPackager, errors);
+        mergeExtraProperties(packager, parentPackager);
+        validateContinueOnError(packager, parentPackager);
 
-        if (isBlank(tool.getPackageName())) {
-            tool.setPackageName(parentTool.getPackageName());
-            if (isBlank(tool.getPackageName())) {
-                tool.setPackageName(distribution.getName());
+        if (isBlank(packager.getPackageName())) {
+            packager.setPackageName(parentPackager.getPackageName());
+            if (isBlank(packager.getPackageName())) {
+                packager.setPackageName(distribution.getName());
             }
         }
 
-        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
+        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
     }
 }

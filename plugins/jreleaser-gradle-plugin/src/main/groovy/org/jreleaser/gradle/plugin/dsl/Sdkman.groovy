@@ -26,7 +26,7 @@ import org.gradle.api.provider.Property
  * @since 0.6.0
  */
 @CompileStatic
-interface Sdkman extends Tool {
+interface Sdkman extends Packager {
     Property<String> getConsumerKey()
 
     Property<String> getConsumerToken()

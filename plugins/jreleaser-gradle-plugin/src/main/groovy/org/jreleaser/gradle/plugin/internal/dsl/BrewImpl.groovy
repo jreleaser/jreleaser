@@ -40,7 +40,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-class BrewImpl extends AbstractRepositoryTool implements Brew {
+class BrewImpl extends AbstractRepositoryPackager implements Brew {
     final Property<String> formulaName
     final Property<Boolean> multiPlatform
     final CommitAuthorImpl commitAuthor
@@ -125,17 +125,17 @@ class BrewImpl extends AbstractRepositoryTool implements Brew {
     }
 
     org.jreleaser.model.Brew toModel() {
-        org.jreleaser.model.Brew tool = new org.jreleaser.model.Brew()
-        fillToolProperties(tool)
-        fillTemplateToolProperties(tool)
-        if (formulaName.present) tool.formulaName = formulaName.get()
-        if (multiPlatform.present) tool.multiPlatform = multiPlatform.get()
-        if (repoTap.isSet()) tool.tap = repoTap.toHomebrewTap()
-        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
-        if (dependencies.present) tool.dependencies = dependencies.get()
-        if (livecheck.present) tool.livecheck = (livecheck.get() as List<String>)
-        if (cask.isSet()) tool.cask = cask.toModel()
-        tool
+        org.jreleaser.model.Brew packager = new org.jreleaser.model.Brew()
+        fillPackagerProperties(packager)
+        fillTemplatePackagerProperties(packager)
+        if (formulaName.present) packager.formulaName = formulaName.get()
+        if (multiPlatform.present) packager.multiPlatform = multiPlatform.get()
+        if (repoTap.isSet()) packager.tap = repoTap.toHomebrewTap()
+        if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
+        if (dependencies.present) packager.dependencies = dependencies.get()
+        if (livecheck.present) packager.livecheck = (livecheck.get() as List<String>)
+        if (cask.isSet()) packager.cask = cask.toModel()
+        packager
     }
 
     @CompileStatic

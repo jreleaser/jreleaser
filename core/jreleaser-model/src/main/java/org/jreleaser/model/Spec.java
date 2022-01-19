@@ -46,8 +46,8 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.9.1
  */
-public class Spec extends AbstractRepositoryTool {
-    public static final String NAME = "spec";
+public class Spec extends AbstractRepositoryPackager {
+    public static final String TYPE = "spec";
     public static final String SKIP_SPEC = "skipSpec";
 
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
@@ -76,7 +76,7 @@ public class Spec extends AbstractRepositoryTool {
     private String release;
 
     public Spec() {
-        super(NAME);
+        super(TYPE);
     }
 
     void setAll(Spec spec) {

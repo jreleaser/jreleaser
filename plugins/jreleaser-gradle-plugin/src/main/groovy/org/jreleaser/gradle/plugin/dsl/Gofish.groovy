@@ -26,7 +26,7 @@ import org.gradle.api.Action
  * @since 0.10.0
  */
 @CompileStatic
-interface Gofish extends RepositoryTool {
+interface Gofish extends RepositoryPackager {
     Tap getRepository()
 
     void repository(Action<? super Tap> action)

@@ -41,86 +41,86 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class ChocolateyValidator extends Validator {
-    public static void validateChocolatey(JReleaserContext context, Distribution distribution, Chocolatey tool, Errors errors) {
+    public static void validateChocolatey(JReleaserContext context, Distribution distribution, Chocolatey packager, Errors errors) {
         JReleaserModel model = context.getModel();
-        Chocolatey parentTool = model.getPackagers().getChocolatey();
+        Chocolatey parentPackager = model.getPackagers().getChocolatey();
 
-        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
-            tool.setActive(parentTool.getActive());
+        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
+            packager.setActive(parentPackager.getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
-            tool.disable();
+            packager.disable();
             return;
         }
 
         context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
 
-        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
-            tool.setActive(Active.NEVER);
-            tool.disable();
+            packager.setActive(Active.NEVER);
+            packager.disable();
             return;
         } else if (candidateArtifacts.size() > 1) {
-            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".chocolatey"));
-            tool.disable();
+            errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".chocolatey"));
+            packager.disable();
             return;
         }
 
-        validateCommitAuthor(tool, parentTool);
-        Chocolatey.ChocolateyBucket bucket = tool.getBucket();
+        validateCommitAuthor(packager, parentPackager);
+        Chocolatey.ChocolateyBucket bucket = packager.getBucket();
         bucket.resolveEnabled(model.getProject());
-        validateTap(context, distribution, bucket, parentTool.getBucket(), "chocolatey.bucket");
-        validateTemplate(context, distribution, tool, parentTool, errors);
-        mergeExtraProperties(tool, parentTool);
-        validateContinueOnError(tool, parentTool);
-        if (isBlank(tool.getDownloadUrl())) {
-            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        validateTap(context, distribution, bucket, parentPackager.getBucket(), "chocolatey.bucket");
+        validateTemplate(context, distribution, packager, parentPackager, errors);
+        mergeExtraProperties(packager, parentPackager);
+        validateContinueOnError(packager, parentPackager);
+        if (isBlank(packager.getDownloadUrl())) {
+            packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }
 
-        if (isBlank(tool.getPackageName())) {
-            tool.setPackageName(parentTool.getPackageName());
-            if (isBlank(tool.getPackageName())) {
-                tool.setPackageName(distribution.getName());
+        if (isBlank(packager.getPackageName())) {
+            packager.setPackageName(parentPackager.getPackageName());
+            if (isBlank(packager.getPackageName())) {
+                packager.setPackageName(distribution.getName());
             }
         }
 
-        if (isBlank(tool.getUsername())) {
-            tool.setUsername(service.getOwner());
+        if (isBlank(packager.getUsername())) {
+            packager.setUsername(service.getOwner());
         }
-        if (!tool.isRemoteBuildSet() && parentTool.isRemoteBuildSet()) {
-            tool.setRemoteBuild(parentTool.isRemoteBuild());
-        }
-
-        if (isBlank(tool.getTitle())) {
-            tool.setTitle(parentTool.getTitle());
-        }
-        if (isBlank(tool.getTitle())) {
-            tool.setTitle(model.getProject().getName());
+        if (!packager.isRemoteBuildSet() && parentPackager.isRemoteBuildSet()) {
+            packager.setRemoteBuild(parentPackager.isRemoteBuild());
         }
 
-        if (isBlank(tool.getIconUrl())) {
-            tool.setIconUrl(parentTool.getIconUrl());
+        if (isBlank(packager.getTitle())) {
+            packager.setTitle(parentPackager.getTitle());
+        }
+        if (isBlank(packager.getTitle())) {
+            packager.setTitle(model.getProject().getName());
         }
 
-        if (isBlank(tool.getSource())) {
-            tool.setSource(parentTool.getSource());
-        }
-        if (isBlank(tool.getSource())) {
-            tool.setSource(DEFAULT_CHOCOLATEY_PUSH_URL);
+        if (isBlank(packager.getIconUrl())) {
+            packager.setIconUrl(parentPackager.getIconUrl());
         }
 
-        if (!tool.isRemoteBuild()) {
-            tool.setApiKey(
+        if (isBlank(packager.getSource())) {
+            packager.setSource(parentPackager.getSource());
+        }
+        if (isBlank(packager.getSource())) {
+            packager.setSource(DEFAULT_CHOCOLATEY_PUSH_URL);
+        }
+
+        if (!packager.isRemoteBuild()) {
+            packager.setApiKey(
                 checkProperty(context,
                     CHOCOLATEY_API_KEY,
                     "chocolatey.apiKey",
-                    tool.getApiKey(),
+                    packager.getApiKey(),
                     errors,
                     context.isDryrun()));
         }
 
-        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
+        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
     }
 }

@@ -39,48 +39,48 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.10.0
  */
 public abstract class GofishValidator extends Validator {
-    public static void validateGofish(JReleaserContext context, Distribution distribution, Gofish tool, Errors errors) {
+    public static void validateGofish(JReleaserContext context, Distribution distribution, Gofish packager, Errors errors) {
         JReleaserModel model = context.getModel();
-        Gofish parentTool = model.getPackagers().getGofish();
+        Gofish parentPackager = model.getPackagers().getGofish();
 
-        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
-            tool.setActive(parentTool.getActive());
+        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
+            packager.setActive(parentPackager.getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) {
-            tool.disable();
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+            packager.disable();
             return;
         }
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
-            tool.disable();
+            packager.disable();
             return;
         }
 
         context.getLogger().debug("distribution.{}.gofish", distribution.getName());
 
-        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
-            tool.setActive(Active.NEVER);
-            tool.disable();
+            packager.setActive(Active.NEVER);
+            packager.disable();
             return;
         } else if (candidateArtifacts.stream()
             .filter(artifact -> isBlank(artifact.getPlatform()))
             .count() > 1) {
-            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".gofish"));
-            tool.disable();
+            errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".gofish"));
+            packager.disable();
             return;
         }
 
-        validateCommitAuthor(tool, parentTool);
-        Gofish.GofishRepository repository = tool.getRepository();
+        validateCommitAuthor(packager, parentPackager);
+        Gofish.GofishRepository repository = packager.getRepository();
         repository.resolveEnabled(model.getProject());
-        validateTap(context, distribution, repository, parentTool.getRepository(), "gofish.repository");
-        validateTemplate(context, distribution, tool, parentTool, errors);
-        mergeExtraProperties(tool, parentTool);
-        validateContinueOnError(tool, parentTool);
-        if (isBlank(tool.getDownloadUrl())) {
-            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        validateTap(context, distribution, repository, parentPackager.getRepository(), "gofish.repository");
+        validateTemplate(context, distribution, packager, parentPackager, errors);
+        mergeExtraProperties(packager, parentPackager);
+        validateContinueOnError(packager, parentPackager);
+        if (isBlank(packager.getDownloadUrl())) {
+            packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }
-        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
+        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
     }
 }

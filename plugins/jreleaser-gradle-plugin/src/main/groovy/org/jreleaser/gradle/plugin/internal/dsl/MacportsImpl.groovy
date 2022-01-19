@@ -37,7 +37,7 @@ import javax.inject.Inject
  * @since 0.9.0
  */
 @CompileStatic
-class MacportsImpl extends AbstractRepositoryTool implements Macports {
+class MacportsImpl extends AbstractRepositoryPackager implements Macports {
     final Property<String> packageName
     final Property<Integer> revision
     final CommitAuthorImpl commitAuthor
@@ -89,15 +89,15 @@ class MacportsImpl extends AbstractRepositoryTool implements Macports {
     }
 
     org.jreleaser.model.Macports toModel() {
-        org.jreleaser.model.Macports tool = new org.jreleaser.model.Macports()
-        fillToolProperties(tool)
-        fillTemplateToolProperties(tool)
-        if (packageName.present) tool.packageName = packageName.get()
-        if (revision.present) tool.revision = revision.get()
-        if (repository.isSet()) tool.repository = repository.toMacportsRepository()
-        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
-        if (categories.present) tool.categories = (categories.get() as List<String>)
-        if (maintainers.present) tool.maintainers = (maintainers.get() as List<String>)
-        tool
+        org.jreleaser.model.Macports packager = new org.jreleaser.model.Macports()
+        fillPackagerProperties(packager)
+        fillTemplatePackagerProperties(packager)
+        if (packageName.present) packager.packageName = packageName.get()
+        if (revision.present) packager.revision = revision.get()
+        if (repository.isSet()) packager.repository = repository.toMacportsRepository()
+        if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
+        if (categories.present) packager.categories = (categories.get() as List<String>)
+        if (maintainers.present) packager.maintainers = (maintainers.get() as List<String>)
+        packager
     }
 }

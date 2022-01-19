@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Snap extends AbstractRepositoryTool {
+public class Snap extends AbstractRepositoryPackager {
     private final Set<String> localPlugs = new LinkedHashSet<>();
     private final Set<String> localSlots = new LinkedHashSet<>();
     private final List<Plug> plugs = new ArrayList<>();

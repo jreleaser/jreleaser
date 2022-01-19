@@ -270,45 +270,45 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         });
     }
 
-    // --== TOOLs ==--
+    // --== PACKAGERS ==--
 
-    public <T extends Tool> T findTool(String name) {
+    public <T extends Packager> T findPackager(String name) {
         if (isBlank(name)) {
-            throw new JReleaserException(RB.$("ERROR_tool_name_not_blank"));
+            throw new JReleaserException(RB.$("ERROR_packager_name_not_blank"));
         }
 
-        return resolveTool(name);
+        return resolvePackager(name);
     }
 
-    public <T extends Tool> T getTool(String name) {
-        T tool = findTool(name);
-        if (null != tool) {
-            return tool;
+    public <T extends Packager> T getPackager(String name) {
+        T packager = findPackager(name);
+        if (null != packager) {
+            return packager;
         }
-        throw new JReleaserException(RB.$("ERROR_tool_not_configured", name));
+        throw new JReleaserException(RB.$("ERROR_packager_not_configured", name));
     }
 
-    private <T extends Tool> T resolveTool(String name) {
+    private <T extends Packager> T resolvePackager(String name) {
         switch (name.toLowerCase().trim()) {
-            case Brew.NAME:
+            case Brew.TYPE:
                 return (T) getBrew();
-            case Chocolatey.NAME:
+            case Chocolatey.TYPE:
                 return (T) getChocolatey();
-            case Docker.NAME:
+            case Docker.TYPE:
                 return (T) getDocker();
-            case Gofish.NAME:
+            case Gofish.TYPE:
                 return (T) getGofish();
-            case Jbang.NAME:
+            case Jbang.TYPE:
                 return (T) getJbang();
-            case Macports.NAME:
+            case Macports.TYPE:
                 return (T) getMacports();
-            case Scoop.NAME:
+            case Scoop.TYPE:
                 return (T) getScoop();
-            case Sdkman.NAME:
+            case Sdkman.TYPE:
                 return (T) getSdkman();
-            case Snap.NAME:
+            case Snap.TYPE:
                 return (T) getSnap();
-            case Spec.NAME:
+            case Spec.TYPE:
                 return (T) getSpec();
             default:
                 throw new JReleaserException(RB.$("ERROR_unsupported_packager", name));
@@ -348,16 +348,16 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
 
     public static Set<String> supportedPackagers() {
         Set<String> set = new LinkedHashSet<>();
-        set.add(Brew.NAME);
-        set.add(Chocolatey.NAME);
-        set.add(Docker.NAME);
-        set.add(Gofish.NAME);
-        set.add(Jbang.NAME);
-        set.add(Macports.NAME);
-        set.add(Scoop.NAME);
-        set.add(Sdkman.NAME);
-        set.add(Snap.NAME);
-        set.add(Spec.NAME);
+        set.add(Brew.TYPE);
+        set.add(Chocolatey.TYPE);
+        set.add(Docker.TYPE);
+        set.add(Gofish.TYPE);
+        set.add(Jbang.TYPE);
+        set.add(Macports.TYPE);
+        set.add(Scoop.TYPE);
+        set.add(Sdkman.TYPE);
+        set.add(Snap.TYPE);
+        set.add(Spec.TYPE);
         return Collections.unmodifiableSet(set);
     }
 

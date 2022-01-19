@@ -20,7 +20,7 @@ package org.jreleaser.engine.distribution;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.tool.spi.ToolProcessingException;
+import org.jreleaser.model.packager.spi.PackagerProcessingException;
 import org.jreleaser.util.JReleaserException;
 
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
  * @since 0.1.0
  */
 public class Distributions {
-    public static void process(JReleaserContext context, String action, ToolProcessingFunction function) {
+    public static void process(JReleaserContext context, String action, PackagerProcessingFunction function) {
         List<Distribution> activeDistributions = context.getModel().getActiveDistributions();
 
         if (activeDistributions.isEmpty()) {
@@ -90,7 +90,7 @@ public class Distributions {
         }
     }
 
-    private static void processDistribution(JReleaserContext context, String action, Distribution distribution, ToolProcessingFunction function) {
+    private static void processDistribution(JReleaserContext context, String action, Distribution distribution, PackagerProcessingFunction function) {
         context.getLogger().increaseIndent();
         context.getLogger().info(RB.$("distributions.apply.action.to"), action, distribution.getName());
 
@@ -99,22 +99,22 @@ public class Distributions {
                 context.getLogger().info(RB.$("packagers.packager.excluded"), packagerName);
                 continue;
             }
-            processTool(context, distribution, packagerName, function);
+            processPackager(context, distribution, packagerName, function);
         }
 
         context.getLogger().decreaseIndent();
     }
 
-    private static void processDistribution(JReleaserContext context, String action, Distribution distribution, String packagerName, ToolProcessingFunction function) {
+    private static void processDistribution(JReleaserContext context, String action, Distribution distribution, String packagerName, PackagerProcessingFunction function) {
         context.getLogger().increaseIndent();
         context.getLogger().info(RB.$("distributions.apply.action.to"), action, distribution.getName());
 
-        processTool(context, distribution, packagerName, function);
+        processPackager(context, distribution, packagerName, function);
 
         context.getLogger().decreaseIndent();
     }
 
-    private static void processTool(JReleaserContext context, Distribution distribution, String packagerName, ToolProcessingFunction function) {
+    private static void processPackager(JReleaserContext context, Distribution distribution, String packagerName, PackagerProcessingFunction function) {
         context.getLogger().increaseIndent();
         context.getLogger().setPrefix(packagerName);
         try {
@@ -123,7 +123,7 @@ public class Distributions {
                 packagerName);
 
             function.consume(processor);
-        } catch (ToolProcessingException e) {
+        } catch (PackagerProcessingException e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);
         }
         context.getLogger().restorePrefix();
@@ -132,11 +132,11 @@ public class Distributions {
 
     private static DistributionProcessor createDistributionProcessor(JReleaserContext context,
                                                                      Distribution distribution,
-                                                                     String toolName) {
+                                                                     String packagerName) {
         return DistributionProcessor.builder()
             .context(context)
             .distributionName(distribution.getName())
-            .toolName(toolName)
+            .packagerName(packagerName)
             .build();
     }
 }

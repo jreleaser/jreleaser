@@ -23,7 +23,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Jbang extends AbstractRepositoryTool {
+public class Jbang extends AbstractRepositoryPackager {
     private final Catalog catalog = new Catalog();
     private String alias;
 

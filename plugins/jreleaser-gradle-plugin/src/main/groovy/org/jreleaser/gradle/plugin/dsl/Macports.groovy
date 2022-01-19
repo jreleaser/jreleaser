@@ -28,7 +28,7 @@ import org.gradle.api.provider.Property
  * @since 0.9.0
  */
 @CompileStatic
-interface Macports extends RepositoryTool {
+interface Macports extends RepositoryPackager {
     Property<String> getPackageName()
 
     Property<Integer> getRevision()

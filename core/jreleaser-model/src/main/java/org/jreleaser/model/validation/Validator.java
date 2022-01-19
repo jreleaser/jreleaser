@@ -28,9 +28,9 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.OwnerAware;
+import org.jreleaser.model.Packager;
 import org.jreleaser.model.RepositoryTap;
 import org.jreleaser.model.TimeoutAware;
-import org.jreleaser.model.Tool;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
@@ -94,7 +94,7 @@ class Validator {
         if (isBlank(self.getOwner())) self.setOwner(other.getOwner());
     }
 
-    static void validateContinueOnError(Tool self, Tool other) {
+    static void validateContinueOnError(Packager self, Packager other) {
         if (!self.isContinueOnErrorSet()) {
             self.setContinueOnError(other.isContinueOnError());
         }

@@ -26,7 +26,7 @@ import java.util.Set;
  * @since 0.4.0
  */
 public interface DockerConfiguration extends Domain, ExtraProperties, Activatable {
-    String NAME = "docker";
+    String TYPE = "docker";
     String LABEL_OCI_IMAGE_TITLE = "org.opencontainers.image.title";
     String LABEL_OCI_IMAGE_DESCRIPTION = "org.opencontainers.image.description";
     String LABEL_OCI_IMAGE_REVISION = "org.opencontainers.image.revision";

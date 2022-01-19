@@ -92,7 +92,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserTemplateTask t) {
                     t.group = JRELEASER_GROUP
-                    t.description = 'Generates templates for a specific tool/announcer'
+                    t.description = 'Generates templates for a specific packager/announcer'
                     t.jlogger.set(logger)
                     t.outputDirectory.set(project.layout
                         .projectDirectory

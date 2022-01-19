@@ -42,8 +42,8 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public class Gofish extends AbstractRepositoryTool {
-    public static final String NAME = "gofish";
+public class Gofish extends AbstractRepositoryPackager {
+    public static final String TYPE = "gofish";
     public static final String SKIP_GOFISH = "skipGofish";
 
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
@@ -66,7 +66,7 @@ public class Gofish extends AbstractRepositoryTool {
     private final GofishRepository repository = new GofishRepository();
 
     public Gofish() {
-        super(NAME);
+        super(TYPE);
     }
 
     void setAll(Gofish spec) {

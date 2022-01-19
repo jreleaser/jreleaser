@@ -36,7 +36,7 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-class JbangImpl extends AbstractRepositoryTool implements Jbang {
+class JbangImpl extends AbstractRepositoryPackager implements Jbang {
     final Property<String> alias
     final CommitAuthorImpl commitAuthor
     final TapImpl catalog
@@ -78,12 +78,12 @@ class JbangImpl extends AbstractRepositoryTool implements Jbang {
     }
 
     org.jreleaser.model.Jbang toModel() {
-        org.jreleaser.model.Jbang tool = new org.jreleaser.model.Jbang()
-        fillToolProperties(tool)
-        fillTemplateToolProperties(tool)
-        if (alias.present) tool.alias = alias.get()
-        if (catalog.isSet()) tool.catalog = catalog.toJbangCatalog()
-        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
-        tool
+        org.jreleaser.model.Jbang packager = new org.jreleaser.model.Jbang()
+        fillPackagerProperties(packager)
+        fillTemplatePackagerProperties(packager)
+        if (alias.present) packager.alias = alias.get()
+        if (catalog.isSet()) packager.catalog = catalog.toJbangCatalog()
+        if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
+        packager
     }
 }

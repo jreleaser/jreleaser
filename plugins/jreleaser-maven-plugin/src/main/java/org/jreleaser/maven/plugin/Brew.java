@@ -30,7 +30,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Brew extends AbstractRepositoryTool {
+public class Brew extends AbstractRepositoryPackager {
     @Parameter(property = "dependencies")
     private final List<Dependency> dependencies = new ArrayList<>();
     private final Tap tap = new Tap();

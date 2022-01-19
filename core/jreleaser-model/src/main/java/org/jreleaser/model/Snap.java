@@ -48,8 +48,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Snap extends AbstractRepositoryTool {
-    public static final String NAME = "snap";
+public class Snap extends AbstractRepositoryPackager {
+    public static final String TYPE = "snap";
     public static final String SKIP_SNAP = "skipSnap";
 
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
@@ -86,7 +86,7 @@ public class Snap extends AbstractRepositoryTool {
     private Boolean remoteBuild;
 
     public Snap() {
-        super(NAME);
+        super(TYPE);
     }
 
     void setAll(Snap snap) {

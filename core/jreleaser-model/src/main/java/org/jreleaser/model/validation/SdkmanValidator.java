@@ -44,79 +44,79 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.6.0
  */
 public abstract class SdkmanValidator extends Validator {
-    public static void validateSdkman(JReleaserContext context, Distribution distribution, Sdkman tool, Errors errors) {
+    public static void validateSdkman(JReleaserContext context, Distribution distribution, Sdkman packager, Errors errors) {
         JReleaserModel model = context.getModel();
-        Sdkman parentTool = model.getPackagers().getSdkman();
+        Sdkman parentPackager = model.getPackagers().getSdkman();
 
-        boolean toolSet = tool.isActiveSet();
-        boolean parentToolSet = parentTool.isActiveSet();
-        tool.getExtraProperties().put(MAGIC_SET, toolSet || parentToolSet);
+        boolean packagerSet = packager.isActiveSet();
+        boolean parentPackagerSet = parentPackager.isActiveSet();
+        packager.getExtraProperties().put(MAGIC_SET, packagerSet || parentPackagerSet);
 
-        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
-            tool.setActive(parentTool.getActive());
+        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
+            packager.setActive(parentPackager.getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
-            tool.disable();
+            packager.disable();
             return;
         }
 
         context.getLogger().debug("distribution.{}.sdkman", distribution.getName());
 
-        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
-            tool.setActive(Active.NEVER);
-            tool.disable();
+            packager.setActive(Active.NEVER);
+            packager.disable();
             return;
         }
 
-        mergeExtraProperties(tool, parentTool);
-        validateContinueOnError(tool, parentTool);
-        if (isBlank(tool.getDownloadUrl())) {
-            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        mergeExtraProperties(packager, parentPackager);
+        validateContinueOnError(packager, parentPackager);
+        if (isBlank(packager.getDownloadUrl())) {
+            packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }
 
-        if (null == tool.getCommand()) {
-            tool.setCommand(parentTool.getCommand());
-            if (null == tool.getCommand()) {
-                tool.setCommand(Sdkman.Command.MAJOR);
+        if (null == packager.getCommand()) {
+            packager.setCommand(parentPackager.getCommand());
+            if (null == packager.getCommand()) {
+                packager.setCommand(Sdkman.Command.MAJOR);
             }
         }
 
-        if (isBlank(tool.getCandidate())) {
-            tool.setCandidate(parentTool.getCandidate());
-            if (isBlank(tool.getCandidate())) {
-                tool.setCandidate(distribution.getName());
+        if (isBlank(packager.getCandidate())) {
+            packager.setCandidate(parentPackager.getCandidate());
+            if (isBlank(packager.getCandidate())) {
+                packager.setCandidate(distribution.getName());
             }
         }
 
-        if (isBlank(tool.getReleaseNotesUrl())) {
-            tool.setReleaseNotesUrl(parentTool.getReleaseNotesUrl());
-            if (isBlank(tool.getReleaseNotesUrl())) {
-                tool.setReleaseNotesUrl(service.getReleaseNotesUrl());
+        if (isBlank(packager.getReleaseNotesUrl())) {
+            packager.setReleaseNotesUrl(parentPackager.getReleaseNotesUrl());
+            if (isBlank(packager.getReleaseNotesUrl())) {
+                packager.setReleaseNotesUrl(service.getReleaseNotesUrl());
             }
         }
 
-        tool.setConsumerKey(
+        packager.setConsumerKey(
             checkProperty(context,
                 SDKMAN_CONSUMER_KEY,
                 "sdkman.consumerKey",
-                tool.getConsumerKey(),
+                packager.getConsumerKey(),
                 errors,
                 context.isDryrun()));
 
-        tool.setConsumerToken(
+        packager.setConsumerToken(
             checkProperty(context,
                 SDKMAN_CONSUMER_TOKEN,
                 "sdkman.consumerToken",
-                tool.getConsumerToken(),
+                packager.getConsumerToken(),
                 errors,
                 context.isDryrun()));
 
-        validateTimeout(tool);
+        validateTimeout(packager);
 
-        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
+        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
     }
 
     public static void postValidateSdkman(JReleaserContext context, Errors errors) {

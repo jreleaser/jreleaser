@@ -22,8 +22,8 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Packager;
 import org.jreleaser.model.Project;
-import org.jreleaser.model.Tool;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
@@ -258,38 +258,7 @@ public abstract class DistributionsValidator extends Validator {
         }
     }
 
-    /*
-    public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Tool tool, Errors errors) {
-        // validate distribution type
-        if (distribution.getType() == Distribution.DistributionType.BINARY ||
-            distribution.getType() == Distribution.DistributionType.JLINK ||
-            distribution.getType() == Distribution.DistributionType.NATIVE_IMAGE ||
-            distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE) {
-            // ensure all artifacts define a platform
-
-            Set<String> fileExtensions = tool.getSupportedExtensions(distribution);
-            String noPlatform = "<nil>";
-            Map<String, List<Artifact>> byPlatform = distribution.getArtifacts().stream()
-                .filter(Artifact::isActive)
-                .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getPath().endsWith(ext)))
-                .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? noPlatform : artifact.getPlatform()));
-
-            if (byPlatform.containsKey(noPlatform)) {
-                errors.configuration(RB.$("validation_distributions_platform_check",
-                    distribution.getName(), distribution.getType(), tool.getName()));
-            }
-
-            if (byPlatform.keySet().stream()
-                .noneMatch(tool::supportsPlatform)) {
-                context.getLogger().warn(RB.$("validation_distributions_disable",
-                    distribution.getName(), tool.getName()));
-                tool.disable();
-            }
-        }
-    }
-     */
-
-    public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Tool tool,
+    public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Packager packager,
                                                  List<Artifact> candidateArtifacts, Errors errors) {
         // validate distribution type
         if (distribution.getType() == Distribution.DistributionType.BINARY ||
@@ -304,14 +273,14 @@ public abstract class DistributionsValidator extends Validator {
 
             if (byPlatform.containsKey(noPlatform)) {
                 errors.configuration(RB.$("validation_distributions_platform_check",
-                    distribution.getName(), distribution.getType(), tool.getName()));
+                    distribution.getName(), distribution.getType(), packager.getType()));
             }
 
             if (byPlatform.keySet().stream()
-                .noneMatch(tool::supportsPlatform)) {
+                .noneMatch(packager::supportsPlatform)) {
                 context.getLogger().warn(RB.$("validation_distributions_disable",
-                    distribution.getName(), tool.getName()));
-                tool.disable();
+                    distribution.getName(), packager.getType()));
+                packager.disable();
             }
         }
     }

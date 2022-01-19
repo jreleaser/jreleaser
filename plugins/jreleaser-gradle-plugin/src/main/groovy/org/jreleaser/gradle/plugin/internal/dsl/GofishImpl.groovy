@@ -34,7 +34,7 @@ import javax.inject.Inject
  * @since 0.10.0
  */
 @CompileStatic
-class GofishImpl extends AbstractRepositoryTool implements Gofish {
+class GofishImpl extends AbstractRepositoryPackager implements Gofish {
     final CommitAuthorImpl commitAuthor
     final TapImpl repository
 
@@ -74,11 +74,11 @@ class GofishImpl extends AbstractRepositoryTool implements Gofish {
     }
 
     org.jreleaser.model.Gofish toModel() {
-        org.jreleaser.model.Gofish tool = new org.jreleaser.model.Gofish()
-        fillToolProperties(tool)
-        fillTemplateToolProperties(tool)
-        if (repository.isSet()) tool.repository = repository.toGofishRepository()
-        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
-        tool
+        org.jreleaser.model.Gofish packager = new org.jreleaser.model.Gofish()
+        fillPackagerProperties(packager)
+        fillTemplatePackagerProperties(packager)
+        if (repository.isSet()) packager.repository = repository.toGofishRepository()
+        if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
+        packager
     }
 }

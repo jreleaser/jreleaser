@@ -44,134 +44,134 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class SnapValidator extends Validator {
-    public static void validateSnap(JReleaserContext context, Distribution distribution, Snap tool, Errors errors) {
+    public static void validateSnap(JReleaserContext context, Distribution distribution, Snap packager, Errors errors) {
         JReleaserModel model = context.getModel();
-        Snap parentTool = model.getPackagers().getSnap();
+        Snap parentPackager = model.getPackagers().getSnap();
 
-        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
-            tool.setActive(parentTool.getActive());
+        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
+            packager.setActive(parentPackager.getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
-            tool.disable();
+            packager.disable();
             return;
         }
 
         context.getLogger().debug("distribution.{}.snap", distribution.getName());
 
-        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
-            tool.setActive(Active.NEVER);
-            tool.disable();
+            packager.setActive(Active.NEVER);
+            packager.disable();
             return;
         } else if (candidateArtifacts.size() > 1) {
-            errors.configuration(RB.$("validation_tool_multiple_artifacts", "distribution." + distribution.getName() + ".snap"));
-            tool.disable();
+            errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".snap"));
+            packager.disable();
             return;
         }
 
-        validateCommitAuthor(tool, parentTool);
-        Snap.SnapTap snap = tool.getSnap();
+        validateCommitAuthor(packager, parentPackager);
+        Snap.SnapTap snap = packager.getSnap();
         snap.resolveEnabled(model.getProject());
         if (isBlank(snap.getName())) {
             snap.setName(distribution.getName() + "-snap");
         }
-        validateTap(context, distribution, snap, parentTool.getSnap(), "snap.snap");
-        validateTemplate(context, distribution, tool, parentTool, errors);
-        mergeExtraProperties(tool, parentTool);
-        validateContinueOnError(tool, parentTool);
-        if (isBlank(tool.getDownloadUrl())) {
-            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        validateTap(context, distribution, snap, parentPackager.getSnap(), "snap.snap");
+        validateTemplate(context, distribution, packager, parentPackager, errors);
+        mergeExtraProperties(packager, parentPackager);
+        validateContinueOnError(packager, parentPackager);
+        if (isBlank(packager.getDownloadUrl())) {
+            packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }
-        mergeSnapPlugs(tool, parentTool);
-        mergeSnapSlots(tool, parentTool);
+        mergeSnapPlugs(packager, parentPackager);
+        mergeSnapSlots(packager, parentPackager);
 
-        if (isBlank(tool.getPackageName())) {
-            tool.setPackageName(parentTool.getPackageName());
-            if (isBlank(tool.getPackageName())) {
-                tool.setPackageName(distribution.getName());
+        if (isBlank(packager.getPackageName())) {
+            packager.setPackageName(parentPackager.getPackageName());
+            if (isBlank(packager.getPackageName())) {
+                packager.setPackageName(distribution.getName());
             }
         }
-        if (isBlank(tool.getBase())) {
-            tool.setBase(parentTool.getBase());
-            if (isBlank(tool.getBase())) {
+        if (isBlank(packager.getBase())) {
+            packager.setBase(parentPackager.getBase());
+            if (isBlank(packager.getBase())) {
                 errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".snap.base"));
             }
         }
-        if (isBlank(tool.getGrade())) {
-            tool.setGrade(parentTool.getGrade());
-            if (isBlank(tool.getGrade())) {
+        if (isBlank(packager.getGrade())) {
+            packager.setGrade(parentPackager.getGrade());
+            if (isBlank(packager.getGrade())) {
                 errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".snap.grade"));
             }
         }
-        if (isBlank(tool.getConfinement())) {
-            tool.setConfinement(parentTool.getConfinement());
-            if (isBlank(tool.getConfinement())) {
+        if (isBlank(packager.getConfinement())) {
+            packager.setConfinement(parentPackager.getConfinement());
+            if (isBlank(packager.getConfinement())) {
                 errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".snap.confinement"));
             }
         }
-        if (!tool.isRemoteBuildSet() && parentTool.isRemoteBuildSet()) {
-            tool.setRemoteBuild(parentTool.isRemoteBuild());
+        if (!packager.isRemoteBuildSet() && parentPackager.isRemoteBuildSet()) {
+            packager.setRemoteBuild(parentPackager.isRemoteBuild());
         }
-        if (!tool.isRemoteBuild() && isBlank(tool.getExportedLogin())) {
-            tool.setExportedLogin(parentTool.getExportedLogin());
-            if (isBlank(tool.getExportedLogin())) {
+        if (!packager.isRemoteBuild() && isBlank(packager.getExportedLogin())) {
+            packager.setExportedLogin(parentPackager.getExportedLogin());
+            if (isBlank(packager.getExportedLogin())) {
                 errors.configuration(RB.$("validation_must_not_be_empty", "distribution." + distribution.getName() + ".snap.exportedLogin"));
-            } else if (!context.getBasedir().resolve(tool.getExportedLogin()).toFile().exists()) {
+            } else if (!context.getBasedir().resolve(packager.getExportedLogin()).toFile().exists()) {
                 errors.configuration(RB.$("validation_directory_not_exist", "distribution." + distribution.getName() + ".snap.exportedLogin",
-                    context.getBasedir().resolve(tool.getExportedLogin())));
+                    context.getBasedir().resolve(packager.getExportedLogin())));
             }
         }
 
-        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
+        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
 
-        tool.addArchitecture(parentTool.getArchitectures());
-        for (int i = 0; i < tool.getArchitectures().size(); i++) {
-            Snap.Architecture arch = tool.getArchitectures().get(i);
+        packager.addArchitecture(parentPackager.getArchitectures());
+        for (int i = 0; i < packager.getArchitectures().size(); i++) {
+            Snap.Architecture arch = packager.getArchitectures().get(i);
             if (!arch.hasBuildOn()) {
                 errors.configuration(RB.$("validation_snap_missing_buildon", "distribution." + distribution.getName() + ".snap.architectures", i));
             }
         }
     }
 
-    private static void mergeSnapPlugs(Snap tool, Snap common) {
+    private static void mergeSnapPlugs(Snap packager, Snap common) {
         Set<String> localPlugs = new LinkedHashSet<>();
-        localPlugs.addAll(tool.getLocalPlugs());
+        localPlugs.addAll(packager.getLocalPlugs());
         localPlugs.addAll(common.getLocalPlugs());
-        tool.setLocalPlugs(localPlugs);
+        packager.setLocalPlugs(localPlugs);
 
         Map<String, Snap.Plug> commonPlugs = common.getPlugs().stream()
             .collect(Collectors.toMap(Snap.Plug::getName, Snap.Plug::copyOf));
-        Map<String, Snap.Plug> toolPlugs = tool.getPlugs().stream()
+        Map<String, Snap.Plug> packagerPlugs = packager.getPlugs().stream()
             .collect(Collectors.toMap(Snap.Plug::getName, Snap.Plug::copyOf));
         commonPlugs.forEach((name, cp) -> {
-            Snap.Plug tp = toolPlugs.remove(name);
+            Snap.Plug tp = packagerPlugs.remove(name);
             if (null != tp) {
                 cp.getAttributes().putAll(tp.getAttributes());
             }
         });
-        commonPlugs.putAll(toolPlugs);
-        tool.setPlugs(new ArrayList<>(commonPlugs.values()));
+        commonPlugs.putAll(packagerPlugs);
+        packager.setPlugs(new ArrayList<>(commonPlugs.values()));
     }
 
-    private static void mergeSnapSlots(Snap tool, Snap common) {
+    private static void mergeSnapSlots(Snap packager, Snap common) {
         Set<String> localSlots = new LinkedHashSet<>();
-        localSlots.addAll(tool.getLocalSlots());
+        localSlots.addAll(packager.getLocalSlots());
         localSlots.addAll(common.getLocalSlots());
-        tool.setLocalSlots(localSlots);
+        packager.setLocalSlots(localSlots);
 
         Map<String, Snap.Slot> commonSlots = common.getSlots().stream()
             .collect(Collectors.toMap(Snap.Slot::getName, Snap.Slot::copyOf));
-        Map<String, Snap.Slot> toolSlots = tool.getSlots().stream()
+        Map<String, Snap.Slot> packagerSlots = packager.getSlots().stream()
             .collect(Collectors.toMap(Snap.Slot::getName, Snap.Slot::copyOf));
         commonSlots.forEach((name, cp) -> {
-            Snap.Slot tp = toolSlots.remove(name);
+            Snap.Slot tp = packagerSlots.remove(name);
             if (null != tp) {
                 cp.getAttributes().putAll(tp.getAttributes());
             }
         });
-        commonSlots.putAll(toolSlots);
-        tool.setSlots(new ArrayList<>(commonSlots.values()));
+        commonSlots.putAll(packagerSlots);
+        packager.setSlots(new ArrayList<>(commonSlots.values()));
     }
 }

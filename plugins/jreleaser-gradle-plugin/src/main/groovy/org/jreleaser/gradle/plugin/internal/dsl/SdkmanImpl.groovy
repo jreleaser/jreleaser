@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.6.0
  */
 @CompileStatic
-class SdkmanImpl extends AbstractTool implements Sdkman {
+class SdkmanImpl extends AbstractPackager implements Sdkman {
     final Property<String> consumerKey
     final Property<String> consumerToken
     final Property<String> candidate
@@ -77,7 +77,7 @@ class SdkmanImpl extends AbstractTool implements Sdkman {
 
     org.jreleaser.model.Sdkman toModel() {
         org.jreleaser.model.Sdkman sdkman = new org.jreleaser.model.Sdkman()
-        fillToolProperties(sdkman)
+        fillPackagerProperties(sdkman)
         if (consumerKey.present) sdkman.consumerKey = consumerKey.get()
         if (consumerToken.present) sdkman.consumerToken = consumerToken.get()
         if (candidate.present) sdkman.candidate = candidate.get()

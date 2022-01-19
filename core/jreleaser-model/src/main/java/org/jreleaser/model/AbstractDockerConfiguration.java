@@ -67,7 +67,7 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
 
     @Override
     public String getPrefix() {
-        return NAME;
+        return TYPE;
     }
 
     @Override

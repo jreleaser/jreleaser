@@ -23,8 +23,8 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Packagers;
 import org.jreleaser.model.Project;
+import org.jreleaser.model.RepositoryPackager;
 import org.jreleaser.model.RepositoryTap;
-import org.jreleaser.model.RepositoryTool;
 import org.jreleaser.model.Sdkman;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
@@ -132,16 +132,16 @@ public abstract class PackagersValidator extends Validator {
         validateSdkman(context, packagers.getSdkman(), errors);
     }
 
-    private static void validateSdkman(JReleaserContext context, Sdkman tool, Errors errors) {
-        validateTimeout(tool);
+    private static void validateSdkman(JReleaserContext context, Sdkman packager, Errors errors) {
+        validateTimeout(packager);
     }
 
     private static void validatePackager(JReleaserContext context,
-                                         RepositoryTool tool,
+                                         RepositoryPackager packager,
                                          RepositoryTap tap,
                                          Errors errors) {
         GitService service = context.getModel().getRelease().getGitService();
-        validateCommitAuthor(tool, service);
+        validateCommitAuthor(packager, service);
         validateOwner(tap, service);
 
         tap.setUsername(

@@ -58,103 +58,103 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public abstract class DockerValidator extends Validator {
-    public static void validateDocker(JReleaserContext context, Distribution distribution, Docker tool, Errors errors) {
+    public static void validateDocker(JReleaserContext context, Distribution distribution, Docker packager, Errors errors) {
         JReleaserModel model = context.getModel();
         Project project = model.getProject();
-        Docker parentTool = model.getPackagers().getDocker();
+        Docker parentPackager = model.getPackagers().getDocker();
 
-        if (!tool.isActiveSet() && parentTool.isActiveSet()) {
-            tool.setActive(parentTool.getActive());
+        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
+            packager.setActive(parentPackager.getActive());
         }
-        if (!tool.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
 
         String element = "distribution." + distribution.getName() + ".docker";
         context.getLogger().debug(element);
 
-        List<Artifact> candidateArtifacts = tool.resolveCandidateArtifacts(context, distribution);
+        List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
-            tool.setActive(Active.NEVER);
-            tool.disable();
+            packager.setActive(Active.NEVER);
+            packager.disable();
             return;
         }
 
         // check specs for active status
-        for (DockerSpec spec : tool.getSpecs().values()) {
-            if (!spec.isActiveSet() && tool.isActiveSet()) {
-                spec.setActive(tool.getActive());
+        for (DockerSpec spec : packager.getSpecs().values()) {
+            if (!spec.isActiveSet() && packager.isActiveSet()) {
+                spec.setActive(packager.getActive());
             }
             spec.resolveEnabled(context.getModel().getProject(), distribution);
         }
 
-        validateTemplate(context, distribution, tool, parentTool, errors);
+        validateTemplate(context, distribution, packager, parentPackager, errors);
 
-        validateCommitAuthor(tool, parentTool);
-        Docker.DockerRepository repository = tool.getRepository();
+        validateCommitAuthor(packager, parentPackager);
+        Docker.DockerRepository repository = packager.getRepository();
         repository.resolveEnabled(model.getProject());
         if (!repository.isVersionedSubfoldersSet()) {
-            repository.setVersionedSubfolders(parentTool.getRepository().isVersionedSubfolders());
+            repository.setVersionedSubfolders(parentPackager.getRepository().isVersionedSubfolders());
         }
         if (isBlank(repository.getName())) {
             repository.setName(project.getName() + "-docker");
         }
-        validateTap(context, distribution, repository, parentTool.getRepository(), "docker.repository");
+        validateTap(context, distribution, repository, parentPackager.getRepository(), "docker.repository");
 
-        mergeExtraProperties(tool, parentTool);
-        validateContinueOnError(tool, parentTool);
-        if (isBlank(tool.getDownloadUrl())) {
-            tool.setDownloadUrl(parentTool.getDownloadUrl());
+        mergeExtraProperties(packager, parentPackager);
+        validateContinueOnError(packager, parentPackager);
+        if (isBlank(packager.getDownloadUrl())) {
+            packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }
 
-        if (isBlank(tool.getBaseImage())) {
-            tool.setBaseImage(parentTool.getBaseImage());
+        if (isBlank(packager.getBaseImage())) {
+            packager.setBaseImage(parentPackager.getBaseImage());
         }
-        validateBaseImage(distribution, tool);
+        validateBaseImage(distribution, packager);
 
-        if (tool.getImageNames().isEmpty()) {
-            tool.setImageNames(parentTool.getImageNames());
+        if (packager.getImageNames().isEmpty()) {
+            packager.setImageNames(parentPackager.getImageNames());
         }
 
-        if (tool.getImageNames().isEmpty()) {
-            tool.addImageName("{{repoOwner}}/{{distributionName}}:{{tagName}}");
+        if (packager.getImageNames().isEmpty()) {
+            packager.addImageName("{{repoOwner}}/{{distributionName}}:{{tagName}}");
         }
 
         if (context.getModel().getProject().isSnapshot()) {
             // find the 1st image that ends with :{{tagName}}
-            Optional<String> imageName = tool.getImageNames().stream()
+            Optional<String> imageName = packager.getImageNames().stream()
                 .filter(n -> n.endsWith(":{{tagName}}") || n.endsWith(":{{ tagName }}"))
                 .findFirst();
-            tool.setImageNames(singleton(imageName.orElse("{{repoOwner}}/{{distributionName}}:{{tagName}}")));
+            packager.setImageNames(singleton(imageName.orElse("{{repoOwner}}/{{distributionName}}:{{tagName}}")));
         }
 
-        validateCommands(tool, parentTool);
+        validateCommands(packager, parentPackager);
 
         Map<String, String> labels = new LinkedHashMap<>();
-        labels.putAll(parentTool.getLabels());
-        labels.putAll(tool.getLabels());
-        tool.setLabels(labels);
+        labels.putAll(parentPackager.getLabels());
+        labels.putAll(packager.getLabels());
+        packager.setLabels(labels);
 
-        if (!tool.getLabels().containsKey(LABEL_OCI_IMAGE_TITLE)) {
-            tool.getLabels().put(LABEL_OCI_IMAGE_TITLE, "{{distributionName}}");
+        if (!packager.getLabels().containsKey(LABEL_OCI_IMAGE_TITLE)) {
+            packager.getLabels().put(LABEL_OCI_IMAGE_TITLE, "{{distributionName}}");
         }
-        validateLabels(tool);
+        validateLabels(packager);
 
-        validateArtifactPlatforms(context, distribution, tool, candidateArtifacts, errors);
+        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
 
-        validateRegistries(context, tool, parentTool, errors, element);
+        validateRegistries(context, packager, parentPackager, errors, element);
 
-        if (!tool.isUseLocalArtifactSet() && parentTool.isUseLocalArtifactSet()) {
-            tool.setUseLocalArtifact(parentTool.isUseLocalArtifact());
+        if (!packager.isUseLocalArtifactSet() && parentPackager.isUseLocalArtifactSet()) {
+            packager.setUseLocalArtifact(parentPackager.isUseLocalArtifact());
         }
         if (distribution.getType() == Distribution.DistributionType.SINGLE_JAR) {
-            tool.setUseLocalArtifact(true);
+            packager.setUseLocalArtifact(true);
         }
 
-        for (Map.Entry<String, DockerSpec> e : tool.getSpecs().entrySet()) {
+        for (Map.Entry<String, DockerSpec> e : packager.getSpecs().entrySet()) {
             DockerSpec spec = e.getValue();
             if (isBlank(spec.getName())) {
                 spec.setName(e.getKey());
             }
-            validateDockerSpec(context, distribution, spec, tool, errors);
+            validateDockerSpec(context, distribution, spec, packager, errors);
         }
     }
 

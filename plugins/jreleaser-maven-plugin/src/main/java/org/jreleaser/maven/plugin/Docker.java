@@ -26,7 +26,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Docker extends AbstractDockerConfiguration implements RepositoryTool {
+public class Docker extends AbstractDockerConfiguration implements RepositoryPackager {
     private final List<DockerSpec> specs = new ArrayList<>();
     private final CommitAuthor commitAuthor = new CommitAuthor();
     private final DockerRepository repository = new DockerRepository();

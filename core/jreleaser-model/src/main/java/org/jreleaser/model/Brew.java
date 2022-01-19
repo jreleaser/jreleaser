@@ -51,8 +51,8 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Brew extends AbstractRepositoryTool {
-    public static final String NAME = "brew";
+public class Brew extends AbstractRepositoryPackager {
+    public static final String TYPE = "brew";
     public static final String SKIP_BREW = "skipBrew";
 
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
@@ -77,7 +77,7 @@ public class Brew extends AbstractRepositoryTool {
     private Boolean multiPlatform;
 
     public Brew() {
-        super(NAME);
+        super(TYPE);
     }
 
     void setAll(Brew brew) {

@@ -40,8 +40,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.9.0
  */
-public class Macports extends AbstractRepositoryTool {
-    public static final String NAME = "macports";
+public class Macports extends AbstractRepositoryPackager {
+    public static final String TYPE = "macports";
     public static final String SKIP_MACPORTS = "skipMacports";
 
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
@@ -62,7 +62,7 @@ public class Macports extends AbstractRepositoryTool {
     private Integer revision;
 
     public Macports() {
-        super(NAME);
+        super(TYPE);
     }
 
     void setAll(Macports macports) {

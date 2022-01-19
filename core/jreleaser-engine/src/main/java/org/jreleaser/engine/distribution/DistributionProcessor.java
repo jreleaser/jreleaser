@@ -20,9 +20,9 @@ package org.jreleaser.engine.distribution;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Tool;
-import org.jreleaser.model.tool.spi.ToolProcessingException;
-import org.jreleaser.model.tool.spi.ToolProcessor;
+import org.jreleaser.model.Packager;
+import org.jreleaser.model.packager.spi.PackagerProcessingException;
+import org.jreleaser.model.packager.spi.PackagerProcessor;
 import org.jreleaser.util.Constants;
 
 import java.util.Map;
@@ -37,34 +37,34 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class DistributionProcessor {
     private final JReleaserContext context;
     private final String distributionName;
-    private final String toolName;
+    private final String packagerName;
 
     private DistributionProcessor(JReleaserContext context,
                                   String distributionName,
-                                  String toolName) {
+                                  String packagerName) {
         this.context = context;
         this.distributionName = distributionName;
-        this.toolName = toolName;
+        this.packagerName = packagerName;
     }
 
     public String getDistributionName() {
         return distributionName;
     }
 
-    public String getToolName() {
-        return toolName;
+    public String getPackagerName() {
+        return packagerName;
     }
 
-    public void prepareDistribution() throws ToolProcessingException {
+    public void prepareDistribution() throws PackagerProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
-        Tool tool = distribution.getTool(toolName);
-        if (!tool.isEnabled()) {
+        Packager packager = distribution.getPackager(packagerName);
+        if (!packager.isEnabled()) {
             context.getLogger().debug(RB.$("distributions.skip.distribution"), distributionName);
             return;
         }
 
-        ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
-        if (!toolProcessor.supportsDistribution(distribution)) {
+        PackagerProcessor<Packager> packagerProcessor = PackagerProcessors.findProcessor(context, packager);
+        if (!packagerProcessor.supportsDistribution(distribution)) {
             context.getLogger().info(RB.$("distributions.not.supported.distribution"), distributionName, distribution.getType());
             return;
         }
@@ -72,10 +72,10 @@ public class DistributionProcessor {
         context.getLogger().info(RB.$("distributions.apply.action.distribution"), RB.$("distributions.action.preparing"), distributionName);
 
         try {
-            toolProcessor.prepareDistribution(distribution, initProps());
-        } catch (ToolProcessingException tpe) {
-            if (tool.isContinueOnError()) {
-                tool.fail();
+            packagerProcessor.prepareDistribution(distribution, initProps());
+        } catch (PackagerProcessingException tpe) {
+            if (packager.isContinueOnError()) {
+                packager.fail();
                 context.getLogger().warn(RB.$("distributions.failure"), tpe.getMessage());
                 context.getLogger().trace(tpe);
             } else {
@@ -84,20 +84,20 @@ public class DistributionProcessor {
         }
     }
 
-    public void packageDistribution() throws ToolProcessingException {
+    public void packageDistribution() throws PackagerProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
-        Tool tool = distribution.getTool(toolName);
-        if (!tool.isEnabled()) {
+        Packager packager = distribution.getPackager(packagerName);
+        if (!packager.isEnabled()) {
             context.getLogger().debug(RB.$("distributions.skip.distribution"), distributionName);
             return;
         }
-        if (tool.isFailed()) {
+        if (packager.isFailed()) {
             context.getLogger().warn(RB.$("distributions.previous.failure"));
             return;
         }
 
-        ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
-        if (!toolProcessor.supportsDistribution(distribution)) {
+        PackagerProcessor<Packager> packagerProcessor = PackagerProcessors.findProcessor(context, packager);
+        if (!packagerProcessor.supportsDistribution(distribution)) {
             context.getLogger().info(RB.$("distributions.not.supported.distribution"), distributionName, distribution.getType());
             return;
         }
@@ -105,10 +105,10 @@ public class DistributionProcessor {
         context.getLogger().info(RB.$("distributions.apply.action.distribution"), RB.$("distributions.action.packaging"), distributionName);
 
         try {
-            toolProcessor.packageDistribution(distribution, initProps());
-        } catch (ToolProcessingException tpe) {
-            if (tool.isContinueOnError()) {
-                tool.fail();
+            packagerProcessor.packageDistribution(distribution, initProps());
+        } catch (PackagerProcessingException tpe) {
+            if (packager.isContinueOnError()) {
+                packager.fail();
                 context.getLogger().warn(RB.$("distributions.failure"), tpe.getMessage());
                 context.getLogger().trace(tpe);
             } else {
@@ -117,20 +117,20 @@ public class DistributionProcessor {
         }
     }
 
-    public void publishDistribution() throws ToolProcessingException {
+    public void publishDistribution() throws PackagerProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
-        Tool tool = distribution.getTool(toolName);
-        if (!tool.isEnabled()) {
+        Packager packager = distribution.getPackager(packagerName);
+        if (!packager.isEnabled()) {
             context.getLogger().debug(RB.$("distributions.skip.distribution"), distributionName);
             return;
         }
-        if (tool.isFailed()) {
+        if (packager.isFailed()) {
             context.getLogger().warn(RB.$("distributions.previous.failure"));
             return;
         }
 
-        ToolProcessor<Tool> toolProcessor = ToolProcessors.findProcessor(context, tool);
-        if (!toolProcessor.supportsDistribution(distribution)) {
+        PackagerProcessor<Packager> packagerProcessor = PackagerProcessors.findProcessor(context, packager);
+        if (!packagerProcessor.supportsDistribution(distribution)) {
             context.getLogger().info(RB.$("distributions.not.supported.distribution"), distributionName, distribution.getType());
             return;
         }
@@ -138,10 +138,10 @@ public class DistributionProcessor {
         context.getLogger().info(RB.$("distributions.apply.action.distribution"), RB.$("distributions.action.publishing"), distributionName);
 
         try {
-            toolProcessor.publishDistribution(distribution, initProps());
-        } catch (ToolProcessingException tpe) {
-            if (tool.isContinueOnError()) {
-                tool.fail();
+            packagerProcessor.publishDistribution(distribution, initProps());
+        } catch (PackagerProcessingException tpe) {
+            if (packager.isContinueOnError()) {
+                packager.fail();
                 context.getLogger().warn(RB.$("distributions.failure"), tpe.getMessage());
                 context.getLogger().trace(tpe);
             } else {
@@ -156,10 +156,10 @@ public class DistributionProcessor {
         props.put(Constants.KEY_PACKAGE_DIRECTORY, context.getPackageDirectory());
         props.put(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, context.getPrepareDirectory()
             .resolve(distributionName)
-            .resolve(toolName));
+            .resolve(packagerName));
         props.put(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, context.getPackageDirectory()
             .resolve(distributionName)
-            .resolve(toolName));
+            .resolve(packagerName));
         return props;
     }
 
@@ -170,7 +170,7 @@ public class DistributionProcessor {
     public static class DistributionProcessorBuilder {
         private JReleaserContext context;
         private String distributionName;
-        private String toolName;
+        private String packagerName;
 
         public DistributionProcessorBuilder context(JReleaserContext context) {
             this.context = requireNonNull(context, "'context' must not be null");
@@ -182,16 +182,16 @@ public class DistributionProcessor {
             return this;
         }
 
-        public DistributionProcessorBuilder toolName(String toolName) {
-            this.toolName = requireNonBlank(toolName, "'toolName' must not be blank");
+        public DistributionProcessorBuilder packagerName(String packagerName) {
+            this.packagerName = requireNonBlank(packagerName, "'packagerName' must not be blank");
             return this;
         }
 
         public DistributionProcessor build() {
             requireNonNull(context, "'context' must not be null");
             requireNonBlank(distributionName, "'distributionName' must not be blank");
-            requireNonBlank(toolName, "'toolName' must not be blank");
-            return new DistributionProcessor(context, distributionName, toolName);
+            requireNonBlank(packagerName, "'packagerName' must not be blank");
+            return new DistributionProcessor(context, distributionName, packagerName);
         }
     }
 }

@@ -40,10 +40,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public class Sdkman extends AbstractTool implements TimeoutAware {
+public class Sdkman extends AbstractPackager implements TimeoutAware {
     public static final String SDKMAN_CONSUMER_KEY = "SDKMAN_CONSUMER_KEY";
     public static final String SDKMAN_CONSUMER_TOKEN = "SDKMAN_CONSUMER_TOKEN";
-    public static final String NAME = "sdkman";
+    public static final String TYPE = "sdkman";
     public static final String SKIP_SDKMAN = "skipSdkman";
 
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
@@ -66,7 +66,7 @@ public class Sdkman extends AbstractTool implements TimeoutAware {
     private boolean published;
 
     public Sdkman() {
-        super(NAME);
+        super(TYPE);
     }
 
     void setAll(Sdkman sdkman) {

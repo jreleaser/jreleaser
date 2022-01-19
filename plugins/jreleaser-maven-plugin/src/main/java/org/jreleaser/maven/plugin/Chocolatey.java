@@ -23,7 +23,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Chocolatey extends AbstractRepositoryTool {
+public class Chocolatey extends AbstractRepositoryPackager {
     private final Bucket bucket = new Bucket();
     private String packageName;
     private String username;

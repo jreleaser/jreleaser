@@ -109,16 +109,16 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
 
     @CompileDynamic
     org.jreleaser.model.Docker toModel() {
-        org.jreleaser.model.Docker tool = new org.jreleaser.model.Docker()
-        toModel(tool)
-        if (continueOnError.present) tool.continueOnError = continueOnError.get()
-        if (downloadUrl.present) tool.downloadUrl = downloadUrl.get()
-        if (repository.isSet()) tool.repository = repository.toModel()
-        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
+        org.jreleaser.model.Docker packager = new org.jreleaser.model.Docker()
+        toModel(packager)
+        if (continueOnError.present) packager.continueOnError = continueOnError.get()
+        if (downloadUrl.present) packager.downloadUrl = downloadUrl.get()
+        if (repository.isSet()) packager.repository = repository.toModel()
+        if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
 
-        specs.each { tool.addSpec(it.toModel()) }
+        specs.each { packager.addSpec(it.toModel()) }
 
-        tool
+        packager
     }
 
     @CompileStatic

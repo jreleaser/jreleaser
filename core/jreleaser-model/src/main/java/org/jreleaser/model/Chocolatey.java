@@ -41,9 +41,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Chocolatey extends AbstractRepositoryTool {
+public class Chocolatey extends AbstractRepositoryPackager {
     public static final String CHOCOLATEY_API_KEY = "CHOCOLATEY_API_KEY";
-    public static final String NAME = "chocolatey";
+    public static final String TYPE = "chocolatey";
     public static final String SKIP_CHOCOLATEY = "skipChocolatey";
     public static final String DEFAULT_CHOCOLATEY_PUSH_URL = "https://push.chocolatey.org/";
 
@@ -67,7 +67,7 @@ public class Chocolatey extends AbstractRepositoryTool {
     private Boolean remoteBuild;
 
     public Chocolatey() {
-        super(NAME);
+        super(TYPE);
     }
 
     void setAll(Chocolatey choco) {

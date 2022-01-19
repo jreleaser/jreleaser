@@ -32,7 +32,7 @@ import org.gradle.api.provider.SetProperty
  * @since 0.1.0
  */
 @CompileStatic
-interface Snap extends RepositoryTool {
+interface Snap extends RepositoryPackager {
     Property<String> getPackageName()
 
     Property<String> getBase()

@@ -37,7 +37,7 @@ import javax.inject.Inject
  * @since 0.9.1
  */
 @CompileStatic
-class SpecImpl extends AbstractRepositoryTool implements Spec {
+class SpecImpl extends AbstractRepositoryPackager implements Spec {
     final Property<String> packageName
     final Property<String> release
     final CommitAuthorImpl commitAuthor
@@ -86,14 +86,14 @@ class SpecImpl extends AbstractRepositoryTool implements Spec {
     }
 
     org.jreleaser.model.Spec toModel() {
-        org.jreleaser.model.Spec tool = new org.jreleaser.model.Spec()
-        fillToolProperties(tool)
-        fillTemplateToolProperties(tool)
-        if (packageName.present) tool.packageName = packageName.get()
-        if (release.present) tool.release = release.get()
-        if (repository.isSet()) tool.repository = repository.toSpecRepository()
-        if (commitAuthor.isSet()) tool.commitAuthor = commitAuthor.toModel()
-        if (requires.present) tool.requires = (requires.get() as List<String>)
-        tool
+        org.jreleaser.model.Spec packager = new org.jreleaser.model.Spec()
+        fillPackagerProperties(packager)
+        fillTemplatePackagerProperties(packager)
+        if (packageName.present) packager.packageName = packageName.get()
+        if (release.present) packager.release = release.get()
+        if (repository.isSet()) packager.repository = repository.toSpecRepository()
+        if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
+        if (requires.present) packager.requires = (requires.get() as List<String>)
+        packager
     }
 }

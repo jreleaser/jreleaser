@@ -27,7 +27,7 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface Jbang extends RepositoryTool {
+interface Jbang extends RepositoryPackager {
     Property<String> getAlias()
 
     Tap getCatalog()

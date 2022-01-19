@@ -26,7 +26,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.9.0
  */
-public class Macports extends AbstractRepositoryTool {
+public class Macports extends AbstractRepositoryPackager {
     private final List<String> categories = new ArrayList<>();
     private final List<String> maintainers = new ArrayList<>();
     private final Tap repository = new Tap();

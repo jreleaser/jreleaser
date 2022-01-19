@@ -27,8 +27,8 @@ import org.jreleaser.model.Files;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.Packager;
 import org.jreleaser.model.SdkmanAnnouncer;
-import org.jreleaser.model.Tool;
 import org.jreleaser.model.Upload;
 import org.jreleaser.model.Uploader;
 import org.jreleaser.util.FileType;
@@ -261,22 +261,22 @@ public class Artifacts {
         return props;
     }
 
-    public static String resolveDownloadUrl(JReleaserContext context, String packager, Distribution distribution, Artifact artifact) {
-        List<String> keys = Collections.singletonList("skip" + capitalize(packager));
+    public static String resolveDownloadUrl(JReleaserContext context, String packagerName, Distribution distribution, Artifact artifact) {
+        List<String> keys = Collections.singletonList("skip" + capitalize(packagerName));
         if (isSkip(artifact, keys)) return "";
 
-        String downloadUrl = artifact.getExtraProperty(packager + DOWNLOAD_URL_SUFFIX);
+        String downloadUrl = artifact.getExtraProperty(packagerName + DOWNLOAD_URL_SUFFIX);
         if (isBlank(downloadUrl)) {
             downloadUrl = artifact.getExtraProperty(DOWNLOAD_URL_KEY);
         }
 
-        Tool tool = distribution.findTool(packager);
+        Packager packager = distribution.findPackager(packagerName);
         if (isBlank(downloadUrl)) {
-            downloadUrl = tool.getDownloadUrl();
+            downloadUrl = packager.getDownloadUrl();
         }
 
         if (isBlank(downloadUrl)) {
-            downloadUrl = distribution.getExtraProperty(packager + DOWNLOAD_URL_SUFFIX);
+            downloadUrl = distribution.getExtraProperty(packagerName + DOWNLOAD_URL_SUFFIX);
         }
         if (isBlank(downloadUrl)) {
             downloadUrl = distribution.getExtraProperty(DOWNLOAD_URL_KEY);
@@ -293,7 +293,7 @@ public class Artifacts {
             downloadUrl = resolveDownloadUrlFromUploader(context, artifact, artifact);
         }
         if (isBlank(downloadUrl)) {
-            downloadUrl = resolveDownloadUrlFromUploader(context, tool, artifact);
+            downloadUrl = resolveDownloadUrlFromUploader(context, packager, artifact);
         }
         if (isBlank(downloadUrl)) {
             downloadUrl = resolveDownloadUrlFromUploader(context, distribution, artifact);
@@ -306,7 +306,7 @@ public class Artifacts {
         }
 
         Map<String, Object> props = context.props();
-        props.putAll(tool.getResolvedExtraProperties());
+        props.putAll(packager.getResolvedExtraProperties());
         props.putAll(distribution.props());
         artifactProps(artifact, distribution, props);
 

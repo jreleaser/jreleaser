@@ -101,13 +101,13 @@ abstract class JReleaserTemplateTask extends DefaultTask {
     }
 
     @Option(option = 'packager-name', description = 'The name of the packager (OPTIONAL).')
-    void setPackagerName(String toolName) {
-        this.packagerName.set(toolName)
+    void setPackagerName(String packagerName) {
+        this.packagerName.set(packagerName)
     }
 
     @Option(option = 'announcer-name', description = 'The name of the announcer (OPTIONAL).')
-    void setAnnouncerName(String toolName) {
-        this.announcerName.set(toolName)
+    void setAnnouncerName(String announcerName) {
+        this.announcerName.set(announcerName)
     }
 
     @Option(option = 'distribution-type', description = 'The type of the distribution (OPTIONAL).')
