@@ -30,7 +30,9 @@ import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
+import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
 import static org.jreleaser.util.CollectionUtils.newSet;
+import static org.jreleaser.util.FileType.DMG;
 import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isFalse;
@@ -43,6 +45,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Macports extends AbstractRepositoryPackager {
     public static final String TYPE = "macports";
     public static final String SKIP_MACPORTS = "skipMacports";
+    public static final String APP_NAME = "appName";
 
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
@@ -52,6 +55,7 @@ public class Macports extends AbstractRepositoryPackager {
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
         SUPPORTED.put(NATIVE_IMAGE, extensions);
+        SUPPORTED.put(NATIVE_PACKAGE, newSet(DMG.extension()));
     }
 
     private final List<String> categories = new ArrayList<>();

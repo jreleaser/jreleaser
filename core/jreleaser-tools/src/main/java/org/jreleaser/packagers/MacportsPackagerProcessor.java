@@ -29,12 +29,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.jreleaser.model.Macports.APP_NAME;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_NAME;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_VERSION;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_URL;
+import static org.jreleaser.util.Constants.KEY_MACPORTS_APP_NAME;
 import static org.jreleaser.util.Constants.KEY_MACPORTS_CATEGORIES;
 import static org.jreleaser.util.Constants.KEY_MACPORTS_DISTNAME;
 import static org.jreleaser.util.Constants.KEY_MACPORTS_DISTRIBUTION_URL;
@@ -46,6 +48,7 @@ import static org.jreleaser.util.Constants.KEY_MACPORTS_REPOSITORY_REPO_URL;
 import static org.jreleaser.util.Constants.KEY_MACPORTS_REVISION;
 import static org.jreleaser.util.Constants.KEY_PROJECT_LONG_DESCRIPTION;
 import static org.jreleaser.util.MustacheUtils.passThrough;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -82,6 +85,9 @@ public class MacportsPackagerProcessor extends AbstractRepositoryPackagerProcess
         props.put(KEY_PROJECT_LONG_DESCRIPTION, passThrough(String.join(LINE_SEPARATOR, longDescription)));
         if (distribution.getType() == Distribution.DistributionType.JAVA_BINARY) {
             props.put(KEY_MACPORTS_JAVA_VERSION, resolveJavaVersion(distribution));
+        }
+        if (packager.getExtraProperties().containsKey(APP_NAME)) {
+            props.put(KEY_MACPORTS_APP_NAME, resolveTemplate(packager.getExtraProperty(APP_NAME), props));
         }
 
         String distributionUrl = (String) props.get(KEY_DISTRIBUTION_URL);

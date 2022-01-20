@@ -218,6 +218,7 @@ public interface Constants {
     String KEY_JBANG_CATALOG_REPO_CLONE_URL = "jbangCatalogRepoCloneUrl";
 
     // Macports
+    String KEY_MACPORTS_APP_NAME = "macportsAppName";
     String KEY_MACPORTS_PACKAGE_NAME = "macportsPackageName";
     String KEY_MACPORTS_REVISION = "macportsRevision";
     String KEY_MACPORTS_CATEGORIES = "macportsCategories";

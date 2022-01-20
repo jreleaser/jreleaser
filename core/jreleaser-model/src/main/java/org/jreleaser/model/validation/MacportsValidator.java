@@ -31,6 +31,7 @@ import org.jreleaser.util.Errors;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jreleaser.model.Macports.APP_NAME;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
@@ -89,6 +90,15 @@ public abstract class MacportsValidator extends Validator {
         }
         if (packager.getCategories().isEmpty()) {
             packager.setCategories(Collections.singletonList("devel"));
+        }
+        if (distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE) {
+            if (!packager.getExtraProperties().containsKey(APP_NAME) &&
+                parentPackager.getExtraProperties().containsKey(APP_NAME)) {
+                packager.getExtraProperties().put(APP_NAME, parentPackager.getExtraProperties().get(APP_NAME));
+            }
+            if (!packager.getExtraProperties().containsKey(APP_NAME)) {
+                packager.getExtraProperties().put(APP_NAME, distribution.getName() + ".app");
+            }
         }
 
         validateCommitAuthor(packager, parentPackager);

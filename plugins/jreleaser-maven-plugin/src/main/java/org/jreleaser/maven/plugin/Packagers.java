@@ -74,7 +74,7 @@ public class Packagers {
         return gofish;
     }
 
-    public void setGofish(Gofish docker) {
+    public void setGofish(Gofish gofish) {
         this.gofish.setAll(gofish);
     }
 
@@ -90,7 +90,7 @@ public class Packagers {
         return macports;
     }
 
-    public void setMacports(Macports jbang) {
+    public void setMacports(Macports macports) {
         this.macports.setAll(macports);
     }
 
