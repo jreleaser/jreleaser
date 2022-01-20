@@ -69,7 +69,7 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
     @Override
     public void assemble(Map<String, Object> props) throws AssemblerProcessingException {
         try {
-            context.getLogger().debug(RB.$("tool.create.properties"), assembler.getType(), assembler.getName());
+            context.getLogger().debug(RB.$("packager.create.properties"), assembler.getType(), assembler.getName());
             Map<String, Object> newProps = fillProps(props);
 
             Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
@@ -105,7 +105,7 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
 
     protected Map<String, Object> fillProps(Map<String, Object> props) throws AssemblerProcessingException {
         Map<String, Object> newProps = new LinkedHashMap<>(props);
-        context.getLogger().debug(RB.$("tool.fill.git.properties"));
+        context.getLogger().debug(RB.$("packager.fill.git.properties"));
         context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel());
         context.getLogger().debug(RB.$("assembler.fill.assembler.properties"));
         fillAssemblerProperties(newProps);

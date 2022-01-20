@@ -59,10 +59,10 @@ abstract class AbstractJavaAssemblerProcessor<A extends JavaAssembler> extends A
     @Override
     public void assemble(Map<String, Object> props) throws AssemblerProcessingException {
         try {
-            context.getLogger().debug(RB.$("tool.create.properties"), assembler.getType(), assembler.getName());
+            context.getLogger().debug(RB.$("packager.create.properties"), assembler.getType(), assembler.getName());
             Map<String, Object> newProps = fillProps(props);
 
-            context.getLogger().debug(RB.$("tool.resolve.templates"), assembler.getType(), assembler.getName());
+            context.getLogger().debug(RB.$("packager.resolve.templates"), assembler.getType(), assembler.getName());
             Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
                 assembler.getType(),
                 assembler.getType(),
@@ -70,9 +70,9 @@ abstract class AbstractJavaAssemblerProcessor<A extends JavaAssembler> extends A
                 context.getBasedir().resolve(getAssembler().getTemplateDirectory()));
 
             for (Map.Entry<String, Reader> entry : templates.entrySet()) {
-                context.getLogger().debug(RB.$("tool.evaluate.template"), entry.getKey(), assembler.getName(), assembler.getType());
+                context.getLogger().debug(RB.$("packager.evaluate.template"), entry.getKey(), assembler.getName(), assembler.getType());
                 String content = applyTemplate(entry.getValue(), newProps, entry.getKey());
-                context.getLogger().debug(RB.$("tool.write.template"), entry.getKey(), assembler.getName(), assembler.getType());
+                context.getLogger().debug(RB.$("packager.write.template"), entry.getKey(), assembler.getName(), assembler.getType());
                 writeFile(context.getModel().getProject(), content, newProps, entry.getKey());
             }
 
