@@ -7,7 +7,7 @@ project:
   website: https://acme.com/app
   authors:
     - Duke
-  license: Apache-2
+  license: Apache-2.0
   java:
     groupId: com.acme
     version: 8
