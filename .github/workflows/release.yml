@@ -72,6 +72,15 @@ jobs:
           JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
 
+      - name: JReleaser assemble output
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: jreleaser-assemble
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+
       - name: Release
         uses: jreleaser/release-action@v1
         with:
@@ -91,11 +100,11 @@ jobs:
           JRELEASER_TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           JRELEASER_TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
 
-      - name: JReleaser output
+      - name: JReleaser release output
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: artifact
+          name: jreleaser-release
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties

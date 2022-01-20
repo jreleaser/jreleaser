@@ -51,6 +51,15 @@ jobs:
           JRELEASER_PROJECT_VERSION: ${{ steps.vars.outputs.version }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
 
+      - name: JReleaser assemble output
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: jreleaser-assemble
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+
       - name: Release
         uses: jreleaser/release-action@v1
         with:
@@ -64,11 +73,11 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
           JRELEASER_DOCKER_DEFAULT_PASSWORD: ${{ secrets.JRELEASER_DOCKER_PASSWORD }}
 
-      - name: JReleaser output
+      - name: JReleaser release output
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: artifact
+          name: jreleaser-release
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties

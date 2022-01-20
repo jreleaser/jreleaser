@@ -136,6 +136,15 @@ assemble:
       jdeps:
         multiRelease: base
         ignoreMissingDeps: true
+      additionalModuleNames:
+        - 'java.security.sasl'
+        - 'java.security.jgss'
+        - 'jdk.crypto.cryptoki'
+        - 'jdk.crypto.ec'
+        - 'jdk.localedata'
+        - 'jdk.net'
+        - 'jdk.security.auth'
+        - 'jdk.security.jgss'
       targetJdks:
         - path: '{{jdkPathPrefix}}/zulu17Osx/{{jdkFilePrefix}}-macosx_x64/zulu-17.jdk/Contents/Home'
           platform: 'osx-x86_64'
