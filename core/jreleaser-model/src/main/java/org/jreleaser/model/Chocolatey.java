@@ -29,9 +29,12 @@ import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
+import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
 import static org.jreleaser.util.CollectionUtils.newSet;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
+import static org.jreleaser.util.FileType.EXE;
+import static org.jreleaser.util.FileType.MSI;
 import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isFalse;
@@ -55,6 +58,7 @@ public class Chocolatey extends AbstractRepositoryPackager {
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
         SUPPORTED.put(NATIVE_IMAGE, extensions);
+        SUPPORTED.put(NATIVE_PACKAGE, newSet(EXE.extension(), MSI.extension()));
     }
 
     private final ChocolateyBucket bucket = new ChocolateyBucket();
