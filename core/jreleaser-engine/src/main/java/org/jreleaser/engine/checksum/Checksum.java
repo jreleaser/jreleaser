@@ -92,6 +92,7 @@ public class Checksum {
                     String oldContent = new String(Files.readAllBytes(checksumsFilePath));
                     if (newContent.equals(oldContent)) {
                         // no need to write down the same content
+                        context.getLogger().info(RB.$("checksum.not.changed"));
                         context.getLogger().restorePrefix();
                         context.getLogger().decreaseIndent();
                         return;
