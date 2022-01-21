@@ -200,6 +200,8 @@ distributions:
       active: always
       remoteBuild: true
       base: core18
+      architectures:
+        - buildOn: [ amd64 ]
       localPlugs:
         - network
         - home
