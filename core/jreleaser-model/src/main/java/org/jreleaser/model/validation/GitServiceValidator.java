@@ -67,6 +67,10 @@ public abstract class GitServiceValidator extends Validator {
             service.setEnabled(true);
         }
 
+        if (!service.isEnabled()) {
+            return;
+        }
+
         if (mode != JReleaserContext.Mode.ASSEMBLE) {
             if (isBlank(service.getOwner()) && !(service instanceof GenericGit)) {
                 errors.configuration(RB.$("validation_must_not_be_blank", service.getServiceName() + ".owner"));
