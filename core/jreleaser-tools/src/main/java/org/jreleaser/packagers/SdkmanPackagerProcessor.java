@@ -18,12 +18,11 @@
 package org.jreleaser.packagers;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Sdkman;
 import org.jreleaser.model.packager.spi.PackagerProcessingException;
-import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.model.util.SdkmanHelper;
 import org.jreleaser.sdk.sdkman.MajorReleaseSdkmanCommand;
 import org.jreleaser.sdk.sdkman.MinorReleaseSdkmanCommand;
 import org.jreleaser.sdk.sdkman.SdkmanException;
@@ -33,9 +32,7 @@ import java.util.Map;
 
 import static org.jreleaser.util.Constants.KEY_SDKMAN_CANDIDATE;
 import static org.jreleaser.util.Constants.KEY_SDKMAN_RELEASE_NOTES_URL;
-import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
-import static org.jreleaser.util.StringUtils.isTrue;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
@@ -63,28 +60,7 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<Sdkman> {
 
         Map<String, String> platforms = new LinkedHashMap<>();
         // collect artifacts by supported SDKMAN! platform
-        for (Artifact artifact : distribution.getArtifacts()) {
-            if (!artifact.isActive()) continue;
-            // only zips are supported
-            if (!artifact.getPath().endsWith(".zip")) {
-                context.getLogger().debug(RB.$("sdkman.no.artifacts.match"),
-                    artifact.getEffectivePath(context, distribution).getFileName());
-                continue;
-            }
-
-            if (isTrue(artifact.getExtraProperties().get("skipSdkman"))) {
-                context.getLogger().debug(RB.$("sdkman.artifact.explicit.skip"),
-                    artifact.getEffectivePath(context, distribution).getFileName());
-                continue;
-            }
-
-            String platform = mapPlatform(artifact.getPlatform());
-            String url = artifactUrl(distribution, artifact);
-            if (platforms.containsKey(platform)) {
-                context.getLogger().warn(RB.$("sdkman.platform.replacement"), platform, url, platforms.get(platform));
-            }
-            platforms.put(platform, url);
-        }
+        SdkmanHelper.collectArtifacts(context, distribution, platforms);
 
         try {
             String candidate = isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
@@ -135,40 +111,5 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<Sdkman> {
     protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
         props.put(KEY_SDKMAN_CANDIDATE, packager.getCandidate());
         props.put(KEY_SDKMAN_RELEASE_NOTES_URL, resolveTemplate(packager.getReleaseNotesUrl(), props));
-    }
-
-    private String mapPlatform(String platform) {
-        /*
-           SDKMAN! supports the following platform mappings
-           - LINUX_64
-           - LINUX_32
-           - LINUX_ARM32
-           - LINUX_ARM64
-           - MAC_OSX
-           - MAC_ARM64
-           - WINDOWS_64
-           - UNIVERSAL
-         */
-
-        if (isBlank(platform)) {
-            return "UNIVERSAL";
-        }
-        if (platform.contains("mac") || platform.contains("osx")) {
-            return platform.contains("aarch_64") ? "MAC_ARM64" : "MAC_OSX";
-        } else if (platform.contains("win")) {
-            return "WINDOWS_64";
-        } else if (platform.contains("linux")) {
-            if (platform.contains("x86_32")) return "LINUX_32";
-            if (platform.contains("x86_64")) return "LINUX_64";
-            if (platform.contains("arm_32")) return "LINUX_ARM32";
-            if (platform.contains("aarch_64")) return "LINUX_ARM64";
-            return "LINUX_32";
-        }
-
-        return null;
-    }
-
-    private String artifactUrl(Distribution distribution, Artifact artifact) {
-        return Artifacts.resolveDownloadUrl(context, Sdkman.TYPE, distribution, artifact);
     }
 }

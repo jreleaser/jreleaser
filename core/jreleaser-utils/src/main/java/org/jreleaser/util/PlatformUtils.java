@@ -120,6 +120,32 @@ public final class PlatformUtils {
         }
     }
 
+    public static boolean isIntel32(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        switch (parts.length) {
+            case 1:
+            case 2:
+                return "x86_32".equals(parts[1]);
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isIntel64(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        switch (parts.length) {
+            case 1:
+            case 2:
+                return "x86_64".equals(parts[1]);
+            default:
+                return false;
+        }
+    }
+
     public static boolean isArm(String osNameOrClassifier) {
         if (isBlank(osNameOrClassifier)) return false;
         String[] parts = osNameOrClassifier.split("-");
@@ -129,6 +155,32 @@ public final class PlatformUtils {
             case 2:
                 return "arm_32".equals(parts[1]) ||
                     "aarch_64".equals(parts[1]);
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isArm32(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        switch (parts.length) {
+            case 1:
+            case 2:
+                return "arm_32".equals(parts[1]);
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isArm64(String osNameOrClassifier) {
+        if (isBlank(osNameOrClassifier)) return false;
+        String[] parts = osNameOrClassifier.split("-");
+
+        switch (parts.length) {
+            case 1:
+            case 2:
+                return "aarch_64".equals(parts[1]);
             default:
                 return false;
         }
