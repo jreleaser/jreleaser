@@ -52,6 +52,7 @@ abstract class UnpackTask extends DefaultTask {
     void unpack() {
         FileUtils.unpackArchive(
             inputFile.get().asFile.toPath(),
-            outputDirectory.get().asFile.toPath())
+            outputDirectory.get().asFile.toPath(),
+            false)
     }
 }
