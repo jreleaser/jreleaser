@@ -63,6 +63,15 @@ public class JavaModuleVersion implements Version<JavaModuleVersion> {
     }
 
     @Override
+    public String toRpmVersion() {
+        StringBuilder b = new StringBuilder();
+        b.append(version);
+        if (hasPrerelease()) b.append("~").append(prerelease.replace("-", "_"));
+        if (hasBuild()) b.append("_").append(build.replace("-", "_"));
+        return b.toString();
+    }
+
+    @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
         b.append(version);

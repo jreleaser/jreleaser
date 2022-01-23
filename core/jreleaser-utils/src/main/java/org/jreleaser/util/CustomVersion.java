@@ -42,6 +42,11 @@ public class CustomVersion implements Version<CustomVersion> {
     }
 
     @Override
+    public String toRpmVersion() {
+        return toString().replace("-", "_");
+    }
+
+    @Override
     public String toString() {
         return version;
     }

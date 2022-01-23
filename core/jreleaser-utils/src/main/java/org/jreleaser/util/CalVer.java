@@ -233,6 +233,11 @@ public class CalVer implements Version<CalVer> {
     }
 
     @Override
+    public String toRpmVersion() {
+        return toString().replace("-","_");
+    }
+
+    @Override
     public String toString() {
         return pattern.replace(YEAR_LONG, year)
             .replace(YEAR_SHORT, year)

@@ -70,6 +70,11 @@ public class ChronVer implements Version<ChronVer> {
     }
 
     @Override
+    public String toRpmVersion() {
+        return toString().replace("-","_");
+    }
+
+    @Override
     public boolean equalsSpec(ChronVer version) {
         return true;
     }

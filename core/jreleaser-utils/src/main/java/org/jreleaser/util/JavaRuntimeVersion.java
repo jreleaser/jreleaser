@@ -99,6 +99,20 @@ public class JavaRuntimeVersion implements Version<JavaRuntimeVersion> {
     }
 
     @Override
+    public String toRpmVersion() {
+        StringBuilder b = new StringBuilder();
+        b.append(version);
+        if (!hasPrerelease() && !hasBuild() && hasOptional()) {
+            b.append("~").append(optional.replace("-", "_"));
+        } else {
+            if (hasPrerelease()) b.append("~").append(prerelease.replace("-", "_"));
+            if (hasBuild()) b.append("_").append(build.replace("-", "_"));
+            if (hasOptional()) b.append("_").append(optional.replace("-", "_"));
+        }
+        return b.toString();
+    }
+
+    @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
         b.append(version);

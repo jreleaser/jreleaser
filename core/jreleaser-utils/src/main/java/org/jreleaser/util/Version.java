@@ -22,5 +22,7 @@ package org.jreleaser.util;
  * @since 1.0.0
  */
 public interface Version<T extends Version<T>> extends Comparable<T> {
+    String toRpmVersion();
+
     boolean equalsSpec(T version);
 }

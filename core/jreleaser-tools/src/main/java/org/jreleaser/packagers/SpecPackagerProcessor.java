@@ -35,6 +35,7 @@ import java.util.Set;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT;
+import static org.jreleaser.util.Constants.KEY_PROJECT_VERSION;
 import static org.jreleaser.util.Constants.KEY_SPEC_BINARIES;
 import static org.jreleaser.util.Constants.KEY_SPEC_DIRECTORIES;
 import static org.jreleaser.util.Constants.KEY_SPEC_FILES;
@@ -98,12 +99,10 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
                 .forEach(entry -> {
                     String[] parts = entry.split("/");
                     if (parts.length > 1) directories.add(parts[0]);
-                    files.add(entry.replace(context.getModel().getProject().getResolvedVersion(),
-                        "%{version}")
-                        .replace(context.getModel().getProject().getEffectiveVersion(),
-                            "%{version}"));
+                    files.add(entry);
                 });
 
+            props.put(KEY_PROJECT_VERSION, context.getModel().getProject().version().toRpmVersion());
             props.put(KEY_SPEC_DIRECTORIES, directories);
             props.put(KEY_SPEC_BINARIES, binaries);
             props.put(KEY_SPEC_FILES, files);

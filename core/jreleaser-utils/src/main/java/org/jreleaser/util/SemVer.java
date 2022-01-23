@@ -95,6 +95,17 @@ public class SemVer implements Version<SemVer> {
     }
 
     @Override
+    public String toRpmVersion() {
+        StringBuilder b = new StringBuilder();
+        b.append(major);
+        if (hasMinor()) b.append(".").append(minor);
+        if (hasPatch()) b.append(".").append(patch);
+        if (hasTag()) b.append("~").append(tag.replace("-", "_"));
+        if (hasBuild()) b.append("_").append(build.replace("-", "_"));
+        return b.toString();
+    }
+
+    @Override
     public boolean equalsSpec(SemVer version) {
         return pattern.pattern().equals(version.pattern.pattern());
     }

@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.util.CalVer;
 import org.jreleaser.util.ChronVer;
 import org.jreleaser.util.Constants;
+import org.jreleaser.util.CustomVersion;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.JavaModuleVersion;
@@ -28,6 +29,7 @@ import org.jreleaser.util.JavaRuntimeVersion;
 import org.jreleaser.util.MustacheUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.SemVer;
+import org.jreleaser.util.Version;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -454,6 +456,25 @@ public class Project implements Domain, ExtraProperties {
         if (isNotBlank(ev)) {
             addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_UNDERSCORES, new MustacheUtils.UnderscoreFunction().apply(ev));
             addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_DASHES, new MustacheUtils.DashFunction().apply(ev));
+        }
+    }
+
+    public Version<?> version() {
+        String v = getResolvedVersion();
+        switch (versionPattern().getType()) {
+            case SEMVER:
+                return SemVer.of(v);
+            case JAVA_RUNTIME:
+                return JavaRuntimeVersion.of(v);
+            case JAVA_MODULE:
+                return JavaModuleVersion.of(v);
+            case CALVER:
+                return CalVer.of(versionPattern().getFormat(), v);
+            case CHRONVER:
+                return ChronVer.of(v);
+            case CUSTOM:
+            default:
+                return CustomVersion.of(v);
         }
     }
 
