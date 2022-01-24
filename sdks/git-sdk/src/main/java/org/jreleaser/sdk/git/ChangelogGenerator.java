@@ -237,28 +237,6 @@ public class ChangelogGenerator {
         }
     }
 
-    private Version currentVersion(JReleaserContext context) {
-        Project project = context.getModel().getProject();
-        String version = project.getResolvedVersion();
-
-        switch (project.versionPattern().getType()) {
-            case SEMVER:
-                return SemVer.of(version);
-            case JAVA_RUNTIME:
-                return JavaRuntimeVersion.of(version);
-            case JAVA_MODULE:
-                return JavaModuleVersion.of(version);
-            case CALVER:
-                String format = project.versionPattern().getFormat();
-                return CalVer.of(format, version);
-            case CHRONVER:
-                return ChronVer.of(version);
-            case CUSTOM:
-            default:
-                return CustomVersion.of(version);
-        }
-    }
-
     private Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
         List<Ref> tags = git.tagList().call();
 
@@ -295,7 +273,7 @@ public class ChangelogGenerator {
                 .findFirst();
         }
 
-        Version currentVersion = currentVersion(context);
+        Version currentVersion = context.getModel().getProject().version();
 
         // tag: early-access
         if (context.getModel().getProject().isSnapshot()) {
