@@ -31,7 +31,6 @@ The CLI can be installed in the following ways:
 
 *Homebrew*:
 
-Requires Java 8
 [source]
 ----
 brew install jreleaser/tap/jreleaser
