@@ -56,7 +56,6 @@ sdk install jreleaser
 
 *JBang*
 
-Requires Java 8
 [source]
 .stable
 ----
