@@ -107,6 +107,12 @@ flatpak run org.jreleaser.cli
 gofish install jreleaser
 ----
 
+*Snap*
+[source]
+----
+snap install jreleaser
+----
+
 *AppImage*
 [source]
 [subs="attributes"]
