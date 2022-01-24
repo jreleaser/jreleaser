@@ -202,6 +202,7 @@ distributions:
       base: core18
       architectures:
         - buildOn: [ amd64 ]
+        - buildOn: [ arm64 ]
       localPlugs:
         - network
         - home
