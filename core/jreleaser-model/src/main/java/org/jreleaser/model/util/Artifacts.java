@@ -301,8 +301,10 @@ public class Artifacts {
 
         if (isBlank(downloadUrl)) {
             context.getLogger().warn(RB.$("ERROR_artifacts_download_url_missing",
-                artifact.getEffectivePath(context, distribution).getFileName().toString()));
-            return "";
+                artifact.getEffectivePath(context, distribution).getFileName().toString(),
+                service.getServiceName()));
+            // assume artifact is available from Git
+            downloadUrl = service.getDownloadUrl();
         }
 
         Map<String, Object> props = context.props();
@@ -353,8 +355,10 @@ public class Artifacts {
 
         if (isBlank(downloadUrl)) {
             context.getLogger().warn(RB.$("ERROR_artifacts_download_url_missing",
-                artifact.getEffectivePath(context, distribution).getFileName().toString()));
-            return "";
+                artifact.getEffectivePath(context, distribution).getFileName().toString()),
+                service.getServiceName());
+            // assume artifact is available from Git
+            downloadUrl = service.getDownloadUrl();
         }
 
         Map<String, Object> props = context.props();
@@ -378,6 +382,7 @@ public class Artifacts {
                     return up.getResolvedDownloadUrl(context, artifact);
                 }
             }
+            return null;
         }
 
         String[] parts = coords.split(":");
