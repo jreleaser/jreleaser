@@ -1,4 +1,4 @@
-name: Trigger
+name: Trigger-{{distributionName}}
 
 on:
   workflow_dispatch:
@@ -13,14 +13,19 @@ jobs:
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '2.2.204'
-          
+
+      - name: Find package
+        shell: bash
+        run: |
+          echo "PACKAGE_NAME=$(ls {{distributionName}}/*.nuspec)" >> $GITHUB_ENV
+
       - name: Pack
+        shell: powershell
         run: |
-          powershell
-          choco pack {{distributionName}}/{{chocolateyPackageName}}.nuspec
-          
+          choco pack {{distributionName}}/${{ env.PACKAGE_NAME }}.nuspec
+
       - name: Publish
+        shell: powershell
         run: |
-          powershell
           choco apikey -k ${{ secrets.CHOCOLATEY_API_KEY  }} -s {{chocolateySource}}
           choco push $(ls *.nupkg | % {$_.FullName}) -s {{chocolateySource}}

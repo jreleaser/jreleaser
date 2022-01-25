@@ -28,7 +28,6 @@ import org.jreleaser.model.packager.spi.PackagerProcessingException;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.command.Command;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -70,11 +69,6 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
         }
 
         createChocolateyPackage(distribution, props);
-    }
-
-    @Override
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws PackagerProcessingException, IOException {
-        super.prepareWorkingCopy(props, directory.resolve(distribution.getName()), distribution);
     }
 
     @Override
@@ -130,24 +124,27 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
         fileName = trimTplExtension(fileName);
 
         Path outputFile = "binary.nuspec".equals(fileName) ?
-            outputDirectory.resolve(packager.getPackageName().concat(".nuspec")) :
-            outputDirectory.resolve(fileName);
+            outputDirectory.resolve(distribution.getName()).resolve(packager.getPackageName().concat(".nuspec")) :
+            fileName.endsWith(".ps1") ? outputDirectory.resolve(distribution.getName()).resolve(fileName) :
+                outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
     }
 
     private void createChocolateyPackage(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
         Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+        Path execDirectory = packageDirectory.resolve(distribution.getName());
 
         Command cmd = new Command("choco")
             .arg("pack")
             .arg(packager.getPackageName().concat(".nuspec"));
 
-        executeCommand(packageDirectory, cmd);
+        executeCommand(execDirectory, cmd);
     }
 
     private void publishChocolateyPackage(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
         Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+        Path execDirectory = packageDirectory.resolve(distribution.getName());
 
         Command cmd = new Command("choco")
             .arg("apikey")
@@ -155,7 +152,7 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
             .arg(packager.getResolvedApiKey())
             .arg("-source")
             .arg(packager.getSource());
-        executeCommand(packageDirectory, cmd);
+        executeCommand(execDirectory, cmd);
 
         cmd = new Command("choco")
             .arg("push")
@@ -163,6 +160,6 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
             .arg("-s")
             .arg(packager.getSource());
 
-        executeCommand(packageDirectory, cmd);
+        executeCommand(execDirectory, cmd);
     }
 }
