@@ -1,5 +1,4 @@
 # {{jreleaserCreationStamp}}
-
 $toolsDir   = "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)"
 
 $packageArgs = @{

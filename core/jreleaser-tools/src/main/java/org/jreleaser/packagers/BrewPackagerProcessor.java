@@ -229,13 +229,13 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
         } else if (packager.isMultiPlatform()) {
             if (CASK_RB.equals(fileName) || FORMULA_RB.equals(fileName)) return;
             Path outputFile = FORMULA_MULTI_RB.equals(fileName) ?
-                outputDirectory.resolve(FORMULA).resolve(distribution.getExecutable().concat(RB)) :
+                outputDirectory.resolve(FORMULA).resolve(distribution.getExecutable().getName().concat(RB)) :
                 outputDirectory.resolve(fileName);
             writeFile(content, outputFile);
         } else {
             if (CASK_RB.equals(fileName) || FORMULA_MULTI_RB.equals(fileName)) return;
             Path outputFile = FORMULA_RB.equals(fileName) ?
-                outputDirectory.resolve(FORMULA).resolve(distribution.getExecutable().concat(RB)) :
+                outputDirectory.resolve(FORMULA).resolve(distribution.getExecutable().getName().concat(RB)) :
                 outputDirectory.resolve(fileName);
             writeFile(content, outputFile);
         }

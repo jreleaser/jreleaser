@@ -42,7 +42,7 @@ post-extract {
 destroot {
     xinstall -d ${destroot}${applications_dir}
     file copy "${worksrcpath}/{{macportsAppName}}" ${destroot}${applications_dir}
-    ln -s "${applications_dir}/{{macportsAppName}}/Contents/MacOs/{{distributionExecutable}}" ${destroot}${prefix}/bin/{{distributionExecutable}}
+    ln -s "${applications_dir}/{{macportsAppName}}/Contents/MacOs/{{distributionExecutableUnix}}" ${destroot}${prefix}/bin/{{distributionExecutableName}}
 }
 
 # Mounts a disk image.

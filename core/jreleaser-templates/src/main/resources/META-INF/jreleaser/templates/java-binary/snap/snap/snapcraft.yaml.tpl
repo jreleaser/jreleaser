@@ -18,8 +18,8 @@ architectures:
   {{/snapArchitectures}}
 {{/hasArchitectures}}
 apps:
-  {{distributionExecutable}}:
-    command: $SNAP/bin/{{distributionExecutable}}
+  {{distributionExecutableName}}:
+    command: $SNAP/bin/{{distributionExecutableUnix}}
     environment:
       JAVA_HOME: "$SNAP/usr/lib/jvm/java/jre/"
       PATH: "$SNAP/bin:$PATH:$SNAP/usr/lib/jvm/java/jre/bin"
@@ -67,7 +67,7 @@ slots:
   {{/snapSlots }}
 {{/snapHasSlots}}
 parts:
-  {{distributionExecutable}}:
+  {{distributionExecutableName}}:
     plugin: dump
     source: {{distributionUrl}}
     source-checksum: sha256/{{distributionChecksumSha256}}

@@ -226,7 +226,7 @@ public class JReleaserContext {
             distribution.setType(assembler.getDistributionType());
             distribution.setActive(assembler.getActive());
             if (assembler instanceof JavaAssembler) {
-                distribution.setExecutable(((JavaAssembler) assembler).getExecutable());
+                distribution.getExecutable().setName(((JavaAssembler) assembler).getExecutable());
                 distribution.setJava(((JavaAssembler) assembler).getJava());
             }
             mergeArtifacts(assembler, distribution);

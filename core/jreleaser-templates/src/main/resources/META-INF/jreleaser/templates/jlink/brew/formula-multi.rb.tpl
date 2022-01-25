@@ -20,7 +20,7 @@ class {{brewFormulaName}} < Formula
 
   def install
     libexec.install Dir["*"]
-    bin.install_symlink "#{libexec}/bin/{{distributionExecutable}}"
+    bin.install_symlink "{{distributionExecutableName}}" => "#{libexec}/bin/{{distributionExecutableUnix}}"
   end
 
   def post_install
@@ -34,7 +34,7 @@ class {{brewFormulaName}} < Formula
   end
 
   test do
-    output = shell_output("#{bin}/{{distributionExecutable}} --version")
+    output = shell_output("#{bin}/{{distributionExecutableName}} --version")
     assert_match "{{projectVersion}}", output
   end
 end

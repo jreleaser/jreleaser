@@ -19,8 +19,8 @@ package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.util.Constants;
 import org.jreleaser.util.JReleaserException;
+import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.SemVer;
 
 import java.util.ArrayList;
@@ -33,6 +33,24 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jreleaser.util.CollectionUtils.safePut;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_EXECUTABLE;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_UNIX;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_WINDOWS;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_EXECUTABLE_NAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_EXECUTABLE_UNIX;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_EXECUTABLE_WINDOWS;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_NAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -53,13 +71,13 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final Java java = new Java();
     private final Platform platform = new Platform();
+    private final Executable executable = new Executable();
+
     private Active active;
     @JsonIgnore
     private boolean enabled;
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;
-    private String executable;
-    private String executableExtension;
 
     void setAll(Distribution distribution) {
         super.setAll(distribution);
@@ -67,8 +85,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.enabled = distribution.enabled;
         this.name = distribution.name;
         this.type = distribution.type;
-        this.executable = distribution.executable;
-        this.executableExtension = distribution.executableExtension;
+        setExecutable(distribution.executable);
         setPlatform(distribution.platform);
         setJava(distribution.java);
         setTags(distribution.tags);
@@ -79,30 +96,34 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     public Map<String, Object> props() {
         Map<String, Object> props = new LinkedHashMap<>();
         applyTemplates(props, getResolvedExtraProperties());
-        props.put(Constants.KEY_DISTRIBUTION_NAME, name);
-        props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, executable);
-        props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE_EXTENSION, executableExtension);
-        props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", tags));
-        props.put(Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", tags));
+        props.put(KEY_DISTRIBUTION_NAME, name);
+        props.put(KEY_DISTRIBUTION_EXECUTABLE, executable.getName());
+        props.put(KEY_DISTRIBUTION_EXECUTABLE_NAME, executable.getName());
+        props.put(KEY_DISTRIBUTION_EXECUTABLE_UNIX, executable.resolveExecutable("linux"));
+        props.put(KEY_DISTRIBUTION_EXECUTABLE_WINDOWS, executable.resolveExecutable("windows"));
+        safePut(KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_UNIX, executable.resolveUnixExtension(), props, true);
+        safePut(KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_WINDOWS, executable.resolveWindowsExtension(), props, true);
+        props.put(KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", tags));
+        props.put(KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", tags));
         props.putAll(java.getResolvedExtraProperties());
-        safePut(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, java.getGroupId(), props, true);
-        safePut(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, java.getArtifactId(), props, true);
-        safePut(Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass(), props, true);
+        safePut(KEY_DISTRIBUTION_JAVA_GROUP_ID, java.getGroupId(), props, true);
+        safePut(KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, java.getArtifactId(), props, true);
+        safePut(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass(), props, true);
         if (isNotBlank(java.getVersion())) {
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, java.getVersion());
+            props.put(KEY_DISTRIBUTION_JAVA_VERSION, java.getVersion());
             SemVer jv = SemVer.of(java.getVersion());
-            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor(), props, true);
-            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor(), props, true);
-            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch(), props, true);
-            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag(), props, true);
-            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild(), props, true);
+            safePut(KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor(), props, true);
+            safePut(KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor(), props, true);
+            safePut(KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch(), props, true);
+            safePut(KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag(), props, true);
+            safePut(KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild(), props, true);
         } else {
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
+            props.put(KEY_DISTRIBUTION_JAVA_VERSION, "");
+            props.put(KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, "");
+            props.put(KEY_DISTRIBUTION_JAVA_VERSION_MINOR, "");
+            props.put(KEY_DISTRIBUTION_JAVA_VERSION_PATCH, "");
+            props.put(KEY_DISTRIBUTION_JAVA_VERSION_TAG, "");
+            props.put(KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
         }
         return props;
     }
@@ -178,20 +199,22 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.name = name;
     }
 
-    public String getExecutable() {
+    public Executable getExecutable() {
         return executable;
     }
 
-    public void setExecutable(String executable) {
-        this.executable = executable;
+    public void setExecutable(Executable executable) {
+        this.executable.setAll(executable);
     }
 
-    public String getExecutableExtension() {
-        return executableExtension;
+    public void setExecutable(String executable) {
+        System.out.println("executable has been deprecated since 1.0.0-M1 and will be removed in the future. Use executable.name instead");
+        this.executable.setName(executable);
     }
 
     public void setExecutableExtension(String executableExtension) {
-        this.executableExtension = executableExtension;
+        System.out.println("executableExtension has been deprecated since 1.0.0-M1 and will be removed in the future. Use executable.windowsExtension instead");
+        this.executable.setWindowsExtension(executableExtension);
     }
 
     public Set<Artifact> getArtifacts() {
@@ -323,8 +346,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         props.put("enabled", isEnabled());
         props.put("active", active);
         props.put("type", type);
-        props.put("executable", executable);
-        props.put("executableExtension", executableExtension);
+        props.put("executable", executable.asMap(full));
         if (full || platform.isSet()) props.put("platform", platform.asMap(full));
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
@@ -369,7 +391,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         NATIVE_IMAGE("graal"),
         NATIVE_PACKAGE("jpackage");
 
-        private String alias;
+        private final String alias;
 
         DistributionType(String alias) {
             this.alias = alias.toUpperCase();
@@ -390,6 +412,67 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
             }
 
             return DistributionType.valueOf(value);
+        }
+    }
+
+    public static class Executable implements Domain {
+        private String name;
+        private String unixExtension;
+        private String windowsExtension = "bat";
+
+        void setAll(Distribution.Executable executable) {
+            this.name = executable.name;
+            this.unixExtension = executable.unixExtension;
+            this.windowsExtension = executable.windowsExtension;
+        }
+
+        public String resolveExecutable(String platform) {
+            if (PlatformUtils.isWindows(platform)) {
+                return name + resolveWindowsExtension();
+            }
+
+            return name + resolveUnixExtension();
+        }
+
+        public String resolveUnixExtension() {
+            return isNotBlank(unixExtension) ? "." + unixExtension : "";
+        }
+
+        public String resolveWindowsExtension() {
+            return "." + windowsExtension;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUnixExtension() {
+            return unixExtension;
+        }
+
+        public void setUnixExtension(String unixExtension) {
+            this.unixExtension = unixExtension;
+        }
+
+        public String getWindowsExtension() {
+            return windowsExtension;
+        }
+
+        public void setWindowsExtension(String windowsExtension) {
+            this.windowsExtension = windowsExtension;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("name", name);
+            map.put("unixExtension", unixExtension);
+            map.put("windowsExtension", windowsExtension);
+            return map;
         }
     }
 }

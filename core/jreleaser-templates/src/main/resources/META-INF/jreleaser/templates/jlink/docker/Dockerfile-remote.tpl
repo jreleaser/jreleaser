@@ -12,7 +12,7 @@ LABEL {{.}}
 RUN curl -Ls "{{distributionUrl}}" --output {{distributionArtifactFile}} && \
     unzip {{distributionArtifactFile}} && \
     rm {{distributionArtifactFile}} && \
-    chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutable}} && \
+    chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutableUnix}} && \
     chmod +x {{distributionArtifactFileName}}/bin/java
 
 {{#dockerPostCommands}}
@@ -22,4 +22,4 @@ RUN curl -Ls "{{distributionUrl}}" --output {{distributionArtifactFile}} && \
 ENV JAVA_HOME="/{{distributionArtifactFileName}}"
 ENV PATH="${PATH}:${JAVA_HOME}/bin"
 
-ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutable}}"]
+ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutableUnix}}"]

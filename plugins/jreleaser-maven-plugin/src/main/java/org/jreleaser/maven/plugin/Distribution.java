@@ -36,11 +36,10 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final Java java = new Java();
     private final Platform platform = new Platform();
+    private final Executable executable = new Executable();
 
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;
-    private String executable;
-    private String executableExtension;
     private Active active;
 
     void setAll(Distribution distribution) {
@@ -48,8 +47,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.active = distribution.active;
         this.name = distribution.name;
         this.type = distribution.type;
-        this.executable = distribution.executable;
-        this.executableExtension = distribution.executableExtension;
+        setExecutable(distribution.executable);
         this.java.setAll(distribution.java);
         setPlatform(distribution.platform);
         setTags(distribution.tags);
@@ -92,20 +90,22 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.name = name;
     }
 
-    public String getExecutable() {
+    public Executable getExecutable() {
         return executable;
     }
 
-    public void setExecutable(String executable) {
-        this.executable = executable;
+    public void setExecutable(Executable executable) {
+        this.executable.setAll(executable);
     }
 
-    public String getExecutableExtension() {
-        return executableExtension;
+    public void setExecutable(String executable) {
+        System.out.println("executable has been deprecated since 1.0.0-M1 and will be removed in the future. Use executable.name instead");
+        this.executable.setName(executable);
     }
 
     public void setExecutableExtension(String executableExtension) {
-        this.executableExtension = executableExtension;
+        System.out.println("executableExtension has been deprecated since 1.0.0-M1 and will be removed in the future. Use executable.windowsExtension instead");
+        this.executable.setWindowsExtension(executableExtension);
     }
 
     public Java getJava() {
@@ -166,6 +166,42 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
             return DistributionType.valueOf(str.replaceAll(" ", "_")
                 .replaceAll("-", "_")
                 .toUpperCase().trim());
+        }
+    }
+
+    public static class Executable {
+        private String name;
+        private String unixExtension;
+        private String windowsExtension;
+
+        void setAll(Distribution.Executable executable) {
+            this.name = executable.name;
+            this.unixExtension = executable.unixExtension;
+            this.windowsExtension = executable.windowsExtension;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUnixExtension() {
+            return unixExtension;
+        }
+
+        public void setUnixExtension(String unixExtension) {
+            this.unixExtension = unixExtension;
+        }
+
+        public String getWindowsExtension() {
+            return windowsExtension;
+        }
+
+        public void setWindowsExtension(String windowsExtension) {
+            this.windowsExtension = windowsExtension;
         }
     }
 }

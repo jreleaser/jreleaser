@@ -68,7 +68,7 @@ public abstract class JbangValidator extends Validator {
         }
 
         if (isBlank(packager.getAlias())) {
-            packager.setAlias(distribution.getExecutable());
+            packager.setAlias(distribution.getExecutable().getName());
         }
 
         if (model.getProject().getExtraProperties().containsKey(KEY_REVERSE_REPO_HOST) &&

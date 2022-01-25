@@ -32,10 +32,6 @@ import org.jreleaser.model.Distribution.DistributionType
 interface Distribution extends Activatable, ExtraProperties, Packagers {
     Property<DistributionType> getDistributionType()
 
-    Property<String> getExecutable()
-
-    Property<String> getExecutableExtension()
-
     ListProperty<String> getTags()
 
     void setDistributionType(String str)
@@ -46,15 +42,29 @@ interface Distribution extends Activatable, ExtraProperties, Packagers {
 
     Platform getPlatform()
 
+    Executable getExecutable()
+
     void artifact(Action<? super Artifact> action)
 
     void java(Action<? super Java> action)
 
     void platform(Action<? super Platform> action)
 
+    void executable(Action<? super Executable> action)
+
     void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
 
     void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action)
+
+    void executable(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Executable) Closure<Void> action)
+
+    interface Executable {
+        Property<String> getName()
+
+        Property<String> getUnixExtension()
+
+        Property<String> getWindowsExtension()
+    }
 }

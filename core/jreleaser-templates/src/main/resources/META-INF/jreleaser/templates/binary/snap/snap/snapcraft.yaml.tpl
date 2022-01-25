@@ -18,8 +18,8 @@ architectures:
   {{/snapArchitectures}}
 {{/hasArchitectures}}
 apps:
-  {{distributionExecutable}}:
-    command: $SNAP/bin/{{distributionExecutable}}
+  {{distributionExecutableName}}:
+    command: $SNAP/bin/{{distributionExecutableUnix}}
     {{#snapHasLocalPlugs}}
     plugs:
       {{#snapLocalPlugs}}
@@ -64,7 +64,7 @@ slots:
   {{/snapSlots }}
 {{/snapHasSlots}}
 parts:
-  {{distributionExecutable}}:
+  {{distributionExecutableName}}:
     plugin: dump
     source: {{distributionUrl}}
     source-checksum: sha256/{{distributionChecksumSha256}}

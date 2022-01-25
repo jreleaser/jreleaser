@@ -13,7 +13,7 @@ COPY assembly/ /
 
 RUN unzip {{distributionArtifactFile}} && \
     rm {{distributionArtifactFile}} && \
-    chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutable}}
+    chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutableUnix}}
 
 {{#dockerPostCommands}}
 {{.}}
@@ -21,4 +21,4 @@ RUN unzip {{distributionArtifactFile}} && \
 
 ENV PATH="${PATH}:/{{distributionArtifactFileName}}/bin"
 
-ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutable}}"]
+ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutableUnix}}"]

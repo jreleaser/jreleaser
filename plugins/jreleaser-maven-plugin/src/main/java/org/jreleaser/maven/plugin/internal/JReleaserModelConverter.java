@@ -1029,8 +1029,7 @@ public final class JReleaserModelConverter {
         d.setActive(tr(distribution.resolveActive()));
         d.setName(tr(distribution.getName()));
         d.setType(tr(distribution.getType().name()));
-        d.setExecutable(tr(distribution.getExecutable()));
-        d.setExecutableExtension(tr(distribution.getExecutableExtension()));
+        d.setExecutable(convertExecutable(distribution.getExecutable()));
         d.setJava(convertJava(distribution.getJava()));
         d.setPlatform(convertPlatform(distribution.getPlatform()));
         d.setTags(tr(distribution.getTags()));
@@ -1049,6 +1048,14 @@ public final class JReleaserModelConverter {
         if (distribution.getSpec().isSet()) d.setSpec(convertSpec(distribution.getSpec()));
 
         return d;
+    }
+
+    private static org.jreleaser.model.Distribution.Executable convertExecutable(Distribution.Executable executable) {
+        org.jreleaser.model.Distribution.Executable e = new org.jreleaser.model.Distribution.Executable();
+        e.setName(tr(executable.getName()));
+        e.setUnixExtension(tr(executable.getUnixExtension()));
+        if (isNotBlank(executable.getWindowsExtension())) e.setWindowsExtension(tr(executable.getWindowsExtension()));
+        return e;
     }
 
     private static org.jreleaser.model.Files convertFiles(Files files) {

@@ -117,7 +117,12 @@ public interface Constants {
     // Distribution
     String KEY_DISTRIBUTION_NAME = "distributionName";
     String KEY_DISTRIBUTION_EXECUTABLE = "distributionExecutable";
+    String KEY_DISTRIBUTION_EXECUTABLE_NAME = "distributionExecutableName";
+    String KEY_DISTRIBUTION_EXECUTABLE_UNIX = "distributionExecutableUnix";
+    String KEY_DISTRIBUTION_EXECUTABLE_WINDOWS = "distributionExecutableWindows";
     String KEY_DISTRIBUTION_EXECUTABLE_EXTENSION = "distributionExecutableExtension";
+    String KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_UNIX = "distributionExecutableExtensionUnix";
+    String KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_WINDOWS = "distributionExecutableExtensionWindows";
     String KEY_DISTRIBUTION_TAGS_BY_SPACE = "distributionTagsBySpace";
     String KEY_DISTRIBUTION_TAGS_BY_COMMA = "distributionTagsByComma";
     String KEY_DISTRIBUTION_URL = "distributionUrl";

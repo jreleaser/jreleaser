@@ -84,7 +84,7 @@ public abstract class ScoopValidator extends Validator {
         if (isBlank(packager.getPackageName())) {
             packager.setPackageName(parentPackager.getPackageName());
             if (isBlank(packager.getPackageName())) {
-                packager.setPackageName(distribution.getExecutable());
+                packager.setPackageName(distribution.getExecutable().getName());
             }
         }
         if (isBlank(packager.getCheckverUrl())) {

@@ -1,6 +1,6 @@
 -- {{jreleaserCreationStamp}}
 
-local name = "{{distributionExecutable}}"
+local name = "{{distributionExecutableName}}"
 local version = "{{projectVersion}}"
 
 food = {

@@ -18,7 +18,7 @@ architectures:
   {{/snapArchitectures}}
 {{/hasArchitectures}}
 apps:
-  {{distributionExecutable}}:
+  {{distributionExecutableName}}:
     command: ${JAVA_HOME}/bin/java -jar $SNAP/{{distributionArtifactFile}}
     environment:
       JAVA_HOME: "$SNAP/usr/lib/jvm/java/jre/"
@@ -67,7 +67,7 @@ slots:
   {{/snapSlots }}
 {{/snapHasSlots}}
 parts:
-  {{distributionExecutable}}:
+  {{distributionExecutableName}}:
     plugin: nil
     override-build: |
       wget -O $SNAPCRAFT_PART_INSTALL/{{distributionArtifactFile}} {{distributionUrl}}

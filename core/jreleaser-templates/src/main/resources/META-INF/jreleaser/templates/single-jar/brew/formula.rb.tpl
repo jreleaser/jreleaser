@@ -20,11 +20,11 @@ class {{brewFormulaName}} < Formula
 
   def install
     libexec.install "{{artifactFile}}"
-    bin.write_jar_script libexec/"{{distributionArtifactFile}}", "{{distributionExecutable}}"
+    bin.write_jar_script libexec/"{{distributionArtifactFile}}", "{{distributionExecutableName}}"
   end
 
   test do
-    output = shell_output("#{bin}/{{distributionExecutable}} --version")
+    output = shell_output("#{bin}/{{distributionExecutableName}} --version")
     assert_match "{{projectVersion}}", output
   end
 end

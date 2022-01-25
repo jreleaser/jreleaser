@@ -43,9 +43,9 @@ destroot {
     copy {*}[glob -dir ${worksrcpath} *] ${target}
 
     # Remove extraneous files
-    delete {*}[glob -directory ${target}/bin *.{{distributionExecutableExtension}}]
+    delete {*}[glob -directory ${target}/bin *.{{distributionExecutableWindowsExtension}}]
 
-    ln -s ../share/${name}/bin/{{distributionExecutable}} ${destroot}${prefix}/bin/{{distributionExecutable}}
+    ln -s ../share/${name}/bin/{{distributionExecutableUnix}} ${destroot}${prefix}/bin/{{distributionExecutableName}}
 }
 
 livecheck.type   none

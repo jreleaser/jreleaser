@@ -13,8 +13,8 @@ COPY assembly/ /
 
 RUN mkdir -p /{{distributionName}}/bin && \
     mkdir -p /{{distributionName}}/lib && \
-    mv /{{distributionExecutable}} /{{distributionName}}/bin && \
-    chmod +x /{{distributionName}}/bin/{{distributionExecutable}} && \
+    mv /{{distributionExecutableUnix}} /{{distributionName}}/bin && \
+    chmod +x /{{distributionName}}/bin/{{distributionExecutableUnix}} && \
     mv /{{distributionArtifactFile}} /{{distributionName}}/lib
 
 ENV PATH="${PATH}:/{{distributionName}}/bin"
@@ -23,5 +23,5 @@ ENV PATH="${PATH}:/{{distributionName}}/bin"
 {{.}}
 {{/dockerPostCommands}}
 
-ENTRYPOINT ["/{{distributionName}}/bin/{{distributionExecutable}}"]
-CMD ["{{distributionExecutable}}"]
+ENTRYPOINT ["/{{distributionName}}/bin/{{distributionExecutableUnix}}"]
+CMD ["{{distributionExecutableUnix}}"]

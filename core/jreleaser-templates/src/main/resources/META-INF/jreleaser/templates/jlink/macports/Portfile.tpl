@@ -39,7 +39,7 @@ destroot {
     # Copy over the needed elements of our directory tree
     copy {*}[glob -dir ${worksrcpath} *] ${target}
 
-    ln -s ../share/${name}/bin/{{distributionExecutable}} ${destroot}${prefix}/bin/{{distributionExecutable}}
+    ln -s ../share/${name}/bin/{{distributionExecutableUnix}} ${destroot}${prefix}/bin/{{distributionExecutableName}}
 }
 
 livecheck.type   none

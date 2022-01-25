@@ -24,11 +24,11 @@ mkdir -p %{buildroot}%{_bindir}
 %define _appdir %{buildroot}%{_datadir}/%{name}
 mkdir -p %{_appdir}/bin
 
-cat > %{buildroot}%{_bindir}/{{distributionExecutable}} <<-EOF
+cat > %{buildroot}%{_bindir}/{{distributionExecutableName}} <<-EOF
 #!/bin/sh
-%{_datadir}/%{name}/bin/{{distributionExecutable}} "$@"
+%{_datadir}/%{name}/bin/{{distributionExecutableUnix}} "$@"
 EOF
-chmod 0755 %{buildroot}%{_bindir}/{{distributionExecutable}}
+chmod 0755 %{buildroot}%{_bindir}/{{distributionExecutableName}}
 
 {{#specDirectories}}
 mkdir -p %{_appdir}/{{.}}

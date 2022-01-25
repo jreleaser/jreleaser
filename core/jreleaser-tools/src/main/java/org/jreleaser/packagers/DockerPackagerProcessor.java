@@ -410,7 +410,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         fileName = trimTplExtension(fileName);
 
         Path outputFile = "executable".equals(fileName) ?
-            outputDirectory.resolve("assembly").resolve(distribution.getExecutable()) :
+            outputDirectory.resolve("assembly").resolve(distribution.getExecutable().getName()) :
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);

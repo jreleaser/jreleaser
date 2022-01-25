@@ -104,11 +104,18 @@ public abstract class DistributionsValidator extends Validator {
             errors.configuration(RB.$("validation_must_not_be_null", "distribution." + distribution.getName() + ".type"));
             return;
         }
-        if (isBlank(distribution.getExecutable())) {
-            distribution.setExecutable(distribution.getName());
+        if (isBlank(distribution.getExecutable().getName())) {
+            distribution.getExecutable().setName(distribution.getName());
         }
-        if (isBlank(distribution.getExecutableExtension())) {
-            distribution.setExecutableExtension("bat");
+        if (isBlank(distribution.getExecutable().getWindowsExtension())) {
+            switch (distribution.getType()) {
+                case BINARY:
+                case NATIVE_IMAGE:
+                    distribution.getExecutable().setWindowsExtension("exe");
+                    break;
+                default:
+                    distribution.getExecutable().setWindowsExtension("bat");
+            }
         }
 
         if (Distribution.JAVA_DISTRIBUTION_TYPES.contains(distribution.getType())) {

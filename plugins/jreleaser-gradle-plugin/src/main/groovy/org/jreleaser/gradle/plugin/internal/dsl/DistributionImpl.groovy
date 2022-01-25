@@ -26,6 +26,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Artifact
 import org.jreleaser.gradle.plugin.dsl.Brew
 import org.jreleaser.gradle.plugin.dsl.Chocolatey
@@ -56,14 +57,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class DistributionImpl implements Distribution {
     String name
-    final Property<String> executable
-    final Property<String> executableExtension
     final Property<String> groupId
     final Property<String> artifactId
     final Property<Active> active
     final Property<DistributionType> distributionType
     final ListProperty<String> tags
     final MapProperty<String, Object> extraProperties
+    final ExecutableImpl executable
     final JavaImpl java
     final PlatformImpl platform
     final BrewImpl brew
@@ -82,8 +82,6 @@ class DistributionImpl implements Distribution {
     @Inject
     DistributionImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
-        executable = objects.property(String).convention(Providers.notDefined())
-        executableExtension = objects.property(String).convention(Providers.notDefined())
         groupId = objects.property(String).convention(Providers.notDefined())
         artifactId = objects.property(String).convention(Providers.notDefined())
         distributionType = objects.property(DistributionType).convention(DistributionType.JAVA_BINARY)
@@ -99,6 +97,7 @@ class DistributionImpl implements Distribution {
             }
         })
 
+        executable = objects.newInstance(ExecutableImpl, objects)
         java = objects.newInstance(JavaImpl, objects)
         platform = objects.newInstance(PlatformImpl, objects)
         brew = objects.newInstance(BrewImpl, objects)
@@ -140,6 +139,11 @@ class DistributionImpl implements Distribution {
     @Override
     void platform(Action<? super Platform> action) {
         action.execute(platform)
+    }
+
+    @Override
+    void executable(Action<? super Executable> action) {
+        action.execute(executable)
     }
 
     @Override
@@ -215,6 +219,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void executable(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Executable) Closure<Void> action) {
+        ConfigureUtil.configure(action, executable)
+    }
+
+    @Override
     void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Brew) Closure<Void> action) {
         ConfigureUtil.configure(action, brew)
     }
@@ -268,8 +277,7 @@ class DistributionImpl implements Distribution {
         org.jreleaser.model.Distribution distribution = new org.jreleaser.model.Distribution()
         distribution.name = name
         if (active.present) distribution.active = active.get()
-        if (executable.present) distribution.executable = executable.get()
-        if (executableExtension.present) distribution.executableExtension = executableExtension.get()
+        if (executable.isSet()) distribution.executable = executable.toModel()
         distribution.type = distributionType.get()
         distribution.java = java.toModel()
         distribution.platform = platform.toModel()
@@ -289,5 +297,34 @@ class DistributionImpl implements Distribution {
         if (snap.isSet()) distribution.snap = snap.toModel()
         if (spec.isSet()) distribution.spec = spec.toModel()
         distribution
+    }
+
+    @CompileStatic
+    static class ExecutableImpl implements Executable {
+        final Property<String> name
+        final Property<String> unixExtension
+        final Property<String> windowsExtension
+
+        @Inject
+        ExecutableImpl(ObjectFactory objects) {
+            name = objects.property(String).convention(Providers.notDefined())
+            unixExtension = objects.property(String).convention(Providers.notDefined())
+            windowsExtension = objects.property(String).convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            name.present ||
+                unixExtension.present ||
+                windowsExtension.present
+        }
+
+        org.jreleaser.model.Distribution.Executable toModel() {
+            org.jreleaser.model.Distribution.Executable executable = new org.jreleaser.model.Distribution.Executable()
+            if (name.present) executable.name = name.get()
+            if (unixExtension.present) executable.unixExtension = unixExtension.get()
+            if (windowsExtension.present) executable.windowsExtension = windowsExtension.get()
+            executable
+        }
     }
 }

@@ -11,8 +11,8 @@
       "java/openjdk"
     ]
   },
-  "pre_install": "\"@java -jar \"\"$dir\\{{distributionArtifactFile}}\"\" %*\" | out-file -en oem \"$dir\\{{distributionExecutable}}.{{distributionExecutableExtension}}\"",
-  "bin": "{{distributionExecutable}}.{{distributionExecutableExtension}}",
+  "pre_install": "\"@java -jar \"\"$dir\\{{distributionArtifactFile}}\"\" %*\" | out-file -en oem \"$dir\\{{distributionExecutableWindows}}\"",
+  "bin": "{{distributionExecutableWindows}}",
   "checkver": {
     "url": "{{scoopCheckverUrl}}",
     "re": "v([\\d.]+).jar"

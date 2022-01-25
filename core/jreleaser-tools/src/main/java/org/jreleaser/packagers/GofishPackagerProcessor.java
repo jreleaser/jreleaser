@@ -91,7 +91,7 @@ public class GofishPackagerProcessor extends AbstractRepositoryPackagerProcessor
         fileName = trimTplExtension(fileName);
 
         Path outputFile = "food.lua".equals(fileName) ?
-            outputDirectory.resolve("Food").resolve(distribution.getExecutable().concat(".lua")) :
+            outputDirectory.resolve("Food").resolve(distribution.getExecutable().getName().concat(".lua")) :
             outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
@@ -119,7 +119,7 @@ public class GofishPackagerProcessor extends AbstractRepositoryPackagerProcessor
             String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
 
             boolean windows = PlatformUtils.isWindows(platform);
-            String executable = distribution.getExecutable();
+            String executable = distribution.getExecutable().getName();
             String projectVersion = context.getModel().getProject().getVersion();
 
             String ps = windows ? "\\\\" : "/";
@@ -129,8 +129,11 @@ public class GofishPackagerProcessor extends AbstractRepositoryPackagerProcessor
                 + ps + "bin" + ps + "\" .. name";
 
             if (windows) {
-                executablePath += " .. \"." + distribution.getExecutableExtension() + "\"";
-                installPath += " .. \"." + distribution.getExecutableExtension() + "\"";
+                executablePath += " .. \"" + distribution.getExecutable().resolveWindowsExtension() + "\"";
+                installPath += " .. \"" + distribution.getExecutable().resolveWindowsExtension() + "\"";
+            } else if(isNotBlank(distribution.getExecutable().getUnixExtension())) {
+                executablePath += " .. \"" + distribution.getExecutable().resolveUnixExtension() + "\"";
+                installPath += " .. \"" + distribution.getExecutable().resolveUnixExtension() + "\"";
             }
             packagePath = executablePath;
             packageInstallPath = installPath;

@@ -73,7 +73,7 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
 
             entries.stream()
                 // skip Windows executables
-                .filter(e -> !e.endsWith(distribution.getExecutableExtension()))
+                .filter(e -> !e.endsWith(distribution.getExecutable().resolveWindowsExtension()))
                 // skip directories
                 .filter(e -> !e.endsWith("/"))
                 // remove root from name
@@ -88,7 +88,7 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
 
             entries.stream()
                 // skip Windows executables
-                .filter(e -> !e.endsWith(distribution.getExecutableExtension()))
+                .filter(e -> !e.endsWith(distribution.getExecutable().resolveWindowsExtension()))
                 // skip directories
                 .filter(e -> !e.endsWith("/"))
                 // remove root from name

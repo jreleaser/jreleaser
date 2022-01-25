@@ -2,7 +2,7 @@
 $tools = Split-Path $MyInvocation.MyCommand.Definition
 $package = Split-Path $tools
 $app_home = Join-Path $package '{{distributionArtifactFileName}}'
-$app_exe = Join-Path $app_home 'bin/{{distributionExecutable}}.exe'
+$app_exe = Join-Path $app_home 'bin/{{distributionExecutableWindows}}'
 
 Install-ChocolateyZipPackage `
     -PackageName '{{chocolateyPackageName}}' `
@@ -11,4 +11,4 @@ Install-ChocolateyZipPackage `
     -ChecksumType 'sha256' `
     -UnzipLocation $package
 
-Install-BinFile -Name '{{distributionExecutable}}' -Path $app_exe
+Install-BinFile -Name '{{distributionExecutableName}}' -Path $app_exe
