@@ -90,7 +90,6 @@ class ChangelogImpl implements Changelog {
 
     @Internal
     boolean isSet() {
-        enabled.present ||
             links.present ||
             hideUncategorized.present ||
             external.present ||
