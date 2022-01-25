@@ -32,6 +32,8 @@ interface FileSet extends ExtraProperties {
 
     Property<String> getOutput()
 
+    Property<Boolean> getFailOnMissingInput()
+
     SetProperty<String> getIncludes()
 
     SetProperty<String> getExcludes()

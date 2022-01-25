@@ -808,6 +808,7 @@ public final class JReleaserModelConverter {
         f.setIncludes(tr(fileSet.getIncludes()));
         f.setExcludes(tr(fileSet.getExcludes()));
         f.setExtraProperties(fileSet.getExtraProperties());
+        if (fileSet.isFailOnMissingInputSet()) f.setFailOnMissingInput(fileSet.isFailOnMissingInput());
         return f;
     }
 

@@ -103,7 +103,7 @@ public class Assemblers {
             context.getLogger().restorePrefix();
             context.getLogger().decreaseIndent();
         } catch (AssemblerProcessingException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);
+            throw new JReleaserException(e.getMessage(), e);
         }
     }
 

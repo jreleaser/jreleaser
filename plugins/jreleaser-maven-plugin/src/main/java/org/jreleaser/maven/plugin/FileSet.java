@@ -33,10 +33,12 @@ public class FileSet implements ExtraProperties {
 
     private String input;
     private String output;
+    private Boolean failOnMissingInput;
 
     void setAll(FileSet fileSet) {
         this.input = fileSet.input;
         this.output = fileSet.output;
+        this.failOnMissingInput = fileSet.failOnMissingInput;
         setIncludes(fileSet.includes);
         setExcludes(fileSet.excludes);
         setExtraProperties(fileSet.extraProperties);
@@ -74,6 +76,18 @@ public class FileSet implements ExtraProperties {
 
     public void setOutput(String output) {
         this.output = output;
+    }
+
+    public boolean isFailOnMissingInput() {
+        return failOnMissingInput == null || failOnMissingInput;
+    }
+
+    public void setFailOnMissingInput(Boolean failOnMissingInput) {
+        this.failOnMissingInput = failOnMissingInput;
+    }
+
+    public boolean isFailOnMissingInputSet() {
+        return failOnMissingInput != null;
     }
 
     @Override

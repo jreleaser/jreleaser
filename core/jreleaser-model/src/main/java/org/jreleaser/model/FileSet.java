@@ -52,10 +52,12 @@ public class FileSet implements Domain, ExtraProperties {
 
     private String input;
     private String output;
+    private Boolean failOnMissingInput;
 
     void setAll(FileSet fileSet) {
         this.input = fileSet.input;
         this.output = fileSet.output;
+        this.failOnMissingInput = fileSet.failOnMissingInput;
         setIncludes(fileSet.includes);
         setExcludes(fileSet.excludes);
         setExtraProperties(fileSet.extraProperties);
@@ -120,6 +122,18 @@ public class FileSet implements Domain, ExtraProperties {
         this.output = output;
     }
 
+    public boolean isFailOnMissingInput() {
+        return failOnMissingInput == null || failOnMissingInput;
+    }
+
+    public void setFailOnMissingInput(Boolean failOnMissingInput) {
+        this.failOnMissingInput = failOnMissingInput;
+    }
+
+    public boolean isFailOnMissingInputSet() {
+        return failOnMissingInput != null;
+    }
+
     @Override
     public Map<String, Object> getExtraProperties() {
         return extraProperties;
@@ -143,6 +157,7 @@ public class FileSet implements Domain, ExtraProperties {
         props.put("output", output);
         props.put("includes", includes);
         props.put("excludes", excludes);
+        props.put("failOnMissingInput", failOnMissingInput);
         props.put("extraProperties", getResolvedExtraProperties());
         return props;
     }
@@ -162,6 +177,17 @@ public class FileSet implements Domain, ExtraProperties {
         resolvedExcludes = resolvedExcludes.stream()
             .map(s -> GLOB_PREFIX + s)
             .collect(toSet());
+
+        if (!java.nio.file.Files.exists(basedir)) {
+            if (isFailOnMissingInput()) {
+                throw new IOException(RB.$("ERROR_artifacts_glob_missing_input",
+                    context.getBasedir().relativize(basedir)));
+            } else {
+                context.getLogger().debug(RB.$("ERROR_artifacts_glob_missing_input",
+                    context.getBasedir().relativize(basedir)));
+            }
+            return new LinkedHashSet<>();
+        }
 
         GlobResolver resolver = new GlobResolver(context.getLogger(), basedir, resolvedIncludes, resolvedExcludes);
 

@@ -39,6 +39,7 @@ class FileSetImpl implements FileSet {
     String name
     final Property<String> input
     final Property<String> output
+    final Property<Boolean> failOnMissingInput
     final SetProperty<String> includes
     final SetProperty<String> excludes
     final MapProperty<String, Object> extraProperties
@@ -47,6 +48,7 @@ class FileSetImpl implements FileSet {
     FileSetImpl(ObjectFactory objects) {
         input = objects.property(String).convention(Providers.notDefined())
         output = objects.property(String).convention(Providers.notDefined())
+        failOnMissingInput = objects.property(Boolean).convention(Providers.notDefined())
         includes = objects.setProperty(String).convention(Providers.notDefined())
         excludes = objects.setProperty(String).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
@@ -68,6 +70,7 @@ class FileSetImpl implements FileSet {
         org.jreleaser.model.FileSet fileSet = new org.jreleaser.model.FileSet()
         if (input.present) fileSet.input = input.get()
         if (output.present) fileSet.output = output.get()
+        if (failOnMissingInput.present) fileSet.failOnMissingInput = failOnMissingInput.get()
         fileSet.includes = (Set<String>) includes.getOrElse([] as Set<String>)
         fileSet.includes = (Set<String>) includes.getOrElse([] as Set<String>)
         if (extraProperties.present) fileSet.extraProperties.putAll(extraProperties.get())
