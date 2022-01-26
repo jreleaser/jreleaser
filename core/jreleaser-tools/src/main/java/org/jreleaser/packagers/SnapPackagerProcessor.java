@@ -73,7 +73,7 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
         }
 
         if (PlatformUtils.isWindows()) {
-            context.getLogger().debug(RB.$("ERROR_packager_excludes_platform", "Windows"));
+            context.getLogger().warn(RB.$("ERROR_packager_excludes_platform", "Windows"));
             return;
         }
 
@@ -93,7 +93,7 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
         }
 
         if (PlatformUtils.isWindows()) {
-            context.getLogger().debug(RB.$("ERROR_packager_excludes_platform", "Windows"));
+            context.getLogger().warn(RB.$("ERROR_packager_excludes_platform", "Windows"));
             return;
         }
 
