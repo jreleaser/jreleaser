@@ -13,10 +13,10 @@ COPY assembly/* /
 
 RUN unzip {{distributionArtifactFile}} && \
     rm {{distributionArtifactFile}} && \
-    chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutable}} && \
+    chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutableUnix}} && \
     chmod +x {{distributionArtifactFileName}}/bin/java && \
-    mv /{{distributionExecutable}}-entrypoint.sh /{{distributionArtifactFileName}}/bin && \
-    chmod +x /{{distributionArtifactFileName}}/bin/{{distributionExecutable}}-entrypoint.sh
+    mv /{{distributionExecutableName}}-entrypoint.sh /{{distributionArtifactFileName}}/bin && \
+    chmod +x /{{distributionArtifactFileName}}/bin/{{distributionExecutableName}}-entrypoint.sh
 
 ENV PATH="${PATH}:/{{distributionArtifactFileName}}/bin"
 
@@ -24,5 +24,5 @@ ENV PATH="${PATH}:/{{distributionArtifactFileName}}/bin"
 {{.}}
 {{/dockerPostCommands}}
 
-ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutable}}-entrypoint.sh"]
-CMD ["/{{distributionArtifactFileName}}/bin/{{distributionExecutable}}"]
+ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutableName}}-entrypoint.sh"]
+CMD ["/{{distributionArtifactFileName}}/bin/{{distributionExecutableUnix}}"]

@@ -43,7 +43,7 @@ destroot {
     copy {*}[glob -dir ${worksrcpath} *] ${target}
 
     # Remove extraneous files
-    delete {*}[glob -directory ${target}/bin *.{{distributionExecutableWindowsExtension}}]
+    delete {*}[glob -directory ${target}/bin *.{{distributionExecutableExtensionWindows}}]
 
     ln -s ../share/${name}/bin/{{distributionExecutableUnix}} ${destroot}${prefix}/bin/{{distributionExecutableName}}
 }
