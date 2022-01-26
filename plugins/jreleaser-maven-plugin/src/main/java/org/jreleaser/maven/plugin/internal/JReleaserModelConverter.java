@@ -298,10 +298,7 @@ public final class JReleaserModelConverter {
         if (service.isSkipTagSet()) s.setSkipTag(service.isSkipTag());
         if (service.isSkipReleaseSet()) s.setSkipRelease(service.isSkipRelease());
         if (service.isOverwriteSet()) s.setOverwrite(service.isOverwrite());
-        if (service.isUpdateSet()) {
-            s.setUpdate(service.isUpdate());
-            s.setUpdateSections(convertUpdateSections(service.getUpdateSections()));
-        }
+        s.setUpdate(convertUpdate(service.getUpdate()));
         if (isNotBlank(service.getApiEndpoint())) s.setApiEndpoint(tr(service.getApiEndpoint()));
         s.setChangelog(convertChangelog(service.getChangelog()));
         s.setMilestone(convertMilestone(service.getMilestone()));
@@ -312,6 +309,13 @@ public final class JReleaserModelConverter {
         if (service.isChecksumsSet()) s.setChecksums(service.isChecksums());
         if (service.isSignaturesSet()) s.setSignatures(service.isSignatures());
         s.setUploadAssets(tr(service.resolveUploadAssets()));
+    }
+
+    private static org.jreleaser.model.GitService.Update convertUpdate(GitService.Update update) {
+        org.jreleaser.model.GitService.Update u = new org.jreleaser.model.GitService.Update();
+        if (update.isEnabledSet()) u.setEnabled(update.isEnabled());
+        u.setSections(convertUpdateSections(update.getSections()));
+        return u;
     }
 
     private static Set<org.jreleaser.model.UpdateSection> convertUpdateSections(Set<UpdateSection> updateSections) {

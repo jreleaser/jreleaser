@@ -89,23 +89,23 @@ public class GithubReleaser extends AbstractReleaser {
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                     createRelease(api, tagName, changelog, true);
-                } else if (github.isUpdate()) {
+                } else if (github.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
                         GHReleaseUpdater updater = release.update();
                         updater.prerelease(github.getPrerelease().isEnabled());
                         updater.draft(github.isDraft());
-                        if (github.getUpdateSections().contains(UpdateSection.TITLE)) {
+                        if (github.getUpdate().getSections().contains(UpdateSection.TITLE)) {
                             context.getLogger().info(RB.$("git.releaser.release.update.title"), github.getEffectiveReleaseName());
                             updater.name(github.getEffectiveReleaseName());
                         }
-                        if (github.getUpdateSections().contains(UpdateSection.BODY)) {
+                        if (github.getUpdate().getSections().contains(UpdateSection.BODY)) {
                             context.getLogger().info(RB.$("git.releaser.release.update.body"));
                             updater.body(changelog);
                         }
                         updater.update();
 
-                        if (github.getUpdateSections().contains(UpdateSection.ASSETS)) {
+                        if (github.getUpdate().getSections().contains(UpdateSection.ASSETS)) {
                             api.uploadAssets(release, assets);
                         }
                         linkDiscussion(tagName, release);

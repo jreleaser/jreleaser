@@ -30,7 +30,7 @@ public abstract class GitService implements Releaser {
     private final CommitAuthor commitAuthor = new CommitAuthor();
     private final Changelog changelog = new Changelog();
     private final Milestone milestone = new Milestone();
-    private final Set<UpdateSection> updateSections = new LinkedHashSet<>();
+    private final Update update = new Update();
     protected Boolean enabled;
     private String host;
     private String owner;
@@ -53,7 +53,6 @@ public abstract class GitService implements Releaser {
     private Boolean skipTag;
     private Boolean skipRelease;
     private Boolean overwrite;
-    private Boolean update;
     private String apiEndpoint;
     private int connectTimeout;
     private int readTimeout;
@@ -168,85 +167,85 @@ public abstract class GitService implements Releaser {
 
     @Deprecated
     public String getRepoUrlFormat() {
-        System.out.println("getRepoUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getRepoUrl() instead");
+        System.out.println("getRepoUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoUrl() instead");
         return repoUrl;
     }
 
     @Deprecated
     public void setRepoUrlFormat(String repoUrl) {
-        System.out.println("setRepoUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setRepoUrl() instead");
+        System.out.println("setRepoUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setRepoUrl() instead");
         this.repoUrl = repoUrl;
     }
 
     @Deprecated
     public String getRepoCloneUrlFormat() {
-        System.out.println("getRepoCloneUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getRepoCloneUrl() instead");
+        System.out.println("getRepoCloneUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoCloneUrl() instead");
         return repoCloneUrl;
     }
 
     @Deprecated
     public void setRepoCloneUrlFormat(String repoCloneUrl) {
-        System.out.println("setRepoCloneUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setRepoCloneUrl() instead");
+        System.out.println("setRepoCloneUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setRepoCloneUrl() instead");
         this.repoCloneUrl = repoCloneUrl;
     }
 
     @Deprecated
     public String getCommitUrlFormat() {
-        System.out.println("getCommitUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getCommitUrl() instead");
+        System.out.println("getCommitUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getCommitUrl() instead");
         return commitUrl;
     }
 
     @Deprecated
     public void setCommitUrlFormat(String commitUrl) {
-        System.out.println("setCommitUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setCommitUrl() instead");
+        System.out.println("setCommitUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setCommitUrl() instead");
         this.commitUrl = commitUrl;
     }
 
     @Deprecated
     public String getDownloadUrlFormat() {
-        System.out.println("getDownloadUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getDownloadUrl() instead");
+        System.out.println("getDownloadUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getDownloadUrl() instead");
         return downloadUrl;
     }
 
     @Deprecated
     public void setDownloadUrlFormat(String downloadUrl) {
-        System.out.println("setDownloadUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setDownloadUrl() instead");
+        System.out.println("setDownloadUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setDownloadUrl() instead");
         this.downloadUrl = downloadUrl;
     }
 
     @Deprecated
     public String getReleaseNotesUrlFormat() {
-        System.out.println("getReleaseNotesUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getReleaseNotesUrl() instead");
+        System.out.println("getReleaseNotesUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getReleaseNotesUrl() instead");
         return releaseNotesUrl;
     }
 
     @Deprecated
     public void setReleaseNotesUrlFormat(String releaseNotesUrl) {
-        System.out.println("setReleaseNotesUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setReleaseNotesUrl() instead");
+        System.out.println("setReleaseNotesUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setReleaseNotesUrl() instead");
         this.releaseNotesUrl = releaseNotesUrl;
     }
 
     @Deprecated
     public String getLatestReleaseUrlFormat() {
-        System.out.println("getLatestReleaseUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getLatestReleaseUrl() instead");
+        System.out.println("getLatestReleaseUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getLatestReleaseUrl() instead");
         return latestReleaseUrl;
     }
 
     @Deprecated
     public void setLatestReleaseUrlFormat(String latestReleaseUrl) {
-        System.out.println("setLatestReleaseUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setLatestReleaseUrl() instead");
+        System.out.println("setLatestReleaseUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setLatestReleaseUrl() instead");
         this.latestReleaseUrl = latestReleaseUrl;
     }
 
     @Deprecated
     public String getIssueTrackerUrlFormat() {
-        System.out.println("getIssueTrackerUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getIssueTrackerUrl() instead");
+        System.out.println("getIssueTrackerUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getIssueTrackerUrl() instead");
         return issueTrackerUrl;
     }
 
     @Deprecated
     public void setIssueTrackerUrlFormat(String issueTrackerUrl) {
-        System.out.println("setIssueTrackerUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use setIssueTrackerUrl() instead");
+        System.out.println("setIssueTrackerUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setIssueTrackerUrl() instead");
         this.issueTrackerUrl = issueTrackerUrl;
     }
 
@@ -370,21 +369,18 @@ public abstract class GitService implements Releaser {
         return overwrite != null;
     }
 
-    public boolean isUpdate() {
-        return update != null && update;
+    public Update getUpdate() {
+        return update;
     }
 
-    public void setUpdate(Boolean update) {
-        this.update = update;
+    public void setUpdate(Update update) {
+        this.update.setAll(update);
     }
 
-    public Set<UpdateSection> getUpdateSections() {
-        return updateSections;
-    }
-
+    @Deprecated
     public void setUpdateSections(Set<UpdateSection> updateSections) {
-        this.updateSections.clear();
-        this.updateSections.addAll(updateSections);
+        System.out.println("<updateSections> has been deprecated since 1.0.0-M2 and will be removed in the future. Use <update><sections> instead");
+        this.update.setSections(updateSections);
     }
 
     public boolean isUpdateSet() {
@@ -477,6 +473,37 @@ public abstract class GitService implements Releaser {
 
     public String resolveUploadAssets() {
         return uploadAssets != null ? uploadAssets.name() : null;
+    }
+
+    public static class Update {
+        private final Set<UpdateSection> sections = new LinkedHashSet<>();
+        private Boolean enabled;
+
+        void setAll(Update update) {
+            this.enabled = update.enabled;
+            setSections(update.sections);
+        }
+
+        public boolean isEnabled() {
+            return enabled != null && enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public boolean isEnabledSet() {
+            return enabled != null;
+        }
+
+        public Set<UpdateSection> getSections() {
+            return sections;
+        }
+
+        public void setSections(Set<UpdateSection> sections) {
+            this.sections.clear();
+            this.sections.addAll(sections);
+        }
     }
 
     public static class Prerelease {

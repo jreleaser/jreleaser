@@ -128,8 +128,8 @@ public abstract class GitServiceValidator extends Validator {
         }
 
         if (service.isReleaseSupported()) {
-            if (!service.isUpdateSet()) {
-                service.setUpdate(
+            if (!service.getUpdate().isEnabledSet()) {
+                service.getUpdate().setEnabled(
                     checkProperty(context,
                         UPDATE,
                         service.getServiceName() + ".update",
@@ -137,8 +137,8 @@ public abstract class GitServiceValidator extends Validator {
                         false));
             }
 
-            if (service.isUpdate() && service.getUpdateSections().isEmpty()) {
-                service.getUpdateSections().add(UpdateSection.ASSETS);
+            if (service.getUpdate().isEnabled() && service.getUpdate().getSections().isEmpty()) {
+                service.getUpdate().getSections().add(UpdateSection.ASSETS);
             }
         }
 

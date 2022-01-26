@@ -99,17 +99,17 @@ public class GitlabReleaser extends AbstractReleaser {
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                     createRelease(api, tagName, changelog, true);
-                } else if (gitlab.isUpdate()) {
+                } else if (gitlab.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
                         boolean update = false;
                         Release updater = new Release();
-                        if (gitlab.getUpdateSections().contains(UpdateSection.TITLE)) {
+                        if (gitlab.getUpdate().getSections().contains(UpdateSection.TITLE)) {
                             update = true;
                             context.getLogger().info(RB.$("git.releaser.release.update.title"), gitlab.getEffectiveReleaseName());
                             updater.setName(gitlab.getEffectiveReleaseName());
                         }
-                        if (gitlab.getUpdateSections().contains(UpdateSection.BODY)) {
+                        if (gitlab.getUpdate().getSections().contains(UpdateSection.BODY)) {
                             update = true;
                             context.getLogger().info(RB.$("git.releaser.release.update.body"));
                             updater.setDescription(changelog);
@@ -118,7 +118,7 @@ public class GitlabReleaser extends AbstractReleaser {
                             api.updateRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), updater);
                         }
 
-                        if (gitlab.getUpdateSections().contains(UpdateSection.ASSETS)) {
+                        if (gitlab.getUpdate().getSections().contains(UpdateSection.ASSETS)) {
                             if (!assets.isEmpty()) {
                                 Collection<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), assets);
                                 api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), uploads);

@@ -108,17 +108,11 @@ interface GitService extends Releaser {
 
     Property<Boolean> getOverwrite()
 
-    Property<Boolean> getUpdate()
-
     Changelog getChangelog()
 
     Milestone getMilestone()
 
     CommitAuthor getCommitAuthor()
-
-    SetProperty<UpdateSection> getUpdateSections()
-
-    void updateSection(String str)
 
     Property<Active> getUploadAssets()
 
@@ -130,11 +124,24 @@ interface GitService extends Releaser {
 
     void commitAuthor(Action<? super CommitAuthor> action)
 
+    void update(Action<? super Update> action)
+
     void changelog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Changelog) Closure<Void> action)
 
     void milestone(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Milestone) Closure<Void> action)
 
     void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action)
+
+    void update(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Update) Closure<Void> action)
+
+    @CompileStatic
+    interface Update {
+        Property<Boolean> getEnabled()
+
+        SetProperty<UpdateSection> getSections()
+
+        void section(String str)
+    }
 
     @CompileStatic
     interface Prerelease {

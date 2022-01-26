@@ -207,13 +207,15 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         this.executable.setAll(executable);
     }
 
+    @Deprecated
     public void setExecutable(String executable) {
-        System.out.println("executable has been deprecated since 1.0.0-M1 and will be removed in the future. Use executable.name instead");
+        System.out.println("executable has been deprecated since 1.0.0-M2 and will be removed in the future. Use executable.name instead");
         this.executable.setName(executable);
     }
 
+    @Deprecated
     public void setExecutableExtension(String executableExtension) {
-        System.out.println("executableExtension has been deprecated since 1.0.0-M1 and will be removed in the future. Use executable.windowsExtension instead");
+        System.out.println("executableExtension has been deprecated since 1.0.0-M2 and will be removed in the future. Use executable.windowsExtension instead");
         this.executable.setWindowsExtension(executableExtension);
     }
 

@@ -60,10 +60,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private final Changelog changelog = new Changelog();
     private final Milestone milestone = new Milestone();
     private final CommitAuthor commitAuthor = new CommitAuthor();
+    private final Update update = new Update();
     private final Prerelease prerelease = new Prerelease();
     @JsonIgnore
     private final boolean releaseSupported;
-    private final Set<UpdateSection> updateSections = new LinkedHashSet<>();
 
     private Boolean enabled;
     private String host;
@@ -87,7 +87,6 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     private Boolean skipTag;
     private Boolean skipRelease;
     private Boolean overwrite;
-    private Boolean update;
     private String apiEndpoint;
     private int connectTimeout;
     private int readTimeout;
@@ -141,7 +140,6 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.skipTag = service.skipTag;
         this.skipRelease = service.skipRelease;
         this.overwrite = service.overwrite;
-        this.update = service.update;
         this.apiEndpoint = service.apiEndpoint;
         this.connectTimeout = service.connectTimeout;
         this.readTimeout = service.readTimeout;
@@ -152,10 +150,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         this.uploadAssets = service.uploadAssets;
         this.uploadAssetsEnabled = service.uploadAssetsEnabled;
         setCommitAuthor(service.commitAuthor);
+        setUpdate(service.update);
         setPrerelease(service.prerelease);
         setChangelog(service.changelog);
         setMilestone(service.milestone);
-        setUpdateSections(service.updateSections);
     }
 
     public String getCanonicalRepoName() {
@@ -605,25 +603,18 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         return overwrite != null;
     }
 
-    public boolean isUpdate() {
-        return update != null && update;
+    public Update getUpdate() {
+        return update;
     }
 
-    public void setUpdate(Boolean update) {
-        this.update = update;
+    public void setUpdate(Update update) {
+        this.update.setAll(update);
     }
 
-    public boolean isUpdateSet() {
-        return update != null;
-    }
-
-    public Set<UpdateSection> getUpdateSections() {
-        return updateSections;
-    }
-
+    @Deprecated
     public void setUpdateSections(Set<UpdateSection> updateSections) {
-        this.updateSections.clear();
-        this.updateSections.addAll(updateSections);
+        System.out.println("updateSections has been deprecated since 1.0.0-M2 and will be removed in the future. Use update.sections instead");
+        this.update.setSections(updateSections);
     }
 
     public String getApiEndpoint() {
@@ -753,8 +744,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put("skipRelease", isSkipRelease());
         props.put("overwrite", isOverwrite());
         if (releaseSupported) {
-            props.put("update", isUpdate());
-            props.put("updateSections", updateSections);
+            props.put("update", update.asMap(full));
             props.put("apiEndpoint", apiEndpoint);
             props.put("connectTimeout", connectTimeout);
             props.put("readTimeout", readTimeout);
@@ -861,6 +851,53 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(model));
         props.put(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(model));
         props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model));
+    }
+
+    public static class Update implements Domain {
+        private final Set<UpdateSection> sections = new LinkedHashSet<>();
+        private Boolean enabled;
+
+        public Update() {
+        }
+
+        public Update(Boolean enabled) {
+            System.out.println("update has been deprecated since 1.0.0-M2 and will be removed in the future. Use update.enabled instead");
+            this.enabled = enabled;
+        }
+
+        void setAll(Update update) {
+            this.enabled = update.enabled;
+            setSections(update.sections);
+        }
+
+        public boolean isEnabled() {
+            return enabled != null && enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public boolean isEnabledSet() {
+            return enabled != null;
+        }
+
+        public Set<UpdateSection> getSections() {
+            return sections;
+        }
+
+        public void setSections(Set<UpdateSection> sections) {
+            this.sections.clear();
+            this.sections.addAll(sections);
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("enabled", isEnabled());
+            map.put("sections", sections);
+            return map;
+        }
     }
 
     public static class Prerelease implements Domain {

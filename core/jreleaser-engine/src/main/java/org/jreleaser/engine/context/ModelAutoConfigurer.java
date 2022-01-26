@@ -414,12 +414,12 @@ public class ModelAutoConfigurer {
             service.setReleaseName(releaseName);
             service.getMilestone().setName(milestoneName);
             service.setOverwrite(overwrite);
-            service.setUpdate(update);
+            service.getUpdate().setEnabled(update);
             if (!updateSections.isEmpty()) {
-                if (!service.isUpdate()) {
+                if (!update) {
                     throw new JReleaserException(RB.$("ERROR_context_configurer_update_not_set"));
                 }
-                service.setUpdateSections(updateSections);
+                service.getUpdate().setSections(updateSections);
             }
             service.setSkipTag(skipTag);
             service.setSkipRelease(skipRelease);

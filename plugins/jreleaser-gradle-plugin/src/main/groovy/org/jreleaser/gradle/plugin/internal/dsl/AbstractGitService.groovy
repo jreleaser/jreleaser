@@ -71,9 +71,9 @@ abstract class AbstractGitService implements GitService {
     final Property<Boolean> checksums
     final Property<Boolean> signatures
     final Property<Boolean> overwrite
-    final Property<Boolean> update
-    final SetProperty<UpdateSection> updateSections
     final Property<Active> uploadAssets
+
+    final UpdateImpl update
 
     @Inject
     AbstractGitService(ObjectFactory objects) {
@@ -107,57 +107,57 @@ abstract class AbstractGitService implements GitService {
         checksums = objects.property(Boolean).convention(Providers.notDefined())
         signatures = objects.property(Boolean).convention(Providers.notDefined())
         overwrite = objects.property(Boolean).convention(Providers.notDefined())
-        update = objects.property(Boolean).convention(Providers.notDefined())
-        updateSections = objects.setProperty(UpdateSection).convention(Providers.notDefined())
         uploadAssets = objects.property(Active).convention(Providers.notDefined())
+
+        update = objects.newInstance(UpdateImpl, objects)
     }
 
     @Deprecated
     @Override
     Property<String> getRepoUrlFormat() {
-        println('getRepoUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getRepoUrl() instead')
+        println('getRepoUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoUrl() instead')
         return repoUrl
     }
 
     @Deprecated
     @Override
     Property<String> getRepoCloneUrlFormat() {
-        println('getRepoCloneUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getRepoCloneUrl() instead')
+        println('getRepoCloneUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoCloneUrl() instead')
         return repoCloneUrl
     }
 
     @Deprecated
     @Override
     Property<String> getCommitUrlFormat() {
-        println('getCommitUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getCommitUrl() instead')
+        println('getCommitUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getCommitUrl() instead')
         return commitUrl
     }
 
     @Deprecated
     @Override
     Property<String> getDownloadUrlFormat() {
-        println('getDownloadUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getDownloadUrl() instead')
+        println('getDownloadUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getDownloadUrl() instead')
         return downloadUrl
     }
 
     @Deprecated
     @Override
     Property<String> getReleaseNotesUrlFormat() {
-        println('getReleaseNotesUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getReleaseNotesUrl() instead')
+        println('getReleaseNotesUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getReleaseNotesUrl() instead')
         return releaseNotesUrl
     }
 
     @Deprecated
     @Override
     Property<String> getLatestReleaseUrlFormat() {
-        println('getLatestReleaseUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getLatestReleaseUrl() instead')
+        println('getLatestReleaseUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getLatestReleaseUrl() instead')
         return latestReleaseUrl
     }
 
     @Deprecated
     @Override
     Property<String> getIssueTrackerUrlFormat() {
-        println('getIssueTrackerUrlFormat() has been deprecated since 0.5.0 wan will be removed in the future. Use getIssueTrackerUrl() instead')
+        println('getIssueTrackerUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getIssueTrackerUrl() instead')
         return issueTrackerUrl
     }
 
@@ -192,8 +192,7 @@ abstract class AbstractGitService implements GitService {
             checksums.present ||
             signatures.present ||
             overwrite.present ||
-            update.present ||
-            updateSections.present ||
+            update.isSet() ||
             uploadAssets.present
     }
 
@@ -220,6 +219,11 @@ abstract class AbstractGitService implements GitService {
     }
 
     @Override
+    void update(Action<? super Update> action) {
+        action.execute(update)
+    }
+
+    @Override
     void changelog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Changelog) Closure<Void> action) {
         ConfigureUtil.configure(action, changelog)
     }
@@ -235,10 +239,8 @@ abstract class AbstractGitService implements GitService {
     }
 
     @Override
-    void updateSection(String str) {
-        if (isNotBlank(str)) {
-            this.updateSections.add(UpdateSection.of(str.trim()))
-        }
+    void update(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Update) Closure<Void> action) {
+        ConfigureUtil.configure(action, update)
     }
 
     protected void toModel(org.jreleaser.model.GitService service) {
@@ -272,9 +274,38 @@ abstract class AbstractGitService implements GitService {
         if (skipTag.present) service.skipTag = skipTag.get()
         if (skipRelease.present) service.skipRelease = skipRelease.get()
         if (overwrite.present) service.overwrite = overwrite.get()
-        if (update.present) service.update = update.get()
-        if (service.update) {
-            service.updateSections = (Set<UpdateSection>) updateSections.getOrElse([] as Set<UpdateSection>)
+        if (update.isSet()) service.update = update.toModel()
+    }
+
+    @CompileStatic
+    static class UpdateImpl implements Update {
+        final Property<Boolean> enabled
+        final SetProperty<UpdateSection> sections
+
+        @Inject
+        UpdateImpl(ObjectFactory objects) {
+            enabled = objects.property(Boolean).convention(Providers.notDefined())
+            sections = objects.setProperty(UpdateSection).convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            enabled.present ||
+                sections.present
+        }
+
+        @Override
+        void section(String str) {
+            if (isNotBlank(str)) {
+                this.sections.add(UpdateSection.of(str.trim()))
+            }
+        }
+
+        org.jreleaser.model.GitService.Update toModel() {
+            org.jreleaser.model.GitService.Update update = new org.jreleaser.model.GitService.Update()
+            if (enabled.present) update.enabled = enabled.get()
+            update.sections = (Set<UpdateSection>) sections.getOrElse([] as Set<UpdateSection>)
+            update
         }
     }
 
