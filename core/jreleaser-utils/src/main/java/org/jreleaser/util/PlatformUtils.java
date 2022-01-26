@@ -18,6 +18,7 @@
 package org.jreleaser.util;
 
 import kr.motd.maven.os.Detector;
+import org.jreleaser.bundle.RB;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,6 +41,8 @@ public final class PlatformUtils {
     private static final OsDetector OS_DETECTOR = new OsDetector();
     private static final List<String> OS_NAMES = new ArrayList<>();
     private static final List<String> OS_ARCHS = new ArrayList<>();
+    private static final String JRELEASER_PLATFORM_OVERRIDE = "JRELEASER_PLATFORM_OVERRIDE";
+    private static String currentPlatform;
 
     static {
         OS_NAMES.addAll(Arrays.asList(
@@ -272,8 +275,21 @@ public final class PlatformUtils {
         return platform;
     }
 
+    public static void resolveCurrentPlatform(JReleaserLogger logger) {
+        String resolved = getCurrent() + "-" + getDetectedArch();
+        String platform = System.getenv().getOrDefault(JRELEASER_PLATFORM_OVERRIDE,
+            System.getProperty(JRELEASER_PLATFORM_OVERRIDE, resolved));
+
+        if (!isSupported(platform)) {
+            logger.warn(RB.$("ERROR_unsupported_platform_override", platform, resolved));
+            platform = resolved;
+        }
+
+        currentPlatform = platform;
+    }
+
     public static String getCurrentFull() {
-        return getCurrent() + "-" + getDetectedArch();
+        return currentPlatform;
     }
 
     public static boolean isWindows() {

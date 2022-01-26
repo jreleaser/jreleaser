@@ -23,6 +23,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -72,6 +73,7 @@ public class ContextCreator {
             gitRootSearch,
             selectedPlatforms);
 
+        PlatformUtils.resolveCurrentPlatform(logger);
         ModelConfigurer.configure(context);
 
         return context;

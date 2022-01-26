@@ -159,7 +159,7 @@ public class Jpackage extends AbstractJavaAssembler {
     }
 
     public PlatformPackager getResolvedPlatformPackager() {
-        String currentPlatform = PlatformUtils.getCurrent();
+        String currentPlatform = PlatformUtils.getCurrentFull();
         if (PlatformUtils.isMac(currentPlatform)) {
             return getOsx();
         } else if (PlatformUtils.isWindows(currentPlatform)) {
