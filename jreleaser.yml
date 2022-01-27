@@ -201,11 +201,21 @@ distributions:
       remoteBuild: true
       base: core18
       architectures:
-        - buildOn: [ amd64 ]
-        - buildOn: [ arm64 ]
+        - buildOn: [ amd64, arm64 ]
+      plugs:
+        - name: dot-config-files
+          attributes:
+            interface: personal-files
+          writes:
+            - $HOME/.jreleaser
+          reads:
+            - $HOME/.gnupg
+            - $HOME/.gitconfig
+            - $HOME/.config/jgit
       localPlugs:
         - network
         - home
+        - dot-config-files
     spec:
       active: always
       repository:
