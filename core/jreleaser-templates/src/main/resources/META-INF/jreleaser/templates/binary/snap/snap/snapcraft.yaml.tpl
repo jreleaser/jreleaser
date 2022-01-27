@@ -19,7 +19,7 @@ architectures:
 {{/hasArchitectures}}
 apps:
   {{distributionExecutableName}}:
-    command: $SNAP/bin/{{distributionExecutableUnix}}
+    command: bin/{{distributionExecutableUnix}}
     {{#snapHasLocalPlugs}}
     plugs:
       {{#snapLocalPlugs}}
