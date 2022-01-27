@@ -20,7 +20,7 @@ class {{brewFormulaName}} < Formula
 
   def install
     libexec.install Dir["*"]
-    bin.install_symlink "{{distributionExecutableName}}" => "#{libexec}/bin/{{distributionExecutableUnix}}"
+    bin.install_symlink "#{libexec}/bin/{{distributionExecutableUnix}}" => "{{distributionExecutableName}}"
   end
 
   def post_install
