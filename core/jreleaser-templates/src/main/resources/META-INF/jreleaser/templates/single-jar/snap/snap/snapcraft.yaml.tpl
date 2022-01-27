@@ -21,8 +21,8 @@ apps:
   {{distributionExecutableName}}:
     command: ${JAVA_HOME}/bin/java -jar $SNAP/{{distributionArtifactFile}}
     environment:
-      JAVA_HOME: "$SNAP/usr/lib/jvm/java/jre/"
-      PATH: "$PATH:$SNAP/usr/lib/jvm/java/jre/bin"
+      JAVA_HOME: "$SNAP/usr/lib/jvm/java"
+      PATH: "$PATH:$JAVA_HOME/bin"
     {{#snapHasLocalPlugs}}
     plugs:
       {{#snapLocalPlugs}}
@@ -79,7 +79,6 @@ parts:
       - ca-certificates
       - ca-certificates-java
     organize:
-      'usr/lib/jvm/java-{{distributionJavaVersion}}-openjdk*': 'usr/lib/jvm/java'
+      'usr/lib/jvm/java-*': 'usr/lib/jvm/java'
     prime:
       - -usr/lib/jvm/java/lib/security/cacerts
-      - -usr/lib/jvm/java/jre/lib/security/cacerts
