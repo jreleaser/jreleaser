@@ -225,6 +225,8 @@ public class Snap extends AbstractRepositoryPackager {
 
     public static class Plug {
         private final Map<String, String> attributes = new LinkedHashMap<>();
+        private final List<String> reads = new ArrayList<>();
+        private final List<String> writes = new ArrayList<>();
         private String name;
 
         public String getName() {
@@ -242,6 +244,24 @@ public class Snap extends AbstractRepositoryPackager {
         public void setAttributes(Map<String, String> attributes) {
             this.attributes.clear();
             this.attributes.putAll(attributes);
+        }
+
+        public List<String> getReads() {
+            return reads;
+        }
+
+        public void setReads(List<String> reads) {
+            this.reads.clear();
+            this.reads.addAll(reads);
+        }
+
+        public List<String> getWrites() {
+            return writes;
+        }
+
+        public void setWrites(List<String> writes) {
+            this.writes.clear();
+            this.writes.addAll(writes);
         }
     }
 

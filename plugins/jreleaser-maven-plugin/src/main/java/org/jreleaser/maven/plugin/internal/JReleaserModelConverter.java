@@ -1340,15 +1340,17 @@ public final class JReleaserModelConverter {
     private static List<org.jreleaser.model.Snap.Plug> convertPlugs(List<Snap.Plug> plugs) {
         List<org.jreleaser.model.Snap.Plug> ps = new ArrayList<>();
         for (Snap.Plug plug : plugs) {
-            ps.add(convertArtifact(plug));
+            ps.add(convertPlug(plug));
         }
         return ps;
     }
 
-    private static org.jreleaser.model.Snap.Plug convertArtifact(Snap.Plug plug) {
+    private static org.jreleaser.model.Snap.Plug convertPlug(Snap.Plug plug) {
         org.jreleaser.model.Snap.Plug p = new org.jreleaser.model.Snap.Plug();
         p.setName(tr(plug.getName()));
         p.setAttributes(plug.getAttributes());
+        p.setReads(tr(plug.getReads()));
+        p.setWrites(tr(plug.getWrites()));
         return p;
     }
 

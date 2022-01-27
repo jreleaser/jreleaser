@@ -149,6 +149,12 @@ public abstract class SnapValidator extends Validator {
             Snap.Plug tp = packagerPlugs.remove(name);
             if (null != tp) {
                 cp.getAttributes().putAll(tp.getAttributes());
+                Set<String> tmp = new LinkedHashSet<>(cp.getReads());
+                tmp.addAll(tp.getReads());
+                cp.setReads(new ArrayList<>(tmp));
+                tmp = new LinkedHashSet<>(cp.getWrites());
+                tmp.addAll(tp.getWrites());
+                cp.setWrites(new ArrayList<>(tmp));
             }
         });
         commonPlugs.putAll(packagerPlugs);
@@ -169,6 +175,12 @@ public abstract class SnapValidator extends Validator {
             Snap.Slot tp = packagerSlots.remove(name);
             if (null != tp) {
                 cp.getAttributes().putAll(tp.getAttributes());
+                Set<String> tmp = new LinkedHashSet<>(cp.getReads());
+                tmp.addAll(tp.getReads());
+                cp.setReads(new ArrayList<>(tmp));
+                tmp = new LinkedHashSet<>(cp.getWrites());
+                tmp.addAll(tp.getWrites());
+                cp.setWrites(new ArrayList<>(tmp));
             }
         });
         commonSlots.putAll(packagerSlots);

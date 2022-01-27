@@ -95,6 +95,14 @@ interface Snap extends RepositoryPackager {
         MapProperty<String, String> getAttributes()
 
         void addAttribute(String key, String value)
+
+        ListProperty<String> getReads()
+
+        void addRead(String read)
+
+        ListProperty<String> getWrites()
+
+        void addWrite(String write)
     }
 
     @CompileStatic

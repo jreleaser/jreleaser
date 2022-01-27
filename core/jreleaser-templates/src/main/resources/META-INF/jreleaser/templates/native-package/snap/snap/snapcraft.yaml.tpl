@@ -37,18 +37,30 @@ apps:
 plugs:
   {{#snapPlugs}}
   {{name}}:
-    {{#attributes}}
+    {{#attrs}}
     {{key}}: {{value}}
-    {{/attributes}}
+    {{/attrs}}
+    {{#hasReads}}
+    read:
+      {{#reads}}
+      - {{.}}
+      {{/reads}}
+    {{/hasReads}}
+    {{#hasWrites}}
+    write:
+      {{#writes}}
+      - {{.}}
+      {{/writes}}
+    {{/hasWrites}}
   {{/snapPlugs}}
 {{/snapHasPlugs}}
 {{#snapHasSlots}}
 slots:
   {{#snapSlots}}
   {{name}}:
-    {{#attributes}}
+    {{#attrs}}
     {{key}}: {{value}}
-    {{/attributes}}
+    {{/attrs}}
     {{#hasReads}}
     reads:
       {{#reads}}

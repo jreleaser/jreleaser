@@ -266,10 +266,14 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
     static class PlugImpl implements Plug {
         String name
         final MapProperty<String, String> attributes
+        final ListProperty<String> reads
+        final ListProperty<String> writes
 
         @Inject
         PlugImpl(ObjectFactory objects) {
             attributes = objects.mapProperty(String, String).convention([:])
+            reads = objects.listProperty(String).convention(Providers.notDefined())
+            writes = objects.listProperty(String).convention(Providers.notDefined())
         }
 
         void setName(String name) {
@@ -283,10 +287,26 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
             }
         }
 
+        @Override
+        void addRead(String read) {
+            if (isNotBlank(read)) {
+                this.reads.add(read.trim())
+            }
+        }
+
+        @Override
+        void addWrite(String write) {
+            if (isNotBlank(write)) {
+                this.writes.add(write.trim())
+            }
+        }
+
         org.jreleaser.model.Snap.Plug toModel() {
             org.jreleaser.model.Snap.Plug plug = new org.jreleaser.model.Snap.Plug()
             plug.name = name
             plug.attributes.putAll(attributes.get())
+            plug.reads = (List<String>) reads.getOrElse([])
+            plug.writes = (List<String>) writes.getOrElse([])
             plug
         }
     }
