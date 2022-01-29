@@ -1,0 +1,306 @@
+environment:
+  properties:
+    jdkPathPrefix: 'apps/jreleaser/build/jdks'
+    jdkFilePrefix: 'zulu17.30.15-ca-jdk17.0.1'
+
+project:
+  name: jreleaser
+  description: Release projects quickly and easily with JReleaser
+  longDescription: |
+    JReleaser is a release automation tool. Its goal is to simplify creating releases and
+    publishing artifacts to multiple package managers while providing customizable options.
+
+    JReleaser takes inputs from popular builds tools (Ant, Maven, Gradle) such as JAR files,
+    binary distributions (.zip, .tar), JLink images, or any other file that you’d like to
+    publish as a Git release on popular Git services such as GitHub, GitLab, or Gitea.
+    Distribution files may additionally be published to be consumed by popular package managers
+    such as Homebrew, Chocolatey, Snapcraft, or get ready to be launched via JBang. Releases
+    may be announced in a variety of channels such as Twitter, Zulip, SDKMAN!, and more.
+
+  website: https://jreleaser.org
+  authors:
+    - Andres Almiray
+  license: Apache-2.0
+  java:
+    groupId: org.jreleaser
+    version: 8
+    multiProject: true
+  extraProperties:
+    inceptionYear: 2020
+  tags:
+    - 'jreleaser'
+    - 'release'
+    - 'tool'
+    - 'java'
+    - 'git'
+
+platform:
+  replacements:
+    aarch_64: aarch64
+
+release:
+  github:
+    overwrite: true
+    sign: true
+    discussionCategoryName: Announcements
+    changelog:
+      formatted: ALWAYS
+      format: '- {{commitShortHash}} {{commitTitle}}'
+      contributors:
+        format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
+      labelers:
+        - label: 'merge_pull'
+          title: 'Merge pull'
+        - label: 'merge_branch'
+          title: 'Merge branch'
+        - label: 'translation'
+          title: '[translation]'
+        - label: 'task'
+          title: '[chore]'
+        - label: 'dependencies'
+          title: '[deps]'
+        - label: 'build'
+          title: '[build]'
+        - label: 'feature'
+          title: 'Resolves #'
+          body: 'Resolves #'
+        - label: 'issue'
+          title: 'Fixes #'
+          body: 'Fixes #'
+        - label: 'issue'
+          title: 'Relates to #'
+          body: 'Relates to #'
+        - label: 'allcontributors'
+          title: 'docs: update'
+      categories:
+        - title: 'Merge'
+          labels:
+            - 'merge_pull'
+            - 'merge_branch'
+        - title: '🚀 Features'
+          labels:
+            - 'feature'
+        - title: '✅ Issues'
+          labels:
+            - 'issue'
+        - title: '🧰 Tasks'
+          labels:
+            - 'task'
+        - title: '🌐 Translation'
+          labels:
+            - 'translation'
+        - title: '⚙️  Dependencies'
+          labels:
+            - 'dependencies'
+        - title: '🛠  Build'
+          labels:
+            - 'build'
+        - title: 'allcontributors'
+          labels:
+            - 'allcontributors'
+      hide:
+        categories:
+          - 'Merge'
+          - 'allcontributors'
+        contributors:
+          - 'GitHub'
+          - 'allcontributors'
+      replacers:
+        - search: '\[chore\] '
+        - search: '\[deps\] '
+        - search: '\[translation\] '
+        - search: '\[build\] '
+
+signing:
+  active: always
+  armored: true
+  files: false
+  mode: COSIGN
+  cosign:
+    version: 1.5.0
+
+checksum:
+  files: false
+
+announce:
+  twitter:
+    active: release
+    status: 🚀 JReleaser {{projectVersion}} has been released! {{releaseNotesUrl}}
+
+assemble:
+  archive:
+    jreleaser-archive:
+      active: always
+      attachPlatform: true
+      formats: [ZIP, TAR, TAR_BZ2, TAR_GZ, TAR_XZ, TBZ2, TGZ, TXZ]
+      fileSets:
+        - input: '.'
+          includes: [ 'VERSION' ]
+
+  jlink:
+    jreleaser-standalone:
+      active: always
+      java:
+        version: 11
+        mainClass: org.jreleaser.cli.Main
+      imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
+      executable: jreleaser
+      jdeps:
+        multiRelease: base
+        ignoreMissingDeps: true
+      additionalModuleNames:
+        - 'java.security.sasl'
+        - 'java.security.jgss'
+        - 'jdk.crypto.cryptoki'
+        - 'jdk.crypto.ec'
+        - 'jdk.localedata'
+        - 'jdk.net'
+        - 'jdk.security.auth'
+        - 'jdk.security.jgss'
+      targetJdks:
+        - path: '{{jdkPathPrefix}}/zulu17Osx/{{jdkFilePrefix}}-macosx_x64/zulu-17.jdk/Contents/Home'
+          platform: 'osx-x86_64'
+        - path: '{{jdkPathPrefix}}/zulu17OsxArm/{{jdkFilePrefix}}-macosx_aarch64/zulu-17.jdk/Contents/Home'
+          platform: 'osx-aarch_64'
+        - path: '{{jdkPathPrefix}}/zulu17Linux/{{jdkFilePrefix}}-linux_x64'
+          platform: 'linux-x86_64'
+        - path: '{{jdkPathPrefix}}/zulu17LinuxArm/{{jdkFilePrefix}}-linux_aarch64'
+          platform: 'linux-aarch_64'
+        - path: '{{jdkPathPrefix}}/zulu17LinuxMusl/{{jdkFilePrefix}}-linux_musl_x64'
+          platform: 'linux_musl-x86_64'
+        - path: '{{jdkPathPrefix}}/zulu17LinuxMuslArm/{{jdkFilePrefix}}-linux_musl_aarch64'
+          platform: 'linux_musl-aarch_64'
+        - path: '{{jdkPathPrefix}}/zulu17Windows/{{jdkFilePrefix}}-win_x64'
+          platform: 'windows-x86_64'
+        - path: '{{jdkPathPrefix}}/zulu17WindowsArm/{{jdkFilePrefix}}-win_aarch64'
+          platform: 'windows-aarch_64'
+      mainJar:
+        path: 'apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
+      jars:
+        - pattern: 'apps/jreleaser/build/dependencies/flat/*.jar'
+
+distributions:
+  jreleaser:
+    java:
+      mainClass: org.jreleaser.cli.Main
+    chocolatey:
+      active: always
+      remoteBuild: true
+      title: JReleaser
+      iconUrl: 'https://rawcdn.githack.com/jreleaser/jreleaser/0934fa1fa3f0bd09c0c8c39fbdeb5df2ce507457/src/media/icon_128x128.png'
+      bucket:
+        active: release
+    jbang:
+      active: always
+    macports:
+      active: always
+      categories:
+        - devel
+        - java
+      maintainers:
+        - '@aalmiray'
+      repository:
+        active: release
+        name: jreleaser-macports
+    scoop:
+      active: always
+      bucket:
+        active: release
+    sdkman:
+      active: release
+    snap:
+      active: always
+      remoteBuild: true
+      base: core18
+      architectures:
+        - buildOn: [ amd64, arm64 ]
+      plugs:
+        - name: dot-config-files
+          attributes:
+            interface: personal-files
+          writes:
+            - $HOME/.jreleaser
+          reads:
+            - $HOME/.gnupg
+            - $HOME/.gitconfig
+            - $HOME/.config/jgit
+      localPlugs:
+        - network
+        - home
+        - dot-config-files
+    spec:
+      active: always
+      repository:
+        active: release
+        name: jreleaser-copr
+    artifacts:
+      - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
+        extraProperties:
+          skipSpec: true
+      - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar'
+
+  jreleaser-ant-tasks:
+    artifacts:
+      - path: plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
+
+  jreleaser-tool-provider:
+    type: SINGLE_JAR
+    artifacts:
+      - path: apps/{{distributionName}}/build/libs/{{distributionName}}-{{projectVersion}}.jar
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.jar'
+
+  jreleaser-standalone:
+    brew:
+      active: always
+      formulaName: jreleaser
+      multiPlatform: true
+      tap:
+        active: release
+        commitMessage: 'jreleaser {{tagName}}'
+    docker:
+      active: always
+      repository:
+        active: always
+        commitMessage: 'jreleaser {{tagName}}'
+      registries:
+        - serverName: DEFAULT
+          username: jreleaser
+      labels:
+        'org.opencontainers.image.title': 'jreleaser'
+      postCommands:
+        - 'VOLUME /workspace'
+      specs:
+        slim:
+          imageNames:
+            - 'jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}'
+            - 'jreleaser/jreleaser-{{dockerSpecName}}:latest'
+          matchers:
+            platform: 'linux-x86_64'
+          preCommands:
+            - 'RUN apt-get update -y'
+            - 'RUN apt-get install unzip'
+        alpine:
+          imageNames:
+            - 'jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}'
+            - 'jreleaser/jreleaser-{{dockerSpecName}}:latest'
+          matchers:
+            platform: 'linux_musl-x86_64'
+          preCommands:
+            - 'RUN apk add unzip'
+    gofish:
+      active: always
+      repository:
+        active: release
+        commitMessage: 'jreleaser {{tagName}}'
+
+files:
+  artifacts:
+    - path: VERSION
+
+upload:
+  s3:
+    jreleaser:
+      active: always
