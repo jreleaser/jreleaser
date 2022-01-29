@@ -25,14 +25,15 @@ jobs:
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Build ${{ matrix.job.os }}-${{ matrix.job.sign }}'
     strategy:
+      fail-fast: false
       matrix:
         job:
-          - { os: macos-latest  ,  sign: gpg    }
-          - { os: macos-latest  ,  sign: cosign }
-          - { os: windows-latest,  sign: gpg    }
-          - { os: windows-latest,  sign: cosign }
-          - { os: ubuntu-latest ,  sign: gpg    }
-          - { os: ubuntu-latest ,  sign: cosign }
+          - { os: macos-latest  , sign: gpg   , s: '/' }
+          - { os: macos-latest  , sign: cosign, s: '/' }
+          - { os: ubuntu-latest , sign: gpg   , s: '/' }
+          - { os: ubuntu-latest , sign: cosign, s: '/' }
+          - { os: windows-latest, sign: gpg   , s: '\' }
+          - { os: windows-latest, sign: cosign, s: '\' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -69,7 +70,7 @@ jobs:
           version: early-access
           arguments: |
             assemble --basedir=${{ github.workspace }} \
-            --config-file=${{ github.workspace }}/.github/test-files/jreleaser-${{ matrix.job.sign }}.yml
+            --config-file=${{ github.workspace }}${{matrix.job.s}}.github${{matrix.job.s}}test-files${{matrix.job.s}}jreleaser-${{ matrix.job.sign }}.yml
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -90,7 +91,7 @@ jobs:
           version: early-access
           arguments: |
             full-release --dry-run --basedir=${{ github.workspace }} \
-            --config-file=${{ github.workspace }}/.github/test-files/jreleaser-${{ matrix.job.sign }}.yml
+            --config-file=${{ github.workspace }}${{matrix.job.s}}.github${{matrix.job.s}}test-files${{matrix.job.s}}jreleaser-${{ matrix.job.sign }}.yml
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}

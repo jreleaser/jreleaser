@@ -108,7 +108,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
             JReleaserConfigParser.class.getClassLoader());
 
         for (JReleaserConfigParser parser : parsers) {
-            Path file = directory.resolve("jreleaser." + parser.getPreferredFileExtension());
+            Path file = directory.resolve("jreleaser." + parser.getPreferredFileExtension()).normalize();
             if (Files.exists(file)) {
                 return Optional.of(file);
             }
@@ -118,7 +118,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
     }
 
     private void resolveBasedir() {
-        actualBasedir = null != basedir ? basedir : actualConfigFile.toAbsolutePath().getParent();
+        actualBasedir = null != basedir ? basedir : actualConfigFile.toAbsolutePath().getParent().normalize();
         if (!Files.exists(actualBasedir)) {
             spec.commandLine().getErr()
                 .println(spec.commandLine().getColorScheme().errorText(

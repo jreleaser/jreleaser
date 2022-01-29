@@ -122,12 +122,12 @@ public final class FileUtils {
     public static Path resolveOutputDirectory(Path basedir, Path outputdir, String baseOutput) {
         String od = Env.resolve("OUTPUT_DIRECTORY", "");
         if (isNotBlank(od)) {
-            return basedir.resolve(od).resolve("jreleaser");
+            return basedir.resolve(od).resolve("jreleaser").normalize();
         }
         if (null != outputdir) {
-            return basedir.resolve(outputdir).resolve("jreleaser");
+            return basedir.resolve(outputdir).resolve("jreleaser").normalize();
         }
-        return basedir.resolve(baseOutput).resolve("jreleaser");
+        return basedir.resolve(baseOutput).resolve("jreleaser").normalize();
     }
 
     public static void zip(Path src, Path dest) throws IOException {
