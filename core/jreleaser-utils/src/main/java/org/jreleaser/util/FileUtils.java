@@ -367,8 +367,16 @@ public final class FileUtils {
     }
 
     public static void chmod(Path path, int mode) throws IOException {
-        PosixFileAttributeView fileAttributeView = Files.getFileAttributeView(path, PosixFileAttributeView.class);
-        fileAttributeView.setPermissions(convertToPermissionsSet(mode));
+        if (supportsPosix(path)) {
+            PosixFileAttributeView fileAttributeView = Files.getFileAttributeView(path, PosixFileAttributeView.class);
+            fileAttributeView.setPermissions(convertToPermissionsSet(mode));
+        } else {
+            path.toFile().setExecutable(true);
+        }
+    }
+
+    private static boolean supportsPosix(Path path) {
+        return path.getFileSystem().supportedFileAttributeViews().contains("posix");
     }
 
     private static Set<PosixFilePermission> convertToPermissionsSet(int mode) {
@@ -479,9 +487,13 @@ public final class FileUtils {
     }
 
     public static void createDirectories(Path path, String accessRights) throws IOException {
-        Set<PosixFilePermission> perms = PosixFilePermissions.fromString(accessRights);
-        FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
-        Files.createDirectories(path, attr);
+        if (supportsPosix(path)) {
+            Set<PosixFilePermission> perms = PosixFilePermissions.fromString(accessRights);
+            FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
+            Files.createDirectories(path, attr);
+        } else {
+            Files.createDirectories(path);
+        }
     }
 
     public static void grantFullAccess(Path path) throws IOException {
@@ -493,13 +505,29 @@ public final class FileUtils {
     }
 
     public static void grantAccess(Path path, String accessRights) throws IOException {
-        Set<PosixFilePermission> perms = PosixFilePermissions.fromString(accessRights);
-        Files.setPosixFilePermissions(path, perms);
+        if (supportsPosix(path)) {
+            Set<PosixFilePermission> perms = PosixFilePermissions.fromString(accessRights);
+            Files.setPosixFilePermissions(path, perms);
+        } else if (accessRights.contains("r")) {
+            path.toFile().setReadable(true);
+        } else if (accessRights.contains("w")) {
+            path.toFile().setWritable(true);
+        } else if (accessRights.contains("x")) {
+            path.toFile().setExecutable(true);
+        }
     }
 
     public static void copyPermissions(Path src, Path dest) throws IOException {
-        Set<PosixFilePermission> perms = Files.getPosixFilePermissions(src);
-        Files.setPosixFilePermissions(dest, perms);
+        if (supportsPosix(src)) {
+            Set<PosixFilePermission> perms = Files.getPosixFilePermissions(src);
+            Files.setPosixFilePermissions(dest, perms);
+        } else {
+            File s = src.toFile();
+            File d = dest.toFile();
+            d.setReadable(s.canRead());
+            d.setWritable(s.canWrite());
+            d.setExecutable(s.canExecute());
+        }
     }
 
     public static void copyFiles(JReleaserLogger logger, Path source, Path target) throws IOException {
