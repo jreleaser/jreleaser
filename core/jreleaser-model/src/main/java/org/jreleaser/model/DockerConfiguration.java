@@ -38,6 +38,14 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
 
     void setTemplateDirectory(String templateDirectory);
 
+    List<String> getSkipTemplates();
+
+    void setSkipTemplates(List<String> skipTemplates);
+
+    void addSkipTemplates(List<String> skipTemplates);
+
+    void addSkipTemplate(String skipTemplate);
+
     String getBaseImage();
 
     void setBaseImage(String baseImage);

@@ -30,6 +30,10 @@ public interface DockerConfiguration extends ExtraProperties, Activatable {
 
     void setTemplateDirectory(String templateDirectory);
 
+    List<String> getSkipTemplates();
+
+    void setSkipTemplates(List<String> skipTemplates);
+
     String getBaseImage();
 
     void setBaseImage(String baseImage);

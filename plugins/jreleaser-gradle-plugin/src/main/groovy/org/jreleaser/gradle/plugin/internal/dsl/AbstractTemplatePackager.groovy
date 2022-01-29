@@ -21,10 +21,13 @@ import groovy.transform.CompileStatic
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.model.TemplatePackager
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -34,22 +37,33 @@ import javax.inject.Inject
 @CompileStatic
 abstract class AbstractTemplatePackager extends AbstractPackager implements org.jreleaser.gradle.plugin.dsl.TemplatePackager {
     final DirectoryProperty templateDirectory
+    final ListProperty<String> skipTemplates
 
     @Inject
     AbstractTemplatePackager(ObjectFactory objects) {
         super(objects)
         templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
+        skipTemplates = objects.listProperty(String).convention(Providers.notDefined())
     }
 
     @Internal
     boolean isSet() {
         super.isSet() ||
-            templateDirectory.present
+            templateDirectory.present ||
+            skipTemplates.present
+    }
+
+    @Override
+    void skipTemplate(String template) {
+        if (isNotBlank(template)) {
+            skipTemplates.add(template.trim())
+        }
     }
 
     protected <T extends TemplatePackager> void fillTemplatePackagerProperties(T packager) {
         if (templateDirectory.present) {
             packager.templateDirectory = templateDirectory.get().asFile.toPath().toAbsolutePath().toString()
         }
+        packager.skipTemplates = (List<String>) skipTemplates.getOrElse([])
     }
 }

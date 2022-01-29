@@ -48,6 +48,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public class Docker extends AbstractDockerConfiguration implements RepositoryPackager {
     public static final String SKIP_DOCKER = "skipDocker";
+
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -62,6 +63,7 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryPac
     private final Map<String, DockerSpec> specs = new LinkedHashMap<>();
     private final CommitAuthor commitAuthor = new CommitAuthor();
     private final DockerRepository repository = new DockerRepository();
+
     private Boolean continueOnError;
     private String downloadUrl;
     @JsonIgnore

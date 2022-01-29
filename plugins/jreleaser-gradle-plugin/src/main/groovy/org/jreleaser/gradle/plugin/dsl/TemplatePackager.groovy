@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.ListProperty
 
 /**
  *
@@ -28,4 +29,8 @@ import org.gradle.api.file.DirectoryProperty
 @CompileStatic
 interface TemplatePackager extends Packager {
     DirectoryProperty getTemplateDirectory()
+
+    ListProperty<String> getSkipTemplates()
+
+    void skipTemplate(String template)
 }

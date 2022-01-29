@@ -17,16 +17,21 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.6.0
  */
 abstract class AbstractTemplatePackager extends AbstractPackager implements TemplatePackager {
+    protected final List<String> skipTemplates = new ArrayList<>();
     protected String templateDirectory;
 
     void setAll(AbstractTemplatePackager packager) {
         super.setAll(packager);
         this.templateDirectory = packager.templateDirectory;
+        setSkipTemplates(packager.skipTemplates);
     }
 
     @Override
@@ -40,8 +45,20 @@ abstract class AbstractTemplatePackager extends AbstractPackager implements Temp
     }
 
     @Override
+    public List<String> getSkipTemplates() {
+        return skipTemplates;
+    }
+
+    @Override
+    public void setSkipTemplates(List<String> skipTemplates) {
+        this.skipTemplates.clear();
+        this.skipTemplates.addAll(skipTemplates);
+    }
+
+    @Override
     public boolean isSet() {
         return super.isSet() ||
+            !skipTemplates.isEmpty() ||
             null != templateDirectory;
     }
 }

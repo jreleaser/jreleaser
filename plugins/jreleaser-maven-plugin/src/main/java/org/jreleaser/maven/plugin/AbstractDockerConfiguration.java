@@ -38,6 +38,8 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
     protected final List<String> preCommands = new ArrayList<>();
     protected final List<String> postCommands = new ArrayList<>();
     protected final Set<Registry> registries = new LinkedHashSet<>();
+    protected final List<String> skipTemplates = new ArrayList<>();
+
     protected boolean enabled;
     protected Active active;
     protected String templateDirectory;
@@ -49,6 +51,7 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
         this.active = docker.active;
         this.enabled = docker.enabled;
         this.templateDirectory = docker.templateDirectory;
+        setSkipTemplates(docker.skipTemplates);
         setExtraProperties(docker.extraProperties);
         this.baseImage = docker.baseImage;
         this.useLocalArtifact = docker.useLocalArtifact;
@@ -172,6 +175,17 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
     }
 
     @Override
+    public List<String> getSkipTemplates() {
+        return skipTemplates;
+    }
+
+    @Override
+    public void setSkipTemplates(List<String> skipTemplates) {
+        this.skipTemplates.clear();
+        this.skipTemplates.addAll(skipTemplates);
+    }
+
+    @Override
     public Map<String, Object> getExtraProperties() {
         return extraProperties;
     }
@@ -183,13 +197,13 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
     }
 
     @Override
-    public void setUseLocalArtifact(Boolean useLocalArtifact) {
-        this.useLocalArtifact = useLocalArtifact;
+    public boolean isUseLocalArtifact() {
+        return useLocalArtifact == null || useLocalArtifact;
     }
 
     @Override
-    public boolean isUseLocalArtifact() {
-        return useLocalArtifact == null || useLocalArtifact;
+    public void setUseLocalArtifact(Boolean useLocalArtifact) {
+        this.useLocalArtifact = useLocalArtifact;
     }
 
     @Override
@@ -200,6 +214,7 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
     public boolean isSet() {
         return null != active ||
             null != templateDirectory ||
+            !skipTemplates.isEmpty() ||
             null != useLocalArtifact ||
             !extraProperties.isEmpty() ||
             isNotBlank(baseImage) ||

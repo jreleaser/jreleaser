@@ -1117,6 +1117,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Brew t = new org.jreleaser.model.Brew();
         convertPackager(packager, t);
         t.setTemplateDirectory(tr(packager.getTemplateDirectory()));
+        t.setSkipTemplates(tr(packager.getSkipTemplates()));
         t.setTap(convertHomebrewTap(packager.getTap()));
         t.setFormulaName(tr(packager.getFormulaName()));
         if (packager.isMultiPlatformSet()) t.setMultiPlatform(packager.isMultiPlatform());
@@ -1165,6 +1166,7 @@ public final class JReleaserModelConverter {
         t.setSource(tr(packager.getSource()));
         t.setRemoteBuild(packager.isRemoteBuild());
         t.setTemplateDirectory(tr(packager.getTemplateDirectory()));
+        t.setSkipTemplates(tr(packager.getSkipTemplates()));
         t.setBucket(convertChocolateyBucket(packager.getBucket()));
         t.setCommitAuthor(convertCommitAuthor(packager.getCommitAuthor()));
         return t;
@@ -1195,6 +1197,7 @@ public final class JReleaserModelConverter {
         }
         d.setActive(tr(docker.resolveActive()));
         d.setTemplateDirectory(tr(docker.getTemplateDirectory()));
+        d.setSkipTemplates(tr(docker.getSkipTemplates()));
         d.setExtraProperties(docker.getExtraProperties());
         d.setBaseImage(tr(docker.getBaseImage()));
         d.setImageNames(tr(docker.getImageNames()));
@@ -1250,6 +1253,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Jbang t = new org.jreleaser.model.Jbang();
         convertPackager(packager, t);
         t.setTemplateDirectory(tr(packager.getTemplateDirectory()));
+        t.setSkipTemplates(tr(packager.getSkipTemplates()));
         t.setAlias(tr(packager.getAlias()));
         t.setCatalog(convertJbangCatalog(packager.getCatalog()));
         t.setCommitAuthor(convertCommitAuthor(packager.getCommitAuthor()));
@@ -1267,6 +1271,7 @@ public final class JReleaserModelConverter {
         convertPackager(packager, t);
         t.setPackageName(tr(packager.getPackageName()));
         t.setTemplateDirectory(tr(packager.getTemplateDirectory()));
+        t.setSkipTemplates(tr(packager.getSkipTemplates()));
         t.setRevision(packager.getRevision());
         t.setCategories(tr(packager.getCategories()));
         t.setMaintainers(tr(packager.getMaintainers()));
@@ -1286,6 +1291,7 @@ public final class JReleaserModelConverter {
         convertPackager(packager, t);
         t.setPackageName(tr(packager.getPackageName()));
         t.setTemplateDirectory(tr(packager.getTemplateDirectory()));
+        t.setSkipTemplates(tr(packager.getSkipTemplates()));
         t.setCheckverUrl(tr(packager.getCheckverUrl()));
         t.setAutoupdateUrl(tr(packager.getAutoupdateUrl()));
         t.setBucket(convertScoopBucket(packager.getBucket()));
@@ -1316,6 +1322,7 @@ public final class JReleaserModelConverter {
         convertPackager(packager, t);
         t.setPackageName(tr(packager.getPackageName()));
         t.setTemplateDirectory(tr(packager.getTemplateDirectory()));
+        t.setSkipTemplates(tr(packager.getSkipTemplates()));
         if (isNotBlank(packager.getBase())) t.setBase(packager.getBase());
         if (isNotBlank(packager.getGrade())) t.setGrade(packager.getGrade());
         if (isNotBlank(packager.getConfinement())) t.setConfinement(packager.getConfinement());
@@ -1391,6 +1398,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Gofish t = new org.jreleaser.model.Gofish();
         convertPackager(packager, t);
         t.setTemplateDirectory(tr(packager.getTemplateDirectory()));
+        t.setSkipTemplates(tr(packager.getSkipTemplates()));
         t.setRepository(convertGofishRepository(packager.getRepository()));
         t.setCommitAuthor(convertCommitAuthor(packager.getCommitAuthor()));
         return t;
@@ -1407,6 +1415,7 @@ public final class JReleaserModelConverter {
         convertPackager(packager, t);
         t.setPackageName(tr(packager.getPackageName()));
         t.setTemplateDirectory(tr(packager.getTemplateDirectory()));
+        t.setSkipTemplates(tr(packager.getSkipTemplates()));
         t.setRelease(tr(packager.getRelease()));
         t.setRequires(tr(packager.getRequires()));
         t.setRepository(convertSpecRepository(packager.getRepository()));

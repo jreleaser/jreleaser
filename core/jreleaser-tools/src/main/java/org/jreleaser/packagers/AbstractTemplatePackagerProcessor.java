@@ -36,6 +36,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
+import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
 import static org.jreleaser.util.MustacheUtils.applyTemplate;
@@ -79,6 +80,11 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager> ext
 
         for (Map.Entry<String, Reader> entry : templates.entrySet()) {
             String filename = entry.getKey();
+            if (isSkipped(filename)) {
+                context.getLogger().debug(RB.$("packager.skipped.template"), filename, distributionName, packagerName);
+                continue;
+            }
+
             if (filename.endsWith(".tpl")) {
                 context.getLogger().debug(RB.$("packager.evaluate.template"), filename, distributionName, packagerName);
                 String content = applyTemplate(entry.getValue(), props);
@@ -99,6 +105,29 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager> ext
                 context.getBasedir(),
                 prepareDirectory, path -> path.getFileName().startsWith("LICENSE"));
         }
+    }
+
+    public boolean isSkipped(String filename) {
+        // check explicit match
+        if (packager.getSkipTemplates().contains(filename)) return true;
+        // check using string contains
+        if (packager.getSkipTemplates().stream()
+            .anyMatch(filename::contains)) return true;
+        // check using regex
+        if (packager.getSkipTemplates().stream()
+            .anyMatch(filename::matches)) return true;
+
+        // remove .tpl and check again
+        String fname = trimTplExtension(filename);
+
+        // check explicit match
+        if (packager.getSkipTemplates().contains(fname)) return true;
+        // check using string contains
+        if (packager.getSkipTemplates().stream()
+            .anyMatch(fname::contains)) return true;
+        // check using regex
+        return packager.getSkipTemplates().stream()
+            .anyMatch(fname::matches);
     }
 
     protected void doPackageDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {

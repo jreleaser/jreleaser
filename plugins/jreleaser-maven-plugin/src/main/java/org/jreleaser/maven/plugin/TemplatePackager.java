@@ -17,6 +17,8 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.6.0
@@ -25,4 +27,8 @@ public interface TemplatePackager extends Packager {
     String getTemplateDirectory();
 
     void setTemplateDirectory(String templateDirectory);
+
+    List<String> getSkipTemplates();
+
+    void setSkipTemplates(List<String> skipTemplates);
 }

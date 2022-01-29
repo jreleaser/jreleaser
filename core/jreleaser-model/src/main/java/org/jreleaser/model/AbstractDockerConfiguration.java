@@ -42,6 +42,8 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
     protected final List<String> preCommands = new ArrayList<>();
     protected final List<String> postCommands = new ArrayList<>();
     protected final Set<Registry> registries = new LinkedHashSet<>();
+    protected final List<String> skipTemplates = new ArrayList<>();
+
     @JsonIgnore
     protected boolean enabled;
     protected Active active;
@@ -54,6 +56,7 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
         this.active = docker.active;
         this.enabled = docker.enabled;
         this.templateDirectory = docker.templateDirectory;
+        setSkipTemplates(docker.skipTemplates);
         setExtraProperties(docker.extraProperties);
         this.baseImage = docker.baseImage;
         this.useLocalArtifact = docker.useLocalArtifact;
@@ -124,6 +127,29 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
     @Override
     public void setTemplateDirectory(String templateDirectory) {
         this.templateDirectory = templateDirectory;
+    }
+
+    @Override
+    public List<String> getSkipTemplates() {
+        return skipTemplates;
+    }
+
+    @Override
+    public void setSkipTemplates(List<String> skipTemplates) {
+        this.skipTemplates.clear();
+        this.skipTemplates.addAll(skipTemplates);
+    }
+
+    @Override
+    public void addSkipTemplates(List<String> templates) {
+        this.skipTemplates.addAll(templates);
+    }
+
+    @Override
+    public void addSkipTemplate(String template) {
+        if (isNotBlank(template)) {
+            this.skipTemplates.add(template.trim());
+        }
     }
 
     @Override
@@ -262,13 +288,13 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
     }
 
     @Override
-    public void setUseLocalArtifact(Boolean useLocalArtifact) {
-        this.useLocalArtifact = useLocalArtifact;
+    public boolean isUseLocalArtifact() {
+        return useLocalArtifact == null || useLocalArtifact;
     }
 
     @Override
-    public boolean isUseLocalArtifact() {
-        return useLocalArtifact == null || useLocalArtifact;
+    public void setUseLocalArtifact(Boolean useLocalArtifact) {
+        this.useLocalArtifact = useLocalArtifact;
     }
 
     @Override
@@ -284,6 +310,7 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
         props.put("enabled", isEnabled());
         props.put("active", active);
         props.put("templateDirectory", templateDirectory);
+        props.put("skipTemplates", skipTemplates);
         props.put("useLocalArtifact", isUseLocalArtifact());
         props.put("baseImage", baseImage);
         props.put("imageNames", imageNames);

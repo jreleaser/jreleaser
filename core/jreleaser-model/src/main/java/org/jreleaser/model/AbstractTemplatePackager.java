@@ -17,13 +17,18 @@
  */
 package org.jreleaser.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.6.0
  */
 public abstract class AbstractTemplatePackager extends AbstractPackager implements TemplatePackager {
+    protected final List<String> skipTemplates = new ArrayList<>();
     protected String templateDirectory;
 
     protected AbstractTemplatePackager(String type) {
@@ -33,6 +38,7 @@ public abstract class AbstractTemplatePackager extends AbstractPackager implemen
     void setAll(AbstractTemplatePackager packager) {
         super.setAll(packager);
         this.templateDirectory = packager.templateDirectory;
+        setSkipTemplates(packager.skipTemplates);
     }
 
     @Override
@@ -45,7 +51,31 @@ public abstract class AbstractTemplatePackager extends AbstractPackager implemen
         this.templateDirectory = templateDirectory;
     }
 
+    @Override
+    public List<String> getSkipTemplates() {
+        return skipTemplates;
+    }
+
+    @Override
+    public void setSkipTemplates(List<String> skipTemplates) {
+        this.skipTemplates.clear();
+        this.skipTemplates.addAll(skipTemplates);
+    }
+
+    @Override
+    public void addSkipTemplates(List<String> templates) {
+        this.skipTemplates.addAll(templates);
+    }
+
+    @Override
+    public void addSkipTemplate(String template) {
+        if (isNotBlank(template)) {
+            this.skipTemplates.add(template.trim());
+        }
+    }
+
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("templateDirectory", templateDirectory);
+        props.put("skipTemplates", skipTemplates);
     }
 }

@@ -46,6 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 abstract class AbstractDockerConfiguration implements DockerConfiguration {
     final Property<Active> active
     final DirectoryProperty templateDirectory
+    final ListProperty<String> skipTemplates
     final MapProperty<String, Object> extraProperties
     final Property<String> baseImage
     final Property<Boolean> useLocalArtifact
@@ -61,6 +62,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     AbstractDockerConfiguration(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
         templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
+        skipTemplates = objects.listProperty(String).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
         baseImage = objects.property(String).convention(Providers.notDefined())
         useLocalArtifact = objects.property(Boolean).convention(Providers.notDefined())
@@ -129,6 +131,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     boolean isSet() {
         active.present ||
             templateDirectory.present ||
+            skipTemplates.present ||
             extraProperties.present ||
             baseImage.present ||
             useLocalArtifact.present ||
@@ -140,11 +143,19 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
             registries.size()
     }
 
+
+    void skipTemplate(String template) {
+        if (isNotBlank(template)) {
+            skipTemplates.add(template.trim())
+        }
+    }
+
     void toModel(org.jreleaser.model.DockerConfiguration docker) {
         if (active.present) docker.active = active.get()
         if (templateDirectory.present) {
             docker.templateDirectory = templateDirectory.get().asFile.toPath().toAbsolutePath().toString()
         }
+        docker.skipTemplates = (List<String>) skipTemplates.getOrElse([])
         if (extraProperties.present) docker.extraProperties.putAll(extraProperties.get())
         if (baseImage.present) docker.baseImage = baseImage.get()
         if (useLocalArtifact.present) docker.useLocalArtifact = useLocalArtifact.get()
