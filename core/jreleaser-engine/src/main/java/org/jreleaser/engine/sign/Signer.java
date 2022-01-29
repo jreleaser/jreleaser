@@ -39,6 +39,8 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Signing;
 import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.sdk.tool.Cosign;
+import org.jreleaser.sdk.tool.ToolException;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.command.CommandException;
 import org.jreleaser.util.signing.GpgCommandSigner;
@@ -126,9 +128,13 @@ public class Signer {
         Signing signing = context.getModel().getSigning();
 
         Cosign cosign = new Cosign(context, signing.getCosign().getVersion());
-        if (!cosign.setup()) {
-            context.getLogger().warn(RB.$("cosign_unavailable"));
-            return;
+        try {
+            if (!cosign.setup()) {
+                context.getLogger().warn(RB.$("tool_unavailable", "cosign"));
+                return;
+            }
+        } catch (ToolException e) {
+            throw new SigningException(e.getMessage(), e);
         }
 
         String privateKey = signing.getCosign().getResolvedPrivateKeyFile();

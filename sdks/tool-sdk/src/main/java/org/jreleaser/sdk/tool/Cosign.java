@@ -15,12 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.engine.sign;
+package org.jreleaser.sdk.tool;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.sdk.tool.Tool;
-import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.command.Command;
 import org.jreleaser.util.command.CommandException;
 import org.jreleaser.util.command.CommandExecutor;
@@ -36,44 +34,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray
  * @since 1.0.0
  */
-public class Cosign {
-    private final JReleaserContext context;
-    private final Tool cosign;
-
+public class Cosign extends AbstractTool {
     public Cosign(JReleaserContext context, String version) {
-        requireNonBlank(version, "'version' must not be blank");
-        this.context = context;
-        this.cosign = new Tool(context.getLogger(), "cosign", version, PlatformUtils.getCurrentFull());
-    }
-
-    public boolean setup() throws SigningException {
-        if (!cosign.verify()) {
-            if (cosign.isEnabled()) {
-                try {
-                    cosign.download();
-                } catch (Exception e) {
-                    throw new SigningException(RB.$("ERROR_unexpected_error"), e);
-                }
-                if (cosign.verify()) return true;
-            }
-
-            context.getLogger().warn(RB.$("cosign_verify_error", cosign.getVersion()));
-            return false;
-        }
-
-        return true;
+        super(context, "cosign", version);
     }
 
     public boolean checkPassword(Path keyFile, byte[] password) {
         ByteArrayInputStream in = new ByteArrayInputStream(password);
 
-        Command command = cosign.asCommand()
+        Command command = tool.asCommand()
             .arg("public-key")
             .arg("--key")
             .arg(keyFile.toAbsolutePath().toString());
@@ -91,7 +65,7 @@ public class Cosign {
 
     public Path generateKeyPair(byte[] password) throws SigningException {
         ByteArrayInputStream in = new ByteArrayInputStream(password);
-        Command command = cosign.asCommand()
+        Command command = tool.asCommand()
             .arg("generate-key-pair");
 
         Path homeDir = resolveJReleaserHomeDir();
@@ -112,7 +86,7 @@ public class Cosign {
         ByteArrayInputStream in = new ByteArrayInputStream(password);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        Command command = cosign.asCommand()
+        Command command = tool.asCommand()
             .arg("sign-blob")
             .arg("--key")
             .arg(keyFile.toAbsolutePath().toString())
@@ -135,7 +109,7 @@ public class Cosign {
 
     public void verifyBlob(Path keyFile, Path signature, Path input) throws SigningException {
         context.getLogger().debug("{}", context.relativizeToBasedir(signature));
-        Command command = cosign.asCommand()
+        Command command = tool.asCommand()
             .arg("verify-blob")
             .arg("--key")
             .arg(keyFile.toAbsolutePath().toString())
@@ -152,13 +126,6 @@ public class Cosign {
         }
     }
 
-    private void executeCommand(CommandExecution execution) throws CommandException {
-        int exitValue = execution.execute();
-        if (exitValue != 0) {
-            throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-        }
-    }
-
     private Path resolveJReleaserHomeDir() {
         String home = System.getenv("JRELEASER_USER_HOME");
         if (isBlank(home)) {
@@ -166,9 +133,5 @@ public class Cosign {
         }
 
         return Paths.get(home);
-    }
-
-    interface CommandExecution {
-        int execute() throws CommandException;
     }
 }

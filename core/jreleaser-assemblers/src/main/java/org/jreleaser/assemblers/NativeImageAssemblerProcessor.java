@@ -23,17 +23,21 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.NativeImage;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
-import org.jreleaser.sdk.tool.Tool;
+import org.jreleaser.sdk.tool.ToolException;
+import org.jreleaser.sdk.tool.Upx;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.SemVer;
 import org.jreleaser.util.command.Command;
+import org.jreleaser.util.command.CommandException;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -198,29 +202,25 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
     }
 
     private void upx(Path image) throws AssemblerProcessingException {
-        Tool upx = new Tool(context.getLogger(), "upx", assembler.getUpx().getVersion(), PlatformUtils.getCurrentFull());
-
-        if (!upx.verify()) {
-            // download
-            if (upx.isEnabled()) {
-                try {
-                    upx.download();
-                } catch (Exception e) {
-                    throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
-                }
-            }
-            if (!upx.verify()) {
-                context.getLogger().warn(RB.$("assembler.native.image.upx.verify", assembler.getUpx().getVersion()));
+        Upx upx = new Upx(context, assembler.getUpx().getVersion());
+        try {
+            if (!upx.setup()) {
+                context.getLogger().warn(RB.$("tool_unavailable", "upx"));
                 return;
             }
+        } catch (ToolException e) {
+            throw new AssemblerProcessingException(e.getMessage(), e);
         }
 
-        Command cmd = upx.asCommand();
-        cmd.args(assembler.getUpx().getArgs());
-        cmd.arg(image.getFileName().toString());
-
+        List<String> args = new ArrayList<>(assembler.getUpx().getArgs());
+        args.add(image.getFileName().toString());
         context.getLogger().info("upx {}", image.getFileName().toString());
-        executeCommand(image.getParent(), cmd);
+
+        try {
+            upx.compress(image.getParent(), args);
+        } catch (CommandException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+        }
     }
 
     private String readGraalVersion(Path path) throws AssemblerProcessingException {
