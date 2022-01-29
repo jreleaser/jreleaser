@@ -40,6 +40,9 @@ public abstract class HttpValidator extends Validator {
 
         for (Map.Entry<String, Http> e : http.entrySet()) {
             e.getValue().setName(e.getKey());
+            if (!mode.validateConfig()) {
+                e.getValue().setActive(Active.NEVER);
+            }
             validateHttp(context, mode, e.getValue(), errors);
         }
     }
