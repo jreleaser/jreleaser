@@ -163,7 +163,7 @@ public class FileSet implements Domain, ExtraProperties {
     }
 
     public Set<Path> getResolvedPaths(JReleaserContext context) throws IOException {
-        Path basedir = context.getBasedir().resolve(getResolvedInput(context));
+        Path basedir = context.getBasedir().resolve(getResolvedInput(context)).normalize().toAbsolutePath();
 
         Set<String> resolvedIncludes = getResolvedIncludes(context);
         if (resolvedIncludes.isEmpty()) {

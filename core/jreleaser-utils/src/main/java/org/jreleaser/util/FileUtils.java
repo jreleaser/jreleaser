@@ -531,7 +531,7 @@ public final class FileUtils {
     }
 
     public static void copyFiles(JReleaserLogger logger, Path source, Path target) throws IOException {
-        copyFiles(logger, source, target, null);
+        copyFiles(logger, source, target, path -> true);
     }
 
     public static void copyFiles(JReleaserLogger logger, Path source, Path target, Predicate<Path> filter) throws IOException {
@@ -555,7 +555,9 @@ public final class FileUtils {
         }
     }
 
-    public static void copyFiles(Path source, Path target, Set<Path> paths) throws IOException {
+    public static void copyFiles(JReleaserLogger logger, Path source, Path target, Set<Path> paths) throws IOException {
+        logger.debug(RB.$("files.copy", source, target));
+
         for (Path path : paths) {
             Path srcPath = source.resolve(path);
             Path targetPath = target.resolve(path);
@@ -587,6 +589,7 @@ public final class FileUtils {
             this.source = source;
             this.target = target;
             this.filter = filter;
+            logger.debug(RB.$("files.copy", source, target));
         }
 
         private boolean filtered(Path path) {

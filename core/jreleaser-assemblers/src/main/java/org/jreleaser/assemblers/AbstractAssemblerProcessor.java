@@ -165,7 +165,7 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
                 }
 
                 Set<Path> paths = fileSet.getResolvedPaths(context);
-                FileUtils.copyFiles(src, dest, paths);
+                FileUtils.copyFiles(context.getLogger(), src, dest, paths);
             }
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
