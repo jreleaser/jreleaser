@@ -25,14 +25,13 @@ jobs:
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Build ${{ matrix.job.os }}-${{ matrix.job.sign }}'
     strategy:
-      fail-fast: true
       matrix:
         job:
-          - { os: macos-latest  ,  sign: pgp    }
+          - { os: macos-latest  ,  sign: gpg    }
           - { os: macos-latest  ,  sign: cosign }
-          - { os: windows-latest,  sign: pgp    }
+          - { os: windows-latest,  sign: gpg    }
           - { os: windows-latest,  sign: cosign }
-          - { os: ubuntu-latest ,  sign: pgp    }
+          - { os: ubuntu-latest ,  sign: gpg    }
           - { os: ubuntu-latest ,  sign: cosign }
     runs-on: ${{ matrix.job.os }}
     steps:
@@ -79,6 +78,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
+          retention-days: 1
           name: 'jreleaser-assemble-${{ matrix.job.os }}-${{ matrix.job.sign }}'
           path: |
             out/jreleaser/trace.log
@@ -108,6 +108,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
+          retention-days: 1
           name: 'jreleaser-release-${{ matrix.job.os }}-${{ matrix.job.sign }}'
           path: |
             out/jreleaser/trace.log
