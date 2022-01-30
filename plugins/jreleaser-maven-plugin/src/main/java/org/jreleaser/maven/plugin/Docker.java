@@ -17,8 +17,8 @@
  */
 package org.jreleaser.maven.plugin;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Docker extends AbstractDockerConfiguration implements RepositoryPackager {
-    private final List<DockerSpec> specs = new ArrayList<>();
+    private final Map<String, DockerSpec> specs = new LinkedHashMap<>();
     private final CommitAuthor commitAuthor = new CommitAuthor();
     private final DockerRepository repository = new DockerRepository();
 
@@ -86,13 +86,13 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryPac
         this.repository.setAll(repository);
     }
 
-    public List<DockerSpec> getSpecs() {
+    public Map<String, DockerSpec> getSpecs() {
         return specs;
     }
 
-    public void setSpecs(List<DockerSpec> specs) {
+    public void setSpecs(Map<String, DockerSpec> specs) {
         this.specs.clear();
-        this.specs.addAll(specs);
+        this.specs.putAll(specs);
     }
 
     public boolean isSet() {

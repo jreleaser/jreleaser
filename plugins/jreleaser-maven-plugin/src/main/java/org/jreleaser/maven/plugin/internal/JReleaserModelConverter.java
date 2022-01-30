@@ -1216,10 +1216,11 @@ public final class JReleaserModelConverter {
         return t;
     }
 
-    private static Map<String, org.jreleaser.model.DockerSpec> convertDockerSpecs(List<DockerSpec> specs) {
+    private static Map<String, org.jreleaser.model.DockerSpec> convertDockerSpecs(Map<String, DockerSpec> specs) {
         Map<String, org.jreleaser.model.DockerSpec> ds = new LinkedHashMap<>();
-        for (DockerSpec spec : specs) {
-            ds.put(spec.getName(), convertDockerSpec(spec));
+        for (Map.Entry<String, DockerSpec> e : specs.entrySet()) {
+            e.getValue().setName(tr(e.getKey()));
+            ds.put(e.getValue().getName(), convertDockerSpec(e.getValue()));
         }
         return ds;
     }
