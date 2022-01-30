@@ -781,7 +781,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Archive a = new org.jreleaser.model.Archive();
         convertAssembler(archive, a);
         a.setArchiveName(tr(archive.getArchiveName()));
-        a.setDistributionType(tr(archive.getDistributionType().name()));
+        if (archive.getDistributionType() != null) a.setDistributionType(tr(archive.getDistributionType().name()));
         if (archive.isAttachPlatformSet()) a.setAttachPlatform(archive.isAttachPlatform());
         a.setFormats(archive.getFormats().stream()
             .map(Object::toString)
