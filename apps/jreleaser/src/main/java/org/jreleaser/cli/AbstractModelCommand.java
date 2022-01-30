@@ -118,7 +118,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
     }
 
     private void resolveBasedir() {
-        actualBasedir = null != basedir ? basedir : actualConfigFile.toAbsolutePath().getParent().normalize();
+        actualBasedir = (null != basedir ? basedir : actualConfigFile.toAbsolutePath().getParent()).normalize();
         if (!Files.exists(actualBasedir)) {
             spec.commandLine().getErr()
                 .println(spec.commandLine().getColorScheme().errorText(

@@ -101,8 +101,7 @@ public class FullRelease extends AbstractPlatformAwareModelCommand {
         String[] includedPackagers;
 
         @CommandLine.Option(names = {"-a", "--announcer"},
-            paramLabel = "<announcer>",
-            required = true)
+            paramLabel = "<announcer>")
         String[] includedAnnouncers;
     }
 
@@ -124,8 +123,7 @@ public class FullRelease extends AbstractPlatformAwareModelCommand {
         String[] excludedPackagers;
 
         @CommandLine.Option(names = {"-xa", "--exclude-announcer"},
-            paramLabel = "<announcer>",
-            required = true)
+            paramLabel = "<announcer>")
         String[] excludedAnnouncers;
     }
 

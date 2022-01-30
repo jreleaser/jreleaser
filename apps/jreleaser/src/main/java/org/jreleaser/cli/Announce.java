@@ -53,15 +53,13 @@ public class Announce extends AbstractPlatformAwareModelCommand {
 
     static class Include {
         @CommandLine.Option(names = {"-a", "--announcer"},
-            paramLabel = "<announcer>",
-            required = true)
+            paramLabel = "<announcer>")
         String[] includedAnnouncers;
     }
 
     static class Exclude {
         @CommandLine.Option(names = {"-xa", "--exclude-announcer"},
-            paramLabel = "<announcer>",
-            required = true)
+            paramLabel = "<announcer>")
         String[] excludedAnnouncers;
     }
 
