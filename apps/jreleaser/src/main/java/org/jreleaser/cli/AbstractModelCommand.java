@@ -81,7 +81,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
 
     private void resolveConfigFile() {
         if (null != configFile) {
-            actualConfigFile = configFile;
+            actualConfigFile = configFile.normalize();
         } else {
             Path directory = Paths.get(".").normalize();
             Optional<Path> file = resolveConfigFileAt(directory);

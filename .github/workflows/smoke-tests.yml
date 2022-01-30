@@ -28,12 +28,12 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-latest  , sign: gpg   , s: '/' }
-          - { os: macos-latest  , sign: cosign, s: '/' }
-          - { os: ubuntu-latest , sign: gpg   , s: '/' }
-          - { os: ubuntu-latest , sign: cosign, s: '/' }
-          - { os: windows-latest, sign: gpg   , s: '\' }
-          - { os: windows-latest, sign: cosign, s: '\' }
+          - { os: macos-latest  , sign: gpg   , s: '/', rargs: '-xp docker' }
+          - { os: macos-latest  , sign: cosign, s: '/', rargs: '-xp docker' }
+          - { os: ubuntu-latest , sign: gpg   , s: '/', rargs: '' }
+          - { os: ubuntu-latest , sign: cosign, s: '/', rargs: '' }
+          - { os: windows-latest, sign: gpg   , s: '\', rargs: '-xp docker' }
+          - { os: windows-latest, sign: cosign, s: '\', rargs: '-xp docker' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -90,7 +90,7 @@ jobs:
         with:
           version: early-access
           arguments: |
-            full-release --dry-run --basedir=${{ github.workspace }} \
+            full-release --dry-run --basedir=${{ github.workspace }} ${{ matrix.job.rargs }} \
             --config-file=${{ github.workspace }}${{matrix.job.s}}.github${{matrix.job.s}}test-files${{matrix.job.s}}jreleaser-${{ matrix.job.sign }}.yml
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
