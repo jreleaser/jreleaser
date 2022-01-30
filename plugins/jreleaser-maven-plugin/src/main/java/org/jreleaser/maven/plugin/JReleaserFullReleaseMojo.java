@@ -21,6 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
 /**
@@ -31,6 +32,66 @@ import org.jreleaser.workflow.Workflows;
  */
 @Mojo(name = "full-release")
 public class JReleaserFullReleaseMojo extends AbstractPlatformAwareJReleaserMojo {
+    /**
+     * Include an uploader by type.
+     */
+    @Parameter(property = "jreleaser.uploaders")
+    private String[] includedUploaders;
+
+    /**
+     * Exclude an uploader by type.
+     */
+    @Parameter(property = "jreleaser.excluded.uploaders")
+    private String[] excludedUploaders;
+
+    /**
+     * Include an uploader by name.
+     */
+    @Parameter(property = "jreleaser.uploader.names")
+    private String[] includedUploaderNames;
+
+    /**
+     * Exclude an uploader by name.
+     */
+    @Parameter(property = "jreleaser.excluded.uploader.names")
+    private String[] excludedUploaderNames;
+
+    /**
+     * Include a distribution.
+     */
+    @Parameter(property = "jreleaser.distributions")
+    private String[] includedDistributions;
+
+    /**
+     * Exclude a distribution.
+     */
+    @Parameter(property = "jreleaser.excluded.distributions")
+    private String[] excludedDistributions;
+
+    /**
+     * Include a packager.
+     */
+    @Parameter(property = "jreleaser.packagers")
+    private String[] includedPackagers;
+
+    /**
+     * Exclude a packager.
+     */
+    @Parameter(property = "jreleaser.excluded.packagers")
+    private String[] excludedPackagers;
+
+    /**
+     * Include an announcer.
+     */
+    @Parameter(property = "jreleaser.announcers")
+    private String[] includedAnnouncers;
+
+    /**
+     * Exclude an announcer.
+     */
+    @Parameter(property = "jreleaser.excluded.announcers")
+    private String[] excludedAnnouncers;
+
     /**
      * Skip execution.
      */
@@ -45,6 +106,17 @@ public class JReleaserFullReleaseMojo extends AbstractPlatformAwareJReleaserMojo
             return;
         }
 
-        Workflows.fullRelease(createContext()).execute();
+        JReleaserContext context = createContext();
+        context.setIncludedUploaderTypes(collectEntries(includedUploaders, true));
+        context.setIncludedUploaderNames(collectEntries(includedUploaderNames));
+        context.setIncludedDistributions(collectEntries(includedDistributions));
+        context.setIncludedPackagers(collectEntries(includedPackagers, true));
+        context.setIncludedAnnouncers(collectEntries(includedAnnouncers, true));
+        context.setExcludedUploaderTypes(collectEntries(excludedUploaders, true));
+        context.setExcludedUploaderNames(collectEntries(excludedUploaderNames));
+        context.setExcludedDistributions(collectEntries(excludedDistributions));
+        context.setExcludedPackagers(collectEntries(excludedPackagers, true));
+        context.setExcludedAnnouncers(collectEntries(excludedAnnouncers, true));
+        Workflows.fullRelease(context).execute();
     }
 }

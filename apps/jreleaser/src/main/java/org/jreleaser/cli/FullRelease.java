@@ -30,8 +30,119 @@ public class FullRelease extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"--dry-run"})
     boolean dryrun;
 
+    @CommandLine.ArgGroup
+    Composite composite;
+
+    static class Composite {
+        @CommandLine.ArgGroup(exclusive = false, order = 1,
+            headingKey = "include.filter.header")
+        Include include;
+
+        @CommandLine.ArgGroup(exclusive = false, order = 2,
+            headingKey = "exclude.filter.header")
+        Exclude exclude;
+
+        String[] includedUploaderTypes() {
+            return include != null ? include.includedUploaderTypes : null;
+        }
+
+        String[] includedUploaderNames() {
+            return include != null ? include.includedUploaderNames : null;
+        }
+
+        String[] includedDistributions() {
+            return include != null ? include.includedDistributions : null;
+        }
+
+        String[] includedPackagers() {
+            return include != null ? include.includedPackagers : null;
+        }
+
+        String[] includedAnnouncers() {
+            return include != null ? include.includedAnnouncers : null;
+        }
+
+        String[] excludedUploaderTypes() {
+            return exclude != null ? exclude.excludedUploaderTypes : null;
+        }
+
+        String[] excludedUploaderNames() {
+            return exclude != null ? exclude.excludedUploaderNames : null;
+        }
+
+        String[] excludedDistributions() {
+            return exclude != null ? exclude.excludedDistributions : null;
+        }
+
+        String[] excludedPackagers() {
+            return exclude != null ? exclude.excludedPackagers : null;
+        }
+
+        String[] excludedAnnouncers() {
+            return exclude != null ? exclude.excludedAnnouncers : null;
+        }
+    }
+
+    static class Include {
+        @CommandLine.Option(names = {"-u", "--uploader"},
+            paramLabel = "<uploader>")
+        String[] includedUploaderTypes;
+
+        @CommandLine.Option(names = {"-un", "--uploader-name"},
+            paramLabel = "<name>")
+        String[] includedUploaderNames;
+
+        @CommandLine.Option(names = {"-d", "--distribution"},
+            paramLabel = "<distribution>")
+        String[] includedDistributions;
+
+        @CommandLine.Option(names = {"-p", "--packager"},
+            paramLabel = "<packager>")
+        String[] includedPackagers;
+
+        @CommandLine.Option(names = {"-a", "--announcer"},
+            paramLabel = "<announcer>",
+            required = true)
+        String[] includedAnnouncers;
+    }
+
+    static class Exclude {
+        @CommandLine.Option(names = {"-xu", "--exclude-uploader"},
+            paramLabel = "<uploader>")
+        String[] excludedUploaderTypes;
+
+        @CommandLine.Option(names = {"-xun", "--exclude-uploader-name"},
+            paramLabel = "<name>")
+        String[] excludedUploaderNames;
+
+        @CommandLine.Option(names = {"-xd", "--exclude-distribution"},
+            paramLabel = "<distribution>")
+        String[] excludedDistributions;
+
+        @CommandLine.Option(names = {"-xp", "--exclude-packager"},
+            paramLabel = "<packager>")
+        String[] excludedPackagers;
+
+        @CommandLine.Option(names = {"-xa", "--exclude-announcer"},
+            paramLabel = "<announcer>",
+            required = true)
+        String[] excludedAnnouncers;
+    }
+
     @Override
     protected void doExecute(JReleaserContext context) {
+        if (null != composite) {
+            context.setIncludedUploaderTypes(collectEntries(composite.includedUploaderTypes(), true));
+            context.setIncludedUploaderNames(collectEntries(composite.includedUploaderNames()));
+            context.setIncludedDistributions(collectEntries(composite.includedDistributions()));
+            context.setIncludedPackagers(collectEntries(composite.includedPackagers(), true));
+            context.setIncludedAnnouncers(collectEntries(composite.includedAnnouncers(), true));
+            context.setExcludedUploaderTypes(collectEntries(composite.excludedUploaderTypes(), true));
+            context.setExcludedUploaderNames(collectEntries(composite.excludedUploaderNames()));
+            context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
+            context.setExcludedPackagers(collectEntries(composite.excludedPackagers(), true));
+            context.setExcludedAnnouncers(collectEntries(composite.excludedAnnouncers(), true));
+        }
         Workflows.fullRelease(context).execute();
     }
 

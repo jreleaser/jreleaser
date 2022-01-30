@@ -281,7 +281,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserFullReleaseTask t) {
                     t.group = JRELEASER_GROUP
-                    t.description = 'Invokes JReleaser on all distributions'
+                    t.description = 'Invokes release, publish, and announce'
                     t.dryrun.set(extension.dryrun.get())
                     t.gitRootSearch.set(extension.gitRootSearch.get())
                     t.model.set(model)

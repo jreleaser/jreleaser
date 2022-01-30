@@ -30,15 +30,35 @@ public class Announce extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"--dry-run"})
     boolean dryrun;
 
-    @CommandLine.ArgGroup(headingKey = "filter.header")
+    @CommandLine.ArgGroup
     Composite composite;
 
     static class Composite {
+        @CommandLine.ArgGroup(exclusive = false, order = 1,
+            headingKey = "include.filter.header")
+        Include include;
+
+        @CommandLine.ArgGroup(exclusive = false, order = 2,
+            headingKey = "exclude.filter.header")
+        Exclude exclude;
+
+        String[] includedAnnouncers() {
+            return include != null ? include.includedAnnouncers : null;
+        }
+
+        String[] excludedAnnouncers() {
+            return exclude != null ? exclude.excludedAnnouncers : null;
+        }
+    }
+
+    static class Include {
         @CommandLine.Option(names = {"-a", "--announcer"},
             paramLabel = "<announcer>",
             required = true)
         String[] includedAnnouncers;
+    }
 
+    static class Exclude {
         @CommandLine.Option(names = {"-xa", "--exclude-announcer"},
             paramLabel = "<announcer>",
             required = true)
@@ -48,8 +68,8 @@ public class Announce extends AbstractPlatformAwareModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {
         if (null != composite) {
-            context.setIncludedAnnouncers(collectEntries(composite.includedAnnouncers, true));
-            context.setExcludedAnnouncers(collectEntries(composite.excludedAnnouncers, true));
+            context.setIncludedAnnouncers(collectEntries(composite.includedAnnouncers(), true));
+            context.setExcludedAnnouncers(collectEntries(composite.excludedAnnouncers(), true));
         }
         Workflows.announce(context).execute();
     }
