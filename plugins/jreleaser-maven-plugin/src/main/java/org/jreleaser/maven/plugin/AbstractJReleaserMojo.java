@@ -91,7 +91,8 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
         try {
             java.nio.file.Files.createDirectories(outputDirectory.toPath());
             return new PrintWriter(new FileOutputStream(
-                outputDirectory.toPath().resolve("trace.log").toFile()));
+                outputDirectory.toPath().resolve("trace.log").toFile()),
+                true);
         } catch (IOException e) {
             throw new MojoExecutionException("Could not initialize trace file", e);
         }
