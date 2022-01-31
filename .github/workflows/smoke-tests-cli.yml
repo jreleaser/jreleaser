@@ -1,4 +1,4 @@
-name: SmokeTests
+name: SmokeTests - CLI
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
 
 jobs:
   precheck:
+    if: startsWith(github.event.head_commit.message, 'Releasing version') != true
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.vars.outputs.VERSION }}
@@ -32,12 +33,12 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-latest  , sign: gpg   , s: '/', pargs: '-xp docker' }
-          - { os: macos-latest  , sign: cosign, s: '/', pargs: '-xp docker' }
-          - { os: ubuntu-latest , sign: gpg   , s: '/', pargs: '' }
-          - { os: ubuntu-latest , sign: cosign, s: '/', pargs: '' }
-          - { os: windows-latest, sign: gpg   , s: '\', pargs: '-xp docker' }
-          - { os: windows-latest, sign: cosign, s: '\', pargs: '-xp docker' }
+          - { os: macos-latest  , sign: gpg   , s: '/', x: '', args: '-xp docker' }
+          - { os: macos-latest  , sign: cosign, s: '/', x: '', args: '-xp docker' }
+          - { os: ubuntu-latest , sign: gpg   , s: '/', x: '', args: '' }
+          - { os: ubuntu-latest , sign: cosign, s: '/', x: '', args: '' }
+          - { os: windows-latest, sign: gpg   , s: '\', x: '.bat', args: '-xp docker' }
+          - { os: windows-latest, sign: cosign, s: '\', x: '.bat', args: '-xp docker' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -45,7 +46,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Java
+      - name: Setup Java
         uses: actions/setup-java@v2
         with:
           java-version: 11
@@ -66,15 +67,17 @@ jobs:
             ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: ./gradlew build -S
+        run: ./gradlew -Prelease=true build -S
+
+      - name: Prepare
+        shell: bash
+        run: |
+          unzip -qo apps/jreleaser/build/distributions/jreleaser-${{ needs.precheck.outputs.VERSION }}.zip
+          cp .github/test-files/jreleaser-${{ matrix.job.sign }}.yml jreleaser.yml
 
       - name: Assemble
-        uses: jreleaser/release-action@v1
-        with:
-          version: early-access
-          arguments: |
-            assemble --basedir=${{ github.workspace }} \
-            --config-file=${{ github.workspace }}${{matrix.job.s}}.github${{matrix.job.s}}test-files${{matrix.job.s}}jreleaser-${{ matrix.job.sign }}.yml
+        run: |
+          ${{ github.workspace }}${{ matrix.job.s }}jreleaser-${{ needs.precheck.outputs.VERSION }}${{ matrix.job.s }}bin${{ matrix.job.s }}jreleaser${{ matrix.job.x }} assemble
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -83,19 +86,15 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          retention-days: 1
-          name: 'jreleaser-assemble-${{ matrix.job.os }}-${{ matrix.job.sign }}'
+          retention-days: 10
+          name: 'jreleaser-assemble-cli-${{ matrix.job.os }}-${{ matrix.job.sign }}'
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
 
-      - name: Release
-        uses: jreleaser/release-action@v1
-        with:
-          version: early-access
-          arguments: |
-            release --dry-run --basedir=${{ github.workspace }} \
-            --config-file=${{ github.workspace }}${{matrix.job.s}}.github${{matrix.job.s}}test-files${{matrix.job.s}}jreleaser-${{ matrix.job.sign }}.yml
+      - name: Full Release
+        run: |
+          ${{ github.workspace }}${{ matrix.job.s }}jreleaser-${{ needs.precheck.outputs.VERSION }}${{ matrix.job.s }}bin${{ matrix.job.s }}jreleaser${{ matrix.job.x }} full-release --dry-run ${{ matrix.job.args }}
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -109,43 +108,14 @@ jobs:
           JRELEASER_S3_JRELEASER_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
           JRELEASER_S3_JRELEASER_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
 
-      - name: JReleaser output
+      - name: JReleaser full-release output
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          retention-days: 1
-          name: 'jreleaser-release-${{ matrix.job.os }}-${{ matrix.job.sign }}'
+          retention-days: 10
+          name: 'jreleaser-full-release-cli-${{ matrix.job.os }}-${{ matrix.job.sign }}'
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
             out/jreleaser/release/CHANGELOG.md
-
-      - name: Publish
-        uses: jreleaser/release-action@v1
-        with:
-          version: early-access
-          arguments: |
-            publish --dry-run --basedir=${{ github.workspace }} ${{ matrix.job.pargs }} \
-            --config-file=${{ github.workspace }}${{matrix.job.s}}.github${{matrix.job.s}}test-files${{matrix.job.s}}jreleaser-${{ matrix.job.sign }}.yml
-        env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
-          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
-          JRELEASER_COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          JRELEASER_DOCKER_DEFAULT_PASSWORD: ${{ secrets.JRELEASER_DOCKER_PASSWORD }}
-          JRELEASER_S3_JRELEASER_REGION: ${{ secrets.S3_REGION }}
-          JRELEASER_S3_JRELEASER_BUCKET: ${{ secrets.S3_BUCKET }}
-          JRELEASER_S3_JRELEASER_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
-          JRELEASER_S3_JRELEASER_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-
-      - name: JReleaser output
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          retention-days: 1
-          name: 'jreleaser-publish-${{ matrix.job.os }}-${{ matrix.job.sign }}'
-          path: |
-            out/jreleaser/trace.log
-            out/jreleaser/output.properties
+            out/jreleaser/prepare
