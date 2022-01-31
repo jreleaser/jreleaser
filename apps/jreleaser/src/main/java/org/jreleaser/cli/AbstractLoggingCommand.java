@@ -81,7 +81,8 @@ abstract class AbstractLoggingCommand extends AbstractCommand implements Callabl
         try {
             Files.createDirectories(getOutputDirectory());
             return new PrintWriter(new FileOutputStream(
-                getOutputDirectory().resolve("trace.log").toFile()));
+                getOutputDirectory().resolve("trace.log").toFile()),
+                true);
         } catch (IOException e) {
             throw new IllegalStateException($("ERROR_trace_file_init"), e);
         }
