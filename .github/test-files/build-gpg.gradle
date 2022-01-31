@@ -1,0 +1,388 @@
+plugins {
+    id 'java-library'
+    id 'org.jreleaser'
+}
+
+jreleaser {
+    gitRootSearch = true
+    dryrun = true
+
+    environment {
+        properties.put('jdkPathPrefix', 'apps/jreleaser/build/jdks')
+        properties.put('jdkFilePrefix', 'zulu17.30.15-ca-jdk17.0.1')
+    }
+
+    project {
+        description = 'Release projects quickly and easily with JReleaser'
+        longDescription = '''|JReleaser is a release automation tool. Its goal is to simplify creating releases and
+          |publishing artifacts to multiple package managers while providing customizable options.
+          |JReleaser takes inputs from popular builds tools (Ant, Maven, Gradle) such as JAR files,
+          |binary distributions (.zip, .tar), JLink images, or any other file that you’d like to
+          |publish as a Git release on popular Git services such as GitHub, GitLab, or Gitea.
+          |Distribution files may additionally be published to be consumed by popular package managers
+          |such as Homebrew, Chocolatey, Snapcraft, or get ready to be launched via JBang. Releases
+          |may be announced in a variety of channels such as Twitter, Zulip, SDKMAN!, and more.'''.stripMargin('|')
+        website = 'https://jreleaser.org'
+        authors = ['Andres Almiray']
+        license = 'Apache-2.0'
+        extraProperties.put('inceptionYear', '2020')
+        tags = ['jreleaser', 'release', 'tool', 'java', 'git']
+        java {
+            mainClass = 'org.jreleaser.cli.Main'
+        }
+    }
+
+    platform {
+        replacements.put('aarch_64', 'aarch64')
+    }
+
+    release {
+        github {
+            overwrite = true
+            sign = true
+            discussionCategoryName = 'Announcements'
+            changelog {
+                formatted = 'ALWAYS'
+                format = '- {{commitShortHash}} {{commitTitle}}'
+                contributors {
+                    format = '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
+                }
+                labeler {
+                    label = 'merge_pull'
+                    title = 'Merge pull'
+                }
+                labeler {
+                    label = 'merge_branch'
+                    title = 'Merge branch'
+                }
+                labeler {
+                    label = 'translation'
+                    title = '[translation]'
+                }
+                labeler {
+                    label = 'task'
+                    title = '[chore]'
+                }
+                labeler {
+                    label = 'dependencies'
+                    title = '[deps]'
+                }
+                labeler {
+                    label = 'build'
+                    title = '[build]'
+                }
+                labeler {
+                    label = 'feature'
+                    title = 'Resolves #'
+                    body = 'Resolves #'
+                }
+                labeler {
+                    label = 'issue'
+                    title = 'Fixes #'
+                    body = 'Fixes #'
+                }
+                labeler {
+                    label = 'issue'
+                    title = 'Relates to #'
+                    body = 'Relates to #'
+                }
+                labeler {
+                    label = 'allcontributors'
+                    title = 'docs: update'
+                }
+                category {
+                    title = 'Merge'
+                    labels = ['merge_pull', 'merge_branch']
+                }
+                category {
+                    title = '🚀 Features'
+                    labels = ['feature']
+                }
+                category {
+                    title = '✅ Issues'
+                    labels = ['issue']
+                }
+                category {
+                    title = '🧰 Tasks'
+                    labels = ['task']
+                }
+                category {
+                    title = '🌐 Translation'
+                    labels = ['translation']
+                }
+                category {
+                    title = '⚙️  Dependencies'
+                    labels = ['dependencies']
+                }
+                category {
+                    title = '🛠  Build'
+                    labels = ['build']
+                }
+                category {
+                    title = 'allcontributors'
+                    labels = ['allcontributors']
+                }
+                hide {
+                    category('Merge')
+                    category('allcontributors')
+                    contributor('GitHub')
+                    contributor('allcontributors')
+                }
+                replacer {
+                    search = '\\[chore\\] '
+                }
+                replacer {
+                    search = '\\[deps\\] '
+                }
+                replacer {
+                    search = '\\[translation\\] '
+                }
+                replacer {
+                    search = '\\[build\\] '
+                }
+            }
+        }
+    }
+
+    signing {
+        active = 'ALWAYS'
+        armored = true
+        files = false
+    }
+
+    checksum {
+        files = false
+    }
+
+    assemble {
+        archive {
+            'jreleaser-archive' {
+                active = 'ALWAYS'
+                attachPlatform = true
+                format('ZIP')
+                format('TAR')
+                format('TAR_BZ2')
+                format('TAR_GZ')
+                format('TAR_XZ')
+                format('TBZ2')
+                format('TGZ')
+                format('TXZ')
+                fileSet {
+                    input = '.'
+                    include('VERSION')
+                }
+            }
+        }
+
+        jlink {
+            'jreleaser-standalone' {
+                active = 'ALWAYS'
+                imageName = '{{distributionName}}-{{projectEffectiveVersion}}'
+                executable = 'jreleaser'
+                jdeps {
+                    multiRelease = 'base'
+                    ignoreMissingDeps = true
+                }
+                additionalModuleNames = [
+                    'java.security.sasl',
+                    'java.security.jgss',
+                    'jdk.crypto.cryptoki',
+                    'jdk.crypto.ec',
+                    'jdk.localedata',
+                    'jdk.net',
+                    'jdk.security.auth',
+                    'jdk.security.jgss'
+                ] as Set<String>
+
+                targetJdk {
+                    path = '{{jdkPathPrefix}}/zulu17Osx/{{jdkFilePrefix}}-macosx_x64/zulu-17.jdk/Contents/Home'
+                    platform = 'osx-x86_64'
+                }
+                targetJdk {
+                    path = '{{jdkPathPrefix}}/zulu17OsxArm/{{jdkFilePrefix}}-macosx_aarch64/zulu-17.jdk/Contents/Home'
+                    platform = 'osx-aarch_64'
+                }
+                targetJdk {
+                    path = '{{jdkPathPrefix}}/zulu17Linux/{{jdkFilePrefix}}-linux_x64'
+                    platform = 'linux-x86_64'
+                }
+                targetJdk {
+                    path = '{{jdkPathPrefix}}/zulu17LinuxArm/{{jdkFilePrefix}}-linux_aarch64'
+                    platform = 'linux-aarch_64'
+                }
+                targetJdk {
+                    path = '{{jdkPathPrefix}}/zulu17LinuxMusl/{{jdkFilePrefix}}-linux_musl_x64'
+                    platform = 'linux_musl-x86_64'
+                }
+                targetJdk {
+                    path = '{{jdkPathPrefix}}/zulu17LinuxMuslArm/{{jdkFilePrefix}}-linux_musl_aarch64'
+                    platform = 'linux_musl-aarch_64'
+                }
+                targetJdk {
+                    path = '{{jdkPathPrefix}}/zulu17Windows/{{jdkFilePrefix}}-win_x64'
+                    platform = 'windows-x86_64'
+                }
+                targetJdk {
+                    path = '{{jdkPathPrefix}}/zulu17WindowsArm/{{jdkFilePrefix}}-win_aarch64'
+                    platform = 'windows-aarch_64'
+                }
+                mainJar {
+                    path = 'apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
+                }
+                jars {
+                    pattern = 'apps/jreleaser/build/dependencies/flat/*.jar'
+                }
+            }
+        }
+    }
+
+    distributions {
+        jreleaser {
+            chocolatey {
+                active = 'ALWAYS'
+                remoteBuild = true
+                title = 'JReleaser'
+                iconUrl = 'https://rawcdn.githack.com/jreleaser/jreleaser/0934fa1fa3f0bd09c0c8c39fbdeb5df2ce507457/src/media/icon_128x128.png'
+                bucket {
+                    active = 'RELEASE'
+                }
+            }
+            jbang {
+                active = 'ALWAYS'
+            }
+            macports {
+                active = 'ALWAYS'
+                category('devel')
+                category('java')
+                maintainer('@aalmiray')
+                repository {
+                    active = 'RELEASE'
+                    name = 'jreleaser-macports'
+                }
+            }
+            scoop {
+                active = 'ALWAYS'
+                bucket {
+                    active = 'RELEASE'
+                }
+            }
+            sdkman {
+                active = 'RELEASE'
+            }
+            snap {
+                active = 'ALWAYS'
+                remoteBuild = true
+                base = 'core18'
+                architecture {
+                    buildOn('amd64')
+                    buildOn('arm64')
+                }
+                plugs {
+                    'dot-config-files' {
+                        attribute('interface', 'personal-files')
+                        write('$HOME/.jreleaser')
+                        read('$HOME/.gnupg')
+                        read('$HOME/.gitconfig')
+                        read('$HOME/.config/jgit')
+                    }
+                }
+                localPlug('network')
+                localPlug('home')
+                localPlug('dot-config-files')
+            }
+            spec {
+                active = 'ALWAYS'
+                repository {
+                    active = 'RELEASE'
+                    name = 'jreleaser-copr'
+                }
+            }
+            artifact {
+                path = 'apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip'
+                transform = '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
+                extraProperties.put('skipSpec', true)
+            }
+            artifact {
+                path = 'apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar'
+                transform = '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar'
+            }
+        }
+
+        'jreleaser-ant-tasks' {
+            artifact {
+                path = 'plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip'
+                transform = '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
+            }
+        }
+
+        'jreleaser-tool-provider' {
+            distributionType = 'SINGLE_JAR'
+            artifact {
+                path = 'apps/{{distributionName}}/build/libs/{{distributionName}}-{{projectVersion}}.jar'
+                transform = '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.jar'
+            }
+        }
+
+        'jreleaser-standalone' {
+            brew {
+                active = 'ALWAYS'
+                formulaName = 'jreleaser'
+                multiPlatform = true
+                repoTap {
+                    active = 'RELEASE'
+                    commitMessage = 'jreleaser {{tagName}}'
+                }
+            }
+            docker {
+                active = 'ALWAYS'
+                repository {
+                    active = 'RELEASE'
+                    commitMessage = 'jreleaser {{tagName}}'
+                }
+                registries {
+                    DEFAULT {
+                        username = 'jreleaser'
+                    }
+                }
+                label('org.opencontainers.image.title', 'jreleaser')
+                postCommand('VOLUME /workspace')
+                specs {
+                    slim {
+                        imageName('jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}')
+                        imageName('jreleaser/jreleaser-{{dockerSpecName}}:latest')
+                        matcher('platform', 'linux-x86_64')
+                        preCommand('RUN apt-get update -y')
+                        preCommand('RUN apt-get install unzip')
+                    }
+                    alpine {
+                        imageName('jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}')
+                        imageName('jreleaser/jreleaser-{{dockerSpecName}}:latest')
+                        matcher('platform', 'linux_musl-x86_64')
+                        preCommand('RUN apk add unzip')
+                    }
+                }
+            }
+            gofish {
+                active = 'ALWAYS'
+                repository {
+                    active = 'RELEASE'
+                    commitMessage = 'jreleaser {{tagName}}'
+                }
+            }
+        }
+    }
+
+    files {
+        artifact {
+            path = 'VERSION'
+        }
+    }
+
+    upload {
+        s3 {
+            jreleaser {
+                active = 'ALWAYS'
+            }
+        }
+    }
+}

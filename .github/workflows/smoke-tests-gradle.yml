@@ -1,0 +1,126 @@
+name: SmokeTests - Gradle
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  precheck:
+    if: startsWith(github.event.head_commit.message, 'Releasing version') != true
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.vars.outputs.VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: n1hility/cancel-previous-runs@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Version
+        id: vars
+        shell: bash
+        run: |
+          version=$(cat VERSION)
+          echo ::set-output name=VERSION::$(echo "$version")
+
+  build:
+    needs: [ precheck ]
+    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
+    name: 'Build ${{ matrix.job.os }}-${{ matrix.job.sign }}'
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { os: macos-latest  , sign: gpg   ,  args: '--exclude-packager docker' }
+          - { os: macos-latest  , sign: cosign,  args: '--exclude-packager docker' }
+          - { os: ubuntu-latest , sign: gpg   ,  args: '' }
+          - { os: ubuntu-latest , sign: cosign,  args: '' }
+          - { os: windows-latest, sign: gpg   ,  args: '--exclude-packager docker' }
+          - { os: windows-latest, sign: cosign,  args: '--exclude-packager docker' }
+    runs-on: ${{ matrix.job.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: 'zulu'
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlew-
+
+      - name: Build
+        run: ./gradlew -Prelease=true build publishToMavenLocal -S
+
+      - name: Prepare
+        shell: bash
+        run: |
+          cp .github/test-files/gradle.properties gradle.properties
+          cp .github/test-files/settings.gradle settings.gradle
+          cp .github/test-files/build-${{ matrix.job.sign }}.gradle build.gradle
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" settings.gradle
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" gradle.properties
+
+      - name: Assemble
+        shell: bash
+        run: |
+          ./gradlew jreleaserAssemble
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+
+      - name: JReleaser assemble output
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          retention-days: 10
+          name: 'jreleaser-assemble-gradle-${{ matrix.job.os }}-${{ matrix.job.sign }}'
+          path: |
+            build/jreleaser/trace.log
+            build/jreleaser/output.properties
+
+      - name: Full Release
+        shell: bash
+        run: |
+          ./gradlew jreleaserFullRelease ${{ matrix.job.args }}
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
+          JRELEASER_COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          JRELEASER_DOCKER_DEFAULT_PASSWORD: ${{ secrets.JRELEASER_DOCKER_PASSWORD }}
+          JRELEASER_S3_JRELEASER_REGION: ${{ secrets.S3_REGION }}
+          JRELEASER_S3_JRELEASER_BUCKET: ${{ secrets.S3_BUCKET }}
+          JRELEASER_S3_JRELEASER_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
+          JRELEASER_S3_JRELEASER_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+
+      - name: JReleaser full-release output
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          retention-days: 10
+          name: 'jreleaser-full-release-gradle-${{ matrix.job.os }}-${{ matrix.job.sign }}'
+          path: |
+            build/jreleaser/trace.log
+            build/jreleaser/output.properties
+            build/jreleaser/release/CHANGELOG.md
+            build/jreleaser/prepare
