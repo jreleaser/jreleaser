@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    SPDX-License-Identifier: Apache-2.0
+
+    Copyright 2021 Andres Almiray.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jreleaser</groupId>
+    <artifactId>jreleaser-test</artifactId>
+    <version>0.0.0-SNAPSHOT</version>
+
+    <name>jreleaser-test</name>
+    <description>Release projects quickly and easily with JReleaser</description>
+    <url>https://jreleaser.org</url>
+    <inceptionYear>2020</inceptionYear>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>https://spdx.org/licenses/Apache-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>aalmiray</id>
+            <name>Andres Almiray</name>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/jreleaser/jreleaser.git</connection>
+        <developerConnection>scm:git:https://github.com/jreleaser/jreleaser.git</developerConnection>
+        <url>https://github.com/jreleaser/jreleaser.git</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jreleaser</groupId>
+                <artifactId>jreleaser-maven-plugin</artifactId>
+                <version>0.0.0-SNAPSHOT</version>
+                <configuration>
+                    <jreleaser>
+                        <environment>
+                            <properties>
+                                <jdkPathPrefix>apps/jreleaser/build/jdks</jdkPathPrefix>
+                                <jdkFilePrefix>zulu17.30.15-ca-jdk17.0.1</jdkFilePrefix>
+                            </properties>
+                        </environment>
+                        <project>
+                            <name>jreleaser</name>
+                            <longDescription>
+                                JReleaser is a release automation tool. Its goal is to simplify creating releases and
+                                publishing artifacts to multiple package managers while providing customizable options.
+                                JReleaser takes inputs from popular builds tools (Ant, Maven, Gradle) such as JAR files,
+                                binary distributions (.zip, .tar), JLink images, or any other file that you’d like to
+                                publish as a Git release on popular Git services such as GitHub, GitLab, or Gitea.
+                                Distribution files may additionally be published to be consumed by popular package managers
+                                such as Homebrew, Chocolatey, Snapcraft, or get ready to be launched via JBang. Releases
+                                may be announced in a variety of channels such as Twitter, Zulip, SDKMAN!, and more.
+                            </longDescription>
+                            <tags>jreleaser,release,tool,java,git</tags>
+                        </project>
+                        <platform>
+                            <replacements>
+                                <aarch_64>aarch64</aarch_64>
+                            </replacements>
+                        </platform>
+                        <release>
+                            <github>
+                                <overwrite>true</overwrite>
+                                <sign>true</sign>
+                                <discussionCategoryName>Announcements</discussionCategoryName>
+                                <changelog>
+                                    <formatted>ALWAYS</formatted>
+                                    <format>- {{commitShortHash}} {{commitTitle}}</format>
+                                    <contributors>
+                                        <format>- {{contributorName}}{{#contributorUsernameAsLink}}
+                                            ({{.}}){{/contributorUsernameAsLink}}
+                                        </format>
+                                    </contributors>
+                                    <labelers>
+                                        <labeler>
+                                            <label>merge_pull</label>
+                                            <title>Merge pull</title>
+                                        </labeler>
+                                        <labeler>
+                                            <label>merge_branch</label>
+                                            <title>Merge branch</title>
+                                        </labeler>
+                                        <labeler>
+                                            <label>translation</label>
+                                            <title>[translation]</title>
+                                        </labeler>
+                                        <labeler>
+                                            <label>task</label>
+                                            <title>[chore]</title>
+                                        </labeler>
+                                        <labeler>
+                                            <label>dependencies</label>
+                                            <title>[deps]</title>
+                                        </labeler>
+                                        <labeler>
+                                            <label>build</label>
+                                            <title>[build]</title>
+                                        </labeler>
+                                        <labeler>
+                                            <label>feature</label>
+                                            <title>Resolves #</title>
+                                            <body>Resolves #</body>
+                                        </labeler>
+                                        <labeler>
+                                            <label>issue</label>
+                                            <title>Fixes #</title>
+                                            <body>Fixes #</body>
+                                        </labeler>
+                                        <labeler>
+                                            <label>issue</label>
+                                            <title>Relates to #</title>
+                                            <body>Relates to #</body>
+                                        </labeler>
+                                        <labeler>
+                                            <label>translation</label>
+                                            <title>[translation]</title>
+                                        </labeler>
+                                        <labeler>
+                                            <label>allcontributirs</label>
+                                            <title>docs: update</title>
+                                        </labeler>
+                                    </labelers>
+                                    <categories>
+                                        <category>
+                                            <title>Merge</title>
+                                            <labels>merge_pull,merge_branch</labels>
+                                        </category>
+                                        <category>
+                                            <title>🚀 Features</title>
+                                            <labels>feature</labels>
+                                        </category>
+                                        <category>
+                                            <title>✅ Issues</title>
+                                            <labels>issue</labels>
+                                        </category>
+                                        <category>
+                                            <title>🧰 Tasks</title>
+                                            <labels>task</labels>
+                                        </category>
+                                        <category>
+                                            <title>🌐 Translation</title>
+                                            <labels>translation</labels>
+                                        </category>
+                                        <category>
+                                            <title>⚙️ Dependencies</title>
+                                            <labels>dependencies</labels>
+                                        </category>
+                                        <category>
+                                            <title>'🛠 Build</title>
+                                            <labels>build</labels>
+                                        </category>
+                                        <category>
+                                            <title>allcontributors</title>
+                                            <labels>allcontributors</labels>
+                                        </category>
+                                    </categories>
+                                    <hide>
+                                        <categories>Merge,allcontributors</categories>
+                                        <contributors>GitHub,allcontributors</contributors>
+                                    </hide>
+                                    <replacers>
+                                        <replacer>
+                                            <search>\[chore\]</search>
+                                        </replacer>
+                                        <replacer>
+                                            <search>\[deps\]</search>
+                                        </replacer>
+                                        <replacer>
+                                            <search>\[translation\]</search>
+                                        </replacer>
+                                        <replacer>
+                                            <search>\[build\]</search>
+                                        </replacer>
+                                    </replacers>
+                                </changelog>
+                            </github>
+                        </release>
+                        <signing>
+                            <active>ALWAYS</active>
+                            <armored>true</armored>
+                            <files>false</files>
+                        </signing>
+                        <checksum>
+                            <files>false</files>
+                        </checksum>
+                        <assemble>
+                            <archive>
+                                <jreleaser-archive>
+                                    <active>ALWAYS</active>
+                                    <attachPlatform>true</attachPlatform>
+                                    <formats>ZIP,TAR,TAR_BZ2,TAR_GZ,TAR_XZ,TBZ2,TGZ,TXZ</formats>
+                                    <fileSets>
+                                        <fileSet>
+                                            <input>.</input>
+                                            <includes>
+                                                <include>VERSION</include>
+                                            </includes>
+                                        </fileSet>
+                                    </fileSets>
+                                </jreleaser-archive>
+                            </archive>
+                            <jlink>
+                                <jreleaser-standalone>
+                                    <active>ALWAYS</active>
+                                    <java>
+                                        <mainClass>org.jreleaser.cli.Main</mainClass>
+                                    </java>
+                                    <imageName>{{distributionName}}-{{projectEffectiveVersion}}</imageName>
+                                    <executable>jreleaser</executable>
+                                    <jdeps>
+                                        <multiRelease>base</multiRelease>
+                                        <ignoreMissingDeps>true</ignoreMissingDeps>
+                                    </jdeps>
+                                    <additionalModuleNames>
+                                        <additionalModuleName>java.security.sasl</additionalModuleName>
+                                        <additionalModuleName>java.security.jgss</additionalModuleName>
+                                        <additionalModuleName>jdk.crypto.cryptoki</additionalModuleName>
+                                        <additionalModuleName>jdk.crypto.ec</additionalModuleName>
+                                        <additionalModuleName>jdk.localedata</additionalModuleName>
+                                        <additionalModuleName>jdk.net</additionalModuleName>
+                                        <additionalModuleName>jdk.security.auth</additionalModuleName>
+                                        <additionalModuleName>jdk.security.jgss</additionalModuleName>
+                                    </additionalModuleNames>
+                                    <targetJdks>
+                                        <targetJdk>
+                                            <path>
+                                                {{jdkPathPrefix}}/zulu17Osx/{{jdkFilePrefix}}-macosx_x64/zulu-17.jdk/Contents/Home
+                                            </path>
+                                            <platform>osx-x86_64</platform>
+                                        </targetJdk>
+                                        <targetJdk>
+                                            <path>
+                                                {{jdkPathPrefix}}/zulu17OsxArm/{{jdkFilePrefix}}-macosx_aarch64/zulu-17.jdk/Contents/Home
+                                            </path>
+                                            <platform>osx-aarch_64</platform>
+                                        </targetJdk>
+                                        <targetJdk>
+                                            <path>{{jdkPathPrefix}}/zulu17Linux/{{jdkFilePrefix}}-linux_x64</path>
+                                            <platform>linux-x86_64</platform>
+                                        </targetJdk>
+                                        <targetJdk>
+                                            <path>{{jdkPathPrefix}}/zulu17LinuxArm/{{jdkFilePrefix}}-linux_aarch64
+                                            </path>
+                                            <platform>linux-aarch_64</platform>
+                                        </targetJdk>
+                                        <targetJdk>
+                                            <path>{{jdkPathPrefix}}/zulu17LinuxMusl/{{jdkFilePrefix}}-linux_musl_x64
+                                            </path>
+                                            <platform>linux_musl-x86_64</platform>
+                                        </targetJdk>
+                                        <targetJdk>
+                                            <path>
+                                                {{jdkPathPrefix}}/zulu17LinuxMuslArm/{{jdkFilePrefix}}-linux_musl_aarch64
+                                            </path>
+                                            <platform>linux_musl-aarch_64</platform>
+                                        </targetJdk>
+                                        <targetJdk>
+                                            <path>{{jdkPathPrefix}}/zulu17Windows/{{jdkFilePrefix}}-win_x64</path>
+                                            <platform>windows-x86_64</platform>
+                                        </targetJdk>
+                                        <targetJdk>
+                                            <path>{{jdkPathPrefix}}/zulu17WindowsArm/{{jdkFilePrefix}}-win_aarch64
+                                            </path>
+                                            <platform>windows-aarch_64</platform>
+                                        </targetJdk>
+                                    </targetJdks>
+                                    <mainJar>
+                                        <path>apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar</path>
+                                    </mainJar>
+                                    <jars>
+                                        <jar>
+                                            <pattern>apps/jreleaser/build/dependencies/flat/*.jar</pattern>
+                                        </jar>
+                                    </jars>
+                                </jreleaser-standalone>
+                            </jlink>
+                        </assemble>
+                        <distributions>
+                            <jreleaser>
+                                <java>
+                                    <mainClass>org.jreleaser.cli.Main</mainClass>
+                                </java>
+                                <chocolatey>
+                                    <active>ALWAYS</active>
+                                    <remoteBuild>true</remoteBuild>
+                                    <title>JReleaser</title>
+                                    <iconUrl>
+                                        https://rawcdn.githack.com/jreleaser/jreleaser/0934fa1fa3f0bd09c0c8c39fbdeb5df2ce507457/src/media/icon_128x128.png
+                                    </iconUrl>
+                                    <bucket>
+                                        <active>RELEASE</active>
+                                    </bucket>
+                                </chocolatey>
+                                <jbang>
+                                    <active>ALWAYS</active>
+                                </jbang>
+                                <macports>
+                                    <active>ALWAYS</active>
+                                    <categories>
+                                        <category>devel</category>
+                                        <category>java</category>
+                                    </categories>
+                                    <maintainers>@aalmiray</maintainers>
+                                    <repository>
+                                        <active>RELEASE</active>
+                                        <name>jreleaser-macports</name>
+                                    </repository>
+                                </macports>
+                                <scoop>
+                                    <active>ALWAYS</active>
+                                    <bucket>
+                                        <active>RELEASE</active>
+                                    </bucket>
+                                </scoop>
+                                <sdkman>
+                                    <active>ALWAYS</active>
+                                </sdkman>
+                                <snap>
+                                    <active>ALWAYS</active>
+                                    <remoteBuild>true</remoteBuild>
+                                    <base>core18</base>
+                                    <architectures>
+                                        <architecture>
+                                            <buildOn>amd64,arm64</buildOn>
+                                        </architecture>
+                                    </architectures>
+                                    <plugs>
+                                        <plug>
+                                            <name>dot-config-files</name>
+                                            <attributes>
+                                                <interface>personal-files</interface>
+                                            </attributes>
+                                            <writes>
+                                                <write>$HOME/.jreleaser</write>
+                                            </writes>
+                                            <reads>
+                                                <read>$HOME/.gnupg</read>
+                                                <read>$HOME/.gitconfig</read>
+                                                <read>$HOME/.config/jgit</read>
+                                            </reads>
+                                        </plug>
+                                    </plugs>
+                                    <localPlugs>network,home,dot-config-files</localPlugs>
+                                </snap>
+                                <spec>
+                                    <active>ALWAYS</active>
+                                    <repository>
+                                        <active>RELEASE</active>
+                                        <name>jreleaser-copr</name>
+                                    </repository>
+                                </spec>
+                                <artifacts>
+                                    <artifact>
+                                        <path>apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip</path>
+                                        <transform>{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip</transform>
+                                        <extraProperties>
+                                            <skipSpec>true</skipSpec>
+                                        </extraProperties>
+                                    </artifact>
+                                    <artifact>
+                                        <path>apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar</path>
+                                        <transform>{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar</transform>
+                                    </artifact>
+                                </artifacts>
+                            </jreleaser>
+                            <jreleaser-ant-tasks>
+                                <artifacts>
+                                    <artifact>
+                                        <path>plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip</path>
+                                        <transform>{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip</transform>
+                                    </artifact>
+                                </artifacts>
+                            </jreleaser-ant-tasks>
+                            <jreleaser-tool-provider>
+                                <type>SINGLE_JAR</type>
+                                <artifacts>
+                                    <artifact>
+                                        <path>apps/{{distributionName}}/build/libs/{{distributionName}}-{{projectVersion}}.jar</path>
+                                        <transform>{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.jar</transform>
+                                    </artifact>
+                                </artifacts>
+                            </jreleaser-tool-provider>
+                            <jreleaser-standalone>
+                                <brew>
+                                    <active>ALWAYS</active>
+                                    <formulaName>jreleaser</formulaName>
+                                    <multiPlatform>true</multiPlatform>
+                                    <tap>
+                                        <active>RELEASE</active>
+                                        <commitMessage>jreleaser {{tagName}}</commitMessage>
+                                    </tap>
+                                </brew>
+                                <docker>
+                                    <active>ALWAYS</active>
+                                    <repository>
+                                        <active>RELEASE</active>
+                                        <commitMessage>jreleaser {{tagName}}</commitMessage>
+                                    </repository>
+                                    <registries>
+                                        <registry>
+                                            <serverName>DEFAULT</serverName>
+                                            <username>jreleaser</username>
+                                        </registry>
+                                    </registries>
+                                    <labels>
+                                        <org.opencontainers.image.title>jreleaser</org.opencontainers.image.title>
+                                    </labels>
+                                    <postCommands>
+                                        <postCommand>VOLUME /workspace</postCommand>
+                                    </postCommands>
+                                    <specs>
+                                        <slim>
+                                            <imageNames>
+                                                <imageName>jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}
+                                                </imageName>
+                                                <imageName>jreleaser/jreleaser-{{dockerSpecName}}:latest</imageName>
+                                            </imageNames>
+                                            <matchers>
+                                                <platform>linux-x86_64</platform>
+                                            </matchers>
+                                            <preCommands>
+                                                <preCommand>RUN apt-get update -y</preCommand>
+                                                <preCommand>RUN apt-get install unzip</preCommand>
+                                            </preCommands>
+                                        </slim>
+                                        <alpine>
+                                            <imageNames>
+                                                <imageName>jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}
+                                                </imageName>
+                                                <imageName>jreleaser/jreleaser-{{dockerSpecName}}:latest</imageName>
+                                            </imageNames>
+                                            <matchers>
+                                                <platform>linux_musl-x86_64</platform>
+                                            </matchers>
+                                            <preCommands>
+                                                <preCommand>RUN apk add unzip</preCommand>
+                                            </preCommands>
+                                        </alpine>
+                                    </specs>
+                                </docker>
+                                <gofish>
+                                    <active>ALWAYS</active>
+                                    <repository>
+                                        <active>RELEASE</active>
+                                        <commitMessage>jreleaser {{tagName}}</commitMessage>
+                                    </repository>
+                                </gofish>
+                            </jreleaser-standalone>
+                        </distributions>
+                        <files>
+                            <artifacts>
+                                <artifact>
+                                    <path>VERSION</path>
+                                </artifact>
+                            </artifacts>
+                        </files>
+                        <upload>
+                            <s3>
+                                <jreleaser>
+                                    <active>ALWAYS</active>
+                                </jreleaser>
+                            </s3>
+                        </upload>
+                    </jreleaser>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
