@@ -46,7 +46,14 @@ class DockerSpecImpl extends AbstractDockerConfiguration implements DockerSpec {
     }
 
     @Override
+    @Deprecated
     void addMatcher(String key, Object value) {
+        println('spec.addMatcher() has been deprecated since 1.0.0-M2 and will be removed in the future. Use spec.matcher() instead')
+        matcher(key, value)
+    }
+
+    @Override
+    void matcher(String key, Object value) {
         if (isNotBlank(key) && null != value) {
             matchers.put(key.trim(), value)
         }
@@ -61,6 +68,7 @@ class DockerSpecImpl extends AbstractDockerConfiguration implements DockerSpec {
 
     org.jreleaser.model.DockerSpec toModel() {
         org.jreleaser.model.DockerSpec spec = new org.jreleaser.model.DockerSpec()
+        spec.name = name
         toModel(spec)
         if (matchers.present) spec.matchers.putAll(matchers.get())
         spec

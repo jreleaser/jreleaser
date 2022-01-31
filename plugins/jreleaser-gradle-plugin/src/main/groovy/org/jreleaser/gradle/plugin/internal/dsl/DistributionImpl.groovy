@@ -120,7 +120,14 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    @Deprecated
     void addTag(String tag) {
+        println('distribution.addTag() has been deprecated since 1.0.0-M2 and will be removed in the future. Use distribution.tag() instead')
+        this.tag(tag)
+    }
+
+    @Override
+    void tag(String tag) {
         if (isNotBlank(tag)) {
             tags.add(tag.trim())
         }

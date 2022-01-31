@@ -62,14 +62,28 @@ class BrewImpl extends AbstractRepositoryPackager implements Brew {
     }
 
     @Override
+    @Deprecated
     void addDependency(String key, String value) {
+        println('brew.addDependency() has been deprecated since 1.0.0-M2 and will be removed in the future. Use brew.dependency() instead')
+        dependency(key, value)
+    }
+
+    @Override
+    @Deprecated
+    void addDependency(String key) {
+        println('brew.addDependency() has been deprecated since 1.0.0-M2 and will be removed in the future. Use brew.dependency() instead')
+        dependency(key)
+    }
+
+    @Override
+    void dependency(String key, String value) {
         if (isNotBlank(key) && isNotBlank(value)) {
             dependencies.put(key.trim(), value.trim())
         }
     }
 
     @Override
-    void addDependency(String key) {
+    void dependency(String key) {
         if (isNotBlank(key)) {
             dependencies.put(key.trim(), 'null')
         }

@@ -41,7 +41,7 @@ public abstract class S3Validator extends Validator {
         for (Map.Entry<String, S3> e : s3.entrySet()) {
             e.getValue().setName(e.getKey());
             if (!mode.validateConfig()) {
-                e.getValue().setActive(Active.NEVER);
+                continue;
             }
             validateS3(context, mode, e.getValue(), errors);
         }

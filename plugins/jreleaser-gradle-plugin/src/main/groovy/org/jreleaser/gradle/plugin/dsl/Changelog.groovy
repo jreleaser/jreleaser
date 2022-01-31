@@ -128,6 +128,8 @@ interface Changelog {
 
         SetProperty<String> getContributors()
 
-        void hideCategory(String category)
+        void category(String category)
+
+        void contributor(String contributor)
     }
 }

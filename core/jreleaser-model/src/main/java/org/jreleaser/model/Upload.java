@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 
@@ -112,7 +112,7 @@ public class Upload implements Domain, EnabledAware {
     public List<Artifactory> getActiveArtifactories() {
         return artifactory.values().stream()
             .filter(Artifactory::isEnabled)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     public Map<String, Artifactory> getArtifactory() {
@@ -125,13 +125,13 @@ public class Upload implements Domain, EnabledAware {
     }
 
     public void addArtifactory(Artifactory artifactory) {
-        this.artifactory.put(artifactory.getType(), artifactory);
+        this.artifactory.put(artifactory.getName(), artifactory);
     }
 
     public List<Http> getActiveHttps() {
         return http.values().stream()
             .filter(Http::isEnabled)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     public Map<String, Http> getHttp() {
@@ -144,13 +144,13 @@ public class Upload implements Domain, EnabledAware {
     }
 
     public void addHttp(Http http) {
-        this.http.put(http.getType(), http);
+        this.http.put(http.getName(), http);
     }
 
     public List<S3> getActiveS3s() {
         return s3.values().stream()
             .filter(S3::isEnabled)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     public Map<String, S3> getS3() {
@@ -163,7 +163,7 @@ public class Upload implements Domain, EnabledAware {
     }
 
     public void addS3(S3 s3) {
-        this.s3.put(s3.getType(), s3);
+        this.s3.put(s3.getName(), s3);
     }
 
     @Override
@@ -175,21 +175,21 @@ public class Upload implements Domain, EnabledAware {
             .stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
-            .collect(Collectors.toList());
+            .collect(toList());
         if (!artifactory.isEmpty()) map.put("artifactory", artifactory);
 
         List<Map<String, Object>> http = this.http.values()
             .stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
-            .collect(Collectors.toList());
+            .collect(toList());
         if (!http.isEmpty()) map.put("http", http);
 
         List<Map<String, Object>> s3 = this.s3.values()
             .stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
-            .collect(Collectors.toList());
+            .collect(toList());
         if (!s3.isEmpty()) map.put("s3", s3);
 
         return map;

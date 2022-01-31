@@ -89,45 +89,52 @@ class SigningImpl implements Signing {
     }
 
     @Override
+    @Deprecated
     Property<String> getExecutable() {
         println 'signing.executable has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.executable instead'
         return command.executable
     }
 
     @Override
+    @Deprecated
     Property<String> getKeyName() {
         println 'signing.keyName has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.keyName instead'
         return command.keyName
     }
 
     @Override
+    @Deprecated
     Property<String> getHomeDir() {
         println 'signing.homeDir has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.homeDir instead'
         return command.homeDir
     }
 
     @Override
+    @Deprecated
     Property<String> getPublicKeyring() {
         println 'signing.publicKeyring has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.publicKeyring instead'
         return command.publicKeyring
     }
 
     @Override
+    @Deprecated
     Property<Boolean> getDefaultKeyring() {
         println 'signing.defaultKeyring has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.defaultKeyring instead'
         return command.defaultKeyring
     }
 
     @Override
+    @Deprecated
     ListProperty<String> getArgs() {
         println 'signing.args has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.args instead'
         return command.args
     }
 
     @Override
+    @Deprecated
     void addArg(String arg) {
         println 'signing.addArg() has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.addArg() instead'
-        command.addArg(arg)
+        command.arg(arg)
     }
 
     @Override
@@ -170,7 +177,6 @@ class SigningImpl implements Signing {
         if (checksums.present) signing.checksums = checksums.get()
         signing.command = ((CommandImpl) command).toModel()
         signing.cosign = ((CosignImpl) cosign).toModel()
-        signing.args = (List<String>) args.getOrElse([])
         signing
     }
 
@@ -203,7 +209,14 @@ class SigningImpl implements Signing {
         }
 
         @Override
+        @Deprecated
         void addArg(String arg) {
+            println('command.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use command.arg() instead')
+            this.arg(arg)
+        }
+
+        @Override
+        void arg(String arg) {
             if (isNotBlank(arg)) {
                 args.add(arg.trim())
             }

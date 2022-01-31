@@ -29,5 +29,8 @@ import org.gradle.api.provider.MapProperty
 interface DockerSpec extends DockerConfiguration {
     MapProperty<String, Object> getMatchers()
 
+    @Deprecated
     void addMatcher(String key, Object value)
+
+    void matcher(String key, Object value)
 }

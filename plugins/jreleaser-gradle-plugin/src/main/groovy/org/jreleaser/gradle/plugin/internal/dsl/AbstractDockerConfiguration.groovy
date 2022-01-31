@@ -83,35 +83,70 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     }
 
     @Override
+    @Deprecated
     void addLabel(String key, String value) {
+        println('docker.addLabel() has been deprecated since 1.0.0-M2 and will be removed in the future. Use docker.label() instead')
+        label(key, value)
+    }
+
+    @Override
+    @Deprecated
+    void addImageName(String imageName) {
+        println('docker.addImageName() has been deprecated since 1.0.0-M2 and will be removed in the future. Use docker.imageName() instead')
+        this.imageName(imageName)
+    }
+
+    @Override
+    @Deprecated
+    void addBuildArg(String buildArg) {
+        println('docker.addBuildArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use docker.buildArg() instead')
+        this.buildArg(buildArg)
+    }
+
+    @Override
+    @Deprecated
+    void addPreCommand(String command) {
+        println('docker.addPreCommand() has been deprecated since 1.0.0-M2 and will be removed in the future. Use docker.preCommand() instead')
+        preCommand(command)
+    }
+
+    @Override
+    @Deprecated
+    void addPostCommand(String command) {
+        println('docker.addPostCommand() has been deprecated since 1.0.0-M2 and will be removed in the future. Use docker.postCommand() instead')
+        postCommand(command)
+    }
+
+    @Override
+    void label(String key, String value) {
         if (isNotBlank(key) && isNotBlank(value)) {
             labels.put(key.trim(), value.trim())
         }
     }
 
     @Override
-    void addImageName(String imageName) {
+    void imageName(String imageName) {
         if (isNotBlank(imageName)) {
             imageNames.add(imageName.trim())
         }
     }
 
     @Override
-    void addBuildArg(String buildArg) {
+    void buildArg(String buildArg) {
         if (isNotBlank(buildArg)) {
             buildArgs.add(buildArg.trim())
         }
     }
 
     @Override
-    void addPreCommand(String command) {
+    void preCommand(String command) {
         if (isNotBlank(command)) {
             preCommands.add(command.trim())
         }
     }
 
     @Override
-    void addPostCommand(String command) {
+    void postCommand(String command) {
         if (isNotBlank(command)) {
             postCommands.add(command.trim())
         }

@@ -53,9 +53,15 @@ interface Snap extends RepositoryPackager {
 
     NamedDomainObjectContainer<Slot> getSlots()
 
+    @Deprecated
     void addLocalPlug(String plug)
 
+    @Deprecated
     void addLocalSlot(String slot)
+
+    void localPlug(String plug)
+
+    void localSlot(String slot)
 
     Tap getSnap()
 
@@ -79,41 +85,65 @@ interface Snap extends RepositoryPackager {
     interface Slot {
         MapProperty<String, String> getAttributes()
 
+        @Deprecated
         void addAttribute(String key, String value)
+
+        void attribute(String key, String value)
 
         ListProperty<String> getReads()
 
+        @Deprecated
         void addRead(String read)
+
+        void read(String read)
 
         ListProperty<String> getWrites()
 
+        @Deprecated
         void addWrite(String write)
+
+        void write(String write)
     }
 
     @CompileStatic
     interface Plug {
         MapProperty<String, String> getAttributes()
 
+        @Deprecated
         void addAttribute(String key, String value)
+
+        void attribute(String key, String value)
 
         ListProperty<String> getReads()
 
+        @Deprecated
         void addRead(String read)
+
+        void read(String read)
 
         ListProperty<String> getWrites()
 
+        @Deprecated
         void addWrite(String write)
+
+        void write(String write)
     }
 
     @CompileStatic
     interface Architecture {
         ListProperty<String> getBuildOn()
 
+        @Deprecated
         void addBuildOn(String str)
+
+        void buildOn(String str)
 
         ListProperty<String> getRunOn()
 
+        @Deprecated
         void addRunOn(String str)
+
+        void runOn(String str)
 
         Property<String> getIgnoreError()
     }

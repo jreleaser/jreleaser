@@ -103,14 +103,28 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
     }
 
     @Override
+    @Deprecated
     void addLocalPlug(String plug) {
+        println('snap.addLocalPlug() has been deprecated since 1.0.0-M2 and will be removed in the future. Use snap.localPlug() instead')
+        localPlug(plug)
+    }
+
+    @Override
+    void localPlug(String plug) {
         if (isNotBlank(plug)) {
             localPlugs.add(plug.trim())
         }
     }
 
     @Override
+    @Deprecated
     void addLocalSlot(String slot) {
+        println('snap.addLocalSlot() has been deprecated since 1.0.0-M2 and will be removed in the future. Use snap.localSlot() instead')
+        localSlot(slot)
+    }
+
+    @Override
+    void localSlot(String slot) {
         if (isNotBlank(slot)) {
             localSlots.add(slot.trim())
         }
@@ -232,21 +246,42 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
         }
 
         @Override
+        @Deprecated
         void addAttribute(String key, String value) {
+            println('plug.addAttribute() has been deprecated since 1.0.0-M2 and will be removed in the future. Use plug.attribute() instead')
+            attribute(key, value)
+        }
+
+        @Override
+        @Deprecated
+        void addRead(String read) {
+            println('plug.addRead() has been deprecated since 1.0.0-M2 and will be removed in the future. Use plug.read() instead')
+            this.read(read)
+        }
+
+        @Override
+        @Deprecated
+        void addWrite(String write) {
+            println('plug.addWrite() has been deprecated since 1.0.0-M2 and will be removed in the future. Use plug.write() instead')
+            this.write(write)
+        }
+
+        @Override
+        void attribute(String key, String value) {
             if (isNotBlank(key) && isNotBlank(value)) {
                 attributes.put(key.trim(), value.trim())
             }
         }
 
         @Override
-        void addRead(String read) {
+        void read(String read) {
             if (isNotBlank(read)) {
                 reads.add(read.trim())
             }
         }
 
         @Override
-        void addWrite(String write) {
+        void write(String write) {
             if (isNotBlank(write)) {
                 writes.add(write.trim())
             }
@@ -281,23 +316,44 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
         }
 
         @Override
+        @Deprecated
         void addAttribute(String key, String value) {
+            println('slot.addAttribute() has been deprecated since 1.0.0-M2 and will be removed in the future. Use slot.attribute() instead')
+            attribute(key, value)
+        }
+
+        @Override
+        @Deprecated
+        void addRead(String read) {
+            println('slot.addRead() has been deprecated since 1.0.0-M2 and will be removed in the future. Use slot.read() instead')
+            this.read(read)
+        }
+
+        @Override
+        @Deprecated
+        void addWrite(String write) {
+            println('slot.addWrite() has been deprecated since 1.0.0-M2 and will be removed in the future. Use slot.write() instead')
+            this.write(write)
+        }
+
+        @Override
+        void attribute(String key, String value) {
             if (isNotBlank(key) && isNotBlank(value)) {
                 attributes.put(key.trim(), value.trim())
             }
         }
 
         @Override
-        void addRead(String read) {
+        void read(String read) {
             if (isNotBlank(read)) {
-                this.reads.add(read.trim())
+                reads.add(read.trim())
             }
         }
 
         @Override
-        void addWrite(String write) {
+        void write(String write) {
             if (isNotBlank(write)) {
-                this.writes.add(write.trim())
+                writes.add(write.trim())
             }
         }
 
@@ -326,14 +382,28 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
         }
 
         @Override
+        @Deprecated
         void addRunOn(String str) {
+            println('architecture.addRunOn() has been deprecated since 1.0.0-M2 and will be removed in the future. Use architecture.runOn() instead')
+            runOn(str)
+        }
+
+        @Override
+        @Deprecated
+        void addBuildOn(String str) {
+            println('architecture.addBuildOn() has been deprecated since 1.0.0-M2 and will be removed in the future. Use architecture.buildOn() instead')
+            buildOn(str)
+        }
+
+        @Override
+        void runOn(String str) {
             if (isNotBlank(str)) {
                 runOn.add(str.trim())
             }
         }
 
         @Override
-        void addBuildOn(String str) {
+        void buildOn(String str) {
             if (isNotBlank(str)) {
                 buildOn.add(str.trim())
             }

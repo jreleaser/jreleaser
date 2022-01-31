@@ -39,7 +39,10 @@ interface NativeImage extends JavaAssembler {
 
     void setArchiveFormat(String str)
 
+    @Deprecated
     void addArg(String arg)
+
+    void arg(String arg)
 
     void graal(Action<? super Artifact> action)
 
@@ -58,6 +61,9 @@ interface NativeImage extends JavaAssembler {
 
         ListProperty<String> getArgs()
 
+        @Deprecated
         void addArg(String arg)
+
+        void arg(String arg)
     }
 }

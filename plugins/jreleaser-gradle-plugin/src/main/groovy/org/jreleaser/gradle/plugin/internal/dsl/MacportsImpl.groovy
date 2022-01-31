@@ -31,6 +31,8 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.StringUtils.isNotBlank
+
 /**
  *
  * @author Andres Almiray
@@ -86,6 +88,20 @@ class MacportsImpl extends AbstractRepositoryPackager implements Macports {
     @Override
     void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
         ConfigureUtil.configure(action, commitAuthor)
+    }
+
+    @Override
+    void category(String category) {
+        if (isNotBlank(category)) {
+            categories.add(category)
+        }
+    }
+
+    @Override
+    void maintainer(String maintainer) {
+        if (isNotBlank(maintainer)) {
+            maintainers.add(maintainer)
+        }
     }
 
     org.jreleaser.model.Macports toModel() {

@@ -85,14 +85,28 @@ class ProjectImpl implements Project {
     }
 
     @Override
+    @Deprecated
     void addAuthor(String name) {
+        println('project.addAuthor() has been deprecated since 1.0.0-M2 and will be removed in the future. Use project.author() instead')
+        author(name)
+    }
+
+    @Override
+    void author(String name) {
         if (isNotBlank(name)) {
             authors.add(name.trim())
         }
     }
 
     @Override
+    @Deprecated
     void addTag(String tag) {
+        println('project.addTag() has been deprecated since 1.0.0-M2 and will be removed in the future. Use project.tag() instead')
+        this.tag(tag)
+    }
+
+    @Override
+    void tag(String tag) {
         if (isNotBlank(tag)) {
             tags.add(tag.trim())
         }

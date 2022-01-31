@@ -36,7 +36,10 @@ interface Distribution extends Activatable, ExtraProperties, Packagers {
 
     void setDistributionType(String str)
 
+    @Deprecated
     void addTag(String tag)
+
+    void tag(String tag)
 
     Java getJava()
 

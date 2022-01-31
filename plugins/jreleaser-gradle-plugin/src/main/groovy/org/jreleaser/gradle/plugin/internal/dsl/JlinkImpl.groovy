@@ -103,7 +103,14 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
     }
 
     @Override
+    @Deprecated
     void addArg(String arg) {
+        println('jlink.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use jlink.arg() instead')
+        this.arg(arg)
+    }
+
+    @Override
+    void arg(String arg) {
         if (isNotBlank(arg)) {
             args.add(arg.trim())
         }

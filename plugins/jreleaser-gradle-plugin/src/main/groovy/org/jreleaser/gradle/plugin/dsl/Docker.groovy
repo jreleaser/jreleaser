@@ -35,7 +35,7 @@ interface Docker extends DockerConfiguration, RepositoryPackager {
 
     void repository(Action<? super DockerRepository> action)
 
-    void specs(Action<? super NamedDomainObjectContainer<? extends DockerSpec>> action)
+    void specs(Action<? super NamedDomainObjectContainer<DockerSpec>> action)
 
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DockerRepository) Closure<Void> action)
 

@@ -343,9 +343,16 @@ class ChangelogImpl implements Changelog {
         }
 
         @Override
-        void hideCategory(String category) {
+        void category(String category) {
             if (isNotBlank(category)) {
                 categories.add(category.trim())
+            }
+        }
+
+        @Override
+        void contributor(String contributor) {
+            if (isNotBlank(contributor)) {
+                contributors.add(contributor.trim())
             }
         }
 

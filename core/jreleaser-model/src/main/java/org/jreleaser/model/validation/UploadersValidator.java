@@ -38,7 +38,7 @@ public abstract class UploadersValidator extends Validator {
         validateHttp(context, mode, errors);
         validateS3(context, mode, errors);
 
-        if (!upload.isEnabledSet()) {
+        if (mode.validateConfig() && !upload.isEnabledSet()) {
             upload.setEnabled(!upload.getActiveArtifactories().isEmpty() ||
                 !upload.getActiveHttps().isEmpty() ||
                 !upload.getActiveS3s().isEmpty());

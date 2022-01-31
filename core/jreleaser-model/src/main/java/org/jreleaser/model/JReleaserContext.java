@@ -344,15 +344,16 @@ public class JReleaserContext {
     private List<String> normalize(List<String> list) {
         if (list == null || list.isEmpty()) return Collections.emptyList();
 
-        for (int i = 0; i < list.size(); i++) {
-            String s = list.get(i).trim();
+        List<String> tmp = new ArrayList<>(list);
+        for (int i = 0; i < tmp.size(); i++) {
+            String s = tmp.get(i).trim();
             if (!s.contains("-")) {
                 s = StringUtils.getHyphenatedName(s);
             }
-            list.set(i, s.toLowerCase());
+            tmp.set(i, s.toLowerCase());
         }
 
-        return list;
+        return tmp;
     }
 
     public List<String> getIncludedAnnouncers() {

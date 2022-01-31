@@ -99,7 +99,14 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     }
 
     @Override
+    @Deprecated
     void addArg(String arg) {
+        println('nativeImage.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use nativeImage.arg() instead')
+        this.arg(arg)
+    }
+
+    @Override
+    void arg(String arg) {
         if (isNotBlank(arg)) {
             args.add(arg.trim())
         }
@@ -181,7 +188,14 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         }
 
         @Override
+        @Deprecated
         void addArg(String arg) {
+            println('upx.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use upx.arg() instead')
+            this.arg(arg)
+        }
+
+        @Override
+        void arg(String arg) {
             if (isNotBlank(arg)) {
                 args.add(arg.trim())
             }

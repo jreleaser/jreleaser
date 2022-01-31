@@ -60,6 +60,7 @@ interface Signing extends Activatable {
 
     ListProperty<String> getArgs()
 
+    @Deprecated
     void addArg(String arg)
 
     Command getCommand()
@@ -87,7 +88,10 @@ interface Signing extends Activatable {
 
         ListProperty<String> getArgs()
 
+        @Deprecated
         void addArg(String arg)
+
+        void arg(String arg)
     }
 
     interface Cosign {

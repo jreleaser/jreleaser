@@ -44,7 +44,10 @@ interface Jlink extends JavaAssembler {
 
     ListProperty<String> getArgs()
 
+    @Deprecated
     void addArg(String arg)
+
+    void arg(String arg)
 
     void jdeps(Action<? super Jdeps> action)
 

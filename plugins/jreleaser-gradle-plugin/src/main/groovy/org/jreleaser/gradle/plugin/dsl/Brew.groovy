@@ -38,9 +38,15 @@ interface Brew extends RepositoryPackager {
 
     MapProperty<String, String> getDependencies()
 
+    @Deprecated
     void addDependency(String key, String value)
 
+    void dependency(String key, String value)
+
+    @Deprecated
     void addDependency(String key)
+
+    void dependency(String key)
 
     Tap getTap()
 

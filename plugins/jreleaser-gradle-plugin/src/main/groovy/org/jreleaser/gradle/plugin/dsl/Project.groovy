@@ -58,9 +58,15 @@ interface Project extends ExtraProperties {
 
     ListProperty<String> getTags()
 
+    @Deprecated
     void addAuthor(String name)
 
+    void author(String name)
+
+    @Deprecated
     void addTag(String tag)
+
+    void tag(String tag)
 
     Java getJava()
 

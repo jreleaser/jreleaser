@@ -42,4 +42,8 @@ interface Macports extends RepositoryPackager {
     void repository(Action<? super Tap> action)
 
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
+
+    void category(String category)
+
+    void maintainer(String maintainer)
 }

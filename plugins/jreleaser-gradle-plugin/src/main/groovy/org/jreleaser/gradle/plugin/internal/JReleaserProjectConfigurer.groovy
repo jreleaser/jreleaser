@@ -311,7 +311,7 @@ class JReleaserProjectConfigurer {
         Path outputDirectoryPath = outputDirectory.get().asFile.toPath()
         Files.createDirectories(outputDirectoryPath)
         PrintWriter tracer = new PrintWriter(new FileOutputStream(outputDirectoryPath
-            .resolve('trace.log').toFile()))
+            .resolve('trace.log').toFile()), true)
 
         new JReleaserLoggerAdapter(project, tracer)
     }

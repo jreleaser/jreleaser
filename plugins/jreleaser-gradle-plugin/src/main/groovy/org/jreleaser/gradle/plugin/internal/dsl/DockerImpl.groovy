@@ -42,7 +42,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 class DockerImpl extends AbstractDockerConfiguration implements Docker {
-    final NamedDomainObjectContainer<DockerSpecImpl> specs
+    final NamedDomainObjectContainer<DockerSpec> specs
     final Property<Boolean> continueOnError
     final Property<String> downloadUrl
     final DockerRepositoryImpl repository
@@ -56,9 +56,9 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
         repository = objects.newInstance(DockerRepositoryImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
 
-        specs = objects.domainObjectContainer(DockerSpecImpl, new NamedDomainObjectFactory<DockerSpecImpl>() {
+        specs = objects.domainObjectContainer(DockerSpec, new NamedDomainObjectFactory<DockerSpec>() {
             @Override
-            DockerSpecImpl create(String name) {
+            DockerSpec create(String name) {
                 DockerSpecImpl spec = objects.newInstance(DockerSpecImpl, objects)
                 spec.name = name
                 return spec
@@ -83,7 +83,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     }
 
     @Override
-    void specs(Action<? super NamedDomainObjectContainer<? extends DockerSpec>> action) {
+    void specs(Action<? super NamedDomainObjectContainer<DockerSpec>> action) {
         action.execute(specs)
     }
 
@@ -116,7 +116,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
         if (repository.isSet()) packager.repository = repository.toModel()
         if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
 
-        specs.each { packager.addSpec(it.toModel()) }
+        specs.each { packager.addSpec(((DockerSpecImpl) it).toModel()) }
 
         packager
     }

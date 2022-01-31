@@ -53,15 +53,30 @@ interface DockerConfiguration extends Activatable, ExtraProperties {
 
     MapProperty<String, String> getLabels()
 
+    @Deprecated
     void addImageName(String imageName)
 
+    @Deprecated
     void addBuildArg(String buildArg)
 
+    @Deprecated
     void addPreCommand(String command)
 
+    @Deprecated
     void addPostCommand(String command)
 
+    @Deprecated
     void addLabel(String key, String value)
+
+    void imageName(String imageName)
+
+    void buildArg(String buildArg)
+
+    void preCommand(String command)
+
+    void postCommand(String command)
+
+    void label(String key, String value)
 
     NamedDomainObjectContainer<Registry> getRegistries()
 
