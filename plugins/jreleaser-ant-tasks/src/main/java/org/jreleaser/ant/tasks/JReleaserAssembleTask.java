@@ -20,41 +20,42 @@ package org.jreleaser.ant.tasks;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class JReleaserAssembleTask extends AbstractPlatformAwareJReleaserTask {
-    private List<String> assemblers;
-    private List<String> excludedAssemblers;
-    private List<String> distributions;
-    private List<String> excludedDistributions;
+public class JReleaserAssembleTask extends AbstractDistributionAwareJReleaserTask {
+    private final List<String> assemblers = new ArrayList<>();
+    private final List<String> excludedAssemblers = new ArrayList<>();
+
+    public void setAssemblers(String assemblers) {
+        this.assemblers.addAll(expandAndCollect(assemblers));
+    }
+
+    public void setExcludedAssemblers(String excludedAssemblers) {
+        this.excludedAssemblers.addAll(expandAndCollect(excludedAssemblers));
+    }
 
     public void setAssemblers(List<String> assemblers) {
-        this.assemblers = assemblers;
+        if (null != assemblers) {
+            this.assemblers.addAll(assemblers);
+        }
     }
 
     public void setExcludedAssemblers(List<String> excludedAssemblers) {
-        this.excludedAssemblers = excludedAssemblers;
-    }
-
-    public void setDistributions(List<String> distributions) {
-        this.distributions = distributions;
-    }
-
-    public void setExcludedDistributions(List<String> excludedDistributions) {
-        this.excludedDistributions = excludedDistributions;
+        if (null != excludedAssemblers) {
+            this.excludedAssemblers.addAll(excludedAssemblers);
+        }
     }
 
     @Override
     protected void doExecute(JReleaserContext context) {
         context.setIncludedAssemblers(assemblers);
         context.setExcludedAssemblers(excludedAssemblers);
-        context.setIncludedDistributions(distributions);
-        context.setExcludedDistributions(excludedDistributions);
-        Workflows.assemble(context).execute();
+        Workflows.assemble(setupContext(context)).execute();
     }
 
     @Override

@@ -20,42 +20,57 @@ package org.jreleaser.ant.tasks;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class JReleaserUploadTask extends AbstractPlatformAwareJReleaserTask {
-    private List<String> uploaderTypes;
-    private List<String> excludedUploaderTypes;
-    private List<String> uploaderNames;
-    private List<String> excludedUploaderNames;
-    private List<String> distributions;
-    private List<String> excludedDistributions;
+public class JReleaserUploadTask extends AbstractDistributionAwareJReleaserTask {
+    private final List<String> uploaderTypes = new ArrayList<>();
+    private final List<String> excludedUploaderTypes = new ArrayList<>();
+    private final List<String> uploaderNames = new ArrayList<>();
+    private final List<String> excludedUploaderNames = new ArrayList<>();
+
+    public void setUploaderTypes(String uploaderTypes) {
+        this.uploaderTypes.addAll(expandAndCollect(uploaderTypes));
+    }
+
+    public void setExcludedUploaderTypes(String excludedUploaderTypes) {
+        this.excludedUploaderTypes.addAll(expandAndCollect(excludedUploaderTypes));
+    }
+
+    public void setUploaderNames(String uploaderNames) {
+        this.uploaderNames.addAll(expandAndCollect(uploaderNames));
+    }
+
+    public void setExcludedUploaderNames(String excludedUploaderNames) {
+        this.excludedUploaderNames.addAll(expandAndCollect(excludedUploaderNames));
+    }
 
     public void setUploaderTypes(List<String> uploaderTypes) {
-        this.uploaderTypes = uploaderTypes;
+        if (null != uploaderTypes) {
+            this.uploaderTypes.addAll(uploaderTypes);
+        }
     }
 
     public void setExcludedUploaderTypes(List<String> excludedUploaderTypes) {
-        this.excludedUploaderTypes = excludedUploaderTypes;
+        if (null != excludedUploaderTypes) {
+            this.excludedUploaderTypes.addAll(excludedUploaderTypes);
+        }
     }
 
     public void setUploaderNames(List<String> uploaderNames) {
-        this.uploaderNames = uploaderNames;
+        if (null != uploaderNames) {
+            this.uploaderNames.addAll(uploaderNames);
+        }
     }
 
     public void setExcludedUploaderNames(List<String> excludedUploaderNames) {
-        this.excludedUploaderNames = excludedUploaderNames;
-    }
-
-    public void setDistributions(List<String> distributions) {
-        this.distributions = distributions;
-    }
-
-    public void setExcludedDistributions(List<String> excludedDistributions) {
-        this.excludedDistributions = excludedDistributions;
+        if (null != excludedUploaderNames) {
+            this.excludedUploaderNames.addAll(excludedUploaderNames);
+        }
     }
 
     @Override
@@ -64,8 +79,6 @@ public class JReleaserUploadTask extends AbstractPlatformAwareJReleaserTask {
         context.setExcludedUploaderTypes(excludedUploaderTypes);
         context.setIncludedUploaderNames(uploaderNames);
         context.setExcludedUploaderNames(excludedUploaderNames);
-        context.setIncludedDistributions(distributions);
-        context.setExcludedDistributions(excludedDistributions);
-        Workflows.upload(context).execute();
+        Workflows.upload(setupContext(context)).execute();
     }
 }

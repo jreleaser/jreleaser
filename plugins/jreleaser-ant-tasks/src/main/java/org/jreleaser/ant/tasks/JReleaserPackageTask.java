@@ -20,40 +20,13 @@ package org.jreleaser.ant.tasks;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
-import java.util.List;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserPackageTask extends AbstractPlatformAwareJReleaserTask {
-    private List<String> packagers;
-    private List<String> excludedPackagers;
-    private List<String> distributions;
-    private List<String> excludedDistributions;
-
-    public void setPackagers(List<String> packagers) {
-        this.packagers = packagers;
-    }
-
-    public void setExcludedPackagers(List<String> excludedPackagers) {
-        this.excludedPackagers = excludedPackagers;
-    }
-
-    public void setDistributions(List<String> distributions) {
-        this.distributions = distributions;
-    }
-
-    public void setExcludedDistributions(List<String> excludedDistributions) {
-        this.excludedDistributions = excludedDistributions;
-    }
-
+public class JReleaserPackageTask extends AbstractPackagerAwareJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setIncludedPackagers(packagers);
-        context.setExcludedPackagers(excludedPackagers);
-        context.setIncludedDistributions(distributions);
-        context.setExcludedDistributions(excludedDistributions);
-        Workflows.packageRelease(context).execute();
+        Workflows.packageRelease(setupContext(context)).execute();
     }
 }

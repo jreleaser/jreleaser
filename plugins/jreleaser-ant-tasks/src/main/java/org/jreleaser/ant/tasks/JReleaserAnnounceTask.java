@@ -20,6 +20,7 @@ package org.jreleaser.ant.tasks;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,15 +28,27 @@ import java.util.List;
  * @since 0.1.0
  */
 public class JReleaserAnnounceTask extends AbstractPlatformAwareJReleaserTask {
-    private List<String> announcers;
-    private List<String> excludedAnnouncers;
+    private final List<String> announcers = new ArrayList<>();
+    private final List<String> excludedAnnouncers = new ArrayList<>();
+
+    public void setAnnouncers(String announcers) {
+        this.announcers.addAll(expandAndCollect(announcers));
+    }
+
+    public void setExcludedAnnouncers(String excludedAnnouncers) {
+        this.excludedAnnouncers.addAll(expandAndCollect(excludedAnnouncers));
+    }
 
     public void setAnnouncers(List<String> announcers) {
-        this.announcers = announcers;
+        if (null != announcers) {
+            this.announcers.addAll(announcers);
+        }
     }
 
     public void setExcludedAnnouncers(List<String> excludedAnnouncers) {
-        this.excludedAnnouncers = excludedAnnouncers;
+        if (null != excludedAnnouncers) {
+            this.excludedAnnouncers.addAll(excludedAnnouncers);
+        }
     }
 
     @Override

@@ -35,13 +35,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -49,6 +53,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 abstract class AbstractJReleaserTask extends Task {
+    protected File basedir;
     protected File configFile;
     protected boolean dryrun;
     protected boolean gitRootSearch;
@@ -58,6 +63,10 @@ abstract class AbstractJReleaserTask extends Task {
     protected JReleaserLogger logger;
     protected Path actualConfigFile;
     protected Path actualBasedir;
+
+    public void setBasedir(File basedir) {
+        this.basedir = basedir;
+    }
 
     public void setConfigFile(File configFile) {
         this.configFile = configFile;
@@ -119,7 +128,7 @@ abstract class AbstractJReleaserTask extends Task {
     }
 
     private void resolveBasedir() {
-        actualBasedir = actualConfigFile.toAbsolutePath().getParent();
+        actualBasedir = (null != basedir ? basedir.toPath() : actualConfigFile.toAbsolutePath().getParent()).normalize();
     }
 
     protected abstract void doExecute(JReleaserContext context);
@@ -135,7 +144,8 @@ abstract class AbstractJReleaserTask extends Task {
         try {
             Files.createDirectories(getOutputDirectory());
             return new PrintWriter(new FileOutputStream(
-                getOutputDirectory().resolve("trace.log").toFile()));
+                getOutputDirectory().resolve("trace.log").toFile()),
+                true);
         } catch (IOException e) {
             throw new IllegalStateException("Could not initialize trace file", e);
         }
@@ -208,5 +218,18 @@ abstract class AbstractJReleaserTask extends Task {
             }
         }
         return list;
+    }
+
+    protected Collection<String> expandAndCollect(String input) {
+        if (isBlank(input)) return Collections.emptyList();
+
+        if (input.contains(",")) {
+            return Arrays.stream(input.split(","))
+                .map(String::trim)
+                .filter(StringUtils::isNotBlank)
+                .collect(toList());
+        }
+
+        return Collections.singletonList(input.trim());
     }
 }

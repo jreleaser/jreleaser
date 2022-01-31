@@ -19,6 +19,7 @@ package org.jreleaser.ant.tasks;
 
 import org.jreleaser.util.PlatformUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,15 +28,21 @@ import java.util.List;
  * @since 0.6.0
  */
 abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask {
+    protected final List<String> selectPlatforms = new ArrayList<>();
     protected boolean selectCurrentPlatform;
-    protected List<String> selectPlatforms;
 
     public void setSelectCurrentPlatform(boolean selectCurrentPlatform) {
         this.selectCurrentPlatform = selectCurrentPlatform;
     }
 
+    public void setSelectPlatforms(String selectPlatforms) {
+        this.selectPlatforms.addAll(expandAndCollect(selectPlatforms));
+    }
+
     public void setSelectPlatforms(List<String> selectPlatforms) {
-        this.selectPlatforms = selectPlatforms;
+        if (null != selectPlatforms) {
+            this.selectPlatforms.addAll(selectPlatforms);
+        }
     }
 
     @Override

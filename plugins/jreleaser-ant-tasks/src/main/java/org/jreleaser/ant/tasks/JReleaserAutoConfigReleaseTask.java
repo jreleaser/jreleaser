@@ -36,6 +36,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -49,9 +50,13 @@ import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
  * @since 0.3.0
  */
 public class JReleaserAutoConfigReleaseTask extends Task {
+    protected final List<String> selectPlatforms = new ArrayList<>();
+    protected final List<String> globs = new ArrayList<>();
+    private final List<String> updateSections = new ArrayList<>();
+    protected Path outputDir;
+    protected boolean selectCurrentPlatform;
     private JReleaserLogger logger;
     private Path actualBasedir;
-    protected Path outputDir;
     private File basedir;
     private boolean dryrun;
     private boolean gitRootSearch;
@@ -71,7 +76,6 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private boolean draft;
     private boolean overwrite;
     private boolean update;
-    private List<String> updateSections;
     private boolean skipTag;
     private boolean skipRelease;
     private String changelog;
@@ -82,9 +86,6 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private boolean signing;
     private boolean armored;
     private FileSet fileSet;
-    private List<String> globs;
-    protected boolean selectCurrentPlatform;
-    protected List<String> selectPlatforms;
 
     public void setDryrun(boolean dryrun) {
         this.dryrun = dryrun;
@@ -167,7 +168,9 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     }
 
     public void setUpdateSections(List<String> updateSections) {
-        this.updateSections = updateSections;
+        if (null != updateSections) {
+            this.updateSections.addAll(updateSections);
+        }
     }
 
     public void setSkipTag(boolean skipTag) {
@@ -211,7 +214,9 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     }
 
     public void setGlobs(List<String> globs) {
-        this.globs = globs;
+        if (null != globs) {
+            this.globs.addAll(globs);
+        }
     }
 
     public void setSelectCurrentPlatform(boolean selectCurrentPlatform) {
@@ -219,7 +224,9 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     }
 
     public void setSelectPlatforms(List<String> selectPlatforms) {
-        this.selectPlatforms = selectPlatforms;
+        if (null != selectPlatforms) {
+            this.selectPlatforms.addAll(selectPlatforms);
+        }
     }
 
     @Override
@@ -271,10 +278,8 @@ public class JReleaserAutoConfigReleaseTask extends Task {
 
     private Set<UpdateSection> collectUpdateSections() {
         Set<UpdateSection> set = new LinkedHashSet<>();
-        if (updateSections != null && updateSections.size() > 0) {
-            for (String updateSection : updateSections) {
-                set.add(UpdateSection.of(updateSection.trim()));
-            }
+        for (String updateSection : updateSections) {
+            set.add(UpdateSection.of(updateSection.trim()));
         }
         return set;
     }

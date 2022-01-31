@@ -28,6 +28,11 @@ import java.io.PrintWriter;
  * @since 0.1.0
  */
 public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
+    private static final String DEBUG = "[DEBUG] ";
+    private static final String INFO = "[INFO]  ";
+    private static final String WARN = "[WARN]  ";
+    private static final String ERROR = "[ERROR] ";
+
     private final Project delegate;
 
     public JReleaserLoggerAdapter(PrintWriter tracer, Project delegate) {
@@ -37,22 +42,30 @@ public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
 
     @Override
     public void debug(String message) {
-        delegate.log(formatMessage(message), Project.MSG_DEBUG);
+        String msg = DEBUG + formatMessage(message);
+        delegate.log(msg, Project.MSG_DEBUG);
+        trace(msg);
     }
 
     @Override
     public void info(String message) {
-        delegate.log(formatMessage(message), Project.MSG_INFO);
+        String msg = INFO + formatMessage(message);
+        delegate.log(msg, Project.MSG_INFO);
+        trace(msg);
     }
 
     @Override
     public void warn(String message) {
-        delegate.log(formatMessage(message), Project.MSG_WARN);
+        String msg = WARN + formatMessage(message);
+        delegate.log(msg, Project.MSG_WARN);
+        trace(msg);
     }
 
     @Override
     public void error(String message) {
-        delegate.log(formatMessage(message), Project.MSG_ERR);
+        String msg = ERROR + formatMessage(message);
+        delegate.log(msg, Project.MSG_ERR);
+        trace(msg);
     }
 
     @Override
@@ -77,21 +90,29 @@ public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
 
     @Override
     public void debug(String message, Throwable throwable) {
-        delegate.log(formatMessage(message), throwable, Project.MSG_DEBUG);
+        String msg = DEBUG + formatMessage(message);
+        delegate.log(msg, throwable, Project.MSG_DEBUG);
+        trace(msg, throwable);
     }
 
     @Override
     public void info(String message, Throwable throwable) {
-        delegate.log(formatMessage(message), throwable, Project.MSG_INFO);
+        String msg = INFO + formatMessage(message);
+        delegate.log(msg, throwable, Project.MSG_INFO);
+        trace(msg, throwable);
     }
 
     @Override
     public void warn(String message, Throwable throwable) {
-        delegate.log(formatMessage(message), throwable, Project.MSG_WARN);
+        String msg = WARN + formatMessage(message);
+        delegate.log(msg, throwable, Project.MSG_WARN);
+        trace(msg, throwable);
     }
 
     @Override
     public void error(String message, Throwable throwable) {
-        delegate.log(formatMessage(message), throwable, Project.MSG_ERR);
+        String msg = ERROR + formatMessage(message);
+        delegate.log(msg, throwable, Project.MSG_ERR);
+        trace(msg, throwable);
     }
 }

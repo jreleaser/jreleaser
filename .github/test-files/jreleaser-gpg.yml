@@ -9,7 +9,6 @@ project:
   longDescription: |
     JReleaser is a release automation tool. Its goal is to simplify creating releases and
     publishing artifacts to multiple package managers while providing customizable options.
-
     JReleaser takes inputs from popular builds tools (Ant, Maven, Gradle) such as JAR files,
     binary distributions (.zip, .tar), JLink images, or any other file that you’d like to
     publish as a Git release on popular Git services such as GitHub, GitLab, or Gitea.

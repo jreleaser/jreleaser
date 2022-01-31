@@ -24,6 +24,7 @@
              classpathref="jreleaser.classpath"/>
 
     <property name="jreleaser.skip" value="false"/>
+    <property name="jreleaser.basedir" value=""/>
     <property name="jreleaser.config.file" value=""/>
     <property name="jreleaser.dry.run" value="false"/>
     <property name="jreleaser.git.root.search" value="false"/>
@@ -39,9 +40,22 @@
     <property name="jreleaser.assembly" value="false"/>
     <property name="jreleaser.outputdir" value="build"/>
     <property name="jreleaser.select.current.platform" value="false"/>
+    <property name="jreleaser.announcers" value=""/>
+    <property name="jreleaser.assemblers" value=""/>
+    <property name="jreleaser.distributions" value=""/>
+    <property name="jreleaser.packagers" value=""/>
+    <property name="jreleaser.uploader.types" value=""/>
+    <property name="jreleaser.uploader.names" value=""/>
+    <property name="jreleaser.excluded.announcers" value=""/>
+    <property name="jreleaser.excluded.assemblers" value=""/>
+    <property name="jreleaser.excluded.distributions" value=""/>
+    <property name="jreleaser.excluded.packagers" value=""/>
+    <property name="jreleaser.excluded.uploader.types" value=""/>
+    <property name="jreleaser.excluded.uploader.names" value=""/>
 
     <target name="jreleaser-template">
         <jreleaser:template skip="${jreleaser.skip}"
+                            basedir="${jreleaser.basedir}"
                             configFile="${jreleaser.config.file}"
                             distributionName="${jreleaser.distribution.name}"
                             packagerName="${jreleaser.packager.name}"
@@ -49,7 +63,7 @@
                             distributionType="${jreleaser.distribution.type}"
                             overwrite="${jreleaser.overwrite}"
                             snapshot="${jreleaser.snapshot}"
-                            outputDir="${jreleaser.outputdir"/>
+                            outputDir="${jreleaser.outputdir}"/>
     </target>
 
     <target name="jreleaser-announce">
@@ -57,24 +71,33 @@
                             selectCurrentPlatform="${jreleaser.select.current.platform}"
                             gitRootSearch="${jreleaser.git.root.search}"
                             skip="${jreleaser.skip}"
+                            basedir="${jreleaser.basedir}"
                             configFile="${jreleaser.config.file}"
-                            outputDir="${jreleaser.outputdir"/>
+                            outputDir="${jreleaser.outputdir}"
+                            announcers="${jreleaser.announcers}"
+                            excludedAnnouncers="${jreleaser.excluded.announcers}"/>
     </target>
 
     <target name="jreleaser-assemble">
-        <jreleaser:assembler skip="${jreleaser.skip}"
-                             selectCurrentPlatform="${jreleaser.select.current.platform}"
-                             gitRootSearch="${jreleaser.git.root.search}"
-                             configFile="${jreleaser.config.file}"
-                             outputDir="${jreleaser.outputdir"/>
+        <jreleaser:assemble skip="${jreleaser.skip}"
+                            selectCurrentPlatform="${jreleaser.select.current.platform}"
+                            gitRootSearch="${jreleaser.git.root.search}"
+                            basedir="${jreleaser.basedir}"
+                            configFile="${jreleaser.config.file}"
+                            outputDir="${jreleaser.outputdir}"
+                            assemblers="${jreleaser.assemblers}"
+                            excludedAssemblers="${jreleaser.excluded.assemblers}"
+                            distributions="${jreleaser.distributions}"
+                            excludedDistributions="${jreleaser.excluded.distributions}"/>
     </target>
 
     <target name="jreleaser-changelog">
         <jreleaser:changelog dryrun="${jreleaser.dry.run}"
                              gitRootSearch="${jreleaser.git.root.search}"
                              skip="${jreleaser.skip}"
+                             basedir="${jreleaser.basedir}"
                              configFile="${jreleaser.config.file}"
-                             outputDir="${jreleaser.outputdir"/>
+                             outputDir="${jreleaser.outputdir}"/>
     </target>
 
     <target name="jreleaser-checksum">
@@ -82,8 +105,11 @@
                             selectCurrentPlatform="${jreleaser.select.current.platform}"
                             gitRootSearch="${jreleaser.git.root.search}"
                             skip="${jreleaser.skip}"
+                            basedir="${jreleaser.basedir}"
                             configFile="${jreleaser.config.file}"
-                            outputDir="${jreleaser.outputdir"/>
+                            outputDir="${jreleaser.outputdir}"
+                            distributions="${jreleaser.distributions}"
+                            excludedDistributions="${jreleaser.excluded.distributions}"/>
     </target>
 
     <target name="jreleaser-config">
@@ -91,8 +117,9 @@
                           selectCurrentPlatform="${jreleaser.select.current.platform}"
                           gitRootSearch="${jreleaser.git.root.search}"
                           assembly="${jreleaser.assembly}"
+                          basedir="${jreleaser.basedir}"
                           configFile="${jreleaser.config.file}"
-                          outputDir="${jreleaser.outputdir"/>
+                          outputDir="${jreleaser.outputdir}"/>
     </target>
 
     <target name="jreleaser-full-release">
@@ -100,8 +127,19 @@
                                 selectCurrentPlatform="${jreleaser.select.current.platform}"
                                 gitRootSearch="${jreleaser.git.root.search}"
                                 skip="${jreleaser.skip}"
+                                basedir="${jreleaser.basedir}"
                                 configFile="${jreleaser.config.file}"
-                                outputDir="${jreleaser.outputdir"/>
+                                outputDir="${jreleaser.outputdir}"
+                                announcers="${jreleaser.announcers}"
+                                excludedAnnouncers="${jreleaser.excluded.announcers}"
+                                distributions="${jreleaser.distributions}"
+                                excludedDistributions="${jreleaser.excluded.distributions}"
+                                packagers="${jreleaser.packagers}"
+                                excludedPackagers="${jreleaser.excluded.packagers}"
+                                uploaderTypes="${jreleaser.uploader.types}"
+                                excludedUploaderTypes="${jreleaser.excluded.uploader.names}"
+                                uploaderNames="${jreleaser.uploader.types}"
+                                excludedUploaderNames="${jreleaser.excluded.uploader.names}"/>
     </target>
 
     <target name="jreleaser-init">
@@ -114,8 +152,13 @@
                            selectCurrentPlatform="${jreleaser.select.current.platform}"
                            gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
+                           basedir="${jreleaser.basedir}"
                            configFile="${jreleaser.config.file}"
-                           outputDir="${jreleaser.outputdir"/>
+                           outputDir="${jreleaser.outputdir}"
+                           distributions="${jreleaser.distributions}"
+                           excludedDistributions="${jreleaser.excluded.distributions}"
+                           packagers="${jreleaser.packagers}"
+                           excludedPackagers="${jreleaser.excluded.packagers}"/>
     </target>
 
     <target name="jreleaser-publish">
@@ -123,8 +166,13 @@
                            selectCurrentPlatform="${jreleaser.select.current.platform}"
                            gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
+                           basedir="${jreleaser.basedir}"
                            configFile="${jreleaser.config.file}"
-                           outputDir="${jreleaser.outputdir"/>
+                           outputDir="${jreleaser.outputdir}"
+                           distributions="${jreleaser.distributions}"
+                           excludedDistributions="${jreleaser.excluded.distributions}"
+                           packagers="${jreleaser.packagers}"
+                           excludedPackagers="${jreleaser.excluded.packagers}"/>
     </target>
 
     <target name="jreleaser-prepare">
@@ -132,8 +180,13 @@
                            selectCurrentPlatform="${jreleaser.select.current.platform}"
                            gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
+                           basedir="${jreleaser.basedir}"
                            configFile="${jreleaser.config.file}"
-                           outputDir="${jreleaser.outputdir"/>
+                           outputDir="${jreleaser.outputdir}"
+                           distributions="${jreleaser.distributions}"
+                           excludedDistributions="${jreleaser.excluded.distributions}"
+                           packagers="${jreleaser.packagers}"
+                           excludedPackagers="${jreleaser.excluded.packagers}"/>
     </target>
 
     <target name="jreleaser-release">
@@ -141,8 +194,11 @@
                            selectCurrentPlatform="${jreleaser.select.current.platform}"
                            gitRootSearch="${jreleaser.git.root.search}"
                            skip="${jreleaser.skip}"
+                           basedir="${jreleaser.basedir}"
                            configFile="${jreleaser.config.file}"
-                           outputDir="${jreleaser.outputdir"/>
+                           outputDir="${jreleaser.outputdir}"
+                           distributions="${jreleaser.distributions}"
+                           excludedDistributions="${jreleaser.excluded.distributions}"/>
     </target>
 
     <target name="jreleaser-sign">
@@ -150,8 +206,11 @@
                         selectCurrentPlatform="${jreleaser.select.current.platform}"
                         gitRootSearch="${jreleaser.git.root.search}"
                         skip="${jreleaser.skip}"
+                        basedir="${jreleaser.basedir}"
                         configFile="${jreleaser.config.file}"
-                        outputDir="${jreleaser.outputdir"/>
+                        outputDir="${jreleaser.outputdir}"
+                        distributions="${jreleaser.distributions}"
+                        excludedDistributions="${jreleaser.excluded.distributions}"/>
     </target>
 
     <target name="jreleaser-upload">
@@ -159,7 +218,14 @@
                           selectCurrentPlatform="${jreleaser.select.current.platform}"
                           gitRootSearch="${jreleaser.git.root.search}"
                           skip="${jreleaser.skip}"
+                          basedir="${jreleaser.basedir}"
                           configFile="${jreleaser.config.file}"
-                          outputDir="${jreleaser.outputdir"/>
+                          outputDir="${jreleaser.outputdir}"
+                          distributions="${jreleaser.distributions}"
+                          excludedDistributions="${jreleaser.excluded.distributions}"
+                          uploaderTypes="${jreleaser.uploader.types}"
+                          excludedUploaderTypes="${jreleaser.excluded.uploader.names}"
+                          uploaderNames="${jreleaser.uploader.types}"
+                          excludedUploaderNames="${jreleaser.excluded.uploader.names}"/>
     </target>
 </project>
