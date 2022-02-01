@@ -19,6 +19,7 @@ package org.jreleaser.sdk.commons;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.Client;
 import feign.Feign;
 import feign.Request;
 import feign.form.FormData;
@@ -36,6 +37,12 @@ import org.jreleaser.model.uploader.spi.UploadException;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.JReleaserLogger;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -44,6 +51,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -75,7 +83,16 @@ public final class ClientUtils {
                                         int readTimeout) {
         requireNonNull(logger, "'logger' must not be null");
 
-        return Feign.builder()
+        Feign.Builder builder = Feign.builder();
+
+        if (Boolean.getBoolean("jreleaser.disableSslValidation")) {
+            logger.warn(RB.$("warn_ssl_disabled"));
+            builder = builder.client(
+                new Client.Default(nonValidatingSSLSocketFactory(),
+                    new NonValidatingHostnameVerifier()));
+        }
+
+        return builder
             .encoder(new FormEncoder(new JacksonEncoder()))
             .decoder(new JacksonDecoder())
             .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
@@ -244,6 +261,42 @@ public final class ClientUtils {
         } catch (IOException e) {
             logger.trace(e);
             throw new UploadException(e);
+        }
+    }
+
+    private static SSLSocketFactory nonValidatingSSLSocketFactory() {
+        try {
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, new TrustManager[]{new NonValidatingTrustManager()}, null);
+            return sslContext.getSocketFactory();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static class NonValidatingTrustManager implements X509TrustManager {
+        private static final X509Certificate[] EMPTY_CERTIFICATES = new X509Certificate[0];
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) {
+            // noop
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) {
+            // noop
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return EMPTY_CERTIFICATES;
+        }
+    }
+
+    private static class NonValidatingHostnameVerifier implements HostnameVerifier {
+        @Override
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
         }
     }
 }
