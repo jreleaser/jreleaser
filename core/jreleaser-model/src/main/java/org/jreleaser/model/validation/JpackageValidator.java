@@ -29,6 +29,7 @@ import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.SemVer;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -81,18 +82,7 @@ public abstract class JpackageValidator extends Validator {
         packager.enable();
 
         if (isNotBlank(jpackage.getJlink())) {
-            if (jpackage.getRuntimeImages().size() > 0) {
-                errors.configuration(RB.$("validation_jpackage_jlink_application", jpackage.getName()));
-            }
-
             Jlink jlink = context.getModel().getAssemble().findJlink(jpackage.getJlink());
-            jpackage.setJava(jlink.getJava());
-            jpackage.setMainJar(jlink.getMainJar());
-            jpackage.setJars(jlink.getJars());
-            packager.setJdk(jlink.getJdk());
-            if (isBlank(jpackage.getExecutable())) {
-                jpackage.setExecutable(jlink.getExecutable());
-            }
 
             Path baseOutputDirectory = context.getAssembleDirectory()
                 .resolve(jlink.getName())
@@ -100,6 +90,7 @@ public abstract class JpackageValidator extends Validator {
 
             String imageName = jlink.getResolvedImageName(context);
 
+            List<Artifact> candidateRuntimeImages = new ArrayList<>();
             for (Artifact targetJdk : jlink.getTargetJdks()) {
                 if (!context.isPlatformSelected(targetJdk)) continue;
 
@@ -108,7 +99,38 @@ public abstract class JpackageValidator extends Validator {
                     .resolve("work-" + platform)
                     .resolve(imageName + "-" + platform)
                     .toAbsolutePath();
-                Artifact runtimeImage = Artifact.of(path, platform);
+                candidateRuntimeImages.add(Artifact.of(path, platform));
+            }
+
+            if (jpackage.getRuntimeImages().size() > 0 && jpackage.getRuntimeImages().size() != candidateRuntimeImages.size()) {
+                errors.configuration(RB.$("validation_jpackage_jlink_application", jpackage.getName()));
+            }
+
+            int count = 0;
+            for (Artifact runtimeImage : jpackage.getRuntimeImages()) {
+                Path rp = runtimeImage.getResolvedPath(context, jpackage);
+                Path tp = runtimeImage.getResolvedTransform(context, jpackage);
+                Path path = tp != null ? tp : rp;
+                if (candidateRuntimeImages.stream()
+                    .filter(a -> a.getPath().equals(path.toString()))
+                    .findFirst().isPresent()) {
+                    count++;
+                }
+            }
+
+            if (jpackage.getRuntimeImages().size() > 0 && count != candidateRuntimeImages.size()) {
+                errors.configuration(RB.$("validation_jpackage_jlink_application", jpackage.getName()));
+            }
+
+            jpackage.setJava(jlink.getJava());
+            jpackage.setMainJar(jlink.getMainJar());
+            jpackage.setJars(jlink.getJars());
+            packager.setJdk(jlink.getJdk());
+            if (isBlank(jpackage.getExecutable())) {
+                jpackage.setExecutable(jlink.getExecutable());
+            }
+
+            for (Artifact runtimeImage : candidateRuntimeImages) {
                 runtimeImage.activate();
                 jpackage.addRuntimeImage(runtimeImage);
             }
@@ -191,7 +213,7 @@ public abstract class JpackageValidator extends Validator {
         if (mode == JReleaserContext.Mode.ASSEMBLE) {
             validateTemplate(context, jpackage, errors);
         }
-        
+
         if (packager instanceof Jpackage.Linux) {
             validateLinux(context, jpackage, (Jpackage.Linux) packager, errors);
         }
