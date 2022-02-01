@@ -269,23 +269,52 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             cmd.arg("--ignore-missing-deps");
         }
         cmd.arg("--print-module-deps");
+
         if (isNotBlank(assembler.getModuleName())) {
             cmd.arg("--module")
                 .arg(assembler.getModuleName())
                 .arg("--module-path");
-        } else {
+            calculateJarPath(jarsDirectory, platform, cmd, false);
+        } else if (!assembler.getJdeps().getTargets().isEmpty()) {
             cmd.arg("--class-path");
+            if (assembler.getJdeps().isUseWildcardInPath()) {
+                cmd.arg(
+                    jarsDirectory.resolve("universal").toAbsolutePath() +
+                        File.separator + "*" +
+                        File.pathSeparator +
+                        jarsDirectory.resolve(platform) +
+                        File.separator + "*");
+            } else {
+                calculateJarPath(jarsDirectory, platform, cmd, true);
+            }
+
+            assembler.getJdeps().getTargets().stream()
+                .map(target -> Templates.resolveTemplate(target, props))
+                .filter(StringUtils::isNotBlank)
+                .forEach(cmd::arg);
+        } else {
+            calculateJarPath(jarsDirectory, platform, cmd, false);
         }
 
-        if (assembler.getJdeps().isUseWildcardInPath()) {
-            cmd.arg(
-                jarsDirectory.resolve("universal").toAbsolutePath() +
-                    File.separator + "*" +
-                    File.pathSeparator +
-                    jarsDirectory.resolve(platform) +
-                    File.separator + "*");
-        } else {
-            try {
+        context.getLogger().debug(String.join(" ", cmd.getArgs()));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        executeCommandCapturing(cmd, out);
+
+        String output = out.toString().trim();
+        long lineCount = Arrays.stream(output.split(System.lineSeparator()))
+            .map(String::trim)
+            .count();
+
+        if (lineCount == 1 && isNotBlank(output)) {
+            return Arrays.stream(output.split(",")).collect(toSet());
+        }
+
+        throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", output));
+    }
+
+    private void calculateJarPath(Path jarsDirectory, String platform, Command cmd, boolean join) throws AssemblerProcessingException {
+        try {
+            if (join) {
                 StringBuilder pathBuilder = new StringBuilder();
 
                 pathBuilder.append(Files.list(jarsDirectory.resolve("universal"))
@@ -304,32 +333,20 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
                 }
 
                 cmd.arg(pathBuilder.toString());
-            } catch (IOException e) {
-                throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", e.getMessage()));
+            } else {
+                Files.list(jarsDirectory.resolve("universal"))
+                    .map(Path::toAbsolutePath)
+                    .map(Object::toString)
+                    .forEach(cmd::arg);
+
+                Files.list(jarsDirectory.resolve(platform))
+                    .map(Path::toAbsolutePath)
+                    .map(Object::toString)
+                    .forEach(cmd::arg);
             }
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", e.getMessage()));
         }
-
-        if (!assembler.getJdeps().getTargets().isEmpty()) {
-            assembler.getJdeps().getTargets().stream()
-                .map(target -> Templates.resolveTemplate(target, props))
-                .filter(StringUtils::isNotBlank)
-                .forEach(cmd::arg);
-        }
-
-        context.getLogger().debug(String.join(" ", cmd.getArgs()));
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        executeCommandCapturing(cmd, out);
-
-        String output = out.toString().trim();
-        long lineCount = Arrays.stream(output.split(System.lineSeparator()))
-            .map(String::trim)
-            .count();
-
-        if (lineCount == 1 && isNotBlank(output)) {
-            return Arrays.stream(output.split(",")).collect(toSet());
-        }
-
-        throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", output));
     }
 
     @Override
