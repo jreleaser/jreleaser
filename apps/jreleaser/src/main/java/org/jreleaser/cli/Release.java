@@ -61,6 +61,22 @@ public class Release extends AbstractPlatformAwareModelCommand {
             return exclude != null ? exclude.excludedDistributions : null;
         }
 
+        String[] includedUploaderTypes() {
+            return include != null ? include.includedUploaderTypes : null;
+        }
+
+        String[] includedUploaderNames() {
+            return include != null ? include.includedUploaderNames : null;
+        }
+
+        String[] excludedUploaderTypes() {
+            return exclude != null ? exclude.excludedUploaderTypes : null;
+        }
+
+        String[] excludedUploaderNames() {
+            return exclude != null ? exclude.excludedUploaderNames : null;
+        }
+
         boolean autoConfig() {
             return autoConfig != null && autoConfig.autoConfig;
         }
@@ -70,12 +86,28 @@ public class Release extends AbstractPlatformAwareModelCommand {
         @CommandLine.Option(names = {"-d", "--distribution"},
             paramLabel = "<distribution>")
         String[] includedDistributions;
+
+        @CommandLine.Option(names = {"-u", "--uploader"},
+            paramLabel = "<uploader>")
+        String[] includedUploaderTypes;
+
+        @CommandLine.Option(names = {"-un", "--uploader-name"},
+            paramLabel = "<name>")
+        String[] includedUploaderNames;
     }
 
     static class Exclude {
         @CommandLine.Option(names = {"-xd", "--exclude-distribution"},
             paramLabel = "<distribution>")
         String[] excludedDistributions;
+
+        @CommandLine.Option(names = {"-xu", "--exclude-uploader"},
+            paramLabel = "<uploader>")
+        String[] excludedUploaderTypes;
+
+        @CommandLine.Option(names = {"-xun", "--exclude-uploader-name"},
+            paramLabel = "<name>")
+        String[] excludedUploaderNames;
     }
 
     static class AutoConfigGroup {
@@ -175,7 +207,11 @@ public class Release extends AbstractPlatformAwareModelCommand {
         JReleaserContext context = super.createContext();
         if (null != composite) {
             context.setIncludedDistributions(collectEntries(composite.includedDistributions()));
+            context.setIncludedUploaderTypes(collectEntries(composite.includedUploaderTypes(), true));
+            context.setIncludedUploaderNames(collectEntries(composite.includedUploaderNames()));
             context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
+            context.setExcludedUploaderTypes(collectEntries(composite.excludedUploaderTypes(), true));
+            context.setExcludedUploaderNames(collectEntries(composite.excludedUploaderNames()));
         }
         return context;
     }

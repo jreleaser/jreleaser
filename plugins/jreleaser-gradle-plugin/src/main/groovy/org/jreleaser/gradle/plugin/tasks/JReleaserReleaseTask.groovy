@@ -35,30 +35,50 @@ import javax.inject.Inject
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserReleaseTask extends AbstractPlatformAwareJReleaserTask {
+abstract class JReleaserReleaseTask extends AbstractJReleaserDistributionTask {
     @Input
     @Optional
-    final ListProperty<String> distributions
+    final ListProperty<String> uploaderTypes
 
     @Input
     @Optional
-    final ListProperty<String> excludedDistributions
+    final ListProperty<String> excludedUploaderTypes
+
+    @Input
+    @Optional
+    final ListProperty<String> uploaderNames
+
+    @Input
+    @Optional
+    final ListProperty<String> excludedUploaderNames
 
     @Inject
     JReleaserReleaseTask(ObjectFactory objects) {
         super(objects)
-        distributions = objects.listProperty(String).convention([])
-        excludedDistributions = objects.listProperty(String).convention([])
+        uploaderTypes = objects.listProperty(String).convention([])
+        excludedUploaderTypes = objects.listProperty(String).convention([])
+        uploaderNames = objects.listProperty(String).convention([])
+        excludedUploaderNames = objects.listProperty(String).convention([])
     }
 
-    @Option(option = 'distribution', description = 'Include a distribution (OPTIONAL).')
-    void setDistribution(List<String> distributions) {
-        this.distributions.set(distributions)
+    @Option(option = 'uploader', description = 'Include an uploader by type (OPTIONAL).')
+    void setUploaderType(List<String> uploaderTypes) {
+        this.uploaderTypes.set(uploaderTypes)
     }
 
-    @Option(option = 'exclude-distribution', description = 'Exclude a distribution (OPTIONAL).')
-    void setExcludeDistribution(List<String> excludedDistributions) {
-        this.excludedDistributions.set(excludedDistributions)
+    @Option(option = 'exclude-uploader', description = 'Exclude an uploader by type (OPTIONAL).')
+    void setExcludeUploaderType(List<String> excludedUploaderTypes) {
+        this.excludedUploaderTypes.set(excludedUploaderTypes)
+    }
+
+    @Option(option = 'uploader-name', description = 'Include an uploader by name (OPTIONAL).')
+    void setUploaderName(List<String> uploaderNames) {
+        this.uploaderNames.set(uploaderNames)
+    }
+
+    @Option(option = 'exclude-uploader-name', description = 'Exclude an uploader by name (OPTIONAL).')
+    void setExcludeUploaderName(List<String> excludedUploaderNames) {
+        this.excludedUploaderNames.set(excludedUploaderNames)
     }
 
     @TaskAction
@@ -67,9 +87,11 @@ abstract class JReleaserReleaseTask extends AbstractPlatformAwareJReleaserTask {
     }
 
     protected JReleaserContext setupContext() {
-        JReleaserContext ctx = createContext()
-        ctx.includedDistributions = distributions.orNull
-        ctx.excludedDistributions = excludedDistributions.orNull
+        JReleaserContext ctx = super.setupContext()
+        ctx.includedUploaderTypes = uploaderTypes.orNull
+        ctx.excludedUploaderTypes = excludedUploaderTypes.orNull
+        ctx.includedUploaderNames = uploaderNames.orNull
+        ctx.excludedUploaderNames = excludedUploaderNames.orNull
         ctx
     }
 }

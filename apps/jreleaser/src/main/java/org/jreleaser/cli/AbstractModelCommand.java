@@ -23,6 +23,7 @@ import org.jreleaser.model.Environment;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 import picocli.CommandLine;
 
@@ -70,6 +71,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
         resolveConfigFile();
         resolveBasedir();
         initLogger();
+        PlatformUtils.resolveCurrentPlatform(logger);
         logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());
         JReleaserVersion.banner(logger.getTracer());
         logger.info($("TEXT_config_file"), actualConfigFile);

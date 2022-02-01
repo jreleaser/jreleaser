@@ -137,7 +137,7 @@
                                 packagers="${jreleaser.packagers}"
                                 excludedPackagers="${jreleaser.excluded.packagers}"
                                 uploaderTypes="${jreleaser.uploader.types}"
-                                excludedUploaderTypes="${jreleaser.excluded.uploader.names}"
+                                excludedUploaderTypes="${jreleaser.excluded.uploader.types}"
                                 uploaderNames="${jreleaser.uploader.types}"
                                 excludedUploaderNames="${jreleaser.excluded.uploader.names}"/>
     </target>
@@ -198,7 +198,11 @@
                            configFile="${jreleaser.config.file}"
                            outputDir="${jreleaser.outputdir}"
                            distributions="${jreleaser.distributions}"
-                           excludedDistributions="${jreleaser.excluded.distributions}"/>
+                           excludedDistributions="${jreleaser.excluded.distributions}"
+                           uploaderTypes="${jreleaser.uploader.types}"
+                           excludedUploaderTypes="${jreleaser.excluded.uploader.types}"
+                           uploaderNames="${jreleaser.uploader.types}"
+                           excludedUploaderNames="${jreleaser.excluded.uploader.names}"/>
     </target>
 
     <target name="jreleaser-sign">
@@ -224,7 +228,7 @@
                           distributions="${jreleaser.distributions}"
                           excludedDistributions="${jreleaser.excluded.distributions}"
                           uploaderTypes="${jreleaser.uploader.types}"
-                          excludedUploaderTypes="${jreleaser.excluded.uploader.names}"
+                          excludedUploaderTypes="${jreleaser.excluded.uploader.types}"
                           uploaderNames="${jreleaser.uploader.types}"
                           excludedUploaderNames="${jreleaser.excluded.uploader.names}"/>
     </target>
