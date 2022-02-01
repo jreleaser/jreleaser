@@ -28,6 +28,8 @@ import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.SemVer;
+import org.jreleaser.util.StringUtils;
+import org.jreleaser.util.Templates;
 import org.jreleaser.util.command.Command;
 
 import java.io.ByteArrayOutputStream;
@@ -39,6 +41,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
@@ -99,7 +102,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             jars.addAll(copyJars(context, assembler, platformJarsDirectory, platform));
 
             // resolve module names
-            Set<String> moduleNames = resolveModuleNames(context, jdkPath, jarsDirectory, platform);
+            Set<String> moduleNames = resolveModuleNames(context, jdkPath, jarsDirectory, platform, props);
             context.getLogger().debug(RB.$("assembler.resolved.module.names"), moduleNames);
             if (moduleNames.isEmpty()) {
                 throw new AssemblerProcessingException(RB.$("ERROR_assembler_no_module_names"));
@@ -246,7 +249,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         }
     }
 
-    private Set<String> resolveModuleNames(JReleaserContext context, Path jdkPath, Path jarsDirectory, String platform) throws AssemblerProcessingException {
+    private Set<String> resolveModuleNames(JReleaserContext context, Path jdkPath, Path jarsDirectory, String platform, Map<String, Object> props) throws AssemblerProcessingException {
         if (!assembler.getModuleNames().isEmpty()) {
             return assembler.getModuleNames();
         }
@@ -274,18 +277,43 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             cmd.arg("--class-path");
         }
 
-        try {
-            Files.list(jarsDirectory.resolve("universal"))
-                .map(Path::toAbsolutePath)
-                .map(Object::toString)
-                .forEach(cmd::arg);
+        if (assembler.getJdeps().isUseWildcardInPath()) {
+            cmd.arg(
+                jarsDirectory.resolve("universal").toAbsolutePath() +
+                    File.separator + "*" +
+                    File.pathSeparator +
+                    jarsDirectory.resolve(platform) +
+                    File.separator + "*");
+        } else {
+            try {
+                StringBuilder pathBuilder = new StringBuilder();
 
-            Files.list(jarsDirectory.resolve(platform))
-                .map(Path::toAbsolutePath)
-                .map(Object::toString)
+                pathBuilder.append(Files.list(jarsDirectory.resolve("universal"))
+                    .map(Path::toAbsolutePath)
+                    .map(Object::toString)
+                    .collect(joining(File.pathSeparator)));
+
+                String platformSpecific = Files.list(jarsDirectory.resolve(platform))
+                    .map(Path::toAbsolutePath)
+                    .map(Object::toString)
+                    .collect(joining(File.pathSeparator));
+
+                if (isNotBlank(platformSpecific)) {
+                    pathBuilder.append(File.pathSeparator)
+                        .append(platformSpecific);
+                }
+
+                cmd.arg(pathBuilder.toString());
+            } catch (IOException e) {
+                throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", e.getMessage()));
+            }
+        }
+
+        if (!assembler.getJdeps().getTargets().isEmpty()) {
+            assembler.getJdeps().getTargets().stream()
+                .map(target -> Templates.resolveTemplate(target, props))
+                .filter(StringUtils::isNotBlank)
                 .forEach(cmd::arg);
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", e.getMessage()));
         }
 
         context.getLogger().debug(String.join(" ", cmd.getArgs()));

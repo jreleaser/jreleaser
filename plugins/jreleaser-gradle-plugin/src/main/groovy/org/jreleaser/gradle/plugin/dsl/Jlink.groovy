@@ -66,5 +66,9 @@ interface Jlink extends JavaAssembler {
         Property<String> getMultiRelease()
 
         Property<Boolean> getIgnoreMissingDeps()
+
+        Property<Boolean> getUseWildcardInPath()
+
+        SetProperty<String> getTargets()
     }
 }

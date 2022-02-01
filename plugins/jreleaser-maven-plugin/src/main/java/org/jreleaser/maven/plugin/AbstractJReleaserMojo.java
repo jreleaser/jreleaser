@@ -31,6 +31,7 @@ import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 
 import java.io.File;
@@ -111,6 +112,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     protected JReleaserContext createContext() throws MojoExecutionException {
         try {
             JReleaserLogger logger = getLogger();
+            PlatformUtils.resolveCurrentPlatform(logger);
             Path basedir = resolveBasedir();
 
             logger.info("JReleaser {}", JReleaserVersion.getPlainVersion());

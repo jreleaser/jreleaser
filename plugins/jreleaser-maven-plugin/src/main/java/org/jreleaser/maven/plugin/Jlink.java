@@ -22,6 +22,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.2.0
@@ -146,12 +148,16 @@ public class Jlink extends AbstractJavaAssembler {
     }
 
     public static class Jdeps {
+        private final Set<String> targets = new LinkedHashSet<>();
         private String multiRelease;
         private Boolean ignoreMissingDeps;
+        private Boolean useWildcardInPath;
 
         void setAll(Jdeps jdeps) {
             this.multiRelease = jdeps.multiRelease;
             this.ignoreMissingDeps = jdeps.ignoreMissingDeps;
+            this.useWildcardInPath = jdeps.useWildcardInPath;
+            setTargets(jdeps.targets);
         }
 
         public String getMultiRelease() {
@@ -172,6 +178,43 @@ public class Jlink extends AbstractJavaAssembler {
 
         public boolean isIgnoreMissingDepsSet() {
             return ignoreMissingDeps != null;
+        }
+
+        public Boolean isUseWildcardInPath() {
+            return useWildcardInPath == null || useWildcardInPath;
+        }
+
+        public void setUseWildcardInPath(Boolean useWildcardInPath) {
+            this.useWildcardInPath = useWildcardInPath;
+        }
+
+        public boolean isUseWildcardInPathSet() {
+            return useWildcardInPath != null;
+        }
+
+        public Set<String> getTargets() {
+            return targets;
+        }
+
+        public void setTargets(Set<String> targets) {
+            this.targets.clear();
+            this.targets.addAll(targets);
+        }
+
+        public void addTargets(List<String> targets) {
+            this.targets.addAll(targets);
+        }
+
+        public void addTarget(String target) {
+            if (isNotBlank(target)) {
+                this.targets.add(target.trim());
+            }
+        }
+
+        public void removeTarget(String target) {
+            if (isNotBlank(target)) {
+                this.targets.remove(target.trim());
+            }
         }
     }
 }

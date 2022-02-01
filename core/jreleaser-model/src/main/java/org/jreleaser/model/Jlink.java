@@ -250,12 +250,16 @@ public class Jlink extends AbstractJavaAssembler {
     }
 
     public static class Jdeps implements Domain {
+        private final Set<String> targets = new LinkedHashSet<>();
         private String multiRelease;
         private Boolean ignoreMissingDeps;
+        private Boolean useWildcardInPath;
 
         void setAll(Jdeps jdeps) {
             this.multiRelease = jdeps.multiRelease;
             this.ignoreMissingDeps = jdeps.ignoreMissingDeps;
+            this.useWildcardInPath = jdeps.useWildcardInPath;
+            setTargets(jdeps.targets);
         }
 
         public String getMultiRelease() {
@@ -278,11 +282,50 @@ public class Jlink extends AbstractJavaAssembler {
             return ignoreMissingDeps != null;
         }
 
+        public Boolean isUseWildcardInPath() {
+            return useWildcardInPath == null || useWildcardInPath;
+        }
+
+        public void setUseWildcardInPath(Boolean useWildcardInPath) {
+            this.useWildcardInPath = useWildcardInPath;
+        }
+
+        public boolean isUseWildcardInPathSet() {
+            return useWildcardInPath != null;
+        }
+
+        public Set<String> getTargets() {
+            return targets;
+        }
+
+        public void setTargets(Set<String> targets) {
+            this.targets.clear();
+            this.targets.addAll(targets);
+        }
+
+        public void addTargets(List<String> targets) {
+            this.targets.addAll(targets);
+        }
+
+        public void addTarget(String target) {
+            if (isNotBlank(target)) {
+                this.targets.add(target.trim());
+            }
+        }
+
+        public void removeTarget(String target) {
+            if (isNotBlank(target)) {
+                this.targets.remove(target.trim());
+            }
+        }
+
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put("multiRelease", multiRelease);
             props.put("ignoreMissingDeps", isIgnoreMissingDeps());
+            props.put("useWildcardInPath", isUseWildcardInPath());
+            props.put("targets", targets);
             return props;
         }
     }

@@ -31,6 +31,7 @@ import org.jreleaser.model.JReleaserContext
 import org.jreleaser.model.JReleaserModel
 import org.jreleaser.model.JReleaserVersion
 import org.jreleaser.util.JReleaserLogger
+import org.jreleaser.util.PlatformUtils
 import org.jreleaser.util.StringUtils
 
 import javax.inject.Inject
@@ -84,6 +85,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
 
     protected JReleaserContext createContext() {
         JReleaserLogger logger = jlogger.get()
+        PlatformUtils.resolveCurrentPlatform(logger)
 
         logger.info('JReleaser {}', JReleaserVersion.getPlainVersion())
         JReleaserVersion.banner(logger.getTracer())

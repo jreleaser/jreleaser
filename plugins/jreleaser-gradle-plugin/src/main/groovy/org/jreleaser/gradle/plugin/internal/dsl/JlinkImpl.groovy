@@ -96,8 +96,8 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
             java.isSet() ||
             jdeps.isSet() ||
             jdk.isSet() ||
-            !moduleNames.present ||
-            !additionalModuleNames.present ||
+            moduleNames.present ||
+            additionalModuleNames.present ||
             !targetJdks.isEmpty() ||
             platform.isSet()
     }
@@ -178,23 +178,31 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
     static class JdepsImpl implements Jdeps {
         final Property<String> multiRelease
         final Property<Boolean> ignoreMissingDeps
+        final Property<Boolean> useWildcardInPath
+        final SetProperty<String> targets
 
         @Inject
         JdepsImpl(ObjectFactory objects) {
             multiRelease = objects.property(String).convention(Providers.notDefined())
             ignoreMissingDeps = objects.property(Boolean).convention(Providers.notDefined())
+            useWildcardInPath = objects.property(Boolean).convention(Providers.notDefined())
+            targets = objects.setProperty(String).convention(Providers.notDefined())
         }
 
         @Internal
         boolean isSet() {
             multiRelease.present ||
-                ignoreMissingDeps.present
+                ignoreMissingDeps.present ||
+                useWildcardInPath.present ||
+                targets.present
         }
 
         org.jreleaser.model.Jlink.Jdeps toModel() {
             org.jreleaser.model.Jlink.Jdeps jdeps = new org.jreleaser.model.Jlink.Jdeps()
             if (multiRelease.present) jdeps.multiRelease = multiRelease.get()
             if (ignoreMissingDeps.present) jdeps.ignoreMissingDeps = ignoreMissingDeps.get()
+            if (useWildcardInPath.present) jdeps.useWildcardInPath = useWildcardInPath.get()
+            jdeps.targets = (Set<String>) targets.getOrElse([] as Set)
             jdeps
         }
     }
