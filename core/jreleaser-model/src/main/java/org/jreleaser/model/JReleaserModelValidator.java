@@ -60,14 +60,14 @@ public final class JReleaserModelValidator {
             validateSigning(context, mode, errors);
             validateRelease(context, mode, errors);
         }
-        if (mode != JReleaserContext.Mode.ASSEMBLE) {
-            validateChecksum(context, mode, errors);
-            validateUploaders(context, mode, errors);
-            validatePackagers(context, mode, errors);
-            validateDistributions(context, mode, errors);
-            validateFiles(context, mode, errors);
-            validateAnnouncers(context, mode, errors);
-        }
+
+        validateChecksum(context, mode, errors);
+        validateUploaders(context, mode, errors);
+        validatePackagers(context, mode, errors);
+        validateDistributions(context, mode, errors);
+        validateFiles(context, mode, errors);
+        validateAnnouncers(context, mode, errors);
+
         postValidateProject(context, mode, errors);
         postValidateAssemblers(context, mode, errors);
         if (mode != JReleaserContext.Mode.ASSEMBLE) {
