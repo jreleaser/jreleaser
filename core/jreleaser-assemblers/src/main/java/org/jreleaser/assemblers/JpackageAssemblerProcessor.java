@@ -116,7 +116,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
         try {
             if (isNotBlank(icon) && Files.exists(context.getBasedir().resolve(icon)) && icon.endsWith(ext)) {
                 Path iconPath = context.getBasedir().resolve(icon);
-                Files.copy(iconPath, inputsDirectory.resolve(assembler.getName() + ext));
+                Files.copy(iconPath, inputsDirectory.resolve(assembler.getName() + ext), REPLACE_EXISTING);
             } else {
                 String iconResource = "META-INF/jreleaser/icons/" + p + "/duke" + ext;
                 try (InputStream in = TemplateUtils.resolveResource(context.getLogger(), iconResource)) {

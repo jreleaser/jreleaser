@@ -29,7 +29,6 @@ import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.SemVer;
 import org.jreleaser.util.StringUtils;
-import org.jreleaser.util.Templates;
 import org.jreleaser.util.command.Command;
 
 import java.io.ByteArrayOutputStream;
@@ -48,6 +47,7 @@ import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -91,7 +91,6 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             if (!context.isPlatformSelected(targetJdk)) continue;
 
             String platform = targetJdk.getPlatform();
-            String platformReplaced = assembler.getPlatform().applyReplacements(platform);
             // copy jars to assembly
             Path jarsDirectory = inputsDirectory.resolve("jars");
             Path universalJarsDirectory = jarsDirectory.resolve("universal");
@@ -289,7 +288,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             }
 
             assembler.getJdeps().getTargets().stream()
-                .map(target -> Templates.resolveTemplate(target, props))
+                .map(target -> resolveTemplate(target, props))
                 .filter(StringUtils::isNotBlank)
                 .forEach(cmd::arg);
         } else {

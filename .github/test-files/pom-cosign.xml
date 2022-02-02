@@ -511,4 +511,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>os.mac</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <jreleaser.excluded.packagers>docker</jreleaser.excluded.packagers>
+            </properties>
+        </profile>
+    </profiles>
 </project>
