@@ -98,6 +98,13 @@ public abstract class SdkmanValidator extends Validator {
             }
         }
 
+        if (isBlank(packager.getConsumerKey())) {
+            packager.setConsumerKey(parentPackager.getConsumerKey());
+        }
+        if (isBlank(packager.getConsumerToken())) {
+            packager.setConsumerToken(parentPackager.getConsumerToken());
+        }
+
         packager.setConsumerKey(
             checkProperty(context,
                 SDKMAN_CONSUMER_KEY,
