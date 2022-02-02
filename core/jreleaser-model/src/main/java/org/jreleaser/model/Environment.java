@@ -46,8 +46,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Environment implements Domain {
     private final Map<String, Object> properties = new LinkedHashMap<>();
     @JsonIgnore
+    private final Map<String, Object> sourcedProperties = new LinkedHashMap<>();
+    @JsonIgnore
     private PropertiesSource propertiesSource;
     private String variables;
+    @JsonIgnore
     private Properties vars;
     @JsonIgnore
     private Path propertiesFile;
@@ -74,7 +77,7 @@ public class Environment implements Domain {
     public void setPropertiesSource(PropertiesSource propertiesSource) {
         this.propertiesSource = propertiesSource;
         if (null != this.propertiesSource) {
-            properties.putAll(propertiesSource.getProperties());
+            sourcedProperties.putAll(propertiesSource.getProperties());
         }
     }
 
@@ -88,6 +91,10 @@ public class Environment implements Domain {
 
     public Map<String, Object> getProperties() {
         return properties;
+    }
+
+    public Map<String, Object> getSourcedProperties() {
+        return sourcedProperties;
     }
 
     public void setProperties(Map<String, Object> properties) {
@@ -125,7 +132,7 @@ public class Environment implements Domain {
             }
 
             if (null != propertiesSource) {
-                properties.putAll(propertiesSource.getProperties());
+                sourcedProperties.putAll(propertiesSource.getProperties());
             }
         }
     }
@@ -165,7 +172,8 @@ public class Environment implements Domain {
     }
 
     public boolean getBooleanProperty(String key) {
-        return properties.containsKey(key) && Boolean.parseBoolean(String.valueOf(properties.get(key)));
+        return (properties.containsKey(key) && Boolean.parseBoolean(String.valueOf(properties.get(key)))) ||
+            (sourcedProperties.containsKey(key) && Boolean.parseBoolean(String.valueOf(sourcedProperties.get(key))));
     }
 
     public interface PropertiesSource {

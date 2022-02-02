@@ -580,6 +580,7 @@ public class Project implements Domain, ExtraProperties {
             Map<String, Object> props = new LinkedHashMap<>();
             Project project = model.getProject();
             props.putAll(model.getEnvironment().getProperties());
+            props.putAll(model.getEnvironment().getSourcedProperties());
             props.put(Constants.KEY_PROJECT_NAME, project.getName());
             props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
             props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());

@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           retention-days: 10
-          name: 'jreleaser-assemble-ant-${{ matrix.job.os }}-${{ matrix.job.sign }}'
+          name: 'jreleaser-assemble-ant-${{ runner.os }}-${{ matrix.job.sign }}'
           path: |
             build/jreleaser/trace.log
             build/jreleaser/output.properties
@@ -118,7 +118,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           retention-days: 10
-          name: 'jreleaser-full-release-ant-${{ matrix.job.os }}-${{ matrix.job.sign }}'
+          name: 'jreleaser-full-release-ant-${{ runner.os }}-${{ matrix.job.sign }}'
           path: |
             build/jreleaser/trace.log
             build/jreleaser/output.properties
