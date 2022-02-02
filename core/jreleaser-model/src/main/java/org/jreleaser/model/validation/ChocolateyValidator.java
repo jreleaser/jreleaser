@@ -25,6 +25,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.Project;
 import org.jreleaser.util.Errors;
 
 import java.util.List;
@@ -122,5 +123,16 @@ public abstract class ChocolateyValidator extends Validator {
         }
 
         validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
+    }
+
+    public static void postValidateChocolatey(JReleaserContext context, Distribution distribution, Chocolatey packager, Errors errors) {
+        context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
+
+        JReleaserModel model = context.getModel();
+        Project project = model.getProject();
+
+        if (isBlank(project.getLicenseUrl())) {
+            errors.configuration(RB.$("ERROR_project_no_license_url"));
+        }
     }
 }

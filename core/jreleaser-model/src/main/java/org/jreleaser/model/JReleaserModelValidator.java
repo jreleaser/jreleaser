@@ -23,6 +23,7 @@ import static org.jreleaser.model.validation.AnnouncersValidator.validateAnnounc
 import static org.jreleaser.model.validation.AssemblersValidator.postValidateAssemblers;
 import static org.jreleaser.model.validation.AssemblersValidator.validateAssemblers;
 import static org.jreleaser.model.validation.ChecksumValidator.validateChecksum;
+import static org.jreleaser.model.validation.DistributionsValidator.postValidateDistributions;
 import static org.jreleaser.model.validation.DistributionsValidator.validateDistributions;
 import static org.jreleaser.model.validation.FilesValidator.validateFiles;
 import static org.jreleaser.model.validation.PackagersValidator.validatePackagers;
@@ -56,11 +57,11 @@ public final class JReleaserModelValidator {
         validateProject(context, mode, errors);
         validateAssemblers(context, mode, errors);
         if (context.getModel().getCommit() != null) {
+            validateSigning(context, mode, errors);
             validateRelease(context, mode, errors);
         }
         if (mode != JReleaserContext.Mode.ASSEMBLE) {
             validateChecksum(context, mode, errors);
-            validateSigning(context, mode, errors);
             validateUploaders(context, mode, errors);
             validatePackagers(context, mode, errors);
             validateDistributions(context, mode, errors);
@@ -69,5 +70,8 @@ public final class JReleaserModelValidator {
         }
         postValidateProject(context, mode, errors);
         postValidateAssemblers(context, mode, errors);
+        if (mode != JReleaserContext.Mode.ASSEMBLE) {
+            postValidateDistributions(context, mode, errors);
+        }
     }
 }

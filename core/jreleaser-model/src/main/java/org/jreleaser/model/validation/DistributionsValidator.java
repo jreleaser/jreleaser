@@ -37,6 +37,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.GitService.KEY_SKIP_RELEASE_SIGNATURES;
 import static org.jreleaser.model.validation.BrewValidator.postValidateBrew;
 import static org.jreleaser.model.validation.BrewValidator.validateBrew;
+import static org.jreleaser.model.validation.ChocolateyValidator.postValidateChocolatey;
 import static org.jreleaser.model.validation.ChocolateyValidator.validateChocolatey;
 import static org.jreleaser.model.validation.DockerValidator.validateDocker;
 import static org.jreleaser.model.validation.GofishValidator.validateGofish;
@@ -290,5 +291,27 @@ public abstract class DistributionsValidator extends Validator {
                 packager.disable();
             }
         }
+    }
+
+    public static void postValidateDistributions(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        if (!mode.validateConfig()) {
+            return;
+        }
+
+        context.getLogger().debug("distributions");
+        Map<String, Distribution> distributions = context.getModel().getDistributions();
+
+        for (Map.Entry<String, Distribution> e : distributions.entrySet()) {
+            Distribution distribution = e.getValue();
+            if (distribution.isEnabled()) {
+                postValidateDistribution(context, distribution, errors);
+            }
+        }
+    }
+
+    private static void postValidateDistribution(JReleaserContext context, Distribution distribution, Errors errors) {
+        context.getLogger().debug("distribution.{}", distribution.getName());
+
+        postValidateChocolatey(context, distribution, distribution.getChocolatey(), errors);
     }
 }
