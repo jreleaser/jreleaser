@@ -28,8 +28,11 @@ import org.jreleaser.model.packager.spi.PackagerProcessingException;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.command.Command;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL;
@@ -137,8 +140,9 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
 
         Command cmd = new Command("choco")
             .arg("pack")
-            .arg(packager.getPackageName().concat(".nuspec"));
+            .arg(packager.getPackageName() + ".nuspec");
 
+        context.getLogger().debug(String.join(" ", cmd.getArgs()));
         executeCommand(execDirectory, cmd);
     }
 
@@ -154,12 +158,28 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
             .arg(packager.getSource());
         executeCommand(execDirectory, cmd);
 
-        cmd = new Command("choco")
-            .arg("push")
-            .arg("$(ls *.nupkg | % {$_.FullName})")
-            .arg("-s")
-            .arg(packager.getSource());
+        try {
+            Optional<String> nuget = Files.list(execDirectory)
+                .map(Path::getFileName)
+                .map(Path::toString)
+                .filter(s -> s.endsWith(".nupkg"))
+                .findFirst();
 
-        executeCommand(execDirectory, cmd);
+            if (nuget.isPresent()) {
+                cmd = new Command("choco")
+                    .arg("push")
+                    .arg(nuget.get())
+                    .arg("-s")
+                    .arg(packager.getSource());
+
+                context.getLogger().debug(String.join(" ", cmd.getArgs()));
+                executeCommand(execDirectory, cmd);
+            } else {
+                throw new PackagerProcessingException(RB.$("ERROR_chocolatey_nuget_not_found",
+                    context.relativizeToBasedir(execDirectory)));
+            }
+        } catch (IOException e) {
+            throw new PackagerProcessingException(RB.$("ERROR_unexpected_error"), e);
+        }
     }
 }
