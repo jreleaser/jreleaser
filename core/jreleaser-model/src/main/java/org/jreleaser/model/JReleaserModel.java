@@ -264,8 +264,10 @@ public class JReleaserModel implements Domain {
     private void fillProjectProperties(Map<String, Object> props, Project project) {
         props.putAll(environment.getProperties());
         props.put(Constants.KEY_TIMESTAMP, timestamp);
-        props.put(Constants.KEY_COMMIT_SHORT_HASH, commit.getShortHash());
-        props.put(Constants.KEY_COMMIT_FULL_HASH, commit.getFullHash());
+        if (commit != null) {
+            props.put(Constants.KEY_COMMIT_SHORT_HASH, commit.getShortHash());
+            props.put(Constants.KEY_COMMIT_FULL_HASH, commit.getFullHash());
+        }
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());

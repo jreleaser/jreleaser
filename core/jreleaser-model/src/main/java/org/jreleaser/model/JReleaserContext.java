@@ -503,16 +503,20 @@ public class JReleaserContext {
         props.put(KEY_TIMESTAMP, model.getTimestamp());
         props.put(KEY_PLATFORM, PlatformUtils.getCurrentFull());
         props.put(KEY_PLATFORM_REPLACED, model.getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
-        props.put(KEY_COMMIT_SHORT_HASH, model.getCommit().getShortHash());
-        props.put(KEY_COMMIT_FULL_HASH, model.getCommit().getFullHash());
+        if (model.getCommit() != null) {
+            props.put(KEY_COMMIT_SHORT_HASH, model.getCommit().getShortHash());
+            props.put(KEY_COMMIT_FULL_HASH, model.getCommit().getFullHash());
+        }
         props.put(KEY_PROJECT_NAME, project.getName());
         props.put(KEY_PROJECT_VERSION, project.getVersion());
         props.put(KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
-        GitService gitService = model.getRelease().getGitService();
-        props.put(KEY_TAG_NAME, gitService.getEffectiveTagName(model));
-        if (gitService.isReleaseSupported()) {
-            props.put(KEY_RELEASE_NAME, gitService.getEffectiveReleaseName());
-            props.put(KEY_MILESTONE_NAME, gitService.getMilestone().getEffectiveName());
+        if (model.getCommit() != null) {
+            GitService gitService = model.getRelease().getGitService();
+            props.put(KEY_TAG_NAME, gitService.getEffectiveTagName(model));
+            if (gitService.isReleaseSupported()) {
+                props.put(KEY_RELEASE_NAME, gitService.getEffectiveReleaseName());
+                props.put(KEY_MILESTONE_NAME, gitService.getMilestone().getEffectiveName());
+            }
         }
         props.put("javaVersion", System.getProperty("java.version"));
 

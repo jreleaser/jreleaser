@@ -54,15 +54,19 @@ public final class JReleaserModelValidator {
 
     private static void validateModel(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
         validateProject(context, mode, errors);
-        validateChecksum(context, mode, errors);
-        validateSigning(context, mode, errors);
-        validateUploaders(context, mode, errors);
-        validateRelease(context, mode, errors);
         validateAssemblers(context, mode, errors);
-        validatePackagers(context, mode, errors);
-        validateDistributions(context, mode, errors);
-        validateFiles(context, mode, errors);
-        validateAnnouncers(context, mode, errors);
+        if (context.getModel().getCommit() != null) {
+            validateRelease(context, mode, errors);
+        }
+        if (mode != JReleaserContext.Mode.ASSEMBLE) {
+            validateChecksum(context, mode, errors);
+            validateSigning(context, mode, errors);
+            validateUploaders(context, mode, errors);
+            validatePackagers(context, mode, errors);
+            validateDistributions(context, mode, errors);
+            validateFiles(context, mode, errors);
+            validateAnnouncers(context, mode, errors);
+        }
         postValidateProject(context, mode, errors);
         postValidateAssemblers(context, mode, errors);
     }

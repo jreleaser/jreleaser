@@ -76,7 +76,9 @@ public class ModelValidator {
         context.getLogger().info(RB.$("context.creator.report.project-version"), version);
         context.getLogger().info(RB.$("context.creator.report.release"), context.getModel().getProject().isSnapshot() ? " " : " " + RB.$("not") + " ");
         context.getLogger().info(RB.$("context.creator.report.timestamp"), context.getModel().getTimestamp());
-        context.getLogger().info(RB.$("context.creator.report.head"), context.getModel().getCommit().getShortHash());
+        if (context.getModel().getCommit() != null) {
+            context.getLogger().info(RB.$("context.creator.report.head"), context.getModel().getCommit().getShortHash());
+        }
         context.getLogger().info(RB.$("context.creator.report.platform"), PlatformUtils.getCurrentFull());
     }
 }

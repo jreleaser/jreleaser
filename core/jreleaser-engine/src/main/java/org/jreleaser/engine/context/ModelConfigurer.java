@@ -41,6 +41,7 @@ public class ModelConfigurer {
         try {
             context.getModel().setCommit(GitSdk.of(context).head());
         } catch (Exception e) {
+            if (context.getMode() == JReleaserContext.Mode.ASSEMBLE) return;
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_head"), e);
         }
