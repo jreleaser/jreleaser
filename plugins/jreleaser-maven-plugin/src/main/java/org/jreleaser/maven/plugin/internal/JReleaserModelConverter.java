@@ -870,7 +870,6 @@ public final class JReleaserModelConverter {
         a.setVendor(tr(applicationPackage.getVendor()));
         a.setCopyright(tr(applicationPackage.getCopyright()));
         a.setLicenseFile(tr(applicationPackage.getLicenseFile()));
-        a.setResourceDir(tr(applicationPackage.getResourceDir()));
         return a;
     }
 
@@ -887,6 +886,7 @@ public final class JReleaserModelConverter {
         into.setJdk(convertArtifact(from.getJdk()));
         into.setTypes(tr(from.getTypes()));
         into.setInstallDir(tr(from.getInstallDir()));
+        into.setResourceDir(tr(from.getResourceDir()));
     }
 
     private static org.jreleaser.model.Jpackage.Linux convertLinux(Jpackage.Linux linux) {

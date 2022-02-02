@@ -228,15 +228,6 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             }
         }
 
-        String resourceDir = resolveTemplate(assembler.getApplicationPackage().getResourceDir(), props);
-        if (isNotBlank(resourceDir)) {
-            Path resourceDirPath = context.getBasedir().resolve(resourceDir);
-            if (Files.exists(resourceDirPath)) {
-                cmd.arg("--resource-dir")
-                    .arg(resourceDirPath.toAbsolutePath().toString());
-            }
-        }
-
         if (!assembler.getApplicationPackage().getFileAssociations().isEmpty()) {
             for (String filename : assembler.getApplicationPackage().getFileAssociations()) {
                 Path path = context.getBasedir().resolve(resolveTemplate(filename, props));
@@ -278,6 +269,15 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
         if (isNotBlank(installDir)) {
             cmd.arg("--install-dir")
                 .arg(installDir);
+        }
+
+        String resourceDir = resolveTemplate(packager.getResourceDir(), props);
+        if (isNotBlank(resourceDir)) {
+            Path resourceDirPath = context.getBasedir().resolve(resourceDir);
+            if (Files.exists(resourceDirPath)) {
+                cmd.arg("--resource-dir")
+                    .arg(resourceDirPath.toAbsolutePath().toString());
+            }
         }
 
         if (packager instanceof Jpackage.Osx) {

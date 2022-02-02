@@ -126,7 +126,7 @@ public abstract class ProjectValidator extends Validator {
             }
         }
 
-        if (isBlank(project.getLicenseUrl())) {
+        if (isBlank(project.getLicenseUrl()) && context.getModel().getCommit() != null) {
             findLicenseFile(context.getBasedir())
                 .ifPresent(path -> {
                     GitService service = context.getModel().getRelease().getGitService();

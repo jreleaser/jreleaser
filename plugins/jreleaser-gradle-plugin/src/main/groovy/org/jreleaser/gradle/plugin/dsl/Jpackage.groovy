@@ -67,8 +67,6 @@ interface Jpackage extends JavaAssembler {
         Property<String> getCopyright()
 
         Property<String> getLicenseFile()
-
-        Property<String> getResourceDir()
     }
 
     @CompileStatic
@@ -87,6 +85,8 @@ interface Jpackage extends JavaAssembler {
         ListProperty<String> getTypes()
 
         Property<String> getInstallDir()
+
+        Property<String> getResourceDir()
 
         void jdk(Action<? super Artifact> action)
 

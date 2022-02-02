@@ -109,6 +109,10 @@ public class Jpackage extends AbstractJavaAssembler {
         String getInstallDir();
 
         void setInstallDir(String installDir);
+
+        String getResourceDir();
+
+        void setResourceDir(String resourceDir);
     }
 
     public static class ApplicationPackage {
@@ -118,14 +122,12 @@ public class Jpackage extends AbstractJavaAssembler {
         private String vendor;
         private String copyright;
         private String licenseFile;
-        private String resourceDir;
 
         void setAll(ApplicationPackage applicationPackage) {
             this.appVersion = applicationPackage.appVersion;
             this.vendor = applicationPackage.vendor;
             this.copyright = applicationPackage.copyright;
             this.licenseFile = applicationPackage.licenseFile;
-            this.resourceDir = applicationPackage.resourceDir;
             setFileAssociations(applicationPackage.fileAssociations);
         }
 
@@ -168,14 +170,6 @@ public class Jpackage extends AbstractJavaAssembler {
 
         public void setLicenseFile(String licenseFile) {
             this.licenseFile = licenseFile;
-        }
-
-        public String getResourceDir() {
-            return resourceDir;
-        }
-
-        public void setResourceDir(String resourceDir) {
-            this.resourceDir = resourceDir;
         }
     }
 
@@ -230,10 +224,12 @@ public class Jpackage extends AbstractJavaAssembler {
 
         private String icon;
         private String installDir;
+        private String resourceDir;
 
         void setAll(AbstractPlatformPackager packager) {
             this.icon = packager.icon;
             this.installDir = packager.installDir;
+            this.resourceDir = packager.resourceDir;
             setJdk(packager.jdk);
             setTypes(packager.types);
         }
@@ -277,6 +273,16 @@ public class Jpackage extends AbstractJavaAssembler {
         @Override
         public void setInstallDir(String installDir) {
             this.installDir = installDir;
+        }
+
+        @Override
+        public String getResourceDir() {
+            return resourceDir;
+        }
+
+        @Override
+        public void setResourceDir(String resourceDir) {
+            this.resourceDir = resourceDir;
         }
     }
 

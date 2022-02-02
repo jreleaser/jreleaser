@@ -198,6 +198,10 @@ public class Jpackage extends AbstractJavaAssembler {
         String getInstallDir();
 
         void setInstallDir(String installDir);
+
+        String getResourceDir();
+
+        void setResourceDir(String resourceDir);
     }
 
     public static class ApplicationPackage implements Domain {
@@ -207,14 +211,12 @@ public class Jpackage extends AbstractJavaAssembler {
         private String vendor;
         private String copyright;
         private String licenseFile;
-        private String resourceDir;
 
         void setAll(ApplicationPackage applicationPackage) {
             this.appVersion = applicationPackage.appVersion;
             this.vendor = applicationPackage.vendor;
             this.copyright = applicationPackage.copyright;
             this.licenseFile = applicationPackage.licenseFile;
-            this.resourceDir = applicationPackage.resourceDir;
             setFileAssociations(applicationPackage.fileAssociations);
         }
 
@@ -259,14 +261,6 @@ public class Jpackage extends AbstractJavaAssembler {
             this.licenseFile = licenseFile;
         }
 
-        public String getResourceDir() {
-            return resourceDir;
-        }
-
-        public void setResourceDir(String resourceDir) {
-            this.resourceDir = resourceDir;
-        }
-
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> props = new LinkedHashMap<>();
@@ -274,7 +268,6 @@ public class Jpackage extends AbstractJavaAssembler {
             props.put("copyright", copyright);
             props.put("vendor", vendor);
             props.put("licenseFile", licenseFile);
-            props.put("resourceDir", resourceDir);
             props.put("fileAssociations", fileAssociations);
             return props;
         }
@@ -356,6 +349,7 @@ public class Jpackage extends AbstractJavaAssembler {
         private boolean enabled;
         private String icon;
         private String installDir;
+        private String resourceDir;
 
         protected AbstractPlatformPackager(String platform, List<String> validTypes) {
             this.platform = platform;
@@ -366,6 +360,7 @@ public class Jpackage extends AbstractJavaAssembler {
             this.icon = packager.icon;
             this.enabled = packager.enabled;
             this.installDir = packager.installDir;
+            this.resourceDir = packager.resourceDir;
             setJdk(packager.jdk);
             setTypes(packager.types);
         }
@@ -388,6 +383,16 @@ public class Jpackage extends AbstractJavaAssembler {
         @Override
         public String getPlatform() {
             return platform;
+        }
+
+        @Override
+        public String getResourceDir() {
+            return resourceDir;
+        }
+
+        @Override
+        public void setResourceDir(String resourceDir) {
+            this.resourceDir = resourceDir;
         }
 
         @Override
@@ -443,6 +448,7 @@ public class Jpackage extends AbstractJavaAssembler {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put("enabled", isEnabled());
             props.put("icon", icon);
+            props.put("resourceDir", resourceDir);
             props.put("types", types);
             props.put("jdk", jdk.asMap(full));
             props.put("installDir", installDir);
