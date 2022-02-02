@@ -63,6 +63,7 @@ public class Chocolatey extends AbstractRepositoryPackager {
 
     private final ChocolateyBucket bucket = new ChocolateyBucket();
     private String packageName;
+    private String packageVersion;
     private String username;
     private String apiKey;
     private String title;
@@ -77,6 +78,7 @@ public class Chocolatey extends AbstractRepositoryPackager {
     void setAll(Chocolatey choco) {
         super.setAll(choco);
         this.packageName = choco.packageName;
+        this.packageVersion = choco.packageVersion;
         this.username = choco.username;
         this.apiKey = choco.apiKey;
         this.title = choco.title;
@@ -96,6 +98,14 @@ public class Chocolatey extends AbstractRepositoryPackager {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public String getPackageVersion() {
+        return packageVersion;
+    }
+
+    public void setPackageVersion(String packageVersion) {
+        this.packageVersion = packageVersion;
     }
 
     public String getUsername() {
@@ -162,6 +172,7 @@ public class Chocolatey extends AbstractRepositoryPackager {
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
         props.put("packageName", packageName);
+        props.put("packageVersion", packageVersion);
         props.put("username", username);
         props.put("apiKey", isNotBlank(getResolvedApiKey()) ? HIDE : UNSET);
         props.put("remoteBuild", isRemoteBuild());

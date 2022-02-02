@@ -26,6 +26,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Chocolatey extends AbstractRepositoryPackager {
     private final Bucket bucket = new Bucket();
     private String packageName;
+    private String packageVersion;
     private String username;
     private String apiKey;
     private String title;
@@ -36,6 +37,7 @@ public class Chocolatey extends AbstractRepositoryPackager {
     void setAll(Chocolatey choco) {
         super.setAll(choco);
         this.packageName = choco.packageName;
+        this.packageVersion = choco.packageVersion;
         this.username = choco.username;
         this.apiKey = choco.apiKey;
         this.title = choco.title;
@@ -51,6 +53,14 @@ public class Chocolatey extends AbstractRepositoryPackager {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public String getPackageVersion() {
+        return packageVersion;
+    }
+
+    public void setPackageVersion(String packageVersion) {
+        this.packageVersion = packageVersion;
     }
 
     public String getUsername() {

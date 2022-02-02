@@ -1162,6 +1162,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Chocolatey t = new org.jreleaser.model.Chocolatey();
         convertPackager(packager, t);
         t.setPackageName(tr(packager.getPackageName()));
+        t.setPackageVersion(tr(packager.getPackageVersion()));
         t.setUsername(tr(packager.getUsername()));
         t.setApiKey(tr(packager.getApiKey()));
         t.setTitle(tr(packager.getTitle()));

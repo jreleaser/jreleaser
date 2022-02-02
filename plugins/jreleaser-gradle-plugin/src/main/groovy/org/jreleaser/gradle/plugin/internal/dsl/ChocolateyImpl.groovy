@@ -38,6 +38,7 @@ import javax.inject.Inject
 @CompileStatic
 class ChocolateyImpl extends AbstractRepositoryPackager implements Chocolatey {
     final Property<String> packageName
+    final Property<String> packageVersion
     final Property<String> username
     final Property<String> apiKey
     final Property<String> title
@@ -51,6 +52,7 @@ class ChocolateyImpl extends AbstractRepositoryPackager implements Chocolatey {
     ChocolateyImpl(ObjectFactory objects) {
         super(objects)
         packageName = objects.property(String).convention(Providers.notDefined())
+        packageVersion = objects.property(String).convention(Providers.notDefined())
         username = objects.property(String).convention(Providers.notDefined())
         apiKey = objects.property(String).convention(Providers.notDefined())
         title = objects.property(String).convention(Providers.notDefined())
@@ -66,6 +68,7 @@ class ChocolateyImpl extends AbstractRepositoryPackager implements Chocolatey {
     boolean isSet() {
         super.isSet() ||
             packageName.present ||
+            packageVersion.present ||
             username.present ||
             apiKey.present ||
             title.present ||
@@ -103,6 +106,7 @@ class ChocolateyImpl extends AbstractRepositoryPackager implements Chocolatey {
         if (bucket.isSet()) packager.bucket = bucket.toChocolateyBucket()
         if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
         if (packageName.present) packager.packageName = packageName.get()
+        if (packageVersion.present) packager.packageVersion = packageVersion.get()
         if (username.present) packager.username = username.get()
         if (apiKey.present) packager.apiKey = apiKey.get()
         if (title.present) packager.title = title.get()

@@ -30,6 +30,8 @@ import org.gradle.api.provider.Property
 interface Chocolatey extends RepositoryPackager {
     Property<String> getPackageName()
 
+    Property<String> getPackageVersion()
+
     Property<String> getUsername()
 
     Property<String> getApiKey()

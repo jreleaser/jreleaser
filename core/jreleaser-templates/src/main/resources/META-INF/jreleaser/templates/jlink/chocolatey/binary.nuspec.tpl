@@ -5,7 +5,7 @@
   <metadata>
     <!-- required -->
     <id>{{chocolateyPackageName}}</id>
-    <version>{{projectVersion}}</version>
+    <version>{{chocolateyPackageVersion}}</version>
     <authors>{{projectAuthorsByComma}}</authors>
     <description>{{projectLongDescription}}</description>
     <!-- optional -->

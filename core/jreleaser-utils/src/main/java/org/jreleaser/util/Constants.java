@@ -208,6 +208,7 @@ public interface Constants {
 
     // Chocolatey
     String KEY_CHOCOLATEY_PACKAGE_NAME = "chocolateyPackageName";
+    String KEY_CHOCOLATEY_PACKAGE_VERSION = "chocolateyPackageVersion";
     String KEY_CHOCOLATEY_USERNAME = "chocolateyUsername";
     String KEY_CHOCOLATEY_TITLE = "chocolateyTitle";
     String KEY_CHOCOLATEY_ICON_URL = "chocolateyIconUrl";

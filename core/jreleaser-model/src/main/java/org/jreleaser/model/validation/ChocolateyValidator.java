@@ -26,8 +26,16 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
+import org.jreleaser.util.CalVer;
+import org.jreleaser.util.ChronVer;
+import org.jreleaser.util.CustomVersion;
 import org.jreleaser.util.Errors;
+import org.jreleaser.util.JavaModuleVersion;
+import org.jreleaser.util.JavaRuntimeVersion;
+import org.jreleaser.util.SemVer;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import static org.jreleaser.model.Chocolatey.CHOCOLATEY_API_KEY;
@@ -49,7 +57,8 @@ public abstract class ChocolateyValidator extends Validator {
         if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
             packager.setActive(parentPackager.getActive());
         }
-        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        Project project = context.getModel().getProject();
+        if (!packager.resolveEnabled(project, distribution)) return;
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
             packager.disable();
@@ -87,6 +96,13 @@ public abstract class ChocolateyValidator extends Validator {
             }
         }
 
+        if (isBlank(packager.getPackageVersion())) {
+            packager.setPackageVersion(parentPackager.getPackageVersion());
+            if (isBlank(packager.getPackageVersion())) {
+                packager.setPackageVersion(model.getProject().getResolvedVersion());
+            }
+        }
+
         if (isBlank(packager.getUsername())) {
             packager.setUsername(service.getOwner());
         }
@@ -113,6 +129,10 @@ public abstract class ChocolateyValidator extends Validator {
         }
 
         if (!packager.isRemoteBuild()) {
+            if (isBlank(packager.getApiKey())) {
+                packager.setApiKey(parentPackager.getApiKey());
+            }
+
             packager.setApiKey(
                 checkProperty(context,
                     CHOCOLATEY_API_KEY,
@@ -123,6 +143,103 @@ public abstract class ChocolateyValidator extends Validator {
         }
 
         validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
+
+        // packageVersion must be #, #.#, #.#.#, #.#.#.#, #.#.#.yyyyMMdd
+        // tag is allowed but only if separated by -
+        try {
+            String packageVersion = packager.getPackageVersion();
+            switch (project.versionPattern().getType()) {
+                case SEMVER:
+                    checkSemver(context, distribution, packager, SemVer.of(packageVersion), errors);
+                    break;
+                case JAVA_RUNTIME:
+                    checkJavaRuntime(context, distribution, packager, JavaRuntimeVersion.of(packageVersion), errors);
+                    break;
+                case JAVA_MODULE:
+                    checkJavaModule(context, distribution, packager, JavaModuleVersion.of(packageVersion), errors);
+                    break;
+                case CALVER:
+                    checkCalVer(context, distribution, packager, CalVer.of(project.versionPattern().getFormat(), packageVersion), errors);
+                    break;
+                case CHRONVER:
+                    checkChronVer(context, distribution, packager, ChronVer.of(packageVersion), errors);
+                    break;
+                case CUSTOM:
+                default:
+                    checkCustomVersion(context, distribution, packager, CustomVersion.of(packageVersion), errors);
+            }
+        } catch (IllegalArgumentException e) {
+            // invalid
+            errors.configuration(RB.$("validation_chocolatey_package_version", packager.getPackageVersion()));
+        }
+    }
+
+    private static void checkSemver(JReleaserContext context, Distribution distribution, Chocolatey packager, SemVer version, Errors errors) {
+        if (version.hasBuild()) {
+            throw new IllegalArgumentException();
+        }
+
+        if ("-".equals(version.getTagsep())) return;
+
+        String tag = version.getTag();
+
+        boolean integer = false;
+        boolean date = false;
+        // tag is either an integer
+        try {
+            Integer.parseInt(tag);
+            integer = true;
+
+            // or follows the yyyyMMdd format
+            if (tag.length() == 8) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+                try {
+                    dateFormat.parse(tag);
+                    date = true;
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException();
+                }
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException();
+        }
+
+        if (!date && !integer) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void checkJavaRuntime(JReleaserContext context, Distribution distribution, Chocolatey packager, JavaRuntimeVersion version, Errors errors) {
+        if (version.hasBuild()) {
+            throw new IllegalArgumentException();
+        }
+
+        if (!version.hasPrerelease() && version.hasOptional()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void checkJavaModule(JReleaserContext context, Distribution distribution, Chocolatey packager, JavaModuleVersion version, Errors errors) {
+        if (version.hasBuild()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void checkCalVer(JReleaserContext context, Distribution distribution, Chocolatey packager, CalVer version, Errors errors) {
+
+    }
+
+    private static void checkChronVer(JReleaserContext context, Distribution distribution, Chocolatey packager, ChronVer version, Errors errors) {
+        if (version.hasChangeset()) {
+            ChronVer.Changeset changeset = version.getChangeset();
+            if (changeset.hasTag() || changeset.hasChange2()) {
+                throw new IllegalArgumentException();
+            }
+        }
+    }
+
+    private static void checkCustomVersion(JReleaserContext context, Distribution distribution, Chocolatey packager, CustomVersion version, Errors errors) {
+
     }
 
     public static void postValidateChocolatey(JReleaserContext context, Distribution distribution, Chocolatey packager, Errors errors) {

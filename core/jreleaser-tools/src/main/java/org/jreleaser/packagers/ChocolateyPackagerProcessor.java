@@ -39,6 +39,7 @@ import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_BUCKET_REPO_URL;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_ICON_URL;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_PACKAGE_NAME;
+import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_PACKAGE_VERSION;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_SOURCE;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_TITLE;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_USERNAME;
@@ -105,6 +106,7 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
             gitService.getResolvedRepoCloneUrl(context.getModel(), packager.getBucket().getOwner(), packager.getBucket().getResolvedName()));
 
         props.put(KEY_CHOCOLATEY_PACKAGE_NAME, getPackager().getPackageName());
+        props.put(KEY_CHOCOLATEY_PACKAGE_VERSION, getPackager().getPackageVersion());
         props.put(KEY_CHOCOLATEY_USERNAME, getPackager().getUsername());
         props.put(KEY_CHOCOLATEY_TITLE, getPackager().getTitle());
         props.put(KEY_CHOCOLATEY_ICON_URL, resolveTemplate(getPackager().getIconUrl(), props));

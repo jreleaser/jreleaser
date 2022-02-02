@@ -86,6 +86,10 @@ public class SemVer implements Version<SemVer> {
         return patch;
     }
 
+    public String getTagsep() {
+        return tagsep;
+    }
+
     public String getTag() {
         return tag;
     }
