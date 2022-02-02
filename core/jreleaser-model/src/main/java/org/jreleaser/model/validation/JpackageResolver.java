@@ -60,8 +60,8 @@ public abstract class JpackageResolver extends Validator {
                     .findFirst();
 
                 if (!file.isPresent()) {
-                    errors.assembly("Missing outputs for " + jpackage.getType() + "." + jpackage.getName() +
-                        ". Distribution " + jpackage.getName() + " has not been assembled.");
+                    errors.assembly(RB.$("validation_missing_assembly",
+                        jpackage.getType(), jpackage.getName(), jpackage.getName()));
                 } else {
                     Artifact artifact = Artifact.of(file.get(), platform);
                     artifact.setExtraProperties(jpackage.getExtraProperties());

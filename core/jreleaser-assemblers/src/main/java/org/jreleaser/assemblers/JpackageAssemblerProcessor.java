@@ -245,7 +245,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
         executeCommandCapturing(cmd, out);
 
         // replace only if not linux
-        if (!PlatformUtils.isLinux(platform)) {
+        if (!PlatformUtils.isLinux(platform) && assembler.isAttachPlatform()) {
             try {
                 Optional<Path> artifact = Files.list(assembleDirectory)
                     .filter(path -> path.getFileName().toString().endsWith(type))

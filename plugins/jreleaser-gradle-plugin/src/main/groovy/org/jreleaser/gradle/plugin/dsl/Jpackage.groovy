@@ -32,6 +32,8 @@ import org.gradle.api.provider.Property
 interface Jpackage extends JavaAssembler {
     Property<String> getJlink()
 
+    Property<Boolean> getAttachPlatform()
+
     void runtimeImage(Action<? super Artifact> action)
 
     void applicationPackage(Action<? super ApplicationPackage> action)

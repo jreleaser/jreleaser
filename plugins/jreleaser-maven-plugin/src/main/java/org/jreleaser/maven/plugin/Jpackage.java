@@ -35,6 +35,7 @@ public class Jpackage extends AbstractJavaAssembler {
     private final Osx osx = new Osx();
 
     private String jlink;
+    private Boolean attachPlatform;
 
     public String getJlink() {
         return jlink;
@@ -42,6 +43,18 @@ public class Jpackage extends AbstractJavaAssembler {
 
     public void setJlink(String jlink) {
         this.jlink = jlink;
+    }
+
+    public boolean isAttachPlatformSet() {
+        return attachPlatform != null;
+    }
+
+    public boolean isAttachPlatform() {
+        return attachPlatform != null && attachPlatform;
+    }
+
+    public void setAttachPlatform(Boolean attachPlatform) {
+        this.attachPlatform = attachPlatform;
     }
 
     public Set<Artifact> getRuntimeImages() {

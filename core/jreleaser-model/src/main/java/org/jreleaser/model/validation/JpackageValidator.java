@@ -112,8 +112,7 @@ public abstract class JpackageValidator extends Validator {
                 Path tp = runtimeImage.getResolvedTransform(context, jpackage);
                 Path path = tp != null ? tp : rp;
                 if (candidateRuntimeImages.stream()
-                    .filter(a -> a.getPath().equals(path.toString()))
-                    .findFirst().isPresent()) {
+                    .anyMatch(a -> a.getPath().equals(path.toString()))) {
                     count++;
                 }
             }

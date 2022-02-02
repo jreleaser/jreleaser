@@ -47,6 +47,7 @@ public class Jpackage extends AbstractJavaAssembler {
     private final Osx osx = new Osx();
 
     private String jlink;
+    private Boolean attachPlatform;
 
     public Jpackage() {
         super(TYPE);
@@ -60,6 +61,7 @@ public class Jpackage extends AbstractJavaAssembler {
     void setAll(Jpackage jpackage) {
         super.setAll(jpackage);
         this.jlink = jpackage.jlink;
+        this.attachPlatform = jpackage.attachPlatform;
         setRuntimeImages(jpackage.runtimeImages);
         setApplicationPackage(jpackage.applicationPackage);
         setLauncher(jpackage.launcher);
@@ -74,6 +76,18 @@ public class Jpackage extends AbstractJavaAssembler {
 
     public void setJlink(String jlink) {
         this.jlink = jlink;
+    }
+
+    public boolean isAttachPlatformSet() {
+        return attachPlatform != null;
+    }
+
+    public boolean isAttachPlatform() {
+        return attachPlatform != null && attachPlatform;
+    }
+
+    public void setAttachPlatform(Boolean attachPlatform) {
+        this.attachPlatform = attachPlatform;
     }
 
     public Set<Artifact> getRuntimeImages() {
@@ -145,6 +159,7 @@ public class Jpackage extends AbstractJavaAssembler {
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
         props.put("jlink", jlink);
+        props.put("attachPlatform", isAttachPlatform());
         Map<String, Map<String, Object>> mapped = new LinkedHashMap<>();
         int i = 0;
         for (Artifact runtimeImage : getRuntimeImages()) {

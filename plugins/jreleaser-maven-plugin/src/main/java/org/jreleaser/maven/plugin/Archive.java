@@ -50,7 +50,7 @@ public class Archive extends AbstractAssembler {
     }
 
     public boolean isAttachPlatformSet() {
-        return attachPlatform;
+        return attachPlatform != null;
     }
 
     public boolean isAttachPlatform() {
