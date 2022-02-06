@@ -179,7 +179,7 @@ public abstract class ChocolateyValidator extends Validator {
             throw new IllegalArgumentException();
         }
 
-        if ("-".equals(version.getTagsep())) return;
+        if (!version.hasTag() || "-".equals(version.getTagsep())) return;
 
         String tag = version.getTag();
 
