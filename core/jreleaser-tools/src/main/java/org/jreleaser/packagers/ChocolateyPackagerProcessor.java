@@ -77,9 +77,13 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
 
     @Override
     protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
-        super.doPublishDistribution(distribution, props);
-
         if (packager.isRemoteBuild()) {
+            super.doPublishDistribution(distribution, props);
+            return;
+        }
+
+        if (context.isDryrun()) {
+            context.getLogger().error(RB.$("dryrun.set"));
             return;
         }
 
