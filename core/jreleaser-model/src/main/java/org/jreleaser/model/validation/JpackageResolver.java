@@ -25,9 +25,10 @@ import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+
+import static org.jreleaser.util.FileUtils.listFilesAndProcess;
 
 /**
  * @author Andres Almiray
@@ -55,9 +56,9 @@ public abstract class JpackageResolver extends Validator {
 
         for (String type : packager.getTypes()) {
             try {
-                Optional<Path> file = Files.list(baseOutputDirectory)
-                    .filter(path -> path.getFileName().toString().endsWith(type))
-                    .findFirst();
+                Optional<Path> file = listFilesAndProcess(baseOutputDirectory, files ->
+                    files.filter(path -> path.getFileName().toString().endsWith(type))
+                        .findFirst());
 
                 if (!file.isPresent()) {
                     errors.assembly(RB.$("validation_missing_assembly",

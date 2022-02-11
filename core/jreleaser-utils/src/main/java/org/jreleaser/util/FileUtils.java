@@ -62,7 +62,10 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import java.util.zip.ZipOutputStream;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
@@ -102,6 +105,18 @@ public final class FileUtils {
 
     private FileUtils() {
         //noop
+    }
+
+    public static void listFilesAndConsume(Path path, Consumer<Stream<Path>> consumer) throws IOException {
+        try (Stream<Path> files = Files.list(path)) {
+            consumer.accept(files);
+        }
+    }
+
+    public static <T> T listFilesAndProcess(Path path, Function<Stream<Path>, T> function) throws IOException {
+        try (Stream<Path> files = Files.list(path)) {
+            return function.apply(files);
+        }
     }
 
     public static Optional<Path> findLicenseFile(Path basedir) {

@@ -39,12 +39,15 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.FileUtils.listFilesAndConsume;
+import static org.jreleaser.util.FileUtils.listFilesAndProcess;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.Templates.resolveTemplate;
@@ -146,7 +149,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
 
             try {
                 Path platformJarsDirectory = jarsDirectory.resolve(platform).toAbsolutePath();
-                if (Files.list(platformJarsDirectory).count() > 1) {
+                if (listFilesAndProcess(platformJarsDirectory, Stream::count) > 1) {
                     modulePath += File.pathSeparator + platformJarsDirectory;
                 }
             } catch (IOException e) {
@@ -316,15 +319,16 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             if (join) {
                 StringBuilder pathBuilder = new StringBuilder();
 
-                pathBuilder.append(Files.list(jarsDirectory.resolve("universal"))
-                    .map(Path::toAbsolutePath)
-                    .map(Object::toString)
-                    .collect(joining(File.pathSeparator)));
+                String s = listFilesAndProcess(jarsDirectory.resolve("universal"), files ->
+                    files.map(Path::toAbsolutePath)
+                        .map(Object::toString)
+                        .collect(joining(File.pathSeparator)));
+                pathBuilder.append(s);
 
-                String platformSpecific = Files.list(jarsDirectory.resolve(platform))
-                    .map(Path::toAbsolutePath)
-                    .map(Object::toString)
-                    .collect(joining(File.pathSeparator));
+                String platformSpecific = listFilesAndProcess(jarsDirectory.resolve(platform), files ->
+                    files.map(Path::toAbsolutePath)
+                        .map(Object::toString)
+                        .collect(joining(File.pathSeparator)));
 
                 if (isNotBlank(platformSpecific)) {
                     pathBuilder.append(File.pathSeparator)
@@ -333,15 +337,15 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
 
                 cmd.arg(pathBuilder.toString());
             } else {
-                Files.list(jarsDirectory.resolve("universal"))
-                    .map(Path::toAbsolutePath)
-                    .map(Object::toString)
-                    .forEach(cmd::arg);
+                listFilesAndConsume(jarsDirectory.resolve("universal"), files ->
+                    files.map(Path::toAbsolutePath)
+                        .map(Object::toString)
+                        .forEach(cmd::arg));
 
-                Files.list(jarsDirectory.resolve(platform))
-                    .map(Path::toAbsolutePath)
-                    .map(Object::toString)
-                    .forEach(cmd::arg);
+                listFilesAndConsume(jarsDirectory.resolve(platform), files ->
+                    files.map(Path::toAbsolutePath)
+                        .map(Object::toString)
+                        .forEach(cmd::arg));
             }
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", e.getMessage()));

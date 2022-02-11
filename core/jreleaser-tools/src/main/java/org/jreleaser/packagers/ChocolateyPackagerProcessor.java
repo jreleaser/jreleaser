@@ -29,7 +29,6 @@ import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.command.Command;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
@@ -45,6 +44,7 @@ import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_TITLE;
 import static org.jreleaser.util.Constants.KEY_CHOCOLATEY_USERNAME;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.util.Constants.KEY_PROJECT_LICENSE_URL;
+import static org.jreleaser.util.FileUtils.listFilesAndProcess;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
@@ -165,11 +165,11 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
         executeCommand(execDirectory, cmd);
 
         try {
-            Optional<String> nuget = Files.list(execDirectory)
-                .map(Path::getFileName)
-                .map(Path::toString)
-                .filter(s -> s.endsWith(".nupkg"))
-                .findFirst();
+            Optional<String> nuget = listFilesAndProcess(execDirectory, files ->
+                files.map(Path::getFileName)
+                    .map(Path::toString)
+                    .filter(s -> s.endsWith(".nupkg"))
+                    .findFirst());
 
             if (nuget.isPresent()) {
                 cmd = new Command("choco")

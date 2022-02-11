@@ -44,6 +44,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.FileUtils.listFilesAndProcess;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
@@ -247,9 +248,9 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
         // replace only if not linux
         if (!PlatformUtils.isLinux(platform) && assembler.isAttachPlatform()) {
             try {
-                Optional<Path> artifact = Files.list(assembleDirectory)
-                    .filter(path -> path.getFileName().toString().endsWith(type))
-                    .findFirst();
+                Optional<Path> artifact = listFilesAndProcess(assembleDirectory, files ->
+                    files.filter(path -> path.getFileName().toString().endsWith(type))
+                        .findFirst());
 
                 if (artifact.isPresent()) {
                     String dest = artifact.get().getFileName().toString()
