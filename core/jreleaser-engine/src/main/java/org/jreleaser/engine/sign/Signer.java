@@ -80,32 +80,34 @@ public class Signer {
 
     public static void sign(JReleaserContext context) throws SigningException {
         context.getLogger().info(RB.$("signing.header"));
-        if (!context.getModel().getSigning().isEnabled()) {
-            context.getLogger().info(RB.$("signing.not.enabled"));
-            return;
-        }
-
         context.getLogger().increaseIndent();
         context.getLogger().setPrefix("sign");
 
-        if (context.getModel().getSigning().getMode() == Signing.Mode.COMMAND) {
-            cmdSign(context);
-        } else if (context.getModel().getSigning().getMode() == Signing.Mode.COSIGN) {
-            cosignSign(context);
-        } else {
-            bcSign(context);
+        if (!context.getModel().getSigning().isEnabled()) {
+            context.getLogger().info(RB.$("signing.not.enabled"));
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
+            return;
         }
 
-        context.getLogger().restorePrefix();
-        context.getLogger().decreaseIndent();
+        try {
+            if (context.getModel().getSigning().getMode() == Signing.Mode.COMMAND) {
+                cmdSign(context);
+            } else if (context.getModel().getSigning().getMode() == Signing.Mode.COSIGN) {
+                cosignSign(context);
+            } else {
+                bcSign(context);
+            }
+        } finally {
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
+        }
     }
 
     private static void cmdSign(JReleaserContext context) throws SigningException {
         List<FilePair> files = collectArtifacts(context, pair -> isValid(context, null, pair));
         if (files.isEmpty()) {
             context.getLogger().info(RB.$("signing.no.match"));
-            context.getLogger().restorePrefix();
-            context.getLogger().decreaseIndent();
             return;
         }
 
@@ -115,8 +117,6 @@ public class Signer {
 
         if (files.isEmpty()) {
             context.getLogger().info(RB.$("signing.up.to.date"));
-            context.getLogger().restorePrefix();
-            context.getLogger().decreaseIndent();
             return;
         }
 
@@ -158,8 +158,6 @@ public class Signer {
         List<FilePair> files = collectArtifacts(context, forceSign, pair -> isValid(context, cosign, thePublicKeyFile, pair));
         if (files.isEmpty()) {
             context.getLogger().info(RB.$("signing.no.match"));
-            context.getLogger().restorePrefix();
-            context.getLogger().decreaseIndent();
             return;
         }
 
@@ -169,8 +167,6 @@ public class Signer {
 
         if (files.isEmpty()) {
             context.getLogger().info(RB.$("signing.up.to.date"));
-            context.getLogger().restorePrefix();
-            context.getLogger().decreaseIndent();
             return;
         }
 
@@ -189,8 +185,6 @@ public class Signer {
         List<FilePair> files = collectArtifacts(context, pair -> isValid(context, keyring, pair));
         if (files.isEmpty()) {
             context.getLogger().info(RB.$("signing.no.match"));
-            context.getLogger().restorePrefix();
-            context.getLogger().decreaseIndent();
             return;
         }
 
@@ -200,8 +194,6 @@ public class Signer {
 
         if (files.isEmpty()) {
             context.getLogger().info(RB.$("signing.up.to.date"));
-            context.getLogger().restorePrefix();
-            context.getLogger().decreaseIndent();
             return;
         }
 
