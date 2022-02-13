@@ -22,7 +22,7 @@ jobs:
       - name: Pack
         shell: powershell
         run: |
-          choco pack {{distributionName}}/${{=<% %>=}}{{ env.PACKAGE_NAME }}<%={{ }}=%>.nuspec
+          choco pack ${{=<% %>=}}{{ env.PACKAGE_NAME }}<%={{ }}=%>
 
       - name: Publish
         shell: powershell
