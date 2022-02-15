@@ -222,17 +222,27 @@ public class Jpackage extends AbstractJavaAssembler {
     public static class ApplicationPackage implements Domain {
         private final List<String> fileAssociations = new ArrayList<>();
 
+        private String appName;
         private String appVersion;
         private String vendor;
         private String copyright;
         private String licenseFile;
 
         void setAll(ApplicationPackage applicationPackage) {
+            this.appName = applicationPackage.appName;
             this.appVersion = applicationPackage.appVersion;
             this.vendor = applicationPackage.vendor;
             this.copyright = applicationPackage.copyright;
             this.licenseFile = applicationPackage.licenseFile;
             setFileAssociations(applicationPackage.fileAssociations);
+        }
+
+        public String getAppName() {
+            return appName;
+        }
+
+        public void setAppName(String appName) {
+            this.appName = appName;
         }
 
         public String getAppVersion() {
@@ -279,6 +289,7 @@ public class Jpackage extends AbstractJavaAssembler {
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> props = new LinkedHashMap<>();
+            props.put("appName", appName);
             props.put("appVersion", appVersion);
             props.put("copyright", copyright);
             props.put("vendor", vendor);

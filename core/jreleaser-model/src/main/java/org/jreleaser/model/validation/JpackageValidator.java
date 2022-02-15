@@ -183,6 +183,10 @@ public abstract class JpackageValidator extends Validator {
             packager.setTypes(singletonList(packager.getValidTypes().get(0)));
         }
 
+        if (isBlank(applicationPackage.getAppName())) {
+            applicationPackage.setAppName(jpackage.getName());
+        }
+
         if (isBlank(applicationPackage.getAppVersion())) {
             applicationPackage.setAppVersion(project.getResolvedVersion());
         }
@@ -233,7 +237,7 @@ public abstract class JpackageValidator extends Validator {
         }
 
         if (isBlank(packager.getPackageName())) {
-            packager.setPackageName(jpackage.getName());
+            packager.setPackageName(jpackage.getApplicationPackage().getAppName());
         }
         if (isNotBlank(packager.getPackageName()) && packager.getPackageName().length() > 16) {
             errors.configuration(RB.$("validation_jpackage_invalid_mac_package_name",
@@ -243,7 +247,7 @@ public abstract class JpackageValidator extends Validator {
 
     private static void validateLinux(JReleaserContext context, Jpackage jpackage, Jpackage.Linux packager, Errors errors) {
         if (isBlank(packager.getPackageName())) {
-            packager.setPackageName(jpackage.getName());
+            packager.setPackageName(jpackage.getApplicationPackage().getAppName());
         }
         if (isBlank(packager.getLicense())) {
             packager.setLicense(context.getModel().getProject().getLicense());

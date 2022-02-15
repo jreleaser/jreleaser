@@ -62,6 +62,8 @@ interface Jpackage extends JavaAssembler {
     interface ApplicationPackage {
         ListProperty<String> getFileAssociations()
 
+        Property<String> getAppName()
+
         Property<String> getAppVersion()
 
         Property<String> getVendor()

@@ -185,6 +185,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
     @CompileStatic
     static class ApplicationPackageImpl implements ApplicationPackage {
         final ListProperty<String> fileAssociations
+        final Property<String> appName
         final Property<String> appVersion
         final Property<String> vendor
         final Property<String> copyright
@@ -192,6 +193,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
 
         @Inject
         ApplicationPackageImpl(ObjectFactory objects) {
+            appName = objects.property(String).convention(Providers.notDefined())
             appVersion = objects.property(String).convention(Providers.notDefined())
             vendor = objects.property(String).convention(Providers.notDefined())
             copyright = objects.property(String).convention(Providers.notDefined())
@@ -201,7 +203,8 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
 
         @Internal
         boolean isSet() {
-            appVersion.present ||
+            appName.present ||
+                appVersion.present ||
                 vendor.present ||
                 copyright.present ||
                 licenseFile.present ||
@@ -210,6 +213,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
 
         org.jreleaser.model.Jpackage.ApplicationPackage toModel() {
             org.jreleaser.model.Jpackage.ApplicationPackage a = new org.jreleaser.model.Jpackage.ApplicationPackage()
+            a.appName = appName.orNull
             a.appVersion = appVersion.orNull
             a.vendor = vendor.orNull
             a.copyright = copyright.orNull

@@ -867,6 +867,7 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Jpackage.ApplicationPackage convertApplicationPackage(Jpackage.ApplicationPackage applicationPackage) {
         org.jreleaser.model.Jpackage.ApplicationPackage a = new org.jreleaser.model.Jpackage.ApplicationPackage();
         a.setFileAssociations(tr(applicationPackage.getFileAssociations()));
+        a.setAppName(tr(applicationPackage.getAppName()));
         a.setAppVersion(tr(applicationPackage.getAppVersion()));
         a.setVendor(tr(applicationPackage.getVendor()));
         a.setCopyright(tr(applicationPackage.getCopyright()));
