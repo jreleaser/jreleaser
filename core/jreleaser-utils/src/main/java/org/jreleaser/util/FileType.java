@@ -44,7 +44,7 @@ public enum FileType {
     TAR_XZ("tar.xz"),
     TBZ2("tbz2"),
     TGZ("tgz"),
-    TXZ("tXz"),
+    TXZ("txz"),
     ZIP("zip");
 
     private final String type;

@@ -330,7 +330,7 @@ public final class FileUtils {
                     try (OutputStream o = Files.newOutputStream(file.toPath())) {
                         IOUtils.copy(in, o);
                         Files.setLastModifiedTime(file.toPath(), FileTime.from(entry.getLastModifiedDate().toInstant()));
-                        chmod(file, getEntryMode(entry));
+                        chmod(file, getEntryMode(entry, file));
                     }
                 }
             }
@@ -358,18 +358,22 @@ public final class FileUtils {
         return "";
     }
 
-    private static int getEntryMode(ArchiveEntry entry) {
+    private static int getEntryMode(ArchiveEntry entry, File file) {
         if (entry instanceof TarArchiveEntry) {
-            return getEntryMode(entry, ((TarArchiveEntry) entry).getMode());
+            return getEntryMode(entry, ((TarArchiveEntry) entry).getMode(), file);
         }
-        return getEntryMode(entry, ((ZipArchiveEntry) entry).getUnixMode());
+        return getEntryMode(entry, ((ZipArchiveEntry) entry).getUnixMode(), file);
     }
 
-    private static int getEntryMode(ArchiveEntry entry, int mode) {
+    private static int getEntryMode(ArchiveEntry entry, int mode, File file) {
         int unixMode = mode & 0777;
         if (unixMode == 0) {
             if (entry.isDirectory()) {
                 unixMode = 0755;
+            } else if ("bin".equalsIgnoreCase(file.getParentFile().getName())) {
+                // zipEntry.unixMode returns 0 most times even if the entry is executable
+                // force executable bit only if parent dir == 'bin'
+                unixMode = 0777;
             } else {
                 unixMode = 0644;
             }
