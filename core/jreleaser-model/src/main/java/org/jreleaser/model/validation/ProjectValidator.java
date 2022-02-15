@@ -79,6 +79,8 @@ public abstract class ProjectValidator extends Validator {
                 "project.snapshot.label",
                 project.getSnapshot().getLabel(),
                 DEFAULT_SNAPSHOT_LABEL));
+        // eager resolve
+        project.getSnapshot().getResolvedLabel(context.getModel());
 
         project.getSnapshot().setFullChangelog(
             checkProperty(context,
