@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.jreleaser.util.Templates.resolveTemplate;
+
 /**
  * @author Andres Almiray
  * @since 0.10.0
@@ -235,6 +237,18 @@ public class Jpackage extends AbstractJavaAssembler {
             this.copyright = applicationPackage.copyright;
             this.licenseFile = applicationPackage.licenseFile;
             setFileAssociations(applicationPackage.fileAssociations);
+        }
+
+        public String getResolvedAppName(JReleaserContext context, Jpackage jpackage) {
+            Map<String, Object> props = context.getModel().props();
+            props.putAll(jpackage.props());
+            return resolveTemplate(appName, props);
+        }
+
+        public String getResolvedAppVersion(JReleaserContext context, Jpackage jpackage) {
+            Map<String, Object> props = context.getModel().props();
+            props.putAll(jpackage.props());
+            return resolveTemplate(appVersion, props);
         }
 
         public String getAppName() {

@@ -192,15 +192,16 @@ public abstract class JpackageValidator extends Validator {
         }
 
         // validate appVersion
+        String appVersion = applicationPackage.getResolvedAppVersion(context, jpackage);
         try {
-            SemVer v = SemVer.of(applicationPackage.getAppVersion());
+            SemVer v = SemVer.of(appVersion);
             if (isNotBlank(v.getBuild()) && isNotBlank(v.getTag()) &&
                 v.getMajor() <= 0) {
-                errors.configuration(RB.$("validation_jpackage_invalid_appversion", applicationPackage.getAppVersion()));
+                errors.configuration(RB.$("validation_jpackage_invalid_appversion", appVersion));
             }
         } catch (IllegalArgumentException e) {
             // can't use this value
-            errors.configuration(RB.$("validation_jpackage_invalid_appversion", applicationPackage.getAppVersion()));
+            errors.configuration(RB.$("validation_jpackage_invalid_appversion", appVersion));
         }
 
         if (isBlank(applicationPackage.getVendor())) {
@@ -246,9 +247,6 @@ public abstract class JpackageValidator extends Validator {
     }
 
     private static void validateLinux(JReleaserContext context, Jpackage jpackage, Jpackage.Linux packager, Errors errors) {
-        if (isBlank(packager.getPackageName())) {
-            packager.setPackageName(jpackage.getApplicationPackage().getAppName());
-        }
         if (isBlank(packager.getLicense())) {
             packager.setLicense(context.getModel().getProject().getLicense());
         }
