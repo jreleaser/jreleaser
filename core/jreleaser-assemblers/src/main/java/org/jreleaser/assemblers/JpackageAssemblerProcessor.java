@@ -45,7 +45,9 @@ import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.FileUtils.listFilesAndProcess;
+import static org.jreleaser.util.PlatformUtils.isWindows;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.quote;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
@@ -105,7 +107,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
         String p = "linux";
         String ext = ".png";
 
-        if (PlatformUtils.isWindows(platform)) {
+        if (isWindows(platform)) {
             p = "windows";
             ext = ".ico";
         } else if (PlatformUtils.isMac(platform)) {
@@ -155,6 +157,10 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
         runtimeImageByPlatform.get().setPath(adjustedImage.toAbsolutePath().toString());
     }
 
+    private String maybeQuote(String str) {
+        return isWindows() ? quote(str) : str;
+    }
+
     private void jpackage(JReleaserContext context, String type, Path workDirectory, Map<String, Object> props) throws AssemblerProcessingException {
         Jpackage.PlatformPackager packager = assembler.getResolvedPlatformPackager();
         Path jdkPath = packager.getJdk().getEffectivePath(context, assembler);
@@ -179,10 +185,12 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
 
         String appName = assembler.getApplicationPackage().getAppName();
         String appVersion = assembler.getApplicationPackage().getAppVersion();
+        String vendor = assembler.getApplicationPackage().getVendor();
+        String copyright = assembler.getApplicationPackage().getCopyright();
 
         Path jpackageExecutable = jdkPath
             .resolve("bin")
-            .resolve(PlatformUtils.isWindows() ? "jpackage.exe" : "jpackage")
+            .resolve(isWindows() ? "jpackage.exe" : "jpackage")
             .toAbsolutePath();
 
         Command cmd = new Command(jpackageExecutable.toAbsolutePath().toString(), true)
@@ -193,7 +201,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             .arg("--input")
             .arg(inputsDirectory.resolve("files").toAbsolutePath().toString())
             .arg("--name")
-            .arg(appName)
+            .arg(maybeQuote(appName))
             .arg("--main-class")
             .arg(assembler.getJava().getMainClass())
             .arg("--main-jar")
@@ -203,11 +211,11 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             .arg("--app-version")
             .arg(appVersion)
             .arg("--vendor")
-            .arg(assembler.getApplicationPackage().getVendor())
+            .arg(maybeQuote(vendor))
             .arg("--copyright")
-            .arg(assembler.getApplicationPackage().getCopyright())
+            .arg(maybeQuote(copyright))
             .arg("--description")
-            .arg(context.getModel().getProject().getDescription());
+            .arg(maybeQuote(context.getModel().getProject().getDescription()));
 
         // Launcher
         for (String argument : assembler.getLauncher().getArguments()) {
@@ -216,7 +224,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
         }
         for (String javaOption : assembler.getLauncher().getJavaOptions()) {
             cmd.arg("--java-options")
-                .arg(javaOption);
+                .arg(maybeQuote(javaOption));
         }
 
         // ApplicationPackage
@@ -376,7 +384,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
         }
         if (isNotBlank(packager.getMenuGroup())) {
             cmd.arg("--win-menu-group")
-                .arg(packager.getMenuGroup());
+                .arg(maybeQuote(packager.getMenuGroup()));
         }
         if (isNotBlank(packager.getUpgradeUuid())) {
             cmd.arg("--win-upgrade-uuid")
