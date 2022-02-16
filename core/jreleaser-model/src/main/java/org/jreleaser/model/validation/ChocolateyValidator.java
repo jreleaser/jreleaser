@@ -243,10 +243,10 @@ public abstract class ChocolateyValidator extends Validator {
     }
 
     public static void postValidateChocolatey(JReleaserContext context, Distribution distribution, Chocolatey packager, Errors errors) {
+        if (!packager.isEnabled()) return;
         context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
 
-        JReleaserModel model = context.getModel();
-        Project project = model.getProject();
+        Project project = context.getModel().getProject();
 
         if (isBlank(project.getLicenseUrl())) {
             errors.configuration(RB.$("ERROR_project_no_license_url"));
