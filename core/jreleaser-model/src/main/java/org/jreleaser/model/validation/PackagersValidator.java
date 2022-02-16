@@ -133,6 +133,7 @@ public abstract class PackagersValidator extends Validator {
     }
 
     private static void validateSdkman(JReleaserContext context, Sdkman packager, Errors errors) {
+        packager.resolveEnabled(context.getModel().getProject());
         validateTimeout(packager);
     }
 

@@ -64,6 +64,14 @@ public abstract class SdkmanAnnouncerValidator extends Validator {
                 errors,
                 context.isDryrun()));
 
+        Sdkman sdkmanPackager = context.getModel().getPackagers().getSdkman();
+        if (isBlank(sdkman.getConsumerKey()) && sdkmanPackager.isEnabled()) {
+            sdkman.setConsumerKey(sdkmanPackager.getConsumerKey());
+        }
+        if (isBlank(sdkman.getConsumerToken()) && sdkmanPackager.isEnabled()) {
+            sdkman.setConsumerToken(sdkmanPackager.getConsumerToken());
+        }
+
         if (isBlank(sdkman.getReleaseNotesUrl())) {
             sdkman.setReleaseNotesUrl(context.getModel().getRelease().getGitService().getReleaseNotesUrl());
         }
