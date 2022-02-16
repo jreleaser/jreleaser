@@ -28,6 +28,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -39,6 +41,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public class CommandExecutor {
     private final JReleaserLogger logger;
     private final boolean quiet;
+    private final Map<String, String> environment = new LinkedHashMap<String, String>();
 
     public CommandExecutor(JReleaserLogger logger) {
         this(logger, false);
@@ -47,6 +50,16 @@ public class CommandExecutor {
     public CommandExecutor(JReleaserLogger logger, boolean quiet) {
         this.logger = logger;
         this.quiet = quiet;
+    }
+
+    public CommandExecutor environment(Map<String,String> env) {
+        environment.putAll(env);
+        return this;
+    }
+
+    public CommandExecutor environment(String name, String value) {
+        environment.put(name, value);
+        return this;
     }
 
     public int executeCommand(ProcessExecutor processExecutor) throws CommandException {
@@ -115,7 +128,8 @@ public class CommandExecutor {
 
     private ProcessExecutor createProcessExecutor(Command command) throws CommandException {
         try {
-            return new ProcessExecutor(command.asCommandLine());
+            return new ProcessExecutor(command.asCommandLine())
+                .environment(environment);
         } catch (IOException e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e);
         }

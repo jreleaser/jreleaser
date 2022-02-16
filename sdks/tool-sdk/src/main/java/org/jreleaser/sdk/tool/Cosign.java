@@ -22,7 +22,6 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.command.Command;
 import org.jreleaser.util.command.CommandException;
 import org.jreleaser.util.command.CommandExecutor;
-import org.jreleaser.util.io.RepeatableInputStream;
 import org.jreleaser.util.signing.SigningException;
 
 import java.io.ByteArrayInputStream;
@@ -64,19 +63,19 @@ public class Cosign extends AbstractTool {
     }
 
     public Path generateKeyPair(byte[] password) throws SigningException {
-        ByteArrayInputStream in = new ByteArrayInputStream(password);
         Command command = tool.asCommand()
             .arg("generate-key-pair");
 
         Path homeDir = resolveJReleaserHomeDir();
         try {
             executeCommand(() -> new CommandExecutor(context.getLogger(), true)
-                .executeCommandWithInput(homeDir, command, new RepeatableInputStream(in)));
+                .environment("COSIGN_PASSWORD", new String(password))
+                .executeCommand(homeDir, command));
         } catch (CommandException e) {
             throw new SigningException(RB.$("ERROR_unexpected_generate_key_pair"), e);
         }
 
-        context.getLogger().info(RB.$("cosign_generated_keys_at"), homeDir.toAbsolutePath());
+        context.getLogger().info(RB.$("cosign.generated.keys.at"), homeDir.toAbsolutePath());
         return homeDir.resolve("cosign.key");
     }
 
