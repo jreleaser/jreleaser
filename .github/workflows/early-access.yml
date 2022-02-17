@@ -29,7 +29,7 @@ jobs:
           echo ::set-output name=VERSION::$(cat VERSION)
 
   assemble:
-    needs: [precheck]
+    needs: precheck
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Assemble on ${{ matrix.os }}'
     strategy:
@@ -95,7 +95,7 @@ jobs:
             out/jreleaser/assemble/jreleaser-installer/jpackage/*.rpm
 
   release:
-    needs: [precheck,assemble]
+    needs: [precheck, assemble]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     runs-on: ubuntu-latest
     steps:
@@ -104,11 +104,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download all build artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v2
-
-      - name: Display downloaded artifacts
-        run: ls -R artifacts
 
       - name: Setup Java
         uses: actions/setup-java@v2
@@ -155,9 +152,9 @@ jobs:
         uses: jreleaser/release-action@v1
         with:
           version: early-access
-          arguments: full-release -DjpackageDir=artifacts
+          arguments: full-release -PjpackageDir=artifacts
         env:
-          JRELEASER_PROJECT_VERSION: ${{ steps.vars.outputs.version }}
+          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}

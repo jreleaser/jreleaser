@@ -89,11 +89,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download all build artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v2
-
-      - name: Display downloaded artifacts
-        run: ls -R artifacts
+        with:
+          name: artifacts
+          path: artifacts
 
       - name: Setup Java
         uses: actions/setup-java@v2
@@ -115,16 +115,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradlew-
 
-      - name: Set version
+      - name: Version
         run: |
           VERSION=${{ github.event.inputs.version }}
           echo $VERSION > VERSION
-          git add VERSION
-          sed -i -e "s/^\:project-version\:\ .*/:project-version: ${VERSION}/g" README.adoc
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "GitHub Action"
-          git commit -a -m "Releasing version $VERSION"
-          git push origin main
 
       - name: Build
         run: |
@@ -142,6 +136,15 @@ jobs:
           -PsonatypeUsername=${{ secrets.SONATYPE_USERNAME }} \
           -PsonatypePassword=${{ secrets.SONATYPE_PASSWORD }} \
           build publishToSonatype publishPlugins -S
+
+      - name: Commit version
+        run: |
+          git add VERSION
+          sed -i -e "s/^\:project-version\:\ .*/:project-version: ${VERSION}/g" README.adoc
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Action"
+          git commit -a -m "Releasing version $VERSION"
+          git push origin main
 
       - name: Assemble
         uses: jreleaser/release-action@v1
@@ -165,7 +168,7 @@ jobs:
         uses: jreleaser/release-action@v1
         with:
           version: early-access
-          arguments: full-release -DjpackageDir=artifacts
+          arguments: full-release -PjpackageDir=artifacts
         env:
           JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -205,7 +208,7 @@ jobs:
           VERSION=${{ github.event.inputs.version }}
           echo $VERSION > VERSION
           git add VERSION
-          git config --global user.email "jreleaser@kordamp.org"
-          git config --global user.name "jreleaserbot"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Action"
           git commit -a -m "Releasing version $VERSION"
           git push origin main
