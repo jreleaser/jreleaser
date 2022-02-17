@@ -10,6 +10,7 @@ env:
 
 jobs:
   precheck:
+    name: Precheck
     if: github.repository == 'jreleaser/jreleaser' && startsWith(github.event.head_commit.message, 'Releasing version') != true
     runs-on: ubuntu-latest
     outputs:
@@ -95,6 +96,7 @@ jobs:
             out/jreleaser/assemble/jreleaser-installer/jpackage/*.rpm
 
   release:
+    name: Release
     needs: [precheck, assemble]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     runs-on: ubuntu-latest

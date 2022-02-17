@@ -50,6 +50,7 @@ release:
       format: '- {{commitShortHash}} {{commitTitle}}'
       contributors:
         format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
+      contentTemplate: 'src/jreleaser/changelog.tpl'
       labelers:
         - label: 'merge_pull'
           title: 'Merge pull'
