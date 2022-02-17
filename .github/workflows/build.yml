@@ -3,13 +3,17 @@ name: Build
 on:
   pull_request:
 
+env:
+  JAVA_VERSION: '11'
+  JAVA_DISTRO: 'zulu'
+
 jobs:
   build:
     name: Build
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     if: startsWith(github.event.head_commit.message, 'Releasing version') != true
 
@@ -19,8 +23,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
-          java-version: 11
-          distribution: 'zulu'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
 
       - uses: actions/cache@v2
         with:
@@ -38,10 +42,3 @@ jobs:
 
       - name: Build
         run: ./gradlew build -S
-
-      - name: Show Reports
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: reports-${{ runner.os }}
-          path: build/

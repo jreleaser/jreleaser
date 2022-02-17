@@ -4,22 +4,30 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Release version"
+        description: 'Release version'
         required: true
+
+env:
+  JAVA_VERSION: '11'
+  JAVA_DISTRO: 'zulu'
+
 jobs:
-  release:
-    name: Release
-    runs-on: ubuntu-latest
+  assemble:
+    name: 'Assemble on ${{ matrix.os }}'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
-          java-version: 11
-          distribution: 'zulu'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
 
       - uses: actions/cache@v2
         with:
@@ -35,7 +43,79 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradlew-
 
-      - name: Set release version
+      - name: Set version
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+          echo $VERSION > VERSION
+
+      - name: Build
+        run: ./gradlew -Prelease=true assemble -S
+
+      - name: Assemble
+        uses: jreleaser/release-action@v1
+        with:
+          version: early-access
+          arguments: assemble -scp
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+
+      - name: JReleaser assemble output
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: jreleaser-assemble-${{ runner.os }}
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+
+      - name: Upload installers
+        uses: actions/upload-artifact@v2
+        with:
+          retention-days: 1
+          name: artifacts
+          path: |
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.pkg
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.msi
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.exe
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.deb
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.rpm
+
+  release:
+    needs: assemble
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v2
+
+      - name: Display downloaded artifacts
+        run: ls -R artifacts
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlew-
+
+      - name: Set version
         run: |
           VERSION=${{ github.event.inputs.version }}
           echo $VERSION > VERSION
@@ -67,7 +147,7 @@ jobs:
         uses: jreleaser/release-action@v1
         with:
           version: early-access
-          arguments: assemble
+          arguments: assemble -xs jpackage
         env:
           JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -85,7 +165,7 @@ jobs:
         uses: jreleaser/release-action@v1
         with:
           version: early-access
-          arguments: full-release
+          arguments: full-release -DjpackageDir=artifacts
         env:
           JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -110,7 +190,6 @@ jobs:
             out/jreleaser/output.properties
 
   update:
-    name: Update version
     needs: release
     runs-on: ubuntu-latest
     steps:

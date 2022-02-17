@@ -2,6 +2,8 @@ environment:
   properties:
     jdkPathPrefix: 'apps/jreleaser/build/jdks'
     jdkFilePrefix: 'zulu17.30.15-ca-jdk17.0.1'
+    jpackageDir: out/jreleaser/assemble/jreleaser-installer/jpackage
+    skipJpackageResolver: true
 
 project:
   name: jreleaser
@@ -167,6 +169,27 @@ assemble:
       jars:
         - pattern: 'apps/jreleaser/build/dependencies/flat/*.jar'
 
+  jpackage:
+    jreleaser-installer:
+      active: always
+      jlink: jreleaser-standalone
+      applicationPackage:
+        appName: jreleaser
+        appVersion: '{{projectVersionNumber}}'
+        vendor: JReleaser
+      osx:
+        types: [pkg]
+        packageName: JReleaser
+        packageIdentifier: org.jreleaser.cli
+        icon: 'src/media/jreleaser.icns'
+      linux:
+        types: [deb,rpm]
+        maintainer: jreleaser@kordamp.org
+        icon: 'src/media/icon_256x256.png'
+      windows:
+        types: [msi,exe]
+        icon: 'src/media/jreleaser.ico'
+
 distributions:
   jreleaser:
     java:
@@ -283,6 +306,25 @@ distributions:
       repository:
         active: release
         commitMessage: 'jreleaser {{tagName}}'
+
+  jreleaser-installer:
+    type: NATIVE_PACKAGE
+    artifacts:
+      - path: '{{jpackageDir}}/jreleaser-{{projectVersionNumber}}.pkg'
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.pkg'
+        platform: 'osx-x86_64'
+      - path: '{{jpackageDir}}/jreleaser_{{projectVersionNumber}}-1_amd64.deb'
+        transform: '{{distributionName}}/{{distributionName}}_{{projectEffectiveVersion}}-1_amd64.deb'
+        platform: 'linux-x86_64'
+      - path: '{{jpackageDir}}/jreleaser-{{projectVersionNumber}}-1.x86_64.rpm'
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}-1.x86_64.rpm'
+        platform: 'linux-x86_64'
+      - path: '{{jpackageDir}}/jreleaser-{{projectVersionNumber}}.msi'
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.msi'
+        platform: 'windows-x86_64'
+      - path: '{{jpackageDir}}/jreleaser-{{projectVersionNumber}}.exe'
+        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.exe'
+        platform: 'windows-x86_64'
 
 files:
   artifacts:
