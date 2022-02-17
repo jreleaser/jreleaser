@@ -19,4 +19,6 @@ dependencies {
     api project(':jreleaser-model')
     api project(':git-sdk')
     api project(':tool-sdk')
+
+    compileOnly "org.graalvm.nativeimage:svm:$graalVersion"
 }

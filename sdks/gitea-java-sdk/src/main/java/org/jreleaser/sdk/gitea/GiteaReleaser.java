@@ -43,6 +43,7 @@ import static org.jreleaser.util.StringUtils.capitalize;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class GiteaReleaser extends AbstractReleaser {
     public GiteaReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);

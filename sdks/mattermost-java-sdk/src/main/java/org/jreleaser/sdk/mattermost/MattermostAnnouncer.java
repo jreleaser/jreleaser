@@ -34,6 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class MattermostAnnouncer implements Announcer {
     private final JReleaserContext context;
 

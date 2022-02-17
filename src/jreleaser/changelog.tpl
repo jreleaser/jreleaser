@@ -33,3 +33,8 @@ These binaries provide their own Java runtime.
 * {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-1_amd64.deb{{/f_release_download_url}}
 * {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm{{/f_release_download_url}}
 * {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi{{/f_release_download_url}}
+
+### 💻 Native Executables
+
+* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip{{/f_release_download_url}}
+* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}}

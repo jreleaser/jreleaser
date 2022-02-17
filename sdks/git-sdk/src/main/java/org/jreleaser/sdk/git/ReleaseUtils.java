@@ -29,6 +29,7 @@ import java.io.IOException;
  * @author Andres Almiray
  * @since 0.7.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public final class ReleaseUtils {
     private ReleaseUtils() {
 

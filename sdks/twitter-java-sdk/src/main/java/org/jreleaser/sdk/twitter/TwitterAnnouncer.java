@@ -27,6 +27,7 @@ import org.jreleaser.model.announcer.spi.Announcer;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class TwitterAnnouncer implements Announcer {
     private final JReleaserContext context;
 

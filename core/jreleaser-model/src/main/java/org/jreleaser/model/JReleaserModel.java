@@ -45,6 +45,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class JReleaserModel implements Domain {
     private final Environment environment = new Environment();
     private final Project project = new Project();

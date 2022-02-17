@@ -2,8 +2,11 @@ environment:
   properties:
     jdkPathPrefix: 'apps/jreleaser/build/jdks'
     jdkFilePrefix: 'zulu17.32.13-ca-jdk17.0.2'
+    graalFilePrefix: 'graalvm-ce-java17-22.0.0.2'
+    nativeImageDir: out/jreleaser/assemble/jreleaser-native/native-image
     jpackageDir: out/jreleaser/assemble/jreleaser-installer/jpackage
     skipJpackageResolver: true
+    skipNativeImageResolver: true
 
 project:
   name: jreleaser
@@ -18,7 +21,6 @@ project:
     Distribution files may additionally be published to be consumed by popular package managers
     such as Homebrew, Chocolatey, Snapcraft, or get ready to be launched via JBang. Releases
     may be announced in a variety of channels such as Twitter, Zulip, SDKMAN!, and more.
-
   website: https://jreleaser.org
   authors:
     - Andres Almiray
@@ -176,6 +178,36 @@ assemble:
         icon: 'src/media/jreleaser.ico'
         resourceDir: 'src/jpackage/windows'
 
+  nativeImage:
+    jreleaser-native:
+      active: always
+      java:
+        version: 17
+        mainClass: org.jreleaser.cli.Main
+      imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
+      executable: jreleaser
+      mainJar:
+        path: 'apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
+      jars:
+        - pattern: 'apps/jreleaser/build/dependencies/flat/*.jar'
+      graalJdks:
+        - path: '{{jdkPathPrefix}}/graal17Osx/{{graalFilePrefix}}/Contents/Home'
+          platform: 'osx-x86_64'
+        - path: '{{jdkPathPrefix}}/graal17Linux/{{graalFilePrefix}}'
+          platform: 'linux-x86_64'
+        #- path: '{{jdkPathPrefix}}/graal17LinuxArm/{{graalFilePrefix}}'
+        #  platform: 'linux-aarch_64'
+        #- path: '{{jdkPathPrefix}}/graal17Windows/{{graalFilePrefix}}'
+        #  platform: 'windows-x86_64'
+      upx:
+        active: always
+        version: '3.96'
+      args:
+        - '-Duser.language=en'
+        - '-H:IncludeLocales=en,ca,de,es,fr,hi,it,ja,nl,pt_BR,zh_TW,ru'
+        - '-H:Optimize=2'
+        - '-H:+RemoveUnusedSymbols'
+
 distributions:
   jreleaser:
     java:
@@ -311,6 +343,20 @@ distributions:
       - path: '{{jpackageDir}}/jreleaser-{{projectVersionNumber}}-windows-x86_64.msi'
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.msi'
         platform: 'windows-x86_64'
+
+  jreleaser-native:
+    type: NATIVE_IMAGE
+    executable:
+      windowsExtension: exe
+    artifacts:
+      - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.zip'
+        platform: 'osx-x86_64'
+      - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip'
+        platform: 'linux-x86_64'
+      #- path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-linux-aarch64.zip'
+      #  platform: 'linux-aarch_64'
+      #- path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.zip'
+      #  platform: 'windows-x86_64'
 
 files:
   artifacts:

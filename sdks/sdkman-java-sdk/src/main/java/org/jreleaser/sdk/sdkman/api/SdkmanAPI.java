@@ -18,11 +18,13 @@
 package org.jreleaser.sdk.sdkman.api;
 
 import feign.RequestLine;
+import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
+@ProxyConfig
 public interface SdkmanAPI {
     @RequestLine("POST /announce/struct")
     void announce(Announce announce);

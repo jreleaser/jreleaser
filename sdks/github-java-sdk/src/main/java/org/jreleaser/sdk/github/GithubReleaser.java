@@ -45,6 +45,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class GithubReleaser extends AbstractReleaser {
     public GithubReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);

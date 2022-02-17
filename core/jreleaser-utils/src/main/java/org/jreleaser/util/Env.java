@@ -26,6 +26,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class Env {
     private static final String JRELEASER_PREFIX = "JRELEASER_";
 

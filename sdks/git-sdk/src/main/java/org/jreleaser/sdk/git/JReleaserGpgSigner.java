@@ -51,6 +51,7 @@ import org.jreleaser.util.signing.SigningException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.Provider;
 import java.security.Security;
 import java.util.Iterator;
 
@@ -64,9 +65,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
     static {
         // replace BC provider with our version
-        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        Provider bcProvider = Security.getProvider("BC");
+        Security.removeProvider("BC");
         Security.setProperty("crypto.policy", "unlimited");
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(bcProvider != null ? bcProvider : new BouncyCastleProvider());
     }
 
     private final JReleaserContext context;

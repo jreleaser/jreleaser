@@ -98,3 +98,18 @@ subprojects {
         useJUnitPlatform()
     }
 }
+
+projects {
+    subprojects {
+        dirs(['core', 'sdks']) {
+            compileJava {
+                options.compilerArgs += ["-AprojectPath=${project.group}/${project.name}"]
+            }
+
+            dependencies {
+                compileOnly project(':nativeimage-annotations')
+                annotationProcessor project(':nativeimage-processor')
+            }
+        }
+    }
+}

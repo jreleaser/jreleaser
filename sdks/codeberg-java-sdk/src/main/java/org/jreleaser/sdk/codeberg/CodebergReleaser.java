@@ -29,6 +29,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.4.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class CodebergReleaser extends GiteaReleaser {
     public CodebergReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);

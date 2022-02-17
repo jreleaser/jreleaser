@@ -34,6 +34,7 @@ import static org.jreleaser.util.MustacheUtils.passThrough;
  * @author Andres Almiray
  * @since 0.2.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class TeamsAnnouncer implements Announcer {
     private final JReleaserContext context;
 

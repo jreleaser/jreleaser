@@ -34,6 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class DiscordAnnouncer implements Announcer {
     private final JReleaserContext context;
 

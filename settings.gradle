@@ -40,7 +40,7 @@ apply plugin: 'org.kordamp.gradle.kordamp-parentbuild'
 rootProject.name = 'jreleaser'
 
 projects {
-    directories = ['apps', 'core', 'sdks', 'plugins']
+    directories = ['infra', 'apps', 'core', 'sdks', 'plugins']
 
     plugins {
         all {
@@ -49,7 +49,7 @@ projects {
         path(':') {
             id 'org.kordamp.gradle.java-project'
         }
-        dirs(['apps', 'core', 'sdks', 'plugins']) {
+        dirs(['infra', 'apps', 'core', 'sdks', 'plugins']) {
             id 'java-library'
         }
     }

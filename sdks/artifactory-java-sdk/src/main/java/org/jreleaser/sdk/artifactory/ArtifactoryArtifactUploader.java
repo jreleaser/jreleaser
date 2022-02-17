@@ -39,6 +39,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.3.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class ArtifactoryArtifactUploader extends AbstractArtifactUploader<Artifactory> {
     private Artifactory uploader;
 

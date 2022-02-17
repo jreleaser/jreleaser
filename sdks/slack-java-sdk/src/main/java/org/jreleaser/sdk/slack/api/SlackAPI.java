@@ -19,11 +19,13 @@ package org.jreleaser.sdk.slack.api;
 
 import feign.Headers;
 import feign.RequestLine;
+import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
+@ProxyConfig
 public interface SlackAPI {
     @RequestLine("POST /chat.postMessage")
     @Headers("Content-Type: application/x-www-form-urlencoded")

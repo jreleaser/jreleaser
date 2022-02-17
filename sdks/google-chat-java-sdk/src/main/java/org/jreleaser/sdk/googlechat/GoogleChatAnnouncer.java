@@ -34,6 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Anyul Rivas
  * @since 0.5.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class GoogleChatAnnouncer implements Announcer {
     private final JReleaserContext context;
 

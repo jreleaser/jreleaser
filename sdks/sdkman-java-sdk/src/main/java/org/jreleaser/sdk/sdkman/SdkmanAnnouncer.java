@@ -39,6 +39,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class SdkmanAnnouncer implements Announcer {
     private final JReleaserContext context;
 

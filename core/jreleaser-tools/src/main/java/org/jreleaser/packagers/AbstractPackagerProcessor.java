@@ -85,6 +85,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 abstract class AbstractPackagerProcessor<T extends Packager> implements PackagerProcessor<T> {
     private static final String ARTIFACT = "artifact";
     private static final String DISTRIBUTION = "distribution";

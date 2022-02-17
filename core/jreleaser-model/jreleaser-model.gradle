@@ -26,7 +26,7 @@ project.rootProject.gradle.addBuildListener(new BuildAdapter() {
             .find { p -> p.name == 'jreleaser-model' }
             .processResources {
                 inputs.property('build_date', gradle.rootProject.config.buildInfo.buildDate + ':' + gradle.rootProject.config.buildInfo.buildTime)
-                filesMatching(['**/*.properties']) {
+                filesMatching(['**/JReleaserVersion.properties']) {
                     expand(
                         'jreleaser_version': gradle.rootProject.version,
                         'built_by': gradle.rootProject.config.buildInfo.buildBy,

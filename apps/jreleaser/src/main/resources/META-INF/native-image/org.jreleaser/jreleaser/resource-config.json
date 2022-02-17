@@ -1,0 +1,74 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "META-INF/services/.*$"
+      },
+      {
+        "pattern": "META-INF/jreleaser/.*$"
+      },
+      {
+        "pattern": "org/jreleaser/.*.properties$"
+      },
+      {
+        "pattern": "org/apache/tika/mime/tika-mimetypes.xml$"
+      },
+      {
+        "pattern": "org/bouncycastle/x509/*.properties$"
+      },
+      {
+        "pattern": "org/joda/time/format/*.properties$"
+      },
+      {
+        "pattern": "org/apache/commons/codec/language/bm/*.txt$"
+      },
+      {
+        "pattern": "org/apache/http/.*.properties$"
+      },
+      {
+        "pattern": "META-INF/mimetypes.default$"
+      },
+      {
+        "pattern": "META-INF/javamail.*$"
+      },
+      {
+        "pattern": "META-INF/mailcap.*$"
+      },
+      {
+        "pattern": "com/amazonaws/.*.json$"
+      },
+      {
+        "pattern": "mime.types$"
+      },
+      {
+        "pattern": "org/eclipse/jgit/.*.properties$"
+      },
+      {
+        "pattern": "conf/*$"
+      },
+      {
+        "pattern": "mozilla/public-suffix-list.txt$"
+      },
+      {
+        "pattern": "org/slf4j/impl/StaticLoggerBinder.class$"
+      }
+    ]
+  },
+  "bundles": [
+    {
+      "name": "org.eclipse.jgit.internal.JGitText"
+    },
+    {
+      "name": "org.jreleaser.bundle.Messages"
+    },
+    {
+      "name": "org.jreleaser.cli.Banner"
+    },
+    {
+      "name": "org.jreleaser.cli.Messages"
+    },
+    {
+      "name": "org.jreleaser.model.JReleaserVersion"
+    }
+  ]
+}

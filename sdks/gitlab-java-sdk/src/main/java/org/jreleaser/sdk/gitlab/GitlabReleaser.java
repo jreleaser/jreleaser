@@ -55,6 +55,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class GitlabReleaser extends AbstractReleaser {
     public GitlabReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);

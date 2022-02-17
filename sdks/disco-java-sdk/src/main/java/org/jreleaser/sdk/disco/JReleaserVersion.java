@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
  * @author Andres Almiray
  * @since 0.9.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class JReleaserVersion {
     private static final ResourceBundle bundle = ResourceBundle.getBundle(JReleaserVersion.class.getName());
     private static final String JRELEASER_VERSION = bundle.getString("jreleaser_version");

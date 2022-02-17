@@ -53,7 +53,7 @@ dependencies {
 
 processResources {
     inputs.property('version', project.version)
-    filesMatching(['**/*.properties']) {
+    filesMatching(['**/Banner*.properties']) {
         expand(
             'version': project.version,
             'id': 'jreleaser',
@@ -113,6 +113,26 @@ jdks {
         url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-macosx_aarch64.zip'
         checksum = '8c287018d358ec2c43995bf09a0cdaa235f0bdd434673777a564daee2c3872df'
     }
+    graal17Osx {
+        platform = 'osx-x86_64'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-darwin-amd64-22.0.0.2.tar.gz'
+        checksum = 'd54af9d1f4d0d351827395a714ed84d2489b023b74a9c13a431cc9d31d1e8f9a'
+    }
+    graal17Linux {
+        platform = 'linux-x86_64'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-linux-amd64-22.0.0.2.tar.gz'
+        checksum = '4f743e0ed3d974b7d619ca2ed6014554e8c12e5ebbb38b9bc9e820b182169bd4'
+    }
+    //graal17LinuxArm {
+    //    platform = 'linux-aarch64'
+    //    url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-linux-aarch64-22.0.0.2.tar.gz'
+    //    checksum = 'c7d78387d2a144944f26773697c1b61d3478a081a1c5e7fc20f47f1f5f3c82c7'
+    //}
+    //graal17Windows {
+    //    platform = 'windows-x86_64'
+    //    url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-windows-amd64-22.0.0.2.zip'
+    //    checksum = '8e97b647729d542fdf0062555ca7bca9ee58a29ed10c4ef58aa9e5174b5eeab9'
+    //}
 }
 
 copyDependencies {

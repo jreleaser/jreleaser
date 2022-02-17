@@ -34,6 +34,7 @@ import java.util.Optional;
  * @author Andres Almiray
  * @since 0.4.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class GenericGitReleaser extends AbstractReleaser {
     public GenericGitReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);

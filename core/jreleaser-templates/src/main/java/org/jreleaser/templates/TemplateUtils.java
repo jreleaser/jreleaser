@@ -41,6 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public final class TemplateUtils {
     private static final Properties TEMPLATES_INVENTORY = new Properties();
     private static final String BASE_TEMPLATE_PREFIX = "META-INF/jreleaser/templates/";

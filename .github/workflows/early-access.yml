@@ -48,9 +48,17 @@ jobs:
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
 
+  native-image:
+    needs: [precheck, jlink]
+    uses: jreleaser/jreleaser/.github/workflows/step-native-image.yml@main
+    with:
+      java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
+      java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
+      project-version: ${{ needs.precheck.outputs.VERSION }}
+
   release:
     name: Release
-    needs: [precheck, jlink, jpackage]
+    needs: [precheck, jlink, jpackage, native-image]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -74,6 +82,12 @@ jobs:
         with:
           name: jpackage
           path: out/jreleaser/assemble/jreleaser-installer/jpackage
+
+      - name: Download native-image
+        uses: actions/download-artifact@v3
+        with:
+          name: native-image
+          path: out/jreleaser/assemble/jreleaser-native/native-image
 
       - name: Setup Java
         uses: actions/setup-java@v3
