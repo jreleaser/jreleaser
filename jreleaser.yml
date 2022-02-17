@@ -291,8 +291,9 @@ distributions:
           matchers:
             platform: 'linux-x86_64'
           preCommands:
-            - 'RUN apt-get update -y'
-            - 'RUN apt-get install unzip'
+            - 'ARG DEBIAN_FRONTEND=noninteractive'
+            - 'ENV TZ=Europe/Zurich'
+            - 'RUN apt-get update && apt-get install -y unzip binutils fakeroot rpm'
         alpine:
           imageNames:
             - 'jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}'
@@ -300,7 +301,7 @@ distributions:
           matchers:
             platform: 'linux_musl-x86_64'
           preCommands:
-            - 'RUN apk add unzip'
+            - 'RUN apk add unzip binutils fakeroot rpm'
     gofish:
       active: always
       repository:
