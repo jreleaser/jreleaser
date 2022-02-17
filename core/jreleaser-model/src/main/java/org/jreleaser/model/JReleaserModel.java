@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.mustachejava.TemplateFunction;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.releaser.spi.Commit;
 import org.jreleaser.util.Constants;
@@ -30,6 +31,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -256,9 +258,14 @@ public class JReleaserModel implements Domain {
 
         applyTemplates(props, project.getResolvedExtraProperties());
         props.put(Constants.KEY_ZONED_DATE_TIME_NOW, now);
-        MustacheUtils.applyFunctions(props);
+        applyFunctions(props);
 
         return props;
+    }
+
+    private void applyFunctions(Map<String, Object> props) {
+        MustacheUtils.applyFunctions(props);
+        props.put(ReleaserDownloadUrl.NAME, new ReleaserDownloadUrl());
     }
 
     private void fillProjectProperties(Map<String, Object> props, Project project) {
@@ -339,5 +346,38 @@ public class JReleaserModel implements Domain {
         props.put(Constants.KEY_RELEASE_NOTES_URL, service.getResolvedReleaseNotesUrl(this));
         props.put(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(this));
         props.put(Constants.KEY_ISSUE_TRACKER_URL, service.getResolvedIssueTrackerUrl(this));
+    }
+
+    private final class ReleaserDownloadUrl implements TemplateFunction {
+        private static final String NAME = "f_release_download_url";
+
+        @Override
+        public String apply(String input) {
+            String format = "md";
+            String artifactFile = "";
+            String[] parts = input.split(":");
+            if (parts.length == 1) {
+                artifactFile = parts[0];
+            } else if (parts.length == 2) {
+                format = parts[0];
+                artifactFile = parts[1];
+            } else {
+                throw new JReleaserException(RB.$("ERROR_invalid_function_input", input, NAME));
+            }
+
+            switch (format.toLowerCase(Locale.ENGLISH)) {
+                case "md":
+                    return ("[{{artifactFile}}](" + getRelease().getGitService().getDownloadUrl() + ")")
+                        .replace("{{artifactFile}}", artifactFile);
+                case "adoc":
+                    return ("link:" + getRelease().getGitService().getDownloadUrl() + "[{{artifactFile}}]")
+                        .replace("{{artifactFile}}", artifactFile);
+                case "html":
+                    return ("<a href=\"" + getRelease().getGitService().getDownloadUrl() + "\">{{artifactFile}}</a>")
+                        .replace("{{artifactFile}}", artifactFile);
+            }
+
+            throw new JReleaserException(RB.$("ERROR_invalid_function_input", input, NAME));
+        }
     }
 }
