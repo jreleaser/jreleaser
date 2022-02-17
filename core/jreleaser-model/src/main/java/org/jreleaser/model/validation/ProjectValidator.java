@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.LicenseId;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.VersionPattern;
 import org.jreleaser.util.Errors;
@@ -35,6 +36,7 @@ import static org.jreleaser.model.Project.PROJECT_VERSION;
 import static org.jreleaser.model.Project.PROJECT_VERSION_PATTERN;
 import static org.jreleaser.util.FileUtils.findLicenseFile;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -125,6 +127,13 @@ public abstract class ProjectValidator extends Validator {
                 context.nag("0.4.0", "project.copyright must not be blank");
                 project.setCopyright("");
                 // errors.configuration("project.copyright must not be blank");
+            }
+        }
+
+        if (isBlank(project.getLicenseUrl())) {
+            if (isNotBlank(project.getLicense())) {
+                LicenseId.findByLiteral(project.getLicense()).ifPresent(licenseId ->
+                    project.setLicenseUrl(licenseId.url()));
             }
         }
 
