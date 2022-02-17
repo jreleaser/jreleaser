@@ -432,9 +432,10 @@ public class Signer {
 
             FileInputStream in = new FileInputStream(input.toFile());
 
-            int ch;
-            while ((ch = in.read()) >= 0) {
-                signatureGenerator.update((byte) ch);
+            byte[] buffer = new byte[8192];
+            int length = 0;
+            while ((length = in.read(buffer)) >= 0) {
+                signatureGenerator.update(buffer, 0, length);
             }
 
             signatureGenerator.generate().encode(bOut);
