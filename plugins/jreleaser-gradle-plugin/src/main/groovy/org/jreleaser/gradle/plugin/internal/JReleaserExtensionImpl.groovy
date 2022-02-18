@@ -33,6 +33,7 @@ import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Assemble
 import org.jreleaser.gradle.plugin.dsl.Checksum
 import org.jreleaser.gradle.plugin.dsl.Distribution
+import org.jreleaser.gradle.plugin.dsl.Download
 import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Packagers
@@ -45,6 +46,7 @@ import org.jreleaser.gradle.plugin.internal.dsl.AnnounceImpl
 import org.jreleaser.gradle.plugin.internal.dsl.AssembleImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ChecksumImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
+import org.jreleaser.gradle.plugin.internal.dsl.DownloadImpl
 import org.jreleaser.gradle.plugin.internal.dsl.EnvironmentImpl
 import org.jreleaser.gradle.plugin.internal.dsl.FilesImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
@@ -77,6 +79,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final PlatformImpl platform
     final ReleaseImpl release
     final UploadImpl upload
+    final DownloadImpl download
     final PackagersImpl packagers
     final AnnounceImpl announce
     final AssembleImpl assemble
@@ -103,6 +106,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         platform = objects.newInstance(PlatformImpl, objects)
         release = objects.newInstance(ReleaseImpl, objects)
         upload = objects.newInstance(UploadImpl, objects)
+        download = objects.newInstance(DownloadImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)
         announce = objects.newInstance(AnnounceImpl, objects)
         assemble = objects.newInstance(AssembleImpl, objects)
@@ -154,6 +158,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     @Override
     void upload(Action<? super Upload> action) {
         action.execute(upload)
+    }
+
+    @Override
+    void download(Action<? super Download> action) {
+        action.execute(download)
     }
 
     @Override
@@ -217,6 +226,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
+    void download(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Download) Closure<Void> action) {
+        ConfigureUtil.configure(action, download)
+    }
+
+    @Override
     void packagers(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Packagers) Closure<Void> action) {
         ConfigureUtil.configure(action, packagers)
     }
@@ -261,6 +275,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.platform = platform.toModel()
         jreleaser.release = release.toModel()
         jreleaser.upload = upload.toModel()
+        jreleaser.download = download.toModel()
         jreleaser.packagers = packagers.toModel()
         jreleaser.announce = announce.toModel()
         jreleaser.assemble = assemble.toModel()

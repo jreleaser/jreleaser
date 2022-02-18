@@ -47,7 +47,7 @@ public class Artifactory extends AbstractUploader {
     private String host;
     private String username;
     private String password;
-    private HttpUploader.Authorization authorization;
+    private WebUploader.Authorization authorization;
 
     public Artifactory() {
         super(TYPE);
@@ -62,9 +62,9 @@ public class Artifactory extends AbstractUploader {
         setRepositories(artifactory.repositories);
     }
 
-    public HttpUploader.Authorization resolveAuthorization() {
+    public WebUploader.Authorization resolveAuthorization() {
         if (null == authorization) {
-            authorization = HttpUploader.Authorization.BEARER;
+            authorization = WebUploader.Authorization.BEARER;
         }
 
         return authorization;
@@ -106,16 +106,16 @@ public class Artifactory extends AbstractUploader {
         this.password = password;
     }
 
-    public HttpUploader.Authorization getAuthorization() {
+    public WebUploader.Authorization getAuthorization() {
         return authorization;
     }
 
-    public void setAuthorization(HttpUploader.Authorization authorization) {
+    public void setAuthorization(WebUploader.Authorization authorization) {
         this.authorization = authorization;
     }
 
     public void setAuthorization(String authorization) {
-        this.authorization = HttpUploader.Authorization.of(authorization);
+        this.authorization = WebUploader.Authorization.of(authorization);
     }
 
     public List<ArtifactoryRepository> getRepositories() {

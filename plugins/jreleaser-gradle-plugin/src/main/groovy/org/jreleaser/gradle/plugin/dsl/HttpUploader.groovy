@@ -18,16 +18,31 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 
 /**
  *
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 0.4.0
  */
 @CompileStatic
-interface HttpUploader extends Uploader {
-    Property<String> getUploadUrl()
+interface HttpUploader extends WebUploader {
+    Property<String> getTarget()
 
-    Property<String> getDownloadUrl()
+    Property<String> getUsername()
+
+    Property<String> getPassword()
+
+    Property<org.jreleaser.model.WebUploader.Method> getMethod()
+
+    Property<org.jreleaser.model.WebUploader.Authorization> getAuthorization()
+
+    MapProperty<String, String> getHeaders()
+
+    void setHeader(String key, String value)
+
+    void setAuthorization(String authorization)
+
+    void setMethod(String method)
 }

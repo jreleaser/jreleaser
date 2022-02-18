@@ -22,6 +22,7 @@ package org.jreleaser.model;
  * @since 0.6.0
  */
 public enum JReleaserCommand {
+    DOWNLOAD,
     ASSEMBLE,
     CHANGELOG,
     CHECKSUM,

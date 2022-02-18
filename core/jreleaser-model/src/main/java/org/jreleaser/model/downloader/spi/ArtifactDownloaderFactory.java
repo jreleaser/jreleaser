@@ -15,32 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.model.downloader.spi;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
+import org.jreleaser.model.Downloader;
+import org.jreleaser.model.JReleaserContext;
 
 /**
- *
  * @author Andres Almiray
- * @since 0.4.0
+ * @since 1.1.0
  */
-@CompileStatic
-interface Http extends HttpUploader {
-    Property<String> getUsername()
+public interface ArtifactDownloaderFactory<D extends Downloader, AD extends ArtifactDownloader<D>> {
+    String getName();
 
-    Property<String> getPassword()
-
-    Property<org.jreleaser.model.HttpUploader.Method> getMethod()
-
-    Property<org.jreleaser.model.HttpUploader.Authorization> getAuthorization()
-
-    MapProperty<String, String> getHeaders()
-
-    void setHeader(String key, String value)
-
-    void setAuthorization(String authorization)
-
-    void setMethod(String method)
+    AD getArtifactDownloader(JReleaserContext context);
 }

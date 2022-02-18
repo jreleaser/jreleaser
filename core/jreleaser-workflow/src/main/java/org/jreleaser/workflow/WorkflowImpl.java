@@ -48,6 +48,10 @@ class WorkflowImpl implements Workflow {
 
         Instant start = Instant.now();
         context.getLogger().info(RB.$("workflow.dryrun"), context.isDryrun());
+        logFilters("workflow.included.downloader.types", context.getIncludedDownloaderTypes());
+        logFilters("workflow.excluded.downloader.types", context.getExcludedDownloaderTypes());
+        logFilters("workflow.included.downloader.names", context.getIncludedDownloaderNames());
+        logFilters("workflow.excluded.downloader.names", context.getExcludedDownloaderNames());
         logFilters("workflow.included.assemblers", context.getIncludedAssemblers());
         logFilters("workflow.excluded.assemblers", context.getExcludedAssemblers());
         logFilters("workflow.included.distributions", context.getIncludedDistributions());

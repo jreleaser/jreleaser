@@ -28,7 +28,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Artifactory
 import org.jreleaser.model.Active
-import org.jreleaser.model.HttpUploader
+import org.jreleaser.model.WebUploader
 import org.jreleaser.util.FileType
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -42,12 +42,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.3.0
  */
 @CompileStatic
-class ArtifactoryImpl extends AbstractHttpUploader implements Artifactory {
+class ArtifactoryImpl extends AbstractWebUploader implements Artifactory {
     String name
     final Property<String> host
     final Property<String> username
     final Property<String> password
-    final Property<HttpUploader.Authorization> authorization
+    final Property<WebUploader.Authorization> authorization
 
     final NamedDomainObjectContainer<ArtifactoryRepositoryImpl> repositories
 
@@ -57,7 +57,7 @@ class ArtifactoryImpl extends AbstractHttpUploader implements Artifactory {
         host = objects.property(String).convention(Providers.notDefined())
         username = objects.property(String).convention(Providers.notDefined())
         password = objects.property(String).convention(Providers.notDefined())
-        authorization = objects.property(HttpUploader.Authorization).convention(Providers.notDefined())
+        authorization = objects.property(WebUploader.Authorization).convention(Providers.notDefined())
 
         repositories = objects.domainObjectContainer(ArtifactoryRepositoryImpl, new NamedDomainObjectFactory<ArtifactoryRepositoryImpl>() {
             @Override
@@ -81,7 +81,7 @@ class ArtifactoryImpl extends AbstractHttpUploader implements Artifactory {
 
     @Override
     void setAuthorization(String authorization) {
-        this.authorization.set(HttpUploader.Authorization.of(authorization))
+        this.authorization.set(WebUploader.Authorization.of(authorization))
     }
 
     @Override

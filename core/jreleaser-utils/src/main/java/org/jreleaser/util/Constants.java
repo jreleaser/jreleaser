@@ -276,6 +276,7 @@ public interface Constants {
     String KEY_ASSEMBLE_DIRECTORY = "assembleDirectory";
     String KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY = "distributionAssembleDirectory";
     String KEY_ARTIFACTS_DIRECTORY = "artifactsDirectory";
+    String KEY_DOWNLOAD_DIRECTORY = "downloadDirectory";
     String KEY_PREPARE_DIRECTORY = "prepareDirectory";
     String KEY_PACKAGE_DIRECTORY = "packageDirectory";
     String KEY_DISTRIBUTION_PREPARE_DIRECTORY = "distributionPrepareDirectory";

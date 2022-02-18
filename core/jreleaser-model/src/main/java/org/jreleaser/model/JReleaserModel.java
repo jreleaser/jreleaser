@@ -53,6 +53,7 @@ public class JReleaserModel implements Domain {
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
     private final Announce announce = new Announce();
+    private final Download download = new Download();
     private final Assemble assemble = new Assemble();
     private final Upload upload = new Upload();
     private final Checksum checksum = new Checksum();
@@ -149,6 +150,14 @@ public class JReleaserModel implements Domain {
         this.assemble.setAll(assemble);
     }
 
+    public Download getDownload() {
+        return download;
+    }
+
+    public void setDownload(Download download) {
+        this.download.setAll(download);
+    }
+
     public Upload getUpload() {
         return upload;
     }
@@ -227,6 +236,7 @@ public class JReleaserModel implements Domain {
         if (full || announce.isEnabled()) map.put("announce", announce.asMap(full));
         if (!files.isEmpty()) map.put("files", files.asMap(full));
         if (full || packagers.hasEnabledPackagers()) map.put("packagers", packagers.asMap(full));
+        if (full || download.isEnabled()) map.put("download", download.asMap(full));
         if (full || assemble.isEnabled()) map.put("assemble", assemble.asMap(full));
         if (full || upload.isEnabled()) map.put("upload", upload.asMap(full));
 

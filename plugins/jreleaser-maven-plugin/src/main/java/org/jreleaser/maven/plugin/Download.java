@@ -17,41 +17,43 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 1.1.0
  */
-abstract class AbstractHttpUploader extends AbstractUploader implements HttpUploader {
-    protected String uploadUrl;
-    protected String downloadUrl;
+public class Download implements EnabledAware {
+    private final Map<String, HttpDownloader> http = new LinkedHashMap<>();
+    private Boolean enabled;
 
-    protected AbstractHttpUploader(String type) {
-        super(type);
-    }
-
-    void setAll(AbstractHttpUploader uploader) {
-        super.setAll(uploader);
-        this.uploadUrl = uploader.uploadUrl;
-        this.downloadUrl = uploader.downloadUrl;
+    void setAll(Download upload) {
+        this.enabled = upload.enabled;
+        setHttp(upload.http);
     }
 
     @Override
-    public String getUploadUrl() {
-        return uploadUrl;
+    public boolean isEnabled() {
+        return enabled != null && enabled;
     }
 
     @Override
-    public void setUploadUrl(String uploadUrl) {
-        this.uploadUrl = uploadUrl;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
-    public String getDownloadUrl() {
-        return downloadUrl;
+    public boolean isEnabledSet() {
+        return enabled != null;
     }
 
-    @Override
-    public void setDownloadUrl(String downloadUrl) {
-        this.downloadUrl = downloadUrl;
+    public Map<String, HttpDownloader> getHttp() {
+        return http;
+    }
+
+    public void setHttp(Map<String, HttpDownloader> http) {
+        this.http.clear();
+        this.http.putAll(http);
     }
 }

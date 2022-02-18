@@ -22,7 +22,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.HttpUploader
+import org.jreleaser.gradle.plugin.dsl.WebUploader
 
 import javax.inject.Inject
 
@@ -32,12 +32,12 @@ import javax.inject.Inject
  * @since 0.8.0
  */
 @CompileStatic
-abstract class AbstractHttpUploader extends AbstractUploader implements HttpUploader {
+abstract class AbstractWebUploader extends AbstractUploader implements WebUploader {
     final Property<String> uploadUrl
     final Property<String> downloadUrl
 
     @Inject
-    AbstractHttpUploader(ObjectFactory objects) {
+    AbstractWebUploader(ObjectFactory objects) {
         super(objects)
         uploadUrl = objects.property(String).convention(Providers.notDefined())
         downloadUrl = objects.property(String).convention(Providers.notDefined())
@@ -50,7 +50,7 @@ abstract class AbstractHttpUploader extends AbstractUploader implements HttpUplo
             downloadUrl.present
     }
 
-    protected <U extends org.jreleaser.model.HttpUploader> void fillProperties(U uploader) {
+    protected <U extends org.jreleaser.model.WebUploader> void fillProperties(U uploader) {
         super.fillProperties(uploader)
         if (uploadUrl.present) uploader.uploadUrl = uploadUrl.get()
         if (downloadUrl.present) uploader.downloadUrl = downloadUrl.get()

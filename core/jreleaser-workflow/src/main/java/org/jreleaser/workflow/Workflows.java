@@ -29,6 +29,13 @@ import static java.util.Collections.singletonList;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class Workflows {
+    public static Workflow download(JReleaserContext context) {
+        context.setCommand(JReleaserCommand.DOWNLOAD);
+        return new WorkflowImpl(context, singletonList(
+            new DownloadWorkflowItem()
+        ));
+    }
+
     public static Workflow assemble(JReleaserContext context) {
         context.setCommand(JReleaserCommand.ASSEMBLE);
         return new WorkflowImpl(context, singletonList(

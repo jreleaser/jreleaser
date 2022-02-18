@@ -15,26 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.http;
-
-import org.jreleaser.model.Http;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.uploader.spi.ArtifactUploaderFactory;
-import org.kordamp.jipsy.annotations.ServiceProviderFor;
+package org.jreleaser.maven.plugin;
 
 /**
  * @author Andres Almiray
- * @since 0.4.0
+ * @since 0.8.0
  */
-@ServiceProviderFor(ArtifactUploaderFactory.class)
-public class HttpArtifactUploaderFactory implements ArtifactUploaderFactory<Http, HttpArtifactUploader> {
-    @Override
-    public String getName() {
-        return Http.TYPE;
+public interface WebUploader extends Uploader {
+    String getUploadUrl();
+
+    void setUploadUrl(String uploadUrl);
+
+    String getDownloadUrl();
+
+    void setDownloadUrl(String downloadUrl);
+
+
+    enum Method {
+        PUT,
+        POST
     }
 
-    @Override
-    public HttpArtifactUploader getArtifactUploader(JReleaserContext context) {
-        return new HttpArtifactUploader(context);
+    enum Authorization {
+        NONE,
+        BASIC,
+        BEARER
     }
 }

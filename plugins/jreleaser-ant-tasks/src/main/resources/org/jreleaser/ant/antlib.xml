@@ -43,6 +43,10 @@
             classname="org.jreleaser.ant.tasks.JReleaserConfigTask"/>
 
     <taskdef
+            name="download"
+            classname="org.jreleaser.ant.tasks.JReleaserDownloadTask"/>
+
+    <taskdef
             name="full-release"
             classname="org.jreleaser.ant.tasks.JReleaserFullReleaseTask"/>
 

@@ -36,15 +36,15 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  */
 public class Upload implements Domain, EnabledAware {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
-    private final Map<String, Http> http = new LinkedHashMap<>();
+    private final Map<String, HttpUploader> http = new LinkedHashMap<>();
     private final Map<String, S3> s3 = new LinkedHashMap<>();
     private Boolean enabled;
 
-    void setAll(Upload assemble) {
-        this.enabled = assemble.enabled;
-        setArtifactory(assemble.artifactory);
-        setHttp(assemble.http);
-        setS3(assemble.s3);
+    void setAll(Upload upload) {
+        this.enabled = upload.enabled;
+        setArtifactory(upload.artifactory);
+        setHttp(upload.http);
+        setS3(upload.s3);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class Upload implements Domain, EnabledAware {
         switch (type) {
             case Artifactory.TYPE:
                 return Optional.ofNullable(artifactory.get(name));
-            case Http.TYPE:
+            case HttpUploader.TYPE:
                 return Optional.ofNullable(http.get(name));
             case S3.TYPE:
                 return Optional.ofNullable(s3.get(name));
@@ -79,7 +79,7 @@ public class Upload implements Domain, EnabledAware {
         switch (type) {
             case Artifactory.TYPE:
                 return getActiveArtifactory(name);
-            case Http.TYPE:
+            case HttpUploader.TYPE:
                 return getActiveHttp(name);
             case S3.TYPE:
                 return getActiveS3(name);
@@ -95,7 +95,7 @@ public class Upload implements Domain, EnabledAware {
             .findFirst();
     }
 
-    public Optional<Http> getActiveHttp(String name) {
+    public Optional<HttpUploader> getActiveHttp(String name) {
         return http.values().stream()
             .filter(Uploader::isEnabled)
             .filter(a -> name.equals(a.name))
@@ -128,22 +128,22 @@ public class Upload implements Domain, EnabledAware {
         this.artifactory.put(artifactory.getName(), artifactory);
     }
 
-    public List<Http> getActiveHttps() {
+    public List<HttpUploader> getActiveHttps() {
         return http.values().stream()
-            .filter(Http::isEnabled)
+            .filter(HttpUploader::isEnabled)
             .collect(toList());
     }
 
-    public Map<String, Http> getHttp() {
+    public Map<String, HttpUploader> getHttp() {
         return http;
     }
 
-    public void setHttp(Map<String, Http> http) {
+    public void setHttp(Map<String, HttpUploader> http) {
         this.http.clear();
         this.http.putAll(http);
     }
 
-    public void addHttp(Http http) {
+    public void addHttp(HttpUploader http) {
         this.http.put(http.getName(), http);
     }
 
@@ -199,7 +199,7 @@ public class Upload implements Domain, EnabledAware {
         switch (uploaderType) {
             case Artifactory.TYPE:
                 return (Map<String, A>) artifactory;
-            case Http.TYPE:
+            case HttpUploader.TYPE:
                 return (Map<String, A>) http;
             case S3.TYPE:
                 return (Map<String, A>) s3;
@@ -269,7 +269,7 @@ public class Upload implements Domain, EnabledAware {
     public static Set<String> supportedUploaders() {
         Set<String> set = new LinkedHashSet<>();
         set.add(Artifactory.TYPE);
-        set.add(Http.TYPE);
+        set.add(HttpUploader.TYPE);
         set.add(S3.TYPE);
         return Collections.unmodifiableSet(set);
     }

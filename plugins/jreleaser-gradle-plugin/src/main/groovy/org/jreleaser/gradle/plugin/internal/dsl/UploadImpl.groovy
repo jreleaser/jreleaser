@@ -25,7 +25,7 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Artifactory
-import org.jreleaser.gradle.plugin.dsl.Http
+import org.jreleaser.gradle.plugin.dsl.HttpUploader
 import org.jreleaser.gradle.plugin.dsl.S3
 import org.jreleaser.gradle.plugin.dsl.Upload
 import org.kordamp.gradle.util.ConfigureUtil
@@ -41,7 +41,7 @@ import javax.inject.Inject
 class UploadImpl implements Upload {
     final Property<Boolean> enabled
     final NamedDomainObjectContainer<Artifactory> artifactory
-    final NamedDomainObjectContainer<Http> http
+    final NamedDomainObjectContainer<HttpUploader> http
     final NamedDomainObjectContainer<S3> s3
 
     @Inject
@@ -57,10 +57,10 @@ class UploadImpl implements Upload {
             }
         })
 
-        http = objects.domainObjectContainer(Http, new NamedDomainObjectFactory<Http>() {
+        http = objects.domainObjectContainer(HttpUploader, new NamedDomainObjectFactory<HttpUploader>() {
             @Override
-            Http create(String name) {
-                HttpImpl h = objects.newInstance(HttpImpl, objects)
+            HttpUploader create(String name) {
+                HttpUploaderImpl h = objects.newInstance(HttpUploaderImpl, objects)
                 h.name = name
                 return h
             }
@@ -82,7 +82,7 @@ class UploadImpl implements Upload {
     }
 
     @Override
-    void http(Action<? super NamedDomainObjectContainer<Http>> action) {
+    void http(Action<? super NamedDomainObjectContainer<HttpUploader>> action) {
         action.execute(http)
     }
 
@@ -111,7 +111,7 @@ class UploadImpl implements Upload {
         org.jreleaser.model.Upload upload = new org.jreleaser.model.Upload()
 
         artifactory.each { upload.addArtifactory(((ArtifactoryImpl) it).toModel()) }
-        http.each { upload.addHttp(((HttpImpl) it).toModel()) }
+        http.each { upload.addHttp(((HttpUploaderImpl) it).toModel()) }
         s3.each { upload.addS3(((S3Impl) it).toModel()) }
 
         upload

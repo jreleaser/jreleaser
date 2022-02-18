@@ -22,7 +22,7 @@ import org.jreleaser.model.Upload;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.ArtifactoryValidator.validateArtifactory;
-import static org.jreleaser.model.validation.HttpValidator.validateHttp;
+import static org.jreleaser.model.validation.HttpUploaderValidator.validateHttpUploader;
 import static org.jreleaser.model.validation.S3Validator.validateS3;
 
 /**
@@ -35,7 +35,7 @@ public abstract class UploadersValidator extends Validator {
 
         Upload upload = context.getModel().getUpload();
         validateArtifactory(context, mode, errors);
-        validateHttp(context, mode, errors);
+        validateHttpUploader(context, mode, errors);
         validateS3(context, mode, errors);
 
         if (mode.validateConfig() && !upload.isEnabledSet()) {

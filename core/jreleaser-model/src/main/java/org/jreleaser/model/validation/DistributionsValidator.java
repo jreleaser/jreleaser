@@ -167,7 +167,7 @@ public abstract class DistributionsValidator extends Validator {
         byPlatform.forEach((p, artifacts) -> {
             String platform = "<nil>".equals(p) ? "no" : p;
             artifacts.stream()
-                .collect(groupingBy(artifact -> FileType.getFileType(artifact.getPath())))
+                .collect(groupingBy(artifact -> FileType.getType(artifact.getPath())))
                 .forEach((ext, matches) -> {
                     if (matches.size() > 1) {
                         errors.configuration(RB.$("validation_distributions_multiple",

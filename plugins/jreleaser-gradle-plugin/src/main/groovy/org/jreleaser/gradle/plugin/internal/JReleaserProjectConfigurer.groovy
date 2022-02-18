@@ -32,6 +32,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserAssembleTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChangelogTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserDownloadTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserFullReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPackageTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask
@@ -98,6 +99,20 @@ class JReleaserProjectConfigurer {
                     t.outputDirectory.set(project.layout
                         .projectDirectory
                         .dir('src/jreleaser'))
+                }
+            })
+
+        project.tasks.register('jreleaserDownload', JReleaserDownloadTask,
+            new Action<JReleaserDownloadTask>() {
+                @Override
+                void execute(JReleaserDownloadTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Downloads all artifacts'
+                    t.dryrun.set(extension.dryrun.get())
+                    t.gitRootSearch.set(extension.gitRootSearch.get())
+                    t.model.set(model)
+                    t.jlogger.set(logger)
+                    t.outputDirectory.set(outputDirectory)
                 }
             })
 

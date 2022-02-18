@@ -19,8 +19,8 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
-import org.jreleaser.model.Http;
 import org.jreleaser.model.HttpUploader;
+import org.jreleaser.model.WebUploader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
@@ -33,12 +33,12 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public abstract class HttpValidator extends Validator {
-    public static void validateHttp(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+public abstract class HttpUploaderValidator extends Validator {
+    public static void validateHttpUploader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
         context.getLogger().debug("http");
-        Map<String, Http> http = context.getModel().getUpload().getHttp();
+        Map<String, HttpUploader> http = context.getModel().getUpload().getHttp();
 
-        for (Map.Entry<String, Http> e : http.entrySet()) {
+        for (Map.Entry<String, HttpUploader> e : http.entrySet()) {
             e.getValue().setName(e.getKey());
             if (!mode.validateConfig()) {
                 validateHttp(context, mode, e.getValue(), new Errors());
@@ -48,7 +48,7 @@ public abstract class HttpValidator extends Validator {
         }
     }
 
-    private static void validateHttp(JReleaserContext context, JReleaserContext.Mode mode, Http http, Errors errors) {
+    private static void validateHttp(JReleaserContext context, JReleaserContext.Mode mode, HttpUploader http, Errors errors) {
         context.getLogger().debug("http.{}", http.getName());
 
         if (!http.isActiveSet()) {
@@ -71,7 +71,7 @@ public abstract class HttpValidator extends Validator {
         }
 
         if (null == http.getMethod()) {
-            http.setMethod(HttpUploader.Method.PUT);
+            http.setMethod(WebUploader.Method.PUT);
         }
 
         switch (http.resolveAuthorization()) {

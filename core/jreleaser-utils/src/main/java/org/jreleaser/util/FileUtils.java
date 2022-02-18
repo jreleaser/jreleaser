@@ -236,6 +236,10 @@ public final class FileUtils {
     }
 
     public static void unpackArchive(Path src, Path dest, boolean removeRootEntry) throws IOException {
+        unpackArchive(src, dest, true, true);
+    }
+
+    public static void unpackArchive(Path src, Path dest, boolean removeRootEntry, boolean cleanDirectory) throws IOException {
         String filename = src.getFileName().toString();
         for (String extension : TAR_COMPRESSED_EXTENSIONS) {
             if (filename.endsWith(extension)) {
@@ -244,7 +248,7 @@ public final class FileUtils {
             }
         }
 
-        deleteFiles(dest, true);
+        if (cleanDirectory) deleteFiles(dest, true);
         File destinationDir = dest.toFile();
 
         if (filename.endsWith(ZIP.extension())) {
@@ -271,7 +275,11 @@ public final class FileUtils {
     }
 
     public static void unpackArchiveCompressed(Path src, Path dest, boolean removeRootEntry) throws IOException {
-        deleteFiles(dest, true);
+        unpackArchiveCompressed(src, dest, true, true);
+    }
+
+    public static void unpackArchiveCompressed(Path src, Path dest, boolean removeRootEntry, boolean cleanDirectory) throws IOException {
+        if (cleanDirectory) deleteFiles(dest, true);
         File destinationDir = dest.toFile();
 
         String filename = src.getFileName().toString();

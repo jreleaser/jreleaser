@@ -140,7 +140,7 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryPac
             .filter(artifact -> supportsPlatform(artifact.getPlatform()))
             .filter(this::isNotSkipped)
             .sorted(Artifact.comparatorByPlatform().thenComparingInt(artifact -> {
-                String ext = FileType.getFileNameExtension(artifact.getResolvedPath(context, distribution));
+                String ext = FileType.getExtension(artifact.getResolvedPath(context, distribution));
                 return fileExtensions.indexOf(ext);
             }))
             .collect(toList());

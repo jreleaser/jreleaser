@@ -38,6 +38,8 @@ import org.jreleaser.maven.plugin.Distribution;
 import org.jreleaser.maven.plugin.Docker;
 import org.jreleaser.maven.plugin.DockerConfiguration;
 import org.jreleaser.maven.plugin.DockerSpec;
+import org.jreleaser.maven.plugin.Download;
+import org.jreleaser.maven.plugin.Downloader;
 import org.jreleaser.maven.plugin.Environment;
 import org.jreleaser.maven.plugin.FileSet;
 import org.jreleaser.maven.plugin.FileType;
@@ -51,7 +53,8 @@ import org.jreleaser.maven.plugin.Gitter;
 import org.jreleaser.maven.plugin.Glob;
 import org.jreleaser.maven.plugin.Gofish;
 import org.jreleaser.maven.plugin.GoogleChat;
-import org.jreleaser.maven.plugin.Http;
+import org.jreleaser.maven.plugin.HttpDownloader;
+import org.jreleaser.maven.plugin.HttpUploader;
 import org.jreleaser.maven.plugin.Java;
 import org.jreleaser.maven.plugin.JavaAssembler;
 import org.jreleaser.maven.plugin.Jbang;
@@ -85,11 +88,11 @@ import org.jreleaser.maven.plugin.Upload;
 import org.jreleaser.maven.plugin.Uploader;
 import org.jreleaser.maven.plugin.Webhook;
 import org.jreleaser.maven.plugin.Zulip;
-import org.jreleaser.model.HttpUploader;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Repository;
 import org.jreleaser.model.RepositoryTap;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.WebUploader;
 import org.jsoup.parser.Parser;
 
 import java.util.ArrayList;
@@ -144,6 +147,7 @@ public final class JReleaserModelConverter {
         jreleaserModel.setPlatform(convertPlatform(jreleaser.getPlatform()));
         jreleaserModel.setRelease(convertRelease(jreleaser.getRelease()));
         jreleaserModel.setUpload(convertUpload(jreleaser.getUpload()));
+        jreleaserModel.setDownload(convertDownload(jreleaser.getDownload()));
         jreleaserModel.setPackagers(convertPackagers(jreleaser.getPackagers()));
         jreleaserModel.setAnnounce(convertAnnounce(jreleaser.getAnnounce()));
         jreleaserModel.setAssemble(convertAssemble(jreleaser.getAssemble()));
@@ -410,7 +414,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Upload u = new org.jreleaser.model.Upload();
         if (upload.isEnabledSet()) u.setEnabled(upload.isEnabled());
         u.setArtifactory(convertArtifactory(upload.getArtifactory()));
-        u.setHttp(convertHttp(upload.getHttp()));
+        u.setHttp(convertHttpUploader(upload.getHttp()));
         u.setS3(convertS3(upload.getS3()));
         return u;
     }
@@ -465,27 +469,27 @@ public final class JReleaserModelConverter {
         if (from.isFilesSet()) into.setFiles(from.isFiles());
         if (from.isSignaturesSet()) into.setSignatures(from.isSignatures());
         if (from.isChecksumsSet()) into.setChecksums(from.isChecksums());
-        if (from instanceof HttpUploader) {
-            convertHttpUploader((HttpUploader) from, (org.jreleaser.model.HttpUploader) into);
+        if (from instanceof WebUploader) {
+            convertWebUploader((WebUploader) from, (WebUploader) into);
         }
     }
 
-    private static void convertHttpUploader(HttpUploader from, org.jreleaser.model.HttpUploader into) {
+    private static void convertWebUploader(WebUploader from, WebUploader into) {
         into.setUploadUrl(tr(from.getUploadUrl()));
         into.setDownloadUrl(tr(from.getDownloadUrl()));
     }
 
-    private static Map<String, org.jreleaser.model.Http> convertHttp(Map<String, Http> http) {
-        Map<String, org.jreleaser.model.Http> map = new LinkedHashMap<>();
-        for (Map.Entry<String, Http> e : http.entrySet()) {
+    private static Map<String, org.jreleaser.model.HttpUploader> convertHttpUploader(Map<String, HttpUploader> http) {
+        Map<String, org.jreleaser.model.HttpUploader> map = new LinkedHashMap<>();
+        for (Map.Entry<String, HttpUploader> e : http.entrySet()) {
             e.getValue().setName(tr(e.getKey()));
-            map.put(e.getValue().getName(), convertHttp(e.getValue()));
+            map.put(e.getValue().getName(), convertHttpUploader(e.getValue()));
         }
         return map;
     }
 
-    private static org.jreleaser.model.Http convertHttp(Http http) {
-        org.jreleaser.model.Http h = new org.jreleaser.model.Http();
+    private static org.jreleaser.model.HttpUploader convertHttpUploader(HttpUploader http) {
+        org.jreleaser.model.HttpUploader h = new org.jreleaser.model.HttpUploader();
         convertUploader(http, h);
         h.setUsername(tr(http.getUsername()));
         h.setPassword(tr(http.getPassword()));
@@ -517,6 +521,47 @@ public final class JReleaserModelConverter {
         s.setDownloadUrl(tr(s3.getDownloadUrl()));
         s.setHeaders(s3.getHeaders());
         return s;
+    }
+
+    private static org.jreleaser.model.Download convertDownload(Download download) {
+        org.jreleaser.model.Download u = new org.jreleaser.model.Download();
+        if (download.isEnabledSet()) u.setEnabled(download.isEnabled());
+        u.setHttp(convertHttpDownloader(download.getHttp()));
+        return u;
+    }
+
+    private static Map<String, org.jreleaser.model.HttpDownloader> convertHttpDownloader(Map<String, HttpDownloader> http) {
+        Map<String, org.jreleaser.model.HttpDownloader> map = new LinkedHashMap<>();
+        for (Map.Entry<String, HttpDownloader> e : http.entrySet()) {
+            e.getValue().setName(tr(e.getKey()));
+            map.put(e.getValue().getName(), convertHttpDownloader(e.getValue()));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.HttpDownloader convertHttpDownloader(HttpDownloader http) {
+        org.jreleaser.model.HttpDownloader h = new org.jreleaser.model.HttpDownloader();
+        convertDownloader(http, h);
+        h.setInput(tr(http.getInput()));
+        h.setOutput(tr(http.getOutput()));
+        h.setHeaders(http.getHeaders());
+        return h;
+    }
+
+    private static void convertDownloader(Downloader from, org.jreleaser.model.Downloader into) {
+        into.setName(tr(from.getName()));
+        into.setActive(from.resolveActive());
+        into.setExtraProperties(from.getExtraProperties());
+        into.setConnectTimeout(from.getConnectTimeout());
+        into.setReadTimeout(from.getReadTimeout());
+        into.setUnpack(convertUnpack(from.getUnpack()));
+    }
+
+    private static org.jreleaser.model.Downloader.Unpack convertUnpack(Downloader.Unpack unpack) {
+        org.jreleaser.model.Downloader.Unpack u = new org.jreleaser.model.Downloader.Unpack();
+        if (unpack.isEnabledSet()) u.setEnabled(unpack.isEnabled());
+        if (unpack.isSkipRootEntrySet()) u.setSkipRootEntry(unpack.isSkipRootEntry());
+        return u;
     }
 
     private static org.jreleaser.model.Packagers convertPackagers(Packagers packagers) {

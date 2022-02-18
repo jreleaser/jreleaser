@@ -17,28 +17,93 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 0.4.0
  */
-public interface HttpUploader extends Uploader {
-    String getUploadUrl();
+public class HttpUploader extends AbstractWebUploader {
+    public static final String NAME = "http";
 
-    void setUploadUrl(String uploadUrl);
+    private final Map<String, String> headers = new LinkedHashMap<>();
+    private String target;
+    private String username;
+    private String password;
+    private Authorization authorization;
+    private Method method;
 
-    String getDownloadUrl();
-
-    void setDownloadUrl(String downloadUrl);
-
-
-    enum Method {
-        PUT,
-        POST
+    public HttpUploader() {
+        super(NAME);
     }
 
-    enum Authorization {
-        NONE,
-        BASIC,
-        BEARER
+    public Authorization resolveAuthorization() {
+        if (null == authorization) {
+            authorization = Authorization.NONE;
+        }
+
+        return authorization;
+    }
+
+    public Method resolveMethod() {
+        if (null == method) {
+            method = Method.PUT;
+        }
+
+        return method;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    public Authorization getAuthorization() {
+        return authorization;
+    }
+
+    public void setAuthorization(Authorization authorization) {
+        this.authorization = authorization;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public void setMethod(Method method) {
+        this.method = method;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers.clear();
+        this.headers.putAll(headers);
+    }
+
+    public void addHeaders(Map<String, String> headers) {
+        this.headers.putAll(headers);
     }
 }

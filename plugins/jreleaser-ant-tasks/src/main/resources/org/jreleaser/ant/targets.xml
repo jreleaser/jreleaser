@@ -46,12 +46,16 @@
     <property name="jreleaser.packagers" value=""/>
     <property name="jreleaser.uploader.types" value=""/>
     <property name="jreleaser.uploader.names" value=""/>
+    <property name="jreleaser.downloader.types" value=""/>
+    <property name="jreleaser.downloader.names" value=""/>
     <property name="jreleaser.excluded.announcers" value=""/>
     <property name="jreleaser.excluded.assemblers" value=""/>
     <property name="jreleaser.excluded.distributions" value=""/>
     <property name="jreleaser.excluded.packagers" value=""/>
     <property name="jreleaser.excluded.uploader.types" value=""/>
     <property name="jreleaser.excluded.uploader.names" value=""/>
+    <property name="jreleaser.excluded.downloader.types" value=""/>
+    <property name="jreleaser.excluded.downloader.names" value=""/>
 
     <target name="jreleaser-template">
         <jreleaser:template skip="${jreleaser.skip}"
@@ -231,5 +235,18 @@
                           excludedUploaderTypes="${jreleaser.excluded.uploader.types}"
                           uploaderNames="${jreleaser.uploader.types}"
                           excludedUploaderNames="${jreleaser.excluded.uploader.names}"/>
+    </target>
+
+    <target name="jreleaser-download">
+        <jreleaser:download dryrun="${jreleaser.dry.run}"
+                            gitRootSearch="${jreleaser.git.root.search}"
+                            skip="${jreleaser.skip}"
+                            basedir="${jreleaser.basedir}"
+                            configFile="${jreleaser.config.file}"
+                            outputDir="${jreleaser.outputdir}"
+                            downloaderTypes="${jreleaser.downloader.types}"
+                            excludedDownloaderTypes="${jreleaser.excluded.downloader.types}"
+                            downloaderNames="${jreleaser.downloader.types}"
+                            excludedDownloaderNames="${jreleaser.excluded.downloader.names}"/>
     </target>
 </project>

@@ -23,8 +23,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.Http
-import org.jreleaser.model.HttpUploader
+import org.jreleaser.gradle.plugin.dsl.HttpUploader
+import org.jreleaser.model.WebUploader
 
 import javax.inject.Inject
 
@@ -36,21 +36,21 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.3.0
  */
 @CompileStatic
-class HttpImpl extends AbstractHttpUploader implements Http {
+class HttpUploaderImpl extends AbstractWebUploader implements HttpUploader {
     String name
     final Property<String> username
     final Property<String> password
-    final Property<HttpUploader.Method> method
-    final Property<HttpUploader.Authorization> authorization
+    final Property<WebUploader.Method> method
+    final Property<WebUploader.Authorization> authorization
     final MapProperty<String, String> headers
 
     @Inject
-    HttpImpl(ObjectFactory objects) {
+    HttpUploaderImpl(ObjectFactory objects) {
         super(objects)
         username = objects.property(String).convention(Providers.notDefined())
         password = objects.property(String).convention(Providers.notDefined())
-        method = objects.property(HttpUploader.Method).convention(Providers.notDefined())
-        authorization = objects.property(HttpUploader.Authorization).convention(Providers.notDefined())
+        method = objects.property(WebUploader.Method).convention(Providers.notDefined())
+        authorization = objects.property(WebUploader.Authorization).convention(Providers.notDefined())
         headers = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
@@ -74,16 +74,16 @@ class HttpImpl extends AbstractHttpUploader implements Http {
 
     @Override
     void setAuthorization(String authorization) {
-        this.authorization.set(HttpUploader.Authorization.of(authorization))
+        this.authorization.set(WebUploader.Authorization.of(authorization))
     }
 
     @Override
     void setMethod(String method) {
-        this.method.set(HttpUploader.Method.of(method))
+        this.method.set(WebUploader.Method.of(method))
     }
 
-    org.jreleaser.model.Http toModel() {
-        org.jreleaser.model.Http http = new org.jreleaser.model.Http()
+    org.jreleaser.model.HttpUploader toModel() {
+        org.jreleaser.model.HttpUploader http = new org.jreleaser.model.HttpUploader()
         http.name = name
         fillProperties(http)
         if (username.present) http.username = username.get()

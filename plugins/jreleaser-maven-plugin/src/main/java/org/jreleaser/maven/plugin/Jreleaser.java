@@ -32,6 +32,7 @@ public class Jreleaser {
     private final Packagers packagers = new Packagers();
     private final Upload upload = new Upload();
     private final Announce announce = new Announce();
+    private final Download download = new Download();
     private final Assemble assemble = new Assemble();
     private final Checksum checksum = new Checksum();
     private final Signing signing = new Signing();
@@ -68,6 +69,14 @@ public class Jreleaser {
 
     public void setRelease(Release release) {
         this.release.setAll(release);
+    }
+
+    public Download getDownload() {
+        return download;
+    }
+
+    public void setDownload(Download download) {
+        this.download.setAll(download);
     }
 
     public Upload getUpload() {

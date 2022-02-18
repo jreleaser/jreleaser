@@ -33,13 +33,13 @@ interface Upload {
 
     NamedDomainObjectContainer<Artifactory> getArtifactory()
 
-    NamedDomainObjectContainer<Http> getHttp()
+    NamedDomainObjectContainer<HttpUploader> getHttp()
 
     NamedDomainObjectContainer<S3> getS3()
 
     void artifactory(Action<? super NamedDomainObjectContainer<Artifactory>> action)
 
-    void http(Action<? super NamedDomainObjectContainer<Http>> action)
+    void http(Action<? super NamedDomainObjectContainer<HttpUploader>> action)
 
     void s3(Action<? super NamedDomainObjectContainer<S3>> action)
 

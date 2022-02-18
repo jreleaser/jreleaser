@@ -42,6 +42,6 @@ dependencies {
     api project(':jreleaser-assemblers')
     // upload
     api project(':artifactory-java-sdk')
-    api project(':http-upload-java-sdk')
+    api project(':http-java-sdk')
     api project(':s3-java-sdk')
 }

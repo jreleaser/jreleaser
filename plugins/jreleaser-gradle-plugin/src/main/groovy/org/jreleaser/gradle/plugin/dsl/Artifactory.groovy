@@ -29,14 +29,14 @@ import org.jreleaser.util.FileType
  * @since 0.3.0
  */
 @CompileStatic
-interface Artifactory extends HttpUploader {
+interface Artifactory extends WebUploader {
     Property<String> getHost()
 
     Property<String> getUsername()
 
     Property<String> getPassword()
 
-    Property<org.jreleaser.model.HttpUploader.Authorization> getAuthorization()
+    Property<org.jreleaser.model.WebUploader.Authorization> getAuthorization()
 
     void setAuthorization(String authorization)
 

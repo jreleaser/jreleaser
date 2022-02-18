@@ -96,12 +96,16 @@ public class JReleaserContext {
     private final List<String> includedAssemblers = new ArrayList<>();
     private final List<String> includedDistributions = new ArrayList<>();
     private final List<String> includedPackagers = new ArrayList<>();
+    private final List<String> includedDownloaderTypes = new ArrayList<>();
+    private final List<String> includedDownloaderNames = new ArrayList<>();
     private final List<String> includedUploaderTypes = new ArrayList<>();
     private final List<String> includedUploaderNames = new ArrayList<>();
     private final List<String> excludedAnnouncers = new ArrayList<>();
     private final List<String> excludedAssemblers = new ArrayList<>();
     private final List<String> excludedDistributions = new ArrayList<>();
     private final List<String> excludedPackagers = new ArrayList<>();
+    private final List<String> excludedDownloaderTypes = new ArrayList<>();
+    private final List<String> excludedDownloaderNames = new ArrayList<>();
     private final List<String> excludedUploaderTypes = new ArrayList<>();
     private final List<String> excludedUploaderNames = new ArrayList<>();
 
@@ -138,6 +142,7 @@ public class JReleaserContext {
             logger.debug("- " + Constants.KEY_SIGNATURES_DIRECTORY + " set to " + getSignaturesDirectory());
             logger.debug("- " + Constants.KEY_PREPARE_DIRECTORY + " set to " + getPrepareDirectory());
             logger.debug("- " + Constants.KEY_PACKAGE_DIRECTORY + " set to " + getPackageDirectory());
+            logger.debug("- " + Constants.KEY_DOWNLOAD_DIRECTORY + " set to " + getDownloadDirectory());
             logger.debug("- " + Constants.KEY_ASSEMBLE_DIRECTORY + " set to " + getAssembleDirectory());
             logger.debug("- " + Constants.KEY_ARTIFACTS_DIRECTORY + " set to " + getArtifactsDirectory());
         } finally {
@@ -313,6 +318,10 @@ public class JReleaserContext {
         return outputDirectory.resolve("assemble");
     }
 
+    public Path getDownloadDirectory() {
+        return outputDirectory.resolve("download");
+    }
+
     public Path getArtifactsDirectory() {
         return outputDirectory.resolve("artifacts");
     }
@@ -392,6 +401,24 @@ public class JReleaserContext {
         this.includedPackagers.addAll(includedPackagers);
     }
 
+    public List<String> getIncludedDownloaderTypes() {
+        return includedDownloaderTypes;
+    }
+
+    public void setIncludedDownloaderTypes(List<String> includedDownloaderTypes) {
+        this.includedDownloaderTypes.clear();
+        this.includedDownloaderTypes.addAll(normalize(includedDownloaderTypes));
+    }
+
+    public List<String> getIncludedDownloaderNames() {
+        return includedDownloaderNames;
+    }
+
+    public void setIncludedDownloaderNames(List<String> includedDownloaderNames) {
+        this.includedDownloaderNames.clear();
+        this.includedDownloaderNames.addAll(includedDownloaderNames);
+    }
+
     public List<String> getIncludedUploaderTypes() {
         return includedUploaderTypes;
     }
@@ -446,6 +473,24 @@ public class JReleaserContext {
         this.excludedPackagers.addAll(normalize(excludedPackagers));
     }
 
+    public List<String> getExcludedDownloaderTypes() {
+        return excludedDownloaderTypes;
+    }
+
+    public void setExcludedDownloaderTypes(List<String> excludedDownloaderTypes) {
+        this.excludedDownloaderTypes.clear();
+        this.excludedDownloaderTypes.addAll(normalize(excludedDownloaderTypes));
+    }
+
+    public List<String> getExcludedDownloaderNames() {
+        return excludedDownloaderNames;
+    }
+
+    public void setExcludedDownloaderNames(List<String> excludedDownloaderNames) {
+        this.excludedDownloaderNames.clear();
+        this.excludedDownloaderNames.addAll(excludedDownloaderNames);
+    }
+
     public List<String> getExcludedUploaderTypes() {
         return excludedUploaderTypes;
     }
@@ -480,6 +525,7 @@ public class JReleaserContext {
         props.put(Constants.KEY_SIGNATURES_DIRECTORY, getSignaturesDirectory());
         props.put(Constants.KEY_PREPARE_DIRECTORY, getPrepareDirectory());
         props.put(Constants.KEY_PACKAGE_DIRECTORY, getPackageDirectory());
+        props.put(Constants.KEY_DOWNLOAD_DIRECTORY, getDownloadDirectory());
         props.put(Constants.KEY_ASSEMBLE_DIRECTORY, getAssembleDirectory());
         props.put(Constants.KEY_ARTIFACTS_DIRECTORY, getArtifactsDirectory());
         return props;

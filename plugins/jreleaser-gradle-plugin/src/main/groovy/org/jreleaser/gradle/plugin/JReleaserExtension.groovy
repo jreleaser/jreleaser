@@ -26,6 +26,7 @@ import org.jreleaser.gradle.plugin.dsl.Announce
 import org.jreleaser.gradle.plugin.dsl.Assemble
 import org.jreleaser.gradle.plugin.dsl.Checksum
 import org.jreleaser.gradle.plugin.dsl.Distribution
+import org.jreleaser.gradle.plugin.dsl.Download
 import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Packagers
@@ -62,6 +63,8 @@ interface JReleaserExtension {
 
     Upload getUpload()
 
+    Download getDownload()
+
     Packagers getPackagers()
 
     Announce getAnnounce()
@@ -86,6 +89,8 @@ interface JReleaserExtension {
 
     void upload(Action<? super Upload> action)
 
+    void download(Action<? super Download> action)
+
     void packagers(Action<? super Packagers> action)
 
     void announce(Action<? super Announce> action)
@@ -109,6 +114,8 @@ interface JReleaserExtension {
     void release(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Release) Closure<Void> action)
 
     void upload(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upload) Closure<Void> action)
+
+    void download(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Download) Closure<Void> action)
 
     void packagers(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Packagers) Closure<Void> action)
 
