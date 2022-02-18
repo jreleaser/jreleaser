@@ -5,26 +5,26 @@
 
 ## Binaries
 
-### Universal
+### 🌟 Universal
 
-* [jreleaser-{{projectEffectiveVersion}}.zip](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-{{projectEffectiveVersion}}.zip)
-* [jreleaser-{{projectEffectiveVersion}}.tar](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-{{projectEffectiveVersion}}.tar)
-* [jreleaser-ant-tasks-{{projectEffectiveVersion}}.zip](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-ant-tasks-{{projectEffectiveVersion}}.zip)
-* [jreleaser-tool-provider-{{projectEffectiveVersion}}.jar](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-tool-provider-{{projectEffectiveVersion}}.jar)
+* {{#f_release_download_url}}jreleaser-{{projectEffectiveVersion}}.zip{{/f_release_download_url}} (requires Java 8+)
+* {{#f_release_download_url}}jreleaser-{{projectEffectiveVersion}}.tar{{/f_release_download_url}} (requires Java 8+)
+* {{#f_release_download_url}}jreleaser-ant-tasks-{{projectEffectiveVersion}}.zip{{/f_release_download_url}} (requires Java 8+)
+* {{#f_release_download_url}}jreleaser-tool-provider-{{projectEffectiveVersion}}.jar{{/f_release_download_url}} (requires Java 11+)
 
-### Bundled Java Runtime
+### ☕️ Bundled Java Runtimes
 
 |Platform | Intel | Arm |
 | ------- | ----- | --- |
-| MacOS   | [jreleaser-standalone-{{projectEffectiveVersion}}-osx-x86_64.zip](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-standalone-{{projectEffectiveVersion}}-osx-x86_64.zip) | [jreleaser-standalone-{{projectEffectiveVersion}}-osx-aarch64.zip](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-standalone-{{projectEffectiveVersion}}-osx-aarch64.zip) |
-| Linux (glibc) | [jreleaser-standalone-{{projectEffectiveVersion}}-linux-x86_64.zip](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-standalone-{{projectEffectiveVersion}}-linux-x86_64.zip) | [jreleaser-standalone-{{projectEffectiveVersion}}-linux-aarch64.zip](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-standalone-{{projectEffectiveVersion}}-linux-aarch64.zip) |
-| Linux (musl) | [jreleaser-standalone-{{projectEffectiveVersion}}-linux_musl-x86_64.zip](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-standalone-{{projectEffectiveVersion}}-linux_musl-x86_64.zip) | [jreleaser-standalone-{{projectEffectiveVersion}}-linux_musl-aarch64.zip](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-standalone-{{projectEffectiveVersion}}-linux_musl-aarch64.zip) |
-| Windows | [jreleaser-standalone-{{projectEffectiveVersion}}-windows-x86_64.zip](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-standalone-{{projectEffectiveVersion}}-windows-x86_64.zip) | [jreleaser-standalone-{{projectEffectiveVersion}}-windows-aarch64.zip](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-standalone-{{projectEffectiveVersion}}-windows-aarch64.zip) |
+| MacOS   | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-osx-x86_64.zip{{/f_release_download_url}} | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-osx-aarch64.zip{{/f_release_download_url}} |
+| Linux (glibc) | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}} | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-linux-aarch64.zip{{/f_release_download_url}} |
+| Linux (musl) | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-linux_musl-x86_64.zip{{/f_release_download_url}} | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-linux_musl-aarch64.zip{{/f_release_download_url}} |
+| Windows | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-windows-x86_64.zip{{/f_release_download_url}} | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-windows-aarch64.zip{{/f_release_download_url}} |
 
-### Installers
+### 📦 Installers
 
-* [jreleaser-installer-{{projectEffectiveVersion}}.pkg](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-installer-{{projectEffectiveVersion}}.pkg)
-* [jreleaser-installer-{{projectEffectiveVersion}}-1_amd64.deb](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-installer-{{projectEffectiveVersion}}-1_amd64.deb)
-* [jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm)
-* [jreleaser-installer-{{projectEffectiveVersion}}.msi](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-installer-{{projectEffectiveVersion}}.msi)
-* [jreleaser-installer-{{projectEffectiveVersion}}.exe](https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/jreleaser-installer-{{projectEffectiveVersion}}.exe)
+* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}.pkg{{/f_release_download_url}}
+* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-1_amd64.deb{{/f_release_download_url}}
+* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm{{/f_release_download_url}}
+* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}.msi{{/f_release_download_url}}
+* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}.exe{{/f_release_download_url}}
