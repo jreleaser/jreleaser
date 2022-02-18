@@ -70,7 +70,7 @@ abstract class AbstractUploader implements Uploader {
 
     @Override
     public String getPrefix() {
-        return name;
+        return type;
     }
 
     @Override
