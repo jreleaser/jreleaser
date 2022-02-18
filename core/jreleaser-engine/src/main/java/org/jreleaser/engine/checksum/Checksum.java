@@ -81,7 +81,10 @@ public class Checksum {
             return;
         }
 
-        checksums.forEach((algorithm, list) -> {
+        for (Map.Entry<Algorithm, List<String>> entry : checksums.entrySet()) {
+            Algorithm algorithm = entry.getKey();
+            List<String> list = entry.getValue();
+
             Path checksumsFilePath = context.getChecksumsDirectory()
                 .resolve(context.getModel().getChecksum().getResolvedName(context, algorithm));
 
@@ -112,7 +115,7 @@ public class Checksum {
             } catch (IOException e) {
                 throw new JReleaserException(RB.$("ERROR_unexpected_error_checksum", checksumsFilePath.toAbsolutePath()), e);
             }
-        });
+        }
 
         context.getLogger().restorePrefix();
         context.getLogger().decreaseIndent();
