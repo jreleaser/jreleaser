@@ -88,7 +88,7 @@ public class GithubReleaser extends AbstractReleaser {
                         release.delete();
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
-                    createRelease(api, tagName, changelog, true);
+                    createRelease(api, tagName, changelog, github.isMatch());
                 } else if (github.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
@@ -123,7 +123,7 @@ public class GithubReleaser extends AbstractReleaser {
             } else {
                 context.getLogger().debug(RB.$("git.releaser.release.not.found"), tagName);
                 context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
-                createRelease(api, tagName, changelog, snapshot);
+                createRelease(api, tagName, changelog, snapshot && github.isMatch());
             }
         } catch (RestAPIException e) {
             context.getLogger().trace(e.getStatus() + " " + e.getReason());

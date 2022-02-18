@@ -65,6 +65,8 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     @JsonIgnore
     private final boolean releaseSupported;
 
+    @JsonIgnore
+    private boolean match = true;
     private Boolean enabled;
     private String host;
     private String owner;
@@ -118,6 +120,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     void setAll(GitService service) {
+        this.match = service.match;
         this.enabled = service.enabled;
         this.host = service.host;
         this.owner = service.owner;
@@ -278,6 +281,14 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
         uploadAssetsEnabled = uploadAssets.check(project, this);
         return uploadAssetsEnabled;
+    }
+
+    public boolean isMatch() {
+        return match;
+    }
+
+    public void setMatch(boolean match) {
+        this.match = match;
     }
 
     @Override

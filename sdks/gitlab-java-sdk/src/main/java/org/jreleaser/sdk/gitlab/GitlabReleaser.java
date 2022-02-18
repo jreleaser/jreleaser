@@ -98,7 +98,7 @@ public class GitlabReleaser extends AbstractReleaser {
                         api.deleteRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), tagName);
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
-                    createRelease(api, tagName, changelog, true);
+                    createRelease(api, tagName, changelog, gitlab.isMatch());
                 } else if (gitlab.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
@@ -142,7 +142,7 @@ public class GitlabReleaser extends AbstractReleaser {
             } else {
                 context.getLogger().debug(RB.$("git.releaser.release.not.found"), tagName);
                 context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
-                createRelease(api, tagName, changelog, snapshot);
+                createRelease(api, tagName, changelog, snapshot && gitlab.isMatch());
             }
         } catch (RestAPIException e) {
             context.getLogger().trace(e.getStatus() + " " + e.getReason());

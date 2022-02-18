@@ -78,6 +78,8 @@ public class ModelConfigurer {
 
         if (service != null) {
             if (!(service instanceof Github)) {
+                context.getModel().getRelease().getGitService().setMatch(false);
+                context.getModel().getRelease().getGitService().setSkipTag(true);
                 context.getLogger().warn(RB.$("ERROR_context_configurer_detected_git"), "github", service.getServiceName());
             }
         } else {
@@ -93,6 +95,8 @@ public class ModelConfigurer {
 
         if (service != null) {
             if (!(service instanceof Gitlab)) {
+                context.getModel().getRelease().getGitService().setMatch(false);
+                context.getModel().getRelease().getGitService().setSkipTag(true);
                 context.getLogger().warn(RB.$("ERROR_context_configurer_detected_git"), "gitlab", service.getServiceName());
             }
         } else {
@@ -108,6 +112,8 @@ public class ModelConfigurer {
 
         if (service != null) {
             if (!(service instanceof Codeberg)) {
+                context.getModel().getRelease().getGitService().setMatch(false);
+                context.getModel().getRelease().getGitService().setSkipTag(true);
                 context.getLogger().warn(RB.$("ERROR_context_configurer_detected_git"), "codeberg", service.getServiceName());
             }
         } else {

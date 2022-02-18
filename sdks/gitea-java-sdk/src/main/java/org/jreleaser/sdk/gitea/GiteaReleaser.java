@@ -86,7 +86,7 @@ public class GiteaReleaser extends AbstractReleaser {
                         api.deleteRelease(gitea.getOwner(), gitea.getName(), tagName, release.getId());
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
-                    createRelease(api, tagName, changelog, true);
+                    createRelease(api, tagName, changelog, gitea.isMatch());
                 } else if (gitea.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
@@ -120,7 +120,7 @@ public class GiteaReleaser extends AbstractReleaser {
             } else {
                 context.getLogger().debug(RB.$("git.releaser.release.not.found"), tagName);
                 context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
-                createRelease(api, tagName, changelog, snapshot);
+                createRelease(api, tagName, changelog, snapshot && gitea.isMatch());
             }
         } catch (RestAPIException e) {
             context.getLogger().trace(e.getStatus() + " " + e.getReason());
