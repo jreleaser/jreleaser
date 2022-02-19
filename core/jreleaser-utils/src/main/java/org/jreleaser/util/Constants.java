@@ -264,6 +264,9 @@ public interface Constants {
     // Gofish
     String KEY_GOFISH_PACKAGES = "gofishPackages";
 
+    // upload
+    String KEY_UPLOADER_NAME = "uploaderName";
+
     // Directories
     String KEY_BASE_OUTPUT_DIRECTORY = "baseOutputDirectory";
     String KEY_OUTPUT_DIRECTORY = "outputDirectory";
