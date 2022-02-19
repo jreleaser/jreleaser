@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.artifactory;
+package org.jreleaser.sdk.http;
 
 import org.jreleaser.model.Http;
 import org.jreleaser.model.JReleaserContext;
