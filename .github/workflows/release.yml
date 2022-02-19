@@ -12,88 +12,32 @@ env:
   JAVA_DISTRO: 'zulu'
 
 jobs:
-  assemble:
-    name: 'Assemble on ${{ matrix.os }}'
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+  precheck:
+    name: Precheck
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.vars.outputs.VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Java
-        uses: actions/setup-java@v2
+      - uses: n1hility/cancel-previous-runs@v2
         with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DISTRO }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - uses: actions/cache@v2
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
-          restore-keys: |
-            ${{ runner.os }}-gradlew-
-
-      - name: Set version
+      - name: Version
+        id: vars
+        shell: bash
         run: |
-          VERSION=${{ github.event.inputs.version }}
-          echo $VERSION > VERSION
+          echo ::set-output name=VERSION::${{ github.event.inputs.version }}
 
-      - name: Build
-        run: ./gradlew -Prelease=true assemble -S
-
-      - name: Assemble
-        uses: jreleaser/release-action@v1
-        with:
-          version: early-access
-          arguments: assemble -scp
-        env:
-          JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-
-      - name: JReleaser assemble output
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: jreleaser-assemble-${{ runner.os }}
-          path: |
-            out/jreleaser/trace.log
-            out/jreleaser/output.properties
-
-      - name: Upload installers
-        uses: actions/upload-artifact@v2
-        with:
-          retention-days: 1
-          name: artifacts
-          path: |
-            out/jreleaser/assemble/jreleaser-installer/jpackage/*.pkg
-            out/jreleaser/assemble/jreleaser-installer/jpackage/*.msi
-            out/jreleaser/assemble/jreleaser-installer/jpackage/*.exe
-            out/jreleaser/assemble/jreleaser-installer/jpackage/*.deb
-            out/jreleaser/assemble/jreleaser-installer/jpackage/*.rpm
-
-  release:
-    needs: assemble
+  jlink:
+    name: Jlink
+    needs: precheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: artifacts
-          path: artifacts
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Setup Java
         uses: actions/setup-java@v2
@@ -117,12 +61,179 @@ jobs:
 
       - name: Version
         run: |
-          VERSION=${{ github.event.inputs.version }}
-          echo $VERSION > VERSION
+          echo ${{ needs.precheck.outputs.VERSION }} > VERSION
 
       - name: Build
+        run: ./gradlew -Prelease=true build -S
+
+      - name: Jlink
+        uses: jreleaser/release-action@v1
+        with:
+          version: early-access
+          arguments: assemble -s jlink
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+
+      - name: JReleaser output
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: jreleaser-jlink
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          retention-days: 1
+          name: artifacts
+          path: |
+            apps/jreleaser/build/libs/
+            apps/jreleaser/build/dependencies/
+            apps/jreleaser/build/distributions/
+            apps/jreleaser-tool-provider/build/libs/*.jar
+            plugins/jreleaser-ant-tasks/build/distributions/*.zip
+
+      - name: Upload jlink
+        uses: actions/upload-artifact@v2
+        with:
+          retention-days: 1
+          name: jlink
+          path: |
+            out/jreleaser/assemble/jreleaser-standalone/jlink/
+
+  jpackage:
+    name: 'JPackage on ${{ matrix.os }}'
+    needs: [precheck, jlink]
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: artifacts
+
+      - name: Download jlink
+        uses: actions/download-artifact@v2
+        with:
+          name: jlink
+          path: out/jreleaser/assemble/jreleaser-standalone/jlink
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlew-
+
+      - name: Version
         run: |
-          ./gradlew -Prelease=true build -S
+          echo ${{ needs.precheck.outputs.VERSION }} > VERSION
+
+      - name: Build
+        run: ./gradlew :jreleaser:copyJdksFromCache :jreleaser:setupJdks
+
+      - name: Jpackage
+        uses: jreleaser/release-action@v1
+        with:
+          version: early-access
+          arguments: assemble -s jpackage -scp
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+
+      - name: JReleaser output
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: jreleaser-jpackage-${{ runner.os }}
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+
+      - name: Upload jpackage
+        uses: actions/upload-artifact@v2
+        with:
+          retention-days: 1
+          name: jpackage
+          path: |
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.pkg
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.msi
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.exe
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.deb
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.rpm
+
+  release:
+    name: Release
+    needs: [precheck, jlink, jpackage]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: artifacts
+
+      - name: Download jlink
+        uses: actions/download-artifact@v2
+        with:
+          name: jlink
+          path: out/jreleaser/assemble/jreleaser-standalone/jlink
+
+      - name: Download jpackage
+        uses: actions/download-artifact@v2
+        with:
+          name: jpackage
+          path: out/jreleaser/assemble/jreleaser-installer/jpackage
+
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlew-
+
+      - name: Version
+        run: |
+          echo ${{ needs.precheck.outputs.VERSION }} > VERSION
 
       - name: Deploy
         env:
@@ -146,31 +257,13 @@ jobs:
           git commit -a -m "Releasing version $VERSION"
           git push origin main
 
-      - name: Assemble
-        uses: jreleaser/release-action@v1
-        with:
-          version: early-access
-          arguments: assemble -xs jpackage
-        env:
-          JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-
-      - name: JReleaser assemble output
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: jreleaser-assemble
-          path: |
-            out/jreleaser/trace.log
-            out/jreleaser/output.properties
-
       - name: Release
         uses: jreleaser/release-action@v1
         with:
           version: early-access
-          arguments: full-release -PjpackageDir=artifacts
+          arguments: full-release
         env:
-          JRELEASER_PROJECT_VERSION: ${{ github.event.inputs.version }}
+          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
@@ -193,7 +286,7 @@ jobs:
             out/jreleaser/output.properties
 
   update:
-    needs: release
+    needs: [precheck, release]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -205,7 +298,7 @@ jobs:
 
       - name: Commit
         run: |
-          VERSION=${{ github.event.inputs.version }}
+          VERSION=${{ needs.precheck.outputs.VERSION }}
           echo $VERSION > VERSION
           git add VERSION
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
