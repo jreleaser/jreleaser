@@ -251,10 +251,10 @@ jobs:
       - name: Commit version
         run: |
           git add VERSION
-          sed -i -e "s/^\:project-version\:\ .*/:project-version: ${VERSION}/g" README.adoc
+          sed -i -e "s/^\:project-version\:\ .*/:project-version: ${{ needs.precheck.outputs.VERSION }}/g" README.adoc
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "GitHub Action"
-          git commit -a -m "Releasing version $VERSION"
+          git commit -a -m "Releasing version ${{ needs.precheck.outputs.VERSION }}"
           git push origin main
 
       - name: Release
@@ -299,9 +299,9 @@ jobs:
       - name: Commit
         run: |
           VERSION=${{ needs.precheck.outputs.VERSION }}
-          echo $VERSION > VERSION
+          echo ${{ needs.precheck.outputs.VERSION }} > VERSION
           git add VERSION
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "GitHub Action"
-          git commit -a -m "Releasing version $VERSION"
+          git commit -a -m "Releasing version ${{ needs.precheck.outputs.VERSION }}"
           git push origin main
