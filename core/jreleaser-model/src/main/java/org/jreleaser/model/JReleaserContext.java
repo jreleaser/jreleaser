@@ -485,6 +485,12 @@ public class JReleaserContext {
         return props;
     }
 
+    public Map<String, Object> fullProps() {
+        LinkedHashMap<String, Object> props = new LinkedHashMap<>(props());
+        props.putAll(model.props());
+        return props;
+    }
+
     @Override
     public String toString() {
         return "JReleaserContext[" +

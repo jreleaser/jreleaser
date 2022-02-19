@@ -65,7 +65,7 @@ public class Archive extends AbstractAssembler {
     }
 
     public String getResolvedArchiveName(JReleaserContext context) {
-        Map<String, Object> props = context.props();
+        Map<String, Object> props = context.fullProps();
         props.putAll(props());
         String result = resolveTemplate(archiveName, props);
         if (isAttachPlatform()) {

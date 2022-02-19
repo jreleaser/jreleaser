@@ -47,7 +47,7 @@ public class Checksum implements Domain {
     }
 
     public String getResolvedName(JReleaserContext context) {
-        Map<String, Object> props = context.props();
+        Map<String, Object> props = context.fullProps();
         context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
         return resolveTemplate(name, props);
     }

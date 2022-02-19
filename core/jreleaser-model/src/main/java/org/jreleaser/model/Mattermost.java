@@ -58,13 +58,13 @@ public class Mattermost extends AbstractAnnouncer {
     }
 
     public String getResolvedMessage(JReleaserContext context) {
-        Map<String, Object> props = context.props();
+        Map<String, Object> props = context.fullProps();
         applyTemplates(props, getResolvedExtraProperties());
         return resolveTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
-        Map<String, Object> props = context.props();
+        Map<String, Object> props = context.fullProps();
         applyTemplates(props, getResolvedExtraProperties());
         props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService()
             .getEffectiveTagName(context.getModel()));

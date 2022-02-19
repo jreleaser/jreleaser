@@ -425,7 +425,7 @@ public class ChangelogGenerator {
                 .append(lineSeparator);
         }
 
-        Map<String, Object> props = context.props();
+        Map<String, Object> props = context.fullProps();
         props.put(KEY_CHANGELOG_CHANGES, passThrough(changes.toString()));
         props.put(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors.toString()));
 

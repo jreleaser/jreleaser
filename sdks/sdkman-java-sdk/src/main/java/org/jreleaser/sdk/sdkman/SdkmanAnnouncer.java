@@ -82,7 +82,7 @@ public class SdkmanAnnouncer implements Announcer {
             Distribution distribution = e.getValue();
 
             Sdkman sdkman = distribution.getSdkman();
-            Map<String, Object> props = context.props();
+            Map<String, Object> props = context.fullProps();
             props.putAll(distribution.props());
             String releaseNotesUrl = resolveTemplate(sdkman.getReleaseNotesUrl(), props);
             String command = sdkman.getCommand().name().toLowerCase();
@@ -130,7 +130,7 @@ public class SdkmanAnnouncer implements Announcer {
 
         try {
             String candidate = isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
-            String releaseNotesUrl = resolveTemplate(sdkman.getReleaseNotesUrl(), context.props());
+            String releaseNotesUrl = resolveTemplate(sdkman.getReleaseNotesUrl(), context.fullProps());
 
             if (sdkman.isMajor()) {
                 context.getLogger().info(RB.$("sdkman.release.announce.major"), candidate);

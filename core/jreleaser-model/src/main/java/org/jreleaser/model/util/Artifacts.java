@@ -90,30 +90,30 @@ public class Artifacts {
     private static final String DOWNLOAD_URL_FROM_KEY = "downloadUrlFrom";
 
     public static String resolveForArtifact(String input, JReleaserContext context) {
-        return resolveTemplate(input, context.props());
+        return resolveTemplate(input, context.fullProps());
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact) {
-        return resolveTemplate(input, artifactProps(artifact, context.props()));
+        return resolveTemplate(input, artifactProps(artifact, context.fullProps()));
     }
 
     public static String resolveForGlob(String input, JReleaserContext context, Glob glob) {
-        return resolveTemplate(input, globProps(glob, context.props()));
+        return resolveTemplate(input, globProps(glob, context.fullProps()));
     }
 
     public static String resolveForFileSet(String input, JReleaserContext context, FileSet fileSet) {
-        return resolveTemplate(input, fileSetProps(fileSet, context.props()));
+        return resolveTemplate(input, fileSetProps(fileSet, context.fullProps()));
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Distribution distribution) {
-        Map<String, Object> props = context.props();
+        Map<String, Object> props = context.fullProps();
         props.putAll(distribution.props());
         props = artifactProps(artifact, props);
         return resolveTemplate(input, props);
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Assembler assembler) {
-        Map<String, Object> props = context.props();
+        Map<String, Object> props = context.fullProps();
         props.putAll(assembler.props());
         props = artifactProps(artifact, props);
         return resolveTemplate(input, props);
@@ -307,7 +307,7 @@ public class Artifacts {
             downloadUrl = service.getDownloadUrl();
         }
 
-        Map<String, Object> props = context.props();
+        Map<String, Object> props = context.fullProps();
         props.putAll(packager.getResolvedExtraProperties());
         props.putAll(distribution.props());
         artifactProps(artifact, distribution, props);
@@ -361,7 +361,7 @@ public class Artifacts {
             downloadUrl = service.getDownloadUrl();
         }
 
-        Map<String, Object> props = context.props();
+        Map<String, Object> props = context.fullProps();
         props.putAll(announcer.getResolvedExtraProperties());
         props.putAll(distribution.props());
         artifactProps(artifact, distribution, props);
@@ -532,7 +532,7 @@ public class Artifacts {
     }
 
     public static Set<Artifact> resolveFiles(JReleaserContext context, Path directory, Collection<String> globs) throws JReleaserException {
-        return resolveFiles(context.getLogger(), context.props(), directory, globs);
+        return resolveFiles(context.getLogger(), context.fullProps(), directory, globs);
     }
 
     private static class GlobResolver extends SimpleFileVisitor<Path> {

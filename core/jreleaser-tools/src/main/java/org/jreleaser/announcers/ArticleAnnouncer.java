@@ -91,7 +91,7 @@ public class ArticleAnnouncer implements Announcer {
 
         context.getLogger().debug(RB.$("announcer.article.resolve.templates"));
 
-        Map<String, Object> props = context.props();
+        Map<String, Object> props = context.fullProps();
         props.put(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
         context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
         props.putAll(article.getResolvedExtraProperties());
@@ -157,7 +157,7 @@ public class ArticleAnnouncer implements Announcer {
                 .addFilepattern(".")
                 .call();
 
-            Map<String, Object> props = context.props();
+            Map<String, Object> props = context.fullProps();
             context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
 
             // setup commit

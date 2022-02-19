@@ -263,7 +263,7 @@ abstract class AbstractUploader implements Uploader {
 
     @Override
     public Map<String, Object> artifactProps(JReleaserContext context, Artifact artifact) {
-        return artifactProps(context.props(), artifact);
+        return artifactProps(context.fullProps(), artifact);
     }
 
     @Override

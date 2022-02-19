@@ -42,7 +42,7 @@ abstract class AbstractHttpUploader extends AbstractUploader implements HttpUplo
 
     @Override
     public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
-        return getResolvedDownloadUrl(context.props(), artifact);
+        return getResolvedDownloadUrl(context.fullProps(), artifact);
     }
 
     @Override

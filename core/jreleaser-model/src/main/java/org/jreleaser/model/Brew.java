@@ -92,7 +92,7 @@ public class Brew extends AbstractRepositoryPackager {
 
     public String getResolvedFormulaName(JReleaserContext context) {
         if (isBlank(cachedFormulaName)) {
-            cachedFormulaName = resolveTemplate(formulaName, context.props());
+            cachedFormulaName = resolveTemplate(formulaName, context.fullProps());
             cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
         }
         return cachedFormulaName;

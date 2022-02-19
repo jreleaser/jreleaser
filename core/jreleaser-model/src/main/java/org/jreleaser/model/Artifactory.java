@@ -148,7 +148,7 @@ public class Artifactory extends AbstractUploader {
 
     @Override
     public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
-        return resolveUrl(context.props(), artifact);
+        return resolveUrl(context.fullProps(), artifact);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class Artifactory extends AbstractUploader {
     }
 
     public String getResolvedUploadUrl(JReleaserContext context, Artifact artifact) {
-        return resolveUrl(context.props(), artifact);
+        return resolveUrl(context.fullProps(), artifact);
     }
 
     private String resolveUrl(Map<String,Object> props, Artifact artifact) {
