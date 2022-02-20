@@ -47,6 +47,7 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -122,7 +123,7 @@ class DistributionImpl implements Distribution {
     @Override
     @Deprecated
     void addTag(String tag) {
-        println('distribution.addTag() has been deprecated since 1.0.0-M2 and will be removed in the future. Use distribution.tag() instead')
+        nag('distribution.addTag() has been deprecated since 1.0.0-M2 and will be removed in the future. Use distribution.tag() instead')
         this.tag(tag)
     }
 

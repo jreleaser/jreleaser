@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.internal
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project
+import org.gradle.api.logging.LogLevel
 import org.jreleaser.util.AbstractJReleaserLogger
 import org.kordamp.gradle.util.AnsiConsole
 import org.slf4j.helpers.MessageFormatter
@@ -34,17 +35,13 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     private final AnsiConsole console
 
     JReleaserLoggerAdapter(Project project, PrintWriter tracer) {
-        this(project, tracer, new PrintWriter(System.out, true), Level.INFO)
+        this(project, tracer, new PrintWriter(System.out, true))
     }
 
     JReleaserLoggerAdapter(Project project, PrintWriter tracer, PrintWriter out) {
-        this(project, tracer, out, Level.INFO)
-    }
-
-    JReleaserLoggerAdapter(Project project, PrintWriter tracer, PrintWriter out, Level level) {
         super(tracer)
         this.out = out
-        this.level = level
+        this.level = resolveLogLevel(project.gradle.startParameter.logLevel)
         this.console = new AnsiConsole(project)
     }
 
@@ -202,6 +199,18 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
         return requested.ordinal() >= level.ordinal()
     }
 
+    private static Level resolveLogLevel(LogLevel logLevel) {
+        switch (logLevel) {
+            case LogLevel.DEBUG: return Level.DEBUG;
+            case LogLevel.WARN: return Level.WARN;
+            case LogLevel.ERROR: return Level.ERROR;
+            case LogLevel.QUIET: return Level.QUIET;
+            case LogLevel.INFO:
+            default:
+                return Level.INFO;
+        }
+    }
+
     private class Colorizer extends PrintWriter {
         Colorizer(PrintWriter delegate) {
             super(delegate, true)
@@ -217,7 +226,8 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
         DEBUG('cyan'),
         INFO('blue'),
         WARN('yellow'),
-        ERROR('red')
+        ERROR('red'),
+        QUIET('black')
 
         private final String color
 

@@ -32,6 +32,7 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -87,7 +88,7 @@ class ProjectImpl implements Project {
     @Override
     @Deprecated
     void addAuthor(String name) {
-        println('project.addAuthor() has been deprecated since 1.0.0-M2 and will be removed in the future. Use project.author() instead')
+        nag('project.addAuthor() has been deprecated since 1.0.0-M2 and will be removed in the future. Use project.author() instead')
         author(name)
     }
 
@@ -101,7 +102,7 @@ class ProjectImpl implements Project {
     @Override
     @Deprecated
     void addTag(String tag) {
-        println('project.addTag() has been deprecated since 1.0.0-M2 and will be removed in the future. Use project.tag() instead')
+        nag('project.addTag() has been deprecated since 1.0.0-M2 and will be removed in the future. Use project.tag() instead')
         this.tag(tag)
     }
 

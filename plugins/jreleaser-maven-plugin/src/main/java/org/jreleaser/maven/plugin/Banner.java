@@ -55,11 +55,16 @@ final class Banner {
 
         b.visited.add(project.getName());
 
+        boolean quiet = log.isErrorEnabled() &&
+            !log.isWarnEnabled() &&
+            !log.isInfoEnabled() &&
+            !log.isDebugEnabled();
+
         try {
             File parent = new File(System.getProperty("user.home"), "/.m2/caches");
             File markerFile = getMarkerFile(parent, b);
             if (!markerFile.exists()) {
-                System.out.println(b.banner);
+                if (!quiet) System.out.println(b.banner);
                 markerFile.getParentFile().mkdirs();
                 PrintStream out = new PrintStream(new FileOutputStream(markerFile));
                 out.println("1");
@@ -69,12 +74,12 @@ final class Banner {
                 try {
                     int count = Integer.parseInt(readQuietly(markerFile));
                     if (count < 3) {
-                        System.out.println(b.banner);
+                        if (!quiet) System.out.println(b.banner);
                     }
                     writeQuietly(markerFile, (count + 1) + "");
                 } catch (NumberFormatException e) {
                     writeQuietly(markerFile, "1");
-                    System.out.println(b.banner);
+                    if (!quiet) System.out.println(b.banner);
                 }
             }
         } catch (IOException ignored) {

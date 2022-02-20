@@ -32,6 +32,7 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -64,14 +65,14 @@ class BrewImpl extends AbstractRepositoryPackager implements Brew {
     @Override
     @Deprecated
     void addDependency(String key, String value) {
-        println('brew.addDependency() has been deprecated since 1.0.0-M2 and will be removed in the future. Use brew.dependency() instead')
+        nag('brew.addDependency() has been deprecated since 1.0.0-M2 and will be removed in the future. Use brew.dependency() instead')
         dependency(key, value)
     }
 
     @Override
     @Deprecated
     void addDependency(String key) {
-        println('brew.addDependency() has been deprecated since 1.0.0-M2 and will be removed in the future. Use brew.dependency() instead')
+        nag('brew.addDependency() has been deprecated since 1.0.0-M2 and will be removed in the future. Use brew.dependency() instead')
         dependency(key)
     }
 
@@ -91,7 +92,7 @@ class BrewImpl extends AbstractRepositoryPackager implements Brew {
 
     @Override
     Tap getTap() {
-        println('brew.tap has been deprecated since 0.9.0 and will be removed in the future. Use brew.repoTap instead')
+        nag('brew.tap has been deprecated since 0.9.0 and will be removed in the future. Use brew.repoTap instead')
         return repoTap
     }
 
@@ -160,8 +161,8 @@ class BrewImpl extends AbstractRepositoryPackager implements Brew {
         final Property<String> appName
         final Property<String> appcast
         final Property<Boolean> enabled
-        final MapProperty<String,List<String>> uninstall
-        final MapProperty<String,List<String>> zap
+        final MapProperty<String, List<String>> uninstall
+        final MapProperty<String, List<String>> zap
 
         @Inject
         CaskImpl(ObjectFactory objects) {
@@ -171,8 +172,8 @@ class BrewImpl extends AbstractRepositoryPackager implements Brew {
             appName = objects.property(String).convention(Providers.notDefined())
             appcast = objects.property(String).convention(Providers.notDefined())
             enabled = objects.property(Boolean).convention(Providers.notDefined())
-            uninstall = (objects.mapProperty(String,List).convention(Providers.notDefined()) as MapProperty<String, List<String>>)
-            zap = (objects.mapProperty(String,List).convention(Providers.notDefined()) as MapProperty<String, List<String>>)
+            uninstall = (objects.mapProperty(String, List).convention(Providers.notDefined()) as MapProperty<String, List<String>>)
+            zap = (objects.mapProperty(String, List).convention(Providers.notDefined()) as MapProperty<String, List<String>>)
         }
 
         @Internal

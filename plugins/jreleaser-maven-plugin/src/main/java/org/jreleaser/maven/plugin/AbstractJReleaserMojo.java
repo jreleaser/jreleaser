@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jreleaser.util.JReleaserOutput.JRELEASER_QUIET;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -84,6 +85,13 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(defaultValue = "${maven.multiModuleProjectDirectory}")
     private String multiModuleProjectDirectory;
 
+    protected boolean isQuiet() {
+        return getLog().isErrorEnabled() &&
+            !getLog().isWarnEnabled() &&
+            !getLog().isInfoEnabled() &&
+            !getLog().isDebugEnabled();
+    }
+
     protected JReleaserLogger getLogger() throws MojoExecutionException {
         return new JReleaserLoggerAdapter(createTracer(), getLog());
     }
@@ -111,6 +119,10 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
 
     protected JReleaserContext createContext() throws MojoExecutionException {
         try {
+            if (isQuiet()) {
+                System.setProperty(JRELEASER_QUIET, "true");
+            }
+
             JReleaserLogger logger = getLogger();
             PlatformUtils.resolveCurrentPlatform(logger);
             Path basedir = resolveBasedir();

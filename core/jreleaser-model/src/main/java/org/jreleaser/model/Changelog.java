@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
@@ -217,7 +218,7 @@ public class Changelog implements Domain, EnabledAware {
 
     @Deprecated
     public void setChange(String change) {
-        System.out.println("changelog.change has been deprecated since 0.6.0 and will be removed in the future. Use changelog.format instead");
+        nag("changelog.change has been deprecated since 0.6.0 and will be removed in the future. Use changelog.format instead");
         this.format = change;
     }
 
@@ -271,7 +272,7 @@ public class Changelog implements Domain, EnabledAware {
 
     @Deprecated
     public void setHideUncategorized(boolean hideUncategorized) {
-        System.out.println("changelog.hideUncategorized has been deprecated since 0.6.0 and will be removed in the future. Use changelog.hide.uncategorized instead");
+        nag("changelog.hideUncategorized has been deprecated since 0.6.0 and will be removed in the future. Use changelog.hide.uncategorized instead");
         this.hide.uncategorized = hideUncategorized;
     }
 
@@ -328,13 +329,6 @@ public class Changelog implements Domain, EnabledAware {
             if (null == o2.getOrder()) return -1;
             return o1.getOrder().compareTo(o2.getOrder());
         };
-
-        public static Set<Category> sort(Set<Category> categories) {
-            TreeSet<Category> tmp = new TreeSet<>(ORDER);
-            tmp.addAll(categories);
-            return tmp;
-        }
-
         private final Set<String> labels = new LinkedHashSet<>();
         private String key;
         private String title;
@@ -419,6 +413,12 @@ public class Changelog implements Domain, EnabledAware {
         @Override
         public int hashCode() {
             return Objects.hash(title);
+        }
+
+        public static Set<Category> sort(Set<Category> categories) {
+            TreeSet<Category> tmp = new TreeSet<>(ORDER);
+            tmp.addAll(categories);
+            return tmp;
         }
 
         public static Category of(String key, String title, String format, String... labels) {

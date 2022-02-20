@@ -34,6 +34,7 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -101,7 +102,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     @Override
     @Deprecated
     void addArg(String arg) {
-        println('nativeImage.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use nativeImage.arg() instead')
+        nag('nativeImage.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use nativeImage.arg() instead')
         this.arg(arg)
     }
 
@@ -190,7 +191,7 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         @Override
         @Deprecated
         void addArg(String arg) {
-            println('upx.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use upx.arg() instead')
+            nag('upx.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use upx.arg() instead')
             this.arg(arg)
         }
 

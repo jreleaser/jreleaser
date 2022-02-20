@@ -29,6 +29,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -398,85 +399,85 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
 
     @Deprecated
     public String getRepoUrlFormat() {
-        System.out.println("getRepoUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoUrl() instead");
+        nag("getRepoUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoUrl() instead");
         return repoUrl;
     }
 
     @Deprecated
     public void setRepoUrlFormat(String repoUrl) {
-        System.out.println("setRepoUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setRepoUrl() instead");
+        nag("setRepoUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setRepoUrl() instead");
         this.repoUrl = repoUrl;
     }
 
     @Deprecated
     public String getRepoCloneUrlFormat() {
-        System.out.println("getRepoCloneUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoCloneUrl() instead");
+        nag("getRepoCloneUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoCloneUrl() instead");
         return repoCloneUrl;
     }
 
     @Deprecated
     public void setRepoCloneUrlFormat(String repoCloneUrl) {
-        System.out.println("setRepoCloneUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setRepoCloneUrl() instead");
+        nag("setRepoCloneUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setRepoCloneUrl() instead");
         this.repoCloneUrl = repoCloneUrl;
     }
 
     @Deprecated
     public String getCommitUrlFormat() {
-        System.out.println("getCommitUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getCommitUrl() instead");
+        nag("getCommitUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getCommitUrl() instead");
         return commitUrl;
     }
 
     @Deprecated
     public void setCommitUrlFormat(String commitUrl) {
-        System.out.println("setCommitUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setCommitUrl() instead");
+        nag("setCommitUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setCommitUrl() instead");
         this.commitUrl = commitUrl;
     }
 
     @Deprecated
     public String getDownloadUrlFormat() {
-        System.out.println("getDownloadUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getDownloadUrl() instead");
+        nag("getDownloadUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getDownloadUrl() instead");
         return downloadUrl;
     }
 
     @Deprecated
     public void setDownloadUrlFormat(String downloadUrl) {
-        System.out.println("setDownloadUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setDownloadUrl() instead");
+        nag("setDownloadUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setDownloadUrl() instead");
         this.downloadUrl = downloadUrl;
     }
 
     @Deprecated
     public String getReleaseNotesUrlFormat() {
-        System.out.println("getReleaseNotesUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getReleaseNotesUrl() instead");
+        nag("getReleaseNotesUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getReleaseNotesUrl() instead");
         return releaseNotesUrl;
     }
 
     @Deprecated
     public void setReleaseNotesUrlFormat(String releaseNotesUrl) {
-        System.out.println("setReleaseNotesUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setReleaseNotesUrl() instead");
+        nag("setReleaseNotesUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setReleaseNotesUrl() instead");
         this.releaseNotesUrl = releaseNotesUrl;
     }
 
     @Deprecated
     public String getLatestReleaseUrlFormat() {
-        System.out.println("getLatestReleaseUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getLatestReleaseUrl() instead");
+        nag("getLatestReleaseUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getLatestReleaseUrl() instead");
         return latestReleaseUrl;
     }
 
     @Deprecated
     public void setLatestReleaseUrlFormat(String latestReleaseUrl) {
-        System.out.println("setLatestReleaseUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setLatestReleaseUrl() instead");
+        nag("setLatestReleaseUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setLatestReleaseUrl() instead");
         this.latestReleaseUrl = latestReleaseUrl;
     }
 
     @Deprecated
     public String getIssueTrackerUrlFormat() {
-        System.out.println("getIssueTrackerUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getIssueTrackerUrl() instead");
+        nag("getIssueTrackerUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getIssueTrackerUrl() instead");
         return issueTrackerUrl;
     }
 
     @Deprecated
     public void setIssueTrackerUrlFormat(String issueTrackerUrl) {
-        System.out.println("setIssueTrackerUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setIssueTrackerUrl() instead");
+        nag("setIssueTrackerUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use setIssueTrackerUrl() instead");
         this.issueTrackerUrl = issueTrackerUrl;
     }
 
@@ -624,7 +625,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
 
     @Deprecated
     public void setUpdateSections(Set<UpdateSection> updateSections) {
-        System.out.println("updateSections has been deprecated since 1.0.0-M2 and will be removed in the future. Use update.sections instead");
+        nag("updateSections has been deprecated since 1.0.0-M2 and will be removed in the future. Use update.sections instead");
         this.update.setSections(updateSections);
     }
 
@@ -873,7 +874,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
 
         public Update(Boolean enabled) {
-            System.out.println("update has been deprecated since 1.0.0-M2 and will be removed in the future. Use update.enabled instead");
+            nag("update has been deprecated since 1.0.0-M2 and will be removed in the future. Use update.enabled instead");
             this.enabled = enabled;
         }
 
@@ -920,7 +921,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
 
         public Prerelease(Boolean enabled) {
-            System.out.println("prerelease has been deprecated since 0.7.0 and will be removed in the future. Use prerelease.enabled instead");
+            nag("prerelease has been deprecated since 0.7.0 and will be removed in the future. Use prerelease.enabled instead");
             this.enabled = enabled;
         }
 

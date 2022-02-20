@@ -42,6 +42,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
 import org.jreleaser.model.JReleaserModel
 import org.jreleaser.util.JReleaserLogger
+import org.jreleaser.util.JReleaserOutput
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -297,7 +298,7 @@ class JReleaserProjectConfigurer {
     private static boolean configureDefaultDistribution(Project project, JReleaserExtensionImpl extension) {
         boolean hasDistributionPlugin = project.plugins.findPlugin('distribution')
 
-        if (hasDistributionPlugin) {
+        if (hasDistributionPlugin && !JReleaserOutput.isQuiet()) {
             project.logger.warn("""|🚨 WARNING 🚨
                                    |Since v0.9.0 JReleaser no longer auto configures a default distribution
                                    |with the outputs of 'distZip' and 'distTar' tasks.

@@ -33,6 +33,7 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -115,49 +116,49 @@ abstract class AbstractGitService implements GitService {
     @Deprecated
     @Override
     Property<String> getRepoUrlFormat() {
-        println('getRepoUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoUrl() instead')
+        nag('getRepoUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoUrl() instead')
         return repoUrl
     }
 
     @Deprecated
     @Override
     Property<String> getRepoCloneUrlFormat() {
-        println('getRepoCloneUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoCloneUrl() instead')
+        nag('getRepoCloneUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoCloneUrl() instead')
         return repoCloneUrl
     }
 
     @Deprecated
     @Override
     Property<String> getCommitUrlFormat() {
-        println('getCommitUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getCommitUrl() instead')
+        nag('getCommitUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getCommitUrl() instead')
         return commitUrl
     }
 
     @Deprecated
     @Override
     Property<String> getDownloadUrlFormat() {
-        println('getDownloadUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getDownloadUrl() instead')
+        nag('getDownloadUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getDownloadUrl() instead')
         return downloadUrl
     }
 
     @Deprecated
     @Override
     Property<String> getReleaseNotesUrlFormat() {
-        println('getReleaseNotesUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getReleaseNotesUrl() instead')
+        nag('getReleaseNotesUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getReleaseNotesUrl() instead')
         return releaseNotesUrl
     }
 
     @Deprecated
     @Override
     Property<String> getLatestReleaseUrlFormat() {
-        println('getLatestReleaseUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getLatestReleaseUrl() instead')
+        nag('getLatestReleaseUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getLatestReleaseUrl() instead')
         return latestReleaseUrl
     }
 
     @Deprecated
     @Override
     Property<String> getIssueTrackerUrlFormat() {
-        println('getIssueTrackerUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getIssueTrackerUrl() instead')
+        nag('getIssueTrackerUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getIssueTrackerUrl() instead')
         return issueTrackerUrl
     }
 

@@ -22,9 +22,12 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.internal.JReleaserExtensionImpl
 import org.jreleaser.gradle.plugin.internal.JReleaserProjectConfigurer
+
+import static org.jreleaser.util.JReleaserOutput.JRELEASER_QUIET
 
 /**
  *
@@ -35,7 +38,11 @@ import org.jreleaser.gradle.plugin.internal.JReleaserProjectConfigurer
 class JReleaserPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
-        Banner.display(project)
+        if (project.gradle.startParameter.logLevel != LogLevel.QUIET) {
+            Banner.display(project)
+        } else {
+            System.setProperty(JRELEASER_QUIET, 'true')
+        }
 
         Provider<String> nameProvider = project.provider({ -> project.name })
         Provider<String> descriptionProvider = project.provider({ -> project.description })

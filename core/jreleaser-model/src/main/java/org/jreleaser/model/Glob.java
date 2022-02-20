@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.Files.exists;
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -220,7 +221,7 @@ public class Glob implements Domain, ExtraProperties {
 
     @Deprecated
     public void setInclude(String include) {
-        System.out.println("glob.include has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
+        nag("glob.include has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
         this.include = include;
     }
 
@@ -230,7 +231,7 @@ public class Glob implements Domain, ExtraProperties {
 
     @Deprecated
     public void setExclude(String exclude) {
-        System.out.println("glob.exclude has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
+        nag("glob.exclude has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
         this.exclude = exclude;
     }
 
@@ -240,7 +241,7 @@ public class Glob implements Domain, ExtraProperties {
 
     @Deprecated
     public void setRecursive(Boolean recursive) {
-        System.out.println("glob.recursive has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
+        nag("glob.recursive has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
         this.recursive = recursive;
     }
 

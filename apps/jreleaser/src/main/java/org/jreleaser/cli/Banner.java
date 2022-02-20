@@ -17,6 +17,8 @@
  */
 package org.jreleaser.cli;
 
+import org.jreleaser.util.JReleaserOutput;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -57,7 +59,7 @@ final class Banner {
             File parent = new File(jreleaserDir, "/.jreleaser/caches");
             File markerFile = getMarkerFile(parent, b);
             if (!markerFile.exists()) {
-                out.println(b.banner);
+                if (!JReleaserOutput.isQuiet()) out.println(b.banner);
                 markerFile.getParentFile().mkdirs();
                 PrintStream fout = new PrintStream(new FileOutputStream(markerFile));
                 fout.println("1");
@@ -67,12 +69,12 @@ final class Banner {
                 try {
                     int count = Integer.parseInt(readQuietly(markerFile));
                     if (count < 3) {
-                        out.println(b.banner);
+                        if (!JReleaserOutput.isQuiet()) out.println(b.banner);
                     }
                     writeQuietly(markerFile, (count + 1) + "");
                 } catch (NumberFormatException e) {
                     writeQuietly(markerFile, "1");
-                    out.println(b.banner);
+                    if (!JReleaserOutput.isQuiet()) out.println(b.banner);
                 }
             }
         } catch (IOException ignored) {

@@ -36,6 +36,7 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -105,7 +106,7 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
     @Override
     @Deprecated
     void addLocalPlug(String plug) {
-        println('snap.addLocalPlug() has been deprecated since 1.0.0-M2 and will be removed in the future. Use snap.localPlug() instead')
+        nag('snap.addLocalPlug() has been deprecated since 1.0.0-M2 and will be removed in the future. Use snap.localPlug() instead')
         localPlug(plug)
     }
 
@@ -119,7 +120,7 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
     @Override
     @Deprecated
     void addLocalSlot(String slot) {
-        println('snap.addLocalSlot() has been deprecated since 1.0.0-M2 and will be removed in the future. Use snap.localSlot() instead')
+        nag('snap.addLocalSlot() has been deprecated since 1.0.0-M2 and will be removed in the future. Use snap.localSlot() instead')
         localSlot(slot)
     }
 
@@ -248,21 +249,21 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
         @Override
         @Deprecated
         void addAttribute(String key, String value) {
-            println('plug.addAttribute() has been deprecated since 1.0.0-M2 and will be removed in the future. Use plug.attribute() instead')
+            nag('plug.addAttribute() has been deprecated since 1.0.0-M2 and will be removed in the future. Use plug.attribute() instead')
             attribute(key, value)
         }
 
         @Override
         @Deprecated
         void addRead(String read) {
-            println('plug.addRead() has been deprecated since 1.0.0-M2 and will be removed in the future. Use plug.read() instead')
+            nag('plug.addRead() has been deprecated since 1.0.0-M2 and will be removed in the future. Use plug.read() instead')
             this.read(read)
         }
 
         @Override
         @Deprecated
         void addWrite(String write) {
-            println('plug.addWrite() has been deprecated since 1.0.0-M2 and will be removed in the future. Use plug.write() instead')
+            nag('plug.addWrite() has been deprecated since 1.0.0-M2 and will be removed in the future. Use plug.write() instead')
             this.write(write)
         }
 
@@ -318,21 +319,21 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
         @Override
         @Deprecated
         void addAttribute(String key, String value) {
-            println('slot.addAttribute() has been deprecated since 1.0.0-M2 and will be removed in the future. Use slot.attribute() instead')
+            nag('slot.addAttribute() has been deprecated since 1.0.0-M2 and will be removed in the future. Use slot.attribute() instead')
             attribute(key, value)
         }
 
         @Override
         @Deprecated
         void addRead(String read) {
-            println('slot.addRead() has been deprecated since 1.0.0-M2 and will be removed in the future. Use slot.read() instead')
+            nag('slot.addRead() has been deprecated since 1.0.0-M2 and will be removed in the future. Use slot.read() instead')
             this.read(read)
         }
 
         @Override
         @Deprecated
         void addWrite(String write) {
-            println('slot.addWrite() has been deprecated since 1.0.0-M2 and will be removed in the future. Use slot.write() instead')
+            nag('slot.addWrite() has been deprecated since 1.0.0-M2 and will be removed in the future. Use slot.write() instead')
             this.write(write)
         }
 
@@ -384,14 +385,14 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
         @Override
         @Deprecated
         void addRunOn(String str) {
-            println('architecture.addRunOn() has been deprecated since 1.0.0-M2 and will be removed in the future. Use architecture.runOn() instead')
+            nag('architecture.addRunOn() has been deprecated since 1.0.0-M2 and will be removed in the future. Use architecture.runOn() instead')
             runOn(str)
         }
 
         @Override
         @Deprecated
         void addBuildOn(String str) {
-            println('architecture.addBuildOn() has been deprecated since 1.0.0-M2 and will be removed in the future. Use architecture.buildOn() instead')
+            nag('architecture.addBuildOn() has been deprecated since 1.0.0-M2 and will be removed in the future. Use architecture.buildOn() instead')
             buildOn(str)
         }
 

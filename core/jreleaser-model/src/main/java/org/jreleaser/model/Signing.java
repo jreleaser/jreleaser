@@ -31,6 +31,7 @@ import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -244,37 +245,37 @@ public class Signing implements Domain, Activatable {
     }
 
     public void setExecutable(String executable) {
-        System.out.println("signing.executable has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.executable instead");
+        nag("signing.executable has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.executable instead");
         this.command.setExecutable(executable);
     }
 
     public void setKeyName(String keyName) {
-        System.out.println("signing.keyName has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.keyName instead");
+        nag("signing.keyName has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.keyName instead");
         this.command.setKeyName(keyName);
     }
 
     public void setHomeDir(String homeDir) {
-        System.out.println("signing.homeDir has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.homeDir instead");
+        nag("signing.homeDir has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.homeDir instead");
         this.command.setHomeDir(homeDir);
     }
 
     public void setPublicKeyring(String publicKeyring) {
-        System.out.println("signing.publicKeyring has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.publicKeyring instead");
+        nag("signing.publicKeyring has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.publicKeyring instead");
         this.command.setPublicKeyring(publicKeyring);
     }
 
     public void setDefaultKeyring(Boolean defaultKeyring) {
-        System.out.println("signing.defaultKeyring has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.defaultKeyring instead");
+        nag("signing.defaultKeyring has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.defaultKeyring instead");
         this.command.setDefaultKeyring(defaultKeyring);
     }
 
     public void setArgs(List<String> args) {
-        System.out.println("signing.args has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.args instead");
+        nag("signing.args has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.args instead");
         this.command.setArgs(args);
     }
 
     public void addArgs(List<String> args) {
-        System.out.println("signing.addArgs() has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.addArgs() instead");
+        nag("signing.addArgs() has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.addArgs() instead");
         this.command.addArgs(args);
     }
 

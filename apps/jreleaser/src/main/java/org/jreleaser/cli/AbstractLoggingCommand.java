@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import static org.jreleaser.util.JReleaserOutput.JRELEASER_QUIET;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -58,8 +59,9 @@ abstract class AbstractLoggingCommand extends AbstractCommand implements Callabl
     @CommandLine.Option(names = {"-od", "--output-directory"})
     Path outputdir;
 
-    protected void initLogger() {
-        ColorizedJReleaserLoggerAdapter.Level level = ColorizedJReleaserLoggerAdapter.Level.INFO;
+    protected ColorizedJReleaserLoggerAdapter.Level level = ColorizedJReleaserLoggerAdapter.Level.INFO;
+
+    protected void setup() {
         if (debug) {
             level = ColorizedJReleaserLoggerAdapter.Level.DEBUG;
             System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "debug");
@@ -72,8 +74,13 @@ abstract class AbstractLoggingCommand extends AbstractCommand implements Callabl
         } else if (quiet) {
             level = ColorizedJReleaserLoggerAdapter.Level.ERROR;
             System.setProperty("org.slf4j.simpleLogger.org.jreleaser", "error");
+            System.setProperty(JRELEASER_QUIET, "true");
         }
 
+        Banner.display(parent().out);
+    }
+
+    protected void initLogger() {
         logger = new ColorizedJReleaserLoggerAdapter(createTracer(), parent().out, level);
     }
 

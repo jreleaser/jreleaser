@@ -30,9 +30,7 @@ abstract class AbstractCommand extends BaseCommand implements Callable<Integer> 
     protected abstract Main parent();
 
     public Integer call() {
-        Banner.display(parent().out);
-
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
+        setup();
 
         try {
             execute();
@@ -50,6 +48,12 @@ abstract class AbstractCommand extends BaseCommand implements Callable<Integer> 
         }
 
         return 0;
+    }
+
+    protected void setup() {
+        Banner.display(parent().out);
+
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
     }
 
     protected void printDetails(Throwable throwable, String message, Colorizer colorizer) {

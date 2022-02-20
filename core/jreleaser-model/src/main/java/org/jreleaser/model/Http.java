@@ -24,6 +24,7 @@ import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -86,13 +87,13 @@ public class Http extends AbstractHttpUploader {
 
     @Deprecated
     public String getTarget() {
-        System.out.println("http.target has been deprecated since 0.6.0 and will be removed in the future. Use http.uploadUrl instead");
+        nag("http.target has been deprecated since 0.6.0 and will be removed in the future. Use http.uploadUrl instead");
         return getUploadUrl();
     }
 
     @Deprecated
     public void setTarget(String target) {
-        System.out.println("http.target has been deprecated since 0.6.0 and will be removed in the future. Use http.uploadUrl instead");
+        nag("http.target has been deprecated since 0.6.0 and will be removed in the future. Use http.uploadUrl instead");
         setUploadUrl(target);
     }
 
