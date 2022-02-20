@@ -1,6 +1,6 @@
 # {{jreleaserCreationStamp}}
 name: {{snapPackageName}}
-version: {{projectVersion}}
+version: "{{projectVersion}}"
 summary: {{projectDescription}}
 description: {{projectLongDescription}}
 
