@@ -30,14 +30,14 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  */
 public class AbstractTool {
     protected final JReleaserContext context;
-    protected final Tool tool;
+    protected final DownloadableTool tool;
     protected final String name;
 
     public AbstractTool(JReleaserContext context, String name, String version) {
         requireNonBlank(version, "'version' must not be blank");
         this.name = requireNonBlank(version, "'name' must not be blank");
         this.context = context;
-        this.tool = new Tool(context.getLogger(), name, version, PlatformUtils.getCurrentFull());
+        this.tool = new DownloadableTool(context.getLogger(), name, version, PlatformUtils.getCurrentFull());
     }
 
     public boolean setup() throws ToolException {

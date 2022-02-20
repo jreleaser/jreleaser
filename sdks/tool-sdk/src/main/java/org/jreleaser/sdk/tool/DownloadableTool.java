@@ -47,7 +47,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 1.0.0
  */
-public class Tool {
+public class DownloadableTool {
     private static final String BASE_TEMPLATE_PREFIX = "META-INF/jreleaser/tools/";
     private static final String DOWNLOAD_URL = "download.url";
     private static final String VERSION = "version";
@@ -66,7 +66,7 @@ public class Tool {
     private final Properties properties;
     private Path executable;
 
-    public Tool(JReleaserLogger logger, String name, String version, String platform) throws ToolException {
+    public DownloadableTool(JReleaserLogger logger, String name, String version, String platform) throws ToolException {
         this.logger = logger;
         this.name = name;
         this.version = version;
@@ -75,7 +75,7 @@ public class Tool {
         String key = name + ".properties";
         try {
             properties = new Properties();
-            properties.load(Tool.class.getClassLoader()
+            properties.load(DownloadableTool.class.getClassLoader()
                 .getResourceAsStream(BASE_TEMPLATE_PREFIX + key));
             enabled = properties.containsKey(platform + EXECUTABLE);
             if (enabled) {
