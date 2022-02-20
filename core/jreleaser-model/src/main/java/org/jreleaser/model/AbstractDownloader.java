@@ -19,8 +19,10 @@ package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +33,7 @@ abstract class AbstractDownloader implements Downloader {
     @JsonIgnore
     protected final String type;
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    private final Unpack unpack = new Unpack();
+    private final List<Asset> assets = new ArrayList<>();
     @JsonIgnore
     protected String name;
     @JsonIgnore
@@ -51,7 +53,7 @@ abstract class AbstractDownloader implements Downloader {
         this.connectTimeout = downloader.connectTimeout;
         this.readTimeout = downloader.readTimeout;
         setExtraProperties(downloader.extraProperties);
-        setUnpack(downloader.unpack);
+        setAssets(downloader.assets);
     }
 
     @Override
@@ -149,13 +151,21 @@ abstract class AbstractDownloader implements Downloader {
     }
 
     @Override
-    public Unpack getUnpack() {
-        return unpack;
+    public List<Asset> getAssets() {
+        return assets;
     }
 
     @Override
-    public void setUnpack(Unpack unpack) {
-        this.unpack.setAll(unpack);
+    public void setAssets(List<Asset> assets) {
+        this.assets.clear();
+        this.assets.addAll(assets);
+    }
+
+    @Override
+    public void addAsset(Asset asset) {
+        if (null != asset) {
+            this.assets.add(asset);
+        }
     }
 
     @Override
@@ -168,7 +178,12 @@ abstract class AbstractDownloader implements Downloader {
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
         asMap(props, full);
-        props.put("unpack", unpack.asMap(full));
+        Map<String, Map<String, Object>> mappedAssets = new LinkedHashMap<>();
+        int i = 0;
+        for (Asset asset : getAssets()) {
+            mappedAssets.put("asset " + (i++), asset.asMap(full));
+        }
+        props.put("assets", mappedAssets);
         props.put("extraProperties", getResolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();

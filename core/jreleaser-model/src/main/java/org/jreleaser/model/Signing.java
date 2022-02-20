@@ -51,7 +51,6 @@ public class Signing implements Domain, Activatable {
     public static final String GPG_HOMEDIR = "GPG_HOMEDIR";
     public static final String GPG_PUBLIC_KEYRING = "GPG_PUBLIC_KEYRING";
 
-    private final List<String> args = new ArrayList<>();
     private final Command command = new Command();
     private final Cosign cosign = new Cosign();
 

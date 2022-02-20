@@ -22,8 +22,6 @@ package org.jreleaser.maven.plugin;
  * @since 0.3.0
  */
 public interface Uploader extends Activatable, TimeoutAware, ExtraProperties {
-    String getType();
-
     String getName();
 
     void setName(String name);

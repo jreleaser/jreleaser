@@ -33,7 +33,19 @@ interface Download {
 
     NamedDomainObjectContainer<HttpDownloader> getHttp()
 
+    NamedDomainObjectContainer<ScpDownloader> getScp()
+
+    NamedDomainObjectContainer<SftpDownloader> getSftp()
+
     void http(Action<? super NamedDomainObjectContainer<HttpDownloader>> action)
 
+    void scp(Action<? super NamedDomainObjectContainer<ScpDownloader>> action)
+
+    void sftp(Action<? super NamedDomainObjectContainer<SftpDownloader>> action)
+
     void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void scp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void sftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 }

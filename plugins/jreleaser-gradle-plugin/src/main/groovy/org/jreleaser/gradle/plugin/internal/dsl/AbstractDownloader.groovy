@@ -19,6 +19,8 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
@@ -44,12 +46,33 @@ abstract class AbstractDownloader implements Downloader {
     final Property<Integer> readTimeout
     final MapProperty<String, Object> extraProperties
 
+    private final NamedDomainObjectContainer<AssetImpl> assets
+
     @Inject
     AbstractDownloader(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
         connectTimeout = objects.property(Integer).convention(Providers.notDefined())
         readTimeout = objects.property(Integer).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+
+        assets = objects.domainObjectContainer(AssetImpl, new NamedDomainObjectFactory<AssetImpl>() {
+            @Override
+            AssetImpl create(String name) {
+                AssetImpl asset = objects.newInstance(AssetImpl, objects)
+                asset.name = name
+                asset
+            }
+        })
+    }
+
+    @Override
+    void asset(Action<? super Asset> action) {
+        action.execute(assets.maybeCreate("asset-${assets.size()}".toString()))
+    }
+
+    @Override
+    void asset(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Asset) Closure<Void> action) {
+        ConfigureUtil.configure(action, assets.maybeCreate("asset-${assets.size()}".toString()))
     }
 
     @Internal
@@ -67,21 +90,14 @@ abstract class AbstractDownloader implements Downloader {
         }
     }
 
-    @Override
-    void unpack(Action<? super Unpack> action) {
-        action.execute(unpack)
-    }
-
-    @Override
-    void unpack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Unpack) Closure<Void> action) {
-        ConfigureUtil.configure(action, unpack)
-    }
-
-    protected <U extends org.jreleaser.model.Downloader> void fillProperties(U downloader) {
+    protected <D extends org.jreleaser.model.Downloader> void fillProperties(D downloader) {
         if (active.present) downloader.active = active.get()
         if (connectTimeout.present) downloader.connectTimeout = connectTimeout.get()
         if (readTimeout.present) downloader.readTimeout = readTimeout.get()
         if (extraProperties.present) downloader.extraProperties.putAll(extraProperties.get())
+        for (AssetImpl asset : assets) {
+            downloader.addAsset(asset.toModel())
+        }
     }
 
     @CompileStatic
@@ -106,6 +122,46 @@ abstract class AbstractDownloader implements Downloader {
             if (enabled.present) unpack.enabled = enabled.get()
             if (skipRootEntry.present) unpack.skipRootEntry = skipRootEntry.get()
             unpack
+        }
+    }
+
+    @CompileStatic
+    static class AssetImpl implements Asset {
+        String name
+        final Property<String> input
+        final Property<String> output
+        final UnpackImpl unpack
+
+        @Inject
+        AssetImpl(ObjectFactory objects) {
+            input = objects.property(String).convention(Providers.notDefined())
+            output = objects.property(String).convention(Providers.notDefined())
+            unpack = objects.newInstance(UnpackImpl, objects)
+        }
+
+        @Internal
+        boolean isSet() {
+            input.present ||
+                output.present ||
+                unpack.isSet()
+        }
+
+        @Override
+        void unpack(Action<? super Unpack> action) {
+            action.execute(unpack)
+        }
+
+        @Override
+        void unpack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Unpack) Closure<Void> action) {
+            ConfigureUtil.configure(action, unpack)
+        }
+
+        org.jreleaser.model.Downloader.Asset toModel() {
+            org.jreleaser.model.Downloader.Asset asset = new org.jreleaser.model.Downloader.Asset()
+            if (input.present) asset.input = input.get()
+            if (output.present) asset.output = output.get()
+            if (unpack.isSet()) asset.unpack = unpack.toModel()
+            asset
         }
     }
 }

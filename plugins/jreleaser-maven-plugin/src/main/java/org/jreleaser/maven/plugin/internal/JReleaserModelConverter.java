@@ -17,6 +17,8 @@
  */
 package org.jreleaser.maven.plugin.internal;
 
+import org.jreleaser.maven.plugin.AbstractSshDownloader;
+import org.jreleaser.maven.plugin.AbstractSshUploader;
 import org.jreleaser.maven.plugin.Announce;
 import org.jreleaser.maven.plugin.Announcer;
 import org.jreleaser.maven.plugin.Archive;
@@ -74,8 +76,12 @@ import org.jreleaser.maven.plugin.Registry;
 import org.jreleaser.maven.plugin.Release;
 import org.jreleaser.maven.plugin.S3;
 import org.jreleaser.maven.plugin.Scoop;
+import org.jreleaser.maven.plugin.ScpDownloader;
+import org.jreleaser.maven.plugin.ScpUploader;
 import org.jreleaser.maven.plugin.Sdkman;
 import org.jreleaser.maven.plugin.SdkmanAnnouncer;
+import org.jreleaser.maven.plugin.SftpDownloader;
+import org.jreleaser.maven.plugin.SftpUploader;
 import org.jreleaser.maven.plugin.Signing;
 import org.jreleaser.maven.plugin.Slack;
 import org.jreleaser.maven.plugin.Snap;
@@ -105,6 +111,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -416,6 +423,8 @@ public final class JReleaserModelConverter {
         u.setArtifactory(convertArtifactory(upload.getArtifactory()));
         u.setHttp(convertHttpUploader(upload.getHttp()));
         u.setS3(convertS3(upload.getS3()));
+        u.setScp(convertScpUploader(upload.getScp()));
+        u.setSftp(convertSftpUploader(upload.getSftp()));
         return u;
     }
 
@@ -499,6 +508,50 @@ public final class JReleaserModelConverter {
         return h;
     }
 
+    private static Map<String, org.jreleaser.model.ScpUploader> convertScpUploader(Map<String, ScpUploader> scp) {
+        Map<String, org.jreleaser.model.ScpUploader> map = new LinkedHashMap<>();
+        for (Map.Entry<String, ScpUploader> e : scp.entrySet()) {
+            e.getValue().setName(tr(e.getKey()));
+            map.put(e.getValue().getName(), convertScpUploader(e.getValue()));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.ScpUploader convertScpUploader(ScpUploader scp) {
+        org.jreleaser.model.ScpUploader h = new org.jreleaser.model.ScpUploader();
+        convertSshUploader(scp, h);
+        return h;
+    }
+
+    private static Map<String, org.jreleaser.model.SftpUploader> convertSftpUploader(Map<String, SftpUploader> sftp) {
+        Map<String, org.jreleaser.model.SftpUploader> map = new LinkedHashMap<>();
+        for (Map.Entry<String, SftpUploader> e : sftp.entrySet()) {
+            e.getValue().setName(tr(e.getKey()));
+            map.put(e.getValue().getName(), convertSftpUploader(e.getValue()));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.SftpUploader convertSftpUploader(SftpUploader sftp) {
+        org.jreleaser.model.SftpUploader h = new org.jreleaser.model.SftpUploader();
+        convertSshUploader(sftp, h);
+        return h;
+    }
+
+    private static void convertSshUploader(AbstractSshUploader from, org.jreleaser.model.AbstractSshUploader into) {
+        convertUploader(from, into);
+        into.setHost(tr(from.getHost()));
+        into.setUsername(tr(from.getUsername()));
+        into.setPassword(tr(from.getPassword()));
+        into.setKnownHostsFile(tr(from.getKnownHostsFile()));
+        into.setPublicKey(tr(from.getPublicKey()));
+        into.setPrivateKey(tr(from.getPrivateKey()));
+        into.setPassphrase(tr(from.getPassphrase()));
+        into.setFingerprint(tr(from.getFingerprint()));
+        into.setPath(tr(from.getPath()));
+        into.setDownloadUrl(tr(from.getDownloadUrl()));
+    }
+
     private static Map<String, org.jreleaser.model.S3> convertS3(Map<String, S3> s3) {
         Map<String, org.jreleaser.model.S3> map = new LinkedHashMap<>();
         for (Map.Entry<String, S3> e : s3.entrySet()) {
@@ -527,6 +580,8 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Download u = new org.jreleaser.model.Download();
         if (download.isEnabledSet()) u.setEnabled(download.isEnabled());
         u.setHttp(convertHttpDownloader(download.getHttp()));
+        u.setScp(convertScpDownloader(download.getScp()));
+        u.setSftp(convertSftpDownloader(download.getSftp()));
         return u;
     }
 
@@ -542,10 +597,50 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.HttpDownloader convertHttpDownloader(HttpDownloader http) {
         org.jreleaser.model.HttpDownloader h = new org.jreleaser.model.HttpDownloader();
         convertDownloader(http, h);
-        h.setInput(tr(http.getInput()));
-        h.setOutput(tr(http.getOutput()));
         h.setHeaders(http.getHeaders());
         return h;
+    }
+
+    private static Map<String, org.jreleaser.model.ScpDownloader> convertScpDownloader(Map<String, ScpDownloader> scp) {
+        Map<String, org.jreleaser.model.ScpDownloader> map = new LinkedHashMap<>();
+        for (Map.Entry<String, ScpDownloader> e : scp.entrySet()) {
+            e.getValue().setName(tr(e.getKey()));
+            map.put(e.getValue().getName(), convertScpDownloader(e.getValue()));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.ScpDownloader convertScpDownloader(ScpDownloader scp) {
+        org.jreleaser.model.ScpDownloader s = new org.jreleaser.model.ScpDownloader();
+        convertSshDownloader(scp, s);
+        return s;
+    }
+
+    private static Map<String, org.jreleaser.model.SftpDownloader> convertSftpDownloader(Map<String, SftpDownloader> sftp) {
+        Map<String, org.jreleaser.model.SftpDownloader> map = new LinkedHashMap<>();
+        for (Map.Entry<String, SftpDownloader> e : sftp.entrySet()) {
+            e.getValue().setName(tr(e.getKey()));
+            map.put(e.getValue().getName(), convertSftpDownloader(e.getValue()));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.SftpDownloader convertSftpDownloader(SftpDownloader sftp) {
+        org.jreleaser.model.SftpDownloader s = new org.jreleaser.model.SftpDownloader();
+        convertSshDownloader(sftp, s);
+        return s;
+    }
+
+    private static void convertSshDownloader(AbstractSshDownloader from, org.jreleaser.model.AbstractSshDownloader into) {
+        convertDownloader(from, into);
+        into.setHost(tr(from.getHost()));
+        into.setUsername(tr(from.getUsername()));
+        into.setPassword(tr(from.getPassword()));
+        into.setKnownHostsFile(tr(from.getKnownHostsFile()));
+        into.setPublicKey(tr(from.getPublicKey()));
+        into.setPrivateKey(tr(from.getPrivateKey()));
+        into.setPassphrase(tr(from.getPassphrase()));
+        into.setFingerprint(tr(from.getFingerprint()));
     }
 
     private static void convertDownloader(Downloader from, org.jreleaser.model.Downloader into) {
@@ -554,7 +649,21 @@ public final class JReleaserModelConverter {
         into.setExtraProperties(from.getExtraProperties());
         into.setConnectTimeout(from.getConnectTimeout());
         into.setReadTimeout(from.getReadTimeout());
-        into.setUnpack(convertUnpack(from.getUnpack()));
+        into.setAssets(convertAssets(from.getAssets()));
+    }
+
+    private static List<org.jreleaser.model.Downloader.Asset> convertAssets(List<Downloader.Asset> assets) {
+        return assets.stream()
+            .map(JReleaserModelConverter::convertAsset)
+            .collect(toList());
+    }
+
+    private static org.jreleaser.model.Downloader.Asset convertAsset(Downloader.Asset asset) {
+        org.jreleaser.model.Downloader.Asset a = new org.jreleaser.model.Downloader.Asset();
+        a.setInput(tr(asset.getInput()));
+        a.setOutput(tr(asset.getOutput()));
+        a.setUnpack(convertUnpack(asset.getUnpack()));
+        return a;
     }
 
     private static org.jreleaser.model.Downloader.Unpack convertUnpack(Downloader.Unpack unpack) {
@@ -838,7 +947,7 @@ public final class JReleaserModelConverter {
     private static List<org.jreleaser.model.FileSet> convertFileSets(List<FileSet> fileSets) {
         return fileSets.stream()
             .map(JReleaserModelConverter::convertFileSet)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     private static org.jreleaser.model.FileSet convertFileSet(FileSet fileSet) {

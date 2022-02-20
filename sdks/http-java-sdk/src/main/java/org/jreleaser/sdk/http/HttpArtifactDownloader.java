@@ -15,21 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.artifactory;
+package org.jreleaser.sdk.http;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Downloader;
 import org.jreleaser.model.HttpDownloader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.downloader.spi.DownloadException;
 import org.jreleaser.sdk.commons.AbstractArtifactDownloader;
-import org.jreleaser.util.FileType;
-import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -61,14 +59,20 @@ public class HttpArtifactDownloader extends AbstractArtifactDownloader<HttpDownl
 
     @Override
     public void download(String name) throws DownloadException {
-        String input = downloader.getResolvedInput(context);
-        String output = downloader.getResolvedOutput(context);
+        for (Downloader.Asset asset : downloader.getAssets()) {
+            downloadAsset(name, asset);
+        }
+    }
+
+    private void downloadAsset(String name, Downloader.Asset asset) throws DownloadException {
+        String input = asset.getResolvedInput(context, downloader);
+        String output = asset.getResolvedOutput(context, downloader, Paths.get(input).getFileName().toString());
 
         if (isBlank(output)) {
             output = Paths.get(input).getFileName().toString();
         }
 
-        Path outputPath = context.getDownloadDirectory().resolve(output);
+        Path outputPath = context.getDownloadDirectory().resolve(name).resolve(output);
         context.getLogger().info("{} -> {}", input, context.relativizeToBasedir(outputPath));
 
         try {
@@ -81,17 +85,6 @@ public class HttpArtifactDownloader extends AbstractArtifactDownloader<HttpDownl
             throw new DownloadException(RB.$("ERROR_unexpected_download", input), e);
         }
 
-        Optional<FileType> fileType = FileType.getFileType(outputPath);
-        if (downloader.getUnpack().isEnabled() && fileType.isPresent() && fileType.get().archive()) {
-            try {
-                context.getLogger().info(RB.$("downloader.unpack"), outputPath.getFileName().toString());
-                FileUtils.unpackArchive(outputPath,
-                    context.getDownloadDirectory(),
-                    downloader.getUnpack().isSkipRootEntry(),
-                    false);
-            } catch (IOException e) {
-                throw new DownloadException(RB.$("ERROR_download_url_unpack", context.relativizeToBasedir(outputPath)), e);
-            }
-        }
+        unpack(asset.getUnpack(), outputPath);
     }
 }

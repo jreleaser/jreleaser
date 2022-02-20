@@ -268,6 +268,9 @@ public interface Constants {
     // upload
     String KEY_UPLOADER_NAME = "uploaderName";
 
+    // Download
+    String KEY_DOWNLOADER_NAME = "downloaderName";
+
     // Directories
     String KEY_BASE_OUTPUT_DIRECTORY = "baseOutputDirectory";
     String KEY_OUTPUT_DIRECTORY = "outputDirectory";

@@ -19,6 +19,7 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
+import org.jreleaser.model.Downloader;
 import org.jreleaser.model.HttpDownloader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
@@ -54,8 +55,15 @@ public abstract class HttpDownloaderValidator extends Validator {
 
         validateTimeout(http);
 
-        if (isBlank(http.getInput())) {
-            errors.configuration(RB.$("validation_must_not_be_null", "http." + http.getName() + ".input"));
+        if (http.getAssets().isEmpty()) {
+            errors.configuration(RB.$("validation_must_not_be_empty", "http." + http.getName() + ".assets"));
+        } else {
+            int index = 0;
+            for (Downloader.Asset asset : http.getAssets()) {
+                if (isBlank(asset.getInput())) {
+                    errors.configuration(RB.$("validation_must_not_be_null", "http." + http.getName() + ".asset[" + (index++) + "].input"));
+                }
+            }
         }
     }
 }

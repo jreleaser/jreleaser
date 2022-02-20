@@ -33,11 +33,15 @@ import static java.util.stream.Collectors.toList;
  */
 public class Download implements Domain, EnabledAware {
     private final Map<String, HttpDownloader> http = new LinkedHashMap<>();
+    private final Map<String, ScpDownloader> scp = new LinkedHashMap<>();
+    private final Map<String, SftpDownloader> sftp = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Download download) {
         this.enabled = download.enabled;
         setHttp(download.http);
+        setScp(download.scp);
+        setSftp(download.sftp);
     }
 
     @Override
@@ -71,7 +75,45 @@ public class Download implements Domain, EnabledAware {
     }
 
     public void addHttp(HttpDownloader http) {
-        this.http.put(http.getName(),http);
+        this.http.put(http.getName(), http);
+    }
+
+    public List<ScpDownloader> getActiveScps() {
+        return scp.values().stream()
+            .filter(ScpDownloader::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, ScpDownloader> getScp() {
+        return scp;
+    }
+
+    public void setScp(Map<String, ScpDownloader> scp) {
+        this.scp.clear();
+        this.scp.putAll(scp);
+    }
+
+    public void addScp(ScpDownloader scp) {
+        this.scp.put(scp.getName(), scp);
+    }
+
+    public List<SftpDownloader> getActiveSftps() {
+        return sftp.values().stream()
+            .filter(SftpDownloader::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, SftpDownloader> getSftp() {
+        return sftp;
+    }
+
+    public void setSftp(Map<String, SftpDownloader> sftp) {
+        this.sftp.clear();
+        this.sftp.putAll(sftp);
+    }
+
+    public void addSftp(SftpDownloader sftp) {
+        this.sftp.put(sftp.getName(), sftp);
     }
 
     @Override
@@ -86,27 +128,49 @@ public class Download implements Domain, EnabledAware {
             .collect(toList());
         if (!http.isEmpty()) map.put("http", http);
 
+        List<Map<String, Object>> scp = this.scp.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!scp.isEmpty()) map.put("scp", scp);
+
+        List<Map<String, Object>> sftp = this.sftp.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!sftp.isEmpty()) map.put("sftp", sftp);
+
         return map;
     }
 
-    public <A extends Downloader> Map<String, A> findDownloadersByType(String uploaderType) {
-        switch (uploaderType) {
-            case HttpUploader.TYPE:
+    public <A extends Downloader> Map<String, A> findDownloadersByType(String downloaderType) {
+        switch (downloaderType) {
+            case HttpDownloader.TYPE:
                 return (Map<String, A>) http;
+            case ScpDownloader.TYPE:
+                return (Map<String, A>) scp;
+            case SftpDownloader.TYPE:
+                return (Map<String, A>) sftp;
         }
 
         return Collections.emptyMap();
     }
 
     public <A extends Downloader> List<A> findAllActiveDownloaders() {
-        List<A> uploaders = new ArrayList<>();
-        uploaders.addAll((List<A>) getActiveHttps());
-        return uploaders;
+        List<A> downloaders = new ArrayList<>();
+        downloaders.addAll((List<A>) getActiveHttps());
+        downloaders.addAll((List<A>) getActiveScps());
+        downloaders.addAll((List<A>) getActiveSftps());
+        return downloaders;
     }
 
     public static Set<String> supportedDownloaders() {
         Set<String> set = new LinkedHashSet<>();
-        set.add(HttpUploader.TYPE);
+        set.add(HttpDownloader.TYPE);
+        set.add(ScpDownloader.TYPE);
+        set.add(SftpDownloader.TYPE);
         return Collections.unmodifiableSet(set);
     }
 }

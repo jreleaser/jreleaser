@@ -17,20 +17,20 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 1.1.0
  */
 public interface Downloader extends Activatable, TimeoutAware, ExtraProperties {
-    String getType();
-
     String getName();
 
     void setName(String name);
 
-    Unpack getUnpack();
+    List<Asset> getAssets();
 
-    void setUnpack(Unpack unpack);
+    void setAssets(List<Asset> assets);
 
     class Unpack implements EnabledAware {
         private Boolean enabled;
@@ -66,6 +66,42 @@ public interface Downloader extends Activatable, TimeoutAware, ExtraProperties {
 
         public boolean isSkipRootEntrySet() {
             return skipRootEntry != null;
+        }
+    }
+
+    class Asset {
+        private final Unpack unpack = new Unpack();
+        private String input;
+        private String output;
+
+        void setAll(Asset asset) {
+            this.input = asset.input;
+            this.output = asset.output;
+            setUnpack(asset.unpack);
+        }
+
+        public String getInput() {
+            return input;
+        }
+
+        public void setInput(String input) {
+            this.input = input;
+        }
+
+        public String getOutput() {
+            return output;
+        }
+
+        public void setOutput(String output) {
+            this.output = output;
+        }
+
+        public Unpack getUnpack() {
+            return unpack;
+        }
+
+        public void setUnpack(Unpack unpack) {
+            this.unpack.setAll(unpack);
         }
     }
 }

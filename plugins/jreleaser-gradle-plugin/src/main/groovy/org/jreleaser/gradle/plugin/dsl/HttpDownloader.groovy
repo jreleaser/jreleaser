@@ -19,7 +19,6 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
 
 /**
  *
@@ -28,10 +27,6 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface HttpDownloader extends Downloader {
-    Property<String> getInput()
-
-    Property<String> getOutput()
-
     MapProperty<String, String> getHeaders()
 
     void setHeader(String key, String value)

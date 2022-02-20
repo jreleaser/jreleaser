@@ -29,18 +29,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.3.0
  */
 public class Artifactory extends AbstractUploader {
-    public static final String NAME = "artifactory";
-
     private final List<ArtifactoryRepository> repositories = new ArrayList<>();
 
     private String host;
     private String username;
     private String password;
     private WebUploader.Authorization authorization;
-
-    public Artifactory() {
-        super(NAME);
-    }
 
     public WebUploader.Authorization resolveAuthorization() {
         if (null == authorization) {

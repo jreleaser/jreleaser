@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.HttpDownloader
 
@@ -37,28 +36,19 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class HttpDownloaderImpl extends AbstractDownloader implements HttpDownloader {
     String name
-    final Property<String> input
-    final Property<String> output
     final MapProperty<String, String> headers
-    final UnpackImpl unpack
 
     @Inject
     HttpDownloaderImpl(ObjectFactory objects) {
         super(objects)
-        input = objects.property(String).convention(Providers.notDefined())
-        output = objects.property(String).convention(Providers.notDefined())
         headers = objects.mapProperty(String, String).convention(Providers.notDefined())
-        unpack = objects.newInstance(UnpackImpl, objects)
     }
 
     @Override
     @Internal
     boolean isSet() {
         super.isSet() ||
-            input.present ||
-            output.present ||
-            headers.present ||
-            unpack.isSet()
+            headers.present
     }
 
     @Override
@@ -72,10 +62,7 @@ class HttpDownloaderImpl extends AbstractDownloader implements HttpDownloader {
         org.jreleaser.model.HttpDownloader http = new org.jreleaser.model.HttpDownloader()
         http.name = name
         fillProperties(http)
-        if (input.present) http.input = input.get()
-        if (output.present) http.output = output.get()
         if (headers.present) http.headers.putAll(headers.get())
-        if (unpack.isSet()) http.unpack = unpack.toModel()
         http
     }
 }

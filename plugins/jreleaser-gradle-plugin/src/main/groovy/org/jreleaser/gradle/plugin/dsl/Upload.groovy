@@ -37,15 +37,27 @@ interface Upload {
 
     NamedDomainObjectContainer<S3> getS3()
 
+    NamedDomainObjectContainer<ScpUploader> getScp()
+
+    NamedDomainObjectContainer<SftpUploader> getSftp()
+
     void artifactory(Action<? super NamedDomainObjectContainer<Artifactory>> action)
 
     void http(Action<? super NamedDomainObjectContainer<HttpUploader>> action)
 
     void s3(Action<? super NamedDomainObjectContainer<S3>> action)
 
+    void scp(Action<? super NamedDomainObjectContainer<ScpUploader>> action)
+
+    void sftp(Action<? super NamedDomainObjectContainer<SftpUploader>> action)
+
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void s3(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void scp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void sftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 }

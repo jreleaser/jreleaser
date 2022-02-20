@@ -15,26 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.artifactory;
+package org.jreleaser.gradle.plugin.internal.dsl
 
-import org.jreleaser.model.HttpDownloader;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.downloader.spi.ArtifactDownloaderFactory;
-import org.kordamp.jipsy.annotations.ServiceProviderFor;
+import groovy.transform.CompileStatic
+import org.gradle.api.model.ObjectFactory
+import org.jreleaser.gradle.plugin.dsl.ScpDownloader
+
+import javax.inject.Inject
 
 /**
+ *
  * @author Andres Almiray
  * @since 1.1.0
  */
-@ServiceProviderFor(ArtifactDownloaderFactory.class)
-public class HttpArtifactDownloaderFactory implements ArtifactDownloaderFactory<HttpDownloader, HttpArtifactDownloader> {
-    @Override
-    public String getName() {
-        return HttpDownloader.TYPE;
+@CompileStatic
+class ScpDownloaderImpl extends AbstractSshDownloader implements ScpDownloader {
+    String name
+
+    @Inject
+    ScpDownloaderImpl(ObjectFactory objects) {
+        super(objects)
     }
 
-    @Override
-    public HttpArtifactDownloader getArtifactDownloader(JReleaserContext context) {
-        return new HttpArtifactDownloader(context);
+    org.jreleaser.model.ScpDownloader toModel() {
+        org.jreleaser.model.ScpDownloader scp = new org.jreleaser.model.ScpDownloader()
+        scp.name = name
+        fillProperties(scp)
+        scp
     }
 }

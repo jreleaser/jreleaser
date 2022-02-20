@@ -26,6 +26,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Download
 import org.jreleaser.gradle.plugin.dsl.HttpDownloader
+import org.jreleaser.gradle.plugin.dsl.ScpDownloader
+import org.jreleaser.gradle.plugin.dsl.SftpDownloader
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -39,16 +41,35 @@ import javax.inject.Inject
 class DownloadImpl implements Download {
     final Property<Boolean> enabled
     final NamedDomainObjectContainer<HttpDownloader> http
+    final NamedDomainObjectContainer<ScpDownloader> scp
+    final NamedDomainObjectContainer<SftpDownloader> sftp
 
     @Inject
     DownloadImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(true)
 
-
         http = objects.domainObjectContainer(HttpDownloader, new NamedDomainObjectFactory<HttpDownloader>() {
             @Override
             HttpDownloader create(String name) {
                 HttpDownloaderImpl h = objects.newInstance(HttpDownloaderImpl, objects)
+                h.name = name
+                return h
+            }
+        })
+
+        scp = objects.domainObjectContainer(ScpDownloader, new NamedDomainObjectFactory<ScpDownloader>() {
+            @Override
+            ScpDownloader create(String name) {
+                ScpDownloaderImpl h = objects.newInstance(ScpDownloaderImpl, objects)
+                h.name = name
+                return h
+            }
+        })
+
+        sftp = objects.domainObjectContainer(SftpDownloader, new NamedDomainObjectFactory<SftpDownloader>() {
+            @Override
+            SftpDownloader create(String name) {
+                SftpDownloaderImpl h = objects.newInstance(SftpDownloaderImpl, objects)
                 h.name = name
                 return h
             }
@@ -61,8 +82,28 @@ class DownloadImpl implements Download {
     }
 
     @Override
+    void scp(Action<? super NamedDomainObjectContainer<ScpDownloader>> action) {
+        action.execute(scp)
+    }
+
+    @Override
+    void sftp(Action<? super NamedDomainObjectContainer<SftpDownloader>> action) {
+        action.execute(sftp)
+    }
+
+    @Override
     void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, http)
+    }
+
+    @Override
+    void scp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, scp)
+    }
+
+    @Override
+    void sftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, sftp)
     }
 
     @CompileDynamic
@@ -70,6 +111,8 @@ class DownloadImpl implements Download {
         org.jreleaser.model.Download download = new org.jreleaser.model.Download()
 
         http.each { download.addHttp(((HttpDownloaderImpl) it).toModel()) }
+        scp.each { download.addScp(((ScpDownloaderImpl) it).toModel()) }
+        sftp.each { download.addSftp(((SftpDownloaderImpl) it).toModel()) }
 
         download
     }

@@ -26,11 +26,15 @@ import java.util.Map;
  */
 public class Download implements EnabledAware {
     private final Map<String, HttpDownloader> http = new LinkedHashMap<>();
+    private final Map<String, ScpDownloader> scp = new LinkedHashMap<>();
+    private final Map<String, SftpDownloader> sftp = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Download upload) {
         this.enabled = upload.enabled;
         setHttp(upload.http);
+        setScp(upload.scp);
+        setSftp(upload.sftp);
     }
 
     @Override
@@ -55,5 +59,23 @@ public class Download implements EnabledAware {
     public void setHttp(Map<String, HttpDownloader> http) {
         this.http.clear();
         this.http.putAll(http);
+    }
+
+    public Map<String, ScpDownloader> getScp() {
+        return scp;
+    }
+
+    public void setScp(Map<String, ScpDownloader> scp) {
+        this.scp.clear();
+        this.scp.putAll(scp);
+    }
+
+    public Map<String, SftpDownloader> getSftp() {
+        return sftp;
+    }
+
+    public void setSftp(Map<String, SftpDownloader> sftp) {
+        this.sftp.clear();
+        this.sftp.putAll(sftp);
     }
 }

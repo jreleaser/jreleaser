@@ -25,18 +25,12 @@ import java.util.Map;
  * @since 0.4.0
  */
 public class HttpUploader extends AbstractWebUploader {
-    public static final String NAME = "http";
-
     private final Map<String, String> headers = new LinkedHashMap<>();
     private String target;
     private String username;
     private String password;
     private Authorization authorization;
     private Method method;
-
-    public HttpUploader() {
-        super(NAME);
-    }
 
     public Authorization resolveAuthorization() {
         if (null == authorization) {

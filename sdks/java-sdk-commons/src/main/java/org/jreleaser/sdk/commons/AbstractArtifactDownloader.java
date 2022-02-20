@@ -17,9 +17,17 @@
  */
 package org.jreleaser.sdk.commons;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Downloader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.downloader.spi.ArtifactDownloader;
+import org.jreleaser.model.downloader.spi.DownloadException;
+import org.jreleaser.util.FileType;
+import org.jreleaser.util.FileUtils;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * @author Andres Almiray
@@ -30,5 +38,20 @@ public abstract class AbstractArtifactDownloader<D extends Downloader> implement
 
     protected AbstractArtifactDownloader(JReleaserContext context) {
         this.context = context;
+    }
+
+    protected void unpack(Downloader.Unpack unpack, Path outputPath) throws DownloadException {
+        Optional<FileType> fileType = FileType.getFileType(outputPath);
+        if (unpack.isEnabled() && fileType.isPresent() && fileType.get().archive()) {
+            try {
+                context.getLogger().info(RB.$("downloader.unpack"), outputPath.getFileName().toString());
+                FileUtils.unpackArchive(outputPath,
+                    outputPath.getParent(),
+                    unpack.isSkipRootEntry(),
+                    false);
+            } catch (IOException e) {
+                throw new DownloadException(RB.$("ERROR_download_url_unpack", context.relativizeToBasedir(outputPath)), e);
+            }
+        }
     }
 }

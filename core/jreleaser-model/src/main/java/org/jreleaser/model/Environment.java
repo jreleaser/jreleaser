@@ -61,6 +61,10 @@ public class Environment implements Domain {
         setPropertiesSource(environment.propertiesSource);
     }
 
+    public Properties getVars() {
+        return vars;
+    }
+
     public String getVariable(String key) {
         return vars.getProperty(Env.prefix(key));
     }

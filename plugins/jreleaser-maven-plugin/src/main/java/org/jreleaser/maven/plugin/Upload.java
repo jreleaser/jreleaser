@@ -28,6 +28,8 @@ public class Upload implements EnabledAware {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
     private final Map<String, HttpUploader> http = new LinkedHashMap<>();
     private final Map<String, S3> s3 = new LinkedHashMap<>();
+    private final Map<String, ScpUploader> scp = new LinkedHashMap<>();
+    private final Map<String, SftpUploader> sftp = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Upload upload) {
@@ -35,6 +37,8 @@ public class Upload implements EnabledAware {
         setArtifactory(upload.artifactory);
         setHttp(upload.http);
         setS3(upload.s3);
+        setScp(upload.scp);
+        setSftp(upload.sftp);
     }
 
     @Override
@@ -77,5 +81,23 @@ public class Upload implements EnabledAware {
     public void setS3(Map<String, S3> s3) {
         this.s3.clear();
         this.s3.putAll(s3);
+    }
+
+    public Map<String, ScpUploader> getScp() {
+        return scp;
+    }
+
+    public void setScp(Map<String, ScpUploader> scp) {
+        this.scp.clear();
+        this.scp.putAll(scp);
+    }
+
+    public Map<String, SftpUploader> getSftp() {
+        return sftp;
+    }
+
+    public void setSftp(Map<String, SftpUploader> sftp) {
+        this.sftp.clear();
+        this.sftp.putAll(sftp);
     }
 }

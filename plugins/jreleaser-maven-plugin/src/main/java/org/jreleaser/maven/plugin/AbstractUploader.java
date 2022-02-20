@@ -26,34 +26,16 @@ import java.util.Map;
  * @since 0.3.0
  */
 abstract class AbstractUploader implements Uploader {
-    protected final String type;
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    protected String name;
-    protected boolean enabled;
-    protected Active active;
+    private String name;
+    private boolean enabled;
+    private Active active;
     private int connectTimeout;
     private int readTimeout;
     private Boolean artifacts;
     private Boolean files;
     private Boolean signatures;
     private Boolean checksums;
-
-    protected AbstractUploader(String type) {
-        this.type = type;
-    }
-
-    void setAll(AbstractUploader uploader) {
-        this.active = uploader.active;
-        this.enabled = uploader.enabled;
-        this.name = uploader.name;
-        this.connectTimeout = uploader.connectTimeout;
-        this.readTimeout = uploader.readTimeout;
-        this.artifacts = uploader.artifacts;
-        this.files = uploader.files;
-        this.signatures = uploader.signatures;
-        this.checksums = uploader.checksums;
-        setExtraProperties(uploader.extraProperties);
-    }
 
     @Override
     public String getName() {
@@ -78,11 +60,6 @@ abstract class AbstractUploader implements Uploader {
     @Override
     public String resolveActive() {
         return active != null ? active.name() : null;
-    }
-
-    @Override
-    public String getType() {
-        return type;
     }
 
     @Override

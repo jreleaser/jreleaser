@@ -27,6 +27,8 @@ import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Artifactory
 import org.jreleaser.gradle.plugin.dsl.HttpUploader
 import org.jreleaser.gradle.plugin.dsl.S3
+import org.jreleaser.gradle.plugin.dsl.ScpUploader
+import org.jreleaser.gradle.plugin.dsl.SftpUploader
 import org.jreleaser.gradle.plugin.dsl.Upload
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -43,6 +45,8 @@ class UploadImpl implements Upload {
     final NamedDomainObjectContainer<Artifactory> artifactory
     final NamedDomainObjectContainer<HttpUploader> http
     final NamedDomainObjectContainer<S3> s3
+    final NamedDomainObjectContainer<ScpUploader> scp
+    final NamedDomainObjectContainer<SftpUploader> sftp
 
     @Inject
     UploadImpl(ObjectFactory objects) {
@@ -74,6 +78,24 @@ class UploadImpl implements Upload {
                 return s
             }
         })
+
+        scp = objects.domainObjectContainer(ScpUploader, new NamedDomainObjectFactory<ScpUploader>() {
+            @Override
+            ScpUploader create(String name) {
+                ScpUploaderImpl h = objects.newInstance(ScpUploaderImpl, objects)
+                h.name = name
+                return h
+            }
+        })
+
+        sftp = objects.domainObjectContainer(SftpUploader, new NamedDomainObjectFactory<SftpUploader>() {
+            @Override
+            SftpUploader create(String name) {
+                SftpUploaderImpl h = objects.newInstance(SftpUploaderImpl, objects)
+                h.name = name
+                return h
+            }
+        })
     }
 
     @Override
@@ -92,6 +114,16 @@ class UploadImpl implements Upload {
     }
 
     @Override
+    void scp(Action<? super NamedDomainObjectContainer<ScpUploader>> action) {
+        action.execute(scp)
+    }
+
+    @Override
+    void sftp(Action<? super NamedDomainObjectContainer<SftpUploader>> action) {
+        action.execute(sftp)
+    }
+
+    @Override
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, artifactory)
     }
@@ -106,6 +138,16 @@ class UploadImpl implements Upload {
         ConfigureUtil.configure(action, s3)
     }
 
+    @Override
+    void scp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, scp)
+    }
+
+    @Override
+    void sftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, sftp)
+    }
+
     @CompileDynamic
     org.jreleaser.model.Upload toModel() {
         org.jreleaser.model.Upload upload = new org.jreleaser.model.Upload()
@@ -113,6 +155,8 @@ class UploadImpl implements Upload {
         artifactory.each { upload.addArtifactory(((ArtifactoryImpl) it).toModel()) }
         http.each { upload.addHttp(((HttpUploaderImpl) it).toModel()) }
         s3.each { upload.addS3(((S3Impl) it).toModel()) }
+        scp.each { upload.addScp(((ScpUploaderImpl) it).toModel()) }
+        sftp.each { upload.addSftp(((SftpUploaderImpl) it).toModel()) }
 
         upload
     }

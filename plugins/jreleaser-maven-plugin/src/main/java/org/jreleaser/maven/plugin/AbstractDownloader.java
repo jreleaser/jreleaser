@@ -17,7 +17,9 @@
  */
 package org.jreleaser.maven.plugin;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,30 +27,13 @@ import java.util.Map;
  * @since 1.1.0
  */
 abstract class AbstractDownloader implements Downloader {
-    protected final String type;
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    private final Unpack unpack = new Unpack();
+    private final List<Downloader.Asset> assets = new ArrayList<>();
 
-    protected String name;
-
-    protected boolean enabled;
-    protected Active active;
+    private String name;
+    private Active active;
     private int connectTimeout;
     private int readTimeout;
-
-    protected AbstractDownloader(String type) {
-        this.type = type;
-    }
-
-    void setAll(AbstractDownloader downloader) {
-        this.name = downloader.name;
-        this.active = downloader.active;
-        this.enabled = downloader.enabled;
-        this.connectTimeout = downloader.connectTimeout;
-        this.readTimeout = downloader.readTimeout;
-        setExtraProperties(downloader.extraProperties);
-        setUnpack(downloader.unpack);
-    }
 
     @Override
     public String getName() {
@@ -73,11 +58,6 @@ abstract class AbstractDownloader implements Downloader {
     @Override
     public String resolveActive() {
         return active != null ? active.name() : null;
-    }
-
-    @Override
-    public String getType() {
-        return type;
     }
 
     @Override
@@ -112,12 +92,13 @@ abstract class AbstractDownloader implements Downloader {
     }
 
     @Override
-    public Unpack getUnpack() {
-        return unpack;
+    public List<Downloader.Asset> getAssets() {
+        return assets;
     }
 
     @Override
-    public void setUnpack(Unpack unpack) {
-        this.unpack.setAll(unpack);
+    public void setAssets(List<Downloader.Asset> assets) {
+        this.assets.clear();
+        this.assets.addAll(assets);
     }
 }

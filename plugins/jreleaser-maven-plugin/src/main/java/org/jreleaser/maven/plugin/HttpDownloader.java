@@ -25,38 +25,7 @@ import java.util.Map;
  * @since 1.1.0
  */
 public class HttpDownloader extends AbstractDownloader {
-    public static final String TYPE = "http";
-
     private final Map<String, String> headers = new LinkedHashMap<>();
-    private String input;
-    private String output;
-
-    public HttpDownloader() {
-        super(TYPE);
-    }
-
-    void setAll(HttpDownloader http) {
-        super.setAll(http);
-        this.input = http.input;
-        this.output = http.output;
-        setHeaders(http.headers);
-    }
-
-    public String getInput() {
-        return input;
-    }
-
-    public void setInput(String input) {
-        this.input = input;
-    }
-
-    public String getOutput() {
-        return output;
-    }
-
-    public void setOutput(String output) {
-        this.output = output;
-    }
 
     public Map<String, String> getHeaders() {
         return headers;

@@ -20,9 +20,6 @@ package org.jreleaser.model;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.Templates.resolveTemplate;
-
 /**
  * @author Andres Almiray
  * @since 1.1.0
@@ -31,8 +28,6 @@ public class HttpDownloader extends AbstractDownloader {
     public static final String TYPE = "http";
 
     private final Map<String, String> headers = new LinkedHashMap<>();
-    private String input;
-    private String output;
 
     public HttpDownloader() {
         super(TYPE);
@@ -40,38 +35,7 @@ public class HttpDownloader extends AbstractDownloader {
 
     void setAll(HttpDownloader http) {
         super.setAll(http);
-        this.input = http.input;
-        this.output = http.output;
         setHeaders(http.headers);
-    }
-
-    public String getResolvedInput(JReleaserContext context) {
-        Map<String, Object> p = context.getModel().props();
-        p.putAll(getResolvedExtraProperties());
-        return resolveTemplate(input, p);
-    }
-
-    public String getResolvedOutput(JReleaserContext context) {
-        if (isBlank(output)) return output;
-        Map<String, Object> p = context.getModel().props();
-        p.putAll(getResolvedExtraProperties());
-        return resolveTemplate(output, p);
-    }
-
-    public String getInput() {
-        return input;
-    }
-
-    public void setInput(String input) {
-        this.input = input;
-    }
-
-    public String getOutput() {
-        return output;
-    }
-
-    public void setOutput(String output) {
-        this.output = output;
     }
 
     public Map<String, String> getHeaders() {
@@ -88,8 +52,6 @@ public class HttpDownloader extends AbstractDownloader {
 
     @Override
     protected void asMap(Map<String, Object> props, boolean full) {
-        props.put("input", input);
-        props.put("output", output);
         props.put("headers", headers);
     }
 }

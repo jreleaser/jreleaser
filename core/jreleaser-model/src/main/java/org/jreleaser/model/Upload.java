@@ -38,6 +38,8 @@ public class Upload implements Domain, EnabledAware {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
     private final Map<String, HttpUploader> http = new LinkedHashMap<>();
     private final Map<String, S3> s3 = new LinkedHashMap<>();
+    private final Map<String, ScpUploader> scp = new LinkedHashMap<>();
+    private final Map<String, SftpUploader> sftp = new LinkedHashMap<>();
     private Boolean enabled;
 
     void setAll(Upload upload) {
@@ -45,6 +47,8 @@ public class Upload implements Domain, EnabledAware {
         setArtifactory(upload.artifactory);
         setHttp(upload.http);
         setS3(upload.s3);
+        setScp(upload.scp);
+        setSftp(upload.sftp);
     }
 
     @Override
@@ -70,6 +74,10 @@ public class Upload implements Domain, EnabledAware {
                 return Optional.ofNullable(http.get(name));
             case S3.TYPE:
                 return Optional.ofNullable(s3.get(name));
+            case ScpUploader.TYPE:
+                return Optional.ofNullable(scp.get(name));
+            case SftpUploader.TYPE:
+                return Optional.ofNullable(sftp.get(name));
         }
 
         return Optional.empty();
@@ -83,6 +91,10 @@ public class Upload implements Domain, EnabledAware {
                 return getActiveHttp(name);
             case S3.TYPE:
                 return getActiveS3(name);
+            case ScpUploader.TYPE:
+                return getActiveScp(name);
+            case SftpUploader.TYPE:
+                return getActiveSftp(name);
         }
 
         return Optional.empty();
@@ -104,6 +116,20 @@ public class Upload implements Domain, EnabledAware {
 
     public Optional<S3> getActiveS3(String name) {
         return s3.values().stream()
+            .filter(Uploader::isEnabled)
+            .filter(a -> name.equals(a.name))
+            .findFirst();
+    }
+
+    public Optional<ScpUploader> getActiveScp(String name) {
+        return scp.values().stream()
+            .filter(Uploader::isEnabled)
+            .filter(a -> name.equals(a.name))
+            .findFirst();
+    }
+
+    public Optional<SftpUploader> getActiveSftp(String name) {
+        return sftp.values().stream()
             .filter(Uploader::isEnabled)
             .filter(a -> name.equals(a.name))
             .findFirst();
@@ -166,6 +192,44 @@ public class Upload implements Domain, EnabledAware {
         this.s3.put(s3.getName(), s3);
     }
 
+    public List<ScpUploader> getActiveScps() {
+        return scp.values().stream()
+            .filter(ScpUploader::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, ScpUploader> getScp() {
+        return scp;
+    }
+
+    public void setScp(Map<String, ScpUploader> scp) {
+        this.scp.clear();
+        this.scp.putAll(scp);
+    }
+
+    public void addScp(ScpUploader scp) {
+        this.scp.put(scp.getName(), scp);
+    }
+
+    public List<SftpUploader> getActiveSftps() {
+        return sftp.values().stream()
+            .filter(SftpUploader::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, SftpUploader> getSftp() {
+        return sftp;
+    }
+
+    public void setSftp(Map<String, SftpUploader> sftp) {
+        this.sftp.clear();
+        this.sftp.putAll(sftp);
+    }
+
+    public void addSftp(SftpUploader sftp) {
+        this.sftp.put(sftp.getName(), sftp);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -192,6 +256,20 @@ public class Upload implements Domain, EnabledAware {
             .collect(toList());
         if (!s3.isEmpty()) map.put("s3", s3);
 
+        List<Map<String, Object>> scp = this.scp.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!scp.isEmpty()) map.put("scp", scp);
+
+        List<Map<String, Object>> sftp = this.sftp.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!sftp.isEmpty()) map.put("sftp", sftp);
+
         return map;
     }
 
@@ -203,6 +281,10 @@ public class Upload implements Domain, EnabledAware {
                 return (Map<String, A>) http;
             case S3.TYPE:
                 return (Map<String, A>) s3;
+            case ScpUploader.TYPE:
+                return (Map<String, A>) scp;
+            case SftpUploader.TYPE:
+                return (Map<String, A>) sftp;
         }
 
         return Collections.emptyMap();
@@ -213,6 +295,8 @@ public class Upload implements Domain, EnabledAware {
         uploaders.addAll((List<A>) getActiveArtifactories());
         uploaders.addAll((List<A>) getActiveHttps());
         uploaders.addAll((List<A>) getActiveS3s());
+        uploaders.addAll((List<A>) getActiveScps());
+        uploaders.addAll((List<A>) getActiveSftps());
         return uploaders;
     }
 
@@ -271,6 +355,8 @@ public class Upload implements Domain, EnabledAware {
         set.add(Artifactory.TYPE);
         set.add(HttpUploader.TYPE);
         set.add(S3.TYPE);
+        set.add(ScpUploader.TYPE);
+        set.add(SftpUploader.TYPE);
         return Collections.unmodifiableSet(set);
     }
 }

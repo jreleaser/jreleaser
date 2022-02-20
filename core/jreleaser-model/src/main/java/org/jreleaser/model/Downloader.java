@@ -19,7 +19,13 @@ package org.jreleaser.model;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import static org.jreleaser.util.Constants.KEY_ARTIFACT_FILE;
+import static org.jreleaser.util.Constants.KEY_DOWNLOADER_NAME;
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -32,9 +38,11 @@ public interface Downloader extends Domain, Activatable, TimeoutAware, ExtraProp
 
     void setName(String name);
 
-    Unpack getUnpack();
+    List<Asset> getAssets();
 
-    void setUnpack(Unpack unpack);
+    void setAssets(List<Asset> assets);
+
+    void addAsset(Asset asset);
 
     class Unpack implements Domain, EnabledAware {
         private Boolean enabled;
@@ -80,6 +88,67 @@ public interface Downloader extends Domain, Activatable, TimeoutAware, ExtraProp
             props.put("enabled", isEnabled());
             props.put("skipRootEntry", isSkipRootEntry());
 
+            return props;
+        }
+    }
+
+    class Asset implements Domain {
+        private final Unpack unpack = new Unpack();
+        private String input;
+        private String output;
+
+        void setAll(Asset asset) {
+            this.input = asset.input;
+            this.output = asset.output;
+            setUnpack(asset.unpack);
+        }
+
+        public String getResolvedInput(JReleaserContext context, Downloader downloader) {
+            Map<String, Object> p = context.getModel().props();
+            p.putAll(downloader.getResolvedExtraProperties());
+            p.put(KEY_DOWNLOADER_NAME, downloader.getName());
+            return resolveTemplate(input, p);
+        }
+
+        public String getResolvedOutput(JReleaserContext context, Downloader downloader, String artifactFile) {
+            if (isBlank(output)) return output;
+            Map<String, Object> p = context.getModel().props();
+            p.putAll(downloader.getResolvedExtraProperties());
+            p.put(KEY_DOWNLOADER_NAME, downloader.getName());
+            p.put(KEY_ARTIFACT_FILE, artifactFile);
+            return resolveTemplate(output, p);
+        }
+
+        public String getInput() {
+            return input;
+        }
+
+        public void setInput(String input) {
+            this.input = input;
+        }
+
+        public String getOutput() {
+            return output;
+        }
+
+        public void setOutput(String output) {
+            this.output = output;
+        }
+
+        public Unpack getUnpack() {
+            return unpack;
+        }
+
+        public void setUnpack(Unpack unpack) {
+            this.unpack.setAll(unpack);
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put("input", input);
+            props.put("output", output);
+            props.put("unpack", unpack.asMap(full));
             return props;
         }
     }

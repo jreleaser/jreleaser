@@ -25,16 +25,6 @@ abstract class AbstractWebUploader extends AbstractUploader implements WebUpload
     protected String uploadUrl;
     protected String downloadUrl;
 
-    protected AbstractWebUploader(String type) {
-        super(type);
-    }
-
-    void setAll(AbstractWebUploader uploader) {
-        super.setAll(uploader);
-        this.uploadUrl = uploader.uploadUrl;
-        this.downloadUrl = uploader.downloadUrl;
-    }
-
     @Override
     public String getUploadUrl() {
         return uploadUrl;

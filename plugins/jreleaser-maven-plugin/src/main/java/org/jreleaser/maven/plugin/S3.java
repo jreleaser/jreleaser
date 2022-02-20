@@ -25,34 +25,15 @@ import java.util.Map;
  * @since 0.8.0
  */
 public class S3 extends AbstractUploader {
-    public static final String TYPE = "s3";
-
     private final Map<String, String> headers = new LinkedHashMap<>();
+    protected String downloadUrl;
     private String region;
     private String bucket;
     private String path;
-    protected String downloadUrl;
     private String endpoint;
     private String accessKeyId;
     private String secretKey;
     private String sessionToken;
-
-    public S3() {
-        super(TYPE);
-    }
-
-    void setAll(S3 s3) {
-        super.setAll(s3);
-        this.region = s3.region;
-        this.bucket = s3.bucket;
-        this.path = s3.path;
-        this.downloadUrl = s3.downloadUrl;
-        this.endpoint = s3.endpoint;
-        this.accessKeyId = s3.accessKeyId;
-        this.secretKey = s3.secretKey;
-        this.sessionToken = s3.sessionToken;
-        setHeaders(s3.headers);
-    }
 
     public String getRegion() {
         return region;

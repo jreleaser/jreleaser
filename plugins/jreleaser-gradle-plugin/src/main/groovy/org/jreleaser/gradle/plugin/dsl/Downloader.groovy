@@ -32,15 +32,25 @@ interface Downloader extends Activatable, ExtraProperties {
 
     Property<Integer> getReadTimeout()
 
-    Unpack getUnpack()
+    void asset(Action<? super Asset> action)
 
-    void unpack(Action<? super Unpack> action)
-
-    void unpack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Unpack) Closure<Void> action)
+    void asset(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Asset) Closure<Void> action)
 
     interface Unpack {
         Property<Boolean> getEnabled()
 
         Property<Boolean> getSkipRootEntry()
+    }
+
+    interface Asset {
+        Property<String> getInput()
+
+        Property<String> getOutput()
+
+        Unpack getUnpack()
+
+        void unpack(Action<? super Unpack> action)
+
+        void unpack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Unpack) Closure<Void> action)
     }
 }

@@ -19,6 +19,11 @@ package org.jreleaser.util;
 
 import org.jreleaser.bundle.RB;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
+import java.util.stream.Collectors;
+
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -50,6 +55,19 @@ public class Env {
         return System.getenv(prefix(key));
     }
 
+    public static String resolve(Collection<String> keys, String value) {
+        if (isNotBlank(value)) {
+            return value;
+        }
+
+        return keys.stream()
+            .map(Env::prefix)
+            .filter(key -> System.getenv().containsKey(key))
+            .map(System::getenv)
+            .findFirst()
+            .orElse(null);
+    }
+
     public static String check(String key, String value, String property, String dsl, String configFilePath, Errors errors) {
         if (isBlank(value)) {
             String prefixedKey = prefix(key);
@@ -58,6 +76,25 @@ public class Env {
                 errors.configuration(RB.$("ERROR_environment_property_check",
                     property, dsl, prefixedKey, configFilePath, prefixedKey));
             }
+        }
+
+        return value;
+    }
+
+    public static String check(Collection<String> keys, Properties values, String property, String dsl, String configFilePath, Errors errors) {
+        List<String> prefixedKeys = keys.stream()
+            .map(Env::prefix)
+            .collect(Collectors.toList());
+
+        String value = prefixedKeys.stream()
+            .filter(values::containsKey)
+            .map(values::getProperty)
+            .findFirst()
+            .orElse(null);
+
+        if (isBlank(value)) {
+            errors.configuration(RB.$("ERROR_environment_property_check2",
+                property, dsl, prefixedKeys, configFilePath, prefixedKeys));
         }
 
         return value;

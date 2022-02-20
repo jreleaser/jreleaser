@@ -90,6 +90,52 @@ class Validator {
         return !errors.hasErrors() ? result : (null != defaultValue ? defaultValue.name() : null);
     }
 
+    static String checkProperty(JReleaserContext context, Collection<String> keys, String property, String value, Errors errors) {
+        if (isNotBlank(value)) return value;
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
+        return Env.check(keys, environment.getVars(), property, dsl, configFilePath, errors);
+    }
+
+    static String checkProperty(JReleaserContext context, Collection<String> keys, String property, String value, Errors errors, boolean dryrun) {
+        if (isNotBlank(value)) return value;
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
+        return Env.check(keys, environment.getVars(), property, dsl, configFilePath, dryrun ? new Errors() : errors);
+    }
+
+    static String checkProperty(JReleaserContext context, Collection<String> keys, String property, String value, String defaultValue) {
+        if (isNotBlank(value)) return value;
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
+        Errors errors = new Errors();
+        String result = Env.check(keys, environment.getVars(), property, dsl, configFilePath, errors);
+        return !errors.hasErrors() ? result : defaultValue;
+    }
+
+    static boolean checkProperty(JReleaserContext context, Collection<String> keys, String property, Boolean value, boolean defaultValue) {
+        if (null != value) return value;
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
+        Errors errors = new Errors();
+        String result = Env.check(keys, environment.getVars(), property, dsl, configFilePath, errors);
+        return !errors.hasErrors() ? Boolean.parseBoolean(result) : defaultValue;
+    }
+
+    static <T extends Enum<T>> String checkProperty(JReleaserContext context, Collection<String> keys, String property, T value, T defaultValue) {
+        if (null != value) return value.name();
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
+        Errors errors = new Errors();
+        String result = Env.check(keys, environment.getVars(), property, dsl, configFilePath, errors);
+        return !errors.hasErrors() ? result : (null != defaultValue ? defaultValue.name() : null);
+    }
+
     static void validateOwner(OwnerAware self, OwnerAware other) {
         if (isBlank(self.getOwner())) self.setOwner(other.getOwner());
     }
