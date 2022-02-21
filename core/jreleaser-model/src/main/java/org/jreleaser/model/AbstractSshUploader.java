@@ -25,6 +25,7 @@ import java.util.Map;
 import static org.jreleaser.util.CollectionUtils.newList;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
@@ -36,7 +37,7 @@ public abstract class AbstractSshUploader extends AbstractUploader implements Ss
     private String username;
     private String password;
     private String host;
-    private int port = -1;
+    private Integer port;
     private String knownHostsFile;
     private String publicKey;
     private String privateKey;
@@ -97,16 +98,13 @@ public abstract class AbstractSshUploader extends AbstractUploader implements Ss
 
     @Override
     public Integer getResolvedPort() {
-        if (-1 == port) {
-            port = 22;
-        }
-        return Integer.parseInt(
-            Env.resolve(newList(
-                    getEnvPrefix() + "_" + Env.toVar(name) + "_PORT",
-                    "SSH_" + Env.toVar(name) + "_PORT",
-                    getEnvPrefix() + "_PORT",
-                    "SSH_PORT"),
-                String.valueOf(port)));
+        String value = Env.resolve(newList(
+                getEnvPrefix() + "_" + Env.toVar(name) + "_PORT",
+                "SSH_" + Env.toVar(name) + "_PORT",
+                getEnvPrefix() + "_PORT",
+                "SSH_PORT"),
+            null == port ? "" : String.valueOf(port));
+        return isBlank(value) ? 22 : Integer.parseInt(value);
     }
 
     @Override
@@ -219,12 +217,12 @@ public abstract class AbstractSshUploader extends AbstractUploader implements Ss
     }
 
     @Override
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
     @Override
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 

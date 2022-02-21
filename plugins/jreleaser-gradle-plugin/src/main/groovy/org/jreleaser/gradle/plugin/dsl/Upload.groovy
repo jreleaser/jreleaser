@@ -33,6 +33,8 @@ interface Upload {
 
     NamedDomainObjectContainer<Artifactory> getArtifactory()
 
+    NamedDomainObjectContainer<FtpUploader> getFtp()
+
     NamedDomainObjectContainer<HttpUploader> getHttp()
 
     NamedDomainObjectContainer<S3> getS3()
@@ -43,6 +45,8 @@ interface Upload {
 
     void artifactory(Action<? super NamedDomainObjectContainer<Artifactory>> action)
 
+    void ftp(Action<? super NamedDomainObjectContainer<FtpUploader>> action)
+
     void http(Action<? super NamedDomainObjectContainer<HttpUploader>> action)
 
     void s3(Action<? super NamedDomainObjectContainer<S3>> action)
@@ -52,6 +56,8 @@ interface Upload {
     void sftp(Action<? super NamedDomainObjectContainer<SftpUploader>> action)
 
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 

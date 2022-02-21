@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.ScpUploader;
@@ -25,6 +26,7 @@ import org.jreleaser.util.Errors;
 import java.util.Map;
 
 import static org.jreleaser.model.validation.SshValidator.validateSsh;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -61,6 +63,9 @@ public abstract class ScpUploaderValidator extends Validator {
         }
 
         validateSsh(context, scp, scp.getName(), "SCP", scp.getType(), errors);
+        if (isBlank(scp.getPath())) {
+            errors.configuration(RB.$("validation_must_not_be_blank", "scp." + scp.getName() + ".path"));
+        }
         validateTimeout(scp);
     }
 }

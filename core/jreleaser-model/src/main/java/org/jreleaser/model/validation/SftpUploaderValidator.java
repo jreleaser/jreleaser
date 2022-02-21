@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.SftpUploader;
@@ -25,6 +26,7 @@ import org.jreleaser.util.Errors;
 import java.util.Map;
 
 import static org.jreleaser.model.validation.SshValidator.validateSsh;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -61,6 +63,9 @@ public abstract class SftpUploaderValidator extends Validator {
         }
 
         validateSsh(context, sftp, sftp.getName(), "SFTP", sftp.getType(), errors);
+        if (isBlank(sftp.getPath())) {
+            errors.configuration(RB.$("validation_must_not_be_blank", "sftp." + sftp.getName() + ".path"));
+        }
         validateTimeout(sftp);
     }
 }

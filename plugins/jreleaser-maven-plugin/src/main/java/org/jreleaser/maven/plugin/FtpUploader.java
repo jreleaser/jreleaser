@@ -21,16 +21,11 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class AbstractSshUploader extends AbstractUploader {
+public abstract class FtpUploader extends AbstractUploader {
     private String username;
     private String password;
     private String host;
     private Integer port;
-    private String knownHostsFile;
-    private String publicKey;
-    private String privateKey;
-    private String passphrase;
-    private String fingerprint;
     private String path;
     private String downloadUrl;
 
@@ -80,45 +75,5 @@ public abstract class AbstractSshUploader extends AbstractUploader {
 
     public void setPort(Integer port) {
         this.port = port;
-    }
-
-    public String getKnownHostsFile() {
-        return knownHostsFile;
-    }
-
-    public void setKnownHostsFile(String knownHostsFile) {
-        this.knownHostsFile = knownHostsFile;
-    }
-
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
-
-    public String getPrivateKey() {
-        return privateKey;
-    }
-
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
-    }
-
-    public String getPassphrase() {
-        return passphrase;
-    }
-
-    public void setPassphrase(String passphrase) {
-        this.passphrase = passphrase;
-    }
-
-    public String getFingerprint() {
-        return fingerprint;
-    }
-
-    public void setFingerprint(String fingerprint) {
-        this.fingerprint = fingerprint;
     }
 }

@@ -36,6 +36,7 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  */
 public class Upload implements Domain, EnabledAware {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
+    private final Map<String, FtpUploader> ftp = new LinkedHashMap<>();
     private final Map<String, HttpUploader> http = new LinkedHashMap<>();
     private final Map<String, S3> s3 = new LinkedHashMap<>();
     private final Map<String, ScpUploader> scp = new LinkedHashMap<>();
@@ -45,6 +46,7 @@ public class Upload implements Domain, EnabledAware {
     void setAll(Upload upload) {
         this.enabled = upload.enabled;
         setArtifactory(upload.artifactory);
+        setFtp(upload.ftp);
         setHttp(upload.http);
         setS3(upload.s3);
         setScp(upload.scp);
@@ -70,6 +72,8 @@ public class Upload implements Domain, EnabledAware {
         switch (type) {
             case Artifactory.TYPE:
                 return Optional.ofNullable(artifactory.get(name));
+            case FtpUploader.TYPE:
+                return Optional.ofNullable(ftp.get(name));
             case HttpUploader.TYPE:
                 return Optional.ofNullable(http.get(name));
             case S3.TYPE:
@@ -87,6 +91,8 @@ public class Upload implements Domain, EnabledAware {
         switch (type) {
             case Artifactory.TYPE:
                 return getActiveArtifactory(name);
+            case FtpUploader.TYPE:
+                return getActiveFtp(name);
             case HttpUploader.TYPE:
                 return getActiveHttp(name);
             case S3.TYPE:
@@ -102,6 +108,13 @@ public class Upload implements Domain, EnabledAware {
 
     public Optional<Artifactory> getActiveArtifactory(String name) {
         return artifactory.values().stream()
+            .filter(Uploader::isEnabled)
+            .filter(a -> name.equals(a.name))
+            .findFirst();
+    }
+
+    public Optional<FtpUploader> getActiveFtp(String name) {
+        return ftp.values().stream()
             .filter(Uploader::isEnabled)
             .filter(a -> name.equals(a.name))
             .findFirst();
@@ -152,6 +165,25 @@ public class Upload implements Domain, EnabledAware {
 
     public void addArtifactory(Artifactory artifactory) {
         this.artifactory.put(artifactory.getName(), artifactory);
+    }
+
+    public List<FtpUploader> getActiveFtps() {
+        return ftp.values().stream()
+            .filter(FtpUploader::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, FtpUploader> getFtp() {
+        return ftp;
+    }
+
+    public void setFtp(Map<String, FtpUploader> ftp) {
+        this.ftp.clear();
+        this.ftp.putAll(ftp);
+    }
+
+    public void addFtp(FtpUploader ftp) {
+        this.ftp.put(ftp.getName(), ftp);
     }
 
     public List<HttpUploader> getActiveHttps() {
@@ -242,6 +274,13 @@ public class Upload implements Domain, EnabledAware {
             .collect(toList());
         if (!artifactory.isEmpty()) map.put("artifactory", artifactory);
 
+        List<Map<String, Object>> ftp = this.ftp.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!ftp.isEmpty()) map.put("ftp", ftp);
+
         List<Map<String, Object>> http = this.http.values()
             .stream()
             .filter(d -> full || d.isEnabled())
@@ -277,6 +316,8 @@ public class Upload implements Domain, EnabledAware {
         switch (uploaderType) {
             case Artifactory.TYPE:
                 return (Map<String, A>) artifactory;
+            case FtpUploader.TYPE:
+                return (Map<String, A>) ftp;
             case HttpUploader.TYPE:
                 return (Map<String, A>) http;
             case S3.TYPE:
@@ -293,6 +334,7 @@ public class Upload implements Domain, EnabledAware {
     public <A extends Uploader> List<A> findAllActiveUploaders() {
         List<A> uploaders = new ArrayList<>();
         uploaders.addAll((List<A>) getActiveArtifactories());
+        uploaders.addAll((List<A>) getActiveFtps());
         uploaders.addAll((List<A>) getActiveHttps());
         uploaders.addAll((List<A>) getActiveS3s());
         uploaders.addAll((List<A>) getActiveScps());
@@ -353,6 +395,7 @@ public class Upload implements Domain, EnabledAware {
     public static Set<String> supportedUploaders() {
         Set<String> set = new LinkedHashSet<>();
         set.add(Artifactory.TYPE);
+        set.add(FtpUploader.TYPE);
         set.add(HttpUploader.TYPE);
         set.add(S3.TYPE);
         set.add(ScpUploader.TYPE);

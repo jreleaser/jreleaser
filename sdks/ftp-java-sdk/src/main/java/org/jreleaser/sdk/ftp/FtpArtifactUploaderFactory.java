@@ -15,38 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
+package org.jreleaser.sdk.ftp;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
+import org.jreleaser.model.FtpUploader;
+import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.SftpUploader;
+import org.jreleaser.model.uploader.spi.ArtifactUploaderFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 /**
- *
  * @author Andres Almiray
  * @since 1.1.0
  */
-@CompileStatic
-interface SshUploader extends Uploader {
-    Property<String> getUsername()
+@ServiceProviderFor(ArtifactUploaderFactory.class)
+public class FtpArtifactUploaderFactory implements ArtifactUploaderFactory<FtpUploader, FtpArtifactUploader> {
+    @Override
+    public String getName() {
+        return FtpUploader.TYPE;
+    }
 
-    Property<String> getPassword()
-
-    Property<String> getHost()
-
-    Property<Integer> getPort()
-
-    RegularFileProperty getKnownHostsFile()
-
-    Property<String> getPublicKey()
-
-    Property<String> getPrivateKey()
-
-    Property<String> getPassphrase()
-
-    Property<String> getFingerprint()
-
-    Property<String> getPath()
-
-    Property<String> getDownloadUrl()
+    @Override
+    public FtpArtifactUploader getArtifactUploader(JReleaserContext context) {
+        return new FtpArtifactUploader(context);
+    }
 }

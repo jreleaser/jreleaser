@@ -46,6 +46,8 @@ import org.jreleaser.maven.plugin.Environment;
 import org.jreleaser.maven.plugin.FileSet;
 import org.jreleaser.maven.plugin.FileType;
 import org.jreleaser.maven.plugin.Files;
+import org.jreleaser.maven.plugin.FtpDownloader;
+import org.jreleaser.maven.plugin.FtpUploader;
 import org.jreleaser.maven.plugin.GenericGit;
 import org.jreleaser.maven.plugin.GitService;
 import org.jreleaser.maven.plugin.Gitea;
@@ -421,6 +423,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Upload u = new org.jreleaser.model.Upload();
         if (upload.isEnabledSet()) u.setEnabled(upload.isEnabled());
         u.setArtifactory(convertArtifactory(upload.getArtifactory()));
+        u.setFtp(convertFtpUploader(upload.getFtp()));
         u.setHttp(convertHttpUploader(upload.getHttp()));
         u.setS3(convertS3(upload.getS3()));
         u.setScp(convertScpUploader(upload.getScp()));
@@ -488,6 +491,26 @@ public final class JReleaserModelConverter {
         into.setDownloadUrl(tr(from.getDownloadUrl()));
     }
 
+    private static Map<String, org.jreleaser.model.FtpUploader> convertFtpUploader(Map<String, FtpUploader> ftp) {
+        Map<String, org.jreleaser.model.FtpUploader> map = new LinkedHashMap<>();
+        for (Map.Entry<String, FtpUploader> e : ftp.entrySet()) {
+            e.getValue().setName(tr(e.getKey()));
+            map.put(e.getValue().getName(), convertFtpUploader(e.getValue()));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.FtpUploader convertFtpUploader(FtpUploader ftp) {
+        org.jreleaser.model.FtpUploader h = new org.jreleaser.model.FtpUploader();
+        convertUploader(ftp, h);
+        h.setUsername(tr(ftp.getUsername()));
+        h.setPassword(tr(ftp.getPassword()));
+        h.setHost(tr(ftp.getHost()));
+        h.setPort(ftp.getPort());
+        h.setPath(ftp.getPath());
+        return h;
+    }
+
     private static Map<String, org.jreleaser.model.HttpUploader> convertHttpUploader(Map<String, HttpUploader> http) {
         Map<String, org.jreleaser.model.HttpUploader> map = new LinkedHashMap<>();
         for (Map.Entry<String, HttpUploader> e : http.entrySet()) {
@@ -541,6 +564,7 @@ public final class JReleaserModelConverter {
     private static void convertSshUploader(AbstractSshUploader from, org.jreleaser.model.AbstractSshUploader into) {
         convertUploader(from, into);
         into.setHost(tr(from.getHost()));
+        into.setPort(from.getPort());
         into.setUsername(tr(from.getUsername()));
         into.setPassword(tr(from.getPassword()));
         into.setKnownHostsFile(tr(from.getKnownHostsFile()));
@@ -579,10 +603,30 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Download convertDownload(Download download) {
         org.jreleaser.model.Download u = new org.jreleaser.model.Download();
         if (download.isEnabledSet()) u.setEnabled(download.isEnabled());
+        u.setFtp(convertFtpDownloader(download.getFtp()));
         u.setHttp(convertHttpDownloader(download.getHttp()));
         u.setScp(convertScpDownloader(download.getScp()));
         u.setSftp(convertSftpDownloader(download.getSftp()));
         return u;
+    }
+
+    private static Map<String, org.jreleaser.model.FtpDownloader> convertFtpDownloader(Map<String, FtpDownloader> ftp) {
+        Map<String, org.jreleaser.model.FtpDownloader> map = new LinkedHashMap<>();
+        for (Map.Entry<String, FtpDownloader> e : ftp.entrySet()) {
+            e.getValue().setName(tr(e.getKey()));
+            map.put(e.getValue().getName(), convertFtpDownloader(e.getValue()));
+        }
+        return map;
+    }
+
+    private static org.jreleaser.model.FtpDownloader convertFtpDownloader(FtpDownloader ftp) {
+        org.jreleaser.model.FtpDownloader h = new org.jreleaser.model.FtpDownloader();
+        convertDownloader(ftp, h);
+        h.setUsername(tr(ftp.getUsername()));
+        h.setPassword(tr(ftp.getPassword()));
+        h.setHost(tr(ftp.getHost()));
+        h.setPort(ftp.getPort());
+        return h;
     }
 
     private static Map<String, org.jreleaser.model.HttpDownloader> convertHttpDownloader(Map<String, HttpDownloader> http) {
@@ -634,6 +678,7 @@ public final class JReleaserModelConverter {
     private static void convertSshDownloader(AbstractSshDownloader from, org.jreleaser.model.AbstractSshDownloader into) {
         convertDownloader(from, into);
         into.setHost(tr(from.getHost()));
+        into.setPort(from.getPort());
         into.setUsername(tr(from.getUsername()));
         into.setPassword(tr(from.getPassword()));
         into.setKnownHostsFile(tr(from.getKnownHostsFile()));

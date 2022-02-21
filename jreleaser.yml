@@ -204,7 +204,7 @@ assemble:
         version: '3.96'
       args:
         - '-Duser.language=en'
-        - '-H:IncludeLocales=en,ca,de,es,fr,hi,it,ja,nl,pt_BR,zh_TW,ru'
+        - '-H:IncludeLocales=en,ca,de,es,fr,hi,it,ja,nl,pt_BR,zh_TW,ru,ko'
         - '-H:Optimize=2'
         - '-H:+RemoveUnusedSymbols'
 

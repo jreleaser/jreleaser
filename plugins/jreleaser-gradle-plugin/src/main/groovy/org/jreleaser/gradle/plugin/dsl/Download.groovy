@@ -31,17 +31,23 @@ import org.gradle.api.provider.Property
 interface Download {
     Property<Boolean> getEnabled()
 
+    NamedDomainObjectContainer<FtpDownloader> getFtp()
+
     NamedDomainObjectContainer<HttpDownloader> getHttp()
 
     NamedDomainObjectContainer<ScpDownloader> getScp()
 
     NamedDomainObjectContainer<SftpDownloader> getSftp()
 
+    void ftp(Action<? super NamedDomainObjectContainer<FtpDownloader>> action)
+
     void http(Action<? super NamedDomainObjectContainer<HttpDownloader>> action)
 
     void scp(Action<? super NamedDomainObjectContainer<ScpDownloader>> action)
 
     void sftp(Action<? super NamedDomainObjectContainer<SftpDownloader>> action)
+
+    void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 

@@ -236,7 +236,7 @@ public final class FileUtils {
     }
 
     public static void unpackArchive(Path src, Path dest, boolean removeRootEntry) throws IOException {
-        unpackArchive(src, dest, true, true);
+        unpackArchive(src, dest, removeRootEntry, true);
     }
 
     public static void unpackArchive(Path src, Path dest, boolean removeRootEntry, boolean cleanDirectory) throws IOException {
@@ -275,7 +275,7 @@ public final class FileUtils {
     }
 
     public static void unpackArchiveCompressed(Path src, Path dest, boolean removeRootEntry) throws IOException {
-        unpackArchiveCompressed(src, dest, true, true);
+        unpackArchiveCompressed(src, dest, removeRootEntry, true);
     }
 
     public static void unpackArchiveCompressed(Path src, Path dest, boolean removeRootEntry, boolean cleanDirectory) throws IOException {

@@ -67,6 +67,18 @@ public abstract class SshValidator extends Validator {
                 errors,
                 context.isDryrun()));
 
+        ssh.setPort(
+            checkProperty(context,
+                newList(
+                    envPrefix + "_" + Env.toVar(name) + "_PORT",
+                    "SSH_" + Env.toVar(name) + "_PORT",
+                    envPrefix + "_PORT",
+                    "SSH_PORT"),
+                propPrefix + ".port",
+                ssh.getPort(),
+                errors,
+                context.isDryrun()));
+
         ssh.setPublicKey(
             checkProperty(context,
                 newList(

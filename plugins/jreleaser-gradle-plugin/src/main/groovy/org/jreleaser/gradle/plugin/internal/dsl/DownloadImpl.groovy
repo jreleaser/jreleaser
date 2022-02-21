@@ -25,6 +25,7 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Download
+import org.jreleaser.gradle.plugin.dsl.FtpDownloader
 import org.jreleaser.gradle.plugin.dsl.HttpDownloader
 import org.jreleaser.gradle.plugin.dsl.ScpDownloader
 import org.jreleaser.gradle.plugin.dsl.SftpDownloader
@@ -40,6 +41,7 @@ import javax.inject.Inject
 @CompileStatic
 class DownloadImpl implements Download {
     final Property<Boolean> enabled
+    final NamedDomainObjectContainer<FtpDownloader> ftp
     final NamedDomainObjectContainer<HttpDownloader> http
     final NamedDomainObjectContainer<ScpDownloader> scp
     final NamedDomainObjectContainer<SftpDownloader> sftp
@@ -47,6 +49,15 @@ class DownloadImpl implements Download {
     @Inject
     DownloadImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(true)
+
+        ftp = objects.domainObjectContainer(FtpDownloader, new NamedDomainObjectFactory<FtpDownloader>() {
+            @Override
+            FtpDownloader create(String name) {
+                FtpDownloaderImpl h = objects.newInstance(FtpDownloaderImpl, objects)
+                h.name = name
+                return h
+            }
+        })
 
         http = objects.domainObjectContainer(HttpDownloader, new NamedDomainObjectFactory<HttpDownloader>() {
             @Override
@@ -77,6 +88,11 @@ class DownloadImpl implements Download {
     }
 
     @Override
+    void ftp(Action<? super NamedDomainObjectContainer<FtpDownloader>> action) {
+        action.execute(ftp)
+    }
+
+    @Override
     void http(Action<? super NamedDomainObjectContainer<HttpDownloader>> action) {
         action.execute(http)
     }
@@ -89,6 +105,11 @@ class DownloadImpl implements Download {
     @Override
     void sftp(Action<? super NamedDomainObjectContainer<SftpDownloader>> action) {
         action.execute(sftp)
+    }
+
+    @Override
+    void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, ftp)
     }
 
     @Override
@@ -110,6 +131,7 @@ class DownloadImpl implements Download {
     org.jreleaser.model.Download toModel() {
         org.jreleaser.model.Download download = new org.jreleaser.model.Download()
 
+        ftp.each { download.addFtp(((FtpDownloaderImpl) it).toModel()) }
         http.each { download.addHttp(((HttpDownloaderImpl) it).toModel()) }
         scp.each { download.addScp(((ScpDownloaderImpl) it).toModel()) }
         sftp.each { download.addSftp(((SftpDownloaderImpl) it).toModel()) }

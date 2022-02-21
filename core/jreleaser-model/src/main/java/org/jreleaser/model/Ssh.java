@@ -34,9 +34,9 @@ public interface Ssh {
 
     void setHost(String host);
 
-    int getPort();
+    Integer getPort();
 
-    void setPort(int port);
+    void setPort(Integer port);
 
     String getKnownHostsFile();
 

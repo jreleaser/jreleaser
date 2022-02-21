@@ -32,6 +32,7 @@ import static java.util.stream.Collectors.toList;
  * @since 1.1.0
  */
 public class Download implements Domain, EnabledAware {
+    private final Map<String, FtpDownloader> ftp = new LinkedHashMap<>();
     private final Map<String, HttpDownloader> http = new LinkedHashMap<>();
     private final Map<String, ScpDownloader> scp = new LinkedHashMap<>();
     private final Map<String, SftpDownloader> sftp = new LinkedHashMap<>();
@@ -39,6 +40,7 @@ public class Download implements Domain, EnabledAware {
 
     void setAll(Download download) {
         this.enabled = download.enabled;
+        setFtp(download.ftp);
         setHttp(download.http);
         setScp(download.scp);
         setSftp(download.sftp);
@@ -57,6 +59,25 @@ public class Download implements Domain, EnabledAware {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
+    }
+
+    public List<FtpDownloader> getActiveFtps() {
+        return ftp.values().stream()
+            .filter(FtpDownloader::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, FtpDownloader> getFtp() {
+        return ftp;
+    }
+
+    public void setFtp(Map<String, FtpDownloader> ftp) {
+        this.ftp.clear();
+        this.ftp.putAll(ftp);
+    }
+
+    public void addFtp(FtpDownloader ftp) {
+        this.ftp.put(ftp.getName(), ftp);
     }
 
     public List<HttpDownloader> getActiveHttps() {
@@ -121,6 +142,13 @@ public class Download implements Domain, EnabledAware {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
 
+        List<Map<String, Object>> ftp = this.ftp.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!ftp.isEmpty()) map.put("ftp", ftp);
+
         List<Map<String, Object>> http = this.http.values()
             .stream()
             .filter(d -> full || d.isEnabled())
@@ -147,6 +175,8 @@ public class Download implements Domain, EnabledAware {
 
     public <A extends Downloader> Map<String, A> findDownloadersByType(String downloaderType) {
         switch (downloaderType) {
+            case FtpDownloader.TYPE:
+                return (Map<String, A>) ftp;
             case HttpDownloader.TYPE:
                 return (Map<String, A>) http;
             case ScpDownloader.TYPE:
@@ -160,6 +190,7 @@ public class Download implements Domain, EnabledAware {
 
     public <A extends Downloader> List<A> findAllActiveDownloaders() {
         List<A> downloaders = new ArrayList<>();
+        downloaders.addAll((List<A>) getActiveFtps());
         downloaders.addAll((List<A>) getActiveHttps());
         downloaders.addAll((List<A>) getActiveScps());
         downloaders.addAll((List<A>) getActiveSftps());
@@ -168,6 +199,7 @@ public class Download implements Domain, EnabledAware {
 
     public static Set<String> supportedDownloaders() {
         Set<String> set = new LinkedHashSet<>();
+        set.add(FtpDownloader.TYPE);
         set.add(HttpDownloader.TYPE);
         set.add(ScpDownloader.TYPE);
         set.add(SftpDownloader.TYPE);

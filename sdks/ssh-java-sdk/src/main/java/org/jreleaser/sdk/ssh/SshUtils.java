@@ -157,7 +157,7 @@ public class SshUtils {
         try {
             if (null != ssh) ssh.disconnect();
         } catch (IOException e) {
-            throw new UploadException(RB.$("ERROR_ssh_disconnect", uploader.getName()), e);
+            throw new UploadException(RB.$("ERROR_disconnect", uploader.getName()), e);
         }
     }
 
@@ -165,7 +165,7 @@ public class SshUtils {
         try {
             ssh.disconnect();
         } catch (IOException e) {
-            throw new DownloadException(RB.$("ERROR_ssh_disconnect", downloader.getName()), e);
+            throw new DownloadException(RB.$("ERROR_disconnect", downloader.getName()), e);
         }
     }
 
@@ -173,7 +173,7 @@ public class SshUtils {
         try {
             sftp.close();
         } catch (IOException e) {
-            throw new UploadException(RB.$("ERROR_ssh_disconnect", uploader.getName()), e);
+            throw new UploadException(RB.$("ERROR_disconnect", uploader.getName()), e);
         }
     }
 
@@ -181,7 +181,7 @@ public class SshUtils {
         try {
             sftp.close();
         } catch (IOException e) {
-            throw new DownloadException(RB.$("ERROR_ssh_disconnect", downloader.getName()), e);
+            throw new DownloadException(RB.$("ERROR_disconnect", downloader.getName()), e);
         }
     }
 }

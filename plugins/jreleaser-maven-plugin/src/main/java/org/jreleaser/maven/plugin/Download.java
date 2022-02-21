@@ -25,6 +25,7 @@ import java.util.Map;
  * @since 1.1.0
  */
 public class Download implements EnabledAware {
+    private final Map<String, FtpDownloader> ftp = new LinkedHashMap<>();
     private final Map<String, HttpDownloader> http = new LinkedHashMap<>();
     private final Map<String, ScpDownloader> scp = new LinkedHashMap<>();
     private final Map<String, SftpDownloader> sftp = new LinkedHashMap<>();
@@ -32,6 +33,7 @@ public class Download implements EnabledAware {
 
     void setAll(Download upload) {
         this.enabled = upload.enabled;
+        setFtp(upload.ftp);
         setHttp(upload.http);
         setScp(upload.scp);
         setSftp(upload.sftp);
@@ -50,6 +52,15 @@ public class Download implements EnabledAware {
     @Override
     public boolean isEnabledSet() {
         return enabled != null;
+    }
+
+    public Map<String, FtpDownloader> getFtp() {
+        return ftp;
+    }
+
+    public void setFtp(Map<String, FtpDownloader> ftp) {
+        this.ftp.clear();
+        this.ftp.putAll(ftp);
     }
 
     public Map<String, HttpDownloader> getHttp() {

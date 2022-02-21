@@ -60,6 +60,15 @@ class Validator {
         return Env.check(key, environment.getVariable(key), property, dsl, configFilePath, dryrun ? new Errors() : errors);
     }
 
+    static Integer checkProperty(JReleaserContext context, String key, String property, Integer value, Errors errors, boolean dryrun) {
+        if (null != value) return value;
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
+        String val = Env.check(key, environment.getVariable(key), property, dsl, configFilePath, dryrun ? new Errors() : errors);
+        return isNotBlank(val) ? Integer.parseInt(val) : null;
+    }
+
     static String checkProperty(JReleaserContext context, String key, String property, String value, String defaultValue) {
         if (isNotBlank(value)) return value;
         Environment environment = context.getModel().getEnvironment();
@@ -104,6 +113,15 @@ class Validator {
         String dsl = context.getConfigurer().toString();
         String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
         return Env.check(keys, environment.getVars(), property, dsl, configFilePath, dryrun ? new Errors() : errors);
+    }
+
+    static Integer checkProperty(JReleaserContext context, Collection<String> keys, String property, Integer value, Errors errors, boolean dryrun) {
+        if (null != value) return value;
+        Environment environment = context.getModel().getEnvironment();
+        String dsl = context.getConfigurer().toString();
+        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
+        String val = Env.check(keys, environment.getVars(), property, dsl, configFilePath, dryrun ? new Errors() : errors);
+        return isNotBlank(val) ? Integer.parseInt(val) : null;
     }
 
     static String checkProperty(JReleaserContext context, Collection<String> keys, String property, String value, String defaultValue) {

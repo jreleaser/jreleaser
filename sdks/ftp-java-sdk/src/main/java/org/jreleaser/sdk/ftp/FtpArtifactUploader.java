@@ -15,50 +15,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.ssh;
+package org.jreleaser.sdk.ftp;
 
-import net.schmizz.sshj.SSHClient;
+import org.apache.commons.net.ftp.FTPClient;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
+import org.jreleaser.model.FtpUploader;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.ScpUploader;
 import org.jreleaser.model.uploader.spi.UploadException;
 import org.jreleaser.sdk.commons.AbstractArtifactUploader;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-
-import static org.jreleaser.sdk.ssh.SshUtils.createDirectories;
-import static org.jreleaser.sdk.ssh.SshUtils.createSSHClient;
-import static org.jreleaser.sdk.ssh.SshUtils.disconnect;
 
 /**
  * @author Andres Almiray
  * @since 1.1.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class ScpArtifactUploader extends AbstractArtifactUploader<ScpUploader> {
-    private ScpUploader uploader;
+public class FtpArtifactUploader extends AbstractArtifactUploader<FtpUploader> {
+    private FtpUploader uploader;
 
-    public ScpArtifactUploader(JReleaserContext context) {
+    public FtpArtifactUploader(JReleaserContext context) {
         super(context);
     }
 
     @Override
-    public ScpUploader getUploader() {
+    public FtpUploader getUploader() {
         return uploader;
     }
 
     @Override
-    public void setUploader(ScpUploader uploader) {
+    public void setUploader(FtpUploader uploader) {
         this.uploader = uploader;
     }
 
     @Override
     public String getType() {
-        return ScpUploader.TYPE;
+        return FtpUploader.TYPE;
     }
 
     @Override
@@ -68,7 +65,7 @@ public class ScpArtifactUploader extends AbstractArtifactUploader<ScpUploader> {
             context.getLogger().info(RB.$("artifacts.no.match"));
         }
 
-        SSHClient ssh = createSSHClient(context, uploader);
+        FTPClient ftp = FtpUtils.open(context, uploader);
 
         try {
             for (Artifact artifact : artifacts) {
@@ -76,11 +73,10 @@ public class ScpArtifactUploader extends AbstractArtifactUploader<ScpUploader> {
                 context.getLogger().info(" - {}", path.getFileName());
 
                 if (!context.isDryrun()) {
-                    try {
+                    try (InputStream in = Files.newInputStream(path)) {
                         String uploadPath = uploader.getResolvedPath(context, artifact);
                         context.getLogger().debug("   " + RB.$("uploader.uploading.to", uploadPath));
-                        createDirectories(context, uploader, ssh, Paths.get(uploadPath).getParent());
-                        ssh.newSCPFileTransfer().upload(path.toAbsolutePath().toString(), uploadPath);
+                        ftp.storeFile(uploadPath, in);
                     } catch (IOException e) {
                         context.getLogger().trace(e);
                         throw new UploadException(RB.$("ERROR_unexpected_upload",
@@ -89,7 +85,7 @@ public class ScpArtifactUploader extends AbstractArtifactUploader<ScpUploader> {
                 }
             }
         } finally {
-            disconnect(uploader, ssh);
+            FtpUtils.close(uploader, ftp);
         }
     }
 }

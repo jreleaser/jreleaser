@@ -21,6 +21,7 @@ import org.jreleaser.model.Download;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.validation.FtpDownloaderValidator.validateFtpDownloader;
 import static org.jreleaser.model.validation.HttpDownloaderValidator.validateHttpDownloader;
 import static org.jreleaser.model.validation.ScpDownloaderValidator.validateScpDownloader;
 import static org.jreleaser.model.validation.SftpDownloaderValidator.validateSftpDownloader;
@@ -38,12 +39,14 @@ public abstract class DownloadersValidator extends Validator {
         context.getLogger().debug("download");
 
         Download download = context.getModel().getDownload();
+        validateFtpDownloader(context, mode, errors);
         validateHttpDownloader(context, mode, errors);
         validateScpDownloader(context, mode, errors);
         validateSftpDownloader(context, mode, errors);
 
         if (!download.isEnabledSet()) {
-            download.setEnabled(!download.getActiveHttps().isEmpty() ||
+            download.setEnabled(!download.getActiveFtps().isEmpty() ||
+                !download.getActiveHttps().isEmpty() ||
                 !download.getActiveScps().isEmpty() ||
                 !download.getActiveSftps().isEmpty());
         }

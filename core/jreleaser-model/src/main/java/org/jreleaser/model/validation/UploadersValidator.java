@@ -22,6 +22,7 @@ import org.jreleaser.model.Upload;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.ArtifactoryValidator.validateArtifactory;
+import static org.jreleaser.model.validation.FtpUploaderValidator.validateFtpUploader;
 import static org.jreleaser.model.validation.HttpUploaderValidator.validateHttpUploader;
 import static org.jreleaser.model.validation.S3Validator.validateS3;
 import static org.jreleaser.model.validation.ScpUploaderValidator.validateScpUploader;
@@ -37,6 +38,7 @@ public abstract class UploadersValidator extends Validator {
 
         Upload upload = context.getModel().getUpload();
         validateArtifactory(context, mode, errors);
+        validateFtpUploader(context, mode, errors);
         validateHttpUploader(context, mode, errors);
         validateS3(context, mode, errors);
         validateScpUploader(context, mode, errors);
@@ -44,6 +46,7 @@ public abstract class UploadersValidator extends Validator {
 
         if (mode.validateConfig() && !upload.isEnabledSet()) {
             upload.setEnabled(!upload.getActiveArtifactories().isEmpty() ||
+                !upload.getActiveFtps().isEmpty() ||
                 !upload.getActiveHttps().isEmpty() ||
                 !upload.getActiveS3s().isEmpty() ||
                 !upload.getActiveScps().isEmpty() ||

@@ -15,38 +15,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl
-
-import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
+package org.jreleaser.model;
 
 /**
- *
  * @author Andres Almiray
  * @since 1.1.0
  */
-@CompileStatic
-interface SshUploader extends Uploader {
-    Property<String> getUsername()
+public interface Ftp {
+    String TYPE = "ftp";
 
-    Property<String> getPassword()
+    String getResolvedUsername();
 
-    Property<String> getHost()
+    String getResolvedPassword();
 
-    Property<Integer> getPort()
+    String getResolvedHost();
 
-    RegularFileProperty getKnownHostsFile()
+    Integer getResolvedPort();
 
-    Property<String> getPublicKey()
+    String getUsername();
 
-    Property<String> getPrivateKey()
+    void setUsername(String username);
 
-    Property<String> getPassphrase()
+    String getPassword();
 
-    Property<String> getFingerprint()
+    void setPassword(String password);
 
-    Property<String> getPath()
+    String getHost();
 
-    Property<String> getDownloadUrl()
+    void setHost(String host);
+
+    Integer getPort();
+
+    void setPort(Integer port);
 }

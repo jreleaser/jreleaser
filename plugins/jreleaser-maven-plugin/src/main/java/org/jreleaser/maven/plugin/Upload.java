@@ -26,6 +26,7 @@ import java.util.Map;
  */
 public class Upload implements EnabledAware {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
+    private final Map<String, FtpUploader> ftp = new LinkedHashMap<>();
     private final Map<String, HttpUploader> http = new LinkedHashMap<>();
     private final Map<String, S3> s3 = new LinkedHashMap<>();
     private final Map<String, ScpUploader> scp = new LinkedHashMap<>();
@@ -35,6 +36,7 @@ public class Upload implements EnabledAware {
     void setAll(Upload upload) {
         this.enabled = upload.enabled;
         setArtifactory(upload.artifactory);
+        setFtp(upload.ftp);
         setHttp(upload.http);
         setS3(upload.s3);
         setScp(upload.scp);
@@ -63,6 +65,15 @@ public class Upload implements EnabledAware {
     public void setArtifactory(Map<String, Artifactory> artifactory) {
         this.artifactory.clear();
         this.artifactory.putAll(artifactory);
+    }
+
+    public Map<String, FtpUploader> getFtp() {
+        return ftp;
+    }
+
+    public void setFtp(Map<String, FtpUploader> ftp) {
+        this.ftp.clear();
+        this.ftp.putAll(ftp);
     }
 
     public Map<String, HttpUploader> getHttp() {

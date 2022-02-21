@@ -25,6 +25,7 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Artifactory
+import org.jreleaser.gradle.plugin.dsl.FtpUploader
 import org.jreleaser.gradle.plugin.dsl.HttpUploader
 import org.jreleaser.gradle.plugin.dsl.S3
 import org.jreleaser.gradle.plugin.dsl.ScpUploader
@@ -43,6 +44,7 @@ import javax.inject.Inject
 class UploadImpl implements Upload {
     final Property<Boolean> enabled
     final NamedDomainObjectContainer<Artifactory> artifactory
+    final NamedDomainObjectContainer<FtpUploader> ftp
     final NamedDomainObjectContainer<HttpUploader> http
     final NamedDomainObjectContainer<S3> s3
     final NamedDomainObjectContainer<ScpUploader> scp
@@ -58,6 +60,15 @@ class UploadImpl implements Upload {
                 ArtifactoryImpl a = objects.newInstance(ArtifactoryImpl, objects)
                 a.name = name
                 return a
+            }
+        })
+
+        ftp = objects.domainObjectContainer(FtpUploader, new NamedDomainObjectFactory<FtpUploader>() {
+            @Override
+            FtpUploader create(String name) {
+                FtpUploaderImpl h = objects.newInstance(FtpUploaderImpl, objects)
+                h.name = name
+                return h
             }
         })
 
@@ -104,6 +115,11 @@ class UploadImpl implements Upload {
     }
 
     @Override
+    void ftp(Action<? super NamedDomainObjectContainer<FtpUploader>> action) {
+        action.execute(ftp)
+    }
+
+    @Override
     void http(Action<? super NamedDomainObjectContainer<HttpUploader>> action) {
         action.execute(http)
     }
@@ -126,6 +142,11 @@ class UploadImpl implements Upload {
     @Override
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, artifactory)
+    }
+
+    @Override
+    void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, ftp)
     }
 
     @Override
@@ -153,6 +174,7 @@ class UploadImpl implements Upload {
         org.jreleaser.model.Upload upload = new org.jreleaser.model.Upload()
 
         artifactory.each { upload.addArtifactory(((ArtifactoryImpl) it).toModel()) }
+        ftp.each { upload.addFtp(((FtpUploaderImpl) it).toModel()) }
         http.each { upload.addHttp(((HttpUploaderImpl) it).toModel()) }
         s3.each { upload.addS3(((S3Impl) it).toModel()) }
         scp.each { upload.addScp(((ScpUploaderImpl) it).toModel()) }

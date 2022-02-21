@@ -18,7 +18,6 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -27,7 +26,7 @@ import org.gradle.api.provider.Property
  * @since 1.1.0
  */
 @CompileStatic
-interface SshUploader extends Uploader {
+interface FtpUploader extends SshUploader {
     Property<String> getUsername()
 
     Property<String> getPassword()
@@ -35,16 +34,6 @@ interface SshUploader extends Uploader {
     Property<String> getHost()
 
     Property<Integer> getPort()
-
-    RegularFileProperty getKnownHostsFile()
-
-    Property<String> getPublicKey()
-
-    Property<String> getPrivateKey()
-
-    Property<String> getPassphrase()
-
-    Property<String> getFingerprint()
 
     Property<String> getPath()
 
