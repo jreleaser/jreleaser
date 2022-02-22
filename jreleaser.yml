@@ -183,6 +183,7 @@ assemble:
         packageName: JReleaser
         packageIdentifier: org.jreleaser.cli
         icon: 'src/media/jreleaser.icns'
+        resourceDir: 'src/jpackage/osx'
       linux:
         types: [deb,rpm]
         maintainer: jreleaser@kordamp.org
