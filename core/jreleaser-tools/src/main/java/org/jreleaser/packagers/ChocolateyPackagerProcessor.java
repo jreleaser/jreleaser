@@ -109,11 +109,11 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
         props.put(KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL,
             gitService.getResolvedRepoCloneUrl(context.getModel(), packager.getBucket().getOwner(), packager.getBucket().getResolvedName()));
 
-        props.put(KEY_CHOCOLATEY_PACKAGE_NAME, getPackager().getPackageName());
-        props.put(KEY_CHOCOLATEY_PACKAGE_VERSION, getPackager().getPackageVersion());
-        props.put(KEY_CHOCOLATEY_USERNAME, getPackager().getUsername());
-        props.put(KEY_CHOCOLATEY_TITLE, getPackager().getTitle());
-        props.put(KEY_CHOCOLATEY_ICON_URL, resolveTemplate(getPackager().getIconUrl(), props));
+        props.put(KEY_CHOCOLATEY_PACKAGE_NAME, packager.getPackageName());
+        props.put(KEY_CHOCOLATEY_PACKAGE_VERSION, resolveTemplate(packager.getPackageVersion(), props));
+        props.put(KEY_CHOCOLATEY_USERNAME, packager.getUsername());
+        props.put(KEY_CHOCOLATEY_TITLE, packager.getTitle());
+        props.put(KEY_CHOCOLATEY_ICON_URL, resolveTemplate(packager.getIconUrl(), props));
         props.put(KEY_CHOCOLATEY_SOURCE, packager.getSource());
     }
 

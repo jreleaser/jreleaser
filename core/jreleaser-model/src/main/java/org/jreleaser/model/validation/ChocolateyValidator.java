@@ -44,6 +44,7 @@ import static org.jreleaser.model.validation.DistributionsValidator.validateArti
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -147,7 +148,7 @@ public abstract class ChocolateyValidator extends Validator {
         // packageVersion must be #, #.#, #.#.#, #.#.#.#, #.#.#.yyyyMMdd
         // tag is allowed but only if separated by -
         try {
-            String packageVersion = packager.getPackageVersion();
+            String packageVersion = resolveTemplate(packager.getPackageVersion(), context.getModel().props());
             switch (project.versionPattern().getType()) {
                 case SEMVER:
                     checkSemver(context, distribution, packager, SemVer.of(packageVersion), errors);
