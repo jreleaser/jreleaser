@@ -84,6 +84,8 @@ interface Jpackage extends JavaAssembler {
 
     @CompileStatic
     interface PlatformPackager {
+        Property<String> getAppName()
+
         RegularFileProperty getIcon()
 
         ListProperty<String> getTypes()

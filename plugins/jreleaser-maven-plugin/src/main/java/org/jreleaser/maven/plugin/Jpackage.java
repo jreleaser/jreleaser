@@ -107,6 +107,10 @@ public class Jpackage extends AbstractJavaAssembler {
     }
 
     public interface PlatformPackager {
+        String getAppName();
+
+        void setAppName(String appName);
+
         String getIcon();
 
         void setIcon(String icon);
@@ -245,16 +249,28 @@ public class Jpackage extends AbstractJavaAssembler {
         private final Artifact jdk = new Artifact();
         private final List<String> types = new ArrayList<>();
 
+        private String appName;
         private String icon;
         private String installDir;
         private String resourceDir;
 
         void setAll(AbstractPlatformPackager packager) {
+            this.appName = packager.appName;
             this.icon = packager.icon;
             this.installDir = packager.installDir;
             this.resourceDir = packager.resourceDir;
             setJdk(packager.jdk);
             setTypes(packager.types);
+        }
+
+        @Override
+        public String getAppName() {
+            return appName;
+        }
+
+        @Override
+        public void setAppName(String appName) {
+            this.appName = appName;
         }
 
         @Override

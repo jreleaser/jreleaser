@@ -190,6 +190,12 @@ public class Jpackage extends AbstractJavaAssembler {
     }
 
     public interface PlatformPackager extends Domain {
+        String getAppName();
+
+        void setAppName(String appName);
+
+        String getResolvedAppName(JReleaserContext context, Jpackage jpackage);
+
         String getIcon();
 
         void setIcon(String icon);
@@ -237,12 +243,6 @@ public class Jpackage extends AbstractJavaAssembler {
             this.copyright = applicationPackage.copyright;
             this.licenseFile = applicationPackage.licenseFile;
             setFileAssociations(applicationPackage.fileAssociations);
-        }
-
-        public String getResolvedAppName(JReleaserContext context, Jpackage jpackage) {
-            Map<String, Object> props = context.getModel().props();
-            props.putAll(jpackage.props());
-            return resolveTemplate(appName, props);
         }
 
         public String getResolvedAppVersion(JReleaserContext context, Jpackage jpackage) {
@@ -387,6 +387,7 @@ public class Jpackage extends AbstractJavaAssembler {
 
         @JsonIgnore
         private boolean enabled;
+        private String appName;
         private String icon;
         private String installDir;
         private String resourceDir;
@@ -398,11 +399,29 @@ public class Jpackage extends AbstractJavaAssembler {
 
         void setAll(AbstractPlatformPackager packager) {
             this.icon = packager.icon;
+            this.appName = packager.appName;
             this.enabled = packager.enabled;
             this.installDir = packager.installDir;
             this.resourceDir = packager.resourceDir;
             setJdk(packager.jdk);
             setTypes(packager.types);
+        }
+
+        @Override
+        public String getResolvedAppName(JReleaserContext context, Jpackage jpackage) {
+            Map<String, Object> props = context.getModel().props();
+            props.putAll(jpackage.props());
+            return resolveTemplate(appName, props);
+        }
+
+        @Override
+        public String getAppName() {
+            return appName;
+        }
+
+        @Override
+        public void setAppName(String appName) {
+            this.appName = appName;
         }
 
         @Override
@@ -487,6 +506,7 @@ public class Jpackage extends AbstractJavaAssembler {
 
             Map<String, Object> props = new LinkedHashMap<>();
             props.put("enabled", isEnabled());
+            props.put("appName", appName);
             props.put("icon", icon);
             props.put("resourceDir", resourceDir);
             props.put("types", types);

@@ -218,6 +218,10 @@ public abstract class JpackageValidator extends Validator {
             validateTemplate(context, jpackage, errors);
         }
 
+        if (isBlank(packager.getAppName())) {
+            packager.setAppName(jpackage.getApplicationPackage().getAppName());
+        }
+
         if (packager instanceof Jpackage.Linux) {
             validateLinux(context, jpackage, (Jpackage.Linux) packager, errors);
         }
@@ -238,7 +242,7 @@ public abstract class JpackageValidator extends Validator {
         }
 
         if (isBlank(packager.getPackageName())) {
-            packager.setPackageName(jpackage.getApplicationPackage().getAppName());
+            packager.setPackageName(packager.getAppName());
         }
         if (isNotBlank(packager.getPackageName()) && packager.getPackageName().length() > 16) {
             errors.configuration(RB.$("validation_jpackage_invalid_mac_package_name",

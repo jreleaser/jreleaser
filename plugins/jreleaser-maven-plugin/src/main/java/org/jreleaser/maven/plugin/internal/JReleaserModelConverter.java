@@ -884,6 +884,7 @@ public final class JReleaserModelConverter {
     }
 
     private static void convertPackager(Jpackage.PlatformPackager from, org.jreleaser.model.Jpackage.PlatformPackager into) {
+        into.setAppName(tr(from.getAppName()));
         into.setIcon(tr(from.getIcon()));
         into.setJdk(convertArtifact(from.getJdk()));
         into.setTypes(tr(from.getTypes()));

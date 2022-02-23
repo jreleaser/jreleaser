@@ -255,6 +255,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
 
     @CompileStatic
     private static abstract class AbstractPlatformPackager implements PlatformPackager {
+        final Property<String> appName
         final RegularFileProperty icon
         final ListProperty<String> types
         final Property<String> installDir
@@ -262,6 +263,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
 
         @Inject
         AbstractPlatformPackager(ObjectFactory objects) {
+            appName = objects.property(String).convention(Providers.notDefined())
             icon = objects.fileProperty().convention(Providers.notDefined())
             types = objects.listProperty(String).convention(Providers.notDefined())
             installDir = objects.property(String).convention(Providers.notDefined())
@@ -270,7 +272,8 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
 
         @Internal
         boolean isSet() {
-            icon.present ||
+            appName.present ||
+                icon.present ||
                 types.present ||
                 jdk.isSet() ||
                 installDir.present ||
@@ -290,6 +293,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
         }
 
         void fillProperties(org.jreleaser.model.Jpackage.PlatformPackager p) {
+            p.appName = appName.orNull
             p.icon = icon.orNull
             p.types = (List<String>) types.getOrElse([] as List<String>)
             p.installDir = installDir.orNull
