@@ -118,6 +118,9 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         String finalImageName = imageName + "-" + platformReplaced;
 
         String executable = assembler.getExecutable();
+        if (PlatformUtils.isWindows()) {
+            executable += ".exe";
+        }
         context.getLogger().info("- {}", finalImageName);
 
         Path image = assembleDirectory.resolve(executable).toAbsolutePath();
@@ -151,7 +154,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
                     .map(Path::toString)
                     .collect(Collectors.joining(File.pathSeparator)));
         }
-        cmd.arg("-H:Name=" + image.getFileName().toString());
+        cmd.arg("-H:Name=" + assembler.getExecutable());
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
         executeCommand(image.getParent(), cmd);
 
