@@ -276,7 +276,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             cmd.arg("--module")
                 .arg(assembler.getModuleName())
                 .arg("--module-path");
-            calculateJarPath(jarsDirectory, platform, cmd, false);
+            calculateJarPath(jarsDirectory, platform, cmd, true);
         } else if (!assembler.getJdeps().getTargets().isEmpty()) {
             cmd.arg("--class-path");
             if (assembler.getJdeps().isUseWildcardInPath()) {
