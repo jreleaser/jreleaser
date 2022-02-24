@@ -180,6 +180,7 @@ assemble:
         vendor: JReleaser
       osx:
         types: [pkg]
+        appName: JReleaser
         packageName: JReleaser
         packageIdentifier: org.jreleaser.cli
         icon: 'src/media/jreleaser.icns'
@@ -317,7 +318,7 @@ distributions:
     executable:
       windowsExtension: exe
     artifacts:
-      - path: '{{jpackageDir}}/jreleaser-{{projectVersionNumber}}.pkg'
+      - path: '{{jpackageDir}}/JReleaser-{{projectVersionNumber}}.pkg'
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.pkg'
         platform: osx-x86_64
       - path: '{{jpackageDir}}/jreleaser_{{projectVersionNumber}}-1_amd64.deb'

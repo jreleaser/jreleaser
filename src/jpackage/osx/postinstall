@@ -7,6 +7,6 @@ then
     mkdir -p $TARGET_DIR
 fi
 
-ln -Ffs "$2/jreleaser.app/Contents/MacOS/jreleaser" "$TARGET_DIR/jreleaser"
+ln -Ffs "$2/JReleaser.app/Contents/MacOS/JReleaser" "$TARGET_DIR/jreleaser"
 
 exit 0
