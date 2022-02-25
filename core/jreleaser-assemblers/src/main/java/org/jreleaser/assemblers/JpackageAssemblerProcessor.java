@@ -370,6 +370,9 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
     }
 
     private void customizeWindows(String type, Jpackage.Windows packager, Path inputsDirectory, Command cmd, Map<String, Object> props) {
+        if (packager.isConsole()) {
+            cmd.arg("--win-console");
+        }
         if (packager.isDirChooser()) {
             cmd.arg("--win-dir-chooser");
         }
