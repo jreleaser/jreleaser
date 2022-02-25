@@ -142,16 +142,16 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         }
 
         // jlink it
-        String modulePath = targetJdk.getEffectivePath(context, assembler).resolve("jmods").toAbsolutePath().toString();
+        String modulePath = maybeQuote(targetJdk.getEffectivePath(context, assembler).resolve("jmods").toAbsolutePath().toString());
         if (isNotBlank(assembler.getModuleName()) || assembler.isCopyJars()) {
-            modulePath += File.pathSeparator + jarsDirectory
+            modulePath += File.pathSeparator + maybeQuote(jarsDirectory
                 .resolve("universal")
-                .toAbsolutePath();
+                .toAbsolutePath().toString());
 
             try {
                 Path platformJarsDirectory = jarsDirectory.resolve(platform).toAbsolutePath();
                 if (listFilesAndProcess(platformJarsDirectory, Stream::count) > 1) {
-                    modulePath += File.pathSeparator + platformJarsDirectory;
+                    modulePath += File.pathSeparator + maybeQuote(platformJarsDirectory.toString());
                 }
             } catch (IOException e) {
                 throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error", e));
@@ -174,7 +174,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
                 .arg(assembler.getExecutable() + "=" + assembler.getModuleName() + "/" + assembler.getJava().getMainClass());
         }
         cmd.arg("--output")
-            .arg(imageDirectory.toString());
+            .arg(maybeQuote(imageDirectory.toString()));
 
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -282,10 +282,10 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             cmd.arg("--class-path");
             if (assembler.getJdeps().isUseWildcardInPath()) {
                 cmd.arg("universal" +
-                        File.separator + "*" +
-                        File.pathSeparator +
-                        platform +
-                        File.separator + "*");
+                    File.separator + "*" +
+                    File.pathSeparator +
+                    platform +
+                    File.separator + "*");
             } else {
                 calculateJarPath(jarsDirectory, platform, cmd, true);
             }
@@ -293,6 +293,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             assembler.getJdeps().getTargets().stream()
                 .map(target -> resolveTemplate(target, props))
                 .filter(StringUtils::isNotBlank)
+                .map(AssemblerUtils::maybeAdjust)
                 .forEach(cmd::arg);
         } else {
             calculateJarPath(jarsDirectory, platform, cmd, false);

@@ -24,9 +24,11 @@ import org.jreleaser.model.JavaAssembler;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
 import org.jreleaser.util.PlatformUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -98,5 +100,21 @@ public final class AssemblerUtils {
         }
 
         return paths;
+    }
+
+    public static Path maybeAdjust(Path path) {
+        if (PlatformUtils.isWindows()) {
+            return Paths.get(path.toString().replace("/", File.separator));
+        }
+
+        return path;
+    }
+
+    public static String maybeAdjust(String path) {
+        if (PlatformUtils.isWindows()) {
+            return path.replace("/", File.separator);
+        }
+
+        return path;
     }
 }

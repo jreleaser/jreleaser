@@ -42,7 +42,9 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
+import static org.jreleaser.util.PlatformUtils.isWindows;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.quote;
 
 /**
  * @author Andres Almiray
@@ -183,5 +185,9 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
         }
+    }
+
+    protected String maybeQuote(String str) {
+        return isWindows() ? quote(str) : str;
     }
 }

@@ -145,13 +145,14 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         Command cmd = new Command(nativeImageExecutable.toString(), true)
             .args(assembler.getArgs())
             .arg("-jar")
-            .arg(assembler.getMainJar().getEffectivePath(context, assembler).toAbsolutePath().toString());
+            .arg(maybeQuote(assembler.getMainJar().getEffectivePath(context, assembler).toAbsolutePath().toString()));
 
         if (!jars.isEmpty()) {
             cmd.arg("-cp")
                 .arg(jars.stream()
                     .map(Path::toAbsolutePath)
                     .map(Path::toString)
+                    .map(this::maybeQuote)
                     .collect(Collectors.joining(File.pathSeparator)));
         }
         cmd.arg("-H:Name=" + assembler.getExecutable());
