@@ -197,6 +197,10 @@ public class Glob implements Domain, ExtraProperties {
                 this.pattern = REGEX_PREFIX + ".*" + File.separator + path;
             }
         }
+
+        if (PlatformUtils.isWindows()) {
+            this.pattern = pattern.replace("/", "\\\\");
+        }
     }
 
     public String getPlatform() {
