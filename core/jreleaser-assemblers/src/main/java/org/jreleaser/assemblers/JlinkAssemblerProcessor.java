@@ -281,11 +281,10 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         } else if (!assembler.getJdeps().getTargets().isEmpty()) {
             cmd.arg("--class-path");
             if (assembler.getJdeps().isUseWildcardInPath()) {
-                cmd.arg(
-                    jarsDirectory.resolve("universal").toAbsolutePath() +
+                cmd.arg("universal" +
                         File.separator + "*" +
                         File.pathSeparator +
-                        jarsDirectory.resolve(platform) +
+                        platform +
                         File.separator + "*");
             } else {
                 calculateJarPath(jarsDirectory, platform, cmd, true);
@@ -301,7 +300,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
 
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        executeCommandCapturing(cmd, out);
+        executeCommandCapturing(jarsDirectory, cmd, out);
 
         String output = out.toString().trim();
         long lineCount = Arrays.stream(output.split(System.lineSeparator()))
@@ -321,13 +320,13 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
                 StringBuilder pathBuilder = new StringBuilder();
 
                 String s = listFilesAndProcess(jarsDirectory.resolve("universal"), files ->
-                    files.map(Path::toAbsolutePath)
+                    files.map(jarsDirectory::relativize)
                         .map(Object::toString)
                         .collect(joining(File.pathSeparator)));
                 pathBuilder.append(s);
 
                 String platformSpecific = listFilesAndProcess(jarsDirectory.resolve(platform), files ->
-                    files.map(Path::toAbsolutePath)
+                    files.map(jarsDirectory::relativize)
                         .map(Object::toString)
                         .collect(joining(File.pathSeparator)));
 
@@ -339,12 +338,12 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
                 cmd.arg(pathBuilder.toString());
             } else {
                 listFilesAndConsume(jarsDirectory.resolve("universal"), files ->
-                    files.map(Path::toAbsolutePath)
+                    files.map(jarsDirectory::relativize)
                         .map(Object::toString)
                         .forEach(cmd::arg));
 
                 listFilesAndConsume(jarsDirectory.resolve(platform), files ->
-                    files.map(Path::toAbsolutePath)
+                    files.map(jarsDirectory::relativize)
                         .map(Object::toString)
                         .forEach(cmd::arg));
             }
