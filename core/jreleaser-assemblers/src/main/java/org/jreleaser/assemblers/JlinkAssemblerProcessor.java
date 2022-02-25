@@ -39,6 +39,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
@@ -104,7 +105,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             jars.addAll(copyJars(context, assembler, platformJarsDirectory, platform));
 
             // resolve module names
-            Set<String> moduleNames = resolveModuleNames(context, jdkPath, jarsDirectory, platform, props);
+            Set<String> moduleNames = new TreeSet<>(resolveModuleNames(context, jdkPath, jarsDirectory, platform, props));
             context.getLogger().debug(RB.$("assembler.resolved.module.names"), moduleNames);
             if (moduleNames.isEmpty()) {
                 throw new AssemblerProcessingException(RB.$("ERROR_assembler_no_module_names"));
