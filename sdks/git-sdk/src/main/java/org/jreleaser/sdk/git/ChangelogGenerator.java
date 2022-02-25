@@ -280,7 +280,11 @@ public class ChangelogGenerator {
             Project.Snapshot snapshot = context.getModel().getProject().getSnapshot();
             String effectiveLabel = snapshot.getEffectiveLabel();
             if (effectiveLabel.equals(effectiveTagName)) {
-                if (!tag.isPresent() || snapshot.isFullChangelog()) {
+                if (snapshot.isFullChangelog()) {
+                    tag = Optional.empty();
+                }
+
+                if (!tag.isPresent()) {
                     if (previousTag.isPresent()) {
                         tag = previousTag;
                     }
