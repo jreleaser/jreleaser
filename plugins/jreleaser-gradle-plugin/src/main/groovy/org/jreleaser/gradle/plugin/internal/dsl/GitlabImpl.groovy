@@ -66,7 +66,7 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
     org.jreleaser.model.Gitlab toModel() {
         org.jreleaser.model.Gitlab service = new org.jreleaser.model.Gitlab()
         toModel(service)
-        if (changelog.isSet()) service.changelog = changelog.toModel()
+        service.changelog = changelog.toModel()
         if (milestone.isSet()) service.milestone = milestone.toModel()
         if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
         if (identifier.present) service.identifier = identifier.get()

@@ -194,9 +194,10 @@ class ChangelogImpl implements Changelog {
         org.jreleaser.model.Changelog changelog = new org.jreleaser.model.Changelog()
         if (enabled.present) {
             changelog.enabled = enabled.get()
-        } else {
-            changelog.enabled = isSet()
         }
+
+        if (!changelog.enabled) return changelog
+
         if (links.present) changelog.links = links.get()
         if (hideUncategorized.present) hide.uncategorized.set(hideUncategorized.get())
         if (sort.present) changelog.sort = sort.get()

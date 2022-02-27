@@ -78,7 +78,7 @@ class CodebergImpl extends AbstractGitService implements Codeberg {
         toModel(service)
         if (draft.present) service.draft = draft.get()
         service.prerelease = prerelease.toModel()
-        if (changelog.isSet()) service.changelog = changelog.toModel()
+        service.changelog = changelog.toModel()
         if (milestone.isSet()) service.milestone = milestone.toModel()
         if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
         service

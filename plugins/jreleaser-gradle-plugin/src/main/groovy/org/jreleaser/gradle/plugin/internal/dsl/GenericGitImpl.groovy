@@ -55,7 +55,7 @@ class GenericGitImpl extends AbstractGitService implements GenericGit {
     org.jreleaser.model.GenericGit toModel() {
         org.jreleaser.model.GenericGit service = new org.jreleaser.model.GenericGit()
         toModel(service)
-        if (changelog.isSet()) service.changelog = changelog.toModel()
+        service.changelog = changelog.toModel()
         if (milestone.isSet()) service.milestone = milestone.toModel()
         if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
         service
