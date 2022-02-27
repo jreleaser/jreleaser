@@ -234,7 +234,7 @@ public class CalVer implements Version<CalVer> {
 
     @Override
     public String toRpmVersion() {
-        return toString().replace("-","_");
+        return toString().replace("-", "_");
     }
 
     @Override
@@ -263,31 +263,31 @@ public class CalVer implements Version<CalVer> {
         int result = pattern.compareTo(other.pattern);
 
         if (result == 0) {
-            result = yearAsInt - other.yearAsInt;
+            result = yearAsInt - (other.hasYear() ? other.yearAsInt : 0);
         }
 
         if (result == 0) {
-            result = hasMonth() ? monthAsInt - other.monthAsInt : 0;
+            result = hasMonth() ? monthAsInt - (other.hasMonth() ? other.monthAsInt : 0) : 0;
         }
 
         if (result == 0) {
-            result = hasWeek() ? weekAsInt - other.weekAsInt : 0;
+            result = hasWeek() ? weekAsInt - (other.hasWeek() ? other.weekAsInt : 0) : 0;
         }
 
         if (result == 0) {
-            result = hasDay() ? dayAsInt - other.dayAsInt : 0;
+            result = hasDay() ? dayAsInt - (other.hasDay() ? other.dayAsInt : 0) : 0;
         }
 
         if (result == 0) {
-            result = hasMinor() ? minorAsInt - other.minorAsInt : 0;
+            result = hasMinor() ? minorAsInt - (other.hasMinor() ? other.minorAsInt : 0) : 0;
         }
 
         if (result == 0) {
-            result = hasMicro() ? microAsInt - other.microAsInt : 0;
+            result = hasMicro() ? microAsInt - (other.hasMicro() ? other.microAsInt : 0) : 0;
         }
 
         if (result == 0 && isNotBlank(modifier)) {
-            result = modifier.compareTo(other.modifier);
+            result = isNotBlank(other.modifier) ? modifier.compareTo(other.modifier) : -1;
         }
 
         return result;
