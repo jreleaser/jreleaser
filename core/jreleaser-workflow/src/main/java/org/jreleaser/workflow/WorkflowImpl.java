@@ -20,12 +20,12 @@ package org.jreleaser.workflow;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.context.ModelValidator;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.util.JReleaserException;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.jreleaser.util.TimeUtils.formatDuration;
 
@@ -44,7 +44,7 @@ class WorkflowImpl implements Workflow {
     }
 
     public void execute() {
-        JReleaserException exception = null;
+        AtomicReference<RuntimeException> exception = new AtomicReference<>();
 
         Instant start = Instant.now();
         context.getLogger().info(RB.$("workflow.dryrun"), context.isDryrun());
@@ -64,9 +64,9 @@ class WorkflowImpl implements Workflow {
         for (WorkflowItem item : items) {
             try {
                 item.invoke(context);
-            } catch (JReleaserException e) {
+            } catch (RuntimeException e) {
                 // terminate
-                exception = e;
+                exception.compareAndSet(null, e);
                 break;
             }
         }
@@ -76,12 +76,12 @@ class WorkflowImpl implements Workflow {
 
         context.getLogger().reset();
         context.report();
-        if (null == exception) {
+        if (null == exception.get()) {
             context.getLogger().info(RB.$("workflow.success"), formatDuration(duration));
         } else {
             context.getLogger().error(RB.$("workflow.failure"), formatDuration(duration));
-            context.getLogger().trace(exception);
-            throw exception;
+            context.getLogger().trace(exception.get());
+            throw exception.get();
         }
     }
 
