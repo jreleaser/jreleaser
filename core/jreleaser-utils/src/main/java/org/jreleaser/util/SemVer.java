@@ -154,10 +154,10 @@ public class SemVer implements Version<SemVer> {
         }
 
         if (result == 0 && isNotBlank(tag)) {
-            result = tag.compareTo(other.tag);
+            result = isNotBlank(other.tag) ? tag.compareTo(other.tag) : -1;
         }
         if (result == 0 && isNotBlank(build)) {
-            result = build.compareTo(other.build);
+            result = isNotBlank(other.build) ? build.compareTo(other.build) : -1;
         }
 
         return result;
