@@ -292,6 +292,10 @@ public abstract class JpackageValidator extends Validator {
             errors.configuration(RB.$("validation_must_not_be_blank", "jpackage." + jpackage.getName() + ".java.groupId"));
         }
 
+        if (isBlank(jpackage.getJava().getMainClass())) {
+            errors.configuration(RB.$("validation_must_not_be_blank", "jpackage." + jpackage.getName() + ".java.mainClass"));
+        }
+
         return true;
     }
 
