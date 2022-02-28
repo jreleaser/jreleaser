@@ -854,6 +854,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Jpackage a = new org.jreleaser.model.Jpackage();
         convertJavaAssembler(jpackage, a);
         a.setJlink(tr(jpackage.getJlink()));
+        a.setModuleName(tr(jpackage.getModuleName()));
         if (jpackage.isAttachPlatformSet()) a.setAttachPlatform(jpackage.isAttachPlatform());
         a.setRuntimeImages(convertArtifacts(jpackage.getRuntimeImages()));
         a.setApplicationPackage(convertApplicationPackage(jpackage.getApplicationPackage()));

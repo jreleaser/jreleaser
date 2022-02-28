@@ -35,6 +35,7 @@ public class Jpackage extends AbstractJavaAssembler {
     private final Osx osx = new Osx();
 
     private String jlink;
+    private String moduleName;
     private Boolean attachPlatform;
 
     public String getJlink() {
@@ -43,6 +44,14 @@ public class Jpackage extends AbstractJavaAssembler {
 
     public void setJlink(String jlink) {
         this.jlink = jlink;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
     }
 
     public boolean isAttachPlatformSet() {

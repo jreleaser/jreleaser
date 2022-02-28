@@ -47,7 +47,6 @@ import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.FileUtils.listFilesAndProcess;
 import static org.jreleaser.util.PlatformUtils.isWindows;
 import static org.jreleaser.util.StringUtils.isNotBlank;
-import static org.jreleaser.util.StringUtils.quote;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
@@ -179,6 +178,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             throw new AssemblerProcessingException(RB.$("ERROR_jpackage_runtime_image_not_found", platform));
         }
 
+        String moduleName = assembler.getModuleName();
         String appName = packager.getResolvedAppName(context, assembler);
         String appVersion = assembler.getApplicationPackage().getResolvedAppVersion(context, assembler);
         String vendor = assembler.getApplicationPackage().getVendor();
@@ -198,10 +198,6 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             .arg(inputsDirectory.resolve("files").toAbsolutePath().toString())
             .arg("--name")
             .arg(maybeQuote(appName))
-            .arg("--main-class")
-            .arg(assembler.getJava().getMainClass())
-            .arg("--main-jar")
-            .arg(maybeQuote(assembler.getMainJar().getResolvedPath().getFileName().toString()))
             .arg("--runtime-image")
             .arg(maybeQuote(runtimeImageByPlatform.get().getEffectivePath(context, assembler).toAbsolutePath().toString()))
             .arg("--app-version")
@@ -212,6 +208,16 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             .arg(maybeQuote(copyright))
             .arg("--description")
             .arg(maybeQuote(context.getModel().getProject().getDescription()));
+
+        if (isNotBlank(moduleName)) {
+            cmd.arg("--module")
+                .arg(moduleName + "/" + assembler.getJava().getMainClass());
+        } else {
+            cmd.arg("--main-class")
+                .arg(assembler.getJava().getMainClass())
+                .arg("--main-jar")
+                .arg(maybeQuote(assembler.getMainJar().getResolvedPath().getFileName().toString()));
+        }
 
         // Launcher
         for (String argument : assembler.getLauncher().getArguments()) {

@@ -45,6 +45,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
     String name
     final Property<String> jlink
+    final Property<String> moduleName
     final Property<Boolean> attachPlatform
     final JavaImpl java
     final PlatformImpl platform
@@ -61,6 +62,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
         super(objects)
 
         jlink = objects.property(String).convention(Providers.notDefined())
+        moduleName = objects.property(String).convention(Providers.notDefined())
         attachPlatform = objects.property(Boolean).convention(Providers.notDefined())
         java = objects.newInstance(JavaImpl, objects)
         platform = objects.newInstance(PlatformImpl, objects)
@@ -84,6 +86,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
     boolean isSet() {
         super.isSet() ||
             jlink.present ||
+            moduleName.present ||
             attachPlatform.present ||
             java.isSet() ||
             platform.isSet() ||
@@ -174,6 +177,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
         if (windows.isSet()) jpackage.windows = windows.toModel()
         if (osx.isSet()) jpackage.osx = osx.toModel()
         if (jlink.present) jpackage.jlink = jlink.get()
+        if (moduleName.present) jpackage.moduleName = moduleName.get()
         if (attachPlatform.present) jpackage.attachPlatform = attachPlatform.get()
         for (ArtifactImpl artifact : runtimeImages) {
             jpackage.addRuntimeImage(artifact.toModel())

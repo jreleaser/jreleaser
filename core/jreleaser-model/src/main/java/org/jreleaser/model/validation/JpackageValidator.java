@@ -123,6 +123,7 @@ public abstract class JpackageValidator extends Validator {
 
             jpackage.setJava(jlink.getJava());
             jpackage.setMainJar(jlink.getMainJar());
+            jpackage.setModuleName(jlink.getModuleName());
             jpackage.setJars(jlink.getJars());
             packager.setJdk(jlink.getJdk());
             if (isBlank(jpackage.getExecutable())) {

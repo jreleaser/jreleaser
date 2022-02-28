@@ -49,6 +49,7 @@ public class Jpackage extends AbstractJavaAssembler {
     private final Osx osx = new Osx();
 
     private String jlink;
+    private String moduleName;
     private Boolean attachPlatform;
 
     public Jpackage() {
@@ -63,6 +64,7 @@ public class Jpackage extends AbstractJavaAssembler {
     void setAll(Jpackage jpackage) {
         super.setAll(jpackage);
         this.jlink = jpackage.jlink;
+        this.moduleName = jpackage.moduleName;
         this.attachPlatform = jpackage.attachPlatform;
         setRuntimeImages(jpackage.runtimeImages);
         setApplicationPackage(jpackage.applicationPackage);
@@ -78,6 +80,14 @@ public class Jpackage extends AbstractJavaAssembler {
 
     public void setJlink(String jlink) {
         this.jlink = jlink;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
     }
 
     public boolean isAttachPlatformSet() {
@@ -161,6 +171,7 @@ public class Jpackage extends AbstractJavaAssembler {
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
         props.put("jlink", jlink);
+        props.put("moduleName", moduleName);
         props.put("attachPlatform", isAttachPlatform());
         Map<String, Map<String, Object>> mapped = new LinkedHashMap<>();
         int i = 0;
