@@ -9,7 +9,7 @@ jreleaser {
 
     environment {
         properties.put('jdkPathPrefix', 'apps/jreleaser/build/jdks')
-        properties.put('jdkFilePrefix', 'zulu17.30.15-ca-jdk17.0.1')
+        properties.put('jdkFilePrefix', 'zulu17.32.13-ca-jdk17.0.2')
     }
 
     project {

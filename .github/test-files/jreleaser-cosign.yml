@@ -1,7 +1,7 @@
 environment:
   properties:
     jdkPathPrefix: 'apps/jreleaser/build/jdks'
-    jdkFilePrefix: 'zulu17.30.15-ca-jdk17.0.1'
+    jdkFilePrefix: 'zulu17.32.13-ca-jdk17.0.2'
 
 project:
   name: jreleaser
