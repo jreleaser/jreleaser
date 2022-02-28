@@ -178,7 +178,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             throw new AssemblerProcessingException(RB.$("ERROR_jpackage_runtime_image_not_found", platform));
         }
 
-        String moduleName = assembler.getModuleName();
+        String moduleName = assembler.getJava().getMainModule();
         String appName = packager.getResolvedAppName(context, assembler);
         String appVersion = assembler.getApplicationPackage().getResolvedAppVersion(context, assembler);
         String vendor = assembler.getApplicationPackage().getVendor();

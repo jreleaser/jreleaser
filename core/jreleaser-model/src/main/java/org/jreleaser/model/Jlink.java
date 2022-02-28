@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.Templates.resolveTemplate;
@@ -44,7 +45,6 @@ public class Jlink extends AbstractJavaAssembler {
 
     private String imageName;
     private String imageNameTransform;
-    private String moduleName;
     private Boolean copyJars;
 
     public Jlink() {
@@ -60,7 +60,6 @@ public class Jlink extends AbstractJavaAssembler {
         super.setAll(jlink);
         this.imageName = jlink.imageName;
         this.imageNameTransform = jlink.imageNameTransform;
-        this.moduleName = jlink.moduleName;
         this.copyJars = jlink.copyJars;
         setJdeps(jlink.jdeps);
         setJdk(jlink.jdk);
@@ -115,12 +114,9 @@ public class Jlink extends AbstractJavaAssembler {
         this.imageNameTransform = imageNameTransform;
     }
 
-    public String getModuleName() {
-        return moduleName;
-    }
-
     public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
+        nag("jlink.moduleName has been deprecated since 1.0.0-M2 and will be removed in the future. Use jlink.java.mainModule instead");
+        this.java.setMainModule(moduleName);
     }
 
     public Set<Artifact> getTargetJdks() {
@@ -234,7 +230,6 @@ public class Jlink extends AbstractJavaAssembler {
         super.asMap(full, props);
         props.put("imageName", imageName);
         props.put("imageNameTransform", imageNameTransform);
-        props.put("moduleName", moduleName);
         props.put("moduleNames", moduleNames);
         props.put("additionalModuleNames", additionalModuleNames);
         props.put("args", args);

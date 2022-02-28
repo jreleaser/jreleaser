@@ -32,6 +32,7 @@ public class Java implements ExtraProperties {
     private String version;
     private String groupId;
     private String artifactId;
+    private String mainModule;
     private String mainClass;
     private Boolean multiProject;
 
@@ -39,6 +40,7 @@ public class Java implements ExtraProperties {
         this.version = project.version;
         this.groupId = project.groupId;
         this.artifactId = project.artifactId;
+        this.mainModule = project.mainModule;
         this.mainClass = project.mainClass;
         this.multiProject = project.multiProject;
         setExtraProperties(project.extraProperties);
@@ -70,6 +72,14 @@ public class Java implements ExtraProperties {
 
     public void setArtifactId(String artifactId) {
         this.artifactId = artifactId;
+    }
+
+    public String getMainModule() {
+        return mainModule;
+    }
+
+    public void setMainModule(String mainModule) {
+        this.mainModule = mainModule;
     }
 
     public String getMainClass() {

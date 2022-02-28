@@ -190,6 +190,9 @@ public abstract class JlinkValidator extends Validator {
         if (isBlank(jlink.getJava().getVersion())) {
             jlink.getJava().setVersion(project.getJava().getVersion());
         }
+        if (isBlank(jlink.getJava().getMainModule())) {
+            jlink.getJava().setMainModule(project.getJava().getMainModule());
+        }
         if (isBlank(jlink.getJava().getMainClass())) {
             jlink.getJava().setMainClass(project.getJava().getMainClass());
         }

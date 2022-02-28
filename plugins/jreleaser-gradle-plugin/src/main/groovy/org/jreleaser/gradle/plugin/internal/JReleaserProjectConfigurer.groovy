@@ -346,6 +346,12 @@ class JReleaserProjectConfigurer {
                 } else {
                     model.project.java.mainClass = application.mainClass.orNull
                 }
+
+                if (version[0] <= 6 && version[1] < 4) {
+                    model.project.java.mainModule = ''
+                } else {
+                    model.project.java.mainModule = application.mainModule.orNull
+                }
             }
         }
     }

@@ -37,6 +37,7 @@ class JavaImpl implements Java {
     final Property<String> version
     final Property<String> groupId
     final Property<String> artifactId
+    final Property<String> mainModule
     final Property<String> mainClass
     final Property<Boolean> multiProject
     final MapProperty<String, Object> extraProperties
@@ -46,6 +47,7 @@ class JavaImpl implements Java {
         version = objects.property(String).convention(Providers.notDefined())
         groupId = objects.property(String).convention(Providers.notDefined())
         artifactId = objects.property(String).convention(Providers.notDefined())
+        mainModule = objects.property(String).convention(Providers.notDefined())
         mainClass = objects.property(String).convention(Providers.notDefined())
         multiProject = objects.property(Boolean).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
@@ -56,6 +58,7 @@ class JavaImpl implements Java {
         version.present ||
             groupId.present ||
             artifactId.present ||
+            mainModule.present ||
             mainClass.present ||
             multiProject.present ||
             extraProperties.present
@@ -67,6 +70,7 @@ class JavaImpl implements Java {
         if (version.present) java.version = version.get()
         if (groupId.present) java.groupId = groupId.get()
         if (artifactId.present) java.artifactId = artifactId.get()
+        if (mainModule.present) java.mainModule = mainModule.get()
         if (mainClass.present) java.mainClass = mainClass.get()
         if (multiProject.present) java.multiProject = multiProject.get()
         if (extraProperties.present) java.extraProperties.putAll(extraProperties.get())

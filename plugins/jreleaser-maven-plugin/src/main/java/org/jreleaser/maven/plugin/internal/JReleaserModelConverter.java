@@ -203,6 +203,7 @@ public final class JReleaserModelConverter {
         j.setGroupId(tr(java.getGroupId()));
         j.setArtifactId(tr(java.getArtifactId()));
         j.setVersion(tr(java.getVersion()));
+        j.setMainModule(tr(java.getMainModule()));
         j.setMainClass(tr(java.getMainClass()));
         if (java.isMultiProjectSet()) j.setMultiProject(java.isMultiProject());
         return j;
@@ -836,7 +837,7 @@ public final class JReleaserModelConverter {
         a.setJdk(convertArtifact(jlink.getJdk()));
         a.setImageName(tr(jlink.getImageName()));
         a.setImageNameTransform(tr(jlink.getImageNameTransform()));
-        a.setModuleName(tr(jlink.getModuleName()));
+        if (isNotBlank(jlink.getModuleName())) a.setModuleName(tr(jlink.getModuleName()));
         if (jlink.isCopyJarsSet()) a.setCopyJars(jlink.isCopyJars());
         return a;
     }
@@ -854,7 +855,7 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Jpackage a = new org.jreleaser.model.Jpackage();
         convertJavaAssembler(jpackage, a);
         a.setJlink(tr(jpackage.getJlink()));
-        a.setModuleName(tr(jpackage.getModuleName()));
+        if (isNotBlank(jpackage.getModuleName())) a.setModuleName(tr(jpackage.getModuleName()));
         if (jpackage.isAttachPlatformSet()) a.setAttachPlatform(jpackage.isAttachPlatform());
         a.setRuntimeImages(convertArtifacts(jpackage.getRuntimeImages()));
         a.setApplicationPackage(convertApplicationPackage(jpackage.getApplicationPackage()));

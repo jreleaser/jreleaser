@@ -223,6 +223,9 @@ public abstract class DistributionsValidator extends Validator {
         if (isBlank(distribution.getJava().getVersion())) {
             distribution.getJava().setVersion(project.getJava().getVersion());
         }
+        if (isBlank(distribution.getJava().getMainModule())) {
+            distribution.getJava().setMainModule(project.getJava().getMainModule());
+        }
         if (isBlank(distribution.getJava().getMainClass())) {
             distribution.getJava().setMainClass(project.getJava().getMainClass());
         }

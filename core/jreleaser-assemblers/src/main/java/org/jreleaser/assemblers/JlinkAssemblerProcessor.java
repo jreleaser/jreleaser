@@ -111,8 +111,8 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
                 throw new AssemblerProcessingException(RB.$("ERROR_assembler_no_module_names"));
             }
             moduleNames.addAll(assembler.getAdditionalModuleNames());
-            if (isNotBlank(assembler.getModuleName())) {
-                moduleNames.add(assembler.getModuleName());
+            if (isNotBlank(assembler.getJava().getMainModule())) {
+                moduleNames.add(assembler.getJava().getMainModule());
             }
             context.getLogger().debug(RB.$("assembler.module.names"), moduleNames);
 
@@ -142,8 +142,9 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         }
 
         // jlink it
+        String moduleName = assembler.getJava().getMainModule();
         String modulePath = maybeQuote(targetJdk.getEffectivePath(context, assembler).resolve("jmods").toAbsolutePath().toString());
-        if (isNotBlank(assembler.getModuleName()) || assembler.isCopyJars()) {
+        if (isNotBlank(moduleName) || assembler.isCopyJars()) {
             modulePath += File.pathSeparator + maybeQuote(jarsDirectory
                 .resolve("universal")
                 .toAbsolutePath().toString());
@@ -169,9 +170,9 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
             .arg(modulePath)
             .arg("--add-modules")
             .arg(String.join(",", moduleNames));
-        if (isNotBlank(assembler.getModuleName())) {
+        if (isNotBlank(moduleName)) {
             cmd.arg("--launcher")
-                .arg(assembler.getExecutable() + "=" + assembler.getModuleName() + "/" + assembler.getJava().getMainClass());
+                .arg(assembler.getExecutable() + "=" + moduleName + "/" + assembler.getJava().getMainClass());
         }
         cmd.arg("--output")
             .arg(maybeQuote(imageDirectory.toString()));
@@ -180,7 +181,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         executeCommandCapturing(cmd, out);
 
-        if (isBlank(assembler.getModuleName())) {
+        if (isBlank(moduleName)) {
             // non modular
             // copy jars & launcher
 
@@ -273,9 +274,10 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<Jlin
         }
         cmd.arg("--print-module-deps");
 
-        if (isNotBlank(assembler.getModuleName())) {
+        String moduleName = assembler.getJava().getMainModule();
+        if (isNotBlank(moduleName)) {
             cmd.arg("--module")
-                .arg(assembler.getModuleName())
+                .arg(moduleName)
                 .arg("--module-path");
             calculateJarPath(jarsDirectory, platform, cmd, true);
         } else if (!assembler.getJdeps().getTargets().isEmpty()) {

@@ -33,6 +33,8 @@ interface Java extends ExtraProperties {
 
     Property<String> getArtifactId()
 
+    Property<String> getMainModule()
+
     Property<String> getMainClass()
 
     Property<Boolean> getMultiProject()

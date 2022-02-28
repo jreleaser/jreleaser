@@ -123,7 +123,6 @@ public abstract class JpackageValidator extends Validator {
 
             jpackage.setJava(jlink.getJava());
             jpackage.setMainJar(jlink.getMainJar());
-            jpackage.setModuleName(jlink.getModuleName());
             jpackage.setJars(jlink.getJars());
             packager.setJdk(jlink.getJdk());
             if (isBlank(jpackage.getExecutable())) {
@@ -281,6 +280,9 @@ public abstract class JpackageValidator extends Validator {
         }
         if (isBlank(jpackage.getJava().getVersion())) {
             jpackage.getJava().setVersion(project.getJava().getVersion());
+        }
+        if (isBlank(jpackage.getJava().getMainModule())) {
+            jpackage.getJava().setMainModule(project.getJava().getMainModule());
         }
         if (isBlank(jpackage.getJava().getMainClass())) {
             jpackage.getJava().setMainClass(project.getJava().getMainClass());

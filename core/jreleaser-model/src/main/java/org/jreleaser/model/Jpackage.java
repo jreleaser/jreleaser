@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
@@ -49,7 +50,6 @@ public class Jpackage extends AbstractJavaAssembler {
     private final Osx osx = new Osx();
 
     private String jlink;
-    private String moduleName;
     private Boolean attachPlatform;
 
     public Jpackage() {
@@ -64,7 +64,6 @@ public class Jpackage extends AbstractJavaAssembler {
     void setAll(Jpackage jpackage) {
         super.setAll(jpackage);
         this.jlink = jpackage.jlink;
-        this.moduleName = jpackage.moduleName;
         this.attachPlatform = jpackage.attachPlatform;
         setRuntimeImages(jpackage.runtimeImages);
         setApplicationPackage(jpackage.applicationPackage);
@@ -82,12 +81,9 @@ public class Jpackage extends AbstractJavaAssembler {
         this.jlink = jlink;
     }
 
-    public String getModuleName() {
-        return moduleName;
-    }
-
     public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
+        nag("jlink.moduleName has been deprecated since 1.0.0-M3 and will be removed in the future. Use jlink.java.mainModule instead");
+        this.java.setMainModule(moduleName);
     }
 
     public boolean isAttachPlatformSet() {
@@ -171,7 +167,6 @@ public class Jpackage extends AbstractJavaAssembler {
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
         props.put("jlink", jlink);
-        props.put("moduleName", moduleName);
         props.put("attachPlatform", isAttachPlatform());
         Map<String, Map<String, Object>> mapped = new LinkedHashMap<>();
         int i = 0;

@@ -34,6 +34,7 @@ public class Java implements Domain, ExtraProperties, EnabledAware {
     private String version;
     private String groupId;
     private String artifactId;
+    private String mainModule;
     private String mainClass;
     private Boolean multiProject;
 
@@ -42,6 +43,7 @@ public class Java implements Domain, ExtraProperties, EnabledAware {
         this.version = java.version;
         this.groupId = java.groupId;
         this.artifactId = java.artifactId;
+        this.mainModule = java.mainModule;
         this.mainClass = java.mainClass;
         this.multiProject = java.multiProject;
         setExtraProperties(java.extraProperties);
@@ -111,6 +113,14 @@ public class Java implements Domain, ExtraProperties, EnabledAware {
         this.mainClass = mainClass;
     }
 
+    public String getMainModule() {
+        return mainModule;
+    }
+
+    public void setMainModule(String mainModule) {
+        this.mainModule = mainModule;
+    }
+
     public boolean isMultiProjectSet() {
         return multiProject != null;
     }
@@ -136,6 +146,7 @@ public class Java implements Domain, ExtraProperties, EnabledAware {
             isNotBlank(version) ||
             isNotBlank(groupId) ||
             isNotBlank(artifactId) ||
+            isNotBlank(mainModule) ||
             isNotBlank(mainClass) ||
             isMultiProjectSet() ||
             !extraProperties.isEmpty();
@@ -150,6 +161,7 @@ public class Java implements Domain, ExtraProperties, EnabledAware {
         map.put("version", version);
         map.put("groupId", groupId);
         map.put("artifactId", artifactId);
+        map.put("mainModule", mainModule);
         map.put("mainClass", mainClass);
         map.put("multiProject", isMultiProject());
         map.put("extraProperties", getResolvedExtraProperties());
