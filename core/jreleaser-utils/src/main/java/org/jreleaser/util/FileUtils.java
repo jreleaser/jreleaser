@@ -26,6 +26,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -59,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -79,6 +81,7 @@ import static org.jreleaser.util.FileType.TAR_XZ;
 import static org.jreleaser.util.FileType.TBZ2;
 import static org.jreleaser.util.FileType.TGZ;
 import static org.jreleaser.util.FileType.TXZ;
+import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -244,6 +247,13 @@ public final class FileUtils {
         deleteFiles(dest, true);
         File destinationDir = dest.toFile();
 
+        if (filename.endsWith(ZIP.extension())) {
+            try (ZipFile zipFile = new ZipFile(src.toFile())) {
+                unpackArchive(removeRootEntry ? filename + "/" : "", destinationDir, zipFile);
+            }
+            return;
+        }
+
         try (InputStream fi = Files.newInputStream(src);
              InputStream bi = new BufferedInputStream(fi);
              ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
@@ -329,6 +339,50 @@ public final class FileUtils {
                 } else {
                     try (OutputStream o = Files.newOutputStream(file.toPath())) {
                         IOUtils.copy(in, o);
+                        Files.setLastModifiedTime(file.toPath(), FileTime.from(entry.getLastModifiedDate().toInstant()));
+                        chmod(file, getEntryMode(entry, file));
+                    }
+                }
+            }
+        }
+    }
+
+    private static void unpackArchive(String basename, File destinationDir, ZipFile zipFile) throws IOException {
+        Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+        while (entries.hasMoreElements()) {
+            ZipArchiveEntry entry = entries.nextElement();
+            if (!zipFile.canReadEntryData(entry)) {
+                // log something?
+                continue;
+            }
+
+            String entryName = entry.getName();
+            if (isNotBlank(basename) && entryName.startsWith(basename) && entryName.length() > basename.length() + 1) {
+                entryName = entryName.substring(basename.length());
+            }
+
+            File file = new File(destinationDir, entryName);
+            String destDirPath = destinationDir.getCanonicalPath();
+            String destFilePath = file.getCanonicalPath();
+            if (!destFilePath.startsWith(destDirPath + File.separator)) {
+                throw new IOException(RB.$("ERROR_files_unpack_outside_target", entry.getName()));
+            }
+
+            if (entry.isDirectory()) {
+                if (!file.isDirectory() && !file.mkdirs()) {
+                    throw new IOException(RB.$("ERROR_files_unpack_fail_dir", file));
+                }
+            } else {
+                File parent = file.getParentFile();
+                if (!parent.isDirectory() && !parent.mkdirs()) {
+                    throw new IOException(RB.$("ERROR_files_unpack_fail_dir", parent));
+                }
+
+                if (entry.isUnixSymlink()) {
+                    Files.createSymbolicLink(file.toPath(), Paths.get(zipFile.getUnixSymlink(entry)));
+                } else {
+                    try (OutputStream o = Files.newOutputStream(file.toPath())) {
+                        IOUtils.copy(zipFile.getInputStream(entry), o);
                         Files.setLastModifiedTime(file.toPath(), FileTime.from(entry.getLastModifiedDate().toInstant()));
                         chmod(file, getEntryMode(entry, file));
                     }
