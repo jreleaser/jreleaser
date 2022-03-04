@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +43,9 @@ public class NativeImage extends AbstractJavaAssembler {
     private final Artifact graal = new Artifact();
     private final Set<Artifact> graalJdks = new LinkedHashSet<>();
     private final Upx upx = new Upx();
+    private final Linux linux = new Linux();
+    private final Windows windows = new Windows();
+    private final Osx osx = new Osx();
 
     private String imageName;
     private String imageNameTransform;
@@ -65,6 +69,9 @@ public class NativeImage extends AbstractJavaAssembler {
         setGraalJdks(nativeImage.graalJdks);
         setArgs(nativeImage.args);
         setUpx(nativeImage.upx);
+        setLinux(nativeImage.linux);
+        setWindows(nativeImage.windows);
+        setOsx(nativeImage.osx);
     }
 
     public String getResolvedImageName(JReleaserContext context) {
@@ -78,6 +85,16 @@ public class NativeImage extends AbstractJavaAssembler {
         Map<String, Object> props = context.getModel().props();
         props.putAll(props());
         return resolveTemplate(imageNameTransform, props);
+    }
+
+    public PlatformCustomizer getResolvedPlatformCustomizer() {
+        String currentPlatform = PlatformUtils.getCurrentFull();
+        if (PlatformUtils.isMac(currentPlatform)) {
+            return getOsx();
+        } else if (PlatformUtils.isWindows(currentPlatform)) {
+            return getWindows();
+        }
+        return getLinux();
     }
 
     public String getImageName() {
@@ -168,6 +185,30 @@ public class NativeImage extends AbstractJavaAssembler {
         this.upx.setAll(upx);
     }
 
+    public Linux getLinux() {
+        return linux;
+    }
+
+    public void setLinux(Linux linux) {
+        this.linux.setAll(linux);
+    }
+
+    public Windows getWindows() {
+        return windows;
+    }
+
+    public void setWindows(Windows windows) {
+        this.windows.setAll(windows);
+    }
+
+    public Osx getOsx() {
+        return osx;
+    }
+
+    public void setOsx(Osx osx) {
+        this.osx.setAll(osx);
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
@@ -183,6 +224,19 @@ public class NativeImage extends AbstractJavaAssembler {
         props.put("graalJdks", mappedJdks);
         props.put("args", args);
         props.put("upx", upx.asMap(full));
+        props.putAll(linux.asMap(full));
+        props.putAll(osx.asMap(full));
+        props.putAll(windows.asMap(full));
+    }
+
+    public interface PlatformCustomizer extends Domain {
+        String getPlatform();
+
+        List<String> getArgs();
+
+        void setArgs(List<String> args);
+
+        void addArgs(List<String> args);
     }
 
     public static class Upx implements Domain, Activatable {
@@ -275,6 +329,65 @@ public class NativeImage extends AbstractJavaAssembler {
             props.put("version", version);
 
             return props;
+        }
+    }
+
+    private static abstract class AbstractPlatformCustomizer implements PlatformCustomizer {
+        private final List<String> args = new ArrayList<>();
+        private final String platform;
+
+        protected AbstractPlatformCustomizer(String platform) {
+            this.platform = platform;
+        }
+
+        void setAll(AbstractPlatformCustomizer customizer) {
+            setArgs(customizer.args);
+        }
+
+        public List<String> getArgs() {
+            return args;
+        }
+
+        public void setArgs(List<String> args) {
+            this.args.clear();
+            this.args.addAll(args);
+        }
+
+        public void addArgs(List<String> args) {
+            this.args.addAll(args);
+        }
+
+        @Override
+        public String getPlatform() {
+            return platform;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put("args", args);
+
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put(platform, props);
+            return map;
+        }
+    }
+
+    public static class Linux extends AbstractPlatformCustomizer {
+        public Linux() {
+            super("linux");
+        }
+    }
+
+    public static class Windows extends AbstractPlatformCustomizer {
+        public Windows() {
+            super("windows");
+        }
+    }
+
+    public static class Osx extends AbstractPlatformCustomizer {
+        public Osx() {
+            super("osx");
         }
     }
 }

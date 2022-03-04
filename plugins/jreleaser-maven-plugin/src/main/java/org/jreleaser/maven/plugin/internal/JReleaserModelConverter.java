@@ -971,6 +971,9 @@ public final class JReleaserModelConverter {
         a.setImageNameTransform(tr(nativeImage.getImageNameTransform()));
         a.setArgs(tr(nativeImage.getArgs()));
         a.setUpx(convertUpx(nativeImage.getUpx()));
+        a.setLinux(convertLinux(nativeImage.getLinux()));
+        a.setWindows(convertWindows(nativeImage.getWindows()));
+        a.setOsx(convertOsx(nativeImage.getOsx()));
         return a;
     }
 
@@ -979,6 +982,24 @@ public final class JReleaserModelConverter {
         a.setActive(tr(upx.resolveActive()));
         a.setVersion(tr(upx.getVersion()));
         a.setArgs(tr(upx.getArgs()));
+        return a;
+    }
+
+    private static org.jreleaser.model.NativeImage.Linux convertLinux(NativeImage.Linux linux) {
+        org.jreleaser.model.NativeImage.Linux a = new org.jreleaser.model.NativeImage.Linux();
+        a.setArgs(tr(linux.getArgs()));
+        return a;
+    }
+
+    private static org.jreleaser.model.NativeImage.Windows convertWindows(NativeImage.Windows windows) {
+        org.jreleaser.model.NativeImage.Windows a = new org.jreleaser.model.NativeImage.Windows();
+        a.setArgs(tr(windows.getArgs()));
+        return a;
+    }
+
+    private static org.jreleaser.model.NativeImage.Osx convertOsx(NativeImage.Osx osx) {
+        org.jreleaser.model.NativeImage.Osx a = new org.jreleaser.model.NativeImage.Osx();
+        a.setArgs(tr(osx.getArgs()));
         return a;
     }
 

@@ -54,6 +54,9 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
 
     private final ArtifactImpl graal
     private final UpxImpl upx
+    private final LinuxImpl linux
+    private final WindowsImpl windows
+    private final OsxImpl osx
     final NamedDomainObjectContainer<ArtifactImpl> graalJdks
 
     @Inject
@@ -69,6 +72,9 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         graal = objects.newInstance(ArtifactImpl, objects)
         graal.setName('graal')
         upx = objects.newInstance(UpxImpl, objects)
+        linux = objects.newInstance(LinuxImpl, objects)
+        windows = objects.newInstance(WindowsImpl, objects)
+        osx = objects.newInstance(OsxImpl, objects)
 
         graalJdks = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
@@ -96,6 +102,9 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
             java.isSet() ||
             graal.isSet() ||
             upx.isSet() ||
+            linux.isSet() ||
+            windows.isSet() ||
+            osx.isSet() ||
             !graalJdks.isEmpty()
     }
 
@@ -124,6 +133,21 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     }
 
     @Override
+    void linux(Action<? super Linux> action) {
+        action.execute(linux)
+    }
+
+    @Override
+    void windows(Action<? super Windows> action) {
+        action.execute(windows)
+    }
+
+    @Override
+    void osx(Action<? super Osx> action) {
+        action.execute(osx)
+    }
+
+    @Override
     void graalJdk(Action<? super Artifact> action) {
         action.execute(graalJdks.maybeCreate("graalJdk-${graalJdks.size()}".toString()))
     }
@@ -136,6 +160,21 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
     @Override
     void upx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
         ConfigureUtil.configure(action, upx)
+    }
+
+    @Override
+    void linux(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
+        ConfigureUtil.configure(action, linux)
+    }
+
+    @Override
+    void windows(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
+        ConfigureUtil.configure(action, windows)
+    }
+
+    @Override
+    void osx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
+        ConfigureUtil.configure(action, osx)
     }
 
     @Override
@@ -162,6 +201,9 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
         nativeImage.args = (List<String>) args.getOrElse([])
         if (graal.isSet()) nativeImage.graal = graal.toModel()
         if (upx.isSet()) nativeImage.upx = upx.toModel()
+        if (linux.isSet()) nativeImage.linux = linux.toModel()
+        if (windows.isSet()) nativeImage.windows = windows.toModel()
+        if (osx.isSet()) nativeImage.osx = osx.toModel()
         for (ArtifactImpl artifact : graalJdks) {
             nativeImage.addGraalJdk(artifact.toModel())
         }
@@ -215,6 +257,90 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
             if (version.present) upx.version = version.get()
             upx.args = (List<String>) args.getOrElse([])
             upx
+        }
+    }
+
+    @CompileStatic
+    static class LinuxImpl implements NativeImage.Linux {
+        final ListProperty<String> args
+
+        @Inject
+        LinuxImpl(ObjectFactory objects) {
+            args = objects.listProperty(String).convention(Providers.notDefined())
+        }
+
+        @Override
+        void arg(String arg) {
+            if (isNotBlank(arg)) {
+                args.add(arg.trim())
+            }
+        }
+
+        @Internal
+        boolean isSet() {
+            args.present
+        }
+
+        org.jreleaser.model.NativeImage.Linux toModel() {
+            org.jreleaser.model.NativeImage.Linux linux = new org.jreleaser.model.NativeImage.Linux()
+            linux.args = (List<String>) args.getOrElse([])
+            linux
+        }
+    }
+
+    @CompileStatic
+    static class WindowsImpl implements NativeImage.Windows {
+        final ListProperty<String> args
+
+        @Inject
+        WindowsImpl(ObjectFactory objects) {
+            args = objects.listProperty(String).convention(Providers.notDefined())
+        }
+
+        @Override
+        void arg(String arg) {
+            if (isNotBlank(arg)) {
+                args.add(arg.trim())
+            }
+        }
+
+        @Internal
+        boolean isSet() {
+            args.present
+        }
+
+        org.jreleaser.model.NativeImage.Windows toModel() {
+            org.jreleaser.model.NativeImage.Windows windows = new org.jreleaser.model.NativeImage.Windows()
+            windows.args = (List<String>) args.getOrElse([])
+            windows
+        }
+    }
+
+    @CompileStatic
+    static class OsxImpl implements NativeImage.Osx {
+        final ListProperty<String> args
+
+        @Inject
+        OsxImpl(ObjectFactory objects) {
+            args = objects.listProperty(String).convention(Providers.notDefined())
+        }
+
+        @Override
+        void arg(String arg) {
+            if (isNotBlank(arg)) {
+                args.add(arg.trim())
+            }
+        }
+
+        @Internal
+        boolean isSet() {
+            args.present
+        }
+
+        org.jreleaser.model.NativeImage.Osx toModel() {
+            org.jreleaser.model.NativeImage.Osx osx = new org.jreleaser.model.NativeImage.Osx()
+            osx.args = (List<String>) args.getOrElse([])
+            osx
         }
     }
 }

@@ -143,8 +143,12 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             .toAbsolutePath();
 
         Command cmd = new Command(nativeImageExecutable.toString(), true)
-            .args(assembler.getArgs())
-            .arg("-jar")
+            .args(assembler.getArgs());
+
+        NativeImage.PlatformCustomizer customizer = assembler.getResolvedPlatformCustomizer();
+        cmd.args(customizer.getArgs());
+
+        cmd.arg("-jar")
             .arg(maybeQuote(assembler.getMainJar().getEffectivePath(context, assembler).toAbsolutePath().toString()));
 
         if (!jars.isEmpty()) {

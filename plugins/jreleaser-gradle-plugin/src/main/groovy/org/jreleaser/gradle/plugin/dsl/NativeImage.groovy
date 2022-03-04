@@ -48,11 +48,23 @@ interface NativeImage extends JavaAssembler {
 
     void upx(Action<? super Upx> action)
 
+    void linux(Action<? super Linux> action)
+
+    void windows(Action<? super Windows> action)
+
+    void osx(Action<? super Osx> action)
+
     void graalJdk(Action<? super Artifact> action)
 
     void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
     void upx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action)
+
+    void linux(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Linux) Closure<Void> action)
+
+    void windows(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Windows) Closure<Void> action)
+
+    void osx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Osx) Closure<Void> action)
 
     void graalJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
@@ -63,6 +75,24 @@ interface NativeImage extends JavaAssembler {
 
         @Deprecated
         void addArg(String arg)
+
+        void arg(String arg)
+    }
+
+    interface Linux {
+        ListProperty<String> getArgs()
+
+        void arg(String arg)
+    }
+
+    interface Windows {
+        ListProperty<String> getArgs()
+
+        void arg(String arg)
+    }
+
+    interface Osx {
+        ListProperty<String> getArgs()
 
         void arg(String arg)
     }

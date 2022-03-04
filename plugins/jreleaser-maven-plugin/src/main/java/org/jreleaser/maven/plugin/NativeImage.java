@@ -30,6 +30,9 @@ public class NativeImage extends AbstractJavaAssembler {
     private final List<String> args = new ArrayList<>();
     private final Artifact graal = new Artifact();
     private final Upx upx = new Upx();
+    private final Linux linux = new Linux();
+    private final Windows windows = new Windows();
+    private final Osx osx = new Osx();
     private final Set<Artifact> graalJdks = new LinkedHashSet<>();
 
     private String imageName;
@@ -90,12 +93,46 @@ public class NativeImage extends AbstractJavaAssembler {
         this.args.addAll(args);
     }
 
-    public NativeImage.Upx getUpx() {
+    public Upx getUpx() {
         return upx;
     }
 
-    public void setUpx(NativeImage.Upx upx) {
+    public void setUpx(Upx upx) {
         this.upx.setAll(upx);
+    }
+
+    public Linux getLinux() {
+        return linux;
+    }
+
+    public void setLinux(Linux linux) {
+        this.linux.setAll(linux);
+    }
+
+    public Windows getWindows() {
+        return windows;
+    }
+
+    public void setWindows(Windows windows) {
+        this.windows.setAll(windows);
+    }
+
+    public Osx getOsx() {
+        return osx;
+    }
+
+    public void setOsx(Osx osx) {
+        this.osx.setAll(osx);
+    }
+
+    public interface PlatformCustomizer {
+        String getPlatform();
+
+        List<String> getArgs();
+
+        void setArgs(List<String> args);
+
+        void addArgs(List<String> args);
     }
 
     public static class Upx implements Activatable {
@@ -140,6 +177,55 @@ public class NativeImage extends AbstractJavaAssembler {
         public void setArgs(List<String> args) {
             this.args.clear();
             this.args.addAll(args);
+        }
+    }
+
+    private static abstract class AbstractPlatformCustomizer implements PlatformCustomizer {
+        private final List<String> args = new ArrayList<>();
+        private final String platform;
+
+        protected AbstractPlatformCustomizer(String platform) {
+            this.platform = platform;
+        }
+
+        void setAll(AbstractPlatformCustomizer customizer) {
+            setArgs(customizer.args);
+        }
+
+        public List<String> getArgs() {
+            return args;
+        }
+
+        public void setArgs(List<String> args) {
+            this.args.clear();
+            this.args.addAll(args);
+        }
+
+        public void addArgs(List<String> args) {
+            this.args.addAll(args);
+        }
+
+        @Override
+        public String getPlatform() {
+            return platform;
+        }
+    }
+
+    public static class Linux extends AbstractPlatformCustomizer {
+        public Linux() {
+            super("linux");
+        }
+    }
+
+    public static class Windows extends AbstractPlatformCustomizer {
+        public Windows() {
+            super("windows");
+        }
+    }
+
+    public static class Osx extends AbstractPlatformCustomizer {
+        public Osx() {
+            super("osx");
         }
     }
 }
