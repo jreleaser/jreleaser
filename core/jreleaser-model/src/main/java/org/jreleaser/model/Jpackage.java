@@ -51,6 +51,7 @@ public class Jpackage extends AbstractJavaAssembler {
 
     private String jlink;
     private Boolean attachPlatform;
+    private Boolean verbose;
 
     public Jpackage() {
         super(TYPE);
@@ -65,6 +66,7 @@ public class Jpackage extends AbstractJavaAssembler {
         super.setAll(jpackage);
         this.jlink = jpackage.jlink;
         this.attachPlatform = jpackage.attachPlatform;
+        this.verbose = jpackage.verbose;
         setRuntimeImages(jpackage.runtimeImages);
         setApplicationPackage(jpackage.applicationPackage);
         setLauncher(jpackage.launcher);
@@ -96,6 +98,18 @@ public class Jpackage extends AbstractJavaAssembler {
 
     public void setAttachPlatform(Boolean attachPlatform) {
         this.attachPlatform = attachPlatform;
+    }
+
+    public boolean isVerboseSet() {
+        return verbose != null;
+    }
+
+    public boolean isVerbose() {
+        return verbose != null && verbose;
+    }
+
+    public void setVerbose(Boolean verbose) {
+        this.verbose = verbose;
     }
 
     public Set<Artifact> getRuntimeImages() {

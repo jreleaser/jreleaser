@@ -36,6 +36,8 @@ interface Jpackage extends JavaAssembler {
 
     Property<Boolean> getAttachPlatform()
 
+    Property<Boolean> getVerbose()
+
     void runtimeImage(Action<? super Artifact> action)
 
     void applicationPackage(Action<? super ApplicationPackage> action)

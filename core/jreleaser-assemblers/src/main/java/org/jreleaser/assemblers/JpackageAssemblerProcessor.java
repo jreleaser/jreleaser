@@ -209,6 +209,10 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             .arg("--description")
             .arg(maybeQuote(context.getModel().getProject().getDescription()));
 
+        if (assembler.isVerbose()) {
+            cmd.arg("--verbose");
+        }
+
         if (isNotBlank(moduleName)) {
             cmd.arg("--module")
                 .arg(moduleName + "/" + assembler.getJava().getMainClass());
@@ -254,6 +258,9 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         executeCommandCapturing(cmd, out);
+        if (assembler.isVerbose()) {
+            context.getLogger().debug(out.toString());
+        }
 
         // replace only if not linux
         if (!PlatformUtils.isLinux(platform) && assembler.isAttachPlatform()) {

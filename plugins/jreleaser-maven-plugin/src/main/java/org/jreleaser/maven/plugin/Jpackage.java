@@ -37,6 +37,7 @@ public class Jpackage extends AbstractJavaAssembler {
     private String jlink;
     private String moduleName;
     private Boolean attachPlatform;
+    private Boolean verbose;
 
     public String getJlink() {
         return jlink;
@@ -64,6 +65,18 @@ public class Jpackage extends AbstractJavaAssembler {
 
     public void setAttachPlatform(Boolean attachPlatform) {
         this.attachPlatform = attachPlatform;
+    }
+
+    public boolean isVerboseSet() {
+        return verbose != null;
+    }
+
+    public boolean isVerbose() {
+        return verbose != null && verbose;
+    }
+
+    public void setVerbose(Boolean verbose) {
+        this.verbose = verbose;
     }
 
     public Set<Artifact> getRuntimeImages() {

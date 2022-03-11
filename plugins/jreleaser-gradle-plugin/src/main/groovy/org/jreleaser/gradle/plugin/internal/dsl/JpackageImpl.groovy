@@ -47,6 +47,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
     final Property<String> jlink
     final Property<String> moduleName
     final Property<Boolean> attachPlatform
+    final Property<Boolean> verbose
     final JavaImpl java
     final PlatformImpl platform
 
@@ -64,6 +65,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
         jlink = objects.property(String).convention(Providers.notDefined())
         moduleName = objects.property(String).convention(Providers.notDefined())
         attachPlatform = objects.property(Boolean).convention(Providers.notDefined())
+        verbose = objects.property(Boolean).convention(Providers.notDefined())
         java = objects.newInstance(JavaImpl, objects)
         platform = objects.newInstance(PlatformImpl, objects)
         applicationPackage = objects.newInstance(ApplicationPackageImpl, objects)
@@ -88,6 +90,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
             jlink.present ||
             moduleName.present ||
             attachPlatform.present ||
+            verbose.present ||
             java.isSet() ||
             platform.isSet() ||
             applicationPackage.isSet() ||
@@ -179,6 +182,7 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
         if (jlink.present) jpackage.jlink = jlink.get()
         if (moduleName.present) jpackage.moduleName = moduleName.get()
         if (attachPlatform.present) jpackage.attachPlatform = attachPlatform.get()
+        if (verbose.present) jpackage.verbose = verbose.get()
         for (ArtifactImpl artifact : runtimeImages) {
             jpackage.addRuntimeImage(artifact.toModel())
         }

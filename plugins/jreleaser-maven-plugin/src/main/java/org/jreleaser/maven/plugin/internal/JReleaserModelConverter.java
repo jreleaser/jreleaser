@@ -857,6 +857,7 @@ public final class JReleaserModelConverter {
         a.setJlink(tr(jpackage.getJlink()));
         if (isNotBlank(jpackage.getModuleName())) a.setModuleName(tr(jpackage.getModuleName()));
         if (jpackage.isAttachPlatformSet()) a.setAttachPlatform(jpackage.isAttachPlatform());
+        if (jpackage.isVerboseSet()) a.setVerbose(jpackage.isVerbose());
         a.setRuntimeImages(convertArtifacts(jpackage.getRuntimeImages()));
         a.setApplicationPackage(convertApplicationPackage(jpackage.getApplicationPackage()));
         a.setLauncher(convertLauncher(jpackage.getLauncher()));
