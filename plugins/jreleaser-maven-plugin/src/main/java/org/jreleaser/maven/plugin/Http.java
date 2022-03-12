@@ -28,7 +28,6 @@ public class Http extends AbstractHttpUploader {
     public static final String NAME = "http";
 
     private final Map<String, String> headers = new LinkedHashMap<>();
-    private String target;
     private String username;
     private String password;
     private Authorization authorization;
@@ -68,14 +67,6 @@ public class Http extends AbstractHttpUploader {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
     }
 
     public Authorization getAuthorization() {

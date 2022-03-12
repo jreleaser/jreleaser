@@ -35,7 +35,6 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
-import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -81,41 +80,6 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
         }
-    }
-
-    @Override
-    @Deprecated
-    void addLabel(String key, String value) {
-        nag('docker.addLabel() has been deprecated since 1.0.0-M2 and will be removed in the future. Use docker.label() instead')
-        label(key, value)
-    }
-
-    @Override
-    @Deprecated
-    void addImageName(String imageName) {
-        nag('docker.addImageName() has been deprecated since 1.0.0-M2 and will be removed in the future. Use docker.imageName() instead')
-        this.imageName(imageName)
-    }
-
-    @Override
-    @Deprecated
-    void addBuildArg(String buildArg) {
-        nag('docker.addBuildArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use docker.buildArg() instead')
-        this.buildArg(buildArg)
-    }
-
-    @Override
-    @Deprecated
-    void addPreCommand(String command) {
-        nag('docker.addPreCommand() has been deprecated since 1.0.0-M2 and will be removed in the future. Use docker.preCommand() instead')
-        preCommand(command)
-    }
-
-    @Override
-    @Deprecated
-    void addPostCommand(String command) {
-        nag('docker.addPostCommand() has been deprecated since 1.0.0-M2 and will be removed in the future. Use docker.postCommand() instead')
-        postCommand(command)
     }
 
     @Override

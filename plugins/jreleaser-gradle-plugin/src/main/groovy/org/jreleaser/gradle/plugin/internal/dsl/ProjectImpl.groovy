@@ -32,7 +32,6 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
-import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -45,7 +44,6 @@ class ProjectImpl implements Project {
     final Property<String> name
     final Property<String> version
     final Property<String> versionPattern
-    final Property<String> snapshotPattern
     final Property<String> description
     final Property<String> longDescription
     final Property<String> website
@@ -68,7 +66,6 @@ class ProjectImpl implements Project {
         name = objects.property(String).convention(nameProvider)
         version = objects.property(String).convention(versionProvider)
         versionPattern = objects.property(String).convention(Providers.notDefined())
-        snapshotPattern = objects.property(String).convention(Providers.notDefined())
         description = objects.property(String).convention(descriptionProvider)
         longDescription = objects.property(String).convention(descriptionProvider)
         website = objects.property(String).convention(Providers.notDefined())
@@ -86,24 +83,10 @@ class ProjectImpl implements Project {
     }
 
     @Override
-    @Deprecated
-    void addAuthor(String name) {
-        nag('project.addAuthor() has been deprecated since 1.0.0-M2 and will be removed in the future. Use project.author() instead')
-        author(name)
-    }
-
-    @Override
     void author(String name) {
         if (isNotBlank(name)) {
             authors.add(name.trim())
         }
-    }
-
-    @Override
-    @Deprecated
-    void addTag(String tag) {
-        nag('project.addTag() has been deprecated since 1.0.0-M2 and will be removed in the future. Use project.tag() instead')
-        this.tag(tag)
     }
 
     @Override
@@ -138,7 +121,6 @@ class ProjectImpl implements Project {
         project.name = name.get()
         project.version = version.get()
         if (versionPattern.present) project.versionPattern = versionPattern.get()
-        if (snapshotPattern.present) project.snapshotPattern = snapshotPattern.get()
         if (description.present) project.description = description.get()
         if (longDescription.present) project.longDescription = longDescription.get()
         if (website.present) project.website = website.get()

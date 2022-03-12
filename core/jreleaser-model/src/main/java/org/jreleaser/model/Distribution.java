@@ -51,7 +51,6 @@ import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_NAME;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE;
-import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -206,12 +205,6 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
 
     public void setExecutable(Executable executable) {
         this.executable.setAll(executable);
-    }
-
-    @Deprecated
-    public void setExecutableExtension(String executableExtension) {
-        nag("executableExtension has been deprecated since 1.0.0-M2 and will be removed in the future. Use executable.windowsExtension instead");
-        this.executable.setWindowsExtension(executableExtension);
     }
 
     public Set<Artifact> getArtifacts() {

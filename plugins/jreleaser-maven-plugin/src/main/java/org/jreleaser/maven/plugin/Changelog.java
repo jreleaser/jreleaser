@@ -46,7 +46,6 @@ public class Changelog implements EnabledAware {
     private Sort sort = Sort.DESC;
     private String external;
     private Active formatted;
-    private String change;
     private String format;
     private String content;
     private String contentTemplate;
@@ -58,7 +57,6 @@ public class Changelog implements EnabledAware {
         this.sort = changelog.sort;
         this.external = changelog.external;
         this.formatted = changelog.formatted;
-        this.change = changelog.change;
         this.format = changelog.format;
         this.content = changelog.content;
         this.contentTemplate = changelog.contentTemplate;
@@ -186,14 +184,6 @@ public class Changelog implements EnabledAware {
         this.labelers.addAll(labelers);
     }
 
-    public String getChange() {
-        return change;
-    }
-
-    public void setChange(String change) {
-        this.change = change;
-    }
-
     public String getFormat() {
         return format;
     }
@@ -224,16 +214,6 @@ public class Changelog implements EnabledAware {
 
     public void setPreset(String preset) {
         this.preset = preset;
-    }
-
-    @Deprecated
-    public boolean isHideUncategorized() {
-        return this.hide.isUncategorized();
-    }
-
-    @Deprecated
-    public void setHideUncategorized(boolean hideUncategorized) {
-        this.hide.setUncategorized(hideUncategorized);
     }
 
     public Contributors getContributors() {

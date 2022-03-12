@@ -35,7 +35,6 @@ public class Project implements ExtraProperties {
     private String name;
     private String version;
     private String versionPattern;
-    private String snapshotPattern;
     private String description;
     private String longDescription;
     private String website;
@@ -49,7 +48,6 @@ public class Project implements ExtraProperties {
         this.name = project.name;
         this.version = project.version;
         this.versionPattern = project.versionPattern;
-        this.snapshotPattern = project.snapshotPattern;
         this.description = project.description;
         this.longDescription = project.longDescription;
         this.website = project.website;
@@ -87,16 +85,6 @@ public class Project implements ExtraProperties {
 
     public void setVersionPattern(String versionPattern) {
         this.versionPattern = versionPattern;
-    }
-
-    @Deprecated
-    public String getSnapshotPattern() {
-        return snapshotPattern;
-    }
-
-    @Deprecated
-    public void setSnapshotPattern(String snapshotPattern) {
-        this.snapshotPattern = snapshotPattern;
     }
 
     public Snapshot getSnapshot() {

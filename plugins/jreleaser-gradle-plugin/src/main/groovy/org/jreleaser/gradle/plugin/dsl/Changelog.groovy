@@ -45,8 +45,6 @@ interface Changelog {
 
     void setFormatted(String str)
 
-    Property<String> getChange()
-
     Property<String> getFormat()
 
     Property<String> getContent()

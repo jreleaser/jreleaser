@@ -26,7 +26,6 @@ import org.jreleaser.gradle.plugin.dsl.DockerSpec
 
 import javax.inject.Inject
 
-import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -44,13 +43,6 @@ class DockerSpecImpl extends AbstractDockerConfiguration implements DockerSpec {
         super(objects)
 
         matchers = objects.mapProperty(String, Object).convention(Providers.notDefined())
-    }
-
-    @Override
-    @Deprecated
-    void addMatcher(String key, Object value) {
-        nag('spec.addMatcher() has been deprecated since 1.0.0-M2 and will be removed in the future. Use spec.matcher() instead')
-        matcher(key, value)
     }
 
     @Override

@@ -32,7 +32,6 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
-import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -63,20 +62,6 @@ class BrewImpl extends AbstractRepositoryPackager implements Brew {
     }
 
     @Override
-    @Deprecated
-    void addDependency(String key, String value) {
-        nag('brew.addDependency() has been deprecated since 1.0.0-M2 and will be removed in the future. Use brew.dependency() instead')
-        dependency(key, value)
-    }
-
-    @Override
-    @Deprecated
-    void addDependency(String key) {
-        nag('brew.addDependency() has been deprecated since 1.0.0-M2 and will be removed in the future. Use brew.dependency() instead')
-        dependency(key)
-    }
-
-    @Override
     void dependency(String key, String value) {
         if (isNotBlank(key) && isNotBlank(value)) {
             dependencies.put(key.trim(), value.trim())
@@ -88,12 +73,6 @@ class BrewImpl extends AbstractRepositoryPackager implements Brew {
         if (isNotBlank(key)) {
             dependencies.put(key.trim(), 'null')
         }
-    }
-
-    @Override
-    Tap getTap() {
-        nag('brew.tap has been deprecated since 0.9.0 and will be removed in the future. Use brew.repoTap instead')
-        return repoTap
     }
 
     @Override

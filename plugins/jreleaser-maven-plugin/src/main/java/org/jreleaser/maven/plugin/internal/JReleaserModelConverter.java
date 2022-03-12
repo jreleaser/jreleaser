@@ -166,7 +166,6 @@ public final class JReleaserModelConverter {
         p.setName(tr(project.getName()));
         p.setVersion(tr(project.getVersion()));
         p.setVersionPattern(tr(project.getVersionPattern()));
-        if (isNotBlank(project.getSnapshotPattern())) p.setSnapshotPattern(project.getSnapshotPattern());
         p.setSnapshot(convertSnapshot(project.getSnapshot()));
         p.setDescription(tr(project.getDescription()));
         p.setLongDescription(tr(project.getLongDescription()));
@@ -224,8 +223,6 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Github g = new org.jreleaser.model.Github();
         convertGitService(github, g);
         g.setDraft(github.isDraft());
-        if (github.isPrereleaseEnabledSet())
-            g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(github.getPrereleaseEnabled()));
         g.setPrerelease(convertPrerelease(github.getPrerelease()));
         g.setDiscussionCategoryName(tr(github.getDiscussionCategoryName()));
         return g;
@@ -245,8 +242,6 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Gitea g = new org.jreleaser.model.Gitea();
         convertGitService(gitea, g);
         g.setDraft(gitea.isDraft());
-        if (gitea.isPrereleaseEnabledSet())
-            g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(gitea.getPrereleaseEnabled()));
         g.setPrerelease(convertPrerelease(gitea.getPrerelease()));
         return g;
     }
@@ -256,8 +251,6 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Codeberg g = new org.jreleaser.model.Codeberg();
         convertGitService(codeberg, g);
         g.setDraft(codeberg.isDraft());
-        if (codeberg.isPrereleaseEnabledSet())
-            g.setPrerelease(new org.jreleaser.model.GitService.Prerelease(codeberg.getPrereleaseEnabled()));
         g.setPrerelease(convertPrerelease(codeberg.getPrerelease()));
         return g;
     }
@@ -341,7 +334,6 @@ public final class JReleaserModelConverter {
         c.setFormatted(tr(changelog.resolveFormatted()));
         c.getIncludeLabels().addAll(tr(changelog.getIncludeLabels()));
         c.getExcludeLabels().addAll(tr(changelog.getExcludeLabels()));
-        if (isNotBlank(changelog.getChange())) c.setChange(changelog.getChange());
         c.setFormat(tr(changelog.getFormat()));
         c.setContent(tr(changelog.getContent()));
         c.setContentTemplate(tr(changelog.getContentTemplate()));
@@ -495,7 +487,6 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.Http convertHttp(Http http) {
         org.jreleaser.model.Http h = new org.jreleaser.model.Http();
         convertUploader(http, h);
-        if (isNotBlank(http.getTarget())) h.setTarget(http.getTarget());
         h.setUsername(tr(http.getUsername()));
         h.setPassword(tr(http.getPassword()));
         h.setAuthorization(tr(http.resolveAuthorization().name()));
@@ -682,7 +673,6 @@ public final class JReleaserModelConverter {
         a.setCandidate(tr(sdkman.getCandidate()));
         a.setReleaseNotesUrl(tr(sdkman.getReleaseNotesUrl()));
         a.setDownloadUrl(tr(sdkman.getDownloadUrl()));
-        a.setMajor(sdkman.isMajor());
         a.setCommand(sdkman.resolveCommand());
         return a;
     }
@@ -837,7 +827,6 @@ public final class JReleaserModelConverter {
         a.setJdk(convertArtifact(jlink.getJdk()));
         a.setImageName(tr(jlink.getImageName()));
         a.setImageNameTransform(tr(jlink.getImageNameTransform()));
-        if (isNotBlank(jlink.getModuleName())) a.setModuleName(tr(jlink.getModuleName()));
         if (jlink.isCopyJarsSet()) a.setCopyJars(jlink.isCopyJars());
         return a;
     }
@@ -855,7 +844,6 @@ public final class JReleaserModelConverter {
         org.jreleaser.model.Jpackage a = new org.jreleaser.model.Jpackage();
         convertJavaAssembler(jpackage, a);
         a.setJlink(tr(jpackage.getJlink()));
-        if (isNotBlank(jpackage.getModuleName())) a.setModuleName(tr(jpackage.getModuleName()));
         if (jpackage.isAttachPlatformSet()) a.setAttachPlatform(jpackage.isAttachPlatform());
         if (jpackage.isVerboseSet()) a.setVerbose(jpackage.isVerbose());
         a.setRuntimeImages(convertArtifacts(jpackage.getRuntimeImages()));
@@ -1129,9 +1117,6 @@ public final class JReleaserModelConverter {
         g.setPattern(tr(glob.getPattern()));
         g.setPlatform(tr(glob.getPlatform()));
         if (isNotBlank(glob.getDirectory())) g.setDirectory(tr(glob.getDirectory()));
-        if (isNotBlank(glob.getInclude())) g.setInclude(glob.getInclude());
-        if (isNotBlank(glob.getExclude())) g.setExclude(glob.getExclude());
-        if (glob.isRecursiveSet()) g.setRecursive(glob.isRecursive());
         return g;
     }
 

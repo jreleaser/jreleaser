@@ -34,7 +34,6 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
-import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -106,13 +105,6 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
             windows.isSet() ||
             osx.isSet() ||
             !graalJdks.isEmpty()
-    }
-
-    @Override
-    @Deprecated
-    void addArg(String arg) {
-        nag('nativeImage.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use nativeImage.arg() instead')
-        this.arg(arg)
     }
 
     @Override
@@ -228,13 +220,6 @@ class NativeImageImpl extends AbstractJavaAssembler implements NativeImage {
             if (isNotBlank(str)) {
                 active.set(Active.of(str.trim()))
             }
-        }
-
-        @Override
-        @Deprecated
-        void addArg(String arg) {
-            nag('upx.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use upx.arg() instead')
-            this.arg(arg)
         }
 
         @Override

@@ -34,8 +34,6 @@ interface Jlink extends JavaAssembler {
 
     Property<String> getImageNameTransform()
 
-    Property<String> getModuleName()
-
     Property<Boolean> getCopyJars()
 
     SetProperty<String> getModuleNames()
@@ -43,9 +41,6 @@ interface Jlink extends JavaAssembler {
     SetProperty<String> getAdditionalModuleNames()
 
     ListProperty<String> getArgs()
-
-    @Deprecated
-    void addArg(String arg)
 
     void arg(String arg)
 

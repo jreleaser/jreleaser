@@ -37,8 +37,6 @@ interface SdkmanAnnouncer extends Announcer {
 
     Property<String> getDownloadUrl()
 
-    Property<Boolean> getMajor()
-
     Property<org.jreleaser.model.Sdkman.Command> getCommand()
 
     void setCommand(String str)

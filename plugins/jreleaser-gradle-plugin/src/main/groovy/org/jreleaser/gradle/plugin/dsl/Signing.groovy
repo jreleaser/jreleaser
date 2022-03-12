@@ -38,14 +38,6 @@ interface Signing extends Activatable {
 
     Property<String> getSecretKey()
 
-    Property<String> getExecutable()
-
-    Property<String> getKeyName()
-
-    Property<String> getHomeDir()
-
-    Property<String> getPublicKeyring()
-
     Property<org.jreleaser.model.Signing.Mode> getMode()
 
     void setMode(String mode)
@@ -55,13 +47,6 @@ interface Signing extends Activatable {
     Property<Boolean> getFiles()
 
     Property<Boolean> getChecksums()
-
-    Property<Boolean> getDefaultKeyring()
-
-    ListProperty<String> getArgs()
-
-    @Deprecated
-    void addArg(String arg)
 
     Command getCommand()
 
@@ -87,9 +72,6 @@ interface Signing extends Activatable {
         Property<Boolean> getDefaultKeyring()
 
         ListProperty<String> getArgs()
-
-        @Deprecated
-        void addArg(String arg)
 
         void arg(String arg)
     }

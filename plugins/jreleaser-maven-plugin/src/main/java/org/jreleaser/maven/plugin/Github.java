@@ -24,7 +24,6 @@ package org.jreleaser.maven.plugin;
 public class Github extends GitService {
     private final Prerelease prerelease = new Prerelease();
     private boolean draft;
-    private Boolean prereleaseEnabled;
     private String discussionCategoryName;
 
     public boolean isDraft() {
@@ -41,18 +40,6 @@ public class Github extends GitService {
 
     public void setPrerelease(Prerelease prerelease) {
         this.prerelease.setAll(prerelease);
-    }
-
-    public void setPrerelease(Boolean prerelease) {
-        this.prereleaseEnabled = prerelease;
-    }
-
-    public Boolean getPrereleaseEnabled() {
-        return prereleaseEnabled;
-    }
-
-    public boolean isPrereleaseEnabledSet() {
-        return prereleaseEnabled != null;
     }
 
     public String getDiscussionCategoryName() {

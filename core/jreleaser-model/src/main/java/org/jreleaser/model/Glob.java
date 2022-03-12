@@ -37,12 +37,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.Files.exists;
-import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -97,7 +95,7 @@ public class Glob implements Domain, ExtraProperties {
     }
 
     public Set<Artifact> getResolvedArtifacts(JReleaserContext context) {
-        return isNotBlank(pattern) ? getResolvedArtifactsPattern(context) : getResolvedArtifactsLegacy(context);
+        return getResolvedArtifactsPattern(context);
     }
 
     public Set<Artifact> getResolvedArtifactsPattern(JReleaserContext context) {
@@ -127,41 +125,6 @@ public class Glob implements Domain, ExtraProperties {
         }
 
         return path;
-    }
-
-    @Deprecated
-    public Set<Artifact> getResolvedArtifactsLegacy(JReleaserContext context) {
-        if (null == artifacts) {
-            // resolve directory
-            Path path = context.getBasedir();
-            if (isNotBlank(directory)) {
-                directory = Artifacts.resolveForGlob(directory, context, this);
-                path = context.getBasedir().resolve(Paths.get(directory)).normalize();
-                if (context.getMode().validatePaths() && !exists(path)) {
-                    throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(path)));
-                }
-            }
-
-            FileCollector fileCollector = new FileCollector(context, include, exclude, path, isRecursive());
-            try {
-                java.nio.file.Files.walkFileTree(path, fileCollector);
-            } catch (IOException e) {
-                throw new JReleaserException(RB.$("ERROR_unexpected_glob_resolve", this.asMap(true)));
-            }
-
-            if (fileCollector.failed) {
-                throw new JReleaserException(RB.$("ERROR_glob_resolve", this.asMap(true)));
-            }
-
-            artifacts = fileCollector.getFiles().stream()
-                .map(p -> Artifact.of(p, platform, getExtraProperties()))
-                .peek(a -> {
-                    if (context.isPlatformSelected(a)) a.activate();
-                })
-                .collect(Collectors.toSet());
-            Artifact.sortArtifacts(artifacts);
-        }
-        return artifacts;
     }
 
     public String getPattern() {
@@ -223,30 +186,12 @@ public class Glob implements Domain, ExtraProperties {
         return include;
     }
 
-    @Deprecated
-    public void setInclude(String include) {
-        nag("glob.include has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
-        this.include = include;
-    }
-
     public String getExclude() {
         return exclude;
     }
 
-    @Deprecated
-    public void setExclude(String exclude) {
-        nag("glob.exclude has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
-        this.exclude = exclude;
-    }
-
     public Boolean isRecursive() {
         return recursive != null && recursive;
-    }
-
-    @Deprecated
-    public void setRecursive(Boolean recursive) {
-        nag("glob.recursive has been deprecated since 0.6.0 and will be removed in the future. Use glob.pattern instead");
-        this.recursive = recursive;
     }
 
     public boolean isRecursiveSet() {

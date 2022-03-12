@@ -39,7 +39,6 @@ public class Jlink extends AbstractJavaAssembler {
 
     private String imageName;
     private String imageNameTransform;
-    private String moduleName;
     private Boolean copyJars;
 
     public Jdeps getJdeps() {
@@ -72,14 +71,6 @@ public class Jlink extends AbstractJavaAssembler {
 
     public void setImageNameTransform(String imageNameTransform) {
         this.imageNameTransform = imageNameTransform;
-    }
-
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
     }
 
     public Set<Artifact> getTargetJdks() {

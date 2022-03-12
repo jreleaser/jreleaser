@@ -35,9 +35,6 @@ interface Project extends ExtraProperties {
 
     Property<String> getVersionPattern()
 
-    @Deprecated
-    Property<String> getSnapshotPattern()
-
     Property<String> getDescription()
 
     Property<String> getLongDescription()
@@ -58,13 +55,7 @@ interface Project extends ExtraProperties {
 
     ListProperty<String> getTags()
 
-    @Deprecated
-    void addAuthor(String name)
-
     void author(String name)
-
-    @Deprecated
-    void addTag(String tag)
 
     void tag(String tag)
 

@@ -31,7 +31,6 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
-import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -87,55 +86,6 @@ class SigningImpl implements Signing {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
         }
-    }
-
-    @Override
-    @Deprecated
-    Property<String> getExecutable() {
-        nag 'signing.executable has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.executable instead'
-        return command.executable
-    }
-
-    @Override
-    @Deprecated
-    Property<String> getKeyName() {
-        nag 'signing.keyName has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.keyName instead'
-        return command.keyName
-    }
-
-    @Override
-    @Deprecated
-    Property<String> getHomeDir() {
-        nag 'signing.homeDir has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.homeDir instead'
-        return command.homeDir
-    }
-
-    @Override
-    @Deprecated
-    Property<String> getPublicKeyring() {
-        nag 'signing.publicKeyring has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.publicKeyring instead'
-        return command.publicKeyring
-    }
-
-    @Override
-    @Deprecated
-    Property<Boolean> getDefaultKeyring() {
-        nag 'signing.defaultKeyring has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.defaultKeyring instead'
-        return command.defaultKeyring
-    }
-
-    @Override
-    @Deprecated
-    ListProperty<String> getArgs() {
-        nag 'signing.args has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.args instead'
-        return command.args
-    }
-
-    @Override
-    @Deprecated
-    void addArg(String arg) {
-        nag 'signing.addArg() has been deprecated since 1.0.0-M1 and will be removed in the future. Use signing.command.addArg() instead'
-        command.arg(arg)
     }
 
     @Override
@@ -207,13 +157,6 @@ class SigningImpl implements Signing {
                 publicKeyring.present ||
                 defaultKeyring.present ||
                 args.present
-        }
-
-        @Override
-        @Deprecated
-        void addArg(String arg) {
-            nag('command.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use command.arg() instead')
-            this.arg(arg)
         }
 
         @Override

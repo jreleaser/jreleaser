@@ -25,9 +25,6 @@ public class Glob {
     private String pattern;
     private String platform;
     private String directory;
-    private String include;
-    private String exclude;
-    private Boolean recursive;
 
     public String getPattern() {
         return pattern;
@@ -51,33 +48,5 @@ public class Glob {
 
     public void setDirectory(String directory) {
         this.directory = directory;
-    }
-
-    public String getInclude() {
-        return include;
-    }
-
-    public void setInclude(String include) {
-        this.include = include;
-    }
-
-    public String getExclude() {
-        return exclude;
-    }
-
-    public void setExclude(String exclude) {
-        this.exclude = exclude;
-    }
-
-    public Boolean isRecursive() {
-        return recursive != null && recursive;
-    }
-
-    public void setRecursive(Boolean recursive) {
-        this.recursive = recursive;
-    }
-
-    public boolean isRecursiveSet() {
-        return recursive != null;
     }
 }

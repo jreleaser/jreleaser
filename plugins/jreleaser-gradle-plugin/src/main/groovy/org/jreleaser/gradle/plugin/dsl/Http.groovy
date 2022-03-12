@@ -28,8 +28,6 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Http extends HttpUploader {
-    Property<String> getTarget()
-
     Property<String> getUsername()
 
     Property<String> getPassword()

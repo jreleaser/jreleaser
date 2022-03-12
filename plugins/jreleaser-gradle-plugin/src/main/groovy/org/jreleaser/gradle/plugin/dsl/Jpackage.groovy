@@ -32,8 +32,6 @@ import org.gradle.api.provider.Property
 interface Jpackage extends JavaAssembler {
     Property<String> getJlink()
 
-    Property<String> getModuleName()
-
     Property<Boolean> getAttachPlatform()
 
     Property<Boolean> getVerbose()

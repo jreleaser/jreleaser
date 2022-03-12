@@ -33,10 +33,4 @@ interface Glob {
     Property<String> getPlatform()
 
     DirectoryProperty getDirectory()
-
-    Property<String> getInclude()
-
-    Property<String> getExclude()
-
-    Property<Boolean> getRecursive()
 }

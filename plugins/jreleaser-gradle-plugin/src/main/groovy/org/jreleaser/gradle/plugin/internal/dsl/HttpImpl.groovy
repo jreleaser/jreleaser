@@ -38,7 +38,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class HttpImpl extends AbstractHttpUploader implements Http {
     String name
-    final Property<String> target
     final Property<String> username
     final Property<String> password
     final Property<HttpUploader.Method> method
@@ -48,7 +47,6 @@ class HttpImpl extends AbstractHttpUploader implements Http {
     @Inject
     HttpImpl(ObjectFactory objects) {
         super(objects)
-        target = objects.property(String).convention(Providers.notDefined())
         username = objects.property(String).convention(Providers.notDefined())
         password = objects.property(String).convention(Providers.notDefined())
         method = objects.property(HttpUploader.Method).convention(Providers.notDefined())
@@ -60,7 +58,6 @@ class HttpImpl extends AbstractHttpUploader implements Http {
     @Internal
     boolean isSet() {
         super.isSet() ||
-            target.present ||
             username.present ||
             password.present ||
             method.present ||
@@ -88,7 +85,6 @@ class HttpImpl extends AbstractHttpUploader implements Http {
     org.jreleaser.model.Http toModel() {
         org.jreleaser.model.Http http = new org.jreleaser.model.Http()
         http.name = name
-        if (target.present) http.target = target.get()
         fillProperties(http)
         if (username.present) http.username = username.get()
         if (password.present) http.password = password.get()

@@ -34,7 +34,6 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
-import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -47,7 +46,6 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
     String name
     final Property<String> imageName
     final Property<String> imageNameTransform
-    final Property<String> moduleName
     final Property<Boolean> copyJars
     final ListProperty<String> args
     final SetProperty<String> moduleNames
@@ -65,7 +63,6 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
 
         imageName = objects.property(String).convention(Providers.notDefined())
         imageNameTransform = objects.property(String).convention(Providers.notDefined())
-        moduleName = objects.property(String).convention(Providers.notDefined())
         copyJars = objects.property(Boolean).convention(Providers.notDefined())
         args = objects.listProperty(String).convention(Providers.notDefined())
         moduleNames = objects.setProperty(String).convention(Providers.notDefined())
@@ -91,7 +88,6 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         super.isSet() ||
             imageName.present ||
             imageNameTransform.present ||
-            moduleName.present ||
             copyJars.present ||
             args.present ||
             java.isSet() ||
@@ -101,13 +97,6 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
             additionalModuleNames.present ||
             !targetJdks.isEmpty() ||
             platform.isSet()
-    }
-
-    @Override
-    @Deprecated
-    void addArg(String arg) {
-        nag('jlink.addArg() has been deprecated since 1.0.0-M2 and will be removed in the future. Use jlink.arg() instead')
-        this.arg(arg)
     }
 
     @Override
@@ -165,7 +154,6 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
         jlink.platform = platform.toModel()
         if (imageName.present) jlink.imageName = imageName.get()
         if (imageNameTransform.present) jlink.imageNameTransform = imageNameTransform.get()
-        if (moduleName.present) jlink.moduleName = moduleName.get()
         if (copyJars.present) jlink.copyJars = copyJars.get()
         jlink.moduleNames = (Set<String>) moduleNames.getOrElse([] as Set)
         jlink.additionalModuleNames = (Set<String>) additionalModuleNames.getOrElse([] as Set)

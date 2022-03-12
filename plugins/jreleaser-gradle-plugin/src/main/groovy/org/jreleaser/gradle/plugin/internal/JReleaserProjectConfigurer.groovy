@@ -296,16 +296,7 @@ class JReleaserProjectConfigurer {
     }
 
     private static boolean configureDefaultDistribution(Project project, JReleaserExtensionImpl extension) {
-        boolean hasDistributionPlugin = project.plugins.findPlugin('distribution')
-
-        if (hasDistributionPlugin && !JReleaserOutput.isQuiet()) {
-            project.logger.warn("""|🚨 WARNING 🚨
-                                   |Since v0.9.0 JReleaser no longer auto configures a default distribution
-                                   |with the outputs of 'distZip' and 'distTar' tasks.
-                                   |You must explicitly configure a distribution.""".stripMargin('|'))
-        }
-
-        return hasDistributionPlugin
+        return project.plugins.findPlugin('distribution')
     }
 
     private static JReleaserLogger createLogger(Project project, Provider<Directory> outputDirectory) {

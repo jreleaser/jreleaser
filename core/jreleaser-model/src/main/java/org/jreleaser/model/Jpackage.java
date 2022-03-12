@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
@@ -81,11 +80,6 @@ public class Jpackage extends AbstractJavaAssembler {
 
     public void setJlink(String jlink) {
         this.jlink = jlink;
-    }
-
-    public void setModuleName(String moduleName) {
-        nag("jlink.moduleName has been deprecated since 1.0.0-M3 and will be removed in the future. Use jlink.java.mainModule instead");
-        this.java.setMainModule(moduleName);
     }
 
     public boolean isAttachPlatformSet() {

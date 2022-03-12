@@ -18,7 +18,6 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.Env;
-import org.jreleaser.util.JReleaserOutput;
 
 import java.util.Map;
 
@@ -26,7 +25,6 @@ import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_KEY;
 import static org.jreleaser.model.Sdkman.SDKMAN_CONSUMER_TOKEN;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
-import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -130,11 +128,6 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         return command == Sdkman.Command.MAJOR;
     }
 
-    @Deprecated
-    public void setMajor(boolean major) {
-        nag("announce.sdkman.major has been deprecated since 0.6.0 and will be removed in the future. Use announce.sdkman.command instead");
-        this.command = major? Sdkman.Command.MAJOR: Sdkman.Command.MINOR;
-    }
 
     @Override
     protected void asMap(Map<String, Object> props, boolean full) {

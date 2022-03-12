@@ -33,7 +33,6 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
-import static org.jreleaser.util.JReleaserOutput.nag
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -111,55 +110,6 @@ abstract class AbstractGitService implements GitService {
         uploadAssets = objects.property(Active).convention(Providers.notDefined())
 
         update = objects.newInstance(UpdateImpl, objects)
-    }
-
-    @Deprecated
-    @Override
-    Property<String> getRepoUrlFormat() {
-        nag('getRepoUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoUrl() instead')
-        return repoUrl
-    }
-
-    @Deprecated
-    @Override
-    Property<String> getRepoCloneUrlFormat() {
-        nag('getRepoCloneUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getRepoCloneUrl() instead')
-        return repoCloneUrl
-    }
-
-    @Deprecated
-    @Override
-    Property<String> getCommitUrlFormat() {
-        nag('getCommitUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getCommitUrl() instead')
-        return commitUrl
-    }
-
-    @Deprecated
-    @Override
-    Property<String> getDownloadUrlFormat() {
-        nag('getDownloadUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getDownloadUrl() instead')
-        return downloadUrl
-    }
-
-    @Deprecated
-    @Override
-    Property<String> getReleaseNotesUrlFormat() {
-        nag('getReleaseNotesUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getReleaseNotesUrl() instead')
-        return releaseNotesUrl
-    }
-
-    @Deprecated
-    @Override
-    Property<String> getLatestReleaseUrlFormat() {
-        nag('getLatestReleaseUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getLatestReleaseUrl() instead')
-        return latestReleaseUrl
-    }
-
-    @Deprecated
-    @Override
-    Property<String> getIssueTrackerUrlFormat() {
-        nag('getIssueTrackerUrlFormat() has been deprecated since 0.5.0 and will be removed in the future. Use getIssueTrackerUrl() instead')
-        return issueTrackerUrl
     }
 
     @Internal

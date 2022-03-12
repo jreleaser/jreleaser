@@ -171,23 +171,7 @@ class Validator {
     static void validateGlobs(JReleaserContext context, Collection<Glob> globs, String property, Errors errors) {
         int i = 0;
         for (Glob glob : globs) {
-            if (isNotBlank(glob.getPattern())) continue;
-
-            boolean isBaseDir = false;
-            if (isBlank(glob.getDirectory())) {
-                glob.setDirectory(".");
-                isBaseDir = true;
-            }
-
-            boolean includeAll = false;
-            if (isBlank(glob.getInclude())) {
-                glob.setInclude("*");
-                includeAll = true;
-            }
-
-            if (isBlank(glob.getExclude()) &&
-                includeAll && isBaseDir) {
-                // too broad!
+            if (isBlank(glob.getPattern())) {
                 errors.configuration(RB.$("validation_must_define_pattern", property + "[" + i + "]"));
             }
         }

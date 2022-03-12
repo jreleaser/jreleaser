@@ -29,7 +29,6 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
     private String candidate;
     private String releaseNotesUrl;
     private String downloadUrl;
-    private boolean major = true;
     private Sdkman.Command command;
 
     void setAll(SdkmanAnnouncer sdkman) {
@@ -39,7 +38,6 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         this.candidate = sdkman.candidate;
         this.releaseNotesUrl = sdkman.releaseNotesUrl;
         this.downloadUrl = sdkman.downloadUrl;
-        this.major = sdkman.major;
         this.command = sdkman.command;
     }
 
@@ -81,14 +79,6 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
 
     public void setDownloadUrl(String downloadUrl) {
         this.downloadUrl = downloadUrl;
-    }
-
-    public boolean isMajor() {
-        return major;
-    }
-
-    public void setMajor(boolean major) {
-        this.major = major;
     }
 
     public Sdkman.Command getCommand() {

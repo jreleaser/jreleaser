@@ -36,7 +36,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -164,16 +163,6 @@ public class Project implements Domain, ExtraProperties {
         this.snapshot.setAll(snapshot);
     }
 
-    @Deprecated
-    public String getSnapshotPattern() {
-        return this.snapshot.getPattern();
-    }
-
-    @Deprecated
-    public void setSnapshotPattern(String snapshotPattern) {
-        nag("project.snapshotPattern has been deprecated since 0.6.0 and will be removed in the future. Use project.snapshot.pattern instead");
-        this.snapshot.setPattern(snapshotPattern);
-    }
 
     public String getDescription() {
         return description;

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.Templates.resolveTemplate;
@@ -114,10 +113,6 @@ public class Jlink extends AbstractJavaAssembler {
         this.imageNameTransform = imageNameTransform;
     }
 
-    public void setModuleName(String moduleName) {
-        nag("jlink.moduleName has been deprecated since 1.0.0-M2 and will be removed in the future. Use jlink.java.mainModule instead");
-        this.java.setMainModule(moduleName);
-    }
 
     public Set<Artifact> getTargetJdks() {
         return Artifact.sortArtifacts(targetJdks);
