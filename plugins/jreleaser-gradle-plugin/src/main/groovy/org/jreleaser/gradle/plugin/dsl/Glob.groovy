@@ -33,4 +33,6 @@ interface Glob {
     Property<String> getPlatform()
 
     DirectoryProperty getDirectory()
+
+    void setDirectory(String directory)
 }

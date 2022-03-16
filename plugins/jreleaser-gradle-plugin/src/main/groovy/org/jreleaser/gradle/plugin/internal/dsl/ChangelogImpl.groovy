@@ -86,6 +86,16 @@ class ChangelogImpl implements Changelog {
         }
     }
 
+    @Override
+    void setExternal(String external) {
+        this.external.set(new File(external))
+    }
+
+    @Override
+    void setContentTemplate(String contentTemplate) {
+        this.contentTemplate.set(new File(contentTemplate))
+    }
+
     @Internal
     boolean isSet() {
             links.present ||

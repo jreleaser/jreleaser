@@ -45,6 +45,11 @@ class TeamsImpl extends AbstractAnnouncer implements Teams {
     }
 
     @Override
+    void setMessageTemplate(String messageTemplate) {
+        this.messageTemplate.set(new File(messageTemplate))
+    }
+
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||

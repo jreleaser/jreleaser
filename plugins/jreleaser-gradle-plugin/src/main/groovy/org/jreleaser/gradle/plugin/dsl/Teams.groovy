@@ -31,4 +31,6 @@ interface Teams extends Announcer {
     Property<String> getWebhook()
 
     RegularFileProperty getMessageTemplate()
+
+    void setMessageTemplate(String messageTemplate)
 }

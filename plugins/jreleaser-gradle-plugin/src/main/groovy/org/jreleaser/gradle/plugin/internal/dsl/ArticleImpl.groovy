@@ -64,6 +64,11 @@ class ArticleImpl extends AbstractAnnouncer implements Article {
     }
 
     @Override
+    void setTemplateDirectory(String templateDirectory) {
+        this.templateDirectory.set(new File(templateDirectory))
+    }
+
+    @Override
     void file(Action<? super Artifact> action) {
         action.execute(files.maybeCreate("files-${files.size()}".toString()))
     }

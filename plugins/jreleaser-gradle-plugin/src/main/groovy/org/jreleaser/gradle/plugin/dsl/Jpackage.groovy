@@ -90,6 +90,8 @@ interface Jpackage extends JavaAssembler {
 
         RegularFileProperty getIcon()
 
+        void setIcon(String icon)
+
         ListProperty<String> getTypes()
 
         Property<String> getInstallDir()

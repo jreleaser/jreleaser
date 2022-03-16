@@ -103,6 +103,11 @@ class SnapImpl extends AbstractRepositoryPackager implements Snap {
     }
 
     @Override
+    void setExportedLogin(String exportedLogin) {
+        this.exportedLogin.set(new File(exportedLogin))
+    }
+
+    @Override
     void localPlug(String plug) {
         if (isNotBlank(plug)) {
             localPlugs.add(plug.trim())

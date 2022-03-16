@@ -76,6 +76,11 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     }
 
     @Override
+    void setTemplateDirectory(String templateDirectory) {
+        this.templateDirectory.set(new File(templateDirectory))
+    }
+
+    @Override
     void setActive(String str) {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))

@@ -30,6 +30,8 @@ import org.gradle.api.file.DirectoryProperty
 interface Article extends Announcer {
     DirectoryProperty getTemplateDirectory()
 
+    void setTemplateDirectory(String templateDirectory)
+
     CommitAuthor getCommitAuthor()
 
     Tap getRepository()

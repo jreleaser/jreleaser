@@ -51,6 +51,11 @@ class DiscussionsImpl extends AbstractAnnouncer implements Discussions {
     }
 
     @Override
+    void setMessageTemplate(String messageTemplate) {
+        this.messageTemplate.set(new File(messageTemplate))
+    }
+
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||

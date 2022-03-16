@@ -33,4 +33,6 @@ interface GoogleChat extends Announcer {
     Property<String> getMessage()
 
     RegularFileProperty getMessageTemplate()
+
+    void setMessageTemplate(String messageTemplate)
 }

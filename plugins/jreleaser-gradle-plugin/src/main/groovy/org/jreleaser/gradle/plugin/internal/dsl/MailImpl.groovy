@@ -72,6 +72,11 @@ class MailImpl extends AbstractAnnouncer implements Mail {
     }
 
     @Override
+    void setMessageTemplate(String messageTemplate) {
+        this.messageTemplate.set(new File(messageTemplate))
+    }
+
+    @Override
     void setTransport(String transport) {
         this.transport.set(org.jreleaser.model.Mail.Transport.valueOf(transport.toUpperCase()))
     }

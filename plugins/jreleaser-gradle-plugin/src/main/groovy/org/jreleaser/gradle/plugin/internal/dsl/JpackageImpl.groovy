@@ -274,6 +274,11 @@ class JpackageImpl extends AbstractJavaAssembler implements Jpackage {
             resourceDir = objects.property(String).convention(Providers.notDefined())
         }
 
+        @Override
+        void setIcon(String icon) {
+            this.icon.set(new File(icon))
+        }
+
         @Internal
         boolean isSet() {
             appName.present ||

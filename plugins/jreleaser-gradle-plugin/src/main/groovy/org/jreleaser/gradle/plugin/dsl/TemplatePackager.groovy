@@ -30,6 +30,8 @@ import org.gradle.api.provider.ListProperty
 interface TemplatePackager extends Packager {
     DirectoryProperty getTemplateDirectory()
 
+    void setTemplateDirectory(String templateDirectory)
+
     ListProperty<String> getSkipTemplates()
 
     void skipTemplate(String template)

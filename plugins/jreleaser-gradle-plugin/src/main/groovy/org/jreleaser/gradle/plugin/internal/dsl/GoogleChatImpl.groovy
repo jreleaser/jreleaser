@@ -47,6 +47,11 @@ class GoogleChatImpl extends AbstractAnnouncer implements GoogleChat {
     }
 
     @Override
+    void setMessageTemplate(String messageTemplate) {
+        this.messageTemplate.set(new File(messageTemplate))
+    }
+
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||

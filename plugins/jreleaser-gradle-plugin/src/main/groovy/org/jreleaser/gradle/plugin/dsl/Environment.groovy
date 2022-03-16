@@ -30,5 +30,7 @@ import org.gradle.api.provider.MapProperty
 interface Environment {
     RegularFileProperty getVariables()
 
+    void setVariables(String variables)
+
     MapProperty<String, Object> getProperties()
 }

@@ -45,6 +45,7 @@ class GlobImpl implements Glob {
         directory = objects.directoryProperty().convention(Providers.notDefined())
     }
 
+    @Override
     void setDirectory(String path) {
         this.directory.set(new File(path))
     }

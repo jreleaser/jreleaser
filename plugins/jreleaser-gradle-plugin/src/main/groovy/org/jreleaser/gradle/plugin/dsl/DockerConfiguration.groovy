@@ -35,6 +35,8 @@ import org.gradle.api.provider.SetProperty
 interface DockerConfiguration extends Activatable, ExtraProperties {
     DirectoryProperty getTemplateDirectory()
 
+    void setTemplateDirectory(String templateDirectory)
+
     ListProperty<String> getSkipTemplates()
 
     void skipTemplate(String template)

@@ -43,6 +43,8 @@ interface Snap extends RepositoryPackager {
 
     RegularFileProperty getExportedLogin()
 
+    void setExportedLogin(String exportedLogin)
+
     Property<Boolean> getRemoteBuild()
 
     SetProperty<String> getLocalPlugs()

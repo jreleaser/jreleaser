@@ -49,6 +49,11 @@ class TelegramImpl extends AbstractAnnouncer implements Telegram {
     }
 
     @Override
+    void setMessageTemplate(String messageTemplate) {
+        this.messageTemplate.set(new File(messageTemplate))
+    }
+
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||

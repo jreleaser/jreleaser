@@ -34,4 +34,9 @@ abstract class AbstractRepositoryPackager extends AbstractTemplatePackager imple
     AbstractRepositoryPackager(ObjectFactory objects) {
         super(objects)
     }
+
+    @Override
+    void setTemplateDirectory(String templateDirectory) {
+        this.templateDirectory.set(new File(templateDirectory))
+    }
 }

@@ -39,6 +39,8 @@ interface Changelog {
 
     RegularFileProperty getExternal()
 
+    void setExternal(String external)
+
     void setSort(String sort)
 
     Property<Active> getFormatted()
@@ -52,6 +54,8 @@ interface Changelog {
     Property<String> getPreset()
 
     RegularFileProperty getContentTemplate()
+
+    void setContentTemplate(String contentTemplate)
 
     SetProperty<String> getIncludeLabels()
 

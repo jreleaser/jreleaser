@@ -75,6 +75,11 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
         })
     }
 
+    @Override
+    void setTemplateDirectory(String templateDirectory) {
+        this.templateDirectory.set(new File(templateDirectory))
+    }
+
     @Internal
     boolean isSet() {
         super.isSet() ||

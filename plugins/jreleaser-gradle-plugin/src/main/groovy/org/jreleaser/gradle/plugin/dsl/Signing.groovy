@@ -82,5 +82,9 @@ interface Signing extends Activatable {
         RegularFileProperty getPrivateKeyFile()
 
         RegularFileProperty getPublicKeyFile()
+
+        void setPrivateKeyFile(String privateKeyFile)
+
+        void setPublicKeyFile(String publicKeyFile)
     }
 }

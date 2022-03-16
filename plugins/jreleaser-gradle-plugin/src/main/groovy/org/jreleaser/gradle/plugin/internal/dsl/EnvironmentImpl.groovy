@@ -44,6 +44,7 @@ class EnvironmentImpl implements Environment {
         properties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
+    @Override
     void setVariables(String variables) {
         this.variables.set(new File(variables))
     }

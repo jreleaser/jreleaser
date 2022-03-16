@@ -51,6 +51,11 @@ class SlackImpl extends AbstractAnnouncer implements Slack {
     }
 
     @Override
+    void setMessageTemplate(String messageTemplate) {
+        this.messageTemplate.set(new File(messageTemplate))
+    }
+
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||

@@ -47,6 +47,11 @@ class GitterImpl extends AbstractAnnouncer implements Gitter {
     }
 
     @Override
+    void setMessageTemplate(String messageTemplate) {
+        this.messageTemplate.set(new File(messageTemplate))
+    }
+
+    @Override
     @Internal
     boolean isSet() {
         super.isSet() ||

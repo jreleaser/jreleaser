@@ -190,6 +190,16 @@ class SigningImpl implements Signing {
             publicKeyFile = objects.fileProperty().convention(Providers.notDefined())
         }
 
+        @Override
+        void setPrivateKeyFile(String privateKeyFile) {
+            this.privateKeyFile.set(new File(privateKeyFile))
+        }
+
+        @Override
+        void setPublicKeyFile(String publicKeyFile) {
+            this.publicKeyFile.set(new File(publicKeyFile))
+        }
+
         @Internal
         boolean isSet() {
             return version.present ||

@@ -61,5 +61,7 @@ interface Mail extends Announcer {
 
     RegularFileProperty getMessageTemplate()
 
+    void setMessageTemplate(String messageTemplate)
+
     MapProperty<String, String> getProperties()
 }

@@ -33,6 +33,8 @@ interface JavaAssembler extends Assembler {
 
     DirectoryProperty getTemplateDirectory()
 
+    void setTemplateDirectory(String templateDirectory)
+
     Java getJava()
 
     void java(Action<? super Java> action)
