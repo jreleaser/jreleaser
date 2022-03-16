@@ -31,6 +31,7 @@ import org.jreleaser.util.PlatformUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -278,17 +279,25 @@ public abstract class DistributionsValidator extends Validator {
             distribution.getType() == Distribution.DistributionType.NATIVE_PACKAGE) {
             // ensure all artifacts define a platform
 
+            AtomicBoolean universal = new AtomicBoolean();
+
             String noPlatform = "<nil>";
             Map<String, List<Artifact>> byPlatform = candidateArtifacts.stream()
+                .peek(artifact -> {
+                    if (distribution.getType() == Distribution.DistributionType.BINARY &&
+                        artifact.extraPropertyIsTrue("universal")) {
+                        universal.compareAndSet(false, true);
+                    }
+                })
                 .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? noPlatform : artifact.getPlatform()));
 
-            if (byPlatform.containsKey(noPlatform)) {
+            if (byPlatform.containsKey(noPlatform) && !universal.get()) {
                 errors.configuration(RB.$("validation_distributions_platform_check",
                     distribution.getName(), distribution.getType(), packager.getType()));
             }
 
             if (byPlatform.keySet().stream()
-                .noneMatch(packager::supportsPlatform)) {
+                .noneMatch(packager::supportsPlatform) && !universal.get()) {
                 context.getLogger().warn(RB.$("validation_distributions_disable",
                     distribution.getName(), packager.getType()));
                 packager.disable();
