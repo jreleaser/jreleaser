@@ -18,7 +18,6 @@
 package org.jreleaser.sdk.git;
 
 
-import javafx.util.Pair;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.LogCommand;
@@ -39,6 +38,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,8 +66,8 @@ class ChangelogGeneratorUnitTest {
         ObjectId headId = ObjectId.fromString("085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7");
         boolean isSnapshot = false;
         List<Ref> tagRefs = buildMockedTagRefs(
-                new Pair("refs/tags/v1.0.0", "cac0cab538b970a37ea1e769cbbde608743bc96d"),
-                new Pair("refs/tags/v2.0.0", "a11bef06a3f659402fe7563abf99ad00de2209e6"));
+                new AbstractMap.SimpleEntry("refs/tags/v1.0.0", "cac0cab538b970a37ea1e769cbbde608743bc96d"),
+                new AbstractMap.SimpleEntry("refs/tags/v2.0.0", "a11bef06a3f659402fe7563abf99ad00de2209e6"));
 
         LogCommand logCommand = doNecessaryMock(effectiveTagName, configuredTagName, headId, isSnapshot, tagRefs);
 
@@ -86,8 +86,8 @@ class ChangelogGeneratorUnitTest {
         ObjectId headId = ObjectId.fromString("085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7");
         boolean isSnapshot = false;
         List<Ref> tagRefs = buildMockedTagRefs(
-                new Pair("refs/tags/v1.0.0", "cac0cab538b970a37ea1e769cbbde608743bc96d"),
-                new Pair("refs/tags/v2.0.0", "a11bef06a3f659402fe7563abf99ad00de2209e6"));
+                new AbstractMap.SimpleEntry("refs/tags/v1.0.0", "cac0cab538b970a37ea1e769cbbde608743bc96d"),
+                new AbstractMap.SimpleEntry("refs/tags/v2.0.0", "a11bef06a3f659402fe7563abf99ad00de2209e6"));
 
         LogCommand logCommand = doNecessaryMock(effectiveTagName, configuredTagName, headId, isSnapshot, tagRefs);
 
@@ -123,7 +123,7 @@ class ChangelogGeneratorUnitTest {
         return logCommand;
     }
 
-    private List<Ref> buildMockedTagRefs(Pair<String, String>... refs) {
+    private List<Ref> buildMockedTagRefs(AbstractMap.SimpleEntry<String, String>... refs) {
 
         return Arrays.stream(refs).map(pair ->  new ObjectIdRef.PeeledTag(null, pair.getKey(),
                 ObjectId.fromString(pair.getValue()),
