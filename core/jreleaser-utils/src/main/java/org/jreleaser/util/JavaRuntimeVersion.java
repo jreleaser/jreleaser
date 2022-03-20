@@ -217,6 +217,10 @@ public class JavaRuntimeVersion implements Version<JavaRuntimeVersion> {
         return Integer.compare(i1, i2);
     }
 
+    public static JavaRuntimeVersion defaultOf() {
+        return of("0.0.0");
+    }
+
     public static JavaRuntimeVersion of(String version) {
         requireNonBlank(version, "Argument 'version' must not be blank");
 

@@ -69,6 +69,10 @@ public class CustomVersion implements Version<CustomVersion> {
         return version.compareTo(other.version);
     }
 
+    public static CustomVersion defaultOf() {
+        return of("0.0.0");
+    }
+
     public static CustomVersion of(String version) {
         requireNonBlank(version, "Argument 'version' must not be blank");
         return new CustomVersion(version);

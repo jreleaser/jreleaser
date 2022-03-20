@@ -19,4 +19,8 @@ dependencies {
     api project(':jreleaser-model')
 
     api "org.eclipse.jgit:org.eclipse.jgit:$jgitVersion"
+
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
 }

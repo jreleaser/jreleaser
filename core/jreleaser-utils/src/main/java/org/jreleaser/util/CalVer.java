@@ -451,7 +451,7 @@ public class CalVer implements Version<CalVer> {
         throw new IllegalArgumentException(RB.$("ERROR_version_parse_with", version, f));
     }
 
-    public static CalVer defaultFor(String format) {
+    public static CalVer defaultOf(String format) {
         requireNonBlank(format, "Argument 'format' must not be blank");
 
         return of(format, format.replace(YEAR_LONG, "2000")

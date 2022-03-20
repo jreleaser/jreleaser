@@ -127,6 +127,10 @@ public class ChronVer implements Version<ChronVer> {
         return result;
     }
 
+    public static ChronVer defaultOf() {
+        return of("2000.01.01");
+    }
+
     public static ChronVer of(String version) {
         requireNonBlank(version, "Argument 'version' must not be blank");
 

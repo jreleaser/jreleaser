@@ -192,6 +192,10 @@ public class JavaModuleVersion implements Version<JavaModuleVersion> {
         return Integer.compare(i1, i2);
     }
 
+    public static JavaModuleVersion defaultOf() {
+        return of("0.0.0");
+    }
+
     public static JavaModuleVersion of(String version) {
         requireNonBlank(version, "Argument 'version' must not be blank");
 

@@ -172,6 +172,10 @@ public class SemVer implements Version<SemVer> {
         return JavaRuntimeVersion.of(jv).feature();
     }
 
+    public static SemVer defaultOf() {
+        return of("0.0.0");
+    }
+
     public static SemVer of(String version) {
         requireNonBlank(version, "Argument 'version' must not be blank");
 

@@ -79,7 +79,7 @@ public class ChangelogGenerator {
 
     private final Set<String> unparseableTags = new LinkedHashSet<>();
 
-    private ChangelogGenerator() {
+    public ChangelogGenerator() {
 
     }
 
@@ -145,8 +145,9 @@ public class ChangelogGenerator {
         }
     }
 
-    private SemVer semverOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
-        Matcher matcher = versionPattern.matcher(extractTagName(ref));
+    private SemVer semverOf(JReleaserContext context, Ref ref, Pattern versionPattern, boolean strict) {
+        String tagName = extractTagName(ref);
+        Matcher matcher = versionPattern.matcher(tagName);
         if (matcher.matches()) {
             String tag = matcher.group(1);
             try {
@@ -155,11 +156,22 @@ public class ChangelogGenerator {
                 unparseableTag(context, tag, e);
             }
         }
-        return SemVer.of("0.0.0");
+
+        if (!strict && tagName.startsWith("v")) {
+            String tag = tagName.substring(1);
+            try {
+                return SemVer.of(tag);
+            } catch (IllegalArgumentException e) {
+                unparseableTag(context, tag, e);
+            }
+        }
+
+        return SemVer.defaultOf();
     }
 
-    private JavaRuntimeVersion javaRuntimeVersionOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
-        Matcher matcher = versionPattern.matcher(extractTagName(ref));
+    private JavaRuntimeVersion javaRuntimeVersionOf(JReleaserContext context, Ref ref, Pattern versionPattern, boolean strict) {
+        String tagName = extractTagName(ref);
+        Matcher matcher = versionPattern.matcher(tagName);
         if (matcher.matches()) {
             String tag = matcher.group(1);
             try {
@@ -168,11 +180,22 @@ public class ChangelogGenerator {
                 unparseableTag(context, tag, e);
             }
         }
-        return JavaRuntimeVersion.of("0.0.0");
+
+        if (!strict && tagName.startsWith("v")) {
+            String tag = tagName.substring(1);
+            try {
+                return JavaRuntimeVersion.of(tag);
+            } catch (IllegalArgumentException e) {
+                unparseableTag(context, tag, e);
+            }
+        }
+
+        return JavaRuntimeVersion.defaultOf();
     }
 
-    private JavaModuleVersion javaModuleVersionOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
-        Matcher matcher = versionPattern.matcher(extractTagName(ref));
+    private JavaModuleVersion javaModuleVersionOf(JReleaserContext context, Ref ref, Pattern versionPattern, boolean strict) {
+        String tagName = extractTagName(ref);
+        Matcher matcher = versionPattern.matcher(tagName);
         if (matcher.matches()) {
             String tag = matcher.group(1);
             try {
@@ -181,12 +204,23 @@ public class ChangelogGenerator {
                 unparseableTag(context, tag, e);
             }
         }
-        return JavaModuleVersion.of("0.0.0");
+
+        if (!strict && tagName.startsWith("v")) {
+            String tag = tagName.substring(1);
+            try {
+                return JavaModuleVersion.of(tag);
+            } catch (IllegalArgumentException e) {
+                unparseableTag(context, tag, e);
+            }
+        }
+
+        return JavaModuleVersion.defaultOf();
     }
 
-    private CalVer calverOf(JReleaserContext context, Ref ref, Pattern versionPattern) {
+    private CalVer calverOf(JReleaserContext context, Ref ref, Pattern versionPattern, boolean strict) {
         String format = context.getModel().getProject().versionPattern().getFormat();
-        Matcher matcher = versionPattern.matcher(extractTagName(ref));
+        String tagName = extractTagName(ref);
+        Matcher matcher = versionPattern.matcher(tagName);
         if (matcher.matches()) {
             String tag = matcher.group(1);
             try {
@@ -195,11 +229,22 @@ public class ChangelogGenerator {
                 unparseableTag(context, tag, e);
             }
         }
-        return CalVer.defaultFor(format);
+
+        if (!strict && tagName.startsWith("v")) {
+            String tag = tagName.substring(1);
+            try {
+                return CalVer.of(format, tag);
+            } catch (IllegalArgumentException e) {
+                unparseableTag(context, tag, e);
+            }
+        }
+
+        return CalVer.defaultOf(format);
     }
 
-    private ChronVer chronVer(JReleaserContext context, Ref ref, Pattern versionPattern) {
-        Matcher matcher = versionPattern.matcher(extractTagName(ref));
+    private ChronVer chronVer(JReleaserContext context, Ref ref, Pattern versionPattern, boolean strict) {
+        String tagName = extractTagName(ref);
+        Matcher matcher = versionPattern.matcher(tagName);
         if (matcher.matches()) {
             String tag = matcher.group(1);
             try {
@@ -208,36 +253,69 @@ public class ChangelogGenerator {
                 unparseableTag(context, tag, e);
             }
         }
-        return ChronVer.of("2000.01.01");
+
+        if (!strict && tagName.startsWith("v")) {
+            String tag = tagName.substring(1);
+            try {
+                return ChronVer.of(tag);
+            } catch (IllegalArgumentException e) {
+                unparseableTag(context, tag, e);
+            }
+        }
+
+        return ChronVer.defaultOf();
     }
 
-    private CustomVersion versionOf(Ref tag, Pattern versionPattern) {
+    private CustomVersion versionOf(Ref tag, Pattern versionPattern, boolean strict) {
         Matcher matcher = versionPattern.matcher(extractTagName(tag));
         if (matcher.matches()) {
             return CustomVersion.of(matcher.group(1));
         }
-        return CustomVersion.of("0.0.0");
+        return CustomVersion.defaultOf();
     }
 
     private Version version(JReleaserContext context, Ref tag, Pattern versionPattern) {
+        return version(context, tag, versionPattern, false);
+    }
+
+    private Version version(JReleaserContext context, Ref tag, Pattern versionPattern, boolean strict) {
         switch (context.getModel().getProject().versionPattern().getType()) {
             case SEMVER:
-                return semverOf(context, tag, versionPattern);
+                return semverOf(context, tag, versionPattern, strict);
             case JAVA_RUNTIME:
-                return javaRuntimeVersionOf(context, tag, versionPattern);
+                return javaRuntimeVersionOf(context, tag, versionPattern, strict);
             case JAVA_MODULE:
-                return javaModuleVersionOf(context, tag, versionPattern);
+                return javaModuleVersionOf(context, tag, versionPattern, strict);
             case CALVER:
-                return calverOf(context, tag, versionPattern);
+                return calverOf(context, tag, versionPattern, strict);
             case CHRONVER:
-                return chronVer(context, tag, versionPattern);
+                return chronVer(context, tag, versionPattern, strict);
             case CUSTOM:
             default:
-                return versionOf(tag, versionPattern);
+                return versionOf(tag, versionPattern, strict);
         }
     }
 
-    private Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
+    private Version defaultVersion(JReleaserContext context) {
+        switch (context.getModel().getProject().versionPattern().getType()) {
+            case SEMVER:
+                return SemVer.defaultOf();
+            case JAVA_RUNTIME:
+                return JavaRuntimeVersion.defaultOf();
+            case JAVA_MODULE:
+                return JavaModuleVersion.defaultOf();
+            case CALVER:
+                String format = context.getModel().getProject().versionPattern().getFormat();
+                return CalVer.defaultOf(format);
+            case CHRONVER:
+                return ChronVer.defaultOf();
+            case CUSTOM:
+            default:
+                return CustomVersion.defaultOf();
+        }
+    }
+
+    protected Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
         List<Ref> tags = git.tagList().call();
 
         GitService gitService = context.getModel().getRelease().getGitService();
@@ -274,6 +352,7 @@ public class ChangelogGenerator {
         }
 
         Version currentVersion = context.getModel().getProject().version();
+        Version defaultVersion = defaultVersion(context);
 
         // tag: early-access
         if (context.getModel().getProject().isSnapshot()) {
@@ -294,7 +373,9 @@ public class ChangelogGenerator {
 
                         tag = tags.stream()
                             .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
-                            .filter(ref -> currentVersion.equalsSpec(version(context, ref, versionPattern)))
+                            .filter(ref -> versionPattern.matcher(extractTagName(ref)).matches())
+                            .filter(ref -> currentVersion.equalsSpec(version(context, ref, versionPattern, true)))
+                            .filter(ref -> !defaultVersion.equals(version(context, ref, versionPattern, true)))
                             .findFirst();
                     }
                 }
@@ -319,7 +400,9 @@ public class ChangelogGenerator {
                 context.getLogger().debug(RB.$("changelog.generator.lookup.matching.tag"), tagPattern, effectiveTagName);
                 tag = tags.stream()
                     .filter(ref -> !extractTagName(ref).equals(effectiveTagName))
-                    .filter(ref -> currentVersion.equalsSpec(version(context, ref, versionPattern)))
+                    .filter(ref -> versionPattern.matcher(extractTagName(ref)).matches())
+                    .filter(ref -> currentVersion.equalsSpec(version(context, ref, versionPattern, true)))
+                    .filter(ref -> !defaultVersion.equals(version(context, ref, versionPattern, true)))
                     .findFirst();
             }
 
@@ -337,7 +420,8 @@ public class ChangelogGenerator {
             context.getLogger().debug(RB.$("changelog.generator.lookup.before.tag"), effectiveTagName, tagPattern);
             previousTag = tags.stream()
                 .filter(ref -> extractTagName(ref).matches(tagPattern))
-                .filter(ref -> lessThan(version(context, ref, versionPattern), currentVersion))
+                .filter(ref -> !defaultVersion.equals(version(context, ref, versionPattern, true)))
+                .filter(ref -> lessThan(version(context, ref, versionPattern, true), currentVersion))
                 .findFirst();
         }
 
@@ -374,7 +458,7 @@ public class ChangelogGenerator {
                 if (!changelog.getHide().containsContributor(c.author.name)) {
                     contributors.add(new Contributor(c.author));
                 }
-                c.commiters.stream()
+                c.committers.stream()
                     .filter(author -> !changelog.getHide().containsContributor(author.name))
                     .forEach(author -> contributors.add(new Contributor(author)));
             })
@@ -552,7 +636,7 @@ public class ChangelogGenerator {
     private static class Commit {
         private static final Pattern CO_AUTHORED_BY_PATTERN = Pattern.compile("^[Cc]o-authored-by:\\s+(.*)\\s+<(.*)>.*$");
         private final Set<String> labels = new LinkedHashSet<>();
-        private final Set<Author> commiters = new LinkedHashSet<>();
+        private final Set<Author> committers = new LinkedHashSet<>();
         private String fullHash;
         private String shortHash;
         private String title;
@@ -577,7 +661,7 @@ public class ChangelogGenerator {
 
         private void addContributor(String name, String email) {
             if (isNotBlank(name) && isNotBlank(email)) {
-                commiters.add(new Author(name, email));
+                committers.add(new Author(name, email));
             }
         }
 
