@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -77,9 +78,9 @@ public class ChangelogGenerator {
     private static final String UNCATEGORIZED = "<<UNCATEGORIZED>>";
     private static final String REGEX_PREFIX = "regex:";
 
-    private final Set<String> unparseableTags = new LinkedHashSet<>();
+    private final Set<Ref> unparseableTags = new LinkedHashSet<>();
 
-    private ChangelogGenerator() {
+    protected ChangelogGenerator() {
 
     }
 
@@ -138,7 +139,7 @@ public class ChangelogGenerator {
         return String.join(commitSeparator, lines);
     }
 
-    private void unparseableTag(JReleaserContext context, String tag, Exception exception) {
+    private void unparseableTag(JReleaserContext context, Ref tag, Exception exception) {
         if (!unparseableTags.contains(tag)) {
             unparseableTags.add(tag);
             context.getLogger().warn(exception.getMessage());
@@ -152,7 +153,7 @@ public class ChangelogGenerator {
             try {
                 return SemVer.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTag(context, tag, e);
+                unparseableTag(context, ref, e);
             }
         }
         return SemVer.of("0.0.0");
@@ -165,7 +166,7 @@ public class ChangelogGenerator {
             try {
                 return JavaRuntimeVersion.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTag(context, tag, e);
+                unparseableTag(context, ref, e);
             }
         }
         return JavaRuntimeVersion.of("0.0.0");
@@ -178,7 +179,7 @@ public class ChangelogGenerator {
             try {
                 return JavaModuleVersion.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTag(context, tag, e);
+                unparseableTag(context, ref, e);
             }
         }
         return JavaModuleVersion.of("0.0.0");
@@ -192,7 +193,7 @@ public class ChangelogGenerator {
             try {
                 return CalVer.of(format, tag);
             } catch (IllegalArgumentException e) {
-                unparseableTag(context, tag, e);
+                unparseableTag(context, ref, e);
             }
         }
         return CalVer.defaultFor(format);
@@ -205,7 +206,7 @@ public class ChangelogGenerator {
             try {
                 return ChronVer.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTag(context, tag, e);
+                unparseableTag(context, ref, e);
             }
         }
         return ChronVer.of("2000.01.01");
@@ -237,7 +238,7 @@ public class ChangelogGenerator {
         }
     }
 
-    private Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
+    protected Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
         List<Ref> tags = git.tagList().call();
 
         GitService gitService = context.getModel().getRelease().getGitService();
@@ -251,11 +252,15 @@ public class ChangelogGenerator {
         Pattern versionPattern = vp;
 
         unparseableTags.clear();
+
+        tags = tags.stream().filter(tagMatches(versionPattern)).collect(Collectors.toList());
         tags.sort((tag1, tag2) -> {
             Version v1 = version(context, tag1, versionPattern);
             Version v2 = version(context, tag2, versionPattern);
             return v2.compareTo(v1);
         });
+
+        tags.removeAll(unparseableTags);
 
         ObjectId head = git.getRepository().resolve(Constants.HEAD);
 
@@ -350,6 +355,10 @@ public class ChangelogGenerator {
 
         ObjectId toRef = getObjectId(git, tag.get());
         return git.log().add(toRef).call();
+    }
+
+    private Predicate<Ref> tagMatches(Pattern versionPattern) {
+        return ref-> versionPattern.matcher(extractTagName(ref)).matches();
     }
 
     private ObjectId getObjectId(Git git, Ref ref) throws IOException {
