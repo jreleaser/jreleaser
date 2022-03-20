@@ -26,7 +26,13 @@ import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectIdRef;
 import org.eclipse.jgit.lib.Ref;
-import org.jreleaser.model.*;
+
+import org.jreleaser.model.Project;
+import org.jreleaser.model.Release;
+import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.VersionPattern;
+import org.jreleaser.model.GitService;
 import org.jreleaser.util.SemVer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,11 +49,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class ChangelogGeneratorUnitTest {
+public class ChangelogGeneratorUnitTest {
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private Git git;
@@ -59,7 +71,7 @@ class ChangelogGeneratorUnitTest {
 
     @Test
     @DisplayName("When configured tag has no prefix and no matches if found then all commits from head must be used")
-    void notParsable() throws GitAPIException, IOException {
+    public void notParsable() throws GitAPIException, IOException {
 
         String effectiveTagName = "2.2.0";
         String configuredTagName = "{{projectVersion}}";
@@ -79,7 +91,7 @@ class ChangelogGeneratorUnitTest {
 
     @Test
     @DisplayName("When no tag is found that match current configured tag name then all commits from head must be used")
-    void tagThatNoMatches() throws GitAPIException, IOException {
+    public void tagThatNoMatches() throws GitAPIException, IOException {
 
         String effectiveTagName = "2.2.0";
         String configuredTagName = "release-{{projectVersion}}";

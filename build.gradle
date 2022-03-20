@@ -90,10 +90,10 @@ subprojects {
         testImplementation "org.junit.jupiter:junit-jupiter:$junit5Version"
         testImplementation "org.junit.jupiter:junit-jupiter-params:$junit5Version"
         testImplementation "org.hamcrest:hamcrest-library:$hamcrestVersion"
-        testImplementation "org.mockito:mockito-core:3.+"
-        testImplementation 'org.mockito:mockito-junit-jupiter:3.+'
+        testImplementation "org.mockito:mockito-core:$mockitoVersion"
+        testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
 
-        testCompile "org.assertj:assertj-core:3.11.1"
+        testImplementation "org.assertj:assertj-core:$assertjVersion"
 
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit5Version"
     }
