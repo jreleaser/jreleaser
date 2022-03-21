@@ -17,7 +17,7 @@
     <tags>{{distributionTagsBySpace}}</tags>
     <summary>{{projectDescription}}</summary>
     <projectSourceUrl>{{repoUrl}}</projectSourceUrl>
-    <packageSourceUrl>{{chocolateyBucketRepoUrl}}</packageSourceUrl>
+    <packageSourceUrl>{{chocolateyPackageSourceUrl}}</packageSourceUrl>
     <docsUrl>{{projectDocsUrl}}</docsUrl>
     <bugTrackerUrl>{{issueTrackerUrl}}</bugTrackerUrl>
     <releaseNotes>{{releaseNotesUrl}}</releaseNotes>
