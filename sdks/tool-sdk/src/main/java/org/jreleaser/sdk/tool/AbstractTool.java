@@ -35,7 +35,7 @@ public class AbstractTool {
 
     public AbstractTool(JReleaserContext context, String name, String version) {
         requireNonBlank(version, "'version' must not be blank");
-        this.name = requireNonBlank(version, "'name' must not be blank");
+        this.name = requireNonBlank(name, "'name' must not be blank");
         this.context = context;
         this.tool = new DownloadableTool(context.getLogger(), name, version, PlatformUtils.getCurrentFull());
     }
