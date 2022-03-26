@@ -3,7 +3,7 @@
 :project-owner:   jreleaser
 :project-name:    jreleaser
 :project-group:   org.jreleaser
-:project-version: 1.0.0-M3
+:project-version: 1.0.0-RC1
 
 image::src/media/banner.png[JReleaser]
 
