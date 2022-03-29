@@ -61,6 +61,7 @@ public class CalVer implements Version<CalVer> {
     private static final String MODIFIER = "MODIFIER";
     private static final String MODIFIER_OP = "[MODIFIER]";
     private static final String MODIFIER_OP2 = "MODIFIER]";
+    private static final String MODIFIER_R = "\\[(.?)MODIFIER]";
 
     private static final String[] YEARS = {YEAR_ZERO, YEAR_SHORT, YEAR_LONG};
     private static final String[] MONTHS = {MONTH_ZERO, MONTH_SHORT};
@@ -239,18 +240,35 @@ public class CalVer implements Version<CalVer> {
 
     @Override
     public String toString() {
-        return pattern.replace(YEAR_LONG, year)
-            .replace(YEAR_SHORT, year)
-            .replace(YEAR_ZERO, year)
-            .replace(MONTH_SHORT, month)
-            .replace(MONTH_ZERO, month)
-            .replace(WEEK_SHORT, week)
-            .replace(WEEK_ZERO, week)
-            .replace(DAY_SHORT, day)
-            .replace(DAY_ZERO, day)
-            .replace(MINOR, String.valueOf(minor))
-            .replace(MICRO, String.valueOf(micro))
-            .replace(MODIFIER, modifier);
+        String str = safeReplace(pattern, YEAR_LONG, year);
+        str = safeReplace(str, YEAR_SHORT, year);
+        str = safeReplace(str, YEAR_ZERO, year);
+        str = safeReplace(str, MONTH_SHORT, month);
+        str = safeReplace(str, MONTH_ZERO, month);
+        str = safeReplace(str, WEEK_SHORT, week);
+        str = safeReplace(str, WEEK_ZERO, week);
+        str = safeReplace(str, DAY_SHORT, day);
+        str = safeReplace(str, DAY_ZERO, day);
+        str = safeReplace(str, MINOR, String.valueOf(minor));
+        str = safeReplace(str, MICRO, String.valueOf(micro));
+
+        Pattern p = Pattern.compile(".*" + MODIFIER_R);
+        Matcher m = p.matcher(str);
+        if (m.matches()) {
+            str = str.replaceAll(MODIFIER_R, m.group(1) + modifier);
+        }
+
+        str = safeReplace(str, MODIFIER_OP, modifier);
+        str = safeReplace(str, MODIFIER, modifier);
+
+        return str;
+    }
+
+    private String safeReplace(String str, CharSequence target, CharSequence replacement) {
+        if (null != replacement) {
+            return str.replace(target, replacement);
+        }
+        return str;
     }
 
     @Override
@@ -454,7 +472,7 @@ public class CalVer implements Version<CalVer> {
     public static CalVer defaultOf(String format) {
         requireNonBlank(format, "Argument 'format' must not be blank");
 
-        return of(format, format.replace(YEAR_LONG, "2000")
+        String str = format.replace(YEAR_LONG, "2000")
             .replace(YEAR_SHORT, "0")
             .replace(YEAR_ZERO, "0")
             .replace(MONTH_SHORT, "1")
@@ -464,7 +482,16 @@ public class CalVer implements Version<CalVer> {
             .replace(DAY_SHORT, "1")
             .replace(DAY_ZERO, "01")
             .replace(MINOR, "0")
-            .replace(MICRO, "0")
+            .replace(MICRO, "0");
+
+        Pattern p = Pattern.compile(".*" + MODIFIER_R);
+        Matcher m = p.matcher(format);
+        if (m.matches()) {
+            str = str.replaceAll(MODIFIER_R, m.group(1) + "A");
+        }
+
+        return of(format, str
+            .replace(MODIFIER_OP, "A")
             .replace(MODIFIER, "A"));
     }
 

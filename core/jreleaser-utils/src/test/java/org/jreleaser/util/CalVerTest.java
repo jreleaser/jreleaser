@@ -64,6 +64,8 @@ public class CalVerTest {
     @MethodSource("version_comparison")
     public void testVersionComparison(String format, String input1, String input2) {
         // given:
+        System.out.println("input1 = " + input1);
+        System.out.println("input2 = " + input2);
         CalVer v1 = CalVer.of(format, input1);
         CalVer v2 = CalVer.of(format, input2);
 
@@ -132,7 +134,9 @@ public class CalVerTest {
             Arguments.of("YYYY.MM.DD", "2021.1.1", "2021.1.2"),
             Arguments.of("YYYY.WW", "2021.1", "2021.2"),
             Arguments.of("YYYY.MINOR.MICRO", "2021.1.2", "2021.1.3"),
-            Arguments.of("YYYY.MODIFIER", "2021.ALPHA", "2021.BETA")
+            Arguments.of("YYYY.MODIFIER", "2021.ALPHA", "2021.BETA"),
+            Arguments.of("YYYY.MINOR.MICRO[.MODIFIER]", "2000.0.0.ALPHA", "2000.0.0.BETA"),
+            Arguments.of("YYYY.MINOR.MICRO[.MODIFIER]", CalVer.defaultOf("YYYY.MINOR.MICRO[.MODIFIER]").toString(), "2000.0.0.B")
         );
     }
 }
