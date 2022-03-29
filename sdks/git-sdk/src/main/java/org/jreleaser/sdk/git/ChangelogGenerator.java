@@ -670,7 +670,7 @@ public class ChangelogGenerator {
             c.fullHash = rc.getId().name();
             c.shortHash = rc.getId().abbreviate(7).name();
             c.body = rc.getFullMessage();
-            String[] lines = c.body.split(lineSeparator());
+            String[] lines = split(c.body);
             c.title = lines[0];
             c.author = new Author(rc.getAuthorIdent().getName(), rc.getAuthorIdent().getEmailAddress());
             c.addContributor(rc.getCommitterIdent().getName(), rc.getCommitterIdent().getEmailAddress());
@@ -682,6 +682,16 @@ public class ChangelogGenerator {
                 }
             }
             return c;
+        }
+
+        private static String[] split(String str) {
+            // try Windows first
+            String sep = "\r\n";
+            if (str.contains(sep)) {
+                return str.split(sep);
+            }
+
+            return str.split("\n");
         }
     }
 
