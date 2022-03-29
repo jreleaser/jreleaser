@@ -286,6 +286,7 @@ jobs:
             out/jreleaser/output.properties
 
   update:
+    name: Update
     needs: [precheck, release]
     runs-on: ubuntu-latest
     steps:
