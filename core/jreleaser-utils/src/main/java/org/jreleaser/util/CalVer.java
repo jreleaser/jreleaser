@@ -61,7 +61,6 @@ public class CalVer implements Version<CalVer> {
     private static final String MODIFIER = "MODIFIER";
     private static final String MODIFIER_OP = "[MODIFIER]";
     private static final String MODIFIER_OP2 = "MODIFIER]";
-    private static final String MODIFIER_R = "\\[(.?)MODIFIER]";
 
     private static final String[] YEARS = {YEAR_ZERO, YEAR_SHORT, YEAR_LONG};
     private static final String[] MONTHS = {MONTH_ZERO, MONTH_SHORT};
@@ -249,17 +248,11 @@ public class CalVer implements Version<CalVer> {
         str = safeReplace(str, WEEK_ZERO, week);
         str = safeReplace(str, DAY_SHORT, day);
         str = safeReplace(str, DAY_ZERO, day);
-        str = safeReplace(str, MINOR, String.valueOf(minor));
-        str = safeReplace(str, MICRO, String.valueOf(micro));
-
-        Pattern p = Pattern.compile(".*" + MODIFIER_R);
-        Matcher m = p.matcher(str);
-        if (m.matches()) {
-            str = str.replaceAll(MODIFIER_R, m.group(1) + modifier);
-        }
-
-        str = safeReplace(str, MODIFIER_OP, modifier);
+        str = safeReplace(str, MINOR, minor);
+        str = safeReplace(str, MICRO, micro);
         str = safeReplace(str, MODIFIER, modifier);
+        str = safeReplace(str, "[", "");
+        str = safeReplace(str, "]", "");
 
         return str;
     }
@@ -472,7 +465,7 @@ public class CalVer implements Version<CalVer> {
     public static CalVer defaultOf(String format) {
         requireNonBlank(format, "Argument 'format' must not be blank");
 
-        String str = format.replace(YEAR_LONG, "2000")
+        return of(format, format.replace(YEAR_LONG, "2000")
             .replace(YEAR_SHORT, "0")
             .replace(YEAR_ZERO, "0")
             .replace(MONTH_SHORT, "1")
@@ -482,17 +475,10 @@ public class CalVer implements Version<CalVer> {
             .replace(DAY_SHORT, "1")
             .replace(DAY_ZERO, "01")
             .replace(MINOR, "0")
-            .replace(MICRO, "0");
-
-        Pattern p = Pattern.compile(".*" + MODIFIER_R);
-        Matcher m = p.matcher(format);
-        if (m.matches()) {
-            str = str.replaceAll(MODIFIER_R, m.group(1) + "A");
-        }
-
-        return of(format, str
-            .replace(MODIFIER_OP, "A")
-            .replace(MODIFIER, "A"));
+            .replace(MICRO, "0")
+            .replace(MODIFIER, "A")
+            .replace("[", "")
+            .replace("]", ""));
     }
 
     private static Tuple take(String str, int index, List<Character> delims) {
