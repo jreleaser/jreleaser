@@ -1,0 +1,96 @@
+name: JPackage
+
+on:
+  workflow_call:
+    inputs:
+      project-version:
+        required: true
+        type: string
+      java-version:
+        default: '11'
+        required: false
+        type: string
+      java-distro:
+        default: 'zulu'
+        required: false
+        type: string
+
+jobs:
+  jpackage:
+    name: 'JPackage on ${{ matrix.os }}'
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artifacts
+
+      - name: Download jlink
+        uses: actions/download-artifact@v3
+        with:
+          name: jlink
+          path: out/jreleaser/assemble/jreleaser-standalone/jlink
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: ${{ inputs.java-distro }}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlew-
+
+      - name: Version
+        if: !endsWith(${{ inputs.project-version }}, '-SNAPSHOT')
+        run: |
+          echo ${{ inputs.project-version }} > VERSION
+
+      - name: Build
+        run: ./gradlew :jreleaser:copyJdksFromCache :jreleaser:setupJdks
+
+      - name: Jpackage
+        uses: jreleaser/release-action@v1
+        with:
+          version: early-access
+          arguments: assemble -s jpackage -scp
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
+
+      - name: JReleaser output
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: jreleaser-jpackage-${{ runner.os }}
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+
+      - name: Upload jpackage
+        uses: actions/upload-artifact@v3
+        with:
+          retention-days: 1
+          name: jpackage
+          path: |
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.pkg
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.msi
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.exe
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.deb
+            out/jreleaser/assemble/jreleaser-installer/jpackage/*.rpm

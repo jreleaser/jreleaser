@@ -1,0 +1,89 @@
+name: Jlink
+
+on:
+  workflow_call:
+    inputs:
+      project-version:
+        required: true
+        type: string
+      java-version:
+        default: '11'
+        required: false
+        type: string
+      java-distro:
+        default: 'zulu'
+        required: false
+        type: string
+
+jobs:
+  jlink:
+    name: Jlink
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: ${{ inputs.java-distro }}
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlew-
+
+      - name: Version
+        if: !endsWith(${{ inputs.project-version }}, '-SNAPSHOT')
+        run: |
+          echo ${{ inputs.project-version }} > VERSION
+
+      - name: Build
+        run: ./gradlew -Prelease=true build -S
+
+      - name: Jlink
+        uses: jreleaser/release-action@v1
+        with:
+          version: early-access
+          arguments: assemble -s jlink
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
+
+      - name: JReleaser output
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: jreleaser-jlink
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          retention-days: 1
+          name: artifacts
+          path: |
+            apps/jreleaser/build/libs/
+            apps/jreleaser/build/dependencies/
+            apps/jreleaser/build/distributions/
+            apps/jreleaser-tool-provider/build/libs/*.jar
+            plugins/jreleaser-ant-tasks/build/distributions/*.zip
+
+      - name: Upload jlink
+        uses: actions/upload-artifact@v3
+        with:
+          retention-days: 1
+          name: jlink
+          path: |
+            out/jreleaser/assemble/jreleaser-standalone/jlink/
