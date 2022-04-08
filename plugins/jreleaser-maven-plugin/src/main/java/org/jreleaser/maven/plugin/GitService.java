@@ -293,10 +293,6 @@ public abstract class GitService implements Releaser {
         this.update.setAll(update);
     }
 
-    public boolean isUpdateSet() {
-        return update != null;
-    }
-
     public String getApiEndpoint() {
         return apiEndpoint;
     }
