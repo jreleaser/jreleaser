@@ -198,6 +198,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "shblue21",
+      "name": "shblue21",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25363091?v=4",
+      "profile": "https://shblue21.github.io/",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
