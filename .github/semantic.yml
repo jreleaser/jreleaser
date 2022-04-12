@@ -1,0 +1,22 @@
+# https://github.com/zeke/semantic-pull-requests
+
+enabled: true
+
+titleAndCommits: true
+
+allowMergeCommits: false
+
+types:
+  - feat
+  - fix
+  - docs
+  - style
+  - refactor
+  - perf
+  - test
+  - build
+  - ci
+  - chore
+  - revert
+  - i18n
+  - deps

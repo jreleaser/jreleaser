@@ -47,60 +47,44 @@ release:
     discussionCategoryName: Announcements
     changelog:
       formatted: ALWAYS
+      preset: conventional-commits
       format: '- {{commitShortHash}} {{commitTitle}}'
       contributors:
         format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
       contentTemplate: 'src/jreleaser/changelog.tpl'
       labelers:
-        - label: 'merge_pull'
-          title: 'Merge pull'
-        - label: 'merge_branch'
-          title: 'Merge branch'
-        - label: 'translation'
-          title: '[translation]'
-        - label: 'task'
-          title: '[chore]'
+        - label: 'i18n'
+          title: 'regex:^(?:i18n(?:\(.*\))?!?):\s.*'
+          order: 120
         - label: 'dependencies'
-          title: '[deps]'
-        - label: 'build'
-          title: '[build]'
-        - label: 'feature'
-          title: 'Resolves #'
-          body: 'Resolves #'
-        - label: 'issue'
-          title: 'Fixes #'
-          body: 'Fixes #'
-        - label: 'issue'
-          title: 'Relates to #'
-          body: 'Relates to #'
-        - label: 'allcontributors'
-          title: 'docs: update'
+          title: 'regex:^(?:deps(?:\(.*\))?!?):\s.*'
+          order: 130
+        - label: 'allcontributors1'
+          title: 'regex:^docs: update .all-contributorsrc.*'
+          order: -1
+        - label: 'allcontributors2'
+          title: 'regex:^docs: update CONTRIBUTORS.md.*'
+          order: -2
       categories:
         - title: 'Merge'
           labels:
             - 'merge_pull'
             - 'merge_branch'
-        - title: '🚀 Features'
-          labels:
-            - 'feature'
-        - title: '✅ Issues'
-          labels:
-            - 'issue'
-        - title: '🧰 Tasks'
-          labels:
-            - 'task'
         - title: '🌐 Translation'
+          key: 'i18n'
+          order: 70
           labels:
-            - 'translation'
+            - 'i18n'
         - title: '⚙️  Dependencies'
+          key: 'dependencies'
+          order: 80
           labels:
             - 'dependencies'
-        - title: '🛠  Build'
-          labels:
-            - 'build'
         - title: 'allcontributors'
+          order: 59
           labels:
-            - 'allcontributors'
+            - 'allcontributors1'
+            - 'allcontributors2'
       hide:
         categories:
           - 'Merge'
@@ -108,11 +92,6 @@ release:
         contributors:
           - 'GitHub'
           - 'allcontributors'
-      replacers:
-        - search: '\[chore\] '
-        - search: '\[deps\] '
-        - search: '\[translation\] '
-        - search: '\[build\] '
 
 signing:
   active: always

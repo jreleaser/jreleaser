@@ -47,8 +47,21 @@ TIP: You maye use link:https://github.com/kordamp/gm[] instead in which case the
  * Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
  * Reference issues and pull requests liberally after the first line
  * When only changing documentation, include [ci skip] in the commit title
- * If fixing a bug, append "Fixes #<n>" to the first line
- * If fixing a feature, append "Resolves #<n>" to the first line
+ * We use link:https://www.conventionalcommits.org/en/v1.0.0/[Conventional Commits] for PR titles and commit messages.
+ ** The following prefixes are allowed:
+   - feat
+  - fix
+  - docs
+  - style
+  - refactor
+  - perf
+  - test
+  - build
+  - ci
+  - chore
+  - revert
+  - i18n
+  - deps
 
 == Documentation
 

@@ -1,6 +1,5 @@
 <!-- The issue this PR addresses -->
-<!-- Use "Fixes #xyz" if fixing a bug -->
-<!-- Use "Resolves #xyz" if providing a feature -->
+<!-- Please reference the issue this PR solves -->
 Fixes #?
 
 ### Context
