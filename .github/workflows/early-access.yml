@@ -41,7 +41,7 @@ jobs:
       project-version: ${{ needs.precheck.outputs.VERSION }}
 
   jpackage:
-    needs: [jlink]
+    needs: [precheck, jlink]
     uses: jreleaser/jreleaser/.github/workflows/step-jpackage.yml@main
     with:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
