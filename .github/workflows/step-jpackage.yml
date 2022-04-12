@@ -59,7 +59,7 @@ jobs:
             ${{ runner.os }}-gradlew-
 
       - name: Version
-        if: !endsWith(${{ inputs.project-version }}, '-SNAPSHOT')
+        if: endsWith(${{ inputs.project-version }}, '-SNAPSHOT') != true
         run: |
           echo ${{ inputs.project-version }} > VERSION
 
