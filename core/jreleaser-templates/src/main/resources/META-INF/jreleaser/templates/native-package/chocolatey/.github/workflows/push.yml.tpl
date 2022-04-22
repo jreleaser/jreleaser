@@ -3,6 +3,8 @@ name: Push-{{distributionName}}
 on:
   push:
     tags:
+    branches-ignore:
+      - '**'
 
 jobs:
   push:
