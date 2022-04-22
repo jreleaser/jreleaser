@@ -320,11 +320,6 @@ distributions:
             platform: 'linux_musl-x86_64'
           preCommands:
             - 'RUN apk add unzip binutils fakeroot rpm'
-    gofish:
-      active: always
-      repository:
-        active: release
-        commitMessage: 'jreleaser {{tagName}}'
 
   jreleaser-installer:
     type: NATIVE_PACKAGE

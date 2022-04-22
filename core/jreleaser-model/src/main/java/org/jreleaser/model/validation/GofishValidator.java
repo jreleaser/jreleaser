@@ -32,6 +32,7 @@ import java.util.List;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -57,6 +58,7 @@ public abstract class GofishValidator extends Validator {
         }
 
         context.getLogger().debug("distribution.{}.gofish", distribution.getName());
+        nag("Gofish is deprecated since 1.1.0 and will be removed in 2.0.0");
 
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
