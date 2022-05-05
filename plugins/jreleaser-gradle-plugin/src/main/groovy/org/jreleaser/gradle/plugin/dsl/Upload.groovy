@@ -43,6 +43,8 @@ interface Upload {
 
     NamedDomainObjectContainer<SftpUploader> getSftp()
 
+    NamedDomainObjectContainer<AzureArtifacts> getAzureArtifacts()
+
     void artifactory(Action<? super NamedDomainObjectContainer<Artifactory>> action)
 
     void ftp(Action<? super NamedDomainObjectContainer<FtpUploader>> action)
@@ -55,6 +57,8 @@ interface Upload {
 
     void sftp(Action<? super NamedDomainObjectContainer<SftpUploader>> action)
 
+    void azureArtifacts(Action<? super NamedDomainObjectContainer<AzureArtifacts>> action)
+
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
@@ -66,4 +70,6 @@ interface Upload {
     void scp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void sftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void azureArtifacts(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 }

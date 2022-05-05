@@ -46,4 +46,5 @@ dependencies {
     api project(':http-java-sdk')
     api project(':ssh-java-sdk')
     api project(':s3-java-sdk')
+    api project(':azuredevops-java-sdk')
 }

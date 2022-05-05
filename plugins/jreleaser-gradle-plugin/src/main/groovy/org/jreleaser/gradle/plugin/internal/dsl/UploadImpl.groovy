@@ -30,6 +30,7 @@ import org.jreleaser.gradle.plugin.dsl.HttpUploader
 import org.jreleaser.gradle.plugin.dsl.S3
 import org.jreleaser.gradle.plugin.dsl.ScpUploader
 import org.jreleaser.gradle.plugin.dsl.SftpUploader
+import org.jreleaser.gradle.plugin.dsl.AzureArtifacts
 import org.jreleaser.gradle.plugin.dsl.Upload
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -49,6 +50,7 @@ class UploadImpl implements Upload {
     final NamedDomainObjectContainer<S3> s3
     final NamedDomainObjectContainer<ScpUploader> scp
     final NamedDomainObjectContainer<SftpUploader> sftp
+    final NamedDomainObjectContainer<AzureArtifacts> azureArtifacts
 
     @Inject
     UploadImpl(ObjectFactory objects) {
@@ -107,6 +109,15 @@ class UploadImpl implements Upload {
                 return h
             }
         })
+
+        azureArtifacts = objects.domainObjectContainer(AzureArtifacts, new NamedDomainObjectFactory<AzureArtifacts>() {
+            @Override
+            AzureArtifacts create(String name) {
+                AzureArtifactsImpl z = objects.newInstance(AzureArtifactsImpl, objects)
+                z.name = name
+                return z
+            }
+        })
     }
 
     @Override
@@ -140,6 +151,11 @@ class UploadImpl implements Upload {
     }
 
     @Override
+    void azureArtifacts(Action<? super NamedDomainObjectContainer<AzureArtifacts>> action) {
+        action.execute(azureArtifacts)
+    }
+
+    @Override
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, artifactory)
     }
@@ -169,6 +185,11 @@ class UploadImpl implements Upload {
         ConfigureUtil.configure(action, sftp)
     }
 
+    @Override
+    void azureArtifacts(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, azureArtifacts)
+    }
+
     @CompileDynamic
     org.jreleaser.model.Upload toModel() {
         org.jreleaser.model.Upload upload = new org.jreleaser.model.Upload()
@@ -179,6 +200,7 @@ class UploadImpl implements Upload {
         s3.each { upload.addS3(((S3Impl) it).toModel()) }
         scp.each { upload.addScp(((ScpUploaderImpl) it).toModel()) }
         sftp.each { upload.addSftp(((SftpUploaderImpl) it).toModel()) }
+        azureArtifacts.each { upload.addAzureArtifacts(((AzureArtifactsImpl) it).toModel()) }
 
         upload
     }

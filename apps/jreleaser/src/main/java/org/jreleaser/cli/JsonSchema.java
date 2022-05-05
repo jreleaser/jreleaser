@@ -74,6 +74,7 @@ public class JsonSchema extends AbstractCommand {
         mappings.put("Map<String, Artifactory>", "ArtifactoryMap");
         mappings.put("Map<String, Http>", "HttpMap");
         mappings.put("Map<String, S3>", "S3Map");
+        mappings.put("Map<String, AzureArtifacts>", "AzureArtifactsMap");
 
         try {
             SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON);

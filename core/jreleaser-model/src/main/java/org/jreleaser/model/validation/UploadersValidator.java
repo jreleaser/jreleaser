@@ -27,6 +27,7 @@ import static org.jreleaser.model.validation.HttpUploaderValidator.validateHttpU
 import static org.jreleaser.model.validation.S3Validator.validateS3;
 import static org.jreleaser.model.validation.ScpUploaderValidator.validateScpUploader;
 import static org.jreleaser.model.validation.SftpUploaderValidator.validateSftpUploader;
+import static org.jreleaser.model.validation.AzureArtifactsValidator.validateAzureArtifacts;;
 
 /**
  * @author Andres Almiray
@@ -43,6 +44,7 @@ public abstract class UploadersValidator extends Validator {
         validateS3(context, mode, errors);
         validateScpUploader(context, mode, errors);
         validateSftpUploader(context, mode, errors);
+        validateAzureArtifacts(context, mode, errors);
 
         if (mode.validateConfig() && !upload.isEnabledSet()) {
             upload.setEnabled(!upload.getActiveArtifactories().isEmpty() ||
@@ -50,7 +52,8 @@ public abstract class UploadersValidator extends Validator {
                 !upload.getActiveHttps().isEmpty() ||
                 !upload.getActiveS3s().isEmpty() ||
                 !upload.getActiveScps().isEmpty() ||
-                !upload.getActiveSftps().isEmpty());
+                !upload.getActiveSftps().isEmpty() ||
+                !upload.getActiveAzureArtifactses().isEmpty());
         }
     }
 }
