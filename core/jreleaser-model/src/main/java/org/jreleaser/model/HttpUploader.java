@@ -18,14 +18,12 @@
 package org.jreleaser.model;
 
 import org.jreleaser.util.Env;
-import org.jreleaser.util.JReleaserOutput;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
-import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -84,18 +82,6 @@ public class HttpUploader extends AbstractWebUploader {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    @Deprecated
-    public String getTarget() {
-        nag("http.target has been deprecated since 0.6.0 and will be removed in the future. Use http.uploadUrl instead");
-        return getUploadUrl();
-    }
-
-    @Deprecated
-    public void setTarget(String target) {
-        nag("http.target has been deprecated since 0.6.0 and will be removed in the future. Use http.uploadUrl instead");
-        setUploadUrl(target);
     }
 
     public Authorization getAuthorization() {
