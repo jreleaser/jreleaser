@@ -421,7 +421,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Upload convertUpload(Upload upload) {
         org.jreleaser.model.Upload u = new org.jreleaser.model.Upload();
-        if (upload.isEnabledSet()) u.setEnabled(upload.isEnabled());
+        u.setActive(tr(upload.resolveActive()));
         u.setArtifactory(convertArtifactory(upload.getArtifactory()));
         u.setFtp(convertFtpUploader(upload.getFtp()));
         u.setHttp(convertHttpUploader(upload.getHttp()));

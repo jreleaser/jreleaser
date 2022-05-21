@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Artifactory
@@ -31,9 +32,12 @@ import org.jreleaser.gradle.plugin.dsl.S3
 import org.jreleaser.gradle.plugin.dsl.ScpUploader
 import org.jreleaser.gradle.plugin.dsl.SftpUploader
 import org.jreleaser.gradle.plugin.dsl.Upload
+import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -42,7 +46,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 class UploadImpl implements Upload {
-    final Property<Boolean> enabled
+    final Property<Active> active
     final NamedDomainObjectContainer<Artifactory> artifactory
     final NamedDomainObjectContainer<FtpUploader> ftp
     final NamedDomainObjectContainer<HttpUploader> http
@@ -52,7 +56,7 @@ class UploadImpl implements Upload {
 
     @Inject
     UploadImpl(ObjectFactory objects) {
-        enabled = objects.property(Boolean).convention(true)
+        active = objects.property(Active).convention(Providers.notDefined())
 
         artifactory = objects.domainObjectContainer(Artifactory, new NamedDomainObjectFactory<Artifactory>() {
             @Override
@@ -107,6 +111,13 @@ class UploadImpl implements Upload {
                 return h
             }
         })
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
     }
 
     @Override
@@ -172,6 +183,7 @@ class UploadImpl implements Upload {
     @CompileDynamic
     org.jreleaser.model.Upload toModel() {
         org.jreleaser.model.Upload upload = new org.jreleaser.model.Upload()
+        if (active.present) upload.active = active.get()
 
         artifactory.each { upload.addArtifactory(((ArtifactoryImpl) it).toModel()) }
         ftp.each { upload.addFtp(((FtpUploaderImpl) it).toModel()) }

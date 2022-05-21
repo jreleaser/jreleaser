@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -27,6 +29,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 
@@ -34,16 +37,20 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class Upload implements Domain, EnabledAware {
+public class Upload implements Domain, Activatable {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
     private final Map<String, FtpUploader> ftp = new LinkedHashMap<>();
     private final Map<String, HttpUploader> http = new LinkedHashMap<>();
     private final Map<String, S3> s3 = new LinkedHashMap<>();
     private final Map<String, ScpUploader> scp = new LinkedHashMap<>();
     private final Map<String, SftpUploader> sftp = new LinkedHashMap<>();
-    private Boolean enabled;
+
+    private Active active;
+    @JsonIgnore
+    private boolean enabled = true;
 
     void setAll(Upload upload) {
+        this.active = upload.active;
         this.enabled = upload.enabled;
         setArtifactory(upload.artifactory);
         setFtp(upload.ftp);
@@ -55,17 +62,48 @@ public class Upload implements Domain, EnabledAware {
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return enabled;
+    }
+
+    public void disable() {
+        active = Active.NEVER;
+        enabled = false;
+    }
+
+    public boolean resolveEnabled(Project project) {
+        if (null == active) {
+            active = Active.ALWAYS;
+        }
+        enabled = active.check(project);
+        return enabled;
     }
 
     @Override
+    public Active getActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public void setActive(String str) {
+        this.active = Active.of(str);
+    }
+
+    @Override
+    public boolean isActiveSet() {
+        return active != null;
+    }
+
+    @Deprecated
     public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+        nag("upload.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
+        if (null != enabled) {
+            this.active = enabled ? Active.ALWAYS : Active.NEVER;
+        }
     }
 
     public Optional<? extends Uploader> getUploader(String type, String name) {
@@ -265,7 +303,8 @@ public class Upload implements Domain, EnabledAware {
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", isEnabled());
+        map.put("enabled", enabled);
+        map.put("active", active);
 
         List<Map<String, Object>> artifactory = this.artifactory.values()
             .stream()

@@ -24,17 +24,17 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class Upload implements EnabledAware {
+public class Upload implements Activatable {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
     private final Map<String, FtpUploader> ftp = new LinkedHashMap<>();
     private final Map<String, HttpUploader> http = new LinkedHashMap<>();
     private final Map<String, S3> s3 = new LinkedHashMap<>();
     private final Map<String, ScpUploader> scp = new LinkedHashMap<>();
     private final Map<String, SftpUploader> sftp = new LinkedHashMap<>();
-    private Boolean enabled;
+    private Active active;
 
     void setAll(Upload upload) {
-        this.enabled = upload.enabled;
+        this.active = upload.active;
         setArtifactory(upload.artifactory);
         setFtp(upload.ftp);
         setHttp(upload.http);
@@ -44,18 +44,18 @@ public class Upload implements EnabledAware {
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled != null && enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public String resolveActive() {
+        return active != null ? active.name() : null;
     }
 
     public Map<String, Artifactory> getArtifactory() {

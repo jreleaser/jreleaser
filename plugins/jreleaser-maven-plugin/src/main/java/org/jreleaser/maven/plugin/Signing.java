@@ -241,7 +241,7 @@ public class Signing implements Activatable {
         }
     }
 
-    public static class Cosign  {
+    public static class Cosign {
         private String version;
         private String privateKeyFile;
         private String publicKeyFile;

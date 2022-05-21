@@ -28,9 +28,7 @@ import org.gradle.api.provider.Property
  * @since 0.3.0
  */
 @CompileStatic
-interface Upload {
-    Property<Boolean> getEnabled()
-
+interface Upload extends Activatable {
     NamedDomainObjectContainer<Artifactory> getArtifactory()
 
     NamedDomainObjectContainer<FtpUploader> getFtp()
