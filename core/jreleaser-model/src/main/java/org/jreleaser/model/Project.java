@@ -114,11 +114,11 @@ public class Project implements Domain, ExtraProperties {
     }
 
     public String getResolvedName() {
-        return Env.resolve(PROJECT_NAME, name);
+        return Env.env(PROJECT_NAME, name);
     }
 
     public String getResolvedVersion() {
-        String resolvedVersion = Env.resolve(PROJECT_VERSION, version);
+        String resolvedVersion = Env.env(PROJECT_VERSION, version);
         // prevent NPE during validation
         return isNotBlank(resolvedVersion) ? resolvedVersion : "";
     }
@@ -490,7 +490,7 @@ public class Project implements Domain, ExtraProperties {
         }
 
         public String getConfiguredPattern() {
-            return Env.resolve(PROJECT_SNAPSHOT_PATTERN, pattern);
+            return Env.env(PROJECT_SNAPSHOT_PATTERN, pattern);
         }
 
         public String getResolvedPattern() {
@@ -502,7 +502,7 @@ public class Project implements Domain, ExtraProperties {
         }
 
         public String getConfiguredLabel() {
-            return Env.resolve(PROJECT_SNAPSHOT_LABEL, label);
+            return Env.env(PROJECT_SNAPSHOT_LABEL, label);
         }
 
         public String getResolvedLabel(JReleaserModel model) {

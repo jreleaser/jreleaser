@@ -65,19 +65,19 @@ public class Twitter extends AbstractAnnouncer {
     }
 
     public String getResolvedConsumerKey() {
-        return Env.resolve(TWITTER_CONSUMER_KEY, consumerKey);
+        return Env.env(TWITTER_CONSUMER_KEY, consumerKey);
     }
 
     public String getResolvedConsumerSecret() {
-        return Env.resolve(TWITTER_CONSUMER_SECRET, consumerSecret);
+        return Env.env(TWITTER_CONSUMER_SECRET, consumerSecret);
     }
 
     public String getResolvedAccessToken() {
-        return Env.resolve(TWITTER_ACCESS_TOKEN, accessToken);
+        return Env.env(TWITTER_ACCESS_TOKEN, accessToken);
     }
 
     public String getResolvedAccessTokenSecret() {
-        return Env.resolve(TWITTER_ACCESS_TOKEN_SECRET, accessTokenSecret);
+        return Env.env(TWITTER_ACCESS_TOKEN_SECRET, accessTokenSecret);
     }
 
     public String getConsumerKey() {

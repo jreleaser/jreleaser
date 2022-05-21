@@ -139,7 +139,7 @@ public class ModelConfigurer {
         if (isBlank(service.getName())) {
             service.setName(repository.getName());
         }
-        if (isBlank(Env.resolve(BRANCH, service.getBranch()))) {
+        if (isBlank(Env.env(BRANCH, service.getBranch()))) {
             service.setBranch(head.getRefName());
         }
     }

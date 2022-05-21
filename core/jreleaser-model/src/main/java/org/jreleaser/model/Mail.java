@@ -115,7 +115,7 @@ public class Mail extends AbstractAnnouncer {
     }
 
     public String getResolvedPassword() {
-        return Env.resolve(MAIL_PASSWORD, password);
+        return Env.env(MAIL_PASSWORD, password);
     }
 
     public Transport getTransport() {

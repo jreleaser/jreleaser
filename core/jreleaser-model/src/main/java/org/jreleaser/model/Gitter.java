@@ -81,7 +81,7 @@ public class Gitter extends AbstractAnnouncer {
     }
 
     public String getResolvedWebhook() {
-        return Env.resolve(GITTER_WEBHOOK, webhook);
+        return Env.env(GITTER_WEBHOOK, webhook);
     }
 
     public String getWebhook() {

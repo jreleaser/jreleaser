@@ -169,11 +169,11 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     public abstract String getReverseRepoHost();
 
     public String getConfiguredTagName() {
-        return Env.resolve(TAG_NAME, tagName);
+        return Env.env(TAG_NAME, tagName);
     }
 
     public String getConfiguredPreviousTagName() {
-        return Env.resolve(PREVIOUS_TAG_NAME, previousTagName);
+        return Env.env(PREVIOUS_TAG_NAME, previousTagName);
     }
 
     public String getResolvedTagName(JReleaserModel model) {
@@ -198,7 +198,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public String getConfiguredReleaseName() {
-        return Env.resolve(RELEASE_NAME, cachedReleaseName);
+        return Env.env(RELEASE_NAME, cachedReleaseName);
     }
 
     public String getResolvedReleaseName(JReleaserModel model) {
@@ -397,11 +397,11 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public String getResolvedToken() {
-        return Env.resolve(Env.toVar(getServiceName()) + "_TOKEN", token);
+        return Env.env(Env.toVar(getServiceName()) + "_TOKEN", token);
     }
 
     public String getResolvedUsername() {
-        return Env.resolve(Env.toVar(getServiceName()) + "_USERNAME", username);
+        return Env.env(Env.toVar(getServiceName()) + "_USERNAME", username);
     }
 
     public String getUsername() {
@@ -849,7 +849,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
 
         public String getConfiguredPattern() {
-            return Env.resolve(PRERELEASE_PATTERN, pattern);
+            return Env.env(PRERELEASE_PATTERN, pattern);
         }
 
         public String getPattern() {
@@ -884,7 +884,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
 
         public String getConfiguredName() {
-            return Env.resolve(MILESTONE_NAME, cachedName);
+            return Env.env(MILESTONE_NAME, cachedName);
         }
 
         public String getResolvedName(Map<String, Object> props) {

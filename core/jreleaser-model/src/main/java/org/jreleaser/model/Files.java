@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jreleaser.util.Env;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -60,7 +61,7 @@ public class Files implements Domain, Activatable {
 
     public boolean resolveEnabled(Project project) {
         if (null == active) {
-            active = Active.NEVER;
+            setActive(Env.resolveOrDefault("files.active", "", "NEVER"));
         }
         enabled = active.check(project);
         return enabled;

@@ -86,7 +86,7 @@ public class GoogleChat extends AbstractAnnouncer {
     }
 
     public String getResolvedWebhook() {
-        return Env.resolve(GOOGLE_CHAT_WEBHOOK, webhook);
+        return Env.env(GOOGLE_CHAT_WEBHOOK, webhook);
     }
 
     public String getWebhook() {

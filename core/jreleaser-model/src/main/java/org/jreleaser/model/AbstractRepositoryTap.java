@@ -138,13 +138,13 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
 
     @Override
     public String getResolvedUsername(GitService service) {
-        return Env.resolve(Env.toVar(basename + "_"
+        return Env.env(Env.toVar(basename + "_"
             + service.getServiceName()) + "_USERNAME", username);
     }
 
     @Override
     public String getResolvedToken(GitService service) {
-        return Env.resolve(Env.toVar(basename + "_"
+        return Env.env(Env.toVar(basename + "_"
             + service.getServiceName()) + "_TOKEN", token);
     }
 

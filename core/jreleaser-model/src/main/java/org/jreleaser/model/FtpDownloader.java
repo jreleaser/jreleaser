@@ -43,22 +43,22 @@ public class FtpDownloader extends AbstractDownloader implements Ftp {
 
     @Override
     public String getResolvedUsername() {
-        return Env.resolve("FTP_" + Env.toVar(name) + "_USERNAME", username);
+        return Env.env("FTP_" + Env.toVar(name) + "_USERNAME", username);
     }
 
     @Override
     public String getResolvedPassword() {
-        return Env.resolve("FTP_" + Env.toVar(name) + "_PASSWORD", password);
+        return Env.env("FTP_" + Env.toVar(name) + "_PASSWORD", password);
     }
 
     @Override
     public String getResolvedHost() {
-        return Env.resolve("FTP_" + Env.toVar(name) + "_HOST", host);
+        return Env.env("FTP_" + Env.toVar(name) + "_HOST", host);
     }
 
     @Override
     public Integer getResolvedPort() {
-        String value = Env.resolve("FTP_" + Env.toVar(name) + "_PORT", null == port ? "" : String.valueOf(port));
+        String value = Env.env("FTP_" + Env.toVar(name) + "_PORT", null == port ? "" : String.valueOf(port));
         return isBlank(value) ? 21 : Integer.parseInt(value);
     }
 

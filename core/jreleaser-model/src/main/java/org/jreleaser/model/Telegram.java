@@ -84,11 +84,11 @@ public class Telegram extends AbstractAnnouncer {
     }
 
     public String getResolvedToken() {
-        return Env.resolve(TELEGRAM_TOKEN, token);
+        return Env.env(TELEGRAM_TOKEN, token);
     }
 
     public String getResolvedChatId() {
-        return Env.resolve(TELEGRAM_CHAT_ID, chatId);
+        return Env.env(TELEGRAM_CHAT_ID, chatId);
     }
 
     public String getToken() {

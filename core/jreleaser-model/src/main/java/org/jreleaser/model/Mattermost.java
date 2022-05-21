@@ -81,7 +81,7 @@ public class Mattermost extends AbstractAnnouncer {
     }
 
     public String getResolvedWebhook() {
-        return Env.resolve(MATTERMOST_WEBHOOK, webhook);
+        return Env.env(MATTERMOST_WEBHOOK, webhook);
     }
 
     public String getWebhook() {

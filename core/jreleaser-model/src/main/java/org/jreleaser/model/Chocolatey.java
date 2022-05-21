@@ -89,7 +89,7 @@ public class Chocolatey extends AbstractRepositoryPackager {
     }
 
     public String getResolvedApiKey() {
-        return Env.resolve(CHOCOLATEY_API_KEY, apiKey);
+        return Env.env(CHOCOLATEY_API_KEY, apiKey);
     }
 
     public String getPackageName() {

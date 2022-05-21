@@ -220,7 +220,7 @@ public class GitSdk {
     }
 
     public static String resolveDefaultGitRemoteName() {
-        String remoteName = Env.resolve("DEFAULT_GIT_REMOTE", "");
+        String remoteName = Env.env("DEFAULT_GIT_REMOTE", "");
         if (isBlank(remoteName)) remoteName = "origin";
         return remoteName;
     }

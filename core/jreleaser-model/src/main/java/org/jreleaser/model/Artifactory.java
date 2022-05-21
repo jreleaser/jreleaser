@@ -71,15 +71,15 @@ public class Artifactory extends AbstractUploader {
     }
 
     public String getResolvedHost() {
-        return Env.resolve("ARTIFACTORY_" + Env.toVar(name) + "_HOST", host);
+        return Env.env("ARTIFACTORY_" + Env.toVar(name) + "_HOST", host);
     }
 
     public String getResolvedUsername() {
-        return Env.resolve("ARTIFACTORY_" + Env.toVar(name) + "_USERNAME", username);
+        return Env.env("ARTIFACTORY_" + Env.toVar(name) + "_USERNAME", username);
     }
 
     public String getResolvedPassword() {
-        return Env.resolve("ARTIFACTORY_" + Env.toVar(name) + "_PASSWORD", password);
+        return Env.env("ARTIFACTORY_" + Env.toVar(name) + "_PASSWORD", password);
     }
 
     public String getHost() {

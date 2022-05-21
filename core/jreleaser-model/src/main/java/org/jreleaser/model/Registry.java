@@ -49,11 +49,11 @@ public class Registry implements Domain, Comparable<Registry> {
     }
 
     public String getResolvedPassword() {
-        return Env.resolve("DOCKER_" + Env.toVar(serverName) + "_PASSWORD", password);
+        return Env.env("DOCKER_" + Env.toVar(serverName) + "_PASSWORD", password);
     }
 
     public String getResolvedUsername() {
-        return Env.resolve("DOCKER_" + Env.toVar(serverName) + "_USERNAME", username);
+        return Env.env("DOCKER_" + Env.toVar(serverName) + "_USERNAME", username);
     }
 
     public String getServer() {

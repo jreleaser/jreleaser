@@ -81,7 +81,7 @@ public class Webhook extends AbstractAnnouncer {
     }
 
     public String getResolvedWebhook() {
-        return Env.resolve(Env.toVar(name) + "_WEBHOOK", webhook);
+        return Env.env(Env.toVar(name) + "_WEBHOOK", webhook);
     }
 
     public void setName(String name) {

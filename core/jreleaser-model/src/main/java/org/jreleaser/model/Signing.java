@@ -93,7 +93,7 @@ public class Signing implements Domain, Activatable {
 
     public boolean resolveEnabled(Project project) {
         if (null == active) {
-            active = Active.NEVER;
+            setActive(Env.resolveOrDefault("signing.active", "", "NEVER"));
         }
         enabled = active.check(project);
         return enabled;
@@ -127,19 +127,19 @@ public class Signing implements Domain, Activatable {
     }
 
     public String getResolvedPublicKey() {
-        return Env.resolve(GPG_PUBLIC_KEY, publicKey);
+        return Env.env(GPG_PUBLIC_KEY, publicKey);
     }
 
     public String getResolvedSecretKey() {
-        return Env.resolve(GPG_SECRET_KEY, secretKey);
+        return Env.env(GPG_SECRET_KEY, secretKey);
     }
 
     public String getResolvedPassphrase() {
-        return Env.resolve(GPG_PASSPHRASE, passphrase);
+        return Env.env(GPG_PASSPHRASE, passphrase);
     }
 
     public String getResolvedCosignPassword() {
-        return Env.resolve(COSIGN_PASSWORD, passphrase);
+        return Env.env(COSIGN_PASSWORD, passphrase);
     }
 
     public Boolean isArmored() {
@@ -408,11 +408,11 @@ public class Signing implements Domain, Activatable {
         }
 
         public String getResolvedPrivateKeyFile() {
-            return Env.resolve(COSIGN_PRIVATE_KEY, privateKeyFile);
+            return Env.env(COSIGN_PRIVATE_KEY, privateKeyFile);
         }
 
         public String getResolvedPublicKeyFile() {
-            return Env.resolve(COSIGN_PUBLIC_KEY, publicKeyFile);
+            return Env.env(COSIGN_PUBLIC_KEY, publicKeyFile);
         }
 
         public String getVersion() {

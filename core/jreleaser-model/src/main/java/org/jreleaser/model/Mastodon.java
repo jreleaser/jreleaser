@@ -58,7 +58,7 @@ public class Mastodon extends AbstractAnnouncer {
     }
 
     public String getResolvedAccessToken() {
-        return Env.resolve(MASTODON_ACCESS_TOKEN, accessToken);
+        return Env.env(MASTODON_ACCESS_TOKEN, accessToken);
     }
 
     public String getHost() {

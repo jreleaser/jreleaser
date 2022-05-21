@@ -82,11 +82,11 @@ public class Sdkman extends AbstractPackager implements TimeoutAware {
     }
 
     public String getResolvedConsumerKey() {
-        return Env.resolve(SDKMAN_CONSUMER_KEY, consumerKey);
+        return Env.env(SDKMAN_CONSUMER_KEY, consumerKey);
     }
 
     public String getResolvedConsumerToken() {
-        return Env.resolve(SDKMAN_CONSUMER_TOKEN, consumerToken);
+        return Env.env(SDKMAN_CONSUMER_TOKEN, consumerToken);
     }
 
     public String getCandidate() {

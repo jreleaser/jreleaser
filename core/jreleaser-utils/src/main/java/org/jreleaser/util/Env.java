@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class Env {
-    private static final String JRELEASER_PREFIX = "JRELEASER_";
+    private static final String JRELEASER_ENV_PREFIX = "JRELEASER_";
+    private static final String JRELEASER_SYS_PREFIX = "jreleaser.";
 
     public static String toVar(String str) {
         return str.replaceAll(" ", "_")
@@ -41,36 +43,74 @@ public class Env {
             .toUpperCase();
     }
 
-    public static String prefix(String key) {
-        if (!key.startsWith(JRELEASER_PREFIX)) {
-            return JRELEASER_PREFIX + key;
+    public static String envKey(String key) {
+        if (!key.startsWith(JRELEASER_ENV_PREFIX)) {
+            key = JRELEASER_ENV_PREFIX + key;
         }
-        return key;
+        return key.replace(".", "_")
+            .toUpperCase(Locale.ENGLISH);
     }
 
-    public static String resolve(String key, String value) {
+    public static String sysKey(String key) {
+        if (!key.startsWith(JRELEASER_SYS_PREFIX)) {
+            key = JRELEASER_SYS_PREFIX + key;
+        }
+        return key.replace("_", ".")
+            .toLowerCase(Locale.ENGLISH);
+    }
+
+    public static String env(String key, String value) {
         if (isNotBlank(value)) {
             return value;
         }
-        return System.getenv(prefix(key));
+        return System.getenv(envKey(key));
     }
 
-    public static String resolve(Collection<String> keys, String value) {
+    public static String env(Collection<String> keys, String value) {
         if (isNotBlank(value)) {
             return value;
         }
 
         return keys.stream()
-            .map(Env::prefix)
+            .map(Env::envKey)
             .filter(key -> System.getenv().containsKey(key))
             .map(System::getenv)
             .findFirst()
             .orElse(null);
     }
 
+    public static String sys(String key, String value) {
+        if (isNotBlank(value)) {
+            return value;
+        }
+        return System.getProperty(sysKey(key));
+    }
+
+    public static String sys(Collection<String> keys, String value) {
+        if (isNotBlank(value)) {
+            return value;
+        }
+
+        return keys.stream()
+            .map(Env::sysKey)
+            .filter(key -> System.getProperties().containsKey(key))
+            .map(System::getProperty)
+            .findFirst()
+            .orElse(null);
+    }
+
+    public static String resolve(String key, String value) {
+        return env(key, sys(key, value));
+    }
+
+    public static String resolveOrDefault(String key, String value, String defaultValue) {
+        String result = env(key, sys(key, value));
+        return isNotBlank(result) ? result : defaultValue;
+    }
+
     public static String check(String key, String value, String property, String dsl, String configFilePath, Errors errors) {
         if (isBlank(value)) {
-            String prefixedKey = prefix(key);
+            String prefixedKey = envKey(key);
             value = System.getenv(prefixedKey);
             if (isBlank(value)) {
                 errors.configuration(RB.$("ERROR_environment_property_check",
@@ -83,7 +123,7 @@ public class Env {
 
     public static String check(Collection<String> keys, Properties values, String property, String dsl, String configFilePath, Errors errors) {
         List<String> prefixedKeys = keys.stream()
-            .map(Env::prefix)
+            .map(Env::envKey)
             .collect(Collectors.toList());
 
         String value = prefixedKeys.stream()

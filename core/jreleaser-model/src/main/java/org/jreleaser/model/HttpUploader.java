@@ -61,11 +61,11 @@ public class HttpUploader extends AbstractWebUploader {
     }
 
     public String getResolvedUsername() {
-        return Env.resolve("HTTP_" + Env.toVar(name) + "_USERNAME", username);
+        return Env.env("HTTP_" + Env.toVar(name) + "_USERNAME", username);
     }
 
     public String getResolvedPassword() {
-        return Env.resolve("HTTP_" + Env.toVar(name) + "_PASSWORD", password);
+        return Env.env("HTTP_" + Env.toVar(name) + "_PASSWORD", password);
     }
 
     public String getUsername() {

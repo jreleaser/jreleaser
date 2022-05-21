@@ -104,35 +104,35 @@ public class S3 extends AbstractUploader {
     }
 
     public String getResolvedRegion() {
-        return Env.resolve("S3_" + Env.toVar(name) + "_REGION", region);
+        return Env.env("S3_" + Env.toVar(name) + "_REGION", region);
     }
 
     public String getResolvedBucket() {
-        return Env.resolve("S3_" + Env.toVar(name) + "_BUCKET", bucket);
+        return Env.env("S3_" + Env.toVar(name) + "_BUCKET", bucket);
     }
 
     public String getResolvedAccessKeyId() {
-        return Env.resolve("S3_" + Env.toVar(name) + "_ACCESS_KEY_ID", accessKeyId);
+        return Env.env("S3_" + Env.toVar(name) + "_ACCESS_KEY_ID", accessKeyId);
     }
 
     public String getResolvedSecretKey() {
-        return Env.resolve("S3_" + Env.toVar(name) + "_SECRET_KEY", secretKey);
+        return Env.env("S3_" + Env.toVar(name) + "_SECRET_KEY", secretKey);
     }
 
     public String getResolvedSessionToken() {
-        return Env.resolve("S3_" + Env.toVar(name) + "_SESSION_TOKEN", sessionToken);
+        return Env.env("S3_" + Env.toVar(name) + "_SESSION_TOKEN", sessionToken);
     }
 
     public String getResolvedPath() {
-        return Env.resolve("S3_" + Env.toVar(name) + "_PATH", path);
+        return Env.env("S3_" + Env.toVar(name) + "_PATH", path);
     }
 
     public String getResolvedDownloadUrl() {
-        return Env.resolve("S3_" + Env.toVar(name) + "_DOWNLOAD_URL", downloadUrl);
+        return Env.env("S3_" + Env.toVar(name) + "_DOWNLOAD_URL", downloadUrl);
     }
 
     public String getResolvedEndpoint() {
-        return Env.resolve("S3_" + Env.toVar(name) + "_ENDPOINT", endpoint);
+        return Env.env("S3_" + Env.toVar(name) + "_ENDPOINT", endpoint);
     }
 
     public String getRegion() {

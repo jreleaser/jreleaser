@@ -72,7 +72,7 @@ public class Teams extends AbstractAnnouncer {
     }
 
     public String getResolvedWebhook() {
-        return Env.resolve(TEAMS_WEBHOOK, webhook);
+        return Env.env(TEAMS_WEBHOOK, webhook);
     }
 
     public String getWebhook() {

@@ -62,7 +62,7 @@ public abstract class AbstractSshDownloader extends AbstractDownloader implement
 
     @Override
     public String getResolvedUsername() {
-        return Env.resolve(newList(
+        return Env.env(newList(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_USERNAME",
                 "SSH_" + Env.toVar(name) + "_USERNAME",
                 getEnvPrefix() + "_USERNAME",
@@ -72,7 +72,7 @@ public abstract class AbstractSshDownloader extends AbstractDownloader implement
 
     @Override
     public String getResolvedPassword() {
-        return Env.resolve(newList(
+        return Env.env(newList(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_PASSWORD",
                 "SSH_" + Env.toVar(name) + "_PASSWORD",
                 getEnvPrefix() + "_PASSWORD",
@@ -82,7 +82,7 @@ public abstract class AbstractSshDownloader extends AbstractDownloader implement
 
     @Override
     public String getResolvedHost() {
-        return Env.resolve(newList(
+        return Env.env(newList(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_HOST",
                 "SSH_" + Env.toVar(name) + "_HOST",
                 getEnvPrefix() + "_HOST",
@@ -92,7 +92,7 @@ public abstract class AbstractSshDownloader extends AbstractDownloader implement
 
     @Override
     public Integer getResolvedPort() {
-        String value = Env.resolve(newList(
+        String value = Env.env(newList(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_PORT",
                 "SSH_" + Env.toVar(name) + "_PORT",
                 getEnvPrefix() + "_PORT",
@@ -103,7 +103,7 @@ public abstract class AbstractSshDownloader extends AbstractDownloader implement
 
     @Override
     public String getResolvedPublicKey() {
-        return Env.resolve(newList(
+        return Env.env(newList(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_PUBLIC_KEY",
                 "SSH_" + Env.toVar(name) + "_PUBLIC_KEY",
                 getEnvPrefix() + "_PUBLIC_KEY",
@@ -113,7 +113,7 @@ public abstract class AbstractSshDownloader extends AbstractDownloader implement
 
     @Override
     public String getResolvedPrivateKey() {
-        return Env.resolve(newList(
+        return Env.env(newList(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_PRIVATE_KEY",
                 "SSH_" + Env.toVar(name) + "_PRIVATE_KEY",
                 getEnvPrefix() + "_PRIVATE_KEY",
@@ -123,7 +123,7 @@ public abstract class AbstractSshDownloader extends AbstractDownloader implement
 
     @Override
     public String getResolvedPassphrase() {
-        return Env.resolve(newList(
+        return Env.env(newList(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_PASSPHRASE",
                 "SSH_" + Env.toVar(name) + "_PASSPHRASE",
                 getEnvPrefix() + "_PASSPHRASE",
@@ -133,7 +133,7 @@ public abstract class AbstractSshDownloader extends AbstractDownloader implement
 
     @Override
     public String getResolvedFingerprint() {
-        return Env.resolve(newList(
+        return Env.env(newList(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_FINGERPRINT",
                 "SSH_" + Env.toVar(name) + "_FINGERPRINT",
                 getEnvPrefix() + "_FINGERPRINT",

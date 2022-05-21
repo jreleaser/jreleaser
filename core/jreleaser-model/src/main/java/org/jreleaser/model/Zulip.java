@@ -95,7 +95,7 @@ public class Zulip extends AbstractAnnouncer {
     }
 
     public String getResolvedApiKey() {
-        return Env.resolve(ZULIP_API_KEY, apiKey);
+        return Env.env(ZULIP_API_KEY, apiKey);
     }
 
     public String getAccount() {

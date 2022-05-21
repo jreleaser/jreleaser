@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jreleaser.util.Env;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +65,7 @@ public class Download implements Domain, Activatable {
 
     public boolean resolveEnabled(Project project) {
         if (null == active) {
-            active = Active.ALWAYS;
+            setActive(Env.resolveOrDefault("download.active", "", "ALWAYS"));
         }
         enabled = active.check(project);
         return enabled;

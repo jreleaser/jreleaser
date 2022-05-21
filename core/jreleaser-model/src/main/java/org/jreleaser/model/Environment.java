@@ -66,7 +66,7 @@ public class Environment implements Domain {
     }
 
     public String getVariable(String key) {
-        return vars.getProperty(Env.prefix(key));
+        return vars.getProperty(Env.envKey(key));
     }
 
     public boolean isSet() {

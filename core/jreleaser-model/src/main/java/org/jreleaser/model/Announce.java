@@ -19,6 +19,7 @@ package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.JReleaserException;
 
 import java.util.Collections;
@@ -87,7 +88,7 @@ public class Announce implements Domain, Activatable {
 
     public boolean resolveEnabled(Project project) {
         if (null == active) {
-            active = Active.ALWAYS;
+            setActive(Env.resolveOrDefault("announce.active", "", "ALWAYS"));
         }
         enabled = active.check(project);
         return enabled;

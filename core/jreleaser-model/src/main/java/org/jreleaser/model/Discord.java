@@ -81,7 +81,7 @@ public class Discord extends AbstractAnnouncer {
     }
 
     public String getResolvedWebhook() {
-        return Env.resolve(DISCORD_WEBHOOK, webhook);
+        return Env.env(DISCORD_WEBHOOK, webhook);
     }
 
     public String getWebhook() {

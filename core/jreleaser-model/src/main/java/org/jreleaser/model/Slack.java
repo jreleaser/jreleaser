@@ -86,7 +86,7 @@ public class Slack extends AbstractAnnouncer {
     }
 
     public String getResolvedToken() {
-        return Env.resolve(SLACK_TOKEN, token);
+        return Env.env(SLACK_TOKEN, token);
     }
 
     public String getToken() {
@@ -98,7 +98,7 @@ public class Slack extends AbstractAnnouncer {
     }
 
     public String getResolvedWebhook() {
-        return Env.resolve(SLACK_WEBHOOK, webhook);
+        return Env.env(SLACK_WEBHOOK, webhook);
     }
 
     public String getWebhook() {
