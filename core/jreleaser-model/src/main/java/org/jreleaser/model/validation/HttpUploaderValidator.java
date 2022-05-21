@@ -19,8 +19,8 @@ package org.jreleaser.model.validation;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
+import org.jreleaser.model.Http;
 import org.jreleaser.model.HttpUploader;
-import org.jreleaser.model.WebUploader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
@@ -71,7 +71,7 @@ public abstract class HttpUploaderValidator extends Validator {
         }
 
         if (null == http.getMethod()) {
-            http.setMethod(WebUploader.Method.PUT);
+            http.setMethod(Http.Method.PUT);
         }
 
         switch (http.resolveAuthorization()) {

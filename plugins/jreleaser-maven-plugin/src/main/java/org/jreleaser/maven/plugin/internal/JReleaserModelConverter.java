@@ -641,6 +641,9 @@ public final class JReleaserModelConverter {
     private static org.jreleaser.model.HttpDownloader convertHttpDownloader(HttpDownloader http) {
         org.jreleaser.model.HttpDownloader h = new org.jreleaser.model.HttpDownloader();
         convertDownloader(http, h);
+        h.setUsername(tr(http.getUsername()));
+        h.setPassword(tr(http.getPassword()));
+        h.setAuthorization(tr(http.resolveAuthorization().name()));
         h.setHeaders(http.getHeaders());
         return h;
     }

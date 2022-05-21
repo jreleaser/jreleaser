@@ -22,6 +22,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.Downloader;
 import org.jreleaser.model.HttpDownloader;
 import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
@@ -51,6 +52,37 @@ public abstract class HttpDownloaderValidator extends Validator {
         }
         if (!http.resolveEnabled(context.getModel().getProject())) {
             return;
+        }
+
+        switch (http.resolveAuthorization()) {
+            case BEARER:
+                http.setPassword(
+                    checkProperty(context,
+                        "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
+                        "http.password",
+                        http.getPassword(),
+                        errors,
+                        context.isDryrun()));
+                break;
+            case BASIC:
+                http.setUsername(
+                    checkProperty(context,
+                        "HTTP_" + Env.toVar(http.getName()) + "_USERNAME",
+                        "http.username",
+                        http.getUsername(),
+                        errors,
+                        context.isDryrun()));
+
+                http.setPassword(
+                    checkProperty(context,
+                        "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
+                        "http.password",
+                        http.getPassword(),
+                        errors,
+                        context.isDryrun()));
+                break;
+            case NONE:
+                break;
         }
 
         validateTimeout(http);

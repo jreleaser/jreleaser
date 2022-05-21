@@ -24,7 +24,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.HttpUploader
-import org.jreleaser.model.WebUploader
+import org.jreleaser.model.Http
 
 import javax.inject.Inject
 
@@ -40,8 +40,8 @@ class HttpUploaderImpl extends AbstractWebUploader implements HttpUploader {
     String name
     final Property<String> username
     final Property<String> password
-    final Property<WebUploader.Method> method
-    final Property<WebUploader.Authorization> authorization
+    final Property<Http.Method> method
+    final Property<Http.Authorization> authorization
     final MapProperty<String, String> headers
 
     @Inject
@@ -49,8 +49,8 @@ class HttpUploaderImpl extends AbstractWebUploader implements HttpUploader {
         super(objects)
         username = objects.property(String).convention(Providers.notDefined())
         password = objects.property(String).convention(Providers.notDefined())
-        method = objects.property(WebUploader.Method).convention(Providers.notDefined())
-        authorization = objects.property(WebUploader.Authorization).convention(Providers.notDefined())
+        method = objects.property(Http.Method).convention(Providers.notDefined())
+        authorization = objects.property(Http.Authorization).convention(Providers.notDefined())
         headers = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
@@ -74,12 +74,12 @@ class HttpUploaderImpl extends AbstractWebUploader implements HttpUploader {
 
     @Override
     void setAuthorization(String authorization) {
-        this.authorization.set(WebUploader.Authorization.of(authorization))
+        this.authorization.set(Http.Authorization.of(authorization))
     }
 
     @Override
     void setMethod(String method) {
-        this.method.set(WebUploader.Method.of(method))
+        this.method.set(Http.Method.of(method))
     }
 
     org.jreleaser.model.HttpUploader toModel() {

@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.jreleaser.model.Http
 import org.jreleaser.util.FileType
 
 /**
@@ -36,7 +37,7 @@ interface Artifactory extends WebUploader {
 
     Property<String> getPassword()
 
-    Property<org.jreleaser.model.WebUploader.Authorization> getAuthorization()
+    Property<Http.Authorization> getAuthorization()
 
     void setAuthorization(String authorization)
 

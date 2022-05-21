@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.jreleaser.model.Http
 
 /**
  *
@@ -32,9 +33,9 @@ interface HttpUploader extends WebUploader {
 
     Property<String> getPassword()
 
-    Property<org.jreleaser.model.WebUploader.Method> getMethod()
+    Property<Http.Method> getMethod()
 
-    Property<org.jreleaser.model.WebUploader.Authorization> getAuthorization()
+    Property<Http.Authorization> getAuthorization()
 
     MapProperty<String, String> getHeaders()
 

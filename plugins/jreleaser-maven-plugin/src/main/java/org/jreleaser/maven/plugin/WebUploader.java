@@ -21,7 +21,7 @@ package org.jreleaser.maven.plugin;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public interface WebUploader extends Uploader {
+public interface WebUploader extends Uploader, Http {
     String getUploadUrl();
 
     void setUploadUrl(String uploadUrl);
@@ -29,16 +29,4 @@ public interface WebUploader extends Uploader {
     String getDownloadUrl();
 
     void setDownloadUrl(String downloadUrl);
-
-
-    enum Method {
-        PUT,
-        POST
-    }
-
-    enum Authorization {
-        NONE,
-        BASIC,
-        BEARER
-    }
 }

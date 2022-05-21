@@ -34,11 +34,11 @@ public class Artifactory extends AbstractUploader {
     private String host;
     private String username;
     private String password;
-    private WebUploader.Authorization authorization;
+    private Http.Authorization authorization;
 
-    public WebUploader.Authorization resolveAuthorization() {
+    public Http.Authorization resolveAuthorization() {
         if (null == authorization) {
-            authorization = WebUploader.Authorization.NONE;
+            authorization = Http.Authorization.NONE;
         }
 
         return authorization;
@@ -68,11 +68,11 @@ public class Artifactory extends AbstractUploader {
         this.password = password;
     }
 
-    public WebUploader.Authorization getAuthorization() {
+    public Http.Authorization getAuthorization() {
         return authorization;
     }
 
-    public void setAuthorization(WebUploader.Authorization authorization) {
+    public void setAuthorization(Http.Authorization authorization) {
         this.authorization = authorization;
     }
 

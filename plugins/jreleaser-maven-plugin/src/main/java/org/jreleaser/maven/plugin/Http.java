@@ -15,20 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
+package org.jreleaser.maven.plugin;
 
 /**
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 1.1.0
  */
-public interface WebUploader extends Uploader, Http {
-    String getUploadUrl();
+public interface Http {
+    enum Method {
+        PUT,
+        POST
+    }
 
-    void setUploadUrl(String uploadUrl);
-
-    String getDownloadUrl();
-
-    void setDownloadUrl(String downloadUrl);
-
-    String getResolvedUploadUrl(JReleaserContext context, Artifact artifact);
+    enum Authorization {
+        NONE,
+        BASIC,
+        BEARER
+    }
 }

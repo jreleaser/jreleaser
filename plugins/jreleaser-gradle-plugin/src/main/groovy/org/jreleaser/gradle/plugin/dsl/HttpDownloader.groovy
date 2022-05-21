@@ -19,6 +19,8 @@ package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.jreleaser.model.Http
 
 /**
  *
@@ -27,7 +29,15 @@ import org.gradle.api.provider.MapProperty
  */
 @CompileStatic
 interface HttpDownloader extends Downloader {
+    Property<String> getUsername()
+
+    Property<String> getPassword()
+
+    Property<Http.Authorization> getAuthorization()
+
     MapProperty<String, String> getHeaders()
 
     void setHeader(String key, String value)
+
+    void setAuthorization(String authorization)
 }

@@ -20,8 +20,8 @@ package org.jreleaser.sdk.http;
 import feign.form.FormData;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
+import org.jreleaser.model.Http;
 import org.jreleaser.model.HttpUploader;
-import org.jreleaser.model.WebUploader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.uploader.spi.UploadException;
 import org.jreleaser.sdk.commons.AbstractArtifactUploader;
@@ -99,7 +99,7 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<HttpUploader>
 
                     resolveHeaders(artifact, headers);
 
-                    if (uploader.getMethod() == WebUploader.Method.POST) {
+                    if (uploader.getMethod() == Http.Method.POST) {
                         ClientUtils.postFile(context.getLogger(),
                             uploader.getResolvedUploadUrl(context, artifact),
                             uploader.getConnectTimeout(),

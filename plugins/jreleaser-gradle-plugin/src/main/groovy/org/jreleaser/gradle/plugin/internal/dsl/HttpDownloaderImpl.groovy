@@ -21,8 +21,10 @@ import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.HttpDownloader
+import org.jreleaser.model.Http
 
 import javax.inject.Inject
 
@@ -36,11 +38,17 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class HttpDownloaderImpl extends AbstractDownloader implements HttpDownloader {
     String name
+    final Property<String> username
+    final Property<String> password
+    final Property<Http.Authorization> authorization
     final MapProperty<String, String> headers
 
     @Inject
     HttpDownloaderImpl(ObjectFactory objects) {
         super(objects)
+        username = objects.property(String).convention(Providers.notDefined())
+        password = objects.property(String).convention(Providers.notDefined())
+        authorization = objects.property(Http.Authorization).convention(Providers.notDefined())
         headers = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
@@ -48,6 +56,9 @@ class HttpDownloaderImpl extends AbstractDownloader implements HttpDownloader {
     @Internal
     boolean isSet() {
         super.isSet() ||
+            username.present ||
+            password.present ||
+            authorization.present ||
             headers.present
     }
 
@@ -58,10 +69,18 @@ class HttpDownloaderImpl extends AbstractDownloader implements HttpDownloader {
         }
     }
 
+    @Override
+    void setAuthorization(String authorization) {
+        this.authorization.set(Http.Authorization.of(authorization))
+    }
+
     org.jreleaser.model.HttpDownloader toModel() {
         org.jreleaser.model.HttpDownloader http = new org.jreleaser.model.HttpDownloader()
         http.name = name
         fillProperties(http)
+        if (username.present) http.username = username.get()
+        if (password.present) http.password = password.get()
+        if (authorization.present) http.authorization = authorization.get()
         if (headers.present) http.headers.putAll(headers.get())
         http
     }

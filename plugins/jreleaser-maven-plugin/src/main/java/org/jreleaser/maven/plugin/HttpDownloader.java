@@ -24,8 +24,43 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class HttpDownloader extends AbstractDownloader {
+public class HttpDownloader extends AbstractDownloader implements Http {
     private final Map<String, String> headers = new LinkedHashMap<>();
+    private String username;
+    private String password;
+    private Authorization authorization;
+
+    public Authorization resolveAuthorization() {
+        if (null == authorization) {
+            authorization = Authorization.NONE;
+        }
+
+        return authorization;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Authorization getAuthorization() {
+        return authorization;
+    }
+
+    public void setAuthorization(Authorization authorization) {
+        this.authorization = authorization;
+    }
 
     public Map<String, String> getHeaders() {
         return headers;

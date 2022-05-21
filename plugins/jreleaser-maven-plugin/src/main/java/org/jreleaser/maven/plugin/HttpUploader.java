@@ -26,7 +26,6 @@ import java.util.Map;
  */
 public class HttpUploader extends AbstractWebUploader {
     private final Map<String, String> headers = new LinkedHashMap<>();
-    private String target;
     private String username;
     private String password;
     private Authorization authorization;
@@ -62,14 +61,6 @@ public class HttpUploader extends AbstractWebUploader {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
     }
 
     public Authorization getAuthorization() {

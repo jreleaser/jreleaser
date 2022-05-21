@@ -47,7 +47,7 @@ public class Artifactory extends AbstractUploader {
     private String host;
     private String username;
     private String password;
-    private WebUploader.Authorization authorization;
+    private Http.Authorization authorization;
 
     public Artifactory() {
         super(TYPE);
@@ -62,9 +62,9 @@ public class Artifactory extends AbstractUploader {
         setRepositories(artifactory.repositories);
     }
 
-    public WebUploader.Authorization resolveAuthorization() {
+    public Http.Authorization resolveAuthorization() {
         if (null == authorization) {
-            authorization = WebUploader.Authorization.BEARER;
+            authorization = Http.Authorization.BEARER;
         }
 
         return authorization;
@@ -106,16 +106,16 @@ public class Artifactory extends AbstractUploader {
         this.password = password;
     }
 
-    public WebUploader.Authorization getAuthorization() {
+    public Http.Authorization getAuthorization() {
         return authorization;
     }
 
-    public void setAuthorization(WebUploader.Authorization authorization) {
+    public void setAuthorization(Http.Authorization authorization) {
         this.authorization = authorization;
     }
 
     public void setAuthorization(String authorization) {
-        this.authorization = WebUploader.Authorization.of(authorization);
+        this.authorization = Http.Authorization.of(authorization);
     }
 
     public List<ArtifactoryRepository> getRepositories() {
@@ -152,7 +152,7 @@ public class Artifactory extends AbstractUploader {
     }
 
     @Override
-    public String getResolvedDownloadUrl(Map<String,Object> props, Artifact artifact) {
+    public String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact) {
         return resolveUrl(props, artifact);
     }
 
@@ -160,7 +160,7 @@ public class Artifactory extends AbstractUploader {
         return resolveUrl(context.fullProps(), artifact);
     }
 
-    private String resolveUrl(Map<String,Object> props, Artifact artifact) {
+    private String resolveUrl(Map<String, Object> props, Artifact artifact) {
         Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
         p.put("artifactoryHost", host);
 
