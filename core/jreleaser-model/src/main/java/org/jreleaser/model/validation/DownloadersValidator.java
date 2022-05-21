@@ -44,11 +44,18 @@ public abstract class DownloadersValidator extends Validator {
         validateScpDownloader(context, mode, errors);
         validateSftpDownloader(context, mode, errors);
 
-        if (!download.isEnabledSet()) {
-            download.setEnabled(!download.getActiveFtps().isEmpty() ||
+        boolean activeSet = download.isActiveSet();
+        if (mode.validateConfig()) {
+            download.resolveEnabled(context.getModel().getProject());
+        }
+
+        if (download.isEnabled()) {
+            boolean enabled = !download.getActiveFtps().isEmpty() ||
                 !download.getActiveHttps().isEmpty() ||
                 !download.getActiveScps().isEmpty() ||
-                !download.getActiveSftps().isEmpty());
+                !download.getActiveSftps().isEmpty();
+
+            if (!activeSet && !enabled) download.disable();
         }
     }
 }

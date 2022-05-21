@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Download
@@ -29,9 +30,12 @@ import org.jreleaser.gradle.plugin.dsl.FtpDownloader
 import org.jreleaser.gradle.plugin.dsl.HttpDownloader
 import org.jreleaser.gradle.plugin.dsl.ScpDownloader
 import org.jreleaser.gradle.plugin.dsl.SftpDownloader
+import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -40,7 +44,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 class DownloadImpl implements Download {
-    final Property<Boolean> enabled
+    final Property<Active> active
     final NamedDomainObjectContainer<FtpDownloader> ftp
     final NamedDomainObjectContainer<HttpDownloader> http
     final NamedDomainObjectContainer<ScpDownloader> scp
@@ -48,7 +52,7 @@ class DownloadImpl implements Download {
 
     @Inject
     DownloadImpl(ObjectFactory objects) {
-        enabled = objects.property(Boolean).convention(true)
+        active = objects.property(Active).convention(Providers.notDefined())
 
         ftp = objects.domainObjectContainer(FtpDownloader, new NamedDomainObjectFactory<FtpDownloader>() {
             @Override
@@ -85,6 +89,13 @@ class DownloadImpl implements Download {
                 return h
             }
         })
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
     }
 
     @Override
@@ -130,6 +141,7 @@ class DownloadImpl implements Download {
     @CompileDynamic
     org.jreleaser.model.Download toModel() {
         org.jreleaser.model.Download download = new org.jreleaser.model.Download()
+        if (active.present) download.active = active.get()
 
         ftp.each { download.addFtp(((FtpDownloaderImpl) it).toModel()) }
         http.each { download.addHttp(((HttpDownloaderImpl) it).toModel()) }

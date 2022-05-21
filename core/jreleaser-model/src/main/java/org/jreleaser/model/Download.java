@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -31,14 +33,18 @@ import static java.util.stream.Collectors.toList;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class Download implements Domain, EnabledAware {
+public class Download implements Domain, Activatable {
     private final Map<String, FtpDownloader> ftp = new LinkedHashMap<>();
     private final Map<String, HttpDownloader> http = new LinkedHashMap<>();
     private final Map<String, ScpDownloader> scp = new LinkedHashMap<>();
     private final Map<String, SftpDownloader> sftp = new LinkedHashMap<>();
-    private Boolean enabled;
+
+    private Active active;
+    @JsonIgnore
+    private boolean enabled = true;
 
     void setAll(Download download) {
+        this.active = download.active;
         this.enabled = download.enabled;
         setFtp(download.ftp);
         setHttp(download.http);
@@ -48,17 +54,40 @@ public class Download implements Domain, EnabledAware {
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return enabled;
+    }
+
+    public void disable() {
+        active = Active.NEVER;
+        enabled = false;
+    }
+
+    public boolean resolveEnabled(Project project) {
+        if (null == active) {
+            active = Active.ALWAYS;
+        }
+        enabled = active.check(project);
+        return enabled;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public void setActive(String str) {
+        this.active = Active.of(str);
+    }
+
+    @Override
+    public boolean isActiveSet() {
+        return active != null;
     }
 
     public List<FtpDownloader> getActiveFtps() {
@@ -140,7 +169,8 @@ public class Download implements Domain, EnabledAware {
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", isEnabled());
+        map.put("enabled", enabled);
+        map.put("active", active);
 
         List<Map<String, Object>> ftp = this.ftp.values()
             .stream()

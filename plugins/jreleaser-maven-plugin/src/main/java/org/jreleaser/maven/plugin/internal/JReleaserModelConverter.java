@@ -601,13 +601,13 @@ public final class JReleaserModelConverter {
     }
 
     private static org.jreleaser.model.Download convertDownload(Download download) {
-        org.jreleaser.model.Download u = new org.jreleaser.model.Download();
-        if (download.isEnabledSet()) u.setEnabled(download.isEnabled());
-        u.setFtp(convertFtpDownloader(download.getFtp()));
-        u.setHttp(convertHttpDownloader(download.getHttp()));
-        u.setScp(convertScpDownloader(download.getScp()));
-        u.setSftp(convertSftpDownloader(download.getSftp()));
-        return u;
+        org.jreleaser.model.Download d = new org.jreleaser.model.Download();
+        d.setActive(tr(download.resolveActive()));
+        d.setFtp(convertFtpDownloader(download.getFtp()));
+        d.setHttp(convertHttpDownloader(download.getHttp()));
+        d.setScp(convertScpDownloader(download.getScp()));
+        d.setSftp(convertSftpDownloader(download.getSftp()));
+        return d;
     }
 
     private static Map<String, org.jreleaser.model.FtpDownloader> convertFtpDownloader(Map<String, FtpDownloader> ftp) {

@@ -24,34 +24,34 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class Download implements EnabledAware {
+public class Download implements Activatable {
     private final Map<String, FtpDownloader> ftp = new LinkedHashMap<>();
     private final Map<String, HttpDownloader> http = new LinkedHashMap<>();
     private final Map<String, ScpDownloader> scp = new LinkedHashMap<>();
     private final Map<String, SftpDownloader> sftp = new LinkedHashMap<>();
-    private Boolean enabled;
+    private Active active;
 
-    void setAll(Download upload) {
-        this.enabled = upload.enabled;
-        setFtp(upload.ftp);
-        setHttp(upload.http);
-        setScp(upload.scp);
-        setSftp(upload.sftp);
+    void setAll(Download download) {
+        this.active = download.active;
+        setFtp(download.ftp);
+        setHttp(download.http);
+        setScp(download.scp);
+        setSftp(download.sftp);
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled != null && enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public String resolveActive() {
+        return active != null ? active.name() : null;
     }
 
     public Map<String, FtpDownloader> getFtp() {

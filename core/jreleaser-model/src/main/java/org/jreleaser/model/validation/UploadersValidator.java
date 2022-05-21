@@ -45,9 +45,9 @@ public abstract class UploadersValidator extends Validator {
         validateSftpUploader(context, mode, errors);
 
         boolean activeSet = upload.isActiveSet();
-        System.out.println(upload.getActive());
-        System.out.println(upload.isActiveSet());
-        upload.resolveEnabled(context.getModel().getProject());
+        if (mode.validateConfig()) {
+            upload.resolveEnabled(context.getModel().getProject());
+        }
 
         if (mode.validateConfig() && upload.isEnabled()) {
             boolean enabled = !upload.getActiveArtifactories().isEmpty() ||
@@ -57,10 +57,7 @@ public abstract class UploadersValidator extends Validator {
                 !upload.getActiveScps().isEmpty() ||
                 !upload.getActiveSftps().isEmpty();
 
-            if (!activeSet) {
-                if (!enabled) upload.disable();
-            }
+            if (!activeSet && !enabled) upload.disable();
         }
-        System.out.println(upload.getActive());
     }
 }
