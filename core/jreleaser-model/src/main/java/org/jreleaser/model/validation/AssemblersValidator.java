@@ -76,15 +76,22 @@ public abstract class AssemblersValidator extends Validator {
         byDistributionName.forEach((name, types) -> {
             if (types.size() > 1) {
                 errors.configuration(RB.$("validation_multiple_assemblers", "distribution." + name, types));
-                assemble.setEnabled(false);
+                assemble.disable();
             }
         });
 
-        if (!assemble.isEnabledSet()) {
-            assemble.setEnabled(!assemble.getActiveArchives().isEmpty() ||
+        boolean activeSet = assemble.isActiveSet();
+        if (mode.validateConfig()) {
+            assemble.resolveEnabled(context.getModel().getProject());
+        }
+
+        if (assemble.isEnabled()) {
+            boolean enabled = !assemble.getActiveArchives().isEmpty() ||
                 !assemble.getActiveJlinks().isEmpty() ||
                 !assemble.getActiveJpackages().isEmpty() ||
-                !assemble.getActiveNativeImages().isEmpty());
+                !assemble.getActiveNativeImages().isEmpty();
+
+            if (!activeSet && !enabled) assemble.disable();
         }
     }
 

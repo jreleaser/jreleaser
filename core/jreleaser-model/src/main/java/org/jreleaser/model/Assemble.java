@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.JReleaserException;
 
 import java.util.ArrayList;
@@ -29,20 +30,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Assemble implements Domain, EnabledAware {
+public class Assemble implements Domain, Activatable {
     private final Map<String, Archive> archive = new LinkedHashMap<>();
     private final Map<String, Jlink> jlink = new LinkedHashMap<>();
     private final Map<String, Jpackage> jpackage = new LinkedHashMap<>();
     private final Map<String, NativeImage> nativeImage = new LinkedHashMap<>();
-    private Boolean enabled;
+
+    private Active active;
+    @JsonIgnore
+    private boolean enabled = true;
 
     void setAll(Assemble assemble) {
+        this.active = assemble.active;
         this.enabled = assemble.enabled;
         setArchive(assemble.archive);
         setJlink(assemble.jlink);
@@ -52,17 +58,48 @@ public class Assemble implements Domain, EnabledAware {
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return enabled;
+    }
+
+    public void disable() {
+        active = Active.NEVER;
+        enabled = false;
+    }
+
+    public boolean resolveEnabled(Project project) {
+        if (null == active) {
+            active = Active.ALWAYS;
+        }
+        enabled = active.check(project);
+        return enabled;
     }
 
     @Override
+    public Active getActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public void setActive(String str) {
+        this.active = Active.of(str);
+    }
+
+    @Override
+    public boolean isActiveSet() {
+        return active != null;
+    }
+
+    @Deprecated
     public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+        nag("assemble.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
+        if (null != enabled) {
+            this.active = enabled ? Active.ALWAYS : Active.NEVER;
+        }
     }
 
     public List<Archive> getActiveArchives() {
@@ -157,6 +194,7 @@ public class Assemble implements Domain, EnabledAware {
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
+        map.put("active", active);
 
         List<Map<String, Object>> archive = this.archive.values()
             .stream()

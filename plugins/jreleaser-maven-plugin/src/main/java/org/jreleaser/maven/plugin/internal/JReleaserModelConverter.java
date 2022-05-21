@@ -953,7 +953,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Assemble convertAssemble(Assemble assemble) {
         org.jreleaser.model.Assemble a = new org.jreleaser.model.Assemble();
-        if (assemble.isEnabledSet()) a.setEnabled(assemble.isEnabled());
+        a.setActive(tr(assemble.resolveActive()));
         a.setArchive(convertArchive(assemble.getArchive()));
         a.setJlink(convertJlink(assemble.getJlink()));
         a.setJpackage(convertJpackage(assemble.getJpackage()));

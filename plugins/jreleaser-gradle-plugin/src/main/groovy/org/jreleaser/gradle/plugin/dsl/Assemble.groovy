@@ -20,7 +20,6 @@ package org.jreleaser.gradle.plugin.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.provider.Property
 
 /**
  *
@@ -28,9 +27,7 @@ import org.gradle.api.provider.Property
  * @since 0.2.0
  */
 @CompileStatic
-interface Assemble {
-    Property<Boolean> getEnabled()
-
+interface Assemble extends Activatable {
     NamedDomainObjectContainer<Archive> getArchive()
 
     NamedDomainObjectContainer<Jlink> getJlink()

@@ -24,15 +24,15 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Assemble implements EnabledAware {
+public class Assemble implements Activatable {
     private final Map<String, Archive> archive = new LinkedHashMap<>();
     private final Map<String, Jlink> jlink = new LinkedHashMap<>();
     private final Map<String, Jpackage> jpackage = new LinkedHashMap<>();
     private final Map<String, NativeImage> nativeImage = new LinkedHashMap<>();
-    private Boolean enabled;
+    private Active active;
 
     void setAll(Assemble assemble) {
-        this.enabled = assemble.enabled;
+        this.active = assemble.active;
         setArchive(assemble.archive);
         setJlink(assemble.jlink);
         setJpackage(assemble.jpackage);
@@ -40,18 +40,18 @@ public class Assemble implements EnabledAware {
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled != null && enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public String resolveActive() {
+        return active != null ? active.name() : null;
     }
 
     public Map<String, Archive> getArchive() {

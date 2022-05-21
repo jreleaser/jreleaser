@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Archive
@@ -29,9 +30,12 @@ import org.jreleaser.gradle.plugin.dsl.Assemble
 import org.jreleaser.gradle.plugin.dsl.Jlink
 import org.jreleaser.gradle.plugin.dsl.Jpackage
 import org.jreleaser.gradle.plugin.dsl.NativeImage
+import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -40,7 +44,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 class AssembleImpl implements Assemble {
-    final Property<Boolean> enabled
+    final Property<Active> active
     final NamedDomainObjectContainer<Archive> archive
     final NamedDomainObjectContainer<Jlink> jlink
     final NamedDomainObjectContainer<Jpackage> jpackage
@@ -48,7 +52,7 @@ class AssembleImpl implements Assemble {
 
     @Inject
     AssembleImpl(ObjectFactory objects) {
-        enabled = objects.property(Boolean).convention(true)
+        active = objects.property(Active).convention(Providers.notDefined())
 
         archive = objects.domainObjectContainer(Archive, new NamedDomainObjectFactory<Archive>() {
             @Override
@@ -85,6 +89,13 @@ class AssembleImpl implements Assemble {
                 nativeImage
             }
         })
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
     }
 
     @Override
@@ -130,6 +141,7 @@ class AssembleImpl implements Assemble {
     @CompileDynamic
     org.jreleaser.model.Assemble toModel() {
         org.jreleaser.model.Assemble assemble = new org.jreleaser.model.Assemble()
+        if (active.present) assemble.active = active.get()
 
         archive.each { assemble.addArchive(((ArchiveImpl) it).toModel()) }
         jlink.each { assemble.addJlink(((JlinkImpl) it).toModel()) }
