@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.JReleaserException;
 
@@ -26,13 +27,14 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Announce implements Domain, EnabledAware {
+public class Announce implements Domain, Activatable {
     private final Article article = new Article();
     private final Discord discord = new Discord();
     private final Discussions discussions = new Discussions();
@@ -48,9 +50,13 @@ public class Announce implements Domain, EnabledAware {
     private final Twitter twitter = new Twitter();
     private final Webhooks webhooks = new Webhooks();
     private final Zulip zulip = new Zulip();
-    private Boolean enabled;
+
+    private Active active;
+    @JsonIgnore
+    private boolean enabled = true;
 
     void setAll(Announce announce) {
+        this.active = announce.active;
         this.enabled = announce.enabled;
         setArticle(announce.article);
         setDiscord(announce.discord);
@@ -71,17 +77,48 @@ public class Announce implements Domain, EnabledAware {
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return enabled;
+    }
+
+    public void disable() {
+        active = Active.NEVER;
+        enabled = false;
+    }
+
+    public boolean resolveEnabled(Project project) {
+        if (null == active) {
+            active = Active.ALWAYS;
+        }
+        enabled = active.check(project);
+        return enabled;
     }
 
     @Override
+    public Active getActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public void setActive(String str) {
+        this.active = Active.of(str);
+    }
+
+    @Override
+    public boolean isActiveSet() {
+        return active != null;
+    }
+
+    @Deprecated
     public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+        nag("announce.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
+        if (null != enabled) {
+            this.active = enabled ? Active.ALWAYS : Active.NEVER;
+        }
     }
 
     public Article getArticle() {
@@ -220,6 +257,7 @@ public class Announce implements Domain, EnabledAware {
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
+        map.put("active", active);
         map.putAll(article.asMap(full));
         map.putAll(discord.asMap(full));
         map.putAll(discussions.asMap(full));

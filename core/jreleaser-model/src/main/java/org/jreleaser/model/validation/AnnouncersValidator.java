@@ -66,8 +66,13 @@ public abstract class AnnouncersValidator extends Validator {
         validateWebhooks(context, announce.getConfiguredWebhooks(), errors);
         validateZulip(context, announce.getZulip(), errors);
 
-        if (!announce.isEnabledSet()) {
-            announce.setEnabled(announce.getArticle().isEnabled() ||
+        boolean activeSet = announce.isActiveSet();
+        if (mode.validateConfig()) {
+            announce.resolveEnabled(context.getModel().getProject());
+        }
+
+        if (announce.isEnabled()) {
+            boolean enabled = announce.getArticle().isEnabled() ||
                 announce.getDiscord().isEnabled() ||
                 announce.getDiscussions().isEnabled() ||
                 announce.getGitter().isEnabled() ||
@@ -81,7 +86,9 @@ public abstract class AnnouncersValidator extends Validator {
                 announce.getTelegram().isEnabled() ||
                 announce.getTwitter().isEnabled() ||
                 announce.getConfiguredWebhooks().isEnabled() ||
-                announce.getZulip().isEnabled());
+                announce.getZulip().isEnabled();
+
+            if (!activeSet && !enabled) announce.disable();
         }
     }
 }

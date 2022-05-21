@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Announce implements EnabledAware {
+public class Announce implements Activatable {
     private final Article article = new Article();
     private final Discord discord = new Discord();
     private final Discussions discussions = new Discussions();
@@ -40,10 +40,10 @@ public class Announce implements EnabledAware {
     private final Twitter twitter = new Twitter();
     private final Map<String, Webhook> webhooks = new LinkedHashMap<>();
     private final Zulip zulip = new Zulip();
-    private Boolean enabled;
+    private Active active;
 
     void setAll(Announce announce) {
-        this.enabled = announce.enabled;
+        this.active = announce.active;
         setArticle(announce.article);
         setDiscord(announce.discord);
         setDiscussions(announce.discussions);
@@ -61,18 +61,18 @@ public class Announce implements EnabledAware {
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled != null && enabled;
+    public Active getActive() {
+        return active;
     }
 
     @Override
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setActive(Active active) {
+        this.active = active;
     }
 
     @Override
-    public boolean isEnabledSet() {
-        return enabled != null;
+    public String resolveActive() {
+        return active != null ? active.name() : null;
     }
 
     public Article getArticle() {

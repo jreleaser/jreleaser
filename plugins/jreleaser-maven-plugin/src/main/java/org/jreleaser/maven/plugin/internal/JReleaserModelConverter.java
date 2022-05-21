@@ -738,7 +738,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Announce convertAnnounce(Announce announce) {
         org.jreleaser.model.Announce a = new org.jreleaser.model.Announce();
-        if (announce.isEnabledSet()) a.setEnabled(announce.isEnabled());
+        a.setActive(tr(announce.resolveActive()));
         if (announce.getArticle().isSet()) a.setArticle(convertArticle(announce.getArticle()));
         if (announce.getDiscord().isSet()) a.setDiscord(convertDiscord(announce.getDiscord()));
         if (announce.getDiscussions().isSet()) a.setDiscussions(convertDiscussions(announce.getDiscussions()));

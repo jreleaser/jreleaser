@@ -40,9 +40,12 @@ import org.jreleaser.gradle.plugin.dsl.Telegram
 import org.jreleaser.gradle.plugin.dsl.Twitter
 import org.jreleaser.gradle.plugin.dsl.Webhook
 import org.jreleaser.gradle.plugin.dsl.Zulip
+import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -51,7 +54,7 @@ import javax.inject.Inject
  */
 @CompileStatic
 class AnnounceImpl implements Announce {
-    final Property<Boolean> enabled
+    final Property<Active> active
     final ArticleImpl article
     final DiscordImpl discord
     final DiscussionsImpl discussions
@@ -70,7 +73,7 @@ class AnnounceImpl implements Announce {
 
     @Inject
     AnnounceImpl(ObjectFactory objects) {
-        enabled = objects.property(Boolean).convention(Providers.notDefined())
+        active = objects.property(Active).convention(Providers.notDefined())
         article = objects.newInstance(ArticleImpl, objects)
         discord = objects.newInstance(DiscordImpl, objects)
         discussions = objects.newInstance(DiscussionsImpl, objects)
@@ -94,6 +97,13 @@ class AnnounceImpl implements Announce {
                 return webhook
             }
         })
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
     }
 
     @Override
@@ -248,7 +258,7 @@ class AnnounceImpl implements Announce {
 
     org.jreleaser.model.Announce toModel() {
         org.jreleaser.model.Announce announce = new org.jreleaser.model.Announce()
-        if (enabled.present) announce.enabled = enabled.get()
+        if (active.present) announce.active = active.get()
         if (article.isSet()) announce.article = article.toModel()
         if (discord.isSet()) announce.discord = discord.toModel()
         if (discussions.isSet()) announce.discussions = discussions.toModel()
