@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class Upx extends AbstractTool {
     public Upx(JReleaserContext context, String version) {
-        super(context, "upx", version);
+        super(context, "upx", version, false);
     }
 
     public void compress(Path parent, List<String> args) throws CommandException {

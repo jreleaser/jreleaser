@@ -40,7 +40,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public class Cosign extends AbstractTool {
     public Cosign(JReleaserContext context, String version) {
-        super(context, "cosign", version);
+        //Cosign outputs its version information on the err-channel
+        super(context, "cosign", version, true);
     }
 
     public boolean checkPassword(Path keyFile, byte[] password) {

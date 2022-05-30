@@ -32,12 +32,14 @@ public class AbstractTool {
     protected final JReleaserContext context;
     protected final DownloadableTool tool;
     protected final String name;
+    protected final boolean verifyErrorOutput;
 
-    public AbstractTool(JReleaserContext context, String name, String version) {
+    public AbstractTool(JReleaserContext context, String name, String version, boolean verifyErrorOutput) {
         requireNonBlank(version, "'version' must not be blank");
         this.name = requireNonBlank(name, "'name' must not be blank");
         this.context = context;
-        this.tool = new DownloadableTool(context.getLogger(), name, version, PlatformUtils.getCurrentFull());
+        this.verifyErrorOutput = verifyErrorOutput;
+        this.tool = new DownloadableTool(context.getLogger(), name, version, PlatformUtils.getCurrentFull(), true);
     }
 
     public boolean setup() throws ToolException {
