@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-21-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-22-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -36,6 +36,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://maarten.mulders.it/"><img src="https://avatars.githubusercontent.com/u/430114?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Maarten Mulders</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=mthmulders" title="Code">💻</a> <a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Amthmulders" title="Bug reports">🐛</a></td>
     <td align="center"><a href="http://michael-simons.eu"><img src="https://avatars.githubusercontent.com/u/526383?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Michael Simons</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Amichael-simons" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://shblue21.github.io/"><img src="https://avatars.githubusercontent.com/u/25363091?v=4?s=100" width="100px;" alt=""/><br /><sub><b>shblue21</b></sub></a><br /><a href="#translation-shblue21" title="Translation">🌍</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://codepitbull.de"><img src="https://avatars.githubusercontent.com/u/1409931?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jochen Mader</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=codepitbull" title="Code">💻</a></td>
   </tr>
 </table>
 
