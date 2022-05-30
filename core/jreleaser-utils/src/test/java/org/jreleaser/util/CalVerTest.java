@@ -64,8 +64,6 @@ public class CalVerTest {
     @MethodSource("version_comparison")
     public void testVersionComparison(String format, String input1, String input2) {
         // given:
-        System.out.println("input1 = " + input1);
-        System.out.println("input2 = " + input2);
         CalVer v1 = CalVer.of(format, input1);
         CalVer v2 = CalVer.of(format, input2);
 
