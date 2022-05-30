@@ -99,6 +99,10 @@ public class CommandExecutor {
         return executeCommandCapturing(createProcessExecutor(command), out);
     }
 
+    public int executeCommandCapturing(Command command, OutputStream out, OutputStream err) throws CommandException {
+        return executeCommandCapturing(createProcessExecutor(command), out, err);
+    }
+
     public int executeCommandCapturing(Path directory, Command command, OutputStream out) throws CommandException {
         return executeCommandCapturing(createProcessExecutor(command)
             .directory(directory.toFile()), out);
@@ -136,8 +140,12 @@ public class CommandExecutor {
     }
 
     private int executeCommandCapturing(ProcessExecutor processor, OutputStream out) throws CommandException {
+        return executeCommandCapturing(processor, out, null);
+    }
+
+    private int executeCommandCapturing(ProcessExecutor processor, OutputStream out, OutputStream err) throws CommandException {
         try {
-            ByteArrayOutputStream err = new ByteArrayOutputStream();
+            ByteArrayOutputStream errLocal = new ByteArrayOutputStream();
 
             int exitValue = processor
                 .redirectOutput(out)
@@ -146,7 +154,11 @@ public class CommandExecutor {
                 .getExitValue();
 
             if (!quiet) {
-                error(err);
+                error(errLocal);
+            }
+
+            if (err != null) {
+                err.write(errLocal.toByteArray());
             }
 
             return exitValue;
