@@ -34,6 +34,10 @@ public class AbstractTool {
     protected final String name;
     protected final boolean verifyErrorOutput;
 
+    public AbstractTool(JReleaserContext context, String name, String version) {
+        this(context, name, version, false);
+    }
+
     public AbstractTool(JReleaserContext context, String name, String version, boolean verifyErrorOutput) {
         requireNonBlank(version, "'version' must not be blank");
         this.name = requireNonBlank(name, "'name' must not be blank");
