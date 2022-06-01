@@ -45,7 +45,7 @@ import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Changelog implements Domain, EnabledAware {
+public class Changelog extends AbstractModelObject<Changelog> implements Domain, EnabledAware {
     private final Set<String> includeLabels = new LinkedHashSet<>();
     private final Set<String> excludeLabels = new LinkedHashSet<>();
     private final Set<Category> categories = new TreeSet<>(Category.ORDER);
@@ -64,21 +64,22 @@ public class Changelog implements Domain, EnabledAware {
     private String contentTemplate;
     private String preset;
 
-    void setAll(Changelog changelog) {
-        this.enabled = changelog.enabled;
-        this.links = changelog.links;
-        this.sort = changelog.sort;
-        this.external = changelog.external;
-        this.formatted = changelog.formatted;
-        this.format = changelog.format;
-        this.content = changelog.content;
-        this.contentTemplate = changelog.contentTemplate;
-        this.preset = changelog.preset;
-        setIncludeLabels(changelog.includeLabels);
-        setExcludeLabels(changelog.excludeLabels);
-        setCategories(changelog.categories);
-        setReplacers(changelog.replacers);
-        setLabelers(changelog.labelers);
+    @Override
+    public void merge(Changelog changelog) {
+        this.enabled = merge(this.enabled, changelog.enabled);
+        this.links = merge(this.links, changelog.links);
+        this.sort = merge(this.sort, changelog.sort);
+        this.external = merge(this.external, changelog.external);
+        this.formatted = merge(this.formatted, changelog.formatted);
+        this.format = merge(this.format, changelog.format);
+        this.content = merge(this.content, changelog.content);
+        this.contentTemplate = merge(this.contentTemplate, changelog.contentTemplate);
+        this.preset = merge(this.preset, changelog.preset);
+        setIncludeLabels(merge(this.includeLabels, changelog.includeLabels));
+        setExcludeLabels(merge(this.excludeLabels, changelog.excludeLabels));
+        setCategories(merge(this.categories, changelog.categories));
+        setReplacers(merge(this.replacers, changelog.replacers));
+        setLabelers(merge(this.labelers, changelog.labelers));
         setHide(changelog.hide);
         setContributors(changelog.contributors);
     }
@@ -247,7 +248,7 @@ public class Changelog implements Domain, EnabledAware {
     }
 
     public void setHide(Hide hide) {
-        this.hide.setAll(hide);
+        this.hide.merge(hide);
     }
 
     public Contributors getContributors() {
@@ -255,7 +256,7 @@ public class Changelog implements Domain, EnabledAware {
     }
 
     public void setContributors(Contributors contributors) {
-        this.contributors.setAll(contributors);
+        this.contributors.merge(contributors);
     }
 
     @Override
@@ -305,7 +306,7 @@ public class Changelog implements Domain, EnabledAware {
         ASC, DESC
     }
 
-    public static class Category implements Domain {
+    public static class Category extends AbstractModelObject<Category> implements Domain {
         public static Comparator<Category> ORDER = (o1, o2) -> {
             if (null == o1.getOrder()) return 1;
             if (null == o2.getOrder()) return -1;
@@ -317,12 +318,13 @@ public class Changelog implements Domain, EnabledAware {
         private String format;
         private Integer order;
 
-        void setAll(Category category) {
-            this.key = category.key;
-            this.title = category.title;
-            this.format = category.format;
-            this.order = category.order;
-            setLabels(category.labels);
+        @Override
+        public void merge(Category category) {
+            this.key = merge(this.key, category.key);
+            this.title = merge(this.title, category.title);
+            this.format = merge(this.format, category.format);
+            this.order = merge(this.order, category.order);
+            setLabels(merge(this.labels, category.labels));
         }
 
         public String getFormat() {
@@ -413,13 +415,14 @@ public class Changelog implements Domain, EnabledAware {
         }
     }
 
-    public static class Replacer implements Domain {
+    public static class Replacer extends AbstractModelObject<Replacer> implements Domain {
         private String search;
         private String replace = "";
 
-        void setAll(Replacer replacer) {
-            this.search = replacer.search;
-            this.replace = replacer.replace;
+        @Override
+        public void merge(Replacer replacer) {
+            this.search = merge(this.search, replacer.search);
+            this.replace = merge(this.replace, replacer.replace);
         }
 
         public String getSearch() {
@@ -447,7 +450,7 @@ public class Changelog implements Domain, EnabledAware {
         }
     }
 
-    public static class Labeler implements Domain {
+    public static class Labeler extends AbstractModelObject<Labeler> implements Domain {
         public static Comparator<Labeler> ORDER = (o1, o2) -> {
             if (null == o1.getOrder()) return 1;
             if (null == o2.getOrder()) return -1;
@@ -459,11 +462,12 @@ public class Changelog implements Domain, EnabledAware {
         private String body;
         private Integer order;
 
-        void setAll(Labeler labeler) {
-            this.label = labeler.label;
-            this.title = labeler.title;
-            this.body = labeler.body;
-            this.order = labeler.order;
+        @Override
+        public void merge(Labeler labeler) {
+            this.label = merge(this.label, labeler.label);
+            this.title = merge(this.title, labeler.title);
+            this.body = merge(this.body, labeler.body);
+            this.order = merge(this.order, labeler.order);
         }
 
         public String getLabel() {
@@ -523,13 +527,14 @@ public class Changelog implements Domain, EnabledAware {
         }
     }
 
-    public static class Contributors implements Domain {
+    public static class Contributors extends AbstractModelObject<Contributors> implements Domain {
         private Boolean enabled;
         private String format;
 
-        void setAll(Contributors contributor) {
-            this.enabled = contributor.enabled;
-            this.format = contributor.format;
+        @Override
+        public void merge(Contributors contributor) {
+            this.enabled = merge(this.enabled, contributor.enabled);
+            this.format = merge(this.format, contributor.format);
         }
 
         public boolean isEnabled() {
@@ -561,22 +566,23 @@ public class Changelog implements Domain, EnabledAware {
         }
     }
 
-    public static class Hide implements Domain {
+    public static class Hide extends AbstractModelObject<Hide> implements Domain {
         private final Set<String> categories = new LinkedHashSet<>();
         private final Set<String> contributors = new LinkedHashSet<>();
-        private boolean uncategorized;
+        private Boolean uncategorized;
 
-        void setAll(Hide hide) {
-            this.uncategorized = hide.uncategorized;
-            setCategories(hide.categories);
-            setContributors(hide.contributors);
+        @Override
+        public void merge(Hide hide) {
+            this.uncategorized = merge(this.uncategorized, hide.uncategorized);
+            setCategories(merge(this.categories, hide.categories));
+            setContributors(merge(this.contributors, hide.contributors));
         }
 
         public boolean isUncategorized() {
-            return uncategorized;
+            return uncategorized != null && uncategorized;
         }
 
-        public void setUncategorized(boolean uncategorized) {
+        public void setUncategorized(Boolean uncategorized) {
             this.uncategorized = uncategorized;
         }
 

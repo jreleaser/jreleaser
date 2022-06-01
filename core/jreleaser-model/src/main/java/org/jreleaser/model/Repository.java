@@ -21,7 +21,7 @@ package org.jreleaser.model;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public class Repository extends AbstractRepositoryTap {
+public class Repository extends AbstractRepositoryTap<Repository> {
     public Repository() {
         super("article", "article");
     }

@@ -44,7 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Chocolatey extends AbstractRepositoryPackager {
+public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
     public static final String CHOCOLATEY_API_KEY = "CHOCOLATEY_API_KEY";
     public static final String TYPE = "chocolatey";
     public static final String SKIP_CHOCOLATEY = "skipChocolatey";
@@ -75,16 +75,17 @@ public class Chocolatey extends AbstractRepositoryPackager {
         super(TYPE);
     }
 
-    void setAll(Chocolatey choco) {
-        super.setAll(choco);
-        this.packageName = choco.packageName;
-        this.packageVersion = choco.packageVersion;
-        this.username = choco.username;
-        this.apiKey = choco.apiKey;
-        this.title = choco.title;
-        this.iconUrl = choco.iconUrl;
-        this.source = choco.source;
-        this.remoteBuild = choco.remoteBuild;
+    @Override
+    public void merge(Chocolatey choco) {
+        super.merge(choco);
+        this.packageName = merge(this.packageName, choco.packageName);
+        this.packageVersion = merge(this.packageVersion, choco.packageVersion);
+        this.username = merge(this.username, choco.username);
+        this.apiKey = merge(this.apiKey, choco.apiKey);
+        this.title = merge(this.title, choco.title);
+        this.iconUrl = merge(this.iconUrl, choco.iconUrl);
+        this.source = merge(this.source, choco.source);
+        this.remoteBuild = merge(this.remoteBuild, choco.remoteBuild);
         setBucket(choco.bucket);
     }
 
@@ -165,7 +166,7 @@ public class Chocolatey extends AbstractRepositoryPackager {
     }
 
     public void setBucket(ChocolateyBucket bucket) {
-        this.bucket.setAll(bucket);
+        this.bucket.merge(bucket);
     }
 
     @Override
@@ -207,7 +208,7 @@ public class Chocolatey extends AbstractRepositoryPackager {
         return isFalse(artifact.getExtraProperties().get(SKIP_CHOCOLATEY));
     }
 
-    public static class ChocolateyBucket extends AbstractRepositoryTap {
+    public static class ChocolateyBucket extends AbstractRepositoryTap<ChocolateyBucket> {
         public ChocolateyBucket() {
             super("chocolatey", "chocolatey-bucket");
         }

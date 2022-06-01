@@ -26,7 +26,7 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public class Article extends AbstractAnnouncer implements CommitAuthorAware {
+public class Article extends AbstractAnnouncer<Article> implements CommitAuthorAware {
     public static final String NAME = "article";
     private final Set<Artifact> files = new LinkedHashSet<>();
     private final CommitAuthor commitAuthor = new CommitAuthor();
@@ -38,10 +38,11 @@ public class Article extends AbstractAnnouncer implements CommitAuthorAware {
         super(NAME);
     }
 
-    void setAll(Article article) {
-        super.setAll(article);
-        this.templateDirectory = article.templateDirectory;
-        setFiles(article.files);
+    @Override
+    public void merge(Article article) {
+        super.merge(article);
+        this.templateDirectory = merge(this.templateDirectory, article.templateDirectory);
+        setFiles(merge(this.files, article.files));
         setCommitAuthor(article.commitAuthor);
         setRepository(article.repository);
     }
@@ -72,7 +73,7 @@ public class Article extends AbstractAnnouncer implements CommitAuthorAware {
 
     @Override
     public void setCommitAuthor(CommitAuthor commitAuthor) {
-        this.commitAuthor.setAll(commitAuthor);
+        this.commitAuthor.merge(commitAuthor);
     }
 
     public Repository getRepository() {
@@ -80,7 +81,7 @@ public class Article extends AbstractAnnouncer implements CommitAuthorAware {
     }
 
     public void setRepository(Repository repository) {
-        this.repository.setAll(repository);
+        this.repository.merge(repository);
     }
 
     public String getTemplateDirectory() {

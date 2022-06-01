@@ -58,7 +58,7 @@ public abstract class ArchiveValidator extends Validator {
             return;
         }
 
-        Platform platform = archive.getPlatform().merge(context.getModel().getPlatform());
+        Platform platform = archive.getPlatform().mergeValues(context.getModel().getPlatform());
         archive.setPlatform(platform);
 
         if (null == archive.getDistributionType()) {

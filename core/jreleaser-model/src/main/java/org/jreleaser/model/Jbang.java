@@ -30,7 +30,7 @@ import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Jbang extends AbstractRepositoryPackager {
+public class Jbang extends AbstractRepositoryPackager<Jbang> {
     public static final String TYPE = "jbang";
 
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
@@ -48,9 +48,10 @@ public class Jbang extends AbstractRepositoryPackager {
         super(TYPE);
     }
 
-    void setAll(Jbang jbang) {
-        super.setAll(jbang);
-        this.alias = jbang.alias;
+    @Override
+    public void merge(Jbang jbang) {
+        super.merge(jbang);
+        this.alias = merge(this.alias, jbang.alias);
         setCatalog(jbang.catalog);
     }
 
@@ -67,7 +68,7 @@ public class Jbang extends AbstractRepositoryPackager {
     }
 
     public void setCatalog(JbangCatalog tap) {
-        this.catalog.setAll(tap);
+        this.catalog.merge(tap);
     }
 
     @Override
@@ -107,7 +108,7 @@ public class Jbang extends AbstractRepositoryPackager {
         return true;
     }
 
-    public static class JbangCatalog extends AbstractRepositoryTap {
+    public static class JbangCatalog extends AbstractRepositoryTap<JbangCatalog> {
         public JbangCatalog() {
             super("jbang", "jbang-catalog");
         }

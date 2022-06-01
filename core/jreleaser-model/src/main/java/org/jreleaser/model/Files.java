@@ -31,7 +31,7 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Files implements Domain, Activatable {
+public class Files extends AbstractModelObject<Files> implements Domain, Activatable {
     private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final List<Glob> globs = new ArrayList<>();
     @JsonIgnore
@@ -42,11 +42,12 @@ public class Files implements Domain, Activatable {
     @JsonIgnore
     private boolean enabled;
 
-    void setAll(Files files) {
-        this.active = files.active;
-        this.enabled = files.enabled;
-        setArtifacts(files.artifacts);
-        setGlobs(files.globs);
+    @Override
+    public void merge(Files files) {
+        this.active = merge(this.active, files.active);
+        this.enabled = merge(this.enabled, files.enabled);
+        setArtifacts(merge(this.artifacts, files.artifacts));
+        setGlobs(merge(this.globs, files.globs));
     }
 
     @Override

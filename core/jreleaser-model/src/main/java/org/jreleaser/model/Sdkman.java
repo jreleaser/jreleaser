@@ -40,7 +40,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public class Sdkman extends AbstractPackager implements TimeoutAware {
+public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
     public static final String SDKMAN_CONSUMER_KEY = "SDKMAN_CONSUMER_KEY";
     public static final String SDKMAN_CONSUMER_TOKEN = "SDKMAN_CONSUMER_TOKEN";
     public static final String TYPE = "sdkman";
@@ -69,16 +69,17 @@ public class Sdkman extends AbstractPackager implements TimeoutAware {
         super(TYPE);
     }
 
-    void setAll(Sdkman sdkman) {
-        super.setAll(sdkman);
-        this.candidate = sdkman.candidate;
-        this.releaseNotesUrl = sdkman.releaseNotesUrl;
-        this.command = sdkman.command;
-        this.consumerKey = sdkman.consumerKey;
-        this.consumerToken = sdkman.consumerToken;
-        this.connectTimeout = sdkman.connectTimeout;
-        this.readTimeout = sdkman.readTimeout;
-        this.published = sdkman.published;
+    @Override
+    public void merge(Sdkman sdkman) {
+        super.merge(sdkman);
+        this.candidate = merge(this.candidate, sdkman.candidate);
+        this.releaseNotesUrl = merge(this.releaseNotesUrl, sdkman.releaseNotesUrl);
+        this.command = merge(this.command, sdkman.command);
+        this.consumerKey = merge(this.consumerKey, sdkman.consumerKey);
+        this.consumerToken = merge(this.consumerToken, sdkman.consumerToken);
+        this.connectTimeout = merge(this.connectTimeout, sdkman.connectTimeout);
+        this.readTimeout = merge(this.readTimeout, sdkman.readTimeout);
+        this.published = merge(this.published, sdkman.published);
     }
 
     public String getResolvedConsumerKey() {

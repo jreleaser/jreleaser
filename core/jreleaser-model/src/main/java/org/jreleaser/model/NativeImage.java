@@ -36,7 +36,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class NativeImage extends AbstractJavaAssembler {
+public class NativeImage extends AbstractJavaAssembler<NativeImage> {
     public static final String TYPE = "native-image";
 
     private final List<String> args = new ArrayList<>();
@@ -60,14 +60,15 @@ public class NativeImage extends AbstractJavaAssembler {
         return Distribution.DistributionType.NATIVE_IMAGE;
     }
 
-    void setAll(NativeImage nativeImage) {
-        super.setAll(nativeImage);
-        this.imageName = nativeImage.imageName;
-        this.imageNameTransform = nativeImage.imageNameTransform;
-        this.archiveFormat = nativeImage.archiveFormat;
+    @Override
+    public void merge(NativeImage nativeImage) {
+        super.merge(nativeImage);
+        this.imageName = merge(this.imageName, nativeImage.imageName);
+        this.imageNameTransform = merge(this.imageNameTransform, nativeImage.imageNameTransform);
+        this.archiveFormat = merge(this.archiveFormat, nativeImage.archiveFormat);
         setGraal(nativeImage.graal);
-        setGraalJdks(nativeImage.graalJdks);
-        setArgs(nativeImage.args);
+        setGraalJdks(merge(this.graalJdks, nativeImage.graalJdks));
+        setArgs(merge(this.args, nativeImage.args));
         setUpx(nativeImage.upx);
         setLinux(nativeImage.linux);
         setWindows(nativeImage.windows);
@@ -130,7 +131,7 @@ public class NativeImage extends AbstractJavaAssembler {
     }
 
     public void setGraal(Artifact graal) {
-        this.graal.setAll(graal);
+        this.graal.merge(graal);
     }
 
     public Set<Artifact> getGraalJdks() {
@@ -182,7 +183,7 @@ public class NativeImage extends AbstractJavaAssembler {
     }
 
     public void setUpx(Upx upx) {
-        this.upx.setAll(upx);
+        this.upx.merge(upx);
     }
 
     public Linux getLinux() {
@@ -190,7 +191,7 @@ public class NativeImage extends AbstractJavaAssembler {
     }
 
     public void setLinux(Linux linux) {
-        this.linux.setAll(linux);
+        this.linux.merge(linux);
     }
 
     public Windows getWindows() {
@@ -198,7 +199,7 @@ public class NativeImage extends AbstractJavaAssembler {
     }
 
     public void setWindows(Windows windows) {
-        this.windows.setAll(windows);
+        this.windows.merge(windows);
     }
 
     public Osx getOsx() {
@@ -206,7 +207,7 @@ public class NativeImage extends AbstractJavaAssembler {
     }
 
     public void setOsx(Osx osx) {
-        this.osx.setAll(osx);
+        this.osx.merge(osx);
     }
 
     @Override
@@ -239,7 +240,7 @@ public class NativeImage extends AbstractJavaAssembler {
         void addArgs(List<String> args);
     }
 
-    public static class Upx implements Domain, Activatable {
+    public static class Upx extends AbstractModelObject<Upx> implements Domain, Activatable {
         private final List<String> args = new ArrayList<>();
 
         @JsonIgnore
@@ -247,11 +248,12 @@ public class NativeImage extends AbstractJavaAssembler {
         private Active active;
         private String version;
 
-        void setAll(Upx upx) {
-            this.active = upx.active;
-            this.enabled = upx.enabled;
-            this.version = upx.version;
-            setArgs(upx.args);
+        @Override
+        public void merge(Upx upx) {
+            this.active = this.merge(this.active, upx.active);
+            this.enabled = this.merge(this.enabled, upx.enabled);
+            this.version = this.merge(this.version, upx.version);
+            setArgs(merge(this.args, upx.args));
         }
 
         @Override
@@ -332,16 +334,17 @@ public class NativeImage extends AbstractJavaAssembler {
         }
     }
 
-    private static abstract class AbstractPlatformCustomizer implements PlatformCustomizer {
-        private final List<String> args = new ArrayList<>();
-        private final String platform;
+    private static abstract class AbstractPlatformCustomizer<S extends AbstractPlatformCustomizer<S>> extends AbstractModelObject<S> implements PlatformCustomizer {
+        protected final List<String> args = new ArrayList<>();
+        protected final String platform;
 
         protected AbstractPlatformCustomizer(String platform) {
             this.platform = platform;
         }
 
-        void setAll(AbstractPlatformCustomizer customizer) {
-            setArgs(customizer.args);
+        @Override
+        public void merge(S customizer) {
+            setArgs(merge(this.args, customizer.args));
         }
 
         public List<String> getArgs() {
@@ -373,19 +376,19 @@ public class NativeImage extends AbstractJavaAssembler {
         }
     }
 
-    public static class Linux extends AbstractPlatformCustomizer {
+    public static class Linux extends AbstractPlatformCustomizer<Linux> {
         public Linux() {
             super("linux");
         }
     }
 
-    public static class Windows extends AbstractPlatformCustomizer {
+    public static class Windows extends AbstractPlatformCustomizer<Windows> {
         public Windows() {
             super("windows");
         }
     }
 
-    public static class Osx extends AbstractPlatformCustomizer {
+    public static class Osx extends AbstractPlatformCustomizer<Osx> {
         public Osx() {
             super("osx");
         }

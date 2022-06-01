@@ -59,7 +59,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Distribution extends Packagers implements ExtraProperties, Activatable {
+public class Distribution extends Packagers<Distribution> implements ExtraProperties, Activatable {
     public static final EnumSet<DistributionType> JAVA_DISTRIBUTION_TYPES = EnumSet.of(
         DistributionType.JAVA_BINARY,
         DistributionType.JLINK,
@@ -79,18 +79,19 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;
 
-    void setAll(Distribution distribution) {
-        super.setAll(distribution);
-        this.active = distribution.active;
-        this.enabled = distribution.enabled;
-        this.name = distribution.name;
-        this.type = distribution.type;
+    @Override
+    public void merge(Distribution distribution) {
+        super.merge(distribution);
+        this.active = merge(this.active, distribution.active);
+        this.enabled = merge(this.enabled, distribution.enabled);
+        this.name = merge(this.name, distribution.name);
+        this.type = merge(this.type, distribution.type);
         setExecutable(distribution.executable);
         setPlatform(distribution.platform);
         setJava(distribution.java);
-        setTags(distribution.tags);
-        setExtraProperties(distribution.extraProperties);
-        setArtifacts(distribution.artifacts);
+        setTags(merge(this.tags, distribution.tags));
+        setExtraProperties(merge(this.extraProperties, distribution.extraProperties));
+        setArtifacts(merge(this.artifacts, distribution.artifacts));
     }
 
     public Map<String, Object> props() {
@@ -171,7 +172,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     }
 
     public void setPlatform(Platform platform) {
-        this.platform.setAll(platform);
+        this.platform.mergeValues(platform);
     }
 
     @Override
@@ -204,7 +205,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     }
 
     public void setExecutable(Executable executable) {
-        this.executable.setAll(executable);
+        this.executable.merge(executable);
     }
 
     public Set<Artifact> getArtifacts() {
@@ -256,7 +257,7 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
     }
 
     public void setJava(Java java) {
-        this.java.setAll(java);
+        this.java.merge(java);
     }
 
     @Override
@@ -405,15 +406,16 @@ public class Distribution extends Packagers implements ExtraProperties, Activata
         }
     }
 
-    public static class Executable implements Domain {
+    public static class Executable extends AbstractModelObject<Executable> implements Domain {
         private String name;
         private String unixExtension;
         private String windowsExtension = "bat";
 
-        void setAll(Distribution.Executable executable) {
-            this.name = executable.name;
-            this.unixExtension = executable.unixExtension;
-            this.windowsExtension = executable.windowsExtension;
+        @Override
+        public void merge(Distribution.Executable executable) {
+            this.name = this.merge(this.name, executable.name);
+            this.unixExtension = this.merge(this.unixExtension, executable.unixExtension);
+            this.windowsExtension = this.merge(this.windowsExtension, executable.windowsExtension);
         }
 
         public String resolveExecutable(String platform) {

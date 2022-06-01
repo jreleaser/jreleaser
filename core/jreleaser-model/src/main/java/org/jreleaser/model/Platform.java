@@ -26,11 +26,12 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public class Platform implements Domain {
+public class Platform extends AbstractModelObject<Platform> implements Domain {
     private final Map<String, String> replacements = new LinkedHashMap<>();
 
-    void setAll(Platform platform) {
-        setReplacements(platform.replacements);
+    @Override
+    public void merge(Platform platform) {
+        setReplacements(merge(this.replacements, platform.replacements));
     }
 
     public boolean isSet() {
@@ -74,7 +75,7 @@ public class Platform implements Domain {
         return String.join("-", parts);
     }
 
-    public Platform merge(Platform other) {
+    public Platform mergeValues(Platform other) {
         Platform merged = new Platform();
 
         Map<String, String> full = new LinkedHashMap<>();

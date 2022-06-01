@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Assemble implements Domain, Activatable {
+public class Assemble extends AbstractModelObject<Assemble> implements Domain, Activatable {
     private final Map<String, Archive> archive = new LinkedHashMap<>();
     private final Map<String, Jlink> jlink = new LinkedHashMap<>();
     private final Map<String, Jpackage> jpackage = new LinkedHashMap<>();
@@ -48,18 +48,27 @@ public class Assemble implements Domain, Activatable {
     @JsonIgnore
     private boolean enabled = true;
 
-    void setAll(Assemble assemble) {
-        this.active = assemble.active;
-        this.enabled = assemble.enabled;
-        setArchive(assemble.archive);
-        setJlink(assemble.jlink);
-        setJpackage(assemble.jpackage);
-        setNativeImage(assemble.nativeImage);
+    @Override
+    public void merge(Assemble assemble) {
+        this.active = merge(this.active, assemble.active);
+        this.enabled = merge(this.enabled, assemble.enabled);
+        setArchive(mergeModel(this.archive, assemble.archive));
+        setJlink(mergeModel(this.jlink, assemble.jlink));
+        setJpackage(mergeModel(this.jpackage, assemble.jpackage));
+        setNativeImage(mergeModel(this.nativeImage, assemble.nativeImage));
     }
 
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Deprecated
+    public void setEnabled(Boolean enabled) {
+        nag("assemble.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
+        if (null != enabled) {
+            this.active = enabled ? Active.ALWAYS : Active.NEVER;
+        }
     }
 
     public void disable() {
@@ -93,14 +102,6 @@ public class Assemble implements Domain, Activatable {
     @Override
     public boolean isActiveSet() {
         return active != null;
-    }
-
-    @Deprecated
-    public void setEnabled(Boolean enabled) {
-        nag("assemble.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
-        if (null != enabled) {
-            this.active = enabled ? Active.ALWAYS : Active.NEVER;
-        }
     }
 
     public List<Archive> getActiveArchives() {
@@ -155,23 +156,23 @@ public class Assemble implements Domain, Activatable {
 
     public List<Jpackage> getActiveJpackages() {
         return jpackage.values().stream()
-        .filter(Jpackage::isEnabled)
-        .collect(Collectors.toList());
+            .filter(Jpackage::isEnabled)
+            .collect(Collectors.toList());
     }
-    
+
     public Map<String, Jpackage> getJpackage() {
         return jpackage;
     }
-    
+
     public void setJpackage(Map<String, Jpackage> jpackage) {
         this.jpackage.clear();
         this.jpackage.putAll(jpackage);
     }
-    
+
     public void addJpackage(Jpackage jpackage) {
         this.jpackage.put(jpackage.getName(), jpackage);
     }
-    
+
     public List<NativeImage> getActiveNativeImages() {
         return nativeImage.values().stream()
             .filter(NativeImage::isEnabled)

@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public abstract class AbstractTemplatePackager extends AbstractPackager implements TemplatePackager {
+public abstract class AbstractTemplatePackager<S extends AbstractTemplatePackager<S>> extends AbstractPackager<S> implements TemplatePackager {
     protected final List<String> skipTemplates = new ArrayList<>();
     protected String templateDirectory;
 
@@ -35,10 +35,11 @@ public abstract class AbstractTemplatePackager extends AbstractPackager implemen
         super(type);
     }
 
-    void setAll(AbstractTemplatePackager packager) {
-        super.setAll(packager);
-        this.templateDirectory = packager.templateDirectory;
-        setSkipTemplates(packager.skipTemplates);
+    @Override
+    public void merge(S packager) {
+        super.merge(packager);
+        this.templateDirectory = merge(this.templateDirectory, packager.templateDirectory);
+        setSkipTemplates(merge(this.skipTemplates, packager.skipTemplates));
     }
 
     @Override

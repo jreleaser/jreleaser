@@ -257,7 +257,7 @@ public class JReleaserContext {
                 })
                 .findFirst();
             if (artifact.isPresent()) {
-                artifact.get().merge(incoming);
+                artifact.get().mergeWith(incoming);
             } else {
                 distribution.addArtifact(incoming);
             }

@@ -70,7 +70,7 @@ public abstract class JlinkValidator extends Validator {
             return;
         }
 
-        Platform platform = jlink.getPlatform().merge(context.getModel().getPlatform());
+        Platform platform = jlink.getPlatform().mergeValues(context.getModel().getPlatform());
         jlink.setPlatform(platform);
 
         if (isBlank(jlink.getImageName())) {

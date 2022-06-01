@@ -18,7 +18,6 @@
 package org.jreleaser.model.downloader.spi;
 
 import org.jreleaser.model.Downloader;
-import org.jreleaser.model.downloader.spi.DownloadException;
 
 /**
  * @author Andres Almiray

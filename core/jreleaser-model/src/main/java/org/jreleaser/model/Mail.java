@@ -39,7 +39,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Mail extends AbstractAnnouncer {
+public class Mail extends AbstractAnnouncer<Mail> {
     public static final String NAME = "mail";
     public static final String MAIL_PASSWORD = "MAIL_PASSWORD";
 
@@ -64,23 +64,24 @@ public class Mail extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(Mail mail) {
-        super.setAll(mail);
-        this.transport = mail.transport;
-        this.host = mail.host;
-        this.port = mail.port;
-        this.auth = mail.auth;
-        this.username = mail.username;
-        this.password = mail.password;
-        this.from = mail.from;
-        this.to = mail.to;
-        this.cc = mail.cc;
-        this.bcc = mail.bcc;
-        this.subject = mail.subject;
-        this.message = mail.message;
-        this.messageTemplate = mail.messageTemplate;
-        this.mimeType = mail.mimeType;
-        setProperties(mail.properties);
+    @Override
+    public void merge(Mail mail) {
+        super.merge(mail);
+        this.transport = merge(this.transport, mail.transport);
+        this.host = merge(this.host, mail.host);
+        this.port = merge(this.port, mail.port);
+        this.auth = merge(this.auth, mail.auth);
+        this.username = merge(this.username, mail.username);
+        this.password = merge(this.password, mail.password);
+        this.from = merge(this.from, mail.from);
+        this.to = merge(this.to, mail.to);
+        this.cc = merge(this.cc, mail.cc);
+        this.bcc = merge(this.bcc, mail.bcc);
+        this.subject = merge(this.subject, mail.subject);
+        this.message = merge(this.message, mail.message);
+        this.messageTemplate = merge(this.messageTemplate, mail.messageTemplate);
+        this.mimeType = merge(this.mimeType, mail.mimeType);
+        setProperties(merge(this.properties, mail.properties));
     }
 
     public String getResolvedSubject(JReleaserContext context) {

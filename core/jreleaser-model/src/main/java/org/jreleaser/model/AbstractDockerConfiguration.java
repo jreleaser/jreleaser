@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public abstract class AbstractDockerConfiguration implements DockerConfiguration {
+public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfiguration<S>> extends AbstractModelObject<S> implements DockerConfiguration {
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected final Map<String, String> labels = new LinkedHashMap<>();
     protected final Set<String> imageNames = new LinkedHashSet<>();
@@ -52,20 +52,21 @@ public abstract class AbstractDockerConfiguration implements DockerConfiguration
 
     protected String baseImage;
 
-    void setAll(AbstractDockerConfiguration docker) {
-        this.active = docker.active;
-        this.enabled = docker.enabled;
-        this.templateDirectory = docker.templateDirectory;
-        setSkipTemplates(docker.skipTemplates);
-        setExtraProperties(docker.extraProperties);
-        this.baseImage = docker.baseImage;
-        this.useLocalArtifact = docker.useLocalArtifact;
-        setImageNames(docker.imageNames);
-        setBuildArgs(docker.buildArgs);
-        setPreCommands(docker.preCommands);
-        setPostCommands(docker.postCommands);
-        setLabels(docker.labels);
-        setRegistries(docker.registries);
+    @Override
+    public void merge(S docker) {
+        this.active = merge(this.active, docker.active);
+        this.enabled = merge(this.enabled, docker.enabled);
+        this.templateDirectory = merge(this.templateDirectory, docker.templateDirectory);
+        setSkipTemplates(merge(this.skipTemplates, docker.skipTemplates));
+        setExtraProperties(merge(this.extraProperties, docker.extraProperties));
+        this.baseImage = merge(this.baseImage, docker.baseImage);
+        this.useLocalArtifact = merge(this.useLocalArtifact, docker.useLocalArtifact);
+        setImageNames(merge(this.imageNames, docker.imageNames));
+        setBuildArgs(merge(this.buildArgs, docker.buildArgs));
+        setPreCommands(merge(this.preCommands, docker.preCommands));
+        setPostCommands(merge(this.postCommands, docker.postCommands));
+        setLabels(merge(this.labels, docker.labels));
+        setRegistries(merge(this.registries, docker.registries));
     }
 
     @Override

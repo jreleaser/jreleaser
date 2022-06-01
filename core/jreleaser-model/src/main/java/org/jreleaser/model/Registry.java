@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Registry implements Domain, Comparable<Registry> {
+public class Registry extends AbstractModelObject<Registry> implements Domain, Comparable<Registry> {
     public static final String DEFAULT_NAME = "DEFAULT";
 
     protected String server;
@@ -40,12 +40,13 @@ public class Registry implements Domain, Comparable<Registry> {
     protected String username;
     protected String password;
 
-    void setAll(Registry registry) {
-        this.server = registry.server;
-        this.serverName = registry.serverName;
-        this.repositoryName = registry.repositoryName;
-        this.username = registry.username;
-        this.password = registry.password;
+    @Override
+    public void merge(Registry registry) {
+        this.server = merge(this.server, registry.server);
+        this.serverName = merge(this.serverName, registry.serverName);
+        this.repositoryName = merge(this.repositoryName, registry.repositoryName);
+        this.username = merge(this.username, registry.username);
+        this.password = merge(this.password, registry.password);
     }
 
     public String getResolvedPassword() {

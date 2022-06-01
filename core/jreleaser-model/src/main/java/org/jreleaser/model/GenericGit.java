@@ -21,15 +21,11 @@ package org.jreleaser.model;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public class GenericGit extends GitService {
+public class GenericGit extends GitService<GenericGit> {
     public static final String NAME = "generic";
 
     public GenericGit() {
         super(NAME, false);
-    }
-
-    void setAll(GenericGit service) {
-        super.setAll(service);
     }
 
     @Override

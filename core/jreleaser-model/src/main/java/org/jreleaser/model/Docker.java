@@ -46,7 +46,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Docker extends AbstractDockerConfiguration implements RepositoryPackager {
+public class Docker extends AbstractDockerConfiguration<Docker> implements RepositoryPackager {
     public static final String SKIP_DOCKER = "skipDocker";
 
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
@@ -69,12 +69,13 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryPac
     @JsonIgnore
     private boolean failed;
 
-    void setAll(Docker docker) {
-        super.setAll(docker);
-        this.continueOnError = docker.continueOnError;
-        this.downloadUrl = docker.downloadUrl;
+    @Override
+    public void merge(Docker docker) {
+        super.merge(docker);
+        this.continueOnError = merge(this.continueOnError, docker.continueOnError);
+        this.downloadUrl = merge(this.downloadUrl, docker.downloadUrl);
         this.failed = docker.failed;
-        setSpecs(docker.specs);
+        setSpecs(mergeModel(this.specs, docker.specs));
         setCommitAuthor(docker.commitAuthor);
         setRepository(docker.repository);
     }
@@ -167,7 +168,7 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryPac
 
     @Override
     public void setCommitAuthor(CommitAuthor commitAuthor) {
-        this.commitAuthor.setAll(commitAuthor);
+        this.commitAuthor.merge(commitAuthor);
     }
 
     public List<DockerSpec> getActiveSpecs() {
@@ -221,7 +222,7 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryPac
     }
 
     public void setRepository(DockerRepository repository) {
-        this.repository.setAll(repository);
+        this.repository.merge(repository);
     }
 
     @Override
@@ -229,7 +230,7 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryPac
         return repository;
     }
 
-    public static class DockerRepository extends AbstractRepositoryTap {
+    public static class DockerRepository extends AbstractRepositoryTap<DockerRepository> {
         private Boolean versionedSubfolders;
 
         public DockerRepository() {
@@ -237,9 +238,9 @@ public class Docker extends AbstractDockerConfiguration implements RepositoryPac
         }
 
         @Override
-        void setAll(AbstractRepositoryTap tap) {
-            super.setAll(tap);
-            this.versionedSubfolders = ((DockerRepository) tap).versionedSubfolders;
+        public void merge(DockerRepository tap) {
+            super.merge(tap);
+            this.versionedSubfolders = this.merge(this.versionedSubfolders, tap.versionedSubfolders);
         }
 
         public boolean isVersionedSubfolders() {

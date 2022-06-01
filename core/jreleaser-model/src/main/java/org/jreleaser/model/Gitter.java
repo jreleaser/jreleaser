@@ -38,7 +38,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Gitter extends AbstractAnnouncer {
+public class Gitter extends AbstractAnnouncer<Gitter> {
     public static final String NAME = "gitter";
     public static final String GITTER_WEBHOOK = "GITTER_WEBHOOK";
 
@@ -50,11 +50,12 @@ public class Gitter extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(Gitter gitter) {
-        super.setAll(gitter);
-        this.webhook = gitter.webhook;
-        this.message = gitter.message;
-        this.messageTemplate = gitter.messageTemplate;
+    @Override
+    public void merge(Gitter gitter) {
+        super.merge(gitter);
+        this.webhook = merge(this.webhook, gitter.webhook);
+        this.message = merge(this.message, gitter.message);
+        this.messageTemplate = merge(this.messageTemplate, gitter.messageTemplate);
     }
 
     public String getResolvedMessage(JReleaserContext context) {

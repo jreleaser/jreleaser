@@ -30,7 +30,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public class HttpUploader extends AbstractWebUploader {
+public class HttpUploader extends AbstractWebUploader<HttpUploader> {
     public static final String TYPE = "http";
 
     private final Map<String, String> headers = new LinkedHashMap<>();
@@ -43,13 +43,14 @@ public class HttpUploader extends AbstractWebUploader {
         super(TYPE);
     }
 
-    void setAll(HttpUploader http) {
-        super.setAll(http);
-        this.username = http.username;
-        this.password = http.password;
-        this.authorization = http.authorization;
-        this.method = http.method;
-        setHeaders(http.headers);
+    @Override
+    public void merge(HttpUploader http) {
+        super.merge(http);
+        this.username = merge(this.username, http.username);
+        this.password = merge(this.password, http.password);
+        this.authorization = merge(this.authorization, http.authorization);
+        this.method = merge(this.method, http.method);
+        setHeaders(merge(this.headers, http.headers));
     }
 
     public Authorization resolveAuthorization() {

@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class Upload implements Domain, Activatable {
+public class Upload extends AbstractModelObject<Upload> implements Domain, Activatable {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
     private final Map<String, FtpUploader> ftp = new LinkedHashMap<>();
     private final Map<String, HttpUploader> http = new LinkedHashMap<>();
@@ -50,20 +50,29 @@ public class Upload implements Domain, Activatable {
     @JsonIgnore
     private boolean enabled = true;
 
-    void setAll(Upload upload) {
-        this.active = upload.active;
-        this.enabled = upload.enabled;
-        setArtifactory(upload.artifactory);
-        setFtp(upload.ftp);
-        setHttp(upload.http);
-        setS3(upload.s3);
-        setScp(upload.scp);
-        setSftp(upload.sftp);
+    @Override
+    public void merge(Upload upload) {
+        this.active = merge(this.active, upload.active);
+        this.enabled = merge(this.enabled, upload.enabled);
+        setArtifactory(mergeModel(this.artifactory, upload.artifactory));
+        setFtp(mergeModel(this.ftp, upload.ftp));
+        setHttp(mergeModel(this.http, upload.http));
+        setS3(mergeModel(this.s3, upload.s3));
+        setScp(mergeModel(this.scp, upload.scp));
+        setSftp(mergeModel(this.sftp, upload.sftp));
     }
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return enabled && active != null;
+    }
+
+    @Deprecated
+    public void setEnabled(Boolean enabled) {
+        nag("upload.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
+        if (null != enabled) {
+            this.active = enabled ? Active.ALWAYS : Active.NEVER;
+        }
     }
 
     public void disable() {
@@ -97,14 +106,6 @@ public class Upload implements Domain, Activatable {
     @Override
     public boolean isActiveSet() {
         return active != null;
-    }
-
-    @Deprecated
-    public void setEnabled(Boolean enabled) {
-        nag("upload.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
-        if (null != enabled) {
-            this.active = enabled ? Active.ALWAYS : Active.NEVER;
-        }
     }
 
     public Optional<? extends Uploader> getUploader(String type, String name) {

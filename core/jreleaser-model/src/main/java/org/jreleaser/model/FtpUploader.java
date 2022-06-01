@@ -32,7 +32,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class FtpUploader extends AbstractUploader implements Ftp {
+public class FtpUploader extends AbstractUploader<FtpUploader> implements Ftp {
     private String username;
     private String password;
     private String host;
@@ -42,6 +42,17 @@ public class FtpUploader extends AbstractUploader implements Ftp {
 
     public FtpUploader() {
         super(TYPE);
+    }
+
+    @Override
+    public void merge(FtpUploader ftp) {
+        super.merge(ftp);
+        this.username = merge(this.username, ftp.username);
+        this.password = merge(this.password, ftp.password);
+        this.host = merge(this.host, ftp.host);
+        this.port = merge(this.port, ftp.port);
+        this.path = merge(this.path, ftp.path);
+        this.downloadUrl = merge(this.downloadUrl, ftp.downloadUrl);
     }
 
     @Override

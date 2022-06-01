@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Java implements Domain, ExtraProperties, EnabledAware {
+public class Java extends AbstractModelObject<Java> implements Domain, ExtraProperties, EnabledAware {
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
 
     protected Boolean enabled;
@@ -38,15 +38,16 @@ public class Java implements Domain, ExtraProperties, EnabledAware {
     private String mainClass;
     private Boolean multiProject;
 
-    void setAll(Java java) {
-        this.enabled = java.enabled;
-        this.version = java.version;
-        this.groupId = java.groupId;
-        this.artifactId = java.artifactId;
-        this.mainModule = java.mainModule;
-        this.mainClass = java.mainClass;
-        this.multiProject = java.multiProject;
-        setExtraProperties(java.extraProperties);
+    @Override
+    public void merge(Java java) {
+        this.enabled = merge(this.enabled, java.enabled);
+        this.version = merge(this.version, java.version);
+        this.groupId = merge(this.groupId, java.groupId);
+        this.artifactId = merge(this.artifactId, java.artifactId);
+        this.mainModule = merge(this.mainModule, java.mainModule);
+        this.mainClass = merge(this.mainClass, java.mainClass);
+        this.multiProject = merge(this.multiProject, java.multiProject);
+        setExtraProperties(merge(this.extraProperties, java.extraProperties));
     }
 
     @Override

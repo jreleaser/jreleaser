@@ -38,7 +38,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Zulip extends AbstractAnnouncer {
+public class Zulip extends AbstractAnnouncer<Zulip> {
     public static final String NAME = "zulip";
     public static final String ZULIP_API_KEY = "ZULIP_API_KEY";
 
@@ -54,15 +54,16 @@ public class Zulip extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(Zulip zulip) {
-        super.setAll(zulip);
-        this.account = zulip.account;
-        this.apiKey = zulip.apiKey;
-        this.apiHost = zulip.apiHost;
-        this.channel = zulip.channel;
-        this.subject = zulip.subject;
-        this.message = zulip.message;
-        this.messageTemplate = zulip.messageTemplate;
+    @Override
+    public void merge(Zulip zulip) {
+        super.merge(zulip);
+        this.account = merge(this.account, zulip.account);
+        this.apiKey = merge(this.apiKey, zulip.apiKey);
+        this.apiHost = merge(this.apiHost, zulip.apiHost);
+        this.channel = merge(this.channel, zulip.channel);
+        this.subject = merge(this.subject, zulip.subject);
+        this.message = merge(this.message, zulip.message);
+        this.messageTemplate = merge(this.messageTemplate, zulip.messageTemplate);
     }
 
     public String getResolvedSubject(JReleaserContext context) {

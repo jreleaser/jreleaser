@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class SdkmanAnnouncer extends AbstractAnnouncer {
+public class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer> {
     public static final String NAME = "sdkman";
 
     private String consumerKey;
@@ -45,14 +45,15 @@ public class SdkmanAnnouncer extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(SdkmanAnnouncer sdkman) {
-        super.setAll(sdkman);
-        this.consumerKey = sdkman.consumerKey;
-        this.consumerToken = sdkman.consumerToken;
-        this.candidate = sdkman.candidate;
-        this.releaseNotesUrl = sdkman.releaseNotesUrl;
-        this.downloadUrl = sdkman.downloadUrl;
-        this.command = sdkman.command;
+    @Override
+    public void merge(SdkmanAnnouncer sdkman) {
+        super.merge(sdkman);
+        this.consumerKey = merge(this.consumerKey, sdkman.consumerKey);
+        this.consumerToken = merge(this.consumerToken, sdkman.consumerToken);
+        this.candidate = merge(this.candidate, sdkman.candidate);
+        this.releaseNotesUrl = merge(this.releaseNotesUrl, sdkman.releaseNotesUrl);
+        this.downloadUrl = merge(this.downloadUrl, sdkman.downloadUrl);
+        this.command = merge(this.command, sdkman.command);
     }
 
     @Override

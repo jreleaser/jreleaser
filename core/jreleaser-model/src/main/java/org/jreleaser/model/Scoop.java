@@ -41,7 +41,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Scoop extends AbstractRepositoryPackager {
+public class Scoop extends AbstractRepositoryPackager<Scoop> {
     public static final String TYPE = "scoop";
     public static final String SKIP_SCOOP = "skipScoop";
 
@@ -66,11 +66,12 @@ public class Scoop extends AbstractRepositoryPackager {
         super(TYPE);
     }
 
-    void setAll(Scoop scoop) {
-        super.setAll(scoop);
-        this.packageName = scoop.packageName;
-        this.checkverUrl = scoop.checkverUrl;
-        this.autoupdateUrl = scoop.autoupdateUrl;
+    @Override
+    public void merge(Scoop scoop) {
+        super.merge(scoop);
+        this.packageName = merge(this.packageName, scoop.packageName);
+        this.checkverUrl = merge(this.checkverUrl, scoop.checkverUrl);
+        this.autoupdateUrl = merge(this.autoupdateUrl, scoop.autoupdateUrl);
         setBucket(scoop.bucket);
     }
 
@@ -103,7 +104,7 @@ public class Scoop extends AbstractRepositoryPackager {
     }
 
     public void setBucket(ScoopBucket bucket) {
-        this.bucket.setAll(bucket);
+        this.bucket.merge(bucket);
     }
 
     @Override
@@ -140,7 +141,7 @@ public class Scoop extends AbstractRepositoryPackager {
         return isFalse(artifact.getExtraProperties().get(SKIP_SCOOP));
     }
 
-    public static class ScoopBucket extends AbstractRepositoryTap {
+    public static class ScoopBucket extends AbstractRepositoryTap<ScoopBucket> {
         public ScoopBucket() {
             super("scoop", "scoop");
         }

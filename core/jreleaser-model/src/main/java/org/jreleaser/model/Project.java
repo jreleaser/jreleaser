@@ -46,7 +46,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Project implements Domain, ExtraProperties {
+public class Project extends AbstractModelObject<Project> implements Domain, ExtraProperties {
     public static final String PROJECT_NAME = "PROJECT_NAME";
     public static final String PROJECT_VERSION = "PROJECT_VERSION";
     public static final String PROJECT_VERSION_PATTERN = "PROJECT_VERSION_PATTERN";
@@ -73,23 +73,24 @@ public class Project implements Domain, ExtraProperties {
     private String vendor;
     private String docsUrl;
 
-    void setAll(Project project) {
-        this.name = project.name;
-        this.version = project.version;
-        this.versionPattern = project.versionPattern;
-        this.description = project.description;
-        this.longDescription = project.longDescription;
-        this.website = project.website;
-        this.license = project.license;
-        this.licenseUrl = project.licenseUrl;
-        this.copyright = project.copyright;
-        this.vendor = project.vendor;
-        this.docsUrl = project.docsUrl;
+    @Override
+    public void merge(Project project) {
+        this.name = merge(this.name, project.name);
+        this.version = merge(this.version, project.version);
+        this.versionPattern = merge(this.versionPattern, project.versionPattern);
+        this.description = merge(this.description, project.description);
+        this.longDescription = merge(this.longDescription, project.longDescription);
+        this.website = merge(this.website, project.website);
+        this.license = merge(this.license, project.license);
+        this.licenseUrl = merge(this.licenseUrl, project.licenseUrl);
+        this.copyright = merge(this.copyright, project.copyright);
+        this.vendor = merge(this.vendor, project.vendor);
+        this.docsUrl = merge(this.docsUrl, project.docsUrl);
         setJava(project.java);
         setSnapshot(project.snapshot);
-        setAuthors(project.authors);
-        setTags(project.tags);
-        setExtraProperties(project.extraProperties);
+        setAuthors(merge(this.authors, project.authors));
+        setTags(merge(this.tags, project.tags));
+        setExtraProperties(merge(this.extraProperties, project.extraProperties));
     }
 
     @Override
@@ -160,9 +161,8 @@ public class Project implements Domain, ExtraProperties {
     }
 
     public void setSnapshot(Snapshot snapshot) {
-        this.snapshot.setAll(snapshot);
+        this.snapshot.merge(snapshot);
     }
-
 
     public String getDescription() {
         return description;
@@ -233,7 +233,7 @@ public class Project implements Domain, ExtraProperties {
     }
 
     public void setJava(Java java) {
-        this.java.setAll(java);
+        this.java.merge(java);
     }
 
     @Override
@@ -468,18 +468,19 @@ public class Project implements Domain, ExtraProperties {
         }
     }
 
-    public static class Snapshot implements Domain {
+    public static class Snapshot extends AbstractModelObject<Snapshot> implements Domain {
         private Boolean enabled;
         private String pattern;
         private String label;
         private Boolean fullChangelog;
         private String cachedLabel;
 
-        void setAll(Snapshot snapshot) {
-            this.enabled = snapshot.enabled;
-            this.pattern = snapshot.pattern;
-            this.label = snapshot.label;
-            this.fullChangelog = snapshot.fullChangelog;
+        @Override
+        public void merge(Snapshot snapshot) {
+            this.enabled = this.merge(this.enabled, snapshot.enabled);
+            this.pattern = this.merge(this.pattern, snapshot.pattern);
+            this.label = this.merge(this.label, snapshot.label);
+            this.fullChangelog = this.merge(this.fullChangelog, snapshot.fullChangelog);
         }
 
         public boolean isSnapshot(String version) {

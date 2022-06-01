@@ -34,14 +34,14 @@ import static org.jreleaser.util.MustacheUtils.applyTemplates;
  * @author Andres Almiray
  * @since 0.2.0
  */
-abstract class AbstractAssembler implements Assembler {
+abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends AbstractModelObject<S> implements Assembler {
     @JsonIgnore
     protected final Set<Artifact> outputs = new LinkedHashSet<>();
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected final List<FileSet> fileSets = new ArrayList<>();
-    private final Platform platform = new Platform();
+    protected final Platform platform = new Platform();
     @JsonIgnore
-    private final String type;
+    protected final String type;
     @JsonIgnore
     protected String name;
     @JsonIgnore
@@ -53,15 +53,16 @@ abstract class AbstractAssembler implements Assembler {
         this.type = type;
     }
 
-    void setAll(AbstractAssembler assembler) {
-        this.active = assembler.active;
-        this.enabled = assembler.enabled;
-        this.exported = assembler.exported;
-        this.name = assembler.name;
-        setPlatform(assembler.platform);
-        setOutputs(assembler.outputs);
-        setExtraProperties(assembler.extraProperties);
-        setFileSets(assembler.fileSets);
+    @Override
+    public void merge(S assembler) {
+        this.active = merge(this.active, assembler.active);
+        this.enabled = merge(this.enabled, assembler.enabled);
+        this.exported = merge(this.exported, assembler.exported);
+        this.name = merge(this.name, assembler.name);
+        this.platform.merge(assembler.platform);
+        setOutputs(merge(this.outputs, assembler.outputs));
+        setFileSets(merge(this.fileSets, assembler.fileSets));
+        setExtraProperties(merge(this.extraProperties, assembler.extraProperties));
     }
 
     @Override
@@ -102,7 +103,7 @@ abstract class AbstractAssembler implements Assembler {
 
     @Override
     public void setPlatform(Platform platform) {
-        this.platform.setAll(platform);
+        this.platform.merge(platform);
     }
 
     @Override

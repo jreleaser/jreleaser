@@ -33,35 +33,37 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class AbstractSshUploader extends AbstractUploader implements SshUploader {
-    private String username;
-    private String password;
-    private String host;
-    private Integer port;
-    private String knownHostsFile;
-    private String publicKey;
-    private String privateKey;
-    private String passphrase;
-    private String fingerprint;
-    private String path;
-    private String downloadUrl;
+public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> extends AbstractUploader<S> implements SshUploader {
+    protected String username;
+    protected String password;
+    protected String host;
+    protected Integer port;
+    protected String knownHostsFile;
+    protected String publicKey;
+    protected String privateKey;
+    protected String passphrase;
+    protected String fingerprint;
+    protected String path;
+    protected String downloadUrl;
 
     public AbstractSshUploader(String type) {
         super(type);
     }
 
-    void setAll(AbstractSshUploader uploader) {
-        this.username = uploader.username;
-        this.password = uploader.password;
-        this.host = uploader.host;
-        this.port = uploader.port;
-        this.knownHostsFile = uploader.knownHostsFile;
-        this.publicKey = uploader.publicKey;
-        this.privateKey = uploader.privateKey;
-        this.passphrase = uploader.passphrase;
-        this.fingerprint = uploader.fingerprint;
-        this.path = uploader.path;
-        this.downloadUrl = uploader.downloadUrl;
+    @Override
+    public void merge(S uploader) {
+        super.merge(uploader);
+        this.username = merge(this.username, uploader.username);
+        this.password = merge(this.password, uploader.password);
+        this.host = merge(this.host, uploader.host);
+        this.port = merge(this.port, uploader.port);
+        this.knownHostsFile = merge(this.knownHostsFile, uploader.knownHostsFile);
+        this.publicKey = merge(this.publicKey, uploader.publicKey);
+        this.privateKey = merge(this.privateKey, uploader.privateKey);
+        this.passphrase = merge(this.passphrase, uploader.passphrase);
+        this.fingerprint = merge(this.fingerprint, uploader.fingerprint);
+        this.path = merge(this.path, uploader.path);
+        this.downloadUrl = merge(this.downloadUrl, uploader.downloadUrl);
     }
 
     protected abstract String getEnvPrefix();

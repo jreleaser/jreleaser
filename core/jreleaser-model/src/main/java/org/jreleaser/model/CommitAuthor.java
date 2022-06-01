@@ -24,13 +24,14 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class CommitAuthor implements Domain {
+public class CommitAuthor extends AbstractModelObject<CommitAuthor> implements Domain {
     private String email;
     private String name;
 
-    void setAll(CommitAuthor author) {
-        this.email = author.email;
-        this.name = author.name;
+    @Override
+    public void merge(CommitAuthor author) {
+        this.email = merge(this.email, author.email);
+        this.name = merge(this.name, author.name);
     }
 
     public String getName() {

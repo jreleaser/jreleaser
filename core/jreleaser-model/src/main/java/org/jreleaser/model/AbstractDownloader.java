@@ -29,31 +29,32 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 1.1.0
  */
-abstract class AbstractDownloader implements Downloader {
+abstract class AbstractDownloader<S extends AbstractDownloader<S>> extends AbstractModelObject<S> implements Downloader {
     @JsonIgnore
     protected final String type;
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    private final List<Asset> assets = new ArrayList<>();
+    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    protected final List<Asset> assets = new ArrayList<>();
     @JsonIgnore
     protected String name;
     @JsonIgnore
     protected boolean enabled;
     protected Active active;
-    private int connectTimeout;
-    private int readTimeout;
+    protected int connectTimeout;
+    protected int readTimeout;
 
     protected AbstractDownloader(String type) {
         this.type = type;
     }
 
-    void setAll(AbstractDownloader downloader) {
-        this.name = downloader.name;
-        this.active = downloader.active;
-        this.enabled = downloader.enabled;
-        this.connectTimeout = downloader.connectTimeout;
-        this.readTimeout = downloader.readTimeout;
-        setExtraProperties(downloader.extraProperties);
-        setAssets(downloader.assets);
+    @Override
+    public void merge(S downloader) {
+        this.name = merge(this.name, downloader.name);
+        this.active = merge(this.active, downloader.active);
+        this.enabled = merge(this.enabled, downloader.enabled);
+        this.connectTimeout = merge(this.connectTimeout, downloader.connectTimeout);
+        this.readTimeout = merge(this.readTimeout, downloader.readTimeout);
+        setExtraProperties(merge(this.extraProperties, downloader.extraProperties));
+        setAssets(merge(this.assets, downloader.assets));
     }
 
     @Override

@@ -42,7 +42,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.9.0
  */
-public class Macports extends AbstractRepositoryPackager {
+public class Macports extends AbstractRepositoryPackager<Macports> {
     public static final String TYPE = "macports";
     public static final String SKIP_MACPORTS = "skipMacports";
     public static final String APP_NAME = "appName";
@@ -69,13 +69,14 @@ public class Macports extends AbstractRepositoryPackager {
         super(TYPE);
     }
 
-    void setAll(Macports macports) {
-        super.setAll(macports);
-        this.packageName = macports.packageName;
-        this.revision = macports.revision;
+    @Override
+    public void merge(Macports macports) {
+        super.merge(macports);
+        this.packageName = merge(this.packageName, macports.packageName);
+        this.revision = merge(this.revision, macports.revision);
         setRepository(macports.repository);
-        setCategories(macports.categories);
-        setMaintainers(macports.maintainers);
+        setCategories(merge(this.categories, macports.categories));
+        setMaintainers(merge(this.maintainers, macports.maintainers));
     }
 
     public List<String> getResolvedMaintainers(JReleaserContext context) {
@@ -112,7 +113,7 @@ public class Macports extends AbstractRepositoryPackager {
     }
 
     public void setRepository(MacportsRepository repository) {
-        this.repository.setAll(repository);
+        this.repository.merge(repository);
     }
 
     public List<String> getCategories() {
@@ -169,7 +170,7 @@ public class Macports extends AbstractRepositoryPackager {
         return isFalse(artifact.getExtraProperties().get(SKIP_MACPORTS));
     }
 
-    public static class MacportsRepository extends AbstractRepositoryTap {
+    public static class MacportsRepository extends AbstractRepositoryTap<MacportsRepository> {
         public MacportsRepository() {
             super("macports", "macports");
         }

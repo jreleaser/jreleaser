@@ -70,7 +70,7 @@ public abstract class NativeImageValidator extends Validator {
             return;
         }
 
-        Platform platform = nativeImage.getPlatform().merge(context.getModel().getPlatform());
+        Platform platform = nativeImage.getPlatform().mergeValues(context.getModel().getPlatform());
         nativeImage.setPlatform(platform);
 
         if (isBlank(nativeImage.getExecutable())) {

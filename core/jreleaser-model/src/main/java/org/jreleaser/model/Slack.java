@@ -38,7 +38,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Slack extends AbstractAnnouncer {
+public class Slack extends AbstractAnnouncer<Slack> {
     public static final String NAME = "slack";
     public static final String SLACK_TOKEN = "SLACK_TOKEN";
     public static final String SLACK_WEBHOOK = "SLACK_WEBHOOK";
@@ -53,13 +53,14 @@ public class Slack extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(Slack slack) {
-        super.setAll(slack);
-        this.token = slack.token;
-        this.webhook = slack.webhook;
-        this.channel = slack.channel;
-        this.message = slack.message;
-        this.messageTemplate = slack.messageTemplate;
+    @Override
+    public void merge(Slack slack) {
+        super.merge(slack);
+        this.token = merge(this.token, slack.token);
+        this.channel = merge(this.channel, slack.channel);
+        this.webhook = merge(this.webhook, slack.webhook);
+        this.message = merge(this.message, slack.message);
+        this.messageTemplate = merge(this.messageTemplate, slack.messageTemplate);
     }
 
     public String getResolvedMessage(JReleaserContext context) {

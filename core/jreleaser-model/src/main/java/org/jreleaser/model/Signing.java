@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Signing implements Domain, Activatable {
+public class Signing extends AbstractModelObject<Signing> implements Domain, Activatable {
     public static final String KEY_SKIP_SIGNING = "skipSigning";
     public static final String COSIGN_PASSWORD = "COSIGN_PASSWORD";
     public static final String COSIGN_PRIVATE_KEY = "COSIGN_PRIVATE_KEY";
@@ -66,17 +66,18 @@ public class Signing implements Domain, Activatable {
     private Boolean files;
     private Boolean checksums;
 
-    void setAll(Signing signing) {
-        this.active = signing.active;
-        this.enabled = signing.enabled;
-        this.armored = signing.armored;
-        this.publicKey = signing.publicKey;
-        this.secretKey = signing.secretKey;
-        this.passphrase = signing.passphrase;
-        this.mode = signing.mode;
-        this.artifacts = signing.artifacts;
-        this.files = signing.files;
-        this.checksums = signing.checksums;
+    @Override
+    public void merge(Signing signing) {
+        this.active = merge(this.active, signing.active);
+        this.enabled = merge(this.enabled, signing.enabled);
+        this.armored = merge(this.armored, signing.armored);
+        this.publicKey = merge(this.publicKey, signing.publicKey);
+        this.secretKey = merge(this.secretKey, signing.secretKey);
+        this.passphrase = merge(this.passphrase, signing.passphrase);
+        this.mode = merge(this.mode, signing.mode);
+        this.artifacts = merge(this.artifacts, signing.artifacts);
+        this.files = merge(this.files, signing.files);
+        this.checksums = merge(this.checksums, signing.checksums);
         setCommand(signing.command);
         setCosign(signing.cosign);
     }
@@ -231,7 +232,7 @@ public class Signing implements Domain, Activatable {
     }
 
     public void setCommand(Command command) {
-        this.command.setAll(command);
+        this.command.merge(command);
     }
 
     public Cosign getCosign() {
@@ -239,7 +240,7 @@ public class Signing implements Domain, Activatable {
     }
 
     public void setCosign(Cosign cosign) {
-        this.cosign.setAll(cosign);
+        this.cosign.merge(cosign);
     }
 
     @Override
@@ -294,7 +295,7 @@ public class Signing implements Domain, Activatable {
         }
     }
 
-    public static class Command implements Domain {
+    public static class Command extends AbstractModelObject<Command> implements Domain {
         private final List<String> args = new ArrayList<>();
 
         private String executable;
@@ -303,13 +304,14 @@ public class Signing implements Domain, Activatable {
         private String publicKeyring;
         private Boolean defaultKeyring;
 
-        void setAll(Command command) {
-            this.executable = command.executable;
-            this.keyName = command.keyName;
-            this.homeDir = command.homeDir;
-            this.publicKeyring = command.publicKeyring;
-            this.defaultKeyring = command.defaultKeyring;
-            setArgs(command.args);
+        @Override
+        public void merge(Command command) {
+            this.executable = merge(this.executable, command.executable);
+            this.keyName = merge(this.keyName, command.keyName);
+            this.homeDir = merge(this.homeDir, command.homeDir);
+            this.publicKeyring = merge(this.publicKeyring, command.publicKeyring);
+            this.defaultKeyring = merge(this.defaultKeyring, command.defaultKeyring);
+            setArgs(merge(this.args, command.args));
         }
 
         public String getExecutable() {
@@ -396,15 +398,16 @@ public class Signing implements Domain, Activatable {
         }
     }
 
-    public static class Cosign implements Domain {
+    public static class Cosign extends AbstractModelObject<Cosign> implements Domain {
         private String version;
         private String privateKeyFile;
         private String publicKeyFile;
 
-        void setAll(Cosign cosign) {
-            this.version = cosign.version;
-            this.privateKeyFile = cosign.privateKeyFile;
-            this.publicKeyFile = cosign.publicKeyFile;
+        @Override
+        public void merge(Cosign cosign) {
+            this.version = merge(this.version, cosign.version);
+            this.privateKeyFile = merge(this.privateKeyFile, cosign.privateKeyFile);
+            this.publicKeyFile = merge(this.publicKeyFile, cosign.publicKeyFile);
         }
 
         public String getResolvedPrivateKeyFile() {

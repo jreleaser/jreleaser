@@ -21,7 +21,7 @@ package org.jreleaser.model;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class SftpDownloader extends AbstractSshDownloader {
+public class SftpDownloader extends AbstractSshDownloader<SftpDownloader> {
     public static final String TYPE = "sftp";
 
     public SftpDownloader() {

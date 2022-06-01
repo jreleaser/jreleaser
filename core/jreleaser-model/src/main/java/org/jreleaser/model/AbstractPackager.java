@@ -33,7 +33,7 @@ import static java.util.stream.Collectors.toList;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractPackager implements Packager {
+public abstract class AbstractPackager<S extends AbstractPackager<S>> extends AbstractModelObject<S> implements Packager {
     @JsonIgnore
     protected final String type;
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
@@ -49,13 +49,14 @@ public abstract class AbstractPackager implements Packager {
         this.type = type;
     }
 
-    void setAll(AbstractPackager packager) {
-        this.active = packager.active;
-        this.enabled = packager.enabled;
+    @Override
+    public void merge(S packager) {
+        this.active = merge(this.active, packager.active);
+        this.enabled = merge(this.enabled, packager.enabled);
+        this.continueOnError = merge(this.continueOnError, packager.continueOnError);
+        this.downloadUrl = merge(this.downloadUrl, packager.downloadUrl);
         this.failed = packager.failed;
-        this.continueOnError = packager.continueOnError;
-        this.downloadUrl = packager.downloadUrl;
-        setExtraProperties(packager.extraProperties);
+        setExtraProperties(merge(this.extraProperties, packager.extraProperties));
     }
 
     @Override

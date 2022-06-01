@@ -30,7 +30,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class FtpDownloader extends AbstractDownloader implements Ftp {
+public class FtpDownloader extends AbstractDownloader<FtpDownloader> implements Ftp {
     public static final String TYPE = "ftp";
     private String username;
     private String password;
@@ -39,6 +39,15 @@ public class FtpDownloader extends AbstractDownloader implements Ftp {
 
     public FtpDownloader() {
         super(TYPE);
+    }
+
+    @Override
+    public void merge(FtpDownloader ftp) {
+        super.merge(ftp);
+        this.username = merge(this.username, ftp.username);
+        this.password = merge(this.password, ftp.password);
+        this.host = merge(this.host, ftp.host);
+        this.port = merge(this.port, ftp.port);
     }
 
     @Override

@@ -23,15 +23,16 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractRepositoryPackager extends AbstractTemplatePackager implements RepositoryPackager {
+public abstract class AbstractRepositoryPackager<S extends AbstractRepositoryPackager<S>> extends AbstractTemplatePackager<S> implements RepositoryPackager {
     protected final CommitAuthor commitAuthor = new CommitAuthor();
 
     protected AbstractRepositoryPackager(String type) {
         super(type);
     }
 
-    void setAll(AbstractRepositoryPackager packager) {
-        super.setAll(packager);
+    @Override
+    public void merge(S packager) {
+        super.merge(packager);
         setCommitAuthor(packager.commitAuthor);
     }
 
@@ -42,7 +43,7 @@ public abstract class AbstractRepositoryPackager extends AbstractTemplatePackage
 
     @Override
     public void setCommitAuthor(CommitAuthor commitAuthor) {
-        this.commitAuthor.setAll(commitAuthor);
+        this.commitAuthor.merge(commitAuthor);
     }
 
     @Override

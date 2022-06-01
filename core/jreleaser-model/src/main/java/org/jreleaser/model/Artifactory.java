@@ -39,7 +39,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class Artifactory extends AbstractUploader {
+public class Artifactory extends AbstractUploader<Artifactory> {
     public static final String TYPE = "artifactory";
 
     private final List<ArtifactoryRepository> repositories = new ArrayList<>();
@@ -53,13 +53,14 @@ public class Artifactory extends AbstractUploader {
         super(TYPE);
     }
 
-    void setAll(Artifactory artifactory) {
-        super.setAll(artifactory);
-        this.host = artifactory.host;
-        this.username = artifactory.username;
-        this.password = artifactory.password;
-        this.authorization = artifactory.authorization;
-        setRepositories(artifactory.repositories);
+    @Override
+    public void merge(Artifactory artifactory) {
+        super.merge(artifactory);
+        this.host = merge(this.host, artifactory.host);
+        this.username = merge(this.username, artifactory.username);
+        this.password = merge(this.password, artifactory.password);
+        this.authorization = merge(this.authorization, artifactory.authorization);
+        setRepositories(merge(this.repositories, artifactory.repositories));
     }
 
     public Http.Authorization resolveAuthorization() {
@@ -185,9 +186,9 @@ public class Artifactory extends AbstractUploader {
         private String path;
 
         void setAll(ArtifactoryRepository repository) {
-            this.active = repository.active;
-            this.enabled = repository.enabled;
-            this.path = repository.path;
+            if (null != repository.active) this.active = repository.active;
+            if (null != repository.active) this.enabled = repository.enabled;
+            if (isNotBlank(repository.path)) this.path = repository.path;
             setFileTypes(repository.fileTypes);
         }
 

@@ -39,7 +39,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAware, TimeoutAware {
+public abstract class GitService<S extends GitService<S>> extends AbstractModelObject<S> implements Releaser, CommitAuthorAware, OwnerAware, TimeoutAware {
     public static final String KEY_SKIP_RELEASE = "skipRelease";
     public static final String KEY_SKIP_RELEASE_SIGNATURES = "skipReleaseSignatures";
 
@@ -56,53 +56,53 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     public static final String PRERELEASE_PATTERN = "PRERELEASE_PATTERN";
 
     @JsonIgnore
-    private final String serviceName;
-    private final Changelog changelog = new Changelog();
-    private final Milestone milestone = new Milestone();
-    private final CommitAuthor commitAuthor = new CommitAuthor();
-    private final Update update = new Update();
-    private final Prerelease prerelease = new Prerelease();
+    protected final String serviceName;
+    protected final Changelog changelog = new Changelog();
+    protected final Milestone milestone = new Milestone();
+    protected final CommitAuthor commitAuthor = new CommitAuthor();
+    protected final Update update = new Update();
+    protected final Prerelease prerelease = new Prerelease();
     @JsonIgnore
-    private final boolean releaseSupported;
+    protected final boolean releaseSupported;
 
     @JsonIgnore
-    private boolean match = true;
-    private Boolean enabled;
-    private String host;
-    private String owner;
-    private String name;
-    private String repoUrl;
-    private String repoCloneUrl;
-    private String commitUrl;
-    private String srcUrl;
-    private String downloadUrl;
-    private String releaseNotesUrl;
-    private String latestReleaseUrl;
-    private String issueTrackerUrl;
-    private String username;
-    private String token;
-    private String tagName;
-    private String previousTagName;
-    private String releaseName;
-    private String branch;
-    private Boolean sign;
-    private Boolean skipTag;
-    private Boolean skipRelease;
-    private Boolean overwrite;
-    private String apiEndpoint;
-    private int connectTimeout;
-    private int readTimeout;
-    private Boolean artifacts;
-    private Boolean files;
-    private Boolean checksums;
-    private Boolean signatures;
-    private Active uploadAssets;
-    private Boolean uploadAssetsEnabled;
+    protected boolean match = true;
+    protected Boolean enabled;
+    protected String host;
+    protected String owner;
+    protected String name;
+    protected String repoUrl;
+    protected String repoCloneUrl;
+    protected String commitUrl;
+    protected String srcUrl;
+    protected String downloadUrl;
+    protected String releaseNotesUrl;
+    protected String latestReleaseUrl;
+    protected String issueTrackerUrl;
+    protected String username;
+    protected String token;
+    protected String tagName;
+    protected String previousTagName;
+    protected String releaseName;
+    protected String branch;
+    protected Boolean sign;
+    protected Boolean skipTag;
+    protected Boolean skipRelease;
+    protected Boolean overwrite;
+    protected String apiEndpoint;
+    protected int connectTimeout;
+    protected int readTimeout;
+    protected Boolean artifacts;
+    protected Boolean files;
+    protected Boolean checksums;
+    protected Boolean signatures;
+    protected Active uploadAssets;
+    protected Boolean uploadAssetsEnabled;
 
     @JsonIgnore
-    private String cachedTagName;
+    protected String cachedTagName;
     @JsonIgnore
-    private String cachedReleaseName;
+    protected String cachedReleaseName;
 
     protected GitService(String serviceName, boolean releaseSupported) {
         this.serviceName = serviceName;
@@ -119,39 +119,40 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         return serviceName;
     }
 
-    void setAll(GitService service) {
+    @Override
+    public void merge(S service) {
         this.match = service.match;
-        this.enabled = service.enabled;
-        this.host = service.host;
-        this.owner = service.owner;
-        this.name = service.name;
-        this.repoUrl = service.repoUrl;
-        this.repoCloneUrl = service.repoCloneUrl;
-        this.commitUrl = service.commitUrl;
-        this.srcUrl = service.srcUrl;
-        this.downloadUrl = service.downloadUrl;
-        this.releaseNotesUrl = service.releaseNotesUrl;
-        this.latestReleaseUrl = service.latestReleaseUrl;
-        this.issueTrackerUrl = service.issueTrackerUrl;
-        this.username = service.username;
-        this.token = service.token;
-        this.tagName = service.tagName;
-        this.previousTagName = service.previousTagName;
-        this.releaseName = service.releaseName;
-        this.branch = service.branch;
-        this.sign = service.sign;
-        this.skipTag = service.skipTag;
-        this.skipRelease = service.skipRelease;
-        this.overwrite = service.overwrite;
-        this.apiEndpoint = service.apiEndpoint;
-        this.connectTimeout = service.connectTimeout;
-        this.readTimeout = service.readTimeout;
-        this.artifacts = service.artifacts;
-        this.files = service.files;
-        this.checksums = service.checksums;
-        this.signatures = service.signatures;
-        this.uploadAssets = service.uploadAssets;
-        this.uploadAssetsEnabled = service.uploadAssetsEnabled;
+        this.enabled = merge(this.enabled, service.enabled);
+        this.host = merge(this.host, service.host);
+        this.owner = merge(this.owner, service.owner);
+        this.name = merge(this.name, service.name);
+        this.repoUrl = merge(this.repoUrl, service.repoUrl);
+        this.repoCloneUrl = merge(this.repoCloneUrl, service.repoCloneUrl);
+        this.commitUrl = merge(this.commitUrl, service.commitUrl);
+        this.srcUrl = merge(this.srcUrl, service.srcUrl);
+        this.downloadUrl = merge(this.downloadUrl, service.downloadUrl);
+        this.releaseNotesUrl = merge(this.releaseNotesUrl, service.releaseNotesUrl);
+        this.latestReleaseUrl = merge(this.latestReleaseUrl, service.latestReleaseUrl);
+        this.issueTrackerUrl = merge(this.issueTrackerUrl, service.issueTrackerUrl);
+        this.username = merge(this.username, service.username);
+        this.token = merge(this.token, service.token);
+        this.tagName = merge(this.tagName, service.tagName);
+        this.previousTagName = merge(this.previousTagName, service.previousTagName);
+        this.releaseName = merge(this.releaseName, service.releaseName);
+        this.branch = merge(this.branch, service.branch);
+        this.sign = merge(this.sign, service.sign);
+        this.skipTag = merge(this.skipTag, service.skipTag);
+        this.skipRelease = merge(this.skipRelease, service.skipRelease);
+        this.overwrite = merge(this.overwrite, service.overwrite);
+        this.apiEndpoint = merge(this.apiEndpoint, service.apiEndpoint);
+        this.connectTimeout = merge(this.connectTimeout, service.connectTimeout);
+        this.readTimeout = merge(this.readTimeout, service.readTimeout);
+        this.artifacts = merge(this.artifacts, service.artifacts);
+        this.files = merge(this.files, service.files);
+        this.checksums = merge(this.checksums, service.checksums);
+        this.signatures = merge(this.signatures, service.signatures);
+        this.uploadAssets = merge(this.uploadAssets, service.uploadAssets);
+        this.uploadAssetsEnabled = merge(this.uploadAssetsEnabled, service.uploadAssetsEnabled);
         setCommitAuthor(service.commitAuthor);
         setUpdate(service.update);
         setPrerelease(service.prerelease);
@@ -459,7 +460,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
 
     @Override
     public void setCommitAuthor(CommitAuthor commitAuthor) {
-        this.commitAuthor.setAll(commitAuthor);
+        this.commitAuthor.merge(commitAuthor);
     }
 
     public Prerelease getPrerelease() {
@@ -467,7 +468,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public void setPrerelease(Prerelease prerelease) {
-        this.prerelease.setAll(prerelease);
+        this.prerelease.merge(prerelease);
     }
 
     public boolean isSign() {
@@ -483,7 +484,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public void setChangelog(Changelog changelog) {
-        this.changelog.setAll(changelog);
+        this.changelog.merge(changelog);
     }
 
     public Milestone getMilestone() {
@@ -491,7 +492,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public void setMilestone(Milestone milestone) {
-        this.milestone.setAll(milestone);
+        this.milestone.merge(milestone);
     }
 
     public boolean isSkipTag() {
@@ -535,7 +536,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
     }
 
     public void setUpdate(Update update) {
-        this.update.setAll(update);
+        this.update.merge(update);
     }
 
     public String getApiEndpoint() {
@@ -775,13 +776,14 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model));
     }
 
-    public static class Update implements Domain {
+    public static class Update extends AbstractModelObject<Update> implements Domain {
         private final Set<UpdateSection> sections = new LinkedHashSet<>();
         private Boolean enabled;
 
-        void setAll(Update update) {
-            this.enabled = update.enabled;
-            setSections(update.sections);
+        @Override
+        public void merge(Update update) {
+            this.enabled = merge(this.enabled, update.enabled);
+            setSections(merge(this.sections, update.sections));
         }
 
         public boolean isEnabled() {
@@ -814,13 +816,14 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
     }
 
-    public static class Prerelease implements Domain {
+    public static class Prerelease extends AbstractModelObject<Prerelease> implements Domain {
         private Boolean enabled;
         private String pattern;
 
-        void setAll(Prerelease prerelease) {
-            this.enabled = prerelease.enabled;
-            this.pattern = prerelease.pattern;
+        @Override
+        public void merge(Prerelease prerelease) {
+            this.enabled = merge(this.enabled, prerelease.enabled);
+            this.pattern = merge(this.pattern, prerelease.pattern);
         }
 
         public void disable() {
@@ -869,7 +872,7 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         }
     }
 
-    public static class Milestone implements Domain {
+    public static class Milestone extends AbstractModelObject<Milestone> implements Domain {
         public static final String MILESTONE_NAME = "MILESTONE_NAME";
 
         private Boolean close;
@@ -878,9 +881,10 @@ public abstract class GitService implements Releaser, CommitAuthorAware, OwnerAw
         @JsonIgnore
         private String cachedName;
 
-        void setAll(Milestone changelog) {
-            this.close = changelog.close;
-            this.name = changelog.name;
+        @Override
+        public void merge(Milestone milestone) {
+            this.close = merge(this.close, milestone.close);
+            this.name = merge(this.name, milestone.name);
         }
 
         public String getConfiguredName() {

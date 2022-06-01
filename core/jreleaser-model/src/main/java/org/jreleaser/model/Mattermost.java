@@ -38,7 +38,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public class Mattermost extends AbstractAnnouncer {
+public class Mattermost extends AbstractAnnouncer<Mattermost> {
     public static final String NAME = "mattermost";
     public static final String MATTERMOST_WEBHOOK = "MATTERMOST_WEBHOOK";
 
@@ -50,11 +50,12 @@ public class Mattermost extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(Mattermost mattermost) {
-        super.setAll(mattermost);
-        this.webhook = mattermost.webhook;
-        this.message = mattermost.message;
-        this.messageTemplate = mattermost.messageTemplate;
+    @Override
+    public void merge(Mattermost mattermost) {
+        super.merge(mattermost);
+        this.webhook = merge(this.webhook, mattermost.webhook);
+        this.message = merge(this.message, mattermost.message);
+        this.messageTemplate = merge(this.messageTemplate, mattermost.messageTemplate);
     }
 
     public String getResolvedMessage(JReleaserContext context) {

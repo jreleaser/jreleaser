@@ -26,18 +26,19 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.8.0
  */
-abstract class AbstractWebUploader extends AbstractUploader implements WebUploader {
-    private String uploadUrl;
-    private String downloadUrl;
+abstract class AbstractWebUploader<S extends AbstractWebUploader<S>> extends AbstractUploader<S> implements WebUploader {
+    protected String uploadUrl;
+    protected String downloadUrl;
 
     protected AbstractWebUploader(String type) {
         super(type);
     }
 
-    void setAll(AbstractWebUploader uploader) {
-        super.setAll(uploader);
-        this.uploadUrl = uploader.uploadUrl;
-        this.downloadUrl = uploader.downloadUrl;
+    @Override
+    public void merge(S uploader) {
+        super.merge(uploader);
+        this.uploadUrl = merge(this.uploadUrl, uploader.uploadUrl);
+        this.downloadUrl = merge(this.downloadUrl, uploader.downloadUrl);
     }
 
     @Override

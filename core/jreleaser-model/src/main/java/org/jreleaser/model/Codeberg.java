@@ -29,8 +29,4 @@ public class Codeberg extends Gitea {
         setHost("codeberg.org");
         setApiEndpoint("https://codeberg.org");
     }
-
-    void setAll(Codeberg service) {
-        super.setAll(service);
-    }
 }

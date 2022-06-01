@@ -27,26 +27,27 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractAnnouncer implements Announcer {
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S>> extends AbstractModelObject<S> implements Announcer {
+    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
     protected String name;
     @JsonIgnore
     protected boolean enabled;
     protected Active active;
-    private int connectTimeout;
-    private int readTimeout;
+    protected int connectTimeout;
+    protected int readTimeout;
 
     protected AbstractAnnouncer(String name) {
         this.name = name;
     }
 
-    void setAll(AbstractAnnouncer announcer) {
-        this.active = announcer.active;
-        this.enabled = announcer.enabled;
-        this.connectTimeout = announcer.connectTimeout;
-        this.readTimeout = announcer.readTimeout;
-        setExtraProperties(announcer.extraProperties);
+    @Override
+    public void merge(S announcer) {
+        this.active = merge(this.active, announcer.active);
+        this.enabled = merge(this.enabled, announcer.enabled);
+        this.connectTimeout = merge(this.connectTimeout, announcer.connectTimeout);
+        this.readTimeout = merge(this.readTimeout, announcer.readTimeout);
+        setExtraProperties(merge(this.extraProperties, announcer.extraProperties));
     }
 
     @Override

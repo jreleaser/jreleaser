@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Gitea extends GitService {
+public class Gitea extends GitService<Gitea> {
     public static final String NAME = "gitea";
 
     private Boolean draft;
@@ -44,9 +44,10 @@ public class Gitea extends GitService {
         setIssueTrackerUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/issues");
     }
 
-    void setAll(Gitea service) {
-        super.setAll(service);
-        this.draft = service.draft;
+    @Override
+    public void merge(Gitea service) {
+        super.merge(service);
+        this.draft = merge(this.draft, service.draft);
     }
 
     public boolean isDraft() {

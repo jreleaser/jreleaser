@@ -31,7 +31,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Twitter extends AbstractAnnouncer {
+public class Twitter extends AbstractAnnouncer<Twitter> {
     public static final String NAME = "twitter";
     public static final String TWITTER_CONSUMER_KEY = "TWITTER_CONSUMER_KEY";
     public static final String TWITTER_CONSUMER_SECRET = "TWITTER_CONSUMER_SECRET";
@@ -48,13 +48,14 @@ public class Twitter extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(Twitter twitter) {
-        super.setAll(twitter);
-        this.consumerKey = twitter.consumerKey;
-        this.consumerSecret = twitter.consumerSecret;
-        this.accessToken = twitter.accessToken;
-        this.accessTokenSecret = twitter.accessTokenSecret;
-        this.status = twitter.status;
+    @Override
+    public void merge(Twitter twitter) {
+        super.merge(twitter);
+        this.consumerKey = merge(this.consumerKey, twitter.consumerKey);
+        this.consumerSecret = merge(this.consumerSecret, twitter.consumerSecret);
+        this.accessToken = merge(this.accessToken, twitter.accessToken);
+        this.accessTokenSecret = merge(this.accessTokenSecret, twitter.accessTokenSecret);
+        this.status = merge(this.status, twitter.status);
     }
 
     public String getResolvedStatus(JReleaserContext context) {

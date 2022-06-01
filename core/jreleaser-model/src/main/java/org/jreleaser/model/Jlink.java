@@ -32,7 +32,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Jlink extends AbstractJavaAssembler {
+public class Jlink extends AbstractJavaAssembler<Jlink> {
     public static final String TYPE = "jlink";
 
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
@@ -55,17 +55,18 @@ public class Jlink extends AbstractJavaAssembler {
         return Distribution.DistributionType.JLINK;
     }
 
-    void setAll(Jlink jlink) {
-        super.setAll(jlink);
-        this.imageName = jlink.imageName;
-        this.imageNameTransform = jlink.imageNameTransform;
-        this.copyJars = jlink.copyJars;
+    @Override
+    public void merge(Jlink jlink) {
+        super.merge(jlink);
+        this.imageName = merge(this.imageName, jlink.imageName);
+        this.imageNameTransform = merge(this.imageNameTransform, jlink.imageNameTransform);
+        this.copyJars = merge(this.copyJars, jlink.copyJars);
         setJdeps(jlink.jdeps);
         setJdk(jlink.jdk);
-        setTargetJdks(jlink.targetJdks);
-        setModuleNames(jlink.moduleNames);
-        setAdditionalModuleNames(jlink.additionalModuleNames);
-        setArgs(jlink.args);
+        setTargetJdks(merge(this.targetJdks, jlink.targetJdks));
+        setModuleNames(merge(this.moduleNames, jlink.moduleNames));
+        setAdditionalModuleNames(merge(this.additionalModuleNames, jlink.additionalModuleNames));
+        setArgs(merge(this.args, jlink.args));
     }
 
     public String getResolvedImageName(JReleaserContext context) {
@@ -86,7 +87,7 @@ public class Jlink extends AbstractJavaAssembler {
     }
 
     public void setJdeps(Jdeps jdeps) {
-        this.jdeps.setAll(jdeps);
+        this.jdeps.merge(jdeps);
     }
 
     public Artifact getJdk() {
@@ -94,7 +95,7 @@ public class Jlink extends AbstractJavaAssembler {
     }
 
     public void setJdk(Artifact jdk) {
-        this.jdk.setAll(jdk);
+        this.jdk.merge(jdk);
     }
 
     public String getImageName() {
@@ -239,17 +240,18 @@ public class Jlink extends AbstractJavaAssembler {
         props.put("copyJars", isCopyJars());
     }
 
-    public static class Jdeps implements Domain {
+    public static class Jdeps extends AbstractModelObject<Jdeps> implements Domain {
         private final Set<String> targets = new LinkedHashSet<>();
         private String multiRelease;
         private Boolean ignoreMissingDeps;
         private Boolean useWildcardInPath;
 
-        void setAll(Jdeps jdeps) {
-            this.multiRelease = jdeps.multiRelease;
-            this.ignoreMissingDeps = jdeps.ignoreMissingDeps;
-            this.useWildcardInPath = jdeps.useWildcardInPath;
-            setTargets(jdeps.targets);
+        @Override
+        public void merge(Jdeps jdeps) {
+            this.multiRelease = this.merge(this.multiRelease, jdeps.multiRelease);
+            this.ignoreMissingDeps = this.merge(this.ignoreMissingDeps, jdeps.ignoreMissingDeps);
+            this.useWildcardInPath = this.merge(this.useWildcardInPath, jdeps.useWildcardInPath);
+            setTargets(merge(this.targets, jdeps.targets));
         }
 
         public String getMultiRelease() {

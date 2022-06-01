@@ -51,7 +51,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Brew extends AbstractRepositoryPackager {
+public class Brew extends AbstractRepositoryPackager<Brew> {
     public static final String TYPE = "brew";
     public static final String SKIP_BREW = "skipBrew";
 
@@ -80,13 +80,14 @@ public class Brew extends AbstractRepositoryPackager {
         super(TYPE);
     }
 
-    void setAll(Brew brew) {
-        super.setAll(brew);
-        this.formulaName = brew.formulaName;
-        this.multiPlatform = brew.multiPlatform;
+    @Override
+    public void merge(Brew brew) {
+        super.merge(brew);
+        this.formulaName = merge(this.formulaName, brew.formulaName);
+        this.multiPlatform = merge(this.multiPlatform, brew.multiPlatform);
         setTap(brew.tap);
-        setDependenciesAsList(brew.dependencies);
-        setLivecheck(brew.livecheck);
+        setDependenciesAsList(merge(this.dependencies, brew.dependencies));
+        setLivecheck(merge(this.livecheck, brew.livecheck));
         setCask(brew.cask);
     }
 
@@ -134,7 +135,7 @@ public class Brew extends AbstractRepositoryPackager {
     }
 
     public void setTap(HomebrewTap tap) {
-        this.tap.setAll(tap);
+        this.tap.merge(tap);
     }
 
     public Cask getCask() {
@@ -142,7 +143,7 @@ public class Brew extends AbstractRepositoryPackager {
     }
 
     public void setCask(Cask cask) {
-        this.cask.setAll(cask);
+        this.cask.merge(cask);
     }
 
     public void setDependencies(Map<String, String> dependencies) {
@@ -299,13 +300,13 @@ public class Brew extends AbstractRepositoryPackager {
         }
     }
 
-    public static class HomebrewTap extends AbstractRepositoryTap {
+    public static class HomebrewTap extends AbstractRepositoryTap<HomebrewTap> {
         public HomebrewTap() {
             super("homebrew", "homebrew-tap");
         }
     }
 
-    public static class Cask implements Domain {
+    public static class Cask extends AbstractModelObject<Cask> implements Domain {
         private final List<CaskItem> uninstall = new ArrayList<>();
         private final List<CaskItem> zap = new ArrayList<>();
         protected Boolean enabled;
@@ -324,15 +325,16 @@ public class Brew extends AbstractRepositoryPackager {
         @JsonIgnore
         private String cachedPkgName;
 
-        void setAll(Cask cask) {
-            this.enabled = cask.enabled;
-            this.name = cask.name;
-            this.displayName = cask.displayName;
-            this.pkgName = cask.pkgName;
-            this.appName = cask.appName;
-            this.appcast = cask.appcast;
-            setUninstallItems(cask.uninstall);
-            setZapItems(cask.zap);
+        @Override
+        public void merge(Cask cask) {
+            this.enabled = this.merge(this.enabled, cask.enabled);
+            this.name = this.merge(this.name, cask.name);
+            this.displayName = this.merge(this.displayName, cask.displayName);
+            this.pkgName = this.merge(this.pkgName, cask.pkgName);
+            this.appName = this.merge(this.appName, cask.appName);
+            this.appcast = this.merge(this.appcast, cask.appcast);
+            setUninstallItems(merge(this.uninstall, cask.uninstall));
+            setZapItems(merge(this.zap, cask.zap));
         }
 
         public void enable() {

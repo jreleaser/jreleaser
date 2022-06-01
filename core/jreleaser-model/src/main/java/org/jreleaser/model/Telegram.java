@@ -38,7 +38,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public class Telegram extends AbstractAnnouncer {
+public class Telegram extends AbstractAnnouncer<Telegram> {
     public static final String NAME = "telegram";
     public static final String TELEGRAM_TOKEN = "TELEGRAM_TOKEN";
     public static final String TELEGRAM_CHAT_ID = "TELEGRAM_CHAT_ID";
@@ -52,12 +52,13 @@ public class Telegram extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(Telegram telegram) {
-        super.setAll(telegram);
-        this.token = telegram.token;
-        this.chatId = telegram.chatId;
-        this.message = telegram.message;
-        this.messageTemplate = telegram.messageTemplate;
+    @Override
+    public void merge(Telegram telegram) {
+        super.merge(telegram);
+        this.token = merge(this.token, telegram.token);
+        this.chatId = merge(this.chatId, telegram.chatId);
+        this.message = merge(this.message, telegram.message);
+        this.messageTemplate = merge(this.messageTemplate, telegram.messageTemplate);
     }
 
     public String getResolvedMessage(JReleaserContext context) {

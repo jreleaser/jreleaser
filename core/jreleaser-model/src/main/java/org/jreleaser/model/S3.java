@@ -33,7 +33,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public class S3 extends AbstractUploader {
+public class S3 extends AbstractUploader<S3> {
     public static final String TYPE = "s3";
 
     private final Map<String, String> headers = new LinkedHashMap<>();
@@ -50,17 +50,18 @@ public class S3 extends AbstractUploader {
         super(TYPE);
     }
 
-    void setAll(S3 s3) {
-        super.setAll(s3);
-        this.region = s3.region;
-        this.bucket = s3.bucket;
-        this.path = s3.path;
-        this.downloadUrl = s3.downloadUrl;
-        this.endpoint = s3.endpoint;
-        this.accessKeyId = s3.accessKeyId;
-        this.secretKey = s3.secretKey;
-        this.sessionToken = s3.sessionToken;
-        setHeaders(s3.headers);
+    @Override
+    public void merge(S3 s3) {
+        super.merge(s3);
+        this.region = merge(this.region, s3.region);
+        this.bucket = merge(this.bucket, s3.bucket);
+        this.path = merge(this.path, s3.path);
+        this.downloadUrl = merge(this.downloadUrl, s3.downloadUrl);
+        this.endpoint = merge(this.endpoint, s3.endpoint);
+        this.accessKeyId = merge(this.accessKeyId, s3.accessKeyId);
+        this.secretKey = merge(this.secretKey, s3.secretKey);
+        this.sessionToken = merge(this.sessionToken, s3.sessionToken);
+        setHeaders(merge(this.headers, s3.headers));
     }
 
     @Override

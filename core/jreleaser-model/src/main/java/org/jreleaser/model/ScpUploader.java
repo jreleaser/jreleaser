@@ -21,7 +21,7 @@ package org.jreleaser.model;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class ScpUploader extends AbstractSshUploader {
+public class ScpUploader extends AbstractSshUploader<ScpUploader> {
     public static final String TYPE = "scp";
 
     public ScpUploader() {

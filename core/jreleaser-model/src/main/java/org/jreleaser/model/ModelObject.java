@@ -21,15 +21,6 @@ package org.jreleaser.model;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class ScpDownloader extends AbstractSshDownloader<ScpDownloader> {
-    public static final String TYPE = "scp";
-
-    public ScpDownloader() {
-        super(TYPE);
-    }
-
-    @Override
-    protected String getEnvPrefix() {
-        return "SCP";
-    }
+public interface ModelObject<S extends ModelObject<S>> {
+    void merge(S source);
 }

@@ -36,37 +36,38 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @author Andres Almiray
  * @since 0.3.0
  */
-abstract class AbstractUploader implements Uploader {
+abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractModelObject<S> implements Uploader {
     @JsonIgnore
     protected final String type;
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
     protected String name;
     @JsonIgnore
     protected boolean enabled;
     protected Active active;
-    private int connectTimeout;
-    private int readTimeout;
-    private Boolean artifacts;
-    private Boolean files;
-    private Boolean signatures;
-    private Boolean checksums;
+    protected int connectTimeout;
+    protected int readTimeout;
+    protected Boolean artifacts;
+    protected Boolean files;
+    protected Boolean signatures;
+    protected Boolean checksums;
 
     protected AbstractUploader(String type) {
         this.type = type;
     }
 
-    void setAll(AbstractUploader uploader) {
-        this.active = uploader.active;
-        this.enabled = uploader.enabled;
-        this.name = uploader.name;
-        this.connectTimeout = uploader.connectTimeout;
-        this.readTimeout = uploader.readTimeout;
-        this.artifacts = uploader.artifacts;
-        this.files = uploader.files;
-        this.signatures = uploader.signatures;
-        this.checksums = uploader.checksums;
-        setExtraProperties(uploader.extraProperties);
+    @Override
+    public void merge(S uploader) {
+        this.active = merge(this.active, uploader.active);
+        this.enabled = merge(this.enabled, uploader.enabled);
+        this.name = merge(this.name, uploader.name);
+        this.connectTimeout = merge(this.connectTimeout, uploader.connectTimeout);
+        this.readTimeout = merge(this.readTimeout, uploader.readTimeout);
+        this.artifacts = merge(this.artifacts, uploader.artifacts);
+        this.files = merge(this.files, uploader.files);
+        this.signatures = merge(this.signatures, uploader.signatures);
+        this.checksums = merge(this.checksums, uploader.checksums);
+        setExtraProperties(merge(this.extraProperties, uploader.extraProperties));
     }
 
     @Override

@@ -31,7 +31,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public class Mastodon extends AbstractAnnouncer {
+public class Mastodon extends AbstractAnnouncer<Mastodon> {
     public static final String NAME = "mastodon";
     public static final String MASTODON_ACCESS_TOKEN = "MASTODON_ACCESS_TOKEN";
 
@@ -43,11 +43,12 @@ public class Mastodon extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(Mastodon mastodon) {
-        super.setAll(mastodon);
-        this.host = mastodon.host;
-        this.accessToken = mastodon.accessToken;
-        this.status = mastodon.status;
+    @Override
+    public void merge(Mastodon mastodon) {
+        super.merge(mastodon);
+        this.host = merge(this.host, mastodon.host);
+        this.accessToken = merge(this.accessToken, mastodon.accessToken);
+        this.status = merge(this.status, mastodon.status);
     }
 
     public String getResolvedStatus(JReleaserContext context) {

@@ -42,7 +42,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public class Gofish extends AbstractRepositoryPackager {
+public class Gofish extends AbstractRepositoryPackager<Gofish> {
     public static final String TYPE = "gofish";
     public static final String SKIP_GOFISH = "skipGofish";
 
@@ -69,8 +69,9 @@ public class Gofish extends AbstractRepositoryPackager {
         super(TYPE);
     }
 
-    void setAll(Gofish spec) {
-        super.setAll(spec);
+    @Override
+    public void merge(Gofish spec) {
+        super.merge(spec);
         setRepository(spec.repository);
     }
 
@@ -79,7 +80,7 @@ public class Gofish extends AbstractRepositoryPackager {
     }
 
     public void setRepository(GofishRepository repository) {
-        this.repository.setAll(repository);
+        this.repository.merge(repository);
     }
 
     @Override
@@ -116,7 +117,7 @@ public class Gofish extends AbstractRepositoryPackager {
         return isFalse(artifact.getExtraProperties().get(SKIP_GOFISH));
     }
 
-    public static class GofishRepository extends AbstractRepositoryTap {
+    public static class GofishRepository extends AbstractRepositoryTap<GofishRepository> {
         public GofishRepository() {
             super("gofish", "fish-food");
         }

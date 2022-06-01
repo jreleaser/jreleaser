@@ -38,7 +38,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Anyul Rivas
  * @since 0.5.0
  */
-public class GoogleChat extends AbstractAnnouncer {
+public class GoogleChat extends AbstractAnnouncer<GoogleChat> {
     public static final String NAME = "googlechat";
     public static final String GOOGLE_CHAT_WEBHOOK = "GOOGLE_CHAT_WEBHOOK";
 
@@ -50,11 +50,12 @@ public class GoogleChat extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(GoogleChat googleChat) {
-        super.setAll(googleChat);
-        this.webhook = googleChat.webhook;
-        this.message = googleChat.message;
-        this.messageTemplate = googleChat.messageTemplate;
+    @Override
+    public void merge(GoogleChat googleChat) {
+        super.merge(googleChat);
+        this.webhook = merge(this.webhook, googleChat.webhook);
+        this.message = merge(this.message, googleChat.message);
+        this.messageTemplate = merge(this.messageTemplate, googleChat.messageTemplate);
     }
 
     @Override

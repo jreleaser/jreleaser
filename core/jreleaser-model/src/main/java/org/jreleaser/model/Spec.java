@@ -46,7 +46,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.9.1
  */
-public class Spec extends AbstractRepositoryPackager {
+public class Spec extends AbstractRepositoryPackager<Spec> {
     public static final String TYPE = "spec";
     public static final String SKIP_SPEC = "skipSpec";
 
@@ -79,12 +79,13 @@ public class Spec extends AbstractRepositoryPackager {
         super(TYPE);
     }
 
-    void setAll(Spec spec) {
-        super.setAll(spec);
-        this.packageName = spec.packageName;
-        this.release = spec.release;
+    @Override
+    public void merge(Spec spec) {
+        super.merge(spec);
+        this.packageName = merge(this.packageName, spec.packageName);
+        this.release = merge(this.release, spec.release);
         setRepository(spec.repository);
-        setRequires(spec.requires);
+        setRequires(merge(this.requires, spec.requires));
     }
 
     public String getPackageName() {
@@ -108,7 +109,7 @@ public class Spec extends AbstractRepositoryPackager {
     }
 
     public void setRepository(SpecRepository repository) {
-        this.repository.setAll(repository);
+        this.repository.merge(repository);
     }
 
     public List<String> getRequires() {
@@ -155,7 +156,7 @@ public class Spec extends AbstractRepositoryPackager {
         return isFalse(artifact.getExtraProperties().get(SKIP_SPEC));
     }
 
-    public static class SpecRepository extends AbstractRepositoryTap {
+    public static class SpecRepository extends AbstractRepositoryTap<SpecRepository> {
         public SpecRepository() {
             super("spec", "spec");
         }

@@ -32,7 +32,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.8.0
  */
-abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAssembler {
+abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S>> extends AbstractAssembler<S> implements JavaAssembler {
     protected final Artifact mainJar = new Artifact();
     protected final List<Glob> jars = new ArrayList<>();
     protected final List<Glob> files = new ArrayList<>();
@@ -45,14 +45,15 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
         super(type);
     }
 
-    void setAll(AbstractJavaAssembler assembler) {
-        super.setAll(assembler);
-        this.executable = assembler.executable;
-        this.templateDirectory = assembler.templateDirectory;
+    @Override
+    public void merge(S assembler) {
+        super.merge(assembler);
+        this.executable = merge(this.executable, assembler.executable);
+        this.templateDirectory = merge(this.templateDirectory, assembler.templateDirectory);
         setJava(assembler.java);
         setMainJar(assembler.mainJar);
-        setJars(assembler.jars);
-        setFiles(assembler.files);
+        setJars(merge(this.jars, assembler.jars));
+        setFiles(merge(this.files, assembler.files));
     }
 
     @Override
@@ -109,7 +110,7 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
 
     @Override
     public void setJava(Java java) {
-        this.java.setAll(java);
+        this.java.merge(java);
     }
 
     @Override
@@ -119,7 +120,7 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
 
     @Override
     public void setMainJar(Artifact mainJar) {
-        this.mainJar.setAll(mainJar);
+        this.mainJar.merge(mainJar);
     }
 
     @Override

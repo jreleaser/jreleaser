@@ -32,7 +32,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractRepositoryTap implements RepositoryTap {
+public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> extends AbstractModelObject<S> implements RepositoryTap {
     protected Active active;
     @JsonIgnore
     protected boolean enabled;
@@ -62,16 +62,17 @@ public abstract class AbstractRepositoryTap implements RepositoryTap {
         this.tapName = tapName;
     }
 
-    void setAll(AbstractRepositoryTap tap) {
-        this.active = tap.active;
-        this.enabled = tap.enabled;
-        this.owner = tap.owner;
-        this.name = tap.name;
-        this.tagName = tap.tagName;
-        this.branch = tap.branch;
-        this.username = tap.username;
-        this.token = tap.token;
-        this.commitMessage = tap.commitMessage;
+    @Override
+    public void merge(S tap) {
+        this.active = merge(this.active, tap.active);
+        this.enabled = merge(this.enabled, tap.enabled);
+        this.owner = merge(this.owner, tap.owner);
+        this.name = merge(this.name, tap.name);
+        this.tagName = merge(this.tagName, tap.tagName);
+        this.branch = merge(this.branch, tap.branch);
+        this.username = merge(this.username, tap.username);
+        this.token = merge(this.token, tap.token);
+        this.commitMessage = merge(this.commitMessage, tap.commitMessage);
     }
 
     @Override

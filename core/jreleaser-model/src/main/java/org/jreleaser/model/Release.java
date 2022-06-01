@@ -24,19 +24,20 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Release implements Domain {
+public class Release extends AbstractModelObject<Release> implements Domain {
     private Github github;
     private Gitlab gitlab;
     private Gitea gitea;
     private Codeberg codeberg;
     private GenericGit generic;
 
-    void setAll(Release release) {
-        this.github = release.github;
-        this.gitlab = release.gitlab;
-        this.gitea = release.gitea;
-        this.codeberg = release.codeberg;
-        this.generic = release.generic;
+    @Override
+    public void merge(Release release) {
+        this.github = merge(this.github, release.github);
+        this.gitlab = merge(this.gitlab, release.gitlab);
+        this.gitea = merge(this.gitea, release.gitea);
+        this.codeberg = merge(this.codeberg, release.codeberg);
+        this.generic = merge(this.generic, release.generic);
     }
 
     public Github getGithub() {

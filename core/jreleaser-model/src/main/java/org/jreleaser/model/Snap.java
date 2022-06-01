@@ -54,7 +54,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Snap extends AbstractRepositoryPackager {
+public class Snap extends AbstractRepositoryPackager<Snap> {
     public static final String TYPE = "snap";
     public static final String SKIP_SNAP = "skipSnap";
 
@@ -96,19 +96,20 @@ public class Snap extends AbstractRepositoryPackager {
         super(TYPE);
     }
 
-    void setAll(Snap snap) {
-        super.setAll(snap);
-        this.packageName = snap.packageName;
-        this.base = snap.base;
-        this.grade = snap.grade;
-        this.confinement = snap.confinement;
-        this.exportedLogin = snap.exportedLogin;
-        this.remoteBuild = snap.remoteBuild;
-        setLocalPlugs(snap.localPlugs);
-        setLocalSlots(snap.localSlots);
-        setPlugs(snap.plugs);
-        setSlots(snap.slots);
-        setArchitectures(snap.architectures);
+    @Override
+    public void merge(Snap snap) {
+        super.merge(snap);
+        this.packageName = merge(this.packageName, snap.packageName);
+        this.base = merge(this.base, snap.base);
+        this.grade = merge(this.grade, snap.grade);
+        this.confinement = merge(this.confinement, snap.confinement);
+        this.exportedLogin = merge(this.exportedLogin, snap.exportedLogin);
+        this.remoteBuild = merge(this.remoteBuild, snap.remoteBuild);
+        setLocalPlugs(merge(this.localPlugs, snap.localPlugs));
+        setLocalSlots(merge(this.localSlots, snap.localSlots));
+        setPlugs(merge(this.plugs, snap.plugs));
+        setSlots(merge(this.slots, snap.slots));
+        setArchitectures(merge(this.architectures, snap.architectures));
         setSnap(snap.snap);
     }
 
@@ -294,7 +295,7 @@ public class Snap extends AbstractRepositoryPackager {
     }
 
     public void setSnap(SnapTap snap) {
-        this.snap.setAll(snap);
+        this.snap.merge(snap);
     }
 
     @Override
@@ -389,7 +390,7 @@ public class Snap extends AbstractRepositoryPackager {
 
         public Collection<Attribute> getAttrs() {
             return attributes.entrySet().stream()
-                .map(e-> new Attribute(e.getKey(), e.getValue()))
+                .map(e -> new Attribute(e.getKey(), e.getValue()))
                 .collect(toList());
         }
 
@@ -503,7 +504,7 @@ public class Snap extends AbstractRepositoryPackager {
 
         public Collection<Attribute> getAttrs() {
             return attributes.entrySet().stream()
-                .map(e-> new Attribute(e.getKey(), e.getValue()))
+                .map(e -> new Attribute(e.getKey(), e.getValue()))
                 .collect(toList());
         }
 
@@ -592,7 +593,7 @@ public class Snap extends AbstractRepositoryPackager {
         }
     }
 
-    public static class SnapTap extends AbstractRepositoryTap {
+    public static class SnapTap extends AbstractRepositoryTap<SnapTap> {
         public SnapTap() {
             super("snap", "snap");
         }

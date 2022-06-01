@@ -31,31 +31,33 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class AbstractSshDownloader extends AbstractDownloader implements SshDownloader {
-    private String username;
-    private String password;
-    private String host;
-    private Integer port;
-    private String knownHostsFile;
-    private String publicKey;
-    private String privateKey;
-    private String passphrase;
-    private String fingerprint;
+public abstract class AbstractSshDownloader<S extends AbstractSshDownloader<S>> extends AbstractDownloader<S> implements SshDownloader {
+    protected String username;
+    protected String password;
+    protected String host;
+    protected Integer port;
+    protected String knownHostsFile;
+    protected String publicKey;
+    protected String privateKey;
+    protected String passphrase;
+    protected String fingerprint;
 
     public AbstractSshDownloader(String type) {
         super(type);
     }
 
-    void setAll(AbstractSshDownloader downloader) {
-        this.username = downloader.username;
-        this.password = downloader.password;
-        this.host = downloader.host;
-        this.port = downloader.port;
-        this.knownHostsFile = downloader.knownHostsFile;
-        this.publicKey = downloader.publicKey;
-        this.privateKey = downloader.privateKey;
-        this.passphrase = downloader.passphrase;
-        this.fingerprint = downloader.fingerprint;
+    @Override
+    public void merge(S downloader) {
+        super.merge(downloader);
+        this.username = merge(this.username, downloader.username);
+        this.password = merge(this.password, downloader.password);
+        this.host = merge(this.host, downloader.host);
+        this.port = merge(this.port, downloader.port);
+        this.knownHostsFile = merge(this.knownHostsFile, downloader.knownHostsFile);
+        this.publicKey = merge(this.publicKey, downloader.publicKey);
+        this.privateKey = merge(this.privateKey, downloader.privateKey);
+        this.passphrase = merge(this.passphrase, downloader.passphrase);
+        this.fingerprint = merge(this.fingerprint, downloader.fingerprint);
     }
 
     protected abstract String getEnvPrefix();

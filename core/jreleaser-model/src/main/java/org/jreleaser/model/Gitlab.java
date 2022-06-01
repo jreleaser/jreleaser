@@ -26,7 +26,7 @@ import static org.jreleaser.util.Constants.KEY_IDENTIFIER;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Gitlab extends GitService {
+public class Gitlab extends GitService<Gitlab> {
     public static final String NAME = "gitlab";
     public static final String SKIP_GITLAB_LINKS = "skipGitlabLinks";
 
@@ -46,10 +46,11 @@ public class Gitlab extends GitService {
         setIssueTrackerUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/issues");
     }
 
-    void setAll(Gitlab service) {
-        super.setAll(service);
-        this.identifier = service.identifier;
-        setUploadLinks(service.uploadLinks);
+    @Override
+    public void merge(Gitlab service) {
+        super.merge(service);
+        this.identifier = merge(this.identifier, service.identifier);
+        setUploadLinks(merge(this.uploadLinks, service.uploadLinks));
     }
 
     @Override

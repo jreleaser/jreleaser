@@ -43,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Environment implements Domain {
+public class Environment extends AbstractModelObject<Environment> implements Domain {
     private final Map<String, Object> properties = new LinkedHashMap<>();
     @JsonIgnore
     private final Map<String, Object> sourcedProperties = new LinkedHashMap<>();
@@ -55,10 +55,11 @@ public class Environment implements Domain {
     @JsonIgnore
     private Path propertiesFile;
 
-    void setAll(Environment environment) {
-        this.variables = environment.variables;
-        setProperties(environment.properties);
-        setPropertiesSource(environment.propertiesSource);
+    @Override
+    public void merge(Environment environment) {
+        this.variables = merge(this.variables, environment.variables);
+        setProperties(merge(this.properties, environment.properties));
+        setPropertiesSource(merge(this.propertiesSource, environment.propertiesSource));
     }
 
     public Properties getVars() {
@@ -97,12 +98,12 @@ public class Environment implements Domain {
         return properties;
     }
 
-    public Map<String, Object> getSourcedProperties() {
-        return sourcedProperties;
-    }
-
     public void setProperties(Map<String, Object> properties) {
         this.properties.putAll(properties);
+    }
+
+    public Map<String, Object> getSourcedProperties() {
+        return sourcedProperties;
     }
 
     public Path getPropertiesFile() {

@@ -99,7 +99,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setEnvironment(Environment environment) {
-        this.environment.setAll(environment);
+        this.environment.merge(environment);
     }
 
     public Platform getPlatform() {
@@ -107,7 +107,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setPlatform(Platform platform) {
-        this.platform.setAll(platform);
+        this.platform.mergeValues(platform);
     }
 
     public Project getProject() {
@@ -115,7 +115,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setProject(Project project) {
-        this.project.setAll(project);
+        this.project.merge(project);
     }
 
     public Release getRelease() {
@@ -123,7 +123,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setRelease(Release release) {
-        this.release.setAll(release);
+        this.release.merge(release);
     }
 
     public Packagers getPackagers() {
@@ -131,7 +131,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setPackagers(Packagers packagers) {
-        this.packagers.setAll(packagers);
+        this.packagers.merge(packagers);
     }
 
     public Announce getAnnounce() {
@@ -139,7 +139,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setAnnounce(Announce announce) {
-        this.announce.setAll(announce);
+        this.announce.merge(announce);
     }
 
     public Assemble getAssemble() {
@@ -147,7 +147,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setAssemble(Assemble assemble) {
-        this.assemble.setAll(assemble);
+        this.assemble.merge(assemble);
     }
 
     public Download getDownload() {
@@ -155,7 +155,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setDownload(Download download) {
-        this.download.setAll(download);
+        this.download.merge(download);
     }
 
     public Upload getUpload() {
@@ -163,7 +163,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setUpload(Upload upload) {
-        this.upload.setAll(upload);
+        this.upload.merge(upload);
     }
 
     public Checksum getChecksum() {
@@ -171,7 +171,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setChecksum(Checksum checksum) {
-        this.checksum.setAll(checksum);
+        this.checksum.merge(checksum);
     }
 
     public Signing getSigning() {
@@ -179,7 +179,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setSigning(Signing signing) {
-        this.signing.setAll(signing);
+        this.signing.merge(signing);
     }
 
     public Files getFiles() {
@@ -187,7 +187,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setFiles(Files files) {
-        this.files.setAll(files);
+        this.files.merge(files);
     }
 
     public List<Distribution> getActiveDistributions() {

@@ -34,7 +34,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Discussions extends AbstractAnnouncer {
+public class Discussions extends AbstractAnnouncer<Discussions> {
     public static final String NAME = "discussions";
 
     private String organization;
@@ -47,13 +47,14 @@ public class Discussions extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(Discussions discussions) {
-        super.setAll(discussions);
-        this.organization = discussions.organization;
-        this.team = discussions.team;
-        this.title = discussions.title;
-        this.message = discussions.message;
-        this.messageTemplate = discussions.messageTemplate;
+    @Override
+    public void merge(Discussions discussions) {
+        super.merge(discussions);
+        this.organization = merge(this.organization, discussions.organization);
+        this.team = merge(this.team, discussions.team);
+        this.title = merge(this.title, discussions.title);
+        this.message = merge(this.message, discussions.message);
+        this.messageTemplate = merge(this.messageTemplate, discussions.messageTemplate);
     }
 
     public String getResolvedTitle(JReleaserContext context) {

@@ -38,7 +38,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Discord extends AbstractAnnouncer {
+public class Discord extends AbstractAnnouncer<Discord> {
     public static final String NAME = "discord";
     public static final String DISCORD_WEBHOOK = "DISCORD_WEBHOOK";
 
@@ -50,11 +50,12 @@ public class Discord extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(Discord discord) {
-        super.setAll(discord);
-        this.webhook = discord.webhook;
-        this.message = discord.message;
-        this.messageTemplate = discord.messageTemplate;
+    @Override
+    public void merge(Discord discord) {
+        super.merge(discord);
+        this.webhook = merge(this.webhook, discord.webhook);
+        this.message = merge(this.message, discord.message);
+        this.messageTemplate = merge(this.messageTemplate, discord.messageTemplate);
     }
 
     public String getResolvedMessage(JReleaserContext context) {

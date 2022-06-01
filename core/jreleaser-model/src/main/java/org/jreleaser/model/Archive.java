@@ -30,7 +30,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public class Archive extends AbstractAssembler {
+public class Archive extends AbstractAssembler<Archive> {
     public static final String TYPE = "archive";
 
     private final Set<Format> formats = new LinkedHashSet<>();
@@ -56,12 +56,13 @@ public class Archive extends AbstractAssembler {
         this.distributionType = Distribution.DistributionType.of(distributionType);
     }
 
-    void setAll(Archive archive) {
-        super.setAll(archive);
-        this.archiveName = archive.archiveName;
-        this.distributionType = archive.distributionType;
-        this.attachPlatform = archive.attachPlatform;
-        setFormats(archive.formats);
+    @Override
+    public void merge(Archive archive) {
+        super.merge(archive);
+        this.archiveName = merge(archive.archiveName, archive.archiveName);
+        this.distributionType = merge(archive.distributionType, archive.distributionType);
+        this.attachPlatform = merge(archive.attachPlatform, archive.attachPlatform);
+        setFormats(merge(this.formats, archive.formats));
     }
 
     public String getResolvedArchiveName(JReleaserContext context) {

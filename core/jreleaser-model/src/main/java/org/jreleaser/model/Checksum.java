@@ -30,7 +30,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public class Checksum implements Domain {
+public class Checksum extends AbstractModelObject<Checksum> implements Domain {
     public static final String KEY_SKIP_CHECKSUM = "skipChecksum";
     public static final String INDIVIDUAL_CHECKSUM = "individualChecksum";
 
@@ -39,11 +39,12 @@ public class Checksum implements Domain {
     private String name;
     private Boolean files;
 
-    void setAll(Checksum checksum) {
-        this.name = checksum.name;
-        this.individual = checksum.individual;
-        this.files = checksum.files;
-        setAlgorithms(checksum.algorithms);
+    @Override
+    public void merge(Checksum checksum) {
+        this.name = merge(this.name, checksum.name);
+        this.individual = merge(this.individual, checksum.individual);
+        this.files = merge(this.files, checksum.files);
+        setAlgorithms(merge(this.algorithms, checksum.algorithms));
     }
 
     public String getResolvedName(JReleaserContext context) {

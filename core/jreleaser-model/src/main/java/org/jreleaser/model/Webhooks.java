@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @author Andres Almiray
  * @since 0.5.0
  */
-public class Webhooks extends AbstractAnnouncer {
+public class Webhooks extends AbstractAnnouncer<Webhooks> {
     public static final String NAME = "webhooks";
     private final Map<String, Webhook> webhooks = new LinkedHashMap<>();
 
@@ -35,9 +35,10 @@ public class Webhooks extends AbstractAnnouncer {
         super(NAME);
     }
 
-    void setAll(Webhooks webhook) {
-        super.setAll(webhook);
-        setWebhooks(webhook.webhooks);
+    @Override
+    public void merge(Webhooks webhook) {
+        super.merge(webhook);
+        setWebhooks(mergeModel(this.webhooks, webhook.webhooks));
     }
 
     public List<Webhook> getActiveWebhooks() {

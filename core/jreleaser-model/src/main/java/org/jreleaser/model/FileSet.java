@@ -43,7 +43,7 @@ import static org.jreleaser.model.util.Artifacts.resolveForFileSet;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public class FileSet implements Domain, ExtraProperties {
+public class FileSet extends AbstractModelObject<FileSet> implements Domain, ExtraProperties {
     private static final String GLOB_PREFIX = "glob:";
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
@@ -54,13 +54,14 @@ public class FileSet implements Domain, ExtraProperties {
     private String output;
     private Boolean failOnMissingInput;
 
-    void setAll(FileSet fileSet) {
-        this.input = fileSet.input;
-        this.output = fileSet.output;
-        this.failOnMissingInput = fileSet.failOnMissingInput;
-        setIncludes(fileSet.includes);
-        setExcludes(fileSet.excludes);
-        setExtraProperties(fileSet.extraProperties);
+    @Override
+    public void merge(FileSet fileSet) {
+        this.input = merge(this.input, fileSet.input);
+        this.output = merge(this.output, fileSet.output);
+        this.failOnMissingInput = merge(this.failOnMissingInput, fileSet.failOnMissingInput);
+        setIncludes(merge(this.includes, fileSet.includes));
+        setExcludes(merge(this.excludes, fileSet.excludes));
+        setExtraProperties(merge(this.extraProperties, fileSet.extraProperties));
     }
 
     @Override

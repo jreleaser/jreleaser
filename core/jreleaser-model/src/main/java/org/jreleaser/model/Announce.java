@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Announce implements Domain, Activatable {
+public class Announce extends AbstractModelObject<Announce> implements Domain, Activatable {
     private final Article article = new Article();
     private final Discord discord = new Discord();
     private final Discussions discussions = new Discussions();
@@ -56,9 +56,10 @@ public class Announce implements Domain, Activatable {
     @JsonIgnore
     private boolean enabled = true;
 
-    void setAll(Announce announce) {
-        this.active = announce.active;
-        this.enabled = announce.enabled;
+    @Override
+    public void merge(Announce announce) {
+        this.active = merge(this.active, announce.active);
+        this.enabled = merge(this.enabled, announce.enabled);
         setArticle(announce.article);
         setDiscord(announce.discord);
         setDiscussions(announce.discussions);
@@ -78,7 +79,15 @@ public class Announce implements Domain, Activatable {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return enabled && active != null;
+    }
+
+    @Deprecated
+    public void setEnabled(Boolean enabled) {
+        nag("announce.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
+        if (null != enabled) {
+            this.active = enabled ? Active.ALWAYS : Active.NEVER;
+        }
     }
 
     public void disable() {
@@ -114,20 +123,12 @@ public class Announce implements Domain, Activatable {
         return active != null;
     }
 
-    @Deprecated
-    public void setEnabled(Boolean enabled) {
-        nag("announce.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
-        if (null != enabled) {
-            this.active = enabled ? Active.ALWAYS : Active.NEVER;
-        }
-    }
-
     public Article getArticle() {
         return article;
     }
 
     public void setArticle(Article article) {
-        this.article.setAll(article);
+        this.article.merge(article);
     }
 
     public Discord getDiscord() {
@@ -135,7 +136,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setDiscord(Discord discord) {
-        this.discord.setAll(discord);
+        this.discord.merge(discord);
     }
 
     public Discussions getDiscussions() {
@@ -143,7 +144,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setDiscussions(Discussions discussions) {
-        this.discussions.setAll(discussions);
+        this.discussions.merge(discussions);
     }
 
     public Gitter getGitter() {
@@ -151,7 +152,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setGitter(Gitter gitter) {
-        this.gitter.setAll(gitter);
+        this.gitter.merge(gitter);
     }
 
     public GoogleChat getGoogleChat() {
@@ -159,7 +160,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setGoogleChat(GoogleChat googleChat) {
-        this.googleChat.setAll(googleChat);
+        this.googleChat.merge(googleChat);
     }
 
     public Mail getMail() {
@@ -167,7 +168,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setMail(Mail mail) {
-        this.mail.setAll(mail);
+        this.mail.merge(mail);
     }
 
     public Mastodon getMastodon() {
@@ -175,7 +176,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setMastodon(Mastodon mastodon) {
-        this.mastodon.setAll(mastodon);
+        this.mastodon.merge(mastodon);
     }
 
     public Mattermost getMattermost() {
@@ -183,7 +184,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setMattermost(Mattermost mattermost) {
-        this.mattermost.setAll(mattermost);
+        this.mattermost.merge(mattermost);
     }
 
     public SdkmanAnnouncer getSdkman() {
@@ -191,7 +192,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setSdkman(SdkmanAnnouncer sdkman) {
-        this.sdkman.setAll(sdkman);
+        this.sdkman.merge(sdkman);
     }
 
     public Slack getSlack() {
@@ -199,7 +200,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setSlack(Slack slack) {
-        this.slack.setAll(slack);
+        this.slack.merge(slack);
     }
 
     public Teams getTeams() {
@@ -207,7 +208,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setTeams(Teams teams) {
-        this.teams.setAll(teams);
+        this.teams.merge(teams);
     }
 
     public Telegram getTelegram() {
@@ -215,7 +216,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setTelegram(Telegram telegram) {
-        this.telegram.setAll(telegram);
+        this.telegram.merge(telegram);
     }
 
     public Twitter getTwitter() {
@@ -223,7 +224,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setTwitter(Twitter twitter) {
-        this.twitter.setAll(twitter);
+        this.twitter.merge(twitter);
     }
 
     public Webhooks getConfiguredWebhooks() {
@@ -231,7 +232,7 @@ public class Announce implements Domain, Activatable {
     }
 
     void setConfiguredWebhooks(Webhooks webhooks) {
-        this.webhooks.setAll(webhooks);
+        this.webhooks.merge(webhooks);
     }
 
     public Map<String, Webhook> getWebhooks() {
@@ -251,7 +252,7 @@ public class Announce implements Domain, Activatable {
     }
 
     public void setZulip(Zulip zulip) {
-        this.zulip.setAll(zulip);
+        this.zulip.merge(zulip);
     }
 
     @Override

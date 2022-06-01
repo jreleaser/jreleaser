@@ -34,7 +34,7 @@ import static java.util.stream.Collectors.toList;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class Download implements Domain, Activatable {
+public class Download extends AbstractModelObject<Download> implements Domain, Activatable {
     private final Map<String, FtpDownloader> ftp = new LinkedHashMap<>();
     private final Map<String, HttpDownloader> http = new LinkedHashMap<>();
     private final Map<String, ScpDownloader> scp = new LinkedHashMap<>();
@@ -44,18 +44,19 @@ public class Download implements Domain, Activatable {
     @JsonIgnore
     private boolean enabled = true;
 
-    void setAll(Download download) {
-        this.active = download.active;
-        this.enabled = download.enabled;
-        setFtp(download.ftp);
-        setHttp(download.http);
-        setScp(download.scp);
-        setSftp(download.sftp);
+    @Override
+    public void merge(Download download) {
+        this.active = merge(this.active, download.active);
+        this.enabled = merge(this.enabled, download.enabled);
+        setFtp(mergeModel(this.ftp, download.ftp));
+        setHttp(mergeModel(this.http, download.http));
+        setScp(mergeModel(this.scp, download.scp));
+        setSftp(mergeModel(this.sftp, download.sftp));
     }
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return enabled && active != null;
     }
 
     public void disable() {
