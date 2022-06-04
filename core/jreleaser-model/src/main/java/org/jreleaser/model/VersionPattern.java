@@ -24,7 +24,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.5.0
  */
-public class VersionPattern {
+public class VersionPattern extends AbstractModelObject<VersionPattern> {
     private Type type;
     private String format;
 
@@ -37,6 +37,7 @@ public class VersionPattern {
     }
 
     public void setType(Type type) {
+        freezeCheck();
         this.type = type;
     }
 
@@ -45,6 +46,7 @@ public class VersionPattern {
     }
 
     public void setFormat(String format) {
+        freezeCheck();
         this.format = format;
     }
 
@@ -59,6 +61,12 @@ public class VersionPattern {
                 }
         }
         return s;
+    }
+
+    @Override
+    public void merge(VersionPattern source) {
+        this.type = merge(this.type, source.type);
+        this.format = merge(this.format, source.format);
     }
 
     public static VersionPattern of(String str) {

@@ -52,6 +52,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void merge(S uploader) {
+        freezeCheck();
         super.merge(uploader);
         this.username = merge(this.username, uploader.username);
         this.password = merge(this.password, uploader.password);
@@ -175,6 +176,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void setPath(String path) {
+        freezeCheck();
         this.path = path;
     }
 
@@ -185,6 +187,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void setDownloadUrl(String downloadUrl) {
+        freezeCheck();
         this.downloadUrl = downloadUrl;
     }
 
@@ -195,6 +198,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void setUsername(String username) {
+        freezeCheck();
         this.username = username;
     }
 
@@ -205,6 +209,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void setPassword(String password) {
+        freezeCheck();
         this.password = password;
     }
 
@@ -215,6 +220,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void setHost(String host) {
+        freezeCheck();
         this.host = host;
     }
 
@@ -225,6 +231,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void setPort(Integer port) {
+        freezeCheck();
         this.port = port;
     }
 
@@ -235,6 +242,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void setKnownHostsFile(String knownHostsFile) {
+        freezeCheck();
         this.knownHostsFile = knownHostsFile;
     }
 
@@ -245,6 +253,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void setPublicKey(String publicKey) {
+        freezeCheck();
         this.publicKey = publicKey;
     }
 
@@ -255,6 +264,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void setPrivateKey(String privateKey) {
+        freezeCheck();
         this.privateKey = privateKey;
     }
 
@@ -265,6 +275,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void setPassphrase(String passphrase) {
+        freezeCheck();
         this.passphrase = passphrase;
     }
 
@@ -275,6 +286,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public void setFingerprint(String fingerprint) {
+        freezeCheck();
         this.fingerprint = fingerprint;
     }
 

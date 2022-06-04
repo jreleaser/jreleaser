@@ -44,6 +44,7 @@ public class HttpDownloader extends AbstractDownloader<HttpDownloader> implement
 
     @Override
     public void merge(HttpDownloader http) {
+        freezeCheck();
         super.merge(http);
         this.username = merge(this.username, http.username);
         this.password = merge(this.password, http.password);
@@ -72,6 +73,7 @@ public class HttpDownloader extends AbstractDownloader<HttpDownloader> implement
     }
 
     public void setUsername(String username) {
+        freezeCheck();
         this.username = username;
     }
 
@@ -80,6 +82,7 @@ public class HttpDownloader extends AbstractDownloader<HttpDownloader> implement
     }
 
     public void setPassword(String password) {
+        freezeCheck();
         this.password = password;
     }
 
@@ -88,22 +91,26 @@ public class HttpDownloader extends AbstractDownloader<HttpDownloader> implement
     }
 
     public void setAuthorization(Http.Authorization authorization) {
+        freezeCheck();
         this.authorization = authorization;
     }
 
     public void setAuthorization(String authorization) {
+        freezeCheck();
         this.authorization = Http.Authorization.of(authorization);
     }
 
     public Map<String, String> getHeaders() {
-        return headers;
+        return freezeWrap(headers);
     }
 
     public void setHeaders(Map<String, String> headers) {
+        freezeCheck();
         this.headers.putAll(headers);
     }
 
     public void addHeaders(Map<String, String> headers) {
+        freezeCheck();
         this.headers.putAll(headers);
     }
 

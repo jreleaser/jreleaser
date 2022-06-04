@@ -54,6 +54,7 @@ public class Telegram extends AbstractAnnouncer<Telegram> {
 
     @Override
     public void merge(Telegram telegram) {
+        freezeCheck();
         super.merge(telegram);
         this.token = merge(this.token, telegram.token);
         this.chatId = merge(this.chatId, telegram.chatId);
@@ -97,6 +98,7 @@ public class Telegram extends AbstractAnnouncer<Telegram> {
     }
 
     public void setToken(String token) {
+        freezeCheck();
         this.token = token;
     }
 
@@ -105,6 +107,7 @@ public class Telegram extends AbstractAnnouncer<Telegram> {
     }
 
     public void setChatId(String chatId) {
+        freezeCheck();
         this.chatId = chatId;
     }
 
@@ -113,6 +116,7 @@ public class Telegram extends AbstractAnnouncer<Telegram> {
     }
 
     public void setMessage(String message) {
+        freezeCheck();
         this.message = message;
     }
 
@@ -121,6 +125,7 @@ public class Telegram extends AbstractAnnouncer<Telegram> {
     }
 
     public void setMessageTemplate(String messageTemplate) {
+        freezeCheck();
         this.messageTemplate = messageTemplate;
     }
 

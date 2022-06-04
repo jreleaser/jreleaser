@@ -67,7 +67,14 @@ public class Scoop extends AbstractRepositoryPackager<Scoop> {
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        bucket.freeze();
+    }
+
+    @Override
     public void merge(Scoop scoop) {
+        freezeCheck();
         super.merge(scoop);
         this.packageName = merge(this.packageName, scoop.packageName);
         this.checkverUrl = merge(this.checkverUrl, scoop.checkverUrl);
@@ -80,6 +87,7 @@ public class Scoop extends AbstractRepositoryPackager<Scoop> {
     }
 
     public void setPackageName(String packageName) {
+        freezeCheck();
         this.packageName = packageName;
     }
 
@@ -88,6 +96,7 @@ public class Scoop extends AbstractRepositoryPackager<Scoop> {
     }
 
     public void setCheckverUrl(String checkverUrl) {
+        freezeCheck();
         this.checkverUrl = checkverUrl;
     }
 
@@ -96,6 +105,7 @@ public class Scoop extends AbstractRepositoryPackager<Scoop> {
     }
 
     public void setAutoupdateUrl(String autoupdateUrl) {
+        freezeCheck();
         this.autoupdateUrl = autoupdateUrl;
     }
 
@@ -133,7 +143,7 @@ public class Scoop extends AbstractRepositoryPackager<Scoop> {
 
     @Override
     public Set<String> getSupportedExtensions(Distribution distribution) {
-        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+        return Collections.unmodifiableSet(SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet()));
     }
 
     @Override

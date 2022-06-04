@@ -54,7 +54,16 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        platform.freeze();
+        outputs.forEach(Artifact::freeze);
+        fileSets.forEach(FileSet::freeze);
+    }
+
+    @Override
     public void merge(S assembler) {
+        freezeCheck();
         this.active = merge(this.active, assembler.active);
         this.enabled = merge(this.enabled, assembler.enabled);
         this.exported = merge(this.exported, assembler.exported);
@@ -103,6 +112,7 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
 
     @Override
     public void setPlatform(Platform platform) {
+        freezeCheck();
         this.platform.merge(platform);
     }
 
@@ -112,7 +122,8 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
     }
 
     @Override
-    public void setExported(boolean exported) {
+    public void setExported(Boolean exported) {
+        freezeCheck();
         this.exported = exported;
     }
 
@@ -123,6 +134,7 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
 
     @Override
     public void setName(String name) {
+        freezeCheck();
         this.name = name;
     }
 
@@ -133,12 +145,13 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override
@@ -148,17 +161,19 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
 
     @Override
     public Set<Artifact> getOutputs() {
-        return Artifact.sortArtifacts(outputs);
+        return freezeWrap(Artifact.sortArtifacts(outputs));
     }
 
     @Override
     public void setOutputs(Set<Artifact> output) {
+        freezeCheck();
         this.outputs.clear();
         this.outputs.addAll(output);
     }
 
     @Override
     public void addOutput(Artifact artifact) {
+        freezeCheck();
         if (null != artifact) {
             this.outputs.add(artifact);
         }
@@ -166,17 +181,19 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
 
     @Override
     public Map<String, Object> getExtraProperties() {
-        return extraProperties;
+        return freezeWrap(extraProperties);
     }
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.putAll(extraProperties);
     }
 
@@ -187,22 +204,25 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
 
     @Override
     public List<FileSet> getFileSets() {
-        return fileSets;
+        return freezeWrap(fileSets);
     }
 
     @Override
     public void setFileSets(List<FileSet> fileSets) {
+        freezeCheck();
         this.fileSets.clear();
         this.fileSets.addAll(fileSets);
     }
 
     @Override
     public void addFileSets(List<FileSet> files) {
+        freezeCheck();
         this.fileSets.addAll(files);
     }
 
     @Override
     public void addFileSet(FileSet file) {
+        freezeCheck();
         if (null != file) {
             this.fileSets.add(file);
         }

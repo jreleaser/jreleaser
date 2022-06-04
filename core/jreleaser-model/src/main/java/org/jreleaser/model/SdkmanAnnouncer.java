@@ -47,6 +47,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer> {
 
     @Override
     public void merge(SdkmanAnnouncer sdkman) {
+        freezeCheck();
         super.merge(sdkman);
         this.consumerKey = merge(this.consumerKey, sdkman.consumerKey);
         this.consumerToken = merge(this.consumerToken, sdkman.consumerToken);
@@ -74,6 +75,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer> {
     }
 
     public void setConsumerKey(String consumerKey) {
+        freezeCheck();
         this.consumerKey = consumerKey;
     }
 
@@ -82,6 +84,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer> {
     }
 
     public void setConsumerToken(String consumerToken) {
+        freezeCheck();
         this.consumerToken = consumerToken;
     }
 
@@ -90,6 +93,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer> {
     }
 
     public void setCandidate(String candidate) {
+        freezeCheck();
         this.candidate = candidate;
     }
 
@@ -98,6 +102,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer> {
     }
 
     public void setReleaseNotesUrl(String releaseNotesUrl) {
+        freezeCheck();
         this.releaseNotesUrl = releaseNotesUrl;
     }
 
@@ -106,6 +111,7 @@ public class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer> {
     }
 
     public void setDownloadUrl(String downloadUrl) {
+        freezeCheck();
         this.downloadUrl = downloadUrl;
     }
 
@@ -114,11 +120,12 @@ public class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer> {
     }
 
     public void setCommand(Sdkman.Command command) {
+        freezeCheck();
         this.command = command;
     }
 
     public void setCommand(String str) {
-        this.command = Sdkman.Command.of(str);
+        setCommand(Sdkman.Command.of(str));
     }
 
     public boolean isCommandSet() {

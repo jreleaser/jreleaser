@@ -66,6 +66,8 @@ public class ModelValidator {
             context.setReleaser(Releasers.releaserFor(context));
         }
 
+        context.freeze();
+
         report(context);
     }
 

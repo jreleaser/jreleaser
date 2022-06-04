@@ -46,7 +46,17 @@ abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S>> extends
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        mainJar.freeze();
+        jars.forEach(Glob::freeze);
+        files.forEach(Glob::freeze);
+        java.freeze();
+    }
+
+    @Override
     public void merge(S assembler) {
+        freezeCheck();
         super.merge(assembler);
         this.executable = merge(this.executable, assembler.executable);
         this.templateDirectory = merge(this.templateDirectory, assembler.templateDirectory);
@@ -90,6 +100,7 @@ abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S>> extends
 
     @Override
     public void setExecutable(String executable) {
+        freezeCheck();
         this.executable = executable;
     }
 
@@ -100,6 +111,7 @@ abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S>> extends
 
     @Override
     public void setTemplateDirectory(String templateDirectory) {
+        freezeCheck();
         this.templateDirectory = templateDirectory;
     }
 
@@ -125,22 +137,25 @@ abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S>> extends
 
     @Override
     public List<Glob> getJars() {
-        return jars;
+        return freezeWrap(jars);
     }
 
     @Override
     public void setJars(List<Glob> jars) {
+        freezeCheck();
         this.jars.clear();
         this.jars.addAll(jars);
     }
 
     @Override
     public void addJars(List<Glob> jars) {
+        freezeCheck();
         this.jars.addAll(jars);
     }
 
     @Override
     public void addJar(Glob jar) {
+        freezeCheck();
         if (null != jar) {
             this.jars.add(jar);
         }
@@ -148,22 +163,25 @@ abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S>> extends
 
     @Override
     public List<Glob> getFiles() {
-        return files;
+        return freezeWrap(files);
     }
 
     @Override
     public void setFiles(List<Glob> files) {
+        freezeCheck();
         this.files.clear();
         this.files.addAll(files);
     }
 
     @Override
     public void addFiles(List<Glob> files) {
+        freezeCheck();
         this.files.addAll(files);
     }
 
     @Override
     public void addFile(Glob file) {
+        freezeCheck();
         if (null != file) {
             this.files.add(file);
         }

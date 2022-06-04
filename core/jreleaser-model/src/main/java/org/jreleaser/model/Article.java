@@ -39,7 +39,16 @@ public class Article extends AbstractAnnouncer<Article> implements CommitAuthorA
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        files.forEach(Artifact::freeze);
+        commitAuthor.freeze();
+        repository.freeze();
+    }
+
+    @Override
     public void merge(Article article) {
+        freezeCheck();
         super.merge(article);
         this.templateDirectory = merge(this.templateDirectory, article.templateDirectory);
         setFiles(merge(this.files, article.files));
@@ -48,19 +57,22 @@ public class Article extends AbstractAnnouncer<Article> implements CommitAuthorA
     }
 
     public Set<Artifact> getFiles() {
-        return Artifact.sortArtifacts(files);
+        return freezeWrap(Artifact.sortArtifacts(files));
     }
 
     public void setFiles(Set<Artifact> files) {
+        freezeCheck();
         this.files.clear();
         this.files.addAll(files);
     }
 
     public void addFiles(Set<Artifact> files) {
+        freezeCheck();
         this.files.addAll(files);
     }
 
     public void addFile(Artifact artifact) {
+        freezeCheck();
         if (null != artifact) {
             this.files.add(artifact);
         }
@@ -89,6 +101,7 @@ public class Article extends AbstractAnnouncer<Article> implements CommitAuthorA
     }
 
     public void setTemplateDirectory(String templateDirectory) {
+        freezeCheck();
         this.templateDirectory = templateDirectory;
     }
 

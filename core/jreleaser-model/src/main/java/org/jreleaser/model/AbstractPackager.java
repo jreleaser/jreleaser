@@ -51,6 +51,7 @@ public abstract class AbstractPackager<S extends AbstractPackager<S>> extends Ab
 
     @Override
     public void merge(S packager) {
+        freezeCheck();
         this.active = merge(this.active, packager.active);
         this.enabled = merge(this.enabled, packager.enabled);
         this.continueOnError = merge(this.continueOnError, packager.continueOnError);
@@ -116,6 +117,7 @@ public abstract class AbstractPackager<S extends AbstractPackager<S>> extends Ab
 
     @Override
     public void setContinueOnError(Boolean continueOnError) {
+        freezeCheck();
         this.continueOnError = continueOnError;
     }
 
@@ -151,12 +153,13 @@ public abstract class AbstractPackager<S extends AbstractPackager<S>> extends Ab
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override
@@ -171,17 +174,19 @@ public abstract class AbstractPackager<S extends AbstractPackager<S>> extends Ab
 
     @Override
     public Map<String, Object> getExtraProperties() {
-        return extraProperties;
+        return freezeWrap(extraProperties);
     }
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.putAll(extraProperties);
     }
 
@@ -192,6 +197,7 @@ public abstract class AbstractPackager<S extends AbstractPackager<S>> extends Ab
 
     @Override
     public void setDownloadUrl(String downloadUrl) {
+        freezeCheck();
         this.downloadUrl = downloadUrl;
     }
 

@@ -29,10 +29,12 @@ import org.jreleaser.util.SemVer;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -67,6 +69,8 @@ public class JReleaserModel implements Domain {
     private final String timestamp;
     @JsonIgnore
     private Commit commit;
+    @JsonIgnore
+    private boolean frozen;
 
     public JReleaserModel() {
         this.now = ZonedDateTime.now();
@@ -76,6 +80,32 @@ public class JReleaserModel implements Domain {
             .appendOffset("+HH:MM", "Z")
             .optionalEnd()
             .toFormatter());
+    }
+
+    public void freeze() {
+        freezeCheck();
+        frozen = true;
+        environment.freeze();
+        project.freeze();
+        platform.freeze();
+        release.freeze();
+        packagers.freeze();
+        announce.freeze();
+        download.freeze();
+        assemble.freeze();
+        upload.freeze();
+        checksum.freeze();
+        signing.freeze();
+        files.freeze();
+        distributions.values().forEach(Distribution::freeze);
+    }
+
+    private void freezeCheck() {
+        if (frozen) throw new UnsupportedOperationException();
+    }
+
+    private <K, V> Map<K, V> freezeWrap(Map<K, V> map) {
+        return frozen ? Collections.unmodifiableMap(map) : map;
     }
 
     public ZonedDateTime getNow() {
@@ -91,6 +121,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setCommit(Commit commit) {
+        freezeCheck();
         this.commit = commit;
     }
 
@@ -107,7 +138,7 @@ public class JReleaserModel implements Domain {
     }
 
     public void setPlatform(Platform platform) {
-        this.platform.mergeValues(platform);
+        this.platform.merge(platform);
     }
 
     public Project getProject() {
@@ -197,19 +228,17 @@ public class JReleaserModel implements Domain {
     }
 
     public Map<String, Distribution> getDistributions() {
-        return distributions;
+        return freezeWrap(distributions);
     }
 
     public void setDistributions(Map<String, Distribution> distributions) {
+        freezeCheck();
         this.distributions.clear();
         this.distributions.putAll(distributions);
     }
 
-    public void addDistributions(Map<String, Distribution> distributions) {
-        this.distributions.putAll(distributions);
-    }
-
     public void addDistribution(Distribution distribution) {
+        freezeCheck();
         this.distributions.put(distribution.getName(), distribution);
     }
 

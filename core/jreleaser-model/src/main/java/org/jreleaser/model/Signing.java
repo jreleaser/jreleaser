@@ -67,7 +67,15 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
     private Boolean checksums;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        command.freeze();
+        cosign.freeze();
+    }
+
+    @Override
     public void merge(Signing signing) {
+        freezeCheck();
         this.active = merge(this.active, signing.active);
         this.enabled = merge(this.enabled, signing.enabled);
         this.armored = merge(this.armored, signing.armored);
@@ -114,12 +122,13 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override
@@ -148,6 +157,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
     }
 
     public void setArmored(Boolean armored) {
+        freezeCheck();
         this.armored = armored;
     }
 
@@ -160,6 +170,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
     }
 
     public void setPublicKey(String publicKey) {
+        freezeCheck();
         this.publicKey = publicKey;
     }
 
@@ -168,6 +179,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
     }
 
     public void setSecretKey(String secretKey) {
+        freezeCheck();
         this.secretKey = secretKey;
     }
 
@@ -176,6 +188,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
     }
 
     public void setPassphrase(String passphrase) {
+        freezeCheck();
         this.passphrase = passphrase;
     }
 
@@ -184,11 +197,12 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
     }
 
     public void setMode(Mode mode) {
+        freezeCheck();
         this.mode = mode;
     }
 
     public void setMode(String str) {
-        this.mode = Mode.of(str);
+        setMode(Mode.of(str));
     }
 
     public boolean isArtifactsSet() {
@@ -200,6 +214,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
     }
 
     public void setArtifacts(Boolean artifacts) {
+        freezeCheck();
         this.artifacts = artifacts;
     }
 
@@ -212,6 +227,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
     }
 
     public void setFiles(Boolean files) {
+        freezeCheck();
         this.files = files;
     }
 
@@ -224,6 +240,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
     }
 
     public void setChecksums(Boolean checksums) {
+        freezeCheck();
         this.checksums = checksums;
     }
 
@@ -232,6 +249,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
     }
 
     public void setCommand(Command command) {
+        freezeCheck();
         this.command.merge(command);
     }
 
@@ -306,6 +324,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
 
         @Override
         public void merge(Command command) {
+            freezeCheck();
             this.executable = merge(this.executable, command.executable);
             this.keyName = merge(this.keyName, command.keyName);
             this.homeDir = merge(this.homeDir, command.homeDir);
@@ -319,6 +338,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
         }
 
         public void setExecutable(String executable) {
+            freezeCheck();
             this.executable = executable;
         }
 
@@ -327,6 +347,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
         }
 
         public void setKeyName(String keyName) {
+            freezeCheck();
             this.keyName = keyName;
         }
 
@@ -335,6 +356,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
         }
 
         public void setHomeDir(String homeDir) {
+            freezeCheck();
             this.homeDir = homeDir;
         }
 
@@ -343,6 +365,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
         }
 
         public void setPublicKeyring(String publicKeyring) {
+            freezeCheck();
             this.publicKeyring = publicKeyring;
         }
 
@@ -355,32 +378,18 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
         }
 
         public void setDefaultKeyring(Boolean defaultKeyring) {
+            freezeCheck();
             this.defaultKeyring = defaultKeyring;
         }
 
         public List<String> getArgs() {
-            return args;
+            return freezeWrap(args);
         }
 
         public void setArgs(List<String> args) {
+            freezeCheck();
             this.args.clear();
             this.args.addAll(args);
-        }
-
-        public void addArgs(List<String> args) {
-            this.args.addAll(args);
-        }
-
-        public void addArg(String arg) {
-            if (isNotBlank(arg)) {
-                this.args.add(arg.trim());
-            }
-        }
-
-        public void removeArg(String arg) {
-            if (isNotBlank(arg)) {
-                this.args.remove(arg.trim());
-            }
         }
 
         @Override
@@ -405,6 +414,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
 
         @Override
         public void merge(Cosign cosign) {
+            freezeCheck();
             this.version = merge(this.version, cosign.version);
             this.privateKeyFile = merge(this.privateKeyFile, cosign.privateKeyFile);
             this.publicKeyFile = merge(this.publicKeyFile, cosign.publicKeyFile);
@@ -423,6 +433,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
         }
 
         public void setVersion(String version) {
+            freezeCheck();
             this.version = version;
         }
 
@@ -431,6 +442,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
         }
 
         public void setPrivateKeyFile(String privateKeyFile) {
+            freezeCheck();
             this.privateKeyFile = privateKeyFile;
         }
 
@@ -439,6 +451,7 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
         }
 
         public void setPublicKeyFile(String publicKeyFile) {
+            freezeCheck();
             this.publicKeyFile = publicKeyFile;
         }
 

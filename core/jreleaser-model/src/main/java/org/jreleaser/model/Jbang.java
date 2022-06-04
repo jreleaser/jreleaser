@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +50,14 @@ public class Jbang extends AbstractRepositoryPackager<Jbang> {
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        catalog.freeze();
+    }
+
+    @Override
     public void merge(Jbang jbang) {
+        freezeCheck();
         super.merge(jbang);
         this.alias = merge(this.alias, jbang.alias);
         setCatalog(jbang.catalog);
@@ -60,6 +68,7 @@ public class Jbang extends AbstractRepositoryPackager<Jbang> {
     }
 
     public void setAlias(String alias) {
+        freezeCheck();
         this.alias = alias;
     }
 
@@ -95,7 +104,7 @@ public class Jbang extends AbstractRepositoryPackager<Jbang> {
 
     @Override
     public Set<String> getSupportedExtensions(Distribution distribution) {
-        return SUPPORTED.getOrDefault(distribution.getType(), emptySet());
+        return Collections.unmodifiableSet(SUPPORTED.getOrDefault(distribution.getType(), emptySet()));
     }
 
     @Override

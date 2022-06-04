@@ -48,6 +48,7 @@ public class Gitlab extends GitService<Gitlab> {
 
     @Override
     public void merge(Gitlab service) {
+        freezeCheck();
         super.merge(service);
         this.identifier = merge(this.identifier, service.identifier);
         setUploadLinks(merge(this.uploadLinks, service.uploadLinks));
@@ -63,14 +64,16 @@ public class Gitlab extends GitService<Gitlab> {
     }
 
     public void setIdentifier(String identifier) {
+        freezeCheck();
         this.identifier = identifier;
     }
 
     public Map<String, String> getUploadLinks() {
-        return uploadLinks;
+        return freezeWrap(uploadLinks);
     }
 
     public void setUploadLinks(Map<String, String> uploadLinks) {
+        freezeCheck();
         this.uploadLinks.clear();
         this.uploadLinks.putAll(uploadLinks);
     }

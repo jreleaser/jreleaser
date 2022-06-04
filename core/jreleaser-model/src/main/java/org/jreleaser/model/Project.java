@@ -74,7 +74,16 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     private String docsUrl;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        java.freeze();
+        snapshot.freeze();
+        versionPattern.freeze();
+    }
+
+    @Override
     public void merge(Project project) {
+        freezeCheck();
         this.name = merge(this.name, project.name);
         this.version = merge(this.version, project.version);
         this.versionPattern = merge(this.versionPattern, project.versionPattern);
@@ -129,6 +138,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void setName(String name) {
+        freezeCheck();
         this.name = name;
     }
 
@@ -137,6 +147,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void setVersion(String version) {
+        freezeCheck();
         this.version = version;
     }
 
@@ -145,11 +156,11 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void setVersionPattern(VersionPattern versionPattern) {
-        this.versionPattern = versionPattern;
+        this.versionPattern.merge(versionPattern);
     }
 
     public void setVersionPattern(String str) {
-        this.versionPattern = VersionPattern.of(str);
+        setVersionPattern(VersionPattern.of(str));
     }
 
     public VersionPattern versionPattern() {
@@ -169,6 +180,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void setDescription(String description) {
+        freezeCheck();
         this.description = description;
     }
 
@@ -177,6 +189,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void setLongDescription(String longDescription) {
+        freezeCheck();
         this.longDescription = longDescription;
     }
 
@@ -185,6 +198,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void setWebsite(String website) {
+        freezeCheck();
         this.website = website;
     }
 
@@ -193,6 +207,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void setLicense(String license) {
+        freezeCheck();
         this.license = license;
     }
 
@@ -201,6 +216,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void setLicenseUrl(String licenseUrl) {
+        freezeCheck();
         this.licenseUrl = licenseUrl;
     }
 
@@ -209,6 +225,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void setCopyright(String copyright) {
+        freezeCheck();
         this.copyright = copyright;
     }
 
@@ -217,6 +234,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void setVendor(String vendor) {
+        freezeCheck();
         this.vendor = vendor;
     }
 
@@ -225,6 +243,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void setDocsUrl(String docsUrl) {
+        freezeCheck();
         this.docsUrl = docsUrl;
     }
 
@@ -238,68 +257,40 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
 
     @Override
     public Map<String, Object> getExtraProperties() {
-        return extraProperties;
+        return freezeWrap(extraProperties);
     }
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.putAll(extraProperties);
     }
 
     public List<String> getAuthors() {
-        return authors;
+        return freezeWrap(authors);
     }
 
     public void setAuthors(List<String> authors) {
+        freezeCheck();
         this.authors.clear();
         this.authors.addAll(authors);
     }
 
-    public void addAuthors(List<String> authors) {
-        this.authors.addAll(authors);
-    }
-
-    public void addAuthor(String author) {
-        if (isNotBlank(author)) {
-            this.authors.add(author.trim());
-        }
-    }
-
-    public void removeAuthor(String author) {
-        if (isNotBlank(author)) {
-            this.authors.remove(author.trim());
-        }
-    }
-
     public List<String> getTags() {
-        return tags;
+        return freezeWrap(tags);
     }
 
     public void setTags(List<String> tags) {
+        freezeCheck();
         this.tags.clear();
         this.tags.addAll(tags);
-    }
-
-    public void addTags(List<String> tags) {
-        this.tags.addAll(tags);
-    }
-
-    public void addTag(String tag) {
-        if (isNotBlank(tag)) {
-            this.tags.add(tag.trim());
-        }
-    }
-
-    public void removeTag(String tag) {
-        if (isNotBlank(tag)) {
-            this.tags.remove(tag.trim());
-        }
     }
 
     @Override
@@ -327,6 +318,17 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     }
 
     public void parseVersion() {
+        boolean isFrozen = frozen;
+
+        try {
+            frozen = false;
+            doParseVersion();
+        } finally {
+            frozen = isFrozen;
+        }
+    }
+
+    private void doParseVersion() {
         String v = getResolvedVersion();
         if (isBlank(v)) return;
 
@@ -477,6 +479,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
 
         @Override
         public void merge(Snapshot snapshot) {
+            freezeCheck();
             this.enabled = this.merge(this.enabled, snapshot.enabled);
             this.pattern = this.merge(this.pattern, snapshot.pattern);
             this.label = this.merge(this.label, snapshot.label);
@@ -529,6 +532,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         }
 
         public void setPattern(String pattern) {
+            freezeCheck();
             this.pattern = pattern;
         }
 
@@ -537,6 +541,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         }
 
         public void setLabel(String label) {
+            freezeCheck();
             this.label = label;
         }
 
@@ -549,6 +554,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         }
 
         public void setFullChangelog(Boolean fullChangelog) {
+            freezeCheck();
             this.fullChangelog = fullChangelog;
         }
 

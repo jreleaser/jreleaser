@@ -22,5 +22,7 @@ package org.jreleaser.model;
  * @since 1.1.0
  */
 public interface ModelObject<S extends ModelObject<S>> {
+    void freeze();
+
     void merge(S source);
 }

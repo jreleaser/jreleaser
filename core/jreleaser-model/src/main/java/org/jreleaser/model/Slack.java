@@ -55,6 +55,7 @@ public class Slack extends AbstractAnnouncer<Slack> {
 
     @Override
     public void merge(Slack slack) {
+        freezeCheck();
         super.merge(slack);
         this.token = merge(this.token, slack.token);
         this.channel = merge(this.channel, slack.channel);
@@ -95,6 +96,7 @@ public class Slack extends AbstractAnnouncer<Slack> {
     }
 
     public void setToken(String token) {
+        freezeCheck();
         this.token = token;
     }
 
@@ -107,6 +109,7 @@ public class Slack extends AbstractAnnouncer<Slack> {
     }
 
     public void setWebhook(String webhook) {
+        freezeCheck();
         this.webhook = webhook;
     }
 
@@ -115,6 +118,7 @@ public class Slack extends AbstractAnnouncer<Slack> {
     }
 
     public void setChannel(String channel) {
+        freezeCheck();
         this.channel = channel;
     }
 
@@ -123,6 +127,7 @@ public class Slack extends AbstractAnnouncer<Slack> {
     }
 
     public void setMessage(String message) {
+        freezeCheck();
         this.message = message;
     }
 
@@ -131,6 +136,7 @@ public class Slack extends AbstractAnnouncer<Slack> {
     }
 
     public void setMessageTemplate(String messageTemplate) {
+        freezeCheck();
         this.messageTemplate = messageTemplate;
     }
 

@@ -49,6 +49,7 @@ public class Discussions extends AbstractAnnouncer<Discussions> {
 
     @Override
     public void merge(Discussions discussions) {
+        freezeCheck();
         super.merge(discussions);
         this.organization = merge(this.organization, discussions.organization);
         this.team = merge(this.team, discussions.team);
@@ -91,6 +92,7 @@ public class Discussions extends AbstractAnnouncer<Discussions> {
     }
 
     public void setOrganization(String organization) {
+        freezeCheck();
         this.organization = organization;
     }
 
@@ -99,6 +101,7 @@ public class Discussions extends AbstractAnnouncer<Discussions> {
     }
 
     public void setTeam(String team) {
+        freezeCheck();
         this.team = team;
     }
 
@@ -107,6 +110,7 @@ public class Discussions extends AbstractAnnouncer<Discussions> {
     }
 
     public void setTitle(String title) {
+        freezeCheck();
         this.title = title;
     }
 
@@ -115,6 +119,7 @@ public class Discussions extends AbstractAnnouncer<Discussions> {
     }
 
     public void setMessage(String message) {
+        freezeCheck();
         this.message = message;
     }
 
@@ -123,6 +128,7 @@ public class Discussions extends AbstractAnnouncer<Discussions> {
     }
 
     public void setMessageTemplate(String messageTemplate) {
+        freezeCheck();
         this.messageTemplate = messageTemplate;
     }
 

@@ -52,6 +52,7 @@ public class Gitter extends AbstractAnnouncer<Gitter> {
 
     @Override
     public void merge(Gitter gitter) {
+        freezeCheck();
         super.merge(gitter);
         this.webhook = merge(this.webhook, gitter.webhook);
         this.message = merge(this.message, gitter.message);
@@ -90,6 +91,7 @@ public class Gitter extends AbstractAnnouncer<Gitter> {
     }
 
     public void setWebhook(String webhook) {
+        freezeCheck();
         this.webhook = webhook;
     }
 
@@ -98,6 +100,7 @@ public class Gitter extends AbstractAnnouncer<Gitter> {
     }
 
     public void setMessage(String message) {
+        freezeCheck();
         this.message = message;
     }
 
@@ -106,6 +109,7 @@ public class Gitter extends AbstractAnnouncer<Gitter> {
     }
 
     public void setMessageTemplate(String messageTemplate) {
+        freezeCheck();
         this.messageTemplate = messageTemplate;
     }
 

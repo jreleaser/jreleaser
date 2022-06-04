@@ -43,6 +43,7 @@ abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S>> extends Abstrac
 
     @Override
     public void merge(S announcer) {
+        freezeCheck();
         this.active = merge(this.active, announcer.active);
         this.enabled = merge(this.enabled, announcer.enabled);
         this.connectTimeout = merge(this.connectTimeout, announcer.connectTimeout);
@@ -84,12 +85,13 @@ abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S>> extends Abstrac
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override
@@ -114,6 +116,7 @@ abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S>> extends Abstrac
 
     @Override
     public void setConnectTimeout(int connectTimeout) {
+        freezeCheck();
         this.connectTimeout = connectTimeout;
     }
 
@@ -124,22 +127,25 @@ abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S>> extends Abstrac
 
     @Override
     public void setReadTimeout(int readTimeout) {
+        freezeCheck();
         this.readTimeout = readTimeout;
     }
 
     @Override
     public Map<String, Object> getExtraProperties() {
-        return extraProperties;
+        return freezeWrap(extraProperties);
     }
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.putAll(extraProperties);
     }
 

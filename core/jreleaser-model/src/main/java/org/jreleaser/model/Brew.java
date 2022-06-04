@@ -81,7 +81,15 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        tap.freeze();
+        cask.freeze();
+    }
+
+    @Override
     public void merge(Brew brew) {
+        freezeCheck();
         super.merge(brew);
         this.formulaName = merge(this.formulaName, brew.formulaName);
         this.multiPlatform = merge(this.multiPlatform, brew.multiPlatform);
@@ -115,6 +123,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
     }
 
     public void setFormulaName(String formulaName) {
+        freezeCheck();
         this.formulaName = formulaName;
     }
 
@@ -123,6 +132,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
     }
 
     public void setMultiPlatform(Boolean multiPlatform) {
+        freezeCheck();
         this.multiPlatform = multiPlatform;
     }
 
@@ -135,6 +145,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
     }
 
     public void setTap(HomebrewTap tap) {
+        freezeCheck();
         this.tap.merge(tap);
     }
 
@@ -143,10 +154,12 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
     }
 
     public void setCask(Cask cask) {
+        freezeCheck();
         this.cask.merge(cask);
     }
 
     public void setDependencies(Map<String, String> dependencies) {
+        freezeCheck();
         if (null == dependencies || dependencies.isEmpty()) {
             return;
         }
@@ -155,10 +168,11 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
     }
 
     public List<Dependency> getDependenciesAsList() {
-        return dependencies;
+        return freezeWrap(dependencies);
     }
 
     public void setDependenciesAsList(List<Dependency> dependencies) {
+        freezeCheck();
         if (null == dependencies || dependencies.isEmpty()) {
             return;
         }
@@ -167,6 +181,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
     }
 
     public void addDependencies(Map<String, String> dependencies) {
+        freezeCheck();
         if (null == dependencies || dependencies.isEmpty()) {
             return;
         }
@@ -174,18 +189,21 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
     }
 
     public void addDependency(String key, String value) {
+        freezeCheck();
         dependencies.add(new Dependency(key, value));
     }
 
     public void addDependency(String key) {
+        freezeCheck();
         dependencies.add(new Dependency(key));
     }
 
     public List<String> getLivecheck() {
-        return livecheck;
+        return freezeWrap(livecheck);
     }
 
     public void setLivecheck(List<String> livecheck) {
+        freezeCheck();
         this.livecheck.clear();
         this.livecheck.addAll(livecheck);
     }
@@ -226,7 +244,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
 
     @Override
     public Set<String> getSupportedExtensions(Distribution distribution) {
-        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+        return Collections.unmodifiableSet(SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet()));
     }
 
     @Override
@@ -326,7 +344,15 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
         private String cachedPkgName;
 
         @Override
+        public void freeze() {
+            super.freeze();
+            uninstall.forEach(CaskItem::freeze);
+            zap.forEach(CaskItem::freeze);
+        }
+
+        @Override
         public void merge(Cask cask) {
+            freezeCheck();
             this.enabled = this.merge(this.enabled, cask.enabled);
             this.name = this.merge(this.name, cask.name);
             this.displayName = this.merge(this.displayName, cask.displayName);
@@ -349,7 +375,8 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
             return enabled != null && enabled;
         }
 
-        public void setEnabled(boolean enabled) {
+        public void setEnabled(Boolean enabled) {
+            freezeCheck();
             this.enabled = enabled;
         }
 
@@ -439,6 +466,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
         }
 
         public void setName(String name) {
+            freezeCheck();
             this.name = name;
         }
 
@@ -447,6 +475,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
         }
 
         public void setDisplayName(String displayName) {
+            freezeCheck();
             this.displayName = displayName;
         }
 
@@ -455,6 +484,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
         }
 
         public void setPkgName(String pkgName) {
+            freezeCheck();
             this.pkgName = pkgName;
         }
 
@@ -463,6 +493,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
         }
 
         public void setAppName(String appName) {
+            freezeCheck();
             this.appName = appName;
         }
 
@@ -471,24 +502,28 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
         }
 
         public void setAppcast(String appcast) {
+            freezeCheck();
             this.appcast = appcast;
         }
 
         public List<CaskItem> getUninstallItems() {
-            return uninstall;
+            return freezeWrap(uninstall);
         }
 
         void setUninstallItems(List<CaskItem> uninstall) {
+            freezeCheck();
             this.uninstall.clear();
             this.uninstall.addAll(uninstall);
         }
 
         public void setUninstall(Map<String, List<String>> uninstall) {
+            freezeCheck();
             this.uninstall.clear();
             uninstall.forEach((name, items) -> this.uninstall.add(new CaskItem(name, items)));
         }
 
         public void addUninstall(CaskItem item) {
+            freezeCheck();
             if (null != item) {
                 this.uninstall.add(item);
             }
@@ -499,20 +534,23 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
         }
 
         public List<CaskItem> getZapItems() {
-            return zap;
+            return freezeWrap(zap);
         }
 
         void setZapItems(List<CaskItem> zap) {
+            freezeCheck();
             this.zap.clear();
             this.zap.addAll(zap);
         }
 
         public void setZap(Map<String, List<String>> zap) {
+            freezeCheck();
             this.zap.clear();
             zap.forEach((name, items) -> this.zap.add(new CaskItem(name, items)));
         }
 
         public void addZap(CaskItem item) {
+            freezeCheck();
             if (null != item) {
                 this.zap.add(item);
             }
@@ -545,7 +583,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
         }
     }
 
-    public static class CaskItem implements Domain {
+    public static class CaskItem extends AbstractModelObject<CaskItem> implements Domain {
         private final List<String> items = new ArrayList<>();
         private String name;
 
@@ -559,32 +597,18 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
         }
 
         public void setName(String name) {
+            freezeCheck();
             this.name = name;
         }
 
         public List<String> getItems() {
-            return items;
+            return freezeWrap(items);
         }
 
         public void setItems(List<String> items) {
+            freezeCheck();
             this.items.clear();
             this.items.addAll(items);
-        }
-
-        public void addItems(List<String> item) {
-            this.items.addAll(item);
-        }
-
-        public void addItem(String item) {
-            if (isNotBlank(item)) {
-                this.items.add(item.trim());
-            }
-        }
-
-        public void removeItem(String item) {
-            if (isNotBlank(item)) {
-                this.items.remove(item.trim());
-            }
         }
 
         public boolean getHasItems() {
@@ -600,6 +624,12 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put(name, items);
             return map;
+        }
+
+        @Override
+        public void merge(CaskItem source) {
+            this.name = merge(this.name, source.name);
+            setItems(merge(this.items, source.items));
         }
     }
 }

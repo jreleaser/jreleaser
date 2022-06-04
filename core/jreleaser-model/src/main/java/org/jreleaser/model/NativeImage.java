@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
@@ -61,7 +60,19 @@ public class NativeImage extends AbstractJavaAssembler<NativeImage> {
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        graal.freeze();
+        graalJdks.forEach(Artifact::freeze);
+        upx.freeze();
+        linux.freeze();
+        windows.freeze();
+        osx.freeze();
+    }
+
+    @Override
     public void merge(NativeImage nativeImage) {
+        freezeCheck();
         super.merge(nativeImage);
         this.imageName = merge(this.imageName, nativeImage.imageName);
         this.imageNameTransform = merge(this.imageNameTransform, nativeImage.imageNameTransform);
@@ -103,6 +114,7 @@ public class NativeImage extends AbstractJavaAssembler<NativeImage> {
     }
 
     public void setImageName(String imageName) {
+        freezeCheck();
         this.imageName = imageName;
     }
 
@@ -111,6 +123,7 @@ public class NativeImage extends AbstractJavaAssembler<NativeImage> {
     }
 
     public void setImageNameTransform(String imageNameTransform) {
+        freezeCheck();
         this.imageNameTransform = imageNameTransform;
     }
 
@@ -119,10 +132,12 @@ public class NativeImage extends AbstractJavaAssembler<NativeImage> {
     }
 
     public void setArchiveFormat(Archive.Format archiveFormat) {
+        freezeCheck();
         this.archiveFormat = archiveFormat;
     }
 
     public void setArchiveFormat(String archiveFormat) {
+        freezeCheck();
         this.archiveFormat = Archive.Format.of(archiveFormat);
     }
 
@@ -135,47 +150,35 @@ public class NativeImage extends AbstractJavaAssembler<NativeImage> {
     }
 
     public Set<Artifact> getGraalJdks() {
-        return Artifact.sortArtifacts(graalJdks);
+        return freezeWrap(Artifact.sortArtifacts(graalJdks));
     }
 
     public void setGraalJdks(Set<Artifact> graalJdks) {
+        freezeCheck();
         this.graalJdks.clear();
         this.graalJdks.addAll(graalJdks);
     }
 
     public void addGraalJdks(Set<Artifact> graalJdks) {
+        freezeCheck();
         this.graalJdks.addAll(graalJdks);
     }
 
     public void addGraalJdk(Artifact jdk) {
+        freezeCheck();
         if (null != jdk) {
             this.graalJdks.add(jdk);
         }
     }
 
     public List<String> getArgs() {
-        return args;
+        return freezeWrap(args);
     }
 
     public void setArgs(List<String> args) {
+        freezeCheck();
         this.args.clear();
         this.args.addAll(args);
-    }
-
-    public void addArgs(List<String> args) {
-        this.args.addAll(args);
-    }
-
-    public void addArg(String arg) {
-        if (isNotBlank(arg)) {
-            this.args.add(arg.trim());
-        }
-    }
-
-    public void removeArg(String arg) {
-        if (isNotBlank(arg)) {
-            this.args.remove(arg.trim());
-        }
     }
 
     public Upx getUpx() {
@@ -236,8 +239,6 @@ public class NativeImage extends AbstractJavaAssembler<NativeImage> {
         List<String> getArgs();
 
         void setArgs(List<String> args);
-
-        void addArgs(List<String> args);
     }
 
     public static class Upx extends AbstractModelObject<Upx> implements Domain, Activatable {
@@ -250,6 +251,7 @@ public class NativeImage extends AbstractJavaAssembler<NativeImage> {
 
         @Override
         public void merge(Upx upx) {
+            freezeCheck();
             this.active = this.merge(this.active, upx.active);
             this.enabled = this.merge(this.enabled, upx.enabled);
             this.version = this.merge(this.version, upx.version);
@@ -281,12 +283,13 @@ public class NativeImage extends AbstractJavaAssembler<NativeImage> {
 
         @Override
         public void setActive(Active active) {
+            freezeCheck();
             this.active = active;
         }
 
         @Override
         public void setActive(String str) {
-            this.active = Active.of(str);
+            setActive(Active.of(str));
         }
 
         @Override
@@ -299,26 +302,18 @@ public class NativeImage extends AbstractJavaAssembler<NativeImage> {
         }
 
         public void setVersion(String version) {
+            freezeCheck();
             this.version = version;
         }
 
         public List<String> getArgs() {
-            return args;
+            return freezeWrap(args);
         }
 
         public void setArgs(List<String> args) {
+            freezeCheck();
             this.args.clear();
             this.args.addAll(args);
-        }
-
-        public void addArgs(List<String> args) {
-            this.args.addAll(args);
-        }
-
-        public void addArg(String arg) {
-            if (isNotBlank(arg)) {
-                this.args.add(arg.trim());
-            }
         }
 
         @Override
@@ -344,19 +339,17 @@ public class NativeImage extends AbstractJavaAssembler<NativeImage> {
 
         @Override
         public void merge(S customizer) {
+            freezeCheck();
             setArgs(merge(this.args, customizer.args));
         }
 
         public List<String> getArgs() {
-            return args;
+            return freezeWrap(args);
         }
 
         public void setArgs(List<String> args) {
+            freezeCheck();
             this.args.clear();
-            this.args.addAll(args);
-        }
-
-        public void addArgs(List<String> args) {
             this.args.addAll(args);
         }
 

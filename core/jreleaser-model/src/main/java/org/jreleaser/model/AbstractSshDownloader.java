@@ -48,6 +48,7 @@ public abstract class AbstractSshDownloader<S extends AbstractSshDownloader<S>> 
 
     @Override
     public void merge(S downloader) {
+        freezeCheck();
         super.merge(downloader);
         this.username = merge(this.username, downloader.username);
         this.password = merge(this.password, downloader.password);
@@ -150,6 +151,7 @@ public abstract class AbstractSshDownloader<S extends AbstractSshDownloader<S>> 
 
     @Override
     public void setUsername(String username) {
+        freezeCheck();
         this.username = username;
     }
 
@@ -160,6 +162,7 @@ public abstract class AbstractSshDownloader<S extends AbstractSshDownloader<S>> 
 
     @Override
     public void setPassword(String password) {
+        freezeCheck();
         this.password = password;
     }
 
@@ -170,6 +173,7 @@ public abstract class AbstractSshDownloader<S extends AbstractSshDownloader<S>> 
 
     @Override
     public void setHost(String host) {
+        freezeCheck();
         this.host = host;
     }
 
@@ -180,6 +184,7 @@ public abstract class AbstractSshDownloader<S extends AbstractSshDownloader<S>> 
 
     @Override
     public void setPort(Integer port) {
+        freezeCheck();
         this.port = port;
     }
 
@@ -190,6 +195,7 @@ public abstract class AbstractSshDownloader<S extends AbstractSshDownloader<S>> 
 
     @Override
     public void setKnownHostsFile(String knownHostsFile) {
+        freezeCheck();
         this.knownHostsFile = knownHostsFile;
     }
 
@@ -200,6 +206,7 @@ public abstract class AbstractSshDownloader<S extends AbstractSshDownloader<S>> 
 
     @Override
     public void setPublicKey(String publicKey) {
+        freezeCheck();
         this.publicKey = publicKey;
     }
 
@@ -210,6 +217,7 @@ public abstract class AbstractSshDownloader<S extends AbstractSshDownloader<S>> 
 
     @Override
     public void setPrivateKey(String privateKey) {
+        freezeCheck();
         this.privateKey = privateKey;
     }
 
@@ -220,6 +228,7 @@ public abstract class AbstractSshDownloader<S extends AbstractSshDownloader<S>> 
 
     @Override
     public void setPassphrase(String passphrase) {
+        freezeCheck();
         this.passphrase = passphrase;
     }
 
@@ -230,6 +239,7 @@ public abstract class AbstractSshDownloader<S extends AbstractSshDownloader<S>> 
 
     @Override
     public void setFingerprint(String fingerprint) {
+        freezeCheck();
         this.fingerprint = fingerprint;
     }
 

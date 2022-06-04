@@ -120,7 +120,18 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        changelog.freeze();
+        milestone.freeze();
+        commitAuthor.freeze();
+        update.freeze();
+        prerelease.freeze();
+    }
+
+    @Override
     public void merge(S service) {
+        freezeCheck();
         this.match = service.match;
         this.enabled = merge(this.enabled, service.enabled);
         this.host = merge(this.host, service.host);
@@ -289,6 +300,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setMatch(boolean match) {
+        freezeCheck();
         this.match = match;
     }
 
@@ -299,6 +311,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
 
     @Override
     public void setEnabled(Boolean enabled) {
+        freezeCheck();
         this.enabled = enabled;
     }
 
@@ -312,6 +325,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setHost(String host) {
+        freezeCheck();
         this.host = host;
     }
 
@@ -322,6 +336,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
 
     @Override
     public void setOwner(String owner) {
+        freezeCheck();
         this.owner = owner;
     }
 
@@ -330,6 +345,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setName(String name) {
+        freezeCheck();
         this.name = name;
     }
 
@@ -338,6 +354,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setRepoUrl(String repoUrl) {
+        freezeCheck();
         this.repoUrl = repoUrl;
     }
 
@@ -346,6 +363,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setRepoCloneUrl(String repoCloneUrl) {
+        freezeCheck();
         this.repoCloneUrl = repoCloneUrl;
     }
 
@@ -354,6 +372,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setCommitUrl(String commitUrl) {
+        freezeCheck();
         this.commitUrl = commitUrl;
     }
 
@@ -362,6 +381,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setSrcUrl(String srcUrl) {
+        freezeCheck();
         this.srcUrl = srcUrl;
     }
 
@@ -370,6 +390,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setDownloadUrl(String downloadUrl) {
+        freezeCheck();
         this.downloadUrl = downloadUrl;
     }
 
@@ -378,6 +399,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setReleaseNotesUrl(String releaseNotesUrl) {
+        freezeCheck();
         this.releaseNotesUrl = releaseNotesUrl;
     }
 
@@ -386,6 +408,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setLatestReleaseUrl(String latestReleaseUrl) {
+        freezeCheck();
         this.latestReleaseUrl = latestReleaseUrl;
     }
 
@@ -394,6 +417,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setIssueTrackerUrl(String issueTrackerUrl) {
+        freezeCheck();
         this.issueTrackerUrl = issueTrackerUrl;
     }
 
@@ -410,6 +434,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setUsername(String username) {
+        freezeCheck();
         this.username = username;
     }
 
@@ -418,6 +443,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setToken(String token) {
+        freezeCheck();
         this.token = token;
     }
 
@@ -426,6 +452,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setTagName(String tagName) {
+        freezeCheck();
         this.tagName = tagName;
     }
 
@@ -434,6 +461,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setPreviousTagName(String previousTagName) {
+        freezeCheck();
         this.previousTagName = previousTagName;
     }
 
@@ -442,6 +470,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setReleaseName(String releaseName) {
+        freezeCheck();
         this.releaseName = releaseName;
     }
 
@@ -450,6 +479,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setBranch(String branch) {
+        freezeCheck();
         this.branch = branch;
     }
 
@@ -476,6 +506,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setSign(Boolean sign) {
+        freezeCheck();
         this.sign = sign;
     }
 
@@ -500,6 +531,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setSkipTag(Boolean skipTag) {
+        freezeCheck();
         this.skipTag = skipTag;
     }
 
@@ -512,6 +544,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setSkipRelease(Boolean skipRelease) {
+        freezeCheck();
         this.skipRelease = skipRelease;
     }
 
@@ -524,6 +557,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setOverwrite(Boolean overwrite) {
+        freezeCheck();
         this.overwrite = overwrite;
     }
 
@@ -544,6 +578,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setApiEndpoint(String apiEndpoint) {
+        freezeCheck();
         this.apiEndpoint = apiEndpoint;
     }
 
@@ -554,6 +589,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
 
     @Override
     public void setConnectTimeout(int connectTimeout) {
+        freezeCheck();
         this.connectTimeout = connectTimeout;
     }
 
@@ -564,6 +600,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
 
     @Override
     public void setReadTimeout(int readTimeout) {
+        freezeCheck();
         this.readTimeout = readTimeout;
     }
 
@@ -576,6 +613,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setArtifacts(Boolean artifacts) {
+        freezeCheck();
         this.artifacts = artifacts;
     }
 
@@ -588,6 +626,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setFiles(Boolean files) {
+        freezeCheck();
         this.files = files;
     }
 
@@ -600,6 +639,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setChecksums(Boolean checksums) {
+        freezeCheck();
         this.checksums = checksums;
     }
 
@@ -612,6 +652,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setSignatures(Boolean signatures) {
+        freezeCheck();
         this.signatures = signatures;
     }
 
@@ -620,11 +661,12 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     }
 
     public void setUploadAssets(Active uploadAssets) {
+        freezeCheck();
         this.uploadAssets = uploadAssets;
     }
 
     public void setUploadAssets(String str) {
-        this.uploadAssets = Active.of(str);
+        setUploadAssets(Active.of(str));
     }
 
     public boolean isUploadAssetsSet() {
@@ -782,6 +824,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
 
         @Override
         public void merge(Update update) {
+            freezeCheck();
             this.enabled = merge(this.enabled, update.enabled);
             setSections(merge(this.sections, update.sections));
         }
@@ -791,6 +834,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         }
 
         public void setEnabled(Boolean enabled) {
+            freezeCheck();
             this.enabled = enabled;
         }
 
@@ -799,10 +843,11 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         }
 
         public Set<UpdateSection> getSections() {
-            return sections;
+            return freezeWrap(sections);
         }
 
         public void setSections(Set<UpdateSection> sections) {
+            freezeCheck();
             this.sections.clear();
             this.sections.addAll(sections);
         }
@@ -822,6 +867,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
 
         @Override
         public void merge(Prerelease prerelease) {
+            freezeCheck();
             this.enabled = merge(this.enabled, prerelease.enabled);
             this.pattern = merge(this.pattern, prerelease.pattern);
         }
@@ -835,6 +881,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         }
 
         public void setEnabled(Boolean enabled) {
+            freezeCheck();
             this.enabled = enabled;
         }
 
@@ -860,6 +907,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         }
 
         public void setPattern(String pattern) {
+            freezeCheck();
             this.pattern = pattern;
         }
 
@@ -883,6 +931,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
 
         @Override
         public void merge(Milestone milestone) {
+            freezeCheck();
             this.close = merge(this.close, milestone.close);
             this.name = merge(this.name, milestone.name);
         }
@@ -914,6 +963,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         }
 
         public void setClose(Boolean close) {
+            freezeCheck();
             this.close = close;
         }
 
@@ -926,6 +976,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         }
 
         public void setName(String name) {
+            freezeCheck();
             this.name = name;
         }
 

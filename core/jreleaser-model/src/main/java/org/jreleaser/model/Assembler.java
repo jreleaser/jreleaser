@@ -36,7 +36,7 @@ public interface Assembler extends Domain, Activatable, ExtraProperties {
 
     boolean isExported();
 
-    void setExported(boolean exported);
+    void setExported(Boolean exported);
 
     String getName();
 

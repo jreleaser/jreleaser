@@ -46,6 +46,7 @@ public class FtpUploader extends AbstractUploader<FtpUploader> implements Ftp {
 
     @Override
     public void merge(FtpUploader ftp) {
+        freezeCheck();
         super.merge(ftp);
         this.username = merge(this.username, ftp.username);
         this.password = merge(this.password, ftp.password);
@@ -101,6 +102,7 @@ public class FtpUploader extends AbstractUploader<FtpUploader> implements Ftp {
 
     @Override
     public void setUsername(String username) {
+        freezeCheck();
         this.username = username;
     }
 
@@ -111,6 +113,7 @@ public class FtpUploader extends AbstractUploader<FtpUploader> implements Ftp {
 
     @Override
     public void setPassword(String password) {
+        freezeCheck();
         this.password = password;
     }
 
@@ -121,6 +124,7 @@ public class FtpUploader extends AbstractUploader<FtpUploader> implements Ftp {
 
     @Override
     public void setHost(String host) {
+        freezeCheck();
         this.host = host;
     }
 
@@ -131,6 +135,7 @@ public class FtpUploader extends AbstractUploader<FtpUploader> implements Ftp {
 
     @Override
     public void setPort(Integer port) {
+        freezeCheck();
         this.port = port;
     }
 
@@ -139,6 +144,7 @@ public class FtpUploader extends AbstractUploader<FtpUploader> implements Ftp {
     }
 
     public void setPath(String path) {
+        freezeCheck();
         this.path = path;
     }
 
@@ -147,6 +153,7 @@ public class FtpUploader extends AbstractUploader<FtpUploader> implements Ftp {
     }
 
     public void setDownloadUrl(String downloadUrl) {
+        freezeCheck();
         this.downloadUrl = downloadUrl;
     }
 

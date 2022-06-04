@@ -29,8 +29,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -49,7 +49,17 @@ public class Assemble extends AbstractModelObject<Assemble> implements Domain, A
     private boolean enabled = true;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        archive.values().forEach(Archive::freeze);
+        jlink.values().forEach(Jlink::freeze);
+        jpackage.values().forEach(Jpackage::freeze);
+        nativeImage.values().forEach(NativeImage::freeze);
+    }
+
+    @Override
     public void merge(Assemble assemble) {
+        freezeCheck();
         this.active = merge(this.active, assemble.active);
         this.enabled = merge(this.enabled, assemble.enabled);
         setArchive(mergeModel(this.archive, assemble.archive));
@@ -66,6 +76,7 @@ public class Assemble extends AbstractModelObject<Assemble> implements Domain, A
     @Deprecated
     public void setEnabled(Boolean enabled) {
         nag("assemble.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
+        freezeCheck();
         if (null != enabled) {
             this.active = enabled ? Active.ALWAYS : Active.NEVER;
         }
@@ -91,12 +102,13 @@ public class Assemble extends AbstractModelObject<Assemble> implements Domain, A
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override
@@ -107,38 +119,42 @@ public class Assemble extends AbstractModelObject<Assemble> implements Domain, A
     public List<Archive> getActiveArchives() {
         return archive.values().stream()
             .filter(Archive::isEnabled)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     public Map<String, Archive> getArchive() {
-        return archive;
+        return freezeWrap(archive);
     }
 
     public void setArchive(Map<String, Archive> archive) {
+        freezeCheck();
         this.archive.clear();
         this.archive.putAll(archive);
     }
 
     public void addArchive(Archive archive) {
+        freezeCheck();
         this.archive.put(archive.getName(), archive);
     }
 
     public List<Jlink> getActiveJlinks() {
         return jlink.values().stream()
             .filter(Jlink::isEnabled)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     public Map<String, Jlink> getJlink() {
-        return jlink;
+        return freezeWrap(jlink);
     }
 
     public void setJlink(Map<String, Jlink> jlink) {
+        freezeCheck();
         this.jlink.clear();
         this.jlink.putAll(jlink);
     }
 
     public void addJlink(Jlink jlink) {
+        freezeCheck();
         this.jlink.put(jlink.getName(), jlink);
     }
 
@@ -157,38 +173,42 @@ public class Assemble extends AbstractModelObject<Assemble> implements Domain, A
     public List<Jpackage> getActiveJpackages() {
         return jpackage.values().stream()
             .filter(Jpackage::isEnabled)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     public Map<String, Jpackage> getJpackage() {
-        return jpackage;
+        return freezeWrap(jpackage);
     }
 
     public void setJpackage(Map<String, Jpackage> jpackage) {
+        freezeCheck();
         this.jpackage.clear();
         this.jpackage.putAll(jpackage);
     }
 
     public void addJpackage(Jpackage jpackage) {
+        freezeCheck();
         this.jpackage.put(jpackage.getName(), jpackage);
     }
 
     public List<NativeImage> getActiveNativeImages() {
         return nativeImage.values().stream()
             .filter(NativeImage::isEnabled)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     public Map<String, NativeImage> getNativeImage() {
-        return nativeImage;
+        return freezeWrap(nativeImage);
     }
 
     public void setNativeImage(Map<String, NativeImage> nativeImage) {
+        freezeCheck();
         this.nativeImage.clear();
         this.nativeImage.putAll(nativeImage);
     }
 
     public void addNativeImage(NativeImage nativeImage) {
+        freezeCheck();
         this.nativeImage.put(nativeImage.getName(), nativeImage);
     }
 
@@ -202,28 +222,28 @@ public class Assemble extends AbstractModelObject<Assemble> implements Domain, A
             .stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
-            .collect(Collectors.toList());
+            .collect(toList());
         if (!archive.isEmpty()) map.put("archive", archive);
 
         List<Map<String, Object>> jlink = this.jlink.values()
             .stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
-            .collect(Collectors.toList());
+            .collect(toList());
         if (!jlink.isEmpty()) map.put("jlink", jlink);
 
         List<Map<String, Object>> jpackage = this.jpackage.values()
             .stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
-            .collect(Collectors.toList());
+            .collect(toList());
         if (!jpackage.isEmpty()) map.put("jpackage", jpackage);
 
         List<Map<String, Object>> nativeImage = this.nativeImage.values()
             .stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
-            .collect(Collectors.toList());
+            .collect(toList());
         if (!nativeImage.isEmpty()) map.put("nativeImage", nativeImage);
 
         return map;

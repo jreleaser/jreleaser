@@ -45,6 +45,7 @@ public class Mastodon extends AbstractAnnouncer<Mastodon> {
 
     @Override
     public void merge(Mastodon mastodon) {
+        freezeCheck();
         super.merge(mastodon);
         this.host = merge(this.host, mastodon.host);
         this.accessToken = merge(this.accessToken, mastodon.accessToken);
@@ -67,6 +68,7 @@ public class Mastodon extends AbstractAnnouncer<Mastodon> {
     }
 
     public void setHost(String host) {
+        freezeCheck();
         this.host = host;
     }
 
@@ -75,6 +77,7 @@ public class Mastodon extends AbstractAnnouncer<Mastodon> {
     }
 
     public void setAccessToken(String accessToken) {
+        freezeCheck();
         this.accessToken = accessToken;
     }
 
@@ -83,6 +86,7 @@ public class Mastodon extends AbstractAnnouncer<Mastodon> {
     }
 
     public void setStatus(String status) {
+        freezeCheck();
         this.status = status;
     }
 

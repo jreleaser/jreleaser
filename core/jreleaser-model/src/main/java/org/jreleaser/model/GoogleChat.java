@@ -52,6 +52,7 @@ public class GoogleChat extends AbstractAnnouncer<GoogleChat> {
 
     @Override
     public void merge(GoogleChat googleChat) {
+        freezeCheck();
         super.merge(googleChat);
         this.webhook = merge(this.webhook, googleChat.webhook);
         this.message = merge(this.message, googleChat.message);
@@ -95,6 +96,7 @@ public class GoogleChat extends AbstractAnnouncer<GoogleChat> {
     }
 
     public void setWebhook(String webhook) {
+        freezeCheck();
         this.webhook = webhook;
     }
 
@@ -103,6 +105,7 @@ public class GoogleChat extends AbstractAnnouncer<GoogleChat> {
     }
 
     public void setMessage(String message) {
+        freezeCheck();
         this.message = message;
     }
 
@@ -111,6 +114,7 @@ public class GoogleChat extends AbstractAnnouncer<GoogleChat> {
     }
 
     public void setMessageTemplate(String messageTemplate) {
+        freezeCheck();
         this.messageTemplate = messageTemplate;
     }
 

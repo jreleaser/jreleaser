@@ -56,6 +56,7 @@ public class Zulip extends AbstractAnnouncer<Zulip> {
 
     @Override
     public void merge(Zulip zulip) {
+        freezeCheck();
         super.merge(zulip);
         this.account = merge(this.account, zulip.account);
         this.apiKey = merge(this.apiKey, zulip.apiKey);
@@ -104,6 +105,7 @@ public class Zulip extends AbstractAnnouncer<Zulip> {
     }
 
     public void setAccount(String account) {
+        freezeCheck();
         this.account = account;
     }
 
@@ -112,6 +114,7 @@ public class Zulip extends AbstractAnnouncer<Zulip> {
     }
 
     public void setApiKey(String apiKey) {
+        freezeCheck();
         this.apiKey = apiKey;
     }
 
@@ -120,6 +123,7 @@ public class Zulip extends AbstractAnnouncer<Zulip> {
     }
 
     public void setApiHost(String apiHost) {
+        freezeCheck();
         this.apiHost = apiHost;
     }
 
@@ -128,6 +132,7 @@ public class Zulip extends AbstractAnnouncer<Zulip> {
     }
 
     public void setChannel(String channel) {
+        freezeCheck();
         this.channel = channel;
     }
 
@@ -136,6 +141,7 @@ public class Zulip extends AbstractAnnouncer<Zulip> {
     }
 
     public void setSubject(String subject) {
+        freezeCheck();
         this.subject = subject;
     }
 
@@ -144,6 +150,7 @@ public class Zulip extends AbstractAnnouncer<Zulip> {
     }
 
     public void setMessage(String message) {
+        freezeCheck();
         this.message = message;
     }
 
@@ -152,6 +159,7 @@ public class Zulip extends AbstractAnnouncer<Zulip> {
     }
 
     public void setMessageTemplate(String messageTemplate) {
+        freezeCheck();
         this.messageTemplate = messageTemplate;
     }
 

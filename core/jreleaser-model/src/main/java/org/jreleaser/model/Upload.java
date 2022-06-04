@@ -51,7 +51,19 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
     private boolean enabled = true;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        artifactory.values().forEach(Artifactory::freeze);
+        ftp.values().forEach(FtpUploader::freeze);
+        http.values().forEach(HttpUploader::freeze);
+        s3.values().forEach(S3::freeze);
+        scp.values().forEach(ScpUploader::freeze);
+        sftp.values().forEach(SftpUploader::freeze);
+    }
+
+    @Override
     public void merge(Upload upload) {
+        freezeCheck();
         this.active = merge(this.active, upload.active);
         this.enabled = merge(this.enabled, upload.enabled);
         setArtifactory(mergeModel(this.artifactory, upload.artifactory));
@@ -70,6 +82,7 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
     @Deprecated
     public void setEnabled(Boolean enabled) {
         nag("upload.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
+        freezeCheck();
         if (null != enabled) {
             this.active = enabled ? Active.ALWAYS : Active.NEVER;
         }
@@ -95,12 +108,13 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override
@@ -195,15 +209,17 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
     }
 
     public Map<String, Artifactory> getArtifactory() {
-        return artifactory;
+        return freezeWrap(artifactory);
     }
 
     public void setArtifactory(Map<String, Artifactory> artifactory) {
+        freezeCheck();
         this.artifactory.clear();
         this.artifactory.putAll(artifactory);
     }
 
     public void addArtifactory(Artifactory artifactory) {
+        freezeCheck();
         this.artifactory.put(artifactory.getName(), artifactory);
     }
 
@@ -214,15 +230,17 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
     }
 
     public Map<String, FtpUploader> getFtp() {
-        return ftp;
+        return freezeWrap(ftp);
     }
 
     public void setFtp(Map<String, FtpUploader> ftp) {
+        freezeCheck();
         this.ftp.clear();
         this.ftp.putAll(ftp);
     }
 
     public void addFtp(FtpUploader ftp) {
+        freezeCheck();
         this.ftp.put(ftp.getName(), ftp);
     }
 
@@ -233,15 +251,17 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
     }
 
     public Map<String, HttpUploader> getHttp() {
-        return http;
+        return freezeWrap(http);
     }
 
     public void setHttp(Map<String, HttpUploader> http) {
+        freezeCheck();
         this.http.clear();
         this.http.putAll(http);
     }
 
     public void addHttp(HttpUploader http) {
+        freezeCheck();
         this.http.put(http.getName(), http);
     }
 
@@ -252,15 +272,17 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
     }
 
     public Map<String, S3> getS3() {
-        return s3;
+        return freezeWrap(s3);
     }
 
     public void setS3(Map<String, S3> s3) {
+        freezeCheck();
         this.s3.clear();
         this.s3.putAll(s3);
     }
 
     public void addS3(S3 s3) {
+        freezeCheck();
         this.s3.put(s3.getName(), s3);
     }
 
@@ -271,15 +293,17 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
     }
 
     public Map<String, ScpUploader> getScp() {
-        return scp;
+        return freezeWrap(scp);
     }
 
     public void setScp(Map<String, ScpUploader> scp) {
+        freezeCheck();
         this.scp.clear();
         this.scp.putAll(scp);
     }
 
     public void addScp(ScpUploader scp) {
+        freezeCheck();
         this.scp.put(scp.getName(), scp);
     }
 
@@ -290,15 +314,17 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
     }
 
     public Map<String, SftpUploader> getSftp() {
-        return sftp;
+        return freezeWrap(sftp);
     }
 
     public void setSftp(Map<String, SftpUploader> sftp) {
+        freezeCheck();
         this.sftp.clear();
         this.sftp.putAll(sftp);
     }
 
     public void addSftp(SftpUploader sftp) {
+        freezeCheck();
         this.sftp.put(sftp.getName(), sftp);
     }
 

@@ -50,6 +50,7 @@ public class Teams extends AbstractAnnouncer<Teams> {
 
     @Override
     public void merge(Teams teams) {
+        freezeCheck();
         super.merge(teams);
         this.webhook = merge(this.webhook, teams.webhook);
         this.messageTemplate = merge(this.messageTemplate, teams.messageTemplate);
@@ -81,6 +82,7 @@ public class Teams extends AbstractAnnouncer<Teams> {
     }
 
     public void setWebhook(String webhook) {
+        freezeCheck();
         this.webhook = webhook;
     }
 
@@ -89,6 +91,7 @@ public class Teams extends AbstractAnnouncer<Teams> {
     }
 
     public void setMessageTemplate(String messageTemplate) {
+        freezeCheck();
         this.messageTemplate = messageTemplate;
     }
 

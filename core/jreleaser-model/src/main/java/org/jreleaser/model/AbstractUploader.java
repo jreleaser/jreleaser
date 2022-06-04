@@ -58,6 +58,7 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
 
     @Override
     public void merge(S uploader) {
+        freezeCheck();
         this.active = merge(this.active, uploader.active);
         this.enabled = merge(this.enabled, uploader.enabled);
         this.name = merge(this.name, uploader.name);
@@ -103,6 +104,7 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
 
     @Override
     public void setName(String name) {
+        freezeCheck();
         this.name = name;
     }
 
@@ -113,12 +115,13 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override
@@ -143,6 +146,7 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
 
     @Override
     public void setConnectTimeout(int connectTimeout) {
+        freezeCheck();
         this.connectTimeout = connectTimeout;
     }
 
@@ -153,22 +157,25 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
 
     @Override
     public void setReadTimeout(int readTimeout) {
+        freezeCheck();
         this.readTimeout = readTimeout;
     }
 
     @Override
     public Map<String, Object> getExtraProperties() {
-        return extraProperties;
+        return freezeWrap(extraProperties);
     }
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.putAll(extraProperties);
     }
 
@@ -179,6 +186,7 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
 
     @Override
     public void setArtifacts(Boolean artifacts) {
+        freezeCheck();
         this.artifacts = artifacts;
     }
 
@@ -194,6 +202,7 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
 
     @Override
     public void setFiles(Boolean files) {
+        freezeCheck();
         this.files = files;
     }
 
@@ -209,6 +218,7 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
 
     @Override
     public void setSignatures(Boolean signatures) {
+        freezeCheck();
         this.signatures = signatures;
     }
 
@@ -229,6 +239,7 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
 
     @Override
     public void setChecksums(Boolean checksums) {
+        freezeCheck();
         this.checksums = checksums;
     }
 

@@ -31,6 +31,7 @@ public class Platform extends AbstractModelObject<Platform> implements Domain {
 
     @Override
     public void merge(Platform platform) {
+        freezeCheck();
         setReplacements(merge(this.replacements, platform.replacements));
     }
 
@@ -39,10 +40,11 @@ public class Platform extends AbstractModelObject<Platform> implements Domain {
     }
 
     public Map<String, String> getReplacements() {
-        return replacements;
+        return freezeWrap(replacements);
     }
 
     public void setReplacements(Map<String, String> replacements) {
+        freezeCheck();
         this.replacements.putAll(replacements);
     }
 

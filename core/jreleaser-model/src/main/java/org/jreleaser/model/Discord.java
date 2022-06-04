@@ -52,6 +52,7 @@ public class Discord extends AbstractAnnouncer<Discord> {
 
     @Override
     public void merge(Discord discord) {
+        freezeCheck();
         super.merge(discord);
         this.webhook = merge(this.webhook, discord.webhook);
         this.message = merge(this.message, discord.message);
@@ -90,6 +91,7 @@ public class Discord extends AbstractAnnouncer<Discord> {
     }
 
     public void setWebhook(String webhook) {
+        freezeCheck();
         this.webhook = webhook;
     }
 
@@ -98,6 +100,7 @@ public class Discord extends AbstractAnnouncer<Discord> {
     }
 
     public void setMessage(String message) {
+        freezeCheck();
         this.message = message;
     }
 
@@ -106,6 +109,7 @@ public class Discord extends AbstractAnnouncer<Discord> {
     }
 
     public void setMessageTemplate(String messageTemplate) {
+        freezeCheck();
         this.messageTemplate = messageTemplate;
     }
 

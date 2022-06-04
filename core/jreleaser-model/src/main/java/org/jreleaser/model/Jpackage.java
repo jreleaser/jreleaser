@@ -62,7 +62,19 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        runtimeImages.forEach(Artifact::freeze);
+        applicationPackage.freeze();
+        launcher.freeze();
+        linux.freeze();
+        windows.freeze();
+        osx.freeze();
+    }
+
+    @Override
     public void merge(Jpackage jpackage) {
+        freezeCheck();
         super.merge(jpackage);
         this.jlink = merge(this.jlink, jpackage.jlink);
         this.attachPlatform = merge(this.attachPlatform, jpackage.attachPlatform);
@@ -80,6 +92,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
     }
 
     public void setJlink(String jlink) {
+        freezeCheck();
         this.jlink = jlink;
     }
 
@@ -92,6 +105,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
     }
 
     public void setAttachPlatform(Boolean attachPlatform) {
+        freezeCheck();
         this.attachPlatform = attachPlatform;
     }
 
@@ -104,23 +118,22 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
     }
 
     public void setVerbose(Boolean verbose) {
+        freezeCheck();
         this.verbose = verbose;
     }
 
     public Set<Artifact> getRuntimeImages() {
-        return Artifact.sortArtifacts(runtimeImages);
+        return freezeWrap(Artifact.sortArtifacts(runtimeImages));
     }
 
     public void setRuntimeImages(Set<Artifact> runtimeImages) {
+        freezeCheck();
         this.runtimeImages.clear();
         this.runtimeImages.addAll(runtimeImages);
     }
 
-    public void addRuntimeImages(Set<Artifact> runtimeImages) {
-        this.runtimeImages.addAll(runtimeImages);
-    }
-
     public void addRuntimeImage(Artifact jdk) {
+        freezeCheck();
         if (null != jdk) {
             this.runtimeImages.add(jdk);
         }
@@ -201,7 +214,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
     }
 
     public Set<PlatformPackager> getPlatformPackagers() {
-        return CollectionUtils.newSet(osx, linux, windows);
+        return Collections.unmodifiableSet(CollectionUtils.newSet(osx, linux, windows));
     }
 
     public interface PlatformPackager extends Domain {
@@ -253,6 +266,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
 
         @Override
         public void merge(ApplicationPackage applicationPackage) {
+            freezeCheck();
             this.appName = this.merge(this.appName, applicationPackage.appName);
             this.appVersion = this.merge(this.appVersion, applicationPackage.appVersion);
             this.vendor = this.merge(this.vendor, applicationPackage.vendor);
@@ -272,6 +286,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setAppName(String appName) {
+            freezeCheck();
             this.appName = appName;
         }
 
@@ -280,6 +295,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setAppVersion(String appVersion) {
+            freezeCheck();
             this.appVersion = appVersion;
         }
 
@@ -288,6 +304,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setVendor(String vendor) {
+            freezeCheck();
             this.vendor = vendor;
         }
 
@@ -296,14 +313,16 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setCopyright(String copyright) {
+            freezeCheck();
             this.copyright = copyright;
         }
 
         public List<String> getFileAssociations() {
-            return fileAssociations;
+            return freezeWrap(fileAssociations);
         }
 
         public void setFileAssociations(List<String> fileAssociations) {
+            freezeCheck();
             this.fileAssociations.clear();
             this.fileAssociations.addAll(fileAssociations);
         }
@@ -313,6 +332,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setLicenseFile(String licenseFile) {
+            freezeCheck();
             this.licenseFile = licenseFile;
         }
 
@@ -336,6 +356,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
 
         @Override
         public void merge(Launcher launcher) {
+            freezeCheck();
             setArguments(merge(this.arguments, launcher.arguments));
             setJavaOptions(merge(this.javaOptions, launcher.javaOptions));
             setLaunchers(merge(this.launchers, launcher.launchers));
@@ -348,41 +369,47 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public List<String> getLaunchers() {
-            return launchers;
+            return freezeWrap(launchers);
         }
 
         public void setLaunchers(List<String> launchers) {
+            freezeCheck();
             this.launchers.clear();
             this.launchers.addAll(launchers);
         }
 
         public void addLaunchers(List<String> launchers) {
+            freezeCheck();
             this.launchers.addAll(launchers);
         }
 
         public List<String> getArguments() {
-            return arguments;
+            return freezeWrap(arguments);
         }
 
         public void setArguments(List<String> arguments) {
+            freezeCheck();
             this.arguments.clear();
             this.arguments.addAll(arguments);
         }
 
         public void addArguments(List<String> arguments) {
+            freezeCheck();
             this.arguments.addAll(arguments);
         }
 
         public List<String> getJavaOptions() {
-            return javaOptions;
+            return freezeWrap(javaOptions);
         }
 
         public void setJavaOptions(List<String> javaOptions) {
+            freezeCheck();
             this.javaOptions.clear();
             this.javaOptions.addAll(javaOptions);
         }
 
         public void addJavaOptions(List<String> javaOptions) {
+            freezeCheck();
             this.javaOptions.addAll(javaOptions);
         }
 
@@ -415,7 +442,14 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         @Override
+        public void freeze() {
+            super.freeze();
+            jdk.freeze();
+        }
+
+        @Override
         public void merge(S packager) {
+            freezeCheck();
             this.icon = this.merge(this.icon, packager.icon);
             this.appName = this.merge(this.appName, packager.appName);
             this.enabled = this.merge(this.enabled, packager.enabled);
@@ -439,6 +473,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
 
         @Override
         public void setAppName(String appName) {
+            freezeCheck();
             this.appName = appName;
         }
 
@@ -449,12 +484,13 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
 
         @Override
         public void setIcon(String icon) {
+            freezeCheck();
             this.icon = icon;
         }
 
         @Override
         public List<String> getValidTypes() {
-            return validTypes;
+            return freezeWrap(validTypes);
         }
 
         @Override
@@ -469,6 +505,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
 
         @Override
         public void setResourceDir(String resourceDir) {
+            freezeCheck();
             this.resourceDir = resourceDir;
         }
 
@@ -499,11 +536,12 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
 
         @Override
         public List<String> getTypes() {
-            return types;
+            return freezeWrap(types);
         }
 
         @Override
         public void setTypes(List<String> types) {
+            freezeCheck();
             this.types.clear();
             this.types.addAll(types);
         }
@@ -515,6 +553,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
 
         @Override
         public void setInstallDir(String installDir) {
+            freezeCheck();
             this.installDir = installDir;
         }
 
@@ -548,7 +587,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         private String license;
         private String appRelease;
         private String appCategory;
-        private boolean shortcut;
+        private Boolean shortcut;
 
         public Linux() {
             super("linux", Arrays.asList("deb", "rpm"));
@@ -556,6 +595,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
 
         @Override
         public void merge(Linux packager) {
+            freezeCheck();
             super.merge(packager);
             this.packageName = this.merge(this.packageName, packager.packageName);
             this.maintainer = this.merge(this.maintainer, packager.maintainer);
@@ -568,10 +608,11 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public List<String> getPackageDeps() {
-            return packageDeps;
+            return freezeWrap(packageDeps);
         }
 
         public void setPackageDeps(List<String> packageDeps) {
+            freezeCheck();
             this.packageDeps.clear();
             this.packageDeps.addAll(packageDeps);
         }
@@ -581,6 +622,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setPackageName(String packageName) {
+            freezeCheck();
             this.packageName = packageName;
         }
 
@@ -589,6 +631,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setMaintainer(String maintainer) {
+            freezeCheck();
             this.maintainer = maintainer;
         }
 
@@ -597,6 +640,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setMenuGroup(String menuGroup) {
+            freezeCheck();
             this.menuGroup = menuGroup;
         }
 
@@ -605,6 +649,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setLicense(String license) {
+            freezeCheck();
             this.license = license;
         }
 
@@ -613,6 +658,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setAppRelease(String appRelease) {
+            freezeCheck();
             this.appRelease = appRelease;
         }
 
@@ -621,14 +667,16 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setAppCategory(String appCategory) {
+            freezeCheck();
             this.appCategory = appCategory;
         }
 
         public boolean isShortcut() {
-            return shortcut;
+            return shortcut != null && shortcut;
         }
 
-        public void setShortcut(boolean shortcut) {
+        public void setShortcut(Boolean shortcut) {
+            freezeCheck();
             this.shortcut = shortcut;
         }
 
@@ -646,11 +694,11 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
     }
 
     public static class Windows extends AbstractPlatformPackager<Windows> {
-        private boolean console;
-        private boolean dirChooser;
-        private boolean menu;
-        private boolean perUserInstall;
-        private boolean shortcut;
+        private Boolean console;
+        private Boolean dirChooser;
+        private Boolean menu;
+        private Boolean perUserInstall;
+        private Boolean shortcut;
         private String menuGroup;
         private String upgradeUuid;
 
@@ -660,6 +708,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
 
         @Override
         public void merge(Windows packager) {
+            freezeCheck();
             super.merge(packager);
             this.console = this.merge(this.console, packager.console);
             this.dirChooser = this.merge(this.dirChooser, packager.dirChooser);
@@ -671,42 +720,47 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public boolean isConsole() {
-            return console;
+            return console != null && console;
         }
 
-        public void setConsole(boolean console) {
+        public void setConsole(Boolean console) {
+            freezeCheck();
             this.console = console;
         }
 
         public boolean isDirChooser() {
-            return dirChooser;
+            return dirChooser != null && dirChooser;
         }
 
-        public void setDirChooser(boolean dirChooser) {
+        public void setDirChooser(Boolean dirChooser) {
+            freezeCheck();
             this.dirChooser = dirChooser;
         }
 
         public boolean isMenu() {
-            return menu;
+            return menu != null && menu;
         }
 
-        public void setMenu(boolean menu) {
+        public void setMenu(Boolean menu) {
+            freezeCheck();
             this.menu = menu;
         }
 
         public boolean isPerUserInstall() {
-            return perUserInstall;
+            return perUserInstall != null && perUserInstall;
         }
 
-        public void setPerUserInstall(boolean perUserInstall) {
+        public void setPerUserInstall(Boolean perUserInstall) {
+            freezeCheck();
             this.perUserInstall = perUserInstall;
         }
 
         public boolean isShortcut() {
-            return shortcut;
+            return shortcut != null && shortcut;
         }
 
-        public void setShortcut(boolean shortcut) {
+        public void setShortcut(Boolean shortcut) {
+            freezeCheck();
             this.shortcut = shortcut;
         }
 
@@ -715,6 +769,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setMenuGroup(String menuGroup) {
+            freezeCheck();
             this.menuGroup = menuGroup;
         }
 
@@ -723,6 +778,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setUpgradeUuid(String upgradeUuid) {
+            freezeCheck();
             this.upgradeUuid = upgradeUuid;
         }
 
@@ -744,7 +800,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         private String packageSigningPrefix;
         private String signingKeychain;
         private String signingKeyUsername;
-        private boolean sign;
+        private Boolean sign;
 
         public Osx() {
             super("osx", Arrays.asList("dmg", "pkg"));
@@ -752,6 +808,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
 
         @Override
         public void merge(Osx packager) {
+            freezeCheck();
             super.merge(packager);
             this.packageIdentifier = this.merge(this.packageIdentifier, packager.packageIdentifier);
             this.packageName = this.merge(this.packageName, packager.packageName);
@@ -766,6 +823,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setPackageIdentifier(String packageIdentifier) {
+            freezeCheck();
             this.packageIdentifier = packageIdentifier;
         }
 
@@ -774,6 +832,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setPackageName(String packageName) {
+            freezeCheck();
             this.packageName = packageName;
         }
 
@@ -782,6 +841,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setPackageSigningPrefix(String packageSigningPrefix) {
+            freezeCheck();
             this.packageSigningPrefix = packageSigningPrefix;
         }
 
@@ -790,6 +850,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setSigningKeychain(String signingKeychain) {
+            freezeCheck();
             this.signingKeychain = signingKeychain;
         }
 
@@ -798,14 +859,16 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
         }
 
         public void setSigningKeyUsername(String signingKeyUsername) {
+            freezeCheck();
             this.signingKeyUsername = signingKeyUsername;
         }
 
         public boolean isSign() {
-            return sign;
+            return sign != null && sign;
         }
 
-        public void setSign(boolean sign) {
+        public void setSign(Boolean sign) {
+            freezeCheck();
             this.sign = sign;
         }
 

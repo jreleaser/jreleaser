@@ -70,7 +70,16 @@ public class Docker extends AbstractDockerConfiguration<Docker> implements Repos
     private boolean failed;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        specs.values().forEach(DockerSpec::freeze);
+        commitAuthor.freeze();
+        repository.freeze();
+    }
+
+    @Override
     public void merge(Docker docker) {
+        freezeCheck();
         super.merge(docker);
         this.continueOnError = merge(this.continueOnError, docker.continueOnError);
         this.downloadUrl = merge(this.downloadUrl, docker.downloadUrl);
@@ -97,6 +106,7 @@ public class Docker extends AbstractDockerConfiguration<Docker> implements Repos
 
     @Override
     public void setContinueOnError(Boolean continueOnError) {
+        freezeCheck();
         this.continueOnError = continueOnError;
     }
 
@@ -112,6 +122,7 @@ public class Docker extends AbstractDockerConfiguration<Docker> implements Repos
 
     @Override
     public void setDownloadUrl(String downloadUrl) {
+        freezeCheck();
         this.downloadUrl = downloadUrl;
     }
 
@@ -127,7 +138,7 @@ public class Docker extends AbstractDockerConfiguration<Docker> implements Repos
 
     @Override
     public Set<String> getSupportedExtensions(Distribution distribution) {
-        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+        return Collections.unmodifiableSet(SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet()));
     }
 
     @Override
@@ -178,19 +189,22 @@ public class Docker extends AbstractDockerConfiguration<Docker> implements Repos
     }
 
     public Map<String, DockerSpec> getSpecs() {
-        return specs;
+        return freezeWrap(specs);
     }
 
     public void setSpecs(Map<String, DockerSpec> specs) {
+        freezeCheck();
         this.specs.clear();
         this.specs.putAll(specs);
     }
 
     public void addSpecs(Map<String, DockerSpec> specs) {
+        freezeCheck();
         this.specs.putAll(specs);
     }
 
     public void addSpec(DockerSpec spec) {
+        freezeCheck();
         this.specs.put(spec.getName(), spec);
     }
 
@@ -239,6 +253,7 @@ public class Docker extends AbstractDockerConfiguration<Docker> implements Repos
 
         @Override
         public void merge(DockerRepository tap) {
+            freezeCheck();
             super.merge(tap);
             this.versionedSubfolders = this.merge(this.versionedSubfolders, tap.versionedSubfolders);
         }
@@ -248,6 +263,7 @@ public class Docker extends AbstractDockerConfiguration<Docker> implements Repos
         }
 
         public void setVersionedSubfolders(Boolean versionedSubfolders) {
+            freezeCheck();
             this.versionedSubfolders = versionedSubfolders;
         }
 

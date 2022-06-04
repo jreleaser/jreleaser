@@ -50,7 +50,23 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        brew.freeze();
+        chocolatey.freeze();
+        docker.freeze();
+        gofish.freeze();
+        jbang.freeze();
+        macports.freeze();
+        scoop.freeze();
+        sdkman.freeze();
+        snap.freeze();
+        spec.freeze();
+    }
+
+    @Override
     public void merge(S packagers) {
+        freezeCheck();
         setBrew(packagers.brew);
         setChocolatey(packagers.chocolatey);
         setDocker(packagers.docker);

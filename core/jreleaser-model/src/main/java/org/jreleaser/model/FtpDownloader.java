@@ -43,6 +43,7 @@ public class FtpDownloader extends AbstractDownloader<FtpDownloader> implements 
 
     @Override
     public void merge(FtpDownloader ftp) {
+        freezeCheck();
         super.merge(ftp);
         this.username = merge(this.username, ftp.username);
         this.password = merge(this.password, ftp.password);
@@ -78,6 +79,7 @@ public class FtpDownloader extends AbstractDownloader<FtpDownloader> implements 
 
     @Override
     public void setUsername(String username) {
+        freezeCheck();
         this.username = username;
     }
 
@@ -88,6 +90,7 @@ public class FtpDownloader extends AbstractDownloader<FtpDownloader> implements 
 
     @Override
     public void setPassword(String password) {
+        freezeCheck();
         this.password = password;
     }
 
@@ -98,6 +101,7 @@ public class FtpDownloader extends AbstractDownloader<FtpDownloader> implements 
 
     @Override
     public void setHost(String host) {
+        freezeCheck();
         this.host = host;
     }
 
@@ -108,6 +112,7 @@ public class FtpDownloader extends AbstractDownloader<FtpDownloader> implements 
 
     @Override
     public void setPort(Integer port) {
+        freezeCheck();
         this.port = port;
     }
 

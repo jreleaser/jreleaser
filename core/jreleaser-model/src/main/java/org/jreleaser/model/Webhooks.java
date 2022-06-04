@@ -36,7 +36,14 @@ public class Webhooks extends AbstractAnnouncer<Webhooks> {
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        webhooks.values().forEach(Webhook::freeze);
+    }
+
+    @Override
     public void merge(Webhooks webhook) {
+        freezeCheck();
         super.merge(webhook);
         setWebhooks(mergeModel(this.webhooks, webhook.webhooks));
     }
@@ -48,15 +55,17 @@ public class Webhooks extends AbstractAnnouncer<Webhooks> {
     }
 
     public Map<String, Webhook> getWebhooks() {
-        return webhooks;
+        return freezeWrap(webhooks);
     }
 
     public void setWebhooks(Map<String, Webhook> webhooks) {
+        freezeCheck();
         this.webhooks.clear();
         this.webhooks.putAll(webhooks);
     }
 
     public void addWebhook(Webhook webhook) {
+        freezeCheck();
         this.webhooks.put(webhook.getName(), webhook);
     }
 

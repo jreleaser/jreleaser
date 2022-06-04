@@ -30,6 +30,7 @@ public class CommitAuthor extends AbstractModelObject<CommitAuthor> implements D
 
     @Override
     public void merge(CommitAuthor author) {
+        freezeCheck();
         this.email = merge(this.email, author.email);
         this.name = merge(this.name, author.name);
     }
@@ -39,6 +40,7 @@ public class CommitAuthor extends AbstractModelObject<CommitAuthor> implements D
     }
 
     public void setName(String name) {
+        freezeCheck();
         this.name = name;
     }
 
@@ -47,6 +49,7 @@ public class CommitAuthor extends AbstractModelObject<CommitAuthor> implements D
     }
 
     public void setEmail(String email) {
+        freezeCheck();
         this.email = email;
     }
 

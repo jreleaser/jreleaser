@@ -32,7 +32,18 @@ public class Release extends AbstractModelObject<Release> implements Domain {
     private GenericGit generic;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        if (null != github) github.freeze();
+        if (null != gitlab) gitlab.freeze();
+        if (null != gitea) gitea.freeze();
+        if (null != codeberg) codeberg.freeze();
+        if (null != generic) generic.freeze();
+    }
+
+    @Override
     public void merge(Release release) {
+        freezeCheck();
         this.github = merge(this.github, release.github);
         this.gitlab = merge(this.gitlab, release.gitlab);
         this.gitea = merge(this.gitea, release.gitea);
@@ -45,6 +56,7 @@ public class Release extends AbstractModelObject<Release> implements Domain {
     }
 
     public void setGithub(Github github) {
+        freezeCheck();
         this.github = github;
     }
 
@@ -53,6 +65,7 @@ public class Release extends AbstractModelObject<Release> implements Domain {
     }
 
     public void setGitlab(Gitlab gitlab) {
+        freezeCheck();
         this.gitlab = gitlab;
     }
 
@@ -61,6 +74,7 @@ public class Release extends AbstractModelObject<Release> implements Domain {
     }
 
     public void setGitea(Gitea gitea) {
+        freezeCheck();
         this.gitea = gitea;
     }
 
@@ -69,6 +83,7 @@ public class Release extends AbstractModelObject<Release> implements Domain {
     }
 
     public void setCodeberg(Codeberg codeberg) {
+        freezeCheck();
         this.codeberg = codeberg;
     }
 
@@ -77,6 +92,7 @@ public class Release extends AbstractModelObject<Release> implements Domain {
     }
 
     public void setGeneric(GenericGit generic) {
+        freezeCheck();
         this.generic = generic;
     }
 

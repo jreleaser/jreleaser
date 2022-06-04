@@ -54,7 +54,14 @@ public class Artifactory extends AbstractUploader<Artifactory> {
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        repositories.forEach(ArtifactoryRepository::freeze);
+    }
+
+    @Override
     public void merge(Artifactory artifactory) {
+        freezeCheck();
         super.merge(artifactory);
         this.host = merge(this.host, artifactory.host);
         this.username = merge(this.username, artifactory.username);
@@ -88,6 +95,7 @@ public class Artifactory extends AbstractUploader<Artifactory> {
     }
 
     public void setHost(String host) {
+        freezeCheck();
         this.host = host;
     }
 
@@ -96,6 +104,7 @@ public class Artifactory extends AbstractUploader<Artifactory> {
     }
 
     public void setUsername(String username) {
+        freezeCheck();
         this.username = username;
     }
 
@@ -104,6 +113,7 @@ public class Artifactory extends AbstractUploader<Artifactory> {
     }
 
     public void setPassword(String password) {
+        freezeCheck();
         this.password = password;
     }
 
@@ -112,23 +122,27 @@ public class Artifactory extends AbstractUploader<Artifactory> {
     }
 
     public void setAuthorization(Http.Authorization authorization) {
+        freezeCheck();
         this.authorization = authorization;
     }
 
     public void setAuthorization(String authorization) {
+        freezeCheck();
         this.authorization = Http.Authorization.of(authorization);
     }
 
     public List<ArtifactoryRepository> getRepositories() {
-        return repositories;
+        return freezeWrap(repositories);
     }
 
     public void setRepositories(List<ArtifactoryRepository> repositories) {
+        freezeCheck();
         this.repositories.clear();
         this.repositories.addAll(repositories);
     }
 
     public void addRepository(ArtifactoryRepository repository) {
+        freezeCheck();
         if (null != repository) {
             this.repositories.add(repository);
         }
@@ -178,17 +192,18 @@ public class Artifactory extends AbstractUploader<Artifactory> {
         return "";
     }
 
-    public static class ArtifactoryRepository implements Domain, Activatable {
+    public static class ArtifactoryRepository extends AbstractModelObject<ArtifactoryRepository> implements Domain, Activatable {
         private final Set<FileType> fileTypes = new LinkedHashSet<>();
 
         private Active active;
         private boolean enabled;
         private String path;
 
-        void setAll(ArtifactoryRepository repository) {
-            if (null != repository.active) this.active = repository.active;
-            if (null != repository.active) this.enabled = repository.enabled;
-            if (isNotBlank(repository.path)) this.path = repository.path;
+        @Override
+        public void merge(ArtifactoryRepository repository) {
+            this.active  = merge(this.active, repository.active);
+            this.enabled = merge(this.enabled, repository.enabled);
+            this.path = merge(this.path, repository.path);
             setFileTypes(repository.fileTypes);
         }
 
@@ -218,12 +233,13 @@ public class Artifactory extends AbstractUploader<Artifactory> {
 
         @Override
         public void setActive(Active active) {
+            freezeCheck();
             this.active = active;
         }
 
         @Override
         public void setActive(String str) {
-            this.active = Active.of(str);
+            setActive(Active.of(str));
         }
 
         @Override
@@ -236,19 +252,22 @@ public class Artifactory extends AbstractUploader<Artifactory> {
         }
 
         public void setPath(String path) {
+            freezeCheck();
             this.path = path;
         }
 
         public Set<FileType> getFileTypes() {
-            return fileTypes;
+            return freezeWrap(fileTypes);
         }
 
         public void setFileTypes(Set<FileType> fileTypes) {
+            freezeCheck();
             this.fileTypes.clear();
             this.fileTypes.addAll(fileTypes);
         }
 
         public void addFileType(FileType fileType) {
+            freezeCheck();
             this.fileTypes.add(fileType);
         }
 

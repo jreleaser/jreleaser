@@ -17,11 +17,15 @@
  */
 package org.jreleaser.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -31,6 +35,46 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.1.0
  */
 public abstract class AbstractModelObject<S extends AbstractModelObject<S>> implements ModelObject<S> {
+    @JsonIgnore
+    protected boolean frozen;
+
+    @Override
+    public void freeze() {
+        frozen = true;
+    }
+
+    public void mutate(Mutator mutator) {
+        if (null == mutator) return;
+
+        boolean isFrozen = frozen;
+        try {
+            frozen = false;
+            mutator.mutate();
+        } finally {
+            frozen = isFrozen;
+        }
+    }
+
+    protected void freezeCheck() {
+        if (frozen) throw new UnsupportedOperationException();
+    }
+
+    protected <T> List<T> freezeWrap(List<T> list) {
+        return frozen ? Collections.unmodifiableList(list) : list;
+    }
+
+    protected <T> Set<T> freezeWrap(Set<T> set) {
+        return frozen ? Collections.unmodifiableSet(set) : set;
+    }
+
+    protected <K, V> Map<K, V> freezeWrap(Map<K, V> map) {
+        return frozen ? Collections.unmodifiableMap(map) : map;
+    }
+
+    protected Properties freezeWrap(Properties props) {
+        return frozen ? new Properties(props) : props;
+    }
+
     protected String merge(String existing, String incoming) {
         return isNotBlank(incoming) ? incoming : existing;
     }
@@ -103,5 +147,9 @@ public abstract class AbstractModelObject<S extends AbstractModelObject<S>> impl
         }
 
         return m1;
+    }
+
+    interface Mutator {
+        void mutate() throws RuntimeException;
     }
 }

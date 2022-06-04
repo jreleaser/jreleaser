@@ -37,6 +37,7 @@ public abstract class AbstractTemplatePackager<S extends AbstractTemplatePackage
 
     @Override
     public void merge(S packager) {
+        freezeCheck();
         super.merge(packager);
         this.templateDirectory = merge(this.templateDirectory, packager.templateDirectory);
         setSkipTemplates(merge(this.skipTemplates, packager.skipTemplates));
@@ -49,27 +50,31 @@ public abstract class AbstractTemplatePackager<S extends AbstractTemplatePackage
 
     @Override
     public void setTemplateDirectory(String templateDirectory) {
+        freezeCheck();
         this.templateDirectory = templateDirectory;
     }
 
     @Override
     public List<String> getSkipTemplates() {
-        return skipTemplates;
+        return freezeWrap(skipTemplates);
     }
 
     @Override
     public void setSkipTemplates(List<String> skipTemplates) {
+        freezeCheck();
         this.skipTemplates.clear();
         this.skipTemplates.addAll(skipTemplates);
     }
 
     @Override
     public void addSkipTemplates(List<String> templates) {
+        freezeCheck();
         this.skipTemplates.addAll(templates);
     }
 
     @Override
     public void addSkipTemplate(String template) {
+        freezeCheck();
         if (isNotBlank(template)) {
             this.skipTemplates.add(template.trim());
         }

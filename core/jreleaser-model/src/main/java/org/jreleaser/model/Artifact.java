@@ -62,6 +62,7 @@ public class Artifact extends AbstractModelObject<Artifact> implements Domain, E
 
     @Override
     public void merge(Artifact artifact) {
+        freezeCheck();
         this.effectivePath = merge(this.effectivePath, artifact.effectivePath);
         this.path = merge(this.path, artifact.path);
         this.platform = merge(this.platform, artifact.platform);
@@ -230,6 +231,7 @@ public class Artifact extends AbstractModelObject<Artifact> implements Domain, E
     }
 
     public void setPlatform(String platform) {
+        freezeCheck();
         this.platform = platform;
     }
 
@@ -238,6 +240,7 @@ public class Artifact extends AbstractModelObject<Artifact> implements Domain, E
     }
 
     public void setTransform(String transform) {
+        freezeCheck();
         this.transform = transform;
     }
 
@@ -248,17 +251,19 @@ public class Artifact extends AbstractModelObject<Artifact> implements Domain, E
 
     @Override
     public Map<String, Object> getExtraProperties() {
-        return extraProperties;
+        return freezeWrap(extraProperties);
     }
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.putAll(extraProperties);
     }
 

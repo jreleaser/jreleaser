@@ -52,6 +52,7 @@ public class Mattermost extends AbstractAnnouncer<Mattermost> {
 
     @Override
     public void merge(Mattermost mattermost) {
+        freezeCheck();
         super.merge(mattermost);
         this.webhook = merge(this.webhook, mattermost.webhook);
         this.message = merge(this.message, mattermost.message);
@@ -90,6 +91,7 @@ public class Mattermost extends AbstractAnnouncer<Mattermost> {
     }
 
     public void setWebhook(String webhook) {
+        freezeCheck();
         this.webhook = webhook;
     }
 
@@ -98,6 +100,7 @@ public class Mattermost extends AbstractAnnouncer<Mattermost> {
     }
 
     public void setMessage(String message) {
+        freezeCheck();
         this.message = message;
     }
 
@@ -106,6 +109,7 @@ public class Mattermost extends AbstractAnnouncer<Mattermost> {
     }
 
     public void setMessageTemplate(String messageTemplate) {
+        freezeCheck();
         this.messageTemplate = messageTemplate;
     }
 

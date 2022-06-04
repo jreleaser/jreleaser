@@ -80,7 +80,17 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
     private DistributionType type = DistributionType.JAVA_BINARY;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        artifacts.forEach(Artifact::freeze);
+        java.freeze();
+        platform.freeze();
+        executable.freeze();
+    }
+
+    @Override
     public void merge(Distribution distribution) {
+        freezeCheck();
         super.merge(distribution);
         this.active = merge(this.active, distribution.active);
         this.enabled = merge(this.enabled, distribution.enabled);
@@ -154,12 +164,13 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override
@@ -172,7 +183,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
     }
 
     public void setPlatform(Platform platform) {
-        this.platform.mergeValues(platform);
+        this.platform.merge(platform);
     }
 
     @Override
@@ -185,10 +196,12 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
     }
 
     public void setType(DistributionType type) {
+        freezeCheck();
         this.type = type;
     }
 
     public void setType(String type) {
+        freezeCheck();
         this.type = DistributionType.of(type);
     }
 
@@ -197,6 +210,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
     }
 
     public void setName(String name) {
+        freezeCheck();
         this.name = name;
     }
 
@@ -209,46 +223,46 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
     }
 
     public Set<Artifact> getArtifacts() {
-        return Artifact.sortArtifacts(artifacts);
+        return freezeWrap(Artifact.sortArtifacts(artifacts));
     }
 
     public void setArtifacts(Set<Artifact> artifacts) {
+        freezeCheck();
         this.artifacts.clear();
         this.artifacts.addAll(artifacts);
     }
 
     public void addArtifacts(Set<Artifact> artifacts) {
+        freezeCheck();
         this.artifacts.addAll(artifacts);
     }
 
     public void addArtifact(Artifact artifact) {
+        freezeCheck();
         if (null != artifact) {
             this.artifacts.add(artifact);
         }
     }
 
     public List<String> getTags() {
-        return tags;
+        return freezeWrap(tags);
     }
 
     public void setTags(List<String> tags) {
+        freezeCheck();
         this.tags.clear();
         this.tags.addAll(tags);
     }
 
     public void addTags(List<String> tags) {
+        freezeCheck();
         this.tags.addAll(tags);
     }
 
     public void addTag(String tag) {
+        freezeCheck();
         if (isNotBlank(tag)) {
             this.tags.add(tag.trim());
-        }
-    }
-
-    public void removeTag(String tag) {
-        if (isNotBlank(tag)) {
-            this.tags.remove(tag.trim());
         }
     }
 
@@ -262,17 +276,19 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
 
     @Override
     public Map<String, Object> getExtraProperties() {
-        return extraProperties;
+        return freezeWrap(extraProperties);
     }
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.putAll(extraProperties);
     }
 
@@ -413,6 +429,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
 
         @Override
         public void merge(Distribution.Executable executable) {
+            freezeCheck();
             this.name = this.merge(this.name, executable.name);
             this.unixExtension = this.merge(this.unixExtension, executable.unixExtension);
             this.windowsExtension = this.merge(this.windowsExtension, executable.windowsExtension);
@@ -439,6 +456,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
         }
 
         public void setName(String name) {
+            freezeCheck();
             this.name = name;
         }
 
@@ -447,6 +465,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
         }
 
         public void setUnixExtension(String unixExtension) {
+            freezeCheck();
             this.unixExtension = unixExtension;
         }
 
@@ -455,6 +474,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
         }
 
         public void setWindowsExtension(String windowsExtension) {
+            freezeCheck();
             this.windowsExtension = windowsExtension;
         }
 

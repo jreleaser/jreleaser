@@ -45,6 +45,7 @@ public class HttpUploader extends AbstractWebUploader<HttpUploader> {
 
     @Override
     public void merge(HttpUploader http) {
+        freezeCheck();
         super.merge(http);
         this.username = merge(this.username, http.username);
         this.password = merge(this.password, http.password);
@@ -74,6 +75,7 @@ public class HttpUploader extends AbstractWebUploader<HttpUploader> {
     }
 
     public void setUsername(String username) {
+        freezeCheck();
         this.username = username;
     }
 
@@ -82,6 +84,7 @@ public class HttpUploader extends AbstractWebUploader<HttpUploader> {
     }
 
     public void setPassword(String password) {
+        freezeCheck();
         this.password = password;
     }
 
@@ -90,10 +93,12 @@ public class HttpUploader extends AbstractWebUploader<HttpUploader> {
     }
 
     public void setAuthorization(Authorization authorization) {
+        freezeCheck();
         this.authorization = authorization;
     }
 
     public void setAuthorization(String authorization) {
+        freezeCheck();
         this.authorization = Authorization.of(authorization);
     }
 
@@ -102,22 +107,21 @@ public class HttpUploader extends AbstractWebUploader<HttpUploader> {
     }
 
     public void setMethod(Method method) {
+        freezeCheck();
         this.method = method;
     }
 
     public void setMethod(String method) {
+        freezeCheck();
         this.method = HttpUploader.Method.of(method);
     }
 
     public Map<String, String> getHeaders() {
-        return headers;
+        return freezeWrap(headers);
     }
 
     public void setHeaders(Map<String, String> headers) {
-        this.headers.putAll(headers);
-    }
-
-    public void addHeaders(Map<String, String> headers) {
+        freezeCheck();
         this.headers.putAll(headers);
     }
 

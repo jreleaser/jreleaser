@@ -71,6 +71,7 @@ public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
 
     @Override
     public void merge(Sdkman sdkman) {
+        freezeCheck();
         super.merge(sdkman);
         this.candidate = merge(this.candidate, sdkman.candidate);
         this.releaseNotesUrl = merge(this.releaseNotesUrl, sdkman.releaseNotesUrl);
@@ -95,6 +96,7 @@ public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
     }
 
     public void setCandidate(String candidate) {
+        freezeCheck();
         this.candidate = candidate;
     }
 
@@ -103,6 +105,7 @@ public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
     }
 
     public void setReleaseNotesUrl(String releaseNotesUrl) {
+        freezeCheck();
         this.releaseNotesUrl = releaseNotesUrl;
     }
 
@@ -111,11 +114,12 @@ public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
     }
 
     public void setCommand(Command command) {
+        freezeCheck();
         this.command = command;
     }
 
     public void setCommand(String str) {
-        this.command = Command.of(str);
+        setCommand(Command.of(str));
     }
 
     public boolean isCommandSet() {
@@ -127,6 +131,7 @@ public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
     }
 
     public void setConsumerKey(String consumerKey) {
+        freezeCheck();
         this.consumerKey = consumerKey;
     }
 
@@ -135,6 +140,7 @@ public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
     }
 
     public void setConsumerToken(String consumerToken) {
+        freezeCheck();
         this.consumerToken = consumerToken;
     }
 
@@ -145,6 +151,7 @@ public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
 
     @Override
     public void setConnectTimeout(int connectTimeout) {
+        freezeCheck();
         this.connectTimeout = connectTimeout;
     }
 
@@ -155,6 +162,7 @@ public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
 
     @Override
     public void setReadTimeout(int readTimeout) {
+        freezeCheck();
         this.readTimeout = readTimeout;
     }
 
@@ -163,6 +171,7 @@ public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
     }
 
     public void setPublished(boolean published) {
+        freezeCheck();
         this.published = published;
     }
 
@@ -189,7 +198,7 @@ public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
 
     @Override
     public Set<String> getSupportedExtensions(Distribution distribution) {
-        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+        return Collections.unmodifiableSet(SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet()));
     }
 
     @Override

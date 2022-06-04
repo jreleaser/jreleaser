@@ -45,7 +45,17 @@ public class Download extends AbstractModelObject<Download> implements Domain, A
     private boolean enabled = true;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        ftp.values().forEach(FtpDownloader::freeze);
+        http.values().forEach(HttpDownloader::freeze);
+        scp.values().forEach(ScpDownloader::freeze);
+        sftp.values().forEach(SftpDownloader::freeze);
+    }
+
+    @Override
     public void merge(Download download) {
+        freezeCheck();
         this.active = merge(this.active, download.active);
         this.enabled = merge(this.enabled, download.enabled);
         setFtp(mergeModel(this.ftp, download.ftp));
@@ -79,12 +89,13 @@ public class Download extends AbstractModelObject<Download> implements Domain, A
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override
@@ -99,15 +110,17 @@ public class Download extends AbstractModelObject<Download> implements Domain, A
     }
 
     public Map<String, FtpDownloader> getFtp() {
-        return ftp;
+        return freezeWrap(ftp);
     }
 
     public void setFtp(Map<String, FtpDownloader> ftp) {
+        freezeCheck();
         this.ftp.clear();
         this.ftp.putAll(ftp);
     }
 
     public void addFtp(FtpDownloader ftp) {
+        freezeCheck();
         this.ftp.put(ftp.getName(), ftp);
     }
 
@@ -118,15 +131,17 @@ public class Download extends AbstractModelObject<Download> implements Domain, A
     }
 
     public Map<String, HttpDownloader> getHttp() {
-        return http;
+        return freezeWrap(http);
     }
 
     public void setHttp(Map<String, HttpDownloader> http) {
+        freezeCheck();
         this.http.clear();
         this.http.putAll(http);
     }
 
     public void addHttp(HttpDownloader http) {
+        freezeCheck();
         this.http.put(http.getName(), http);
     }
 
@@ -137,15 +152,17 @@ public class Download extends AbstractModelObject<Download> implements Domain, A
     }
 
     public Map<String, ScpDownloader> getScp() {
-        return scp;
+        return freezeWrap(scp);
     }
 
     public void setScp(Map<String, ScpDownloader> scp) {
+        freezeCheck();
         this.scp.clear();
         this.scp.putAll(scp);
     }
 
     public void addScp(ScpDownloader scp) {
+        freezeCheck();
         this.scp.put(scp.getName(), scp);
     }
 
@@ -156,15 +173,17 @@ public class Download extends AbstractModelObject<Download> implements Domain, A
     }
 
     public Map<String, SftpDownloader> getSftp() {
-        return sftp;
+        return freezeWrap(sftp);
     }
 
     public void setSftp(Map<String, SftpDownloader> sftp) {
+        freezeCheck();
         this.sftp.clear();
         this.sftp.putAll(sftp);
     }
 
     public void addSftp(SftpDownloader sftp) {
+        freezeCheck();
         this.sftp.put(sftp.getName(), sftp);
     }
 

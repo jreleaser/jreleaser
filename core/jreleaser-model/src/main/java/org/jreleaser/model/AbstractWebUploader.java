@@ -36,6 +36,7 @@ abstract class AbstractWebUploader<S extends AbstractWebUploader<S>> extends Abs
 
     @Override
     public void merge(S uploader) {
+        freezeCheck();
         super.merge(uploader);
         this.uploadUrl = merge(this.uploadUrl, uploader.uploadUrl);
         this.downloadUrl = merge(this.downloadUrl, uploader.downloadUrl);
@@ -67,6 +68,7 @@ abstract class AbstractWebUploader<S extends AbstractWebUploader<S>> extends Abs
 
     @Override
     public void setUploadUrl(String uploadUrl) {
+        freezeCheck();
         this.uploadUrl = uploadUrl;
     }
 
@@ -77,6 +79,7 @@ abstract class AbstractWebUploader<S extends AbstractWebUploader<S>> extends Abs
 
     @Override
     public void setDownloadUrl(String downloadUrl) {
+        freezeCheck();
         this.downloadUrl = downloadUrl;
     }
 

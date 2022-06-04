@@ -53,7 +53,14 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     protected String baseImage;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        registries.forEach(Registry::freeze);
+    }
+
+    @Override
     public void merge(S docker) {
+        freezeCheck();
         this.active = merge(this.active, docker.active);
         this.enabled = merge(this.enabled, docker.enabled);
         this.templateDirectory = merge(this.templateDirectory, docker.templateDirectory);
@@ -107,12 +114,13 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override
@@ -127,27 +135,31 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void setTemplateDirectory(String templateDirectory) {
+        freezeCheck();
         this.templateDirectory = templateDirectory;
     }
 
     @Override
     public List<String> getSkipTemplates() {
-        return skipTemplates;
+        return freezeWrap(skipTemplates);
     }
 
     @Override
     public void setSkipTemplates(List<String> skipTemplates) {
+        freezeCheck();
         this.skipTemplates.clear();
         this.skipTemplates.addAll(skipTemplates);
     }
 
     @Override
     public void addSkipTemplates(List<String> templates) {
+        freezeCheck();
         this.skipTemplates.addAll(templates);
     }
 
     @Override
     public void addSkipTemplate(String template) {
+        freezeCheck();
         if (isNotBlank(template)) {
             this.skipTemplates.add(template.trim());
         }
@@ -155,17 +167,19 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public Map<String, Object> getExtraProperties() {
-        return extraProperties;
+        return freezeWrap(extraProperties);
     }
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.putAll(extraProperties);
     }
 
@@ -176,27 +190,31 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void setBaseImage(String baseImage) {
+        freezeCheck();
         this.baseImage = baseImage;
     }
 
     @Override
     public Map<String, String> getLabels() {
-        return labels;
+        return freezeWrap(labels);
     }
 
     @Override
     public void setLabels(Map<String, String> labels) {
+        freezeCheck();
         this.labels.clear();
         this.labels.putAll(labels);
     }
 
     @Override
     public void addLabels(Map<String, String> labels) {
+        freezeCheck();
         this.labels.putAll(labels);
     }
 
     @Override
     public void addLabel(String key, String value) {
+        freezeCheck();
         if (isNotBlank(value)) {
             this.labels.put(key, value);
         }
@@ -204,11 +222,12 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public Set<String> getImageNames() {
-        return imageNames;
+        return freezeWrap(imageNames);
     }
 
     @Override
     public void setImageNames(Set<String> imageNames) {
+        freezeCheck();
         if (imageNames != null) {
             this.imageNames.clear();
             this.imageNames.addAll(imageNames);
@@ -217,6 +236,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void addImageName(String imageName) {
+        freezeCheck();
         if (isNotBlank(imageName)) {
             this.imageNames.add(imageName);
         }
@@ -224,11 +244,12 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public List<String> getBuildArgs() {
-        return buildArgs;
+        return freezeWrap(buildArgs);
     }
 
     @Override
     public void setBuildArgs(List<String> buildArgs) {
+        freezeCheck();
         if (buildArgs != null) {
             this.buildArgs.clear();
             this.buildArgs.addAll(buildArgs);
@@ -237,6 +258,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void addBuildArg(String buildArg) {
+        freezeCheck();
         if (isNotBlank(buildArg)) {
             this.buildArgs.add(buildArg);
         }
@@ -244,11 +266,12 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public List<String> getPreCommands() {
-        return preCommands;
+        return freezeWrap(preCommands);
     }
 
     @Override
     public void setPreCommands(List<String> preCommands) {
+        freezeCheck();
         if (preCommands != null) {
             this.preCommands.clear();
             this.preCommands.addAll(preCommands);
@@ -257,11 +280,12 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public List<String> getPostCommands() {
-        return postCommands;
+        return freezeWrap(postCommands);
     }
 
     @Override
     public void setPostCommands(List<String> postCommands) {
+        freezeCheck();
         if (postCommands != null) {
             this.postCommands.clear();
             this.postCommands.addAll(postCommands);
@@ -270,11 +294,12 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public Set<Registry> getRegistries() {
-        return registries;
+        return freezeWrap(registries);
     }
 
     @Override
     public void setRegistries(Set<Registry> registries) {
+        freezeCheck();
         if (registries != null) {
             this.registries.clear();
             this.registries.addAll(registries);
@@ -283,6 +308,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void addRegistry(Registry registry) {
+        freezeCheck();
         if (null != registry) {
             this.registries.add(registry);
         }
@@ -295,6 +321,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void setUseLocalArtifact(Boolean useLocalArtifact) {
+        freezeCheck();
         this.useLocalArtifact = useLocalArtifact;
     }
 

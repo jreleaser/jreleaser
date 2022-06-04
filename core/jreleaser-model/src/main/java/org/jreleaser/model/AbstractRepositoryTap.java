@@ -59,11 +59,13 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     }
 
     public void setTapName(String tapName) {
+        freezeCheck();
         this.tapName = tapName;
     }
 
     @Override
     public void merge(S tap) {
+        freezeCheck();
         this.active = merge(this.active, tap.active);
         this.enabled = merge(this.enabled, tap.enabled);
         this.owner = merge(this.owner, tap.owner);
@@ -101,12 +103,13 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override
@@ -156,6 +159,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
 
     @Override
     public void setOwner(String owner) {
+        freezeCheck();
         this.owner = owner;
     }
 
@@ -166,6 +170,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
 
     @Override
     public void setName(String name) {
+        freezeCheck();
         this.name = name;
     }
 
@@ -176,6 +181,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
 
     @Override
     public void setTagName(String tagName) {
+        freezeCheck();
         this.tagName = tagName;
     }
 
@@ -186,6 +192,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
 
     @Override
     public void setBranch(String branch) {
+        freezeCheck();
         this.branch = branch;
     }
 
@@ -196,6 +203,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
 
     @Override
     public void setUsername(String username) {
+        freezeCheck();
         this.username = username;
     }
 
@@ -206,6 +214,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
 
     @Override
     public void setToken(String token) {
+        freezeCheck();
         this.token = token;
     }
 
@@ -216,6 +225,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
 
     @Override
     public void setCommitMessage(String commitMessage) {
+        freezeCheck();
         this.commitMessage = commitMessage;
     }
 

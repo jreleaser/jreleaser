@@ -40,6 +40,7 @@ public class Java extends AbstractModelObject<Java> implements Domain, ExtraProp
 
     @Override
     public void merge(Java java) {
+        freezeCheck();
         this.enabled = merge(this.enabled, java.enabled);
         this.version = merge(this.version, java.version);
         this.groupId = merge(this.groupId, java.groupId);
@@ -57,6 +58,7 @@ public class Java extends AbstractModelObject<Java> implements Domain, ExtraProp
 
     @Override
     public void setEnabled(Boolean enabled) {
+        freezeCheck();
         this.enabled = enabled;
     }
 
@@ -75,6 +77,7 @@ public class Java extends AbstractModelObject<Java> implements Domain, ExtraProp
     }
 
     public void setVersion(String version) {
+        freezeCheck();
         if (isNotBlank(version) && version.startsWith("1.8")) {
             this.version = "8";
         } else {
@@ -87,6 +90,7 @@ public class Java extends AbstractModelObject<Java> implements Domain, ExtraProp
     }
 
     public void setGroupId(String groupId) {
+        freezeCheck();
         this.groupId = groupId;
     }
 
@@ -95,6 +99,7 @@ public class Java extends AbstractModelObject<Java> implements Domain, ExtraProp
     }
 
     public void setArtifactId(String artifactId) {
+        freezeCheck();
         this.artifactId = artifactId;
     }
 
@@ -102,7 +107,8 @@ public class Java extends AbstractModelObject<Java> implements Domain, ExtraProp
         return multiProject != null && multiProject;
     }
 
-    public void setMultiProject(boolean multiProject) {
+    public void setMultiProject(Boolean multiProject) {
+        freezeCheck();
         this.multiProject = multiProject;
     }
 
@@ -111,6 +117,7 @@ public class Java extends AbstractModelObject<Java> implements Domain, ExtraProp
     }
 
     public void setMainClass(String mainClass) {
+        freezeCheck();
         this.mainClass = mainClass;
     }
 
@@ -119,6 +126,7 @@ public class Java extends AbstractModelObject<Java> implements Domain, ExtraProp
     }
 
     public void setMainModule(String mainModule) {
+        freezeCheck();
         this.mainModule = mainModule;
     }
 
@@ -128,17 +136,19 @@ public class Java extends AbstractModelObject<Java> implements Domain, ExtraProp
 
     @Override
     public Map<String, Object> getExtraProperties() {
-        return extraProperties;
+        return freezeWrap(extraProperties);
     }
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.putAll(extraProperties);
     }
 

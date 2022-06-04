@@ -33,7 +33,14 @@ public class DockerSpec extends AbstractDockerConfiguration<DockerSpec> {
     private String name;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        if (null != artifact) artifact.freeze();
+    }
+
+    @Override
     public void merge(DockerSpec docker) {
+        freezeCheck();
         super.merge(docker);
         this.name = merge(this.name, docker.name);
         this.artifact = docker.artifact;
@@ -45,6 +52,7 @@ public class DockerSpec extends AbstractDockerConfiguration<DockerSpec> {
     }
 
     public void setArtifact(Artifact artifact) {
+        freezeCheck();
         this.artifact = artifact;
         this.artifact.activate();
     }
@@ -54,18 +62,16 @@ public class DockerSpec extends AbstractDockerConfiguration<DockerSpec> {
     }
 
     public void setName(String name) {
+        freezeCheck();
         this.name = name;
     }
 
     public Map<String, Object> getMatchers() {
-        return matchers;
+        return freezeWrap(matchers);
     }
 
     public void setMatchers(Map<String, Object> matchers) {
-        this.matchers.putAll(matchers);
-    }
-
-    public void addMatchers(Map<String, Object> matchers) {
+        freezeCheck();
         this.matchers.putAll(matchers);
     }
 

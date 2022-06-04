@@ -46,6 +46,7 @@ public class Gitea extends GitService<Gitea> {
 
     @Override
     public void merge(Gitea service) {
+        freezeCheck();
         super.merge(service);
         this.draft = merge(this.draft, service.draft);
     }
@@ -55,6 +56,7 @@ public class Gitea extends GitService<Gitea> {
     }
 
     public void setDraft(Boolean draft) {
+        freezeCheck();
         this.draft = draft;
     }
 

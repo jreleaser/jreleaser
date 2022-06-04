@@ -76,7 +76,14 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        bucket.freeze();
+    }
+
+    @Override
     public void merge(Chocolatey choco) {
+        freezeCheck();
         super.merge(choco);
         this.packageName = merge(this.packageName, choco.packageName);
         this.packageVersion = merge(this.packageVersion, choco.packageVersion);
@@ -98,6 +105,7 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
     }
 
     public void setPackageName(String packageName) {
+        freezeCheck();
         this.packageName = packageName;
     }
 
@@ -106,6 +114,7 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
     }
 
     public void setPackageVersion(String packageVersion) {
+        freezeCheck();
         this.packageVersion = packageVersion;
     }
 
@@ -114,6 +123,7 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
     }
 
     public void setUsername(String username) {
+        freezeCheck();
         this.username = username;
     }
 
@@ -122,6 +132,7 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
     }
 
     public void setApiKey(String apiKey) {
+        freezeCheck();
         this.apiKey = apiKey;
     }
 
@@ -130,6 +141,7 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
     }
 
     public void setTitle(String title) {
+        freezeCheck();
         this.title = title;
     }
 
@@ -138,6 +150,7 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
     }
 
     public void setIconUrl(String iconUrl) {
+        freezeCheck();
         this.iconUrl = iconUrl;
     }
 
@@ -146,6 +159,7 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
     }
 
     public void setSource(String source) {
+        freezeCheck();
         this.source = source;
     }
 
@@ -154,6 +168,7 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
     }
 
     public void setRemoteBuild(Boolean remoteBuild) {
+        freezeCheck();
         this.remoteBuild = remoteBuild;
     }
 
@@ -166,6 +181,7 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
     }
 
     public void setBucket(ChocolateyBucket bucket) {
+        freezeCheck();
         this.bucket.merge(bucket);
     }
 
@@ -200,7 +216,7 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
 
     @Override
     public Set<String> getSupportedExtensions(Distribution distribution) {
-        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+        return Collections.unmodifiableSet(SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet()));
     }
 
     @Override

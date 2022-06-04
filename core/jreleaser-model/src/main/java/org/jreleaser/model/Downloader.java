@@ -44,13 +44,14 @@ public interface Downloader extends Domain, Activatable, TimeoutAware, ExtraProp
 
     void addAsset(Asset asset);
 
-    class Unpack implements Domain, EnabledAware {
+    class Unpack extends AbstractModelObject<Unpack> implements Domain, EnabledAware {
         private Boolean enabled;
         private Boolean skipRootEntry;
 
-        void setAll(Unpack unpack) {
-            this.enabled = unpack.enabled;
-            this.skipRootEntry = unpack.skipRootEntry;
+        @Override
+        public void merge(Unpack unpack) {
+            this.enabled = merge(this.enabled, unpack.enabled);
+            this.skipRootEntry = merge(this.skipRootEntry, unpack.skipRootEntry);
         }
 
         @Override
@@ -92,14 +93,21 @@ public interface Downloader extends Domain, Activatable, TimeoutAware, ExtraProp
         }
     }
 
-    class Asset implements Domain {
+    class Asset extends AbstractModelObject<Asset> implements Domain {
         private final Unpack unpack = new Unpack();
         private String input;
         private String output;
 
-        void setAll(Asset asset) {
-            this.input = asset.input;
-            this.output = asset.output;
+        @Override
+        public void freeze() {
+            super.freeze();
+            unpack.freeze();
+        }
+
+        @Override
+        public void merge(Asset asset) {
+            this.input = merge(this.input, asset.input);
+            this.output = merge(this.output, asset.output);
             setUnpack(asset.unpack);
         }
 
@@ -140,7 +148,7 @@ public interface Downloader extends Domain, Activatable, TimeoutAware, ExtraProp
         }
 
         public void setUnpack(Unpack unpack) {
-            this.unpack.setAll(unpack);
+            this.unpack.merge(unpack);
         }
 
         @Override

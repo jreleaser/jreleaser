@@ -42,6 +42,7 @@ public class Registry extends AbstractModelObject<Registry> implements Domain, C
 
     @Override
     public void merge(Registry registry) {
+        freezeCheck();
         this.server = merge(this.server, registry.server);
         this.serverName = merge(this.serverName, registry.serverName);
         this.repositoryName = merge(this.repositoryName, registry.repositoryName);
@@ -62,6 +63,7 @@ public class Registry extends AbstractModelObject<Registry> implements Domain, C
     }
 
     public void setServer(String server) {
+        freezeCheck();
         this.server = server;
     }
 
@@ -70,6 +72,7 @@ public class Registry extends AbstractModelObject<Registry> implements Domain, C
     }
 
     public void setServerName(String serverName) {
+        freezeCheck();
         this.serverName = serverName;
     }
 
@@ -78,6 +81,7 @@ public class Registry extends AbstractModelObject<Registry> implements Domain, C
     }
 
     public void setRepositoryName(String repositoryName) {
+        freezeCheck();
         this.repositoryName = repositoryName;
     }
 
@@ -86,6 +90,7 @@ public class Registry extends AbstractModelObject<Registry> implements Domain, C
     }
 
     public void setUsername(String username) {
+        freezeCheck();
         this.username = username;
     }
 
@@ -94,6 +99,7 @@ public class Registry extends AbstractModelObject<Registry> implements Domain, C
     }
 
     public void setPassword(String password) {
+        freezeCheck();
         this.password = password;
     }
 

@@ -56,6 +56,7 @@ public class FileSet extends AbstractModelObject<FileSet> implements Domain, Ext
 
     @Override
     public void merge(FileSet fileSet) {
+        freezeCheck();
         this.input = merge(this.input, fileSet.input);
         this.output = merge(this.output, fileSet.output);
         this.failOnMissingInput = merge(this.failOnMissingInput, fileSet.failOnMissingInput);
@@ -90,19 +91,21 @@ public class FileSet extends AbstractModelObject<FileSet> implements Domain, Ext
     }
 
     public Set<String> getIncludes() {
-        return includes;
+        return freezeWrap(includes);
     }
 
     public void setIncludes(Set<String> includes) {
+        freezeCheck();
         this.includes.clear();
         this.includes.addAll(includes);
     }
 
     public Set<String> getExcludes() {
-        return excludes;
+        return freezeWrap(excludes);
     }
 
     public void setExcludes(Set<String> excludes) {
+        freezeCheck();
         this.excludes.clear();
         this.excludes.addAll(excludes);
     }
@@ -112,6 +115,7 @@ public class FileSet extends AbstractModelObject<FileSet> implements Domain, Ext
     }
 
     public void setInput(String input) {
+        freezeCheck();
         this.input = input;
     }
 
@@ -120,6 +124,7 @@ public class FileSet extends AbstractModelObject<FileSet> implements Domain, Ext
     }
 
     public void setOutput(String output) {
+        freezeCheck();
         this.output = output;
     }
 
@@ -128,6 +133,7 @@ public class FileSet extends AbstractModelObject<FileSet> implements Domain, Ext
     }
 
     public void setFailOnMissingInput(Boolean failOnMissingInput) {
+        freezeCheck();
         this.failOnMissingInput = failOnMissingInput;
     }
 
@@ -137,17 +143,19 @@ public class FileSet extends AbstractModelObject<FileSet> implements Domain, Ext
 
     @Override
     public Map<String, Object> getExtraProperties() {
-        return extraProperties;
+        return freezeWrap(extraProperties);
     }
 
     @Override
     public void setExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.clear();
         this.extraProperties.putAll(extraProperties);
     }
 
     @Override
     public void addExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
         this.extraProperties.putAll(extraProperties);
     }
 

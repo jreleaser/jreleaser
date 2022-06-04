@@ -57,13 +57,14 @@ public class Environment extends AbstractModelObject<Environment> implements Dom
 
     @Override
     public void merge(Environment environment) {
+        freezeCheck();
         this.variables = merge(this.variables, environment.variables);
         setProperties(merge(this.properties, environment.properties));
         setPropertiesSource(merge(this.propertiesSource, environment.propertiesSource));
     }
 
     public Properties getVars() {
-        return vars;
+        return freezeWrap(vars);
     }
 
     public String getVariable(String key) {
@@ -80,6 +81,7 @@ public class Environment extends AbstractModelObject<Environment> implements Dom
     }
 
     public void setPropertiesSource(PropertiesSource propertiesSource) {
+        freezeCheck();
         this.propertiesSource = propertiesSource;
         if (null != this.propertiesSource) {
             sourcedProperties.putAll(propertiesSource.getProperties());
@@ -91,19 +93,21 @@ public class Environment extends AbstractModelObject<Environment> implements Dom
     }
 
     public void setVariables(String variables) {
+        freezeCheck();
         this.variables = variables;
     }
 
     public Map<String, Object> getProperties() {
-        return properties;
+        return freezeWrap(properties);
     }
 
     public void setProperties(Map<String, Object> properties) {
+        freezeCheck();
         this.properties.putAll(properties);
     }
 
     public Map<String, Object> getSourcedProperties() {
-        return sourcedProperties;
+        return freezeWrap(sourcedProperties);
     }
 
     public Path getPropertiesFile() {

@@ -31,7 +31,14 @@ public abstract class AbstractRepositoryPackager<S extends AbstractRepositoryPac
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        commitAuthor.freeze();
+    }
+
+    @Override
     public void merge(S packager) {
+        freezeCheck();
         super.merge(packager);
         setCommitAuthor(packager.commitAuthor);
     }

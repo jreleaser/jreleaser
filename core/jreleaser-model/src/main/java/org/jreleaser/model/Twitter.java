@@ -50,6 +50,7 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
 
     @Override
     public void merge(Twitter twitter) {
+        freezeCheck();
         super.merge(twitter);
         this.consumerKey = merge(this.consumerKey, twitter.consumerKey);
         this.consumerSecret = merge(this.consumerSecret, twitter.consumerSecret);
@@ -86,6 +87,7 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
     }
 
     public void setConsumerKey(String consumerKey) {
+        freezeCheck();
         this.consumerKey = consumerKey;
     }
 
@@ -94,6 +96,7 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
     }
 
     public void setConsumerSecret(String consumerSecret) {
+        freezeCheck();
         this.consumerSecret = consumerSecret;
     }
 
@@ -102,6 +105,7 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
     }
 
     public void setAccessToken(String accessToken) {
+        freezeCheck();
         this.accessToken = accessToken;
     }
 
@@ -110,6 +114,7 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
     }
 
     public void setAccessTokenSecret(String accessTokenSecret) {
+        freezeCheck();
         this.accessTokenSecret = accessTokenSecret;
     }
 
@@ -118,6 +123,7 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
     }
 
     public void setStatus(String status) {
+        freezeCheck();
         this.status = status;
     }
 

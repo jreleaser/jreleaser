@@ -65,7 +65,18 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     private String preset;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        categories.forEach(Category::freeze);
+        replacers.forEach(Replacer::freeze);
+        labelers.forEach(Labeler::freeze);
+        hide.freeze();
+        contributors.freeze();
+    }
+
+    @Override
     public void merge(Changelog changelog) {
+        freezeCheck();
         this.enabled = merge(this.enabled, changelog.enabled);
         this.links = merge(this.links, changelog.links);
         this.sort = merge(this.sort, changelog.sort);
@@ -112,6 +123,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
 
     @Override
     public void setEnabled(Boolean enabled) {
+        freezeCheck();
         this.enabled = enabled;
     }
 
@@ -125,6 +137,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     }
 
     public void setLinks(Boolean links) {
+        freezeCheck();
         this.links = links;
     }
 
@@ -133,10 +146,12 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     }
 
     public void setSort(Sort sort) {
+        freezeCheck();
         this.sort = sort;
     }
 
     public void setSort(String sort) {
+        freezeCheck();
         if (isNotBlank(sort)) {
             setSort(Sort.valueOf(sort.toUpperCase()));
         }
@@ -147,6 +162,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     }
 
     public void setExternal(String external) {
+        freezeCheck();
         this.external = external;
     }
 
@@ -155,11 +171,12 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     }
 
     public void setFormatted(Active formatted) {
+        freezeCheck();
         this.formatted = formatted;
     }
 
     public void setFormatted(String str) {
-        this.formatted = Active.of(str);
+        setFormatted(Active.of(str));
     }
 
     public boolean isFormattedSet() {
@@ -167,46 +184,51 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     }
 
     public Set<String> getIncludeLabels() {
-        return includeLabels;
+        return freezeWrap(includeLabels);
     }
 
     public void setIncludeLabels(Set<String> includeLabels) {
+        freezeCheck();
         this.includeLabels.clear();
         this.includeLabels.addAll(includeLabels.stream().map(String::trim).collect(Collectors.toSet()));
     }
 
     public Set<String> getExcludeLabels() {
-        return excludeLabels;
+        return freezeWrap(excludeLabels);
     }
 
     public void setExcludeLabels(Set<String> excludeLabels) {
+        freezeCheck();
         this.excludeLabels.clear();
         this.excludeLabels.addAll(excludeLabels.stream().map(String::trim).collect(Collectors.toSet()));
     }
 
     public Set<Category> getCategories() {
-        return categories;
+        return freezeWrap(categories);
     }
 
     public void setCategories(Set<Category> categories) {
+        freezeCheck();
         this.categories.clear();
         this.categories.addAll(categories);
     }
 
     public List<Replacer> getReplacers() {
-        return replacers;
+        return freezeWrap(replacers);
     }
 
     public void setReplacers(List<Replacer> replacers) {
+        freezeCheck();
         this.replacers.clear();
         this.replacers.addAll(replacers);
     }
 
     public Set<Labeler> getLabelers() {
-        return labelers;
+        return freezeWrap(labelers);
     }
 
     public void setLabelers(Set<Labeler> labelers) {
+        freezeCheck();
         this.labelers.clear();
         this.labelers.addAll(labelers);
     }
@@ -216,6 +238,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     }
 
     public void setFormat(String format) {
+        freezeCheck();
         this.format = format;
     }
 
@@ -224,6 +247,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     }
 
     public void setContent(String content) {
+        freezeCheck();
         this.content = content;
     }
 
@@ -232,6 +256,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     }
 
     public void setContentTemplate(String contentTemplate) {
+        freezeCheck();
         this.contentTemplate = contentTemplate;
     }
 
@@ -240,6 +265,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     }
 
     public void setPreset(String preset) {
+        freezeCheck();
         this.preset = preset;
     }
 
@@ -320,6 +346,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
 
         @Override
         public void merge(Category category) {
+            freezeCheck();
             this.key = merge(this.key, category.key);
             this.title = merge(this.title, category.title);
             this.format = merge(this.format, category.format);
@@ -332,6 +359,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setFormat(String format) {
+            freezeCheck();
             this.format = format;
         }
 
@@ -340,6 +368,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setKey(String key) {
+            freezeCheck();
             this.key = key;
         }
 
@@ -348,6 +377,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setTitle(String title) {
+            freezeCheck();
             this.title = title;
             if (isBlank(this.key)) {
                 this.key = title;
@@ -355,15 +385,17 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public Set<String> getLabels() {
-            return labels;
+            return freezeWrap(labels);
         }
 
         public void setLabels(Set<String> labels) {
+            freezeCheck();
             this.labels.clear();
             this.labels.addAll(labels);
         }
 
         public void addLabels(Set<String> labels) {
+            freezeCheck();
             this.labels.addAll(labels);
         }
 
@@ -372,6 +404,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setOrder(Integer order) {
+            freezeCheck();
             this.order = order;
         }
 
@@ -421,6 +454,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
 
         @Override
         public void merge(Replacer replacer) {
+            freezeCheck();
             this.search = merge(this.search, replacer.search);
             this.replace = merge(this.replace, replacer.replace);
         }
@@ -430,6 +464,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setSearch(String search) {
+            freezeCheck();
             this.search = search;
         }
 
@@ -438,6 +473,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setReplace(String replace) {
+            freezeCheck();
             this.replace = replace;
         }
 
@@ -464,6 +500,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
 
         @Override
         public void merge(Labeler labeler) {
+            freezeCheck();
             this.label = merge(this.label, labeler.label);
             this.title = merge(this.title, labeler.title);
             this.body = merge(this.body, labeler.body);
@@ -475,6 +512,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setLabel(String label) {
+            freezeCheck();
             this.label = label;
         }
 
@@ -483,6 +521,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setTitle(String title) {
+            freezeCheck();
             this.title = title;
         }
 
@@ -491,6 +530,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setBody(String body) {
+            freezeCheck();
             this.body = body;
         }
 
@@ -499,6 +539,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setOrder(Integer order) {
+            freezeCheck();
             this.order = order;
         }
 
@@ -533,6 +574,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
 
         @Override
         public void merge(Contributors contributor) {
+            freezeCheck();
             this.enabled = merge(this.enabled, contributor.enabled);
             this.format = merge(this.format, contributor.format);
         }
@@ -542,6 +584,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setEnabled(Boolean enabled) {
+            freezeCheck();
             this.enabled = enabled;
         }
 
@@ -554,6 +597,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setFormat(String format) {
+            freezeCheck();
             this.format = format;
         }
 
@@ -573,6 +617,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
 
         @Override
         public void merge(Hide hide) {
+            freezeCheck();
             this.uncategorized = merge(this.uncategorized, hide.uncategorized);
             setCategories(merge(this.categories, hide.categories));
             setContributors(merge(this.contributors, hide.contributors));
@@ -583,23 +628,27 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public void setUncategorized(Boolean uncategorized) {
+            freezeCheck();
             this.uncategorized = uncategorized;
         }
 
         public Set<String> getCategories() {
-            return categories;
+            return freezeWrap(categories);
         }
 
         public void setCategories(Set<String> categories) {
+            freezeCheck();
             this.categories.clear();
             this.categories.addAll(categories.stream().map(String::trim).collect(Collectors.toSet()));
         }
 
         public void addCategories(Set<String> categories) {
+            freezeCheck();
             this.categories.addAll(categories.stream().map(String::trim).collect(Collectors.toSet()));
         }
 
         public void addCategory(String category) {
+            freezeCheck();
             if (isNotBlank(category)) {
                 this.categories.add(category.trim());
             }
@@ -613,19 +662,22 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         }
 
         public Set<String> getContributors() {
-            return contributors;
+            return freezeWrap(contributors);
         }
 
         public void setContributors(Set<String> contributors) {
+            freezeCheck();
             this.contributors.clear();
             this.contributors.addAll(contributors.stream().map(String::trim).collect(Collectors.toSet()));
         }
 
         public void addContributors(Set<String> contributors) {
+            freezeCheck();
             this.contributors.addAll(contributors.stream().map(String::trim).collect(Collectors.toSet()));
         }
 
         public void addContributor(String contributor) {
+            freezeCheck();
             if (isNotBlank(contributor)) {
                 this.contributors.add(contributor.trim());
             }

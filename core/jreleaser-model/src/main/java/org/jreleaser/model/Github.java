@@ -45,6 +45,7 @@ public class Github extends GitService<Github> {
 
     @Override
     public void merge(Github service) {
+        freezeCheck();
         super.merge(service);
         this.draft = merge(this.draft, service.draft);
         this.discussionCategoryName = merge(this.discussionCategoryName, service.discussionCategoryName);
@@ -55,6 +56,7 @@ public class Github extends GitService<Github> {
     }
 
     public void setDraft(Boolean draft) {
+        freezeCheck();
         this.draft = draft;
     }
 
@@ -67,6 +69,7 @@ public class Github extends GitService<Github> {
     }
 
     public void setDiscussionCategoryName(String discussionCategoryName) {
+        freezeCheck();
         this.discussionCategoryName = discussionCategoryName;
     }
 

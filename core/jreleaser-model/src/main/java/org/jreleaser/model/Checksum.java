@@ -41,6 +41,7 @@ public class Checksum extends AbstractModelObject<Checksum> implements Domain {
 
     @Override
     public void merge(Checksum checksum) {
+        freezeCheck();
         this.name = merge(this.name, checksum.name);
         this.individual = merge(this.individual, checksum.individual);
         this.files = merge(this.files, checksum.files);
@@ -70,6 +71,7 @@ public class Checksum extends AbstractModelObject<Checksum> implements Domain {
     }
 
     public void setName(String name) {
+        freezeCheck();
         this.name = name;
     }
 
@@ -78,6 +80,7 @@ public class Checksum extends AbstractModelObject<Checksum> implements Domain {
     }
 
     public void setIndividual(Boolean individual) {
+        freezeCheck();
         this.individual = individual;
     }
 
@@ -86,10 +89,11 @@ public class Checksum extends AbstractModelObject<Checksum> implements Domain {
     }
 
     public Set<Algorithm> getAlgorithms() {
-        return algorithms;
+        return freezeWrap(algorithms);
     }
 
     public void setAlgorithms(Set<Algorithm> algorithms) {
+        freezeCheck();
         this.algorithms.clear();
         this.algorithms.addAll(algorithms);
     }
@@ -103,6 +107,7 @@ public class Checksum extends AbstractModelObject<Checksum> implements Domain {
     }
 
     public void setFiles(Boolean files) {
+        freezeCheck();
         this.files = files;
     }
 

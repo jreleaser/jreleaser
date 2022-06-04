@@ -80,7 +80,14 @@ public class Spec extends AbstractRepositoryPackager<Spec> {
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        repository.freeze();
+    }
+
+    @Override
     public void merge(Spec spec) {
+        freezeCheck();
         super.merge(spec);
         this.packageName = merge(this.packageName, spec.packageName);
         this.release = merge(this.release, spec.release);
@@ -93,6 +100,7 @@ public class Spec extends AbstractRepositoryPackager<Spec> {
     }
 
     public void setPackageName(String packageName) {
+        freezeCheck();
         this.packageName = packageName;
     }
 
@@ -101,6 +109,7 @@ public class Spec extends AbstractRepositoryPackager<Spec> {
     }
 
     public void setRelease(String release) {
+        freezeCheck();
         this.release = release;
     }
 
@@ -113,10 +122,11 @@ public class Spec extends AbstractRepositoryPackager<Spec> {
     }
 
     public List<String> getRequires() {
-        return requires;
+        return freezeWrap(requires);
     }
 
     public void setRequires(List<String> requires) {
+        freezeCheck();
         this.requires.clear();
         this.requires.addAll(requires);
     }
@@ -148,7 +158,7 @@ public class Spec extends AbstractRepositoryPackager<Spec> {
 
     @Override
     public Set<String> getSupportedExtensions(Distribution distribution) {
-        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+        return Collections.unmodifiableSet(SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet()));
     }
 
     @Override

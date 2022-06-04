@@ -57,7 +57,28 @@ public class Announce extends AbstractModelObject<Announce> implements Domain, A
     private boolean enabled = true;
 
     @Override
+    public void freeze() {
+        super.freeze();
+        article.freeze();
+        discord.freeze();
+        discussions.freeze();
+        gitter.freeze();
+        googleChat.freeze();
+        mail.freeze();
+        mastodon.freeze();
+        mattermost.freeze();
+        sdkman.freeze();
+        slack.freeze();
+        teams.freeze();
+        telegram.freeze();
+        twitter.freeze();
+        webhooks.freeze();
+        zulip.freeze();
+    }
+
+    @Override
     public void merge(Announce announce) {
+        freezeCheck();
         this.active = merge(this.active, announce.active);
         this.enabled = merge(this.enabled, announce.enabled);
         setArticle(announce.article);
@@ -85,6 +106,7 @@ public class Announce extends AbstractModelObject<Announce> implements Domain, A
     @Deprecated
     public void setEnabled(Boolean enabled) {
         nag("announce.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
+        freezeCheck();
         if (null != enabled) {
             this.active = enabled ? Active.ALWAYS : Active.NEVER;
         }
@@ -110,12 +132,13 @@ public class Announce extends AbstractModelObject<Announce> implements Domain, A
 
     @Override
     public void setActive(Active active) {
+        freezeCheck();
         this.active = active;
     }
 
     @Override
     public void setActive(String str) {
-        this.active = Active.of(str);
+        setActive(Active.of(str));
     }
 
     @Override

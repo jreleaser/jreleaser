@@ -71,6 +71,7 @@ public class Gofish extends AbstractRepositoryPackager<Gofish> {
 
     @Override
     public void merge(Gofish spec) {
+        freezeCheck();
         super.merge(spec);
         setRepository(spec.repository);
     }
@@ -109,7 +110,7 @@ public class Gofish extends AbstractRepositoryPackager<Gofish> {
 
     @Override
     public Set<String> getSupportedExtensions(Distribution distribution) {
-        return SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet());
+        return Collections.unmodifiableSet(SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet()));
     }
 
     @Override

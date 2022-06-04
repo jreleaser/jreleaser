@@ -52,6 +52,7 @@ public class S3 extends AbstractUploader<S3> {
 
     @Override
     public void merge(S3 s3) {
+        freezeCheck();
         super.merge(s3);
         this.region = merge(this.region, s3.region);
         this.bucket = merge(this.bucket, s3.bucket);
@@ -141,6 +142,7 @@ public class S3 extends AbstractUploader<S3> {
     }
 
     public void setRegion(String region) {
+        freezeCheck();
         this.region = region;
     }
 
@@ -149,6 +151,7 @@ public class S3 extends AbstractUploader<S3> {
     }
 
     public void setBucket(String bucket) {
+        freezeCheck();
         this.bucket = bucket;
     }
 
@@ -157,6 +160,7 @@ public class S3 extends AbstractUploader<S3> {
     }
 
     public void setAccessKeyId(String accessKeyId) {
+        freezeCheck();
         this.accessKeyId = accessKeyId;
     }
 
@@ -165,6 +169,7 @@ public class S3 extends AbstractUploader<S3> {
     }
 
     public void setSecretKey(String secretKey) {
+        freezeCheck();
         this.secretKey = secretKey;
     }
 
@@ -173,6 +178,7 @@ public class S3 extends AbstractUploader<S3> {
     }
 
     public void setSessionToken(String sessionToken) {
+        freezeCheck();
         this.sessionToken = sessionToken;
     }
 
@@ -181,6 +187,7 @@ public class S3 extends AbstractUploader<S3> {
     }
 
     public void setPath(String path) {
+        freezeCheck();
         this.path = path;
     }
 
@@ -189,6 +196,7 @@ public class S3 extends AbstractUploader<S3> {
     }
 
     public void setDownloadUrl(String downloadUrl) {
+        freezeCheck();
         this.downloadUrl = downloadUrl;
     }
 
@@ -197,18 +205,16 @@ public class S3 extends AbstractUploader<S3> {
     }
 
     public void setEndpoint(String endpoint) {
+        freezeCheck();
         this.endpoint = endpoint;
     }
 
     public Map<String, String> getHeaders() {
-        return headers;
+        return freezeWrap(headers);
     }
 
     public void setHeaders(Map<String, String> headers) {
-        this.headers.putAll(headers);
-    }
-
-    public void addHeaders(Map<String, String> headers) {
+        freezeCheck();
         this.headers.putAll(headers);
     }
 

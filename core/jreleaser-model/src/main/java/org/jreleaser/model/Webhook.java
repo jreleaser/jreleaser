@@ -50,6 +50,7 @@ public class Webhook extends AbstractAnnouncer<Webhook> {
 
     @Override
     public void merge(Webhook webhook) {
+        freezeCheck();
         super.merge(webhook);
         this.name = merge(this.name, webhook.name);
         this.webhook = merge(this.webhook, webhook.webhook);
@@ -86,6 +87,7 @@ public class Webhook extends AbstractAnnouncer<Webhook> {
     }
 
     public void setName(String name) {
+        freezeCheck();
         this.name = name;
     }
 
@@ -94,6 +96,7 @@ public class Webhook extends AbstractAnnouncer<Webhook> {
     }
 
     public void setWebhook(String webhook) {
+        freezeCheck();
         this.webhook = webhook;
     }
 
@@ -102,6 +105,7 @@ public class Webhook extends AbstractAnnouncer<Webhook> {
     }
 
     public void setMessage(String message) {
+        freezeCheck();
         this.message = message;
     }
 
@@ -110,6 +114,7 @@ public class Webhook extends AbstractAnnouncer<Webhook> {
     }
 
     public void setMessageProperty(String messageProperty) {
+        freezeCheck();
         this.messageProperty = messageProperty;
     }
 
@@ -118,6 +123,7 @@ public class Webhook extends AbstractAnnouncer<Webhook> {
     }
 
     public void setMessageTemplate(String messageTemplate) {
+        freezeCheck();
         this.messageTemplate = messageTemplate;
     }
 
