@@ -90,7 +90,7 @@ public class Glob extends AbstractModelObject<Glob> implements Domain, ExtraProp
     public Set<Artifact> getResolvedArtifactsPattern(JReleaserContext context) {
         if (null == artifacts) {
             mutate(() -> setPattern(Artifacts.resolveForGlob(getPattern(), context, this)));
-            normalizePattern();
+            normalizePattern(resolveDirectory(context));
             artifacts = Artifacts.resolveFiles(context, resolveDirectory(context), Collections.singletonList(pattern));
             artifacts.forEach(artifact -> {
                 artifact.setPlatform(platform);
@@ -126,7 +126,7 @@ public class Glob extends AbstractModelObject<Glob> implements Domain, ExtraProp
         this.pattern = pattern.trim();
     }
 
-    private void normalizePattern() {
+    private void normalizePattern(Path basedir) {
         if (!pattern.startsWith(GLOB_PREFIX) && !pattern.startsWith(REGEX_PREFIX)) {
             this.pattern = GLOB_PREFIX + pattern;
         }
@@ -139,6 +139,8 @@ public class Glob extends AbstractModelObject<Glob> implements Domain, ExtraProp
             }
             if (!Paths.get(test).isAbsolute()) {
                 this.pattern = GLOB_PREFIX + "**" + File.separator + path;
+            } else {
+                this.pattern = GLOB_PREFIX + "**" + relativize(basedir, Paths.get(path));
             }
         } else {
             String path = this.pattern.substring(REGEX_PREFIX.length());
@@ -148,12 +150,25 @@ public class Glob extends AbstractModelObject<Glob> implements Domain, ExtraProp
             }
             if (!Paths.get(test).isAbsolute()) {
                 this.pattern = REGEX_PREFIX + ".*" + File.separator + path;
+            } else {
+                this.pattern = REGEX_PREFIX + ".*" + relativize(basedir, Paths.get(path));
             }
         }
 
         if (PlatformUtils.isWindows()) {
             this.pattern = pattern.replace("/", "\\\\");
         }
+    }
+
+    public Path relativize(Path base, Path other) {
+        Path p1 = base.toAbsolutePath();
+        Path p2 = other.toAbsolutePath();
+        Path p = p1.relativize(p2).normalize();
+        while (p != null && !p.endsWith("..")) {
+            p = p.getParent();
+        }
+
+        return base.resolve(p).resolve(p2).normalize();
     }
 
     public String getPlatform() {
