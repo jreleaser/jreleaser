@@ -28,6 +28,7 @@ import org.jreleaser.model.Uploader;
 import org.jreleaser.model.uploader.spi.ArtifactUploader;
 import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.util.Algorithm;
+import org.jreleaser.util.Constants;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,6 +38,7 @@ import java.util.List;
 import static org.jreleaser.model.Checksum.INDIVIDUAL_CHECKSUM;
 import static org.jreleaser.model.Checksum.KEY_SKIP_CHECKSUM;
 import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
+import static org.jreleaser.util.Constants.KEY_PLATFORM_REPLACED;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.isTrue;
 
@@ -86,7 +88,7 @@ public abstract class AbstractArtifactUploader<U extends Uploader> implements Ar
                         String platform = artifact.getPlatform();
                         String platformReplaced = distribution.getPlatform().applyReplacements(platform);
                         if (isNotBlank(platformReplaced)) {
-                            artifact.getExtraProperties().put("platformReplaced", platformReplaced);
+                            artifact.mutate(() -> artifact.getExtraProperties().put(KEY_PLATFORM_REPLACED, platformReplaced));
                         }
                         artifacts.add(artifact);
                         if (uploadChecksums && isIndividual(context, distribution, artifact)) {

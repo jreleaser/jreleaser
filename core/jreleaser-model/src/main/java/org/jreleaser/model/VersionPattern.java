@@ -65,8 +65,10 @@ public class VersionPattern extends AbstractModelObject<VersionPattern> {
 
     @Override
     public void merge(VersionPattern source) {
-        this.type = merge(this.type, source.type);
-        this.format = merge(this.format, source.format);
+        if (source != null) {
+            this.type = merge(this.type, source.type);
+            this.format = merge(this.format, source.format);
+        }
     }
 
     public static VersionPattern of(String str) {

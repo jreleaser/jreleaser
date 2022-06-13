@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
+import static org.jreleaser.util.Constants.KEY_PLATFORM_REPLACED;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -314,7 +315,7 @@ public class GitlabReleaser extends AbstractReleaser {
                         String platform = artifact.getPlatform();
                         String platformReplaced = distribution.getPlatform().applyReplacements(platform);
                         if (isNotBlank(platformReplaced)) {
-                            artifact.getExtraProperties().put("platformReplaced", platformReplaced);
+                            artifact.mutate(() -> artifact.getExtraProperties().put(KEY_PLATFORM_REPLACED, platformReplaced));
                         }
                         artifacts.add(artifact);
                     }

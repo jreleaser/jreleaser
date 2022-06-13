@@ -149,7 +149,7 @@ public abstract class AbstractModelObject<S extends AbstractModelObject<S>> impl
         return m1;
     }
 
-    interface Mutator {
+    public interface Mutator {
         void mutate() throws RuntimeException;
     }
 }
