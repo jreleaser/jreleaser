@@ -101,7 +101,7 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<Sdkman> {
                     break;
             }
 
-            sdkman.setPublished(true);
+            sdkman.mutate(() -> sdkman.setPublished(true));
         } catch (SdkmanException e) {
             throw new PackagerProcessingException(e);
         }

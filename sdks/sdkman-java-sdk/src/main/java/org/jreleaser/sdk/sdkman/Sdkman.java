@@ -41,6 +41,8 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class Sdkman {
+    private static final String KEY_UNIVERSAL = "UNIVERSAL";
+
     private final JReleaserLogger logger;
     private final SdkmanAPI api;
     private final boolean dryrun;
@@ -101,7 +103,7 @@ public class Sdkman {
                         String version,
                         String url) throws SdkmanException {
         Map<String, String> platforms = new LinkedHashMap<>();
-        platforms.put("UNIVERSAL", url);
+        platforms.put(KEY_UNIVERSAL, url);
         release(candidate, version, platforms);
     }
 
@@ -131,7 +133,7 @@ public class Sdkman {
                              String releaseNotesUrl,
                              boolean skipAnnounce) throws SdkmanException {
         Map<String, String> platforms = new LinkedHashMap<>();
-        platforms.put("UNIVERSAL", url);
+        platforms.put(KEY_UNIVERSAL, url);
         majorRelease(candidate, version, platforms, hashtag, releaseNotesUrl, skipAnnounce);
     }
 
@@ -165,7 +167,7 @@ public class Sdkman {
                              String releaseNotesUrl,
                              boolean skipAnnounce) throws SdkmanException {
         Map<String, String> platforms = new LinkedHashMap<>();
-        platforms.put("UNIVERSAL", url);
+        platforms.put(KEY_UNIVERSAL, url);
         minorRelease(candidate, version, platforms, hashtag, releaseNotesUrl, skipAnnounce);
     }
 

@@ -67,7 +67,9 @@ public class SdkmanAnnouncer implements Announcer {
                 return isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
             }, distribution -> distribution));
 
-        Boolean set = (Boolean) context.getModel().getAnnounce().getSdkman().getExtraProperties().remove(MAGIC_SET);
+        Boolean set = (Boolean) context.getModel().getAnnounce().getSdkman().getExtraProperties().get(MAGIC_SET);
+        context.getModel().getAnnounce().getSdkman().mutate(()-> context.getModel().getAnnounce().getSdkman().getExtraProperties().remove(MAGIC_SET));
+
         if (distributions.isEmpty()) {
             if (set == null || !set) {
                 announceProject();
