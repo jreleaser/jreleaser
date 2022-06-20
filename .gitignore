@@ -10,7 +10,8 @@ tmp/
 .DS_Store
 .tmp
 # Eclipse
-bin
+*/bin
+!core/jreleaser-templates/src/main/resources/META-INF/jreleaser/templates/**/bin
 .classpath
 .project
 .settings

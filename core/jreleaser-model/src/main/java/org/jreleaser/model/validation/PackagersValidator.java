@@ -47,6 +47,13 @@ public abstract class PackagersValidator extends Validator {
         Packagers packagers = model.getPackagers();
         Project project = model.getProject();
 
+        packagers.getAsdf().resolveEnabled(project);
+        packagers.getAsdf().getRepository().resolveEnabled(project);
+        validatePackager(context,
+            packagers.getAsdf(),
+            packagers.getAsdf().getRepository(),
+            errors);
+
         packagers.getBrew().resolveEnabled(project);
         packagers.getBrew().getTap().resolveEnabled(project);
         validatePackager(context,

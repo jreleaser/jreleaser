@@ -25,6 +25,7 @@ import java.util.Map;
  * @since 0.1.0
  */
 public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> implements Domain {
+    protected final Asdf asdf = new Asdf();
     protected final Brew brew = new Brew();
     protected final Chocolatey chocolatey = new Chocolatey();
     protected final Docker docker = new Docker();
@@ -37,7 +38,8 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     protected final Spec spec = new Spec();
 
     public boolean hasEnabledPackagers() {
-        return brew.isEnabled() ||
+        return asdf.isEnabled() ||
+            brew.isEnabled() ||
             chocolatey.isEnabled() ||
             docker.isEnabled() ||
             gofish.isEnabled() ||
@@ -52,6 +54,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     @Override
     public void freeze() {
         super.freeze();
+        asdf.freeze();
         brew.freeze();
         chocolatey.freeze();
         docker.freeze();
@@ -67,6 +70,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     @Override
     public void merge(S packagers) {
         freezeCheck();
+        setAsdf(packagers.asdf);
         setBrew(packagers.brew);
         setChocolatey(packagers.chocolatey);
         setDocker(packagers.docker);
@@ -77,6 +81,14 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
         setSdkman(packagers.sdkman);
         setSnap(packagers.snap);
         setSpec(packagers.spec);
+    }
+
+    public Asdf getAsdf() {
+        return asdf;
+    }
+
+    public void setAsdf(Asdf asdf) {
+        this.asdf.merge(asdf);
     }
 
     public Brew getBrew() {
@@ -162,6 +174,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
+        map.putAll(asdf.asMap(full));
         map.putAll(brew.asMap(full));
         map.putAll(chocolatey.asMap(full));
         map.putAll(docker.asMap(full));

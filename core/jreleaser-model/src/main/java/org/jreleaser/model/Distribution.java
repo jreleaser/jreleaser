@@ -320,6 +320,8 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
 
     private <T extends Packager> T resolvePackager(String name) {
         switch (name.toLowerCase().trim()) {
+            case Asdf.TYPE:
+                return (T) getAsdf();
             case Brew.TYPE:
                 return (T) getBrew();
             case Chocolatey.TYPE:
@@ -377,6 +379,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
 
     public static Set<String> supportedPackagers() {
         Set<String> set = new LinkedHashSet<>();
+        set.add(Asdf.TYPE);
         set.add(Brew.TYPE);
         set.add(Chocolatey.TYPE);
         set.add(Docker.TYPE);

@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.GitService.KEY_SKIP_RELEASE_SIGNATURES;
+import static org.jreleaser.model.validation.AsdfValidator.validateAsdf;
 import static org.jreleaser.model.validation.BrewValidator.postValidateBrew;
 import static org.jreleaser.model.validation.BrewValidator.validateBrew;
 import static org.jreleaser.model.validation.ChocolateyValidator.postValidateChocolatey;
@@ -176,6 +177,7 @@ public abstract class DistributionsValidator extends Validator {
                 });
         });
 
+        validateAsdf(context, distribution, distribution.getAsdf(), errors);
         validateBrew(context, distribution, distribution.getBrew(), errors);
         validateChocolatey(context, distribution, distribution.getChocolatey(), errors);
         validateDocker(context, distribution, distribution.getDocker(), errors);

@@ -22,6 +22,7 @@ dependencies {
     // tools
     api project(':jreleaser-templates')
     api project(':sdkman-java-sdk')
+    api "org.apache.commons:commons-lang3:${commonsLang3Version}"
 
     compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
     annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"

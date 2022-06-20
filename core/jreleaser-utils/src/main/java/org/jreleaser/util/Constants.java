@@ -165,6 +165,10 @@ public interface Constants {
     String KEY_ARTIFACT_SIZE = "artifactSize";
     String KEY_ARTIFACT_ARCHIVE_FORMAT = "artifactArchiveFormat";
 
+    // Asdf
+    String KEY_ASDF_PLUGIN_REPO_URL = "asdfPluginRepoUrl";
+    String KEY_ASDF_PLUGIN_TOOL_CHECK = "asdfPluginToolCheck";
+
     // Brew
     String KEY_BREW_FORMULA_NAME = "brewFormulaName";
     String KEY_BREW_DEPENDENCIES = "brewDependencies";
@@ -264,6 +268,11 @@ public interface Constants {
 
     // Gofish
     String KEY_GOFISH_PACKAGES = "gofishPackages";
+
+    // Asdf
+    String KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE = "asdfDistributionArtifactFile";
+    String KEY_ASDF_DISTRIBUTION_URL = "asdfDistributionUrl";
+    String KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE_NAME = "asdfDistributionArtifactFileName";
 
     // upload
     String KEY_UPLOADER_NAME = "uploaderName";
