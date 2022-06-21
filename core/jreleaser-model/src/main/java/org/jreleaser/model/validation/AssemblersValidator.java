@@ -81,7 +81,7 @@ public abstract class AssemblersValidator extends Validator {
         });
 
         boolean activeSet = assemble.isActiveSet();
-        if (mode.validateConfig()) {
+        if (mode.validateConfig() || mode.validateAssembly()) {
             assemble.resolveEnabled(context.getModel().getProject());
         }
 

@@ -44,7 +44,7 @@ public abstract class ReleaseValidator extends Validator {
         if (validateCodeberg(context, mode, release.getCodeberg(), errors)) count++;
         if (validateGeneric(context, mode, release.getGeneric(), errors)) count++;
 
-        if (mode != JReleaserContext.Mode.ASSEMBLE) {
+        if (!mode.validateStandalone()) {
             if (0 == count) {
                 errors.configuration(RB.$("validation_release_no_providers"));
                 return;

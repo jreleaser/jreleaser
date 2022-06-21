@@ -94,4 +94,9 @@ public class Download extends AbstractModelCommand {
     protected boolean dryrun() {
         return dryrun;
     }
+
+    @Override
+    protected JReleaserContext.Mode getMode() {
+        return JReleaserContext.Mode.DOWNLOAD;
+    }
 }

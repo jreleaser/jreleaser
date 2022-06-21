@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     private boolean full;
     private boolean assembly;
+    private boolean download;
 
     public void setFull(boolean full) {
         this.full = full;
@@ -37,6 +38,10 @@ public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
 
     public void setAssembly(boolean assembly) {
         this.assembly = assembly;
+    }
+
+    public void setDownload(boolean download) {
+        this.download = download;
     }
 
     @Override
@@ -48,6 +53,8 @@ public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     }
 
     protected JReleaserContext.Mode getMode() {
-        return assembly ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.CONFIG;
+        if (download) return JReleaserContext.Mode.DOWNLOAD;
+        if (assembly) return JReleaserContext.Mode.ASSEMBLE;
+        return JReleaserContext.Mode.CONFIG;
     }
 }

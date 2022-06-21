@@ -72,7 +72,7 @@ public final class JReleaserModelValidator {
 
         postValidateProject(context, mode, errors);
         postValidateAssemblers(context, mode, errors);
-        if (mode != JReleaserContext.Mode.ASSEMBLE) {
+        if (!mode.validateStandalone()) {
             postValidateDistributions(context, mode, errors);
         }
     }

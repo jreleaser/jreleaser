@@ -31,8 +31,16 @@ public class Config extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"-f", "--full"})
     boolean full;
 
-    @CommandLine.Option(names = {"-a", "--assembly"})
-    boolean assembly;
+    @CommandLine.ArgGroup
+    Exclusive exclusive;
+
+    static class Exclusive {
+        @CommandLine.Option(names = {"-a", "--assembly"}, required = true)
+        boolean assembly;
+
+        @CommandLine.Option(names = {"-d", "--download"}, required = true)
+        boolean download;
+    }
 
     @Override
     protected void doExecute(JReleaserContext context) {
@@ -41,7 +49,18 @@ public class Config extends AbstractPlatformAwareModelCommand {
         context.report();
     }
 
+    @Override
     protected JReleaserContext.Mode getMode() {
-        return assembly ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.CONFIG;
+        if (download()) return JReleaserContext.Mode.DOWNLOAD;
+        if (assembly()) return JReleaserContext.Mode.ASSEMBLE;
+        return JReleaserContext.Mode.CONFIG;
+    }
+
+    private boolean download() {
+        return exclusive != null && exclusive.download;
+    }
+
+    private boolean assembly() {
+        return exclusive != null && exclusive.assembly;
     }
 }

@@ -71,7 +71,7 @@ public abstract class GitServiceValidator extends Validator {
             return;
         }
 
-        if (mode != JReleaserContext.Mode.ASSEMBLE) {
+        if (!mode.validateStandalone()) {
             if (isBlank(service.getOwner()) && !(service instanceof GenericGit)) {
                 errors.configuration(RB.$("validation_must_not_be_blank", service.getServiceName() + ".owner"));
             }
@@ -93,7 +93,7 @@ public abstract class GitServiceValidator extends Validator {
                 service.getServiceName().toUpperCase() + "_TOKEN",
                 service.getServiceName() + ".token",
                 service.getToken(),
-                mode != JReleaserContext.Mode.ASSEMBLE ? errors : new Errors()));
+                !mode.validateStandalone() ? errors : new Errors()));
 
         service.setTagName(
             checkProperty(context,
@@ -206,7 +206,7 @@ public abstract class GitServiceValidator extends Validator {
             }
         }
 
-        if (mode != JReleaserContext.Mode.ASSEMBLE) {
+        if (!mode.validateStandalone()) {
             validateChangelog(context, service, errors);
         }
 

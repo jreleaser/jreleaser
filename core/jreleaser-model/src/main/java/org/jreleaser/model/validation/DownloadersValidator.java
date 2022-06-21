@@ -45,7 +45,7 @@ public abstract class DownloadersValidator extends Validator {
         validateSftpDownloader(context, mode, errors);
 
         boolean activeSet = download.isActiveSet();
-        if (mode.validateConfig()) {
+        if (mode.validateConfig() || mode.validateDownload()) {
             download.resolveEnabled(context.getModel().getProject());
         }
 

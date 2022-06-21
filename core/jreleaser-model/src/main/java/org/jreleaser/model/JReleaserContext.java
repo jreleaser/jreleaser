@@ -670,12 +670,21 @@ public class JReleaserContext {
 
     public enum Mode {
         CONFIG,
+        DOWNLOAD,
         ASSEMBLE,
         FULL,
         CHANGELOG;
 
+        public boolean validateDownload() {
+            return this == DOWNLOAD;
+        }
+
         public boolean validateAssembly() {
-            return this == ASSEMBLE;
+            return this == ASSEMBLE ;
+        }
+
+        public boolean validateStandalone() {
+            return validateAssembly() || validateDownload();
         }
 
         public boolean validateConfig() {

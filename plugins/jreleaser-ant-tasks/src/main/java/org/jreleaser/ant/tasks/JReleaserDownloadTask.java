@@ -81,4 +81,9 @@ public class JReleaserDownloadTask extends AbstractJReleaserTask {
         context.setExcludedDownloaderNames(excludedDownloaderNames);
         Workflows.download(context).execute();
     }
+
+    @Override
+    protected JReleaserContext.Mode getMode() {
+        return JReleaserContext.Mode.DOWNLOAD;
+    }
 }

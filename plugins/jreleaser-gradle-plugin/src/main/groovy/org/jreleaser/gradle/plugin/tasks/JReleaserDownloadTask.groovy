@@ -83,6 +83,7 @@ abstract class JReleaserDownloadTask extends AbstractJReleaserTask {
 
     @TaskAction
     void performAction() {
+        mode = JReleaserContext.Mode.DOWNLOAD
         JReleaserContext ctx = createContext()
         ctx.includedDownloaderTypes = downloaderTypes.orNull
         ctx.excludedDownloaderTypes = excludedDownloaderTypes.orNull

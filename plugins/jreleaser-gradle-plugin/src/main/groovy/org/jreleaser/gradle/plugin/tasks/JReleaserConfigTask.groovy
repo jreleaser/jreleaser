@@ -42,11 +42,15 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     @Input
     final Property<Boolean> assembly
 
+    @Input
+    final Property<Boolean> download
+
     @Inject
     JReleaserConfigTask(ObjectFactory objects) {
         super(objects)
         full = objects.property(Boolean).convention(false)
         assembly = objects.property(Boolean).convention(false)
+        download = objects.property(Boolean).convention(false)
     }
 
     @Option(option = 'full', description = 'Display full configuration (OPTIONAL).')
@@ -59,9 +63,20 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
         this.assembly.set(assembly)
     }
 
+    @Option(option = 'download', description = 'Display download configuration (OPTIONAL).')
+    void setDownload(boolean download) {
+        this.download.set(download)
+    }
+
     @TaskAction
     void displayConfig() {
-        mode = assembly.get() ? JReleaserContext.Mode.ASSEMBLE : JReleaserContext.Mode.CONFIG
+        if (download.get()) {
+            mode = JReleaserContext.Mode.DOWNLOAD
+        } else if (assembly.get()) {
+            mode = JReleaserContext.Mode.ASSEMBLE
+        } else {
+            mode = JReleaserContext.Mode.CONFIG
+        }
 
         JReleaserContext context = createContext()
         ModelValidator.validate(context)

@@ -77,4 +77,9 @@ public class JReleaserDownloadMojo extends AbstractJReleaserMojo {
         context.setExcludedDownloaderNames(collectEntries(excludedDownloaderNames));
         Workflows.download(context).execute();
     }
+
+    @Override
+    protected JReleaserContext.Mode getMode() {
+        return JReleaserContext.Mode.DOWNLOAD;
+    }
 }

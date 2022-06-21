@@ -40,6 +40,7 @@ public class ModelValidator {
             }
 
             switch (context.getMode()) {
+                case DOWNLOAD:
                 case ASSEMBLE:
                     if (errors.hasConfigurationErrors()) {
                         throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured") +
@@ -62,7 +63,7 @@ public class ModelValidator {
             throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured"), e);
         }
 
-        if (context.getMode() != JReleaserContext.Mode.ASSEMBLE) {
+        if (!context.getMode().validateStandalone()) {
             context.setReleaser(Releasers.releaserFor(context));
         }
 
