@@ -64,6 +64,7 @@ enforce {
             "org.codehaus.plexus:plexus-utils:$plexusVersion",
             "org.codehaus.plexus:plexus-classworlds:$classworldsVersion",
             "org.codehaus.plexus:plexus-component-annotations:2.1.0",
+            "com.fasterxml.jackson:jackson-bom:$jacksonVersion",
             "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
             "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
             "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",

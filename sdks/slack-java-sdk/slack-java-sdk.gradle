@@ -22,5 +22,8 @@ dependencies {
     api project(':jreleaser-model')
     api project(':java-sdk-commons')
 
-    testImplementation "com.github.tomakehurst:wiremock-jre8:$wiremockVersion"
+    testImplementation("com.github.tomakehurst:wiremock-jre8:$wiremockVersion") {
+        exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-java-server'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-java-client'
+    }
 }

@@ -23,5 +23,8 @@ dependencies {
 
     api "org.twitter4j:twitter4j-core:$twitter4jVersion"
 
-    testImplementation "com.github.tomakehurst:wiremock-jre8:$wiremockVersion"
+    testImplementation("com.github.tomakehurst:wiremock-jre8:$wiremockVersion") {
+        exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-java-server'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-java-client'
+    }
 }
