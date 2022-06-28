@@ -1126,6 +1126,7 @@ public final class JReleaserModelConverter {
 
     private static org.jreleaser.model.Jlink.Jdeps convertJdeps(Jlink.Jdeps jdeps) {
         org.jreleaser.model.Jlink.Jdeps j = new org.jreleaser.model.Jlink.Jdeps();
+        if (jdeps.isEnabledSet()) j.setEnabled(jdeps.isEnabled());
         j.setMultiRelease(jdeps.getMultiRelease());
         if (jdeps.isIgnoreMissingDepsSet()) j.setIgnoreMissingDeps(jdeps.isIgnoreMissingDeps());
         if (jdeps.isUseWildcardInPathSet()) j.setUseWildcardInPath(jdeps.isUseWildcardInPath());

@@ -165,6 +165,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
 
     @CompileStatic
     static class JdepsImpl implements Jdeps {
+        final Property<Boolean> enabled
         final Property<String> multiRelease
         final Property<Boolean> ignoreMissingDeps
         final Property<Boolean> useWildcardInPath
@@ -172,6 +173,7 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
 
         @Inject
         JdepsImpl(ObjectFactory objects) {
+            enabled = objects.property(Boolean).convention(Providers.notDefined())
             multiRelease = objects.property(String).convention(Providers.notDefined())
             ignoreMissingDeps = objects.property(Boolean).convention(Providers.notDefined())
             useWildcardInPath = objects.property(Boolean).convention(Providers.notDefined())
@@ -188,6 +190,11 @@ class JlinkImpl extends AbstractJavaAssembler implements Jlink {
 
         org.jreleaser.model.Jlink.Jdeps toModel() {
             org.jreleaser.model.Jlink.Jdeps jdeps = new org.jreleaser.model.Jlink.Jdeps()
+            if (enabled.present) {
+                jdeps.enabled = enabled.get()
+            } else {
+                jdeps.enabled = true
+            }
             if (multiRelease.present) jdeps.multiRelease = multiRelease.get()
             if (ignoreMissingDeps.present) jdeps.ignoreMissingDeps = ignoreMissingDeps.get()
             if (useWildcardInPath.present) jdeps.useWildcardInPath = useWildcardInPath.get()

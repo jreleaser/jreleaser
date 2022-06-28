@@ -205,11 +205,12 @@ public class Jlink extends AbstractJavaAssembler<Jlink> {
         props.put("copyJars", isCopyJars());
     }
 
-    public static class Jdeps extends AbstractModelObject<Jdeps> implements Domain {
+    public static class Jdeps extends AbstractModelObject<Jdeps> implements Domain, EnabledAware {
         private final Set<String> targets = new LinkedHashSet<>();
         private String multiRelease;
         private Boolean ignoreMissingDeps;
         private Boolean useWildcardInPath;
+        private Boolean enabled;
 
         @Override
         public void merge(Jdeps jdeps) {
@@ -217,6 +218,7 @@ public class Jlink extends AbstractJavaAssembler<Jlink> {
             this.multiRelease = this.merge(this.multiRelease, jdeps.multiRelease);
             this.ignoreMissingDeps = this.merge(this.ignoreMissingDeps, jdeps.ignoreMissingDeps);
             this.useWildcardInPath = this.merge(this.useWildcardInPath, jdeps.useWildcardInPath);
+            this.enabled = merge(this.enabled, jdeps.enabled);
             setTargets(merge(this.targets, jdeps.targets));
         }
 
@@ -266,8 +268,25 @@ public class Jlink extends AbstractJavaAssembler<Jlink> {
         }
 
         @Override
+        public boolean isEnabled() {
+            return enabled != null && enabled;
+        }
+
+        @Override
+        public void setEnabled(Boolean enabled) {
+            freezeCheck();
+            this.enabled = enabled;
+        }
+
+        @Override
+        public boolean isEnabledSet() {
+            return enabled != null;
+        }
+
+        @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> props = new LinkedHashMap<>();
+            props.put("enabled", isEnabled());
             props.put("multiRelease", multiRelease);
             props.put("ignoreMissingDeps", isIgnoreMissingDeps());
             props.put("useWildcardInPath", isUseWildcardInPath());

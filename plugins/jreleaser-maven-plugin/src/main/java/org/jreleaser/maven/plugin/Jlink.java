@@ -138,13 +138,15 @@ public class Jlink extends AbstractJavaAssembler {
         return copyJars != null;
     }
 
-    public static class Jdeps {
+    public static class Jdeps implements EnabledAware {
         private final Set<String> targets = new LinkedHashSet<>();
         private String multiRelease;
         private Boolean ignoreMissingDeps;
         private Boolean useWildcardInPath;
+        private Boolean enabled;
 
         void setAll(Jdeps jdeps) {
+            this.enabled = jdeps.enabled;
             this.multiRelease = jdeps.multiRelease;
             this.ignoreMissingDeps = jdeps.ignoreMissingDeps;
             this.useWildcardInPath = jdeps.useWildcardInPath;
@@ -192,20 +194,19 @@ public class Jlink extends AbstractJavaAssembler {
             this.targets.addAll(targets);
         }
 
-        public void addTargets(List<String> targets) {
-            this.targets.addAll(targets);
+        @Override
+        public boolean isEnabled() {
+            return enabled != null && enabled;
         }
 
-        public void addTarget(String target) {
-            if (isNotBlank(target)) {
-                this.targets.add(target.trim());
-            }
+        @Override
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
         }
 
-        public void removeTarget(String target) {
-            if (isNotBlank(target)) {
-                this.targets.remove(target.trim());
-            }
+        @Override
+        public boolean isEnabledSet() {
+            return enabled != null;
         }
     }
 }

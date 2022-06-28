@@ -58,6 +58,8 @@ interface Jlink extends JavaAssembler {
 
     @CompileStatic
     interface Jdeps {
+        Property<Boolean> getEnabled()
+
         Property<String> getMultiRelease()
 
         Property<Boolean> getIgnoreMissingDeps()

@@ -165,6 +165,18 @@ public abstract class JlinkValidator extends Validator {
                 validateFileSet(context, mode, jlink, fileSet, i++, errors);
             }
         }
+
+        if (!jlink.getJdeps().isEnabledSet()) {
+            jlink.getJdeps().setEnabled(true);
+        }
+
+        if (!jlink.getJdeps().isEnabled() && jlink.getModuleNames().isEmpty()) {
+            jlink.getModuleNames().add("java.base");
+        }
+
+        if (!jlink.getModuleNames().isEmpty()) {
+            jlink.getJdeps().setEnabled(false);
+        }
     }
 
     private static boolean validateJava(JReleaserContext context, Jlink jlink, Errors errors) {
