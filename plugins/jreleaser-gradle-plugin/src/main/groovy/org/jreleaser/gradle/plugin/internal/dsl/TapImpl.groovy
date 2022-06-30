@@ -92,7 +92,7 @@ class TapImpl implements Tap {
         if (name.present) into.name = name.get()
         if (tagName.present) into.tagName = tagName.get()
         if (branch.present) into.branch = branch.get()
-        if (username.present) into.name = username.get()
+        if (username.present) into.username = username.get()
         if (token.present) into.token = token.get()
         if (commitMessage.present) into.commitMessage = commitMessage.get()
     }
