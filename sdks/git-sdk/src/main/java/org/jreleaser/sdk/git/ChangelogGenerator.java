@@ -115,6 +115,8 @@ public class ChangelogGenerator {
                 lineSeparator() +
                 StreamSupport.stream(commits.spliterator(), false)
                     .sorted(revCommitComparator)
+                    // Do not include merge commits
+                    .filter(commit -> commit.getParentCount() < 2)
                     .map(commit -> formatCommit(commit, commitsUrl, changelog, commitSeparator))
                     .collect(Collectors.joining(commitSeparator));
         } catch (GitAPIException e) {
