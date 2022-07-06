@@ -94,6 +94,9 @@ release:
         contributors:
           - 'GitHub'
           - 'allcontributors'
+      replacers:
+        - search: 'i18n: '
+        - search: 'deps: '
 
 signing:
   active: always
