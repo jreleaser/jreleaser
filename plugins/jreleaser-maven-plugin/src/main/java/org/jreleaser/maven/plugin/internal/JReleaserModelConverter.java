@@ -836,6 +836,7 @@ public final class JReleaserModelConverter {
         if (mail.isAuthSet()) a.setAuth(mail.isAuth());
         if (null != mail.getTransport()) a.setTransport(mail.getTransport().name());
         if (null != mail.getMimeType()) a.setMimeType(mail.getMimeType().name());
+        a.setHost(tr(mail.getHost()));
         a.setPort(mail.getPort());
         a.setUsername(tr(mail.getUsername()));
         a.setPassword(tr(mail.getPassword()));
