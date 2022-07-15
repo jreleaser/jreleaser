@@ -25,7 +25,6 @@ import org.apache.maven.project.MavenProject;
 import org.jreleaser.engine.context.ContextCreator;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
-import org.jreleaser.maven.plugin.internal.JReleaserModelConverter;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.JReleaserVersion;
@@ -59,7 +58,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     protected MavenProject project;
 
     @Parameter
-    protected Jreleaser jreleaser;
+    protected JReleaserModel jreleaser;
 
     @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}/jreleaser")
     protected File outputDirectory;
@@ -108,7 +107,8 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     protected JReleaserModel convertModel() {
-        JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser != null ? jreleaser : new Jreleaser());
+        //JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser != null ? jreleaser : new Jreleaser());
+        JReleaserModel jreleaserModel = jreleaser != null ? jreleaser : new JReleaserModel();
         return JReleaserModelConfigurer.configure(jreleaserModel, project, session);
     }
 
