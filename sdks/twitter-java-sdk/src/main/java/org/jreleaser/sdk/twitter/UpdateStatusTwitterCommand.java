@@ -22,7 +22,6 @@ import org.jreleaser.util.JReleaserLogger;
 import java.util.List;
 
 import static org.jreleaser.util.ObjectUtils.requireNonEmpty;
-import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray

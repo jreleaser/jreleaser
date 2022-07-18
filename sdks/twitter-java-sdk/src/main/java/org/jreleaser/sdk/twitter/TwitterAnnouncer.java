@@ -24,8 +24,10 @@ import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.MustacheUtils;
+import org.jreleaser.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,13 +69,21 @@ public class TwitterAnnouncer implements Announcer {
             Map<String, Object> props = new LinkedHashMap<>();
             props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
             context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
-            statuses.add(twitter.getResolvedStatusTemplate(context,props));
+            Arrays.stream(twitter.getResolvedStatusTemplate(context, props)
+                    .split(System.lineSeparator()))
+                .filter(StringUtils::isNotBlank)
+                .map(String::trim)
+                .forEach(statuses::add);
         }
         if (statuses.isEmpty() && !twitter.getStatuses().isEmpty()) {
             statuses.addAll(twitter.getStatuses());
+            twitter.getStatuses().stream()
+                .filter(StringUtils::isNotBlank)
+                .map(String::trim)
+                .forEach(statuses::add);
         }
         if (statuses.isEmpty()) {
-            statuses.add(RB.$("default.release.message"));
+            statuses.add(twitter.getStatus());
         }
 
         for (int i = 0; i < statuses.size(); i++) {

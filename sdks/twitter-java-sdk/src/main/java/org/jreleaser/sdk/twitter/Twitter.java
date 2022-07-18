@@ -77,7 +77,7 @@ public class Twitter {
             Status status = twitter.updateStatus(message);
             for (int i = 1; i < statuses.size(); i++) {
                 status = twitter.updateStatus(new StatusUpdate(statuses.get(i))
-                        .inReplyToStatusId(status.getId()));
+                    .inReplyToStatusId(status.getId()));
             }
         });
     }

@@ -73,7 +73,7 @@ public abstract class TwitterValidator extends Validator {
                 context.isDryrun()));
 
         if (isNotBlank(twitter.getStatusTemplate()) &&
-                !Files.exists(context.getBasedir().resolve(twitter.getStatusTemplate().trim()))) {
+            !Files.exists(context.getBasedir().resolve(twitter.getStatusTemplate().trim()))) {
             errors.configuration(RB.$("validation_directory_not_exist", "twitter.statusTemplate", twitter.getStatusTemplate()));
         }
 

@@ -46,15 +46,12 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
     public static final String TWITTER_CONSUMER_SECRET = "TWITTER_CONSUMER_SECRET";
     public static final String TWITTER_ACCESS_TOKEN = "TWITTER_ACCESS_TOKEN";
     public static final String TWITTER_ACCESS_TOKEN_SECRET = "TWITTER_ACCESS_TOKEN_SECRET";
-
+    private final List<String> statuses = new ArrayList<>();
     private String consumerKey;
     private String consumerSecret;
     private String accessToken;
     private String accessTokenSecret;
     private String status;
-
-    private final List<String> statuses = new ArrayList<>();
-
     private String statusTemplate;
 
     public Twitter() {
@@ -70,8 +67,8 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
         this.accessToken = merge(this.accessToken, twitter.accessToken);
         this.accessTokenSecret = merge(this.accessTokenSecret, twitter.accessTokenSecret);
         this.status = merge(this.status, twitter.status);
-        setStatuses(merge(this.statuses,twitter.statuses));
-        this.statusTemplate = merge(this.statusTemplate,twitter.statusTemplate);
+        setStatuses(merge(this.statuses, twitter.statuses));
+        this.statusTemplate = merge(this.statusTemplate, twitter.statusTemplate);
     }
 
     public String getResolvedStatus(JReleaserContext context) {
@@ -85,7 +82,7 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
         Map<String, Object> props = context.fullProps();
         applyTemplates(props, getResolvedExtraProperties());
         props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService()
-                .getEffectiveTagName(context.getModel()));
+            .getEffectiveTagName(context.getModel()));
         props.putAll(extraProps);
 
         Path templatePath = context.getBasedir().resolve(statusTemplate);
@@ -94,7 +91,7 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
             return applyTemplate(reader, props);
         } catch (IOException e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
-                    context.relativizeToBasedir(templatePath)));
+                context.relativizeToBasedir(templatePath)));
         }
     }
 
@@ -159,14 +156,14 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
         this.status = status;
     }
 
-    public void setStatuses(List<String> statuses){
+    public List<String> getStatuses() {
+        return freezeWrap(statuses);
+    }
+
+    public void setStatuses(List<String> statuses) {
         freezeCheck();
         this.statuses.clear();
         this.statuses.addAll(statuses);
-    }
-
-    public List<String> getStatuses() {
-        return freezeWrap(statuses);
     }
 
     public String getStatusTemplate() {
@@ -185,7 +182,7 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
         props.put("accessToken", isNotBlank(getResolvedAccessToken()) ? HIDE : UNSET);
         props.put("accessTokenSecret", isNotBlank(getResolvedAccessTokenSecret()) ? HIDE : UNSET);
         props.put("status", status);
-        props.put("statuses",statuses);
-        props.put("statusTemplate",statusTemplate);
+        props.put("statuses", statuses);
+        props.put("statusTemplate", statusTemplate);
     }
 }
