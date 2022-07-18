@@ -19,14 +19,16 @@ package org.jreleaser.sdk.twitter;
 
 import org.jreleaser.util.JReleaserLogger;
 
-import static org.jreleaser.util.StringUtils.requireNonBlank;
+import java.util.List;
+
+import static org.jreleaser.util.ObjectUtils.requireNonEmpty;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
-    private final String status;
+    private final List<String> statuses;
 
     private UpdateStatusTwitterCommand(JReleaserLogger logger,
                                        String apiHost,
@@ -37,14 +39,14 @@ public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
                                        String accessToken,
                                        String accessTokenSecret,
                                        boolean dryrun,
-                                       String status) {
+                                       List<String> statuses) {
         super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, accessToken, accessTokenSecret, dryrun);
-        this.status = status;
+        this.statuses = statuses;
     }
 
     @Override
     public void execute() throws TwitterException {
-        twitter.updateStatus(status);
+        twitter.updateStatus(statuses);
     }
 
     public static Builder builder(JReleaserLogger logger) {
@@ -52,20 +54,20 @@ public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
     }
 
     public static class Builder extends AbstractTwitterCommand.Builder<Builder> {
-        private String status;
+        private List<String> statuses;
 
         protected Builder(JReleaserLogger logger) {
             super(logger);
         }
 
-        public Builder status(String status) {
-            this.status = requireNonBlank(status, "'status' must not be blank");
+        public Builder statuses(List<String> statuses) {
+            this.statuses = (List<String>) requireNonEmpty(statuses, "'statuses' must not be empty");
             return this;
         }
 
         public UpdateStatusTwitterCommand build() {
             validate();
-            requireNonBlank(status, "'status' must not be blank");
+            this.statuses = (List<String>) requireNonEmpty(statuses, "'statuses' must not be empty");
 
             return new UpdateStatusTwitterCommand(
                 logger,
@@ -77,7 +79,7 @@ public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
                 accessToken,
                 accessTokenSecret,
                 dryrun,
-                status);
+                statuses);
         }
     }
 }

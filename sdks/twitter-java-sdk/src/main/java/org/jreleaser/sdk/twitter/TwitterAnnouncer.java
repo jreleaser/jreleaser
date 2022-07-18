@@ -22,6 +22,20 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Twitter;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.announcer.spi.Announcer;
+import org.jreleaser.util.Constants;
+import org.jreleaser.util.MustacheUtils;
+import org.jreleaser.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.jreleaser.util.Constants.KEY_TAG_NAME;
+import static org.jreleaser.util.MustacheUtils.applyTemplates;
+import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -49,9 +63,35 @@ public class TwitterAnnouncer implements Announcer {
     public void announce() throws AnnounceException {
         Twitter twitter = context.getModel().getAnnounce().getTwitter();
 
-        String status = twitter.getResolvedStatus(context);
-        context.getLogger().info(RB.$("twitter.tweet"), status);
-        context.getLogger().debug(RB.$("twitter.tweet.size"), status.length());
+        List<String> statuses = new ArrayList<>();
+
+        if (isNotBlank(twitter.getStatusTemplate())) {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
+            context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
+            Arrays.stream(twitter.getResolvedStatusTemplate(context, props)
+                    .split(System.lineSeparator()))
+                .filter(StringUtils::isNotBlank)
+                .map(String::trim)
+                .forEach(statuses::add);
+        }
+        if (statuses.isEmpty() && !twitter.getStatuses().isEmpty()) {
+            statuses.addAll(twitter.getStatuses());
+            twitter.getStatuses().stream()
+                .filter(StringUtils::isNotBlank)
+                .map(String::trim)
+                .forEach(statuses::add);
+        }
+        if (statuses.isEmpty()) {
+            statuses.add(twitter.getStatus());
+        }
+
+        for (int i = 0; i < statuses.size(); i++) {
+            String status = getResolvedMessage(context, statuses.get(i));
+            context.getLogger().info(RB.$("twitter.tweet"), status);
+            context.getLogger().debug(RB.$("twitter.tweet.size"), status.length());
+            statuses.set(i, status);
+        }
 
         try {
             UpdateStatusTwitterCommand.builder(context.getLogger())
@@ -61,12 +101,19 @@ public class TwitterAnnouncer implements Announcer {
                 .consumerToken(context.isDryrun() ? "**UNDEFINED**" : twitter.getResolvedConsumerSecret())
                 .accessToken(context.isDryrun() ? "**UNDEFINED**" : twitter.getResolvedAccessToken())
                 .accessTokenSecret(context.isDryrun() ? "**UNDEFINED**" : twitter.getResolvedAccessTokenSecret())
-                .status(status)
+                .statuses(statuses)
                 .dryrun(context.isDryrun())
                 .build()
                 .execute();
         } catch (TwitterException e) {
             throw new AnnounceException(e);
         }
+    }
+
+    private String getResolvedMessage(JReleaserContext context, String message) {
+        Map<String, Object> props = context.fullProps();
+        applyTemplates(props, context.getModel().getAnnounce().getTwitter().getResolvedExtraProperties());
+        props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService().getEffectiveTagName(context.getModel()));
+        return resolveTemplate(message, props);
     }
 }

@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-22-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-23-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -39,6 +39,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="http://codepitbull.de"><img src="https://avatars.githubusercontent.com/u/1409931?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jochen Mader</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=codepitbull" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.jee.gr"><img src="https://avatars.githubusercontent.com/u/20904915?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alexius DIAKOGIANNIS</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=diakogiannis" title="Code">💻</a></td>
   </tr>
 </table>
 

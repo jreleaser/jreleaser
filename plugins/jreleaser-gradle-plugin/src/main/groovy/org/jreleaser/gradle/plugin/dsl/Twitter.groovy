@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -36,4 +37,10 @@ interface Twitter extends Announcer {
     Property<String> getAccessTokenSecret()
 
     Property<String> getStatus()
+
+    Property<String> getStatusTemplate()
+
+    ListProperty<String> getStatuses()
+
+    void status(String message)
 }

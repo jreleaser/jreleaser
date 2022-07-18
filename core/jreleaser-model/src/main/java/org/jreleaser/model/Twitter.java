@@ -17,12 +17,21 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.util.Env;
+import org.jreleaser.util.JReleaserException;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
+import static org.jreleaser.util.Constants.KEY_TAG_NAME;
 import static org.jreleaser.util.Constants.UNSET;
+import static org.jreleaser.util.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.Templates.resolveTemplate;
@@ -37,12 +46,13 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
     public static final String TWITTER_CONSUMER_SECRET = "TWITTER_CONSUMER_SECRET";
     public static final String TWITTER_ACCESS_TOKEN = "TWITTER_ACCESS_TOKEN";
     public static final String TWITTER_ACCESS_TOKEN_SECRET = "TWITTER_ACCESS_TOKEN_SECRET";
-
+    private final List<String> statuses = new ArrayList<>();
     private String consumerKey;
     private String consumerSecret;
     private String accessToken;
     private String accessTokenSecret;
     private String status;
+    private String statusTemplate;
 
     public Twitter() {
         super(NAME);
@@ -57,6 +67,8 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
         this.accessToken = merge(this.accessToken, twitter.accessToken);
         this.accessTokenSecret = merge(this.accessTokenSecret, twitter.accessTokenSecret);
         this.status = merge(this.status, twitter.status);
+        setStatuses(merge(this.statuses, twitter.statuses));
+        this.statusTemplate = merge(this.statusTemplate, twitter.statusTemplate);
     }
 
     public String getResolvedStatus(JReleaserContext context) {
@@ -64,6 +76,23 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
         applyTemplates(props, getResolvedExtraProperties());
         context.getModel().getRelease().getGitService().fillProps(props, context.getModel());
         return resolveTemplate(status, props);
+    }
+
+    public String getResolvedStatusTemplate(JReleaserContext context, Map<String, Object> extraProps) {
+        Map<String, Object> props = context.fullProps();
+        applyTemplates(props, getResolvedExtraProperties());
+        props.put(KEY_TAG_NAME, context.getModel().getRelease().getGitService()
+            .getEffectiveTagName(context.getModel()));
+        props.putAll(extraProps);
+
+        Path templatePath = context.getBasedir().resolve(statusTemplate);
+        try {
+            Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
+            return applyTemplate(reader, props);
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
+                context.relativizeToBasedir(templatePath)));
+        }
     }
 
     public String getResolvedConsumerKey() {
@@ -127,6 +156,25 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
         this.status = status;
     }
 
+    public List<String> getStatuses() {
+        return freezeWrap(statuses);
+    }
+
+    public void setStatuses(List<String> statuses) {
+        freezeCheck();
+        this.statuses.clear();
+        this.statuses.addAll(statuses);
+    }
+
+    public String getStatusTemplate() {
+        return statusTemplate;
+    }
+
+    public void setStatusTemplate(String statusTemplate) {
+        freezeCheck();
+        this.statusTemplate = statusTemplate;
+    }
+
     @Override
     protected void asMap(Map<String, Object> props, boolean full) {
         props.put("consumerKey", isNotBlank(getResolvedConsumerKey()) ? HIDE : UNSET);
@@ -134,5 +182,7 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
         props.put("accessToken", isNotBlank(getResolvedAccessToken()) ? HIDE : UNSET);
         props.put("accessTokenSecret", isNotBlank(getResolvedAccessTokenSecret()) ? HIDE : UNSET);
         props.put("status", status);
+        props.put("statuses", statuses);
+        props.put("statusTemplate", statusTemplate);
     }
 }

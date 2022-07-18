@@ -22,11 +22,14 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Twitter;
 import org.jreleaser.util.Errors;
 
+import java.nio.file.Files;
+
 import static org.jreleaser.model.Twitter.TWITTER_ACCESS_TOKEN;
 import static org.jreleaser.model.Twitter.TWITTER_ACCESS_TOKEN_SECRET;
 import static org.jreleaser.model.Twitter.TWITTER_CONSUMER_KEY;
 import static org.jreleaser.model.Twitter.TWITTER_CONSUMER_SECRET;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -69,7 +72,12 @@ public abstract class TwitterValidator extends Validator {
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(twitter.getStatus())) {
+        if (isNotBlank(twitter.getStatusTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(twitter.getStatusTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "twitter.statusTemplate", twitter.getStatusTemplate()));
+        }
+
+        if (isBlank(twitter.getStatus()) && isBlank(twitter.getStatusTemplate()) && twitter.getStatuses().isEmpty()) {
             twitter.setStatus(RB.$("default.release.message"));
         }
 

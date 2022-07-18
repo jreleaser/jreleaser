@@ -19,8 +19,12 @@ package org.jreleaser.sdk.twitter;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.JReleaserLogger;
+import twitter4j.Status;
+import twitter4j.StatusUpdate;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
+
+import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -67,8 +71,15 @@ public class Twitter {
         this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
-    public void updateStatus(String status) throws TwitterException {
-        wrap(() -> twitter.updateStatus(status));
+    public void updateStatus(List<String> statuses) throws TwitterException {
+        wrap(() -> {
+            String message = statuses.get(0);
+            Status status = twitter.updateStatus(message);
+            for (int i = 1; i < statuses.size(); i++) {
+                status = twitter.updateStatus(new StatusUpdate(statuses.get(i))
+                    .inReplyToStatusId(status.getId()));
+            }
+        });
     }
 
     private void wrap(TwitterOperation op) throws TwitterException {

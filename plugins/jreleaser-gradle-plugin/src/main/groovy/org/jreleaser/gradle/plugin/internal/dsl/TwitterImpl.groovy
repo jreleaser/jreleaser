@@ -20,11 +20,14 @@ package org.jreleaser.gradle.plugin.internal.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Twitter
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -38,6 +41,8 @@ class TwitterImpl extends AbstractAnnouncer implements Twitter {
     final Property<String> accessToken
     final Property<String> accessTokenSecret
     final Property<String> status
+    final Property<String> statusTemplate
+    final ListProperty<String> statuses
 
     @Inject
     TwitterImpl(ObjectFactory objects) {
@@ -47,6 +52,8 @@ class TwitterImpl extends AbstractAnnouncer implements Twitter {
         accessToken = objects.property(String).convention(Providers.notDefined())
         accessTokenSecret = objects.property(String).convention(Providers.notDefined())
         status = objects.property(String).convention(Providers.notDefined())
+        statusTemplate = objects.property(String).convention(Providers.notDefined())
+        statuses = objects.listProperty(String).convention(Providers.notDefined())
     }
 
     @Override
@@ -57,7 +64,16 @@ class TwitterImpl extends AbstractAnnouncer implements Twitter {
             consumerSecret.present ||
             accessToken.present ||
             accessTokenSecret.present ||
-            status.present
+            status.present ||
+            statusTemplate.present ||
+            statuses.present
+    }
+
+    @Override
+    void status(String message) {
+        if(isNotBlank(message)){
+            statuses.add(message.trim())
+        }
     }
 
     org.jreleaser.model.Twitter toModel() {
@@ -68,6 +84,8 @@ class TwitterImpl extends AbstractAnnouncer implements Twitter {
         if (accessToken.present) twitter.accessToken = accessToken.get()
         if (accessTokenSecret.present) twitter.accessTokenSecret = accessTokenSecret.get()
         if (status.present) twitter.status = status.get()
+        if (statusTemplate.present) twitter.statusTemplate = statusTemplate.get()
+        twitter.statuses = (List<String>) statuses.getOrElse([])
         twitter
     }
 }
