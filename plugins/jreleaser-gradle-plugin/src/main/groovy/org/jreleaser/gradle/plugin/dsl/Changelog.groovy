@@ -53,6 +53,8 @@ interface Changelog {
 
     Property<String> getPreset()
 
+    Property<Boolean> getSkipMergeCommits()
+
     RegularFileProperty getContentTemplate()
 
     void setContentTemplate(String contentTemplate)

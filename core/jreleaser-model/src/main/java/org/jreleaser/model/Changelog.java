@@ -56,6 +56,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
 
     private Boolean enabled;
     private Boolean links;
+    private Boolean skipMergeCommits;
     private Sort sort = Sort.DESC;
     private String external;
     private Active formatted;
@@ -79,6 +80,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         freezeCheck();
         this.enabled = merge(this.enabled, changelog.enabled);
         this.links = merge(this.links, changelog.links);
+        this.skipMergeCommits = merge(this.skipMergeCommits, changelog.skipMergeCommits);
         this.sort = merge(this.sort, changelog.sort);
         this.external = merge(this.external, changelog.external);
         this.formatted = merge(this.formatted, changelog.formatted);
@@ -136,9 +138,18 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         return links != null && links;
     }
 
+    public boolean isSkipMergeCommits() {
+        return skipMergeCommits != null && skipMergeCommits;
+    }
+
     public void setLinks(Boolean links) {
         freezeCheck();
         this.links = links;
+    }
+
+    public void setSkipMergeCommits(Boolean skipMergeCommits) {
+        freezeCheck();
+        this.skipMergeCommits = skipMergeCommits;
     }
 
     public Sort getSort() {
@@ -293,6 +304,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         map.put("enabled", isEnabled());
         map.put("external", external);
         map.put("links", isLinks());
+        map.put("skipMergeCommits", isSkipMergeCommits());
         map.put("sort", sort);
         map.put("formatted", formatted);
         map.put("preset", preset);

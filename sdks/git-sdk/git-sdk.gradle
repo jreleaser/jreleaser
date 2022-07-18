@@ -22,5 +22,6 @@ dependencies {
 
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
+    testImplementation "org.mockito:mockito-inline:$mockitoVersion"
     testImplementation "org.assertj:assertj-core:$assertjVersion"
 }
