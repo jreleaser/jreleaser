@@ -83,7 +83,7 @@ public class ChangelogGenerator {
 
     }
 
-    private String createChangelog(JReleaserContext context) throws IOException {
+    protected String createChangelog(JReleaserContext context) throws IOException {
         GitService gitService = context.getModel().getRelease().getGitService();
         Changelog changelog = gitService.getChangelog();
 
@@ -114,6 +114,7 @@ public class ChangelogGenerator {
                 lineSeparator() +
                 lineSeparator() +
                 StreamSupport.stream(commits.spliterator(), false)
+                    .filter(c -> !changelog.isSkipMergeCommits() || c.getParentCount() <= 1)
                     .sorted(revCommitComparator)
                     .map(commit -> formatCommit(commit, commitsUrl, changelog, commitSeparator))
                     .collect(Collectors.joining(commitSeparator));
@@ -122,7 +123,7 @@ public class ChangelogGenerator {
         }
     }
 
-    private String formatCommit(RevCommit commit, String commitsUrl, Changelog changelog, String commitSeparator) {
+    protected String formatCommit(RevCommit commit, String commitsUrl, Changelog changelog, String commitSeparator) {
         String commitHash = commit.getId().name();
         String abbreviation = commit.getId().abbreviate(7).name();
         String[] input = commit.getFullMessage().trim().split(lineSeparator());
@@ -441,7 +442,7 @@ public class ChangelogGenerator {
         return peeled.getPeeledObjectId() != null ? peeled.getPeeledObjectId() : peeled.getObjectId();
     }
 
-    private String formatChangelog(JReleaserContext context,
+    protected String formatChangelog(JReleaserContext context,
                                    Changelog changelog,
                                    Iterable<RevCommit> commits,
                                    Comparator<RevCommit> revCommitComparator,
@@ -450,6 +451,7 @@ public class ChangelogGenerator {
         Map<String, List<Commit>> categories = new LinkedHashMap<>();
 
         StreamSupport.stream(commits.spliterator(), false)
+            .filter(c -> !changelog.isSkipMergeCommits() || c.getParentCount() <= 1)
             .sorted(revCommitComparator)
             .map(Commit::of)
             .peek(c -> {
@@ -572,7 +574,7 @@ public class ChangelogGenerator {
         return text;
     }
 
-    private String categorize(Commit commit, Changelog changelog) {
+    protected String categorize(Commit commit, Changelog changelog) {
         if (!commit.labels.isEmpty()) {
             for (Changelog.Category category : changelog.getCategories()) {
                 if (CollectionUtils.intersects(category.getLabels(), commit.labels)) {
@@ -613,7 +615,7 @@ public class ChangelogGenerator {
         }
     }
 
-    private boolean checkLabels(Commit commit, Changelog changelog) {
+    protected boolean checkLabels(Commit commit, Changelog changelog) {
         if (!changelog.getIncludeLabels().isEmpty()) {
             return CollectionUtils.intersects(changelog.getIncludeLabels(), commit.labels);
         }
@@ -633,7 +635,7 @@ public class ChangelogGenerator {
         return new ChangelogGenerator().createChangelog(context);
     }
 
-    private static class Commit {
+    protected static class Commit {
         private static final Pattern CO_AUTHORED_BY_PATTERN = Pattern.compile("^[Cc]o-authored-by:\\s+(.*)\\s+<(.*)>.*$");
         private final Set<String> labels = new LinkedHashSet<>();
         private final Set<Author> committers = new LinkedHashSet<>();

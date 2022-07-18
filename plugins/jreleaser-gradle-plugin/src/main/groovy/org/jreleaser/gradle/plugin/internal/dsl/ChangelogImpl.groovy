@@ -43,6 +43,7 @@ class ChangelogImpl implements Changelog {
     final Property<Boolean> enabled
     final Property<Boolean> links
     final Property<Boolean> hideUncategorized
+    final Property<Boolean> skipMergeCommits
     final Property<org.jreleaser.model.Changelog.Sort> sort
     final RegularFileProperty external
     final Property<Active> formatted
@@ -66,6 +67,7 @@ class ChangelogImpl implements Changelog {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
         links = objects.property(Boolean).convention(Providers.notDefined())
         hideUncategorized = objects.property(Boolean).convention(Providers.notDefined())
+        skipMergeCommits = objects.property(Boolean).convention(Providers.notDefined())
         sort = objects.property(org.jreleaser.model.Changelog.Sort).convention(Providers.notDefined())
         external = objects.fileProperty().convention(Providers.notDefined())
         formatted = objects.property(Active).convention(Providers.notDefined())
@@ -99,6 +101,7 @@ class ChangelogImpl implements Changelog {
     @Internal
     boolean isSet() {
             links.present ||
+            skipMergeCommits.present ||
             hideUncategorized.present ||
             external.present ||
             sort.present ||
@@ -208,6 +211,7 @@ class ChangelogImpl implements Changelog {
         if (!changelog.enabled) return changelog
 
         if (links.present) changelog.links = links.get()
+        if (skipMergeCommits.present) changelog.skipMergeCommits = skipMergeCommits.get()
         if (hideUncategorized.present) hide.uncategorized.set(hideUncategorized.get())
         if (sort.present) changelog.sort = sort.get()
         if (external.present) changelog.external = external.getAsFile().get().toPath()
