@@ -107,7 +107,6 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     protected JReleaserModel convertModel() {
-        //JReleaserModel jreleaserModel = JReleaserModelConverter.convert(jreleaser != null ? jreleaser : new Jreleaser());
         JReleaserModel jreleaserModel = jreleaser != null ? jreleaser : new JReleaserModel();
         return JReleaserModelConfigurer.configure(jreleaserModel, project, session);
     }

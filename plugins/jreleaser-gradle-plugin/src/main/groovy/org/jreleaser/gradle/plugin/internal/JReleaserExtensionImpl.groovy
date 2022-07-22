@@ -61,6 +61,7 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.StringUtils.isBlank
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -264,6 +265,9 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     JReleaserModel toModel(org.gradle.api.Project gradleProject, JReleaserLogger logger) {
         if (configFile.present) {
             JReleaserModel jreleaser = ContextCreator.resolveModel(logger, configFile.asFile.get().toPath())
+            if (isBlank(jreleaser.project.name)) jreleaser.project.name = project.name.orNull
+            if (isBlank(jreleaser.project.version)) jreleaser.project.version = project.version.orNull
+            if (isBlank(jreleaser.project.description)) jreleaser.project.description = project.description.orNull
             jreleaser.environment.propertiesSource = new org.jreleaser.model.Environment.MapPropertiesSource(
                 filterProperties(project.properties))
             return jreleaser
@@ -294,7 +298,8 @@ class JReleaserExtensionImpl implements JReleaserExtension {
 
             def val = value
             if (value instanceof Provider) {
-                val = ((Provider) value).get()
+                Provider provider = (Provider) value
+                val = provider.present? provider.get() : null
             }
 
             if (value instanceof CharSequence ||
