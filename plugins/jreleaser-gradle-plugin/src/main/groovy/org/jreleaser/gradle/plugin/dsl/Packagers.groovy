@@ -27,6 +27,8 @@ import org.gradle.api.Action
  */
 @CompileStatic
 interface Packagers {
+    Asdf getAsdf()
+
     Brew getBrew()
 
     Chocolatey getChocolatey()
@@ -47,6 +49,8 @@ interface Packagers {
 
     Spec getSpec()
 
+    void asdf(Action<? super Asdf> action)
+
     void brew(Action<? super Brew> action)
 
     void chocolatey(Action<? super Chocolatey> action)
@@ -66,6 +70,8 @@ interface Packagers {
     void snap(Action<? super Snap> action)
 
     void spec(Action<? super Spec> action)
+
+    void asdf(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Asdf) Closure<Void> action)
 
     void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Brew) Closure<Void> action)
 

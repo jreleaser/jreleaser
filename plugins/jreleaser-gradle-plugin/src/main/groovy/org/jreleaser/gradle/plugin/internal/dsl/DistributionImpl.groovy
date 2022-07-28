@@ -28,6 +28,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Artifact
+import org.jreleaser.gradle.plugin.dsl.Asdf
 import org.jreleaser.gradle.plugin.dsl.Brew
 import org.jreleaser.gradle.plugin.dsl.Chocolatey
 import org.jreleaser.gradle.plugin.dsl.Distribution
@@ -66,6 +67,7 @@ class DistributionImpl implements Distribution {
     final ExecutableImpl executable
     final JavaImpl java
     final PlatformImpl platform
+    final AsdfImpl asdf
     final BrewImpl brew
     final ChocolateyImpl chocolatey
     final DockerImpl docker
@@ -100,6 +102,7 @@ class DistributionImpl implements Distribution {
         executable = objects.newInstance(ExecutableImpl, objects)
         java = objects.newInstance(JavaImpl, objects)
         platform = objects.newInstance(PlatformImpl, objects)
+        asdf = objects.newInstance(AsdfImpl, objects)
         brew = objects.newInstance(BrewImpl, objects)
         chocolatey = objects.newInstance(ChocolateyImpl, objects)
         docker = objects.newInstance(DockerImpl, objects)
@@ -144,6 +147,11 @@ class DistributionImpl implements Distribution {
     @Override
     void executable(Action<? super Executable> action) {
         action.execute(executable)
+    }
+
+    @Override
+    void asdf(Action<? super Asdf> action) {
+        action.execute(asdf)
     }
 
     @Override
@@ -224,6 +232,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void asdf(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Asdf) Closure<Void> action) {
+        ConfigureUtil.configure(action, asdf)
+    }
+
+    @Override
     void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Brew) Closure<Void> action) {
         ConfigureUtil.configure(action, brew)
     }
@@ -286,6 +299,7 @@ class DistributionImpl implements Distribution {
         }
         distribution.tags = (List<String>) tags.getOrElse([])
         if (extraProperties.present) distribution.extraProperties.putAll(extraProperties.get())
+        if (asdf.isSet()) distribution.asdf = asdf.toModel()
         if (brew.isSet()) distribution.brew = brew.toModel()
         if (chocolatey.isSet()) distribution.chocolatey = chocolatey.toModel()
         if (docker.isSet()) distribution.docker = docker.toModel()
