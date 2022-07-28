@@ -137,6 +137,7 @@ public class JReleaserContext {
 
         try {
             logger.increaseIndent();
+            logger.debug("- " + Constants.KEY_BASEDIR + " set to " + getBasedir());
             logger.debug("- " + Constants.KEY_BASE_OUTPUT_DIRECTORY + " set to " + getOutputDirectory().getParent());
             logger.debug("- " + Constants.KEY_OUTPUT_DIRECTORY + " set to " + getOutputDirectory());
             logger.debug("- " + Constants.KEY_CHECKSUMS_DIRECTORY + " set to " + getChecksumsDirectory());
@@ -551,6 +552,7 @@ public class JReleaserContext {
 
     public Map<String, Object> props() {
         Map<String, Object> props = new LinkedHashMap<>(model.props());
+        props.put(Constants.KEY_BASEDIR, getBasedir());
         props.put(Constants.KEY_BASE_OUTPUT_DIRECTORY, getOutputDirectory().getParent());
         props.put(Constants.KEY_OUTPUT_DIRECTORY, getOutputDirectory());
         props.put(Constants.KEY_CHECKSUMS_DIRECTORY, getChecksumsDirectory());
