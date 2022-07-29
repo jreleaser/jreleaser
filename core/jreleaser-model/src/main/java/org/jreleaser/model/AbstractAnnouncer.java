@@ -34,8 +34,8 @@ abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S>> extends Abstrac
     @JsonIgnore
     protected boolean enabled;
     protected Active active;
-    protected int connectTimeout;
-    protected int readTimeout;
+    protected Integer connectTimeout;
+    protected Integer readTimeout;
 
     protected AbstractAnnouncer(String name) {
         this.name = name;
@@ -110,23 +110,23 @@ abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S>> extends Abstrac
     }
 
     @Override
-    public int getConnectTimeout() {
+    public Integer getConnectTimeout() {
         return connectTimeout;
     }
 
     @Override
-    public void setConnectTimeout(int connectTimeout) {
+    public void setConnectTimeout(Integer connectTimeout) {
         freezeCheck();
         this.connectTimeout = connectTimeout;
     }
 
     @Override
-    public int getReadTimeout() {
+    public Integer getReadTimeout() {
         return readTimeout;
     }
 
     @Override
-    public void setReadTimeout(int readTimeout) {
+    public void setReadTimeout(Integer readTimeout) {
         freezeCheck();
         this.readTimeout = readTimeout;
     }

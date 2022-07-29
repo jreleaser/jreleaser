@@ -22,11 +22,11 @@ package org.jreleaser.model;
  * @since 0.2.0
  */
 public interface TimeoutAware {
-    int getConnectTimeout();
+    Integer getConnectTimeout();
 
-    void setConnectTimeout(int timeout);
+    void setConnectTimeout(Integer timeout);
 
-    int getReadTimeout();
+    Integer getReadTimeout();
 
-    void setReadTimeout(int timeout);
+    void setReadTimeout(Integer timeout);
 }

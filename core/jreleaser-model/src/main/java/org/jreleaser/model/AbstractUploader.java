@@ -140,23 +140,23 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
     }
 
     @Override
-    public int getConnectTimeout() {
+    public Integer getConnectTimeout() {
         return connectTimeout;
     }
 
     @Override
-    public void setConnectTimeout(int connectTimeout) {
+    public void setConnectTimeout(Integer connectTimeout) {
         freezeCheck();
         this.connectTimeout = connectTimeout;
     }
 
     @Override
-    public int getReadTimeout() {
+    public Integer getReadTimeout() {
         return readTimeout;
     }
 
     @Override
-    public void setReadTimeout(int readTimeout) {
+    public void setReadTimeout(Integer readTimeout) {
         freezeCheck();
         this.readTimeout = readTimeout;
     }
