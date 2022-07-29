@@ -22,6 +22,7 @@ import org.jreleaser.util.Env;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -211,12 +212,12 @@ public class Sdkman extends AbstractPackager<Sdkman> implements TimeoutAware {
         MINOR;
 
         public String toString() {
-            return name().toLowerCase();
+            return name().toLowerCase(Locale.ENGLISH);
         }
 
         public static Command of(String str) {
             if (isBlank(str)) return null;
-            return Command.valueOf(str.toUpperCase().trim());
+            return Command.valueOf(str.toUpperCase(Locale.ENGLISH).trim());
         }
     }
 }

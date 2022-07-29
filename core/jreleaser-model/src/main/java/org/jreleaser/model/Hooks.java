@@ -23,8 +23,6 @@ import org.jreleaser.util.Env;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jreleaser.util.StringUtils.isNotBlank;
-
 /**
  * @author Andres Almiray
  * @since 1.2.0

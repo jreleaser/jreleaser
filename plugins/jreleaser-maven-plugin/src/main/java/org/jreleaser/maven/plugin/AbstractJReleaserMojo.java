@@ -42,6 +42,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static org.jreleaser.util.JReleaserOutput.JRELEASER_QUIET;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -193,7 +194,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
             for (String s : input) {
                 if (isNotBlank(s)) {
                     s = s.trim();
-                    list.add(lowerCase ? s.toLowerCase() : s);
+                    list.add(lowerCase ? s.toLowerCase(Locale.ENGLISH) : s);
                 }
             }
         }

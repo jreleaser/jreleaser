@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import java.util.Locale;
 import java.util.function.Predicate;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -55,12 +56,12 @@ public enum Active {
 
     @Override
     public String toString() {
-        return name().toLowerCase();
+        return name().toLowerCase(Locale.ENGLISH);
     }
 
     public static Active of(String str) {
         if (isBlank(str)) return null;
-        return Active.valueOf(str.toUpperCase().trim()
+        return Active.valueOf(str.toUpperCase(Locale.ENGLISH).trim()
             .replace("+", "_")
             .replace("-", "_")
             .replace(" ", "_"));

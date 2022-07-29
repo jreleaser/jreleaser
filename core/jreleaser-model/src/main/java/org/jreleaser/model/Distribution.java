@@ -29,6 +29,7 @@ import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -319,7 +320,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
     }
 
     private <T extends Packager> T resolvePackager(String name) {
-        switch (name.toLowerCase().trim()) {
+        switch (name.toLowerCase(Locale.ENGLISH).trim()) {
             case Asdf.TYPE:
                 return (T) getAsdf();
             case Brew.TYPE:
@@ -404,7 +405,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
         private final String alias;
 
         DistributionType(String alias) {
-            this.alias = alias.toUpperCase();
+            this.alias = alias.toUpperCase(Locale.ENGLISH);
         }
 
         public static DistributionType of(String str) {
@@ -412,7 +413,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
 
             String value = str.replaceAll(" ", "_")
                 .replaceAll("-", "_")
-                .toUpperCase().trim();
+                .toUpperCase(Locale.ENGLISH).trim();
 
             // try alias
             for (DistributionType type : DistributionType.values()) {

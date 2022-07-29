@@ -25,6 +25,7 @@ import org.jreleaser.util.JReleaserException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -318,7 +319,7 @@ public class Announce extends AbstractModelObject<Announce> implements Domain, A
     }
 
     private <A extends Announcer> A resolveAnnouncer(String name) {
-        switch (name.toLowerCase().trim()) {
+        switch (name.toLowerCase(Locale.ENGLISH).trim()) {
             case Article.NAME:
                 return (A) getArticle();
             case Discord.NAME:

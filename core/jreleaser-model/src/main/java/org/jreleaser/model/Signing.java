@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
@@ -304,12 +305,12 @@ public class Signing extends AbstractModelObject<Signing> implements Domain, Act
 
         @Override
         public String toString() {
-            return name().toLowerCase();
+            return name().toLowerCase(Locale.ENGLISH);
         }
 
         public static Mode of(String str) {
             if (isBlank(str)) return null;
-            return Mode.valueOf(str.toUpperCase().trim());
+            return Mode.valueOf(str.toUpperCase(Locale.ENGLISH).trim());
         }
     }
 

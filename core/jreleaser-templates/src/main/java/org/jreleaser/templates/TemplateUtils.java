@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -94,7 +95,7 @@ public final class TemplateUtils {
                 }
             });
         } catch (IOException e) {
-            String distributionTypeName = distributionType.toLowerCase().replace('_', '-');
+            String distributionTypeName = distributionType.toLowerCase(Locale.ENGLISH).replace('_', '-');
             throw new JReleaserException(RB.$("ERROR_unexpected_reading_templates_distribution",
                 distributionTypeName, toolName, actualTemplateDirectory.toAbsolutePath()));
         }
@@ -122,24 +123,24 @@ public final class TemplateUtils {
     }
 
     public static Map<String, Reader> resolveTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot) {
-        String distributionTypeName = distributionType.toLowerCase().replace('_', '-');
+        String distributionTypeName = distributionType.toLowerCase(Locale.ENGLISH).replace('_', '-');
 
         Map<String, Reader> templates = new LinkedHashMap<>();
 
         logger.debug(RB.$("templates.templates.resolve.classpath"));
 
-        String templatePrefix = distributionTypeName + "." + toolName.toLowerCase() + (snapshot ? "-snapshot" : "");
+        String templatePrefix = distributionTypeName + "." + toolName.toLowerCase(Locale.ENGLISH) + (snapshot ? "-snapshot" : "");
         logger.debug(RB.$("templates.template.resolve.classpath", templatePrefix));
         String values = TEMPLATES_INVENTORY.getProperty(templatePrefix);
         if (isBlank(values) && snapshot) {
-            templatePrefix = distributionTypeName + "." + toolName.toLowerCase();
+            templatePrefix = distributionTypeName + "." + toolName.toLowerCase(Locale.ENGLISH);
             logger.debug(RB.$("templates.template.resolve.classpath", templatePrefix));
             values = TEMPLATES_INVENTORY.getProperty(templatePrefix);
         }
 
         if (isNotBlank(values)) {
             for (String k : values.split(",")) {
-                templates.put(k, resolveTemplate(logger, distributionTypeName + "/" + toolName.toLowerCase() + "/" + k));
+                templates.put(k, resolveTemplate(logger, distributionTypeName + "/" + toolName.toLowerCase(Locale.ENGLISH) + "/" + k));
             }
         }
 

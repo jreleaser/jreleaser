@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
@@ -144,8 +145,8 @@ public class JdkHelper {
             log.info("Verifying " + filename);
             if (!calculatedChecksum.equalsIgnoreCase(checksum)) {
                 throw new MojoExecutionException("Invalid checksum for file '" +
-                    filename + "'. Expected " + checksum.toLowerCase() +
-                    " but got " + calculatedChecksum.toLowerCase() + ".");
+                    filename + "'. Expected " + checksum.toLowerCase(Locale.ENGLISH) +
+                    " but got " + calculatedChecksum.toLowerCase(Locale.ENGLISH) + ".");
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Unexpected error when verifying " + filename, e);

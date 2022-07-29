@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -164,7 +165,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     public void setSort(String sort) {
         freezeCheck();
         if (isNotBlank(sort)) {
-            setSort(Sort.valueOf(sort.toUpperCase()));
+            setSort(Sort.valueOf(sort.toUpperCase(Locale.ENGLISH)));
         }
     }
 

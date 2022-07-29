@@ -18,6 +18,7 @@
 package org.jreleaser.model;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -401,7 +402,7 @@ public enum LicenseId {
 
     public static Optional<LicenseId> findByLiteral(String id) {
         try {
-            return Optional.of(valueOf(id.toUpperCase()));
+            return Optional.of(valueOf(id.toUpperCase(Locale.ENGLISH)));
         } catch (Exception ignored) {
             return Arrays.stream(values())
                 .filter(l -> l.spdx().equals(id))

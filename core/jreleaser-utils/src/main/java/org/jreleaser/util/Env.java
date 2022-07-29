@@ -40,7 +40,7 @@ public class Env {
     public static String toVar(String str) {
         return str.replaceAll(" ", "_")
             .replaceAll("-", "_")
-            .toUpperCase();
+            .toUpperCase(Locale.ENGLISH);
     }
 
     public static String envKey(String key) {

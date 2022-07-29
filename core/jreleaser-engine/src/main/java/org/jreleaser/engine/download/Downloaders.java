@@ -18,7 +18,6 @@
 package org.jreleaser.engine.download;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.engine.download.ProjectDownloader;
 import org.jreleaser.model.Download;
 import org.jreleaser.model.Downloader;
 import org.jreleaser.model.JReleaserContext;

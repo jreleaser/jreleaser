@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -215,7 +216,7 @@ abstract class AbstractJReleaserTask extends Task {
             for (String s : input) {
                 if (isNotBlank(s)) {
                     s = s.trim();
-                    list.add(lowerCase ? s.toLowerCase() : s);
+                    list.add(lowerCase ? s.toLowerCase(Locale.ENGLISH) : s);
                 }
             }
         }

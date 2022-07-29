@@ -41,6 +41,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -375,7 +376,7 @@ public class JReleaserContext {
             if (!s.contains("-")) {
                 s = StringUtils.getHyphenatedName(s);
             }
-            tmp.set(i, s.toLowerCase());
+            tmp.set(i, s.toLowerCase(Locale.ENGLISH));
         }
 
         return tmp;

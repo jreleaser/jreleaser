@@ -20,6 +20,7 @@ package org.jreleaser.model;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -156,7 +157,7 @@ public class Archive extends AbstractAssembler<Archive> {
         public static org.jreleaser.model.Archive.Format of(String str) {
             if (isBlank(str)) return null;
             return org.jreleaser.model.Archive.Format
-                .valueOf(str.toUpperCase().trim()
+                .valueOf(str.toUpperCase(Locale.ENGLISH).trim()
                     .replace(".", "_"));
         }
     }

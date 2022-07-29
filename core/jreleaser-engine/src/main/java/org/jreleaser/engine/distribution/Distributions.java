@@ -24,6 +24,7 @@ import org.jreleaser.model.packager.spi.PackagerProcessingException;
 import org.jreleaser.util.JReleaserException;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Andres Almiray
@@ -34,7 +35,7 @@ public class Distributions {
         List<Distribution> activeDistributions = context.getModel().getActiveDistributions();
 
         if (activeDistributions.isEmpty()) {
-            context.getLogger().debug(RB.$("distributions.not.enabled"), action.toLowerCase());
+            context.getLogger().debug(RB.$("distributions.not.enabled"), action.toLowerCase(Locale.ENGLISH));
             return;
         }
 

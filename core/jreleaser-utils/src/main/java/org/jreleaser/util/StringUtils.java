@@ -58,7 +58,7 @@ public class StringUtils {
         }
 
         if (str.length() == 1) {
-            return str.toUpperCase();
+            return str.toUpperCase(Locale.ENGLISH);
         }
 
         return ((String) (str.substring(0, 1).toUpperCase(Locale.ENGLISH) + str.substring(1)));
@@ -235,7 +235,7 @@ public class StringUtils {
 
     public static String getLogicalPropertyName(String className, String trailingName) {
         if (isNotBlank(className) && isNotBlank(trailingName) && className.length() == trailingName.length() + 1 && className.endsWith(trailingName)) {
-            return className.substring(0, 1).toLowerCase();
+            return className.substring(0, 1).toLowerCase(Locale.ENGLISH);
         }
 
         return getLogicalName(getPropertyName(className), trailingName);
@@ -528,7 +528,7 @@ public class StringUtils {
         }
 
         String naturalName = getNaturalName(getShortName(name));
-        return naturalName.replaceAll("\\s", "-").toLowerCase();
+        return naturalName.replaceAll("\\s", "-").toLowerCase(Locale.ENGLISH);
     }
 
     /**

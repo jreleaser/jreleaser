@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -83,14 +84,14 @@ public abstract class GitServiceValidator extends Validator {
 
         service.setUsername(
             checkProperty(context,
-                service.getServiceName().toUpperCase() + "_USERNAME",
+                service.getServiceName().toUpperCase(Locale.ENGLISH) + "_USERNAME",
                 service.getServiceName() + ".username",
                 service.getUsername(),
                 service.getOwner()));
 
         service.setToken(
             checkProperty(context,
-                service.getServiceName().toUpperCase() + "_TOKEN",
+                service.getServiceName().toUpperCase(Locale.ENGLISH) + "_TOKEN",
                 service.getServiceName() + ".token",
                 service.getToken(),
                 !mode.validateStandalone() ? errors : new Errors()));
@@ -321,7 +322,7 @@ public abstract class GitServiceValidator extends Validator {
 
     private static void loadPreset(JReleaserContext context, Changelog changelog, Errors errors) {
         try {
-            String preset = changelog.getPreset().toLowerCase().trim();
+            String preset = changelog.getPreset().toLowerCase(Locale.ENGLISH).trim();
             String presetFileName = "META-INF/jreleaser/changelog/preset-" + preset + ".yml";
 
             InputStream inputStream = GitServiceValidator.class.getClassLoader()

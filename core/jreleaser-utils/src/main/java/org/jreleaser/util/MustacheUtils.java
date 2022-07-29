@@ -31,6 +31,7 @@ import java.io.Writer;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -168,14 +169,14 @@ public final class MustacheUtils {
     public static class UpperFunction implements Function<String, String> {
         @Override
         public String apply(String input) {
-            return input.toUpperCase();
+            return input.toUpperCase(Locale.ENGLISH);
         }
     }
 
     public static class LowerFunction implements Function<String, String> {
         @Override
         public String apply(String input) {
-            return input.toLowerCase();
+            return input.toLowerCase(Locale.ENGLISH);
         }
     }
 

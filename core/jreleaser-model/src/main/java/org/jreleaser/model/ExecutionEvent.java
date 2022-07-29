@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import java.util.Locale;
+
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -61,14 +63,14 @@ public class ExecutionEvent {
 
         @Override
         public String toString() {
-            return name().toLowerCase();
+            return name().toLowerCase(Locale.ENGLISH);
         }
 
         public static Type of(String str) {
             if (isBlank(str)) return null;
             return Type.valueOf(str.replaceAll(" ", "_")
                 .replaceAll("-", "_")
-                .toUpperCase().trim());
+                .toUpperCase(Locale.ENGLISH).trim());
         }
     }
 }

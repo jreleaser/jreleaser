@@ -78,12 +78,12 @@ class MailImpl extends AbstractAnnouncer implements Mail {
 
     @Override
     void setTransport(String transport) {
-        this.transport.set(org.jreleaser.model.Mail.Transport.valueOf(transport.toUpperCase()))
+        this.transport.set(org.jreleaser.model.Mail.Transport.valueOf(transport.toUpperCase(Locale.ENGLISH)))
     }
 
     @Override
     void setMimeType(String mimeType) {
-        this.mimeType.set(org.jreleaser.model.Mail.MimeType.valueOf(mimeType.toUpperCase()))
+        this.mimeType.set(org.jreleaser.model.Mail.MimeType.valueOf(mimeType.toUpperCase(Locale.ENGLISH)))
     }
 
     @Override

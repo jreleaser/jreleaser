@@ -19,6 +19,8 @@ package org.jreleaser.util;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+import java.util.Locale;
+
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -40,16 +42,16 @@ public enum Algorithm {
 
     public String formatted() {
         if (name().startsWith("SHA3")) {
-            return name().toLowerCase().replace("_", "-");
+            return name().toLowerCase(Locale.ENGLISH).replace("_", "-");
         }
-        return name().toLowerCase().replace("_", "");
+        return name().toLowerCase(Locale.ENGLISH).replace("_", "");
     }
 
     @JsonCreator
     public static Algorithm of(String str) {
         if (isBlank(str)) return null;
 
-        String value = str.toUpperCase().trim();
+        String value = str.toUpperCase(Locale.ENGLISH).trim();
 
         switch (value) {
             case "SHA1":

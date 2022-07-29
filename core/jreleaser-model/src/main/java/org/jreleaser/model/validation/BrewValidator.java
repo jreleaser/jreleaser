@@ -30,6 +30,7 @@ import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -204,7 +205,7 @@ public abstract class BrewValidator extends Validator {
         }
 
         if (isBlank(cask.getName())) {
-            cask.setName(packager.getResolvedFormulaName(context).toLowerCase());
+            cask.setName(packager.getResolvedFormulaName(context).toLowerCase(Locale.ENGLISH));
         }
         if (isBlank(cask.getDisplayName())) {
             cask.setDisplayName(packager.getResolvedFormulaName(context));

@@ -19,6 +19,7 @@ package org.jreleaser.util;
 
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
@@ -79,7 +80,7 @@ public enum FileType {
 
     public static FileType of(String str) {
         if (isBlank(str)) return null;
-        return FileType.valueOf(str.toUpperCase().trim()
+        return FileType.valueOf(str.toUpperCase(Locale.ENGLISH).trim()
             .replace(".", "_"));
     }
 

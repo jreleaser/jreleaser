@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import java.util.Locale;
+
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -30,11 +32,11 @@ public enum UpdateSection {
 
     @Override
     public String toString() {
-        return name().toLowerCase();
+        return name().toLowerCase(Locale.ENGLISH);
     }
 
     public static UpdateSection of(String str) {
         if (isBlank(str)) return null;
-        return UpdateSection.valueOf(str.toUpperCase().trim());
+        return UpdateSection.valueOf(str.toUpperCase(Locale.ENGLISH).trim());
     }
 }

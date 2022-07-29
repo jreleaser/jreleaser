@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import java.util.Locale;
+
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -30,12 +32,12 @@ public interface Http {
 
         @Override
         public String toString() {
-            return name().toLowerCase();
+            return name().toLowerCase(Locale.ENGLISH);
         }
 
         public static Method of(String str) {
             if (isBlank(str)) return null;
-            return Method.valueOf(str.toUpperCase().trim());
+            return Method.valueOf(str.toUpperCase(Locale.ENGLISH).trim());
         }
     }
 
@@ -46,12 +48,12 @@ public interface Http {
 
         @Override
         public String toString() {
-            return name().toLowerCase();
+            return name().toLowerCase(Locale.ENGLISH);
         }
 
         public static Authorization of(String str) {
             if (isBlank(str)) return null;
-            return Authorization.valueOf(str.toUpperCase().trim());
+            return Authorization.valueOf(str.toUpperCase(Locale.ENGLISH).trim());
         }
     }
 }

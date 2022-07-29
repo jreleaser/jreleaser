@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**

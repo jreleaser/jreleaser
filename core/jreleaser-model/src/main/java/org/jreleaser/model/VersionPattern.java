@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import java.util.Locale;
+
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -102,14 +104,14 @@ public class VersionPattern extends AbstractModelObject<VersionPattern> {
 
         @Override
         public String toString() {
-            return name().toLowerCase();
+            return name().toLowerCase(Locale.ENGLISH);
         }
 
         public static Type of(String str) {
             if (isBlank(str)) return null;
             return Type.valueOf(str.replaceAll(" ", "_")
                 .replaceAll("-", "_")
-                .toUpperCase().trim());
+                .toUpperCase(Locale.ENGLISH).trim());
         }
     }
 }

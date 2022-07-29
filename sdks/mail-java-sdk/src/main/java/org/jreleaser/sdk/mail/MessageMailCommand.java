@@ -31,6 +31,7 @@ import org.jreleaser.util.JReleaserLogger;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -150,7 +151,7 @@ public class MessageMailCommand implements MailCommand {
             message.setHeader("X-Mailer", "JReleaser " + JReleaserVersion.getPlainVersion());
             message.setSentDate(new Date());
 
-            Transport t = session.getTransport(transport.name().toLowerCase());
+            Transport t = session.getTransport(transport.name().toLowerCase(Locale.ENGLISH));
             if (auth) {
                 t.connect(host, username, password);
             } else {

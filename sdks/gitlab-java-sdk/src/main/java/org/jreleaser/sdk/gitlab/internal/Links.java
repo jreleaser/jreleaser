@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.gitlab.internal;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +42,7 @@ public class Links {
                 String[] parts = s.split(";");
                 Matcher matcher = REL_PATTERN.matcher(parts[1].trim());
                 if (matcher.matches()) {
-                    switch (matcher.group(1).toLowerCase()) {
+                    switch (matcher.group(1).toLowerCase(Locale.ENGLISH)) {
                         case "first":
                             first = normalize(parts[0]);
                             break;

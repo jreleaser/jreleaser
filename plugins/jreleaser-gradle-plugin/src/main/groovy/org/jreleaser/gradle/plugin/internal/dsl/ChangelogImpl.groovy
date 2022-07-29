@@ -121,7 +121,7 @@ class ChangelogImpl implements Changelog {
 
     @Override
     void setSort(String sort) {
-        this.sort.set(org.jreleaser.model.Changelog.Sort.valueOf(sort.toUpperCase()))
+        this.sort.set(org.jreleaser.model.Changelog.Sort.valueOf(sort.toUpperCase(Locale.ENGLISH)))
     }
 
     @Override

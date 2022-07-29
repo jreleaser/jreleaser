@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
@@ -128,7 +129,7 @@ public class Mail extends AbstractAnnouncer<Mail> {
         freezeCheck();
         this.transport = Transport.valueOf(transport.replaceAll(" ", "_")
             .replaceAll("-", "_")
-            .toUpperCase());
+            .toUpperCase(Locale.ENGLISH));
     }
 
     public void setTransport(Transport transport) {
@@ -256,7 +257,7 @@ public class Mail extends AbstractAnnouncer<Mail> {
         freezeCheck();
         this.mimeType = MimeType.valueOf(mimeType.replaceAll(" ", "_")
             .replaceAll("-", "_")
-            .toUpperCase());
+            .toUpperCase(Locale.ENGLISH));
     }
 
     public void setMimeType(MimeType mimeType) {

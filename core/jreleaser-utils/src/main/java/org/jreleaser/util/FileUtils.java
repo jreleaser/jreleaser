@@ -62,6 +62,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -128,7 +129,7 @@ public final class FileUtils {
             if (Files.exists(path)) {
                 return Optional.of(path);
             }
-            path = basedir.resolve(licenseFilename.toLowerCase());
+            path = basedir.resolve(licenseFilename.toLowerCase(Locale.ENGLISH));
             if (Files.exists(path)) {
                 return Optional.of(path);
             }

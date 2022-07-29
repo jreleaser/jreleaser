@@ -22,6 +22,7 @@ import org.jreleaser.util.JReleaserException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.jreleaser.util.Constants.HIDE;
@@ -248,10 +249,10 @@ public abstract class JReleaserModelPrinter {
     }
 
     public static boolean isSecret(String key) {
-        String lower = key.toLowerCase();
+        String lower = key.toLowerCase(Locale.ENGLISH);
 
         for (String keyword : SECRET_KEYWORDS.split(",")) {
-            if (lower.contains(keyword.trim().toLowerCase())) return true;
+            if (lower.contains(keyword.trim().toLowerCase(Locale.ENGLISH))) return true;
         }
 
         return false;

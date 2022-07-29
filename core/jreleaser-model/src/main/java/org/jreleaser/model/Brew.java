@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -394,7 +395,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
         public String getResolvedCaskName(JReleaserContext context) {
             if (isBlank(cachedCaskName)) {
                 cachedCaskName = resolveTemplate(name, context.getModel().props());
-                cachedCaskName = cachedCaskName.toLowerCase();
+                cachedCaskName = cachedCaskName.toLowerCase(Locale.ENGLISH);
             }
             return cachedCaskName;
         }
