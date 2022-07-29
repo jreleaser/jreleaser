@@ -18,15 +18,20 @@
 package org.jreleaser.workflow;
 
 import org.jreleaser.engine.upload.Uploaders;
+import org.jreleaser.model.JReleaserCommand;
 import org.jreleaser.model.JReleaserContext;
 
 /**
  * @author Andres Almiray
  * @since 0.3.0
  */
-class UploadWorkflowItem implements WorkflowItem {
+class UploadWorkflowItem extends AbstractWorkflowItem {
+    protected UploadWorkflowItem() {
+        super(JReleaserCommand.UPLOAD);
+    }
+
     @Override
-    public void invoke(JReleaserContext context) {
+    protected void doInvoke(JReleaserContext context) {
         Uploaders.upload(context);
     }
 }

@@ -27,6 +27,7 @@ import static org.jreleaser.model.validation.DistributionsValidator.postValidate
 import static org.jreleaser.model.validation.DistributionsValidator.validateDistributions;
 import static org.jreleaser.model.validation.DownloadersValidator.validateDownloaders;
 import static org.jreleaser.model.validation.FilesValidator.validateFiles;
+import static org.jreleaser.model.validation.HooksValidator.validateHooks;
 import static org.jreleaser.model.validation.PackagersValidator.validatePackagers;
 import static org.jreleaser.model.validation.ProjectValidator.postValidateProject;
 import static org.jreleaser.model.validation.ProjectValidator.validateProject;
@@ -55,6 +56,7 @@ public final class JReleaserModelValidator {
     }
 
     private static void validateModel(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
+        validateHooks(context, mode, errors);
         validateProject(context, mode, errors);
         validateDownloaders(context, mode, errors);
         validateAssemblers(context, mode, errors);

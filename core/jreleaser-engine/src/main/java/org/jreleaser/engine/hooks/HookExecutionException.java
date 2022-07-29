@@ -15,25 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.workflow;
-
-import org.jreleaser.bundle.RB;
-import org.jreleaser.engine.distribution.DistributionProcessor;
-import org.jreleaser.engine.distribution.Distributions;
-import org.jreleaser.model.JReleaserCommand;
-import org.jreleaser.model.JReleaserContext;
+package org.jreleaser.engine.hooks;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 1.2.0
  */
-class PublishWorkflowItem extends AbstractWorkflowItem {
-    protected PublishWorkflowItem() {
-        super(JReleaserCommand.PUBLISH);
+public class HookExecutionException extends Exception {
+    public HookExecutionException(String message) {
+        super(message);
     }
 
-    @Override
-    protected void doInvoke(JReleaserContext context) {
-        Distributions.process(context, RB.$("distributions.action.publishing.capitalize"), DistributionProcessor::publishDistribution);
+    public HookExecutionException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public HookExecutionException(Throwable cause) {
+        super(cause);
     }
 }

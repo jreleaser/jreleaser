@@ -15,25 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.workflow;
+package org.jreleaser.gradle.plugin.dsl
 
-import org.jreleaser.bundle.RB;
-import org.jreleaser.engine.distribution.DistributionProcessor;
-import org.jreleaser.engine.distribution.Distributions;
-import org.jreleaser.model.JReleaserCommand;
-import org.jreleaser.model.JReleaserContext;
+import groovy.transform.CompileStatic
+import org.gradle.api.Action
+import org.gradle.api.provider.SetProperty
 
 /**
+ *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 1.2.0
  */
-class PublishWorkflowItem extends AbstractWorkflowItem {
-    protected PublishWorkflowItem() {
-        super(JReleaserCommand.PUBLISH);
-    }
+@CompileStatic
+interface Hook extends Activatable {
+    Filter getFilter()
 
-    @Override
-    protected void doInvoke(JReleaserContext context) {
-        Distributions.process(context, RB.$("distributions.action.publishing.capitalize"), DistributionProcessor::publishDistribution);
+    void filter(Action<? super Filter> action)
+
+    void filter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Filter) Closure<Void> action)
+
+    interface Filter {
+        SetProperty<String> getIncludes()
+
+        SetProperty<String> getExcludes()
+
+        void include(String str)
+
+        void exclude(String str)
     }
 }

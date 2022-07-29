@@ -19,6 +19,7 @@ package org.jreleaser.workflow;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.sign.Signer;
+import org.jreleaser.model.JReleaserCommand;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.signing.SigningException;
@@ -27,9 +28,13 @@ import org.jreleaser.util.signing.SigningException;
  * @author Andres Almiray
  * @since 0.1.0
  */
-class SignWorkflowItem implements WorkflowItem {
+class SignWorkflowItem extends AbstractWorkflowItem {
+    protected SignWorkflowItem() {
+        super(JReleaserCommand.SIGN);
+    }
+
     @Override
-    public void invoke(JReleaserContext context) {
+    protected void doInvoke(JReleaserContext context) {
         try {
             Signer.sign(context);
         } catch (SigningException e) {

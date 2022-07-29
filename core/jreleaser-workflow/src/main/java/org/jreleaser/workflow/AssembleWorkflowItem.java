@@ -18,15 +18,20 @@
 package org.jreleaser.workflow;
 
 import org.jreleaser.engine.assemble.Assemblers;
+import org.jreleaser.model.JReleaserCommand;
 import org.jreleaser.model.JReleaserContext;
 
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
-class AssembleWorkflowItem implements WorkflowItem {
+class AssembleWorkflowItem extends AbstractWorkflowItem {
+    protected AssembleWorkflowItem() {
+        super(JReleaserCommand.ASSEMBLE);
+    }
+
     @Override
-    public void invoke(JReleaserContext context) {
+    protected void doInvoke(JReleaserContext context) {
         Assemblers.assemble(context);
     }
 }

@@ -23,7 +23,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray
- * @since 1.1.0
+ * @since 1.2.0
  */
 public class ExecutionEvent {
     private final Type type;
@@ -46,13 +46,18 @@ public class ExecutionEvent {
         return new ExecutionEvent(Type.BEFORE, name);
     }
 
-    public static ExecutionEvent after(String name) {
-        return new ExecutionEvent(Type.AFTER, name);
+    public static ExecutionEvent success(String name) {
+        return new ExecutionEvent(Type.SUCCESS, name);
+    }
+
+    public static ExecutionEvent failure(String name) {
+        return new ExecutionEvent(Type.FAILURE, name);
     }
 
     public enum Type {
         BEFORE,
-        AFTER;
+        SUCCESS,
+        FAILURE;
 
         @Override
         public String toString() {

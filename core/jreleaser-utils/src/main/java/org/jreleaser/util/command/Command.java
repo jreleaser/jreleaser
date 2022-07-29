@@ -49,6 +49,11 @@ public class Command {
         this.args.add(arg);
     }
 
+    public Command(List<String> args) {
+        this.supportsArgsfile = false;
+        this.args.addAll(args);
+    }
+
     public boolean isSupportsArgsfile() {
         return supportsArgsfile;
     }

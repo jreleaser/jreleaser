@@ -17,23 +17,26 @@
  */
 package org.jreleaser.workflow;
 
-import org.jreleaser.bundle.RB;
-import org.jreleaser.engine.distribution.DistributionProcessor;
-import org.jreleaser.engine.distribution.Distributions;
+import org.jreleaser.engine.hooks.CommandHookExecutor;
 import org.jreleaser.model.JReleaserCommand;
 import org.jreleaser.model.JReleaserContext;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 1.2.0
  */
-class PublishWorkflowItem extends AbstractWorkflowItem {
-    protected PublishWorkflowItem() {
-        super(JReleaserCommand.PUBLISH);
+abstract class AbstractWorkflowItem implements WorkflowItem {
+    private final JReleaserCommand command;
+
+    protected AbstractWorkflowItem(JReleaserCommand command) {
+        this.command = command;
     }
 
     @Override
-    protected void doInvoke(JReleaserContext context) {
-        Distributions.process(context, RB.$("distributions.action.publishing.capitalize"), DistributionProcessor::publishDistribution);
+    public void invoke(JReleaserContext context) {
+        CommandHookExecutor executor = new CommandHookExecutor(context);
+        executor.execute(command.toStep(), () -> doInvoke(context));
     }
+
+    protected abstract void doInvoke(JReleaserContext context);
 }

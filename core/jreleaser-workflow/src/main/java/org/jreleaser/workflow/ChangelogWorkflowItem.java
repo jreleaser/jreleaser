@@ -18,15 +18,20 @@
 package org.jreleaser.workflow;
 
 import org.jreleaser.engine.changelog.Changelog;
+import org.jreleaser.model.JReleaserCommand;
 import org.jreleaser.model.JReleaserContext;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-class ChangelogWorkflowItem implements WorkflowItem {
+class ChangelogWorkflowItem extends AbstractWorkflowItem {
+    protected ChangelogWorkflowItem() {
+        super(JReleaserCommand.CHANGELOG);
+    }
+
     @Override
-    public void invoke(JReleaserContext context) {
+    protected void doInvoke(JReleaserContext context) {
         context.setChangelog(Changelog.createChangelog(context));
     }
 }

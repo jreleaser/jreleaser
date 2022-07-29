@@ -18,15 +18,20 @@
 package org.jreleaser.workflow;
 
 import org.jreleaser.engine.checksum.Checksum;
+import org.jreleaser.model.JReleaserCommand;
 import org.jreleaser.model.JReleaserContext;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-class ChecksumWorkflowItem implements WorkflowItem {
+class ChecksumWorkflowItem extends AbstractWorkflowItem {
+    protected ChecksumWorkflowItem() {
+        super(JReleaserCommand.CHECKSUM);
+    }
+
     @Override
-    public void invoke(JReleaserContext context) {
+    protected void doInvoke(JReleaserContext context) {
         Checksum.collectAndWriteChecksums(context);
     }
 }

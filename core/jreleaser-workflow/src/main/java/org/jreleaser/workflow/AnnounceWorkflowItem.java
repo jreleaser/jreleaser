@@ -19,6 +19,7 @@ package org.jreleaser.workflow;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.announce.Announcers;
+import org.jreleaser.model.JReleaserCommand;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.util.JReleaserException;
@@ -27,9 +28,13 @@ import org.jreleaser.util.JReleaserException;
  * @author Andres Almiray
  * @since 0.1.0
  */
-class AnnounceWorkflowItem implements WorkflowItem {
+class AnnounceWorkflowItem extends AbstractWorkflowItem {
+    protected AnnounceWorkflowItem() {
+        super(JReleaserCommand.ANNOUNCE);
+    }
+
     @Override
-    public void invoke(JReleaserContext context) {
+    protected void doInvoke(JReleaserContext context) {
         try {
             Announcers.announce(context);
         } catch (AnnounceException e) {

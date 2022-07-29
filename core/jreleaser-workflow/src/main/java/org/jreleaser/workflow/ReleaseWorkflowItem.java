@@ -19,6 +19,7 @@ package org.jreleaser.workflow;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.release.Releasers;
+import org.jreleaser.model.JReleaserCommand;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.util.JReleaserException;
@@ -27,9 +28,13 @@ import org.jreleaser.util.JReleaserException;
  * @author Andres Almiray
  * @since 0.1.0
  */
-class ReleaseWorkflowItem implements WorkflowItem {
+class ReleaseWorkflowItem extends AbstractWorkflowItem {
+    protected ReleaseWorkflowItem() {
+        super(JReleaserCommand.RELEASE);
+    }
+
     @Override
-    public void invoke(JReleaserContext context) {
+    protected void doInvoke(JReleaserContext context) {
         try {
             Releasers.release(context);
         } catch (ReleaseException e) {

@@ -50,6 +50,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class JReleaserModel implements Domain {
     private final Environment environment = new Environment();
+    private final Hooks hooks = new Hooks();
     private final Project project = new Project();
     private final Platform platform = new Platform();
     private final Release release = new Release();
@@ -86,6 +87,7 @@ public class JReleaserModel implements Domain {
         freezeCheck();
         frozen = true;
         environment.freeze();
+        hooks.freeze();
         project.freeze();
         platform.freeze();
         release.freeze();
@@ -131,6 +133,14 @@ public class JReleaserModel implements Domain {
 
     public void setEnvironment(Environment environment) {
         this.environment.merge(environment);
+    }
+
+    public Hooks getHooks() {
+        return hooks;
+    }
+
+    public void setHooks(Hooks hooks) {
+        this.hooks.merge(hooks);
     }
 
     public Platform getPlatform() {
@@ -257,6 +267,7 @@ public class JReleaserModel implements Domain {
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         if (full || environment.isSet()) map.put("environment", environment.asMap(full));
+        if (full || hooks.isSet()) map.put("hooks", hooks.asMap(full));
         map.put("project", project.asMap(full));
         if (full || platform.isSet()) map.put("platform", platform.asMap(full));
         map.put("release", release.asMap(full));

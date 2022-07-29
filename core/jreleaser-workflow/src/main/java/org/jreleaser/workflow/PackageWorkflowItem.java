@@ -20,15 +20,20 @@ package org.jreleaser.workflow;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.distribution.DistributionProcessor;
 import org.jreleaser.engine.distribution.Distributions;
+import org.jreleaser.model.JReleaserCommand;
 import org.jreleaser.model.JReleaserContext;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-class PackageWorkflowItem implements WorkflowItem {
+class PackageWorkflowItem extends AbstractWorkflowItem {
+    protected PackageWorkflowItem() {
+        super(JReleaserCommand.PACKAGE);
+    }
+
     @Override
-    public void invoke(JReleaserContext context) {
+    protected void doInvoke(JReleaserContext context) {
         Distributions.process(context, RB.$("distributions.action.packaging.capitalize"), DistributionProcessor::packageDistribution);
     }
 }

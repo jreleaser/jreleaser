@@ -15,25 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.workflow;
+package org.jreleaser.gradle.plugin.dsl
 
-import org.jreleaser.bundle.RB;
-import org.jreleaser.engine.distribution.DistributionProcessor;
-import org.jreleaser.engine.distribution.Distributions;
-import org.jreleaser.model.JReleaserCommand;
-import org.jreleaser.model.JReleaserContext;
+import groovy.transform.CompileStatic
+import org.gradle.api.Action
 
 /**
+ *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 1.2.0
  */
-class PublishWorkflowItem extends AbstractWorkflowItem {
-    protected PublishWorkflowItem() {
-        super(JReleaserCommand.PUBLISH);
-    }
+@CompileStatic
+interface Hooks extends Activatable {
+    CommandHooks getCommand()
 
-    @Override
-    protected void doInvoke(JReleaserContext context) {
-        Distributions.process(context, RB.$("distributions.action.publishing.capitalize"), DistributionProcessor::publishDistribution);
-    }
+    void command(Action<? super CommandHooks> action)
+
+    void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHooks) Closure<Void> action)
 }

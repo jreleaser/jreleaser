@@ -18,15 +18,20 @@
 package org.jreleaser.workflow;
 
 import org.jreleaser.engine.download.Downloaders;
+import org.jreleaser.model.JReleaserCommand;
 import org.jreleaser.model.JReleaserContext;
 
 /**
  * @author Andres Almiray
  * @since 1.1.0
  */
-class DownloadWorkflowItem implements WorkflowItem {
+class DownloadWorkflowItem extends AbstractWorkflowItem {
+    protected DownloadWorkflowItem() {
+        super(JReleaserCommand.DOWNLOAD);
+    }
+
     @Override
-    public void invoke(JReleaserContext context) {
+    protected void doInvoke(JReleaserContext context) {
         Downloaders.download(context);
     }
 }

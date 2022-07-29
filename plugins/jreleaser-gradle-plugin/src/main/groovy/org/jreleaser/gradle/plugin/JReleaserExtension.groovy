@@ -29,6 +29,7 @@ import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Download
 import org.jreleaser.gradle.plugin.dsl.Environment
 import org.jreleaser.gradle.plugin.dsl.Files
+import org.jreleaser.gradle.plugin.dsl.Hooks
 import org.jreleaser.gradle.plugin.dsl.Packagers
 import org.jreleaser.gradle.plugin.dsl.Platform
 import org.jreleaser.gradle.plugin.dsl.Project
@@ -55,6 +56,8 @@ interface JReleaserExtension {
 
     Environment getEnvironment()
 
+    Hooks getHooks()
+
     Project getProject()
 
     Platform getPlatform()
@@ -78,6 +81,8 @@ interface JReleaserExtension {
     NamedDomainObjectContainer<Distribution> getDistributions()
 
     void environment(Action<? super Environment> action)
+
+    void hooks(Action<? super Hooks> action)
 
     void project(Action<? super Project> action)
 
@@ -104,6 +109,8 @@ interface JReleaserExtension {
     void distributions(Action<? super NamedDomainObjectContainer<Distribution>> action)
 
     void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action)
+
+    void hooks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hooks) Closure<Void> action)
 
     void project(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Project) Closure<Void> action)
 

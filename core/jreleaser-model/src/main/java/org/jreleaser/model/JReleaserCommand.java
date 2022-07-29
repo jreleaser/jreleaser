@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import java.util.Locale;
+
 /**
  * @author Andres Almiray
  * @since 0.6.0
@@ -34,6 +36,11 @@ public enum JReleaserCommand {
     PUBLISH,
     ANNOUNCE,
     FULL_RELEASE;
+
+    public String toStep() {
+        return name().toLowerCase(Locale.ENGLISH)
+            .replace("_", "-");
+    }
 
     public static boolean supportsAssemble(JReleaserCommand command) {
         return ASSEMBLE == command;
