@@ -44,6 +44,7 @@ import org.jreleaser.gradle.plugin.dsl.Snap
 import org.jreleaser.gradle.plugin.dsl.Spec
 import org.jreleaser.model.Active
 import org.jreleaser.model.Distribution.DistributionType
+import org.jreleaser.model.Stereotype
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -61,6 +62,7 @@ class DistributionImpl implements Distribution {
     final Property<String> groupId
     final Property<String> artifactId
     final Property<Active> active
+    final Property<Stereotype> stereotype
     final Property<DistributionType> distributionType
     final ListProperty<String> tags
     final MapProperty<String, Object> extraProperties
@@ -84,6 +86,7 @@ class DistributionImpl implements Distribution {
     @Inject
     DistributionImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.notDefined())
+        stereotype = objects.property(Stereotype).convention(Providers.notDefined())
         groupId = objects.property(String).convention(Providers.notDefined())
         artifactId = objects.property(String).convention(Providers.notDefined())
         distributionType = objects.property(DistributionType).convention(DistributionType.JAVA_BINARY)
@@ -119,6 +122,13 @@ class DistributionImpl implements Distribution {
     void setDistributionType(String str) {
         if (isNotBlank(str)) {
             this.distributionType.set(DistributionType.of(str.trim()))
+        }
+    }
+
+    @Override
+    void setStereotype(String str) {
+        if (isNotBlank(str)) {
+            stereotype.set(Stereotype.of(str.trim()))
         }
     }
 
@@ -290,6 +300,7 @@ class DistributionImpl implements Distribution {
         org.jreleaser.model.Distribution distribution = new org.jreleaser.model.Distribution()
         distribution.name = name
         if (active.present) distribution.active = active.get()
+        if (stereotype.present) distribution.stereotype = stereotype.get()
         if (executable.isSet()) distribution.executable = executable.toModel()
         distribution.type = distributionType.get()
         distribution.java = java.toModel()

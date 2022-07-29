@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.jreleaser.model.Stereotype
 
 /**
  *
@@ -34,6 +35,8 @@ interface Project extends ExtraProperties {
     Property<String> getVersion()
 
     Property<String> getVersionPattern()
+
+    Property<Stereotype> getStereotype()
 
     Property<String> getDescription()
 
@@ -62,6 +65,8 @@ interface Project extends ExtraProperties {
     Java getJava()
 
     Snapshot getSnapshot()
+
+    void setStereotype(String str)
 
     void java(Action<? super Java> action)
 

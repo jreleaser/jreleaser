@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.model.Distribution.DistributionType
+import org.jreleaser.model.Stereotype
 
 /**
  *
@@ -31,6 +32,8 @@ import org.jreleaser.model.Distribution.DistributionType
 @CompileStatic
 interface Distribution extends Activatable, ExtraProperties, Packagers {
     Property<DistributionType> getDistributionType()
+
+    Property<Stereotype> getStereotype()
 
     ListProperty<String> getTags()
 
@@ -43,6 +46,8 @@ interface Distribution extends Activatable, ExtraProperties, Packagers {
     Platform getPlatform()
 
     Executable getExecutable()
+
+    void setStereotype(String str)
 
     void artifact(Action<? super Artifact> action)
 

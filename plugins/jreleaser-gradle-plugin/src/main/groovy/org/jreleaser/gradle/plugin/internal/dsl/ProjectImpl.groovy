@@ -28,6 +28,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Project
+import org.jreleaser.model.Stereotype
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -52,6 +53,7 @@ class ProjectImpl implements Project {
     final Property<String> copyright
     final Property<String> vendor
     final Property<String> docsUrl
+    final Property<Stereotype> stereotype
     final ListProperty<String> authors
     final ListProperty<String> tags
     final MapProperty<String, Object> extraProperties
@@ -74,12 +76,20 @@ class ProjectImpl implements Project {
         copyright = objects.property(String).convention(Providers.notDefined())
         vendor = objects.property(String).convention(Providers.notDefined())
         docsUrl = objects.property(String).convention(Providers.notDefined())
+        stereotype = objects.property(Stereotype).convention(Providers.notDefined())
         authors = objects.listProperty(String).convention(Providers.notDefined())
         tags = objects.listProperty(String).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
 
         java = objects.newInstance(JavaImpl, objects)
         snapshot = objects.newInstance(SnapshotImpl, objects)
+    }
+
+    @Override
+    void setStereotype(String str) {
+        if (isNotBlank(str)) {
+            stereotype.set(Stereotype.of(str.trim()))
+        }
     }
 
     @Override
@@ -129,6 +139,7 @@ class ProjectImpl implements Project {
         if (copyright.present) project.copyright = copyright.get()
         if (vendor.present) project.vendor = vendor.get()
         if (docsUrl.present) project.docsUrl = docsUrl.get()
+        if (stereotype.present) project.stereotype = stereotype.get()
         project.authors = (List<String>) authors.getOrElse([])
         project.tags = (List<String>) tags.getOrElse([])
         if (extraProperties.present) project.extraProperties.putAll(extraProperties.get())

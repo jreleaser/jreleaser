@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
+import org.jreleaser.model.Stereotype
 
 /**
  *
@@ -31,9 +32,13 @@ import org.gradle.api.provider.Property
 interface Assembler extends Activatable, ExtraProperties {
     Property<Boolean> getExported()
 
+    Property<Stereotype> getStereotype()
+
     NamedDomainObjectContainer<FileSet> getFileSets()
 
     Platform getPlatform()
+
+    void setStereotype(String str)
 
     void fileSet(Action<? super FileSet> action)
 

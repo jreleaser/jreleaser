@@ -30,6 +30,7 @@ import org.jreleaser.gradle.plugin.dsl.Assembler
 import org.jreleaser.gradle.plugin.dsl.FileSet
 import org.jreleaser.gradle.plugin.dsl.Platform
 import org.jreleaser.model.Active
+import org.jreleaser.model.Stereotype
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -45,6 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 abstract class AbstractAssembler implements Assembler {
     final Property<Boolean> exported
     final Property<Active> active
+    final Property<Stereotype> stereotype
     final MapProperty<String, Object> extraProperties
     final NamedDomainObjectContainer<FileSetImpl> fileSets
 
@@ -52,6 +54,7 @@ abstract class AbstractAssembler implements Assembler {
     AbstractAssembler(ObjectFactory objects) {
         exported = objects.property(Boolean).convention(Providers.notDefined())
         active = objects.property(Active).convention(Providers.notDefined())
+        stereotype = objects.property(Stereotype).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
 
         fileSets = objects.domainObjectContainer(FileSetImpl, new NamedDomainObjectFactory<FileSetImpl>() {
@@ -80,6 +83,13 @@ abstract class AbstractAssembler implements Assembler {
     }
 
     @Override
+    void setStereotype(String str) {
+        if (isNotBlank(str)) {
+            stereotype.set(Stereotype.of(str.trim()))
+        }
+    }
+
+    @Override
     void fileSet(Action<? super FileSet> action) {
         action.execute(fileSets.maybeCreate("fileSet-${fileSets.size()}".toString()))
     }
@@ -102,6 +112,7 @@ abstract class AbstractAssembler implements Assembler {
     protected <A extends org.jreleaser.model.Assembler> void fillProperties(A assembler) {
         assembler.exported = exported.getOrElse(true)
         if (active.present) assembler.active = active.get()
+        if (stereotype.present) assembler.stereotype = stereotype.get()
         if (extraProperties.present) assembler.extraProperties.putAll(extraProperties.get())
         for (FileSetImpl fileSet : fileSets) {
             assembler.addFileSet(fileSet.toModel())
