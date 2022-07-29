@@ -240,6 +240,7 @@ public class JReleaserContext {
             if (null == distribution) {
                 distribution = new Distribution();
                 distribution.setType(assembler.getDistributionType());
+                distribution.setStereotype(assembler.getStereotype());
                 distribution.setName(assembler.getName());
                 model.getDistributions().put(assembler.getName(), distribution);
             }

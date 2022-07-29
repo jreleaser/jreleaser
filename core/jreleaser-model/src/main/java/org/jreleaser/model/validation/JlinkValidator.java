@@ -63,6 +63,9 @@ public abstract class JlinkValidator extends Validator {
             errors.configuration(RB.$("validation_must_not_be_blank", "jlink.name"));
             return;
         }
+        if (null == jlink.getStereotype()) {
+            jlink.setStereotype(context.getModel().getProject().getStereotype());
+        }
 
         context.getLogger().debug("jlink.{}.java", jlink.getName());
         if (!validateJava(context, jlink, errors)) {

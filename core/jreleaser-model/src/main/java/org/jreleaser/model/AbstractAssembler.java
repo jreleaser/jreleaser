@@ -18,7 +18,6 @@
 package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_NAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_STEREOTYPE;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 
 /**
@@ -48,6 +49,7 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
     protected boolean enabled;
     protected Active active;
     protected Boolean exported;
+    private Stereotype stereotype;
 
     protected AbstractAssembler(String type) {
         this.type = type;
@@ -69,6 +71,7 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
         this.exported = merge(this.exported, assembler.exported);
         this.name = merge(this.name, assembler.name);
         this.platform.merge(assembler.platform);
+        this.stereotype = merge(this.stereotype, assembler.getStereotype());
         setOutputs(merge(this.outputs, assembler.outputs));
         setFileSets(merge(this.fileSets, assembler.fileSets));
         setExtraProperties(merge(this.extraProperties, assembler.extraProperties));
@@ -78,8 +81,25 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
     public Map<String, Object> props() {
         Map<String, Object> props = new LinkedHashMap<>();
         applyTemplates(props, getResolvedExtraProperties());
-        props.put(Constants.KEY_DISTRIBUTION_NAME, name);
+        props.put(KEY_DISTRIBUTION_NAME, name);
+        props.put(KEY_DISTRIBUTION_STEREOTYPE, getStereotype());
         return props;
+    }
+
+    @Override
+    public Stereotype getStereotype() {
+        return stereotype;
+    }
+
+    @Override
+    public void setStereotype(Stereotype stereotype) {
+        freezeCheck();
+        this.stereotype = stereotype;
+    }
+
+    @Override
+    public void setStereotype(String str) {
+        setStereotype(Stereotype.of(str));
     }
 
     @Override
@@ -236,6 +256,7 @@ abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends Abstrac
         props.put("enabled", isEnabled());
         props.put("exported", isExported());
         props.put("active", active);
+        props.put("stereotype", stereotype);
         if (full || platform.isSet()) props.put("platform", platform.asMap(full));
         asMap(full, props);
         Map<String, Map<String, Object>> mappedFileSets = new LinkedHashMap<>();

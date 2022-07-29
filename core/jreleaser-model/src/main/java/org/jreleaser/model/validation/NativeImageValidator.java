@@ -59,6 +59,10 @@ public abstract class NativeImageValidator extends Validator {
         }
         if (!nativeImage.resolveEnabled(context.getModel().getProject())) return;
 
+        if (null == nativeImage.getStereotype()) {
+            nativeImage.setStereotype(context.getModel().getProject().getStereotype());
+        }
+
         if (isBlank(nativeImage.getName())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "nativeImage.name"));
             return;

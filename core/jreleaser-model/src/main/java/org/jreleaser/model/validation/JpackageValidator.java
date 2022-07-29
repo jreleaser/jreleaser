@@ -77,6 +77,10 @@ public abstract class JpackageValidator extends Validator {
         Project project = context.getModel().getProject();
         if (!jpackage.resolveEnabled(project)) return;
 
+        if (null == jpackage.getStereotype()) {
+            jpackage.setStereotype(context.getModel().getProject().getStereotype());
+        }
+
         Jpackage.PlatformPackager packager = jpackage.getResolvedPlatformPackager();
         Jpackage.ApplicationPackage applicationPackage = jpackage.getApplicationPackage();
         packager.enable();

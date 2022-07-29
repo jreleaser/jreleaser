@@ -107,6 +107,9 @@ public abstract class DistributionsValidator extends Validator {
             errors.configuration(RB.$("validation_must_not_be_null", "distribution." + distribution.getName() + ".type"));
             return;
         }
+        if (null == distribution.getStereotype()) {
+            distribution.setStereotype(context.getModel().getProject().getStereotype());
+        }
         if (isBlank(distribution.getExecutable().getName())) {
             distribution.getExecutable().setName(distribution.getName());
         }

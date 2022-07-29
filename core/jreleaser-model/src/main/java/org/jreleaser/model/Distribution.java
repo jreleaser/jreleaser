@@ -19,6 +19,7 @@ package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.util.Constants;
 import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.SemVer;
@@ -50,6 +51,7 @@ import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_NAME;
+import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_STEREOTYPE;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
@@ -79,6 +81,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
     private boolean enabled;
     private String name;
     private DistributionType type = DistributionType.JAVA_BINARY;
+    private Stereotype stereotype;
 
     @Override
     public void freeze() {
@@ -97,6 +100,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
         this.enabled = merge(this.enabled, distribution.enabled);
         this.name = merge(this.name, distribution.name);
         this.type = merge(this.type, distribution.type);
+        this.stereotype = merge(this.stereotype, distribution.stereotype);
         setExecutable(distribution.executable);
         setPlatform(distribution.platform);
         setJava(distribution.java);
@@ -109,6 +113,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
         Map<String, Object> props = new LinkedHashMap<>();
         applyTemplates(props, getResolvedExtraProperties());
         props.put(KEY_DISTRIBUTION_NAME, name);
+        props.put(KEY_DISTRIBUTION_STEREOTYPE, getStereotype());
         props.put(KEY_DISTRIBUTION_EXECUTABLE, executable.getName());
         props.put(KEY_DISTRIBUTION_EXECUTABLE_NAME, executable.getName());
         props.put(KEY_DISTRIBUTION_EXECUTABLE_UNIX, executable.resolveExecutable("linux"));
@@ -204,6 +209,19 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
     public void setType(String type) {
         freezeCheck();
         this.type = DistributionType.of(type);
+    }
+
+    public Stereotype getStereotype() {
+        return stereotype;
+    }
+
+    public void setStereotype(Stereotype stereotype) {
+        freezeCheck();
+        this.stereotype = stereotype;
+    }
+
+    public void setStereotype(String str) {
+        setStereotype(Stereotype.of(str));
     }
 
     public String getName() {
@@ -367,6 +385,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
         props.put("artifacts", mappedArtifacts);
 
         props.put("tags", tags);
+        props.put("stereotype", stereotype);
         props.put("extraProperties", getResolvedExtraProperties());
         if (java.isEnabled()) {
             props.put("java", java.asMap(full));

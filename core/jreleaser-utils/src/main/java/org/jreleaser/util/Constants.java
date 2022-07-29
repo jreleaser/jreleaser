@@ -66,6 +66,7 @@ public interface Constants {
     String KEY_PROJECT_LONG_DESCRIPTION = "projectLongDescription";
     String KEY_PROJECT_WEBSITE = "projectWebsite";
     String KEY_PROJECT_DOCS_URL = "projectDocsUrl";
+    String KEY_PROJECT_STEREOTYPE = "projectStereotype";
     String KEY_PROJECT_COPYRIGHT = "projectCopyright";
     String KEY_PROJECT_VENDOR = "projectVendor";
     String KEY_PROJECT_LICENSE = "projectLicense";
@@ -125,6 +126,7 @@ public interface Constants {
     String KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_WINDOWS = "distributionExecutableExtensionWindows";
     String KEY_DISTRIBUTION_TAGS_BY_SPACE = "distributionTagsBySpace";
     String KEY_DISTRIBUTION_TAGS_BY_COMMA = "distributionTagsByComma";
+    String KEY_DISTRIBUTION_STEREOTYPE = "distributionStereotype";
     String KEY_DISTRIBUTION_URL = "distributionUrl";
     String KEY_DISTRIBUTION_SIZE = "distributionSize";
     String KEY_DISTRIBUTION_SHA_256 = "distributionSha256";

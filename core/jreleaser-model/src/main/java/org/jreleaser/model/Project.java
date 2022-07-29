@@ -72,6 +72,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     private String copyright;
     private String vendor;
     private String docsUrl;
+    private Stereotype stereotype = Stereotype.NONE;
 
     @Override
     public void freeze() {
@@ -95,6 +96,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         this.copyright = merge(this.copyright, project.copyright);
         this.vendor = merge(this.vendor, project.vendor);
         this.docsUrl = merge(this.docsUrl, project.docsUrl);
+        this.stereotype = merge(this.stereotype, project.stereotype);
         setJava(project.java);
         setSnapshot(project.snapshot);
         setAuthors(merge(this.authors, project.authors));
@@ -247,6 +249,19 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         this.docsUrl = docsUrl;
     }
 
+    public Stereotype getStereotype() {
+        return stereotype;
+    }
+
+    public void setStereotype(Stereotype stereotype) {
+        freezeCheck();
+        this.stereotype = stereotype;
+    }
+
+    public void setStereotype(String str) {
+        setStereotype(Stereotype.of(str));
+    }
+
     public Java getJava() {
         return java;
     }
@@ -310,6 +325,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         map.put("vendor", vendor);
         map.put("authors", authors);
         map.put("tags", tags);
+        map.put("stereotype", stereotype);
         map.put("extraProperties", getResolvedExtraProperties());
         if (java.isEnabled()) {
             map.put("java", java.asMap(full));
@@ -580,6 +596,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
             props.putAll(model.getEnvironment().getSourcedProperties());
             props.put(Constants.KEY_PROJECT_NAME, project.getName());
             props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
+            props.put(Constants.KEY_PROJECT_STEREOTYPE, project.getStereotype());
             props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
             props.put(Constants.KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
             if (isNotBlank(project.getDescription())) {

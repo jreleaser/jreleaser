@@ -62,6 +62,9 @@ public abstract class ArchiveValidator extends Validator {
         if (null == archive.getDistributionType()) {
             archive.setDistributionType(Distribution.DistributionType.BINARY);
         }
+        if (null == archive.getStereotype()) {
+            archive.setStereotype(context.getModel().getProject().getStereotype());
+        }
 
         if (isBlank(archive.getArchiveName())) {
             archive.setArchiveName("{{distributionName}}-{{projectVersion}}");

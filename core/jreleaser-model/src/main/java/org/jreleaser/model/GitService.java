@@ -730,6 +730,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
         props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
+        props.put(Constants.KEY_PROJECT_STEREOTYPE, project.getStereotype());
         props.put(Constants.KEY_PROJECT_EFFECTIVE_VERSION, project.getEffectiveVersion());
         props.put(Constants.KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
         if (isNotBlank(project.getDescription())) {
