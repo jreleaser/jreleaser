@@ -81,32 +81,40 @@ public final class CommandHookExecutor {
             context.getLogger().info(RB.$("hooks.execution"), event.getType().name().toLowerCase(Locale.ENGLISH), hooks.size());
         }
 
-        for (CommandHook hook : hooks) {
-            String resolvedCmd = hook.getResolvedCmd(context, event);
+        context.getLogger().setPrefix("hooks");
+        context.getLogger().increaseIndent();
 
-            List<String> commandLine = null;
+        try {
+            for (CommandHook hook : hooks) {
+                String resolvedCmd = hook.getResolvedCmd(context, event);
 
-            try {
-                commandLine = parseCommand(resolvedCmd);
-            } catch (IllegalStateException e) {
-                throw new JReleaserException(RB.$("ERROR_command_hook_parser_error", hook.getCmd()), e);
-            }
+                List<String> commandLine = null;
 
-            try {
-                Command command = new Command(commandLine);
-                executeCommand(context.getBasedir(), command);
-            } catch (CommandException e) {
-                if (!hook.isContinueOnError()) {
-                    throw new JReleaserException(RB.$("ERROR_command_hook_unexpected_error"), e);
-                } else {
-                    if (e.getCause() != null) {
-                        context.getLogger().warn(e.getCause().getMessage());
+                try {
+                    commandLine = parseCommand(resolvedCmd);
+                } catch (IllegalStateException e) {
+                    throw new JReleaserException(RB.$("ERROR_command_hook_parser_error", hook.getCmd()), e);
+                }
+
+                try {
+                    Command command = new Command(commandLine);
+                    executeCommand(context.getBasedir(), command);
+                } catch (CommandException e) {
+                    if (!hook.isContinueOnError()) {
+                        throw new JReleaserException(RB.$("ERROR_command_hook_unexpected_error"), e);
                     } else {
-                        context.getLogger().warn(e.getMessage());
+                        if (e.getCause() != null) {
+                            context.getLogger().warn(e.getCause().getMessage());
+                        } else {
+                            context.getLogger().warn(e.getMessage());
+                        }
+                        context.getLogger().trace(RB.$("ERROR_command_hook_unexpected_error"), e);
                     }
-                    context.getLogger().trace(RB.$("ERROR_command_hook_unexpected_error"), e);
                 }
             }
+        } finally {
+            context.getLogger().decreaseIndent();
+            context.getLogger().restorePrefix();
         }
     }
 
