@@ -31,6 +31,7 @@ public class Release {
     private String tagName;
     private String description;
     private String ref;
+    private String tagPath;
     private Date createdAt;
     private Date releasedAt;
 
@@ -64,6 +65,14 @@ public class Release {
 
     public void setRef(String ref) {
         this.ref = ref;
+    }
+
+    public String getTagPath() {
+        return tagPath;
+    }
+
+    public void setTagPath(String tagPath) {
+        this.tagPath = tagPath;
     }
 
     public Date getCreatedAt() {

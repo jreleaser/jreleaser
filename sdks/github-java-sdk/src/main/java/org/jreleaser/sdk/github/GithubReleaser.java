@@ -24,9 +24,11 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.releaser.spi.AbstractReleaser;
 import org.jreleaser.model.releaser.spi.Asset;
+import org.jreleaser.model.releaser.spi.Release;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
+import org.jreleaser.model.util.VersionUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogGenerator;
 import org.jreleaser.sdk.git.ChangelogProvider;
@@ -44,8 +46,10 @@ import org.kohsuke.github.GHRepository;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -253,6 +257,39 @@ public class GithubReleaser extends AbstractReleaser {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public List<Release> listReleases(String owner, String repo) throws IOException {
+        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
+
+        Github api = new Github(context.getLogger(),
+            github.getApiEndpoint(),
+            github.getResolvedToken(),
+            github.getConnectTimeout(),
+            github.getReadTimeout());
+
+        List<Release> releases = new ArrayList<>();
+
+        for (GHRelease ghRelease : api.listReleases(owner, repo).toList()) {
+            if (ghRelease.isDraft() || ghRelease.isPrerelease()) continue;
+            releases.add(new Release(
+                ghRelease.getName(),
+                ghRelease.getTagName(),
+                ghRelease.getHtmlUrl().toExternalForm(),
+                ghRelease.getPublished_at()
+            ));
+        }
+
+        VersionUtils.clearUnparseableTags();
+        Pattern versionPattern = VersionUtils.resolveVersionPattern(context);
+        for (Release release : releases) {
+            release.setVersion(VersionUtils.version(context, release.getTagName(), versionPattern));
+        }
+
+        releases.sort((r1, r2) -> r2.getVersion().compareTo(r1.getVersion()));
+
+        return releases;
     }
 
     private void createRelease(Github api, String tagName, String changelog, boolean deleteTags) throws IOException {

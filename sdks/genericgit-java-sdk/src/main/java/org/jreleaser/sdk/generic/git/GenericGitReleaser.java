@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.releaser.spi.AbstractReleaser;
 import org.jreleaser.model.releaser.spi.Asset;
+import org.jreleaser.model.releaser.spi.Release;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
@@ -29,6 +30,7 @@ import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,5 +72,10 @@ public class GenericGitReleaser extends AbstractReleaser {
     @Override
     public Optional<User> findUser(String email, String name) {
         return Optional.empty();
+    }
+
+    @Override
+    public List<Release> listReleases(String owner, String repo) throws IOException {
+        return Collections.emptyList();
     }
 }

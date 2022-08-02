@@ -30,6 +30,7 @@ import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.model.util.VersionUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
@@ -49,6 +50,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
 import static org.jreleaser.util.Constants.KEY_PLATFORM_REPLACED;
@@ -216,6 +218,29 @@ public class GitlabReleaser extends AbstractReleaser {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public List<org.jreleaser.model.releaser.spi.Release> listReleases(String owner, String repo) throws IOException {
+        org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
+
+        Gitlab api = new Gitlab(context.getLogger(),
+            gitlab.getApiEndpoint(),
+            gitlab.getResolvedToken(),
+            gitlab.getConnectTimeout(),
+            gitlab.getReadTimeout());
+
+        List<org.jreleaser.model.releaser.spi.Release> releases = api.listReleases(owner, repo, gitlab.getProjectIdentifier());
+
+        VersionUtils.clearUnparseableTags();
+        Pattern versionPattern = VersionUtils.resolveVersionPattern(context);
+        for (org.jreleaser.model.releaser.spi.Release release : releases) {
+            release.setVersion(VersionUtils.version(context, release.getTagName(), versionPattern));
+        }
+
+        releases.sort((r1, r2) -> r2.getVersion().compareTo(r1.getVersion()));
+
+        return releases;
     }
 
     private void createRelease(Gitlab api, String tagName, String changelog, boolean deleteTags) throws IOException {

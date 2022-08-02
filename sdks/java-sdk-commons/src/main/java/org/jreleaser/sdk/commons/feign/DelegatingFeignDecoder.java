@@ -15,24 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.releaser.spi;
+package org.jreleaser.sdk.commons.feign;
+
+import feign.FeignException;
+import feign.Response;
+import feign.codec.DecodeException;
+import feign.codec.Decoder;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Type;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 1.2.0
  */
-public interface Releaser {
-    void release() throws ReleaseException;
+public class DelegatingFeignDecoder implements Decoder {
+    private final Decoder delegate;
 
-    Repository maybeCreateRepository(String owner, String repo, String password) throws IOException;
+    public DelegatingFeignDecoder(Decoder delegate) {
+        this.delegate = delegate;
+    }
 
-    Optional<User> findUser(String email, String name);
-    
-    String generateReleaseNotes() throws IOException;
+    @Override
+    public Object decode(Response response, Type type) throws IOException, DecodeException, FeignException {
+        return delegate.decode(response, type);
+    }
 
-    List<Release> listReleases(String owner, String repo) throws IOException;
+    protected Decoder getDelegate() {
+        return delegate;
+    }
 }

@@ -39,11 +39,15 @@ import org.jreleaser.sdk.gitlab.api.Milestone;
 import org.jreleaser.sdk.gitlab.api.Project;
 import org.jreleaser.sdk.gitlab.api.Release;
 import org.jreleaser.sdk.gitlab.api.User;
+import org.jreleaser.sdk.gitlab.internal.Page;
+import org.jreleaser.sdk.gitlab.internal.PaginatingDecoder;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.StringUtils;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -102,13 +106,63 @@ class Gitlab {
         this.logger = logger;
         this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
-            .decoder(new JacksonDecoder(objectMapper))
+            .decoder(new PaginatingDecoder(new JacksonDecoder(objectMapper)))
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", token)))
             .target(GitlabAPI.class, endpoint);
     }
 
     Project findProject(String projectName, String identifier) throws RestAPIException {
         return getProject(projectName, identifier);
+    }
+
+    List<org.jreleaser.model.releaser.spi.Release> listReleases(String owner, String repoName, String identifier) throws IOException {
+        logger.debug(RB.$("git.fetch.releases"), owner, repoName);
+
+        List<org.jreleaser.model.releaser.spi.Release> releases = new ArrayList<>();
+
+        if (isBlank(identifier)) {
+            Project project = getProject(repoName, identifier);
+            identifier = project.getId().toString();
+        }
+
+        Page<List<Release>> page = api.listReleases0(identifier);
+        page.getContent().stream()
+            .map(r -> new org.jreleaser.model.releaser.spi.Release(
+                r.getName(),
+                r.getTagName(),
+                apiHost + r.getTagPath(),
+                r.getReleasedAt()
+            ))
+            .forEach(releases::add);
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            try {
+                collectReleases(page, releases);
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
+        }
+
+        return releases;
+    }
+
+    private void collectReleases(Page<List<Release>> page, List<org.jreleaser.model.releaser.spi.Release> releases) throws URISyntaxException {
+        URI next = new URI(page.getLinks().next());
+        logger.debug(next.toString());
+
+        page = api.listReleases1(next);
+        page.getContent().stream()
+            .map(r -> new org.jreleaser.model.releaser.spi.Release(
+                r.getName(),
+                r.getTagName(),
+                apiHost + r.getTagPath(),
+                r.getReleasedAt()
+            ))
+            .forEach(releases::add);
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            collectReleases(page, releases);
+        }
     }
 
     Optional<Milestone> findMilestoneByName(String owner, String repo, String identifier, String milestoneName) throws IOException {
