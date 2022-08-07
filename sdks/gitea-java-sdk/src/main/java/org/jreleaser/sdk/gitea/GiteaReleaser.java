@@ -26,11 +26,13 @@ import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.RestAPIException;
+import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.sdk.gitea.api.GtMilestone;
 import org.jreleaser.sdk.gitea.api.GtRelease;
 import org.jreleaser.sdk.gitea.api.GtRepository;
+import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,6 +49,15 @@ import static org.jreleaser.util.StringUtils.capitalize;
 public class GiteaReleaser extends AbstractReleaser {
     public GiteaReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);
+    }
+
+    @Override
+    public String generateReleaseNotes() throws IOException {
+        try {
+            return ChangelogProvider.getChangelog(context).trim();
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
+        }
     }
 
     @Override

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -25,6 +26,8 @@ import java.util.Map;
  */
 public class Github extends GitService<Github> {
     public static final String NAME = "github";
+
+    private final ReleaseNotes releaseNotes = new ReleaseNotes();
 
     private Boolean draft;
     private String discussionCategoryName;
@@ -44,11 +47,18 @@ public class Github extends GitService<Github> {
     }
 
     @Override
+    public void freeze() {
+        super.freeze();
+        releaseNotes.freeze();
+    }
+
+    @Override
     public void merge(Github service) {
         freezeCheck();
         super.merge(service);
         this.draft = merge(this.draft, service.draft);
         this.discussionCategoryName = merge(this.discussionCategoryName, service.discussionCategoryName);
+        setReleaseNotes(service.releaseNotes);
     }
 
     public boolean isDraft() {
@@ -73,6 +83,14 @@ public class Github extends GitService<Github> {
         this.discussionCategoryName = discussionCategoryName;
     }
 
+    public ReleaseNotes getReleaseNotes() {
+        return releaseNotes;
+    }
+
+    public void setReleaseNotes(ReleaseNotes releaseNotes) {
+        this.releaseNotes.merge(releaseNotes);
+    }
+
     @Override
     public String getReverseRepoHost() {
         return "com.github";
@@ -83,6 +101,45 @@ public class Github extends GitService<Github> {
         Map<String, Object> map = super.asMap(full);
         map.put("draft", isDraft());
         map.put("discussionCategoryName", discussionCategoryName);
+        map.put("releaseNotes", releaseNotes.asMap(full));
         return map;
+    }
+
+    public static class ReleaseNotes extends AbstractModelObject<ReleaseNotes> implements Domain {
+        private Boolean generate;
+        private String configurationFile;
+
+        @Override
+        public void merge(ReleaseNotes source) {
+            freezeCheck();
+            this.generate = merge(this.generate, source.generate);
+            this.configurationFile = merge(this.configurationFile, source.configurationFile);
+        }
+
+        public Boolean isGenerate() {
+            return generate != null && generate;
+        }
+
+        public void setGenerate(Boolean generate) {
+            freezeCheck();
+            this.generate = generate;
+        }
+
+        public String getConfigurationFile() {
+            return configurationFile;
+        }
+
+        public void setConfigurationFile(String configurationFile) {
+            freezeCheck();
+            this.configurationFile = configurationFile;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("generate", isGenerate());
+            map.put("configurationFile", configurationFile);
+            return map;
+        }
     }
 }

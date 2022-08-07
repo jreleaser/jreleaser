@@ -31,6 +31,8 @@ import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.github.api.GhRelease;
+import org.jreleaser.sdk.github.api.GhReleaseNotes;
+import org.jreleaser.sdk.github.api.GhReleaseNotesParams;
 import org.jreleaser.sdk.github.api.GhSearchUser;
 import org.jreleaser.sdk.github.api.GhUser;
 import org.jreleaser.sdk.github.api.GithubAPI;
@@ -102,5 +104,11 @@ class XGithub {
         }
 
         return Optional.empty();
+    }
+
+    GhReleaseNotes generateReleaseNotes(String owner, String repo, GhReleaseNotesParams params) throws RestAPIException {
+        logger.info(RB.$("github.generate.release.notes"), owner, repo, params.getPreviousTagName(), params.getTagName());
+
+        return api.generateReleaseNotes(params, owner, repo);
     }
 }

@@ -31,6 +31,7 @@ import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.sdk.commons.RestAPIException;
+import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
@@ -38,6 +39,7 @@ import org.jreleaser.sdk.gitlab.api.LinkRequest;
 import org.jreleaser.sdk.gitlab.api.Milestone;
 import org.jreleaser.sdk.gitlab.api.Project;
 import org.jreleaser.sdk.gitlab.api.Release;
+import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -60,6 +62,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class GitlabReleaser extends AbstractReleaser {
     public GitlabReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);
+    }
+
+    @Override
+    public String generateReleaseNotes() throws IOException {
+        try {
+            return ChangelogProvider.getChangelog(context).trim();
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
+        }
     }
 
     @Override

@@ -41,6 +41,7 @@ class GithubImpl extends AbstractGitService implements Github {
     final MilestoneImpl milestone
     final CommitAuthorImpl commitAuthor
     final PrereleaseImpl prerelease
+    final ReleaseNotesImpl releaseNotes
 
     @Inject
     GithubImpl(ObjectFactory objects) {
@@ -52,6 +53,7 @@ class GithubImpl extends AbstractGitService implements Github {
         milestone = objects.newInstance(MilestoneImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
         prerelease = objects.newInstance(PrereleaseImpl, objects)
+        releaseNotes = objects.newInstance(ReleaseNotesImpl, objects)
     }
 
     @Override
@@ -60,6 +62,7 @@ class GithubImpl extends AbstractGitService implements Github {
         super.isSet() ||
             draft.present ||
             prerelease.isSet() ||
+            releaseNotes.isSet() ||
             discussionCategoryName.present ||
             changelog.isSet() ||
             milestone.isSet() ||
@@ -72,8 +75,18 @@ class GithubImpl extends AbstractGitService implements Github {
     }
 
     @Override
+    void releaseNotes(Action<? super ReleaseNotes> action) {
+        action.execute(releaseNotes)
+    }
+
+    @Override
     void prerelease(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Prerelease) Closure<Void> action) {
         ConfigureUtil.configure(action, prerelease)
+    }
+
+    @Override
+    void releaseNotes(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ReleaseNotes) Closure<Void> action) {
+        ConfigureUtil.configure(action, releaseNotes)
     }
 
     org.jreleaser.model.Github toModel() {
@@ -81,10 +94,36 @@ class GithubImpl extends AbstractGitService implements Github {
         toModel(service)
         if (draft.present) service.draft = draft.get()
         service.prerelease = prerelease.toModel()
+        service.releaseNotes = releaseNotes.toModel()
         if (discussionCategoryName.present) service.discussionCategoryName = discussionCategoryName.get()
         service.changelog = changelog.toModel()
         if (milestone.isSet()) service.milestone = milestone.toModel()
         if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
         service
+    }
+
+    @CompileStatic
+    static class ReleaseNotesImpl implements ReleaseNotes {
+        final Property<Boolean> generate
+        final Property<String> configurationFile
+
+        @Inject
+        ReleaseNotesImpl(ObjectFactory objects) {
+            generate = objects.property(Boolean).convention(Providers.notDefined())
+            configurationFile = objects.property(String).convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            generate.present ||
+                configurationFile.present
+        }
+
+        org.jreleaser.model.Github.ReleaseNotes toModel() {
+            org.jreleaser.model.Github.ReleaseNotes releaseNotes = new org.jreleaser.model.Github.ReleaseNotes()
+            if (generate.present) releaseNotes.generate = generate.get()
+            if (configurationFile.present) releaseNotes.configurationFile = configurationFile.get()
+            releaseNotes
+        }
     }
 }

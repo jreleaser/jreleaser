@@ -17,6 +17,8 @@
  */
 package org.jreleaser.sdk.github;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
@@ -26,19 +28,26 @@ import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.RestAPIException;
+import org.jreleaser.sdk.git.ChangelogGenerator;
+import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.sdk.github.api.GhRelease;
+import org.jreleaser.sdk.github.api.GhReleaseNotes;
+import org.jreleaser.sdk.github.api.GhReleaseNotesParams;
+import org.jreleaser.util.JReleaserException;
 import org.kohsuke.github.GHMilestone;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHReleaseUpdater;
 import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHTag;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
+import static org.jreleaser.sdk.git.GitSdk.extractTagName;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -49,6 +58,76 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public class GithubReleaser extends AbstractReleaser {
     public GithubReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);
+    }
+
+    @Override
+    public String generateReleaseNotes() throws IOException {
+        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
+
+        if (github.getReleaseNotes().isGenerate()) {
+            return ChangelogProvider.storeChangelog(context, generateReleaseNotesByAPI());
+        }
+
+        try {
+            return ChangelogProvider.getChangelog(context).trim();
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
+        }
+    }
+
+    private String generateReleaseNotesByAPI() throws JReleaserException {
+        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
+        String tagName = github.getEffectiveTagName(context.getModel());
+
+        try {
+            Git git = GitSdk.of(context).open();
+            ChangelogGenerator.Tags tags = new ChangelogGenerator().resolveTags(git, context);
+            GhReleaseNotesParams params = new GhReleaseNotesParams();
+            params.setTagName(tagName);
+            if (!isTagInRemote(context, tagName)) {
+                params.setTagName("HEAD");
+            }
+            if (tags.getPrevious().isPresent()) {
+                params.setPreviousTagName(extractTagName(tags.getPrevious().get()));
+            }
+            params.setTargetCommitish(github.getBranch());
+            GhReleaseNotes releaseNotes = new XGithub(context.getLogger(),
+                github.getApiEndpoint(),
+                github.getResolvedToken(),
+                github.getConnectTimeout(),
+                github.getReadTimeout())
+                .generateReleaseNotes(github.getOwner(), github.getName(), params);
+            return releaseNotes.getBody().replace("...HEAD", "..." + tagName);
+        } catch (IOException | GitAPIException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
+        }
+    }
+
+    protected boolean isTagInRemote(JReleaserContext context, String tagName) {
+        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
+
+        try {
+            Github api = new Github(context.getLogger(),
+                github.getApiEndpoint(),
+                github.getResolvedToken(),
+                github.getConnectTimeout(),
+                github.getReadTimeout());
+            GHRepository repository = api.findRepository(github.getOwner(), github.getName());
+            if (null == repository) {
+                // remote does not exist!
+                throw new NullPointerException("BOOM!");
+            }
+            for (GHTag tag : repository.listTags()) {
+                if (tag.getName().equals(tagName)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            context.getLogger().trace(e);
+            throw new JReleaserException(e);
+        }
+
+        return false;
     }
 
     @Override

@@ -42,4 +42,8 @@ public interface GithubAPI {
     @RequestLine("GET /users/{username}")
     @Headers("Content-Type: application/json")
     GhUser getUser(@Param("username") String username);
+
+    @RequestLine("POST /repos/{owner}/{repo}/releases/generate-notes")
+    @Headers("Content-Type: application/json")
+    GhReleaseNotes generateReleaseNotes(GhReleaseNotesParams params, @Param("owner") String owner, @Param("repo") String repo);
 }

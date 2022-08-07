@@ -24,7 +24,9 @@ import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
+import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.ReleaseUtils;
+import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,6 +40,15 @@ import java.util.Optional;
 public class GenericGitReleaser extends AbstractReleaser {
     public GenericGitReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);
+    }
+
+    @Override
+    public String generateReleaseNotes() throws IOException {
+        try {
+            return ChangelogProvider.getChangelog(context).trim();
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
+        }
     }
 
     @Override

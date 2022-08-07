@@ -45,8 +45,10 @@ public class ChangelogProvider {
             return "";
         }
 
-        String content = resolveChangelog(context);
+        return storeChangelog(context, resolveChangelog(context));
+    }
 
+    public static String storeChangelog(JReleaserContext context, String content) throws IOException {
         Path changelogFile = context.getOutputDirectory()
             .resolve("release")
             .resolve("CHANGELOG.md");

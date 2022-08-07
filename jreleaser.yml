@@ -47,7 +47,10 @@ release:
     overwrite: true
     sign: true
     discussionCategoryName: Announcements
+    releaseNotes:
+      generate: true
     changelog:
+      enabled: false
       formatted: ALWAYS
       preset: conventional-commits
       format: '- {{commitShortHash}} {{commitTitle}}'
@@ -114,7 +117,7 @@ announce:
 assemble:
   jlink:
     jreleaser-standalone:
-      active: always
+      active: never
       java:
         version: 11
         mainClass: org.jreleaser.cli.Main
@@ -156,7 +159,7 @@ assemble:
 
   jpackage:
     jreleaser-installer:
-      active: always
+      active: never
       jlink: jreleaser-standalone
       attachPlatform: true
       applicationPackage:
@@ -183,7 +186,7 @@ assemble:
 
   nativeImage:
     jreleaser-native:
-      active: always
+      active: never
       java:
         version: 17
         mainClass: org.jreleaser.cli.Main
@@ -213,6 +216,7 @@ assemble:
 
 distributions:
   jreleaser:
+    active: never
     java:
       mainClass: org.jreleaser.cli.Main
     chocolatey:
@@ -274,17 +278,20 @@ distributions:
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar'
 
   jreleaser-ant-tasks:
+    active: never
     artifacts:
       - path: plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
 
   jreleaser-tool-provider:
+    active: never
     type: SINGLE_JAR
     artifacts:
       - path: apps/{{distributionName}}/build/libs/{{distributionName}}-{{projectVersion}}.jar
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.jar'
 
   jreleaser-standalone:
+    active: never
     brew:
       active: always
       formulaName: jreleaser
@@ -325,6 +332,7 @@ distributions:
             - 'RUN apk add unzip binutils fakeroot rpm'
 
   jreleaser-installer:
+    active: never
     type: NATIVE_PACKAGE
     executable:
       windowsExtension: exe
@@ -343,6 +351,7 @@ distributions:
         platform: 'windows-x86_64'
 
   jreleaser-native:
+    active: never
     type: NATIVE_IMAGE
     executable:
       windowsExtension: exe

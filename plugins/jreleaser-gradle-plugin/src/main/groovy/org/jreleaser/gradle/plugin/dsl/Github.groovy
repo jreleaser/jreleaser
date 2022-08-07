@@ -34,7 +34,20 @@ interface Github extends GitService {
 
     Prerelease getPrerelease()
 
+    ReleaseNotes getReleaseNotes()
+
     void prerelease(Action<? super Prerelease> action)
 
+    void releaseNotes(Action<? super ReleaseNotes> action)
+
     void prerelease(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Prerelease) Closure<Void> action)
+
+    void releaseNotes(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ReleaseNotes) Closure<Void> action)
+
+    @CompileStatic
+    interface ReleaseNotes {
+        Property<Boolean> getGenerate()
+
+        Property<String> getConfigurationFile()
+    }
 }

@@ -55,5 +55,4 @@ public abstract class AbstractReleaser implements Releaser {
     protected abstract void createTag() throws ReleaseException;
 
     protected abstract void createRelease() throws ReleaseException;
-
 }

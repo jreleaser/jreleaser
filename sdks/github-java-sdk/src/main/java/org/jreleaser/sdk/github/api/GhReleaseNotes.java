@@ -15,21 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.releaser.spi;
+package org.jreleaser.sdk.github.api;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 1.2.0
  */
-public interface Releaser {
-    void release() throws ReleaseException;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class GhReleaseNotes {
+    private String name;
+    private String body;
 
-    Repository maybeCreateRepository(String owner, String repo, String password) throws IOException;
+    public String getName() {
+        return name;
+    }
 
-    Optional<User> findUser(String email, String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    String generateReleaseNotes() throws IOException;
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
 }

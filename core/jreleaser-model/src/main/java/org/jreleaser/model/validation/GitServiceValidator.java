@@ -23,6 +23,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.Changelog;
 import org.jreleaser.model.GenericGit;
 import org.jreleaser.model.GitService;
+import org.jreleaser.model.Github;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Project;
@@ -169,9 +170,6 @@ public abstract class GitServiceValidator extends Validator {
                 service.setReleaseName("Release {{ tagName }}");
             }
         }
-        if (!service.getChangelog().isEnabledSet()) {
-            service.getChangelog().setEnabled(true);
-        }
         if (isBlank(service.getCommitAuthor().getName())) {
             service.getCommitAuthor().setName("jreleaserbot");
         }
@@ -199,11 +197,31 @@ public abstract class GitServiceValidator extends Validator {
         }
 
         if (project.isSnapshot()) {
-            service.getChangelog().setEnabled(true);
-            service.getChangelog().setExternal(null);
-            service.getChangelog().setSort(Changelog.Sort.DESC);
+            boolean generate = false;
+            if (service instanceof Github) {
+                Github gh = (Github) service;
+                generate = gh.getReleaseNotes().isGenerate();
+            }
+
+            if (!generate) {
+                service.getChangelog().setEnabled(true);
+                service.getChangelog().setExternal(null);
+                service.getChangelog().setSort(Changelog.Sort.DESC);
+            }
             if (service.isReleaseSupported()) {
                 service.setOverwrite(true);
+            }
+        }
+
+        if (!service.getChangelog().isEnabledSet()) {
+            boolean generate = false;
+            if (service instanceof Github) {
+                Github gh = (Github) service;
+                generate = gh.getReleaseNotes().isGenerate();
+            }
+
+            if (!generate) {
+                service.getChangelog().setEnabled(true);
             }
         }
 
@@ -233,10 +251,30 @@ public abstract class GitServiceValidator extends Validator {
         Changelog changelog = service.getChangelog();
 
         if (isNotBlank(changelog.getExternal())) {
+            changelog.setEnabled(true);
             changelog.setFormatted(Active.NEVER);
         }
 
+        if(!changelog.isEnabledSet() && changelog.isSet()) {
+            changelog.setEnabled(true);
+        }
+
+        // Special case for GitHub
+        if (service instanceof Github) {
+            Github gh = (Github) service;
+            boolean generate = gh.getReleaseNotes().isGenerate();
+
+            if (generate && changelog.isEnabled()) {
+                errors.configuration(RB.$("validation_github_releasenotes_changelog"));
+                return;
+            }
+        }
+
         if (!changelog.resolveFormatted(context.getModel().getProject())) return;
+
+        if (null == changelog.getSort()) {
+            changelog.setSort(Changelog.Sort.DESC);
+        }
 
         if (isBlank(changelog.getFormat())) {
             changelog.setFormat("- {{commitShortHash}} {{commitTitle}} ({{commitAuthor}})");

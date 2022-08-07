@@ -18,8 +18,8 @@
 package org.jreleaser.engine.changelog;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ import java.nio.file.Path;
 public class Changelog {
     public static String createChangelog(JReleaserContext context) {
         try {
-            return ChangelogProvider.getChangelog(context).trim();
+            return Releasers.releaserFor(context).generateReleaseNotes();
         } catch (IOException e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
         }

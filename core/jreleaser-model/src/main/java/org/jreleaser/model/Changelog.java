@@ -58,13 +58,32 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     private Boolean enabled;
     private Boolean links;
     private Boolean skipMergeCommits;
-    private Sort sort = Sort.DESC;
+    private Sort sort;
     private String external;
     private Active formatted;
     private String format;
     private String content;
     private String contentTemplate;
     private String preset;
+
+    public boolean isSet() {
+        return !includeLabels.isEmpty() ||
+            !excludeLabels.isEmpty() ||
+            !categories.isEmpty() ||
+            !replacers.isEmpty() ||
+            !labelers.isEmpty() ||
+            hide.isSet() ||
+            contributors.isSet() ||
+            null != links ||
+            null != skipMergeCommits ||
+            null != sort ||
+            null != formatted ||
+            isNotBlank(external) ||
+            isNotBlank(format) ||
+            isNotBlank(content) ||
+            isNotBlank(contentTemplate) ||
+            isNotBlank(preset);
+    }
 
     @Override
     public void freeze() {
@@ -139,13 +158,13 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
         return links != null && links;
     }
 
-    public boolean isSkipMergeCommits() {
-        return skipMergeCommits != null && skipMergeCommits;
-    }
-
     public void setLinks(Boolean links) {
         freezeCheck();
         this.links = links;
+    }
+
+    public boolean isSkipMergeCommits() {
+        return skipMergeCommits != null && skipMergeCommits;
     }
 
     public void setSkipMergeCommits(Boolean skipMergeCommits) {
@@ -621,6 +640,11 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
             map.put("format", format);
             return map;
         }
+
+        public boolean isSet() {
+            return isNotBlank(format) ||
+                null != enabled;
+        }
     }
 
     public static class Hide extends AbstractModelObject<Hide> implements Domain {
@@ -715,6 +739,12 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
             map.put("categories", categories);
             map.put("contributors", contributors);
             return map;
+        }
+
+        public boolean isSet() {
+            return !categories.isEmpty() ||
+                !contributors.isEmpty() ||
+                null != uncategorized;
         }
     }
 }
