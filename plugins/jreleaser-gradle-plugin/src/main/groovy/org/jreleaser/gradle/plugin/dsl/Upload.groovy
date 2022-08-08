@@ -20,7 +20,6 @@ package org.jreleaser.gradle.plugin.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.provider.Property
 
 /**
  *
@@ -30,6 +29,8 @@ import org.gradle.api.provider.Property
 @CompileStatic
 interface Upload extends Activatable {
     NamedDomainObjectContainer<Artifactory> getArtifactory()
+
+    NamedDomainObjectContainer<GitlabUploader> getGitlab()
 
     NamedDomainObjectContainer<FtpUploader> getFtp()
 
@@ -43,6 +44,8 @@ interface Upload extends Activatable {
 
     void artifactory(Action<? super NamedDomainObjectContainer<Artifactory>> action)
 
+    void gitlab(Action<? super NamedDomainObjectContainer<GitlabUploader>> action)
+
     void ftp(Action<? super NamedDomainObjectContainer<FtpUploader>> action)
 
     void http(Action<? super NamedDomainObjectContainer<HttpUploader>> action)
@@ -54,6 +57,8 @@ interface Upload extends Activatable {
     void sftp(Action<? super NamedDomainObjectContainer<SftpUploader>> action)
 
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 

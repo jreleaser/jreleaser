@@ -41,6 +41,7 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
 public class Upload extends AbstractModelObject<Upload> implements Domain, Activatable {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
     private final Map<String, FtpUploader> ftp = new LinkedHashMap<>();
+    private final Map<String, GitlabUploader> gitlab = new LinkedHashMap<>();
     private final Map<String, HttpUploader> http = new LinkedHashMap<>();
     private final Map<String, S3> s3 = new LinkedHashMap<>();
     private final Map<String, ScpUploader> scp = new LinkedHashMap<>();
@@ -55,6 +56,7 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
         super.freeze();
         artifactory.values().forEach(Artifactory::freeze);
         ftp.values().forEach(FtpUploader::freeze);
+        gitlab.values().forEach(GitlabUploader::freeze);
         http.values().forEach(HttpUploader::freeze);
         s3.values().forEach(S3::freeze);
         scp.values().forEach(ScpUploader::freeze);
@@ -68,6 +70,7 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
         this.enabled = merge(this.enabled, upload.enabled);
         setArtifactory(mergeModel(this.artifactory, upload.artifactory));
         setFtp(mergeModel(this.ftp, upload.ftp));
+        setGitlab(mergeModel(this.gitlab, upload.gitlab));
         setHttp(mergeModel(this.http, upload.http));
         setS3(mergeModel(this.s3, upload.s3));
         setScp(mergeModel(this.scp, upload.scp));
@@ -128,6 +131,8 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
                 return Optional.ofNullable(artifactory.get(name));
             case FtpUploader.TYPE:
                 return Optional.ofNullable(ftp.get(name));
+            case GitlabUploader.TYPE:
+                return Optional.ofNullable(gitlab.get(name));
             case HttpUploader.TYPE:
                 return Optional.ofNullable(http.get(name));
             case S3.TYPE:
@@ -147,6 +152,8 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
                 return getActiveArtifactory(name);
             case FtpUploader.TYPE:
                 return getActiveFtp(name);
+            case GitlabUploader.TYPE:
+                return getActiveGitlab(name);
             case HttpUploader.TYPE:
                 return getActiveHttp(name);
             case S3.TYPE:
@@ -169,6 +176,13 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
 
     public Optional<FtpUploader> getActiveFtp(String name) {
         return ftp.values().stream()
+            .filter(Uploader::isEnabled)
+            .filter(a -> name.equals(a.name))
+            .findFirst();
+    }
+
+    public Optional<GitlabUploader> getActiveGitlab(String name) {
+        return gitlab.values().stream()
             .filter(Uploader::isEnabled)
             .filter(a -> name.equals(a.name))
             .findFirst();
@@ -242,6 +256,27 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
     public void addFtp(FtpUploader ftp) {
         freezeCheck();
         this.ftp.put(ftp.getName(), ftp);
+    }
+
+    public List<GitlabUploader> getActiveGitlabs() {
+        return gitlab.values().stream()
+            .filter(GitlabUploader::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, GitlabUploader> getGitlab() {
+        return freezeWrap(gitlab);
+    }
+
+    public void setGitlab(Map<String, GitlabUploader> gitlab) {
+        freezeCheck();
+        this.gitlab.clear();
+        this.gitlab.putAll(gitlab);
+    }
+
+    public void addGitlab(GitlabUploader gitlab) {
+        freezeCheck();
+        this.gitlab.put(gitlab.getName(), gitlab);
     }
 
     public List<HttpUploader> getActiveHttps() {
@@ -348,6 +383,13 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
             .collect(toList());
         if (!ftp.isEmpty()) map.put("ftp", ftp);
 
+        List<Map<String, Object>> gitlab = this.gitlab.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!gitlab.isEmpty()) map.put("gitlab", gitlab);
+
         List<Map<String, Object>> http = this.http.values()
             .stream()
             .filter(d -> full || d.isEnabled())
@@ -385,6 +427,8 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
                 return (Map<String, A>) artifactory;
             case FtpUploader.TYPE:
                 return (Map<String, A>) ftp;
+            case GitlabUploader.TYPE:
+                return (Map<String, A>) gitlab;
             case HttpUploader.TYPE:
                 return (Map<String, A>) http;
             case S3.TYPE:
@@ -402,6 +446,7 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
         List<A> uploaders = new ArrayList<>();
         uploaders.addAll((List<A>) getActiveArtifactories());
         uploaders.addAll((List<A>) getActiveFtps());
+        uploaders.addAll((List<A>) getActiveGitlabs());
         uploaders.addAll((List<A>) getActiveHttps());
         uploaders.addAll((List<A>) getActiveS3s());
         uploaders.addAll((List<A>) getActiveScps());
@@ -463,6 +508,7 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
         Set<String> set = new LinkedHashSet<>();
         set.add(Artifactory.TYPE);
         set.add(FtpUploader.TYPE);
+        set.add(GitlabUploader.TYPE);
         set.add(HttpUploader.TYPE);
         set.add(S3.TYPE);
         set.add(ScpUploader.TYPE);
