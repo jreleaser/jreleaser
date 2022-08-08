@@ -27,6 +27,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Artifactory
 import org.jreleaser.gradle.plugin.dsl.FtpUploader
+import org.jreleaser.gradle.plugin.dsl.GiteaUploader
 import org.jreleaser.gradle.plugin.dsl.GitlabUploader
 import org.jreleaser.gradle.plugin.dsl.HttpUploader
 import org.jreleaser.gradle.plugin.dsl.S3
@@ -49,8 +50,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class UploadImpl implements Upload {
     final Property<Active> active
     final NamedDomainObjectContainer<Artifactory> artifactory
-    final NamedDomainObjectContainer<GitlabUploader> gitlab
     final NamedDomainObjectContainer<FtpUploader> ftp
+    final NamedDomainObjectContainer<GiteaUploader> gitea
+    final NamedDomainObjectContainer<GitlabUploader> gitlab
     final NamedDomainObjectContainer<HttpUploader> http
     final NamedDomainObjectContainer<S3> s3
     final NamedDomainObjectContainer<ScpUploader> scp
@@ -69,19 +71,28 @@ class UploadImpl implements Upload {
             }
         })
 
-        gitlab = objects.domainObjectContainer(GitlabUploader, new NamedDomainObjectFactory<GitlabUploader>() {
+        ftp = objects.domainObjectContainer(FtpUploader, new NamedDomainObjectFactory<FtpUploader>() {
             @Override
-            GitlabUploader create(String name) {
-                GitlabUploaderImpl h = objects.newInstance(GitlabUploaderImpl, objects)
+            FtpUploader create(String name) {
+                FtpUploaderImpl h = objects.newInstance(FtpUploaderImpl, objects)
                 h.name = name
                 return h
             }
         })
 
-        ftp = objects.domainObjectContainer(FtpUploader, new NamedDomainObjectFactory<FtpUploader>() {
+        gitea = objects.domainObjectContainer(GiteaUploader, new NamedDomainObjectFactory<GiteaUploader>() {
             @Override
-            FtpUploader create(String name) {
-                FtpUploaderImpl h = objects.newInstance(FtpUploaderImpl, objects)
+            GiteaUploader create(String name) {
+                GiteaUploaderImpl h = objects.newInstance(GiteaUploaderImpl, objects)
+                h.name = name
+                return h
+            }
+        })
+
+        gitlab = objects.domainObjectContainer(GitlabUploader, new NamedDomainObjectFactory<GitlabUploader>() {
+            @Override
+            GitlabUploader create(String name) {
+                GitlabUploaderImpl h = objects.newInstance(GitlabUploaderImpl, objects)
                 h.name = name
                 return h
             }
@@ -137,13 +148,18 @@ class UploadImpl implements Upload {
     }
 
     @Override
-    void gitlab(Action<? super NamedDomainObjectContainer<GitlabUploader>> action) {
-        action.execute(gitlab)
+    void ftp(Action<? super NamedDomainObjectContainer<FtpUploader>> action) {
+        action.execute(ftp)
     }
 
     @Override
-    void ftp(Action<? super NamedDomainObjectContainer<FtpUploader>> action) {
-        action.execute(ftp)
+    void gitea(Action<? super NamedDomainObjectContainer<GiteaUploader>> action) {
+        action.execute(gitea)
+    }
+
+    @Override
+    void gitlab(Action<? super NamedDomainObjectContainer<GitlabUploader>> action) {
+        action.execute(gitlab)
     }
 
     @Override
@@ -172,13 +188,18 @@ class UploadImpl implements Upload {
     }
 
     @Override
-    void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, gitlab)
+    void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, ftp)
     }
 
     @Override
-    void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, ftp)
+    void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, gitea)
+    }
+
+    @Override
+    void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, gitlab)
     }
 
     @Override
@@ -207,8 +228,9 @@ class UploadImpl implements Upload {
         if (active.present) upload.active = active.get()
 
         artifactory.each { upload.addArtifactory(((ArtifactoryImpl) it).toModel()) }
-        gitlab.each { upload.addGitlab(((GitlabUploaderImpl) it).toModel()) }
         ftp.each { upload.addFtp(((FtpUploaderImpl) it).toModel()) }
+        gitea.each { upload.addGitea(((GiteaUploaderImpl) it).toModel()) }
+        gitlab.each { upload.addGitlab(((GitlabUploaderImpl) it).toModel()) }
         http.each { upload.addHttp(((HttpUploaderImpl) it).toModel()) }
         s3.each { upload.addS3(((S3Impl) it).toModel()) }
         scp.each { upload.addScp(((ScpUploaderImpl) it).toModel()) }

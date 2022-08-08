@@ -41,6 +41,7 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
 public class Upload extends AbstractModelObject<Upload> implements Domain, Activatable {
     private final Map<String, Artifactory> artifactory = new LinkedHashMap<>();
     private final Map<String, FtpUploader> ftp = new LinkedHashMap<>();
+    private final Map<String, GiteaUploader> gitea = new LinkedHashMap<>();
     private final Map<String, GitlabUploader> gitlab = new LinkedHashMap<>();
     private final Map<String, HttpUploader> http = new LinkedHashMap<>();
     private final Map<String, S3> s3 = new LinkedHashMap<>();
@@ -54,13 +55,14 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
     @Override
     public void freeze() {
         super.freeze();
-        artifactory.values().forEach(Artifactory::freeze);
-        ftp.values().forEach(FtpUploader::freeze);
-        gitlab.values().forEach(GitlabUploader::freeze);
-        http.values().forEach(HttpUploader::freeze);
-        s3.values().forEach(S3::freeze);
-        scp.values().forEach(ScpUploader::freeze);
-        sftp.values().forEach(SftpUploader::freeze);
+        artifactory.values().forEach(ModelObject::freeze);
+        ftp.values().forEach(ModelObject::freeze);
+        gitea.values().forEach(ModelObject::freeze);
+        gitlab.values().forEach(ModelObject::freeze);
+        http.values().forEach(ModelObject::freeze);
+        s3.values().forEach(ModelObject::freeze);
+        scp.values().forEach(ModelObject::freeze);
+        sftp.values().forEach(ModelObject::freeze);
     }
 
     @Override
@@ -70,6 +72,7 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
         this.enabled = merge(this.enabled, upload.enabled);
         setArtifactory(mergeModel(this.artifactory, upload.artifactory));
         setFtp(mergeModel(this.ftp, upload.ftp));
+        setGitea(mergeModel(this.gitea, upload.gitea));
         setGitlab(mergeModel(this.gitlab, upload.gitlab));
         setHttp(mergeModel(this.http, upload.http));
         setS3(mergeModel(this.s3, upload.s3));
@@ -131,6 +134,8 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
                 return Optional.ofNullable(artifactory.get(name));
             case FtpUploader.TYPE:
                 return Optional.ofNullable(ftp.get(name));
+            case GiteaUploader.TYPE:
+                return Optional.ofNullable(gitea.get(name));
             case GitlabUploader.TYPE:
                 return Optional.ofNullable(gitlab.get(name));
             case HttpUploader.TYPE:
@@ -152,6 +157,8 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
                 return getActiveArtifactory(name);
             case FtpUploader.TYPE:
                 return getActiveFtp(name);
+            case GiteaUploader.TYPE:
+                return getActiveGitea(name);
             case GitlabUploader.TYPE:
                 return getActiveGitlab(name);
             case HttpUploader.TYPE:
@@ -176,6 +183,13 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
 
     public Optional<FtpUploader> getActiveFtp(String name) {
         return ftp.values().stream()
+            .filter(Uploader::isEnabled)
+            .filter(a -> name.equals(a.name))
+            .findFirst();
+    }
+
+    public Optional<GiteaUploader> getActiveGitea(String name) {
+        return gitea.values().stream()
             .filter(Uploader::isEnabled)
             .filter(a -> name.equals(a.name))
             .findFirst();
@@ -256,6 +270,27 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
     public void addFtp(FtpUploader ftp) {
         freezeCheck();
         this.ftp.put(ftp.getName(), ftp);
+    }
+
+    public List<GiteaUploader> getActiveGiteas() {
+        return gitea.values().stream()
+            .filter(GiteaUploader::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, GiteaUploader> getGitea() {
+        return freezeWrap(gitea);
+    }
+
+    public void setGitea(Map<String, GiteaUploader> gitea) {
+        freezeCheck();
+        this.gitea.clear();
+        this.gitea.putAll(gitea);
+    }
+
+    public void addGitea(GiteaUploader gitea) {
+        freezeCheck();
+        this.gitea.put(gitea.getName(), gitea);
     }
 
     public List<GitlabUploader> getActiveGitlabs() {
@@ -383,6 +418,13 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
             .collect(toList());
         if (!ftp.isEmpty()) map.put("ftp", ftp);
 
+        List<Map<String, Object>> gitea = this.gitea.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!gitea.isEmpty()) map.put("gitea", gitea);
+
         List<Map<String, Object>> gitlab = this.gitlab.values()
             .stream()
             .filter(d -> full || d.isEnabled())
@@ -427,6 +469,8 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
                 return (Map<String, A>) artifactory;
             case FtpUploader.TYPE:
                 return (Map<String, A>) ftp;
+            case GiteaUploader.TYPE:
+                return (Map<String, A>) gitea;
             case GitlabUploader.TYPE:
                 return (Map<String, A>) gitlab;
             case HttpUploader.TYPE:
@@ -446,6 +490,7 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
         List<A> uploaders = new ArrayList<>();
         uploaders.addAll((List<A>) getActiveArtifactories());
         uploaders.addAll((List<A>) getActiveFtps());
+        uploaders.addAll((List<A>) getActiveGiteas());
         uploaders.addAll((List<A>) getActiveGitlabs());
         uploaders.addAll((List<A>) getActiveHttps());
         uploaders.addAll((List<A>) getActiveS3s());
@@ -508,6 +553,7 @@ public class Upload extends AbstractModelObject<Upload> implements Domain, Activ
         Set<String> set = new LinkedHashSet<>();
         set.add(Artifactory.TYPE);
         set.add(FtpUploader.TYPE);
+        set.add(GiteaUploader.TYPE);
         set.add(GitlabUploader.TYPE);
         set.add(HttpUploader.TYPE);
         set.add(S3.TYPE);

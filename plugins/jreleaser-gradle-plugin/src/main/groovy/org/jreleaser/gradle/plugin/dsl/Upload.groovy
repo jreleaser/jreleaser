@@ -30,9 +30,11 @@ import org.gradle.api.NamedDomainObjectContainer
 interface Upload extends Activatable {
     NamedDomainObjectContainer<Artifactory> getArtifactory()
 
-    NamedDomainObjectContainer<GitlabUploader> getGitlab()
-
     NamedDomainObjectContainer<FtpUploader> getFtp()
+
+    NamedDomainObjectContainer<GitlabUploader> getGitea()
+
+    NamedDomainObjectContainer<GitlabUploader> getGitlab()
 
     NamedDomainObjectContainer<HttpUploader> getHttp()
 
@@ -44,9 +46,11 @@ interface Upload extends Activatable {
 
     void artifactory(Action<? super NamedDomainObjectContainer<Artifactory>> action)
 
-    void gitlab(Action<? super NamedDomainObjectContainer<GitlabUploader>> action)
-
     void ftp(Action<? super NamedDomainObjectContainer<FtpUploader>> action)
+
+    void gitea(Action<? super NamedDomainObjectContainer<GiteaUploader>> action)
+
+    void gitlab(Action<? super NamedDomainObjectContainer<GitlabUploader>> action)
 
     void http(Action<? super NamedDomainObjectContainer<HttpUploader>> action)
 
@@ -58,9 +62,11 @@ interface Upload extends Activatable {
 
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
-    void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
     void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 

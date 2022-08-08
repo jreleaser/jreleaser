@@ -15,12 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.gitlab;
+package org.jreleaser.sdk.gitea;
 
 import feign.form.FormData;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Artifact;
-import org.jreleaser.model.GitlabUploader;
+import org.jreleaser.model.GiteaUploader;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.uploader.spi.UploadException;
 import org.jreleaser.sdk.commons.AbstractArtifactUploader;
@@ -36,26 +36,26 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public class GitlabArtifactUploader extends AbstractArtifactUploader<GitlabUploader> {
-    private GitlabUploader uploader;
+public class GiteaArtifactUploader extends AbstractArtifactUploader<GiteaUploader> {
+    private GiteaUploader uploader;
 
-    public GitlabArtifactUploader(JReleaserContext context) {
+    public GiteaArtifactUploader(JReleaserContext context) {
         super(context);
     }
 
     @Override
-    public GitlabUploader getUploader() {
+    public GiteaUploader getUploader() {
         return uploader;
     }
 
     @Override
-    public void setUploader(GitlabUploader uploader) {
+    public void setUploader(GiteaUploader uploader) {
         this.uploader = uploader;
     }
 
     @Override
     public String getType() {
-        return GitlabUploader.TYPE;
+        return GiteaUploader.TYPE;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class GitlabArtifactUploader extends AbstractArtifactUploader<GitlabUploa
             if (!context.isDryrun()) {
                 try {
                     Map<String, String> headers = new LinkedHashMap<>();
-                    headers.put("Authorization", "Bearer " + token);
+                    headers.put("Authorization", "token " + token);
                     FormData data = ClientUtils.toFormData(path);
 
                     ClientUtils.putFile(context.getLogger(),

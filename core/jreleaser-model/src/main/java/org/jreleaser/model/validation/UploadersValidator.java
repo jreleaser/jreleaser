@@ -23,6 +23,7 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.validation.ArtifactoryValidator.validateArtifactory;
 import static org.jreleaser.model.validation.FtpUploaderValidator.validateFtpUploader;
+import static org.jreleaser.model.validation.GiteaUploaderValidator.validateGiteaUploader;
 import static org.jreleaser.model.validation.GitlabUploaderValidator.validateGitlabUploader;
 import static org.jreleaser.model.validation.HttpUploaderValidator.validateHttpUploader;
 import static org.jreleaser.model.validation.S3Validator.validateS3;
@@ -40,6 +41,7 @@ public abstract class UploadersValidator extends Validator {
         Upload upload = context.getModel().getUpload();
         validateArtifactory(context, mode, errors);
         validateFtpUploader(context, mode, errors);
+        validateGiteaUploader(context, mode, errors);
         validateGitlabUploader(context, mode, errors);
         validateHttpUploader(context, mode, errors);
         validateS3(context, mode, errors);
@@ -54,6 +56,7 @@ public abstract class UploadersValidator extends Validator {
         if (mode.validateConfig() && upload.isEnabled()) {
             boolean enabled = !upload.getActiveArtifactories().isEmpty() ||
                 !upload.getActiveFtps().isEmpty() ||
+                !upload.getActiveGiteas().isEmpty() ||
                 !upload.getActiveGitlabs().isEmpty() ||
                 !upload.getActiveHttps().isEmpty() ||
                 !upload.getActiveS3s().isEmpty() ||
