@@ -52,7 +52,7 @@ public final class CommandHookExecutor {
             runnable.run();
         } catch (RuntimeException e) {
             executeHooks(ExecutionEvent.failure(step));
-            return;
+            throw e;
         }
         executeHooks(ExecutionEvent.success(step));
     }
