@@ -40,8 +40,8 @@ import org.kohsuke.github.GHMilestone;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHReleaseUpdater;
 import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GHTag;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
@@ -115,19 +115,17 @@ public class GithubReleaser extends AbstractReleaser {
             GHRepository repository = api.findRepository(github.getOwner(), github.getName());
             if (null == repository) {
                 // remote does not exist!
-                throw new NullPointerException("BOOM!");
+                throw new IllegalStateException(RB.$("ERROR_git_repository_not_exists", github.getCanonicalRepoName()));
             }
-            for (GHTag tag : repository.listTags()) {
-                if (tag.getName().equals(tagName)) {
-                    return true;
-                }
-            }
+
+            return null != repository.getRef("tags/" + tagName);
+        } catch (FileNotFoundException e) {
+            // OK, it means tag does not exist
+            return false;
         } catch (IOException e) {
             context.getLogger().trace(e);
             throw new JReleaserException(e);
         }
-
-        return false;
     }
 
     @Override
