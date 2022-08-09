@@ -68,7 +68,7 @@ public class Gitlab extends GitService<Gitlab> {
 
     @Deprecated
     public void setIdentifier(String identifier) {
-        nag("gitea.identifier is deprecated since 1.2.0 and will be removed in 2.0.0. Use gitea.projectIdentifier instead");
+        nag("gitlab.identifier is deprecated since 1.2.0 and will be removed in 2.0.0. Use gitlab.projectIdentifier instead");
         setProjectIdentifier(identifier);
     }
 
