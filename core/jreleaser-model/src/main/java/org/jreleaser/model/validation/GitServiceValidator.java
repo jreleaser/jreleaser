@@ -200,7 +200,7 @@ public abstract class GitServiceValidator extends Validator {
             boolean generate = false;
             if (service instanceof Github) {
                 Github gh = (Github) service;
-                generate = gh.getReleaseNotes().isGenerate();
+                generate = gh.getReleaseNotes().isEnabled();
             }
 
             if (!generate) {
@@ -217,7 +217,7 @@ public abstract class GitServiceValidator extends Validator {
             boolean generate = false;
             if (service instanceof Github) {
                 Github gh = (Github) service;
-                generate = gh.getReleaseNotes().isGenerate();
+                generate = gh.getReleaseNotes().isEnabled();
             }
 
             if (!generate) {
@@ -262,7 +262,7 @@ public abstract class GitServiceValidator extends Validator {
         // Special case for GitHub
         if (service instanceof Github) {
             Github gh = (Github) service;
-            boolean generate = gh.getReleaseNotes().isGenerate();
+            boolean generate = gh.getReleaseNotes().isEnabled();
 
             if (generate && changelog.isEnabled()) {
                 errors.configuration(RB.$("validation_github_releasenotes_changelog"));

@@ -105,24 +105,31 @@ public class Github extends GitService<Github> {
         return map;
     }
 
-    public static class ReleaseNotes extends AbstractModelObject<ReleaseNotes> implements Domain {
-        private Boolean generate;
+    public static class ReleaseNotes extends AbstractModelObject<ReleaseNotes> implements Domain, EnabledAware {
+        private Boolean enabled;
         private String configurationFile;
 
         @Override
         public void merge(ReleaseNotes source) {
             freezeCheck();
-            this.generate = merge(this.generate, source.generate);
+            this.enabled = merge(this.enabled, source.enabled);
             this.configurationFile = merge(this.configurationFile, source.configurationFile);
         }
 
-        public Boolean isGenerate() {
-            return generate != null && generate;
+        @Override
+        public boolean isEnabled() {
+            return enabled != null && enabled;
         }
 
-        public void setGenerate(Boolean generate) {
+        @Override
+        public void setEnabled(Boolean enabled) {
             freezeCheck();
-            this.generate = generate;
+            this.enabled = enabled;
+        }
+
+        @Override
+        public boolean isEnabledSet() {
+            return enabled != null;
         }
 
         public String getConfigurationFile() {
@@ -137,7 +144,7 @@ public class Github extends GitService<Github> {
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
-            map.put("generate", isGenerate());
+            map.put("enabled", isEnabled());
             map.put("configurationFile", configurationFile);
             return map;
         }

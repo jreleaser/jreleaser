@@ -46,7 +46,7 @@ interface Github extends GitService {
 
     @CompileStatic
     interface ReleaseNotes {
-        Property<Boolean> getGenerate()
+        Property<Boolean> getEnabled()
 
         Property<String> getConfigurationFile()
     }

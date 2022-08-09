@@ -64,7 +64,7 @@ public class GithubReleaser extends AbstractReleaser {
     public String generateReleaseNotes() throws IOException {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
 
-        if (github.getReleaseNotes().isGenerate()) {
+        if (github.getReleaseNotes().isEnabled()) {
             return ChangelogProvider.storeChangelog(context, generateReleaseNotesByAPI());
         }
 

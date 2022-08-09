@@ -104,24 +104,24 @@ class GithubImpl extends AbstractGitService implements Github {
 
     @CompileStatic
     static class ReleaseNotesImpl implements ReleaseNotes {
-        final Property<Boolean> generate
+        final Property<Boolean> enabled
         final Property<String> configurationFile
 
         @Inject
         ReleaseNotesImpl(ObjectFactory objects) {
-            generate = objects.property(Boolean).convention(Providers.notDefined())
+            enabled = objects.property(Boolean).convention(Providers.notDefined())
             configurationFile = objects.property(String).convention(Providers.notDefined())
         }
 
         @Internal
         boolean isSet() {
-            generate.present ||
+            enabled.present ||
                 configurationFile.present
         }
 
         org.jreleaser.model.Github.ReleaseNotes toModel() {
             org.jreleaser.model.Github.ReleaseNotes releaseNotes = new org.jreleaser.model.Github.ReleaseNotes()
-            if (generate.present) releaseNotes.generate = generate.get()
+            if (enabled.present) releaseNotes.enabled = enabled.get()
             if (configurationFile.present) releaseNotes.configurationFile = configurationFile.get()
             releaseNotes
         }
