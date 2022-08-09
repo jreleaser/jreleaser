@@ -30,5 +30,7 @@ import org.gradle.api.provider.Property
 interface Gitlab extends GitService {
     Property<String> getIdentifier()
 
+    Property<String> getProjectIdentifier()
+
     MapProperty<String, String> getUploadLinks()
 }

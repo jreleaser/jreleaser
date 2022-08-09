@@ -37,7 +37,7 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
     final ChangelogImpl changelog
     final MilestoneImpl milestone
     final CommitAuthorImpl commitAuthor
-    final Property<String> identifier
+    final Property<String> projectIdentifier
     final MapProperty<String, String> uploadLinks
 
     @Inject
@@ -48,8 +48,12 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
         milestone = objects.newInstance(MilestoneImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
 
-        identifier = objects.property(String).convention(Providers.notDefined())
+        projectIdentifier = objects.property(String).convention(Providers.notDefined())
         uploadLinks = objects.mapProperty(String, String).convention(Providers.notDefined())
+    }
+
+    Property<String> getIdentifier() {
+        projectIdentifier
     }
 
     @Override
@@ -59,7 +63,7 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
             changelog.isSet() ||
             milestone.isSet() ||
             commitAuthor.isSet() ||
-            identifier.present ||
+            projectIdentifier.present ||
             uploadLinks.present
     }
 
@@ -69,7 +73,7 @@ class GitlabImpl extends AbstractGitService implements Gitlab {
         service.changelog = changelog.toModel()
         if (milestone.isSet()) service.milestone = milestone.toModel()
         if (commitAuthor.isSet()) service.commitAuthor = commitAuthor.toModel()
-        if (identifier.present) service.identifier = identifier.get()
+        if (projectIdentifier.present) service.projectIdentifier = projectIdentifier.get()
         if (uploadLinks.present) service.uploadLinks.putAll(uploadLinks.get())
         service
     }

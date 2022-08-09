@@ -101,14 +101,14 @@ public class GitlabReleaser extends AbstractReleaser {
                 gitlab.getReadTimeout());
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, gitlab.getCanonicalRepoName());
-            Release release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), tagName);
+            Release release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), tagName);
             boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
                 context.getLogger().debug(RB.$("git.releaser.release.exists"), tagName);
                 if (gitlab.isOverwrite() || snapshot) {
                     context.getLogger().debug(RB.$("git.releaser.release.delete"), tagName);
                     if (!context.isDryrun()) {
-                        api.deleteRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), tagName);
+                        api.deleteRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), tagName);
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                     createRelease(api, tagName, changelog, gitlab.isMatch());
@@ -128,17 +128,17 @@ public class GitlabReleaser extends AbstractReleaser {
                             updater.setDescription(changelog);
                         }
                         if (update) {
-                            api.updateRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), updater);
+                            api.updateRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), updater);
                         }
 
                         if (gitlab.getUpdate().getSections().contains(UpdateSection.ASSETS)) {
                             if (!assets.isEmpty()) {
-                                Collection<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), assets);
-                                api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), uploads);
+                                Collection<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), assets);
+                                api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), uploads);
                             }
                             if (!gitlab.getUploadLinks().isEmpty()) {
                                 Collection<LinkRequest> links = collectUploadLinks(gitlab);
-                                api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), links);
+                                api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), links);
                             }
                         }
                     }
@@ -180,7 +180,7 @@ public class GitlabReleaser extends AbstractReleaser {
         Project project = null;
 
         try {
-            project = api.findProject(repo, gitlab.getIdentifier());
+            project = api.findProject(repo, gitlab.getProjectIdentifier());
         } catch (RestAPIException e) {
             if (!e.isNotFound()) {
                 throw e;
@@ -244,7 +244,7 @@ public class GitlabReleaser extends AbstractReleaser {
         }
 
         if (deleteTags) {
-            deleteTags(api, gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), tagName);
+            deleteTags(api, gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), tagName);
         }
 
         // local tag
@@ -260,26 +260,26 @@ public class GitlabReleaser extends AbstractReleaser {
         release.setDescription(changelog);
 
         // remote tag/release
-        api.createRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), release);
+        api.createRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), release);
 
         if (!assets.isEmpty()) {
-            Collection<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getIdentifier(), assets);
-            api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), uploads);
+            Collection<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), assets);
+            api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), uploads);
         }
         if (!links.isEmpty()) {
-            api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getIdentifier(), links);
+            api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), links);
         }
 
         if (gitlab.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
             Optional<Milestone> milestone = api.findMilestoneByName(
                 gitlab.getOwner(),
                 gitlab.getName(),
-                gitlab.getIdentifier(),
+                gitlab.getProjectIdentifier(),
                 gitlab.getMilestone().getEffectiveName());
             if (milestone.isPresent()) {
                 api.closeMilestone(gitlab.getOwner(),
                     gitlab.getName(),
-                    gitlab.getIdentifier(),
+                    gitlab.getProjectIdentifier(),
                     milestone.get());
             }
         }
