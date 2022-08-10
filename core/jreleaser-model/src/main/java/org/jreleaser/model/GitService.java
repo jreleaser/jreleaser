@@ -739,17 +739,8 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         if (isNotBlank(project.getLongDescription())) {
             props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
         }
-        if (isNotBlank(project.getWebsite())) {
-            props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
-        }
         if (isNotBlank(project.getLicense())) {
             props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
-        }
-        if (isNotBlank(project.getLicense())) {
-            props.put(Constants.KEY_PROJECT_LICENSE_URL, project.getLicenseUrl());
-        }
-        if (isNotBlank(project.getDocsUrl())) {
-            props.put(Constants.KEY_PROJECT_DOCS_URL, project.getDocsUrl());
         }
         if (isNotBlank(project.getCopyright())) {
             props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
@@ -757,6 +748,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         if (isNotBlank(project.getVendor())) {
             props.put(Constants.KEY_PROJECT_VENDOR, project.getVendor());
         }
+        project.getLinks().fillProps(props);
 
         if (project.getJava().isEnabled()) {
             props.putAll(project.getJava().getResolvedExtraProperties());

@@ -130,21 +130,21 @@ public abstract class ProjectValidator extends Validator {
             }
         }
 
-        if (isBlank(project.getLicenseUrl())) {
+        if (isBlank(project.getLinks().getLicense())) {
             if (isNotBlank(project.getLicense())) {
                 LicenseId.findByLiteral(project.getLicense()).ifPresent(licenseId ->
-                    project.setLicenseUrl(licenseId.url()));
+                    project.getLinks().setLicense(licenseId.url()));
             }
         }
 
-        if (isBlank(project.getLicenseUrl()) && context.getModel().getCommit() != null) {
+        if (isBlank(project.getLinks().getLicense()) && context.getModel().getCommit() != null) {
             findLicenseFile(context.getBasedir())
                 .ifPresent(path -> {
                     GitService service = context.getModel().getRelease().getGitService();
                     String srcUrl = service.getResolvedSrcUrl(context.getModel());
                     if (!srcUrl.endsWith("/")) srcUrl += "/";
                     srcUrl += path.getFileName().toString();
-                    project.setLicenseUrl(srcUrl);
+                    project.getLinks().setLicense(srcUrl);
                 });
         }
         if (isBlank(project.getLinks().getVcsBrowser())) {
@@ -153,8 +153,8 @@ public abstract class ProjectValidator extends Validator {
         if (isBlank(project.getLinks().getBugTracker())) {
             project.getLinks().setBugTracker(context.getModel().getRelease().getGitService().getIssueTrackerUrl());
         }
-        if (isBlank(project.getLinks().getHomepage())) {
-            project.getLinks().setHomepage(project.getWebsite());
+        if (isBlank(project.getLinks().getDocumentation())) {
+            project.getLinks().setDocumentation(project.getLinks().getHomepage());
         }
 
         if (!mode.validateConfig()) return;
@@ -166,13 +166,10 @@ public abstract class ProjectValidator extends Validator {
         if (isBlank(project.getDescription())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "project.description"));
         }
-        if (isBlank(project.getWebsite())) {
+        if (isBlank(project.getLinks().getHomepage())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "project.website"));
         }
-        if (isBlank(project.getDocsUrl())) {
-            project.setDocsUrl(project.getWebsite());
-        }
-        if (isBlank(project.getDocsUrl())) {
+        if (isBlank(project.getLinks().getDocumentation())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "project.docsUrl"));
         }
         if (isBlank(project.getLicense())) {

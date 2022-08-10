@@ -145,12 +145,12 @@ class ProjectImpl implements Project {
         if (versionPattern.present) project.versionPattern = versionPattern.get()
         if (description.present) project.description = description.get()
         if (longDescription.present) project.longDescription = longDescription.get()
-        if (website.present) project.website = website.get()
+        if (website.present) project.links.homepage = website.get()
         if (license.present) project.license = license.get()
-        if (licenseUrl.present) project.licenseUrl = licenseUrl.get()
+        if (licenseUrl.present) project.links.license = licenseUrl.get()
         if (copyright.present) project.copyright = copyright.get()
         if (vendor.present) project.vendor = vendor.get()
-        if (docsUrl.present) project.docsUrl = docsUrl.get()
+        if (docsUrl.present) project.links.documentation = docsUrl.get()
         if (stereotype.present) project.stereotype = stereotype.get()
         project.authors = (List<String>) authors.getOrElse([])
         project.tags = (List<String>) tags.getOrElse([])
@@ -194,6 +194,8 @@ class ProjectImpl implements Project {
     @CompileStatic
     static class LinksImpl implements Links {
         final Property<String> homepage
+        final Property<String> documentation
+        final Property<String> license
         final Property<String> bugTracker
         final Property<String> faq
         final Property<String> help
@@ -206,6 +208,8 @@ class ProjectImpl implements Project {
         @Inject
         LinksImpl(ObjectFactory objects) {
             homepage = objects.property(String).convention(Providers.notDefined())
+            documentation = objects.property(String).convention(Providers.notDefined())
+            license = objects.property(String).convention(Providers.notDefined())
             bugTracker = objects.property(String).convention(Providers.notDefined())
             faq = objects.property(String).convention(Providers.notDefined())
             help = objects.property(String).convention(Providers.notDefined())
@@ -219,6 +223,8 @@ class ProjectImpl implements Project {
         @Internal
         boolean isSet() {
             homepage.present ||
+                documentation.present ||
+                license.present ||
                 bugTracker.present ||
                 faq.present ||
                 help.present ||
@@ -232,6 +238,8 @@ class ProjectImpl implements Project {
         org.jreleaser.model.Project.Links toModel() {
             org.jreleaser.model.Project.Links links = new org.jreleaser.model.Project.Links()
             if (homepage.present) links.homepage = homepage.get()
+            if (documentation.present) links.documentation = documentation.get()
+            if (license.present) links.license = license.get()
             if (bugTracker.present) links.bugTracker = bugTracker.get()
             if (faq.present) links.faq = faq.get()
             if (help.present) links.help = help.get()

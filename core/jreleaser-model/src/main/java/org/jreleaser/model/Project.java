@@ -36,6 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jreleaser.util.JReleaserOutput.nag;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -67,12 +68,9 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     private VersionPattern versionPattern = new VersionPattern();
     private String description;
     private String longDescription;
-    private String website;
     private String license;
-    private String licenseUrl;
     private String copyright;
     private String vendor;
-    private String docsUrl;
     private Stereotype stereotype = Stereotype.NONE;
 
     @Override
@@ -92,12 +90,9 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         this.versionPattern = merge(this.versionPattern, project.versionPattern);
         this.description = merge(this.description, project.description);
         this.longDescription = merge(this.longDescription, project.longDescription);
-        this.website = merge(this.website, project.website);
         this.license = merge(this.license, project.license);
-        this.licenseUrl = merge(this.licenseUrl, project.licenseUrl);
         this.copyright = merge(this.copyright, project.copyright);
         this.vendor = merge(this.vendor, project.vendor);
-        this.docsUrl = merge(this.docsUrl, project.docsUrl);
         this.stereotype = merge(this.stereotype, project.stereotype);
         setJava(project.java);
         setSnapshot(project.snapshot);
@@ -198,13 +193,15 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         this.longDescription = longDescription;
     }
 
+    @Deprecated
     public String getWebsite() {
-        return website;
+        return links.getHomepage();
     }
 
+    @Deprecated
     public void setWebsite(String website) {
-        freezeCheck();
-        this.website = website;
+        nag("project.website is deprecated since 1.2.0 and will be removed in 2.0.0. Use project.links.homepage instead");
+        links.setHomepage(website);
     }
 
     public String getLicense() {
@@ -216,13 +213,15 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         this.license = license;
     }
 
+    @Deprecated
     public String getLicenseUrl() {
-        return licenseUrl;
+        return links.getLicense();
     }
 
+    @Deprecated
     public void setLicenseUrl(String licenseUrl) {
-        freezeCheck();
-        this.licenseUrl = licenseUrl;
+        nag("project.licenseUrl is deprecated since 1.2.0 and will be removed in 2.0.0. Use project.links.license instead");
+        links.setLicense(licenseUrl);
     }
 
     public String getCopyright() {
@@ -243,13 +242,15 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         this.vendor = vendor;
     }
 
+    @Deprecated
     public String getDocsUrl() {
-        return docsUrl;
+        return links.getDocumentation();
     }
 
+    @Deprecated
     public void setDocsUrl(String docsUrl) {
-        freezeCheck();
-        this.docsUrl = docsUrl;
+        nag("project.docsUrl is deprecated since 1.2.0 and will be removed in 2.0.0. Use project.links.documentation instead");
+        links.setDocumentation(docsUrl);
     }
 
     public Stereotype getStereotype() {
@@ -328,10 +329,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         map.put("snapshot", snapshot.asMap(full));
         map.put("description", description);
         map.put("longDescription", longDescription);
-        map.put("website", website);
-        map.put("docsUrl", docsUrl);
         map.put("license", license);
-        map.put("licenseUrl", licenseUrl);
         map.put("copyright", copyright);
         map.put("vendor", vendor);
         map.put("authors", authors);
@@ -617,17 +615,8 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
             if (isNotBlank(project.getLongDescription())) {
                 props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
             }
-            if (isNotBlank(project.getWebsite())) {
-                props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
-            }
             if (isNotBlank(project.getLicense())) {
                 props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
-            }
-            if (isNotBlank(project.getLicense())) {
-                props.put(Constants.KEY_PROJECT_LICENSE_URL, project.getLicenseUrl());
-            }
-            if (isNotBlank(project.getDocsUrl())) {
-                props.put(Constants.KEY_PROJECT_DOCS_URL, project.getDocsUrl());
             }
             if (isNotBlank(project.getCopyright())) {
                 props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
@@ -635,6 +624,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
             if (isNotBlank(project.getVendor())) {
                 props.put(Constants.KEY_PROJECT_VENDOR, project.getVendor());
             }
+            project.getLinks().fillProps(props);
 
             if (project.getJava().isEnabled()) {
                 props.putAll(project.getJava().getResolvedExtraProperties());
@@ -669,9 +659,12 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         }
     }
 
-
     public static class Links extends AbstractModelObject<Project.Links> implements Domain {
+        private static final String PROJECT_LINK = "projectLink";
+
         private String homepage;
+        private String documentation;
+        private String license;
         private String bugTracker;
         private String faq;
         private String help;
@@ -685,6 +678,8 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         public void merge(Project.Links source) {
             freezeCheck();
             this.homepage = merge(this.homepage, source.homepage);
+            this.documentation = merge(this.documentation, source.documentation);
+            this.license = merge(this.license, source.license);
             this.bugTracker = merge(this.bugTracker, source.bugTracker);
             this.faq = merge(this.faq, source.faq);
             this.help = merge(this.help, source.help);
@@ -702,6 +697,24 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         public void setHomepage(String homepage) {
             freezeCheck();
             this.homepage = homepage;
+        }
+
+        public String getDocumentation() {
+            return documentation;
+        }
+
+        public void setDocumentation(String documentation) {
+            freezeCheck();
+            this.documentation = documentation;
+        }
+
+        public String getLicense() {
+            return license;
+        }
+
+        public void setLicense(String license) {
+            freezeCheck();
+            this.license = license;
         }
 
         public String getBugTracker() {
@@ -780,6 +793,8 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
             if (isNotBlank(homepage)) map.put("homepage", homepage);
+            if (isNotBlank(documentation)) map.put("documentation", documentation);
+            if (isNotBlank(license)) map.put("license", license);
             if (isNotBlank(bugTracker)) map.put("bugTracker", bugTracker);
             if (isNotBlank(vcsBrowser)) map.put("vcsBrowser", vcsBrowser);
             if (isNotBlank(faq)) map.put("faq", faq);
@@ -789,6 +804,23 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
             if (isNotBlank(contact)) map.put("contact", contact);
             if (isNotBlank(contribute)) map.put("contribute", contribute);
             return map;
+        }
+
+        public void fillProps(Map<String, Object> props) {
+            if (isNotBlank(homepage)) props.put(PROJECT_LINK + "Homepage", homepage);
+            if (isNotBlank(documentation)) props.put(PROJECT_LINK + "Documentation", documentation);
+            if (isNotBlank(license)) props.put(PROJECT_LINK + "License", license);
+            if (isNotBlank(bugTracker)) props.put(PROJECT_LINK + "BugTracker", bugTracker);
+            if (isNotBlank(vcsBrowser)) props.put(PROJECT_LINK + "VcsBrowser", vcsBrowser);
+            if (isNotBlank(faq)) props.put(PROJECT_LINK + "Faq", faq);
+            if (isNotBlank(help)) props.put(PROJECT_LINK + "Help", help);
+            if (isNotBlank(donation)) props.put(PROJECT_LINK + "Donation", donation);
+            if (isNotBlank(translate)) props.put(PROJECT_LINK + "translate", translate);
+            if (isNotBlank(contact)) props.put(PROJECT_LINK + "contact", contact);
+            if (isNotBlank(contribute)) props.put(PROJECT_LINK + "contribute", contribute);
+            if (isNotBlank(homepage)) props.put(Constants.KEY_PROJECT_WEBSITE, homepage);
+            if (isNotBlank(documentation)) props.put(Constants.KEY_PROJECT_DOCS_URL, documentation);
+            if (isNotBlank(license)) props.put(Constants.KEY_PROJECT_LICENSE_URL, license);
         }
     }
 }

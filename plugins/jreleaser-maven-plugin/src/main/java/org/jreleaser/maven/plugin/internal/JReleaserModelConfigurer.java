@@ -64,11 +64,11 @@ public final class JReleaserModelConfigurer {
         if (isBlank(project.getDescription())) {
             project.setDescription(mavenProject.getDescription());
         }
-        if (isBlank(project.getWebsite())) {
-            project.setWebsite(mavenProject.getUrl());
+        if (isBlank(project.getLinks().getHomepage())) {
+            project.getLinks().setHomepage(mavenProject.getUrl());
         }
-        if (isBlank(project.getWebsite()) && (null != mavenProject.getOrganization())) {
-            project.setWebsite(mavenProject.getOrganization().getUrl());
+        if (isBlank(project.getLinks().getHomepage()) && (null != mavenProject.getOrganization())) {
+            project.getLinks().setHomepage(mavenProject.getOrganization().getUrl());
         }
         if (project.getAuthors().isEmpty()) {
             project.setAuthors(resolveAuthors(mavenProject.getDevelopers()));
@@ -77,7 +77,7 @@ public final class JReleaserModelConfigurer {
             License license = resolveLicense(mavenProject.getLicenses());
             if (null != license) {
                 project.setLicense(license.getName());
-                project.setLicenseUrl(license.getUrl());
+                project.getLinks().setLicense(license.getUrl());
             }
         }
         if (!project.getExtraProperties().containsKey("inceptionYear") &&

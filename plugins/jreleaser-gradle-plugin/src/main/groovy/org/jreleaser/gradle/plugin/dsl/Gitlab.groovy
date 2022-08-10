@@ -28,6 +28,7 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Gitlab extends GitService {
+    @Deprecated
     Property<String> getIdentifier()
 
     Property<String> getProjectIdentifier()

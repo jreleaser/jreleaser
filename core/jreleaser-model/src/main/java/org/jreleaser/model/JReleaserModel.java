@@ -338,17 +338,8 @@ public class JReleaserModel implements Domain {
         if (isNotBlank(project.getLongDescription())) {
             props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
         }
-        if (isNotBlank(project.getWebsite())) {
-            props.put(Constants.KEY_PROJECT_WEBSITE, project.getWebsite());
-        }
         if (isNotBlank(project.getLicense())) {
             props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
-        }
-        if (isNotBlank(project.getLicense())) {
-            props.put(Constants.KEY_PROJECT_LICENSE_URL, project.getLicenseUrl());
-        }
-        if (isNotBlank(project.getDocsUrl())) {
-            props.put(Constants.KEY_PROJECT_DOCS_URL, project.getDocsUrl());
         }
         if (isNotBlank(project.getCopyright())) {
             props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
@@ -356,6 +347,7 @@ public class JReleaserModel implements Domain {
         if (isNotBlank(project.getVendor())) {
             props.put(Constants.KEY_PROJECT_VENDOR, project.getVendor());
         }
+        project.getLinks().fillProps(props);
         props.put(Constants.KEY_PROJECT_AUTHORS_BY_SPACE, String.join(" ", project.getAuthors()));
         props.put(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));
         props.put(Constants.KEY_PROJECT_TAGS_BY_SPACE, String.join(" ", project.getTags()));

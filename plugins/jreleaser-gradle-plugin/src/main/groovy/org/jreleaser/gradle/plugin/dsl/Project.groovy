@@ -42,16 +42,19 @@ interface Project extends ExtraProperties {
 
     Property<String> getLongDescription()
 
+    @Deprecated
     Property<String> getWebsite()
 
     Property<String> getLicense()
 
+    @Deprecated
     Property<String> getLicenseUrl()
 
     Property<String> getCopyright()
 
     Property<String> getVendor()
 
+    @Deprecated
     Property<String> getDocsUrl()
 
     ListProperty<String> getAuthors()
@@ -92,6 +95,10 @@ interface Project extends ExtraProperties {
 
     interface Links {
         Property<String> getHomepage()
+
+        Property<String> getDocumentation()
+
+        Property<String> getLicense()
 
         Property<String> getBugTracker()
 

@@ -249,7 +249,7 @@ public abstract class ChocolateyValidator extends Validator {
 
         Project project = context.getModel().getProject();
 
-        if (isBlank(project.getLicenseUrl())) {
+        if (isBlank(project.getLinks().getLicense())) {
             errors.configuration(RB.$("ERROR_project_no_license_url"));
         }
     }
