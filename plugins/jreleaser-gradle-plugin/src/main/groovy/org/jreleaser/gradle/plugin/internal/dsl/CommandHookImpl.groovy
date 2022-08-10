@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 1.2.0
  */
 @CompileStatic
-abstract class CommandHookImpl extends AbstractHook implements CommandHook {
+class CommandHookImpl extends AbstractHook implements CommandHook {
     String name
     final Property<Boolean> continueOnError
     final Property<String> cmd
