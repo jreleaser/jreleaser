@@ -87,6 +87,12 @@ class Github {
             .build();
     }
 
+    PagedIterable<GHRelease> listReleases(String owner, String repo) throws IOException {
+        logger.debug(RB.$("git.fetch.releases"), owner, repo);
+        return github.getRepository(owner + "/" + repo)
+            .listReleases();
+    }
+
     GHRepository findRepository(String owner, String repo) throws IOException {
         logger.debug(RB.$("git.repository.lookup"), owner, repo);
         try {

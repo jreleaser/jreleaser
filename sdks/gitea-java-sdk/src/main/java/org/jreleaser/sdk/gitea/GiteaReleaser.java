@@ -25,6 +25,7 @@ import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.model.releaser.spi.ReleaseException;
 import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.releaser.spi.User;
+import org.jreleaser.model.util.VersionUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static org.jreleaser.util.StringUtils.capitalize;
 
@@ -203,6 +205,29 @@ public class GiteaReleaser extends AbstractReleaser {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public List<org.jreleaser.model.releaser.spi.Release> listReleases(String owner, String repo) throws IOException {
+        org.jreleaser.model.Gitea gitea = resolveGiteaFromModel();
+
+        Gitea api = new Gitea(context.getLogger(),
+            gitea.getApiEndpoint(),
+            gitea.getResolvedToken(),
+            gitea.getConnectTimeout(),
+            gitea.getReadTimeout());
+
+        List<org.jreleaser.model.releaser.spi.Release> releases = api.listReleases(owner, repo);
+
+        VersionUtils.clearUnparseableTags();
+        Pattern versionPattern = VersionUtils.resolveVersionPattern(context);
+        for (org.jreleaser.model.releaser.spi.Release release : releases) {
+            release.setVersion(VersionUtils.version(context, release.getTagName(), versionPattern));
+        }
+
+        releases.sort((r1, r2) -> r2.getVersion().compareTo(r1.getVersion()));
+
+        return releases;
     }
 
     private void createRelease(Gitea api, String tagName, String changelog, boolean deleteTags) throws IOException {

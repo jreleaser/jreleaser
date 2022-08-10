@@ -23,7 +23,9 @@ import feign.QueryMap;
 import feign.RequestLine;
 import feign.form.FormData;
 import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
+import org.jreleaser.sdk.gitea.internal.Page;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -77,4 +79,8 @@ public interface GiteaAPI {
     @RequestLine("GET /users/search")
     @Headers("Content-Type: application/json")
     GtSearchUser searchUser(@QueryMap Map<String, String> q);
+
+    @RequestLine("GET /repos/{owner}/{repo}/releases")
+    @Headers("Content-Type: application/json")
+    Page<List<GtRelease>> listReleases(@Param("owner") String owner, @Param("repo") String repo, @QueryMap Map<String, Object> q);
 }

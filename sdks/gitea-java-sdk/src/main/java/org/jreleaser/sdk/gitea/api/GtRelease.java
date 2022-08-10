@@ -19,6 +19,8 @@ package org.jreleaser.sdk.gitea.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Date;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -34,6 +36,8 @@ public class GtRelease {
     private Boolean prerelease;
     private Boolean draft;
     private String targetCommitish;
+    private Date createdAt;
+    private Date publishedAt;
 
     public Integer getId() {
         return id;
@@ -83,7 +87,7 @@ public class GtRelease {
         this.body = body;
     }
 
-    public Boolean isPrerelease() {
+    public Boolean getPrerelease() {
         return prerelease;
     }
 
@@ -105,5 +109,21 @@ public class GtRelease {
 
     public void setTargetCommitish(String targetCommitish) {
         this.targetCommitish = targetCommitish;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getPublishedAt() {
+        return publishedAt;
+    }
+
+    public void setPublishedAt(Date publishedAt) {
+        this.publishedAt = publishedAt;
     }
 }

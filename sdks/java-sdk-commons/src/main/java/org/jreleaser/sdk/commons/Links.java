@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.gitlab.internal;
+package org.jreleaser.sdk.commons;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -69,6 +69,13 @@ public class Links {
         return url;
     }
 
+    public boolean isEmpty() {
+        return !hasFirst() &&
+            !hasLast() &&
+            !hasPrev() &&
+            !hasNext();
+    }
+
     public boolean hasFirst() {
         return !isBlank(first);
     }
@@ -103,12 +110,12 @@ public class Links {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Links{");
+        final StringBuilder sb = new StringBuilder("Links[");
         sb.append("first='").append(first).append('\'');
         sb.append(", next='").append(next).append('\'');
         sb.append(", prev='").append(prev).append('\'');
         sb.append(", last='").append(last).append('\'');
-        sb.append('}');
+        sb.append(']');
         return sb.toString();
     }
 
@@ -117,6 +124,6 @@ public class Links {
     }
 
     public static Links of(Collection<String> input) {
-        return new Links(input.size() > 1 ? input.iterator().next() : "");
+        return new Links(null != input && input.size() > 0 ? input.iterator().next() : "");
     }
 }

@@ -23,7 +23,9 @@ import feign.QueryMap;
 import feign.RequestLine;
 import feign.form.FormData;
 import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
+import org.jreleaser.sdk.gitlab.internal.Page;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -82,4 +84,12 @@ public interface GitlabAPI {
     @RequestLine("GET /search")
     @Headers("Content-Type: application/json")
     List<User> searchUser(@QueryMap Map<String, String> q);
+
+    @RequestLine("GET /projects/{projectId}/releases")
+    @Headers("Content-Type: application/json")
+    Page<List<Release>> listReleases0(@Param("projectId") String projectId);
+
+    @RequestLine("GET")
+    @Headers("Content-Type: application/json")
+    Page<List<Release>> listReleases1(URI uri);
 }
