@@ -121,6 +121,7 @@ public abstract class ProjectValidator extends Validator {
         if (null == project.getInceptionYear() &&
             project.getExtraProperties().containsKey("inceptionYear")) {
             project.setInceptionYear(project.getExtraProperty("inceptionYear"));
+            context.nag("1.2.0","Use project.inceptionYear instead of project.extraProperties.inceptionYear");
         }
 
         if (isBlank(project.getCopyright())) {
