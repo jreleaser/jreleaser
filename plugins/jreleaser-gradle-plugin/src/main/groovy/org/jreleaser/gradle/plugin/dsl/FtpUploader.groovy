@@ -26,7 +26,7 @@ import org.gradle.api.provider.Property
  * @since 1.1.0
  */
 @CompileStatic
-interface FtpUploader extends SshUploader {
+interface FtpUploader extends Uploader {
     Property<String> getUsername()
 
     Property<String> getPassword()

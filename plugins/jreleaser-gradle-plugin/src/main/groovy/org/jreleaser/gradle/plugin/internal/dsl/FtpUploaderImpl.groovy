@@ -32,7 +32,7 @@ import javax.inject.Inject
  * @since 1.1.0
  */
 @CompileStatic
-abstract class FtpUploaderImpl extends AbstractUploader implements FtpUploader {
+class FtpUploaderImpl extends AbstractUploader implements FtpUploader {
     String name
     final Property<String> username
     final Property<String> password
