@@ -742,6 +742,9 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         if (isNotBlank(project.getLicense())) {
             props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
         }
+        if (null != project.getInceptionYear()) {
+            props.put(Constants.KEY_PROJECT_INCEPTION_YEAR, project.getInceptionYear());
+        }
         if (isNotBlank(project.getCopyright())) {
             props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
         }

@@ -117,16 +117,21 @@ public abstract class ProjectValidator extends Validator {
         context.getLogger().debug("project");
         Project project = context.getModel().getProject();
 
+        // TODO: remove in 2.0.0
+        if (null == project.getInceptionYear() &&
+            project.getExtraProperties().containsKey("inceptionYear")) {
+            project.setInceptionYear(project.getExtraProperty("inceptionYear"));
+        }
+
         if (isBlank(project.getCopyright())) {
-            if (project.getExtraProperties().containsKey("inceptionYear") &&
+            if (project.getInceptionYear() != null &&
                 !project.getAuthors().isEmpty()) {
                 project.setCopyright(
-                    project.getExtraProperties().get("inceptionYear") + " " +
+                    project.getInceptionYear() + " " +
                         String.join(",", project.getAuthors()));
             } else {
                 context.nag("0.4.0", "project.copyright must not be blank");
                 project.setCopyright("");
-                // errors.configuration("project.copyright must not be blank");
             }
         }
 

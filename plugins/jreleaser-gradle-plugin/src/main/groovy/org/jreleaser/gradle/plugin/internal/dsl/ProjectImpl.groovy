@@ -48,6 +48,7 @@ class ProjectImpl implements Project {
     final Property<String> description
     final Property<String> longDescription
     final Property<String> website
+    final Property<String> inceptionYear
     final Property<String> license
     final Property<String> licenseUrl
     final Property<String> copyright
@@ -73,6 +74,7 @@ class ProjectImpl implements Project {
         longDescription = objects.property(String).convention(descriptionProvider)
         website = objects.property(String).convention(Providers.notDefined())
         license = objects.property(String).convention(Providers.notDefined())
+        inceptionYear = objects.property(String).convention(Providers.notDefined())
         licenseUrl = objects.property(String).convention(Providers.notDefined())
         copyright = objects.property(String).convention(Providers.notDefined())
         vendor = objects.property(String).convention(Providers.notDefined())
@@ -147,6 +149,7 @@ class ProjectImpl implements Project {
         if (longDescription.present) project.longDescription = longDescription.get()
         if (website.present) project.links.homepage = website.get()
         if (license.present) project.license = license.get()
+        if (inceptionYear.present) project.inceptionYear = inceptionYear.get()
         if (licenseUrl.present) project.links.license = licenseUrl.get()
         if (copyright.present) project.copyright = copyright.get()
         if (vendor.present) project.vendor = vendor.get()

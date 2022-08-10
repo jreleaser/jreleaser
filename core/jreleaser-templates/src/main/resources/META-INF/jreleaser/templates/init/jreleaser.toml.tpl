@@ -9,7 +9,7 @@
   links.homepage = "https://acme.com/app"
   java.groupId = "com.acme"
   java.version = "8"
-  extraProperties.inceptionYear = "@year@"
+  inceptionYear = "@year@"
 
 [release.github]
   owner = "duke"

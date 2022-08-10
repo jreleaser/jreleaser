@@ -80,9 +80,8 @@ public final class JReleaserModelConfigurer {
                 project.getLinks().setLicense(license.getUrl());
             }
         }
-        if (!project.getExtraProperties().containsKey("inceptionYear") &&
-            isNotBlank(mavenProject.getInceptionYear())) {
-            project.getExtraProperties().put("inceptionYear", mavenProject.getInceptionYear());
+        if (isBlank(project.getInceptionYear()) && isNotBlank(mavenProject.getInceptionYear())) {
+            project.setInceptionYear(mavenProject.getInceptionYear());
         }
 
         project.getJava().setGroupId(mavenProject.getGroupId());

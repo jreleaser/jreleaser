@@ -69,6 +69,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     private String description;
     private String longDescription;
     private String license;
+    private String inceptionYear;
     private String copyright;
     private String vendor;
     private Stereotype stereotype = Stereotype.NONE;
@@ -91,6 +92,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         this.description = merge(this.description, project.description);
         this.longDescription = merge(this.longDescription, project.longDescription);
         this.license = merge(this.license, project.license);
+        this.inceptionYear = merge(this.inceptionYear, project.inceptionYear);
         this.copyright = merge(this.copyright, project.copyright);
         this.vendor = merge(this.vendor, project.vendor);
         this.stereotype = merge(this.stereotype, project.stereotype);
@@ -224,6 +226,15 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         links.setLicense(licenseUrl);
     }
 
+    public String getInceptionYear() {
+        return inceptionYear;
+    }
+
+    public void setInceptionYear(String inceptionYear) {
+        freezeCheck();
+        this.inceptionYear = inceptionYear;
+    }
+
     public String getCopyright() {
         return copyright;
     }
@@ -330,6 +341,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         map.put("description", description);
         map.put("longDescription", longDescription);
         map.put("license", license);
+        map.put("inceptionYear", inceptionYear);
         map.put("copyright", copyright);
         map.put("vendor", vendor);
         map.put("authors", authors);
@@ -617,6 +629,9 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
             }
             if (isNotBlank(project.getLicense())) {
                 props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+            }
+            if (null != project.getInceptionYear()) {
+                props.put(Constants.KEY_PROJECT_INCEPTION_YEAR, project.getInceptionYear());
             }
             if (isNotBlank(project.getCopyright())) {
                 props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());

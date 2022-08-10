@@ -47,6 +47,8 @@ interface Project extends ExtraProperties {
 
     Property<String> getLicense()
 
+    Property<String> getInceptionYear()
+
     @Deprecated
     Property<String> getLicenseUrl()
 

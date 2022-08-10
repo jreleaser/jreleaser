@@ -70,6 +70,7 @@ public interface Constants {
     String KEY_PROJECT_COPYRIGHT = "projectCopyright";
     String KEY_PROJECT_VENDOR = "projectVendor";
     String KEY_PROJECT_LICENSE = "projectLicense";
+    String KEY_PROJECT_INCEPTION_YEAR = "projectInceptionYear";
     String KEY_PROJECT_LICENSE_URL = "projectLicenseUrl";
     String KEY_PROJECT_AUTHORS_BY_SPACE = "projectAuthorsBySpace";
     String KEY_PROJECT_AUTHORS_BY_COMMA = "projectAuthorsByComma";

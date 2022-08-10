@@ -37,8 +37,8 @@ class KordampJReleaserAdapter {
         if (!jreleaser.project.description.present) {
             jreleaser.project.description.set(config.info.description)
         }
-        if (!jreleaser.project.website.present) {
-            jreleaser.project.website.set(config.info.links.website)
+        if (!jreleaser.project.links.homepage.present) {
+            jreleaser.project.links.homepage.set(config.info.links.website)
         }
         if (!jreleaser.project.authors.present) {
             jreleaser.project.authors.set(config.info.authors)
@@ -55,12 +55,8 @@ class KordampJReleaserAdapter {
                 jreleaser.project.license.set(license.name)
             }
         }
-        if (jreleaser.project.extraProperties.present) {
-            if (!jreleaser.project.extraProperties.get().containsKey('inceptionYear')) {
-                jreleaser.project.extraProperties.put('inceptionYear', config.info.inceptionYear)
-            }
-        } else {
-            jreleaser.project.extraProperties.put('inceptionYear', config.info.inceptionYear)
+        if (!jreleaser.project.inceptionYear.present) {
+            jreleaser.project.inceptionYear.set(config.info.inceptionYear)
         }
     }
 }
