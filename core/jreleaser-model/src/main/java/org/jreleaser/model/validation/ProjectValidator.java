@@ -147,6 +147,15 @@ public abstract class ProjectValidator extends Validator {
                     project.setLicenseUrl(srcUrl);
                 });
         }
+        if (isBlank(project.getLinks().getVcsBrowser())) {
+            project.getLinks().setVcsBrowser(context.getModel().getRelease().getGitService().getRepoUrl());
+        }
+        if (isBlank(project.getLinks().getBugTracker())) {
+            project.getLinks().setBugTracker(context.getModel().getRelease().getGitService().getIssueTrackerUrl());
+        }
+        if (isBlank(project.getLinks().getHomepage())) {
+            project.getLinks().setHomepage(project.getWebsite());
+        }
 
         if (!mode.validateConfig()) return;
 
@@ -157,11 +166,11 @@ public abstract class ProjectValidator extends Validator {
         if (isBlank(project.getDescription())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "project.description"));
         }
-        if (isBlank(project.getDocsUrl())) {
-            project.setDocsUrl(project.getWebsite());
-        }
         if (isBlank(project.getWebsite())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "project.website"));
+        }
+        if (isBlank(project.getDocsUrl())) {
+            project.setDocsUrl(project.getWebsite());
         }
         if (isBlank(project.getDocsUrl())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "project.docsUrl"));

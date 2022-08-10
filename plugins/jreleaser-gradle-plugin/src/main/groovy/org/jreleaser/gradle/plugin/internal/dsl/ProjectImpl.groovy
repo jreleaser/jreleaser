@@ -59,6 +59,7 @@ class ProjectImpl implements Project {
     final MapProperty<String, Object> extraProperties
     final JavaImpl java
     final SnapshotImpl snapshot
+    final LinksImpl links
 
     @Inject
     ProjectImpl(ObjectFactory objects,
@@ -83,6 +84,7 @@ class ProjectImpl implements Project {
 
         java = objects.newInstance(JavaImpl, objects)
         snapshot = objects.newInstance(SnapshotImpl, objects)
+        links = objects.newInstance(LinksImpl, objects)
     }
 
     @Override
@@ -104,6 +106,16 @@ class ProjectImpl implements Project {
         if (isNotBlank(tag)) {
             tags.add(tag.trim())
         }
+    }
+
+    @Override
+    void links(Action<? super Links> action) {
+        action.execute(links)
+    }
+
+    @Override
+    void links(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Links) Closure<Void> action) {
+        ConfigureUtil.configure(action, links)
     }
 
     @Override
@@ -145,6 +157,7 @@ class ProjectImpl implements Project {
         if (extraProperties.present) project.extraProperties.putAll(extraProperties.get())
         project.java = java.toModel()
         project.snapshot = snapshot.toModel()
+        project.links = links.toModel()
         project
     }
 
@@ -174,6 +187,60 @@ class ProjectImpl implements Project {
             if (label.present) snapshot.label = label.get()
             if (fullChangelog.present) snapshot.fullChangelog = fullChangelog.get()
             snapshot
+        }
+    }
+
+
+    @CompileStatic
+    static class LinksImpl implements Links {
+        final Property<String> homepage
+        final Property<String> bugTracker
+        final Property<String> faq
+        final Property<String> help
+        final Property<String> donation
+        final Property<String> translate
+        final Property<String> contact
+        final Property<String> vcsBrowser
+        final Property<String> contribute
+
+        @Inject
+        LinksImpl(ObjectFactory objects) {
+            homepage = objects.property(String).convention(Providers.notDefined())
+            bugTracker = objects.property(String).convention(Providers.notDefined())
+            faq = objects.property(String).convention(Providers.notDefined())
+            help = objects.property(String).convention(Providers.notDefined())
+            donation = objects.property(String).convention(Providers.notDefined())
+            translate = objects.property(String).convention(Providers.notDefined())
+            contact = objects.property(String).convention(Providers.notDefined())
+            vcsBrowser = objects.property(String).convention(Providers.notDefined())
+            contribute = objects.property(String).convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            homepage.present ||
+                bugTracker.present ||
+                faq.present ||
+                help.present ||
+                donation.present ||
+                translate.present ||
+                contact.present ||
+                vcsBrowser.present ||
+                contribute.present
+        }
+
+        org.jreleaser.model.Project.Links toModel() {
+            org.jreleaser.model.Project.Links links = new org.jreleaser.model.Project.Links()
+            if (homepage.present) links.homepage = homepage.get()
+            if (bugTracker.present) links.bugTracker = bugTracker.get()
+            if (faq.present) links.faq = faq.get()
+            if (help.present) links.help = help.get()
+            if (donation.present) links.donation = donation.get()
+            if (translate.present) links.translate = translate.get()
+            if (contact.present) links.contact = contact.get()
+            if (vcsBrowser.present) links.vcsBrowser = vcsBrowser.get()
+            if (contribute.present) links.contribute = contribute.get()
+            links
         }
     }
 }

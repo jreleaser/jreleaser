@@ -59,6 +59,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final Links links = new Links();
     private final Java java = new Java();
     private final Snapshot snapshot = new Snapshot();
     private String name;
@@ -77,6 +78,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     @Override
     public void freeze() {
         super.freeze();
+        links.freeze();
         java.freeze();
         snapshot.freeze();
         versionPattern.freeze();
@@ -102,6 +104,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         setAuthors(merge(this.authors, project.authors));
         setTags(merge(this.tags, project.tags));
         setExtraProperties(merge(this.extraProperties, project.extraProperties));
+        setLinks(project.links);
     }
 
     @Override
@@ -308,6 +311,14 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         this.tags.addAll(tags);
     }
 
+    public Links getLinks() {
+        return links;
+    }
+
+    public void setLinks(Links links) {
+        this.links.merge(links);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -326,6 +337,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         map.put("authors", authors);
         map.put("tags", tags);
         map.put("stereotype", stereotype);
+        map.put("links", links.asMap(full));
         map.put("extraProperties", getResolvedExtraProperties());
         if (java.isEnabled()) {
             map.put("java", java.asMap(full));
@@ -654,6 +666,129 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
             MustacheUtils.applyFunctions(props);
 
             return props;
+        }
+    }
+
+
+    public static class Links extends AbstractModelObject<Project.Links> implements Domain {
+        private String homepage;
+        private String bugTracker;
+        private String faq;
+        private String help;
+        private String donation;
+        private String translate;
+        private String contact;
+        private String vcsBrowser;
+        private String contribute;
+
+        @Override
+        public void merge(Project.Links source) {
+            freezeCheck();
+            this.homepage = merge(this.homepage, source.homepage);
+            this.bugTracker = merge(this.bugTracker, source.bugTracker);
+            this.faq = merge(this.faq, source.faq);
+            this.help = merge(this.help, source.help);
+            this.donation = merge(this.donation, source.donation);
+            this.translate = merge(this.translate, source.translate);
+            this.contact = merge(this.contact, source.contact);
+            this.vcsBrowser = merge(this.vcsBrowser, source.vcsBrowser);
+            this.contribute = merge(this.contribute, source.contribute);
+        }
+
+        public String getHomepage() {
+            return homepage;
+        }
+
+        public void setHomepage(String homepage) {
+            freezeCheck();
+            this.homepage = homepage;
+        }
+
+        public String getBugTracker() {
+            return bugTracker;
+        }
+
+        public void setBugTracker(String bugTracker) {
+            freezeCheck();
+            this.bugTracker = bugTracker;
+        }
+
+        public String getFaq() {
+            return faq;
+        }
+
+        public void setFaq(String faq) {
+            freezeCheck();
+            this.faq = faq;
+        }
+
+        public String getHelp() {
+            return help;
+        }
+
+        public void setHelp(String help) {
+            freezeCheck();
+            this.help = help;
+        }
+
+        public String getDonation() {
+            return donation;
+        }
+
+        public void setDonation(String donation) {
+            freezeCheck();
+            this.donation = donation;
+        }
+
+        public String getTranslate() {
+            return translate;
+        }
+
+        public void setTranslate(String translate) {
+            freezeCheck();
+            this.translate = translate;
+        }
+
+        public String getContact() {
+            return contact;
+        }
+
+        public void setContact(String contact) {
+            freezeCheck();
+            this.contact = contact;
+        }
+
+        public String getVcsBrowser() {
+            return vcsBrowser;
+        }
+
+        public void setVcsBrowser(String vcsBrowser) {
+            freezeCheck();
+            this.vcsBrowser = vcsBrowser;
+        }
+
+        public String getContribute() {
+            return contribute;
+        }
+
+        public void setContribute(String contribute) {
+            freezeCheck();
+            this.contribute = contribute;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            if (isNotBlank(homepage)) map.put("homepage", homepage);
+            if (isNotBlank(bugTracker)) map.put("bugTracker", bugTracker);
+            if (isNotBlank(vcsBrowser)) map.put("vcsBrowser", vcsBrowser);
+            if (isNotBlank(faq)) map.put("faq", faq);
+            if (isNotBlank(help)) map.put("help", help);
+            if (isNotBlank(donation)) map.put("donation", donation);
+            if (isNotBlank(translate)) map.put("translate", translate);
+            if (isNotBlank(contact)) map.put("contact", contact);
+            if (isNotBlank(contribute)) map.put("contribute", contribute);
+            return map;
         }
     }
 }

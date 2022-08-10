@@ -62,11 +62,17 @@ interface Project extends ExtraProperties {
 
     void tag(String tag)
 
+    Links getLinks()
+
     Java getJava()
 
     Snapshot getSnapshot()
 
     void setStereotype(String str)
+
+    void links(Action<? super Links> action)
+
+    void links(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Links) Closure<Void> action)
 
     void java(Action<? super Java> action)
 
@@ -82,5 +88,25 @@ interface Project extends ExtraProperties {
         Property<String> getLabel()
 
         Property<Boolean> getFullChangelog()
+    }
+
+    interface Links {
+        Property<String> getHomepage()
+
+        Property<String> getBugTracker()
+
+        Property<String> getFaq()
+
+        Property<String> getHelp()
+
+        Property<String> getDonation()
+
+        Property<String> getTranslate()
+
+        Property<String> getContact()
+
+        Property<String> getVcsBrowser()
+
+        Property<String> getContribute()
     }
 }
