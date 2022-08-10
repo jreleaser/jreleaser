@@ -68,10 +68,6 @@ release:
           title: 'regex:^docs: update CONTRIBUTORS.md.*'
           order: -2
       categories:
-        - title: 'Merge'
-          labels:
-            - 'merge_pull'
-            - 'merge_branch'
         - title: '🌐 Translation'
           key: 'i18n'
           order: 70
@@ -89,7 +85,7 @@ release:
             - 'allcontributors2'
       hide:
         categories:
-          - 'Merge'
+          - 'merge'
           - 'allcontributors'
         contributors:
           - 'GitHub'
