@@ -87,6 +87,10 @@ interface Project extends ExtraProperties {
 
     void snapshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snapshot) Closure<Void> action)
 
+    void screenshot(Action<? super Screenshot> action)
+
+    void screenshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Screenshot) Closure<Void> action)
+
     interface Snapshot {
         Property<String> getPattern()
 

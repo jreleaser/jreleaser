@@ -63,6 +63,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     private final Links links = new Links();
     private final Java java = new Java();
     private final Snapshot snapshot = new Snapshot();
+    private final List<Screenshot> screenshots = new ArrayList<>();
     private String name;
     private String version;
     private VersionPattern versionPattern = new VersionPattern();
@@ -81,6 +82,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         java.freeze();
         snapshot.freeze();
         versionPattern.freeze();
+        screenshots.forEach(ModelObject::freeze);
     }
 
     @Override
@@ -102,6 +104,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         setTags(merge(this.tags, project.tags));
         setExtraProperties(merge(this.extraProperties, project.extraProperties));
         setLinks(project.links);
+        setScreenshots(merge(this.screenshots, project.screenshots));
     }
 
     @Override
@@ -277,6 +280,23 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         setStereotype(Stereotype.of(str));
     }
 
+    public List<Screenshot> getScreenshots() {
+        return freezeWrap(screenshots);
+    }
+
+    public void setScreenshots(List<Screenshot> screenshots) {
+        freezeCheck();
+        this.screenshots.clear();
+        this.screenshots.addAll(screenshots);
+    }
+
+    public void addScreenshot(Screenshot screenshot) {
+        freezeCheck();
+        if (null != screenshot) {
+            this.screenshots.add(screenshot);
+        }
+    }
+
     public Java getJava() {
         return java;
     }
@@ -348,6 +368,12 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         map.put("tags", tags);
         map.put("stereotype", stereotype);
         map.put("links", links.asMap(full));
+        Map<String, Map<String, Object>> sm = new LinkedHashMap<>();
+        int i = 0;
+        for (Screenshot screenshot : screenshots) {
+            sm.put("screenshot " + (i++), screenshot.asMap(full));
+        }
+        map.put("screenshots", sm);
         map.put("extraProperties", getResolvedExtraProperties());
         if (java.isEnabled()) {
             map.put("java", java.asMap(full));

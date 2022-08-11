@@ -19,6 +19,8 @@ package org.jreleaser.gradle.plugin.internal.dsl
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -28,6 +30,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Project
+import org.jreleaser.gradle.plugin.dsl.Screenshot
 import org.jreleaser.model.Stereotype
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -62,6 +65,8 @@ class ProjectImpl implements Project {
     final SnapshotImpl snapshot
     final LinksImpl links
 
+    private final NamedDomainObjectContainer<ScreenshotImpl> screenshots
+
     @Inject
     ProjectImpl(ObjectFactory objects,
                 Provider<String> nameProvider,
@@ -87,6 +92,15 @@ class ProjectImpl implements Project {
         java = objects.newInstance(JavaImpl, objects)
         snapshot = objects.newInstance(SnapshotImpl, objects)
         links = objects.newInstance(LinksImpl, objects)
+
+        screenshots = objects.domainObjectContainer(ScreenshotImpl, new NamedDomainObjectFactory<ScreenshotImpl>() {
+            @Override
+            ScreenshotImpl create(String name) {
+                ScreenshotImpl screenshot = objects.newInstance(ScreenshotImpl, objects)
+                screenshot.name = name
+                screenshot
+            }
+        })
     }
 
     @Override
@@ -140,6 +154,16 @@ class ProjectImpl implements Project {
         ConfigureUtil.configure(action, snapshot)
     }
 
+    @Override
+    void screenshot(Action<? super Screenshot> action) {
+        action.execute(screenshots.maybeCreate("screenshot-${screenshots.size()}".toString()))
+    }
+
+    @Override
+    void screenshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Screenshot) Closure<Void> action) {
+        ConfigureUtil.configure(action, screenshots.maybeCreate("screenshot-${screenshots.size()}".toString()))
+    }
+
     org.jreleaser.model.Project toModel() {
         org.jreleaser.model.Project project = new org.jreleaser.model.Project()
         project.name = name.get()
@@ -161,6 +185,9 @@ class ProjectImpl implements Project {
         project.java = java.toModel()
         project.snapshot = snapshot.toModel()
         project.links = links.toModel()
+        for (ScreenshotImpl screenshot : screenshots) {
+            project.addScreenshot(screenshot.toModel())
+        }
         project
     }
 

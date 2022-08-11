@@ -30,11 +30,13 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.OwnerAware;
 import org.jreleaser.model.Packager;
 import org.jreleaser.model.RepositoryTap;
+import org.jreleaser.model.Screenshot;
 import org.jreleaser.model.TimeoutAware;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Collection;
+import java.util.List;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -244,6 +246,40 @@ class Validator {
     static void validateFileSet(JReleaserContext context, JReleaserContext.Mode mode, Assembler assembler, FileSet fileSet, int index, Errors errors) {
         if (mode.validateStandalone() && isBlank(fileSet.getInput())) {
             errors.configuration(RB.$("validation_must_not_be_null", assembler.getType() + "." + assembler.getName() + ".fileSet[" + index + "].input"));
+        }
+    }
+
+    static void validateScreenshots(JReleaserContext context, JReleaserContext.Mode mode, List<Screenshot> screenshots, Errors errors, String base) {
+        if (screenshots.size() == 1) {
+            screenshots.get(0).setPrimary(true);
+        }
+
+        if (screenshots.stream()
+            .mapToInt(s -> s.isPrimary() ? 1 : 0)
+            .sum() > 1) {
+            errors.configuration(RB.$("validation_multiple_primary_screenshots", base));
+        }
+
+        for (int i = 0; i < screenshots.size(); i++) {
+            Screenshot screenshot = screenshots.get(i);
+            if (isBlank(screenshot.getUrl())) {
+                errors.configuration(RB.$("validation_must_not_be_blank", base + ".screenshots[" + i + "].url"));
+            }
+
+            if (screenshot.getType() == Screenshot.Type.THUMBNAIL) {
+                if (null == screenshot.getWidth()) {
+                    errors.configuration(RB.$("validation_must_not_be_null", base + ".screenshots[" + i + "].width"));
+                }
+                if (null == screenshot.getHeight()) {
+                    errors.configuration(RB.$("validation_must_not_be_null", base + ".screenshots[" + i + "].height"));
+                }
+            } else {
+                if (null == screenshot.getWidth() && null != screenshot.getHeight()) {
+                    errors.configuration(RB.$("validation_must_not_be_null", base + ".screenshots[" + i + "].width"));
+                } else if (null != screenshot.getWidth() && null == screenshot.getHeight()) {
+                    errors.configuration(RB.$("validation_must_not_be_null", base + ".screenshots[" + i + "].height"));
+                }
+            }
         }
     }
 }
