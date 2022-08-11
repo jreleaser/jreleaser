@@ -37,6 +37,9 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import org.commonmark.node.*;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 /**
  * @author Andres Almiray
@@ -108,6 +111,7 @@ public final class MustacheUtils {
         props.put("f_lower", new LowerFunction());
         props.put("f_capitalize", new CapitalizeFunction());
         props.put("f_uncapitalize", new UncapitalizeFunction());
+        props.put("f_md2html", new MarkdownToHtmlFunction());
     }
 
     private static class MyMustacheFactory extends DefaultMustacheFactory {
@@ -191,6 +195,16 @@ public final class MustacheUtils {
         @Override
         public String apply(String input) {
             return StringUtils.uncapitalize(input);
+        }
+    }
+
+    public static class MarkdownToHtmlFunction implements Function<String, String> {
+        @Override
+        public String apply(String input) {
+            Parser parser = Parser.builder().build();
+            Node document = parser.parse(input);
+            HtmlRenderer renderer = HtmlRenderer.builder().build();
+            return renderer.render(document);
         }
     }
 }

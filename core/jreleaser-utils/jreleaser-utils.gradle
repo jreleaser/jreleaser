@@ -28,4 +28,5 @@ dependencies {
     api "org.slf4j:jcl-over-slf4j:$slf4jVersion"
     api "org.zeroturnaround:zt-exec:$ztexecVersion"
     api "com.github.veithen.cosmos.bootstrap:org.tukaani.xz:$xzVersion"
+    api "org.commonmark:commonmark:$commonmarkVersion"
 }
