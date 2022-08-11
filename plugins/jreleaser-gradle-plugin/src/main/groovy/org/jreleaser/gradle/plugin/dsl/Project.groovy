@@ -63,9 +63,13 @@ interface Project extends ExtraProperties {
 
     ListProperty<String> getTags()
 
+    ListProperty<String> getMaintainers()
+
     void author(String name)
 
     void tag(String tag)
+
+    void maintainer(String maintainer)
 
     Links getLinks()
 

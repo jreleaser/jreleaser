@@ -104,6 +104,9 @@ public abstract class PackagersValidator extends Validator {
             packagers.getMacports(),
             packagers.getMacports().getRepository(),
             errors);
+        if (packagers.getMacports().getMaintainers().isEmpty()) {
+            packagers.getMacports().getMaintainers().addAll(project.getMaintainers());
+        }
 
         packagers.getScoop().resolveEnabled(project);
         packagers.getScoop().getBucket().resolveEnabled(project);

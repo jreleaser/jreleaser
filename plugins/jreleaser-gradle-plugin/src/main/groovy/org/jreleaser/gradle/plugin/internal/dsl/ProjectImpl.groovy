@@ -60,6 +60,7 @@ class ProjectImpl implements Project {
     final Property<Stereotype> stereotype
     final ListProperty<String> authors
     final ListProperty<String> tags
+    final ListProperty<String> maintainers
     final MapProperty<String, Object> extraProperties
     final JavaImpl java
     final SnapshotImpl snapshot
@@ -87,6 +88,7 @@ class ProjectImpl implements Project {
         stereotype = objects.property(Stereotype).convention(Providers.notDefined())
         authors = objects.listProperty(String).convention(Providers.notDefined())
         tags = objects.listProperty(String).convention(Providers.notDefined())
+        maintainers = objects.listProperty(String).convention(Providers.notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
 
         java = objects.newInstance(JavaImpl, objects)
@@ -121,6 +123,13 @@ class ProjectImpl implements Project {
     void tag(String tag) {
         if (isNotBlank(tag)) {
             tags.add(tag.trim())
+        }
+    }
+
+    @Override
+    void maintainer(String maintainer) {
+        if (isNotBlank(maintainer)) {
+            maintainers.add(maintainer)
         }
     }
 
@@ -181,6 +190,7 @@ class ProjectImpl implements Project {
         if (stereotype.present) project.stereotype = stereotype.get()
         project.authors = (List<String>) authors.getOrElse([])
         project.tags = (List<String>) tags.getOrElse([])
+        project.maintainers = (List<String>) maintainers.getOrElse([])
         if (extraProperties.present) project.extraProperties.putAll(extraProperties.get())
         project.java = java.toModel()
         project.snapshot = snapshot.toModel()

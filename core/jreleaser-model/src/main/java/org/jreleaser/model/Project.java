@@ -59,6 +59,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
 
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
+    private final List<String> maintainers = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Links links = new Links();
     private final Java java = new Java();
@@ -102,6 +103,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         setSnapshot(project.snapshot);
         setAuthors(merge(this.authors, project.authors));
         setTags(merge(this.tags, project.tags));
+        setMaintainers(merge(this.maintainers, project.maintainers));
         setExtraProperties(merge(this.extraProperties, project.extraProperties));
         setLinks(project.links);
         setScreenshots(merge(this.screenshots, project.screenshots));
@@ -343,6 +345,16 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         this.tags.addAll(tags);
     }
 
+    public List<String> getMaintainers() {
+        return freezeWrap(maintainers);
+    }
+
+    public void setMaintainers(List<String> maintainers) {
+        freezeCheck();
+        this.maintainers.clear();
+        this.maintainers.addAll(maintainers);
+    }
+
     public Links getLinks() {
         return links;
     }
@@ -366,6 +378,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         map.put("vendor", vendor);
         map.put("authors", authors);
         map.put("tags", tags);
+        map.put("maintainers", maintainers);
         map.put("stereotype", stereotype);
         map.put("links", links.asMap(full));
         Map<String, Map<String, Object>> sm = new LinkedHashMap<>();
