@@ -30,8 +30,7 @@ project:
     groupId: org.jreleaser
     version: 8
     multiProject: true
-  extraProperties:
-    inceptionYear: 2020
+  inceptionYear: 2020
   tags:
     - 'jreleaser'
     - 'release'
