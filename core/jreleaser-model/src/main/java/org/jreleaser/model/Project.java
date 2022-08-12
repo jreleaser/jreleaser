@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import com.github.mustachejava.TemplateFunction;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.util.CalVer;
 import org.jreleaser.util.ChronVer;
@@ -32,6 +33,7 @@ import org.jreleaser.util.SemVer;
 import org.jreleaser.util.Version;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -875,6 +877,38 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
             if (isNotBlank(homepage)) props.put(Constants.KEY_PROJECT_WEBSITE, homepage);
             if (isNotBlank(documentation)) props.put(Constants.KEY_PROJECT_DOCS_URL, documentation);
             if (isNotBlank(license)) props.put(Constants.KEY_PROJECT_LICENSE_URL, license);
+        }
+
+        public Collection<AppdataLink> asAppdataLinks() {
+            List<AppdataLink> links = new ArrayList<>();
+            if (isNotBlank(homepage)) links.add(new AppdataLink("homepage", homepage));
+            if (isNotBlank(bugTracker)) links.add(new AppdataLink("bugTracker", bugTracker));
+            if (isNotBlank(faq)) links.add(new AppdataLink("faq", faq));
+            if (isNotBlank(help)) links.add(new AppdataLink("help", help));
+            if (isNotBlank(donation)) links.add(new AppdataLink("donation", donation));
+            if (isNotBlank(translate)) links.add(new AppdataLink("translate", translate));
+            if (isNotBlank(contact)) links.add(new AppdataLink("contact", contact));
+            if (isNotBlank(vcsBrowser)) links.add(new AppdataLink("vcsBrowser", vcsBrowser));
+            if (isNotBlank(contribute)) links.add(new AppdataLink("contribute", contribute));
+            return links;
+        }
+
+        public static final class AppdataLink {
+            private String type;
+            private String url;
+
+            public AppdataLink(String type, String url) {
+                this.type = type;
+                this.url = url;
+            }
+
+            public String getType() {
+                return type;
+            }
+
+            public TemplateFunction getUrl() {
+                return (s) -> url;
+            }
         }
     }
 }
