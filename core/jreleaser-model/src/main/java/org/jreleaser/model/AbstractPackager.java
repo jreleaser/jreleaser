@@ -22,9 +22,11 @@ import org.jreleaser.util.FileType;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.toList;
@@ -58,6 +60,11 @@ public abstract class AbstractPackager<S extends AbstractPackager<S>> extends Ab
         this.downloadUrl = merge(this.downloadUrl, packager.downloadUrl);
         this.failed = packager.failed;
         setExtraProperties(merge(this.extraProperties, packager.extraProperties));
+    }
+
+    @Override
+    public Set<Stereotype> getSupportedStereotypes() {
+        return EnumSet.allOf(Stereotype.class);
     }
 
     @Override
@@ -106,6 +113,7 @@ public abstract class AbstractPackager<S extends AbstractPackager<S>> extends Ab
 
     @Override
     public void disable() {
+        freezeCheck();
         active = Active.NEVER;
         enabled = false;
     }
@@ -127,6 +135,7 @@ public abstract class AbstractPackager<S extends AbstractPackager<S>> extends Ab
     }
 
     public boolean resolveEnabled(Project project) {
+        freezeCheck();
         if (null == active) {
             active = Active.NEVER;
         }
@@ -136,6 +145,7 @@ public abstract class AbstractPackager<S extends AbstractPackager<S>> extends Ab
     }
 
     public boolean resolveEnabled(Project project, Distribution distribution) {
+        freezeCheck();
         if (null == active) {
             active = Active.NEVER;
         }

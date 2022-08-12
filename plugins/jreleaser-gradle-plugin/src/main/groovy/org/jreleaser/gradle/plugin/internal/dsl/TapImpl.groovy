@@ -24,6 +24,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.Tap
 import org.jreleaser.model.Active
+import org.jreleaser.model.AppImage
 import org.jreleaser.model.Asdf
 import org.jreleaser.model.Brew
 import org.jreleaser.model.Chocolatey
@@ -96,6 +97,12 @@ class TapImpl implements Tap {
         if (username.present) into.username = username.get()
         if (token.present) into.token = token.get()
         if (commitMessage.present) into.commitMessage = commitMessage.get()
+    }
+
+    AppImage.AppImageRepository toAppImageRepository() {
+        AppImage.AppImageRepository tap = new AppImage.AppImageRepository()
+        convert(tap)
+        tap
     }
 
     Asdf.AsdfRepository toAsdfRepository() {

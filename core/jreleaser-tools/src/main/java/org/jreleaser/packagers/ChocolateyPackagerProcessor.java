@@ -97,7 +97,7 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
         if (!props.containsKey(KEY_PROJECT_LICENSE_URL) ||

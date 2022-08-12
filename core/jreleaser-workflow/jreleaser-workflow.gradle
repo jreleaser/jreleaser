@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 dependencies {
-    api project(':jreleaser-engine')
     // announce
     api project(':discord-java-sdk')
     api project(':gitter-java-sdk')

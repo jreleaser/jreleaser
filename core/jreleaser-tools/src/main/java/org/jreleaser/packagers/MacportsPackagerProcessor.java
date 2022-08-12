@@ -68,7 +68,7 @@ public class MacportsPackagerProcessor extends AbstractRepositoryPackagerProcess
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
         props.put(KEY_MACPORTS_REPOSITORY_REPO_URL,

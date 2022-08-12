@@ -109,7 +109,7 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
         props.put(KEY_BREW_FORMULA_NAME, packager.getResolvedFormulaName(props));

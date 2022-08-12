@@ -882,13 +882,13 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         public Collection<AppdataLink> asAppdataLinks() {
             List<AppdataLink> links = new ArrayList<>();
             if (isNotBlank(homepage)) links.add(new AppdataLink("homepage", homepage));
-            if (isNotBlank(bugTracker)) links.add(new AppdataLink("bugTracker", bugTracker));
+            if (isNotBlank(bugTracker)) links.add(new AppdataLink("bugtracker", bugTracker));
             if (isNotBlank(faq)) links.add(new AppdataLink("faq", faq));
             if (isNotBlank(help)) links.add(new AppdataLink("help", help));
             if (isNotBlank(donation)) links.add(new AppdataLink("donation", donation));
             if (isNotBlank(translate)) links.add(new AppdataLink("translate", translate));
             if (isNotBlank(contact)) links.add(new AppdataLink("contact", contact));
-            if (isNotBlank(vcsBrowser)) links.add(new AppdataLink("vcsBrowser", vcsBrowser));
+            if (isNotBlank(vcsBrowser)) links.add(new AppdataLink("vcs-browser", vcsBrowser));
             if (isNotBlank(contribute)) links.add(new AppdataLink("contribute", contribute));
             return links;
         }

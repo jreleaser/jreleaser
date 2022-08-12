@@ -118,7 +118,7 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException {
         props.put(KEY_SPEC_PACKAGE_NAME, packager.getPackageName());
         props.put(KEY_SPEC_RELEASE, packager.getRelease());
         props.put(KEY_SPEC_REQUIRES, packager.getRequires());

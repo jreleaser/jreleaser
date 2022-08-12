@@ -56,7 +56,7 @@ public class GofishPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException {
         List<Artifact> artifacts = collectArtifacts(distribution);
 
         List<GofishPackage> packages = artifacts.stream()

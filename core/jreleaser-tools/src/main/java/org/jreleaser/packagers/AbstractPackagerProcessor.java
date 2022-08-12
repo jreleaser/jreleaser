@@ -133,7 +133,7 @@ abstract class AbstractPackagerProcessor<T extends Packager> implements Packager
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug(RB.$("packager.create.properties"), distributionName, getPackagerName());
-            Map<String, Object> newProps = fillProps(distribution, props);
+            Map<String, Object> newProps = fillProps(distribution, props, ProcessingStep.PREPARE);
             if (newProps.isEmpty()) {
                 context.getLogger().warn(RB.$("packager.skip.distribution"), distributionName);
                 return;
@@ -152,7 +152,7 @@ abstract class AbstractPackagerProcessor<T extends Packager> implements Packager
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug(RB.$("packager.create.properties"), distributionName, getPackagerName());
-            Map<String, Object> newProps = fillProps(distribution, props);
+            Map<String, Object> newProps = fillProps(distribution, props, ProcessingStep.PACKAGE);
             if (newProps.isEmpty()) {
                 context.getLogger().warn(RB.$("packager.skip.distribution"), distributionName);
                 return;
@@ -174,7 +174,7 @@ abstract class AbstractPackagerProcessor<T extends Packager> implements Packager
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug(RB.$("packager.create.properties"), distributionName, getPackagerName());
-            Map<String, Object> newProps = fillProps(distribution, props);
+            Map<String, Object> newProps = fillProps(distribution, props, ProcessingStep.PUBLISH);
             if (newProps.isEmpty()) {
                 context.getLogger().warn(RB.$("packager.skip.distribution"), distributionName);
                 return;
@@ -190,7 +190,7 @@ abstract class AbstractPackagerProcessor<T extends Packager> implements Packager
 
     protected abstract void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException;
 
-    protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props, ProcessingStep processingStep) throws PackagerProcessingException {
         Map<String, Object> newProps = new LinkedHashMap<>(props);
         context.getLogger().debug(RB.$("packager.fill.distribution.properties"));
         fillDistributionProperties(newProps, distribution);
@@ -202,7 +202,7 @@ abstract class AbstractPackagerProcessor<T extends Packager> implements Packager
             return Collections.emptyMap();
         }
         context.getLogger().debug(RB.$("packager.fill.packager.properties"));
-        fillPackagerProperties(newProps, distribution);
+        fillPackagerProperties(newProps, distribution, processingStep);
         applyTemplates(newProps, packager.getResolvedExtraProperties());
         if (isBlank(context.getModel().getRelease().getGitService().getReverseRepoHost())) {
             newProps.put(KEY_REVERSE_REPO_HOST,
@@ -216,7 +216,7 @@ abstract class AbstractPackagerProcessor<T extends Packager> implements Packager
         props.putAll(distribution.props());
     }
 
-    protected abstract void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException;
+    protected abstract void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException;
 
     protected void executeCommand(Path directory, Command command) throws PackagerProcessingException {
         try {
@@ -484,5 +484,11 @@ abstract class AbstractPackagerProcessor<T extends Packager> implements Packager
         } else if (value != null) {
             dest.put(key, value);
         }
+    }
+
+    protected enum ProcessingStep {
+        PREPARE,
+        PACKAGE,
+        PUBLISH;
     }
 }

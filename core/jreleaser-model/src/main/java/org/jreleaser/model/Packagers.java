@@ -25,6 +25,7 @@ import java.util.Map;
  * @since 0.1.0
  */
 public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> implements Domain {
+    protected final AppImage appimage = new AppImage();
     protected final Asdf asdf = new Asdf();
     protected final Brew brew = new Brew();
     protected final Chocolatey chocolatey = new Chocolatey();
@@ -38,7 +39,8 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     protected final Spec spec = new Spec();
 
     public boolean hasEnabledPackagers() {
-        return asdf.isEnabled() ||
+        return appimage.isEnabled() ||
+            asdf.isEnabled() ||
             brew.isEnabled() ||
             chocolatey.isEnabled() ||
             docker.isEnabled() ||
@@ -54,6 +56,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     @Override
     public void freeze() {
         super.freeze();
+        appimage.freeze();
         asdf.freeze();
         brew.freeze();
         chocolatey.freeze();
@@ -70,6 +73,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     @Override
     public void merge(S packagers) {
         freezeCheck();
+        setAppImage(packagers.appimage);
         setAsdf(packagers.asdf);
         setBrew(packagers.brew);
         setChocolatey(packagers.chocolatey);
@@ -81,6 +85,14 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
         setSdkman(packagers.sdkman);
         setSnap(packagers.snap);
         setSpec(packagers.spec);
+    }
+
+    public AppImage getAppImage() {
+        return appimage;
+    }
+
+    public void setAppImage(AppImage appimage) {
+        this.appimage.merge(appimage);
     }
 
     public Asdf getAsdf() {
@@ -174,6 +186,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
+        map.putAll(appimage.asMap(full));
         map.putAll(asdf.asMap(full));
         map.putAll(brew.asMap(full));
         map.putAll(chocolatey.asMap(full));

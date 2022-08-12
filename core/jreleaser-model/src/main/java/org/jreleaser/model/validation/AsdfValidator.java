@@ -47,10 +47,7 @@ public abstract class AsdfValidator extends Validator {
         if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
             packager.setActive(parentPackager.getActive());
         }
-        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
-            packager.disable();
-            return;
-        }
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
             packager.disable();

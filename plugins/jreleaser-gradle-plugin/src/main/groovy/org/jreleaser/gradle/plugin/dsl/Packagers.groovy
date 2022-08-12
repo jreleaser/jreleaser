@@ -27,6 +27,8 @@ import org.gradle.api.Action
  */
 @CompileStatic
 interface Packagers {
+    AppImage getAppImage()
+
     Asdf getAsdf()
 
     Brew getBrew()
@@ -49,6 +51,8 @@ interface Packagers {
 
     Spec getSpec()
 
+    void appImage(Action<? super AppImage> action)
+
     void asdf(Action<? super Asdf> action)
 
     void brew(Action<? super Brew> action)
@@ -70,6 +74,8 @@ interface Packagers {
     void snap(Action<? super Snap> action)
 
     void spec(Action<? super Spec> action)
+
+    void appImage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = AppImage) Closure<Void> action)
 
     void asdf(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Asdf) Closure<Void> action)
 

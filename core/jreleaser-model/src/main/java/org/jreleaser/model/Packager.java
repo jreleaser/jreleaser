@@ -37,6 +37,8 @@ public interface Packager extends Domain, ExtraProperties, Activatable {
 
     Set<String> getSupportedExtensions(Distribution distribution);
 
+    Set<Stereotype> getSupportedStereotypes();
+
     List<Artifact> resolveCandidateArtifacts(JReleaserContext context, Distribution distribution);
 
     boolean isSnapshotSupported();

@@ -59,7 +59,7 @@ public class Screenshot extends AbstractModelObject<Screenshot> implements Domai
         setType(Type.of(str));
     }
 
-    public Boolean isPrimary() {
+    public boolean isPrimary() {
         return primary != null && primary;
     }
 

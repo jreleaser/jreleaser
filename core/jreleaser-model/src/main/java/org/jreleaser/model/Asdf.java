@@ -84,6 +84,7 @@ public class Asdf extends AbstractRepositoryPackager<Asdf> {
     }
 
     public void setToolCheck(String toolCheck) {
+        freezeCheck();
         this.toolCheck = toolCheck;
     }
 

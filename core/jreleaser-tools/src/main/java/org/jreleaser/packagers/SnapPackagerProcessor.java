@@ -102,7 +102,7 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
         String desc = context.getModel().getProject().getLongDescription();

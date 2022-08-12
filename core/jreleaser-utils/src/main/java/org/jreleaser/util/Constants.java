@@ -72,6 +72,7 @@ public interface Constants {
     String KEY_PROJECT_LICENSE = "projectLicense";
     String KEY_PROJECT_INCEPTION_YEAR = "projectInceptionYear";
     String KEY_PROJECT_LICENSE_URL = "projectLicenseUrl";
+    String KEY_PROJECT_AUTHORS = "projectAuthors";
     String KEY_PROJECT_AUTHORS_BY_SPACE = "projectAuthorsBySpace";
     String KEY_PROJECT_AUTHORS_BY_COMMA = "projectAuthorsByComma";
     String KEY_PROJECT_TAGS_BY_SPACE = "projectTagsBySpace";
@@ -169,9 +170,26 @@ public interface Constants {
     String KEY_ARTIFACT_SIZE = "artifactSize";
     String KEY_ARTIFACT_ARCHIVE_FORMAT = "artifactArchiveFormat";
 
+    // AppImage
+    String KEY_APPIMAGE_REPO_OWNER = "appImageRepoOwner";
+    String KEY_APPIMAGE_REPO_NAME = "appImageRepoName";
+    String KEY_APPIMAGE_COMPONENT_ID = "appImageComponentId";
+    String KEY_APPIMAGE_CATEGORIES = "appImageCategories";
+    String KEY_APPIMAGE_DEVELOPER_NAME = "appImageDeveloperName";
+    String KEY_APPIMAGE_REQUIRES_TERMINAL = "appImageRequiresTerminal";
+    String KEY_APPIMAGE_RELEASES = "appImageReleases";
+    String KEY_APPIMAGE_URLS = "appImageUrls";
+    String KEY_APPIMAGE_SCREENSHOTS = "appImageScreenshots";
+    String KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE = "appImageDistributionArtifactFile";
+    String KEY_APPIMAGE_DISTRIBUTION_URL = "appImageDistributionUrl";
+    String KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE_NAME = "appImageDistributionArtifactFileName";
+
     // Asdf
     String KEY_ASDF_PLUGIN_REPO_URL = "asdfPluginRepoUrl";
     String KEY_ASDF_PLUGIN_TOOL_CHECK = "asdfPluginToolCheck";
+    String KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE = "asdfDistributionArtifactFile";
+    String KEY_ASDF_DISTRIBUTION_URL = "asdfDistributionUrl";
+    String KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE_NAME = "asdfDistributionArtifactFileName";
 
     // Brew
     String KEY_BREW_FORMULA_NAME = "brewFormulaName";
@@ -272,11 +290,6 @@ public interface Constants {
 
     // Gofish
     String KEY_GOFISH_PACKAGES = "gofishPackages";
-
-    // Asdf
-    String KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE = "asdfDistributionArtifactFile";
-    String KEY_ASDF_DISTRIBUTION_URL = "asdfDistributionUrl";
-    String KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE_NAME = "asdfDistributionArtifactFileName";
 
     // upload
     String KEY_UPLOADER_NAME = "uploaderName";

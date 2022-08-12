@@ -23,6 +23,7 @@ import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,6 +140,11 @@ public class Docker extends AbstractDockerConfiguration<Docker> implements Repos
     @Override
     public Set<String> getSupportedExtensions(Distribution distribution) {
         return Collections.unmodifiableSet(SUPPORTED.getOrDefault(distribution.getType(), Collections.emptySet()));
+    }
+
+    @Override
+    public Set<Stereotype> getSupportedStereotypes() {
+        return EnumSet.allOf(Stereotype.class);
     }
 
     @Override

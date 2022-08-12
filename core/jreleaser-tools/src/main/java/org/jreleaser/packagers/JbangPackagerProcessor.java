@@ -69,7 +69,7 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
         props.put(KEY_JBANG_CATALOG_REPO_URL,

@@ -100,7 +100,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         Files.deleteIfExists(prepareDirectory.resolve(ROOT).resolve("Dockerfile-remote"));
 
         for (DockerSpec spec : packager.getActiveSpecs()) {
-            prepareSpec(distribution, props, distributionName, prepareDirectory, spec);
+            prepareSpec(distribution, props, distributionName, prepareDirectory, spec, ProcessingStep.PREPARE);
         }
     }
 
@@ -108,8 +108,9 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
                              Map<String, Object> props,
                              String distributionName,
                              Path prepareDirectory,
-                             DockerSpec spec) throws IOException, PackagerProcessingException {
-        Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+                             DockerSpec spec,
+                             ProcessingStep processingStep) throws IOException, PackagerProcessingException {
+        Map<String, Object> newProps = fillSpecProps(distribution, props, spec, processingStep);
         context.getLogger().debug(RB.$("distributions.action.preparing") + " {} spec", spec.getName());
         super.doPrepareDistribution(distribution, newProps, distributionName,
             prepareDirectory.resolve(spec.getName()),
@@ -126,9 +127,9 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         }
     }
 
-    private Map<String, Object> fillSpecProps(Distribution distribution, Map<String, Object> props, DockerSpec spec) throws PackagerProcessingException {
+    private Map<String, Object> fillSpecProps(Distribution distribution, Map<String, Object> props, DockerSpec spec, ProcessingStep processingStep) throws PackagerProcessingException {
         List<Artifact> artifacts = Collections.singletonList(spec.getArtifact());
-        Map<String, Object> newProps = fillProps(distribution, props);
+        Map<String, Object> newProps = fillProps(distribution, props, processingStep);
         newProps.put(KEY_DOCKER_SPEC_NAME, spec.getName());
         fillDockerProperties(newProps, distribution, spec);
         verifyAndAddArtifacts(newProps, distribution, artifacts);
@@ -164,7 +165,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
         for (DockerSpec spec : packager.getActiveSpecs()) {
             context.getLogger().debug(RB.$("distributions.action.packaging") + " {} spec", spec.getName());
-            Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+            Map<String, Object> newProps = fillSpecProps(distribution, props, spec, ProcessingStep.PACKAGE);
             packageDocker(distribution, newProps, packageDirectory.resolve(spec.getName()),
                 spec, Collections.singletonList(spec.getArtifact()));
         }
@@ -265,14 +266,14 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
         for (DockerSpec spec : packager.getActiveSpecs()) {
             context.getLogger().debug(RB.$("distributions.action.publishing") + " {} spec", spec.getName());
-            Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+            Map<String, Object> newProps = fillSpecProps(distribution, props, spec, ProcessingStep.PUBLISH);
             publishDocker(distribution, newProps, spec);
         }
         publishToRepository(distribution, props);
     }
 
     private void publishToRepository(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
-        super.doPublishDistribution(distribution, fillProps(distribution, props));
+        super.doPublishDistribution(distribution, fillProps(distribution, props, ProcessingStep.PUBLISH));
     }
 
     @Override
@@ -377,7 +378,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException {
         fillDockerProperties(props, distribution, getPackager());
     }
 
@@ -431,7 +432,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             prepareWorkingCopy(packageDirectory.resolve(ROOT), directory);
 
             for (DockerSpec spec : activeSpecs) {
-                Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+                Map<String, Object> newProps = fillSpecProps(distribution, props, spec, ProcessingStep.PUBLISH);
                 for (String imageName : spec.getImageNames()) {
                     copyDockerfiles(packageDirectory.resolve(spec.getName()), resolveTemplate(imageName, newProps), directory, spec, true);
                 }
