@@ -23,14 +23,20 @@ project:
     may be announced in a variety of channels such as Twitter, Zulip, SDKMAN!, and more.
   links:
     homepage: https://jreleaser.org
+    faq: https://{{repoHost}}/{{repoOwner}}/{{repoName}}/discussions
+    donation: https://opencollective.com/jreleaser
   authors:
     - Andres Almiray
   license: Apache-2.0
+  inceptionYear: 2020
+  stereotype: cli
+  screenshots:
+    - url: https://jreleaser.org/images/app-full-release-command.png
+      caption: JReleaser in action
   java:
     groupId: org.jreleaser
     version: 8
     multiProject: true
-  inceptionYear: 2020
   tags:
     - 'jreleaser'
     - 'release'
