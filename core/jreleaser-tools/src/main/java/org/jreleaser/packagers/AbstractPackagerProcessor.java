@@ -208,6 +208,7 @@ abstract class AbstractPackagerProcessor<T extends Packager> implements Packager
             newProps.put(KEY_REVERSE_REPO_HOST,
                 packager.getExtraProperties().get(KEY_REVERSE_REPO_HOST));
         }
+        applyTemplates(newProps, newProps);
         return newProps;
     }
 

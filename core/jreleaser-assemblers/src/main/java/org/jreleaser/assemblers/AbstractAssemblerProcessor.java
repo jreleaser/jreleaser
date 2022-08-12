@@ -42,6 +42,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
+import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.PlatformUtils.isWindows;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.quote;
@@ -112,6 +113,7 @@ abstract class AbstractAssemblerProcessor<A extends Assembler> implements Assemb
         context.getModel().getRelease().getGitService().fillProps(newProps, context.getModel());
         context.getLogger().debug(RB.$("assembler.fill.assembler.properties"));
         fillAssemblerProperties(newProps);
+        applyTemplates(props, props);
         return newProps;
     }
 
