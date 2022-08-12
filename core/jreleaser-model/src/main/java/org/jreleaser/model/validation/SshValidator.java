@@ -22,7 +22,7 @@ import org.jreleaser.model.Ssh;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
-import static org.jreleaser.util.CollectionUtils.newList;
+import static org.jreleaser.util.CollectionUtils.listOf;
 
 /**
  * @author Andres Almiray
@@ -33,7 +33,7 @@ public abstract class SshValidator extends Validator {
                                    String envPrefix, String propPrefix, Errors errors) {
         ssh.setUsername(
             checkProperty(context,
-                newList(
+                listOf(
                     envPrefix + "_" + Env.toVar(name) + "_USERNAME",
                     "SSH_" + Env.toVar(name) + "_USERNAME",
                     envPrefix + "_USERNAME",
@@ -45,7 +45,7 @@ public abstract class SshValidator extends Validator {
 
         ssh.setPassword(
             checkProperty(context,
-                newList(
+                listOf(
                     envPrefix + "_" + Env.toVar(name) + "_PASSWORD",
                     "SSH_" + Env.toVar(name) + "_PASSWORD",
                     envPrefix + "_PASSWORD",
@@ -57,7 +57,7 @@ public abstract class SshValidator extends Validator {
 
         ssh.setHost(
             checkProperty(context,
-                newList(
+                listOf(
                     envPrefix + "_" + Env.toVar(name) + "_HOST",
                     "SSH_" + Env.toVar(name) + "_HOST",
                     envPrefix + "_HOST",
@@ -69,7 +69,7 @@ public abstract class SshValidator extends Validator {
 
         ssh.setPort(
             checkProperty(context,
-                newList(
+                listOf(
                     envPrefix + "_" + Env.toVar(name) + "_PORT",
                     "SSH_" + Env.toVar(name) + "_PORT",
                     envPrefix + "_PORT",
@@ -81,7 +81,7 @@ public abstract class SshValidator extends Validator {
 
         ssh.setPublicKey(
             checkProperty(context,
-                newList(
+                listOf(
                     envPrefix + "_" + Env.toVar(name) + "_PUBLIC_KEY",
                     "SSH_" + Env.toVar(name) + "_PUBLIC_KEY",
                     envPrefix + "_PUBLIC_KEY",
@@ -93,7 +93,7 @@ public abstract class SshValidator extends Validator {
 
         ssh.setPrivateKey(
             checkProperty(context,
-                newList(
+                listOf(
                     envPrefix + "_" + Env.toVar(name) + "_PRIVATE_KEY",
                     "SSH_" + Env.toVar(name) + "_PRIVATE_KEY",
                     envPrefix + "_PRIVATE_KEY",
@@ -105,7 +105,7 @@ public abstract class SshValidator extends Validator {
 
         ssh.setPassphrase(
             checkProperty(context,
-                newList(
+                listOf(
                     envPrefix + "_" + Env.toVar(name) + "_PASSPHRASE",
                     "SSH_" + Env.toVar(name) + "_PASSPHRASE",
                     envPrefix + "_PASSPHRASE",
@@ -117,7 +117,7 @@ public abstract class SshValidator extends Validator {
 
         ssh.setFingerprint(
             checkProperty(context,
-                newList(
+                listOf(
                     envPrefix + "_" + Env.toVar(name) + "_FINGERPRINT",
                     "SSH_" + Env.toVar(name) + "_FINGERPRINT",
                     envPrefix + "_FINGERPRINT",

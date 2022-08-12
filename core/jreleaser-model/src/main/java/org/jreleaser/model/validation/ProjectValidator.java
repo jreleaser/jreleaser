@@ -23,11 +23,8 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.LicenseId;
 import org.jreleaser.model.Project;
-import org.jreleaser.model.Screenshot;
 import org.jreleaser.model.VersionPattern;
 import org.jreleaser.util.Errors;
-
-import java.util.List;
 
 import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_LABEL;
 import static org.jreleaser.model.Project.DEFAULT_SNAPSHOT_PATTERN;

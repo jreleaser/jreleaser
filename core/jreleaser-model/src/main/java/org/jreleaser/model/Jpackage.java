@@ -18,7 +18,6 @@
 package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
@@ -31,6 +30,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static java.util.Collections.unmodifiableSet;
+import static org.jreleaser.util.CollectionUtils.setOf;
 import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
@@ -214,7 +215,7 @@ public class Jpackage extends AbstractJavaAssembler<Jpackage> {
     }
 
     public Set<PlatformPackager> getPlatformPackagers() {
-        return Collections.unmodifiableSet(CollectionUtils.newSet(osx, linux, windows));
+        return unmodifiableSet(setOf(osx, linux, windows));
     }
 
     public interface PlatformPackager extends Domain {

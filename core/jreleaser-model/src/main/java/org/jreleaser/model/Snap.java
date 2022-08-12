@@ -35,7 +35,7 @@ import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
 import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
-import static org.jreleaser.util.CollectionUtils.newSet;
+import static org.jreleaser.util.CollectionUtils.setOf;
 import static org.jreleaser.util.FileType.DEB;
 import static org.jreleaser.util.FileType.JAR;
 import static org.jreleaser.util.FileType.RPM;
@@ -60,7 +60,7 @@ public class Snap extends AbstractRepositoryPackager<Snap> {
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
-        Set<String> extensions = newSet(
+        Set<String> extensions = setOf(
             TAR_BZ2.extension(),
             TAR_GZ.extension(),
             TAR_XZ.extension(),
@@ -73,8 +73,8 @@ public class Snap extends AbstractRepositoryPackager<Snap> {
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
         SUPPORTED.put(NATIVE_IMAGE, extensions);
-        SUPPORTED.put(NATIVE_PACKAGE, newSet(DEB.extension(), RPM.extension()));
-        SUPPORTED.put(SINGLE_JAR, newSet(JAR.extension()));
+        SUPPORTED.put(NATIVE_PACKAGE, setOf(DEB.extension(), RPM.extension()));
+        SUPPORTED.put(SINGLE_JAR, setOf(JAR.extension()));
     }
 
     private final Set<String> localPlugs = new LinkedHashSet<>();

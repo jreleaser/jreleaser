@@ -349,13 +349,13 @@ class Gitlab {
     Optional<org.jreleaser.model.releaser.spi.User> findUser(String email, String name) throws RestAPIException {
         logger.debug(RB.$("git.user.lookup"), name, email);
 
-        List<User> users = api.searchUser(CollectionUtils.<String, String>newMap("scope", "users", "search", email));
+        List<User> users = api.searchUser(CollectionUtils.<String, String>mapOf("scope", "users", "search", email));
         if (users != null && !users.isEmpty()) {
             User user = users.get(0);
             return Optional.of(new org.jreleaser.model.releaser.spi.User(user.getUsername(), email, user.getWebUrl()));
         }
 
-        users = api.searchUser(CollectionUtils.<String, String>newMap("scope", "users", "search", name));
+        users = api.searchUser(CollectionUtils.<String, String>mapOf("scope", "users", "search", name));
         if (users != null && !users.isEmpty()) {
             User user = users.get(0);
             if (name.equals(user.getName())) {

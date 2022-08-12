@@ -22,7 +22,7 @@ import org.jreleaser.util.Env;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jreleaser.util.CollectionUtils.newList;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -71,7 +71,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public String getResolvedUsername() {
-        return Env.env(newList(
+        return Env.env(listOf(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_USERNAME",
                 "SSH_" + Env.toVar(name) + "_USERNAME",
                 getEnvPrefix() + "_USERNAME",
@@ -81,7 +81,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public String getResolvedPassword() {
-        return Env.env(newList(
+        return Env.env(listOf(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_PASSWORD",
                 "SSH_" + Env.toVar(name) + "_PASSWORD",
                 getEnvPrefix() + "_PASSWORD",
@@ -91,7 +91,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public String getResolvedHost() {
-        return Env.env(newList(
+        return Env.env(listOf(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_HOST",
                 "SSH_" + Env.toVar(name) + "_HOST",
                 getEnvPrefix() + "_HOST",
@@ -101,7 +101,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public Integer getResolvedPort() {
-        String value = Env.env(newList(
+        String value = Env.env(listOf(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_PORT",
                 "SSH_" + Env.toVar(name) + "_PORT",
                 getEnvPrefix() + "_PORT",
@@ -112,7 +112,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public String getResolvedPublicKey() {
-        return Env.env(newList(
+        return Env.env(listOf(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_PUBLIC_KEY",
                 "SSH_" + Env.toVar(name) + "_PUBLIC_KEY",
                 getEnvPrefix() + "_PUBLIC_KEY",
@@ -122,7 +122,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public String getResolvedPrivateKey() {
-        return Env.env(newList(
+        return Env.env(listOf(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_PRIVATE_KEY",
                 "SSH_" + Env.toVar(name) + "_PRIVATE_KEY",
                 getEnvPrefix() + "_PRIVATE_KEY",
@@ -132,7 +132,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public String getResolvedPassphrase() {
-        return Env.env(newList(
+        return Env.env(listOf(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_PASSPHRASE",
                 "SSH_" + Env.toVar(name) + "_PASSPHRASE",
                 getEnvPrefix() + "_PASSPHRASE",
@@ -142,7 +142,7 @@ public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> exte
 
     @Override
     public String getResolvedFingerprint() {
-        return Env.env(newList(
+        return Env.env(listOf(
                 getEnvPrefix() + "_" + Env.toVar(name) + "_FINGERPRINT",
                 "SSH_" + Env.toVar(name) + "_FINGERPRINT",
                 getEnvPrefix() + "_FINGERPRINT",

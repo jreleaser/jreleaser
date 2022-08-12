@@ -19,7 +19,6 @@ package org.jreleaser.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.util.Artifacts;
-import org.jreleaser.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.Constants.KEY_UPLOADER_NAME;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
@@ -271,7 +271,7 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
         String skipUpload = "skipUpload";
         String skipUploadByType = skipUpload + capitalize(type);
         String skipUploadByName = skipUploadByType + getClassNameForLowerCaseHyphenSeparatedName(name);
-        return CollectionUtils.newList(skipUpload, skipUploadByType, skipUploadByName);
+        return listOf(skipUpload, skipUploadByType, skipUploadByName);
     }
 
     @Override

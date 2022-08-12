@@ -266,7 +266,7 @@ class Gitea {
     Optional<User> findUser(String email, String name, String host) throws RestAPIException {
         logger.debug(RB.$("git.user.lookup"), name, email);
 
-        GtSearchUser search = api.searchUser(CollectionUtils.<String, String>newMap("q", email));
+        GtSearchUser search = api.searchUser(CollectionUtils.<String, String>mapOf("q", email));
         if (null != search.getData() && !search.getData().isEmpty()) {
             GtUser user = search.getData().get(0);
             return Optional.of(new User(user.getUsername(), email, host + user.getUsername()));

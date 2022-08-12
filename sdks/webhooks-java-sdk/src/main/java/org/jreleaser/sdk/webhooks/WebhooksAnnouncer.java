@@ -81,7 +81,7 @@ public class WebhooksAnnouncer implements Announcer {
 
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                message = objectMapper.writeValueAsString(CollectionUtils.newMap(webhook.getMessageProperty(), message));
+                message = objectMapper.writeValueAsString(CollectionUtils.mapOf(webhook.getMessageProperty(), message));
             } catch (JsonProcessingException e) {
                 throw new AnnounceException(RB.$("ERROR_unexpected_json_format"), e);
             }

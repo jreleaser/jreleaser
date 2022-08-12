@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.binarySearch;
 import static java.util.Collections.emptyList;
-import static org.jreleaser.util.CollectionUtils.newList;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -323,7 +323,7 @@ public class CalVer implements Version<CalVer> {
 
         List<String> tokens = new ArrayList<>();
 
-        List<Character> delims = newList('.', '_', '-', '[');
+        List<Character> delims = listOf('.', '_', '-', '[');
         String f = format.trim();
         String y = null;
         String m = null;

@@ -128,8 +128,14 @@ public final class CollectionUtils {
         return output;
     }
 
+    @Deprecated
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static <K, V> Map newMap(Object... keysAndValues) {
+        return mapOf(keysAndValues);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static <K, V> Map mapOf(Object... keysAndValues) {
         if (keysAndValues == null) {
             return Collections.emptyMap();
         }
@@ -144,8 +150,14 @@ public final class CollectionUtils {
         return map;
     }
 
+    @Deprecated
     @SafeVarargs
     public static <T> Set<T> newSet(T... values) {
+        return setOf(values);
+    }
+
+    @SafeVarargs
+    public static <T> Set<T> setOf(T... values) {
         if (values == null) {
             return Collections.emptySet();
         }
@@ -153,8 +165,14 @@ public final class CollectionUtils {
         return new HashSet<>(Arrays.asList(values));
     }
 
+    @Deprecated
     @SafeVarargs
     public static <T> List<T> newList(T... values) {
+        return listOf(values);
+    }
+
+    @SafeVarargs
+    public static <T> List<T> listOf(T... values) {
         if (values == null) {
             return Collections.emptyList();
         }

@@ -26,7 +26,7 @@ import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
-import static org.jreleaser.util.CollectionUtils.newList;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -65,7 +65,7 @@ public abstract class GitlabUploaderValidator extends Validator {
 
         gitlab.setToken(
             checkProperty(context,
-                newList(
+                listOf(
                     "GITLAB_" + Env.toVar(gitlab.getName()) + "_TOKEN",
                     "GITLAB_TOKEN"),
                 "gitlab.token",

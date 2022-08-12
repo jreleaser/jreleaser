@@ -86,7 +86,7 @@ class XGithub {
     Optional<User> findUser(String email, String name) throws RestAPIException {
         logger.debug(RB.$("git.user.lookup"), name, email);
 
-        GhSearchUser search = api.searchUser(CollectionUtils.<String, String>newMap("q", email));
+        GhSearchUser search = api.searchUser(CollectionUtils.<String, String>mapOf("q", email));
         if (search.getTotalCount() > 0) {
             GhUser user = search.getItems().get(0);
             return Optional.of(new User(user.getLogin(), email, user.getHtmlUrl()));
@@ -94,7 +94,7 @@ class XGithub {
 
         // use full name instead
         String query = "fullname:" + name + " type:user";
-        search = api.searchUser(CollectionUtils.<String, String>newMap("q", query));
+        search = api.searchUser(CollectionUtils.<String, String>mapOf("q", query));
         if (search.getTotalCount() > 0) {
             GhUser user = search.getItems().get(0);
             GhUser test = api.getUser(user.getLogin());

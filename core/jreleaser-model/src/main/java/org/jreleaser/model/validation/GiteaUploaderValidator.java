@@ -26,7 +26,7 @@ import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
-import static org.jreleaser.util.CollectionUtils.newList;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -65,7 +65,7 @@ public abstract class GiteaUploaderValidator extends Validator {
 
         gitea.setToken(
             checkProperty(context,
-                newList(
+                listOf(
                     "GITEA_" + Env.toVar(gitea.getName()) + "_TOKEN",
                     "GITEA_TOKEN"),
                 "gitea.token",

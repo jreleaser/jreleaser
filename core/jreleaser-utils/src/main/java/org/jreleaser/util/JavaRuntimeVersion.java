@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jreleaser.util.CollectionUtils.newList;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -229,7 +229,7 @@ public class JavaRuntimeVersion implements Version<JavaRuntimeVersion> {
             throw new IllegalArgumentException("Version does not start with a digit: '" + version + "'");
         }
 
-        String v = take(version, 0, newList('-', '+'));
+        String v = take(version, 0, listOf('-', '+'));
         String p = null;
         String b = null;
         String o = null;

@@ -18,7 +18,6 @@
 package org.jreleaser.model;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
@@ -38,6 +37,7 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.model.util.Artifacts.resolveForFileSet;
+import static org.jreleaser.util.CollectionUtils.setOf;
 
 /**
  * @author Andres Almiray
@@ -176,7 +176,7 @@ public class FileSet extends AbstractModelObject<FileSet> implements Domain, Ext
 
         Set<String> resolvedIncludes = getResolvedIncludes(context);
         if (resolvedIncludes.isEmpty()) {
-            resolvedIncludes = CollectionUtils.newSet("**/*");
+            resolvedIncludes = setOf("**/*");
         }
         resolvedIncludes = resolvedIncludes.stream()
             .map(s -> GLOB_PREFIX + s)

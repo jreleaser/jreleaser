@@ -22,7 +22,7 @@ import org.jreleaser.util.Env;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jreleaser.util.CollectionUtils.newList;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.Constants.HIDE;
 import static org.jreleaser.util.Constants.UNSET;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -59,7 +59,7 @@ public class GiteaUploader extends AbstractUploader<GiteaUploader> {
     }
 
     public String getResolvedToken() {
-        return Env.env(newList(
+        return Env.env(listOf(
                 "GITLAB_" + Env.toVar(name) + "_TOKEN",
                 "GITLAB_TOKEN"),
             token);

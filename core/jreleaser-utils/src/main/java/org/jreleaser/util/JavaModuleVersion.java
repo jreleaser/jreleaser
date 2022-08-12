@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.util.Collections.emptyList;
-import static org.jreleaser.util.CollectionUtils.newList;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -128,12 +128,12 @@ public class JavaModuleVersion implements Version<JavaModuleVersion> {
     }
 
     private int comparePrerelease(String p1, String p2) {
-        List<Character> delims = CollectionUtils.newList('.', '-');
+        List<Character> delims = CollectionUtils.listOf('.', '-');
         return compareTokens(split(p1, delims), split(p2, delims));
     }
 
     private int compareBuild(String b1, String b2) {
-        List<Character> delims = CollectionUtils.newList('.', '-', '+');
+        List<Character> delims = CollectionUtils.listOf('.', '-', '+');
         return compareTokens(split(b1, delims), split(b2, delims));
     }
 
@@ -204,12 +204,12 @@ public class JavaModuleVersion implements Version<JavaModuleVersion> {
             throw new IllegalArgumentException("Version does not start with a digit: '" + version + "'");
         }
 
-        String v = take(version, 0, newList('-', '+'));
+        String v = take(version, 0, listOf('-', '+'));
         String p = null;
         String b = null;
         if (v.length() + 1 < version.length()) {
             if (version.charAt(v.length()) == '-') {
-                p = take(version, v.length() + 1, newList('+'));
+                p = take(version, v.length() + 1, listOf('+'));
                 if (v.length() + 1 + p.length() + 1 < version.length()) {
                     b = take(version, v.length() + 1 + p.length() + 1, emptyList());
                 }
