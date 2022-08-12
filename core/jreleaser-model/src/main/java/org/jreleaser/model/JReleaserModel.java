@@ -309,6 +309,7 @@ public class JReleaserModel implements Domain {
         applyTemplates(props, project.getResolvedExtraProperties());
         props.put(Constants.KEY_ZONED_DATE_TIME_NOW, now);
         applyFunctions(props);
+        applyTemplates(props, props);
 
         return props;
     }

@@ -31,6 +31,7 @@ import java.io.Writer;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -83,7 +84,7 @@ public final class MustacheUtils {
     }
 
     public static void applyTemplates(Map<String, Object> props, Map<String, Object> templates) {
-        for (Map.Entry<String, Object> e : templates.entrySet()) {
+        for (Map.Entry<String, Object> e : new LinkedHashSet<>(templates.entrySet())) {
             String value = String.valueOf(e.getValue());
             if (value.contains("{{") && value.contains("}}")) {
                 props.put(e.getKey(), applyTemplate(value, props));
