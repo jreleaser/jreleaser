@@ -17,6 +17,7 @@
  */
 package org.jreleaser.packagers;
 
+import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.JReleaserContext;
@@ -27,10 +28,10 @@ import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Scanner;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -149,12 +150,9 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager> ext
     protected void writeFile(Reader reader, Path outputFile) throws PackagerProcessingException {
         try {
             createDirectoriesWithFullAccess(outputFile.getParent());
-            Scanner scanner = new Scanner(reader);
-            scanner.useDelimiter("\\Z");
-            Files.write(outputFile, scanner.next().getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
-            scanner.close();
+            Files.write(outputFile, IOUtils.toByteArray(reader, StandardCharsets.UTF_8), CREATE, WRITE, TRUNCATE_EXISTING);
             grantFullAccess(outputFile);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new PackagerProcessingException(RB.$("ERROR_unexpected_error_writing_file", outputFile.toAbsolutePath()), e);
         }
     }
@@ -164,7 +162,7 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager> ext
             createDirectoriesWithFullAccess(outputFile.getParent());
             Files.write(outputFile, content.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
             grantFullAccess(outputFile);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new PackagerProcessingException(RB.$("ERROR_unexpected_error_writing_file", outputFile.toAbsolutePath()), e);
         }
     }

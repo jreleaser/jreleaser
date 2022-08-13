@@ -21,10 +21,13 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,7 +93,7 @@ public final class TemplateUtils {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     templates.put(actualTemplateDirectory.relativize(file).toString(),
-                        Files.newBufferedReader(file));
+                        newBufferedReader(file));
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -111,7 +114,7 @@ public final class TemplateUtils {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     templates.put(templateDirectory.relativize(file).toString(),
-                        Files.newBufferedReader(file));
+                        newBufferedReader(file));
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -120,6 +123,10 @@ public final class TemplateUtils {
         }
 
         return templates;
+    }
+
+    private static BufferedReader newBufferedReader(Path file) throws IOException {
+        return new BufferedReader(new InputStreamReader(new FileInputStream(file.toFile()), StandardCharsets.UTF_8));
     }
 
     public static Map<String, Reader> resolveTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot) {
@@ -156,7 +163,7 @@ public final class TemplateUtils {
             if (null == inputStream) {
                 throw new JReleaserException(RB.$("ERROR_template_not_found", BASE_TEMPLATE_PREFIX + templateKey));
             }
-            return new InputStreamReader(inputStream);
+            return new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_reading_template_for", templateKey, "classpath"));
         }
