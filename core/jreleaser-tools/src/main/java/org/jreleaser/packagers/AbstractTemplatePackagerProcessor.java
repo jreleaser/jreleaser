@@ -96,7 +96,7 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager> ext
                 writeFile(context.getModel().getProject(), distribution, content, props, prepareDirectory, filename);
             } else {
                 context.getLogger().debug(RB.$("packager.write.file"), filename, distributionName, packagerName);
-                writeFile(entry.getValue(), prepareDirectory.resolve(filename));
+                writeFile(context.getModel().getProject(), distribution, entry.getValue(), props, prepareDirectory, filename);
             }
         }
 
@@ -146,6 +146,10 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager> ext
     }
 
     protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException;
+
+    protected void writeFile(Project project, Distribution distribution, Reader reader, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException {
+        writeFile(reader, outputDirectory.resolve(fileName));
+    }
 
     protected void writeFile(Reader reader, Path outputFile) throws PackagerProcessingException {
         try {

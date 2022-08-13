@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name={{projectNameCapitalized}}
+Name=JReleaser
 Exec={{distributionExecutableName}}
 Icon={{distributionExecutableName}}
 Categories={{appImageCategoriesByComma}}

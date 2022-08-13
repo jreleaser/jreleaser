@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- {{jreleaserCreationStamp}} -->
-<component type="desktop-application">
+<!-- Generated with JReleaser 1.2.0-SNAPSHOT at 2022-08-13T23:17:43.641+02:00 -->
+<component type="console-application">
   <id>{{appImageComponentId}}</id>
-  <name>{{projectName}}</name>
+  <name>JReleaser</name>
   <summary>{{projectDescription}}</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>{{projectLicense}}</project_license>
@@ -25,7 +25,6 @@
     {{/appImageReleases}}
   </releases>
   <developer_name>{{appImageDeveloperName}}</developer_name>
-  <launchable type="desktop-id">{{distributionExecutableName}}.desktop</launchable>
   <screenshots>
      {{#appImageScreenshots}}
      <screenshot{{#primary}} type="default"{{/primary}}>

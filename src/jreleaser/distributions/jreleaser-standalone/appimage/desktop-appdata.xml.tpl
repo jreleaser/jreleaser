@@ -30,7 +30,7 @@
      {{#appImageScreenshots}}
      <screenshot{{#primary}} type="default"{{/primary}}>
        {{#caption}}<caption>{{caption}}</caption>{{/caption}}
-       <image type="{{type}}"{{#width}} width="{{width}}"{{/width}}{{#height}} height="{{height}}"{{/height}}>{{url}}</image>
+       <image type="{{type}}{{#width}} width="{{width}}"{{/width}}{{#height}} height="{{height}}"{{/height}}>{{url}}</image>
      </screenshot>
      {{/appImageScreenshots}}
   </screenshots>

@@ -125,8 +125,8 @@ public final class TemplateUtils {
         return templates;
     }
 
-    private static BufferedReader newBufferedReader(Path file) throws IOException {
-        return new BufferedReader(new InputStreamReader(new FileInputStream(file.toFile()), StandardCharsets.UTF_8));
+    private static Reader newBufferedReader(Path file) throws IOException {
+        return new InputStreamReader(new FileInputStream(file.toFile()), StandardCharsets.UTF_8);
     }
 
     public static Map<String, Reader> resolveTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot) {

@@ -30,6 +30,7 @@ import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.packager.spi.PackagerProcessingException;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,6 +40,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.Constants.KEY_APPIMAGE_CATEGORIES;
+import static org.jreleaser.util.Constants.KEY_APPIMAGE_CATEGORIES_BY_COMMA;
 import static org.jreleaser.util.Constants.KEY_APPIMAGE_COMPONENT_ID;
 import static org.jreleaser.util.Constants.KEY_APPIMAGE_DEVELOPER_NAME;
 import static org.jreleaser.util.Constants.KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE;
@@ -76,6 +78,7 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         props.put(KEY_APPIMAGE_URLS, context.getModel().getProject().getLinks().asAppdataLinks());
         props.put(KEY_APPIMAGE_COMPONENT_ID, getPackager().getComponentId());
         props.put(KEY_APPIMAGE_CATEGORIES, getPackager().getCategories());
+        props.put(KEY_APPIMAGE_CATEGORIES_BY_COMMA, String.join(",", getPackager().getCategories()));
         props.put(KEY_APPIMAGE_DEVELOPER_NAME, getPackager().getDeveloperName());
         props.put(KEY_APPIMAGE_REQUIRES_TERMINAL, getPackager().isRequiresTerminal());
         props.put(KEY_APPIMAGE_REPO_OWNER, packager.getRepository().getOwner());
@@ -89,7 +92,7 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         str = str.replace(context.getModel().getProject().getEffectiveVersion(), "${DISTRIBUTION_VERSION}");
         props.put(KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE_NAME, str);
         str = (String) props.get(KEY_DISTRIBUTION_URL);
-        str = str.replace(gitService.getResolvedTagName(context.getModel()), "${DISTRIBUTION_TAG}")
+        str = str.replace(gitService.getEffectiveTagName(context.getModel()), "${DISTRIBUTION_TAG}")
             .replace((String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE), "${DISTRIBUTION_FILE}");
         props.put(KEY_APPIMAGE_DISTRIBUTION_URL, str);
 
@@ -135,13 +138,23 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
 
         Path outputFile = outputDirectory.resolve(fileName);
 
-        if ("app.desktop".equals(fileName) || "icons/app.png".equals(fileName)) {
+        if ("app.desktop".equals(fileName)) {
             outputFile = outputDirectory.resolve(fileName.replace("app", distribution.getExecutable().getName()));
         } else if ("appdata.xml".equals(fileName)) {
             outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".appdata.xml");
         }
 
         writeFile(content, outputFile);
+    }
+
+    protected void writeFile(Project project, Distribution distribution, Reader reader, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException {
+        Path outputFile = outputDirectory.resolve(fileName);
+
+        if (fileName.endsWith("app.png")) {
+            outputFile = outputDirectory.resolve(fileName.replace("app", distribution.getExecutable().getName()));
+        }
+
+        writeFile(reader, outputFile);
     }
 
     private Optional<Stereotype> resolveStereotype(String fileName) {

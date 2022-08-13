@@ -2,7 +2,7 @@
 Name={{projectNameCapitalized}}
 Exec={{distributionExecutableName}}
 Icon={{distributionExecutableName}}
-Categories={{appImageCategory}}
+Categories={{appImageCategoriesByComma}}
 Terminal=true
 Type=Application
 Version=1.0

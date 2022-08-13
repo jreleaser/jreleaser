@@ -29,11 +29,8 @@
   <screenshots>
      {{#appImageScreenshots}}
      <screenshot{{#primary}} type="default"{{/primary}}>
-       <type>{{type}}</type>
-       <image>{{url}}</image>
        {{#caption}}<caption>{{caption}}</caption>{{/caption}}
-       {{#width}}<width>{{width}}</width>{{/width}}
-       {{#height}}<height>{{height}}</height>{{/height}}
+       <image type="{{type}}"{{#width}} width="{{width}}"{{/width}}{{#height}} height="{{height}}"{{/height}}>{{url}}</image>
      </screenshot>
      {{/appImageScreenshots}}
   </screenshots>
