@@ -28,6 +28,7 @@ import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.JReleaserException;
+import org.jreleaser.util.JReleaserLogger;
 
 import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -87,7 +88,7 @@ public class ModelConfigurer {
             context.getModel().getRelease().setGithub(new Github());
         }
 
-        fillGitProperties(context.getModel().getRelease().getGitService(),
+        fillGitProperties(context.getLogger(), context.getModel().getRelease().getGitService(),
             repository, context.getModel().getCommit());
     }
 
@@ -104,7 +105,7 @@ public class ModelConfigurer {
             context.getModel().getRelease().setGitlab(new Gitlab());
         }
 
-        fillGitProperties(context.getModel().getRelease().getGitService(),
+        fillGitProperties(context.getLogger(), context.getModel().getRelease().getGitService(),
             repository, context.getModel().getCommit());
     }
 
@@ -121,7 +122,7 @@ public class ModelConfigurer {
             context.getModel().getRelease().setCodeberg(new Codeberg());
         }
 
-        fillGitProperties(context.getModel().getRelease().getGitService(),
+        fillGitProperties(context.getLogger(), context.getModel().getRelease().getGitService(),
             repository, context.getModel().getCommit());
     }
 
@@ -129,17 +130,27 @@ public class ModelConfigurer {
         GitService service = context.getModel().getRelease().getGitService();
 
         if (service != null) {
-            fillGitProperties(service, repository, context.getModel().getCommit());
+            fillGitProperties(context.getLogger(), service, repository, context.getModel().getCommit());
         }
     }
 
-    private static void fillGitProperties(GitService service, Repository repository, Commit head) {
+    private static void fillGitProperties(JReleaserLogger logger, GitService service, Repository repository, Commit head) {
         if (isBlank(service.getOwner())) {
             service.setOwner(repository.getOwner());
+        } else if (!service.getOwner().equals(repository.getOwner())) {
+            service.setMatch(false);
+            service.setSkipTag(true);
+            logger.warn(RB.$("ERROR_context_configurer_detected_git_owner"), repository.getOwner(), service.getOwner());
         }
+
         if (isBlank(service.getName())) {
             service.setName(repository.getName());
+        } else if (!service.getName().equals(repository.getName())) {
+            service.setMatch(false);
+            service.setSkipTag(true);
+            logger.warn(RB.$("ERROR_context_configurer_detected_git_name"), repository.getName(), service.getName());
         }
+
         if (isBlank(Env.env(BRANCH, service.getBranch()))) {
             service.setBranch(head.getRefName());
         }
