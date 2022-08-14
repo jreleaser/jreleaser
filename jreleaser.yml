@@ -287,6 +287,15 @@ distributions:
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.jar'
 
   jreleaser-standalone:
+    appImage:
+      active: always
+      componentId: org.jreleaser.cli
+      developerName: JReleaser
+      categories:
+        - Development
+      repository:
+        active: release
+        name: jreleaser-appimage
     brew:
       active: always
       formulaName: jreleaser
