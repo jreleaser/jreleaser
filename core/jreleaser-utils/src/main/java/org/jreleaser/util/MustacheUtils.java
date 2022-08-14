@@ -136,6 +136,7 @@ public final class MustacheUtils {
         }
         props.put("f_now", new TimeFormatFunction(now));
 
+        props.put("f_trim", new TrimFunction());
         props.put("f_underscore", new UnderscoreFunction());
         props.put("f_dash", new DashFunction());
         props.put("f_slash", new SlashFunction());
@@ -176,6 +177,13 @@ public final class MustacheUtils {
         public String apply(String input) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(input);
             return now.format(formatter);
+        }
+    }
+
+    public static class TrimFunction implements Function<String, String> {
+        @Override
+        public String apply(String input) {
+            return input.trim();
         }
     }
 
@@ -240,7 +248,7 @@ public final class MustacheUtils {
             Parser parser = Parser.builder().build();
             Node document = parser.parse(input);
             HtmlRenderer renderer = HtmlRenderer.builder().build();
-            return renderer.render(document);
+            return renderer.render(document).trim();
         }
     }
 
