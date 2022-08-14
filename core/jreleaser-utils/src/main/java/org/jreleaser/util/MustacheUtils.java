@@ -27,13 +27,18 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.jreleaser.bundle.RB;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -41,6 +46,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static java.nio.file.Files.readAllBytes;
+import static org.jreleaser.util.ChecksumUtils.checksum;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -137,6 +144,10 @@ public final class MustacheUtils {
         props.put("f_capitalize", new CapitalizeFunction());
         props.put("f_uncapitalize", new UncapitalizeFunction());
         props.put("f_md2html", new MarkdownToHtmlFunction());
+        props.put("f_file_read", new FileReadFunction());
+        props.put("f_file_size", new FileSizeFunction());
+        EnumSet.allOf(Algorithm.class)
+            .forEach(algorithm -> props.put("f_checksum_" + algorithm.formatted(), new FileChecksumFunction(algorithm)));
     }
 
     private static class MyMustacheFactory extends DefaultMustacheFactory {
@@ -230,6 +241,69 @@ public final class MustacheUtils {
             Node document = parser.parse(input);
             HtmlRenderer renderer = HtmlRenderer.builder().build();
             return renderer.render(document);
+        }
+    }
+
+    public static class FileReadFunction implements Function<Object, String> {
+        @Override
+        public String apply(Object input) {
+            try {
+                if (input instanceof Path) {
+                    return new String(Files.readAllBytes((Path) input));
+                } else if (input instanceof File) {
+                    return new String(Files.readAllBytes(((File) input).toPath()));
+                } else if (input instanceof CharSequence) {
+                    return new String(Files.readAllBytes(Paths.get(String.valueOf(input).trim())));
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException(RB.$("ERROR_unexpected_file_read", input), e);
+            }
+
+            throw new IllegalStateException(RB.$("ERROR_invalid_file_input", input));
+        }
+    }
+
+    public static class FileSizeFunction implements Function<Object, Long> {
+        @Override
+        public Long apply(Object input) {
+            try {
+                if (input instanceof Path) {
+                    return Files.size((Path) input);
+                } else if (input instanceof File) {
+                    return Files.size(((File) input).toPath());
+                } else if (input instanceof CharSequence) {
+                    return Files.size(Paths.get(String.valueOf(input).trim()));
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException(RB.$("ERROR_unexpected_file_read", input), e);
+            }
+
+            throw new IllegalStateException(RB.$("ERROR_invalid_file_input", input));
+        }
+    }
+
+    public static class FileChecksumFunction implements Function<Object, String> {
+        private final Algorithm algorithm;
+
+        public FileChecksumFunction(Algorithm algorithm) {
+            this.algorithm = algorithm;
+        }
+
+        @Override
+        public String apply(Object input) {
+            try {
+                if (input instanceof Path) {
+                    return checksum(algorithm, readAllBytes((Path) input));
+                } else if (input instanceof File) {
+                    return checksum(algorithm, readAllBytes(((File) input).toPath()));
+                } else if (input instanceof CharSequence) {
+                    return checksum(algorithm, readAllBytes(Paths.get(String.valueOf(input).trim())));
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException(RB.$("ERROR_unexpected_file_read", input), e);
+            }
+
+            throw new IllegalStateException(RB.$("ERROR_invalid_file_input", input));
         }
     }
 }
