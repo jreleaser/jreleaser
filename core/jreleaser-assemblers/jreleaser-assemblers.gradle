@@ -20,6 +20,7 @@ dependencies {
     api project(':git-sdk')
     api project(':tool-sdk')
     api project(':jreleaser-templates')
+    api "commons-io:commons-io:$commonsIoVersion"
 
     compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
     annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"

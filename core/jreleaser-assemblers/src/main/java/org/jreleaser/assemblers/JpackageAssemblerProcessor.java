@@ -24,6 +24,7 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Jpackage;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
+import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.templates.TemplateUtils;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.FileUtils;
@@ -33,7 +34,6 @@ import org.jreleaser.util.command.Command;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -121,11 +121,11 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
                 Files.copy(iconPath, inputsDirectory.resolve(assembler.getName() + ext), REPLACE_EXISTING);
             } else {
                 String iconResource = "META-INF/jreleaser/icons/" + p + "/duke" + ext;
-                try (InputStream in = TemplateUtils.resolveResource(context.getLogger(), iconResource)) {
-                    writeFile(IOUtils.toByteArray(in), inputsDirectory.resolve(assembler.getName() + ext));
+                try (TemplateResource templateResource = TemplateUtils.resolveResource(context.getLogger(), iconResource)) {
+                    writeFile(IOUtils.toByteArray(templateResource.getInputStream()), inputsDirectory.resolve(assembler.getName() + ext));
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
     }

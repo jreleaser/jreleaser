@@ -17,16 +17,17 @@
  */
 package org.jreleaser.assemblers;
 
+import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Glob;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JavaAssembler;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
+import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.util.Constants;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
@@ -63,17 +64,25 @@ abstract class AbstractJavaAssemblerProcessor<A extends JavaAssembler> extends A
             Map<String, Object> newProps = fillProps(props);
 
             context.getLogger().debug(RB.$("packager.resolve.templates"), assembler.getType(), assembler.getName());
-            Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
+            Map<String, TemplateResource> templates = resolveAndMergeTemplates(context.getLogger(),
                 assembler.getType(),
                 assembler.getType(),
                 context.getModel().getProject().isSnapshot(),
                 context.getBasedir().resolve(getAssembler().getTemplateDirectory()));
 
-            for (Map.Entry<String, Reader> entry : templates.entrySet()) {
-                context.getLogger().debug(RB.$("packager.evaluate.template"), entry.getKey(), assembler.getName(), assembler.getType());
-                String content = applyTemplate(entry.getValue(), newProps, entry.getKey());
-                context.getLogger().debug(RB.$("packager.write.template"), entry.getKey(), assembler.getName(), assembler.getType());
-                writeFile(context.getModel().getProject(), content, newProps, entry.getKey());
+            for (Map.Entry<String, TemplateResource> entry : templates.entrySet()) {
+                String key = entry.getKey();
+                TemplateResource value = entry.getValue();
+
+                if (value.isReader()) {
+                    context.getLogger().debug(RB.$("packager.evaluate.template"), key, assembler.getName(), assembler.getType());
+                    String content = applyTemplate(value.getReader(), newProps, key);
+                    context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
+                    writeFile(context.getModel().getProject(), content, newProps, key);
+                } else {
+                    context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
+                    writeFile(context.getModel().getProject(), IOUtils.toByteArray(value.getInputStream()), newProps, key);
+                }
             }
 
             Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
@@ -110,4 +119,17 @@ abstract class AbstractJavaAssemblerProcessor<A extends JavaAssembler> extends A
     }
 
     protected abstract void writeFile(Project project, String content, Map<String, Object> props, String fileName) throws AssemblerProcessingException;
+
+    protected void writeFile(Project project, byte[] content, Map<String, Object> props, String fileName) throws AssemblerProcessingException {
+        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+        Path inputsDirectory = outputDirectory.resolve("inputs");
+        try {
+            Files.createDirectories(inputsDirectory);
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_create_directories"), e);
+        }
+
+        Path outputFile = inputsDirectory.resolve(fileName);
+        writeFile(content, outputFile);
+    }
 }

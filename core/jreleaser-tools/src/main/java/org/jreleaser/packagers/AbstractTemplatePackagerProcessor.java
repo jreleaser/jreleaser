@@ -24,9 +24,11 @@ import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.TemplatePackager;
 import org.jreleaser.model.packager.spi.PackagerProcessingException;
+import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -72,23 +74,24 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager> ext
         Files.createDirectories(prepareDirectory);
 
         context.getLogger().debug(RB.$("packager.resolve.templates"), distributionName, packagerName);
-        Map<String, Reader> templates = resolveAndMergeTemplates(context.getLogger(),
+        Map<String, TemplateResource> templates = resolveAndMergeTemplates(context.getLogger(),
             distribution.getType().name(),
             // leave this one be!
             getPackagerName(),
             context.getModel().getProject().isSnapshot(),
             context.getBasedir().resolve(templateDirectory));
 
-        for (Map.Entry<String, Reader> entry : templates.entrySet()) {
+        for (Map.Entry<String, TemplateResource> entry : templates.entrySet()) {
             String filename = entry.getKey();
             if (isSkipped(filename)) {
                 context.getLogger().debug(RB.$("packager.skipped.template"), filename, distributionName, packagerName);
                 continue;
             }
 
-            if (filename.endsWith(".tpl")) {
+            TemplateResource value = entry.getValue();
+            if (value.isReader()) {
                 context.getLogger().debug(RB.$("packager.evaluate.template"), filename, distributionName, packagerName);
-                String content = applyTemplate(entry.getValue(), props);
+                String content = applyTemplate(value.getReader(), props);
                 if (!content.endsWith(System.lineSeparator())) {
                     content += System.lineSeparator();
                 }
@@ -96,7 +99,7 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager> ext
                 writeFile(context.getModel().getProject(), distribution, content, props, prepareDirectory, filename);
             } else {
                 context.getLogger().debug(RB.$("packager.write.file"), filename, distributionName, packagerName);
-                writeFile(context.getModel().getProject(), distribution, entry.getValue(), props, prepareDirectory, filename);
+                writeFile(context.getModel().getProject(), distribution, value.getInputStream(), props, prepareDirectory, filename);
             }
         }
 
@@ -147,6 +150,12 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager> ext
 
     protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException;
 
+    protected void writeFile(Project project, Distribution distribution, InputStream inputStream, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException {
+        Path outputFile = outputDirectory.resolve(fileName);
+
+        writeFile(inputStream, outputFile);
+    }
+
     protected void writeFile(Project project, Distribution distribution, Reader reader, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException {
         writeFile(reader, outputDirectory.resolve(fileName));
     }
@@ -161,13 +170,27 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager> ext
         }
     }
 
-    protected void writeFile(String content, Path outputFile) throws PackagerProcessingException {
+    protected void writeFile(InputStream inputStream, Path outputFile) throws PackagerProcessingException {
         try {
             createDirectoriesWithFullAccess(outputFile.getParent());
-            Files.write(outputFile, content.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
+            Files.write(outputFile, IOUtils.toByteArray(inputStream), CREATE, WRITE, TRUNCATE_EXISTING);
             grantFullAccess(outputFile);
         } catch (Exception e) {
             throw new PackagerProcessingException(RB.$("ERROR_unexpected_error_writing_file", outputFile.toAbsolutePath()), e);
         }
+    }
+
+    protected void writeFile(byte[] content, Path outputFile) throws PackagerProcessingException {
+        try {
+            createDirectoriesWithFullAccess(outputFile.getParent());
+            Files.write(outputFile, content, CREATE, WRITE, TRUNCATE_EXISTING);
+            grantFullAccess(outputFile);
+        } catch (Exception e) {
+            throw new PackagerProcessingException(RB.$("ERROR_unexpected_error_writing_file", outputFile.toAbsolutePath()), e);
+        }
+    }
+
+    protected void writeFile(String content, Path outputFile) throws PackagerProcessingException {
+        writeFile(content.getBytes(), outputFile);
     }
 }

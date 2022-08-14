@@ -17,10 +17,12 @@
  */
 package org.jreleaser.ant.tasks;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.jreleaser.ant.tasks.internal.JReleaserLoggerAdapter;
 import org.jreleaser.config.JReleaserConfigParser;
+import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.templates.TemplateUtils;
 import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
@@ -28,13 +30,11 @@ import org.jreleaser.util.JReleaserLogger;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
-import java.util.Scanner;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -75,14 +75,11 @@ public class JReleaserInitTask extends Task {
             Path outputDirectory = getOutputDirectory();
             Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
-            Reader template = TemplateUtils.resolveTemplate(logger, "jreleaser." + format + ".tpl");
+            TemplateResource template = TemplateUtils.resolveTemplate(logger, "jreleaser." + format + ".tpl");
 
             logger.info("Writing file " + outputFile.toAbsolutePath());
-            try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
-                 Scanner scanner = new Scanner(template)) {
-                while (scanner.hasNextLine()) {
-                    writer.write(scanner.nextLine() + System.lineSeparator());
-                }
+            try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING)) {
+                IOUtils.copy(template.getReader(), writer);
             } catch (FileAlreadyExistsException e) {
                 logger.error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());
                 return;

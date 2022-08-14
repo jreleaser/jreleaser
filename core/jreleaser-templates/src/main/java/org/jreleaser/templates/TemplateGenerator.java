@@ -17,20 +17,21 @@
  */
 package org.jreleaser.templates;
 
+import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Announce;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.util.JReleaserLogger;
 
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Reader;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Scanner;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
@@ -93,17 +94,14 @@ public class TemplateGenerator {
             throw fail(e);
         }
 
-        Reader reader = TemplateUtils.resolveTemplate(logger,"announcers/" + announcerName + ".tpl");
+        TemplateResource value = TemplateUtils.resolveTemplate(logger, "announcers/" + announcerName + ".tpl");
 
         Path outputFile = outputDirectory.resolve(announcerName + ".tpl");
         logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());
 
         try (Writer fileWriter = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
-             BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter);
-             Scanner scanner = new Scanner(reader)) {
-            while (scanner.hasNextLine()) {
-                decoratedWriter.write(scanner.nextLine() + System.lineSeparator());
-            }
+             BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter)) {
+            IOUtils.copy(value.getReader(), decoratedWriter);
         } catch (FileAlreadyExistsException e) {
             logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
             return null;
@@ -130,8 +128,8 @@ public class TemplateGenerator {
             throw fail(e);
         }
 
-        Map<String, Reader> templates = TemplateUtils.resolveTemplates(logger, distributionType.name(), packagerName, snapshot);
-        for (Map.Entry<String, Reader> template : templates.entrySet()) {
+        Map<String, TemplateResource> templates = TemplateUtils.resolveTemplates(logger, distributionType.name(), packagerName, snapshot);
+        for (Map.Entry<String, TemplateResource> template : templates.entrySet()) {
             Path outputFile = output.resolve(template.getKey());
             logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());
 
@@ -141,17 +139,27 @@ public class TemplateGenerator {
                 throw fail(e);
             }
 
-            try (Writer fileWriter = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
-                 BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter);
-                 Scanner scanner = new Scanner(template.getValue())) {
-                while (scanner.hasNextLine()) {
-                    decoratedWriter.write(scanner.nextLine() + System.lineSeparator());
+            TemplateResource value = template.getValue();
+
+            if (value.isReader()) {
+                try (Writer fileWriter = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
+                     BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter)) {
+                    IOUtils.copy(value.getReader(), decoratedWriter);
+                } catch (FileAlreadyExistsException e) {
+                    logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
+                    return null;
+                } catch (Exception e) {
+                    throw fail(e);
                 }
-            } catch (FileAlreadyExistsException e) {
-                logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
-                return null;
-            } catch (Exception e) {
-                throw fail(e);
+            } else {
+                try (OutputStream outputStream = new FileOutputStream(outputFile.toFile())) {
+                    IOUtils.copy(value.getInputStream(), outputStream);
+                } catch (FileAlreadyExistsException e) {
+                    logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
+                    return null;
+                } catch (Exception e) {
+                    throw fail(e);
+                }
             }
         }
 

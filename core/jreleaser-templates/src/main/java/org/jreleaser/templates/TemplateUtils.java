@@ -21,12 +21,10 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.JReleaserLogger;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -49,6 +47,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public final class TemplateUtils {
     private static final Properties TEMPLATES_INVENTORY = new Properties();
     private static final String BASE_TEMPLATE_PREFIX = "META-INF/jreleaser/templates/";
+    private static final String TPL = ".tpl";
 
     static {
         try {
@@ -64,22 +63,22 @@ public final class TemplateUtils {
     }
 
     public static String trimTplExtension(String str) {
-        if (str.endsWith(".tpl")) {
+        if (str.endsWith(TPL)) {
             return str.substring(0, str.length() - 4);
         }
         return str;
     }
 
-    public static Map<String, Reader> resolveAndMergeTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot, Path templateDirectory) {
-        Map<String, Reader> templates = resolveTemplates(logger, distributionType, toolName, snapshot);
+    public static Map<String, TemplateResource> resolveAndMergeTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot, Path templateDirectory) {
+        Map<String, TemplateResource> templates = resolveTemplates(logger, distributionType, toolName, snapshot);
         if (null != templateDirectory && Files.exists(templateDirectory)) {
             templates.putAll(resolveTemplates(distributionType, toolName, snapshot, templateDirectory));
         }
         return templates;
     }
 
-    public static Map<String, Reader> resolveTemplates(String distributionType, String toolName, boolean snapshot, Path templateDirectory) {
-        Map<String, Reader> templates = new LinkedHashMap<>();
+    public static Map<String, TemplateResource> resolveTemplates(String distributionType, String toolName, boolean snapshot, Path templateDirectory) {
+        Map<String, TemplateResource> templates = new LinkedHashMap<>();
 
         Path snapshotTemplateDirectory = templateDirectory.resolveSibling(templateDirectory.getFileName() + "-snapshot");
         Path directory = templateDirectory;
@@ -93,7 +92,7 @@ public final class TemplateUtils {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     templates.put(actualTemplateDirectory.relativize(file).toString(),
-                        newBufferedReader(file));
+                        asResource(file));
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -106,15 +105,15 @@ public final class TemplateUtils {
         return templates;
     }
 
-    public static Map<String, Reader> resolveTemplates(Path templateDirectory) {
-        Map<String, Reader> templates = new LinkedHashMap<>();
+    public static Map<String, TemplateResource> resolveTemplates(Path templateDirectory) {
+        Map<String, TemplateResource> templates = new LinkedHashMap<>();
 
         try {
             Files.walkFileTree(templateDirectory, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     templates.put(templateDirectory.relativize(file).toString(),
-                        newBufferedReader(file));
+                        asResource(file));
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -125,14 +124,19 @@ public final class TemplateUtils {
         return templates;
     }
 
-    private static Reader newBufferedReader(Path file) throws IOException {
-        return new InputStreamReader(new FileInputStream(file.toFile()), StandardCharsets.UTF_8);
+    private static TemplateResource asResource(Path file) throws IOException {
+        FileInputStream inputStream = new FileInputStream(file.toFile());
+        if (file.getFileName().toString().endsWith(TPL)) {
+            return new ReaderTemplateResource(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        }
+
+        return new InputStreamTemplateResource(inputStream);
     }
 
-    public static Map<String, Reader> resolveTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot) {
+    public static Map<String, TemplateResource> resolveTemplates(JReleaserLogger logger, String distributionType, String toolName, boolean snapshot) {
         String distributionTypeName = distributionType.toLowerCase(Locale.ENGLISH).replace('_', '-');
 
-        Map<String, Reader> templates = new LinkedHashMap<>();
+        Map<String, TemplateResource> templates = new LinkedHashMap<>();
 
         logger.debug(RB.$("templates.templates.resolve.classpath"));
 
@@ -154,7 +158,7 @@ public final class TemplateUtils {
         return templates;
     }
 
-    public static Reader resolveTemplate(JReleaserLogger logger, String templateKey) {
+    public static TemplateResource resolveTemplate(JReleaserLogger logger, String templateKey) {
         logger.debug(RB.$("templates.template.resolve.classpath"), templateKey);
 
         try {
@@ -163,13 +167,13 @@ public final class TemplateUtils {
             if (null == inputStream) {
                 throw new JReleaserException(RB.$("ERROR_template_not_found", BASE_TEMPLATE_PREFIX + templateKey));
             }
-            return new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            return templateKey.endsWith(TPL) ? new ReaderTemplateResource(new InputStreamReader(inputStream, StandardCharsets.UTF_8)) : new InputStreamTemplateResource(inputStream);
         } catch (Exception e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_reading_template_for", templateKey, "classpath"));
         }
     }
 
-    public static InputStream resolveResource(JReleaserLogger logger, String key) {
+    public static TemplateResource resolveResource(JReleaserLogger logger, String key) {
         logger.debug(RB.$("templates.resource.resolve.classpath"), key);
 
         try {
@@ -178,7 +182,7 @@ public final class TemplateUtils {
             if (null == inputStream) {
                 throw new JReleaserException(RB.$("ERROR_resource_not_found", key));
             }
-            return inputStream;
+            return new InputStreamTemplateResource(inputStream);
         } catch (Exception e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_reading_resource_for", key, "classpath"), e);
         }

@@ -30,6 +30,7 @@ import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.packager.spi.PackagerProcessingException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -147,14 +148,14 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         writeFile(content, outputFile);
     }
 
-    protected void writeFile(Project project, Distribution distribution, Reader reader, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException {
+    protected void writeFile(Project project, Distribution distribution, InputStream inputStream, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException {
         Path outputFile = outputDirectory.resolve(fileName);
 
         if (fileName.endsWith("app.png")) {
             outputFile = outputDirectory.resolve(fileName.replace("app", distribution.getExecutable().getName()));
         }
 
-        writeFile(reader, outputFile);
+        writeFile(inputStream, outputFile);
     }
 
     private Optional<Stereotype> resolveStereotype(String fileName) {

@@ -15,30 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.tools.ant.DirectoryScanner
+package org.jreleaser.templates;
 
-dependencies {
-    api project(':jreleaser-model')
-    api "commons-io:commons-io:$commonsIoVersion"
-    api "com.github.spullara.mustache.java:compiler:$mustacheVersion"
-}
+import java.io.InputStream;
+import java.io.Reader;
 
-processResources {
-    doFirst {
-        DirectoryScanner.removeDefaultExclude('**/.gitignore')
-    }
+/**
+ * @author Andres Almiray
+ * @since 1.2.0
+ */
+public interface TemplateResource extends AutoCloseable {
+    Reader getReader();
 
-    doLast {
-        DirectoryScanner.resetDefaultExcludes()
-    }
-}
+    InputStream getInputStream();
 
-jar {
-    doFirst {
-        DirectoryScanner.removeDefaultExclude('**/.gitignore')
-    }
+    boolean isReader();
 
-    doLast {
-        DirectoryScanner.resetDefaultExcludes()
-    }
+    boolean isInputStream();
 }

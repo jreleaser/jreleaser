@@ -17,21 +17,20 @@
  */
 package org.jreleaser.cli;
 
+import org.apache.commons.io.IOUtils;
 import org.jreleaser.config.JReleaserConfigParser;
+import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.templates.TemplateUtils;
 import org.jreleaser.util.JReleaserException;
 import picocli.CommandLine;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringWriter;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
-import java.util.Scanner;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -80,16 +79,9 @@ public class Init extends AbstractLoggingCommand {
 
             Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
-            Reader template = TemplateUtils.resolveTemplate(logger, "jreleaser." + format + ".tpl");
+            TemplateResource template = TemplateUtils.resolveTemplate(logger, "jreleaser." + format + ".tpl");
 
-            StringWriter sw = new StringWriter();
-            try (Scanner scanner = new Scanner(template)) {
-                while (scanner.hasNextLine()) {
-                    sw.write(scanner.nextLine() + System.lineSeparator());
-                }
-            }
-
-            String content = sw.toString();
+            String content = IOUtils.toString(template.getReader());
             LocalDate now = LocalDate.now();
             content = content.replaceAll("@year@", now.getYear() + "");
 
