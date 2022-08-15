@@ -10,7 +10,8 @@ DISTRIBUTION_NAME="{{distributionExecutableName}}"
 DISTRIBUTION_EXEC="{{distributionExecutableUnix}}"
 DISTRIBUTION_ID="{{appImageComponentId}}"
 DISTRIBUTION_URL="{{appImageDistributionUrl}}"
-APPIMAGETOOL_URL="https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-${SYSTEM_ARCH}.AppImage"
+APPIMAGETOOL_FILE="appimagetool-${SYSTEM_ARCH}.AppImage"
+APPIMAGETOOL_URL="https://github.com/AppImage/AppImageKit/releases/download/continuous/${APPIMAGETOOL_FILE}"
 
 # create build directory for needed resources
 mkdir -p build-${SYSTEM_ARCH}/
@@ -18,14 +19,28 @@ cd build-${SYSTEM_ARCH}/
 
 # download AppImage tool
 wget -c $APPIMAGETOOL_URL
-chmod +x "./appimagetool-${SYSTEM_ARCH}.AppImage"
+if [ ! -f "$APPIMAGETOOL_FILE" ]; then
+    echo "ERROR: ${APPIMAGETOOL_FILE} does not exist."
+    exit 1
+fi
+chmod +x "$APPIMAGETOOL_FILE"
 
 # download and extract release
 wget -c -O $DISTRIBUTION_FILE $DISTRIBUTION_URL
-if [ "$DISTRIBUTION_FILE" = *.zip ]]; then
+if [ ! -f "$DISTRIBUTION_FILE" ]; then
+    echo "ERROR: ${DISTRIBUTION_FILE} does not exist."
+    exit 1
+fi
+
+if [ "$DISTRIBUTION_FILE" = *.zip ]; then
   unzip -o $DISTRIBUTION_FILE
 else
   tar -xvf $DISTRIBUTION_FILE
+fi
+
+if [ ! -d $DISTRIBUTION_FILE_NAME ]; then
+  echo "ERROR: ${DISTRIBUTION_FILE_NAME} does not exist"
+  exit 1
 fi
 
 # create AppDir structure
@@ -57,4 +72,4 @@ EOF
 chmod +x AppDir/AppRun
 
 # build AppImage
-ARCH=${SYSTEM_ARCH} "./appimagetool-${SYSTEM_ARCH}.AppImage" -v AppDir/ "../${DISTRIBUTION_NAME}-${DISTRIBUTION_VERSION}-${SYSTEM_ARCH}.AppImage"
+ARCH=${SYSTEM_ARCH} "./${APPIMAGETOOL_FILE}" -v AppDir/ "../${DISTRIBUTION_NAME}-${DISTRIBUTION_VERSION}-${SYSTEM_ARCH}.AppImage"
