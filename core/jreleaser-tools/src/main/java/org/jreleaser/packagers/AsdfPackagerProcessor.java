@@ -56,7 +56,7 @@ public class AsdfPackagerProcessor extends AbstractRepositoryPackagerProcessor<A
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
         GitService gitService = context.getModel().getRelease().getGitService();
 
         String repoUrl = gitService.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName());

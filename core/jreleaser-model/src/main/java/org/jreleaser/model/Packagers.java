@@ -30,6 +30,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     protected final Brew brew = new Brew();
     protected final Chocolatey chocolatey = new Chocolatey();
     protected final Docker docker = new Docker();
+    protected final Flatpak flatpak = new Flatpak();
     protected final Gofish gofish = new Gofish();
     protected final Jbang jbang = new Jbang();
     protected final Macports macports = new Macports();
@@ -44,6 +45,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
             brew.isEnabled() ||
             chocolatey.isEnabled() ||
             docker.isEnabled() ||
+            flatpak.isEnabled() ||
             gofish.isEnabled() ||
             jbang.isEnabled() ||
             macports.isEnabled() ||
@@ -61,6 +63,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
         brew.freeze();
         chocolatey.freeze();
         docker.freeze();
+        flatpak.freeze();
         gofish.freeze();
         jbang.freeze();
         macports.freeze();
@@ -78,6 +81,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
         setBrew(packagers.brew);
         setChocolatey(packagers.chocolatey);
         setDocker(packagers.docker);
+        setFlatpak(packagers.flatpak);
         setGofish(packagers.gofish);
         setJbang(packagers.jbang);
         setMacports(packagers.macports);
@@ -133,6 +137,14 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
 
     public void setGofish(Gofish gofish) {
         this.gofish.merge(gofish);
+    }
+
+    public Flatpak getFlatpak() {
+        return flatpak;
+    }
+
+    public void setFlatpak(Flatpak flatpak) {
+        this.flatpak.merge(flatpak);
     }
 
     public Jbang getJbang() {
@@ -191,6 +203,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
         map.putAll(brew.asMap(full));
         map.putAll(chocolatey.asMap(full));
         map.putAll(docker.asMap(full));
+        map.putAll(flatpak.asMap(full));
         map.putAll(gofish.asMap(full));
         map.putAll(jbang.asMap(full));
         map.putAll(macports.asMap(full));

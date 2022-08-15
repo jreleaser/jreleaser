@@ -215,6 +215,16 @@ assemble:
 
 distributions:
   jreleaser:
+    flatpak:
+      active: always
+      componentId: org.jreleaser.cli
+      developerName: JReleaser
+      categories:
+        - Developer Tools
+      repository:
+        active: release
+        owner: flathub
+        name: org.jreleaser.cli
     java:
       mainClass: org.jreleaser.cli.Main
     chocolatey:
@@ -274,6 +284,8 @@ distributions:
           skipSpec: true
       - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar'
+        extraProperties:
+          skipFlatpak: true
 
   jreleaser-ant-tasks:
     artifacts:

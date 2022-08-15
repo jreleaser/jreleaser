@@ -37,6 +37,8 @@ interface Packagers {
 
     Docker getDocker()
 
+    Flatpak getFlatpak()
+
     Gofish getGofish()
 
     Jbang getJbang()
@@ -61,6 +63,8 @@ interface Packagers {
 
     void docker(Action<? super Docker> action)
 
+    void flatpak(Action<? super Flatpak> action)
+
     void gofish(Action<? super Gofish> action)
 
     void jbang(Action<? super Jbang> action)
@@ -84,6 +88,8 @@ interface Packagers {
     void chocolatey(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Chocolatey) Closure<Void> action)
 
     void docker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Docker) Closure<Void> action)
+
+    void flatpak(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Flatpak) Closure<Void> action)
 
     void gofish(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Gofish) Closure<Void> action)
 

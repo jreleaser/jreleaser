@@ -43,6 +43,7 @@ import static org.jreleaser.model.validation.BrewValidator.validateBrew;
 import static org.jreleaser.model.validation.ChocolateyValidator.postValidateChocolatey;
 import static org.jreleaser.model.validation.ChocolateyValidator.validateChocolatey;
 import static org.jreleaser.model.validation.DockerValidator.validateDocker;
+import static org.jreleaser.model.validation.FlatpakValidator.validateFlatpak;
 import static org.jreleaser.model.validation.GofishValidator.validateGofish;
 import static org.jreleaser.model.validation.JbangValidator.postValidateJBang;
 import static org.jreleaser.model.validation.JbangValidator.validateJbang;
@@ -186,6 +187,7 @@ public abstract class DistributionsValidator extends Validator {
         validateBrew(context, distribution, distribution.getBrew(), errors);
         validateChocolatey(context, distribution, distribution.getChocolatey(), errors);
         validateDocker(context, distribution, distribution.getDocker(), errors);
+        validateFlatpak(context, mode, distribution, distribution.getFlatpak(), errors);
         validateGofish(context, distribution, distribution.getGofish(), errors);
         validateJbang(context, distribution, distribution.getJbang(), errors);
         validateMacports(context, distribution, distribution.getMacports(), errors);

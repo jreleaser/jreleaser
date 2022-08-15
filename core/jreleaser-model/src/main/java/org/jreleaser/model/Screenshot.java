@@ -174,7 +174,7 @@ public class Screenshot extends AbstractModelObject<Screenshot> implements Domai
 
         public ScreenshotTemplate(Screenshot source) {
             this.type = source.type.toString();
-            this.primary = source.primary;
+            this.primary = source.isPrimary();
             this.url = source.url;
             this.caption = source.caption;
             this.width = source.width;

@@ -27,10 +27,17 @@
   <developer_name>{{appImageDeveloperName}}</developer_name>
   <screenshots>
      {{#appImageScreenshots}}
+     {{#caption}}
      <screenshot{{#primary}} type="default"{{/primary}}>
-       {{#caption}}<caption>{{caption}}</caption>{{/caption}}
+       <caption>{{caption}}</caption>
        <image type="{{type}}"{{#width}} width="{{width}}"{{/width}}{{#height}} height="{{height}}"{{/height}}>{{url}}</image>
      </screenshot>
+     {{/caption}}
+     {{^caption}}
+     <screenshot{{#primary}} type="default"{{/primary}}>
+       <image type="{{type}}"{{#width}} width="{{width}}"{{/width}}{{#height}} height="{{height}}"{{/height}}>{{url}}</image>
+     </screenshot>
+     {{/caption}}
      {{/appImageScreenshots}}
   </screenshots>
   <content_rating type="oars-1.1" />

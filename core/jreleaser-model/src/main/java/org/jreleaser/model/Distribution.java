@@ -348,6 +348,8 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
                 return (T) getChocolatey();
             case Docker.TYPE:
                 return (T) getDocker();
+            case Flatpak.TYPE:
+                return (T) getFlatpak();
             case Gofish.TYPE:
                 return (T) getGofish();
             case Jbang.TYPE:
@@ -405,6 +407,7 @@ public class Distribution extends Packagers<Distribution> implements ExtraProper
         set.add(Brew.TYPE);
         set.add(Chocolatey.TYPE);
         set.add(Docker.TYPE);
+        set.add(Flatpak.TYPE);
         set.add(Gofish.TYPE);
         set.add(Jbang.TYPE);
         set.add(Macports.TYPE);

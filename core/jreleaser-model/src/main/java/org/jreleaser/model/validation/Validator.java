@@ -285,14 +285,20 @@ class Validator {
     }
 
     static void validateIcons(JReleaserContext context, JReleaserContext.Mode mode, List<Icon> icons, Errors errors, String base) {
-        if (icons.size() == 1) {
-            icons.get(0).setPrimary(true);
-        }
+        validateIcons(context, mode, icons, errors, base, true);
+    }
 
-        if (icons.stream()
-            .mapToInt(s -> s.isPrimary() ? 1 : 0)
-            .sum() > 1) {
-            errors.configuration(RB.$("validation_multiple_primary_icons", base));
+    static void validateIcons(JReleaserContext context, JReleaserContext.Mode mode, List<Icon> icons, Errors errors, String base, boolean validatePrimary) {
+        if (validatePrimary) {
+            if (icons.size() == 1) {
+                icons.get(0).setPrimary(true);
+            }
+
+            if (icons.stream()
+                .mapToInt(s -> s.isPrimary() ? 1 : 0)
+                .sum() > 1) {
+                errors.configuration(RB.$("validation_multiple_primary_icons", base));
+            }
         }
 
         for (int i = 0; i < icons.size(); i++) {

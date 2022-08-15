@@ -34,6 +34,7 @@ import org.jreleaser.gradle.plugin.dsl.Brew
 import org.jreleaser.gradle.plugin.dsl.Chocolatey
 import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Docker
+import org.jreleaser.gradle.plugin.dsl.Flatpak
 import org.jreleaser.gradle.plugin.dsl.Gofish
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Jbang
@@ -75,6 +76,7 @@ class DistributionImpl implements Distribution {
     final BrewImpl brew
     final ChocolateyImpl chocolatey
     final DockerImpl docker
+    final FlatpakImpl flatpak
     final GofishImpl gofish
     final JbangImpl jbang
     final MacportsImpl macports
@@ -112,6 +114,7 @@ class DistributionImpl implements Distribution {
         brew = objects.newInstance(BrewImpl, objects)
         chocolatey = objects.newInstance(ChocolateyImpl, objects)
         docker = objects.newInstance(DockerImpl, objects)
+        flatpak = objects.newInstance(FlatpakImpl, objects)
         gofish = objects.newInstance(GofishImpl, objects)
         jbang = objects.newInstance(JbangImpl, objects)
         macports = objects.newInstance(MacportsImpl, objects)
@@ -186,6 +189,11 @@ class DistributionImpl implements Distribution {
     @Override
     void docker(Action<? super Docker> action) {
         action.execute(docker)
+    }
+
+    @Override
+    void flatpak(Action<? super Flatpak> action) {
+        action.execute(flatpak)
     }
 
     @Override
@@ -276,6 +284,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void flatpak(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Flatpak) Closure<Void> action) {
+        ConfigureUtil.configure(action, flatpak)
+    }
+
+    @Override
     void gofish(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Gofish) Closure<Void> action) {
         ConfigureUtil.configure(action, gofish)
     }
@@ -329,6 +342,7 @@ class DistributionImpl implements Distribution {
         if (brew.isSet()) distribution.brew = brew.toModel()
         if (chocolatey.isSet()) distribution.chocolatey = chocolatey.toModel()
         if (docker.isSet()) distribution.docker = docker.toModel()
+        if (flatpak.isSet()) distribution.flatpak = flatpak.toModel()
         if (gofish.isSet()) distribution.gofish = gofish.toModel()
         if (jbang.isSet()) distribution.jbang = jbang.toModel()
         if (macports.isSet()) distribution.macports = macports.toModel()

@@ -26,6 +26,7 @@ public interface Constants {
     String HIDE = "************";
 
     String MAGIC_SET = "__MAGIC_SET__";
+    String SKIP_OPENJDK = "skipOpenjdk";
 
     // General
     String KEY_ZONED_DATE_TIME_NOW = "__ZonedDateTime_now__";
@@ -289,6 +290,30 @@ public interface Constants {
     String KEY_SPEC_DIRECTORIES = "specDirectories";
     String KEY_SPEC_BINARIES = "specBinaries";
     String KEY_SPEC_FILES = "specFiles";
+
+    // Flatpak
+    String KEY_FLATPAK_REPO_OWNER = "flatpakRepoOwner";
+    String KEY_FLATPAK_REPO_NAME = "flatpakRepoName";
+    String KEY_FLATPAK_COMPONENT_ID = "flatpakComponentId";
+    String KEY_FLATPAK_CATEGORIES = "flatpakCategories";
+    String KEY_FLATPAK_CATEGORIES_BY_COMMA = "flatpakCategoriesByComma";
+    String KEY_FLATPAK_CATEGORIES_BY_SEMICOLON = "flatpakCategoriesBySemicolon";
+    String KEY_FLATPAK_DEVELOPER_NAME = "flatpakDeveloperName";
+    String KEY_FLATPAK_RELEASES = "flatpakReleases";
+    String KEY_FLATPAK_URLS = "flatpakUrls";
+    String KEY_FLATPAK_SCREENSHOTS = "flatpakScreenshots";
+    String KEY_FLATPACK_ICONS = "flatpakIcons";
+    String KEY_FLATPAK_DIRECTORIES = "flatpakDirectories";
+    String KEY_FLATPAK_BINARIES = "flatpakBinaries";
+    String KEY_FLATPAK_FILES = "flatpakFiles";
+    String KEY_FLATPAK_HAS_SDK_EXTENSIONS = "flatpakHasSdkExtensions";
+    String KEY_FLATPAK_SDK_EXTENSIONS = "flatpakSdkExtensions";
+    String KEY_FLATPAK_HAS_SDK_FINISH_ARGS = "flatpakHasFinishArgs";
+    String KEY_FLATPAK_SDK_FINISH_ARGS = "flatpakFinishArgs";
+    String KEY_FLATPAK_RUNTIME = "flatpakRuntime";
+    String KEY_FLATPAK_RUNTIME_VERSION = "flatpakRuntimeVersion";
+    String KEY_FLATPAK_SDK = "flatpakSdk";
+    String KEY_FLATPAK_INCLUDE_OPENJDK = "flatpakIncludeOpendJdk";
 
     // Gofish
     String KEY_GOFISH_PACKAGES = "gofishPackages";

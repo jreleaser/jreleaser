@@ -28,6 +28,7 @@ import org.jreleaser.model.AppImage
 import org.jreleaser.model.Asdf
 import org.jreleaser.model.Brew
 import org.jreleaser.model.Chocolatey
+import org.jreleaser.model.Flatpak
 import org.jreleaser.model.Gofish
 import org.jreleaser.model.Jbang
 import org.jreleaser.model.Macports
@@ -119,6 +120,12 @@ class TapImpl implements Tap {
 
     Macports.MacportsRepository toMacportsRepository() {
         Macports.MacportsRepository tap = new Macports.MacportsRepository()
+        convert(tap)
+        tap
+    }
+
+    Flatpak.FlatpakRepository toFlatpakRepository() {
+        Flatpak.FlatpakRepository tap = new Flatpak.FlatpakRepository()
         convert(tap)
         tap
     }

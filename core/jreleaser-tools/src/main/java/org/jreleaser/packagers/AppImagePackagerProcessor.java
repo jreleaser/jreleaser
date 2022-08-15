@@ -75,13 +75,61 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
     }
 
     @Override
+    protected void doPrepareDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+        setupPrepare(distribution, props);
+        super.doPrepareDistribution(distribution, props);
+    }
+
+    @Override
     protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
         copyPreparedFiles(distribution, props);
     }
 
+    private void setupPrepare(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+        GitService gitService = context.getModel().getRelease().getGitService();
+
+        try {
+            props.put(KEY_APPIMAGE_RELEASES, Releasers.releaserFor(context)
+                .listReleases(gitService.getOwner(), gitService.getName())
+                .stream().map(r -> Release.of(r.getUrl(), r.getVersion().toString(), r.getPublishedAt()))
+                .collect(toList()));
+        } catch (IOException e) {
+            throw new PackagerProcessingException(RB.$("ERROR_unexpected_error"), e);
+        }
+
+        props.put(KEY_APPIMAGE_SCREENSHOTS, packager.getScreenshots().stream()
+            .map(Screenshot::asScreenshotTemplate)
+            .collect(toList()));
+
+        context.getLogger().debug(RB.$("packager.fetch.icons"));
+        props.put(KEY_APPIMAGE_ICONS, packager.getIcons());
+        for (Icon icon : packager.getIcons()) {
+            // check if exists
+            String iconUrl = resolveTemplate(icon.getUrl(), props);
+            String iconExt = getFilenameExtension(iconUrl);
+            Path iconPath = Paths.get(packager.getTemplateDirectory(), "icons",
+                icon.getWidth() + "x" + icon.getHeight(),
+                distribution.getExecutable().getName() + "." + iconExt);
+
+            if (!Files.exists(iconPath)) {
+                // download
+                context.getLogger().debug("{} -> {}", iconUrl, context.relativizeToBasedir(iconPath));
+                try {
+                    org.apache.commons.io.FileUtils.copyURLToFile(
+                        new URL(iconUrl),
+                        iconPath.toFile(),
+                        20000,
+                        60000);
+                } catch (IOException e) {
+                    throw new PackagerProcessingException(RB.$("ERROR_unexpected_download", iconUrl), e);
+                }
+            }
+        }
+    }
+
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
         props.put(KEY_PROJECT_AUTHORS, context.getModel().getProject().getAuthors());
         props.put(KEY_APPIMAGE_URLS, context.getModel().getProject().getLinks().asLinkTemplates());
         props.put(KEY_APPIMAGE_COMPONENT_ID, getPackager().getComponentId());
@@ -103,47 +151,6 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         str = str.replace(gitService.getEffectiveTagName(context.getModel()), "${DISTRIBUTION_TAG}")
             .replace((String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE), "${DISTRIBUTION_FILE}");
         props.put(KEY_APPIMAGE_DISTRIBUTION_URL, str);
-
-        if (processingStep == ProcessingStep.PREPARE) {
-            try {
-                props.put(KEY_APPIMAGE_RELEASES, Releasers.releaserFor(context)
-                    .listReleases(gitService.getOwner(), gitService.getName())
-                    .stream().map(r -> Release.of(r.getUrl(), r.getVersion().toString(), r.getPublishedAt()))
-                    .collect(toList()));
-            } catch (IOException e) {
-                throw new PackagerProcessingException(RB.$("ERROR_unexpected_error"), e);
-            }
-
-            props.put(KEY_APPIMAGE_SCREENSHOTS, packager.getScreenshots().stream()
-                .map(Screenshot::asScreenshotTemplate)
-                .collect(toList()));
-
-            context.getLogger().debug(RB.$("packager.fetch.icons"));
-            for (Icon icon : packager.getIcons()) {
-                // check if exists
-                String iconUrl = resolveTemplate(icon.getUrl(), props);
-                String iconExt = getFilenameExtension(iconUrl);
-                Path iconPath = Paths.get(packager.getTemplateDirectory(), "icons",
-                    icon.getWidth() + "x" + icon.getHeight(),
-                    distribution.getExecutable().getName() + "." + iconExt);
-
-                if (!Files.exists(iconPath)) {
-                    // download
-                    context.getLogger().debug("{} -> {}", iconUrl, context.relativizeToBasedir(iconPath));
-                    try {
-                        org.apache.commons.io.FileUtils.copyURLToFile(
-                            new URL(iconUrl),
-                            iconPath.toFile(),
-                            20000,
-                            60000);
-                    } catch (IOException e) {
-                        throw new PackagerProcessingException(RB.$("ERROR_unexpected_download", iconUrl), e);
-                    }
-                }
-
-                props.put(KEY_APPIMAGE_ICONS, packager.getIcons());
-            }
-        }
     }
 
     @Override
@@ -174,10 +181,13 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
 
         Path outputFile = outputDirectory.resolve(fileName);
 
-        if ("app.desktop".equals(fileName)) {
-            outputFile = outputDirectory.resolve(fileName.replace("app", distribution.getExecutable().getName()));
-        } else if ("appdata.xml".equals(fileName)) {
-            outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".appdata.xml");
+        switch (fileName) {
+            case "app.desktop":
+                outputFile = outputDirectory.resolve(distribution.getExecutable().getName() + ".desktop");
+                break;
+            case "appdata.xml":
+                outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".appdata.xml");
+                break;
         }
 
         writeFile(content, outputFile);
