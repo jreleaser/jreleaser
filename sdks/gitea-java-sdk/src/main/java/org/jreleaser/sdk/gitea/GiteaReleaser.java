@@ -30,6 +30,7 @@ import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
+import org.jreleaser.sdk.gitea.api.GtAsset;
 import org.jreleaser.sdk.gitea.api.GtMilestone;
 import org.jreleaser.sdk.gitea.api.GtRelease;
 import org.jreleaser.sdk.gitea.api.GtRepository;
@@ -37,7 +38,10 @@ import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -74,20 +78,20 @@ public class GiteaReleaser extends AbstractReleaser {
         String tagName = gitea.getEffectiveTagName(context.getModel());
 
         try {
-            String branch = gitea.getBranch();
-            List<String> branchNames = GitSdk.of(context)
-                .getRemoteBranches();
-            if (!branchNames.contains(branch)) {
-                throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
-            }
-
-            String changelog = context.getChangelog();
-
             Gitea api = new Gitea(context.getLogger(),
                 gitea.getApiEndpoint(),
                 gitea.getResolvedToken(),
                 gitea.getConnectTimeout(),
                 gitea.getReadTimeout());
+
+            String branch = gitea.getBranch();
+
+            List<String> branchNames = api.listBranches(gitea.getOwner(), gitea.getName());
+            if (!branchNames.contains(branch)) {
+                throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
+            }
+
+            String changelog = context.getChangelog();
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, gitea.getCanonicalRepoName());
             GtRelease release = api.findReleaseByTag(gitea.getOwner(), gitea.getName(), tagName);
@@ -118,7 +122,7 @@ public class GiteaReleaser extends AbstractReleaser {
                         api.updateRelease(gitea.getOwner(), gitea.getName(), release.getId(), updater);
 
                         if (gitea.getUpdate().getSections().contains(UpdateSection.ASSETS)) {
-                            api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);
+                            updateAssets(api, release);
                         }
                     }
                 } else {
@@ -276,6 +280,28 @@ public class GiteaReleaser extends AbstractReleaser {
                     milestone.get());
             }
         }
+    }
+
+    private void updateAssets(Gitea api, GtRelease release) throws IOException {
+        org.jreleaser.model.Gitea gitea = resolveGiteaFromModel();
+
+        List<Asset> assetsToBeUpdated = new ArrayList<>();
+        List<Asset> assetsToBeUploaded = new ArrayList<>();
+
+        Map<String, GtAsset> existingAssets = api.listAssets(gitea.getOwner(), gitea.getName(), release);
+        Map<String, Asset> assetsToBePublished = new LinkedHashMap<>();
+        assets.forEach(asset -> assetsToBePublished.put(asset.getFilename(), asset));
+
+        existingAssets.keySet().forEach(name -> {
+            if (existingAssets.containsKey(name)) {
+                assetsToBeUpdated.add(assetsToBePublished.get(name));
+            } else {
+                assetsToBeUploaded.add(assetsToBePublished.get(name));
+            }
+        });
+
+        api.updateAssets(gitea.getOwner(), gitea.getName(), release, assetsToBeUpdated, existingAssets);
+        api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assetsToBeUploaded);
     }
 
     private void deleteTags(Gitea api, String owner, String repo, String tagName) {

@@ -83,4 +83,16 @@ public interface GiteaAPI {
     @RequestLine("GET /repos/{owner}/{repo}/releases")
     @Headers("Content-Type: application/json")
     Page<List<GtRelease>> listReleases(@Param("owner") String owner, @Param("repo") String repo, @QueryMap Map<String, Object> q);
+
+    @RequestLine("GET /repos/{owner}/{repo}/branches")
+    @Headers("Content-Type: application/json")
+    Page<List<GtBranch>> listBranches(@Param("owner") String owner, @Param("repo") String repo, @QueryMap Map<String, Object> q);
+
+    @RequestLine("GET /repos/{owner}/{repo}/releases/{releaseId}/assets")
+    @Headers("Content-Type: application/json")
+    List<GtAsset> listAssets(@Param("owner") String owner, @Param("repo") String repo, @Param("releaseId") Integer releaseId);
+
+    @RequestLine("DELETE /repos/{owner}/{repo}/releases/{releaseId}/assets/{assetId}")
+    @Headers("Content-Type: application/json")
+    void deleteAsset(@Param("owner") String owner, @Param("repo") String repo, @Param("releaseId") Integer releaseId, @Param("assetId") Integer assetId);
 }

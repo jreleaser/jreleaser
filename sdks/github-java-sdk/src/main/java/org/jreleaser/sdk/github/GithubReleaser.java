@@ -34,10 +34,13 @@ import org.jreleaser.sdk.git.ChangelogGenerator;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
+import org.jreleaser.sdk.github.api.GhAsset;
 import org.jreleaser.sdk.github.api.GhRelease;
 import org.jreleaser.sdk.github.api.GhReleaseNotes;
 import org.jreleaser.sdk.github.api.GhReleaseNotesParams;
 import org.jreleaser.util.JReleaserException;
+import org.kohsuke.github.GHAsset;
+import org.kohsuke.github.GHBranch;
 import org.kohsuke.github.GHMilestone;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHReleaseUpdater;
@@ -47,7 +50,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -144,20 +149,19 @@ public class GithubReleaser extends AbstractReleaser {
         String tagName = github.getEffectiveTagName(context.getModel());
 
         try {
-            String branch = github.getBranch();
-            List<String> branchNames = GitSdk.of(context)
-                .getRemoteBranches();
-            if (!branchNames.contains(branch)) {
-                throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
-            }
-
-            String changelog = context.getChangelog();
-
             Github api = new Github(context.getLogger(),
                 github.getApiEndpoint(),
                 github.getResolvedToken(),
                 github.getConnectTimeout(),
                 github.getReadTimeout());
+
+            String branch = github.getBranch();
+            Map<String, GHBranch> branches = api.listBranches(github.getOwner(), github.getName());
+            if (!branches.containsKey(branch)) {
+                throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branches.keySet()));
+            }
+
+            String changelog = context.getChangelog();
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, github.getCanonicalRepoName());
             GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);
@@ -185,10 +189,10 @@ public class GithubReleaser extends AbstractReleaser {
                             context.getLogger().info(RB.$("git.releaser.release.update.body"));
                             updater.body(changelog);
                         }
-                        updater.update();
+                        release = updater.update();
 
                         if (github.getUpdate().getSections().contains(UpdateSection.ASSETS)) {
-                            api.uploadAssets(release, assets);
+                            updateAssets(api, release);
                         }
                         linkDiscussion(tagName, release);
                     }
@@ -340,6 +344,28 @@ public class GithubReleaser extends AbstractReleaser {
         }
 
         linkDiscussion(tagName, release);
+    }
+
+    private void updateAssets(Github api, GHRelease release) throws IOException {
+        org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
+
+        List<Asset> assetsToBeUpdated = new ArrayList<>();
+        List<Asset> assetsToBeUploaded = new ArrayList<>();
+
+        Map<String, GHAsset> existingAssets = api.listAssets(github.getOwner(), github.getName(), release);
+        Map<String, Asset> assetsToBePublished = new LinkedHashMap<>();
+        assets.forEach(asset -> assetsToBePublished.put(asset.getFilename(), asset));
+
+        existingAssets.keySet().forEach(name -> {
+            if (existingAssets.containsKey(name)) {
+                assetsToBeUpdated.add(assetsToBePublished.get(name));
+            } else {
+                assetsToBeUploaded.add(assetsToBePublished.get(name));
+            }
+        });
+
+        api.updateAssets(release, assetsToBeUpdated, existingAssets);
+        api.uploadAssets(release, assetsToBeUploaded);
     }
 
     private void linkDiscussion(String tagName, GHRelease release) {

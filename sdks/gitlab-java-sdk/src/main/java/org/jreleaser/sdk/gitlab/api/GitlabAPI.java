@@ -92,4 +92,12 @@ public interface GitlabAPI {
     @RequestLine("GET")
     @Headers("Content-Type: application/json")
     Page<List<Release>> listReleases1(URI uri);
+
+    @RequestLine("GET /projects/{projectId}/repository/branches")
+    @Headers("Content-Type: application/json")
+    Page<List<Branch>> listBranches0(@Param("projectId") String projectId);
+
+    @RequestLine("GET")
+    @Headers("Content-Type: application/json")
+    Page<List<Branch>> listBranches1(URI uri);
 }

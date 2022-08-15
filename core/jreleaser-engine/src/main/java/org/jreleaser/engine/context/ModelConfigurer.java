@@ -137,7 +137,8 @@ public class ModelConfigurer {
     private static void fillGitProperties(JReleaserLogger logger, GitService service, Repository repository, Commit head) {
         if (isBlank(service.getOwner())) {
             service.setOwner(repository.getOwner());
-        } else if (!service.getOwner().equals(repository.getOwner())) {
+        }
+        if (!service.getOwner().equals(repository.getOwner())) {
             service.setMatch(false);
             service.setSkipTag(true);
             logger.warn(RB.$("ERROR_context_configurer_detected_git_owner"), repository.getOwner(), service.getOwner());
@@ -145,7 +146,8 @@ public class ModelConfigurer {
 
         if (isBlank(service.getName())) {
             service.setName(repository.getName());
-        } else if (!service.getName().equals(repository.getName())) {
+        }
+        if (!service.getName().equals(repository.getName())) {
             service.setMatch(false);
             service.setSkipTag(true);
             logger.warn(RB.$("ERROR_context_configurer_detected_git_name"), repository.getName(), service.getName());
@@ -153,6 +155,10 @@ public class ModelConfigurer {
 
         if (isBlank(Env.env(BRANCH, service.getBranch()))) {
             service.setBranch(head.getRefName());
+        }
+        if (!service.getBranch().equals(head.getRefName())) {
+            service.setMatch(false);
+            logger.warn(RB.$("ERROR_context_configurer_detected_git_branch"), head.getRefName(), service.getBranch());
         }
     }
 }

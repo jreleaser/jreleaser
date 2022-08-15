@@ -32,6 +32,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
+import org.jreleaser.sdk.gitlab.api.Branch;
 import org.jreleaser.sdk.gitlab.api.FileUpload;
 import org.jreleaser.sdk.gitlab.api.GitlabAPI;
 import org.jreleaser.sdk.gitlab.api.LinkRequest;
@@ -116,7 +117,7 @@ class Gitlab {
     }
 
     List<org.jreleaser.model.releaser.spi.Release> listReleases(String owner, String repoName, String identifier) throws IOException {
-        logger.debug(RB.$("git.fetch.releases"), owner, repoName);
+        logger.debug(RB.$("git.list.releases"), owner, repoName);
 
         List<org.jreleaser.model.releaser.spi.Release> releases = new ArrayList<>();
 
@@ -162,6 +163,46 @@ class Gitlab {
 
         if (page.hasLinks() && page.getLinks().hasNext()) {
             collectReleases(page, releases);
+        }
+    }
+
+    List<String> listBranches(String owner, String repoName, String identifier) throws IOException {
+        logger.debug(RB.$("git.list.branches"), owner, repoName);
+
+        List<String> branches = new ArrayList<>();
+
+        if (isBlank(identifier)) {
+            Project project = getProject(repoName, identifier);
+            identifier = project.getId().toString();
+        }
+
+        Page<List<Branch>> page = api.listBranches0(identifier);
+        page.getContent().stream()
+            .map(Branch::getName)
+            .forEach(branches::add);
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            try {
+                collectBranches(page, branches);
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
+        }
+
+        return branches;
+    }
+
+    private void collectBranches(Page<List<Branch>> page, List<String> branches) throws URISyntaxException {
+        URI next = new URI(page.getLinks().next());
+        logger.debug(next.toString());
+
+        page = api.listBranches1(next);
+        page.getContent().stream()
+            .map(Branch::getName)
+            .forEach(branches::add);
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            collectBranches(page, branches);
         }
     }
 

@@ -55,13 +55,17 @@ public class GenericGitReleaser extends AbstractReleaser {
 
     @Override
     protected void createTag() throws ReleaseException {
-        ReleaseUtils.createTag(context);
+        if (context.getModel().getRelease().getGitService().isMatch()) {
+            ReleaseUtils.createTag(context);
+        }
     }
 
     @Override
     protected void createRelease() throws ReleaseException {
         context.getLogger().info(RB.$("generic.git.warning"));
-        ReleaseUtils.createTag(context);
+        if (context.getModel().getRelease().getGitService().isMatch()) {
+            ReleaseUtils.createTag(context);
+        }
     }
 
     @Override
