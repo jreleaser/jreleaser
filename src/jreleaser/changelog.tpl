@@ -38,3 +38,9 @@ These binaries provide their own Java runtime.
 
 * {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip{{/f_release_download_url}}
 * {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}}
+
+### Checksums
+
+```
+{{#f_trim}}{{#f_file_read}}{{checksumDirectory}}/checksums_sha256.txt{{/f_file_read}}{{/f_trim}}
+```
