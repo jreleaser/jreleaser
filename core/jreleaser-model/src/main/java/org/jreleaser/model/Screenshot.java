@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model;
 
+import com.github.mustachejava.TemplateFunction;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -143,6 +145,10 @@ public class Screenshot extends AbstractModelObject<Screenshot> implements Domai
         return map;
     }
 
+    public ScreenshotTemplate asScreenshotTemplate() {
+        return new ScreenshotTemplate(this);
+    }
+
     public enum Type {
         SOURCE,
         THUMBNAIL;
@@ -155,6 +161,48 @@ public class Screenshot extends AbstractModelObject<Screenshot> implements Domai
         public static Type of(String str) {
             if (isBlank(str)) return null;
             return Type.valueOf(str.toUpperCase(Locale.ENGLISH).trim());
+        }
+    }
+
+    public static final class ScreenshotTemplate {
+        private final String type;
+        private final boolean primary;
+        private final String url;
+        private final String caption;
+        private final Integer width;
+        private final Integer height;
+
+        public ScreenshotTemplate(Screenshot source) {
+            this.type = source.type.toString();
+            this.primary = source.primary;
+            this.url = source.url;
+            this.caption = source.caption;
+            this.width = source.width;
+            this.height = source.height;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public TemplateFunction getUrl() {
+            return (s) -> url;
+        }
+
+        public boolean isPrimary() {
+            return primary;
+        }
+
+        public String getCaption() {
+            return caption;
+        }
+
+        public Integer getWidth() {
+            return width;
+        }
+
+        public Integer getHeight() {
+            return height;
         }
     }
 }

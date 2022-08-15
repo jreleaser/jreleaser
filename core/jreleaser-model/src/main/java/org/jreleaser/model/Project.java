@@ -879,25 +879,25 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
             if (isNotBlank(license)) props.put(Constants.KEY_PROJECT_LICENSE_URL, license);
         }
 
-        public Collection<AppdataLink> asAppdataLinks() {
-            List<AppdataLink> links = new ArrayList<>();
-            if (isNotBlank(homepage)) links.add(new AppdataLink("homepage", homepage));
-            if (isNotBlank(bugTracker)) links.add(new AppdataLink("bugtracker", bugTracker));
-            if (isNotBlank(faq)) links.add(new AppdataLink("faq", faq));
-            if (isNotBlank(help)) links.add(new AppdataLink("help", help));
-            if (isNotBlank(donation)) links.add(new AppdataLink("donation", donation));
-            if (isNotBlank(translate)) links.add(new AppdataLink("translate", translate));
-            if (isNotBlank(contact)) links.add(new AppdataLink("contact", contact));
-            if (isNotBlank(vcsBrowser)) links.add(new AppdataLink("vcs-browser", vcsBrowser));
-            if (isNotBlank(contribute)) links.add(new AppdataLink("contribute", contribute));
+        public Collection<LinkTemplate> asLinkTemplates() {
+            List<LinkTemplate> links = new ArrayList<>();
+            if (isNotBlank(homepage)) links.add(new LinkTemplate("homepage", homepage));
+            if (isNotBlank(bugTracker)) links.add(new LinkTemplate("bugtracker", bugTracker));
+            if (isNotBlank(faq)) links.add(new LinkTemplate("faq", faq));
+            if (isNotBlank(help)) links.add(new LinkTemplate("help", help));
+            if (isNotBlank(donation)) links.add(new LinkTemplate("donation", donation));
+            if (isNotBlank(translate)) links.add(new LinkTemplate("translate", translate));
+            if (isNotBlank(contact)) links.add(new LinkTemplate("contact", contact));
+            if (isNotBlank(vcsBrowser)) links.add(new LinkTemplate("vcs-browser", vcsBrowser));
+            if (isNotBlank(contribute)) links.add(new LinkTemplate("contribute", contribute));
             return links;
         }
 
-        public static final class AppdataLink {
+        public static final class LinkTemplate {
             private String type;
             private String url;
 
-            public AppdataLink(String type, String url) {
+            public LinkTemplate(String type, String url) {
                 this.type = type;
                 this.url = url;
             }

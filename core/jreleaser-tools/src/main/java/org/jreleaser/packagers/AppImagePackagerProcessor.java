@@ -26,12 +26,12 @@ import org.jreleaser.model.GitService;
 import org.jreleaser.model.Github;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
+import org.jreleaser.model.Screenshot;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.packager.spi.PackagerProcessingException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -76,7 +76,7 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
     @Override
     protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution, ProcessingStep processingStep) throws PackagerProcessingException {
         props.put(KEY_PROJECT_AUTHORS, context.getModel().getProject().getAuthors());
-        props.put(KEY_APPIMAGE_URLS, context.getModel().getProject().getLinks().asAppdataLinks());
+        props.put(KEY_APPIMAGE_URLS, context.getModel().getProject().getLinks().asLinkTemplates());
         props.put(KEY_APPIMAGE_COMPONENT_ID, getPackager().getComponentId());
         props.put(KEY_APPIMAGE_CATEGORIES, getPackager().getCategories());
         props.put(KEY_APPIMAGE_CATEGORIES_BY_COMMA, String.join(",", getPackager().getCategories()));
@@ -107,7 +107,9 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
                 throw new PackagerProcessingException(RB.$("ERROR_unexpected_error"), e);
             }
 
-            props.put(KEY_APPIMAGE_SCREENSHOTS, packager.getScreenshots());
+            props.put(KEY_APPIMAGE_SCREENSHOTS, packager.getScreenshots().stream()
+                .map(Screenshot::asScreenshotTemplate)
+                .collect(toList()));
         }
     }
 
