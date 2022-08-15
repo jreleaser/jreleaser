@@ -18,8 +18,6 @@
 package org.jreleaser.gradle.plugin.dsl
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -28,28 +26,12 @@ import org.gradle.api.provider.Property
  * @since 1.2.0
  */
 @CompileStatic
-interface AppImage extends RepositoryPackager {
-    Property<String> getComponentId()
+interface Icon extends ExtraProperties {
+    Property<String> getUrl()
 
-    ListProperty<String> getCategories()
+    Property<Integer> getWidth()
 
-    Property<String> getDeveloperName()
+    Property<Integer> getHeight()
 
-    Property<Boolean> getRequiresTerminal()
-
-    void category(String category)
-
-    Tap getRepository()
-
-    void repository(Action<? super Tap> action)
-
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
-
-    void screenshot(Action<? super Screenshot> action)
-
-    void screenshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Screenshot) Closure<Void> action)
-
-    void icon(Action<? super Icon> action)
-
-    void icon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Icon) Closure<Void> action)
+    Property<Boolean> getPrimary()
 }

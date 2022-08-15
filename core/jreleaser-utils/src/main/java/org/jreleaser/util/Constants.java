@@ -181,6 +181,7 @@ public interface Constants {
     String KEY_APPIMAGE_RELEASES = "appImageReleases";
     String KEY_APPIMAGE_URLS = "appImageUrls";
     String KEY_APPIMAGE_SCREENSHOTS = "appImageScreenshots";
+    String KEY_APPIMAGE_ICONS = "appImageIcons";
     String KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE = "appImageDistributionArtifactFile";
     String KEY_APPIMAGE_DISTRIBUTION_URL = "appImageDistributionUrl";
     String KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE_NAME = "appImageDistributionArtifactFileName";

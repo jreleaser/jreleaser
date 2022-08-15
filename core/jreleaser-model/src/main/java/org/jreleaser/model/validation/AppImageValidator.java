@@ -23,13 +23,12 @@ import org.jreleaser.model.AppImage;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
+import org.jreleaser.model.Icon;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.Screenshot;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.util.Errors;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.jreleaser.model.AppImage.SKIP_APPIMAGE;
@@ -38,7 +37,6 @@ import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtra
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isFalse;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.isTrue;
 
@@ -109,6 +107,34 @@ public abstract class AppImageValidator extends Validator {
         packager.getScreenshots().removeIf(screenshot -> isTrue(screenshot.getExtraProperties().get(SKIP_APPIMAGE)));
         if (packager.getScreenshots().isEmpty()) {
             errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".appImage.screenshots"));
+        }
+
+        if (packager.getIcons().isEmpty()) {
+            packager.setIcons(parentPackager.getIcons());
+        }
+        if (packager.getIcons().isEmpty()) {
+            errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".appImage.icons"));
+        }
+        validateIcons(context, mode, packager.getIcons(), errors, "distribution." + distribution.getName() + ".appImage");
+        packager.getIcons().removeIf(icon -> isTrue(icon.getExtraProperties().get(SKIP_APPIMAGE)));
+        if (packager.getIcons().isEmpty()) {
+            errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".appImage.icons"));
+        }
+        for (int i = 0; i < packager.getIcons().size(); i++) {
+            Icon icon = packager.getIcons().get(i);
+            if (icon.getWidth() != null && !icon.getWidth().equals(icon.getHeight())) {
+                errors.configuration(RB.$("validation_must_be_equal",
+                    "distribution." + distribution.getName() + ".appImage.icons[" + i + "].width", icon.getWidth(),
+                    "distribution." + distribution.getName() + ".appImage.icons[" + i + "].height", icon.getHeight()));
+            }
+        }
+        if (packager.getIcons().size() == 1) {
+            packager.getIcons().get(0).setPrimary(true);
+        }
+        if (packager.getIcons().stream()
+            .mapToInt(s -> s.isPrimary() ? 1 : 0)
+            .sum() == 0) {
+            errors.configuration(RB.$("validation_no_primary_icon", "distribution." + distribution.getName() + ".appImage.icons"));
         }
 
         if (isBlank(packager.getRepository().getName())) {

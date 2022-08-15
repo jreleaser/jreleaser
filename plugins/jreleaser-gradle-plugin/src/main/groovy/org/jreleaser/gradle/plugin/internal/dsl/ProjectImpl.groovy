@@ -28,6 +28,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.Icon
 import org.jreleaser.gradle.plugin.dsl.Java
 import org.jreleaser.gradle.plugin.dsl.Project
 import org.jreleaser.gradle.plugin.dsl.Screenshot
@@ -67,6 +68,7 @@ class ProjectImpl implements Project {
     final LinksImpl links
 
     private final NamedDomainObjectContainer<ScreenshotImpl> screenshots
+    private final NamedDomainObjectContainer<IconImpl> icons
 
     @Inject
     ProjectImpl(ObjectFactory objects,
@@ -101,6 +103,15 @@ class ProjectImpl implements Project {
                 ScreenshotImpl screenshot = objects.newInstance(ScreenshotImpl, objects)
                 screenshot.name = name
                 screenshot
+            }
+        })
+
+        icons = objects.domainObjectContainer(IconImpl, new NamedDomainObjectFactory<IconImpl>() {
+            @Override
+            IconImpl create(String name) {
+                IconImpl icon = objects.newInstance(IconImpl, objects)
+                icon.name = name
+                icon
             }
         })
     }
@@ -173,6 +184,16 @@ class ProjectImpl implements Project {
         ConfigureUtil.configure(action, screenshots.maybeCreate("screenshot-${screenshots.size()}".toString()))
     }
 
+    @Override
+    void icon(Action<? super Icon> action) {
+        action.execute(icons.maybeCreate("icons-${icons.size()}".toString()))
+    }
+
+    @Override
+    void icon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Icon) Closure<Void> action) {
+        ConfigureUtil.configure(action, icons.maybeCreate("icons-${icons.size()}".toString()))
+    }
+
     org.jreleaser.model.Project toModel() {
         org.jreleaser.model.Project project = new org.jreleaser.model.Project()
         project.name = name.get()
@@ -197,6 +218,9 @@ class ProjectImpl implements Project {
         project.links = links.toModel()
         for (ScreenshotImpl screenshot : screenshots) {
             project.addScreenshot(screenshot.toModel())
+        }
+        for (IconImpl icon : icons) {
+            project.addIcon(icon.toModel())
         }
         project
     }

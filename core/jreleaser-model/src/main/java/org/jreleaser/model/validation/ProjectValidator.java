@@ -113,6 +113,7 @@ public abstract class ProjectValidator extends Validator {
         }
 
         validateScreenshots(context, mode, project.getScreenshots(), errors, "project");
+        validateIcons(context, mode, project.getIcons(), errors, "project");
     }
 
     public static void postValidateProject(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {

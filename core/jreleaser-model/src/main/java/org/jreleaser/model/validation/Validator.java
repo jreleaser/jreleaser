@@ -26,6 +26,7 @@ import org.jreleaser.model.Environment;
 import org.jreleaser.model.FileSet;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Glob;
+import org.jreleaser.model.Icon;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.OwnerAware;
 import org.jreleaser.model.Packager;
@@ -279,6 +280,31 @@ class Validator {
                 } else if (null != screenshot.getWidth() && null == screenshot.getHeight()) {
                     errors.configuration(RB.$("validation_must_not_be_null", base + ".screenshots[" + i + "].height"));
                 }
+            }
+        }
+    }
+
+    static void validateIcons(JReleaserContext context, JReleaserContext.Mode mode, List<Icon> icons, Errors errors, String base) {
+        if (icons.size() == 1) {
+            icons.get(0).setPrimary(true);
+        }
+
+        if (icons.stream()
+            .mapToInt(s -> s.isPrimary() ? 1 : 0)
+            .sum() > 1) {
+            errors.configuration(RB.$("validation_multiple_primary_icons", base));
+        }
+
+        for (int i = 0; i < icons.size(); i++) {
+            Icon icon = icons.get(i);
+            if (isBlank(icon.getUrl())) {
+                errors.configuration(RB.$("validation_must_not_be_blank", base + ".icons[" + i + "].url"));
+            }
+            if (null == icon.getWidth()) {
+                errors.configuration(RB.$("validation_must_not_be_null", base + ".icons[" + i + "].width"));
+            }
+            if (null == icon.getHeight()) {
+                errors.configuration(RB.$("validation_must_not_be_null", base + ".icons[" + i + "].height"));
             }
         }
     }

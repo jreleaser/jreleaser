@@ -28,6 +28,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.AppImage
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
+import org.jreleaser.gradle.plugin.dsl.Icon
 import org.jreleaser.gradle.plugin.dsl.Screenshot
 import org.jreleaser.gradle.plugin.dsl.Tap
 import org.kordamp.gradle.util.ConfigureUtil
@@ -51,6 +52,7 @@ class AppImageImpl extends AbstractRepositoryPackager implements AppImage {
     final Property<Boolean> requiresTerminal
 
     private final NamedDomainObjectContainer<ScreenshotImpl> screenshots
+    private final NamedDomainObjectContainer<IconImpl> icons
 
     @Inject
     AppImageImpl(ObjectFactory objects) {
@@ -70,6 +72,15 @@ class AppImageImpl extends AbstractRepositoryPackager implements AppImage {
                 screenshot
             }
         })
+
+        icons = objects.domainObjectContainer(IconImpl, new NamedDomainObjectFactory<IconImpl>() {
+            @Override
+            IconImpl create(String name) {
+                IconImpl icon = objects.newInstance(IconImpl, objects)
+                icon.name = name
+                icon
+            }
+        })
     }
 
     @Override
@@ -82,7 +93,8 @@ class AppImageImpl extends AbstractRepositoryPackager implements AppImage {
             categories.present ||
             developerName.present ||
             requiresTerminal.present ||
-            !screenshots.empty
+            !screenshots.empty||
+            !icons.empty
     }
 
     @Override
@@ -122,6 +134,16 @@ class AppImageImpl extends AbstractRepositoryPackager implements AppImage {
         ConfigureUtil.configure(action, screenshots.maybeCreate("screenshot-${screenshots.size()}".toString()))
     }
 
+    @Override
+    void icon(Action<? super Icon> action) {
+        action.execute(icons.maybeCreate("icons-${icons.size()}".toString()))
+    }
+
+    @Override
+    void icon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Icon) Closure<Void> action) {
+        ConfigureUtil.configure(action, icons.maybeCreate("icons-${icons.size()}".toString()))
+    }
+
     org.jreleaser.model.AppImage toModel() {
         org.jreleaser.model.AppImage packager = new org.jreleaser.model.AppImage()
         fillPackagerProperties(packager)
@@ -134,6 +156,9 @@ class AppImageImpl extends AbstractRepositoryPackager implements AppImage {
         if (requiresTerminal.present) packager.requiresTerminal = requiresTerminal.get()
         for (ScreenshotImpl screenshot : screenshots) {
             packager.addScreenshot(screenshot.toModel())
+        }
+        for (IconImpl icon : icons) {
+            packager.addIcon(icon.toModel())
         }
         packager
     }

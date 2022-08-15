@@ -50,15 +50,17 @@ mv "${DISTRIBUTION_FILE_NAME}" AppDir/usr/share/${DISTRIBUTION_NAME}
 mkdir -p AppDir/usr/bin/
 ln -s AppDir/usr/share/${DISTRIBUTION_NAME}/bin/${DISTRIBUTION_EXEC} AppDir/usr/bin/${DISTRIBUTION_EXEC}
 mkdir -p AppDir/usr/share/applications/
-mkdir -p AppDir/usr/share/icons/hicolor/128x128/
-cp ../icons/${DISTRIBUTION_NAME}.png AppDir/usr/share/icons/hicolor/128x128/${DISTRIBUTION_NAME}.png
 mkdir -p AppDir/usr/share/metainfo
 cp ../${DISTRIBUTION_ID}.appdata.xml AppDir/usr/share/metainfo
 cp ../${DISTRIBUTION_ID}.appdata.xml AppDir/usr/share/metainfo/${DISTRIBUTION_NAME}.appdata.xml
 cp ../${DISTRIBUTION_NAME}.desktop AppDir/usr/share/applications
 ln -s usr/share/applications/${DISTRIBUTION_NAME}.desktop AppDir/${DISTRIBUTION_NAME}.desktop
-ln -s usr/share/icons/hicolor/128x128/${DISTRIBUTION_NAME}.png AppDir/${DISTRIBUTION_NAME}.png
-ln -s usr/share/icons/hicolor/128x128/${DISTRIBUTION_NAME}.png AppDir/.DirIcon
+{{#appImageIcons}}
+mkdir -p AppDir/usr/share/icons/hicolor/{{width}}x{{height}}/
+cp ../icons/{{width}}x{{height}}/${DISTRIBUTION_NAME}.png AppDir/usr/share/icons/hicolor/{{width}}x{{height}}/${DISTRIBUTION_NAME}.png
+{{#primary}}ln -s usr/share/icons/hicolor/{{width}}x{{height}}/${DISTRIBUTION_NAME}.png AppDir/${DISTRIBUTION_NAME}.png{{/primary}}
+{{#primary}}ln -s usr/share/icons/hicolor/{{width}}x{{height}}/${DISTRIBUTION_NAME}.png AppDir/.DirIcon{{/primary}}
+{{/appImageIcons}}
 
 # create AppRun script
 cat > AppDir/AppRun << "EOF"
@@ -72,4 +74,4 @@ EOF
 chmod +x AppDir/AppRun
 
 # build AppImage
-ARCH=${SYSTEM_ARCH} "./appimagetool-${SYSTEM_ARCH}.AppImage" -v AppDir/ "../${DISTRIBUTION_NAME}-${DISTRIBUTION_VERSION}-${SYSTEM_ARCH}.AppImage"
+ARCH=${SYSTEM_ARCH} "./${APPIMAGETOOL_FILE}" -v AppDir/ "../${DISTRIBUTION_NAME}-${DISTRIBUTION_VERSION}-${SYSTEM_ARCH}.AppImage"

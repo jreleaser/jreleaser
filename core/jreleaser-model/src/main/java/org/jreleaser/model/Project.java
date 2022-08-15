@@ -67,6 +67,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
     private final Java java = new Java();
     private final Snapshot snapshot = new Snapshot();
     private final List<Screenshot> screenshots = new ArrayList<>();
+    private final List<Icon> icons = new ArrayList<>();
     private String name;
     private String version;
     private VersionPattern versionPattern = new VersionPattern();
@@ -86,6 +87,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         snapshot.freeze();
         versionPattern.freeze();
         screenshots.forEach(ModelObject::freeze);
+        icons.forEach(ModelObject::freeze);
     }
 
     @Override
@@ -109,6 +111,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         setExtraProperties(merge(this.extraProperties, project.extraProperties));
         setLinks(project.links);
         setScreenshots(merge(this.screenshots, project.screenshots));
+        setIcons(merge(this.icons, project.icons));
     }
 
     @Override
@@ -301,6 +304,23 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         }
     }
 
+    public List<Icon> getIcons() {
+        return freezeWrap(icons);
+    }
+
+    public void setIcons(List<Icon> icons) {
+        freezeCheck();
+        this.icons.clear();
+        this.icons.addAll(icons);
+    }
+
+    public void addIcon(Icon icon) {
+        freezeCheck();
+        if (null != icon) {
+            this.icons.add(icon);
+        }
+    }
+
     public Java getJava() {
         return java;
     }
@@ -389,6 +409,12 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
             sm.put("screenshot " + (i++), screenshot.asMap(full));
         }
         map.put("screenshots", sm);
+        sm = new LinkedHashMap<>();
+        i = 0;
+        for (Icon icon : icons) {
+            sm.put("icon " + (i++), icon.asMap(full));
+        }
+        map.put("icons", sm);
         map.put("extraProperties", getResolvedExtraProperties());
         if (java.isEnabled()) {
             map.put("java", java.asMap(full));

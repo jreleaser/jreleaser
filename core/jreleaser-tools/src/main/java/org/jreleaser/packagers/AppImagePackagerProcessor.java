@@ -24,6 +24,7 @@ import org.jreleaser.model.AppImage;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Github;
+import org.jreleaser.model.Icon;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Project;
 import org.jreleaser.model.Screenshot;
@@ -32,7 +33,10 @@ import org.jreleaser.model.packager.spi.PackagerProcessingException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -47,6 +51,7 @@ import static org.jreleaser.util.Constants.KEY_APPIMAGE_DEVELOPER_NAME;
 import static org.jreleaser.util.Constants.KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE_NAME;
 import static org.jreleaser.util.Constants.KEY_APPIMAGE_DISTRIBUTION_URL;
+import static org.jreleaser.util.Constants.KEY_APPIMAGE_ICONS;
 import static org.jreleaser.util.Constants.KEY_APPIMAGE_RELEASES;
 import static org.jreleaser.util.Constants.KEY_APPIMAGE_REPO_NAME;
 import static org.jreleaser.util.Constants.KEY_APPIMAGE_REPO_OWNER;
@@ -57,6 +62,8 @@ import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
 import static org.jreleaser.util.Constants.KEY_DISTRIBUTION_URL;
 import static org.jreleaser.util.Constants.KEY_PROJECT_AUTHORS;
+import static org.jreleaser.util.StringUtils.getFilenameExtension;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -110,6 +117,32 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
             props.put(KEY_APPIMAGE_SCREENSHOTS, packager.getScreenshots().stream()
                 .map(Screenshot::asScreenshotTemplate)
                 .collect(toList()));
+
+            context.getLogger().debug(RB.$("packager.fetch.icons"));
+            for (Icon icon : packager.getIcons()) {
+                // check if exists
+                String iconUrl = resolveTemplate(icon.getUrl(), props);
+                String iconExt = getFilenameExtension(iconUrl);
+                Path iconPath = Paths.get(packager.getTemplateDirectory(), "icons",
+                    icon.getWidth() + "x" + icon.getHeight(),
+                    distribution.getExecutable().getName() + "." + iconExt);
+
+                if (!Files.exists(iconPath)) {
+                    // download
+                    context.getLogger().debug("{} -> {}", iconUrl, context.relativizeToBasedir(iconPath));
+                    try {
+                        org.apache.commons.io.FileUtils.copyURLToFile(
+                            new URL(iconUrl),
+                            iconPath.toFile(),
+                            20000,
+                            60000);
+                    } catch (IOException e) {
+                        throw new PackagerProcessingException(RB.$("ERROR_unexpected_download", iconUrl), e);
+                    }
+                }
+
+                props.put(KEY_APPIMAGE_ICONS, packager.getIcons());
+            }
         }
     }
 

@@ -67,6 +67,7 @@ public class AppImage extends AbstractRepositoryPackager<AppImage> {
 
     private final AppImageRepository repository = new AppImageRepository();
     private final List<Screenshot> screenshots = new ArrayList<>();
+    private final List<Icon> icons = new ArrayList<>();
     private final List<String> categories = new ArrayList<>();
     private String componentId;
     private String developerName;
@@ -80,6 +81,7 @@ public class AppImage extends AbstractRepositoryPackager<AppImage> {
     public void freeze() {
         super.freeze();
         screenshots.forEach(ModelObject::freeze);
+        icons.forEach(ModelObject::freeze);
     }
 
     @Override
@@ -92,6 +94,7 @@ public class AppImage extends AbstractRepositoryPackager<AppImage> {
         setRepository(source.repository);
         setCategories(merge(this.categories, source.categories));
         setScreenshots(merge(this.screenshots, source.screenshots));
+        setIcons(merge(this.icons, source.icons));
     }
 
     @Override
@@ -157,6 +160,23 @@ public class AppImage extends AbstractRepositoryPackager<AppImage> {
         }
     }
 
+    public List<Icon> getIcons() {
+        return freezeWrap(icons);
+    }
+
+    public void setIcons(List<Icon> icons) {
+        freezeCheck();
+        this.icons.clear();
+        this.icons.addAll(icons);
+    }
+
+    public void addIcon(Icon icon) {
+        freezeCheck();
+        if (null != icon) {
+            this.icons.add(icon);
+        }
+    }
+
     public AppImageRepository getRepository() {
         return repository;
     }
@@ -166,19 +186,25 @@ public class AppImage extends AbstractRepositoryPackager<AppImage> {
     }
 
     @Override
-    protected void asMap(boolean full, Map<String, Object> props) {
-        super.asMap(full, props);
-        props.put("componentId", componentId);
-        props.put("categories", categories);
-        props.put("developerName", developerName);
-        props.put("requiresTerminal", isRequiresTerminal());
+    protected void asMap(boolean full, Map<String, Object> map) {
+        super.asMap(full, map);
+        map.put("componentId", componentId);
+        map.put("categories", categories);
+        map.put("developerName", developerName);
+        map.put("requiresTerminal", isRequiresTerminal());
         Map<String, Map<String, Object>> sm = new LinkedHashMap<>();
         int i = 0;
         for (Screenshot screenshot : screenshots) {
             sm.put("screenshot " + (i++), screenshot.asMap(full));
         }
-        props.put("screenshots", sm);
-        props.put("repository", repository.asMap(full));
+        map.put("screenshots", sm);
+        sm = new LinkedHashMap<>();
+        i = 0;
+        for (Icon icon : icons) {
+            sm.put("icon " + (i++), icon.asMap(full));
+        }
+        map.put("icons", sm);
+        map.put("repository", repository.asMap(full));
     }
 
     @Override
