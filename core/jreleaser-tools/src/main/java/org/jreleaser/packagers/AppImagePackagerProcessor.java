@@ -192,7 +192,7 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         }
 
         public static Release of(String url, String version, Date date) {
-            SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             return new Release(url, version, format.format(date));
         }
     }

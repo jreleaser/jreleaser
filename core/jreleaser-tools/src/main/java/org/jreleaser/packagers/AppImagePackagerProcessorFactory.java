@@ -27,7 +27,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
  * @since 1.2.0
  */
 @ServiceProviderFor(PackagerProcessorFactory.class)
-public class AppImagefPackagerProcessorFactory implements PackagerProcessorFactory<AppImage, AppImagePackagerProcessor> {
+public class AppImagePackagerProcessorFactory implements PackagerProcessorFactory<AppImage, AppImagePackagerProcessor> {
     @Override
     public String getName() {
         return AppImage.TYPE;
