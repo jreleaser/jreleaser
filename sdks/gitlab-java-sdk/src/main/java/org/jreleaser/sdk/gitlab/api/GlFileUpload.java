@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @since 0.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FileUpload {
+public class GlFileUpload {
     private String alt;
     private String url;
     private String fullPath;
@@ -81,8 +81,8 @@ public class FileUpload {
             '}';
     }
 
-    public LinkRequest toLinkRequest(String apiHost) {
-        LinkRequest link = new LinkRequest();
+    public GlLinkRequest toLinkRequest(String apiHost) {
+        GlLinkRequest link = new GlLinkRequest();
         link.setName(getName());
         link.setUrl(apiHost + getFullPath());
         link.setFilepath("/" + getName());

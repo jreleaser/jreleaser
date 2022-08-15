@@ -19,17 +19,22 @@ package org.jreleaser.sdk.gitlab.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Date;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Link {
+public class GlUser {
     private Integer id;
+    private String email;
     private String name;
-    private String url;
-    private Boolean external;
-    private String linkType;
+    private String username;
+    private String state;
+    private String webUrl;
+    private String avatarUrl;
+    private Date createdAt;
 
     public Integer getId() {
         return id;
@@ -37,6 +42,14 @@ public class Link {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getName() {
@@ -47,27 +60,43 @@ public class Link {
         this.name = name;
     }
 
-    public String getUrl() {
-        return url;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public Boolean getExternal() {
-        return external;
+    public String getState() {
+        return state;
     }
 
-    public void setExternal(Boolean external) {
-        this.external = external;
+    public void setState(String state) {
+        this.state = state;
     }
 
-    public String getLinkType() {
-        return linkType;
+    public String getWebUrl() {
+        return webUrl;
     }
 
-    public void setLinkType(String linkType) {
-        this.linkType = linkType;
+    public void setWebUrl(String webUrl) {
+        this.webUrl = webUrl;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 }

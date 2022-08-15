@@ -19,22 +19,17 @@ package org.jreleaser.sdk.gitlab.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.Date;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class User {
+public class GlLink {
     private Integer id;
-    private String email;
     private String name;
-    private String username;
-    private String state;
-    private String webUrl;
-    private String avatarUrl;
-    private Date createdAt;
+    private String url;
+    private Boolean external;
+    private String linkType;
 
     public Integer getId() {
         return id;
@@ -42,14 +37,6 @@ public class User {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getName() {
@@ -60,43 +47,27 @@ public class User {
         this.name = name;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public String getState() {
-        return state;
+    public Boolean getExternal() {
+        return external;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setExternal(Boolean external) {
+        this.external = external;
     }
 
-    public String getWebUrl() {
-        return webUrl;
+    public String getLinkType() {
+        return linkType;
     }
 
-    public void setWebUrl(String webUrl) {
-        this.webUrl = webUrl;
-    }
-
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setLinkType(String linkType) {
+        this.linkType = linkType;
     }
 }

@@ -26,7 +26,7 @@ import java.util.Date;
  * @since 0.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Release {
+public class GlRelease {
     private String name;
     private String tagName;
     private String description;

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @since 0.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Milestone {
+public class GlMilestone {
     private Integer id;
     private Integer iid;
     private Integer projectId;

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @since 0.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Namespace {
+public class GlNamespace {
     private Integer id;
     private String name;
     private String path;

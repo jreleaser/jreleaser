@@ -35,11 +35,11 @@ import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
-import org.jreleaser.sdk.gitlab.api.FileUpload;
-import org.jreleaser.sdk.gitlab.api.LinkRequest;
-import org.jreleaser.sdk.gitlab.api.Milestone;
-import org.jreleaser.sdk.gitlab.api.Project;
-import org.jreleaser.sdk.gitlab.api.Release;
+import org.jreleaser.sdk.gitlab.api.GlFileUpload;
+import org.jreleaser.sdk.gitlab.api.GlLinkRequest;
+import org.jreleaser.sdk.gitlab.api.GlMilestone;
+import org.jreleaser.sdk.gitlab.api.GlProject;
+import org.jreleaser.sdk.gitlab.api.GlRelease;
 import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
@@ -103,7 +103,7 @@ public class GitlabReleaser extends AbstractReleaser {
             String changelog = context.getChangelog();
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, gitlab.getCanonicalRepoName());
-            Release release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), tagName);
+            GlRelease release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), tagName);
             boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
                 context.getLogger().debug(RB.$("git.releaser.release.exists"), tagName);
@@ -118,7 +118,7 @@ public class GitlabReleaser extends AbstractReleaser {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
                         boolean update = false;
-                        Release updater = new Release();
+                        GlRelease updater = new GlRelease();
                         if (gitlab.getUpdate().getSections().contains(UpdateSection.TITLE)) {
                             update = true;
                             context.getLogger().info(RB.$("git.releaser.release.update.title"), gitlab.getEffectiveReleaseName());
@@ -135,11 +135,11 @@ public class GitlabReleaser extends AbstractReleaser {
 
                         if (gitlab.getUpdate().getSections().contains(UpdateSection.ASSETS)) {
                             if (!assets.isEmpty()) {
-                                Collection<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), assets);
+                                Collection<GlFileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), assets);
                                 api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), uploads);
                             }
                             if (!gitlab.getUploadLinks().isEmpty()) {
-                                Collection<LinkRequest> links = collectUploadLinks(gitlab);
+                                Collection<GlLinkRequest> links = collectUploadLinks(gitlab);
                                 api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), links);
                             }
                         }
@@ -179,7 +179,7 @@ public class GitlabReleaser extends AbstractReleaser {
             password,
             gitlab.getConnectTimeout(),
             gitlab.getReadTimeout());
-        Project project = null;
+        GlProject project = null;
 
         try {
             project = api.findProject(repo, gitlab.getProjectIdentifier());
@@ -246,7 +246,7 @@ public class GitlabReleaser extends AbstractReleaser {
     private void createRelease(Gitlab api, String tagName, String changelog, boolean deleteTags) throws IOException {
         org.jreleaser.model.Gitlab gitlab = context.getModel().getRelease().getGitlab();
 
-        Collection<LinkRequest> links = collectUploadLinks(gitlab);
+        Collection<GlLinkRequest> links = collectUploadLinks(gitlab);
 
         if (context.isDryrun()) {
             if (!assets.isEmpty()) {
@@ -260,7 +260,7 @@ public class GitlabReleaser extends AbstractReleaser {
                 }
             }
             if (!links.isEmpty()) {
-                for (LinkRequest link : links) {
+                for (GlLinkRequest link : links) {
                     context.getLogger().info(" " + RB.$("git.upload.asset"), link.getName());
                 }
             }
@@ -278,7 +278,7 @@ public class GitlabReleaser extends AbstractReleaser {
             GitSdk.of(context).tag(tagName, true, context);
         }
 
-        Release release = new Release();
+        GlRelease release = new GlRelease();
         release.setName(gitlab.getEffectiveReleaseName());
         release.setTagName(tagName);
         release.setRef(gitlab.getBranch());
@@ -288,7 +288,7 @@ public class GitlabReleaser extends AbstractReleaser {
         api.createRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), release);
 
         if (!assets.isEmpty()) {
-            Collection<FileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), assets);
+            Collection<GlFileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), assets);
             api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), uploads);
         }
         if (!links.isEmpty()) {
@@ -296,7 +296,7 @@ public class GitlabReleaser extends AbstractReleaser {
         }
 
         if (gitlab.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
-            Optional<Milestone> milestone = api.findMilestoneByName(
+            Optional<GlMilestone> milestone = api.findMilestoneByName(
                 gitlab.getOwner(),
                 gitlab.getName(),
                 gitlab.getProjectIdentifier(),
@@ -310,8 +310,8 @@ public class GitlabReleaser extends AbstractReleaser {
         }
     }
 
-    private Collection<LinkRequest> collectUploadLinks(org.jreleaser.model.Gitlab gitlab) {
-        List<LinkRequest> links = new ArrayList<>();
+    private Collection<GlLinkRequest> collectUploadLinks(org.jreleaser.model.Gitlab gitlab) {
+        List<GlLinkRequest> links = new ArrayList<>();
 
         for (Map.Entry<String, String> e : gitlab.getUploadLinks().entrySet()) {
             Optional<? extends Uploader> uploader = context.getModel().getUpload().getActiveUploader(e.getKey(), e.getValue());
@@ -323,7 +323,7 @@ public class GitlabReleaser extends AbstractReleaser {
         return links;
     }
 
-    private void collectUploadLinks(Uploader uploader, List<LinkRequest> links) {
+    private void collectUploadLinks(Uploader uploader, List<GlLinkRequest> links) {
         List<String> keys = uploader.resolveSkipKeys();
         keys.add(org.jreleaser.model.Gitlab.SKIP_GITLAB_LINKS);
 
@@ -389,17 +389,17 @@ public class GitlabReleaser extends AbstractReleaser {
         return false;
     }
 
-    private void deleteTags(Gitlab api, String owner, String repo, String identifier, String tagName) {
+    private void deleteTags(Gitlab api, String owner, String repo, String projectIdentifier, String tagName) {
         // delete remote tag
         try {
-            api.deleteTag(owner, repo, identifier, tagName);
+            api.deleteTag(owner, repo, projectIdentifier, tagName);
         } catch (RestAPIException ignored) {
             //noop
         }
     }
 
-    private static LinkRequest toLinkRequest(Path path, String url) {
-        LinkRequest link = new LinkRequest();
+    private static GlLinkRequest toLinkRequest(Path path, String url) {
+        GlLinkRequest link = new GlLinkRequest();
         link.setName(path.getFileName().toString());
         link.setUrl(url);
         link.setFilepath("/" + link.getName());

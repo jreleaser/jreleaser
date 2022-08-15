@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @since 0.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LinkRequest {
+public class GlLinkRequest {
     private String name;
     private String url;
     private String filepath;

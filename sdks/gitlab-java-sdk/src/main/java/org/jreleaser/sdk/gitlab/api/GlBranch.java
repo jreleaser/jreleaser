@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @since 1.2.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Branch {
+public class GlBranch {
     private String name;
 
     public String getName() {

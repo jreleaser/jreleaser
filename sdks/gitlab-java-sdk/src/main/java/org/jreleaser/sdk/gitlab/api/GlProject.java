@@ -27,7 +27,7 @@ import java.util.List;
  * @since 0.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Project {
+public class GlProject {
     private Date createdAt;
     private Integer creatorId;
     private String defaultBranch;
@@ -36,9 +36,9 @@ public class Project {
     private Integer id;
     private Boolean isPublic;
     private String name;
-    private Namespace namespace;
+    private GlNamespace namespace;
     private String nameWithNamespace;
-    private User owner;
+    private GlUser owner;
     private String path;
     private String pathWithNamespace;
     private String sshUrlToRepo;
@@ -110,11 +110,11 @@ public class Project {
         this.name = name;
     }
 
-    public Namespace getNamespace() {
+    public GlNamespace getNamespace() {
         return namespace;
     }
 
-    public void setNamespace(Namespace namespace) {
+    public void setNamespace(GlNamespace namespace) {
         this.namespace = namespace;
     }
 
@@ -126,11 +126,11 @@ public class Project {
         this.nameWithNamespace = nameWithNamespace;
     }
 
-    public User getOwner() {
+    public GlUser getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(GlUser owner) {
         this.owner = owner;
     }
 
