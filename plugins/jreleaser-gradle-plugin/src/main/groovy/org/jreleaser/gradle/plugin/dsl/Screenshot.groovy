@@ -26,7 +26,7 @@ import org.gradle.api.provider.Property
  * @since 1.2.0
  */
 @CompileStatic
-interface Screenshot {
+interface Screenshot extends ExtraProperties {
     void setScreenshotType(String str)
 
     Property<org.jreleaser.model.Screenshot.Type> getScreenshotType()

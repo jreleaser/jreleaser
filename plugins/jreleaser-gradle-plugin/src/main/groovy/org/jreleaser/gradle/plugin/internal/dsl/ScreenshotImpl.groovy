@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.internal.dsl
 import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.Screenshot
 
@@ -41,6 +42,7 @@ class ScreenshotImpl implements Screenshot {
     final Property<String> caption
     final Property<Integer> width
     final Property<Integer> height
+    final MapProperty<String, Object> extraProperties
 
     @Inject
     ScreenshotImpl(ObjectFactory objects) {
@@ -51,6 +53,7 @@ class ScreenshotImpl implements Screenshot {
         caption = objects.property(String).convention(Providers.notDefined())
         width = objects.property(Integer).convention(Providers.notDefined())
         height = objects.property(Integer).convention(Providers.notDefined())
+        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
     @Override
@@ -68,6 +71,7 @@ class ScreenshotImpl implements Screenshot {
         if (caption.present) screenshot.caption = caption.get()
         if (width.present) screenshot.width = width.get()
         if (height.present) screenshot.height = height.get()
+        if (extraProperties.present) screenshot.extraProperties.putAll(extraProperties.get())
         screenshot
     }
 }

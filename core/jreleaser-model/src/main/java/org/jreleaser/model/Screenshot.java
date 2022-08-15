@@ -27,7 +27,9 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public class Screenshot extends AbstractModelObject<Screenshot> implements Domain {
+public class Screenshot extends AbstractModelObject<Screenshot> implements Domain, ExtraProperties {
+    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
+
     private Type type = Type.SOURCE;
     private Boolean primary;
     private String url;
@@ -36,14 +38,15 @@ public class Screenshot extends AbstractModelObject<Screenshot> implements Domai
     private Integer height;
 
     @Override
-    public void merge(Screenshot registry) {
+    public void merge(Screenshot source) {
         freezeCheck();
-        this.type = merge(this.type, registry.type);
-        this.primary = merge(this.primary, registry.primary);
-        this.url = merge(this.url, registry.url);
-        this.caption = merge(this.caption, registry.caption);
-        this.width = merge(this.width, registry.width);
-        this.height = merge(this.height, registry.height);
+        this.type = merge(this.type, source.type);
+        this.primary = merge(this.primary, source.primary);
+        this.url = merge(this.url, source.url);
+        this.caption = merge(this.caption, source.caption);
+        this.width = merge(this.width, source.width);
+        this.height = merge(this.height, source.height);
+        setExtraProperties(merge(this.extraProperties, source.extraProperties));
     }
 
     public Type getType() {
@@ -105,6 +108,29 @@ public class Screenshot extends AbstractModelObject<Screenshot> implements Domai
     }
 
     @Override
+    public String getPrefix() {
+        return "screenshot";
+    }
+
+    @Override
+    public Map<String, Object> getExtraProperties() {
+        return freezeWrap(extraProperties);
+    }
+
+    @Override
+    public void setExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
+        this.extraProperties.clear();
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
+    public void addExtraProperties(Map<String, Object> extraProperties) {
+        freezeCheck();
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("type", type);
@@ -113,6 +139,7 @@ public class Screenshot extends AbstractModelObject<Screenshot> implements Domai
         map.put("caption", caption);
         map.put("width", width);
         map.put("height", height);
+        map.put("extraProperties", getResolvedExtraProperties());
         return map;
     }
 

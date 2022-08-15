@@ -25,17 +25,22 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.Screenshot;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.util.Errors;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static org.jreleaser.model.AppImage.SKIP_APPIMAGE;
 import static org.jreleaser.model.validation.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.model.validation.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.validation.TemplateValidator.validateTemplate;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isFalse;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -101,6 +106,10 @@ public abstract class AppImageValidator extends Validator {
             errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".appImage.screenshots"));
         }
         validateScreenshots(context, mode, packager.getScreenshots(), errors, "distribution." + distribution.getName() + ".appImage");
+        packager.getScreenshots().removeIf(screenshot -> isTrue(screenshot.getExtraProperties().get(SKIP_APPIMAGE)));
+        if (packager.getScreenshots().isEmpty()) {
+            errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".appImage.screenshots"));
+        }
 
         if (isBlank(packager.getRepository().getName())) {
             packager.getRepository().setName(distribution.getName() + "-appimage");
