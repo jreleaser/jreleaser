@@ -219,21 +219,21 @@ assemble:
 
 distributions:
   jreleaser:
-    #flatpak:
-    #  active: always
-    #  componentId: org.jreleaser.cli
-    #  developerName: JReleaser
-    #  runtime: freedesktop
-    #  runtimeVersion: 21.08
-    #  finishArgs:
-    #    - --share=network
-    #    - --filesystem=host
-    #  categories:
-    #    - Developer Tools
-    #  repository:
-    #    active: release
-    #    owner: flathub
-    #    name: org.jreleaser.cli
+    flatpak:
+      active: always
+      componentId: org.jreleaser.cli
+      developerName: JReleaser
+      runtime: freedesktop
+      runtimeVersion: 21.08
+      finishArgs:
+        - --share=network
+        - --filesystem=host
+      categories:
+        - Developer Tools
+      repository:
+        active: release
+        owner: flathub
+        name: org.jreleaser.cli
     java:
       mainClass: org.jreleaser.cli.Main
     chocolatey:
