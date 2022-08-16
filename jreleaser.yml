@@ -33,6 +33,10 @@ project:
   screenshots:
     - url: https://jreleaser.org/images/app-full-release-command.png
       caption: JReleaser in action
+  icons:
+    - url: https://raw.githubusercontent.com/jreleaser/jreleaser/main/src/media/icon_256x256.png
+      width: 256
+      height: 256
   java:
     groupId: org.jreleaser
     version: 8
@@ -215,16 +219,21 @@ assemble:
 
 distributions:
   jreleaser:
-    flatpak:
-      active: always
-      componentId: org.jreleaser.cli
-      developerName: JReleaser
-      categories:
-        - Developer Tools
-      repository:
-        active: release
-        owner: flathub
-        name: org.jreleaser.cli
+    #flatpak:
+    #  active: always
+    #  componentId: org.jreleaser.cli
+    #  developerName: JReleaser
+    #  runtime: freedesktop
+    #  runtimeVersion: 21.08
+    #  finishArgs:
+    #    - --share=network
+    #    - --filesystem=host
+    #  categories:
+    #    - Developer Tools
+    #  repository:
+    #    active: release
+    #    owner: flathub
+    #    name: org.jreleaser.cli
     java:
       mainClass: org.jreleaser.cli.Main
     chocolatey:
