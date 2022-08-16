@@ -93,6 +93,7 @@ enforce {
             "junit:junit:$junitVersion",
             "org.hamcrest:hamcrest:$hamcrestVersion",
             "org.apache.httpcomponents:httpclient:$httpclientVersion",
-            "com.sun.mail:jakarta.mail:$mailApiVersion"
+            "com.sun.mail:jakarta.mail:$mailApiVersion",
+            "net.bytebuddy:byte-buddy:$bytebuddyVersion"
     }
 }
