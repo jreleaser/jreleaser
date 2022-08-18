@@ -154,17 +154,18 @@ public final class ClientUtils {
             int status = connection.getResponseCode();
             if (status >= 400) {
                 String reason = connection.getResponseMessage();
-                Reader reader = new InputStreamReader(connection.getErrorStream(), UTF_8);
-                message = IOUtils.toString(reader);
                 StringBuilder b = new StringBuilder("Webhook replied with: ")
                     .append(status);
                 if (isNotBlank(reason)) {
                     b.append(" reason: ")
-                        .append(reason)
-                        .append(",");
+                        .append(reason);
                 }
-                if (isNotBlank(message)) {
-                    b.append(message);
+                try (Reader reader = new InputStreamReader(connection.getErrorStream(), UTF_8)) {
+                    message = IOUtils.toString(reader);
+                    if (isNotBlank(message)) {
+                        b.append(",")
+                            .append(message);
+                    }
                 }
                 throw new AnnounceException(b.toString());
             }
@@ -245,17 +246,18 @@ public final class ClientUtils {
             int status = connection.getResponseCode();
             if (status >= 400) {
                 String reason = connection.getResponseMessage();
-                Reader reader = new InputStreamReader(connection.getErrorStream(), UTF_8);
-                String message = IOUtils.toString(reader);
                 StringBuilder b = new StringBuilder("Got ")
                     .append(status);
                 if (isNotBlank(reason)) {
                     b.append(" reason: ")
-                        .append(reason)
-                        .append(",");
+                        .append(reason);
                 }
-                if (isNotBlank(message)) {
-                    b.append(message);
+                try (Reader reader = new InputStreamReader(connection.getErrorStream(), UTF_8)) {
+                    String message = IOUtils.toString(reader);
+                    if (isNotBlank(message)) {
+                        b.append(", ")
+                            .append(message);
+                    }
                 }
                 throw new UploadException(b.toString());
             }
@@ -268,7 +270,7 @@ public final class ClientUtils {
     private static SSLSocketFactory nonValidatingSSLSocketFactory() {
         try {
             SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, new TrustManager[]{new NonValidatingTrustManager()}, null);
+            sslContext.init(null, new TrustManager[]{new NonValidatingTrustManager()}, null); // lgtm [java/insecure-trustmanager]
             return sslContext.getSocketFactory();
         } catch (Exception e) {
             throw new IllegalStateException(e);

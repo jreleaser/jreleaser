@@ -124,7 +124,7 @@ public abstract class AbstractModelObject<S extends AbstractModelObject<S>> impl
         if (null != existing) m1.putAll(existing);
         if (null != incoming && !incoming.isEmpty()) {
             Map<String, T> m2 = new LinkedHashMap<>(incoming);
-            m2.keySet().removeAll(existing.keySet());
+            if (null != existing) m2.keySet().removeAll(existing.keySet());
             m1.putAll(m2);
         }
 
@@ -137,7 +137,7 @@ public abstract class AbstractModelObject<S extends AbstractModelObject<S>> impl
         if (null != incoming && !incoming.isEmpty()) {
             for (Map.Entry<String, T> e : incoming.entrySet()) {
                 String key = e.getKey();
-                if (existing.containsKey(key)) {
+                if (null != existing && existing.containsKey(key)) {
                     T value = existing.get(key);
                     value.merge(e.getValue());
                 } else {

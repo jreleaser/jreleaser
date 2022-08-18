@@ -541,13 +541,13 @@ public final class CollectionUtils {
         }
 
         @Override
-        public String getProperty(String key) {
+        public String getProperty(String key) { // lgtm [java/unsynchronized-getter]
             Object value = map.get(key);
             return value != null ? String.valueOf(value) : null;
         }
 
         @Override
-        public String getProperty(String key, String defaultValue) {
+        public String getProperty(String key, String defaultValue) { // lgtm [java/unsynchronized-getter]
             Object value = map.get(key);
             return value != null ? String.valueOf(value) : defaultValue;
         }

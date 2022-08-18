@@ -219,6 +219,8 @@ assemble:
 
 distributions:
   jreleaser:
+    java:
+      mainClass: org.jreleaser.cli.Main
     flatpak:
       active: always
       componentId: org.jreleaser.cli
@@ -234,8 +236,6 @@ distributions:
         active: release
         owner: flathub
         name: org.jreleaser.cli
-    java:
-      mainClass: org.jreleaser.cli.Main
     chocolatey:
       active: always
       remoteBuild: true
