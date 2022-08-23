@@ -124,7 +124,7 @@ public abstract class ProjectValidator extends Validator {
         if (null == project.getInceptionYear() &&
             project.getExtraProperties().containsKey("inceptionYear")) {
             project.setInceptionYear(project.getExtraProperty("inceptionYear"));
-            context.nag("1.2.0","Use project.inceptionYear instead of project.extraProperties.inceptionYear");
+            context.nag("1.2.0", "Use project.inceptionYear instead of project.extraProperties.inceptionYear");
         }
 
         if (isBlank(project.getCopyright())) {
@@ -134,8 +134,7 @@ public abstract class ProjectValidator extends Validator {
                     project.getInceptionYear() + " " +
                         String.join(",", project.getAuthors()));
             } else {
-                context.nag("0.4.0", "project.copyright must not be blank");
-                project.setCopyright("");
+                errors.configuration(RB.$("validation_must_not_be_blank", "project.copyright"));
             }
         }
 
@@ -166,7 +165,14 @@ public abstract class ProjectValidator extends Validator {
             project.getLinks().setDocumentation(project.getLinks().getHomepage());
         }
 
-        if (!mode.validateConfig()) return;
+        if (!mode.validateConfig()) {
+            if (mode.validateAssembly()) {
+                if (isBlank(project.getDescription())) {
+                    errors.configuration(RB.$("validation_must_not_be_blank", "project.description"));
+                }
+            }
+            return;
+        }
 
         if (context.getModel().getActiveDistributions().isEmpty() && !context.getModel().getAnnounce().isEnabled()) {
             return;

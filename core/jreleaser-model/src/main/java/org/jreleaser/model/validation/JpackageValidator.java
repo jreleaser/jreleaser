@@ -199,13 +199,15 @@ public abstract class JpackageValidator extends Validator {
         String appVersion = applicationPackage.getResolvedAppVersion(context, jpackage);
         try {
             SemVer v = SemVer.of(appVersion);
-            if (isNotBlank(v.getBuild()) && isNotBlank(v.getTag()) &&
-                v.getMajor() <= 0) {
-                errors.configuration(RB.$("validation_jpackage_invalid_appversion", appVersion));
+            if (isNotBlank(v.getBuild()) || isNotBlank(v.getTag())) {
+                errors.configuration(RB.$("validation_jpackage_invalid_appversion_t", appVersion));
+            }
+            if (v.getMajor() <= 0) {
+                errors.configuration(RB.$("validation_jpackage_invalid_appversion_n", appVersion));
             }
         } catch (IllegalArgumentException e) {
             // can't use this value
-            errors.configuration(RB.$("validation_jpackage_invalid_appversion", appVersion));
+            errors.configuration(RB.$("validation_jpackage_invalid_appversion_n", appVersion));
         }
 
         if (isBlank(applicationPackage.getVendor())) {
