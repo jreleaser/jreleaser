@@ -72,8 +72,17 @@ public class JsonSchema extends AbstractCommand {
         mappings.put("Map<String, Distribution>", "DistributionMap");
         mappings.put("Map<String, DockerSpec>", "DockerSpecMap");
         mappings.put("Map<String, Artifactory>", "ArtifactoryMap");
-        mappings.put("Map<String, Http>", "HttpMap");
+        mappings.put("Map<String, GiteaUploader>", "GiteaUploaderMap");
+        mappings.put("Map<String, GitlabUploader>", "GitlabUploaderMap");
+        mappings.put("Map<String, FtpUploader>", "FtpUploaderMap");
+        mappings.put("Map<String, HttpUploader>", "HttpUploaderMap");
+        mappings.put("Map<String, SftpUploader>", "SftpUploaderMap");
+        mappings.put("Map<String, ScpUploader>", "ScpUploaderMap");
         mappings.put("Map<String, S3>", "S3Map");
+        mappings.put("Map<String, FtpDownloader>", "FtpDownloaderMap");
+        mappings.put("Map<String, HttpDownloader>", "HttpDownloaderMap");
+        mappings.put("Map<String, SftpDownloader>", "SftpDownloaderMap");
+        mappings.put("Map<String, ScpDownloader>", "ScpDownloaderMap");
 
         try {
             SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON);
