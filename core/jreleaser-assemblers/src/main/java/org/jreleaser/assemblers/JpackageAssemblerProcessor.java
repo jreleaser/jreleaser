@@ -232,6 +232,10 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             cmd.arg("--java-options")
                 .arg(maybeQuote(javaOption));
         }
+        for (String launcher : assembler.getLauncher().getLaunchers()) {
+            cmd.arg("--add-launcher")
+                .arg(maybeQuote(launcher));
+        }
 
         // ApplicationPackage
         String licenseFile = resolveTemplate(assembler.getApplicationPackage().getLicenseFile(), props);
