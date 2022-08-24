@@ -16,13 +16,14 @@ RUN unzip {{distributionArtifactFile}} && \
     chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutableUnix}} && \
     chmod +x {{distributionArtifactFileName}}/bin/java && \
     mv /{{distributionExecutableName}}-entrypoint.sh /{{distributionArtifactFileName}}/bin && \
-    chmod +x /{{distributionArtifactFileName}}/bin/{{distributionExecutableName}}-entrypoint.sh
+    chmod +x /{{distributionArtifactFileName}}/bin/{{distributionExecutableName}}-entrypoint.sh && \
+    mv /{{distributionArtifactFileName}} /{{distributionExecutableName}}
 
-ENV PATH="${PATH}:/{{distributionArtifactFileName}}/bin"
+ENV PATH="${PATH}:/{{distributionExecutableName}}/bin"
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutableName}}-entrypoint.sh"]
-CMD ["/{{distributionArtifactFileName}}/bin/{{distributionExecutableUnix}}"]
+ENTRYPOINT ["/{{distributionExecutableName}}/bin/{{distributionExecutableName}}-entrypoint.sh"]
+CMD ["/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}"]
