@@ -354,7 +354,7 @@ distributions:
           matchers:
             platform: 'linux_musl-x86_64'
           preCommands:
-            - 'RUN apk add unzip binutils fakeroot rpm'
+            - 'RUN apk add unzip binutils fakeroot rpm bash'
 
   jreleaser-installer:
     type: NATIVE_PACKAGE
