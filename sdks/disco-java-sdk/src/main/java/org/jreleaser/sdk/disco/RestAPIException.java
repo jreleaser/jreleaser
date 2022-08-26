@@ -28,6 +28,8 @@ import java.util.Map;
  * @since 0.9.0
  */
 public class RestAPIException extends RuntimeException {
+    private static final long serialVersionUID = -7270438109492904609L;
+
     private final Request request;
     private final int status;
     private final String reason;

@@ -59,9 +59,16 @@ config {
 
     quality {
         checkstyle {
-            toolVersion = '9.3'
+            toolVersion = checkstyleVersion
             aggregate {
                 enabled = true
+            }
+        }
+        pmd {
+            toolVersion = pmdVersion
+            ignoreFailures = true
+            aggregate {
+                enabled = false
             }
         }
     }

@@ -91,6 +91,8 @@ public class ArtifactoryArtifactUploader extends AbstractArtifactUploader<Artifa
                         case BEARER:
                             headers.put("Authorization", "Bearer " + password);
                             break;
+                        default:
+                            // noop
                     }
 
                     headers.put("X-Checksum-Deploy", "false");

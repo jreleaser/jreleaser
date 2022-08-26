@@ -27,6 +27,7 @@ buildscript {
         classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:plugin-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:checkstyle-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:pmd-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:kordamp-parentbuild:$kordampBuildVersion"
         classpath "org.jreleaser:jdks-gradle-plugin:$jdksPluginVersion"
         classpath 'de.undercouch:gradle-download-task:4.1.1'
@@ -50,6 +51,7 @@ projects {
         path(':') {
             id 'org.kordamp.gradle.java-project'
             id 'org.kordamp.gradle.checkstyle'
+            id 'org.kordamp.gradle.pmd'
         }
         dirs(['infra', 'apps', 'core', 'sdks', 'plugins']) {
             id 'java-library'
