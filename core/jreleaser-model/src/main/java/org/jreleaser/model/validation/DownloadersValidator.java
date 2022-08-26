@@ -32,7 +32,7 @@ import static org.jreleaser.model.validation.SftpDownloaderValidator.validateSft
  */
 public abstract class DownloadersValidator extends Validator {
     public static void validateDownloaders(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode == JReleaserContext.Mode.CHANGELOG) {
+        if (mode.validateChangelog() || mode.validateAnnounce()) {
             return;
         }
 

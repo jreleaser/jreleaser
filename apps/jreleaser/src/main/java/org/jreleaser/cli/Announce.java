@@ -76,4 +76,9 @@ public class Announce extends AbstractPlatformAwareModelCommand {
     protected boolean dryrun() {
         return dryrun;
     }
+
+    @Override
+    protected JReleaserContext.Mode getMode() {
+        return JReleaserContext.Mode.ANNOUNCE;
+    }
 }

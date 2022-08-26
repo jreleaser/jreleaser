@@ -677,7 +677,16 @@ public class JReleaserContext {
         DOWNLOAD,
         ASSEMBLE,
         FULL,
-        CHANGELOG;
+        CHANGELOG,
+        ANNOUNCE;
+
+        public boolean validateChangelog() {
+            return this == CHANGELOG;
+        }
+
+        public boolean validateAnnounce() {
+            return this == ANNOUNCE;
+        }
 
         public boolean validateDownload() {
             return this == DOWNLOAD;

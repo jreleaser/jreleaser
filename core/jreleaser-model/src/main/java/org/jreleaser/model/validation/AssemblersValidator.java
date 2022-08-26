@@ -43,7 +43,7 @@ import static org.jreleaser.model.validation.NativeImageValidator.validateNative
  */
 public abstract class AssemblersValidator extends Validator {
     public static void validateAssemblers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode == JReleaserContext.Mode.CHANGELOG) {
+        if (mode.validateChangelog() || mode.validateAnnounce()) {
             return;
         }
 
@@ -96,7 +96,7 @@ public abstract class AssemblersValidator extends Validator {
     }
 
     public static void postValidateAssemblers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode == JReleaserContext.Mode.CHANGELOG) {
+        if (mode.validateChangelog() || mode.validateAnnounce()) {
             return;
         }
 

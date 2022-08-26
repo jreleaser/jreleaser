@@ -57,4 +57,9 @@ public class JReleaserAnnounceTask extends AbstractPlatformAwareJReleaserTask {
         context.setExcludedAnnouncers(excludedAnnouncers);
         Workflows.announce(context).execute();
     }
+
+    @Override
+    protected JReleaserContext.Mode getMode() {
+        return JReleaserContext.Mode.ANNOUNCE;
+    }
 }

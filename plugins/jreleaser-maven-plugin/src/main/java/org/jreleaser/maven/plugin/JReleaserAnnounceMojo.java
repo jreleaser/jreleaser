@@ -63,4 +63,9 @@ public class JReleaserAnnounceMojo extends AbstractPlatformAwareJReleaserMojo {
         context.setExcludedAnnouncers(collectEntries(excludedAnnouncers, true));
         Workflows.announce(context).execute();
     }
+
+    @Override
+    protected JReleaserContext.Mode getMode() {
+        return JReleaserContext.Mode.ANNOUNCE;
+    }
 }

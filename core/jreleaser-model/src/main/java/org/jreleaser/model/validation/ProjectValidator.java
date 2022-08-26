@@ -165,16 +165,18 @@ public abstract class ProjectValidator extends Validator {
             project.getLinks().setDocumentation(project.getLinks().getHomepage());
         }
 
-        if (!mode.validateConfig()) {
-            if (mode.validateAssembly()) {
-                if (isBlank(project.getDescription())) {
-                    errors.configuration(RB.$("validation_must_not_be_blank", "project.description"));
-                }
+        if (mode.validateAssembly()) {
+            if (isBlank(project.getDescription())) {
+                errors.configuration(RB.$("validation_must_not_be_blank", "project.description"));
             }
+        }
+
+        if (!mode.validateConfig() && !mode.validateAnnounce()) {
             return;
         }
 
-        if (context.getModel().getActiveDistributions().isEmpty() && !context.getModel().getAnnounce().isEnabled()) {
+        if (context.getModel().getActiveDistributions().isEmpty() ||
+            !context.getModel().getAnnounce().isEnabled()) {
             return;
         }
 

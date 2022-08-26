@@ -49,6 +49,7 @@ abstract class JReleaserAnnounceTask extends AbstractPlatformAwareJReleaserTask 
         super(objects)
         announcers = objects.listProperty(String).convention([])
         excludedAnnouncers = objects.listProperty(String).convention([])
+        mode = JReleaserContext.Mode.ANNOUNCE
     }
 
     @Option(option = 'announcer', description = 'Include an announcer (OPTIONAL).')

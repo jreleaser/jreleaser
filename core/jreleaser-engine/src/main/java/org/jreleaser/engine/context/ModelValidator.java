@@ -34,7 +34,7 @@ public class ModelValidator {
         try {
             Errors errors = context.validateModel();
 
-            if (context.getMode() != JReleaserContext.Mode.CHANGELOG) {
+            if (!context.getMode().validateChangelog()) {
                 new JReleaserModelPrinter.Plain(context.getLogger().getTracer())
                     .print(context.getModel().asMap(true));
             }

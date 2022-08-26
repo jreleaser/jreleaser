@@ -43,7 +43,7 @@ import static org.jreleaser.model.validation.ZulipValidator.validateZulip;
  */
 public abstract class AnnouncersValidator extends Validator {
     public static void validateAnnouncers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (!mode.validateConfig()) {
+        if (!mode.validateAnnounce() && !mode.validateConfig()) {
             return;
         }
 
@@ -67,7 +67,7 @@ public abstract class AnnouncersValidator extends Validator {
         validateZulip(context, announce.getZulip(), errors);
 
         boolean activeSet = announce.isActiveSet();
-        if (mode.validateConfig()) {
+        if (mode.validateAnnounce() || mode.validateConfig()) {
             announce.resolveEnabled(context.getModel().getProject());
         }
 
