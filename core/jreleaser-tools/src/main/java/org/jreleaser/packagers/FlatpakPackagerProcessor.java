@@ -169,6 +169,7 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
             Path iconPath = Paths.get(packager.getTemplateDirectory(), "icons",
                 icon.getWidth() + "x" + icon.getHeight(),
                 distribution.getExecutable().getName() + "." + iconExt);
+            iconPath = context.getBasedir().resolve(iconPath);
 
             if (!Files.exists(iconPath)) {
                 // download
