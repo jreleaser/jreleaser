@@ -37,6 +37,7 @@ import org.jreleaser.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
@@ -197,7 +198,12 @@ public class GitSdk {
             throw new IOException(RB.$("ERROR_git_find_tag", tagName), e);
         }
     }
-
+    
+    public boolean isShallow() {
+        Path path = basedir.toPath();
+        return Files.exists(path.resolve(".git/shallow"));
+    }
+    
     public void tag(String tagName, JReleaserContext context) throws IOException {
         tag(tagName, false, context);
     }

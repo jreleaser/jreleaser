@@ -179,6 +179,11 @@ public class ChangelogGenerator {
     }
 
     public Tags resolveTags(Git git, JReleaserContext context) throws GitAPIException {
+        GitSdk shallowTest = GitSdk.of(context);
+        if (shallowTest.isShallow()) {
+            context.getLogger().warn(RB.$("changelog.shallow.warning"));
+        }
+        
         List<Ref> tags = git.tagList().call();
 
         GitService gitService = context.getModel().getRelease().getGitService();
