@@ -22,10 +22,14 @@ jreleaser {
           |Distribution files may additionally be published to be consumed by popular package managers
           |such as Homebrew, Chocolatey, Snapcraft, or get ready to be launched via JBang. Releases
           |may be announced in a variety of channels such as Twitter, Zulip, SDKMAN!, and more.'''.stripMargin('|')
-        website = 'https://jreleaser.org'
+        links {
+            homepage = 'https://jreleaser.org'
+            faq      = 'https://{{repoHost}}/{{repoOwner}}/{{repoName}}/discussions'
+            donation = 'https://opencollective.com/jreleaser'
+        }
         authors = ['Andres Almiray']
         license = 'Apache-2.0'
-        extraProperties.put('inceptionYear', '2020')
+        inceptionYear = '2020'
         tags = ['jreleaser', 'release', 'tool', 'java', 'git']
         java {
             mainClass = 'org.jreleaser.cli.Main'
@@ -43,102 +47,59 @@ jreleaser {
             discussionCategoryName = 'Announcements'
             changelog {
                 formatted = 'ALWAYS'
+                preset = 'conventional-commits'
                 format = '- {{commitShortHash}} {{commitTitle}}'
                 contributors {
                     format = '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
                 }
                 labeler {
-                    label = 'merge_pull'
-                    title = 'Merge pull'
-                }
-                labeler {
-                    label = 'merge_branch'
-                    title = 'Merge branch'
-                }
-                labeler {
-                    label = 'translation'
-                    title = '[translation]'
-                }
-                labeler {
-                    label = 'task'
-                    title = '[chore]'
+                    label = 'i18n'
+                    title = 'regex:^(?:i18n(?:\\(.*\\))?!?):\\s.*'
+                    order = 120
                 }
                 labeler {
                     label = 'dependencies'
-                    title = '[deps]'
+                    title = 'regex:^(?:deps(?:\\(.*\\))?!?):\\s.*'
+                    order = 130
                 }
                 labeler {
-                    label = 'build'
-                    title = '[build]'
+                    label = 'allcontributors1'
+                    title = 'regex:^docs: update .all-contributorsrc.*'
+                    order = -1
                 }
                 labeler {
-                    label = 'feature'
-                    title = 'Resolves #'
-                    body = 'Resolves #'
-                }
-                labeler {
-                    label = 'issue'
-                    title = 'Fixes #'
-                    body = 'Fixes #'
-                }
-                labeler {
-                    label = 'issue'
-                    title = 'Relates to #'
-                    body = 'Relates to #'
-                }
-                labeler {
-                    label = 'allcontributors'
-                    title = 'docs: update'
+                    label = 'allcontributors2'
+                    title = 'regex:^docs: update CONTRIBUTORS.md.*'
+                    order = -2
                 }
                 category {
-                    title = 'Merge'
-                    labels = ['merge_pull', 'merge_branch']
+                    title  = '🌐 Translation'
+                    key    = 'i18n'
+                    order  = 70
+                    labels = ['i18n']
                 }
                 category {
-                    title = '🚀 Features'
-                    labels = ['feature']
-                }
-                category {
-                    title = '✅ Issues'
-                    labels = ['issue']
-                }
-                category {
-                    title = '🧰 Tasks'
-                    labels = ['task']
-                }
-                category {
-                    title = '🌐 Translation'
-                    labels = ['translation']
-                }
-                category {
-                    title = '⚙️  Dependencies'
+                    title  = '⚙️  Dependencies'
+                    key    = 'dependencies'
+                    order  = 80
                     labels = ['dependencies']
                 }
                 category {
-                    title = '🛠  Build'
-                    labels = ['build']
-                }
-                category {
-                    title = 'allcontributors'
-                    labels = ['allcontributors']
+                    title  = 'allcontributors'
+                    order  = 59
+                    labels = ['allcontributors1', 'allcontributors2']
                 }
                 hide {
-                    category('Merge')
+                    category('merge')
                     category('allcontributors')
                     contributor('GitHub')
                     contributor('allcontributors')
                 }
                 replacer {
-                    search = '\\[chore\\] '
+                    search = 'i18n: '
                 }
                 replacer {
-                    search = '\\[deps\\] '
-                }
-                replacer {
-                    search = '\\[translation\\] '
-                }
-                replacer {
-                    search = '\\[build\\] '
+                    search = 'deps: '
                 }
             }
         }
@@ -150,7 +111,7 @@ jreleaser {
         files = false
         mode = 'COSIGN'
         cosign {
-            version = '1.5.0'
+            version = '1.11.1'
         }
     }
 
@@ -242,6 +203,21 @@ jreleaser {
 
     distributions {
         jreleaser {
+            flatpak {
+                active = 'ALWAYS'
+                componentId = 'org.jreleaser.cli'
+                developerName = 'JReleaser'
+                runtime = 'FREEDESKTOP'
+                runtimeVersion = '21.08'
+                finishArg('--share=network')
+                finishArg('--filesystem=host')
+                category('Developer Tools')
+                repository {
+                    active = 'RELEASE'
+                    repoOwner = 'flathub'
+                    name = 'org.jreleaser.cli'
+                }
+            }
             chocolatey {
                 active = 'ALWAYS'
                 remoteBuild = true
@@ -309,6 +285,7 @@ jreleaser {
             artifact {
                 path = 'apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar'
                 transform = '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar'
+                extraProperties.put('skipFlatpak', true)
             }
         }
 
@@ -328,6 +305,16 @@ jreleaser {
         }
 
         'jreleaser-standalone' {
+            appImage {
+                active = 'ALWAYS'
+                componentId = 'org.jreleaser.cli'
+                developerName = 'JReleaser'
+                category('Developement')
+                repository {
+                    active = 'RELEASE'
+                    name = 'jreleaser-appimage'
+                }
+            }
             brew {
                 active = 'ALWAYS'
                 formulaName = 'jreleaser'
@@ -355,22 +342,16 @@ jreleaser {
                         imageName('jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}')
                         imageName('jreleaser/jreleaser-{{dockerSpecName}}:latest')
                         matcher('platform', 'linux-x86_64')
-                        preCommand('RUN apt-get update -y')
-                        preCommand('RUN apt-get install unzip')
+                        preCommand('ARG DEBIAN_FRONTEND=noninteractive')
+                        preCommand('ENV TZ=Europe/Zurich')
+                        preCommand('RUN apt-get update && apt-get install -y unzip binutils fakeroot rpm')
                     }
                     alpine {
                         imageName('jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}')
                         imageName('jreleaser/jreleaser-{{dockerSpecName}}:latest')
                         matcher('platform', 'linux_musl-x86_64')
-                        preCommand('RUN apk add unzip')
+                        preCommand('RUN apk add unzip bash')
                     }
-                }
-            }
-            gofish {
-                active = 'ALWAYS'
-                repository {
-                    active = 'RELEASE'
-                    commitMessage = 'jreleaser {{tagName}}'
                 }
             }
         }

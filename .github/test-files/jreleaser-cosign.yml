@@ -15,17 +15,26 @@ project:
     Distribution files may additionally be published to be consumed by popular package managers
     such as Homebrew, Chocolatey, Snapcraft, or get ready to be launched via JBang. Releases
     may be announced in a variety of channels such as Twitter, Zulip, SDKMAN!, and more.
-
-  website: https://jreleaser.org
+  links:
+    homepage: https://jreleaser.org
+    faq: https://{{repoHost}}/{{repoOwner}}/{{repoName}}/discussions
+    donation: https://opencollective.com/jreleaser
   authors:
     - Andres Almiray
   license: Apache-2.0
+  inceptionYear: 2020
+  stereotype: cli
+  screenshots:
+    - url: https://jreleaser.org/images/app-full-release-command.png
+      caption: JReleaser in action
+  icons:
+    - url: https://raw.githubusercontent.com/jreleaser/jreleaser/main/src/media/icon_256x256.png
+      width: 256
+      height: 256
   java:
     groupId: org.jreleaser
     version: 8
     multiProject: true
-  extraProperties:
-    inceptionYear: 2020
   tags:
     - 'jreleaser'
     - 'release'
@@ -44,71 +53,50 @@ release:
     discussionCategoryName: Announcements
     changelog:
       formatted: ALWAYS
+      preset: conventional-commits
       format: '- {{commitShortHash}} {{commitTitle}}'
       contributors:
         format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
+      contentTemplate: 'src/jreleaser/changelog.tpl'
       labelers:
-        - label: 'merge_pull'
-          title: 'Merge pull'
-        - label: 'merge_branch'
-          title: 'Merge branch'
-        - label: 'translation'
-          title: '[translation]'
-        - label: 'task'
-          title: '[chore]'
+        - label: 'i18n'
+          title: 'regex:^(?:i18n(?:\(.*\))?!?):\s.*'
+          order: 120
         - label: 'dependencies'
-          title: '[deps]'
-        - label: 'build'
-          title: '[build]'
-        - label: 'feature'
-          title: 'Resolves #'
-          body: 'Resolves #'
-        - label: 'issue'
-          title: 'Fixes #'
-          body: 'Fixes #'
-        - label: 'issue'
-          title: 'Relates to #'
-          body: 'Relates to #'
-        - label: 'allcontributors'
-          title: 'docs: update'
+          title: 'regex:^(?:deps(?:\(.*\))?!?):\s.*'
+          order: 130
+        - label: 'allcontributors1'
+          title: 'regex:^docs: update .all-contributorsrc.*'
+          order: -1
+        - label: 'allcontributors2'
+          title: 'regex:^docs: update CONTRIBUTORS.md.*'
+          order: -2
       categories:
-        - title: 'Merge'
-          labels:
-            - 'merge_pull'
-            - 'merge_branch'
-        - title: '🚀 Features'
-          labels:
-            - 'feature'
-        - title: '✅ Issues'
-          labels:
-            - 'issue'
-        - title: '🧰 Tasks'
-          labels:
-            - 'task'
         - title: '🌐 Translation'
+          key: 'i18n'
+          order: 70
           labels:
-            - 'translation'
+            - 'i18n'
         - title: '⚙️  Dependencies'
+          key: 'dependencies'
+          order: 80
           labels:
             - 'dependencies'
-        - title: '🛠  Build'
-          labels:
-            - 'build'
         - title: 'allcontributors'
+          order: 59
           labels:
-            - 'allcontributors'
+            - 'allcontributors1'
+            - 'allcontributors2'
       hide:
         categories:
-          - 'Merge'
+          - 'merge'
           - 'allcontributors'
         contributors:
           - 'GitHub'
           - 'allcontributors'
       replacers:
-        - search: '\[chore\] '
-        - search: '\[deps\] '
-        - search: '\[translation\] '
-        - search: '\[build\] '
+        - search: 'i18n: '
+        - search: 'deps: '
 
 signing:
   active: always
@@ -116,7 +104,7 @@ signing:
   files: false
   mode: COSIGN
   cosign:
-    version: 1.5.0
+    version: 1.11.1
 
 checksum:
   files: false
@@ -182,6 +170,21 @@ distributions:
   jreleaser:
     java:
       mainClass: org.jreleaser.cli.Main
+    flatpak:
+      active: always
+      componentId: org.jreleaser.cli
+      developerName: JReleaser
+      runtime: freedesktop
+      runtimeVersion: 21.08
+      finishArgs:
+        - --share=network
+        - --filesystem=host
+      categories:
+        - Developer Tools
+      repository:
+        active: release
+        owner: flathub
+        name: org.jreleaser.cli
     chocolatey:
       active: always
       remoteBuild: true
@@ -239,6 +242,8 @@ distributions:
           skipSpec: true
       - path: apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar'
+        extraProperties:
+          skipFlatpak: true
 
   jreleaser-ant-tasks:
     artifacts:
@@ -252,6 +257,15 @@ distributions:
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.jar'
 
   jreleaser-standalone:
+    appImage:
+      active: always
+      componentId: org.jreleaser.cli
+      developerName: JReleaser
+      categories:
+        - Development
+      repository:
+        active: release
+        name: jreleaser-appimage
     brew:
       active: always
       formulaName: jreleaser
@@ -279,8 +293,9 @@ distributions:
           matchers:
             platform: 'linux-x86_64'
           preCommands:
-            - 'RUN apt-get update -y'
-            - 'RUN apt-get install unzip'
+            - 'ARG DEBIAN_FRONTEND=noninteractive'
+            - 'ENV TZ=Europe/Zurich'
+            - 'RUN apt-get update && apt-get install -y unzip binutils fakeroot rpm'
         alpine:
           imageNames:
             - 'jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}'
@@ -288,12 +303,7 @@ distributions:
           matchers:
             platform: 'linux_musl-x86_64'
           preCommands:
-            - 'RUN apk add unzip'
-    gofish:
-      active: always
-      repository:
-        active: release
-        commitMessage: 'jreleaser {{tagName}}'
+            - 'RUN apk add unzip binutils fakeroot rpm bash'
 
 files:
   artifacts:

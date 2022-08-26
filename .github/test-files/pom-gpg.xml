@@ -92,6 +92,24 @@
                                 such as Homebrew, Chocolatey, Snapcraft, or get ready to be launched via JBang. Releases
                                 may be announced in a variety of channels such as Twitter, Zulip, SDKMAN!, and more.
                             </longDescription>
+                            <links>
+                                <faq>https://{{repoHost}}/{{repoOwner}}/{{repoName}}/discussions</faq>
+                                <donation>https://opencollective.com/jreleaser</donation>
+                            </links>
+                            <stereotype>cli</stereotype>
+                            <screenshots>
+                                <screenshot>
+                                    <url>https://jreleaser.org/images/app-full-release-command.png</url>
+                                    <caption>JReleaser in action</caption>
+                                </screenshot>
+                            </screenshots>
+                            <icons>
+                                <icon>
+                                    <url>https://raw.githubusercontent.com/jreleaser/jreleaser/main/src/media/icon_256x256.png</url>
+                                    <width>256</width>
+                                    <height>256</height>
+                                </icon>
+                            </icons>
                             <tags>jreleaser,release,tool,java,git</tags>
                         </project>
                         <platform>
@@ -106,111 +124,65 @@
                                 <discussionCategoryName>Announcements</discussionCategoryName>
                                 <changelog>
                                     <formatted>ALWAYS</formatted>
+                                    <preset>conventional-commits</preset>
                                     <format>- {{commitShortHash}} {{commitTitle}}</format>
                                     <contributors>
                                         <format>- {{contributorName}}{{#contributorUsernameAsLink}}
                                             ({{.}}){{/contributorUsernameAsLink}}
                                         </format>
                                     </contributors>
+                                    <contentTemplate>src/jreleaser/changelog.tpl</contentTemplate>
                                     <labelers>
                                         <labeler>
-                                            <label>merge_pull</label>
-                                            <title>Merge pull</title>
-                                        </labeler>
-                                        <labeler>
-                                            <label>merge_branch</label>
-                                            <title>Merge branch</title>
-                                        </labeler>
-                                        <labeler>
-                                            <label>translation</label>
-                                            <title>[translation]</title>
-                                        </labeler>
-                                        <labeler>
-                                            <label>task</label>
-                                            <title>[chore]</title>
+                                            <label>i18n</label>
+                                            <title>regex:^(?:i18n(?:\(.*\))?!?):\s.*</title>
+                                            <order>120</order>
                                         </labeler>
                                         <labeler>
                                             <label>dependencies</label>
-                                            <title>[deps]</title>
+                                            <title>regex:^(?:deps(?:\(.*\))?!?):\s.*</title>
+                                            <order>130</order>
                                         </labeler>
                                         <labeler>
-                                            <label>build</label>
-                                            <title>[build]</title>
+                                            <label>allcontributors1</label>
+                                            <title>regex:^docs: update .all-contributorsrc.*</title>
+                                            <order>-1</order>
                                         </labeler>
                                         <labeler>
-                                            <label>feature</label>
-                                            <title>Resolves #</title>
-                                            <body>Resolves #</body>
-                                        </labeler>
-                                        <labeler>
-                                            <label>issue</label>
-                                            <title>Fixes #</title>
-                                            <body>Fixes #</body>
-                                        </labeler>
-                                        <labeler>
-                                            <label>issue</label>
-                                            <title>Relates to #</title>
-                                            <body>Relates to #</body>
-                                        </labeler>
-                                        <labeler>
-                                            <label>translation</label>
-                                            <title>[translation]</title>
-                                        </labeler>
-                                        <labeler>
-                                            <label>allcontributirs</label>
-                                            <title>docs: update</title>
+                                            <label>allcontributors2</label>
+                                            <title>regex:^docs: update CONTRIBUTORS.md.*</title>
+                                            <order>-2</order>
                                         </labeler>
                                     </labelers>
                                     <categories>
                                         <category>
-                                            <title>Merge</title>
-                                            <labels>merge_pull,merge_branch</labels>
-                                        </category>
-                                        <category>
-                                            <title>🚀 Features</title>
-                                            <labels>feature</labels>
-                                        </category>
-                                        <category>
-                                            <title>✅ Issues</title>
-                                            <labels>issue</labels>
-                                        </category>
-                                        <category>
-                                            <title>🧰 Tasks</title>
-                                            <labels>task</labels>
-                                        </category>
-                                        <category>
                                             <title>🌐 Translation</title>
-                                            <labels>translation</labels>
+                                            <key>i18n</key>
+                                            <order>70</order>
+                                            <labels>i18n</labels>
                                         </category>
                                         <category>
-                                            <title>⚙️ Dependencies</title>
+                                            <title>⚙️  Dependencies</title>
+                                            <key>dependencies</key>
+                                            <order>80</order>
                                             <labels>dependencies</labels>
                                         </category>
                                         <category>
-                                            <title>'🛠 Build</title>
-                                            <labels>build</labels>
-                                        </category>
-                                        <category>
                                             <title>allcontributors</title>
-                                            <labels>allcontributors</labels>
+                                            <order>59</order>
+                                            <labels>allcontributors1,allcontributors2</labels>
                                         </category>
                                     </categories>
                                     <hide>
-                                        <categories>Merge,allcontributors</categories>
+                                        <categories>merge,allcontributors</categories>
                                         <contributors>GitHub,allcontributors</contributors>
                                     </hide>
                                     <replacers>
                                         <replacer>
-                                            <search>\[chore\]</search>
+                                            <search>i18n:</search>
                                         </replacer>
                                         <replacer>
-                                            <search>\[deps\]</search>
-                                        </replacer>
-                                        <replacer>
-                                            <search>\[translation\]</search>
-                                        </replacer>
-                                        <replacer>
-                                            <search>\[build\]</search>
+                                            <search>deps:</search>
                                         </replacer>
                                     </replacers>
                                 </changelog>
@@ -321,6 +293,23 @@
                                 <java>
                                     <mainClass>org.jreleaser.cli.Main</mainClass>
                                 </java>
+                                <flatpak>
+                                    <active>ALWAYS</active>
+                                    <componentId>org.jreleaser.cli</componentId>
+                                    <developerName>JReleaser</developerName>
+                                    <runtime>FREEDESKTOP</runtime>
+                                    <runtimeVersion>21.08</runtimeVersion>
+                                    <finishArgs>
+                                        <finishArg>--share=network</finishArg>
+                                        <finishArg>--filesystem=host</finishArg>
+                                    </finishArgs>
+                                    <categories>Developer Tools</categories>
+                                    <repository>
+                                        <active>RELEASE</active>
+                                        <owner>flathub</owner>
+                                        <name>org.jreleaser.cli</name>
+                                    </repository>
+                                </flatpak>
                                 <chocolatey>
                                     <active>ALWAYS</active>
                                     <remoteBuild>true</remoteBuild>
@@ -401,6 +390,9 @@
                                     <artifact>
                                         <path>apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar</path>
                                         <transform>{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar</transform>
+                                        <extraProperties>
+                                            <skipFlatpak>true</skipFlatpak>
+                                        </extraProperties>
                                     </artifact>
                                 </artifacts>
                             </jreleaser>
@@ -422,6 +414,16 @@
                                 </artifacts>
                             </jreleaser-tool-provider>
                             <jreleaser-standalone>
+                                <appImage>
+                                    <active>ALWAYS</active>
+                                    <componentId>org.jreleaser.cli</componentId>
+                                    <developerName>JReleaser</developerName>
+                                    <categories>Development</categories>
+                                    <repository>
+                                        <active>RELEASE</active>
+                                        <name>jreleaser-appimage</name>
+                                    </repository>
+                                </appImage>
                                 <brew>
                                     <active>ALWAYS</active>
                                     <formulaName>jreleaser</formulaName>
@@ -460,8 +462,9 @@
                                                 <platform>linux-x86_64</platform>
                                             </matchers>
                                             <preCommands>
-                                                <preCommand>RUN apt-get update -y</preCommand>
-                                                <preCommand>RUN apt-get install unzip</preCommand>
+                                                <preCommand>ARG DEBIAN_FRONTEND=noninteractive</preCommand>
+                                                <preCommand>ENV TZ=Europe/Zurich</preCommand>
+                                                <preCommand>RUN apt-get update &amp;&amp; apt-get install -y unzip binutils fakeroot rpm</preCommand>
                                             </preCommands>
                                         </slim>
                                         <alpine>
@@ -474,18 +477,11 @@
                                                 <platform>linux_musl-x86_64</platform>
                                             </matchers>
                                             <preCommands>
-                                                <preCommand>RUN apk add unzip</preCommand>
+                                                <preCommand>RUN apk add unzip binutils fakeroot rpm bash</preCommand>
                                             </preCommands>
                                         </alpine>
                                     </specs>
                                 </docker>
-                                <gofish>
-                                    <active>ALWAYS</active>
-                                    <repository>
-                                        <active>RELEASE</active>
-                                        <commitMessage>jreleaser {{tagName}}</commitMessage>
-                                    </repository>
-                                </gofish>
                             </jreleaser-standalone>
                         </distributions>
                         <files>
