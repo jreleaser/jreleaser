@@ -96,7 +96,7 @@
                                 <faq>https://{{repoHost}}/{{repoOwner}}/{{repoName}}/discussions</faq>
                                 <donation>https://opencollective.com/jreleaser</donation>
                             </links>
-                            <stereotype>cli</stereotype>
+                            <stereotype>CLI</stereotype>
                             <screenshots>
                                 <screenshot>
                                     <url>https://jreleaser.org/images/app-full-release-command.png</url>
