@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class FtpDownloaderValidator extends Validator {
     public static void validateFtpDownloader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("ftp");
+        context.getLogger().debug("download.ftp");
         Map<String, FtpDownloader> ftp = context.getModel().getDownload().getFtp();
 
         for (Map.Entry<String, FtpDownloader> e : ftp.entrySet()) {
@@ -49,7 +49,7 @@ public abstract class FtpDownloaderValidator extends Validator {
     }
 
     private static void validateFtp(JReleaserContext context, JReleaserContext.Mode mode, FtpDownloader ftp, Errors errors) {
-        context.getLogger().debug("ftp.{}", ftp.getName());
+        context.getLogger().debug("download.ftp.{}", ftp.getName());
 
         if (!ftp.isActiveSet()) {
             ftp.setActive(Active.ALWAYS);

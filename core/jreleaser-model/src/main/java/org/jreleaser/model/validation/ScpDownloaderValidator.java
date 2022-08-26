@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class ScpDownloaderValidator extends Validator {
     public static void validateScpDownloader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("scp");
+        context.getLogger().debug("download.scp");
         Map<String, ScpDownloader> scp = context.getModel().getDownload().getScp();
 
         for (Map.Entry<String, ScpDownloader> e : scp.entrySet()) {
@@ -49,7 +49,7 @@ public abstract class ScpDownloaderValidator extends Validator {
     }
 
     private static void validateScpDownloader(JReleaserContext context, JReleaserContext.Mode mode, ScpDownloader scp, Errors errors) {
-        context.getLogger().debug("scp.{}", scp.getName());
+        context.getLogger().debug("download.scp.{}", scp.getName());
 
         if (!scp.isActiveSet()) {
             scp.setActive(Active.ALWAYS);

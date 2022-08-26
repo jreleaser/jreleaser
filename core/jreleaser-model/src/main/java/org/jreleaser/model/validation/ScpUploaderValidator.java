@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class ScpUploaderValidator extends Validator {
     public static void validateScpUploader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("scp");
+        context.getLogger().debug("upload.scp");
         Map<String, ScpUploader> scp = context.getModel().getUpload().getScp();
 
         for (Map.Entry<String, ScpUploader> e : scp.entrySet()) {
@@ -48,7 +48,7 @@ public abstract class ScpUploaderValidator extends Validator {
     }
 
     private static void validateScpUploader(JReleaserContext context, JReleaserContext.Mode mode, ScpUploader scp, Errors errors) {
-        context.getLogger().debug("scp.{}", scp.getName());
+        context.getLogger().debug("upload.scp.{}", scp.getName());
 
         if (!scp.isActiveSet()) {
             scp.setActive(Active.NEVER);

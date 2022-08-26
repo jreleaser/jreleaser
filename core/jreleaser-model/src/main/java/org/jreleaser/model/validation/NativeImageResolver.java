@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class NativeImageResolver extends Validator {
     public static void resolveNativeImageOutputs(JReleaserContext context, Errors errors) {
-        context.getLogger().debug("nativeImage");
+        context.getLogger().debug("assemble.nativeImage");
 
         for (NativeImage nativeImage : context.getModel().getAssemble().getActiveNativeImages()) {
             if (nativeImage.isExported()) resolveNativeImageOutputs(context, nativeImage, errors);

@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class GitlabUploaderValidator extends Validator {
     public static void validateGitlabUploader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("gitlab");
+        context.getLogger().debug("upload.gitlab");
         Map<String, GitlabUploader> gitlab = context.getModel().getUpload().getGitlab();
 
         for (Map.Entry<String, GitlabUploader> e : gitlab.entrySet()) {
@@ -49,7 +49,7 @@ public abstract class GitlabUploaderValidator extends Validator {
     }
 
     private static void validateGitlabUploader(JReleaserContext context, JReleaserContext.Mode mode, GitlabUploader gitlab, Errors errors) {
-        context.getLogger().debug("gitlab.{}", gitlab.getName());
+        context.getLogger().debug("upload.gitlab.{}", gitlab.getName());
 
         if (!gitlab.isActiveSet()) {
             gitlab.setActive(Active.NEVER);

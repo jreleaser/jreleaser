@@ -42,7 +42,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class NativeImageValidator extends Validator {
     public static void validateNativeImage(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("nativeImage");
+        context.getLogger().debug("assemble.nativeImage");
         Map<String, NativeImage> nativeImage = context.getModel().getAssemble().getNativeImage();
 
         for (Map.Entry<String, NativeImage> e : nativeImage.entrySet()) {
@@ -56,7 +56,7 @@ public abstract class NativeImageValidator extends Validator {
     }
 
     private static void validateNativeImage(JReleaserContext context, JReleaserContext.Mode mode, NativeImage nativeImage, Errors errors) {
-        context.getLogger().debug("nativeImage.{}", nativeImage.getName());
+        context.getLogger().debug("assemble.nativeImage.{}", nativeImage.getName());
 
         if (!nativeImage.isActiveSet()) {
             nativeImage.setActive(Active.NEVER);

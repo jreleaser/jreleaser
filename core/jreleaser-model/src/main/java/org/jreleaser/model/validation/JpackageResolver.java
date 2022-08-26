@@ -36,7 +36,7 @@ import static org.jreleaser.util.FileUtils.listFilesAndProcess;
  */
 public abstract class JpackageResolver extends Validator {
     public static void resolveJpackageOutputs(JReleaserContext context, Errors errors) {
-        context.getLogger().debug("jpackage");
+        context.getLogger().debug("assemble.jpackage");
 
         for (Jpackage jpackage : context.getModel().getAssemble().getActiveJpackages()) {
             if (jpackage.isExported()) resolveJpackageOutputs(context, jpackage, errors);

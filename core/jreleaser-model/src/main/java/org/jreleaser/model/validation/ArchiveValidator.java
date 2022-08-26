@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class ArchiveValidator extends Validator {
     public static void validateArchive(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("archive");
+        context.getLogger().debug("assemble.archive");
         Map<String, Archive> archive = context.getModel().getAssemble().getArchive();
 
         for (Map.Entry<String, Archive> e : archive.entrySet()) {
@@ -49,7 +49,7 @@ public abstract class ArchiveValidator extends Validator {
     }
 
     private static void validateArchive(JReleaserContext context, JReleaserContext.Mode mode, Archive archive, Errors errors) {
-        context.getLogger().debug("archive.{}", archive.getName());
+        context.getLogger().debug("assemble.archive.{}", archive.getName());
 
         if (!archive.isActiveSet()) {
             archive.setActive(Active.NEVER);

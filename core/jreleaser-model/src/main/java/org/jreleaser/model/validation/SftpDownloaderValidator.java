@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class SftpDownloaderValidator extends Validator {
     public static void validateSftpDownloader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("sftp");
+        context.getLogger().debug("download.sftp");
         Map<String, SftpDownloader> sftp = context.getModel().getDownload().getSftp();
 
         for (Map.Entry<String, SftpDownloader> e : sftp.entrySet()) {
@@ -49,7 +49,7 @@ public abstract class SftpDownloaderValidator extends Validator {
     }
 
     private static void validateSftpDownloader(JReleaserContext context, JReleaserContext.Mode mode, SftpDownloader sftp, Errors errors) {
-        context.getLogger().debug("sftp.{}", sftp.getName());
+        context.getLogger().debug("download.sftp.{}", sftp.getName());
 
         if (!sftp.isActiveSet()) {
             sftp.setActive(Active.ALWAYS);

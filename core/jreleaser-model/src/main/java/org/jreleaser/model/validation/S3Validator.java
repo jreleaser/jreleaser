@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class S3Validator extends Validator {
     public static void validateS3(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("s3");
+        context.getLogger().debug("upload.s3");
         Map<String, S3> s3 = context.getModel().getUpload().getS3();
 
         for (Map.Entry<String, S3> e : s3.entrySet()) {
@@ -49,7 +49,7 @@ public abstract class S3Validator extends Validator {
     }
 
     private static void validateS3(JReleaserContext context, JReleaserContext.Mode mode, S3 s3, Errors errors) {
-        context.getLogger().debug("s3.{}", s3.getName());
+        context.getLogger().debug("upload.s3.{}", s3.getName());
 
         if (!s3.isActiveSet()) {
             s3.setActive(Active.NEVER);

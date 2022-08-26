@@ -42,7 +42,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class JlinkValidator extends Validator {
     public static void validateJlink(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("jlink");
+        context.getLogger().debug("assemble.jlink");
         Map<String, Jlink> jlink = context.getModel().getAssemble().getJlink();
 
         for (Map.Entry<String, Jlink> e : jlink.entrySet()) {
@@ -56,7 +56,7 @@ public abstract class JlinkValidator extends Validator {
     }
 
     private static void validateJlink(JReleaserContext context, JReleaserContext.Mode mode, Jlink jlink, Errors errors) {
-        context.getLogger().debug("jlink.{}", jlink.getName());
+        context.getLogger().debug("assemble.jlink.{}", jlink.getName());
 
         if (!jlink.isActiveSet()) {
             jlink.setActive(Active.NEVER);

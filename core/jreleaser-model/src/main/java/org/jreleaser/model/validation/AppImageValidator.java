@@ -59,6 +59,8 @@ public abstract class AppImageValidator extends Validator {
             return;
         }
 
+        context.getLogger().debug("distribution.{}.appImage", distribution.getName());
+
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);

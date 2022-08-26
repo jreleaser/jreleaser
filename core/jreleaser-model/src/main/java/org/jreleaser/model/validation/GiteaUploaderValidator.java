@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class GiteaUploaderValidator extends Validator {
     public static void validateGiteaUploader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("gitea");
+        context.getLogger().debug("upload.gitea");
         Map<String, GiteaUploader> gitea = context.getModel().getUpload().getGitea();
 
         for (Map.Entry<String, GiteaUploader> e : gitea.entrySet()) {
@@ -49,7 +49,7 @@ public abstract class GiteaUploaderValidator extends Validator {
     }
 
     private static void validateGiteaUploader(JReleaserContext context, JReleaserContext.Mode mode, GiteaUploader gitea, Errors errors) {
-        context.getLogger().debug("gitea.{}", gitea.getName());
+        context.getLogger().debug("upload.gitea.{}", gitea.getName());
 
         if (!gitea.isActiveSet()) {
             gitea.setActive(Active.NEVER);

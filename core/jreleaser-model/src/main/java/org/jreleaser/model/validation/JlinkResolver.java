@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class JlinkResolver extends Validator {
     public static void resolveJlinkOutputs(JReleaserContext context, Errors errors) {
-        context.getLogger().debug("jlink");
+        context.getLogger().debug("assemble.jlink");
 
         for (Jlink jlink : context.getModel().getAssemble().getActiveJlinks()) {
             if (jlink.isExported()) resolveJlinkOutputs(context, jlink, errors);

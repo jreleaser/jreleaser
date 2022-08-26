@@ -33,7 +33,7 @@ import java.nio.file.Path;
  */
 public abstract class ArchiveResolver extends Validator {
     public static void resolveArchiveOutputs(JReleaserContext context, Errors errors) {
-        context.getLogger().debug("archive");
+        context.getLogger().debug("assemble.archive");
 
         for (Archive archive : context.getModel().getAssemble().getActiveArchives()) {
             if (archive.isExported()) resolveArchiveOutputs(context, archive, errors);

@@ -49,7 +49,7 @@ public abstract class JpackageValidator extends Validator {
     private static final Pattern MAC_IDENTIFIER_PATTERN = Pattern.compile(MAC_IDENTIFIER);
 
     public static void validateJpackage(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("jpackage");
+        context.getLogger().debug("assemble.jpackage");
         Map<String, Jpackage> jpackage = context.getModel().getAssemble().getJpackage();
 
         for (Map.Entry<String, Jpackage> e : jpackage.entrySet()) {
@@ -63,7 +63,7 @@ public abstract class JpackageValidator extends Validator {
     }
 
     public static void postValidateJpackage(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("jpackage");
+        context.getLogger().debug("assemble.jpackage");
         Map<String, Jpackage> jpackage = context.getModel().getAssemble().getJpackage();
 
         for (Map.Entry<String, Jpackage> e : jpackage.entrySet()) {
@@ -72,7 +72,7 @@ public abstract class JpackageValidator extends Validator {
     }
 
     private static void validateJpackage(JReleaserContext context, JReleaserContext.Mode mode, Jpackage jpackage, Errors errors) {
-        context.getLogger().debug("jpackage.{}", jpackage.getName());
+        context.getLogger().debug("assemble.jpackage.{}", jpackage.getName());
 
         if (!jpackage.isActiveSet()) {
             jpackage.setActive(Active.NEVER);

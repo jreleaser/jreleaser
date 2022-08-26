@@ -32,7 +32,7 @@ import java.util.Map;
  */
 public abstract class ArtifactoryValidator extends Validator {
     public static void validateArtifactory(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("artifactory");
+        context.getLogger().debug("upload.artifactory");
         Map<String, Artifactory> artifactory = context.getModel().getUpload().getArtifactory();
 
         for (Map.Entry<String, Artifactory> e : artifactory.entrySet()) {
@@ -46,7 +46,7 @@ public abstract class ArtifactoryValidator extends Validator {
     }
 
     private static void validateArtifactory(JReleaserContext context, JReleaserContext.Mode mode, Artifactory artifactory, Errors errors) {
-        context.getLogger().debug("artifactory.{}", artifactory.getName());
+        context.getLogger().debug("upload.artifactory.{}", artifactory.getName());
 
         if (!artifactory.isActiveSet()) {
             artifactory.setActive(Active.NEVER);
