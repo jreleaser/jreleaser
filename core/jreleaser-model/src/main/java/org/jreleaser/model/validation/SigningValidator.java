@@ -41,7 +41,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class SigningValidator extends Validator {
     public static void validateSigning(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode.validateConfig()) {
+        if (!mode.validateConfig()) {
             errors = new Errors();
         }
 
