@@ -43,17 +43,18 @@ import static org.jreleaser.model.validation.NativeImageValidator.validateNative
  */
 public abstract class AssemblersValidator extends Validator {
     public static void validateAssemblers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode.validateChangelog() || mode.validateAnnounce()) {
-            return;
-        }
-
+        Assemble assemble = context.getModel().getAssemble();
         context.getLogger().debug("assemble");
 
-        Assemble assemble = context.getModel().getAssemble();
         validateArchive(context, mode, errors);
         validateJlink(context, mode, errors);
         validateJpackage(context, mode, errors);
         validateNativeImage(context, mode, errors);
+
+        if (!mode.validateAssembly() && !mode.validateConfig()) {
+            assemble.disable();
+            return;
+        }
 
         // validate unique distribution names between exported assemblers
         Map<String, List<String>> byDistributionName = new LinkedHashMap<>();
@@ -96,7 +97,7 @@ public abstract class AssemblersValidator extends Validator {
     }
 
     public static void postValidateAssemblers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode.validateChangelog() || mode.validateAnnounce()) {
+        if (!mode.validateAssembly() && !mode.validateConfig()) {
             return;
         }
 

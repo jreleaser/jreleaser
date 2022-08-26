@@ -36,13 +36,9 @@ import static org.jreleaser.model.validation.SftpUploaderValidator.validateSftpU
  */
 public abstract class UploadersValidator extends Validator {
     public static void validateUploaders(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (!mode.validateConfig()) {
-            return;
-        }
-
+        Upload upload = context.getModel().getUpload();
         context.getLogger().debug("upload");
 
-        Upload upload = context.getModel().getUpload();
         validateArtifactory(context, mode, errors);
         validateFtpUploader(context, mode, errors);
         validateGiteaUploader(context, mode, errors);
@@ -51,6 +47,11 @@ public abstract class UploadersValidator extends Validator {
         validateS3(context, mode, errors);
         validateScpUploader(context, mode, errors);
         validateSftpUploader(context, mode, errors);
+
+        if (!mode.validateConfig()) {
+            upload.disable();
+            return;
+        }
 
         boolean activeSet = upload.isActiveSet();
         if (mode.validateConfig()) {

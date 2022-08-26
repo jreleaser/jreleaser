@@ -62,10 +62,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class DistributionsValidator extends Validator {
     public static void validateDistributions(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (!mode.validateConfig()) {
-            return;
-        }
-
         context.getLogger().debug("distributions");
         Map<String, Distribution> distributions = context.getModel().getDistributions();
 
@@ -75,11 +71,19 @@ public abstract class DistributionsValidator extends Validator {
                 distribution.setName(e.getKey());
             }
             if (context.isDistributionIncluded(distribution)) {
-                validateDistribution(context, mode, distribution, errors);
+                if (mode.validateConfig()) {
+                    validateDistribution(context, mode, distribution, new Errors());
+                } else {
+                    validateDistribution(context, mode, distribution, errors);
+                }
             } else {
                 distribution.setActive(Active.NEVER);
                 distribution.resolveEnabled(context.getModel().getProject());
             }
+        }
+
+        if (!mode.validateConfig()) {
+            return;
         }
 
         postValidateBrew(context, errors);

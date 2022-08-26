@@ -40,7 +40,11 @@ public abstract class SftpDownloaderValidator extends Validator {
 
         for (Map.Entry<String, SftpDownloader> e : sftp.entrySet()) {
             e.getValue().setName(e.getKey());
-            validateSftpDownloader(context, mode, e.getValue(), errors);
+            if (mode.validateDownload() || mode.validateConfig()) {
+                validateSftpDownloader(context, mode, e.getValue(), errors);
+            } else {
+                validateSftpDownloader(context, mode, e.getValue(), new Errors());
+            }
         }
     }
 

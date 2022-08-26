@@ -40,7 +40,11 @@ public abstract class ArchiveValidator extends Validator {
 
         for (Map.Entry<String, Archive> e : archive.entrySet()) {
             e.getValue().setName(e.getKey());
-            validateArchive(context, mode, e.getValue(), errors);
+            if (!mode.validateAssembly() && !mode.validateConfig()) {
+                validateArchive(context, mode, e.getValue(), new Errors());
+            } else {
+                validateArchive(context, mode, e.getValue(), errors);
+            }
         }
     }
 

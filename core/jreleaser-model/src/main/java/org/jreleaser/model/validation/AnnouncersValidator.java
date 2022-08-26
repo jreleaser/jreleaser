@@ -43,13 +43,9 @@ import static org.jreleaser.model.validation.ZulipValidator.validateZulip;
  */
 public abstract class AnnouncersValidator extends Validator {
     public static void validateAnnouncers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (!mode.validateAnnounce() && !mode.validateConfig()) {
-            return;
-        }
-
+        Announce announce = context.getModel().getAnnounce();
         context.getLogger().debug("announce");
 
-        Announce announce = context.getModel().getAnnounce();
         validateArticle(context, announce.getArticle(), errors);
         validateDiscussions(context, announce.getDiscussions(), errors);
         validateDiscord(context, announce.getDiscord(), errors);
@@ -65,6 +61,11 @@ public abstract class AnnouncersValidator extends Validator {
         validateTwitter(context, announce.getTwitter(), errors);
         validateWebhooks(context, announce.getConfiguredWebhooks(), errors);
         validateZulip(context, announce.getZulip(), errors);
+
+        if (!mode.validateAnnounce() && !mode.validateConfig()) {
+            announce.disable();
+            return;
+        }
 
         boolean activeSet = announce.isActiveSet();
         if (mode.validateAnnounce() || mode.validateConfig()) {

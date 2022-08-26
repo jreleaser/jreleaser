@@ -32,30 +32,30 @@ import static org.jreleaser.model.validation.SftpDownloaderValidator.validateSft
  */
 public abstract class DownloadersValidator extends Validator {
     public static void validateDownloaders(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (mode.validateChangelog() || mode.validateAnnounce()) {
-            return;
-        }
-
+        Download download = context.getModel().getDownload();
         context.getLogger().debug("download");
 
-        Download download = context.getModel().getDownload();
         validateFtpDownloader(context, mode, errors);
         validateHttpDownloader(context, mode, errors);
         validateScpDownloader(context, mode, errors);
         validateSftpDownloader(context, mode, errors);
 
-        boolean activeSet = download.isActiveSet();
-        if (mode.validateConfig() || mode.validateDownload()) {
-            download.resolveEnabled(context.getModel().getProject());
-        }
+        if (mode.validateDownload() || mode.validateConfig()) {
+            boolean activeSet = download.isActiveSet();
+            if (mode.validateConfig() || mode.validateDownload()) {
+                download.resolveEnabled(context.getModel().getProject());
+            }
 
-        if (download.isEnabled()) {
-            boolean enabled = !download.getActiveFtps().isEmpty() ||
-                !download.getActiveHttps().isEmpty() ||
-                !download.getActiveScps().isEmpty() ||
-                !download.getActiveSftps().isEmpty();
+            if (download.isEnabled()) {
+                boolean enabled = !download.getActiveFtps().isEmpty() ||
+                    !download.getActiveHttps().isEmpty() ||
+                    !download.getActiveScps().isEmpty() ||
+                    !download.getActiveSftps().isEmpty();
 
-            if (!activeSet && !enabled) download.disable();
+                if (!activeSet && !enabled) download.disable();
+            }
+        } else {
+            download.disable();
         }
     }
 }

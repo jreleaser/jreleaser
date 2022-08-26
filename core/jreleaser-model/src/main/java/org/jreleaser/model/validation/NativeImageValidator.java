@@ -47,7 +47,11 @@ public abstract class NativeImageValidator extends Validator {
 
         for (Map.Entry<String, NativeImage> e : nativeImage.entrySet()) {
             e.getValue().setName(e.getKey());
-            validateNativeImage(context, mode, e.getValue(), errors);
+            if (!mode.validateAssembly() && !mode.validateConfig()) {
+                validateNativeImage(context, mode, e.getValue(), new Errors());
+            } else {
+                validateNativeImage(context, mode, e.getValue(), errors);
+            }
         }
     }
 
