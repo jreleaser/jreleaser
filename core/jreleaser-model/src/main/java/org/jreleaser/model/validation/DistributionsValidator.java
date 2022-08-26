@@ -71,7 +71,7 @@ public abstract class DistributionsValidator extends Validator {
                 distribution.setName(e.getKey());
             }
             if (context.isDistributionIncluded(distribution)) {
-                if (mode.validateConfig()) {
+                if (!mode.validateConfig()) {
                     validateDistribution(context, mode, distribution, new Errors());
                 } else {
                     validateDistribution(context, mode, distribution, errors);
