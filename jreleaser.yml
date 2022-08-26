@@ -25,6 +25,7 @@ project:
     homepage: https://jreleaser.org
     faq: https://{{repoHost}}/{{repoOwner}}/{{repoName}}/discussions
     donation: https://opencollective.com/jreleaser
+    documentation: https://jreleaser.org/guide/latest
   authors:
     - Andres Almiray
   license: Apache-2.0
@@ -115,7 +116,7 @@ checksum:
 announce:
   twitter:
     active: release
-    status: 🚀 JReleaser {{projectVersion}} has been released! {{releaseNotesUrl}}
+    statusTemplate: src/jreleaser/twitter.tpl
 
 assemble:
   jlink:
