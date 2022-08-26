@@ -27,6 +27,7 @@ import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.model.Snap;
 import org.jreleaser.util.Errors;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -118,7 +119,7 @@ public abstract class SnapValidator extends Validator {
             packager.setExportedLogin(parentPackager.getExportedLogin());
             if (isBlank(packager.getExportedLogin())) {
                 errors.configuration(RB.$("validation_must_not_be_empty", "distribution." + distribution.getName() + ".snap.exportedLogin"));
-            } else if (!context.getBasedir().resolve(packager.getExportedLogin()).toFile().exists()) {
+            } else if (!Files.exists(context.getBasedir().resolve(packager.getExportedLogin()))) {
                 errors.configuration(RB.$("validation_directory_not_exist", "distribution." + distribution.getName() + ".snap.exportedLogin",
                     context.getBasedir().resolve(packager.getExportedLogin())));
             }
