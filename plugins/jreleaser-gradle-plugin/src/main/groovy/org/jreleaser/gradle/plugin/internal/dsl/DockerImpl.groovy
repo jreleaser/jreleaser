@@ -124,7 +124,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
     @CompileStatic
     static class DockerRepositoryImpl implements DockerRepository {
         final Property<Active> active
-        final Property<String> owner
+        final Property<String> repoOwner
         final Property<String> name
         final Property<String> tagName
         final Property<String> branch
@@ -136,7 +136,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
         @Inject
         DockerRepositoryImpl(ObjectFactory objects) {
             active = objects.property(Active).convention(Providers.notDefined())
-            owner = objects.property(String).convention(Providers.notDefined())
+            repoOwner = objects.property(String).convention(Providers.notDefined())
             name = objects.property(String).convention(Providers.notDefined())
             tagName = objects.property(String).convention(Providers.notDefined())
             branch = objects.property(String).convention(Providers.notDefined())
@@ -156,7 +156,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
         @Internal
         boolean isSet() {
             active.present ||
-                owner.present ||
+                repoOwner.present ||
                 name.present ||
                 tagName.present ||
                 branch.present ||
@@ -169,7 +169,7 @@ class DockerImpl extends AbstractDockerConfiguration implements Docker {
         org.jreleaser.model.Docker.DockerRepository toModel() {
             org.jreleaser.model.Docker.DockerRepository tap = new org.jreleaser.model.Docker.DockerRepository()
             if (active.present) tap.active = active.get()
-            if (owner.present) tap.owner = owner.get()
+            if (repoOwner.present) tap.owner = repoOwner.get()
             if (name.present) tap.name = name.get()
             if (tagName.present) tap.tagName = tagName.get()
             if (branch.present) tap.branch = branch.get()

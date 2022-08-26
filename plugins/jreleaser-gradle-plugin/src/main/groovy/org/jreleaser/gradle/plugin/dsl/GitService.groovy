@@ -33,7 +33,7 @@ import org.jreleaser.model.UpdateSection
 interface GitService extends Releaser {
     Property<String> getHost()
 
-    Property<String> getOwner()
+    Property<String> getRepoOwner()
 
     Property<String> getName()
 

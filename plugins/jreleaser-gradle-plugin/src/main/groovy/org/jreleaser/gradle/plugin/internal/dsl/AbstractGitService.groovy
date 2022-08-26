@@ -44,7 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 abstract class AbstractGitService implements GitService {
     final Property<Boolean> enabled
     final Property<String> host
-    final Property<String> owner
+    final Property<String> repoOwner
     final Property<String> name
     final Property<String> repoUrl
     final Property<String> repoCloneUrl
@@ -79,7 +79,7 @@ abstract class AbstractGitService implements GitService {
     AbstractGitService(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.notDefined())
         host = objects.property(String).convention(Providers.notDefined())
-        owner = objects.property(String).convention(Providers.notDefined())
+        repoOwner = objects.property(String).convention(Providers.notDefined())
         name = objects.property(String).convention(Providers.notDefined())
         repoUrl = objects.property(String).convention(Providers.notDefined())
         repoCloneUrl = objects.property(String).convention(Providers.notDefined())
@@ -116,7 +116,7 @@ abstract class AbstractGitService implements GitService {
     boolean isSet() {
         enabled.present ||
             host.present ||
-            owner.present ||
+            repoOwner.present ||
             name.present ||
             repoUrl.present ||
             repoCloneUrl.present ||
@@ -197,7 +197,7 @@ abstract class AbstractGitService implements GitService {
     protected void toModel(org.jreleaser.model.GitService service) {
         if (enabled.present) service.enabled = enabled.get()
         if (host.present) service.host = host.get()
-        if (owner.present) service.owner = owner.get()
+        if (repoOwner.present) service.owner = repoOwner.get()
         if (name.present) service.name = name.get()
         if (repoUrl.present) service.repoUrl = repoUrl.get()
         if (repoCloneUrl.present) service.repoCloneUrl = repoCloneUrl.get()
