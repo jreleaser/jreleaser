@@ -143,7 +143,7 @@ public abstract class JpackageValidator extends Validator {
             }
         }
 
-        context.getLogger().debug("jpackage.{}.java", jpackage.getName());
+        context.getLogger().debug("assemble.jpackage.{}.java", jpackage.getName());
         if (!validateJava(context, jpackage, errors)) {
             return;
         }

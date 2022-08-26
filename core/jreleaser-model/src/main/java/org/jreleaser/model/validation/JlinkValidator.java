@@ -71,7 +71,7 @@ public abstract class JlinkValidator extends Validator {
             jlink.setStereotype(context.getModel().getProject().getStereotype());
         }
 
-        context.getLogger().debug("jlink.{}.java", jlink.getName());
+        context.getLogger().debug("assemble.jlink.{}.java", jlink.getName());
         if (!validateJava(context, jlink, errors)) {
             return;
         }
