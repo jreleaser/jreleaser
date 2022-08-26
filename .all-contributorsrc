@@ -243,6 +243,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "fbiville",
+      "name": "Florent Biville",
+      "avatar_url": "https://avatars.githubusercontent.com/u/445792?v=4",
+      "profile": "https://fbiville.github.io",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
