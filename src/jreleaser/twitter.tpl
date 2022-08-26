@@ -4,6 +4,8 @@
 📦 asdf-vm as packager {{projectLinkDocumentation}}/configuration/packagers/asdf.html
 📦 AppImage as packager {{projectLinkDocumentation}}/configuration/packagers/appimage.html
 📦 Flatpak as packager {{projectLinkDocumentation}}/configuration/packagers/flatpak.html
+⬆️  Upload binaries to @giteaio packages {{projectLinkDocumentation}}/configuration/upload/gitea.html
+⬆️  Upload binaries to @gitlab packages {{projectLinkDocumentation}}/configuration/upload/gitlab.html
 🗒  Additional template functions such as markdown2HTML and checksums {{projectLinkDocumentation}}/configuration/name-templates.html#_functions
 🗂  Overwrite existing release assets when updating a release (only on @github & @giteaio)
 📝 Full list of changes available at the {{milestoneName}} milestone https://{{repoHost}}/{{repoOwner}}/{{repoName}}/milestones?state=closed
