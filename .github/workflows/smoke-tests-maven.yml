@@ -66,21 +66,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradlew-
 
-      - name: Build
-        run: ./gradlew -Prelease=true build publishToMavenLocal -S
-
-      - name: Prepare
-        shell: bash
-        run: |
-          cp .github/test-files/pom-${{ matrix.job.sign }}.xml pom.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
-
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+
+      - name: Build
+        run: ./gradlew -Prelease=true clean build publishToMavenLocal -S
+
+      - name: Prepare
+        shell: bash
+        run: |
+          cp .github/test-files/pom-${{ matrix.job.sign }}.xml pom.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
 
       - name: Assemble
         shell: bash

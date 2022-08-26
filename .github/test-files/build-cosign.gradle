@@ -30,6 +30,16 @@ jreleaser {
         authors = ['Andres Almiray']
         license = 'Apache-2.0'
         inceptionYear = '2020'
+        stereotype = 'cli'
+        screenshot {
+            url = 'https://jreleaser.org/images/app-full-release-command.png'
+            caption = 'JReleaser in action'
+        }
+        icon {
+            url    = 'https://raw.githubusercontent.com/jreleaser/jreleaser/main/src/media/icon_256x256.png'
+            width  = 256
+            height = 256
+        }
         tags = ['jreleaser', 'release', 'tool', 'java', 'git']
         java {
             mainClass = 'org.jreleaser.cli.Main'
