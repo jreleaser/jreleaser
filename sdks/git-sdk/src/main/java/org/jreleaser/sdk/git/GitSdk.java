@@ -198,12 +198,12 @@ public class GitSdk {
             throw new IOException(RB.$("ERROR_git_find_tag", tagName), e);
         }
     }
-    
+
     public boolean isShallow() {
         Path path = basedir.toPath();
         return Files.exists(path.resolve(".git/shallow"));
     }
-    
+
     public void tag(String tagName, JReleaserContext context) throws IOException {
         tag(tagName, false, context);
     }

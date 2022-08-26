@@ -183,7 +183,7 @@ public class ChangelogGenerator {
         if (shallowTest.isShallow()) {
             context.getLogger().warn(RB.$("changelog.shallow.warning"));
         }
-        
+
         List<Ref> tags = git.tagList().call();
 
         GitService gitService = context.getModel().getRelease().getGitService();

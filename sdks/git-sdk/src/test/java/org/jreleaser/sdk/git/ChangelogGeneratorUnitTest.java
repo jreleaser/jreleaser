@@ -209,8 +209,8 @@ public class ChangelogGeneratorUnitTest {
         ObjectId headId = ObjectId.fromString("085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7");
         boolean isSnapshot = false;
         List<Ref> tagRefs = buildMockedTagRefs(
-          new String[]{"refs/tags/v1.0.0", "cac0cab538b970a37ea1e769cbbde608743bc96d"},
-          new String[]{"refs/tags/v2.0.0", "a11bef06a3f659402fe7563abf99ad00de2209e6"});
+            new String[]{"refs/tags/v1.0.0", "cac0cab538b970a37ea1e769cbbde608743bc96d"},
+            new String[]{"refs/tags/v2.0.0", "a11bef06a3f659402fe7563abf99ad00de2209e6"});
 
         doNecessaryMock(effectiveTagName, configuredTagName, headId, isSnapshot, tagRefs);
 
