@@ -163,7 +163,7 @@ public class Macports extends AbstractRepositoryPackager<Macports> {
     @Override
     public boolean supportsPlatform(String platform) {
         return isBlank(platform) ||
-            (PlatformUtils.isMac(platform) && PlatformUtils.isIntel(platform));
+            PlatformUtils.isMac(platform) && PlatformUtils.isIntel(platform);
     }
 
     @Override

@@ -17,9 +17,6 @@
  */
 package org.jreleaser.infra.nativeimage.processor;
 
-import javax.lang.model.element.Element;
-import java.util.Set;
-
 /**
  * @author Andres Almiray
  * @since 1.0.0

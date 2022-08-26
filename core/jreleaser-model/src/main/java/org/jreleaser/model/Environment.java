@@ -181,8 +181,9 @@ public class Environment extends AbstractModelObject<Environment> implements Dom
     }
 
     public boolean getBooleanProperty(String key) {
-        return (properties.containsKey(key) && Boolean.parseBoolean(String.valueOf(properties.get(key)))) ||
-            (sourcedProperties.containsKey(key) && Boolean.parseBoolean(String.valueOf(sourcedProperties.get(key))));
+        boolean keyInProperties = properties.containsKey(key) && Boolean.parseBoolean(String.valueOf(properties.get(key)));
+        boolean keyInSourcedProperties = sourcedProperties.containsKey(key) && Boolean.parseBoolean(String.valueOf(sourcedProperties.get(key)));
+        return keyInProperties || keyInSourcedProperties;
     }
 
     public interface PropertiesSource {

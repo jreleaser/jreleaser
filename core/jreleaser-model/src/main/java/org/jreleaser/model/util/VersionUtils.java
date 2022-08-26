@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  * @since 1.2.0
  */
 public class VersionUtils {
-    private final static UnparseableTags unparseableTags = new UnparseableTags();
+    private final static UnparseableTags UNPARSEABLE_TAGS = new UnparseableTags();
 
     public static Pattern resolveVersionPattern(JReleaserContext context) {
         GitService gitService = context.getModel().getRelease().getGitService();
@@ -51,7 +51,7 @@ public class VersionUtils {
     }
 
     public static void clearUnparseableTags() {
-        unparseableTags.clear();
+        UNPARSEABLE_TAGS.clear();
     }
 
     public static Version version(JReleaserContext context, String tagName, Pattern versionPattern) {
@@ -102,7 +102,7 @@ public class VersionUtils {
             try {
                 return SemVer.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTags.unparseable(context, tag, e);
+                UNPARSEABLE_TAGS.unparseable(context, tag, e);
             }
         }
 
@@ -111,7 +111,7 @@ public class VersionUtils {
             try {
                 return SemVer.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTags.unparseable(context, tag, e);
+                UNPARSEABLE_TAGS.unparseable(context, tag, e);
             }
         }
 
@@ -125,7 +125,7 @@ public class VersionUtils {
             try {
                 return JavaRuntimeVersion.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTags.unparseable(context, tag, e);
+                UNPARSEABLE_TAGS.unparseable(context, tag, e);
             }
         }
 
@@ -134,7 +134,7 @@ public class VersionUtils {
             try {
                 return JavaRuntimeVersion.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTags.unparseable(context, tag, e);
+                UNPARSEABLE_TAGS.unparseable(context, tag, e);
             }
         }
 
@@ -148,7 +148,7 @@ public class VersionUtils {
             try {
                 return JavaModuleVersion.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTags.unparseable(context, tag, e);
+                UNPARSEABLE_TAGS.unparseable(context, tag, e);
             }
         }
 
@@ -157,7 +157,7 @@ public class VersionUtils {
             try {
                 return JavaModuleVersion.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTags.unparseable(context, tag, e);
+                UNPARSEABLE_TAGS.unparseable(context, tag, e);
             }
         }
 
@@ -172,7 +172,7 @@ public class VersionUtils {
             try {
                 return CalVer.of(format, tag);
             } catch (IllegalArgumentException e) {
-                unparseableTags.unparseable(context, tag, e);
+                UNPARSEABLE_TAGS.unparseable(context, tag, e);
             }
         }
 
@@ -181,7 +181,7 @@ public class VersionUtils {
             try {
                 return CalVer.of(format, tag);
             } catch (IllegalArgumentException e) {
-                unparseableTags.unparseable(context, tag, e);
+                UNPARSEABLE_TAGS.unparseable(context, tag, e);
             }
         }
 
@@ -195,7 +195,7 @@ public class VersionUtils {
             try {
                 return ChronVer.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTags.unparseable(context, tag, e);
+                UNPARSEABLE_TAGS.unparseable(context, tag, e);
             }
         }
 
@@ -204,7 +204,7 @@ public class VersionUtils {
             try {
                 return ChronVer.of(tag);
             } catch (IllegalArgumentException e) {
-                unparseableTags.unparseable(context, tag, e);
+                UNPARSEABLE_TAGS.unparseable(context, tag, e);
             }
         }
 

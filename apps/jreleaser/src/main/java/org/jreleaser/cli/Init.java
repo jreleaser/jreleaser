@@ -88,7 +88,7 @@ public class Init extends AbstractLoggingCommand {
             logger.info($("jreleaser.init.TEXT_writing_file"), outputFile.toAbsolutePath());
 
             try {
-                Files.write(outputFile, content.getBytes(), (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
+                Files.write(outputFile, content.getBytes(), overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING);
             } catch (FileAlreadyExistsException e) {
                 logger.error($("jreleaser.init.ERROR_file_exists"), outputFile.toAbsolutePath());
                 return;

@@ -232,7 +232,7 @@ public class Brew extends AbstractRepositoryPackager<Brew> {
     @Override
     public boolean supportsPlatform(String platform) {
         if (isMultiPlatform()) {
-            return (isBlank(platform) || PlatformUtils.isMac(platform) || PlatformUtils.isLinux(platform)) &&
+            return isBlank(platform) || PlatformUtils.isMac(platform) || PlatformUtils.isLinux(platform) &&
                 !PlatformUtils.isAlpineLinux(platform);
         }
         return isBlank(platform) || PlatformUtils.isMac(platform);

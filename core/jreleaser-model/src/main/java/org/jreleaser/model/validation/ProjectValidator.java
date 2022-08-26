@@ -108,7 +108,7 @@ public abstract class ProjectValidator extends Validator {
             !context.getModel().getAssemble().getJpackage().isEmpty() ||
             !context.getModel().getAssemble().getNativeImage().isEmpty();
 
-        if ((mode.validateConfig() && javaDistributions) || javaAssemblers) {
+        if (javaAssemblers || mode.validateConfig() && javaDistributions) {
             validateJava(context, project, errors);
         }
 

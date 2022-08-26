@@ -78,7 +78,7 @@ public class JReleaserInitTask extends Task {
             TemplateResource template = TemplateUtils.resolveTemplate(logger, "jreleaser." + format + ".tpl");
 
             logger.info("Writing file " + outputFile.toAbsolutePath());
-            try (Writer writer = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING)) {
+            try (Writer writer = Files.newBufferedWriter(outputFile, overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING)) {
                 IOUtils.copy(template.getReader(), writer);
             } catch (FileAlreadyExistsException e) {
                 logger.error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());

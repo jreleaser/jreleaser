@@ -37,6 +37,7 @@ public class Pkg {
     private String distributionVersion;
     private String operatingSystem;
     private String architecture = "x86-64";
+    @SuppressWarnings("ParameterName")
     private String libc_type;
     private boolean javafxBundled;
     private boolean directlyDownloadable;
@@ -106,11 +107,13 @@ public class Pkg {
         this.architecture = architecture;
     }
 
+    @SuppressWarnings("ParameterName")
     public String getLibc_type() {
         return libc_type;
     }
 
-    public void setLibc_type(String libc_type) {
+    @SuppressWarnings("ParameterName")
+    public void setLibc_type(@SuppressWarnings("ParameterName") String libc_type) {
         this.libc_type = libc_type;
     }
 

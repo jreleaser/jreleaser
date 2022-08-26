@@ -438,7 +438,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
         if (isBlank(v)) return;
 
         switch (versionPattern().getType()) {
-            case SEMVER: {
+            case SEMVER:
                 try {
                     SemVer parsedVersion = SemVer.of(v);
                     StringBuilder vn = new StringBuilder().append(parsedVersion.getMajor());
@@ -461,9 +461,8 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
                 } catch (IllegalArgumentException e) {
                     throw new JReleaserException(RB.$("ERROR_version_invalid", v, "semver"), e);
                 }
-            }
             break;
-            case JAVA_RUNTIME: {
+            case JAVA_RUNTIME:
                 try {
                     JavaRuntimeVersion parsedVersion = JavaRuntimeVersion.of(v);
                     addExtraProperty(Constants.KEY_VERSION_NUMBER, parsedVersion.getVersion());
@@ -479,9 +478,8 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
                 } catch (IllegalArgumentException e) {
                     throw new JReleaserException(RB.$("ERROR_version_invalid", v, "Java runtime"), e);
                 }
-            }
             break;
-            case JAVA_MODULE: {
+            case JAVA_MODULE:
                 try {
                     JavaModuleVersion parsedVersion = JavaModuleVersion.of(v);
                     addExtraProperty(Constants.KEY_VERSION_NUMBER, parsedVersion.getVersion());
@@ -494,9 +492,8 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
                 } catch (IllegalArgumentException e) {
                     throw new JReleaserException(RB.$("ERROR_version_invalid", v, "Java module"), e);
                 }
-            }
             break;
-            case CALVER: {
+            case CALVER:
                 try {
                     CalVer parsedVersion = CalVer.of(versionPattern().getFormat(), v);
                     addExtraProperty(Constants.KEY_VERSION_NUMBER, v);
@@ -522,9 +519,8 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
                 } catch (IllegalArgumentException e) {
                     throw new JReleaserException(RB.$("ERROR_version_invalid", v, "calver"), e);
                 }
-            }
             break;
-            case CHRONVER: {
+            case CHRONVER:
                 try {
                     ChronVer parsedVersion = ChronVer.of(v);
                     addExtraProperty(Constants.KEY_VERSION_NUMBER, v);
@@ -537,7 +533,6 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
                 } catch (IllegalArgumentException e) {
                     throw new JReleaserException(RB.$("ERROR_version_invalid", v, "chronver"), e);
                 }
-            }
             break;
             default:
                 addExtraProperty(Constants.KEY_VERSION_NUMBER, v);
@@ -933,7 +928,7 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
             }
 
             public TemplateFunction getUrl() {
-                return (s) -> url;
+                return s -> url;
             }
         }
     }

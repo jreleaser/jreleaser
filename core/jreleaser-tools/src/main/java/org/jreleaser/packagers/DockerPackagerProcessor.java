@@ -306,7 +306,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
         context.getLogger().debug(RB.$("docker.login"),
             registry.getServerName(),
-            (isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : ""));
+            isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : "");
         if (!context.isDryrun()) executeCommandWithInput(cmd, in);
     }
 
@@ -360,7 +360,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         context.getLogger().debug(RB.$("docker.push"),
             tag,
             registry.getServerName(),
-            (isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : ""));
+            isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : "");
         if (!context.isDryrun()) executeCommand(cmd);
     }
 
@@ -372,7 +372,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
         context.getLogger().debug(RB.$("docker.logout"),
             registry.getServerName(),
-            (isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : ""));
+            isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : "");
         if (!context.isDryrun()) executeCommand(cmd);
     }
 

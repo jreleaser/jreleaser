@@ -27,7 +27,7 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GhSearchUser {
-    private int totalCount = 0;
+    private int totalCount;
     private List<GhUser> items;
 
     public int getTotalCount() {

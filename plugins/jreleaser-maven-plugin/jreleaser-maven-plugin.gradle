@@ -23,6 +23,12 @@ config {
     licensing {
         exclude 'build/mavenPlugin/**'
     }
+
+    quality {
+        checkstyle {
+            excludes = ['**/HelpMojo.java']
+        }
+    }
 }
 
 mavenPlugin {

@@ -38,40 +38,40 @@ final class Banner {
     private final String banner = MessageFormat.format(bundle.getString('product.banner'), productName, productVersion)
     private final List<String> visited = []
 
-    private static final Banner b = new Banner()
+    private static final Banner BANNER = new Banner()
 
     private Banner() {
         // noop
     }
 
     static void display(Project project) {
-        if (b.visited.contains(project.rootProject.name)) {
+        if (BANNER.visited.contains(project.rootProject.name)) {
             return
         }
-        b.visited.add(project.rootProject.name)
+        BANNER.visited.add(project.rootProject.name)
         project.gradle.addBuildListener(new BuildAdapter() {
             @Override
             void buildFinished(BuildResult result) {
-                b.visited.clear()
+                BANNER.visited.clear()
             }
         })
 
         File parent = new File(project.gradle.gradleUserHomeDir, 'caches')
-        File markerFile = b.getMarkerFile(parent)
+        File markerFile = BANNER.getMarkerFile(parent)
         if (!markerFile.exists()) {
             markerFile.parentFile.mkdirs()
             markerFile.text = '1'
-            println(b.banner)
+            println(BANNER.banner)
         } else {
             try {
                 int count = Integer.parseInt(markerFile.text)
                 if (count < 3) {
-                    println(b.banner)
+                    println(BANNER.banner)
                 }
                 markerFile.text = (count + 1) + ''
             } catch (NumberFormatException e) {
                 markerFile.text = '1'
-                println(b.banner)
+                println(BANNER.banner)
             }
         }
     }

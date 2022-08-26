@@ -28,7 +28,6 @@ import org.jreleaser.model.Uploader;
 import org.jreleaser.model.uploader.spi.ArtifactUploader;
 import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.util.Algorithm;
-import org.jreleaser.util.Constants;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

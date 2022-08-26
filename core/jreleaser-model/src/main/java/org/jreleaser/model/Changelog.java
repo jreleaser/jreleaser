@@ -365,7 +365,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     }
 
     public static class Category extends AbstractModelObject<Category> implements Domain {
-        public static Comparator<Category> ORDER = (o1, o2) -> {
+        public static final Comparator<Category> ORDER = (o1, o2) -> {
             if (null == o1.getOrder()) return 1;
             if (null == o2.getOrder()) return -1;
             return o1.getOrder().compareTo(o2.getOrder());
@@ -519,7 +519,7 @@ public class Changelog extends AbstractModelObject<Changelog> implements Domain,
     }
 
     public static class Labeler extends AbstractModelObject<Labeler> implements Domain {
-        public static Comparator<Labeler> ORDER = (o1, o2) -> {
+        public static final Comparator<Labeler> ORDER = (o1, o2) -> {
             if (null == o1.getOrder()) return 1;
             if (null == o2.getOrder()) return -1;
             return o1.getOrder().compareTo(o2.getOrder());

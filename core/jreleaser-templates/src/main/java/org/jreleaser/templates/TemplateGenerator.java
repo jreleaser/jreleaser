@@ -99,7 +99,7 @@ public class TemplateGenerator {
         Path outputFile = outputDirectory.resolve(announcerName + ".tpl");
         logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());
 
-        try (Writer fileWriter = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
+        try (Writer fileWriter = Files.newBufferedWriter(outputFile, overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING);
              BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter)) {
             IOUtils.copy(value.getReader(), decoratedWriter);
         } catch (FileAlreadyExistsException e) {
@@ -142,7 +142,7 @@ public class TemplateGenerator {
             TemplateResource value = template.getValue();
 
             if (value.isReader()) {
-                try (Writer fileWriter = Files.newBufferedWriter(outputFile, (overwrite ? CREATE : CREATE_NEW), WRITE, TRUNCATE_EXISTING);
+                try (Writer fileWriter = Files.newBufferedWriter(outputFile, overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING);
                      BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter)) {
                     IOUtils.copy(value.getReader(), decoratedWriter);
                 } catch (FileAlreadyExistsException e) {

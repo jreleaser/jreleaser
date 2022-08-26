@@ -41,7 +41,8 @@ public interface ExtraProperties extends Serializable {
     void addExtraProperties(Map<String, Object> properties);
 
     default void addExtraProperty(String key, Object value) {
-        if ((value instanceof CharSequence && isNotBlank(String.valueOf(value))) || null != value) {
+        boolean valueIsNotBlank = value instanceof CharSequence && isNotBlank(String.valueOf(value));
+        if (valueIsNotBlank || null != value) {
             getExtraProperties().put(key, value);
         }
     }

@@ -26,11 +26,11 @@ import java.util.ResourceBundle;
  * @since 0.1.0
  */
 public class JReleaserVersion {
-    private static final ResourceBundle bundle = ResourceBundle.getBundle(JReleaserVersion.class.getName());
-    private static final String JRELEASER_VERSION = bundle.getString("jreleaser_version");
-    private static final String BUILD_DATE = bundle.getString("build_date");
-    private static final String BUILD_TIME = bundle.getString("build_time");
-    private static final String BUILD_REVISION = bundle.getString("build_revision");
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(JReleaserVersion.class.getName());
+    private static final String JRELEASER_VERSION = BUNDLE.getString("jreleaser_version");
+    private static final String BUILD_DATE = BUNDLE.getString("build_date");
+    private static final String BUILD_TIME = BUNDLE.getString("build_time");
+    private static final String BUILD_REVISION = BUNDLE.getString("build_revision");
 
     public static String getPlainVersion() {
         return JRELEASER_VERSION;

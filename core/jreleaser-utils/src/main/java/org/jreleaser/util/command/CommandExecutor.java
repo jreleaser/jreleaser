@@ -52,7 +52,7 @@ public class CommandExecutor {
         this.quiet = quiet;
     }
 
-    public CommandExecutor environment(Map<String,String> env) {
+    public CommandExecutor environment(Map<String, String> env) {
         environment.putAll(env);
         return this;
     }

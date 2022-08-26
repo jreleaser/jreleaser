@@ -130,6 +130,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
         }
     }
 
+    @SuppressWarnings("UnnecessaryParentheses")
     private void adjustRuntimeImage(JReleaserContext context, Jpackage assembler, Path workDirectory, String platform) throws AssemblerProcessingException {
         Optional<Artifact> runtimeImageByPlatform = assembler.findRuntimeImageByPlatform(platform);
         if (!runtimeImageByPlatform.isPresent()) {
@@ -143,8 +144,9 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<J
             if (!FileUtils.copyFilesRecursive(context.getLogger(), originalImage, adjustedImage, new Predicate<Path>() {
                 @Override
                 public boolean test(Path path) {
-                    return (path.getFileName().toString().endsWith(".jar") && path.getParent().getFileName().toString().equals("jars")) ||
-                        path.getFileName().toString().equals(context.getModel().getAssemble().findJlink(assembler.getJlink()).getExecutable());
+                    boolean pathIsJar = path.getFileName().toString().endsWith(".jar") && path.getParent().getFileName().toString().equals("jars");
+                    boolean pathIsExecutable = path.getFileName().toString().equals(context.getModel().getAssemble().findJlink(assembler.getJlink()).getExecutable());
+                    return pathIsJar || pathIsExecutable;
                 }
             })) {
                 throw new IOException(RB.$("ERROR_assembler_adjusting_image", adjustedImage));

@@ -56,6 +56,15 @@ config {
             dsld: 'SLASHSTAR_STYLE'
         ]
     }
+
+    quality {
+        checkstyle {
+            toolVersion = '9.3'
+            aggregate {
+                enabled = true
+            }
+        }
+    }
 }
 
 allprojects {

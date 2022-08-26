@@ -18,7 +18,6 @@
 package org.jreleaser.sdk.ssh;
 
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.ScpDownloader;
 import org.jreleaser.model.SftpDownloader;
 import org.jreleaser.model.downloader.spi.ArtifactDownloaderFactory;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;

@@ -27,7 +27,6 @@ import org.apache.maven.project.MavenProject;
 import org.jreleaser.engine.context.ModelAutoConfigurer;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Release;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.PlatformUtils;

@@ -67,7 +67,7 @@ public final class JReleaserModelConfigurer {
         if (isBlank(project.getLinks().getHomepage())) {
             project.getLinks().setHomepage(mavenProject.getUrl());
         }
-        if (isBlank(project.getLinks().getHomepage()) && (null != mavenProject.getOrganization())) {
+        if (isBlank(project.getLinks().getHomepage()) && null != mavenProject.getOrganization()) {
             project.getLinks().setHomepage(mavenProject.getOrganization().getUrl());
         }
         if (project.getAuthors().isEmpty()) {

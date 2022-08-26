@@ -663,6 +663,7 @@ public final class CollectionUtils {
         }
 
         @Override
+        @SuppressWarnings("NoClone")
         public synchronized Object clone() {
             Map<String, Object> m = new LinkedHashMap<>(map);
             return new MapToPropertiesAdapter(m);

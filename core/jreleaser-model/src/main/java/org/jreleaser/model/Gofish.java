@@ -100,7 +100,7 @@ public class Gofish extends AbstractRepositoryPackager<Gofish> {
         return isBlank(platform) ||
             PlatformUtils.isMac(platform) ||
             PlatformUtils.isWindows(platform) ||
-            (PlatformUtils.isLinux(platform) && !PlatformUtils.isAlpineLinux(platform));
+            PlatformUtils.isLinux(platform) && !PlatformUtils.isAlpineLinux(platform);
     }
 
     @Override

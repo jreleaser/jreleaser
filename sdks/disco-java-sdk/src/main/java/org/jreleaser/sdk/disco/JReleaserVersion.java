@@ -25,8 +25,8 @@ import java.util.ResourceBundle;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class JReleaserVersion {
-    private static final ResourceBundle bundle = ResourceBundle.getBundle(JReleaserVersion.class.getName());
-    private static final String JRELEASER_VERSION = bundle.getString("jreleaser_version");
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(JReleaserVersion.class.getName());
+    private static final String JRELEASER_VERSION = BUNDLE.getString("jreleaser_version");
 
     public static String getPlainVersion() {
         return JRELEASER_VERSION;

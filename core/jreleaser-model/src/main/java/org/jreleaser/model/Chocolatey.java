@@ -206,7 +206,8 @@ public class Chocolatey extends AbstractRepositoryPackager<Chocolatey> {
 
     @Override
     public boolean supportsPlatform(String platform) {
-        return isBlank(platform) || (PlatformUtils.isWindows(platform) && PlatformUtils.isIntel(platform));
+        return isBlank(platform) ||
+            PlatformUtils.isWindows(platform) && PlatformUtils.isIntel(platform);
     }
 
     @Override

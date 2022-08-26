@@ -133,7 +133,7 @@ public abstract class BrewValidator extends Validator {
     }
 
     private static void validateCask(JReleaserContext context, Distribution distribution, Brew packager, Brew.Cask cask, Errors errors) {
-        if (cask == null || (cask.isEnabledSet() && !cask.isEnabled())) {
+        if (cask == null || cask.isEnabledSet() && !cask.isEnabled()) {
             return;
         }
 

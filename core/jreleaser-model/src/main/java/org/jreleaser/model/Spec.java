@@ -148,7 +148,7 @@ public class Spec extends AbstractRepositoryPackager<Spec> {
     @Override
     public boolean supportsPlatform(String platform) {
         return isBlank(platform) ||
-            (PlatformUtils.isLinux(platform) && PlatformUtils.isIntel(platform) && !PlatformUtils.isAlpineLinux(platform));
+            PlatformUtils.isLinux(platform) && PlatformUtils.isIntel(platform) && !PlatformUtils.isAlpineLinux(platform);
     }
 
     @Override

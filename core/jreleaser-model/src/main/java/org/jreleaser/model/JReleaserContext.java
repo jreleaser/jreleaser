@@ -684,7 +684,7 @@ public class JReleaserContext {
         }
 
         public boolean validateAssembly() {
-            return this == ASSEMBLE ;
+            return this == ASSEMBLE;
         }
 
         public boolean validateStandalone() {

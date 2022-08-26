@@ -107,6 +107,8 @@ public class FtpUtils {
     }
 
     private static class FtpCommandListener implements ProtocolCommandListener {
+        private static final String LOGIN = "LOGIN";
+
         private final JReleaserContext context;
 
         public FtpCommandListener(JReleaserContext context) {
@@ -121,7 +123,6 @@ public class FtpUtils {
             if ("PASS".equalsIgnoreCase(cmd) || "USER".equalsIgnoreCase(cmd)) {
                 msg.append(cmd).append(" *******");
             } else {
-                String LOGIN = "LOGIN";
                 if (LOGIN.equalsIgnoreCase(cmd)) {
                     String m = event.getMessage();
                     m = m.substring(0, msg.indexOf(LOGIN) + LOGIN.length());

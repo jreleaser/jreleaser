@@ -19,7 +19,6 @@ package org.jreleaser.sdk.ftp;
 
 import org.jreleaser.model.FtpUploader;
 import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.SftpUploader;
 import org.jreleaser.model.uploader.spi.ArtifactUploaderFactory;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
 

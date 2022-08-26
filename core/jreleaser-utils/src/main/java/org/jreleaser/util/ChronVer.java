@@ -71,7 +71,7 @@ public class ChronVer implements Version<ChronVer> {
 
     @Override
     public String toRpmVersion() {
-        return toString().replace("-","_");
+        return toString().replace("-", "_");
     }
 
     @Override

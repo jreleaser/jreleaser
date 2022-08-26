@@ -186,7 +186,7 @@ public class Screenshot extends AbstractModelObject<Screenshot> implements Domai
         }
 
         public TemplateFunction getUrl() {
-            return (s) -> url;
+            return s -> url;
         }
 
         public boolean isPrimary() {

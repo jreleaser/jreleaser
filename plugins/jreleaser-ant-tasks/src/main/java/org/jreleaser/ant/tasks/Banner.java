@@ -32,7 +32,7 @@ import java.util.Scanner;
  * @since 0.1.0
  */
 final class Banner {
-    private static final Banner b = new Banner();
+    private static final Banner BANNER = new Banner();
     private final ResourceBundle bundle = ResourceBundle.getBundle(Banner.class.getName());
     private final String productVersion = bundle.getString("product.version");
     private final String productId = bundle.getString("product.id");
@@ -46,9 +46,9 @@ final class Banner {
     public static void display(PrintWriter writer) {
         try {
             File parent = new File(System.getProperty("user.home"), "/.ant/caches");
-            File markerFile = getMarkerFile(parent, b);
+            File markerFile = getMarkerFile(parent, BANNER);
             if (!markerFile.exists()) {
-                writer.println(b.banner);
+                writer.println(BANNER.banner);
                 markerFile.getParentFile().mkdirs();
                 PrintStream out = new PrintStream(new FileOutputStream(markerFile));
                 out.println("1");
@@ -58,12 +58,12 @@ final class Banner {
                 try {
                     int count = Integer.parseInt(readQuietly(markerFile));
                     if (count < 3) {
-                        writer.println(b.banner);
+                        writer.println(BANNER.banner);
                     }
                     writeQuietly(markerFile, (count + 1) + "");
                 } catch (NumberFormatException e) {
                     writeQuietly(markerFile, "1");
-                    writer.println(b.banner);
+                    writer.println(BANNER.banner);
                 }
             }
         } catch (IOException ignored) {

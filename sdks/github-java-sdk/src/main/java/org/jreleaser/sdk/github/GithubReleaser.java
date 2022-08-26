@@ -34,7 +34,6 @@ import org.jreleaser.sdk.git.ChangelogGenerator;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
-import org.jreleaser.sdk.github.api.GhAsset;
 import org.jreleaser.sdk.github.api.GhRelease;
 import org.jreleaser.sdk.github.api.GhReleaseNotes;
 import org.jreleaser.sdk.github.api.GhReleaseNotesParams;
