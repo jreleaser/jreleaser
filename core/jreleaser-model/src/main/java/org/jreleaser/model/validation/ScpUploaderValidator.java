@@ -34,8 +34,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class ScpUploaderValidator extends Validator {
     public static void validateScpUploader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("upload.scp");
         Map<String, ScpUploader> scp = context.getModel().getUpload().getScp();
+        if (!scp.isEmpty()) context.getLogger().debug("upload.scp");
 
         for (Map.Entry<String, ScpUploader> e : scp.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -54,10 +54,12 @@ public abstract class ScpUploaderValidator extends Validator {
             scp.setActive(Active.NEVER);
         }
         if (!scp.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         if (!scp.isArtifacts() && !scp.isFiles() && !scp.isSignatures()) {
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             scp.disable();
             return;
         }

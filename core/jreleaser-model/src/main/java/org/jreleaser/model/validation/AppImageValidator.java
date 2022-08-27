@@ -46,30 +46,35 @@ import static org.jreleaser.util.StringUtils.isTrue;
  */
 public abstract class AppImageValidator extends Validator {
     public static void validateAppImage(JReleaserContext context, JReleaserContext.Mode mode, Distribution distribution, AppImage packager, Errors errors) {
+        context.getLogger().debug("distribution.{}.appImage", distribution.getName());
         JReleaserModel model = context.getModel();
         AppImage parentPackager = model.getPackagers().getAppImage();
 
         if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
             packager.setActive(parentPackager.getActive());
         }
-        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
+            context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();
             return;
         }
 
-        context.getLogger().debug("distribution.{}.appImage", distribution.getName());
-
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             packager.disable();
             return;
         } else if (candidateArtifacts.stream()
             .filter(artifact -> isBlank(artifact.getPlatform()))
             .count() > 1) {
             errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".appImage"));
+            context.getLogger().debug(RB.$("validation.disabled.multiple.artifacts"));
             packager.disable();
             return;
         }

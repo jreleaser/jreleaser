@@ -46,28 +46,34 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class SnapValidator extends Validator {
     public static void validateSnap(JReleaserContext context, Distribution distribution, Snap packager, Errors errors) {
+        context.getLogger().debug("distribution.{}.snap", distribution.getName());
         JReleaserModel model = context.getModel();
         Snap parentPackager = model.getPackagers().getSnap();
 
         if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
             packager.setActive(parentPackager.getActive());
         }
-        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            packager.disable();
+            return;
+        }
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
+            context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();
             return;
         }
 
-        context.getLogger().debug("distribution.{}.snap", distribution.getName());
-
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             packager.disable();
             return;
         } else if (candidateArtifacts.size() > 1) {
             errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".snap"));
+            context.getLogger().debug(RB.$("validation.disabled.multiple.artifacts"));
             packager.disable();
             return;
         }

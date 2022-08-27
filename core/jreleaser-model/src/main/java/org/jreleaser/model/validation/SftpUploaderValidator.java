@@ -34,8 +34,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class SftpUploaderValidator extends Validator {
     public static void validateSftpUploader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("upload.sftp");
         Map<String, SftpUploader> sftp = context.getModel().getUpload().getSftp();
+        if (!sftp.isEmpty()) context.getLogger().debug("upload.sftp");
 
         for (Map.Entry<String, SftpUploader> e : sftp.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -54,10 +54,12 @@ public abstract class SftpUploaderValidator extends Validator {
             sftp.setActive(Active.NEVER);
         }
         if (!sftp.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         if (!sftp.isArtifacts() && !sftp.isFiles() && !sftp.isSignatures()) {
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             sftp.disable();
             return;
         }

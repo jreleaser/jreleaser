@@ -41,30 +41,35 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class AsdfValidator extends Validator {
     public static void validateAsdf(JReleaserContext context, Distribution distribution, Asdf packager, Errors errors) {
+        context.getLogger().debug("distribution.{}.asdf", distribution.getName());
         JReleaserModel model = context.getModel();
         Asdf parentPackager = model.getPackagers().getAsdf();
 
         if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
             packager.setActive(parentPackager.getActive());
         }
-        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
+            context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();
             return;
         }
 
-        context.getLogger().debug("distribution.{}.asdf", distribution.getName());
-
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             packager.disable();
             return;
         } else if (candidateArtifacts.stream()
             .filter(artifact -> isBlank(artifact.getPlatform()))
             .count() > 1) {
             errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".asdf"));
+            context.getLogger().debug(RB.$("validation.disabled.multiple.artifacts"));
             packager.disable();
             return;
         }

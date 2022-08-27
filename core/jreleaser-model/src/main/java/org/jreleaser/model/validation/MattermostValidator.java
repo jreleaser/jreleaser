@@ -36,8 +36,11 @@ public abstract class MattermostValidator extends Validator {
     private static final String DEFAULT_MATTERMOST_TPL = "src/jreleaser/templates/mattermost.tpl";
 
     public static void validateMattermost(JReleaserContext context, Mattermost mattermost, Errors errors) {
-        if (!mattermost.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.mattermost");
+        if (!mattermost.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         mattermost.setWebhook(
             checkProperty(context,

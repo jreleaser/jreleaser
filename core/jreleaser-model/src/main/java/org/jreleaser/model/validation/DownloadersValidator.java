@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Download;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
@@ -52,7 +53,10 @@ public abstract class DownloadersValidator extends Validator {
                     !download.getActiveScps().isEmpty() ||
                     !download.getActiveSftps().isEmpty();
 
-                if (!activeSet && !enabled) download.disable();
+                if (!activeSet && !enabled) {
+                    context.getLogger().debug(RB.$("validation.disabled"));
+                    download.disable();
+                }
             }
         } else {
             download.disable();

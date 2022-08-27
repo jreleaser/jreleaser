@@ -41,6 +41,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class SpecValidator extends Validator {
     public static void validateSpec(JReleaserContext context, Distribution distribution, Spec packager, Errors errors) {
+        context.getLogger().debug("distribution.{}.spec", distribution.getName());
         JReleaserModel model = context.getModel();
         Spec parentPackager = model.getPackagers().getSpec();
 
@@ -48,24 +49,26 @@ public abstract class SpecValidator extends Validator {
             packager.setActive(parentPackager.getActive());
         }
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
             return;
         }
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
+            context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();
             return;
         }
 
-        context.getLogger().debug("distribution.{}.spec", distribution.getName());
-
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             packager.disable();
             return;
         } else if (candidateArtifacts.size() > 1) {
             errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".spec"));
+            context.getLogger().debug(RB.$("validation.disabled.multiple.artifacts"));
             packager.disable();
             return;
         }

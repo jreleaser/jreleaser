@@ -34,8 +34,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class MailValidator extends Validator {
     public static void validateMail(JReleaserContext context, Mail mail, Errors errors) {
-        if (!mail.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.mail");
+        if (!mail.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         if (null == mail.getTransport()) {
             mail.setTransport(Mail.Transport.SMTP);

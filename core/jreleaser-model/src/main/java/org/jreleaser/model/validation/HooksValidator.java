@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Hooks;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
@@ -40,7 +41,10 @@ public abstract class HooksValidator extends Validator {
         if (hooks.isEnabled()) {
             boolean enabled = hooks.getCommand().isEnabled();
 
-            if (!activeSet && !enabled) hooks.disable();
+            if (!activeSet && !enabled) {
+                context.getLogger().debug(RB.$("validation.disabled"));
+                hooks.disable();
+            }
         }
     }
 }

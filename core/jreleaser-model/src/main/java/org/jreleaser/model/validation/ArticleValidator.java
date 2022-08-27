@@ -35,8 +35,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class ArticleValidator extends Validator {
     public static void validateArticle(JReleaserContext context, Article article, Errors errors) {
-        if (!article.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.article");
+        if (!article.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         GitService service = context.getModel().getRelease().getGitService();
         Repository repository = article.getRepository();

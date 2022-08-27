@@ -53,7 +53,10 @@ public abstract class CommandHooksValidator extends Validator {
                 hooks.getSuccess().stream().anyMatch(CommandHook::isEnabled) ||
                 hooks.getFailure().stream().anyMatch(CommandHook::isEnabled);
 
-            if (!activeSet && !enabled) hooks.disable();
+            if (!activeSet && !enabled) {
+                context.getLogger().debug(RB.$("validation.disabled"));
+                hooks.disable();
+            }
         }
     }
 
@@ -63,7 +66,10 @@ public abstract class CommandHooksValidator extends Validator {
         if (!hook.isActiveSet()) {
             hook.setActive(Active.ALWAYS);
         }
-        if (!hook.resolveEnabled(context.getModel().getProject())) return;
+        if (!hook.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         if (isBlank(hook.getCmd())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "hook.cmd"));

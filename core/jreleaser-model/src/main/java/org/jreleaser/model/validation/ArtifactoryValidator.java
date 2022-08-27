@@ -32,8 +32,8 @@ import java.util.Map;
  */
 public abstract class ArtifactoryValidator extends Validator {
     public static void validateArtifactory(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("upload.artifactory");
         Map<String, Artifactory> artifactory = context.getModel().getUpload().getArtifactory();
+        if (!artifactory.isEmpty()) context.getLogger().debug("upload.artifactory");
 
         for (Map.Entry<String, Artifactory> e : artifactory.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -52,16 +52,20 @@ public abstract class ArtifactoryValidator extends Validator {
             artifactory.setActive(Active.NEVER);
         }
         if (!artifactory.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         if (!artifactory.isArtifacts() && !artifactory.isFiles() && !artifactory.isSignatures()) {
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             artifactory.disable();
             return;
         }
 
         if (artifactory.getRepositories().isEmpty()) {
             errors.configuration(RB.$("validation_artifactory_no_repositories", "artifactory." + artifactory.getName()));
+            context.getLogger().debug(RB.$("validation.disabled.no.repositories"));
+            artifactory.disable();
             return;
         }
 
@@ -101,6 +105,8 @@ public abstract class ArtifactoryValidator extends Validator {
                 break;
             case NONE:
                 errors.configuration(RB.$("validation_value_cannot_be", "artifactory." + artifactory.getName() + ".authorization", "NONE"));
+                context.getLogger().debug(RB.$("validation.disabled.error"));
+                artifactory.disable();
                 break;
         }
 
@@ -115,6 +121,7 @@ public abstract class ArtifactoryValidator extends Validator {
 
         if (artifactory.getRepositories().stream().noneMatch(Artifactory.ArtifactoryRepository::isEnabled)) {
             errors.warning(RB.$("validation_artifactory_disabled_repositories", "artifactory." + artifactory.getName()));
+            context.getLogger().debug(RB.$("validation.disabled.no.repositories"));
             artifactory.disable();
         }
     }

@@ -31,8 +31,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class MastodonValidator extends Validator {
     public static void validateMastodon(JReleaserContext context, Mastodon mastodon, Errors errors) {
-        if (!mastodon.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.mastodon");
+        if (!mastodon.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         if (isBlank(mastodon.getHost())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "mastodon.host"));

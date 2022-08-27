@@ -45,6 +45,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class SdkmanValidator extends Validator {
     public static void validateSdkman(JReleaserContext context, Distribution distribution, Sdkman packager, Errors errors) {
+        context.getLogger().debug("distribution.{}.sdkman", distribution.getName());
         JReleaserModel model = context.getModel();
         Sdkman parentPackager = model.getPackagers().getSdkman();
 
@@ -55,18 +56,22 @@ public abstract class SdkmanValidator extends Validator {
         if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
             packager.setActive(parentPackager.getActive());
         }
-        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            packager.disable();
+            return;
+        }
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
+            context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();
             return;
         }
 
-        context.getLogger().debug("distribution.{}.sdkman", distribution.getName());
-
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             packager.disable();
             return;
         }

@@ -35,8 +35,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class GiteaUploaderValidator extends Validator {
     public static void validateGiteaUploader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("upload.gitea");
         Map<String, GiteaUploader> gitea = context.getModel().getUpload().getGitea();
+        if (!gitea.isEmpty()) context.getLogger().debug("upload.gitea");
 
         for (Map.Entry<String, GiteaUploader> e : gitea.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -55,10 +55,12 @@ public abstract class GiteaUploaderValidator extends Validator {
             gitea.setActive(Active.NEVER);
         }
         if (!gitea.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         if (!gitea.isArtifacts() && !gitea.isFiles() && !gitea.isSignatures()) {
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             gitea.disable();
             return;
         }

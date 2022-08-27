@@ -62,8 +62,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class DistributionsValidator extends Validator {
     public static void validateDistributions(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("distributions");
         Map<String, Distribution> distributions = context.getModel().getDistributions();
+        if (!distributions.isEmpty()) context.getLogger().debug("distributions");
 
         for (Map.Entry<String, Distribution> e : distributions.entrySet()) {
             Distribution distribution = e.getValue();
@@ -95,20 +95,27 @@ public abstract class DistributionsValidator extends Validator {
         if (!distribution.isActiveSet()) {
             distribution.setActive(Active.ALWAYS);
         }
-        if (!distribution.resolveEnabled(context.getModel().getProject())) return;
+        if (!distribution.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         if (!selectArtifactsByPlatform(context, distribution)) {
             distribution.setActive(Active.NEVER);
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             distribution.disable();
             return;
         }
 
         if (isBlank(distribution.getName())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "distribution.name"));
+            context.getLogger().debug(RB.$("validation.disabled.error"));
+            distribution.disable();
             return;
         }
         if (null == distribution.getType()) {
             errors.configuration(RB.$("validation_must_not_be_null", "distribution." + distribution.getName() + ".type"));
+            distribution.disable();
             return;
         }
         if (null == distribution.getStereotype()) {
@@ -147,6 +154,8 @@ public abstract class DistributionsValidator extends Validator {
 
         if (null == distribution.getArtifacts() || distribution.getArtifacts().isEmpty()) {
             errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".artifacts"));
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
+            distribution.disable();
             return;
         }
 

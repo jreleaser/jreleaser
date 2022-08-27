@@ -35,8 +35,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class HttpDownloaderValidator extends Validator {
     public static void validateHttpDownloader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("download.http");
         Map<String, HttpDownloader> http = context.getModel().getDownload().getHttp();
+        if (!http.isEmpty()) context.getLogger().debug("download.http");
 
         for (Map.Entry<String, HttpDownloader> e : http.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -55,6 +55,7 @@ public abstract class HttpDownloaderValidator extends Validator {
             http.setActive(Active.ALWAYS);
         }
         if (!http.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 

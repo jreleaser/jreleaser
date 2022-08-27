@@ -35,8 +35,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class S3Validator extends Validator {
     public static void validateS3(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("upload.s3");
         Map<String, S3> s3 = context.getModel().getUpload().getS3();
+        if (!s3.isEmpty()) context.getLogger().debug("upload.s3");
 
         for (Map.Entry<String, S3> e : s3.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -55,10 +55,12 @@ public abstract class S3Validator extends Validator {
             s3.setActive(Active.NEVER);
         }
         if (!s3.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         if (!s3.isArtifacts() && !s3.isFiles() && !s3.isSignatures()) {
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             s3.disable();
             return;
         }

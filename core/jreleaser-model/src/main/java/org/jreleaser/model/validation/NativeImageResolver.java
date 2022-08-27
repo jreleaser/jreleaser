@@ -25,6 +25,7 @@ import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -34,9 +35,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class NativeImageResolver extends Validator {
     public static void resolveNativeImageOutputs(JReleaserContext context, Errors errors) {
-        context.getLogger().debug("assemble.nativeImage");
+        List<NativeImage> activeNativeImages = context.getModel().getAssemble().getActiveNativeImages();
+        if (!activeNativeImages.isEmpty()) context.getLogger().debug("assemble.nativeImage");
 
-        for (NativeImage nativeImage : context.getModel().getAssemble().getActiveNativeImages()) {
+        for (NativeImage nativeImage : activeNativeImages) {
             if (nativeImage.isExported()) resolveNativeImageOutputs(context, nativeImage, errors);
         }
     }

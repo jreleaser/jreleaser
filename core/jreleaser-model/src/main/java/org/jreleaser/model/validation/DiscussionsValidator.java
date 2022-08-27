@@ -36,11 +36,15 @@ public abstract class DiscussionsValidator extends Validator {
     private static final String DEFAULT_DISCUSSIONS_TPL = "src/jreleaser/templates/discussions.tpl";
 
     public static void validateDiscussions(JReleaserContext context, Discussions discussions, Errors errors) {
-        if (!discussions.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.discussions");
+        if (!discussions.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         if (!Github.NAME.equals(context.getModel().getRelease().getGitService().getServiceName())) {
             errors.configuration(RB.$("validation_discussions_enabled"));
+            context.getLogger().debug(RB.$("validation.disabled"));
             discussions.disable();
             return;
         }

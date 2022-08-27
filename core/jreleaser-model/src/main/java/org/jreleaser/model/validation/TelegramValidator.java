@@ -37,8 +37,11 @@ public abstract class TelegramValidator extends Validator {
     private static final String DEFAULT_TELEGRAM_TPL = "src/jreleaser/templates/telegram.tpl";
 
     public static void validateTelegram(JReleaserContext context, Telegram telegram, Errors errors) {
-        if (!telegram.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.telegram");
+        if (!telegram.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         telegram.setToken(
             checkProperty(context,

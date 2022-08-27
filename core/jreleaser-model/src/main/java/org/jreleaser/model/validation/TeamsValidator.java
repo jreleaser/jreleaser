@@ -36,8 +36,11 @@ public abstract class TeamsValidator extends Validator {
     private static final String DEFAULT_TEAMS_TPL = "src/jreleaser/templates/teams.tpl";
 
     public static void validateTeams(JReleaserContext context, Teams teams, Errors errors) {
-        if (!teams.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.teams");
+        if (!teams.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         teams.setWebhook(
             checkProperty(context,

@@ -442,7 +442,8 @@ public class Artifacts {
         } catch (IOException e) {
             throw new JReleaserException(RB.$("ERROR_artifacts_unexpected_error_copying",
                 context.relativizeToBasedir(src),
-                context.relativizeToBasedir(dest)));
+                context.relativizeToBasedir(dest),
+                e.toString()));
         }
     }
 

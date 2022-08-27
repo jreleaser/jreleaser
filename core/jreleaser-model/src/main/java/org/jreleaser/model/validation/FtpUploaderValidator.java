@@ -34,8 +34,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class FtpUploaderValidator extends Validator {
     public static void validateFtpUploader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("upload.ftp");
         Map<String, FtpUploader> ftp = context.getModel().getUpload().getFtp();
+        if (!ftp.isEmpty()) context.getLogger().debug("upload.ftp");
 
         for (Map.Entry<String, FtpUploader> e : ftp.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -54,10 +54,12 @@ public abstract class FtpUploaderValidator extends Validator {
             ftp.setActive(Active.NEVER);
         }
         if (!ftp.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         if (!ftp.isArtifacts() && !ftp.isFiles() && !ftp.isSignatures()) {
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             ftp.disable();
             return;
         }

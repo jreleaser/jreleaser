@@ -35,8 +35,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class GitlabUploaderValidator extends Validator {
     public static void validateGitlabUploader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("upload.gitlab");
         Map<String, GitlabUploader> gitlab = context.getModel().getUpload().getGitlab();
+        if (!gitlab.isEmpty()) context.getLogger().debug("upload.gitlab");
 
         for (Map.Entry<String, GitlabUploader> e : gitlab.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -55,10 +55,12 @@ public abstract class GitlabUploaderValidator extends Validator {
             gitlab.setActive(Active.NEVER);
         }
         if (!gitlab.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         if (!gitlab.isArtifacts() && !gitlab.isFiles() && !gitlab.isSignatures()) {
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             gitlab.disable();
             return;
         }

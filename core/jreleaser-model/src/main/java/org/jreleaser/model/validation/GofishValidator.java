@@ -41,6 +41,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class GofishValidator extends Validator {
     public static void validateGofish(JReleaserContext context, Distribution distribution, Gofish packager, Errors errors) {
+        context.getLogger().debug("distribution.{}.gofish", distribution.getName());
         JReleaserModel model = context.getModel();
         Gofish parentPackager = model.getPackagers().getGofish();
 
@@ -48,27 +49,30 @@ public abstract class GofishValidator extends Validator {
             packager.setActive(parentPackager.getActive());
         }
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
             return;
         }
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
+            context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();
             return;
         }
 
-        context.getLogger().debug("distribution.{}.gofish", distribution.getName());
         nag("Gofish is deprecated since 1.1.0 and will be removed in 2.0.0");
 
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             packager.disable();
             return;
         } else if (candidateArtifacts.stream()
             .filter(artifact -> isBlank(artifact.getPlatform()))
             .count() > 1) {
             errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".gofish"));
+            context.getLogger().debug(RB.$("validation.disabled.multiple.artifacts"));
             packager.disable();
             return;
         }

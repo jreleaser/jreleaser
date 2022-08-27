@@ -223,6 +223,7 @@ distributions:
     java:
       mainClass: org.jreleaser.cli.Main
     flatpak:
+      continueOnError: true
       active: always
       componentId: org.jreleaser.cli
       developerName: JReleaser
@@ -310,6 +311,7 @@ distributions:
 
   jreleaser-standalone:
     appImage:
+      continueOnError: true
       active: always
       componentId: org.jreleaser.cli
       developerName: JReleaser

@@ -42,8 +42,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class NativeImageValidator extends Validator {
     public static void validateNativeImage(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("assemble.nativeImage");
         Map<String, NativeImage> nativeImage = context.getModel().getAssemble().getNativeImage();
+        if (!nativeImage.isEmpty()) context.getLogger().debug("assemble.nativeImage");
 
         for (Map.Entry<String, NativeImage> e : nativeImage.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -61,7 +61,10 @@ public abstract class NativeImageValidator extends Validator {
         if (!nativeImage.isActiveSet()) {
             nativeImage.setActive(Active.NEVER);
         }
-        if (!nativeImage.resolveEnabled(context.getModel().getProject())) return;
+        if (!nativeImage.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         if (null == nativeImage.getStereotype()) {
             nativeImage.setStereotype(context.getModel().getProject().getStereotype());
@@ -69,11 +72,14 @@ public abstract class NativeImageValidator extends Validator {
 
         if (isBlank(nativeImage.getName())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "nativeImage.name"));
+            context.getLogger().debug(RB.$("validation.disabled.error"));
+            nativeImage.disable();
             return;
         }
 
         if (null == nativeImage.getMainJar()) {
             errors.configuration(RB.$("validation_is_null", "nativeImage." + nativeImage.getName() + ".mainJar"));
+            context.getLogger().debug(RB.$("validation.disabled.error"));
             return;
         }
 

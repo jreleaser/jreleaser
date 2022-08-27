@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Files;
 import org.jreleaser.model.JReleaserContext;
@@ -38,7 +39,10 @@ public abstract class FilesValidator extends Validator {
         if (!files.isActiveSet()) {
             files.setActive(Active.ALWAYS);
         }
-        if (!files.resolveEnabled(context.getModel().getProject())) return;
+        if (!files.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         files.getArtifacts()
             .forEach(artifact -> {

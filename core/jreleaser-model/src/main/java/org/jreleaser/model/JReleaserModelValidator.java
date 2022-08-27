@@ -48,6 +48,7 @@ public final class JReleaserModelValidator {
         context.getLogger().increaseIndent();
         context.getLogger().setPrefix("validation");
         try {
+            context.getLogger().debug("mode {}", mode);
             validateModel(context, mode, errors);
         } finally {
             context.getLogger().restorePrefix();
@@ -72,8 +73,13 @@ public final class JReleaserModelValidator {
         validateFiles(context, mode, errors);
         validateAnnouncers(context, mode, errors);
 
-        postValidateProject(context, mode, errors);
-        postValidateAssemblers(context, mode, errors);
-        postValidateDistributions(context, mode, errors);
+        context.getLogger().setPrefix("postvalidation");
+        try {
+            postValidateProject(context, mode, errors);
+            postValidateAssemblers(context, mode, errors);
+            postValidateDistributions(context, mode, errors);
+        } finally {
+            context.getLogger().restorePrefix();
+        }
     }
 }

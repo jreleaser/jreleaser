@@ -52,6 +52,7 @@ import static org.jreleaser.util.Templates.resolveTemplate;
  */
 public abstract class ChocolateyValidator extends Validator {
     public static void validateChocolatey(JReleaserContext context, Distribution distribution, Chocolatey packager, Errors errors) {
+        context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
         JReleaserModel model = context.getModel();
         Chocolatey parentPackager = model.getPackagers().getChocolatey();
 
@@ -59,22 +60,26 @@ public abstract class ChocolateyValidator extends Validator {
             packager.setActive(parentPackager.getActive());
         }
         Project project = context.getModel().getProject();
-        if (!packager.resolveEnabled(project, distribution)) return;
+        if (!packager.resolveEnabled(project, distribution)) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
         GitService service = model.getRelease().getGitService();
         if (!service.isReleaseSupported()) {
+            context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();
             return;
         }
 
-        context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
-
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             packager.disable();
             return;
         } else if (candidateArtifacts.size() > 1) {
             errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".chocolatey"));
+            context.getLogger().debug(RB.$("validation.disabled.multiple.artifacts"));
             packager.disable();
             return;
         }

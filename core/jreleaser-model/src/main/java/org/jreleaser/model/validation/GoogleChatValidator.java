@@ -36,8 +36,11 @@ public abstract class GoogleChatValidator extends Validator {
     private static final String DEFAULT_GOOGLE_CHAT_TPL = "src/jreleaser/templates/googleChat.tpl";
 
     public static void validateGoogleChat(JReleaserContext context, GoogleChat googleChat, Errors errors) {
-        if (!googleChat.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.googleChat");
+        if (!googleChat.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         googleChat.setWebhook(
             checkProperty(context,

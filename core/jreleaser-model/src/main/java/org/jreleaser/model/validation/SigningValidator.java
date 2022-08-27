@@ -48,7 +48,10 @@ public abstract class SigningValidator extends Validator {
         context.getLogger().debug("signing");
         Signing signing = context.getModel().getSigning();
 
-        if (!signing.resolveEnabled(context.getModel().getProject())) return;
+        if (!signing.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         if (!signing.isArmoredSet()) {
             signing.setArmored(true);

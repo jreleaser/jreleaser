@@ -255,7 +255,7 @@ public class Flatpak extends AbstractRepositoryPackager<Flatpak> {
     @Override
     public boolean supportsPlatform(String platform) {
         return isBlank(platform) ||
-            PlatformUtils.isLinux(platform) && PlatformUtils.isIntel64(platform);
+            PlatformUtils.isLinux(platform) && PlatformUtils.isIntel64(platform) && !PlatformUtils.isAlpineLinux(platform);
     }
 
     @Override

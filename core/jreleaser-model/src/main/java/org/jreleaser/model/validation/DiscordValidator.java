@@ -36,8 +36,11 @@ public abstract class DiscordValidator extends Validator {
     private static final String DEFAULT_DISCORD_TPL = "src/jreleaser/templates/discord.tpl";
 
     public static void validateDiscord(JReleaserContext context, Discord discord, Errors errors) {
-        if (!discord.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.discord");
+        if (!discord.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         discord.setWebhook(
             checkProperty(context,

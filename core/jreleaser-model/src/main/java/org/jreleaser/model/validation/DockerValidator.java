@@ -59,6 +59,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class DockerValidator extends Validator {
     public static void validateDocker(JReleaserContext context, Distribution distribution, Docker packager, Errors errors) {
+        String element = "distribution." + distribution.getName() + ".docker";
+        context.getLogger().debug(element);
         JReleaserModel model = context.getModel();
         Project project = model.getProject();
         Docker parentPackager = model.getPackagers().getDocker();
@@ -66,14 +68,16 @@ public abstract class DockerValidator extends Validator {
         if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
             packager.setActive(parentPackager.getActive());
         }
-        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
-
-        String element = "distribution." + distribution.getName() + ".docker";
-        context.getLogger().debug(element);
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            packager.disable();
+            return;
+        }
 
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             packager.disable();
             return;
         }

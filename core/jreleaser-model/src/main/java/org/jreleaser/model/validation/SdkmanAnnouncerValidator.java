@@ -34,19 +34,23 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class SdkmanAnnouncerValidator extends Validator {
     public static void validateSdkmanAnnouncer(JReleaserContext context, SdkmanAnnouncer sdkman, Errors errors) {
+        context.getLogger().debug("announce.sdkman");
         // activate if there are any active distributions with Sdkman packager enabled
         context.getModel().getActiveDistributions().stream()
             .filter(d -> d.getSdkman().isEnabled())
             .findFirst()
             .ifPresent(distribution -> sdkman.setActive(Active.ALWAYS));
 
-        if (!sdkman.resolveEnabled(context.getModel().getProject())) return;
+        if (!sdkman.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
         if (!context.getModel().getRelease().getGitService().isReleaseSupported()) {
+            context.getLogger().debug(RB.$("validation.disabled.release"));
             sdkman.disable();
             return;
         }
 
-        context.getLogger().debug("announce.sdkman");
 
         sdkman.setConsumerKey(
             checkProperty(context,

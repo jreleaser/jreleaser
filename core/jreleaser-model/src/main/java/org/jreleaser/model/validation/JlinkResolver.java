@@ -26,6 +26,7 @@ import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -35,9 +36,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class JlinkResolver extends Validator {
     public static void resolveJlinkOutputs(JReleaserContext context, Errors errors) {
-        context.getLogger().debug("assemble.jlink");
+        List<Jlink> activeJlinks = context.getModel().getAssemble().getActiveJlinks();
+        if (!activeJlinks.isEmpty()) context.getLogger().debug("assemble.jlink");
 
-        for (Jlink jlink : context.getModel().getAssemble().getActiveJlinks()) {
+        for (Jlink jlink : activeJlinks) {
             if (jlink.isExported()) resolveJlinkOutputs(context, jlink, errors);
         }
     }

@@ -70,6 +70,7 @@ public abstract class GitServiceValidator extends Validator {
         }
 
         if (!service.isEnabled()) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 

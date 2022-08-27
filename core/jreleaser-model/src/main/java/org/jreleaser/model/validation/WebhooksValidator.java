@@ -53,18 +53,26 @@ public abstract class WebhooksValidator extends Validator {
 
         if (enabled) {
             webhooks.setActive(Active.ALWAYS);
-            webhooks.resolveEnabled(context.getModel().getProject());
+        } else {
+            webhooks.setActive(Active.NEVER);
+        }
+
+        if (!webhooks.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
         }
     }
 
     public static boolean validateWebhook(JReleaserContext context, Webhooks webhooks, Webhook webhook, Errors errors) {
-        if (!webhook.resolveEnabled(context.getModel().getProject())) return false;
+        context.getLogger().debug("announce.webhook." + webhook.getName());
+        if (!webhook.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return false;
+        }
         if (isBlank(webhook.getName())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             webhook.disable();
             return false;
         }
-
-        context.getLogger().debug("announce.webhook." + webhook.getName());
 
         webhook.setWebhook(
             checkProperty(context,

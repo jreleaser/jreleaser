@@ -35,8 +35,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class ScpDownloaderValidator extends Validator {
     public static void validateScpDownloader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("download.scp");
         Map<String, ScpDownloader> scp = context.getModel().getDownload().getScp();
+        if (!scp.isEmpty()) context.getLogger().debug("download.scp");
 
         for (Map.Entry<String, ScpDownloader> e : scp.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -55,6 +55,7 @@ public abstract class ScpDownloaderValidator extends Validator {
             scp.setActive(Active.ALWAYS);
         }
         if (!scp.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 

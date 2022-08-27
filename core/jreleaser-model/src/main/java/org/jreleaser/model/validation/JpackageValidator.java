@@ -49,8 +49,8 @@ public abstract class JpackageValidator extends Validator {
     private static final Pattern MAC_IDENTIFIER_PATTERN = Pattern.compile(MAC_IDENTIFIER);
 
     public static void validateJpackage(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("assemble.jpackage");
         Map<String, Jpackage> jpackage = context.getModel().getAssemble().getJpackage();
+        if (!jpackage.isEmpty()) context.getLogger().debug("assemble.jpackage");
 
         for (Map.Entry<String, Jpackage> e : jpackage.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -79,7 +79,10 @@ public abstract class JpackageValidator extends Validator {
         }
 
         Project project = context.getModel().getProject();
-        if (!jpackage.resolveEnabled(project)) return;
+        if (!jpackage.resolveEnabled(project)) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         if (null == jpackage.getStereotype()) {
             jpackage.setStereotype(context.getModel().getProject().getStereotype());
@@ -145,6 +148,8 @@ public abstract class JpackageValidator extends Validator {
 
         context.getLogger().debug("assemble.jpackage.{}.java", jpackage.getName());
         if (!validateJava(context, jpackage, errors)) {
+            context.getLogger().debug(RB.$("validation.disabled.error"));
+            jpackage.disable();
             return;
         }
 

@@ -42,8 +42,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class JlinkValidator extends Validator {
     public static void validateJlink(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("assemble.jlink");
         Map<String, Jlink> jlink = context.getModel().getAssemble().getJlink();
+        if (!jlink.isEmpty()) context.getLogger().debug("assemble.jlink");
 
         for (Map.Entry<String, Jlink> e : jlink.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -61,7 +61,10 @@ public abstract class JlinkValidator extends Validator {
         if (!jlink.isActiveSet()) {
             jlink.setActive(Active.NEVER);
         }
-        if (!jlink.resolveEnabled(context.getModel().getProject())) return;
+        if (!jlink.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         if (isBlank(jlink.getName())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "jlink.name"));
@@ -73,6 +76,8 @@ public abstract class JlinkValidator extends Validator {
 
         context.getLogger().debug("assemble.jlink.{}.java", jlink.getName());
         if (!validateJava(context, jlink, errors)) {
+            context.getLogger().debug(RB.$("validation.disabled.error"));
+            jlink.disable();
             return;
         }
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Announce;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.util.Errors;
@@ -63,6 +64,7 @@ public abstract class AnnouncersValidator extends Validator {
         validateZulip(context, announce.getZulip(), errors);
 
         if (!mode.validateAnnounce() && !mode.validateConfig()) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             announce.disable();
             return;
         }
@@ -89,7 +91,10 @@ public abstract class AnnouncersValidator extends Validator {
                 announce.getConfiguredWebhooks().isEnabled() ||
                 announce.getZulip().isEnabled();
 
-            if (!activeSet && !enabled) announce.disable();
+            if (!activeSet && !enabled) {
+                context.getLogger().debug(RB.$("validation.disabled"));
+                announce.disable();
+            }
         }
     }
 }

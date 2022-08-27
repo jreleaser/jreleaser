@@ -26,6 +26,7 @@ import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * @author Andres Almiray
@@ -33,9 +34,10 @@ import java.nio.file.Path;
  */
 public abstract class ArchiveResolver extends Validator {
     public static void resolveArchiveOutputs(JReleaserContext context, Errors errors) {
-        context.getLogger().debug("assemble.archive");
+        List<Archive> activeArchives = context.getModel().getAssemble().getActiveArchives();
+        if (!activeArchives.isEmpty()) context.getLogger().debug("assemble.archive");
 
-        for (Archive archive : context.getModel().getAssemble().getActiveArchives()) {
+        for (Archive archive : activeArchives) {
             if (archive.isExported()) resolveArchiveOutputs(context, archive, errors);
         }
     }

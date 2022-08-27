@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.validation;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.Upload;
 import org.jreleaser.util.Errors;
@@ -68,7 +69,10 @@ public abstract class UploadersValidator extends Validator {
                 !upload.getActiveScps().isEmpty() ||
                 !upload.getActiveSftps().isEmpty();
 
-            if (!activeSet && !enabled) upload.disable();
+            if (!activeSet && !enabled) {
+                context.getLogger().debug(RB.$("validation.disabled"));
+                upload.disable();
+            }
         }
     }
 }

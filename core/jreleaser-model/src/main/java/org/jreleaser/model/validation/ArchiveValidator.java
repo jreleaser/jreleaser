@@ -35,8 +35,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class ArchiveValidator extends Validator {
     public static void validateArchive(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("assemble.archive");
         Map<String, Archive> archive = context.getModel().getAssemble().getArchive();
+        if (!archive.isEmpty()) context.getLogger().debug("assemble.archive");
 
         for (Map.Entry<String, Archive> e : archive.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -54,10 +54,15 @@ public abstract class ArchiveValidator extends Validator {
         if (!archive.isActiveSet()) {
             archive.setActive(Active.NEVER);
         }
-        if (!archive.resolveEnabled(context.getModel().getProject())) return;
+        if (!archive.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         if (isBlank(archive.getName())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "archive.name"));
+            context.getLogger().debug(RB.$("validation.disabled.error"));
+            archive.disable();
             return;
         }
 

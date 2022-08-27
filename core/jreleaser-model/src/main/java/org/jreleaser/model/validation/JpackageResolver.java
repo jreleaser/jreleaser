@@ -26,6 +26,7 @@ import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 import static org.jreleaser.util.FileUtils.listFilesAndProcess;
@@ -36,9 +37,10 @@ import static org.jreleaser.util.FileUtils.listFilesAndProcess;
  */
 public abstract class JpackageResolver extends Validator {
     public static void resolveJpackageOutputs(JReleaserContext context, Errors errors) {
-        context.getLogger().debug("assemble.jpackage");
+        List<Jpackage> activeJpackages = context.getModel().getAssemble().getActiveJpackages();
+        if (!activeJpackages.isEmpty()) context.getLogger().debug("assemble.jpackage");
 
-        for (Jpackage jpackage : context.getModel().getAssemble().getActiveJpackages()) {
+        for (Jpackage jpackage : activeJpackages) {
             if (jpackage.isExported()) resolveJpackageOutputs(context, jpackage, errors);
         }
     }

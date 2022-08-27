@@ -41,20 +41,24 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class JbangValidator extends Validator {
     public static void validateJbang(JReleaserContext context, Distribution distribution, Jbang packager, Errors errors) {
+        context.getLogger().debug("distribution.{}.jbang", distribution.getName());
         JReleaserModel model = context.getModel();
         Jbang parentPackager = model.getPackagers().getJbang();
 
         if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
             packager.setActive(parentPackager.getActive());
         }
-        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) return;
-        GitService service = model.getRelease().getGitService();
-        if (!service.isReleaseSupported()) {
+        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
             return;
         }
-
-        context.getLogger().debug("distribution.{}.jbang", distribution.getName());
+        GitService service = model.getRelease().getGitService();
+        if (!service.isReleaseSupported()) {
+            context.getLogger().debug(RB.$("validation.disabled.release"));
+            packager.disable();
+            return;
+        }
 
         validateCommitAuthor(packager, parentPackager);
         Jbang.JbangCatalog catalog = packager.getCatalog();

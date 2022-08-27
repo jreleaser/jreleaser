@@ -36,8 +36,11 @@ public abstract class ZulipValidator extends Validator {
     private static final String DEFAULT_ZULIP_TPL = "src/jreleaser/templates/zulip.tpl";
 
     public static void validateZulip(JReleaserContext context, Zulip zulip, Errors errors) {
-        if (!zulip.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.zulip");
+        if (!zulip.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         if (isBlank(zulip.getAccount())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "zulip.account"));

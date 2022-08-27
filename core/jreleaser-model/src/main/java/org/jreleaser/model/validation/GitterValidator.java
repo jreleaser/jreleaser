@@ -36,8 +36,11 @@ public abstract class GitterValidator extends Validator {
     private static final String DEFAULT_GITTER_TPL = "src/jreleaser/templates/gitter.tpl";
 
     public static void validateGitter(JReleaserContext context, Gitter gitter, Errors errors) {
-        if (!gitter.resolveEnabled(context.getModel().getProject())) return;
         context.getLogger().debug("announce.gitter");
+        if (!gitter.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
 
         gitter.setWebhook(
             checkProperty(context,

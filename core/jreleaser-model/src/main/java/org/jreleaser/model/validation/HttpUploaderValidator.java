@@ -35,8 +35,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public abstract class HttpUploaderValidator extends Validator {
     public static void validateHttpUploader(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        context.getLogger().debug("upload.http");
         Map<String, HttpUploader> http = context.getModel().getUpload().getHttp();
+        if (!http.isEmpty()) context.getLogger().debug("upload.http");
 
         for (Map.Entry<String, HttpUploader> e : http.entrySet()) {
             e.getValue().setName(e.getKey());
@@ -55,10 +55,12 @@ public abstract class HttpUploaderValidator extends Validator {
             http.setActive(Active.NEVER);
         }
         if (!http.resolveEnabled(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         if (!http.isArtifacts() && !http.isFiles() && !http.isSignatures()) {
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             http.disable();
             return;
         }
