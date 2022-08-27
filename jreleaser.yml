@@ -320,6 +320,7 @@ distributions:
       repository:
         active: release
         name: jreleaser-appimage
+        commitMessage: 'jreleaser {{tagName}}'
     brew:
       active: always
       formulaName: jreleaser
