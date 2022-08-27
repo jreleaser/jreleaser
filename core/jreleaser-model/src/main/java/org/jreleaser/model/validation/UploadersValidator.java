@@ -40,24 +40,24 @@ public abstract class UploadersValidator extends Validator {
         Upload upload = context.getModel().getUpload();
         context.getLogger().debug("upload");
 
-        validateArtifactory(context, mode, errors);
-        validateFtpUploader(context, mode, errors);
-        validateGiteaUploader(context, mode, errors);
-        validateGitlabUploader(context, mode, errors);
-        validateHttpUploader(context, mode, errors);
-        validateS3(context, mode, errors);
-        validateScpUploader(context, mode, errors);
-        validateSftpUploader(context, mode, errors);
+        boolean skipValidation = !mode.validateConfig();
+        Errors errorCollector = skipValidation ? new Errors() : errors;
+        validateArtifactory(context, mode, errorCollector);
+        validateFtpUploader(context, mode, errorCollector);
+        validateGiteaUploader(context, mode, errorCollector);
+        validateGitlabUploader(context, mode, errorCollector);
+        validateHttpUploader(context, mode, errorCollector);
+        validateS3(context, mode, errorCollector);
+        validateScpUploader(context, mode, errorCollector);
+        validateSftpUploader(context, mode, errorCollector);
 
-        if (!mode.validateConfig()) {
-            upload.disable();
+        if (skipValidation) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         boolean activeSet = upload.isActiveSet();
-        if (mode.validateConfig()) {
-            upload.resolveEnabled(context.getModel().getProject());
-        }
+        upload.resolveEnabled(context.getModel().getProject());
 
         if (mode.validateConfig() && upload.isEnabled()) {
             boolean enabled = !upload.getActiveArtifactories().isEmpty() ||

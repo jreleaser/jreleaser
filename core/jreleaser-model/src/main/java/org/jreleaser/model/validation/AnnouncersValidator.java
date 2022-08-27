@@ -47,32 +47,31 @@ public abstract class AnnouncersValidator extends Validator {
         Announce announce = context.getModel().getAnnounce();
         context.getLogger().debug("announce");
 
-        validateArticle(context, announce.getArticle(), errors);
-        validateDiscussions(context, announce.getDiscussions(), errors);
-        validateDiscord(context, announce.getDiscord(), errors);
-        validateGitter(context, announce.getGitter(), errors);
-        validateGoogleChat(context, announce.getGoogleChat(), errors);
-        validateMail(context, announce.getMail(), errors);
-        validateMastodon(context, announce.getMastodon(), errors);
-        validateMattermost(context, announce.getMattermost(), errors);
-        validateSdkmanAnnouncer(context, announce.getSdkman(), errors);
-        validateSlack(context, announce.getSlack(), errors);
-        validateTeams(context, announce.getTeams(), errors);
-        validateTelegram(context, announce.getTelegram(), errors);
-        validateTwitter(context, announce.getTwitter(), errors);
-        validateWebhooks(context, announce.getConfiguredWebhooks(), errors);
-        validateZulip(context, announce.getZulip(), errors);
+        boolean skipValidation = !mode.validateAnnounce() && !mode.validateConfig();
+        Errors errorCollector = skipValidation ? new Errors() : errors;
+        validateArticle(context, announce.getArticle(), errorCollector);
+        validateDiscussions(context, announce.getDiscussions(), errorCollector);
+        validateDiscord(context, announce.getDiscord(), errorCollector);
+        validateGitter(context, announce.getGitter(), errorCollector);
+        validateGoogleChat(context, announce.getGoogleChat(), errorCollector);
+        validateMail(context, announce.getMail(), errorCollector);
+        validateMastodon(context, announce.getMastodon(), errorCollector);
+        validateMattermost(context, announce.getMattermost(), errorCollector);
+        validateSdkmanAnnouncer(context, announce.getSdkman(), errorCollector);
+        validateSlack(context, announce.getSlack(), errorCollector);
+        validateTeams(context, announce.getTeams(), errorCollector);
+        validateTelegram(context, announce.getTelegram(), errorCollector);
+        validateTwitter(context, announce.getTwitter(), errorCollector);
+        validateWebhooks(context, announce.getConfiguredWebhooks(), errorCollector);
+        validateZulip(context, announce.getZulip(), errorCollector);
 
-        if (!mode.validateAnnounce() && !mode.validateConfig()) {
+        if (skipValidation) {
             context.getLogger().debug(RB.$("validation.disabled"));
-            announce.disable();
             return;
         }
 
         boolean activeSet = announce.isActiveSet();
-        if (mode.validateAnnounce() || mode.validateConfig()) {
-            announce.resolveEnabled(context.getModel().getProject());
-        }
+        announce.resolveEnabled(context.getModel().getProject());
 
         if (announce.isEnabled()) {
             boolean enabled = announce.getArticle().isEnabled() ||

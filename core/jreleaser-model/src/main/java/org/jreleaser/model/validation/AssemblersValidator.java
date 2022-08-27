@@ -46,13 +46,15 @@ public abstract class AssemblersValidator extends Validator {
         Assemble assemble = context.getModel().getAssemble();
         context.getLogger().debug("assemble");
 
-        validateArchive(context, mode, errors);
-        validateJlink(context, mode, errors);
-        validateJpackage(context, mode, errors);
-        validateNativeImage(context, mode, errors);
+        boolean skipValidation = !mode.validateAssembly() && !mode.validateConfig();
+        Errors errorCollector = skipValidation ? new Errors() : errors;
+        validateArchive(context, mode, errorCollector);
+        validateJlink(context, mode, errorCollector);
+        validateJpackage(context, mode, errorCollector);
+        validateNativeImage(context, mode, errorCollector);
 
-        if (!mode.validateAssembly() && !mode.validateConfig()) {
-            assemble.disable();
+        if (skipValidation) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
@@ -83,9 +85,7 @@ public abstract class AssemblersValidator extends Validator {
         });
 
         boolean activeSet = assemble.isActiveSet();
-        if (mode.validateConfig() || mode.validateAssembly()) {
-            assemble.resolveEnabled(context.getModel().getProject());
-        }
+        assemble.resolveEnabled(context.getModel().getProject());
 
         if (assemble.isEnabled()) {
             boolean enabled = !assemble.getActiveArchives().isEmpty() ||

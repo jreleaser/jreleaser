@@ -36,12 +36,14 @@ public abstract class DownloadersValidator extends Validator {
         Download download = context.getModel().getDownload();
         context.getLogger().debug("download");
 
-        validateFtpDownloader(context, mode, errors);
-        validateHttpDownloader(context, mode, errors);
-        validateScpDownloader(context, mode, errors);
-        validateSftpDownloader(context, mode, errors);
+        boolean skipValidation = !mode.validateDownload() && !mode.validateConfig();
+        Errors errorCollector = skipValidation ? new Errors() : errors;
+        validateFtpDownloader(context, mode, errorCollector);
+        validateHttpDownloader(context, mode, errorCollector);
+        validateScpDownloader(context, mode, errorCollector);
+        validateSftpDownloader(context, mode, errorCollector);
 
-        if (mode.validateDownload() || mode.validateConfig()) {
+        if (!skipValidation) {
             boolean activeSet = download.isActiveSet();
             if (mode.validateConfig() || mode.validateDownload()) {
                 download.resolveEnabled(context.getModel().getProject());
@@ -58,8 +60,6 @@ public abstract class DownloadersValidator extends Validator {
                     download.disable();
                 }
             }
-        } else {
-            download.disable();
         }
     }
 }

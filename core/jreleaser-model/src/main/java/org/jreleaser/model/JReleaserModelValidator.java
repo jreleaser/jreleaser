@@ -48,7 +48,7 @@ public final class JReleaserModelValidator {
         context.getLogger().increaseIndent();
         context.getLogger().setPrefix("validation");
         try {
-            context.getLogger().debug("mode {}", mode);
+            context.getLogger().debug("--== {} ==--", mode);
             validateModel(context, mode, errors);
         } finally {
             context.getLogger().restorePrefix();
