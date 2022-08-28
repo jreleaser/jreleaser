@@ -127,17 +127,6 @@ public abstract class ProjectValidator extends Validator {
             context.nag("1.2.0", "Use project.inceptionYear instead of project.extraProperties.inceptionYear");
         }
 
-        if (isBlank(project.getCopyright())) {
-            if (project.getInceptionYear() != null &&
-                !project.getAuthors().isEmpty()) {
-                project.setCopyright(
-                    project.getInceptionYear() + " " +
-                        String.join(",", project.getAuthors()));
-            } else {
-                errors.configuration(RB.$("validation_must_not_be_blank", "project.copyright"));
-            }
-        }
-
         if (isBlank(project.getLinks().getLicense())) {
             if (isNotBlank(project.getLicense())) {
                 LicenseId.findByLiteral(project.getLicense()).ifPresent(licenseId ->
@@ -165,7 +154,7 @@ public abstract class ProjectValidator extends Validator {
             project.getLinks().setDocumentation(project.getLinks().getHomepage());
         }
 
-        if (mode.validateAssembly()) {
+        if (mode.validateAssembly() && context.getModel().getAssemble().isEnabled()) {
             if (isBlank(project.getDescription())) {
                 errors.configuration(RB.$("validation_must_not_be_blank", "project.description"));
             }
@@ -178,6 +167,17 @@ public abstract class ProjectValidator extends Validator {
         if (context.getModel().getActiveDistributions().isEmpty() ||
             !context.getModel().getAnnounce().isEnabled()) {
             return;
+        }
+
+        if (isBlank(project.getCopyright())) {
+            if (project.getInceptionYear() != null &&
+                !project.getAuthors().isEmpty()) {
+                project.setCopyright(
+                    project.getInceptionYear() + " " +
+                        String.join(", ", project.getAuthors()));
+            } else {
+                errors.configuration(RB.$("validation_must_not_be_blank", "project.copyright"));
+            }
         }
 
         if (isBlank(project.getDescription())) {
