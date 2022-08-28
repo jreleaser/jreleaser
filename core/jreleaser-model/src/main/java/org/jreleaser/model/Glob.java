@@ -163,12 +163,7 @@ public class Glob extends AbstractModelObject<Glob> implements Domain, ExtraProp
     public Path relativize(Path base, Path other) {
         Path p1 = base.toAbsolutePath();
         Path p2 = other.toAbsolutePath();
-        Path p = p1.relativize(p2).normalize();
-        while (p != null && !p.endsWith("..")) {
-            p = p.getParent();
-        }
-
-        return base.resolve(p).resolve(p2).normalize();
+        return p1.relativize(p2).normalize();
     }
 
     public String getPlatform() {
