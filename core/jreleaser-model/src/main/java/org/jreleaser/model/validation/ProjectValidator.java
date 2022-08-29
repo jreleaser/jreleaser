@@ -158,6 +158,17 @@ public abstract class ProjectValidator extends Validator {
             if (isBlank(project.getDescription())) {
                 errors.configuration(RB.$("validation_must_not_be_blank", "project.description"));
             }
+
+            if (isBlank(project.getCopyright())) {
+                if (project.getInceptionYear() != null &&
+                    !project.getAuthors().isEmpty()) {
+                    project.setCopyright(
+                        project.getInceptionYear() + " " +
+                            String.join(", ", project.getAuthors()));
+                } else {
+                    errors.configuration(RB.$("validation_must_not_be_blank", "project.copyright"));
+                }
+            }
         }
 
         if (!mode.validateConfig() && !mode.validateAnnounce()) {
