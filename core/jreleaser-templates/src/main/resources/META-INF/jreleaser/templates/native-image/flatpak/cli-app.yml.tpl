@@ -39,4 +39,5 @@ modules:
       {{#flatpakIcons}}
       - type: file
         path: icons/{{width}}x{{height}}/{{distributionExecutable}}.png
+        dest: icons/{{width}}x{{height}}
       {{/flatpakIcons}}
