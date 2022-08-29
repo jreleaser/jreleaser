@@ -73,6 +73,7 @@ public class Flatpak extends AbstractRepositoryPackager<Flatpak> {
     private final List<Icon> icons = new ArrayList<>();
     private final Set<String> sdkExtensions = new LinkedHashSet<>();
     private final Set<String> finishArgs = new LinkedHashSet<>();
+    private final Set<String> skipReleases = new LinkedHashSet<>();
     private String componentId;
     private String developerName;
     private Runtime runtime;
@@ -103,6 +104,7 @@ public class Flatpak extends AbstractRepositoryPackager<Flatpak> {
         setCategories(merge(this.categories, source.categories));
         setScreenshots(merge(this.screenshots, source.screenshots));
         setIcons(merge(this.icons, source.icons));
+        setSkipReleases(merge(this.skipReleases, source.skipReleases));
     }
 
     @Override
@@ -214,6 +216,16 @@ public class Flatpak extends AbstractRepositoryPackager<Flatpak> {
         }
     }
 
+    public Set<String> getSkipReleases() {
+        return freezeWrap(skipReleases);
+    }
+
+    public void setSkipReleases(Set<String> tags) {
+        freezeCheck();
+        this.skipReleases.clear();
+        this.skipReleases.addAll(tags);
+    }
+
     public FlatpakRepository getRepository() {
         return repository;
     }
@@ -244,6 +256,7 @@ public class Flatpak extends AbstractRepositoryPackager<Flatpak> {
             sm.put("icon " + (i++), icon.asMap(full));
         }
         map.put("icons", sm);
+        map.put("skipReleases", skipReleases);
         map.put("repository", repository.asMap(full));
     }
 

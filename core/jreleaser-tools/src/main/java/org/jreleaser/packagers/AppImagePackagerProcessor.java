@@ -41,6 +41,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
@@ -91,8 +93,9 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
 
         try {
             props.put(KEY_APPIMAGE_RELEASES, Releasers.releaserFor(context)
-                .listReleases(gitService.getOwner(), gitService.getName())
-                .stream().map(r -> Release.of(r.getUrl(), r.getVersion().toString(), r.getPublishedAt()))
+                .listReleases(gitService.getOwner(), gitService.getName()).stream()
+                .filter(r -> isReleaseIncluded(packager.getSkipReleases(), r.getVersion().toString()))
+                .map(r -> Release.of(r.getUrl(), r.getVersion().toString(), r.getPublishedAt()))
                 .collect(toList()));
         } catch (IOException e) {
             throw new PackagerProcessingException(RB.$("ERROR_unexpected_error"), e);
@@ -202,6 +205,25 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         }
 
         writeFile(inputStream, outputFile);
+    }
+
+    private boolean isReleaseIncluded(Set<String> skipReleases, String version) {
+        if (null == skipReleases || skipReleases.isEmpty()) {
+            return true;
+        }
+
+        // 1. exact match
+        if (skipReleases.contains(version)) {
+            return false;
+        }
+
+        // 2. regex match
+        for (String regex : skipReleases) {
+            Pattern p = Pattern.compile(regex);
+            if (p.matcher(version).matches()) return false;
+        }
+
+        return true;
     }
 
     private Optional<Stereotype> resolveStereotype(String fileName) {

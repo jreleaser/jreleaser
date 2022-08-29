@@ -44,6 +44,8 @@ interface Flatpak extends RepositoryPackager {
 
     SetProperty<String> getFinishArgs()
 
+    SetProperty<String> getSkipReleases()
+
     void setRuntime(String str)
 
     void category(String str)
@@ -51,6 +53,8 @@ interface Flatpak extends RepositoryPackager {
     void sdkExtension(String str)
 
     void finishArg(String str)
+
+    void skipRelease(String skipRelease)
 
     Tap getRepository()
 

@@ -25,6 +25,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.AppImage
 import org.jreleaser.gradle.plugin.dsl.CommitAuthor
@@ -50,6 +51,7 @@ class AppImageImpl extends AbstractRepositoryPackager implements AppImage {
     final ListProperty<String> categories
     final Property<String> developerName
     final Property<Boolean> requiresTerminal
+    final SetProperty<String> skipReleases
 
     private final NamedDomainObjectContainer<ScreenshotImpl> screenshots
     private final NamedDomainObjectContainer<IconImpl> icons
@@ -63,6 +65,7 @@ class AppImageImpl extends AbstractRepositoryPackager implements AppImage {
         categories = objects.listProperty(String).convention(Providers.notDefined())
         developerName = objects.property(String).convention(Providers.notDefined())
         requiresTerminal = objects.property(Boolean).convention(Providers.notDefined())
+        skipReleases = objects.setProperty(String).convention(Providers.notDefined())
 
         screenshots = objects.domainObjectContainer(ScreenshotImpl, new NamedDomainObjectFactory<ScreenshotImpl>() {
             @Override
@@ -93,6 +96,7 @@ class AppImageImpl extends AbstractRepositoryPackager implements AppImage {
             categories.present ||
             developerName.present ||
             requiresTerminal.present ||
+            skipReleases.present ||
             !screenshots.empty||
             !icons.empty
     }
@@ -101,6 +105,13 @@ class AppImageImpl extends AbstractRepositoryPackager implements AppImage {
     void category(String category) {
         if (isNotBlank(category)) {
             categories.add(category.trim())
+        }
+    }
+
+    @Override
+    void skipRelease(String str) {
+        if (isNotBlank(str)) {
+            skipReleases.add(str.trim())
         }
     }
 
@@ -154,6 +165,7 @@ class AppImageImpl extends AbstractRepositoryPackager implements AppImage {
         packager.categories = (List<String>) categories.getOrElse([])
         if (developerName.present) packager.developerName = developerName.get()
         if (requiresTerminal.present) packager.requiresTerminal = requiresTerminal.get()
+        packager.skipReleases = (Set<String>) skipReleases.getOrElse(new LinkedHashSet<String>())
         for (ScreenshotImpl screenshot : screenshots) {
             packager.addScreenshot(screenshot.toModel())
         }

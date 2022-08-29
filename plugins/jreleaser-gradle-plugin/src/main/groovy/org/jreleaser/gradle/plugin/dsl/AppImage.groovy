@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
  *
@@ -37,7 +38,11 @@ interface AppImage extends RepositoryPackager {
 
     Property<Boolean> getRequiresTerminal()
 
+    SetProperty<String> getSkipReleases()
+
     void category(String category)
+
+    void skipRelease(String skipRelease)
 
     Tap getRepository()
 

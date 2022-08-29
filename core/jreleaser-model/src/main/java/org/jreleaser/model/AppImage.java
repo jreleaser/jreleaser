@@ -22,6 +22,7 @@ import org.jreleaser.util.PlatformUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,6 +70,7 @@ public class AppImage extends AbstractRepositoryPackager<AppImage> {
     private final List<Screenshot> screenshots = new ArrayList<>();
     private final List<Icon> icons = new ArrayList<>();
     private final List<String> categories = new ArrayList<>();
+    private final Set<String> skipReleases = new LinkedHashSet<>();
     private String componentId;
     private String developerName;
     private Boolean requiresTerminal;
@@ -95,6 +97,7 @@ public class AppImage extends AbstractRepositoryPackager<AppImage> {
         setCategories(merge(this.categories, source.categories));
         setScreenshots(merge(this.screenshots, source.screenshots));
         setIcons(merge(this.icons, source.icons));
+        setSkipReleases(merge(this.skipReleases, source.skipReleases));
     }
 
     @Override
@@ -177,6 +180,16 @@ public class AppImage extends AbstractRepositoryPackager<AppImage> {
         }
     }
 
+    public Set<String> getSkipReleases() {
+        return freezeWrap(skipReleases);
+    }
+
+    public void setSkipReleases(Set<String> tags) {
+        freezeCheck();
+        this.skipReleases.clear();
+        this.skipReleases.addAll(tags);
+    }
+
     public AppImageRepository getRepository() {
         return repository;
     }
@@ -204,6 +217,7 @@ public class AppImage extends AbstractRepositoryPackager<AppImage> {
             sm.put("icon " + (i++), icon.asMap(full));
         }
         map.put("icons", sm);
+        map.put("skipReleases", skipReleases);
         map.put("repository", repository.asMap(full));
     }
 

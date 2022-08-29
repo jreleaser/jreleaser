@@ -54,6 +54,7 @@ class FlatpakImpl extends AbstractRepositoryPackager implements Flatpak {
     final Property<String> runtimeVersion
     final SetProperty<String> sdkExtensions
     final SetProperty<String> finishArgs
+    final SetProperty<String> skipReleases
 
     private final NamedDomainObjectContainer<ScreenshotImpl> screenshots
     private final NamedDomainObjectContainer<IconImpl> icons
@@ -70,6 +71,7 @@ class FlatpakImpl extends AbstractRepositoryPackager implements Flatpak {
         runtimeVersion = objects.property(String).convention(Providers.notDefined())
         sdkExtensions = objects.setProperty(String).convention(Providers.notDefined())
         finishArgs = objects.setProperty(String).convention(Providers.notDefined())
+        skipReleases = objects.setProperty(String).convention(Providers.notDefined())
 
         screenshots = objects.domainObjectContainer(ScreenshotImpl, new NamedDomainObjectFactory<ScreenshotImpl>() {
             @Override
@@ -110,6 +112,7 @@ class FlatpakImpl extends AbstractRepositoryPackager implements Flatpak {
             runtimeVersion.present ||
             sdkExtensions.present ||
             finishArgs.present ||
+            skipReleases.present ||
             !screenshots.empty ||
             !icons.empty
     }
@@ -132,6 +135,13 @@ class FlatpakImpl extends AbstractRepositoryPackager implements Flatpak {
     void finishArg(String str) {
         if (isNotBlank(str)) {
             finishArgs.add(str.trim())
+        }
+    }
+
+    @Override
+    void skipRelease(String str) {
+        if (isNotBlank(str)) {
+            skipReleases.add(str.trim())
         }
     }
 
@@ -188,6 +198,7 @@ class FlatpakImpl extends AbstractRepositoryPackager implements Flatpak {
         if (runtimeVersion.present) packager.runtimeVersion = runtimeVersion.get()
         packager.sdkExtensions = (Set<String>) sdkExtensions.getOrElse(new LinkedHashSet<String>())
         packager.finishArgs = (Set<String>) finishArgs.getOrElse(new LinkedHashSet<String>())
+        packager.skipReleases = (Set<String>) skipReleases.getOrElse(new LinkedHashSet<String>())
         for (ScreenshotImpl screenshot : screenshots) {
             packager.addScreenshot(screenshot.toModel())
         }
