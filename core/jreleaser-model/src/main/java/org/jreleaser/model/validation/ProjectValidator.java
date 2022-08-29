@@ -154,7 +154,7 @@ public abstract class ProjectValidator extends Validator {
             project.getLinks().setDocumentation(project.getLinks().getHomepage());
         }
 
-        if (mode.validateAssembly() && context.getModel().getAssemble().isEnabled()) {
+        if (context.getModel().getAssemble().isEnabled()) {
             if (isBlank(project.getDescription())) {
                 errors.configuration(RB.$("validation_must_not_be_blank", "project.description"));
             }
