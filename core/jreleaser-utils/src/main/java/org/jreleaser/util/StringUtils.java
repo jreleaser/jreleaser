@@ -204,6 +204,38 @@ public class StringUtils {
     }
 
     /**
+     * Converts foo-bar into Foo Bar. Empty and null strings are returned
+     * as-is.
+     *
+     * @param name The lower case hyphen separated name
+     * @return The capitalized name equivalent.
+     */
+    public static String getCapitalizedName(String name) {
+        // Handle null and empty strings.
+        if (isBlank(name)) {
+            return name;
+        }
+
+        if (name.contains("-")) {
+            StringBuilder buf = new StringBuilder();
+            String[] tokens = name.split("-");
+            for (String token : tokens) {
+                if (token == null || token.length() == 0) {
+                    continue;
+                }
+                if (buf.length() > 0) {
+                    buf.append(' ');
+                }
+                buf.append(capitalize(token));
+            }
+
+            return buf.toString();
+        }
+
+        return capitalize(name);
+    }
+
+    /**
      * Retrieves the logical class name of a Griffon artifact given the Griffon class
      * and a specified trailing name
      *

@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
-import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
+import static org.jreleaser.util.StringUtils.getCapitalizedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.Templates.resolveTemplate;
@@ -728,7 +728,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         props.putAll(model.getEnvironment().getProperties());
         props.putAll(model.getEnvironment().getSourcedProperties());
         props.put(Constants.KEY_PROJECT_NAME, project.getName());
-        props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getClassNameForLowerCaseHyphenSeparatedName(project.getName()));
+        props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getCapitalizedName(project.getName()));
         props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
         props.put(Constants.KEY_PROJECT_STEREOTYPE, project.getStereotype());
         props.put(Constants.KEY_PROJECT_EFFECTIVE_VERSION, project.getEffectiveVersion());
