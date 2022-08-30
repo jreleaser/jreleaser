@@ -37,6 +37,8 @@ import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.gitea.api.GiteaAPI;
 import org.jreleaser.sdk.gitea.api.GtAsset;
 import org.jreleaser.sdk.gitea.api.GtBranch;
+import org.jreleaser.sdk.gitea.api.GtIssue;
+import org.jreleaser.sdk.gitea.api.GtLabel;
 import org.jreleaser.sdk.gitea.api.GtMilestone;
 import org.jreleaser.sdk.gitea.api.GtOrganization;
 import org.jreleaser.sdk.gitea.api.GtRelease;
@@ -56,8 +58,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -338,6 +342,78 @@ class Gitea {
         }
 
         return Optional.empty();
+    }
+
+    GtLabel getOrCreateLabel(String owner, String name, String labelName, String labelColor, String description) throws IOException {
+        logger.debug(RB.$("git.label.fetch", labelName));
+
+        List<GtLabel> labels = listLabels(owner, name);
+        Optional<GtLabel> label = labels.stream()
+            .filter(l -> l.getName().equals(labelName))
+            .findFirst();
+
+        if (label.isPresent()) {
+            return label.get();
+        }
+
+        logger.debug(RB.$("git.label.create", labelName));
+        return api.createLabel(owner, name, labelName, labelColor, description);
+    }
+
+    Optional<GtIssue> findIssue(String owner, String name, int issueNumber) throws IOException {
+        logger.debug(RB.$("git.issue.fetch", issueNumber));
+        try {
+            return Optional.of(api.findIssue(owner, name, issueNumber));
+        } catch (RestAPIException e) {
+            if (e.isNotFound()) {
+                return Optional.empty();
+            }
+            throw e;
+        }
+    }
+
+    void addLabelToIssue(String owner, String name, GtIssue issue, GtLabel label) throws IOException {
+        logger.debug(RB.$("git.issue.label", label.getName(), issue.getNumber()));
+
+        Map<String,List<Integer>> labels = new LinkedHashMap<>();
+        List<Integer> list = labels.computeIfAbsent("labels", k -> new ArrayList<>());
+        list.addAll(issue.getLabels().stream().map(GtLabel::getId).collect(toList()));
+        list.add(label.getId());
+
+        api.labelIssue(labels, owner, name, issue.getNumber());
+    }
+
+    void commentOnIssue(String owner, String name, GtIssue issue, String comment) throws IOException {
+        logger.debug(RB.$("git.issue.comment", issue.getNumber()));
+
+        Map<String,String> params = new LinkedHashMap<>();
+        params.put("body", comment);
+
+        api.commentIssue(params, owner, name, issue.getNumber());
+    }
+
+    private List<GtLabel> listLabels(String owner, String repoName) throws IOException {
+        logger.debug(RB.$("git.list.labels"), owner, repoName);
+
+        List<GtLabel> labels = new ArrayList<>();
+
+        int pageCount = 0;
+        Map<String, Object> params = CollectionUtils.<String, Object>map()
+            .e("limit", 20);
+
+        boolean consume = true;
+        do {
+            params.put("page", ++pageCount);
+            Page<List<GtLabel>> page = api.listLabels(owner, repoName, params);
+            labels.addAll(page.getContent());
+
+            if (!page.hasLinks() || !page.getLinks().hasNext()) {
+                consume = false;
+            }
+        }
+        while (consume);
+
+        return labels;
     }
 
     private FormData toFormData(Path asset) throws IOException {

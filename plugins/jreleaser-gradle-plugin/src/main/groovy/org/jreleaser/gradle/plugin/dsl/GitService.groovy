@@ -105,6 +105,8 @@ interface GitService extends Releaser {
 
     void update(Action<? super Update> action)
 
+    void issues(Action<? super Issues> action)
+
     void changelog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Changelog) Closure<Void> action)
 
     void milestone(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Milestone) Closure<Void> action)
@@ -112,6 +114,8 @@ interface GitService extends Releaser {
     void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action)
 
     void update(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Update) Closure<Void> action)
+
+    void issues(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Issues) Closure<Void> action)
 
     @CompileStatic
     interface Update {
@@ -134,5 +138,25 @@ interface GitService extends Releaser {
         Property<Boolean> getClose()
 
         Property<String> getName()
+    }
+
+    @CompileStatic
+    interface Issues {
+        Property<Boolean> getEnabled()
+
+        Property<String> getComment()
+
+        void label(Action<? super Label> action)
+
+        void label(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Label) Closure<Void> action)
+
+        @CompileStatic
+        interface Label {
+            Property<String> getName()
+
+            Property<String> getColor()
+
+            Property<String> getDescription()
+        }
     }
 }

@@ -59,6 +59,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
     protected final String serviceName;
     protected final Changelog changelog = new Changelog();
     protected final Milestone milestone = new Milestone();
+    protected final Issues issues = new Issues();
     protected final CommitAuthor commitAuthor = new CommitAuthor();
     protected final Update update = new Update();
     protected final Prerelease prerelease = new Prerelease();
@@ -124,6 +125,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         super.freeze();
         changelog.freeze();
         milestone.freeze();
+        issues.freeze();
         commitAuthor.freeze();
         update.freeze();
         prerelease.freeze();
@@ -169,6 +171,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         setPrerelease(service.prerelease);
         setChangelog(service.changelog);
         setMilestone(service.milestone);
+        setIssues(service.issues);
     }
 
     public String getCanonicalRepoName() {
@@ -526,6 +529,14 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         this.milestone.merge(milestone);
     }
 
+    public Issues getIssues() {
+        return issues;
+    }
+
+    public void setIssues(Issues issues) {
+        this.issues.merge(issues);
+    }
+
     public boolean isSkipTag() {
         return skipTag != null && skipTag;
     }
@@ -716,6 +727,7 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
         props.put("changelog", changelog.asMap(full));
         if (releaseSupported) {
             props.put("milestone", milestone.asMap(full));
+            props.put("issues", issues.asMap(full));
         }
         props.put("prerelease", prerelease.asMap(full));
         return props;
@@ -982,6 +994,118 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
             map.put("name", name);
             map.put("close", isClose());
             return map;
+        }
+    }
+
+    public static class Issues extends AbstractModelObject<Issues> implements Domain, EnabledAware {
+        private final Label label = new Label();
+        private String comment;
+        private Boolean enabled;
+
+        @Override
+        public void freeze() {
+            super.freeze();
+            label.freeze();
+        }
+
+        @Override
+        public void merge(Issues source) {
+            freezeCheck();
+            this.comment = merge(this.comment, source.comment);
+            this.enabled = merge(this.enabled, source.enabled);
+            setLabel(source.label);
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return enabled != null && enabled;
+        }
+
+        @Override
+        public void setEnabled(Boolean enabled) {
+            freezeCheck();
+            this.enabled = enabled;
+        }
+
+        @Override
+        public boolean isEnabledSet() {
+            return enabled != null;
+        }
+
+        public String getComment() {
+            return comment;
+        }
+
+        public void setComment(String comment) {
+            freezeCheck();
+            this.comment = comment;
+        }
+
+        public Label getLabel() {
+            return label;
+        }
+
+        public void setLabel(Label label) {
+            this.label.merge(label);
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("enabled", isEnabled());
+            map.put("comment", comment);
+            map.put("label", label.asMap(full));
+            return map;
+        }
+
+        public static class Label extends AbstractModelObject<Label> implements Domain {
+            private String name;
+            private String color;
+            private String description;
+
+            @Override
+            public void merge(Label source) {
+                freezeCheck();
+                this.name = merge(this.name, source.name);
+                this.color = merge(this.color, source.color);
+                this.description = merge(this.description, source.description);
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                freezeCheck();
+                this.name = name;
+            }
+
+            public String getColor() {
+                return color;
+            }
+
+            public void setColor(String color) {
+                freezeCheck();
+                this.color = color;
+            }
+
+            public String getDescription() {
+                return description;
+            }
+
+            public void setDescription(String description) {
+                freezeCheck();
+                this.description = description;
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                Map<String, Object> map = new LinkedHashMap<>();
+                map.put("name", name);
+                map.put("color", color);
+                map.put("description", description);
+                return map;
+            }
         }
     }
 }

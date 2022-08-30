@@ -45,13 +45,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static org.jreleaser.sdk.git.ChangelogProvider.extractIssues;
+import static org.jreleaser.sdk.git.ChangelogProvider.storeIssues;
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
 import static org.jreleaser.util.ComparatorUtils.lessThan;
 import static org.jreleaser.util.Constants.KEY_CHANGELOG_CHANGES;
@@ -97,8 +101,22 @@ public class ChangelogGenerator {
             }
             context.getLogger().debug(RB.$("changelog.generator.sort.commits"), changelog.getSort());
 
+            // collect
+            List<RevCommit> commitList = StreamSupport.stream(commits.spliterator(), false)
+                .filter(c -> !changelog.isSkipMergeCommits() || c.getParentCount() <= 1)
+                .collect(toList());
+
+            if (context.getModel().getRelease().getGitService().getIssues().isEnabled()) {
+                // extract issues
+                String rawContent = commitList.stream()
+                    .map(RevCommit::getFullMessage)
+                    .collect(joining(lineSeparator()));
+                Set<Integer> issues = extractIssues(context, rawContent);
+                storeIssues(context, issues);
+            }
+
             if (changelog.resolveFormatted(context.getModel().getProject())) {
-                return formatChangelog(context, changelog, commits, revCommitComparator, commitSeparator);
+                return formatChangelog(context, changelog, commitList, revCommitComparator, commitSeparator);
             }
 
             String commitsUrl = gitService.getResolvedCommitUrl(context.getModel());
@@ -106,11 +124,10 @@ public class ChangelogGenerator {
             return "## Changelog" +
                 lineSeparator() +
                 lineSeparator() +
-                StreamSupport.stream(commits.spliterator(), false)
-                    .filter(c -> !changelog.isSkipMergeCommits() || c.getParentCount() <= 1)
+                commitList.stream()
                     .sorted(revCommitComparator)
                     .map(commit -> formatCommit(commit, commitsUrl, changelog, commitSeparator))
-                    .collect(Collectors.joining(commitSeparator));
+                    .collect(joining(commitSeparator));
         } catch (GitAPIException e) {
             throw new IOException(e);
         }
@@ -142,40 +159,6 @@ public class ChangelogGenerator {
 
     private Version defaultVersion(JReleaserContext context) {
         return VersionUtils.defaultVersion(context);
-    }
-
-    public static class Tags {
-        private final Optional<Ref> current;
-        private final Optional<Ref> previous;
-
-        private static Tags empty() {
-            return new Tags(null, null);
-        }
-
-        private static Tags current(Ref tag) {
-            return new Tags(tag, null);
-        }
-
-        private static Tags previous(Ref tag) {
-            return new Tags(null, tag);
-        }
-
-        private static Tags of(Ref tag1, Ref tag2) {
-            return new Tags(tag1, tag2);
-        }
-
-        private Tags(Ref current, Ref previous) {
-            this.current = Optional.ofNullable(current);
-            this.previous = Optional.ofNullable(previous);
-        }
-
-        public Optional<Ref> getCurrent() {
-            return current;
-        }
-
-        public Optional<Ref> getPrevious() {
-            return previous;
-        }
     }
 
     public Tags resolveTags(Git git, JReleaserContext context) throws GitAPIException {
@@ -342,14 +325,13 @@ public class ChangelogGenerator {
 
     protected String formatChangelog(JReleaserContext context,
                                      Changelog changelog,
-                                     Iterable<RevCommit> commits,
+                                     List<RevCommit> commits,
                                      Comparator<RevCommit> revCommitComparator,
                                      String lineSeparator) {
-        Set<Contributor> contributors = new LinkedHashSet<>();
+        Set<Contributor> contributors = new TreeSet<>();
         Map<String, List<Commit>> categories = new LinkedHashMap<>();
 
-        StreamSupport.stream(commits.spliterator(), false)
-            .filter(c -> !changelog.isSkipMergeCommits() || c.getParentCount() <= 1)
+        commits.stream()
             .sorted(revCommitComparator)
             .map(Commit::of)
             .peek(c -> {
@@ -385,7 +367,7 @@ public class ChangelogGenerator {
 
             changes.append(categories.get(categoryKey).stream()
                     .map(c -> resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl)))
-                    .collect(Collectors.joining(lineSeparator)))
+                    .collect(joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
         }
@@ -398,7 +380,7 @@ public class ChangelogGenerator {
 
             changes.append(categories.get(UNCATEGORIZED).stream()
                     .map(c -> resolveTemplate(changelog.getFormat(), c.asContext(changelog.isLinks(), commitsUrl)))
-                    .collect(Collectors.joining(lineSeparator)))
+                    .collect(joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
         }
@@ -445,7 +427,8 @@ public class ChangelogGenerator {
 
         String contributorFormat = isNotBlank(format) ? format : "{{contributorName}}";
 
-        grouped.forEach((name, cs) -> {
+        grouped.keySet().stream().sorted().forEach(name -> {
+            List<Contributor> cs = grouped.get(name);
             Optional<Contributor> contributor = cs.stream()
                 .filter(c -> c.getUser() != null)
                 .findFirst();
@@ -531,6 +514,40 @@ public class ChangelogGenerator {
         }
 
         return new ChangelogGenerator().createChangelog(context);
+    }
+
+    public static class Tags {
+        private final Optional<Ref> current;
+        private final Optional<Ref> previous;
+
+        private Tags(Ref current, Ref previous) {
+            this.current = Optional.ofNullable(current);
+            this.previous = Optional.ofNullable(previous);
+        }
+
+        public Optional<Ref> getCurrent() {
+            return current;
+        }
+
+        public Optional<Ref> getPrevious() {
+            return previous;
+        }
+
+        private static Tags empty() {
+            return new Tags(null, null);
+        }
+
+        private static Tags current(Ref tag) {
+            return new Tags(tag, null);
+        }
+
+        private static Tags previous(Ref tag) {
+            return new Tags(null, tag);
+        }
+
+        private static Tags of(Ref tag1, Ref tag2) {
+            return new Tags(tag1, tag2);
+        }
     }
 
     protected static class Commit {

@@ -166,11 +166,34 @@ public abstract class GitServiceValidator extends Validator {
         if (isBlank(service.getTagName())) {
             service.setTagName("v" + project.getVersion());
         }
+
         if (service.isReleaseSupported()) {
             if (isBlank(service.getReleaseName())) {
                 service.setReleaseName("Release {{ tagName }}");
             }
+
+            service.getMilestone().setName(
+                checkProperty(context,
+                    MILESTONE_NAME,
+                    service.getServiceName() + ".milestone.name",
+                    service.getMilestone().getName(),
+                    "{{tagName}}"));
+
+            GitService.Issues issues = service.getIssues();
+            if (isBlank(issues.getComment())) {
+                issues.setComment("Released in {{tagName}} -> {{releaseNotesUrl}}");
+            }
+            if (isBlank(issues.getLabel().getName())) {
+                issues.getLabel().setName("released");
+            }
+            if (isBlank(issues.getLabel().getColor())) {
+                issues.getLabel().setColor("#FF0000");
+            }
+            if (isBlank(issues.getLabel().getDescription())) {
+                issues.getLabel().setDescription("Issue has been released");
+            }
         }
+
         if (isBlank(service.getCommitAuthor().getName())) {
             service.getCommitAuthor().setName("jreleaserbot");
         }
@@ -179,16 +202,6 @@ public abstract class GitServiceValidator extends Validator {
         }
 
         validateTimeout(service);
-
-        if (service.isReleaseSupported()) {
-            // milestone
-            service.getMilestone().setName(
-                checkProperty(context,
-                    MILESTONE_NAME,
-                    service.getServiceName() + ".milestone.name",
-                    service.getMilestone().getName(),
-                    "{{tagName}}"));
-        }
 
         // eager resolve
         service.getResolvedTagName(context.getModel());
@@ -212,6 +225,7 @@ public abstract class GitServiceValidator extends Validator {
             if (service.isReleaseSupported()) {
                 service.setOverwrite(true);
             }
+            service.getIssues().setEnabled(false);
         }
 
         if (!service.getChangelog().isEnabledSet()) {
@@ -256,7 +270,7 @@ public abstract class GitServiceValidator extends Validator {
             changelog.setFormatted(Active.NEVER);
         }
 
-        if(!changelog.isEnabledSet() && changelog.isSet()) {
+        if (!changelog.isEnabledSet() && changelog.isSet()) {
             changelog.setEnabled(true);
         }
 

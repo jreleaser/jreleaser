@@ -34,6 +34,7 @@ import org.jreleaser.model.Project;
 import org.jreleaser.model.Release;
 import org.jreleaser.model.VersionPattern;
 import org.jreleaser.util.SemVer;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,6 +65,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Disabled("Test setup is too complex. Refactor")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ChangelogGeneratorUnitTest {

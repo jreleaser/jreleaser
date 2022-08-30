@@ -28,7 +28,9 @@ import org.kohsuke.github.GHBranch;
 import org.kohsuke.github.GHDiscussion;
 import org.kohsuke.github.GHException;
 import org.kohsuke.github.GHFileNotFoundException;
+import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHIssueState;
+import org.kohsuke.github.GHLabel;
 import org.kohsuke.github.GHMilestone;
 import org.kohsuke.github.GHOrganization;
 import org.kohsuke.github.GHRelease;
@@ -41,6 +43,7 @@ import org.kohsuke.github.HttpConnector;
 import org.kohsuke.github.PagedIterable;
 import org.kohsuke.github.extras.ImpatientHttpConnector;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -231,6 +234,26 @@ class Github {
         return ghTeam.createDiscussion(title)
             .body(message)
             .done();
+    }
+
+    GHLabel getOrCreateLabel(GHRepository repository, String labelName, String color, String description) throws IOException {
+        logger.debug(RB.$("git.label.fetch", labelName));
+
+        try {
+            return repository.getLabel(labelName);
+        } catch (FileNotFoundException ok) {
+            logger.debug(RB.$("git.label.create", labelName));
+            return repository.createLabel(labelName, color, description);
+        }
+    }
+
+    Optional<GHIssue> findIssue(GHRepository repository, int issueNumber) throws IOException {
+        logger.debug(RB.$("git.issue.fetch", issueNumber));
+        try {
+            return Optional.of(repository.getIssue(issueNumber));
+        } catch (FileNotFoundException ok) {
+            return Optional.empty();
+        }
     }
 
     private GHOrganization resolveOrganization(String name) throws IOException {

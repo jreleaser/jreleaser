@@ -100,4 +100,32 @@ public interface GitlabAPI {
     @RequestLine("GET")
     @Headers("Content-Type: application/json")
     Page<List<GlBranch>> listBranches1(URI uri);
+
+    @RequestLine("GET /projects/{projectId}/labels")
+    @Headers("Content-Type: application/json")
+    Page<List<GlLabel>> listLabels0(@Param("projectId") Integer projectId);
+
+    @RequestLine("GET")
+    @Headers("Content-Type: application/json")
+    Page<List<GlLabel>> listLabels1(URI uri);
+
+    @RequestLine("POST /projects/{projectId}/labels")
+    @Headers("Content-Type: application/json")
+    GlLabel createLabel(@Param("projectId") Integer projectId, @Param("name") String name, @Param("color") String color, @Param("description") String description);
+
+    @RequestLine("GET /projects/{projectId}/issues")
+    @Headers("Content-Type: application/json")
+    Page<List<GlIssue>> listIssues0(@Param("projectId") Integer projectId);
+
+    @RequestLine("GET")
+    @Headers("Content-Type: application/json")
+    Page<List<GlIssue>> listIssues1(URI uri);
+
+    @RequestLine("PUT /projects/{projectId}/issues/{issue_iid}")
+    @Headers("Content-Type: application/json")
+    void labelIssue(Map<String, List<String>> labels, @Param("projectId") Integer projectId, @Param("issue_iid") Integer iid);
+
+    @RequestLine("POST /projects/{projectId}/issues/{issue_iid}/notes")
+    @Headers("Content-Type: application/json")
+    void commentIssue(Map<String, String> params, @Param("projectId") Integer projectId, @Param("issue_iid") Integer iid);
 }

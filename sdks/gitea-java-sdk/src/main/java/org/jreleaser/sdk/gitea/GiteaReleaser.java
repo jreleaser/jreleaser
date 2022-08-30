@@ -31,6 +31,8 @@ import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.sdk.gitea.api.GtAsset;
+import org.jreleaser.sdk.gitea.api.GtIssue;
+import org.jreleaser.sdk.gitea.api.GtLabel;
 import org.jreleaser.sdk.gitea.api.GtMilestone;
 import org.jreleaser.sdk.gitea.api.GtRelease;
 import org.jreleaser.sdk.gitea.api.GtRepository;
@@ -46,6 +48,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static org.jreleaser.util.StringUtils.capitalize;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -124,6 +127,7 @@ public class GiteaReleaser extends AbstractReleaser {
                         if (gitea.getUpdate().getSections().contains(UpdateSection.ASSETS)) {
                             updateAssets(api, release);
                         }
+                        updateIssues(gitea, api);
                     }
                 } else {
                     if (context.isDryrun()) {
@@ -246,6 +250,7 @@ public class GiteaReleaser extends AbstractReleaser {
 
                 context.getLogger().info(" " + RB.$("git.upload.asset"), asset.getFilename());
             }
+            updateIssues(gitea, api);
             return;
         }
 
@@ -278,6 +283,65 @@ public class GiteaReleaser extends AbstractReleaser {
                 api.closeMilestone(gitea.getOwner(),
                     gitea.getName(),
                     milestone.get());
+            }
+        }
+
+        updateIssues(gitea, api);
+    }
+
+    private void updateIssues(org.jreleaser.model.Gitea gitea, Gitea api) throws IOException {
+        if (!gitea.getIssues().isEnabled()) return;
+
+        List<String> issueNumbers = ChangelogProvider.getIssues(context);
+
+        if (!issueNumbers.isEmpty()) {
+            context.getLogger().info(RB.$("git.issue.release.mark", issueNumbers.size()));
+        }
+
+        if (context.isDryrun()) {
+            for (String issueNumber : issueNumbers) {
+                context.getLogger().debug(RB.$("git.issue.release", issueNumber));
+            }
+            return;
+        }
+
+        String tagName = gitea.getEffectiveTagName(context.getModel());
+        String labelName = gitea.getIssues().getLabel().getName();
+        String labelColor = gitea.getIssues().getLabel().getColor();
+        Map<String, Object> props = gitea.props(context.getModel());
+        gitea.fillProps(props, context.getModel());
+        String comment = resolveTemplate(gitea.getIssues().getComment(), props);
+
+        if (labelColor.startsWith("#")) {
+            labelColor = labelColor.substring(1);
+        }
+
+        GtLabel gtLabel = null;
+
+        try {
+            gtLabel = api.getOrCreateLabel(
+                gitea.getOwner(),
+                gitea.getName(),
+                labelName,
+                labelColor,
+                gitea.getIssues().getLabel().getDescription());
+        } catch (IOException e) {
+            throw new IllegalStateException(RB.$("ERROR_git_releaser_fetch_label", tagName, labelName), e);
+        }
+
+        for (String issueNumber : issueNumbers) {
+            try {
+                Optional<GtIssue> op = api.findIssue(gitea.getOwner(), gitea.getName(), Integer.parseInt(issueNumber));
+                if (!op.isPresent()) continue;
+
+                GtIssue gtIssue = op.get();
+                if (gtIssue.getState().equals("closed") && gtIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
+                    context.getLogger().debug(RB.$("git.issue.release", issueNumber));
+                    api.addLabelToIssue(gitea.getOwner(), gitea.getName(), gtIssue, gtLabel);
+                    api.commentOnIssue(gitea.getOwner(), gitea.getName(), gtIssue, comment);
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException(RB.$("ERROR_git_releaser_cannot_release", tagName, issueNumber), e);
             }
         }
     }

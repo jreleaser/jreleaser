@@ -74,6 +74,7 @@ abstract class AbstractGitService implements GitService {
     final Property<Active> uploadAssets
 
     final UpdateImpl update
+    final IssuesImpl issues
 
     @Inject
     AbstractGitService(ObjectFactory objects) {
@@ -110,6 +111,7 @@ abstract class AbstractGitService implements GitService {
         uploadAssets = objects.property(Active).convention(Providers.notDefined())
 
         update = objects.newInstance(UpdateImpl, objects)
+        issues = objects.newInstance(IssuesImpl, objects)
     }
 
     @Internal
@@ -144,6 +146,7 @@ abstract class AbstractGitService implements GitService {
             signatures.present ||
             overwrite.present ||
             update.isSet() ||
+            issues.isSet() ||
             uploadAssets.present
     }
 
@@ -175,6 +178,11 @@ abstract class AbstractGitService implements GitService {
     }
 
     @Override
+    void issues(Action<? super Issues> action) {
+        action.execute(issues)
+    }
+
+    @Override
     void changelog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Changelog) Closure<Void> action) {
         ConfigureUtil.configure(action, changelog)
     }
@@ -192,6 +200,11 @@ abstract class AbstractGitService implements GitService {
     @Override
     void update(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Update) Closure<Void> action) {
         ConfigureUtil.configure(action, update)
+    }
+
+    @Override
+    void issues(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Issues) Closure<Void> action) {
+        ConfigureUtil.configure(action, issues)
     }
 
     protected void toModel(org.jreleaser.model.GitService service) {
@@ -226,6 +239,7 @@ abstract class AbstractGitService implements GitService {
         if (skipRelease.present) service.skipRelease = skipRelease.get()
         if (overwrite.present) service.overwrite = overwrite.get()
         if (update.isSet()) service.update = update.toModel()
+        if (issues.isSet()) service.issues = issues.toModel()
     }
 
     @CompileStatic
@@ -307,6 +321,74 @@ abstract class AbstractGitService implements GitService {
             if (close.present) milestone.close = close.get()
             if (name.present) milestone.name = name.get()
             milestone
+        }
+    }
+
+    @CompileStatic
+    static class IssuesImpl implements Issues {
+        final Property<Boolean> enabled
+        final Property<String> comment
+        final LabelImpl label
+
+        @Inject
+        IssuesImpl(ObjectFactory objects) {
+            enabled = objects.property(Boolean).convention(Providers.notDefined())
+            comment = objects.property(String).convention(Providers.notDefined())
+            label = objects.newInstance(LabelImpl, objects)
+        }
+
+        @Internal
+        boolean isSet() {
+            enabled.present ||
+                comment.present ||
+                label.isSet()
+        }
+
+        @Override
+        void label(Action<? super Label> action) {
+            action.execute(label)
+        }
+
+        @Override
+        void label(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Label) Closure<Void> action) {
+            ConfigureUtil.configure(action, label)
+        }
+
+        org.jreleaser.model.GitService.Issues toModel() {
+            org.jreleaser.model.GitService.Issues issues = new org.jreleaser.model.GitService.Issues()
+            if (enabled.present) issues.enabled = enabled.get()
+            if (comment.present) issues.comment = comment.get()
+            if (label.isSet()) issues.label = label.toModel()
+            issues
+        }
+
+        @CompileStatic
+        static class LabelImpl implements Label {
+            final Property<String> name
+            final Property<String> color
+            final Property<String> description
+
+            @Inject
+            LabelImpl(ObjectFactory objects) {
+                name = objects.property(String).convention(Providers.notDefined())
+                color = objects.property(String).convention(Providers.notDefined())
+                description = objects.property(String).convention(Providers.notDefined())
+            }
+
+            @Internal
+            boolean isSet() {
+                name.present ||
+                    color.present ||
+                    description.present
+            }
+
+            org.jreleaser.model.GitService.Issues.Label toModel() {
+                org.jreleaser.model.GitService.Issues.Label label = new org.jreleaser.model.GitService.Issues.Label()
+                if (name.present) label.name = name.get()
+                if (color.present) label.color = color.get()
+                if (description.present) label.description = description.get()
+                label
+            }
         }
     }
 }

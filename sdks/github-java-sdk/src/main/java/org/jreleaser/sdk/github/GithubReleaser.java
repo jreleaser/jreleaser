@@ -40,6 +40,9 @@ import org.jreleaser.sdk.github.api.GhReleaseNotesParams;
 import org.jreleaser.util.JReleaserException;
 import org.kohsuke.github.GHAsset;
 import org.kohsuke.github.GHBranch;
+import org.kohsuke.github.GHIssue;
+import org.kohsuke.github.GHIssueState;
+import org.kohsuke.github.GHLabel;
 import org.kohsuke.github.GHMilestone;
 import org.kohsuke.github.GHRelease;
 import org.kohsuke.github.GHReleaseUpdater;
@@ -53,10 +56,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import static org.jreleaser.sdk.git.ChangelogProvider.extractIssues;
+import static org.jreleaser.sdk.git.ChangelogProvider.storeIssues;
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -73,7 +80,14 @@ public class GithubReleaser extends AbstractReleaser {
         org.jreleaser.model.Github github = context.getModel().getRelease().getGithub();
 
         if (github.getReleaseNotes().isEnabled()) {
-            return ChangelogProvider.storeChangelog(context, generateReleaseNotesByAPI());
+            String content = generateReleaseNotesByAPI();
+
+            if (github.getIssues().isEnabled()) {
+                Set<Integer> issues = extractIssues(context, content);
+                storeIssues(context, issues);
+            }
+
+            return ChangelogProvider.storeChangelog(context, content);
         }
 
         try {
@@ -194,6 +208,7 @@ public class GithubReleaser extends AbstractReleaser {
                             updateAssets(api, release);
                         }
                         linkDiscussion(tagName, release);
+                        updateIssues(github, api);
                     }
                 } else {
                     if (context.isDryrun()) {
@@ -307,6 +322,7 @@ public class GithubReleaser extends AbstractReleaser {
 
                 context.getLogger().info(" " + RB.$("git.upload.asset"), asset.getFilename());
             }
+            updateIssues(github, api);
             return;
         }
 
@@ -343,6 +359,63 @@ public class GithubReleaser extends AbstractReleaser {
         }
 
         linkDiscussion(tagName, release);
+        updateIssues(github, api);
+    }
+
+    private void updateIssues(org.jreleaser.model.Github github, Github api) throws IOException {
+        if (!github.getIssues().isEnabled()) return;
+
+        List<String> issueNumbers = ChangelogProvider.getIssues(context);
+
+        if (!issueNumbers.isEmpty()) {
+            context.getLogger().info(RB.$("git.issue.release.mark", issueNumbers.size()));
+        }
+
+        if (context.isDryrun()) {
+            for (String issueNumber : issueNumbers) {
+                context.getLogger().debug(RB.$("git.issue.release", issueNumber));
+            }
+            return;
+        }
+
+        String tagName = github.getEffectiveTagName(context.getModel());
+        String labelName = github.getIssues().getLabel().getName();
+        String labelColor = github.getIssues().getLabel().getColor();
+        Map<String, Object> props = github.props(context.getModel());
+        github.fillProps(props, context.getModel());
+        String comment = resolveTemplate(github.getIssues().getComment(), props);
+        if (labelColor.startsWith("#")) {
+            labelColor = labelColor.substring(1);
+        }
+
+        GHRepository ghRepository = api.findRepository(github.getOwner(), github.getName());
+        GHLabel ghLabel = null;
+
+        try {
+            ghLabel = api.getOrCreateLabel(
+                ghRepository,
+                labelName,
+                labelColor,
+                github.getIssues().getLabel().getDescription());
+        } catch (IOException e) {
+            throw new IllegalStateException(RB.$("ERROR_git_releaser_fetch_label", tagName, labelName), e);
+        }
+
+        for (String issueNumber : issueNumbers) {
+            try {
+                Optional<GHIssue> op = api.findIssue(ghRepository, Integer.parseInt(issueNumber));
+                if (!op.isPresent()) continue;
+
+                GHIssue ghIssue = op.get();
+                if (ghIssue.getState() == GHIssueState.CLOSED && ghIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
+                    context.getLogger().debug(RB.$("git.issue.release", issueNumber));
+                    ghIssue.addLabels(ghLabel);
+                    ghIssue.comment(comment);
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException(RB.$("ERROR_git_releaser_cannot_release", tagName, issueNumber), e);
+            }
+        }
     }
 
     private void updateAssets(Github api, GHRelease release) throws IOException {

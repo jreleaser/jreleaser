@@ -95,4 +95,24 @@ public interface GiteaAPI {
     @RequestLine("DELETE /repos/{owner}/{repo}/releases/{releaseId}/assets/{assetId}")
     @Headers("Content-Type: application/json")
     void deleteAsset(@Param("owner") String owner, @Param("repo") String repo, @Param("releaseId") Integer releaseId, @Param("assetId") Integer assetId);
+
+    @RequestLine("GET /repos/{owner}/{repo}/labels")
+    @Headers("Content-Type: application/json")
+    Page<List<GtLabel>> listLabels(@Param("owner") String owner, @Param("repo") String repo, @QueryMap Map<String, Object> q);
+
+    @RequestLine("POST /repos/{owner}/{repo}/labels")
+    @Headers("Content-Type: application/json")
+    GtLabel createLabel(@Param("owner") String owner, @Param("repo") String repo, @Param("name") String name, @Param("color") String color, @Param("description") String description);
+
+    @RequestLine("GET /repos/{owner}/{repo}/issues/{issueNumber}")
+    @Headers("Content-Type: application/json")
+    GtIssue findIssue(@Param("owner") String owner, @Param("repo") String repo, @Param("issueNumber") int issueNumber);
+
+    @RequestLine("POST /repos/{owner}/{repo}/issues/{issueNumber}/labels")
+    @Headers("Content-Type: application/json")
+    void labelIssue(Map<String, List<Integer>> labels, @Param("owner") String owner, @Param("repo") String repo, @Param("issueNumber") Integer issueNumber);
+
+    @RequestLine("POST /repos/{owner}/{repo}/issues/{issueNumber}/comments")
+    @Headers("Content-Type: application/json")
+    void commentIssue(Map<String, String> params, @Param("owner") String owner, @Param("repo") String repo, @Param("issueNumber") Integer issueNumber);
 }

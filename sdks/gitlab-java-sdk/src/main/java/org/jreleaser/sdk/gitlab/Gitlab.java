@@ -36,6 +36,8 @@ import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.gitlab.api.GitlabAPI;
 import org.jreleaser.sdk.gitlab.api.GlBranch;
 import org.jreleaser.sdk.gitlab.api.GlFileUpload;
+import org.jreleaser.sdk.gitlab.api.GlIssue;
+import org.jreleaser.sdk.gitlab.api.GlLabel;
 import org.jreleaser.sdk.gitlab.api.GlLinkRequest;
 import org.jreleaser.sdk.gitlab.api.GlMilestone;
 import org.jreleaser.sdk.gitlab.api.GlProject;
@@ -54,7 +56,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -406,6 +410,102 @@ class Gitlab {
         }
 
         return Optional.empty();
+    }
+
+    GlLabel getOrCreateLabel(Integer projectIdentifier, String labelName, String labelColor, String description) throws IOException {
+        logger.debug(RB.$("git.label.fetch", labelName));
+
+        List<GlLabel> labels = listLabels(projectIdentifier);
+        Optional<GlLabel> label = labels.stream()
+            .filter(l -> l.getName().equals(labelName))
+            .findFirst();
+
+        if (label.isPresent()) {
+            return label.get();
+        }
+
+        logger.debug(RB.$("git.label.create", labelName));
+        return api.createLabel(projectIdentifier, labelName, labelColor, description);
+    }
+
+    void addLabelToIssue(Integer projectIdentifier, GlIssue issue, GlLabel label) throws IOException {
+        logger.debug(RB.$("git.issue.label", label.getName(), issue.getIid()));
+
+        Map<String, List<String>> labels = new LinkedHashMap<>();
+        List<String> list = labels.computeIfAbsent("labels", k -> new ArrayList<>());
+        list.addAll(issue.getLabels());
+        list.add(label.getName());
+
+        api.labelIssue(labels, projectIdentifier, issue.getIid());
+    }
+
+    void commentOnIssue(Integer projectIdentifier, GlIssue issue, String comment) throws IOException {
+        logger.debug(RB.$("git.issue.comment", issue.getIid()));
+
+        Map<String, String> params = new LinkedHashMap<>();
+        params.put("body", comment);
+
+        api.commentIssue(params, projectIdentifier, issue.getIid());
+    }
+
+    List<GlLabel> listLabels(Integer projectIdentifier) throws IOException {
+        logger.debug(RB.$("gitlab.list.labels"), projectIdentifier);
+
+        List<GlLabel> labels = new ArrayList<>();
+        Page<List<GlLabel>> page = api.listLabels0(projectIdentifier);
+        labels.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            try {
+                collectLabels(page, labels);
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
+        }
+
+        return labels;
+    }
+
+    private void collectLabels(Page<List<GlLabel>> page, List<GlLabel> labels) throws URISyntaxException {
+        URI next = new URI(page.getLinks().next());
+        logger.debug(next.toString());
+
+        page = api.listLabels1(next);
+        labels.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            collectLabels(page, labels);
+        }
+    }
+
+    List<GlIssue> listIssues(Integer projectIdentifier) throws IOException {
+        logger.debug(RB.$("gitlab.list.issues"), projectIdentifier);
+
+        List<GlIssue> issues = new ArrayList<>();
+        Page<List<GlIssue>> page = api.listIssues0(projectIdentifier);
+        issues.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            try {
+                collectIssues(page, issues);
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
+        }
+
+        return issues;
+    }
+
+    private void collectIssues(Page<List<GlIssue>> page, List<GlIssue> issues) throws URISyntaxException {
+        URI next = new URI(page.getLinks().next());
+        logger.debug(next.toString());
+
+        page = api.listIssues1(next);
+        issues.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            collectIssues(page, issues);
+        }
     }
 
     private FormData toFormData(Path asset) throws IOException {

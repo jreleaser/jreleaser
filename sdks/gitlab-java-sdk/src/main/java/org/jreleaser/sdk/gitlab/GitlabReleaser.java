@@ -36,6 +36,8 @@ import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.sdk.gitlab.api.GlFileUpload;
+import org.jreleaser.sdk.gitlab.api.GlIssue;
+import org.jreleaser.sdk.gitlab.api.GlLabel;
 import org.jreleaser.sdk.gitlab.api.GlLinkRequest;
 import org.jreleaser.sdk.gitlab.api.GlMilestone;
 import org.jreleaser.sdk.gitlab.api.GlProject;
@@ -55,6 +57,7 @@ import java.util.regex.Pattern;
 import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
 import static org.jreleaser.util.Constants.KEY_PLATFORM_REPLACED;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
@@ -143,6 +146,7 @@ public class GitlabReleaser extends AbstractReleaser {
                                 api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), links);
                             }
                         }
+                        updateIssues(gitlab, api);
                     }
                 } else {
                     if (context.isDryrun()) {
@@ -264,6 +268,7 @@ public class GitlabReleaser extends AbstractReleaser {
                     context.getLogger().info(" " + RB.$("git.upload.asset"), link.getName());
                 }
             }
+            updateIssues(gitlab, api);
 
             return;
         }
@@ -306,6 +311,72 @@ public class GitlabReleaser extends AbstractReleaser {
                     gitlab.getName(),
                     gitlab.getProjectIdentifier(),
                     milestone.get());
+            }
+        }
+        updateIssues(gitlab, api);
+    }
+
+    private void updateIssues(org.jreleaser.model.Gitlab gitlab, Gitlab api) throws IOException {
+        if (!gitlab.getIssues().isEnabled()) return;
+
+        List<String> issueNumbers = ChangelogProvider.getIssues(context);
+
+        if (!issueNumbers.isEmpty()) {
+            context.getLogger().info(RB.$("git.issue.release.mark", issueNumbers.size()));
+        }
+
+        if (context.isDryrun()) {
+            for (String issueNumber : issueNumbers) {
+                context.getLogger().debug(RB.$("git.issue.release", issueNumber));
+            }
+            return;
+        }
+
+        Integer projectIdentifier = api.findProject(gitlab.getName(), gitlab.getProjectIdentifier()).getId();
+        String tagName = gitlab.getEffectiveTagName(context.getModel());
+        String labelName = gitlab.getIssues().getLabel().getName();
+        String labelColor = gitlab.getIssues().getLabel().getColor();
+        Map<String, Object> props = gitlab.props(context.getModel());
+        gitlab.fillProps(props, context.getModel());
+        String comment = resolveTemplate(gitlab.getIssues().getComment(), props);
+
+        if (!labelColor.startsWith("#")) {
+            try {
+                Integer.parseInt(labelColor, 16);
+                labelColor = "#" + labelColor;
+            } catch (NumberFormatException ok) {
+                // ignored
+            }
+        }
+
+        GlLabel glLabel = null;
+
+        try {
+            glLabel = api.getOrCreateLabel(
+                projectIdentifier,
+                labelName,
+                labelColor,
+                gitlab.getIssues().getLabel().getDescription());
+        } catch (IOException e) {
+            throw new IllegalStateException(RB.$("ERROR_git_releaser_fetch_label", tagName, labelName), e);
+        }
+
+        List<GlIssue> issues = api.listIssues(projectIdentifier);
+
+        for (String issueNumber : issueNumbers) {
+            try {
+                Integer in = Integer.parseInt(issueNumber);
+                Optional<GlIssue> op = issues.stream().filter(i -> i.getIid().equals(in)).findFirst();
+                if (!op.isPresent()) continue;
+
+                GlIssue glIssue = op.get();
+                if (glIssue.getState().equals("closed") && glIssue.getLabels().stream().noneMatch(l -> l.equals(labelName))) {
+                    context.getLogger().debug(RB.$("git.issue.release", issueNumber));
+                    api.addLabelToIssue(projectIdentifier, glIssue, glLabel);
+                    api.commentOnIssue(projectIdentifier, glIssue, comment);
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException(RB.$("ERROR_git_releaser_cannot_release", tagName, issueNumber), e);
             }
         }
     }
