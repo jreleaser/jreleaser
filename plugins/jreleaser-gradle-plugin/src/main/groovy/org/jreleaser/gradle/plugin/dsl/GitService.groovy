@@ -133,6 +133,6 @@ interface GitService extends Releaser {
     interface Milestone {
         Property<Boolean> getClose()
 
-        Property<Boolean> getName()
+        Property<String> getName()
     }
 }
