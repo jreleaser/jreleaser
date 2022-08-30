@@ -56,7 +56,7 @@ interface Announce extends Activatable {
 
     Zulip getZulip()
 
-    NamedDomainObjectContainer<Webhook> getHttp()
+    NamedDomainObjectContainer<HttpAnnouncer> getHttp()
 
     NamedDomainObjectContainer<Webhook> getWebhooks()
 
