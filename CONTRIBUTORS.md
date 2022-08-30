@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-27-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-28-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -44,6 +44,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/ixchelruiz"><img src="https://avatars.githubusercontent.com/u/1284934?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ix-chel Ruiz</b></sub></a><br /><a href="#ideas-ixchelruiz" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://fbiville.github.io"><img src="https://avatars.githubusercontent.com/u/445792?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Florent Biville</b></sub></a><br /><a href="#ideas-fbiville" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://lesincroyableslivres.fr/"><img src="https://avatars.githubusercontent.com/u/1279749?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Guillaume Smet</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=gsmet" title="Code">💻</a> <a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Agsmet" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/aidenzzz"><img src="https://avatars.githubusercontent.com/u/8568425?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aiden Turner</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=aidenzzz" title="Code">💻</a></td>
   </tr>
 </table>
 
