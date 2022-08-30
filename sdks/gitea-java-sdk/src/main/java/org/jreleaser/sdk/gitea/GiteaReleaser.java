@@ -356,7 +356,7 @@ public class GiteaReleaser extends AbstractReleaser {
         Map<String, Asset> assetsToBePublished = new LinkedHashMap<>();
         assets.forEach(asset -> assetsToBePublished.put(asset.getFilename(), asset));
 
-        existingAssets.keySet().forEach(name -> {
+        assetsToBePublished.keySet().forEach(name -> {
             if (existingAssets.containsKey(name)) {
                 assetsToBeUpdated.add(assetsToBePublished.get(name));
             } else {
