@@ -262,6 +262,15 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "aidenzzz",
+      "name": "Aiden Turner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8568425?v=4",
+      "profile": "https://github.com/aidenzzz",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
