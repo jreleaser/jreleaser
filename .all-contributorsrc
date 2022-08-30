@@ -252,6 +252,16 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "gsmet",
+      "name": "Guillaume Smet",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1279749?v=4",
+      "profile": "https://lesincroyableslivres.fr/",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
