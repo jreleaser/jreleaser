@@ -71,12 +71,22 @@ public final class ClientUtils {
         // noop
     }
 
-    public static FormData toFormData(Path asset) throws IOException {
+    public static FormData toFormData(String fileName, String contentType, String content) throws IOException {
+        return toFormData(fileName, contentType, content.getBytes(UTF_8));
+    }
+
+    public static FormData toFormData(String fileName, String contentType, byte[] content) throws IOException {
         return FormData.builder()
-            .fileName(asset.getFileName().toString())
-            .contentType(MediaType.parse(TIKA.detect(asset)).toString())
-            .data(Files.readAllBytes(asset))
+            .fileName(fileName)
+            .contentType(contentType)
+            .data(content)
             .build();
+    }
+
+    public static FormData toFormData(Path asset) throws IOException {
+        return toFormData(asset.getFileName().toString(),
+            MediaType.parse(TIKA.detect(asset)).toString(),
+            Files.readAllBytes(asset));
     }
 
     public static Feign.Builder builder(JReleaserLogger logger,

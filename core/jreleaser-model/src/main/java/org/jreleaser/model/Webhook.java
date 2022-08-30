@@ -86,6 +86,11 @@ public class Webhook extends AbstractAnnouncer<Webhook> {
         return Env.env(Env.toVar(name) + "_WEBHOOK", webhook);
     }
 
+    @Override
+    public String getPrefix() {
+        return "webhook";
+    }
+
     public void setName(String name) {
         freezeCheck();
         this.name = name;

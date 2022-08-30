@@ -42,6 +42,7 @@ public class Announce extends AbstractModelObject<Announce> implements Domain, A
     private final Discussions discussions = new Discussions();
     private final Gitter gitter = new Gitter();
     private final GoogleChat googleChat = new GoogleChat();
+    private final HttpAnnouncers http = new HttpAnnouncers();
     private final Mail mail = new Mail();
     private final Mastodon mastodon = new Mastodon();
     private final Mattermost mattermost = new Mattermost();
@@ -65,6 +66,7 @@ public class Announce extends AbstractModelObject<Announce> implements Domain, A
         discussions.freeze();
         gitter.freeze();
         googleChat.freeze();
+        http.freeze();
         mail.freeze();
         mastodon.freeze();
         mattermost.freeze();
@@ -87,6 +89,7 @@ public class Announce extends AbstractModelObject<Announce> implements Domain, A
         setDiscussions(announce.discussions);
         setGitter(announce.gitter);
         setGoogleChat(announce.googleChat);
+        setConfiguredHttp(announce.http);
         setMail(announce.mail);
         setMastodon(announce.mastodon);
         setMattermost(announce.mattermost);
@@ -251,6 +254,26 @@ public class Announce extends AbstractModelObject<Announce> implements Domain, A
         this.twitter.merge(twitter);
     }
 
+    public HttpAnnouncers getConfiguredHttp() {
+        return this.http;
+    }
+
+    void setConfiguredHttp(HttpAnnouncers https) {
+        this.http.merge(https);
+    }
+
+    public Map<String, HttpAnnouncer> getHttp() {
+        return this.http.getHttpAnnouncers();
+    }
+
+    public void setHttp(Map<String, HttpAnnouncer> https) {
+        this.http.setHttpAnnouncers(https);
+    }
+
+    public void addHttpAnnouncer(HttpAnnouncer http) {
+        this.http.addHttpAnnouncer(http);
+    }
+
     public Webhooks getConfiguredWebhooks() {
         return this.webhooks;
     }
@@ -289,6 +312,7 @@ public class Announce extends AbstractModelObject<Announce> implements Domain, A
         map.putAll(discussions.asMap(full));
         map.putAll(gitter.asMap(full));
         map.putAll(googleChat.asMap(full));
+        map.putAll(http.asMap(full));
         map.putAll(mail.asMap(full));
         map.putAll(mastodon.asMap(full));
         map.putAll(mattermost.asMap(full));
@@ -330,6 +354,8 @@ public class Announce extends AbstractModelObject<Announce> implements Domain, A
                 return (A) getGitter();
             case GoogleChat.NAME:
                 return (A) getGoogleChat();
+            case HttpAnnouncers.NAME:
+                return (A) getConfiguredHttp();
             case Mail.NAME:
                 return (A) getMail();
             case Mastodon.NAME:
@@ -362,6 +388,7 @@ public class Announce extends AbstractModelObject<Announce> implements Domain, A
         set.add(Discussions.NAME);
         set.add(Gitter.NAME);
         set.add(GoogleChat.NAME);
+        set.add(HttpAnnouncers.NAME);
         set.add(Mail.NAME);
         set.add(Mastodon.NAME);
         set.add(Mattermost.NAME);
