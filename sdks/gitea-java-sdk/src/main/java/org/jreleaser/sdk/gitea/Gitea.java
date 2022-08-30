@@ -58,7 +58,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -375,7 +374,7 @@ class Gitea {
     void addLabelToIssue(String owner, String name, GtIssue issue, GtLabel label) throws IOException {
         logger.debug(RB.$("git.issue.label", label.getName(), issue.getNumber()));
 
-        Map<String,List<Integer>> labels = new LinkedHashMap<>();
+        Map<String, List<Integer>> labels = new LinkedHashMap<>();
         List<Integer> list = labels.computeIfAbsent("labels", k -> new ArrayList<>());
         list.addAll(issue.getLabels().stream().map(GtLabel::getId).collect(toList()));
         list.add(label.getId());
@@ -386,7 +385,7 @@ class Gitea {
     void commentOnIssue(String owner, String name, GtIssue issue, String comment) throws IOException {
         logger.debug(RB.$("git.issue.comment", issue.getNumber()));
 
-        Map<String,String> params = new LinkedHashMap<>();
+        Map<String, String> params = new LinkedHashMap<>();
         params.put("body", comment);
 
         api.commentIssue(params, owner, name, issue.getNumber());
