@@ -27,6 +27,7 @@ import static org.jreleaser.model.validation.DiscordValidator.validateDiscord;
 import static org.jreleaser.model.validation.DiscussionsValidator.validateDiscussions;
 import static org.jreleaser.model.validation.GitterValidator.validateGitter;
 import static org.jreleaser.model.validation.GoogleChatValidator.validateGoogleChat;
+import static org.jreleaser.model.validation.HttpAnnouncerValidator.validateHttpAnnouncers;
 import static org.jreleaser.model.validation.MailValidator.validateMail;
 import static org.jreleaser.model.validation.MastodonValidator.validateMastodon;
 import static org.jreleaser.model.validation.MattermostValidator.validateMattermost;
@@ -54,6 +55,7 @@ public abstract class AnnouncersValidator extends Validator {
         validateDiscord(context, announce.getDiscord(), errorCollector);
         validateGitter(context, announce.getGitter(), errorCollector);
         validateGoogleChat(context, announce.getGoogleChat(), errorCollector);
+        validateHttpAnnouncers(context, announce.getConfiguredHttp(), errorCollector);
         validateMail(context, announce.getMail(), errorCollector);
         validateMastodon(context, announce.getMastodon(), errorCollector);
         validateMattermost(context, announce.getMattermost(), errorCollector);
@@ -79,6 +81,7 @@ public abstract class AnnouncersValidator extends Validator {
                 announce.getDiscussions().isEnabled() ||
                 announce.getGitter().isEnabled() ||
                 announce.getGoogleChat().isEnabled() ||
+                announce.getConfiguredHttp().isEnabled() ||
                 announce.getMail().isEnabled() ||
                 announce.getMastodon().isEnabled() ||
                 announce.getMattermost().isEnabled() ||

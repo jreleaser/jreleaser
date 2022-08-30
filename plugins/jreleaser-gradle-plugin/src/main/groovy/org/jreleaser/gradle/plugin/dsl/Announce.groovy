@@ -56,6 +56,8 @@ interface Announce extends Activatable {
 
     Zulip getZulip()
 
+    NamedDomainObjectContainer<Webhook> getHttp()
+
     NamedDomainObjectContainer<Webhook> getWebhooks()
 
     void article(Action<? super Article> action)
@@ -67,6 +69,8 @@ interface Announce extends Activatable {
     void gitter(Action<? super Gitter> action)
 
     void googleChat(Action<? super GoogleChat> action)
+
+    void http(Action<? super NamedDomainObjectContainer<HttpAnnouncer>> action)
 
     void mail(Action<? super Mail> action)
 
@@ -97,6 +101,8 @@ interface Announce extends Activatable {
     void gitter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Gitter) Closure<Void> action)
 
     void googleChat(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GoogleChat) Closure<Void> action)
+
+    void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void mail(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mail) Closure<Void> action)
 

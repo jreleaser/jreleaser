@@ -30,6 +30,7 @@ import org.jreleaser.gradle.plugin.dsl.Discord
 import org.jreleaser.gradle.plugin.dsl.Discussions
 import org.jreleaser.gradle.plugin.dsl.Gitter
 import org.jreleaser.gradle.plugin.dsl.GoogleChat
+import org.jreleaser.gradle.plugin.dsl.HttpAnnouncer
 import org.jreleaser.gradle.plugin.dsl.Mail
 import org.jreleaser.gradle.plugin.dsl.Mastodon
 import org.jreleaser.gradle.plugin.dsl.Mattermost
@@ -69,6 +70,7 @@ class AnnounceImpl implements Announce {
     final TelegramImpl telegram
     final TwitterImpl twitter
     final ZulipImpl zulip
+    final NamedDomainObjectContainer<HttpAnnouncer> http
     final NamedDomainObjectContainer<Webhook> webhooks
 
     @Inject
@@ -88,6 +90,15 @@ class AnnounceImpl implements Announce {
         telegram = objects.newInstance(TelegramImpl, objects)
         twitter = objects.newInstance(TwitterImpl, objects)
         zulip = objects.newInstance(ZulipImpl, objects)
+
+        http = objects.domainObjectContainer(HttpAnnouncer, new NamedDomainObjectFactory<HttpAnnouncer>() {
+            @Override
+            HttpAnnouncer create(String name) {
+                HttpAnnouncerImpl http = objects.newInstance(HttpAnnouncerImpl, objects)
+                http.name = name
+                return http
+            }
+        })
 
         webhooks = objects.domainObjectContainer(Webhook, new NamedDomainObjectFactory<Webhook>() {
             @Override
@@ -129,6 +140,11 @@ class AnnounceImpl implements Announce {
     @Override
     void googleChat(Action<? super GoogleChat> action) {
         action.execute(googleChat)
+    }
+
+    @Override
+    void http(Action<? super NamedDomainObjectContainer<HttpAnnouncer>> action) {
+        action.execute(http)
     }
 
     @Override
@@ -207,6 +223,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, http)
+    }
+
+    @Override
     void mail(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Mail) Closure<Void> action) {
         ConfigureUtil.configure(action, mail)
     }
@@ -273,6 +294,10 @@ class AnnounceImpl implements Announce {
         if (telegram.isSet()) announce.telegram = telegram.toModel()
         if (twitter.isSet()) announce.twitter = twitter.toModel()
         if (zulip.isSet()) announce.zulip = zulip.toModel()
+
+        http.toList().each { http ->
+            announce.addHttpAnnouncer(((HttpAnnouncerImpl) http).toModel())
+        }
 
         webhooks.toList().each { webhook ->
             announce.addWebhook(((WebhookImpl) webhook).toModel())

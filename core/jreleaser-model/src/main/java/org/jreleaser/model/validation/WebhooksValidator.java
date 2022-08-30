@@ -82,9 +82,10 @@ public abstract class WebhooksValidator extends Validator {
                 errors,
                 context.isDryrun()));
 
+        String defaultMessageTemplate = DEFAULT_TPL + webhook.getName() + ".tpl";
         if (isBlank(webhook.getMessage()) && isBlank(webhook.getMessageTemplate())) {
-            if (Files.exists(context.getBasedir().resolve(DEFAULT_TPL + webhook.getName() + ".tpl"))) {
-                webhook.setMessageTemplate(DEFAULT_TPL + webhook.getName() + ".tpl");
+            if (Files.exists(context.getBasedir().resolve(defaultMessageTemplate))) {
+                webhook.setMessageTemplate(defaultMessageTemplate);
             } else {
                 webhook.setMessage(RB.$("default.release.message"));
             }
@@ -95,6 +96,7 @@ public abstract class WebhooksValidator extends Validator {
         }
 
         if (isNotBlank(webhook.getMessageTemplate()) &&
+            !defaultMessageTemplate.equals(webhook.getMessageTemplate().trim()) &&
             !Files.exists(context.getBasedir().resolve(webhook.getMessageTemplate().trim()))) {
             errors.configuration(RB.$("validation_directory_not_exist",
                 "webhook." + webhook.getName() + ".messageTemplate", webhook.getMessageTemplate()));
