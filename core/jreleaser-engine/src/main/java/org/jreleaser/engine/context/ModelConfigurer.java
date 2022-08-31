@@ -153,7 +153,8 @@ public class ModelConfigurer {
             logger.warn(RB.$("ERROR_context_configurer_detected_git_name"), repository.getName(), service.getName());
         }
 
-        if (isBlank(Env.env(BRANCH, service.getBranch()))) {
+        service.setBranch(Env.env(BRANCH, service.getBranch()));
+        if (isBlank(service.getBranch())) {
             service.setBranch(head.getRefName());
         }
         if (!service.getBranch().equals(head.getRefName())) {
