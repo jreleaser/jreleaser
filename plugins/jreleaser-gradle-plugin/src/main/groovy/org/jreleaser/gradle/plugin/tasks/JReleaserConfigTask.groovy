@@ -40,21 +40,25 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     final Property<Boolean> full
 
     @Input
+    final Property<Boolean> announce
+
+    @Input
     final Property<Boolean> assembly
 
     @Input
-    final Property<Boolean> download
+    final Property<Boolean> changelog
 
     @Input
-    final Property<Boolean> changelog
+    final Property<Boolean> download
 
     @Inject
     JReleaserConfigTask(ObjectFactory objects) {
         super(objects)
         full = objects.property(Boolean).convention(false)
         assembly = objects.property(Boolean).convention(false)
-        download = objects.property(Boolean).convention(false)
+        announce = objects.property(Boolean).convention(false)
         changelog = objects.property(Boolean).convention(false)
+        download = objects.property(Boolean).convention(false)
     }
 
     @Option(option = 'full', description = 'Display full configuration (OPTIONAL).')
@@ -62,14 +66,14 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
         this.full.set(full)
     }
 
+    @Option(option = 'announce', description = 'Display announce configuration (OPTIONAL).')
+    void setAnnounce(boolean announce) {
+        this.announce.set(announce)
+    }
+
     @Option(option = 'assembly', description = 'Display assembly configuration (OPTIONAL).')
     void setAssembly(boolean assembly) {
         this.assembly.set(assembly)
-    }
-
-    @Option(option = 'download', description = 'Display download configuration (OPTIONAL).')
-    void setDownload(boolean download) {
-        this.download.set(download)
     }
 
     @Option(option = 'changelog', description = 'Display changelog configuration (OPTIONAL).')
@@ -77,10 +81,17 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
         this.changelog.set(changelog)
     }
 
+    @Option(option = 'download', description = 'Display download configuration (OPTIONAL).')
+    void setDownload(boolean download) {
+        this.download.set(download)
+    }
+
     @TaskAction
     void displayConfig() {
         if (download.get()) {
             mode = JReleaserContext.Mode.DOWNLOAD
+        } else if (announce.get()) {
+            mode = JReleaserContext.Mode.ANNOUNCE
         } else if (assembly.get()) {
             mode = JReleaserContext.Mode.ASSEMBLE
         } else if (changelog.get()) {

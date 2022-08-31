@@ -37,7 +37,9 @@
     <property name="jreleaser.overwrite" value="false"/>
     <property name="jreleaser.snapshot" value="false"/>
     <property name="jreleaser.full" value="false"/>
+    <property name="jreleaser.announce" value="false"/>
     <property name="jreleaser.assembly" value="false"/>
+    <property name="jreleaser.changelog" value="false"/>
     <property name="jreleaser.download" value="false"/>
     <property name="jreleaser.outputdir" value="build"/>
     <property name="jreleaser.select.current.platform" value="false"/>
@@ -121,7 +123,9 @@
         <jreleaser:config full="${jreleaser.full}"
                           selectCurrentPlatform="${jreleaser.select.current.platform}"
                           gitRootSearch="${jreleaser.git.root.search}"
+                          announce="${jreleaser.announce}"
                           assembly="${jreleaser.assembly}"
+                          changelog="${jreleaser.changelog}"
                           download="${jreleaser.download}"
                           basedir="${jreleaser.basedir}"
                           configFile="${jreleaser.config.file}"

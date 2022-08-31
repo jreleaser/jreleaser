@@ -40,6 +40,7 @@ public class ModelValidator {
             }
 
             switch (context.getMode()) {
+                case ANNOUNCE:
                 case CHANGELOG:
                 case DOWNLOAD:
                 case ASSEMBLE:

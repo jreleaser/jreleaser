@@ -46,20 +46,25 @@ public class JReleaserConfigMojo extends AbstractPlatformAwareJReleaserMojo {
     @Parameter(property = "jreleaser.config.full")
     private boolean full;
     /**
+     * Display announce configuration.
+     */
+    @Parameter(property = "jreleaser.config.announce")
+    private boolean announce;
+    /**
      * Display assembly configuration.
      */
     @Parameter(property = "jreleaser.config.assembly")
     private boolean assembly;
     /**
+     * Display changelog configuration.
+     */
+    @Parameter(property = "jreleaser.config.changelog")
+    private boolean changelog;
+    /**
      * Display download configuration.
      */
     @Parameter(property = "jreleaser.config.download")
     private boolean download;
-    /**
-     * Display download configuration.
-     */
-    @Parameter(property = "jreleaser.config.changelog")
-    private boolean changelog;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -80,6 +85,7 @@ public class JReleaserConfigMojo extends AbstractPlatformAwareJReleaserMojo {
         if (download) return JReleaserContext.Mode.DOWNLOAD;
         if (assembly) return JReleaserContext.Mode.ASSEMBLE;
         if (changelog) return JReleaserContext.Mode.CHANGELOG;
+        if (announce) return JReleaserContext.Mode.ANNOUNCE;
         return JReleaserContext.Mode.CONFIG;
     }
 }
