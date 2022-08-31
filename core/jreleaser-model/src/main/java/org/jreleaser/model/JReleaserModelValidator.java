@@ -59,25 +59,25 @@ public final class JReleaserModelValidator {
     private static void validateModel(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
         validateHooks(context, mode, errors);
         validateProject(context, mode, errors);
-        validateDownloaders(context, mode, errors);
-        validateAssemblers(context, mode, errors);
+        if (mode.validateConfig() || mode.validateDownload()) validateDownloaders(context, mode, errors);
+        if (mode.validateConfig() || mode.validateAssembly()) validateAssemblers(context, mode, errors);
         if (context.getModel().getCommit() != null) {
             validateSigning(context, mode, errors);
             validateRelease(context, mode, errors);
         }
 
-        validateChecksum(context, mode, errors);
-        validateUploaders(context, mode, errors);
-        validatePackagers(context, mode, errors);
-        validateDistributions(context, mode, errors);
-        validateFiles(context, mode, errors);
-        validateAnnouncers(context, mode, errors);
+        if (mode.validateConfig()) validateChecksum(context, mode, errors);
+        if (mode.validateConfig()) validateUploaders(context, mode, errors);
+        if (mode.validateConfig()) validatePackagers(context, mode, errors);
+        if (mode.validateConfig()) validateDistributions(context, mode, errors);
+        if (mode.validateConfig()) validateFiles(context, mode, errors);
+        if (mode.validateConfig() || mode.validateAnnounce()) validateAnnouncers(context, mode, errors);
 
         context.getLogger().setPrefix("postvalidation");
         try {
             postValidateProject(context, mode, errors);
-            postValidateAssemblers(context, mode, errors);
-            postValidateDistributions(context, mode, errors);
+            if (mode.validateConfig() || mode.validateAssembly()) postValidateAssemblers(context, mode, errors);
+            if (mode.validateConfig()) postValidateDistributions(context, mode, errors);
         } finally {
             context.getLogger().restorePrefix();
         }

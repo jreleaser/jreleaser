@@ -45,12 +45,16 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     @Input
     final Property<Boolean> download
 
+    @Input
+    final Property<Boolean> changelog
+
     @Inject
     JReleaserConfigTask(ObjectFactory objects) {
         super(objects)
         full = objects.property(Boolean).convention(false)
         assembly = objects.property(Boolean).convention(false)
         download = objects.property(Boolean).convention(false)
+        changelog = objects.property(Boolean).convention(false)
     }
 
     @Option(option = 'full', description = 'Display full configuration (OPTIONAL).')
@@ -68,12 +72,19 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
         this.download.set(download)
     }
 
+    @Option(option = 'changelog', description = 'Display changelog configuration (OPTIONAL).')
+    void setChangelog(boolean changelog) {
+        this.changelog.set(changelog)
+    }
+
     @TaskAction
     void displayConfig() {
         if (download.get()) {
             mode = JReleaserContext.Mode.DOWNLOAD
         } else if (assembly.get()) {
             mode = JReleaserContext.Mode.ASSEMBLE
+        } else if (changelog.get()) {
+            mode = JReleaserContext.Mode.CHANGELOG
         } else {
             mode = JReleaserContext.Mode.CONFIG
         }

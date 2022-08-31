@@ -40,6 +40,9 @@ public class Config extends AbstractPlatformAwareModelCommand {
 
         @CommandLine.Option(names = {"-d", "--download"}, required = true)
         boolean download;
+
+        @CommandLine.Option(names = {"--changelog"}, required = true)
+        boolean changelog;
     }
 
     @Override
@@ -53,6 +56,7 @@ public class Config extends AbstractPlatformAwareModelCommand {
     protected JReleaserContext.Mode getMode() {
         if (download()) return JReleaserContext.Mode.DOWNLOAD;
         if (assembly()) return JReleaserContext.Mode.ASSEMBLE;
+        if (changelog()) return JReleaserContext.Mode.CHANGELOG;
         return JReleaserContext.Mode.CONFIG;
     }
 
@@ -62,5 +66,9 @@ public class Config extends AbstractPlatformAwareModelCommand {
 
     private boolean assembly() {
         return exclusive != null && exclusive.assembly;
+    }
+
+    private boolean changelog() {
+        return exclusive != null && exclusive.changelog;
     }
 }
