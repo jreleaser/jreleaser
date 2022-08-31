@@ -6,7 +6,7 @@ on:
 
 jobs:
   precheck:
-    if: startsWith(github.event.head_commit.message, 'Releasing version') != true
+    if: github.repository == 'jreleaser/jreleaser' && startsWith(github.event.head_commit.message, 'Releasing version') != true
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.vars.outputs.VERSION }}
