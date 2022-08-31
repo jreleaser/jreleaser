@@ -31,6 +31,7 @@ public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     private boolean full;
     private boolean assembly;
     private boolean download;
+    private boolean changelog;
 
     public void setFull(boolean full) {
         this.full = full;
@@ -44,6 +45,10 @@ public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
         this.download = download;
     }
 
+    public void setChangelog(boolean changelog) {
+        this.changelog = changelog;
+    }
+
     @Override
     protected void doExecute(JReleaserContext context) {
         ModelValidator.validate(context);
@@ -55,6 +60,7 @@ public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     protected JReleaserContext.Mode getMode() {
         if (download) return JReleaserContext.Mode.DOWNLOAD;
         if (assembly) return JReleaserContext.Mode.ASSEMBLE;
+        if (changelog) return JReleaserContext.Mode.CHANGELOG;
         return JReleaserContext.Mode.CONFIG;
     }
 }

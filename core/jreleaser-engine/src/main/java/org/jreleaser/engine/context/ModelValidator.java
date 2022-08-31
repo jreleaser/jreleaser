@@ -40,6 +40,7 @@ public class ModelValidator {
             }
 
             switch (context.getMode()) {
+                case CHANGELOG:
                 case DOWNLOAD:
                 case ASSEMBLE:
                     if (errors.hasConfigurationErrors()) {
