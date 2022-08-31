@@ -14,6 +14,14 @@ on:
         default: 'zulu'
         required: false
         type: string
+      graal-version:
+        default: '22.2.0'
+        required: false
+        type: string
+      graal-java-version:
+        default: '17'
+        required: false
+        type: string
 
 jobs:
   native-image:
@@ -21,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macOS-latest] #, windows-latest]
+        os: [ubuntu-latest, macOS-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -37,6 +45,14 @@ jobs:
         with:
           name: jlink
           path: out/jreleaser/assemble/jreleaser-standalone/jlink
+
+      - name: Set up Graal
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: ${{ inputs.graal-version }}
+          java-version: ${{ inputs.graal-java-version }}
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Java
         uses: actions/setup-java@v3

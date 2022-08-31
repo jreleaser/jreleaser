@@ -2,7 +2,7 @@ environment:
   properties:
     jdkPathPrefix: 'apps/jreleaser/build/jdks'
     jdkFilePrefix: 'zulu17.32.13-ca-jdk17.0.2'
-    graalFilePrefix: 'graalvm-ce-java17-22.0.0.2'
+    graalFilePrefix: 'graalvm-ce-java17-22.2.0'
     nativeImageDir: out/jreleaser/assemble/jreleaser-native/native-image
     jpackageDir: out/jreleaser/assemble/jreleaser-installer/jpackage
     skipJpackageResolver: true
@@ -58,6 +58,8 @@ release:
     overwrite: true
     sign: true
     discussionCategoryName: Announcements
+    issues:
+      enabled: true
     changelog:
       formatted: ALWAYS
       preset: conventional-commits
@@ -207,8 +209,8 @@ assemble:
           platform: 'linux-x86_64'
         #- path: '{{jdkPathPrefix}}/graal17LinuxArm/{{graalFilePrefix}}'
         #  platform: 'linux-aarch_64'
-        #- path: '{{jdkPathPrefix}}/graal17Windows/{{graalFilePrefix}}'
-        #  platform: 'windows-x86_64'
+        - path: '{{jdkPathPrefix}}/graal17Windows/{{graalFilePrefix}}'
+          platform: 'windows-x86_64'
       upx:
         active: always
         version: '3.96'
@@ -389,8 +391,8 @@ distributions:
         platform: 'linux-x86_64'
       #- path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-linux-aarch64.zip'
       #  platform: 'linux-aarch_64'
-      #- path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.zip'
-      #  platform: 'windows-x86_64'
+      - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.zip'
+        platform: 'windows-x86_64'
 
 files:
   artifacts:

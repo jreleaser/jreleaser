@@ -115,24 +115,24 @@ jdks {
     }
     graal17Osx {
         platform = 'osx-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-darwin-amd64-22.0.0.2.tar.gz'
-        checksum = 'd54af9d1f4d0d351827395a714ed84d2489b023b74a9c13a431cc9d31d1e8f9a'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.2.0/graalvm-ce-java17-darwin-amd64-22.2.0.tar.gz'
+        checksum = 'b92b6f5f7f11282f20c8f8b94ea1c16d776cbadd7b254119836a7ace9f513b0d'
     }
     graal17Linux {
         platform = 'linux-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-linux-amd64-22.0.0.2.tar.gz'
-        checksum = '4f743e0ed3d974b7d619ca2ed6014554e8c12e5ebbb38b9bc9e820b182169bd4'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.2.0/graalvm-ce-java17-linux-amd64-22.2.0.tar.gz'
+        checksum = 'cd903566d030bf44a8c5c0f50914fc9c9d89cb2954e1f90512b137a0bfedc3ca'
     }
     //graal17LinuxArm {
     //    platform = 'linux-aarch64'
     //    url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-linux-aarch64-22.0.0.2.tar.gz'
     //    checksum = 'c7d78387d2a144944f26773697c1b61d3478a081a1c5e7fc20f47f1f5f3c82c7'
     //}
-    //graal17Windows {
-    //    platform = 'windows-x86_64'
-    //    url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-windows-amd64-22.0.0.2.zip'
-    //    checksum = '8e97b647729d542fdf0062555ca7bca9ee58a29ed10c4ef58aa9e5174b5eeab9'
-    //}
+    graal17Windows {
+        platform = 'windows-x86_64'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.2.0/graalvm-ce-java17-windows-amd64-22.2.0.zip'
+        checksum = '0930735fafe50f295b3e46c5e860ca3500aa76bdeb02f1af142bedab88a371c8'
+    }
 }
 
 copyDependencies {

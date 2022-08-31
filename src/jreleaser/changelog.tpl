@@ -38,4 +38,5 @@ These binaries provide their own Java runtime.
 
 * {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip{{/f_release_download_url}}
 * {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}}
+* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip{{/f_release_download_url}}
 
