@@ -7,6 +7,8 @@ on:
 env:
   JAVA_VERSION: '11'
   JAVA_DISTRO: 'zulu'
+  GRAAL_VERSION: '22.2.0'
+  GRAAL_JAVA_VERSION: '17'
 
 jobs:
   precheck:
@@ -17,6 +19,8 @@ jobs:
       VERSION: ${{ steps.vars.outputs.VERSION }}
       JAVA_VERSION: ${{ env.JAVA_VERSION }}
       JAVA_DISTRO: ${{ env.JAVA_DISTRO }}
+      GRAAL_VERSION: ${{ env.GRAAL_VERSION }}
+      GRAAL_JAVA_VERSION: ${{ env.GRAAL_JAVA_VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -52,6 +56,8 @@ jobs:
     needs: [precheck, jlink]
     uses: jreleaser/jreleaser/.github/workflows/step-native-image.yml@main
     with:
+      graal-version: ${{ needs.precheck.outputs.GRAAL_VERSION }}
+      graal-java-version: ${{ needs.precheck.outputs.GRAAL_JAVA_VERSION }}
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
