@@ -105,6 +105,26 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.project.snapshot.full.changelog")
     boolean projectSnapshotFullChangelog;
     /**
+     * The project copyright information.
+     */
+    @Parameter(property = "jreleaser.project.copyright")
+    private String projectCopyright;
+    /**
+     * The project description.
+     */
+    @Parameter(property = "jreleaser.project.description")
+    private String projectDescription;
+    /**
+     * The year of project inception.
+     */
+    @Parameter(property = "jreleaser.project.inceptionYear")
+    private String projectInceptionYear;
+    /**
+     * The stereotype of the project.
+     */
+    @Parameter(property = "jreleaser.project.stereotype")
+    private String projectStereotype;
+    /**
      * The release tag.
      */
     @Parameter(property = "jreleaser.tag.name")
@@ -205,6 +225,11 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.armored")
     private boolean armored;
     /**
+     * The authors.
+     */
+    @Parameter(property = "jreleaser.authors")
+    private String[] authors;
+    /**
      * Input file(s) to be uploaded.
      */
     @Parameter(property = "jreleaser.files")
@@ -241,6 +266,10 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .projectSnapshotPattern(projectSnapshotPattern)
             .projectSnapshotLabel(projectSnapshotLabel)
             .projectSnapshotFullChangelog(projectSnapshotFullChangelog)
+            .projectCopyright(projectCopyright)
+            .projectDescription(projectDescription)
+            .projectInceptionYear(projectInceptionYear)
+            .projectStereotype(projectStereotype)
             .tagName(tagName)
             .previousTagName(previousTagName)
             .releaseName(releaseName)
@@ -261,6 +290,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .commitAuthorEmail(commitAuthorEmail)
             .signing(signing)
             .armored(armored)
+            .authors(collectAuthors())
             .files(collectFiles())
             .globs(collectGlobs())
             .selectedPlatforms(collectSelectedPlatforms())
@@ -281,6 +311,14 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Could not initialize trace file", e);
         }
+    }
+
+    private List<String> collectAuthors() {
+        List<String> list = new ArrayList<>();
+        if (authors != null && authors.length > 0) {
+            Collections.addAll(list, authors);
+        }
+        return list;
     }
 
     private List<String> collectFiles() {
