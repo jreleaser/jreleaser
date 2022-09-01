@@ -52,6 +52,7 @@ public class ModelAutoConfigurer {
     private static final String GLOB_PREFIX = "glob:";
     private static final String REGEX_PREFIX = "regex:";
 
+    private final List<String> authors = new ArrayList<>();
     private final List<String> files = new ArrayList<>();
     private final List<String> globs = new ArrayList<>();
     private final List<String> selectedPlatforms = new ArrayList<>();
@@ -67,6 +68,10 @@ public class ModelAutoConfigurer {
     private String projectSnapshotPattern;
     private String projectSnapshotLabel;
     private boolean projectSnapshotFullChangelog;
+    private String projectCopyright;
+    private String projectDescription;
+    private String projectInceptionYear;
+    private String projectStereotype;
     private String tagName;
     private String previousTagName;
     private String releaseName;
@@ -139,6 +144,26 @@ public class ModelAutoConfigurer {
 
     public ModelAutoConfigurer projectSnapshotFullChangelog(boolean projectSnapshotFullChangelog) {
         this.projectSnapshotFullChangelog = projectSnapshotFullChangelog;
+        return this;
+    }
+
+    public ModelAutoConfigurer projectCopyright(String projectCopyright) {
+        this.projectCopyright = projectCopyright;
+        return this;
+    }
+
+    public ModelAutoConfigurer projectDescription(String projectDescription) {
+        this.projectDescription = projectDescription;
+        return this;
+    }
+
+    public ModelAutoConfigurer projectInceptionYear(String projectInceptionYear) {
+        this.projectInceptionYear = projectInceptionYear;
+        return this;
+    }
+
+    public ModelAutoConfigurer projectStereotype(String projectStereotype) {
+        this.projectStereotype = projectStereotype;
         return this;
     }
 
@@ -252,6 +277,21 @@ public class ModelAutoConfigurer {
         return this;
     }
 
+    public ModelAutoConfigurer authors(List<String> authors) {
+        this.authors.clear();
+        if (null != authors && !authors.isEmpty()) {
+            authors.forEach(this::file);
+        }
+        return this;
+    }
+
+    public ModelAutoConfigurer author(String author) {
+        if (isNotBlank(author)) {
+            this.authors.add(author.trim());
+        }
+        return this;
+    }
+
     public ModelAutoConfigurer files(List<String> files) {
         this.files.clear();
         if (null != files && !files.isEmpty()) {
@@ -336,6 +376,15 @@ public class ModelAutoConfigurer {
         if (isNotBlank(projectSnapshotPattern)) logger.info("- project.snapshot.pattern: {}", projectSnapshotPattern);
         if (isNotBlank(projectSnapshotLabel)) logger.info("- project.snapshot.label: {}", projectSnapshotLabel);
         if (projectSnapshotFullChangelog) logger.info("- project.snapshot.full.changelog: true");
+        if (isNotBlank(projectDescription)) logger.info("- project.description: {}", projectDescription);
+        if (isNotBlank(projectCopyright)) logger.info("- project.copyright: {}", projectCopyright);
+        if (isNotBlank(projectInceptionYear)) logger.info("- project.inceptionYear: {}", projectInceptionYear);
+        if (isNotBlank(projectStereotype)) logger.info("- project.stereotype: {}", projectStereotype);
+        if (!authors.isEmpty()) {
+            for (String author : authors) {
+                logger.info("- author: {}", author);
+            }
+        }
         if (isNotBlank(username)) logger.info("- release.username: {}", username);
         if (isNotBlank(tagName)) logger.info("- release.tagName: {}", tagName);
         if (isNotBlank(previousTagName)) logger.info("- release.previousTagName: {}", previousTagName);
@@ -376,6 +425,11 @@ public class ModelAutoConfigurer {
     private JReleaserModel autoConfiguredModel(Path basedir) {
         JReleaserModel model = new JReleaserModel();
         model.getProject().setName(projectName);
+        model.getProject().setDescription(projectDescription);
+        model.getProject().setCopyright(projectCopyright);
+        model.getProject().setStereotype(projectStereotype);
+        model.getProject().setInceptionYear(projectInceptionYear);
+        model.getProject().setAuthors(authors);
         model.getProject().setVersion(projectVersion);
         model.getProject().setVersionPattern(projectVersionPattern);
         model.getProject().getSnapshot().setPattern(projectSnapshotPattern);
