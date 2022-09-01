@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-30-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-31-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -49,6 +49,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="http://gastaldi.wordpress.com"><img src="https://avatars.githubusercontent.com/u/54133?v=4?s=100" width="100px;" alt=""/><br /><sub><b>George Gastaldi</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=gastaldi" title="Code">💻</a></td>
     <td align="center"><a href="http://www.mynethome.de"><img src="https://avatars.githubusercontent.com/u/37251?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Markus Schlichting</b></sub></a><br /><a href="#translation-madmas" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/TCarmine"><img src="https://avatars.githubusercontent.com/u/13622527?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Carmine</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=TCarmine" title="Code">💻</a> <a href="#translation-TCarmine" title="Translation">🌍</a></td>
   </tr>
 </table>
 
