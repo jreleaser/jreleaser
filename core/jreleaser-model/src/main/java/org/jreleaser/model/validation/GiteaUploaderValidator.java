@@ -40,9 +40,7 @@ public abstract class GiteaUploaderValidator extends Validator {
 
         for (Map.Entry<String, GiteaUploader> e : gitea.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (!mode.validateConfig()) {
-                validateGiteaUploader(context, mode, e.getValue(), new Errors());
-            } else {
+            if (mode.validateConfig()) {
                 validateGiteaUploader(context, mode, e.getValue(), errors);
             }
         }

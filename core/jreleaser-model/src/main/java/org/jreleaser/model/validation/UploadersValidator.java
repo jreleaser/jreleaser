@@ -40,38 +40,33 @@ public abstract class UploadersValidator extends Validator {
         Upload upload = context.getModel().getUpload();
         context.getLogger().debug("upload");
 
-        boolean skipValidation = !mode.validateConfig();
-        Errors errorCollector = skipValidation ? new Errors() : errors;
-        validateArtifactory(context, mode, errorCollector);
-        validateFtpUploader(context, mode, errorCollector);
-        validateGiteaUploader(context, mode, errorCollector);
-        validateGitlabUploader(context, mode, errorCollector);
-        validateHttpUploader(context, mode, errorCollector);
-        validateS3(context, mode, errorCollector);
-        validateScpUploader(context, mode, errorCollector);
-        validateSftpUploader(context, mode, errorCollector);
+        validateArtifactory(context, mode, errors);
+        validateFtpUploader(context, mode, errors);
+        validateGiteaUploader(context, mode, errors);
+        validateGitlabUploader(context, mode, errors);
+        validateHttpUploader(context, mode, errors);
+        validateS3(context, mode, errors);
+        validateScpUploader(context, mode, errors);
+        validateSftpUploader(context, mode, errors);
 
-        if (skipValidation) {
-            context.getLogger().debug(RB.$("validation.disabled"));
-            return;
-        }
+        if (mode.validateConfig()) {
+            boolean activeSet = upload.isActiveSet();
+            upload.resolveEnabled(context.getModel().getProject());
 
-        boolean activeSet = upload.isActiveSet();
-        upload.resolveEnabled(context.getModel().getProject());
+            if (upload.isEnabled()) {
+                boolean enabled = !upload.getActiveArtifactories().isEmpty() ||
+                    !upload.getActiveFtps().isEmpty() ||
+                    !upload.getActiveGiteas().isEmpty() ||
+                    !upload.getActiveGitlabs().isEmpty() ||
+                    !upload.getActiveHttps().isEmpty() ||
+                    !upload.getActiveS3s().isEmpty() ||
+                    !upload.getActiveScps().isEmpty() ||
+                    !upload.getActiveSftps().isEmpty();
 
-        if (mode.validateConfig() && upload.isEnabled()) {
-            boolean enabled = !upload.getActiveArtifactories().isEmpty() ||
-                !upload.getActiveFtps().isEmpty() ||
-                !upload.getActiveGiteas().isEmpty() ||
-                !upload.getActiveGitlabs().isEmpty() ||
-                !upload.getActiveHttps().isEmpty() ||
-                !upload.getActiveS3s().isEmpty() ||
-                !upload.getActiveScps().isEmpty() ||
-                !upload.getActiveSftps().isEmpty();
-
-            if (!activeSet && !enabled) {
-                context.getLogger().debug(RB.$("validation.disabled"));
-                upload.disable();
+                if (!activeSet && !enabled) {
+                    context.getLogger().debug(RB.$("validation.disabled"));
+                    upload.disable();
+                }
             }
         }
     }

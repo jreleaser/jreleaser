@@ -40,10 +40,8 @@ public abstract class FtpDownloaderValidator extends Validator {
 
         for (Map.Entry<String, FtpDownloader> e : ftp.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (mode.validateDownload() || mode.validateConfig()) {
+            if (mode.validateConfig() || mode.validateDownload()) {
                 validateFtp(context, mode, e.getValue(), errors);
-            } else {
-                validateFtp(context, mode, e.getValue(), new Errors());
             }
         }
     }

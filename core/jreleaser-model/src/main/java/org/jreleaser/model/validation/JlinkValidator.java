@@ -47,7 +47,9 @@ public abstract class JlinkValidator extends Validator {
 
         for (Map.Entry<String, Jlink> e : jlink.entrySet()) {
             e.getValue().setName(e.getKey());
-            validateJlink(context, mode, e.getValue(), errors);
+            if (mode.validateConfig() || mode.validateAssembly()) {
+                validateJlink(context, mode, e.getValue(), errors);
+            }
         }
     }
 

@@ -40,10 +40,8 @@ public abstract class ScpDownloaderValidator extends Validator {
 
         for (Map.Entry<String, ScpDownloader> e : scp.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (mode.validateDownload() || mode.validateConfig()) {
+            if (mode.validateConfig() || mode.validateDownload()) {
                 validateScpDownloader(context, mode, e.getValue(), errors);
-            } else {
-                validateScpDownloader(context, mode, e.getValue(), new Errors());
             }
         }
     }

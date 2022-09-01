@@ -70,23 +70,19 @@ public abstract class DistributionsValidator extends Validator {
             if (isBlank(distribution.getName())) {
                 distribution.setName(e.getKey());
             }
-            if (context.isDistributionIncluded(distribution)) {
-                if (mode.validateConfig()) {
-                    validateDistribution(context, mode, distribution, errors);
-                }
+            if (mode.validateConfig() && context.isDistributionIncluded(distribution)) {
+                validateDistribution(context, mode, distribution, errors);
             } else {
                 distribution.setActive(Active.NEVER);
                 distribution.resolveEnabled(context.getModel().getProject());
             }
         }
 
-        if (!mode.validateConfig()) {
-            return;
+        if (mode.validateConfig()) {
+            postValidateBrew(context, errors);
+            postValidateJBang(context, errors);
+            postValidateSdkman(context, errors);
         }
-
-        postValidateBrew(context, errors);
-        postValidateJBang(context, errors);
-        postValidateSdkman(context, errors);
     }
 
     private static void validateDistribution(JReleaserContext context, JReleaserContext.Mode mode, Distribution distribution, Errors errors) {
@@ -326,10 +322,6 @@ public abstract class DistributionsValidator extends Validator {
     }
 
     public static void postValidateDistributions(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (!mode.validateConfig()) {
-            return;
-        }
-
         context.getLogger().debug("distributions");
         Map<String, Distribution> distributions = context.getModel().getDistributions();
 

@@ -40,9 +40,7 @@ public abstract class HttpUploaderValidator extends Validator {
 
         for (Map.Entry<String, HttpUploader> e : http.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (!mode.validateConfig()) {
-                validateHttp(context, mode, e.getValue(), new Errors());
-            } else {
+            if (mode.validateConfig()) {
                 validateHttp(context, mode, e.getValue(), errors);
             }
         }

@@ -37,9 +37,7 @@ public abstract class ArtifactoryValidator extends Validator {
 
         for (Map.Entry<String, Artifactory> e : artifactory.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (!mode.validateConfig()) {
-                validateArtifactory(context, mode, e.getValue(), new Errors());
-            } else {
+            if (mode.validateConfig()) {
                 validateArtifactory(context, mode, e.getValue(), errors);
             }
         }

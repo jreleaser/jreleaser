@@ -219,7 +219,7 @@ public class S3 extends AbstractUploader<S3> {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props, boolean full) {
+    protected void asMap(boolean full, Map<String, Object> props) {
         props.put("region", getResolvedRegion());
         props.put("bucket", getResolvedBucket());
         props.put("accessKeyId", isNotBlank(getResolvedAccessKeyId()) ? HIDE : UNSET);

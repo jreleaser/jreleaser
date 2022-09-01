@@ -46,14 +46,12 @@ public abstract class AssemblersValidator extends Validator {
         Assemble assemble = context.getModel().getAssemble();
         context.getLogger().debug("assemble");
 
-        boolean skipValidation = !mode.validateAssembly() && !mode.validateConfig();
-        Errors errorCollector = skipValidation ? new Errors() : errors;
-        validateArchive(context, mode, errorCollector);
-        validateJlink(context, mode, errorCollector);
-        validateJpackage(context, mode, errorCollector);
-        validateNativeImage(context, mode, errorCollector);
+        validateArchive(context, mode, errors);
+        validateJlink(context, mode, errors);
+        validateJpackage(context, mode, errors);
+        validateNativeImage(context, mode, errors);
 
-        if (skipValidation) {
+        if (!mode.validateConfig() && !mode.validateAssembly()) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
@@ -101,10 +99,6 @@ public abstract class AssemblersValidator extends Validator {
     }
 
     public static void postValidateAssemblers(JReleaserContext context, JReleaserContext.Mode mode, Errors errors) {
-        if (!mode.validateAssembly() && !mode.validateConfig()) {
-            return;
-        }
-
         context.getLogger().debug("assemble");
 
         postValidateJpackage(context, mode, errors);

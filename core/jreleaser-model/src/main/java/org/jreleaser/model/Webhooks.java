@@ -74,7 +74,7 @@ public class Webhooks extends AbstractAnnouncer<Webhooks> {
         if (!full && !isEnabled()) return Collections.emptyMap();
 
         Map<String, Object> props = new LinkedHashMap<>();
-        asMap(props, full);
+        asMap(full, props);
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(getName(), props);
@@ -82,7 +82,7 @@ public class Webhooks extends AbstractAnnouncer<Webhooks> {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props, boolean full) {
+    protected void asMap(boolean full, Map<String, Object> props) {
         this.webhooks.values()
             .stream()
             .filter(Webhook::isEnabled)

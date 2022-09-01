@@ -193,7 +193,7 @@ abstract class AbstractDownloader<S extends AbstractDownloader<S>> extends Abstr
         props.put("active", active);
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
-        asMap(props, full);
+        asMap(full, props);
         Map<String, Map<String, Object>> mappedAssets = new LinkedHashMap<>();
         int i = 0;
         for (Asset asset : getAssets()) {
@@ -207,5 +207,5 @@ abstract class AbstractDownloader<S extends AbstractDownloader<S>> extends Abstr
         return map;
     }
 
-    protected abstract void asMap(Map<String, Object> props, boolean full);
+    protected abstract void asMap(boolean full, Map<String, Object> props);
 }

@@ -39,9 +39,7 @@ public abstract class FtpUploaderValidator extends Validator {
 
         for (Map.Entry<String, FtpUploader> e : ftp.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (!mode.validateConfig()) {
-                validateFtp(context, mode, e.getValue(), new Errors());
-            } else {
+            if (mode.validateConfig()) {
                 validateFtp(context, mode, e.getValue(), errors);
             }
         }

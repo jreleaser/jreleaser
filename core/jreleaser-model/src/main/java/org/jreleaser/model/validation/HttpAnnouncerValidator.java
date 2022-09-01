@@ -39,7 +39,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public abstract class HttpAnnouncerValidator extends Validator {
     private static final String DEFAULT_TPL = "src/jreleaser/templates/";
 
-    public static void validateHttpAnnouncers(JReleaserContext context, HttpAnnouncers http, Errors errors) {
+    public static void validateHttpAnnouncers(JReleaserContext context, JReleaserContext.Mode mode, HttpAnnouncers http, Errors errors) {
         context.getLogger().debug("announce.http");
 
         Map<String, HttpAnnouncer> ha = http.getHttpAnnouncers();
@@ -47,8 +47,10 @@ public abstract class HttpAnnouncerValidator extends Validator {
         boolean enabled = false;
         for (Map.Entry<String, HttpAnnouncer> e : ha.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (validateHttpAnnouncer(context, http, e.getValue(), errors)) {
-                enabled = true;
+            if (mode.validateConfig() || mode.validateAnnounce()) {
+                if (validateHttpAnnouncer(context, http, e.getValue(), errors)) {
+                    enabled = true;
+                }
             }
         }
 
