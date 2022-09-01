@@ -209,12 +209,12 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         this.projectStereotype.set(projectStereotype)
     }
 
-    @Option(option = 'author', description = 'Project author(s) (OPTIONAL).')
+    @Option(option = 'author', description = 'The project authors (OPTIONAL).')
     void setAuthor(List<String> authors) {
         this.authors.addAll(authors)
     }
 
-    @Option(option = 'tag-name', description = 'The release tga (OPTIONAL).')
+    @Option(option = 'tag-name', description = 'The release tag (OPTIONAL).')
     void setTagName(String tagName) {
         this.tagName.set(tagName)
     }

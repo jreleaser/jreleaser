@@ -105,7 +105,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.project.snapshot.full.changelog")
     boolean projectSnapshotFullChangelog;
     /**
-     * The project copyright information.
+     * The project copyright.
      */
     @Parameter(property = "jreleaser.project.copyright")
     private String projectCopyright;
@@ -115,12 +115,12 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.project.description")
     private String projectDescription;
     /**
-     * The year of project inception.
+     * The project inception year.
      */
-    @Parameter(property = "jreleaser.project.inceptionYear")
+    @Parameter(property = "jreleaser.project.inception.year")
     private String projectInceptionYear;
     /**
-     * The stereotype of the project.
+     * The project stereotype.
      */
     @Parameter(property = "jreleaser.project.stereotype")
     private String projectStereotype;
@@ -225,7 +225,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.armored")
     private boolean armored;
     /**
-     * The authors.
+     * The project authors.
      */
     @Parameter(property = "jreleaser.authors")
     private String[] authors;
