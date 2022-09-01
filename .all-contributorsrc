@@ -299,6 +299,16 @@
         "code",
         "translation"
       ]
+    },
+    {
+      "login": "reinhapa",
+      "name": "Patrick Reinhart",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4694567?v=4",
+      "profile": "https://www.reini.net",
+      "contributions": [
+        "code",
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
