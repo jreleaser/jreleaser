@@ -106,7 +106,7 @@ public class Article extends AbstractAnnouncer<Article> implements CommitAuthorA
     }
 
     @Override
-    protected void asMap(Map<String, Object> props, boolean full) {
+    protected void asMap(boolean full, Map<String, Object> props) {
         props.put("commitAuthor", commitAuthor.asMap(full));
         props.put("repository", repository.asMap(full));
 

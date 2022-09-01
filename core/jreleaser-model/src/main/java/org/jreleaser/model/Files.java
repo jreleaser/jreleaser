@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.Env;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -162,6 +163,8 @@ public class Files extends AbstractModelObject<Files> implements Domain, Activat
 
     @Override
     public Map<String, Object> asMap(boolean full) {
+        if (!full && !isEnabled()) return Collections.emptyMap();
+
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", active);

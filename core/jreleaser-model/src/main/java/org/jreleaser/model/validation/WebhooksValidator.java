@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public abstract class WebhooksValidator extends Validator {
     private static final String DEFAULT_TPL = "src/jreleaser/templates/";
 
-    public static void validateWebhooks(JReleaserContext context, Webhooks webhooks, Errors errors) {
+    public static void validateWebhooks(JReleaserContext context, JReleaserContext.Mode mode, Webhooks webhooks, Errors errors) {
         context.getLogger().debug("announce.webhooks");
 
         Map<String, Webhook> webhook = webhooks.getWebhooks();
@@ -46,8 +46,10 @@ public abstract class WebhooksValidator extends Validator {
         boolean enabled = false;
         for (Map.Entry<String, Webhook> e : webhook.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (validateWebhook(context, webhooks, e.getValue(), errors)) {
-                enabled = true;
+            if (mode.validateConfig() || mode.validateAnnounce()) {
+                if (validateWebhook(context, webhooks, e.getValue(), errors)) {
+                    enabled = true;
+                }
             }
         }
 

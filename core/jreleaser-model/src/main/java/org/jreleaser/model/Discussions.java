@@ -133,7 +133,7 @@ public class Discussions extends AbstractAnnouncer<Discussions> {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props, boolean full) {
+    protected void asMap(boolean full, Map<String, Object> props) {
         props.put("organization", organization);
         props.put("team", team);
         props.put("title", title);

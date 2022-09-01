@@ -158,7 +158,7 @@ abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S>> extends Abstrac
         props.put("active", active);
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
-        asMap(props, full);
+        asMap(full, props);
         props.put("extraProperties", getResolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
@@ -166,5 +166,5 @@ abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S>> extends Abstrac
         return map;
     }
 
-    protected abstract void asMap(Map<String, Object> props, boolean full);
+    protected abstract void asMap(boolean full, Map<String, Object> props);
 }

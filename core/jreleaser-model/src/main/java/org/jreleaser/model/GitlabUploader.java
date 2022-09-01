@@ -112,7 +112,7 @@ public class GitlabUploader extends AbstractUploader<GitlabUploader> {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props, boolean full) {
+    protected void asMap(boolean full, Map<String, Object> props) {
         props.put("host", host);
         props.put("token", isNotBlank(getResolvedToken()) ? HIDE : UNSET);
         props.put("packageName", packageName);

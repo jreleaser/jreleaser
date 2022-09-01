@@ -149,7 +149,7 @@ public class Artifactory extends AbstractUploader<Artifactory> {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props, boolean full) {
+    protected void asMap(boolean full, Map<String, Object> props) {
         props.put("authorization", authorization);
         props.put("host", getResolvedHost());
         props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);

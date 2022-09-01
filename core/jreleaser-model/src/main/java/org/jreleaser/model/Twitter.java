@@ -176,7 +176,7 @@ public class Twitter extends AbstractAnnouncer<Twitter> {
     }
 
     @Override
-    protected void asMap(Map<String, Object> props, boolean full) {
+    protected void asMap(boolean full, Map<String, Object> props) {
         props.put("consumerKey", isNotBlank(getResolvedConsumerKey()) ? HIDE : UNSET);
         props.put("consumerSecret", isNotBlank(getResolvedConsumerSecret()) ? HIDE : UNSET);
         props.put("accessToken", isNotBlank(getResolvedAccessToken()) ? HIDE : UNSET);

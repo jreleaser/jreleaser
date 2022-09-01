@@ -83,7 +83,7 @@ abstract class AbstractWebUploader<S extends AbstractWebUploader<S>> extends Abs
         this.downloadUrl = downloadUrl;
     }
 
-    protected void asMap(Map<String, Object> props, boolean full) {
+    protected void asMap(boolean full, Map<String, Object> props) {
         props.put("uploadUrl", uploadUrl);
         props.put("downloadUrl", downloadUrl);
     }

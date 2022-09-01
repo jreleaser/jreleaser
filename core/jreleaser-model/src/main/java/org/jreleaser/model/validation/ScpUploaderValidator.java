@@ -39,9 +39,7 @@ public abstract class ScpUploaderValidator extends Validator {
 
         for (Map.Entry<String, ScpUploader> e : scp.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (!mode.validateConfig()) {
-                validateScpUploader(context, mode, e.getValue(), new Errors());
-            } else {
+            if (mode.validateConfig()) {
                 validateScpUploader(context, mode, e.getValue(), errors);
             }
         }

@@ -54,7 +54,9 @@ public abstract class JpackageValidator extends Validator {
 
         for (Map.Entry<String, Jpackage> e : jpackage.entrySet()) {
             e.getValue().setName(e.getKey());
-            validateJpackage(context, mode, e.getValue(), errors);
+            if (mode.validateConfig() || mode.validateAssembly()) {
+                validateJpackage(context, mode, e.getValue(), errors);
+            }
         }
     }
 

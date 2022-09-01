@@ -40,9 +40,7 @@ public abstract class GitlabUploaderValidator extends Validator {
 
         for (Map.Entry<String, GitlabUploader> e : gitlab.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (!mode.validateConfig()) {
-                validateGitlabUploader(context, mode, e.getValue(), new Errors());
-            } else {
+            if (mode.validateConfig()) {
                 validateGitlabUploader(context, mode, e.getValue(), errors);
             }
         }

@@ -39,9 +39,7 @@ public abstract class SftpUploaderValidator extends Validator {
 
         for (Map.Entry<String, SftpUploader> e : sftp.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (!mode.validateConfig()) {
-                validateSftpUploader(context, mode, e.getValue(), new Errors());
-            } else {
+            if (mode.validateConfig()) {
                 validateSftpUploader(context, mode, e.getValue(), errors);
             }
         }

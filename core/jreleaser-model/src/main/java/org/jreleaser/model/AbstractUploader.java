@@ -256,7 +256,7 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
         props.put("files", isFiles());
         props.put("signatures", isSignatures());
         props.put("checksums", isChecksums());
-        asMap(props, full);
+        asMap(full, props);
         props.put("extraProperties", getResolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
@@ -264,7 +264,7 @@ abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractM
         return map;
     }
 
-    protected abstract void asMap(Map<String, Object> props, boolean full);
+    protected abstract void asMap(boolean full, Map<String, Object> props);
 
     @Override
     public List<String> resolveSkipKeys() {
