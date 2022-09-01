@@ -132,6 +132,22 @@ public class Release extends AbstractPlatformAwareModelCommand {
         @CommandLine.Option(names = {"--project-snapshot-full-changelog"})
         boolean projectSnapshotFullChangelog;
 
+        @CommandLine.Option(names = {"--project-copyright"})
+        String projectCopyright;
+
+        @CommandLine.Option(names = {"--project-description"})
+        String projectDescription;
+
+        @CommandLine.Option(names = {"--project-inception-year"})
+        String projectInceptionYear;
+
+        @CommandLine.Option(names = {"--project-stereotype"})
+        String projectStereotype;
+
+        @CommandLine.Option(names = {"--authors"},
+                paramLabel = "<authors>")
+        String[] authors;
+
         @CommandLine.Option(names = {"--tag-name"})
         String tagName;
 
@@ -237,6 +253,11 @@ public class Release extends AbstractPlatformAwareModelCommand {
             .projectSnapshotPattern(composite.autoConfig.projectSnapshotPattern)
             .projectSnapshotLabel(composite.autoConfig.projectSnapshotLabel)
             .projectSnapshotFullChangelog(composite.autoConfig.projectSnapshotFullChangelog)
+            .projectCopyright(composite.autoConfig.projectCopyright)
+            .projectDescription(composite.autoConfig.projectDescription)
+            .projectInceptionYear(composite.autoConfig.projectInceptionYear)
+            .projectStereotype(composite.autoConfig.projectStereotype)
+            .authors(collectEntries(composite.autoConfig.authors))
             .tagName(composite.autoConfig.tagName)
             .previousTagName(composite.autoConfig.previousTagName)
             .releaseName(composite.autoConfig.releaseName)
