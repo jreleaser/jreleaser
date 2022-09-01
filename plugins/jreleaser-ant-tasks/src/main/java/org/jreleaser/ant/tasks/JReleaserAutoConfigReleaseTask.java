@@ -66,6 +66,11 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private String projectSnapshotPattern;
     private String projectSnapshotLabel;
     private boolean projectSnapshotFullChangelog;
+    private final List<String> authors = new ArrayList<>();
+    private String projectCopyright;
+    private String projectDescription;
+    private String projectInceptionYear;
+    private String projectStereotype;
     private String tagName;
     private String previousTagName;
     private String releaseName;
@@ -125,6 +130,28 @@ public class JReleaserAutoConfigReleaseTask extends Task {
 
     public void setProjectSnapshotFullChangelog(boolean projectSnapshotFullChangelog) {
         this.projectSnapshotFullChangelog = projectSnapshotFullChangelog;
+    }
+
+    public void setProjectCopyright(String projectCopyright) {
+        this.projectCopyright = projectCopyright;
+    }
+
+    public void setProjectDescription(String projectDescription) {
+        this.projectDescription = projectDescription;
+    }
+
+    public void setProjectInceptionYear(String projectInceptionYear) {
+        this.projectInceptionYear = projectInceptionYear;
+    }
+
+    public void setProjectStereotype(String projectStereotype) {
+        this.projectStereotype = projectStereotype;
+    }
+
+    public void setAuthors(List<String>  authors) {
+        if (null != authors) {
+            this.authors.addAll(authors);
+        }
     }
 
     public void setTagName(String tagName) {
@@ -248,6 +275,11 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .projectSnapshotPattern(projectSnapshotPattern)
             .projectSnapshotLabel(projectSnapshotLabel)
             .projectSnapshotFullChangelog(projectSnapshotFullChangelog)
+            .projectCopyright(projectCopyright)
+            .projectDescription(projectDescription)
+            .projectInceptionYear(projectInceptionYear)
+            .projectStereotype(projectStereotype)
+            .authors(authors)
             .tagName(tagName)
             .previousTagName(previousTagName)
             .releaseName(releaseName)
