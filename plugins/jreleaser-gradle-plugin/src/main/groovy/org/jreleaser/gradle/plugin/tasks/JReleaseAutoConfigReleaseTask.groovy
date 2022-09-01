@@ -77,6 +77,21 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     final Property<Boolean> projectSnapshotFullChangelog
     @Input
     @Optional
+    final Property<String> projectCopyright
+    @Input
+    @Optional
+    final Property<String> projectInceptionYear
+    @Input
+    @Optional
+    final Property<String> projectStereotype
+    @Input
+    @Optional
+    final Property<String> projectDescription
+    @Input
+    @Optional
+    final ListProperty<String> authors
+    @Input
+    @Optional
     final Property<String> tagName
     @Input
     @Optional
@@ -172,6 +187,31 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Option(option = 'project-snapshot-full-changelog', description = 'Calculate full changelog since last non-snapshot release (OPTIONAL).')
     void setProjectSnapshotFullChangelog(boolean projectSnapshotFullChangelog) {
         this.projectSnapshotFullChangelog.set(projectSnapshotFullChangelog)
+    }
+
+    @Option(option = 'project-copyright', description = 'The project copyright (OPTIONAL).')
+    void setProjectCopyright(String projectCopyright) {
+        this.projectCopyright.set(projectCopyright)
+    }
+
+    @Option(option = 'project-description', description = 'The project description (OPTIONAL).')
+    void setProjectDescription(String projectDescription) {
+        this.projectDescription.set(projectDescription)
+    }
+
+    @Option(option = 'project-inception-year', description = 'The project inception year (OPTIONAL).')
+    void setProjectInceptionYear(String projectInceptionYear) {
+        this.projectInceptionYear.set(projectInceptionYear)
+    }
+
+    @Option(option = 'project-stereotype', description = 'The project stereotype (OPTIONAL).')
+    void setProjectStereotype(String projectStereotype) {
+        this.projectStereotype.set(projectStereotype)
+    }
+
+    @Option(option = 'author', description = 'Project author(s) (OPTIONAL).')
+    void setAuthor(List<String> authors) {
+        this.authors.addAll(authors)
     }
 
     @Option(option = 'tag-name', description = 'The release tga (OPTIONAL).')
@@ -317,6 +357,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         projectSnapshotPattern = objects.property(String).convention(String.valueOf(Providers.notDefined()))
         projectSnapshotLabel = objects.property(String).convention(String.valueOf(Providers.notDefined()))
         projectSnapshotFullChangelog = objects.property(Boolean).convention(false)
+        projectCopyright = objects.property(String).convention(String.valueOf(Providers.notDefined()))
+        projectDescription = objects.property(String).convention(String.valueOf(Providers.notDefined()))
+        projectInceptionYear = objects.property(String).convention(String.valueOf(Providers.notDefined()))
+        projectStereotype = objects.property(String).convention(String.valueOf(Providers.notDefined()))
+        authors = objects.listProperty(String).convention([])
         tagName = objects.property(String).convention(Providers.notDefined())
         releaseName = objects.property(String).convention(Providers.notDefined())
         branch = objects.property(String).convention(Providers.notDefined())
@@ -361,6 +406,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .projectSnapshotPattern(projectSnapshotPattern.orNull)
             .projectSnapshotLabel(projectSnapshotLabel.orNull)
             .projectSnapshotFullChangelog(projectSnapshotFullChangelog.get())
+            .projectCopyright(projectCopyright.orNull)
+            .projectDescription(projectDescription.orNull)
+            .projectInceptionYear(projectInceptionYear.orNull)
+            .projectStereotype(projectStereotype.orNull)
+            .authors((List<String>) authors.getOrElse([] as List<String>))
             .tagName(tagName.orNull)
             .releaseName(releaseName.orNull)
             .branch(branch.orNull)
