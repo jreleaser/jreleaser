@@ -64,13 +64,6 @@ config {
                 enabled = true
             }
         }
-        pmd {
-            toolVersion = pmdVersion
-            ignoreFailures = true
-            aggregate {
-                enabled = false
-            }
-        }
     }
 }
 
