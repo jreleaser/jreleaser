@@ -289,6 +289,16 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "TCarmine",
+      "name": "Carmine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13622527?v=4",
+      "profile": "https://github.com/TCarmine",
+      "contributions": [
+        "code",
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
