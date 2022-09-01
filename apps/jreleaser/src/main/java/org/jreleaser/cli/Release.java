@@ -144,8 +144,8 @@ public class Release extends AbstractPlatformAwareModelCommand {
         @CommandLine.Option(names = {"--project-stereotype"})
         String projectStereotype;
 
-        @CommandLine.Option(names = {"--authors"},
-                paramLabel = "<authors>")
+        @CommandLine.Option(names = {"--author"},
+                paramLabel = "<author>")
         String[] authors;
 
         @CommandLine.Option(names = {"--tag-name"})
