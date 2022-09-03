@@ -19,18 +19,20 @@ package org.jreleaser.engine.context;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
-import org.jreleaser.model.Codeberg;
-import org.jreleaser.model.GitService;
-import org.jreleaser.model.Github;
-import org.jreleaser.model.Gitlab;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.releaser.spi.Commit;
-import org.jreleaser.model.releaser.spi.Repository;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.api.JReleaserContext.Mode;
+import org.jreleaser.model.api.JReleaserModel;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.release.BaseReleaser;
+import org.jreleaser.model.internal.release.CodebergReleaser;
+import org.jreleaser.model.internal.release.GithubReleaser;
+import org.jreleaser.model.internal.release.GitlabReleaser;
+import org.jreleaser.model.spi.release.Commit;
+import org.jreleaser.model.spi.release.Repository;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.Env;
-import org.jreleaser.util.JReleaserException;
 
-import static org.jreleaser.model.GitService.BRANCH;
+import static org.jreleaser.model.api.release.Releaser.BRANCH;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -40,10 +42,13 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public class ModelConfigurer {
     public static void configure(JReleaserContext context) {
         try {
-            context.getModel().setCommit(GitSdk.of(context).head());
+            Commit head = GitSdk.of(context).head();
+            context.getModel().setCommit(new JReleaserModel.Commit(head.getShortHash(),
+                head.getFullHash(),
+                head.getRefName()));
         } catch (Exception e) {
-            if (context.getMode() == JReleaserContext.Mode.ASSEMBLE ||
-                context.getMode() == JReleaserContext.Mode.DOWNLOAD) return;
+            if (context.getMode() == Mode.ASSEMBLE ||
+                context.getMode() == Mode.DOWNLOAD) return;
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_head"), e);
         }
@@ -76,65 +81,65 @@ public class ModelConfigurer {
     }
 
     private static void autoConfigureGithub(JReleaserContext context, Repository repository) {
-        GitService service = context.getModel().getRelease().getGitService();
+        BaseReleaser service = context.getModel().getRelease().getReleaser();
 
         if (service != null) {
-            if (!(service instanceof Github)) {
-                context.getModel().getRelease().getGitService().setMatch(false);
-                context.getModel().getRelease().getGitService().setSkipTag(true);
+            if (!(service instanceof GithubReleaser)) {
+                context.getModel().getRelease().getReleaser().setMatch(false);
+                context.getModel().getRelease().getReleaser().setSkipTag(true);
                 context.getLogger().warn(RB.$("ERROR_context_configurer_detected_git"), "github", service.getServiceName());
             }
         } else {
-            context.getModel().getRelease().setGithub(new Github());
+            context.getModel().getRelease().setGithub(new GithubReleaser());
         }
 
-        fillGitProperties(context.getLogger(), context.getModel().getRelease().getGitService(),
+        fillGitProperties(context.getLogger(), context.getModel().getRelease().getReleaser(),
             repository, context.getModel().getCommit());
     }
 
     private static void autoConfigureGitlab(JReleaserContext context, Repository repository) {
-        GitService service = context.getModel().getRelease().getGitService();
+        BaseReleaser service = context.getModel().getRelease().getReleaser();
 
         if (service != null) {
-            if (!(service instanceof Gitlab)) {
-                context.getModel().getRelease().getGitService().setMatch(false);
-                context.getModel().getRelease().getGitService().setSkipTag(true);
+            if (!(service instanceof GitlabReleaser)) {
+                context.getModel().getRelease().getReleaser().setMatch(false);
+                context.getModel().getRelease().getReleaser().setSkipTag(true);
                 context.getLogger().warn(RB.$("ERROR_context_configurer_detected_git"), "gitlab", service.getServiceName());
             }
         } else {
-            context.getModel().getRelease().setGitlab(new Gitlab());
+            context.getModel().getRelease().setGitlab(new GitlabReleaser());
         }
 
-        fillGitProperties(context.getLogger(), context.getModel().getRelease().getGitService(),
+        fillGitProperties(context.getLogger(), context.getModel().getRelease().getReleaser(),
             repository, context.getModel().getCommit());
     }
 
     private static void autoConfigureCodeberg(JReleaserContext context, Repository repository) {
-        GitService service = context.getModel().getRelease().getGitService();
+        BaseReleaser service = context.getModel().getRelease().getReleaser();
 
         if (service != null) {
-            if (!(service instanceof Codeberg)) {
-                context.getModel().getRelease().getGitService().setMatch(false);
-                context.getModel().getRelease().getGitService().setSkipTag(true);
+            if (!(service instanceof CodebergReleaser)) {
+                context.getModel().getRelease().getReleaser().setMatch(false);
+                context.getModel().getRelease().getReleaser().setSkipTag(true);
                 context.getLogger().warn(RB.$("ERROR_context_configurer_detected_git"), "codeberg", service.getServiceName());
             }
         } else {
-            context.getModel().getRelease().setCodeberg(new Codeberg());
+            context.getModel().getRelease().setCodeberg(new CodebergReleaser());
         }
 
-        fillGitProperties(context.getLogger(), context.getModel().getRelease().getGitService(),
+        fillGitProperties(context.getLogger(), context.getModel().getRelease().getReleaser(),
             repository, context.getModel().getCommit());
     }
 
     private static void autoConfigureOther(JReleaserContext context, Repository repository) {
-        GitService service = context.getModel().getRelease().getGitService();
+        BaseReleaser service = context.getModel().getRelease().getReleaser();
 
         if (service != null) {
             fillGitProperties(context.getLogger(), service, repository, context.getModel().getCommit());
         }
     }
 
-    private static void fillGitProperties(JReleaserLogger logger, GitService service, Repository repository, Commit head) {
+    private static void fillGitProperties(JReleaserLogger logger, BaseReleaser service, Repository repository, JReleaserModel.Commit head) {
         if (isBlank(service.getOwner())) {
             service.setOwner(repository.getOwner());
         }

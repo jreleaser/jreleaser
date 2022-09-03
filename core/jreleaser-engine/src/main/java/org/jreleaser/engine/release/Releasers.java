@@ -18,17 +18,17 @@
 package org.jreleaser.engine.release;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Codeberg;
-import org.jreleaser.model.GenericGit;
-import org.jreleaser.model.Gitea;
-import org.jreleaser.model.Github;
-import org.jreleaser.model.Gitlab;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.releaser.spi.ReleaseException;
-import org.jreleaser.model.releaser.spi.Releaser;
-import org.jreleaser.model.releaser.spi.ReleaserBuilder;
-import org.jreleaser.model.releaser.spi.ReleaserBuilderFactory;
-import org.jreleaser.util.JReleaserException;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.api.release.CodebergReleaser;
+import org.jreleaser.model.api.release.GenericGitReleaser;
+import org.jreleaser.model.api.release.GiteaReleaser;
+import org.jreleaser.model.api.release.GithubReleaser;
+import org.jreleaser.model.api.release.GitlabReleaser;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.spi.release.ReleaseException;
+import org.jreleaser.model.spi.release.Releaser;
+import org.jreleaser.model.spi.release.ReleaserBuilder;
+import org.jreleaser.model.spi.release.ReleaserBuilderFactory;
 
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -52,23 +52,23 @@ public class Releasers {
 
     private static <T extends ReleaserBuilder> T findReleaser(JReleaserContext context) {
         Map<String, ReleaserBuilder> builders = StreamSupport.stream(ServiceLoader.load(ReleaserBuilderFactory.class,
-            Releasers.class.getClassLoader()).spliterator(), false)
+                Releasers.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(ReleaserBuilderFactory::getName, ReleaserBuilderFactory::getBuilder));
 
         if (null != context.getModel().getRelease().getGithub()) {
-            return (T) builders.get(Github.NAME);
+            return (T) builders.get(GithubReleaser.TYPE);
         }
         if (null != context.getModel().getRelease().getGitlab()) {
-            return (T) builders.get(Gitlab.NAME);
+            return (T) builders.get(GitlabReleaser.TYPE);
         }
         if (null != context.getModel().getRelease().getGitea()) {
-            return (T) builders.get(Gitea.NAME);
+            return (T) builders.get(GiteaReleaser.TYPE);
         }
         if (null != context.getModel().getRelease().getCodeberg()) {
-            return (T) builders.get(Codeberg.NAME);
+            return (T) builders.get(CodebergReleaser.TYPE);
         }
         if (null != context.getModel().getRelease().getGeneric()) {
-            return (T) builders.get(GenericGit.NAME);
+            return (T) builders.get(GenericGitReleaser.TYPE);
         }
 
         throw new JReleaserException(RB.$("ERROR_releaser_no_match"));

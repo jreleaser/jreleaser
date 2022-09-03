@@ -18,16 +18,17 @@
 package org.jreleaser.engine.download;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Download;
-import org.jreleaser.model.Downloader;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.downloader.spi.DownloadException;
-import org.jreleaser.util.JReleaserException;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.download.Download;
+import org.jreleaser.model.internal.download.Downloader;
+import org.jreleaser.model.spi.download.DownloadException;
 
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
+import static org.jreleaser.model.internal.JReleaserSupport.supportedDownloaders;
 
 /**
  * @author Andres Almiray
@@ -44,7 +45,7 @@ public class Downloaders {
         if (!context.getIncludedDownloaderTypes().isEmpty()) {
             for (String downloaderType : context.getIncludedDownloaderTypes()) {
                 // check if the downloaderType is valid
-                if (!Download.supportedDownloaders().contains(downloaderType)) {
+                if (!supportedDownloaders().contains(downloaderType)) {
                     context.getLogger().warn(RB.$("ERROR_unsupported_downloader", downloaderType));
                     continue;
                 }

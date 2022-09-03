@@ -25,7 +25,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
-import org.jreleaser.model.Distribution;
 import org.jreleaser.templates.TemplateGenerationException;
 import org.jreleaser.templates.TemplateGenerator;
 
@@ -66,7 +65,7 @@ public class JReleaserTemplateMojo extends AbstractMojo {
      * The type of the distribution.
      */
     @Parameter(property = "jreleaser.template.distribution.type", defaultValue = "JAVA_BINARY")
-    private final Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
+    private final org.jreleaser.model.Distribution.DistributionType distributionType = org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 
     /**
      * The name of the packager.

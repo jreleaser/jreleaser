@@ -26,7 +26,7 @@ import static org.apache.maven.shared.utils.logging.MessageUtils.isColorEnabled;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserModelPrinter extends org.jreleaser.model.JReleaserModelPrinter {
+public class JReleaserModelPrinter extends org.jreleaser.model.internal.JReleaserModelPrinter {
     public JReleaserModelPrinter(PrintWriter out) {
         super(out);
     }

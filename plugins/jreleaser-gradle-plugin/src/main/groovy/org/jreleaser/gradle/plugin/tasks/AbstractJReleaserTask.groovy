@@ -28,16 +28,16 @@ import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.logging.JReleaserLogger
-import org.jreleaser.model.JReleaserContext
-import org.jreleaser.model.JReleaserModel
 import org.jreleaser.model.JReleaserVersion
+import org.jreleaser.model.internal.JReleaserContext
+import org.jreleaser.model.internal.JReleaserModel
 import org.jreleaser.util.PlatformUtils
 import org.jreleaser.util.StringUtils
 
 import javax.inject.Inject
 
-import static org.jreleaser.model.JReleaserContext.Configurer
-import static org.jreleaser.model.JReleaserContext.Mode
+import static org.jreleaser.model.api.JReleaserContext.Mode.FULL
+import static org.jreleaser.model.internal.JReleaserContext.Configurer
 
 /**
  *
@@ -61,13 +61,13 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     final Property<JReleaserLogger> jlogger
 
     @Internal
-    Mode mode
+    org.jreleaser.model.api.JReleaserContext.Mode mode
 
     @Inject
     AbstractJReleaserTask(ObjectFactory objects) {
         model = objects.property(JReleaserModel)
         jlogger = objects.property(JReleaserLogger)
-        mode = Mode.FULL
+        mode = FULL
         dryrun = objects.property(Boolean).convention(false)
         gitRootSearch = objects.property(Boolean).convention(false)
         outputDirectory = objects.directoryProperty()

@@ -18,19 +18,20 @@
 package org.jreleaser.engine.announce;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Announce;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.announcer.spi.AnnounceException;
-import org.jreleaser.model.announcer.spi.Announcer;
-import org.jreleaser.model.announcer.spi.AnnouncerBuilder;
-import org.jreleaser.model.announcer.spi.AnnouncerBuilderFactory;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.JReleaserModel;
+import org.jreleaser.model.spi.announce.AnnounceException;
+import org.jreleaser.model.spi.announce.Announcer;
+import org.jreleaser.model.spi.announce.AnnouncerBuilder;
+import org.jreleaser.model.spi.announce.AnnouncerBuilderFactory;
 
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static org.jreleaser.model.internal.JReleaserSupport.supportedAnnouncers;
 
 /**
  * @author Andres Almiray
@@ -53,7 +54,7 @@ public class Announcers {
         if (!context.getIncludedAnnouncers().isEmpty()) {
             for (String announcerName : context.getIncludedAnnouncers()) {
                 // check if the announcer name is valid
-                if (!Announce.supportedAnnouncers().contains(announcerName)) {
+                if (!supportedAnnouncers().contains(announcerName)) {
                     context.getLogger().warn(RB.$("ERROR_unsupported_announcer", announcerName));
                     continue;
                 }
@@ -109,7 +110,7 @@ public class Announcers {
         JReleaserModel model = context.getModel();
 
         Map<String, AnnouncerBuilder> builders = StreamSupport.stream(ServiceLoader.load(AnnouncerBuilderFactory.class,
-            Announcers.class.getClassLoader()).spliterator(), false)
+                Announcers.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(AnnouncerBuilderFactory::getName, AnnouncerBuilderFactory::getBuilder));
 
         Map<String, Announcer> announcers = new TreeMap<>();

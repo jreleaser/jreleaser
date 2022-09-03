@@ -27,7 +27,7 @@ import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.internal.JReleaserExtensionImpl
 import org.jreleaser.gradle.plugin.internal.JReleaserProjectConfigurer
 
-import static org.jreleaser.util.JReleaserOutput.JRELEASER_QUIET
+import static org.jreleaser.model.JReleaserOutput.JRELEASER_QUIET
 
 /**
  *

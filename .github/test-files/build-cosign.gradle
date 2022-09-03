@@ -8,7 +8,7 @@ jreleaser {
     dryrun = true
 
     environment {
-        properties.put('jdkPathPrefix', 'apps/jreleaser/build/jdks')
+        properties.put('jdkPathPrefix', 'plugins/jreleaser/build/jdks')
         properties.put('jdkFilePrefix', 'zulu17.32.13-ca-jdk17.0.2')
     }
 
@@ -202,10 +202,10 @@ jreleaser {
                     platform = 'windows-aarch_64'
                 }
                 mainJar {
-                    path = 'apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
+                    path = 'plugins/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
                 }
                 jars {
-                    pattern = 'apps/jreleaser/build/dependencies/flat/*.jar'
+                    pattern = 'plugins/jreleaser/build/dependencies/flat/*.jar'
                 }
             }
         }
@@ -288,12 +288,12 @@ jreleaser {
                 }
             }
             artifact {
-                path = 'apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip'
+                path = 'plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip'
                 transform = '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
                 extraProperties.put('skipSpec', true)
             }
             artifact {
-                path = 'apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar'
+                path = 'plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar'
                 transform = '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar'
                 extraProperties.put('skipFlatpak', true)
             }
@@ -309,7 +309,7 @@ jreleaser {
         'jreleaser-tool-provider' {
             distributionType = 'SINGLE_JAR'
             artifact {
-                path = 'apps/{{distributionName}}/build/libs/{{distributionName}}-{{projectVersion}}.jar'
+                path = 'plugins/{{distributionName}}/build/libs/{{distributionName}}-{{projectVersion}}.jar'
                 transform = '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.jar'
             }
         }

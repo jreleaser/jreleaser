@@ -1,0 +1,92 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2020-2022 The JReleaser authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jreleaser.sdk.github;
+
+import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Constants;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.release.GithubReleaser;
+import org.jreleaser.model.spi.announce.AnnounceException;
+import org.jreleaser.model.spi.announce.Announcer;
+import org.jreleaser.mustache.MustacheUtils;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
+/**
+ * @author Andres Almiray
+ * @since 0.1.0
+ */
+public class DiscussionsAnnouncer implements Announcer {
+    private final JReleaserContext context;
+
+    DiscussionsAnnouncer(JReleaserContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public String getName() {
+        return org.jreleaser.model.api.announce.DiscussionsAnnouncer.TYPE;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return context.getModel().getAnnounce().getDiscussions().isEnabled();
+    }
+
+    @Override
+    public void announce() throws AnnounceException {
+        GithubReleaser github = context.getModel().getRelease().getGithub();
+        org.jreleaser.model.internal.announce.DiscussionsAnnouncer discussions = context.getModel().getAnnounce().getDiscussions();
+
+        String message = "";
+        if (isNotBlank(discussions.getMessage())) {
+            message = discussions.getResolvedMessage(context);
+        } else {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
+            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+            message = discussions.getResolvedMessageTemplate(context, props);
+        }
+
+        String title = discussions.getResolvedTitle(context);
+        context.getLogger().info("title: {}", title);
+        context.getLogger().debug("message: {}", message);
+
+        try {
+            Github api = new Github(context.getLogger(),
+                github.getApiEndpoint(),
+                github.getResolvedToken(),
+                discussions.getConnectTimeout(),
+                discussions.getReadTimeout());
+
+            if (api.findDiscussion(discussions.getOrganization(), discussions.getTeam(), title).isPresent()) {
+                throw new IllegalStateException(RB.$("ERROR_git_discussion_duplicate",
+                    title, discussions.getOrganization(), discussions.getTeam()));
+            }
+
+            api.createDiscussion(discussions.getOrganization(), discussions.getTeam(), title, message);
+        } catch (IOException | IllegalStateException e) {
+            context.getLogger().trace(e);
+            throw new AnnounceException(e);
+        }
+    }
+}

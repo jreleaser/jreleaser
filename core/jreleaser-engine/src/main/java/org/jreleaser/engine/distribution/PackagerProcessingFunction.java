@@ -17,7 +17,7 @@
  */
 package org.jreleaser.engine.distribution;
 
-import org.jreleaser.model.packager.spi.PackagerProcessingException;
+import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 
 /**
  * @author Andres Almiray

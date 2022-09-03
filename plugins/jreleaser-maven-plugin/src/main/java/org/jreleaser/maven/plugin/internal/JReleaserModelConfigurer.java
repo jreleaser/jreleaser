@@ -21,9 +21,9 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Developer;
 import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
-import org.jreleaser.model.Environment;
-import org.jreleaser.model.JReleaserModel;
-import org.jreleaser.model.Project;
+import org.jreleaser.model.internal.JReleaserModel;
+import org.jreleaser.model.internal.environment.Environment;
+import org.jreleaser.model.internal.project.Project;
 
 import java.util.ArrayList;
 import java.util.Collections;

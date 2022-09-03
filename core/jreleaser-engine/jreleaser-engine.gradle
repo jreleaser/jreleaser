@@ -17,9 +17,45 @@
  */
 dependencies {
     api project(':jreleaser-extensions-impl')
-    api project(':jreleaser-model')
-    api project(':git-sdk')
-    api project(':tool-sdk')
+    api project(':jreleaser-model-impl')
+    api project(':jreleaser-templates')
+    api project(':jreleaser-git-java-sdk')
+    api project(':jreleaser-tool-java-sdk')
+    api project(':jreleaser-signing-java-sdk')
+    api project(':jreleaser-command-java-sdk')
+
+    // tools
+    api "org.apache.commons:commons-lang3:${commonsLang3Version}"
+
+    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
+    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+
+    // announce
+    api project(':jreleaser-discord-java-sdk')
+    api project(':jreleaser-gitter-java-sdk')
+    api project(':jreleaser-google-chat-java-sdk')
+    api project(':jreleaser-smtp-java-sdk')
+    api project(':jreleaser-mastodon-java-sdk')
+    api project(':jreleaser-mattermost-java-sdk')
+    api project(':jreleaser-sdkman-java-sdk')
+    api project(':jreleaser-slack-java-sdk')
+    api project(':jreleaser-teams-java-sdk')
+    api project(':jreleaser-telegram-java-sdk')
+    api project(':jreleaser-twitter-java-sdk')
+    api project(':jreleaser-webhooks-java-sdk')
+    api project(':jreleaser-zulip-java-sdk')
+    // release
+    api project(':jreleaser-github-java-sdk')
+    api project(':jreleaser-gitlab-java-sdk')
+    api project(':jreleaser-gitea-java-sdk')
+    api project(':jreleaser-codeberg-java-sdk')
+    api project(':jreleaser-genericgit-java-sdk')
+    // download/upload
+    api project(':jreleaser-artifactory-java-sdk')
+    api project(':jreleaser-ftp-java-sdk')
+    api project(':jreleaser-http-java-sdk')
+    api project(':jreleaser-ssh-java-sdk')
+    api project(':jreleaser-s3-java-sdk')
 
     compileOnly "org.graalvm.nativeimage:svm:$graalVersion"
 }

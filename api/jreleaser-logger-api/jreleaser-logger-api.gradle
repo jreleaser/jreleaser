@@ -16,22 +16,6 @@
  * limitations under the License.
  */
 dependencies {
-    api project(':jreleaser-model-api')
-    api project(':jreleaser-resource-bundle')
-
-    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
-    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
-
-    api('kr.motd.maven:os-maven-plugin:1.7.0') { transitive = false }
-    api "com.github.spullara.mustache.java:compiler:$mustacheVersion"
-    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
-    // checksum
-    api "commons-codec:commons-codec:$commonsCodecVersion"
-    api "org.apache.commons:commons-compress:$commonsCompressVersion"
+    api "org.slf4j:slf4j-api:$slf4jVersion"
     api "org.slf4j:jcl-over-slf4j:$slf4jVersion"
-    api "org.zeroturnaround:zt-exec:$ztexecVersion"
-    api "com.github.veithen.cosmos.bootstrap:org.tukaani.xz:$xzVersion"
-    api "org.commonmark:commonmark:$commonmarkVersion"
 }

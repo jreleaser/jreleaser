@@ -18,13 +18,13 @@
 package org.jreleaser.engine.checksum;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Artifact;
-import org.jreleaser.model.Distribution;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.distributions.Distribution;
+import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.ChecksumUtils;
-import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jreleaser.model.Checksum.KEY_SKIP_CHECKSUM;
+import static org.jreleaser.model.api.checksum.Checksum.KEY_SKIP_CHECKSUM;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**

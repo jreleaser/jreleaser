@@ -24,7 +24,7 @@ import com.github.sbaudoin.yamllint.Linter;
 import com.github.sbaudoin.yamllint.YamlLintConfig;
 import com.github.sbaudoin.yamllint.YamlLintConfigException;
 import org.jreleaser.config.JReleaserConfigParser;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.internal.JReleaserModel;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 import java.io.IOException;

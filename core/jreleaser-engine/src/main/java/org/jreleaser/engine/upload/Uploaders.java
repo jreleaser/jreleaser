@@ -18,16 +18,17 @@
 package org.jreleaser.engine.upload;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Upload;
-import org.jreleaser.model.Uploader;
-import org.jreleaser.model.uploader.spi.UploadException;
-import org.jreleaser.util.JReleaserException;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.upload.Upload;
+import org.jreleaser.model.internal.upload.Uploader;
+import org.jreleaser.model.spi.upload.UploadException;
 
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
+import static org.jreleaser.model.internal.JReleaserSupport.supportedUploaders;
 
 /**
  * @author Andres Almiray
@@ -44,7 +45,7 @@ public class Uploaders {
         if (!context.getIncludedUploaderTypes().isEmpty()) {
             for (String uploaderType : context.getIncludedUploaderTypes()) {
                 // check if the uploaderType is valid
-                if (!Upload.supportedUploaders().contains(uploaderType)) {
+                if (!supportedUploaders().contains(uploaderType)) {
                     context.getLogger().warn(RB.$("ERROR_unsupported_uploader", uploaderType));
                     continue;
                 }

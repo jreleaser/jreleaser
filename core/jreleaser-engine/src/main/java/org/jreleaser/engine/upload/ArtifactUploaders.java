@@ -18,11 +18,11 @@
 package org.jreleaser.engine.upload;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Uploader;
-import org.jreleaser.model.uploader.spi.ArtifactUploader;
-import org.jreleaser.model.uploader.spi.ArtifactUploaderFactory;
-import org.jreleaser.util.JReleaserException;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.upload.Uploader;
+import org.jreleaser.model.spi.upload.ArtifactUploader;
+import org.jreleaser.model.spi.upload.ArtifactUploaderFactory;
 
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -36,7 +36,7 @@ import java.util.stream.StreamSupport;
 public class ArtifactUploaders {
     public static <U extends Uploader> ArtifactUploader<U> findUploader(JReleaserContext context, U uploader) {
         Map<String, ArtifactUploader> uploaders = StreamSupport.stream(ServiceLoader.load(ArtifactUploaderFactory.class,
-            ArtifactUploaders.class.getClassLoader()).spliterator(), false)
+                ArtifactUploaders.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(ArtifactUploaderFactory::getName, factory -> factory.getArtifactUploader(context)));
 
         if (uploaders.containsKey(uploader.getType())) {

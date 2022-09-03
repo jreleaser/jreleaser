@@ -19,7 +19,7 @@ package org.jreleaser.config.toml;
 
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import org.jreleaser.config.JReleaserConfigParser;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.internal.JReleaserModel;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 import java.io.IOException;

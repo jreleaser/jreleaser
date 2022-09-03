@@ -36,7 +36,7 @@ mavenPlugin {
 }
 
 dependencies {
-    api project(':disco-java-sdk')
+    api project(':jreleaser-disco-java-sdk')
     api "org.twdata.maven:mojo-executor:$mojoExecutorVersion"
     api "org.codehaus.plexus:plexus-archiver:$plexusArchiverVersion"
 

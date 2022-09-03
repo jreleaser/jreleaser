@@ -1,0 +1,143 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2020-2022 The JReleaser authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+plugins {
+    id 'application'
+    id 'org.jreleaser.jdks'
+}
+
+application {
+    mainClass = 'org.jreleaser.cli.Main'
+}
+
+jar {
+    manifest {
+        attributes('Main-Class': 'org.jreleaser.cli.Main')
+    }
+}
+
+config {
+    info {
+        specification { enabled = true }
+    }
+}
+
+dependencies {
+    api project(':jreleaser-engine')
+    //config
+    api project(':jreleaser-config-yaml')
+    api project(':jreleaser-config-toml')
+    api project(':jreleaser-config-json')
+    api "com.github.victools:jsonschema-generator:$jsonSchemaVersion"
+    api "com.github.victools:jsonschema-module-jackson:$jsonSchemaVersion"
+
+    annotationProcessor "info.picocli:picocli-codegen:$picocliVersion"
+    api "info.picocli:picocli:$picocliVersion"
+    runtimeOnly "org.slf4j:slf4j-simple:$slf4jVersion"
+}
+
+processResources {
+    inputs.property('version', project.version)
+    filesMatching(['**/Banner*.properties']) {
+        expand(
+            'version': project.version,
+            'id': 'jreleaser',
+            'name': 'jreleaser'
+        )
+    }
+}
+
+distributions {
+    main {
+        contents {
+            from('../..') {
+                include 'VERSION'
+            }
+        }
+    }
+}
+
+jdks {
+    zulu17Linux {
+        platform = 'linux-x86_64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_x64.zip'
+        checksum = '7668ebaecc81041d8d1e79e857552887f56c445ef4c6e8d634007b7b67f5a1d3'
+    }
+    zulu17LinuxArm {
+        platform = 'linux-aarch64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_aarch64.tar.gz'
+        checksum = '2b8066bbdbc5cff422bb6b6db1b8f8d362b576340cce8492f1255502af632b06'
+    }
+    zulu17LinuxMusl {
+        platform = 'linux_musl-x86_64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_musl_x64.tar.gz'
+        checksum = 'bcc5342011bd9f3643372aadbdfa68d47463ff0d8621668a0bdf2910614d95c6'
+    }
+    zulu17LinuxMuslArm {
+        platform = 'linux_musl-aarch64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_musl_aarch64.tar.gz'
+        checksum = '6b920559abafbe9bdef386a20ecf3a2f318bc1f0d8359eb1f95aee26606bbc70'
+    }
+    zulu17Windows {
+        platform = 'windows-x86_64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-win_x64.zip'
+        checksum = 'e965aa0ea7a0661a3446cf8f10ee00684b851f883b803315289f26b4aa907fdb'
+    }
+    zulu17WindowsArm {
+        platform = 'windows-aarch64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-win_aarch64.zip'
+        checksum = '1a9d4ab3b52ce3db7354691163e5a36979af9c37d80c3c490c12af07de21d8f3'
+    }
+    zulu17Osx {
+        platform = 'osx-x86_64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-macosx_x64.zip'
+        checksum = 'f75fe30aced4fbee8db108fbb123b3af328503a2af46e173cbe43613b995e492'
+    }
+    zulu17OsxArm {
+        platform = 'osx-aarch64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-macosx_aarch64.zip'
+        checksum = '8c287018d358ec2c43995bf09a0cdaa235f0bdd434673777a564daee2c3872df'
+    }
+    graal17Osx {
+        platform = 'osx-x86_64'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.2.0/graalvm-ce-java17-darwin-amd64-22.2.0.tar.gz'
+        checksum = 'b92b6f5f7f11282f20c8f8b94ea1c16d776cbadd7b254119836a7ace9f513b0d'
+    }
+    graal17Linux {
+        platform = 'linux-x86_64'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.2.0/graalvm-ce-java17-linux-amd64-22.2.0.tar.gz'
+        checksum = 'cd903566d030bf44a8c5c0f50914fc9c9d89cb2954e1f90512b137a0bfedc3ca'
+    }
+    //graal17LinuxArm {
+    //    platform = 'linux-aarch64'
+    //    url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-linux-aarch64-22.0.0.2.tar.gz'
+    //    checksum = 'c7d78387d2a144944f26773697c1b61d3478a081a1c5e7fc20f47f1f5f3c82c7'
+    //}
+    graal17Windows {
+        platform = 'windows-x86_64'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.2.0/graalvm-ce-java17-windows-amd64-22.2.0.zip'
+        checksum = '0930735fafe50f295b3e46c5e860ca3500aa76bdeb02f1af142bedab88a371c8'
+    }
+}
+
+copyDependencies {
+    dependsOn classes
+    inputs.files(configurations.runtimeClasspath)
+    configuration = 'runtimeClasspath'
+}
+
+assemble.dependsOn copyDependencies

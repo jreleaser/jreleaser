@@ -23,8 +23,9 @@ import org.jreleaser.ant.tasks.internal.JReleaserLoggerAdapter;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.engine.context.ContextCreator;
 import org.jreleaser.logging.JReleaserLogger;
-import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.api.JReleaserContext.Mode;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 
@@ -198,8 +199,8 @@ abstract class AbstractJReleaserTask extends Task {
         return extensions;
     }
 
-    protected JReleaserContext.Mode getMode() {
-        return JReleaserContext.Mode.FULL;
+    protected Mode getMode() {
+        return Mode.FULL;
     }
 
     protected List<String> collectSelectedPlatforms() {

@@ -22,11 +22,11 @@ import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.extensions.api.ExtensionManager;
 import org.jreleaser.extensions.api.ExtensionManagerHolder;
 import org.jreleaser.extensions.impl.DefaultExtensionManager;
-import org.jreleaser.model.Extension;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModelPrinter;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.JReleaserModelPrinter;
+import org.jreleaser.model.internal.extensions.Extension;
 import org.jreleaser.util.Errors;
-import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.Map;
@@ -74,8 +74,6 @@ public class ModelValidator {
         if (!context.getMode().validateStandalone()) {
             context.setReleaser(Releasers.releaserFor(context));
         }
-
-        // context.freeze();
 
         report(context);
         loadExtensions(context);

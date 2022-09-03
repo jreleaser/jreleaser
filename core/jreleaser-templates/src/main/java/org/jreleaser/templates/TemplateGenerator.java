@@ -20,8 +20,6 @@ package org.jreleaser.templates;
 import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
-import org.jreleaser.model.Announce;
-import org.jreleaser.model.Distribution;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -38,6 +36,8 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Objects.requireNonNull;
+import static org.jreleaser.model.internal.JReleaserSupport.supportedAnnouncers;
+import static org.jreleaser.model.internal.JReleaserSupport.supportedPackagers;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -49,7 +49,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class TemplateGenerator {
     private final JReleaserLogger logger;
     private final String distributionName;
-    private final Distribution.DistributionType distributionType;
+    private final org.jreleaser.model.Distribution.DistributionType distributionType;
     private final String packagerName;
     private final String announcerName;
     private final Path outputDirectory;
@@ -58,7 +58,7 @@ public class TemplateGenerator {
 
     private TemplateGenerator(JReleaserLogger logger,
                               String distributionName,
-                              Distribution.DistributionType distributionType,
+                              org.jreleaser.model.Distribution.DistributionType distributionType,
                               String packagerName,
                               String announcerName,
                               Path outputDirectory,
@@ -82,7 +82,7 @@ public class TemplateGenerator {
     }
 
     private Path generateAnnouncer() throws TemplateGenerationException {
-        if (!Announce.supportedAnnouncers().contains(announcerName)) {
+        if (!supportedAnnouncers().contains(announcerName)) {
             logger.error(RB.$("templates.announcer.not.supported"), announcerName);
             return null;
         }
@@ -113,7 +113,7 @@ public class TemplateGenerator {
     }
 
     private Path generatePackager() throws TemplateGenerationException {
-        if (!Distribution.supportedPackagers().contains(packagerName)) {
+        if (!supportedPackagers().contains(packagerName)) {
             logger.error(RB.$("ERROR_packager_not_supported"), packagerName);
             return null;
         }
@@ -178,7 +178,7 @@ public class TemplateGenerator {
     public static class TemplateGeneratorBuilder {
         private JReleaserLogger logger;
         private String distributionName;
-        private Distribution.DistributionType distributionType = Distribution.DistributionType.JAVA_BINARY;
+        private org.jreleaser.model.Distribution.DistributionType distributionType = org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
         private String packagerName;
         private String announcerName;
         private Path outputDirectory;
@@ -195,7 +195,7 @@ public class TemplateGenerator {
             return this;
         }
 
-        public TemplateGeneratorBuilder distributionType(Distribution.DistributionType distributionType) {
+        public TemplateGeneratorBuilder distributionType(org.jreleaser.model.Distribution.DistributionType distributionType) {
             this.distributionType = distributionType;
             return this;
         }

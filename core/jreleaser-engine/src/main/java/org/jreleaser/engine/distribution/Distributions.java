@@ -18,13 +18,15 @@
 package org.jreleaser.engine.distribution;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Distribution;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.packager.spi.PackagerProcessingException;
-import org.jreleaser.util.JReleaserException;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.distributions.Distribution;
+import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 
 import java.util.List;
 import java.util.Locale;
+
+import static org.jreleaser.model.internal.JReleaserSupport.supportedPackagers;
 
 /**
  * @author Andres Almiray
@@ -52,7 +54,7 @@ public class Distributions {
 
                 if (!context.getIncludedPackagers().isEmpty()) {
                     for (String packagerName : context.getIncludedPackagers()) {
-                        if (!Distribution.supportedPackagers().contains(packagerName)) {
+                        if (!supportedPackagers().contains(packagerName)) {
                             context.getLogger().warn(RB.$("ERROR_unsupported_packager", packagerName));
                             continue;
                         }
@@ -67,7 +69,7 @@ public class Distributions {
             }
         } else if (!context.getIncludedPackagers().isEmpty()) {
             for (String packagerName : context.getIncludedPackagers()) {
-                if (!Distribution.supportedPackagers().contains(packagerName)) {
+                if (!supportedPackagers().contains(packagerName)) {
                     context.getLogger().warn(RB.$("ERROR_unsupported_packager", packagerName));
                     continue;
                 }
@@ -95,7 +97,7 @@ public class Distributions {
         context.getLogger().increaseIndent();
         context.getLogger().info(RB.$("distributions.apply.action.to"), action, distribution.getName());
 
-        for (String packagerName : Distribution.supportedPackagers()) {
+        for (String packagerName : supportedPackagers()) {
             if (context.getExcludedPackagers().contains(packagerName)) {
                 context.getLogger().info(RB.$("packagers.packager.excluded"), packagerName);
                 continue;

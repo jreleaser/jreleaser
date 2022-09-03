@@ -18,11 +18,11 @@
 package org.jreleaser.engine.assemble;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Assembler;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.assembler.spi.AssemblerProcessor;
-import org.jreleaser.model.assembler.spi.AssemblerProcessorFactory;
-import org.jreleaser.util.JReleaserException;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.assemble.Assembler;
+import org.jreleaser.model.spi.assemble.AssemblerProcessor;
+import org.jreleaser.model.spi.assemble.AssemblerProcessorFactory;
 
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -36,7 +36,7 @@ import java.util.stream.StreamSupport;
 public class AssemblerProcessors {
     public static <A extends Assembler> AssemblerProcessor<A> findProcessor(JReleaserContext context, A assembler) {
         Map<String, AssemblerProcessor> processors = StreamSupport.stream(ServiceLoader.load(AssemblerProcessorFactory.class,
-            AssemblerProcessors.class.getClassLoader()).spliterator(), false)
+                AssemblerProcessors.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(AssemblerProcessorFactory::getName, factory -> factory.getAssemblerProcessor(context)));
 
         if (processors.containsKey(assembler.getType())) {

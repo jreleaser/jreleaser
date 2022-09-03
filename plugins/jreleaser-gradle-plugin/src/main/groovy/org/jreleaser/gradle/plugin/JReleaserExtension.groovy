@@ -22,21 +22,21 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.jreleaser.gradle.plugin.dsl.Announce
-import org.jreleaser.gradle.plugin.dsl.Assemble
-import org.jreleaser.gradle.plugin.dsl.Checksum
-import org.jreleaser.gradle.plugin.dsl.Distribution
-import org.jreleaser.gradle.plugin.dsl.Download
-import org.jreleaser.gradle.plugin.dsl.Environment
-import org.jreleaser.gradle.plugin.dsl.Extension
-import org.jreleaser.gradle.plugin.dsl.Files
-import org.jreleaser.gradle.plugin.dsl.Hooks
-import org.jreleaser.gradle.plugin.dsl.Packagers
-import org.jreleaser.gradle.plugin.dsl.Platform
-import org.jreleaser.gradle.plugin.dsl.Project
-import org.jreleaser.gradle.plugin.dsl.Release
-import org.jreleaser.gradle.plugin.dsl.Signing
-import org.jreleaser.gradle.plugin.dsl.Upload
+import org.jreleaser.gradle.plugin.dsl.announce.Announce
+import org.jreleaser.gradle.plugin.dsl.assemble.Assemble
+import org.jreleaser.gradle.plugin.dsl.checksum.Checksum
+import org.jreleaser.gradle.plugin.dsl.distributions.Distribution
+import org.jreleaser.gradle.plugin.dsl.download.Download
+import org.jreleaser.gradle.plugin.dsl.environment.Environment
+import org.jreleaser.gradle.plugin.dsl.extensions.Extension
+import org.jreleaser.gradle.plugin.dsl.files.Files
+import org.jreleaser.gradle.plugin.dsl.hooks.Hooks
+import org.jreleaser.gradle.plugin.dsl.packagers.Packagers
+import org.jreleaser.gradle.plugin.dsl.platform.Platform
+import org.jreleaser.gradle.plugin.dsl.project.Project
+import org.jreleaser.gradle.plugin.dsl.release.Release
+import org.jreleaser.gradle.plugin.dsl.signing.Signing
+import org.jreleaser.gradle.plugin.dsl.upload.Upload
 
 /**
  *
@@ -55,32 +55,45 @@ interface JReleaserExtension {
 
     Property<Boolean> getGitRootSearch()
 
+    @Deprecated
     Environment getEnvironment()
 
+    @Deprecated
     Hooks getHooks()
 
+    @Deprecated
     Project getProject()
 
+    @Deprecated
     Platform getPlatform()
 
+    @Deprecated
     Release getRelease()
 
+    @Deprecated
     Upload getUpload()
 
+    @Deprecated
     Download getDownload()
 
+    @Deprecated
     Packagers getPackagers()
 
+    @Deprecated
     Announce getAnnounce()
 
+    @Deprecated
     Assemble getAssemble()
 
+    @Deprecated
     Signing getSigning()
 
+    @Deprecated
     Checksum getChecksum()
 
-    NamedDomainObjectContainer<Extension> getExtensions()
+    // NamedDomainObjectContainer<Extension> getExtensions()
 
+    @Deprecated
     NamedDomainObjectContainer<Distribution> getDistributions()
 
     void environment(Action<? super Environment> action)

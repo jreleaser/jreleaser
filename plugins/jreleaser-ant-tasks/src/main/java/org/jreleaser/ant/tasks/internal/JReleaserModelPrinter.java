@@ -23,7 +23,7 @@ import java.io.PrintWriter;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserModelPrinter extends org.jreleaser.model.JReleaserModelPrinter {
+public class JReleaserModelPrinter extends org.jreleaser.model.internal.JReleaserModelPrinter {
     public JReleaserModelPrinter(PrintWriter out) {
         super(out);
     }

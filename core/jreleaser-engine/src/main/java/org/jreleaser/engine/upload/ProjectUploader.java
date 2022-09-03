@@ -18,10 +18,10 @@
 package org.jreleaser.engine.upload;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Uploader;
-import org.jreleaser.model.uploader.spi.ArtifactUploader;
-import org.jreleaser.model.uploader.spi.UploadException;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.upload.Uploader;
+import org.jreleaser.model.spi.upload.ArtifactUploader;
+import org.jreleaser.model.spi.upload.UploadException;
 
 import static java.util.Objects.requireNonNull;
 

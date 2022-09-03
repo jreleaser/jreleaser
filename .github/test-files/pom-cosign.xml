@@ -76,7 +76,7 @@
                     <jreleaser>
                         <environment>
                             <properties>
-                                <jdkPathPrefix>apps/jreleaser/build/jdks</jdkPathPrefix>
+                                <jdkPathPrefix>plugins/jreleaser/build/jdks</jdkPathPrefix>
                                 <jdkFilePrefix>zulu17.32.13-ca-jdk17.0.2</jdkFilePrefix>
                             </properties>
                         </environment>
@@ -282,11 +282,11 @@
                                         </targetJdk>
                                     </targetJdks>
                                     <mainJar>
-                                        <path>apps/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar</path>
+                                        <path>plugins/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar</path>
                                     </mainJar>
                                     <jars>
                                         <jar>
-                                            <pattern>apps/jreleaser/build/dependencies/flat/*.jar</pattern>
+                                            <pattern>plugins/jreleaser/build/dependencies/flat/*.jar</pattern>
                                         </jar>
                                     </jars>
                                 </jreleaser-standalone>
@@ -385,14 +385,14 @@
                                 </spec>
                                 <artifacts>
                                     <artifact>
-                                        <path>apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip</path>
+                                        <path>plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip</path>
                                         <transform>{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip</transform>
                                         <extraProperties>
                                             <skipSpec>true</skipSpec>
                                         </extraProperties>
                                     </artifact>
                                     <artifact>
-                                        <path>apps/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar</path>
+                                        <path>plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar</path>
                                         <transform>{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar</transform>
                                         <extraProperties>
                                             <skipFlatpak>true</skipFlatpak>
@@ -412,7 +412,7 @@
                                 <type>SINGLE_JAR</type>
                                 <artifacts>
                                     <artifact>
-                                        <path>apps/{{distributionName}}/build/libs/{{distributionName}}-{{projectVersion}}.jar</path>
+                                        <path>plugins/{{distributionName}}/build/libs/{{distributionName}}-{{projectVersion}}.jar</path>
                                         <transform>{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.jar</transform>
                                     </artifact>
                                 </artifacts>
