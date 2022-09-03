@@ -25,9 +25,9 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.Mail;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.util.Date;
 import java.util.LinkedHashMap;

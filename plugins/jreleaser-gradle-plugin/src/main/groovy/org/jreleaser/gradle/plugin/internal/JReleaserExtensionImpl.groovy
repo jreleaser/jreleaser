@@ -35,6 +35,7 @@ import org.jreleaser.gradle.plugin.dsl.Checksum
 import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Download
 import org.jreleaser.gradle.plugin.dsl.Environment
+import org.jreleaser.gradle.plugin.dsl.Extension
 import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Hooks
 import org.jreleaser.gradle.plugin.dsl.Packagers
@@ -49,6 +50,7 @@ import org.jreleaser.gradle.plugin.internal.dsl.ChecksumImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.DownloadImpl
 import org.jreleaser.gradle.plugin.internal.dsl.EnvironmentImpl
+import org.jreleaser.gradle.plugin.internal.dsl.ExtensionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.FilesImpl
 import org.jreleaser.gradle.plugin.internal.dsl.HooksImpl
 import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
@@ -57,8 +59,8 @@ import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
 import org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl
 import org.jreleaser.gradle.plugin.internal.dsl.SigningImpl
 import org.jreleaser.gradle.plugin.internal.dsl.UploadImpl
+import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.JReleaserModel
-import org.jreleaser.util.JReleaserLogger
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -91,6 +93,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final SigningImpl signing
     final FilesImpl files
     final NamedDomainObjectContainer<Distribution> distributions
+    final NamedDomainObjectContainer<Extension> extensions
 
     private final ProjectLayout layout
 
@@ -124,7 +127,16 @@ class JReleaserExtensionImpl implements JReleaserExtension {
             Distribution create(String name) {
                 DistributionImpl distribution = objects.newInstance(DistributionImpl, objects)
                 distribution.name = name
-                return distribution
+                distribution
+            }
+        })
+
+        extensions = objects.domainObjectContainer(Extension, new NamedDomainObjectFactory<Extension>() {
+            @Override
+            Extension create(String name) {
+                ExtensionImpl extension = objects.newInstance(ExtensionImpl, objects)
+                extension.name = name
+                extension
             }
         })
     }
@@ -206,6 +218,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
+    void extensions(Action<? super NamedDomainObjectContainer<Extension>> action) {
+        action.execute(extensions)
+    }
+
+    @Override
     void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action) {
         ConfigureUtil.configure(action, environment)
     }
@@ -275,6 +292,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         ConfigureUtil.configure(action, distributions)
     }
 
+    @Override
+    void extensions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, extensions)
+    }
+
     @CompileDynamic
     JReleaserModel toModel(org.gradle.api.Project gradleProject, JReleaserLogger logger) {
         if (configFile.present) {
@@ -302,6 +324,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.checksum = checksum.toModel()
         jreleaser.files = files.toModel()
         distributions.each { jreleaser.addDistribution(((DistributionImpl) it).toModel()) }
+        extensions.each { jreleaser.addExtension(((ExtensionImpl) it).toModel()) }
         jreleaser
     }
 

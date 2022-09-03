@@ -20,11 +20,11 @@ package org.jreleaser.sdk.mastodon;
 import feign.form.FormEncoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.mastodon.api.MastodonAPI;
 import org.jreleaser.sdk.mastodon.api.Status;
-import org.jreleaser.util.JReleaserLogger;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;

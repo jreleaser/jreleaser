@@ -203,6 +203,7 @@ public abstract class GitServiceValidator extends Validator {
 
         validateTimeout(service);
 
+        // FIXME: extension
         // eager resolve
         service.getResolvedTagName(context.getModel());
         if (service.isReleaseSupported()) {

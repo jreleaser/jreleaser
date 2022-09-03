@@ -17,7 +17,7 @@
  */
 package org.jreleaser.cli.internal;
 
-import org.jreleaser.util.AbstractJReleaserLogger;
+import org.jreleaser.logging.AbstractJReleaserLogger;
 import org.slf4j.helpers.MessageFormatter;
 import picocli.CommandLine;
 

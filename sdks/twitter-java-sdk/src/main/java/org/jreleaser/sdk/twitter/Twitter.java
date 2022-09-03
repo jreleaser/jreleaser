@@ -18,7 +18,7 @@
 package org.jreleaser.sdk.twitter;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.logging.JReleaserLogger;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.TwitterFactory;

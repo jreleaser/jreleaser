@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.twitter;
 
-import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.logging.JReleaserLogger;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;

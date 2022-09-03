@@ -18,7 +18,7 @@
 package org.jreleaser.model;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.logging.JReleaserLogger;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;

@@ -110,7 +110,7 @@ subprojects {
 
 projects {
     subprojects {
-        dirs(['core', 'sdks']) {
+        dirs(['api', 'core', 'sdks']) {
             compileJava {
                 options.compilerArgs += ["-AprojectPath=${project.group}/${project.name}"]
             }

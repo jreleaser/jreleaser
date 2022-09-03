@@ -27,10 +27,10 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
+import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.JReleaserContext
 import org.jreleaser.model.JReleaserModel
 import org.jreleaser.model.JReleaserVersion
-import org.jreleaser.util.JReleaserLogger
 import org.jreleaser.util.PlatformUtils
 import org.jreleaser.util.StringUtils
 

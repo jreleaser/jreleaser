@@ -18,6 +18,7 @@
 package org.jreleaser.engine.context;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.Codeberg;
 import org.jreleaser.model.GitService;
 import org.jreleaser.model.Github;
@@ -28,7 +29,6 @@ import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.JReleaserException;
-import org.jreleaser.util.JReleaserLogger;
 
 import static org.jreleaser.model.GitService.BRANCH;
 import static org.jreleaser.util.StringUtils.isBlank;

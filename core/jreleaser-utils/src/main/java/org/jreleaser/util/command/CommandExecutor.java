@@ -18,7 +18,7 @@
 package org.jreleaser.util.command;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.logging.JReleaserLogger;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessInitException;
 

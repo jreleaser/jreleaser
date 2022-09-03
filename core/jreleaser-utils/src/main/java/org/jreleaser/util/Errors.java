@@ -17,6 +17,8 @@
  */
 package org.jreleaser.util;
 
+import org.jreleaser.logging.JReleaserLogger;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedHashSet;

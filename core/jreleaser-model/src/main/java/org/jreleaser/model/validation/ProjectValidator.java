@@ -134,6 +134,7 @@ public abstract class ProjectValidator extends Validator {
             }
         }
 
+        // FIXME: extension
         if (isBlank(project.getLinks().getLicense()) && context.getModel().getCommit() != null) {
             findLicenseFile(context.getBasedir())
                 .ifPresent(path -> {

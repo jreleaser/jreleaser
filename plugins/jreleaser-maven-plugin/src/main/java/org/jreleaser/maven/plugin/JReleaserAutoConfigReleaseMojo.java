@@ -25,10 +25,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.jreleaser.engine.context.ModelAutoConfigurer;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
-import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.workflow.Workflows;
 

@@ -19,11 +19,19 @@ package org.jreleaser.engine.context;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.release.Releasers;
+import org.jreleaser.extensions.api.ExtensionManager;
+import org.jreleaser.extensions.api.ExtensionManagerHolder;
+import org.jreleaser.extensions.impl.DefaultExtensionManager;
+import org.jreleaser.model.Extension;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModelPrinter;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserException;
 import org.jreleaser.util.PlatformUtils;
+
+import java.util.Map;
+
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -70,6 +78,7 @@ public class ModelValidator {
         // context.freeze();
 
         report(context);
+        loadExtensions(context);
     }
 
     private static void report(JReleaserContext context) {
@@ -83,5 +92,32 @@ public class ModelValidator {
             context.getLogger().info(RB.$("context.creator.report.head"), context.getModel().getCommit().getShortHash());
         }
         context.getLogger().info(RB.$("context.creator.report.platform"), PlatformUtils.getCurrentFull());
+    }
+
+    private static void loadExtensions(JReleaserContext context) {
+        ExtensionManager em = ExtensionManagerHolder.get();
+
+        if (!(em instanceof DefaultExtensionManager)) {
+            context.getLogger().warn(RB.$("context.creator.extension.manager.error"));
+            return;
+        }
+
+        DefaultExtensionManager extensionManager = (DefaultExtensionManager) em;
+        for (Map.Entry<String, Extension> e : context.getModel().getExtensions().entrySet()) {
+            Extension extension = e.getValue();
+            DefaultExtensionManager.ExtensionBuilder builder = extensionManager.configureExtension(e.getKey())
+                .withEnabled(extension.isEnabled());
+            if (isNotBlank(extension.getDirectory())) {
+                builder = builder.withDirectory(extension.getDirectory());
+            }
+
+            for (Extension.Provider provider : extension.getProviders()) {
+                builder = builder.withExtensionPoint(provider.getType(), provider.getProperties());
+            }
+
+            builder.build();
+        }
+
+        extensionManager.load(context.getLogger(), context.getBasedir());
     }
 }

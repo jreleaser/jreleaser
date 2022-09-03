@@ -18,7 +18,7 @@
 package org.jreleaser.jdks.maven.plugin;
 
 import org.apache.maven.plugin.logging.Log;
-import org.jreleaser.util.AbstractJReleaserLogger;
+import org.jreleaser.logging.AbstractJReleaserLogger;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.io.PrintWriter;

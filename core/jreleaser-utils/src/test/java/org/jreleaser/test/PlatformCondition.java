@@ -18,7 +18,7 @@
 package org.jreleaser.test;
 
 import org.jreleaser.util.PlatformUtils;
-import org.jreleaser.util.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;

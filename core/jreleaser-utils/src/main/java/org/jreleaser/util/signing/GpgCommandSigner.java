@@ -18,7 +18,7 @@
 package org.jreleaser.util.signing;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.util.command.Command;
 import org.jreleaser.util.command.CommandException;
 import org.jreleaser.util.command.CommandExecutor;

@@ -27,11 +27,11 @@ import feign.Request;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.sdk.disco.api.DiscoAPI;
 import org.jreleaser.sdk.disco.api.EphemeralId;
 import org.jreleaser.sdk.disco.api.Pkg;
 import org.jreleaser.sdk.disco.api.Result;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
 import java.util.Collections;

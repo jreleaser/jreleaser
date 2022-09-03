@@ -28,6 +28,7 @@ import org.jreleaser.gradle.plugin.dsl.Checksum
 import org.jreleaser.gradle.plugin.dsl.Distribution
 import org.jreleaser.gradle.plugin.dsl.Download
 import org.jreleaser.gradle.plugin.dsl.Environment
+import org.jreleaser.gradle.plugin.dsl.Extension
 import org.jreleaser.gradle.plugin.dsl.Files
 import org.jreleaser.gradle.plugin.dsl.Hooks
 import org.jreleaser.gradle.plugin.dsl.Packagers
@@ -78,6 +79,8 @@ interface JReleaserExtension {
 
     Checksum getChecksum()
 
+    NamedDomainObjectContainer<Extension> getExtensions()
+
     NamedDomainObjectContainer<Distribution> getDistributions()
 
     void environment(Action<? super Environment> action)
@@ -108,6 +111,8 @@ interface JReleaserExtension {
 
     void distributions(Action<? super NamedDomainObjectContainer<Distribution>> action)
 
+    void extensions(Action<? super NamedDomainObjectContainer<Extension>> action)
+
     void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action)
 
     void hooks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hooks) Closure<Void> action)
@@ -135,4 +140,6 @@ interface JReleaserExtension {
     void checksum(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Checksum) Closure<Void> action)
 
     void distributions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void extensions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 }

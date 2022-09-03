@@ -30,9 +30,9 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.options.OptionValues
+import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.Distribution
 import org.jreleaser.templates.TemplateGenerator
-import org.jreleaser.util.JReleaserLogger
 
 import javax.inject.Inject
 import java.nio.file.Path

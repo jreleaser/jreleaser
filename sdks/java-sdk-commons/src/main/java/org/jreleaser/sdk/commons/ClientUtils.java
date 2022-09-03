@@ -30,12 +30,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserModelPrinter;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.announcer.spi.AnnounceException;
 import org.jreleaser.model.uploader.spi.UploadException;
 import org.jreleaser.util.Constants;
-import org.jreleaser.util.JReleaserLogger;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;

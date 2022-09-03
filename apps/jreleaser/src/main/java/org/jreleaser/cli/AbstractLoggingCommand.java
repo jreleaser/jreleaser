@@ -18,7 +18,7 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.cli.internal.ColorizedJReleaserLoggerAdapter;
-import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.util.StringUtils;
 import picocli.CommandLine;
 

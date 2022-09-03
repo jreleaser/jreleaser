@@ -802,7 +802,6 @@ public abstract class GitService<S extends GitService<S>> extends AbstractModelO
 
         applyTemplates(props, project.getResolvedExtraProperties());
         props.put(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
-        MustacheUtils.applyFunctions(props);
 
         return props;
     }

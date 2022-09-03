@@ -35,6 +35,7 @@ import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;

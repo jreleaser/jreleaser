@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.util;
+package org.jreleaser.logging;
 
 import java.io.PrintWriter;
 
@@ -23,6 +23,7 @@ import java.io.PrintWriter;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public interface JReleaserLogger {
     PrintWriter getTracer();
 

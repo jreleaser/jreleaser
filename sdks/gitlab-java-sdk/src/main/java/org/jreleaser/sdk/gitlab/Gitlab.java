@@ -29,6 +29,7 @@ import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.model.releaser.spi.Release;
 import org.jreleaser.sdk.commons.ClientUtils;
@@ -46,7 +47,6 @@ import org.jreleaser.sdk.gitlab.api.GlUser;
 import org.jreleaser.sdk.gitlab.internal.Page;
 import org.jreleaser.sdk.gitlab.internal.PaginatingDecoder;
 import org.jreleaser.util.CollectionUtils;
-import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.StringUtils;
 
 import java.io.IOException;

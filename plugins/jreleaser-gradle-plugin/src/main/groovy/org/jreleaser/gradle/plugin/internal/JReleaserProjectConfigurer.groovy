@@ -41,9 +41,8 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
+import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.JReleaserModel
-import org.jreleaser.util.JReleaserLogger
-import org.jreleaser.util.JReleaserOutput
 
 import java.nio.file.Files
 import java.nio.file.Path
