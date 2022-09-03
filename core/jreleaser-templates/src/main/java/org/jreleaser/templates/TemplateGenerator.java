@@ -19,9 +19,9 @@ package org.jreleaser.templates;
 
 import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.Announce;
 import org.jreleaser.model.Distribution;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;

@@ -541,14 +541,26 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
 
         String vn = (String) getExtraProperties().get(Constants.KEY_VERSION_NUMBER);
         String ev = getEffectiveVersion();
-        addExtraProperty(Constants.KEY_VERSION_WITH_UNDERSCORES, new MustacheUtils.UnderscoreFunction().apply(v));
-        addExtraProperty(Constants.KEY_VERSION_WITH_DASHES, new MustacheUtils.DashFunction().apply(v));
-        addExtraProperty(Constants.KEY_VERSION_NUMBER_WITH_UNDERSCORES, new MustacheUtils.UnderscoreFunction().apply(vn));
-        addExtraProperty(Constants.KEY_VERSION_NUMBER_WITH_DASHES, new MustacheUtils.DashFunction().apply(vn));
+        addExtraProperty(Constants.KEY_VERSION_WITH_UNDERSCORES, underscore(v));
+        addExtraProperty(Constants.KEY_VERSION_WITH_DASHES, dash(v));
+        addExtraProperty(Constants.KEY_VERSION_NUMBER_WITH_UNDERSCORES, underscore(vn));
+        addExtraProperty(Constants.KEY_VERSION_NUMBER_WITH_DASHES, dash(vn));
         if (isNotBlank(ev)) {
-            addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_UNDERSCORES, new MustacheUtils.UnderscoreFunction().apply(ev));
-            addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_DASHES, new MustacheUtils.DashFunction().apply(ev));
+            addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_UNDERSCORES, underscore(ev));
+            addExtraProperty(Constants.KEY_EFFECTIVE_VERSION_WITH_DASHES, dash(ev));
         }
+    }
+
+    private String underscore(String input) {
+        return input.replace(".", "_")
+            .replace("-", "_")
+            .replace("+", "_");
+    }
+
+    private String dash(String input) {
+        return input.replace(".", "-")
+            .replace("_", "-")
+            .replace("+", "-");
     }
 
     public Version<?> version() {
@@ -730,7 +742,6 @@ public class Project extends AbstractModelObject<Project> implements Domain, Ext
 
             applyTemplates(props, project.getResolvedExtraProperties());
             props.put(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
-            MustacheUtils.applyFunctions(props);
 
             return props;
         }

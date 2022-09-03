@@ -30,6 +30,7 @@ import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.releaser.spi.Asset;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.ClientUtils;
@@ -48,7 +49,6 @@ import org.jreleaser.sdk.gitea.api.GtUser;
 import org.jreleaser.sdk.gitea.internal.Page;
 import org.jreleaser.sdk.gitea.internal.PaginatingDecoder;
 import org.jreleaser.util.CollectionUtils;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
 import java.nio.file.Files;

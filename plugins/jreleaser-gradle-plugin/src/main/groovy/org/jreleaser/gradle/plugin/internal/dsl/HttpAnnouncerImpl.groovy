@@ -25,7 +25,6 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.HttpAnnouncer
-import org.jreleaser.gradle.plugin.dsl.HttpUploader
 import org.jreleaser.model.Http
 
 import javax.inject.Inject

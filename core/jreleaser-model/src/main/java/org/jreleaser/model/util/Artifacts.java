@@ -18,6 +18,7 @@
 package org.jreleaser.model.util;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Assembler;
 import org.jreleaser.model.Distribution;
@@ -33,7 +34,6 @@ import org.jreleaser.model.Upload;
 import org.jreleaser.model.Uploader;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.JReleaserException;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;

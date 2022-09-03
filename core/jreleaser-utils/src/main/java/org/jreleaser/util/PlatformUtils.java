@@ -19,6 +19,7 @@ package org.jreleaser.util;
 
 import kr.motd.maven.os.Detector;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 
 import java.io.IOException;
 import java.nio.file.Files;

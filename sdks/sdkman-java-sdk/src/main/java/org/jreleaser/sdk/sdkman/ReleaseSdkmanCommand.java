@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.util.JReleaserLogger;
+import org.jreleaser.logging.JReleaserLogger;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

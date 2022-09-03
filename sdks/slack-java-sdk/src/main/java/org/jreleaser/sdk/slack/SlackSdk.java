@@ -18,11 +18,11 @@
 package org.jreleaser.sdk.slack;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.slack.api.Message;
 import org.jreleaser.sdk.slack.api.SlackAPI;
 import org.jreleaser.sdk.slack.api.SlackResponse;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.util.concurrent.Callable;
 

@@ -18,7 +18,7 @@
 package org.jreleaser.ant.tasks.internal;
 
 import org.apache.tools.ant.Project;
-import org.jreleaser.util.AbstractJReleaserLogger;
+import org.jreleaser.logging.AbstractJReleaserLogger;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.io.PrintWriter;

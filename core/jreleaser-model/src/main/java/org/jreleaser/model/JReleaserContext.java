@@ -19,11 +19,11 @@ package org.jreleaser.model;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.releaser.spi.Releaser;
 import org.jreleaser.util.Constants;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.JReleaserException;
-import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.SemVer;
 import org.jreleaser.util.StringUtils;

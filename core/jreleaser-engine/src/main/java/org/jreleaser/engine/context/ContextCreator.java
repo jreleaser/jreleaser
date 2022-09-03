@@ -19,10 +19,10 @@ package org.jreleaser.engine.context;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.config.JReleaserConfigLoader;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.JReleaserModel;
 import org.jreleaser.util.JReleaserException;
-import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;

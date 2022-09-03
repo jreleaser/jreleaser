@@ -18,11 +18,11 @@
 package org.jreleaser.sdk.telegram;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.telegram.api.Message;
 import org.jreleaser.sdk.telegram.api.TelegramAPI;
-import org.jreleaser.util.JReleaserLogger;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;

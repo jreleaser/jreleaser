@@ -23,9 +23,9 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Resource;
 import org.jreleaser.ant.tasks.internal.JReleaserLoggerAdapter;
 import org.jreleaser.engine.context.ModelAutoConfigurer;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserContext;
 import org.jreleaser.model.UpdateSection;
-import org.jreleaser.util.JReleaserLogger;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.workflow.Workflows;
 

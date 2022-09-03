@@ -18,8 +18,8 @@
 package org.jreleaser.templates;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.util.JReleaserException;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.io.FileInputStream;
 import java.io.IOException;

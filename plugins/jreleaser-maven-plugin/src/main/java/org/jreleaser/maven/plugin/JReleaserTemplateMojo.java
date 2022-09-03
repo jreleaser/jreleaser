@@ -23,11 +23,11 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.templates.TemplateGenerationException;
 import org.jreleaser.templates.TemplateGenerator;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.io.File;
 import java.io.FileOutputStream;

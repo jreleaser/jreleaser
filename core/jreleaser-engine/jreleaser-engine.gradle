@@ -16,6 +16,7 @@
  * limitations under the License.
  */
 dependencies {
+    api project(':jreleaser-extensions-impl')
     api project(':jreleaser-model')
     api project(':git-sdk')
     api project(':tool-sdk')

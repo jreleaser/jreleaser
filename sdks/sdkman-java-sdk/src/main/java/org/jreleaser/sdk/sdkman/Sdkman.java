@@ -22,12 +22,12 @@ import feign.Request;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.sdk.sdkman.api.Announce;
 import org.jreleaser.sdk.sdkman.api.Candidate;
 import org.jreleaser.sdk.sdkman.api.Release;
 import org.jreleaser.sdk.sdkman.api.SdkmanAPI;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

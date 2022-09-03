@@ -34,9 +34,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.getCapitalizedName;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -62,6 +62,7 @@ public class JReleaserModel implements Domain {
     private final Signing signing = new Signing();
     private final Files files = new Files();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
+    private final Map<String, Extension> extensions = new LinkedHashMap<>();
 
     @JsonIgnore
     private final ZonedDateTime now;
@@ -98,7 +99,8 @@ public class JReleaserModel implements Domain {
         checksum.freeze();
         signing.freeze();
         files.freeze();
-        distributions.values().forEach(Distribution::freeze);
+        distributions.values().forEach(ModelObject::freeze);
+        extensions.values().forEach(ModelObject::freeze);
     }
 
     private void freezeCheck() {
@@ -233,7 +235,7 @@ public class JReleaserModel implements Domain {
     public List<Distribution> getActiveDistributions() {
         return distributions.values().stream()
             .filter(Distribution::isEnabled)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     public Map<String, Distribution> getDistributions() {
@@ -263,8 +265,37 @@ public class JReleaserModel implements Domain {
         throw new JReleaserException(RB.$("ERROR_distribution_not_found", name));
     }
 
+    public List<Extension> getActiveExtensions() {
+        return extensions.values().stream()
+            .filter(Extension::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, Extension> getExtensions() {
+        return freezeWrap(extensions);
+    }
+
+    public void setExtensions(Map<String, Extension> extensions) {
+        freezeCheck();
+        this.extensions.clear();
+        this.extensions.putAll(extensions);
+    }
+
+    public void addExtension(Extension extension) {
+        freezeCheck();
+        this.extensions.put(extension.getName(), extension);
+    }
+
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
+
+        List<Map<String, Object>> extensions = this.extensions.values()
+            .stream()
+            .filter(e -> full || e.isEnabled())
+            .map(e -> e.asMap(full))
+            .collect(toList());
+        if (!extensions.isEmpty()) map.put("extensions", extensions);
+
         if (full || environment.isSet()) map.put("environment", environment.asMap(full));
         if (full || hooks.isSet()) map.put("hooks", hooks.asMap(full));
         map.put("project", project.asMap(full));
@@ -283,8 +314,9 @@ public class JReleaserModel implements Domain {
             .stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
-            .collect(Collectors.toList());
+            .collect(toList());
         if (!distributions.isEmpty()) map.put("distributions", distributions);
+
         return map;
     }
 
@@ -308,14 +340,9 @@ public class JReleaserModel implements Domain {
 
         applyTemplates(props, project.getResolvedExtraProperties());
         props.put(Constants.KEY_ZONED_DATE_TIME_NOW, now);
-        applyFunctions(props);
+        props.put(ReleaserDownloadUrl.NAME, new ReleaserDownloadUrl());
 
         return props;
-    }
-
-    private void applyFunctions(Map<String, Object> props) {
-        MustacheUtils.applyFunctions(props);
-        props.put(ReleaserDownloadUrl.NAME, new ReleaserDownloadUrl());
     }
 
     private void fillProjectProperties(Map<String, Object> props, Project project) {

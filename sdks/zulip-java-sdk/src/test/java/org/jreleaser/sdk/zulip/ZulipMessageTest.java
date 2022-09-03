@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.zulip;
 
-import org.jreleaser.util.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 

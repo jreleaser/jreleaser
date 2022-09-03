@@ -22,10 +22,10 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.jreleaser.ant.tasks.internal.JReleaserLoggerAdapter;
 import org.jreleaser.config.JReleaserConfigParser;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.templates.TemplateUtils;
 import org.jreleaser.util.JReleaserException;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

@@ -18,6 +18,7 @@
 package org.jreleaser.engine.context;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Artifact;
 import org.jreleaser.model.Codeberg;
@@ -32,7 +33,6 @@ import org.jreleaser.model.releaser.spi.Repository;
 import org.jreleaser.model.util.Artifacts;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.util.JReleaserException;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
 import java.nio.file.Path;

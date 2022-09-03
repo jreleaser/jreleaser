@@ -27,6 +27,7 @@ import feign.httpclient.ApacheHttpClient;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.releaser.spi.User;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
@@ -37,7 +38,6 @@ import org.jreleaser.sdk.github.api.GhSearchUser;
 import org.jreleaser.sdk.github.api.GhUser;
 import org.jreleaser.sdk.github.api.GithubAPI;
 import org.jreleaser.util.CollectionUtils;
-import org.jreleaser.util.JReleaserLogger;
 
 import java.io.IOException;
 import java.util.Optional;
