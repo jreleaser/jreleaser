@@ -72,7 +72,7 @@ jobs:
       - name: Prepare
         shell: bash
         run: |
-          unzip -qo apps/jreleaser/build/distributions/jreleaser-${{ needs.precheck.outputs.VERSION }}.zip
+          unzip -qo plugins/jreleaser/build/distributions/jreleaser-${{ needs.precheck.outputs.VERSION }}.zip
           cp .github/test-files/jreleaser-${{ matrix.job.sign }}.yml jreleaser.yml
 
       - name: Assemble

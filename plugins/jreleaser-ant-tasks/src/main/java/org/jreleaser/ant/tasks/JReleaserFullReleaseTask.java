@@ -17,7 +17,7 @@
  */
 package org.jreleaser.ant.tasks;
 
-import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
 import java.util.ArrayList;

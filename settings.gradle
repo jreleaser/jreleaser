@@ -41,7 +41,7 @@ apply plugin: 'org.kordamp.gradle.kordamp-parentbuild'
 rootProject.name = 'jreleaser'
 
 projects {
-    directories = ['infra', 'apps', 'api', 'core', 'sdks', 'plugins']
+    directories = ['infra', 'api', 'core', 'sdks', 'plugins']
 
     plugins {
         all {
@@ -51,7 +51,7 @@ projects {
             id 'org.kordamp.gradle.java-project'
             id 'org.kordamp.gradle.checkstyle'
         }
-        dirs(['infra', 'apps', 'api', 'core', 'sdks', 'plugins']) {
+        dirs(['infra', 'api', 'core', 'sdks', 'plugins']) {
             id 'java-library'
         }
     }

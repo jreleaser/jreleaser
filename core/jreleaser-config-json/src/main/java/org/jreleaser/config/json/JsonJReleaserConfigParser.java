@@ -19,7 +19,7 @@ package org.jreleaser.config.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jreleaser.config.JReleaserConfigParser;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.internal.JReleaserModel;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 import java.io.IOException;

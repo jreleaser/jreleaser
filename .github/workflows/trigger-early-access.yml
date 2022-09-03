@@ -36,9 +36,9 @@ jobs:
       - name: Rename artifacts
         run: |
           mkdir early-access
-          cp apps/jreleaser-tool-provider/build/VERSION early-access/VERSION
-          cp apps/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-*-SNAPSHOT.jar early-access/jreleaser-tool-provider-early-access.jar
-          cp apps/jreleaser/build/distributions/jreleaser-*-SNAPSHOT.zip early-access/jreleaser-early-access.zip
+          cp plugins/jreleaser-tool-provider/build/VERSION early-access/VERSION
+          cp plugins/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-*-SNAPSHOT.jar early-access/jreleaser-tool-provider-early-access.jar
+          cp plugins/jreleaser/build/distributions/jreleaser-*-SNAPSHOT.zip early-access/jreleaser-early-access.zip
           cp plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-*-SNAPSHOT.zip early-access/jreleaser-ant-tasks-early-access.zip
 
       - name: 'Release early-access artifacts'

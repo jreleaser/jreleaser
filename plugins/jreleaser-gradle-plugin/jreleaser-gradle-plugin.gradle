@@ -34,7 +34,7 @@ config {
 dependencies {
     compileOnly gradleApi()
 
-    api project(':jreleaser-workflow')
+    api project(':jreleaser-engine')
     //config
     api project(':jreleaser-config-yaml')
     api project(':jreleaser-config-toml')

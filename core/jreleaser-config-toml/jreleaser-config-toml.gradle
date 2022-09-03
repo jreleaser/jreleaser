@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 dependencies {
-    api project(':jreleaser-model')
+    api project(':jreleaser-model-impl')
     api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     api "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"

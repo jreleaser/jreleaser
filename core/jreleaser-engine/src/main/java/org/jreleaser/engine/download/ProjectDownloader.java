@@ -18,10 +18,10 @@
 package org.jreleaser.engine.download;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Downloader;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.downloader.spi.ArtifactDownloader;
-import org.jreleaser.model.downloader.spi.DownloadException;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.download.Downloader;
+import org.jreleaser.model.spi.download.ArtifactDownloader;
+import org.jreleaser.model.spi.download.DownloadException;
 
 import static java.util.Objects.requireNonNull;
 

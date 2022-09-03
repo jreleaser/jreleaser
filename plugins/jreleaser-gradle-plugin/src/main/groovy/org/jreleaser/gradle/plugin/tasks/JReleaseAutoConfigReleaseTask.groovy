@@ -31,8 +31,8 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ModelAutoConfigurer
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
-import org.jreleaser.model.JReleaserContext
 import org.jreleaser.model.UpdateSection
+import org.jreleaser.model.internal.JReleaserContext
 import org.jreleaser.util.PlatformUtils
 import org.jreleaser.workflow.Workflows
 
@@ -353,29 +353,29 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
 
         projectName = objects.property(String).convention(project.name)
         projectVersion = objects.property(String).convention(String.valueOf(project.version))
-        projectVersionPattern = objects.property(String).convention(Providers.notDefined())
-        projectSnapshotPattern = objects.property(String).convention(Providers.notDefined())
-        projectSnapshotLabel = objects.property(String).convention(Providers.notDefined())
+        projectVersionPattern = objects.property(String).convention(Providers.<String> notDefined())
+        projectSnapshotPattern = objects.property(String).convention(Providers.<String> notDefined())
+        projectSnapshotLabel = objects.property(String).convention(Providers.<String> notDefined())
         projectSnapshotFullChangelog = objects.property(Boolean).convention(false)
-        projectCopyright = objects.property(String).convention(Providers.notDefined())
-        projectDescription = objects.property(String).convention(Providers.notDefined())
-        projectInceptionYear = objects.property(String).convention(Providers.notDefined())
-        projectStereotype = objects.property(String).convention(Providers.notDefined())
+        projectCopyright = objects.property(String).convention(Providers.<String> notDefined())
+        projectDescription = objects.property(String).convention(Providers.<String> notDefined())
+        projectInceptionYear = objects.property(String).convention(Providers.<String> notDefined())
+        projectStereotype = objects.property(String).convention(Providers.<String> notDefined())
         authors = objects.listProperty(String).convention([])
-        tagName = objects.property(String).convention(Providers.notDefined())
-        releaseName = objects.property(String).convention(Providers.notDefined())
-        branch = objects.property(String).convention(Providers.notDefined())
-        milestoneName = objects.property(String).convention(Providers.notDefined())
-        changeLog = objects.property(String).convention(Providers.notDefined())
-        username = objects.property(String).convention(Providers.notDefined())
-        commitAuthorName = objects.property(String).convention(Providers.notDefined())
-        commitAuthorEmail = objects.property(String).convention(Providers.notDefined())
+        tagName = objects.property(String).convention(Providers.<String> notDefined())
+        releaseName = objects.property(String).convention(Providers.<String> notDefined())
+        branch = objects.property(String).convention(Providers.<String> notDefined())
+        milestoneName = objects.property(String).convention(Providers.<String> notDefined())
+        changeLog = objects.property(String).convention(Providers.<String> notDefined())
+        username = objects.property(String).convention(Providers.<String> notDefined())
+        commitAuthorName = objects.property(String).convention(Providers.<String> notDefined())
+        commitAuthorEmail = objects.property(String).convention(Providers.<String> notDefined())
         prerelease = objects.property(Boolean).convention(false)
-        prereleasePattern = objects.property(String).convention(Providers.notDefined())
+        prereleasePattern = objects.property(String).convention(Providers.<String> notDefined())
         draft = objects.property(Boolean).convention(false)
         overwrite = objects.property(Boolean).convention(false)
         update = objects.property(Boolean).convention(false)
-        updateSections = objects.setProperty(UpdateSection).convention(Providers.notDefined())
+        updateSections = objects.setProperty(UpdateSection).convention(Providers.<Set<UpdateSection>> notDefined())
         skipTag = objects.property(Boolean).convention(false)
         skipRelease = objects.property(Boolean).convention(false)
         changelogFormatted = objects.property(Boolean).convention(false)
@@ -439,7 +439,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     }
 
     protected List<String> collectSelectedPlatforms() {
-        if (selectCurrentPlatform.present) return Collections.singletonList(PlatformUtils.getCurrentFull());
+        if (selectCurrentPlatform.present) return Collections.singletonList(PlatformUtils.getCurrentFull())
         return selectPlatforms.get()
     }
 }

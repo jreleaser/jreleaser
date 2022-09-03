@@ -18,13 +18,15 @@
 package org.jreleaser.engine.assemble;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Assemble;
-import org.jreleaser.model.Assembler;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
-import org.jreleaser.util.JReleaserException;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.assemble.Assemble;
+import org.jreleaser.model.internal.assemble.Assembler;
+import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 
 import java.util.Map;
+
+import static org.jreleaser.model.internal.JReleaserSupport.supportedAssemblers;
 
 /**
  * @author Andres Almiray
@@ -41,7 +43,7 @@ public class Assemblers {
         if (!context.getIncludedAssemblers().isEmpty()) {
             for (String assemblerType : context.getIncludedAssemblers()) {
                 // check if the assemblerType is valid
-                if (!Assemble.supportedAssemblers().contains(assemblerType)) {
+                if (!supportedAssemblers().contains(assemblerType)) {
                     context.getLogger().warn(RB.$("ERROR_unsupported_assembler", assemblerType));
                     continue;
                 }

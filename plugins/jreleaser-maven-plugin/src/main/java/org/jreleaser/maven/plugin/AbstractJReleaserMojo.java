@@ -26,10 +26,11 @@ import org.jreleaser.engine.context.ContextCreator;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
-import org.jreleaser.util.JReleaserException;
+import org.jreleaser.model.api.JReleaserContext.Mode;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 
@@ -44,7 +45,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static org.jreleaser.util.JReleaserOutput.JRELEASER_QUIET;
+import static org.jreleaser.model.JReleaserOutput.JRELEASER_QUIET;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -113,7 +114,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     protected JReleaserModel readModel(JReleaserLogger logger) {
-        JReleaserModel jreleaserModel = ContextCreator.resolveModel(logger, configFile.toPath());
+        JReleaserModel jreleaserModel = (JReleaserModel) ContextCreator.resolveModel(logger, configFile.toPath());
         return JReleaserModelConfigurer.configure(jreleaserModel, project, session);
     }
 
@@ -167,8 +168,8 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
         throw new IllegalArgumentException("Invalid configuration format: " + configFile.getName());
     }
 
-    protected JReleaserContext.Mode getMode() {
-        return JReleaserContext.Mode.FULL;
+    protected Mode getMode() {
+        return Mode.FULL;
     }
 
     private Path resolveBasedir() {

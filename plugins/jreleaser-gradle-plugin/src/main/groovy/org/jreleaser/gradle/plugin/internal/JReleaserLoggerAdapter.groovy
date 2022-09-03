@@ -201,13 +201,13 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
 
     private static Level resolveLogLevel(LogLevel logLevel) {
         switch (logLevel) {
-            case LogLevel.DEBUG: return Level.DEBUG;
-            case LogLevel.WARN: return Level.WARN;
-            case LogLevel.ERROR: return Level.ERROR;
-            case LogLevel.QUIET: return Level.QUIET;
+            case LogLevel.DEBUG: return Level.DEBUG
+            case LogLevel.WARN: return Level.WARN
+            case LogLevel.ERROR: return Level.ERROR
+            case LogLevel.QUIET: return Level.QUIET
             case LogLevel.INFO:
             default:
-                return Level.INFO;
+                return Level.INFO
         }
     }
 

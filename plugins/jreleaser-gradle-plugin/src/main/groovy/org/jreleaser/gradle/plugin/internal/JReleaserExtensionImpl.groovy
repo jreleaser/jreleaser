@@ -29,38 +29,38 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
-import org.jreleaser.gradle.plugin.dsl.Announce
-import org.jreleaser.gradle.plugin.dsl.Assemble
-import org.jreleaser.gradle.plugin.dsl.Checksum
-import org.jreleaser.gradle.plugin.dsl.Distribution
-import org.jreleaser.gradle.plugin.dsl.Download
-import org.jreleaser.gradle.plugin.dsl.Environment
-import org.jreleaser.gradle.plugin.dsl.Extension
-import org.jreleaser.gradle.plugin.dsl.Files
-import org.jreleaser.gradle.plugin.dsl.Hooks
-import org.jreleaser.gradle.plugin.dsl.Packagers
-import org.jreleaser.gradle.plugin.dsl.Platform
-import org.jreleaser.gradle.plugin.dsl.Project
-import org.jreleaser.gradle.plugin.dsl.Release
-import org.jreleaser.gradle.plugin.dsl.Signing
-import org.jreleaser.gradle.plugin.dsl.Upload
-import org.jreleaser.gradle.plugin.internal.dsl.AnnounceImpl
-import org.jreleaser.gradle.plugin.internal.dsl.AssembleImpl
-import org.jreleaser.gradle.plugin.internal.dsl.ChecksumImpl
-import org.jreleaser.gradle.plugin.internal.dsl.DistributionImpl
-import org.jreleaser.gradle.plugin.internal.dsl.DownloadImpl
-import org.jreleaser.gradle.plugin.internal.dsl.EnvironmentImpl
-import org.jreleaser.gradle.plugin.internal.dsl.ExtensionImpl
-import org.jreleaser.gradle.plugin.internal.dsl.FilesImpl
-import org.jreleaser.gradle.plugin.internal.dsl.HooksImpl
-import org.jreleaser.gradle.plugin.internal.dsl.PackagersImpl
-import org.jreleaser.gradle.plugin.internal.dsl.PlatformImpl
-import org.jreleaser.gradle.plugin.internal.dsl.ProjectImpl
-import org.jreleaser.gradle.plugin.internal.dsl.ReleaseImpl
-import org.jreleaser.gradle.plugin.internal.dsl.SigningImpl
-import org.jreleaser.gradle.plugin.internal.dsl.UploadImpl
+import org.jreleaser.gradle.plugin.dsl.announce.Announce
+import org.jreleaser.gradle.plugin.dsl.assemble.Assemble
+import org.jreleaser.gradle.plugin.dsl.checksum.Checksum
+import org.jreleaser.gradle.plugin.dsl.distributions.Distribution
+import org.jreleaser.gradle.plugin.dsl.download.Download
+import org.jreleaser.gradle.plugin.dsl.environment.Environment
+import org.jreleaser.gradle.plugin.dsl.extensions.Extension
+import org.jreleaser.gradle.plugin.dsl.files.Files
+import org.jreleaser.gradle.plugin.dsl.hooks.Hooks
+import org.jreleaser.gradle.plugin.dsl.packagers.Packagers
+import org.jreleaser.gradle.plugin.dsl.platform.Platform
+import org.jreleaser.gradle.plugin.dsl.project.Project
+import org.jreleaser.gradle.plugin.dsl.release.Release
+import org.jreleaser.gradle.plugin.dsl.signing.Signing
+import org.jreleaser.gradle.plugin.dsl.upload.Upload
+import org.jreleaser.gradle.plugin.internal.dsl.announce.AnnounceImpl
+import org.jreleaser.gradle.plugin.internal.dsl.assemble.AssembleImpl
+import org.jreleaser.gradle.plugin.internal.dsl.checksum.ChecksumImpl
+import org.jreleaser.gradle.plugin.internal.dsl.distributions.DistributionImpl
+import org.jreleaser.gradle.plugin.internal.dsl.download.DownloadImpl
+import org.jreleaser.gradle.plugin.internal.dsl.environment.EnvironmentImpl
+import org.jreleaser.gradle.plugin.internal.dsl.extensions.ExtensionImpl
+import org.jreleaser.gradle.plugin.internal.dsl.files.FilesImpl
+import org.jreleaser.gradle.plugin.internal.dsl.hooks.HooksImpl
+import org.jreleaser.gradle.plugin.internal.dsl.packagers.PackagersImpl
+import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
+import org.jreleaser.gradle.plugin.internal.dsl.project.ProjectImpl
+import org.jreleaser.gradle.plugin.internal.dsl.release.ReleaseImpl
+import org.jreleaser.gradle.plugin.internal.dsl.signing.SigningImpl
+import org.jreleaser.gradle.plugin.internal.dsl.upload.UploadImpl
 import org.jreleaser.logging.JReleaserLogger
-import org.jreleaser.model.JReleaserModel
+import org.jreleaser.model.internal.JReleaserModel
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -93,7 +93,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final SigningImpl signing
     final FilesImpl files
     final NamedDomainObjectContainer<Distribution> distributions
-    final NamedDomainObjectContainer<Extension> extensions
+    private final NamedDomainObjectContainer<Extension> extensions
 
     private final ProjectLayout layout
 
@@ -304,7 +304,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
             if (isBlank(jreleaser.project.name)) jreleaser.project.name = project.name.orNull
             if (isBlank(jreleaser.project.version)) jreleaser.project.version = project.version.orNull
             if (isBlank(jreleaser.project.description)) jreleaser.project.description = project.description.orNull
-            jreleaser.environment.propertiesSource = new org.jreleaser.model.Environment.MapPropertiesSource(
+            jreleaser.environment.propertiesSource = new org.jreleaser.model.internal.environment.Environment.MapPropertiesSource(
                 filterProperties(project.properties))
             return jreleaser
         }

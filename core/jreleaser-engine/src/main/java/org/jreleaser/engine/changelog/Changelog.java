@@ -19,8 +19,8 @@ package org.jreleaser.engine.changelog;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.release.Releasers;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.util.JReleaserException;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.internal.JReleaserContext;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -24,10 +24,12 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
-import org.jreleaser.model.JReleaserContext
+import org.jreleaser.model.internal.JReleaserContext
 import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
+
+import static org.jreleaser.model.api.JReleaserContext.Mode.ASSEMBLE
 
 /**
  *
@@ -87,7 +89,7 @@ abstract class JReleaserAssembleTask extends AbstractPlatformAwareJReleaserTask 
     }
 
     protected JReleaserContext setupContext() {
-        mode = JReleaserContext.Mode.ASSEMBLE
+        mode = ASSEMBLE
         JReleaserContext ctx = createContext()
         ctx.includedAssemblers = assemblers.orNull
         ctx.excludedAssemblers = excludedAssemblers.orNull

@@ -19,7 +19,7 @@ package org.jreleaser.templates;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
-import org.jreleaser.util.JReleaserException;
+import org.jreleaser.model.JReleaserException;
 
 import java.io.FileInputStream;
 import java.io.IOException;

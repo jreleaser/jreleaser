@@ -18,12 +18,12 @@
 package org.jreleaser.engine.distribution;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Distribution;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Packager;
-import org.jreleaser.model.packager.spi.PackagerProcessingException;
-import org.jreleaser.model.packager.spi.PackagerProcessor;
-import org.jreleaser.util.Constants;
+import org.jreleaser.model.Constants;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.distributions.Distribution;
+import org.jreleaser.model.internal.packagers.Packager;
+import org.jreleaser.model.spi.packagers.PackagerProcessingException;
+import org.jreleaser.model.spi.packagers.PackagerProcessor;
 
 import java.util.Map;
 

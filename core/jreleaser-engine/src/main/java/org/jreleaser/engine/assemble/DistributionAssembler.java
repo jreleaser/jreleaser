@@ -18,11 +18,11 @@
 package org.jreleaser.engine.assemble;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Assembler;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.assembler.spi.AssemblerProcessingException;
-import org.jreleaser.model.assembler.spi.AssemblerProcessor;
-import org.jreleaser.util.Constants;
+import org.jreleaser.model.Constants;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.assemble.Assembler;
+import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
+import org.jreleaser.model.spi.assemble.AssemblerProcessor;
 
 import java.nio.file.Path;
 import java.util.Map;

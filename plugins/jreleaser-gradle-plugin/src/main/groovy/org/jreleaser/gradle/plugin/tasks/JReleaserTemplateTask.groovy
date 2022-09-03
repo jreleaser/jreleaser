@@ -78,7 +78,7 @@ abstract class JReleaserTemplateTask extends DefaultTask {
         distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.JAVA_BINARY)
         distributionName = objects.property(String)
         packagerName = objects.property(String)
-        announcerName = objects.property(String).convention(Providers.notDefined())
+        announcerName = objects.property(String).convention(Providers.<String> notDefined())
         overwrite = objects.property(Boolean).convention(false)
         snapshot = objects.property(Boolean).convention(false)
 

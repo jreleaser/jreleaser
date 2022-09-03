@@ -19,7 +19,8 @@ package org.jreleaser.ant.tasks;
 
 import org.jreleaser.ant.tasks.internal.JReleaserModelPrinter;
 import org.jreleaser.engine.context.ModelValidator;
-import org.jreleaser.model.JReleaserContext;
+import org.jreleaser.model.api.JReleaserContext.Mode;
+import org.jreleaser.model.internal.JReleaserContext;
 
 import java.io.PrintWriter;
 
@@ -62,11 +63,11 @@ public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
         context.report();
     }
 
-    protected JReleaserContext.Mode getMode() {
-        if (download) return JReleaserContext.Mode.DOWNLOAD;
-        if (assembly) return JReleaserContext.Mode.ASSEMBLE;
-        if (changelog) return JReleaserContext.Mode.CHANGELOG;
-        if (announce) return JReleaserContext.Mode.ANNOUNCE;
-        return JReleaserContext.Mode.CONFIG;
+    protected Mode getMode() {
+        if (download) return Mode.DOWNLOAD;
+        if (assembly) return Mode.ASSEMBLE;
+        if (changelog) return Mode.CHANGELOG;
+        if (announce) return Mode.ANNOUNCE;
+        return Mode.CONFIG;
     }
 }

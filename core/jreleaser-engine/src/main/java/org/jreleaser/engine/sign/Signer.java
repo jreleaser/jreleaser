@@ -34,18 +34,18 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Artifact;
-import org.jreleaser.model.Distribution;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.Signing;
-import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.distributions.Distribution;
+import org.jreleaser.model.internal.signing.Signing;
+import org.jreleaser.model.internal.util.Artifacts;
+import org.jreleaser.sdk.command.CommandException;
+import org.jreleaser.sdk.signing.GpgCommandSigner;
+import org.jreleaser.sdk.signing.Keyring;
+import org.jreleaser.sdk.signing.SigningException;
 import org.jreleaser.sdk.tool.Cosign;
 import org.jreleaser.sdk.tool.ToolException;
 import org.jreleaser.util.Algorithm;
-import org.jreleaser.util.command.CommandException;
-import org.jreleaser.util.signing.GpgCommandSigner;
-import org.jreleaser.util.signing.Keyring;
-import org.jreleaser.util.signing.SigningException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -64,7 +64,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.bouncycastle.bcpg.CompressionAlgorithmTags.UNCOMPRESSED;
-import static org.jreleaser.model.Signing.KEY_SKIP_SIGNING;
+import static org.jreleaser.model.api.signing.Signing.KEY_SKIP_SIGNING;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -93,9 +93,9 @@ public class Signer {
         }
 
         try {
-            if (context.getModel().getSigning().getMode() == Signing.Mode.COMMAND) {
+            if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.COMMAND) {
                 cmdSign(context);
-            } else if (context.getModel().getSigning().getMode() == Signing.Mode.COSIGN) {
+            } else if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.COSIGN) {
                 cosignSign(context);
             } else {
                 bcSign(context);
@@ -463,7 +463,7 @@ public class Signer {
         Path signaturesDirectory = context.getSignaturesDirectory();
 
         String extension = ".sig";
-        if (signing.getMode() != Signing.Mode.COSIGN) {
+        if (signing.getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
             extension = signing.isArmored() ? ".asc" : ".sig";
         }
 

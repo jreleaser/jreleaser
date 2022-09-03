@@ -23,7 +23,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
-import org.jreleaser.model.JReleaserContext
+import org.jreleaser.model.internal.JReleaserContext
 
 import javax.inject.Inject
 

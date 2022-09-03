@@ -25,9 +25,15 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ModelValidator
 import org.jreleaser.gradle.plugin.internal.JReleaserModelPrinter
-import org.jreleaser.model.JReleaserContext
+import org.jreleaser.model.internal.JReleaserContext
 
 import javax.inject.Inject
+
+import static org.jreleaser.model.api.JReleaserContext.Mode.ANNOUNCE
+import static org.jreleaser.model.api.JReleaserContext.Mode.ASSEMBLE
+import static org.jreleaser.model.api.JReleaserContext.Mode.CHANGELOG
+import static org.jreleaser.model.api.JReleaserContext.Mode.CONFIG
+import static org.jreleaser.model.api.JReleaserContext.Mode.DOWNLOAD
 
 /**
  *
@@ -89,15 +95,15 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     @TaskAction
     void displayConfig() {
         if (download.get()) {
-            mode = JReleaserContext.Mode.DOWNLOAD
+            mode = DOWNLOAD
         } else if (announce.get()) {
-            mode = JReleaserContext.Mode.ANNOUNCE
+            mode = ANNOUNCE
         } else if (assembly.get()) {
-            mode = JReleaserContext.Mode.ASSEMBLE
+            mode = ASSEMBLE
         } else if (changelog.get()) {
-            mode = JReleaserContext.Mode.CHANGELOG
+            mode = CHANGELOG
         } else {
-            mode = JReleaserContext.Mode.CONFIG
+            mode = CONFIG
         }
 
         JReleaserContext context = createContext()

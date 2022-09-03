@@ -26,7 +26,7 @@ import org.kordamp.gradle.util.AnsiConsole
  * @since 0.1.0
  */
 @CompileStatic
-class JReleaserModelPrinter extends org.jreleaser.model.JReleaserModelPrinter {
+class JReleaserModelPrinter extends org.jreleaser.model.internal.JReleaserModelPrinter {
     private final AnsiConsole console
 
     JReleaserModelPrinter(Project project) {

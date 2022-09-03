@@ -20,19 +20,20 @@ package org.jreleaser.engine.context;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.Active;
-import org.jreleaser.model.Artifact;
-import org.jreleaser.model.Codeberg;
-import org.jreleaser.model.GitService;
-import org.jreleaser.model.Github;
-import org.jreleaser.model.Gitlab;
-import org.jreleaser.model.JReleaserContext;
-import org.jreleaser.model.JReleaserModel;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.UpdateSection;
-import org.jreleaser.model.releaser.spi.Repository;
-import org.jreleaser.model.util.Artifacts;
+import org.jreleaser.model.api.JReleaserContext.Mode;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.JReleaserModel;
+import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.release.BaseReleaser;
+import org.jreleaser.model.internal.release.CodebergReleaser;
+import org.jreleaser.model.internal.release.GithubReleaser;
+import org.jreleaser.model.internal.release.GitlabReleaser;
+import org.jreleaser.model.internal.util.Artifacts;
+import org.jreleaser.model.spi.release.Repository;
 import org.jreleaser.sdk.git.GitSdk;
-import org.jreleaser.util.JReleaserException;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -360,7 +361,7 @@ public class ModelAutoConfigurer {
         return ContextCreator.create(
             logger,
             JReleaserContext.Configurer.CLI,
-            JReleaserContext.Mode.FULL,
+            Mode.FULL,
             autoConfiguredModel(basedir),
             basedir,
             outputDirectory,
@@ -438,25 +439,25 @@ public class ModelAutoConfigurer {
 
         try {
             Repository repository = GitSdk.of(basedir, gitRootSearch).getRemote();
-            GitService service = null;
+            BaseReleaser service = null;
             switch (repository.getKind()) {
                 case GITHUB:
-                    service = new Github();
-                    model.getRelease().setGithub((Github) service);
-                    if (prerelease) ((Github) service).getPrerelease().setEnabled(true);
-                    ((Github) service).getPrerelease().setPattern(prereleasePattern);
-                    ((Github) service).setDraft(draft);
+                    service = new GithubReleaser();
+                    model.getRelease().setGithub((GithubReleaser) service);
+                    if (prerelease) service.getPrerelease().setEnabled(true);
+                    service.getPrerelease().setPattern(prereleasePattern);
+                    ((GithubReleaser) service).setDraft(draft);
                     break;
                 case GITLAB:
-                    service = new Gitlab();
-                    model.getRelease().setGitlab((Gitlab) service);
+                    service = new GitlabReleaser();
+                    model.getRelease().setGitlab((GitlabReleaser) service);
                     break;
                 case CODEBERG:
-                    service = new Codeberg();
-                    model.getRelease().setCodeberg((Codeberg) service);
-                    if (prerelease) ((Codeberg) service).getPrerelease().setEnabled(true);
-                    ((Codeberg) service).getPrerelease().setPattern(prereleasePattern);
-                    ((Codeberg) service).setDraft(draft);
+                    service = new CodebergReleaser();
+                    model.getRelease().setCodeberg((CodebergReleaser) service);
+                    if (prerelease) service.getPrerelease().setEnabled(true);
+                    service.getPrerelease().setPattern(prereleasePattern);
+                    ((CodebergReleaser) service).setDraft(draft);
                     break;
                 default:
                     throw new JReleaserException(RB.$("ERROR_context_configurer_unsupported_url", repository.getHttpUrl()));
