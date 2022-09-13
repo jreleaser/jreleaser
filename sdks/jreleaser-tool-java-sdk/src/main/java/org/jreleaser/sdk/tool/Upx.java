@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.tool;
 
-import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;

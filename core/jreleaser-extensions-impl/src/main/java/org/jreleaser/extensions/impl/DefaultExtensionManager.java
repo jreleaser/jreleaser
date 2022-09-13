@@ -17,11 +17,20 @@
  */
 package org.jreleaser.extensions.impl;
 
+import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.extensions.api.Extension;
 import org.jreleaser.extensions.api.ExtensionManager;
 import org.jreleaser.extensions.api.ExtensionPoint;
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.api.JReleaserContext;
+import org.jreleaser.sdk.command.CommandException;
+import org.jreleaser.sdk.tool.Mvn;
+import org.jreleaser.sdk.tool.ToolException;
+import org.jreleaser.templates.TemplateResource;
+import org.jreleaser.templates.TemplateUtils;
+import org.jreleaser.util.DefaultVersions;
+import org.jreleaser.util.FileUtils;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 import java.io.File;
@@ -32,6 +41,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -41,8 +51,11 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -59,7 +72,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
         return new ExtensionBuilder(name, this);
     }
 
-    public void load(JReleaserLogger logger, Path basedir) {
+    public void load(JReleaserContext context) {
         extensionPoints.clear();
         allExtensionPoints.clear();
 
@@ -68,7 +81,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
 
         // load defaults
         for (Extension extension : resolveServiceLoader()) {
-            processExtension(logger, extension, visitedExtensionNames, visitedExtensionTypes);
+            processExtension(context, extension, visitedExtensionNames, visitedExtensionTypes);
         }
 
         for (Map.Entry<String, ExtensionDef> e : extensionDefs.entrySet()) {
@@ -78,9 +91,9 @@ public final class DefaultExtensionManager implements ExtensionManager {
                 continue;
             }
 
-            createClassLoader(logger, basedir, extensionDef).ifPresent(classLoader -> {
+            createClassLoader(context, extensionDef).ifPresent(classLoader -> {
                 for (Extension extension : ServiceLoader.load(Extension.class, classLoader)) {
-                    processExtension(logger, extension, visitedExtensionNames, visitedExtensionTypes);
+                    processExtension(context, extension, visitedExtensionNames, visitedExtensionTypes);
                 }
             });
         }
@@ -100,14 +113,20 @@ public final class DefaultExtensionManager implements ExtensionManager {
         });
     }
 
-    private Optional<ClassLoader> createClassLoader(JReleaserLogger logger, Path basedir, ExtensionDef extensionDef) {
-        Path directoryPath = Paths.get(extensionDef.getDirectory());
+    private Optional<ClassLoader> createClassLoader(JReleaserContext context, ExtensionDef extensionDef) {
+        String directory = extensionDef.getDirectory();
+
+        if (isNotBlank(extensionDef.getGav())) {
+            directory = resolveJARs(context, extensionDef);
+        }
+
+        Path directoryPath = Paths.get(directory);
         if (!directoryPath.isAbsolute()) {
-            directoryPath = basedir.resolve(directoryPath);
+            directoryPath = context.getBasedir().resolve(directoryPath);
         }
 
         if (!Files.exists(directoryPath)) {
-            logger.warn(RB.$("extension.manager.load.directory.missing", extensionDef.getName(), directoryPath.toAbsolutePath()));
+            context.getLogger().warn(RB.$("extension.manager.load.directory.missing", extensionDef.getName(), directoryPath.toAbsolutePath()));
             return Optional.empty();
         }
 
@@ -117,13 +136,13 @@ public final class DefaultExtensionManager implements ExtensionManager {
                 .filter(path -> path.getFileName().toString().endsWith(".jar"))
                 .collect(toList());
         } catch (IOException e) {
-            logger.trace(e);
-            logger.warn(RB.$("extension.manager.load.directory.error", extensionDef.getName(), directoryPath.toAbsolutePath()));
+            context.getLogger().trace(e);
+            context.getLogger().warn(RB.$("extension.manager.load.directory.error", extensionDef.getName(), directoryPath.toAbsolutePath()));
             return Optional.empty();
         }
 
         if (jars.isEmpty()) {
-            logger.warn(RB.$("extension.manager.load.empty.jars", extensionDef.getName(), directoryPath.toAbsolutePath()));
+            context.getLogger().warn(RB.$("extension.manager.load.empty.jars", extensionDef.getName(), directoryPath.toAbsolutePath()));
             return Optional.empty();
         }
 
@@ -133,8 +152,8 @@ public final class DefaultExtensionManager implements ExtensionManager {
             try {
                 urls[i] = jar.toUri().toURL();
             } catch (MalformedURLException e) {
-                logger.trace(e);
-                logger.warn(RB.$("extension.manager.load.jar.error", extensionDef.getName(), jar.toAbsolutePath()));
+                context.getLogger().trace(e);
+                context.getLogger().warn(RB.$("extension.manager.load.jar.error", extensionDef.getName(), jar.toAbsolutePath()));
                 return Optional.empty();
             }
         }
@@ -142,7 +161,65 @@ public final class DefaultExtensionManager implements ExtensionManager {
         return Optional.of(new URLClassLoader(urls, getClass().getClassLoader()));
     }
 
-    private void processExtension(JReleaserLogger logger, Extension extension, Set<String> visitedExtensionNames, Set<String> visitedExtensionTypes) {
+    private String resolveJARs(JReleaserContext context, ExtensionDef extensionDef) {
+        Path target = context.getOutputDirectory().resolve("extensions")
+            .resolve(extensionDef.getName())
+            .toAbsolutePath();
+
+        Mvn mvn = new Mvn(context, DefaultVersions.getInstance().getMvnVersion());
+
+        try {
+            if (!mvn.setup()) {
+                throw new JReleaserException(RB.$("tool_unavailable", "mvn"));
+            }
+        } catch (ToolException e) {
+            throw new JReleaserException(RB.$("tool_unavailable", "mvn"), e);
+        }
+
+        try {
+            FileUtils.deleteFiles(target, true);
+
+            Path pom = Files.createTempFile("jreleaser-extensions", "pom.xml");
+
+            TemplateResource template = TemplateUtils.resolveTemplate(context.getLogger(), "extensions/pom.xml.tpl");
+
+            String[] gav = extensionDef.getGav().split(":");
+
+            String content = IOUtils.toString(template.getReader());
+            content = content.replaceAll("@groupId@", gav[0])
+                .replaceAll("@artifactId@", gav[1])
+                .replaceAll("@version@", gav[2]);
+
+            Files.write(pom, content.getBytes(), WRITE, TRUNCATE_EXISTING);
+
+            List<String> args = new ArrayList<>();
+            args.add("-B");
+            args.add("-q");
+            args.add("-f");
+            args.add(pom.toAbsolutePath().toString());
+            args.add("dependency:resolve");
+            // resolve
+            context.getLogger().debug(RB.$("extension.manager.resolve.jars", extensionDef.getGav()));
+            mvn.invoke(context.getBasedir(), args);
+
+            args.clear();
+            args.add("-B");
+            args.add("-q");
+            args.add("-f");
+            args.add(pom.toAbsolutePath().toString());
+            args.add("dependency:copy-dependencies");
+            args.add("-DoutputDirectory=" + target);
+            // copy
+            context.getLogger().debug(RB.$("extension.manager.copy.jars", extensionDef.getGav(), context.relativizeToBasedir(target)));
+            mvn.invoke(context.getBasedir(), args);
+        } catch (IOException | CommandException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);
+        }
+
+        return target.toString();
+    }
+
+    private void processExtension(JReleaserContext context, Extension extension, Set<String> visitedExtensionNames, Set<String> visitedExtensionTypes) {
         String extensionName = extension.getName();
         String extensionType = extension.getClass().getName();
 
@@ -150,14 +227,14 @@ public final class DefaultExtensionManager implements ExtensionManager {
             return;
         }
 
-        logger.debug(RB.$("extension.manager.load", extensionName, extensionType));
+        context.getLogger().debug(RB.$("extension.manager.load", extensionName, extensionType));
         visitedExtensionNames.add(extensionName);
         visitedExtensionTypes.add(extensionType);
 
         ExtensionDef extensionDef = extensionDefs.get(extensionName);
 
         if (null != extensionDef && !extensionDef.isEnabled()) {
-            logger.debug(RB.$("extension.manager.disabled", extensionName));
+            context.getLogger().debug(RB.$("extension.manager.disabled", extensionName));
             return;
         }
 
@@ -167,7 +244,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
                 extensionPoint.init(extensionDef.getExtensionPoints().get(extensionPointTypeName)
                     .getProperties());
             }
-            logger.debug(RB.$("extension.manager.add.extension.point", extensionPointTypeName, extensionName));
+            context.getLogger().debug(RB.$("extension.manager.add.extension.point", extensionPointTypeName, extensionName));
             allExtensionPoints.add(extensionPoint);
         }
     }
@@ -185,12 +262,14 @@ public final class DefaultExtensionManager implements ExtensionManager {
 
     private static class ExtensionDef {
         private final String name;
+        private final String gav;
         private final String directory;
         private final boolean enabled;
         private final Map<String, ExtensionPointDef> extensionPoints = new LinkedHashMap<>();
 
-        private ExtensionDef(String name, String directory, boolean enabled, Map<String, ExtensionPointDef> extensionPoints) {
+        private ExtensionDef(String name, String directory, String gav, boolean enabled, Map<String, ExtensionPointDef> extensionPoints) {
             this.name = name;
+            this.gav = gav;
             this.directory = directory;
             this.enabled = enabled;
             this.extensionPoints.putAll(extensionPoints);
@@ -198,6 +277,10 @@ public final class DefaultExtensionManager implements ExtensionManager {
 
         private String getName() {
             return name;
+        }
+
+        public String getGav() {
+            return gav;
         }
 
         private String getDirectory() {
@@ -235,6 +318,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
         private final Map<String, ExtensionPointDef> extensionPoints = new LinkedHashMap<>();
         private final String name;
         private final DefaultExtensionManager defaultExtensionManager;
+        private String gav;
         private String directory;
         private boolean enabled;
 
@@ -248,6 +332,11 @@ public final class DefaultExtensionManager implements ExtensionManager {
             }
             Path baseExtensionsDirectory = Paths.get(jreleaserHome).resolve("extensions");
             this.directory = baseExtensionsDirectory.resolve(name).toAbsolutePath().toString();
+        }
+
+        public ExtensionBuilder withGav(String gav) {
+            this.gav = gav;
+            return this;
         }
 
         public ExtensionBuilder withDirectory(String directory) {
@@ -267,7 +356,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
 
         public void build() {
             defaultExtensionManager.extensionDefs.put(name,
-                new ExtensionDef(name, directory, enabled, extensionPoints));
+                new ExtensionDef(name, directory, gav, enabled, extensionPoints));
         }
     }
 }

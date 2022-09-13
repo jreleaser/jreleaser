@@ -105,6 +105,9 @@ public class ModelValidator {
             Extension extension = e.getValue();
             DefaultExtensionManager.ExtensionBuilder builder = extensionManager.configureExtension(e.getKey())
                 .withEnabled(extension.isEnabled());
+            if (isNotBlank(extension.getGav())) {
+                builder = builder.withGav(extension.getGav());
+            }
             if (isNotBlank(extension.getDirectory())) {
                 builder = builder.withDirectory(extension.getDirectory());
             }
@@ -116,6 +119,6 @@ public class ModelValidator {
             builder.build();
         }
 
-        extensionManager.load(context.getLogger(), context.getBasedir());
+        extensionManager.load(context.asImmutable());
     }
 }

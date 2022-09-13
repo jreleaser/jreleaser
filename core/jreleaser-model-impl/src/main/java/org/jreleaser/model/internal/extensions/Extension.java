@@ -38,6 +38,7 @@ public final class Extension extends AbstractModelObject<Extension> implements D
     private final List<Provider> providers = new ArrayList<>();
     private Boolean enabled;
     private String name;
+    private String gav;
     private String directory;
 
     private final org.jreleaser.model.api.extensions.Extension immutable = new org.jreleaser.model.api.extensions.Extension() {
@@ -46,6 +47,11 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public String getGav() {
+            return gav;
         }
 
         @Override
@@ -82,6 +88,7 @@ public final class Extension extends AbstractModelObject<Extension> implements D
     public void merge(Extension source) {
         this.enabled = merge(this.enabled, source.enabled);
         this.name = merge(this.name, source.name);
+        this.gav = merge(this.gav, source.gav);
         this.directory = merge(this.directory, source.directory);
         setProviders(merge(this.providers, source.providers));
     }
@@ -107,6 +114,14 @@ public final class Extension extends AbstractModelObject<Extension> implements D
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getGav() {
+        return gav;
+    }
+
+    public void setGav(String gav) {
+        this.gav = gav;
     }
 
     public String getDirectory() {
@@ -138,6 +153,7 @@ public final class Extension extends AbstractModelObject<Extension> implements D
 
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
+        props.put("gav", gav);
         props.put("directory", directory);
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();
         for (int i = 0; i < providers.size(); i++) {

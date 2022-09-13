@@ -32,6 +32,8 @@ import org.gradle.api.provider.Property
 interface Extension {
     Property<Boolean> getEnabled()
 
+    Property<String> getGav()
+
     DirectoryProperty getDirectory()
 
     void provider(Action<? super Provider> action)

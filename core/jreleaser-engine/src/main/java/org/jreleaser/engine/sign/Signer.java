@@ -129,7 +129,7 @@ public class Signer {
     private static void cosignSign(JReleaserContext context) throws SigningException {
         Signing signing = context.getModel().getSigning();
 
-        Cosign cosign = new Cosign(context, signing.getCosign().getVersion());
+        Cosign cosign = new Cosign(context.asImmutable(), signing.getCosign().getVersion());
         try {
             if (!cosign.setup()) {
                 context.getLogger().warn(RB.$("tool_unavailable", "cosign"));

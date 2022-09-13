@@ -79,7 +79,7 @@ public class Init extends AbstractLoggingCommand {
 
             Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
-            TemplateResource template = TemplateUtils.resolveTemplate(logger, "jreleaser." + format + ".tpl");
+            TemplateResource template = TemplateUtils.resolveTemplate(logger, "init/jreleaser." + format + ".tpl");
 
             String content = IOUtils.toString(template.getReader());
             LocalDate now = LocalDate.now();

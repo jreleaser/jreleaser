@@ -40,12 +40,14 @@ import javax.inject.Inject
 class ExtensionImpl implements Extension {
     String name
     final Property<Boolean> enabled
+    final Property<String> gav
     final DirectoryProperty directory
     final NamedDomainObjectContainer<ProviderImpl> providers
 
     @Inject
     ExtensionImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        gav = objects.property(String).convention(Providers.<String> notDefined())
         directory = objects.directoryProperty().convention(Providers.notDefined())
 
         providers = objects.domainObjectContainer(ProviderImpl, new NamedDomainObjectFactory<ProviderImpl>() {
@@ -72,6 +74,7 @@ class ExtensionImpl implements Extension {
         org.jreleaser.model.internal.extensions.Extension extension = new org.jreleaser.model.internal.extensions.Extension()
         extension.name = name
         if (enabled.present) extension.enabled = enabled.get()
+        if (gav.present) extension.gav = gav.get()
         if (directory.present) {
             extension.directory = directory.get().asFile.toPath().toAbsolutePath().toString()
         }

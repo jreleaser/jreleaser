@@ -64,6 +64,10 @@ public abstract class ExtensionsValidator extends Validator {
                 "extension." + extension.getName() + ".directory", extension.getDirectory()));
         }
 
+        if (isNotBlank(extension.getGav()) && isNotBlank(extension.getDirectory())) {
+            errors.configuration(RB.$("validation_extension_gav_directory", "extension." + extension.getName()));
+        }
+
         for (int i = 0; i < extension.getProviders().size(); i++) {
             validateExtensionProvider(context, mode, extension, extension.getProviders().get(i), i, errors);
         }
