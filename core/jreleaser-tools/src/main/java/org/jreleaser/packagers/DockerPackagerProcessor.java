@@ -39,6 +39,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -182,7 +183,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             Path workingDirectory = prepareAssembly(distribution, props, packageDirectory, artifacts);
 
             for (String imageName : docker.getImageNames()) {
-                imageName = resolveTemplate(imageName, props);
+                imageName = resolveTemplate(imageName, props).toLowerCase(Locale.ENGLISH);
 
                 // command line
                 Command cmd = createBuildCommand(props, docker);
