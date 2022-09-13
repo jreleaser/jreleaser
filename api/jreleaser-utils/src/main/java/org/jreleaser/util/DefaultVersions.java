@@ -15,15 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-model-api')
-    api project(':jreleaser-logger-api')
-    api project(':jreleaser-tool-java-sdk')
-    api project(':jreleaser-utils')
-    api project(':jreleaser-templates')
+package org.jreleaser.util;
 
-    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
-    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
+import java.util.ResourceBundle;
 
-    api "org.commonmark:commonmark:$commonmarkVersion"
+/**
+ * @author Andres Almiray
+ * @since 1.3.0
+ */
+public final class DefaultVersions {
+    private static final DefaultVersions INSTANCE = new DefaultVersions();
+    private final ResourceBundle bundle = ResourceBundle.getBundle("org.jreleaser.default_versions");
+    private final String mvnVersion = bundle.getString("mvn.version");
+
+    public String getMvnVersion() {
+        return mvnVersion;
+    }
+
+    public static DefaultVersions getInstance() {
+        return INSTANCE;
+    }
 }

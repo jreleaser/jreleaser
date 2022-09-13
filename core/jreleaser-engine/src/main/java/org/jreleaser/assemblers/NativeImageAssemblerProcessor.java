@@ -210,7 +210,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
     }
 
     private void upx(Path image) throws AssemblerProcessingException {
-        Upx upx = new Upx(context, assembler.getUpx().getVersion());
+        Upx upx = new Upx(context.asImmutable(), assembler.getUpx().getVersion());
         try {
             if (!upx.setup()) {
                 context.getLogger().warn(RB.$("tool_unavailable", "upx"));

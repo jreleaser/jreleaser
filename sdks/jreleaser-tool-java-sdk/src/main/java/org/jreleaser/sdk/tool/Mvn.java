@@ -15,16 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.extensions.api;
+package org.jreleaser.sdk.tool;
 
-import java.util.Set;
+import org.jreleaser.model.api.JReleaserContext;
+import org.jreleaser.sdk.command.Command;
+import org.jreleaser.sdk.command.CommandException;
+import org.jreleaser.sdk.command.CommandExecutor;
+
+import java.nio.file.Path;
+import java.util.List;
 
 /**
  * @author Andres Almiray
  * @since 1.3.0
  */
-public interface Extension {
-    String getName();
+public class Mvn extends AbstractTool {
+    public Mvn(JReleaserContext context, String version) {
+        super(context, "mvn", version);
+    }
 
-    Set<? extends ExtensionPoint> provides();
+    public void invoke(Path parent, List<String> args) throws CommandException {
+        Command command = tool.asCommand().args(args);
+        executeCommand(() -> new CommandExecutor(context.getLogger())
+            .executeCommand(parent, command));
+    }
 }

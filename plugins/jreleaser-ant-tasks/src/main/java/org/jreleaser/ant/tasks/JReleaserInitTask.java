@@ -75,7 +75,7 @@ public class JReleaserInitTask extends Task {
             Path outputDirectory = getOutputDirectory();
             Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
-            TemplateResource template = TemplateUtils.resolveTemplate(logger, "jreleaser." + format + ".tpl");
+            TemplateResource template = TemplateUtils.resolveTemplate(logger, "init/jreleaser." + format + ".tpl");
 
             logger.info("Writing file " + outputFile.toAbsolutePath());
             try (Writer writer = Files.newBufferedWriter(outputFile, overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING)) {

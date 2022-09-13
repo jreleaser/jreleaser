@@ -64,8 +64,9 @@ public class DownloadableTool {
     private final String platform;
     private final boolean enabled;
     private final Properties properties;
+    private final boolean verifyErrorOutput;
+
     private Path executable;
-    protected final boolean verifyErrorOutput;
 
     public DownloadableTool(JReleaserLogger logger, String name, String version, String platform, boolean verifyErrorOutput) throws ToolException {
         this.logger = logger;
@@ -80,13 +81,22 @@ public class DownloadableTool {
             properties = new Properties();
             properties.load(DownloadableTool.class.getClassLoader()
                 .getResourceAsStream(BASE_TEMPLATE_PREFIX + key));
-            enabled = properties.containsKey(platform + EXECUTABLE);
+            enabled = properties.containsKey(platformKey(EXECUTABLE));
             if (enabled) {
-                executable = Paths.get(properties.getProperty(platform + EXECUTABLE));
+                executable = Paths.get(properties.getProperty(platformKey(EXECUTABLE)));
             }
         } catch (Exception e) {
             throw new ToolException(RB.$("ERROR_unexpected_reading_resource_for", key, "classpath"));
         }
+    }
+
+    private String platformKey(String key) {
+        String k = platform + key;
+        if (properties.containsKey(k)) {
+            return k;
+        }
+
+        return key.startsWith(".") ? key.substring(1) : key;
     }
 
     public boolean isEnabled() {
@@ -150,7 +160,7 @@ public class DownloadableTool {
     }
 
     public void download() throws ToolException {
-        String filename = properties.getProperty(platform + FILENAME);
+        String filename = properties.getProperty(platformKey(FILENAME));
 
         if (isBlank(filename)) {
             executable = null;
@@ -162,8 +172,8 @@ public class DownloadableTool {
 
         boolean unpack = Boolean.parseBoolean(properties.getProperty(UNPACK));
         String downloadUrl = properties.getProperty(DOWNLOAD_URL);
-        String executablePath = properties.getProperty(platform + EXECUTABLE_PATH);
-        String exec = properties.getProperty(platform + EXECUTABLE);
+        String executablePath = properties.getProperty(platformKey(EXECUTABLE_PATH));
+        String exec = properties.getProperty(platformKey(EXECUTABLE));
 
         Map<String, Object> props = props();
         filename = resolveTemplate(filename, props);
@@ -239,5 +249,4 @@ public class DownloadableTool {
 
         return Paths.get(home).resolve("caches");
     }
-
 }

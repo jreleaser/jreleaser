@@ -29,3 +29,11 @@ dependencies {
     api "org.slf4j:jcl-over-slf4j:$slf4jVersion"
     api "com.github.veithen.cosmos.bootstrap:org.tukaani.xz:$xzVersion"
 }
+
+processResources {
+    filesMatching(['**/*.properties']) {
+        expand(
+            mvnVersion: mavenVersion
+        )
+    }
+}

@@ -30,6 +30,8 @@ import java.util.Map;
 public interface Extension extends Domain, EnabledAware {
     String getName();
 
+    String getGav();
+
     String getDirectory();
 
     List<? extends Provider> getProviders();
