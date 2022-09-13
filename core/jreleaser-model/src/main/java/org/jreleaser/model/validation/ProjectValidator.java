@@ -174,8 +174,7 @@ public abstract class ProjectValidator extends Validator {
         if (!mode.validateConfig() && !mode.validateAnnounce()) {
             return;
         }
-
-        if (context.getModel().getActiveDistributions().isEmpty() ||
+        if (context.getModel().getActiveDistributions().isEmpty() &&
             !context.getModel().getAnnounce().isEnabled()) {
             return;
         }
