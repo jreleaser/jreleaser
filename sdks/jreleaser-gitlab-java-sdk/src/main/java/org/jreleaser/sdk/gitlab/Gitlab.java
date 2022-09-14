@@ -236,6 +236,30 @@ class Gitlab {
         }
     }
 
+    Optional<GlMilestone> findClosedMilestoneByName(String owner, String repo, String projectIdentifier, String milestoneName) throws IOException {
+        logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
+
+        GlProject project = getProject(repo, projectIdentifier);
+
+        try {
+            List<GlMilestone> milestones = api.findMilestoneByTitle(project.getId(), CollectionUtils.<String, Object>map()
+                .e("title", milestoneName));
+
+            if (milestones == null || milestones.isEmpty()) {
+                return Optional.empty();
+            }
+
+            GlMilestone milestone = milestones.get(0);
+            return "closed".equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
+        } catch (RestAPIException e) {
+            if (e.isNotFound() || e.isForbidden()) {
+                // ok
+                return Optional.empty();
+            }
+            throw e;
+        }
+    }
+
     void closeMilestone(String owner, String repo, String projectIdentifier, GlMilestone milestone) throws IOException {
         logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
@@ -429,24 +453,31 @@ class Gitlab {
         return api.createLabel(projectIdentifier, labelName, labelColor, description);
     }
 
-    void addLabelToIssue(Integer projectIdentifier, GlIssue issue, GlLabel label) throws IOException {
+    void addLabelToIssue(Integer projectIdentifier, GlIssue issue, GlLabel label) {
         logger.debug(RB.$("git.issue.label", label.getName(), issue.getIid()));
 
-        Map<String, List<String>> labels = new LinkedHashMap<>();
-        List<String> list = labels.computeIfAbsent("labels", k -> new ArrayList<>());
+        Map<String, Object> params = new LinkedHashMap<>();
+        List<String> list = (List<String>) params.computeIfAbsent("labels", k -> new ArrayList<>());
         list.addAll(issue.getLabels());
         list.add(label.getName());
 
-        api.labelIssue(labels, projectIdentifier, issue.getIid());
+        api.updateIssue(params, projectIdentifier, issue.getIid());
     }
 
-    void commentOnIssue(Integer projectIdentifier, GlIssue issue, String comment) throws IOException {
+    void commentOnIssue(Integer projectIdentifier, GlIssue issue, String comment) {
         logger.debug(RB.$("git.issue.comment", issue.getIid()));
 
         Map<String, String> params = new LinkedHashMap<>();
         params.put("body", comment);
 
         api.commentIssue(params, projectIdentifier, issue.getIid());
+    }
+
+    void setMilestoneOnIssue(Integer projectIdentifier, GlIssue issue, GlMilestone milestone) {
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("milestone_id", milestone.getId());
+
+        api.updateIssue(params, projectIdentifier, issue.getIid());
     }
 
     List<GlLabel> listLabels(Integer projectIdentifier) throws IOException {

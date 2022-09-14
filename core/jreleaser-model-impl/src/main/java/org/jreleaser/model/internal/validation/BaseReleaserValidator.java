@@ -44,7 +44,7 @@ import java.util.TreeSet;
 import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.api.release.Releaser.BRANCH;
-import static org.jreleaser.model.api.release.Releaser.Milestone.MILESTONE_NAME;
+import static org.jreleaser.model.api.release.Releaser.MILESTONE_NAME;
 import static org.jreleaser.model.api.release.Releaser.OVERWRITE;
 import static org.jreleaser.model.api.release.Releaser.RELEASE_NAME;
 import static org.jreleaser.model.api.release.Releaser.SKIP_RELEASE;

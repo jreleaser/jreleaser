@@ -20,6 +20,7 @@ package org.jreleaser.sdk.gitlab;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.api.common.Apply;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.ExtraProperties;
@@ -59,6 +60,7 @@ import static org.jreleaser.model.Constants.KEY_PLATFORM_REPLACED;
 import static org.jreleaser.model.api.signing.Signing.KEY_SKIP_SIGNING;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.uncapitalize;
 
 /**
  * @author Andres Almiray
@@ -362,22 +364,66 @@ public class GitlabReleaser extends AbstractReleaser {
             throw new IllegalStateException(RB.$("ERROR_git_releaser_fetch_label", tagName, labelName), e);
         }
 
+        Optional<GlMilestone> milestone = Optional.empty();
+        Apply applyMilestone = gitlab.getIssues().getApplyMilestone();
+        if (gitlab.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
+            milestone = api.findMilestoneByName(
+                gitlab.getOwner(),
+                gitlab.getName(),
+                gitlab.getProjectIdentifier(),
+                gitlab.getMilestone().getEffectiveName());
+
+            if (!milestone.isPresent()) {
+                milestone = api.findClosedMilestoneByName(
+                    gitlab.getOwner(),
+                    gitlab.getName(),
+                    gitlab.getProjectIdentifier(),
+                    gitlab.getMilestone().getEffectiveName());
+            }
+        }
+
         List<GlIssue> issues = api.listIssues(projectIdentifier);
 
         for (String issueNumber : issueNumbers) {
-            try {
-                Integer in = Integer.parseInt(issueNumber);
-                Optional<GlIssue> op = issues.stream().filter(i -> i.getIid().equals(in)).findFirst();
-                if (!op.isPresent()) continue;
+            Integer in = Integer.parseInt(issueNumber);
+            Optional<GlIssue> op = issues.stream().filter(i -> i.getIid().equals(in)).findFirst();
+            if (!op.isPresent()) continue;
 
-                GlIssue glIssue = op.get();
-                if (glIssue.getState().equals("closed") && glIssue.getLabels().stream().noneMatch(l -> l.equals(labelName))) {
-                    context.getLogger().debug(RB.$("git.issue.release", issueNumber));
-                    api.addLabelToIssue(projectIdentifier, glIssue, glLabel);
-                    api.commentOnIssue(projectIdentifier, glIssue, comment);
+            GlIssue glIssue = op.get();
+            if (glIssue.getState().equals("closed") && glIssue.getLabels().stream().noneMatch(l -> l.equals(labelName))) {
+                context.getLogger().debug(RB.$("git.issue.release", issueNumber));
+                api.addLabelToIssue(projectIdentifier, glIssue, glLabel);
+                api.commentOnIssue(projectIdentifier, glIssue, comment);
+
+                milestone.ifPresent(glMilestone -> applyMilestone(gitlab, api, projectIdentifier, issueNumber, glIssue, applyMilestone, glMilestone));
+            }
+        }
+    }
+
+    private void applyMilestone(org.jreleaser.model.internal.release.GitlabReleaser gitlab, Gitlab api, Integer projectIdentifier,
+                                String issueNumber, GlIssue glIssue, Apply applyMilestone, GlMilestone targetMilestone) {
+        GlMilestone issueMilestone = glIssue.getMilestone();
+        String targetMilestoneTitle = targetMilestone.getTitle();
+
+        if (null == issueMilestone) {
+            context.getLogger().debug(RB.$("git.issue.milestone.apply", targetMilestoneTitle, issueNumber));
+            api.setMilestoneOnIssue(projectIdentifier, glIssue, targetMilestone);
+        } else {
+            String milestoneTitle = issueMilestone.getTitle();
+
+            if (applyMilestone == Apply.ALWAYS) {
+                context.getLogger().debug(uncapitalize(RB.$("git.issue.milestone.warn", issueNumber, milestoneTitle)));
+            } else if (applyMilestone == Apply.WARN) {
+                if (!milestoneTitle.equals(targetMilestoneTitle)) {
+                    context.getLogger().warn(RB.$("git.issue.milestone.warn", issueNumber, milestoneTitle));
                 }
-            } catch (IOException e) {
-                throw new IllegalStateException(RB.$("ERROR_git_releaser_cannot_release", tagName, issueNumber), e);
+            } else if (applyMilestone == Apply.FORCE) {
+                if (!milestoneTitle.equals(targetMilestoneTitle)) {
+                    context.getLogger().warn(RB.$("git.issue.milestone.force", targetMilestoneTitle, issueNumber, milestoneTitle));
+                    api.setMilestoneOnIssue(projectIdentifier, glIssue, targetMilestone);
+                } else {
+                    context.getLogger().debug(uncapitalize(RB.$("git.issue.milestone.warn", issueNumber, milestoneTitle)));
+                }
             }
         }
     }

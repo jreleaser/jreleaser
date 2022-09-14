@@ -33,6 +33,7 @@ public class GlIssue {
     private Integer iid;
     private String title;
     private String state;
+    private GlMilestone milestone;
 
     public Integer getId() {
         return id;
@@ -75,6 +76,14 @@ public class GlIssue {
             this.labels.clear();
             this.labels.addAll(labels);
         }
+    }
+
+    public GlMilestone getMilestone() {
+        return milestone;
+    }
+
+    public void setMilestone(GlMilestone milestone) {
+        this.milestone = milestone;
     }
 
     @Override

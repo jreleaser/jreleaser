@@ -149,6 +149,16 @@ class Github {
             .findFirst();
     }
 
+    Optional<GHMilestone> findClosedMilestoneByName(String owner, String repo, String milestoneName) throws IOException {
+        logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
+
+        GHRepository repository = findRepository(owner, repo);
+        PagedIterable<GHMilestone> milestones = repository.listMilestones(GHIssueState.CLOSED);
+        return StreamSupport.stream(milestones.spliterator(), false)
+            .filter(m -> milestoneName.equals(m.getTitle()))
+            .findFirst();
+    }
+
     void closeMilestone(String owner, String repo, GHMilestone milestone) throws IOException {
         logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 

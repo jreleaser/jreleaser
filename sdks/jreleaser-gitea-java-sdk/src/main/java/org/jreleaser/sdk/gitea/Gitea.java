@@ -209,6 +209,26 @@ class Gitea {
         }
     }
 
+    Optional<GtMilestone> findClosedMilestoneByName(String owner, String repo, String milestoneName) {
+        logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
+
+        try {
+            GtMilestone milestone = api.findMilestoneByTitle(owner, repo, milestoneName);
+
+            if (milestone == null) {
+                return Optional.empty();
+            }
+
+            return "closed".equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
+        } catch (RestAPIException e) {
+            if (e.isNotFound()) {
+                // ok
+                return Optional.empty();
+            }
+            throw e;
+        }
+    }
+
     void closeMilestone(String owner, String repo, GtMilestone milestone) throws IOException {
         logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
@@ -372,7 +392,7 @@ class Gitea {
         }
     }
 
-    void addLabelToIssue(String owner, String name, GtIssue issue, GtLabel label) throws IOException {
+    void addLabelToIssue(String owner, String name, GtIssue issue, GtLabel label) {
         logger.debug(RB.$("git.issue.label", label.getName(), issue.getNumber()));
 
         Map<String, List<Integer>> labels = new LinkedHashMap<>();
@@ -383,13 +403,20 @@ class Gitea {
         api.labelIssue(labels, owner, name, issue.getNumber());
     }
 
-    void commentOnIssue(String owner, String name, GtIssue issue, String comment) throws IOException {
+    void commentOnIssue(String owner, String name, GtIssue issue, String comment) {
         logger.debug(RB.$("git.issue.comment", issue.getNumber()));
 
         Map<String, String> params = new LinkedHashMap<>();
         params.put("body", comment);
 
         api.commentIssue(params, owner, name, issue.getNumber());
+    }
+
+    void setMilestoneOnIssue(String owner, String name, GtIssue issue, GtMilestone milestone) {
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("milestone", milestone.getId());
+
+        api.updateIssue(params, owner, name, issue.getNumber());
     }
 
     private List<GtLabel> listLabels(String owner, String repoName) throws IOException {

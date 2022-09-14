@@ -123,7 +123,7 @@ public interface GitlabAPI {
 
     @RequestLine("PUT /projects/{projectId}/issues/{issue_iid}")
     @Headers("Content-Type: application/json")
-    void labelIssue(Map<String, List<String>> labels, @Param("projectId") Integer projectId, @Param("issue_iid") Integer iid);
+    void updateIssue(Map<String, Object> params, @Param("projectId") Integer projectId, @Param("issue_iid") Integer iid);
 
     @RequestLine("POST /projects/{projectId}/issues/{issue_iid}/notes")
     @Headers("Content-Type: application/json")
