@@ -60,20 +60,20 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     protected String baseImage;
 
     @Override
-    public void merge(S docker) {
-        this.active = merge(this.active, docker.active);
-        this.enabled = merge(this.enabled, docker.enabled);
-        this.templateDirectory = merge(this.templateDirectory, docker.templateDirectory);
-        setSkipTemplates(merge(this.skipTemplates, docker.skipTemplates));
-        setExtraProperties(merge(this.extraProperties, docker.extraProperties));
-        this.baseImage = merge(this.baseImage, docker.baseImage);
-        this.useLocalArtifact = merge(this.useLocalArtifact, docker.useLocalArtifact);
-        setImageNames(merge(this.imageNames, docker.imageNames));
-        setBuildArgs(merge(this.buildArgs, docker.buildArgs));
-        setPreCommands(merge(this.preCommands, docker.preCommands));
-        setPostCommands(merge(this.postCommands, docker.postCommands));
-        setLabels(merge(this.labels, docker.labels));
-        setRegistries(merge(this.registries, docker.registries));
+    public void merge(S source) {
+        this.active = merge(this.active, source.active);
+        this.enabled = merge(this.enabled, source.enabled);
+        this.templateDirectory = merge(this.templateDirectory, source.templateDirectory);
+        setSkipTemplates(merge(this.skipTemplates, source.skipTemplates));
+        setExtraProperties(merge(this.extraProperties, source.extraProperties));
+        this.baseImage = merge(this.baseImage, source.baseImage);
+        this.useLocalArtifact = merge(this.useLocalArtifact, source.useLocalArtifact);
+        setImageNames(merge(this.imageNames, source.imageNames));
+        setBuildArgs(merge(this.buildArgs, source.buildArgs));
+        setPreCommands(merge(this.preCommands, source.preCommands));
+        setPostCommands(merge(this.postCommands, source.postCommands));
+        setLabels(merge(this.labels, source.labels));
+        setRegistries(merge(this.registries, source.registries));
     }
 
     @Override

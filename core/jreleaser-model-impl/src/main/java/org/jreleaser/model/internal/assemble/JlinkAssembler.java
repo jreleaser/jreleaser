@@ -417,12 +417,12 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler> 
         }
 
         @Override
-        public void merge(Jdeps jdeps) {
-            this.multiRelease = this.merge(this.multiRelease, jdeps.multiRelease);
-            this.ignoreMissingDeps = this.merge(this.ignoreMissingDeps, jdeps.ignoreMissingDeps);
-            this.useWildcardInPath = this.merge(this.useWildcardInPath, jdeps.useWildcardInPath);
-            this.enabled = merge(this.enabled, jdeps.enabled);
-            setTargets(merge(this.targets, jdeps.targets));
+        public void merge(Jdeps source) {
+            this.multiRelease = this.merge(this.multiRelease, source.multiRelease);
+            this.ignoreMissingDeps = this.merge(this.ignoreMissingDeps, source.ignoreMissingDeps);
+            this.useWildcardInPath = this.merge(this.useWildcardInPath, source.useWildcardInPath);
+            this.enabled = merge(this.enabled, source.enabled);
+            setTargets(merge(this.targets, source.targets));
         }
 
         public String getMultiRelease() {

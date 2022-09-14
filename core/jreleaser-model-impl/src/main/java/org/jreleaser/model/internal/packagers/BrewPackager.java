@@ -519,15 +519,15 @@ public final class BrewPackager extends AbstractRepositoryPackager<BrewPackager>
         }
 
         @Override
-        public void merge(Cask spurce) {
-            this.enabled = this.merge(this.enabled, spurce.enabled);
-            this.name = this.merge(this.name, spurce.name);
-            this.displayName = this.merge(this.displayName, spurce.displayName);
-            this.pkgName = this.merge(this.pkgName, spurce.pkgName);
-            this.appName = this.merge(this.appName, spurce.appName);
-            this.appcast = this.merge(this.appcast, spurce.appcast);
-            setUninstallItems(merge(this.uninstall, spurce.uninstall));
-            setZapItems(merge(this.zap, spurce.zap));
+        public void merge(Cask source) {
+            this.enabled = this.merge(this.enabled, source.enabled);
+            this.name = this.merge(this.name, source.name);
+            this.displayName = this.merge(this.displayName, source.displayName);
+            this.pkgName = this.merge(this.pkgName, source.pkgName);
+            this.appName = this.merge(this.appName, source.appName);
+            this.appcast = this.merge(this.appcast, source.appcast);
+            setUninstallItems(merge(this.uninstall, source.uninstall));
+            setZapItems(merge(this.zap, source.zap));
         }
 
         public void enable() {

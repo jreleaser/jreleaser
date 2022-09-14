@@ -67,16 +67,16 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     }
 
     @Override
-    public void merge(S tap) {
-        this.active = merge(this.active, tap.active);
-        this.enabled = merge(this.enabled, tap.enabled);
-        this.owner = merge(this.owner, tap.owner);
-        this.name = merge(this.name, tap.name);
-        this.tagName = merge(this.tagName, tap.tagName);
-        this.branch = merge(this.branch, tap.branch);
-        this.username = merge(this.username, tap.username);
-        this.token = merge(this.token, tap.token);
-        this.commitMessage = merge(this.commitMessage, tap.commitMessage);
+    public void merge(S source) {
+        this.active = merge(this.active, source.active);
+        this.enabled = merge(this.enabled, source.enabled);
+        this.owner = merge(this.owner, source.owner);
+        this.name = merge(this.name, source.name);
+        this.tagName = merge(this.tagName, source.tagName);
+        this.branch = merge(this.branch, source.branch);
+        this.username = merge(this.username, source.username);
+        this.token = merge(this.token, source.token);
+        this.commitMessage = merge(this.commitMessage, source.commitMessage);
     }
 
     @Override

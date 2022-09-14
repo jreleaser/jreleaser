@@ -155,12 +155,12 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         }
 
         @Override
-        public void merge(DockerConfiguration.Registry registry) {
-            this.server = merge(this.server, registry.server);
-            this.serverName = merge(this.serverName, registry.serverName);
-            this.repositoryName = merge(this.repositoryName, registry.repositoryName);
-            this.username = merge(this.username, registry.username);
-            this.password = merge(this.password, registry.password);
+        public void merge(DockerConfiguration.Registry source) {
+            this.server = merge(this.server, source.server);
+            this.serverName = merge(this.serverName, source.serverName);
+            this.repositoryName = merge(this.repositoryName, source.repositoryName);
+            this.username = merge(this.username, source.username);
+            this.password = merge(this.password, source.password);
         }
 
         public String getResolvedPassword() {

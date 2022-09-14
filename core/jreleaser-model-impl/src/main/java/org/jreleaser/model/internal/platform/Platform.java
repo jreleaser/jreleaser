@@ -55,8 +55,8 @@ public final class Platform extends AbstractModelObject<Platform> implements Dom
     }
 
     @Override
-    public void merge(Platform platform) {
-        setReplacements(merge(this.replacements, platform.replacements));
+    public void merge(Platform source) {
+        setReplacements(merge(this.replacements, source.replacements));
     }
 
     public boolean isSet() {

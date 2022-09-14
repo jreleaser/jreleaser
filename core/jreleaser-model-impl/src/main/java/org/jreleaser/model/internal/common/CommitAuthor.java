@@ -52,9 +52,9 @@ public final class CommitAuthor extends AbstractModelObject<CommitAuthor> implem
     }
 
     @Override
-    public void merge(CommitAuthor author) {
-        this.email = merge(this.email, author.email);
-        this.name = merge(this.name, author.name);
+    public void merge(CommitAuthor source) {
+        this.email = merge(this.email, source.email);
+        this.name = merge(this.name, source.name);
     }
 
     public String getName() {

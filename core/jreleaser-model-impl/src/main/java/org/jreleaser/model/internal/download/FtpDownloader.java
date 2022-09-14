@@ -130,12 +130,12 @@ public final class FtpDownloader extends AbstractDownloader<FtpDownloader> imple
     }
 
     @Override
-    public void merge(FtpDownloader ftp) {
-        super.merge(ftp);
-        this.username = merge(this.username, ftp.username);
-        this.password = merge(this.password, ftp.password);
-        this.host = merge(this.host, ftp.host);
-        this.port = merge(this.port, ftp.port);
+    public void merge(FtpDownloader source) {
+        super.merge(source);
+        this.username = merge(this.username, source.username);
+        this.password = merge(this.password, source.password);
+        this.host = merge(this.host, source.host);
+        this.port = merge(this.port, source.port);
     }
 
     public String getUsername() {

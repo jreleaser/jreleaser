@@ -139,19 +139,19 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     }
 
     @Override
-    public void merge(Signing signing) {
-        this.active = merge(this.active, signing.active);
-        this.enabled = merge(this.enabled, signing.enabled);
-        this.armored = merge(this.armored, signing.armored);
-        this.publicKey = merge(this.publicKey, signing.publicKey);
-        this.secretKey = merge(this.secretKey, signing.secretKey);
-        this.passphrase = merge(this.passphrase, signing.passphrase);
-        this.mode = merge(this.mode, signing.mode);
-        this.artifacts = merge(this.artifacts, signing.artifacts);
-        this.files = merge(this.files, signing.files);
-        this.checksums = merge(this.checksums, signing.checksums);
-        setCommand(signing.command);
-        setCosign(signing.cosign);
+    public void merge(Signing source) {
+        this.active = merge(this.active, source.active);
+        this.enabled = merge(this.enabled, source.enabled);
+        this.armored = merge(this.armored, source.armored);
+        this.publicKey = merge(this.publicKey, source.publicKey);
+        this.secretKey = merge(this.secretKey, source.secretKey);
+        this.passphrase = merge(this.passphrase, source.passphrase);
+        this.mode = merge(this.mode, source.mode);
+        this.artifacts = merge(this.artifacts, source.artifacts);
+        this.files = merge(this.files, source.files);
+        this.checksums = merge(this.checksums, source.checksums);
+        setCommand(source.command);
+        setCosign(source.cosign);
     }
 
     @Override
@@ -401,13 +401,13 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
         }
 
         @Override
-        public void merge(Command command) {
-            this.executable = merge(this.executable, command.executable);
-            this.keyName = merge(this.keyName, command.keyName);
-            this.homeDir = merge(this.homeDir, command.homeDir);
-            this.publicKeyring = merge(this.publicKeyring, command.publicKeyring);
-            this.defaultKeyring = merge(this.defaultKeyring, command.defaultKeyring);
-            setArgs(merge(this.args, command.args));
+        public void merge(Command source) {
+            this.executable = merge(this.executable, source.executable);
+            this.keyName = merge(this.keyName, source.keyName);
+            this.homeDir = merge(this.homeDir, source.homeDir);
+            this.publicKeyring = merge(this.publicKeyring, source.publicKeyring);
+            this.defaultKeyring = merge(this.defaultKeyring, source.defaultKeyring);
+            setArgs(merge(this.args, source.args));
         }
 
         public String getExecutable() {
@@ -510,10 +510,10 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
         }
 
         @Override
-        public void merge(Cosign cosign) {
-            this.version = merge(this.version, cosign.version);
-            this.privateKeyFile = merge(this.privateKeyFile, cosign.privateKeyFile);
-            this.publicKeyFile = merge(this.publicKeyFile, cosign.publicKeyFile);
+        public void merge(Cosign source) {
+            this.version = merge(this.version, source.version);
+            this.privateKeyFile = merge(this.privateKeyFile, source.privateKeyFile);
+            this.publicKeyFile = merge(this.publicKeyFile, source.publicKeyFile);
         }
 
         public String getResolvedPrivateKeyFile() {

@@ -126,18 +126,18 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
     }
 
     @Override
-    public void merge(Artifact artifact) {
-        this.effectivePath = merge(this.effectivePath, artifact.effectivePath);
-        this.path = merge(this.path, artifact.path);
-        this.platform = merge(this.platform, artifact.platform);
-        this.transform = merge(this.transform, artifact.transform);
-        this.resolvedPath = merge(this.resolvedPath, artifact.resolvedPath);
-        this.resolvedTransform = merge(this.resolvedTransform, artifact.resolvedTransform);
-        this.active = artifact.active;
-        setExtraProperties(merge(this.extraProperties, artifact.extraProperties));
+    public void merge(Artifact source) {
+        this.effectivePath = merge(this.effectivePath, source.effectivePath);
+        this.path = merge(this.path, source.path);
+        this.platform = merge(this.platform, source.platform);
+        this.transform = merge(this.transform, source.transform);
+        this.resolvedPath = merge(this.resolvedPath, source.resolvedPath);
+        this.resolvedTransform = merge(this.resolvedTransform, source.resolvedTransform);
+        this.active = source.active;
+        setExtraProperties(merge(this.extraProperties, source.extraProperties));
 
         // do not merge
-        setHashes(artifact.hashes);
+        setHashes(source.hashes);
     }
 
     public boolean isActive() {

@@ -50,14 +50,14 @@ public abstract class AbstractDownloader<S extends AbstractDownloader<S>> extend
     }
 
     @Override
-    public void merge(S downloader) {
-        this.name = merge(this.name, downloader.name);
-        this.active = merge(this.active, downloader.active);
-        this.enabled = merge(this.enabled, downloader.enabled);
-        this.connectTimeout = merge(this.connectTimeout, downloader.connectTimeout);
-        this.readTimeout = merge(this.readTimeout, downloader.readTimeout);
-        setExtraProperties(merge(this.extraProperties, downloader.extraProperties));
-        setAssets(merge(this.assets, downloader.assets));
+    public void merge(S source) {
+        this.name = merge(this.name, source.name);
+        this.active = merge(this.active, source.active);
+        this.enabled = merge(this.enabled, source.enabled);
+        this.connectTimeout = merge(this.connectTimeout, source.connectTimeout);
+        this.readTimeout = merge(this.readTimeout, source.readTimeout);
+        setExtraProperties(merge(this.extraProperties, source.extraProperties));
+        setAssets(merge(this.assets, source.assets));
     }
 
     @Override

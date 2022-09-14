@@ -130,12 +130,12 @@ public final class HttpDownloader extends AbstractDownloader<HttpDownloader> imp
     }
 
     @Override
-    public void merge(HttpDownloader http) {
-        super.merge(http);
-        this.username = merge(this.username, http.username);
-        this.password = merge(this.password, http.password);
-        this.authorization = merge(this.authorization, http.authorization);
-        setHeaders(merge(this.headers, http.headers));
+    public void merge(HttpDownloader source) {
+        super.merge(source);
+        this.username = merge(this.username, source.username);
+        this.password = merge(this.password, source.password);
+        this.authorization = merge(this.authorization, source.authorization);
+        setHeaders(merge(this.headers, source.headers));
     }
 
     @Override
