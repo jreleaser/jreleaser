@@ -234,19 +234,19 @@ public final class Distribution extends Packagers<Distribution> implements Domai
     }
 
     @Override
-    public void merge(Distribution distribution) {
-        super.merge(distribution);
-        this.active = merge(this.active, distribution.active);
-        this.enabled = merge(this.enabled, distribution.enabled);
-        this.name = merge(this.name, distribution.name);
-        this.type = merge(this.type, distribution.type);
-        this.stereotype = merge(this.stereotype, distribution.stereotype);
-        setExecutable(distribution.executable);
-        setPlatform(distribution.platform);
-        setJava(distribution.java);
-        setTags(merge(this.tags, distribution.tags));
-        setExtraProperties(merge(this.extraProperties, distribution.extraProperties));
-        setArtifacts(merge(this.artifacts, distribution.artifacts));
+    public void merge(Distribution source) {
+        super.merge(source);
+        this.active = merge(this.active, source.active);
+        this.enabled = merge(this.enabled, source.enabled);
+        this.name = merge(this.name, source.name);
+        this.type = merge(this.type, source.type);
+        this.stereotype = merge(this.stereotype, source.stereotype);
+        setExecutable(source.executable);
+        setPlatform(source.platform);
+        setJava(source.java);
+        setTags(merge(this.tags, source.tags));
+        setExtraProperties(merge(this.extraProperties, source.extraProperties));
+        setArtifacts(merge(this.artifacts, source.artifacts));
     }
 
     public Map<String, Object> props() {

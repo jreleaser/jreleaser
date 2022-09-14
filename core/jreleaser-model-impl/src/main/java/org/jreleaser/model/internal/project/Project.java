@@ -242,26 +242,26 @@ public final class Project extends AbstractModelObject<Project> implements Domai
     }
 
     @Override
-    public void merge(Project project) {
-        this.name = merge(this.name, project.name);
-        this.version = merge(this.version, project.version);
-        this.versionPattern = merge(this.versionPattern, project.versionPattern);
-        this.description = merge(this.description, project.description);
-        this.longDescription = merge(this.longDescription, project.longDescription);
-        this.license = merge(this.license, project.license);
-        this.inceptionYear = merge(this.inceptionYear, project.inceptionYear);
-        this.copyright = merge(this.copyright, project.copyright);
-        this.vendor = merge(this.vendor, project.vendor);
-        this.stereotype = merge(this.stereotype, project.stereotype);
-        setJava(project.java);
-        setSnapshot(project.snapshot);
-        setAuthors(merge(this.authors, project.authors));
-        setTags(merge(this.tags, project.tags));
-        setMaintainers(merge(this.maintainers, project.maintainers));
-        setExtraProperties(merge(this.extraProperties, project.extraProperties));
-        setLinks(project.links);
-        setScreenshots(merge(this.screenshots, project.screenshots));
-        setIcons(merge(this.icons, project.icons));
+    public void merge(Project source) {
+        this.name = merge(this.name, source.name);
+        this.version = merge(this.version, source.version);
+        this.versionPattern = merge(this.versionPattern, source.versionPattern);
+        this.description = merge(this.description, source.description);
+        this.longDescription = merge(this.longDescription, source.longDescription);
+        this.license = merge(this.license, source.license);
+        this.inceptionYear = merge(this.inceptionYear, source.inceptionYear);
+        this.copyright = merge(this.copyright, source.copyright);
+        this.vendor = merge(this.vendor, source.vendor);
+        this.stereotype = merge(this.stereotype, source.stereotype);
+        setJava(source.java);
+        setSnapshot(source.snapshot);
+        setAuthors(merge(this.authors, source.authors));
+        setTags(merge(this.tags, source.tags));
+        setMaintainers(merge(this.maintainers, source.maintainers));
+        setExtraProperties(merge(this.extraProperties, source.extraProperties));
+        setLinks(source.links);
+        setScreenshots(merge(this.screenshots, source.screenshots));
+        setIcons(merge(this.icons, source.icons));
     }
 
     @Override
@@ -737,11 +737,11 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         }
 
         @Override
-        public void merge(Snapshot snapshot) {
-            this.enabled = this.merge(this.enabled, snapshot.enabled);
-            this.pattern = this.merge(this.pattern, snapshot.pattern);
-            this.label = this.merge(this.label, snapshot.label);
-            this.fullChangelog = this.merge(this.fullChangelog, snapshot.fullChangelog);
+        public void merge(Snapshot source) {
+            this.enabled = this.merge(this.enabled, source.enabled);
+            this.pattern = this.merge(this.pattern, source.pattern);
+            this.label = this.merge(this.label, source.label);
+            this.fullChangelog = this.merge(this.fullChangelog, source.fullChangelog);
         }
 
         public boolean isSnapshot(String version) {

@@ -137,20 +137,20 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     }
 
     @Override
-    public void merge(S packagers) {
-        setAppImage(packagers.appImage);
-        setAsdf(packagers.asdf);
-        setBrew(packagers.brew);
-        setChocolatey(packagers.chocolatey);
-        setDocker(packagers.docker);
-        setFlatpak(packagers.flatpak);
-        setGofish(packagers.gofish);
-        setJbang(packagers.jbang);
-        setMacports(packagers.macports);
-        setScoop(packagers.scoop);
-        setSdkman(packagers.sdkman);
-        setSnap(packagers.snap);
-        setSpec(packagers.spec);
+    public void merge(S source) {
+        setAppImage(source.appImage);
+        setAsdf(source.asdf);
+        setBrew(source.brew);
+        setChocolatey(source.chocolatey);
+        setDocker(source.docker);
+        setFlatpak(source.flatpak);
+        setGofish(source.gofish);
+        setJbang(source.jbang);
+        setMacports(source.macports);
+        setScoop(source.scoop);
+        setSdkman(source.sdkman);
+        setSnap(source.snap);
+        setSpec(source.spec);
     }
 
     public AppImagePackager getAppImage() {

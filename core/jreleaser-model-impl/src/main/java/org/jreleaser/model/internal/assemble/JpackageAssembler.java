@@ -492,13 +492,13 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
 
         @Override
-        public void merge(ApplicationPackage applicationPackage) {
-            this.appName = this.merge(this.appName, applicationPackage.appName);
-            this.appVersion = this.merge(this.appVersion, applicationPackage.appVersion);
-            this.vendor = this.merge(this.vendor, applicationPackage.vendor);
-            this.copyright = this.merge(this.copyright, applicationPackage.copyright);
-            this.licenseFile = this.merge(this.licenseFile, applicationPackage.licenseFile);
-            setFileAssociations(merge(this.fileAssociations, applicationPackage.fileAssociations));
+        public void merge(ApplicationPackage source) {
+            this.appName = this.merge(this.appName, source.appName);
+            this.appVersion = this.merge(this.appVersion, source.appVersion);
+            this.vendor = this.merge(this.vendor, source.vendor);
+            this.copyright = this.merge(this.copyright, source.copyright);
+            this.licenseFile = this.merge(this.licenseFile, source.licenseFile);
+            setFileAssociations(merge(this.fileAssociations, source.fileAssociations));
         }
 
         public String getResolvedAppVersion(JReleaserContext context, JpackageAssembler jpackage) {

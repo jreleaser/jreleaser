@@ -210,24 +210,24 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     }
 
     @Override
-    public void merge(Changelog changelog) {
-        this.enabled = merge(this.enabled, changelog.enabled);
-        this.links = merge(this.links, changelog.links);
-        this.skipMergeCommits = merge(this.skipMergeCommits, changelog.skipMergeCommits);
-        this.sort = merge(this.sort, changelog.sort);
-        this.external = merge(this.external, changelog.external);
-        this.formatted = merge(this.formatted, changelog.formatted);
-        this.format = merge(this.format, changelog.format);
-        this.content = merge(this.content, changelog.content);
-        this.contentTemplate = merge(this.contentTemplate, changelog.contentTemplate);
-        this.preset = merge(this.preset, changelog.preset);
-        setIncludeLabels(merge(this.includeLabels, changelog.includeLabels));
-        setExcludeLabels(merge(this.excludeLabels, changelog.excludeLabels));
-        setCategories(merge(this.categories, changelog.categories));
-        setReplacers(merge(this.replacers, changelog.replacers));
-        setLabelers(merge(this.labelers, changelog.labelers));
-        setHide(changelog.hide);
-        setContributors(changelog.contributors);
+    public void merge(Changelog source) {
+        this.enabled = merge(this.enabled, source.enabled);
+        this.links = merge(this.links, source.links);
+        this.skipMergeCommits = merge(this.skipMergeCommits, source.skipMergeCommits);
+        this.sort = merge(this.sort, source.sort);
+        this.external = merge(this.external, source.external);
+        this.formatted = merge(this.formatted, source.formatted);
+        this.format = merge(this.format, source.format);
+        this.content = merge(this.content, source.content);
+        this.contentTemplate = merge(this.contentTemplate, source.contentTemplate);
+        this.preset = merge(this.preset, source.preset);
+        setIncludeLabels(merge(this.includeLabels, source.includeLabels));
+        setExcludeLabels(merge(this.excludeLabels, source.excludeLabels));
+        setCategories(merge(this.categories, source.categories));
+        setReplacers(merge(this.replacers, source.replacers));
+        setLabelers(merge(this.labelers, source.labelers));
+        setHide(source.hide);
+        setContributors(source.contributors);
     }
 
     public boolean resolveFormatted(Project project) {

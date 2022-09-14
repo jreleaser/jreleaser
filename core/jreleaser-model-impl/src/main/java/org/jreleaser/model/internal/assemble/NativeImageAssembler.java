@@ -542,8 +542,8 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         }
 
         @Override
-        public void merge(S customizer) {
-            setArgs(merge(this.args, customizer.args));
+        public void merge(S source) {
+            setArgs(merge(this.args, source.args));
         }
 
         public List<String> getArgs() {

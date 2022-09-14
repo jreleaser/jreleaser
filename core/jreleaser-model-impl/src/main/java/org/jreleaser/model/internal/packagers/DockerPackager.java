@@ -239,14 +239,14 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     }
 
     @Override
-    public void merge(DockerPackager docker) {
-        super.merge(docker);
-        this.continueOnError = merge(this.continueOnError, docker.continueOnError);
-        this.downloadUrl = merge(this.downloadUrl, docker.downloadUrl);
-        this.failed = docker.failed;
-        setSpecs(mergeModel(this.specs, docker.specs));
-        setCommitAuthor(docker.commitAuthor);
-        setRepository(docker.repository);
+    public void merge(DockerPackager source) {
+        super.merge(source);
+        this.continueOnError = merge(this.continueOnError, source.continueOnError);
+        this.downloadUrl = merge(this.downloadUrl, source.downloadUrl);
+        this.failed = source.failed;
+        setSpecs(mergeModel(this.specs, source.specs));
+        setCommitAuthor(source.commitAuthor);
+        setRepository(source.repository);
     }
 
     @Override
@@ -483,9 +483,9 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         }
 
         @Override
-        public void merge(DockerRepository tap) {
-            super.merge(tap);
-            this.versionedSubfolders = this.merge(this.versionedSubfolders, tap.versionedSubfolders);
+        public void merge(DockerRepository source) {
+            super.merge(source);
+            this.versionedSubfolders = this.merge(this.versionedSubfolders, source.versionedSubfolders);
         }
 
         public boolean isVersionedSubfolders() {
