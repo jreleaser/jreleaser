@@ -22,9 +22,19 @@ import org.jreleaser.extensions.api.ExtensionPoint;
 import java.util.Map;
 
 /**
+ * Enables customization of the Mustache context used when evaluating named templates.
+ *
  * @author Andres Almiray
  * @since 1.3.0
  */
 public interface MustacheExtensionPoint extends ExtensionPoint {
-    void apply(Map<String, Object> props);
+    /**
+     * Enhances the given context with additional properties.
+     * <p>
+     * <strong>WARNING: </strong> be careful when defining key names
+     * as you may override existing ones.
+     *
+     * @param context the evaluation context.
+     */
+    void apply(Map<String, Object> context);
 }
