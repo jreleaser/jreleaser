@@ -22,6 +22,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.api.common.Apply;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.util.VersionUtils;
 import org.jreleaser.model.spi.release.AbstractReleaser;
@@ -64,6 +65,7 @@ import static org.jreleaser.sdk.git.ChangelogProvider.extractIssues;
 import static org.jreleaser.sdk.git.ChangelogProvider.storeIssues;
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.uncapitalize;
 
 /**
  * @author Andres Almiray
@@ -401,6 +403,22 @@ public class GithubReleaser extends AbstractReleaser {
             throw new IllegalStateException(RB.$("ERROR_git_releaser_fetch_label", tagName, labelName), e);
         }
 
+        Optional<GHMilestone> milestone = Optional.empty();
+        Apply applyMilestone = github.getIssues().getApplyMilestone();
+        if (applyMilestone != Apply.NEVER) {
+            milestone = api.findMilestoneByName(
+                github.getOwner(),
+                github.getName(),
+                github.getMilestone().getEffectiveName());
+
+            if (!milestone.isPresent()) {
+                milestone = api.findClosedMilestoneByName(
+                    github.getOwner(),
+                    github.getName(),
+                    github.getMilestone().getEffectiveName());
+            }
+        }
+
         for (String issueNumber : issueNumbers) {
             try {
                 Optional<GHIssue> op = api.findIssue(ghRepository, Integer.parseInt(issueNumber));
@@ -411,9 +429,40 @@ public class GithubReleaser extends AbstractReleaser {
                     context.getLogger().debug(RB.$("git.issue.release", issueNumber));
                     ghIssue.addLabels(ghLabel);
                     ghIssue.comment(comment);
+
+                    if (milestone.isPresent()) {
+                        applyMilestone(issueNumber, ghIssue, applyMilestone, milestone.get());
+                    }
                 }
             } catch (IOException e) {
                 throw new IllegalStateException(RB.$("ERROR_git_releaser_cannot_release", tagName, issueNumber), e);
+            }
+        }
+    }
+
+    private void applyMilestone(String issueNumber, GHIssue ghIssue, Apply applyMilestone, GHMilestone targetMilestone) throws IOException {
+        GHMilestone issueMilestone = ghIssue.getMilestone();
+        String targetMilestoneTitle = targetMilestone.getTitle();
+
+        if (null == issueMilestone) {
+            context.getLogger().debug(RB.$("git.issue.milestone.apply", targetMilestoneTitle, issueNumber));
+            ghIssue.setMilestone(targetMilestone);
+        } else {
+            String milestoneTitle = issueMilestone.getTitle();
+
+            if (applyMilestone == Apply.ALWAYS) {
+                context.getLogger().debug(uncapitalize(RB.$("git.issue.milestone.warn", issueNumber, milestoneTitle)));
+            } else if (applyMilestone == Apply.WARN) {
+                if (!milestoneTitle.equals(targetMilestoneTitle)) {
+                    context.getLogger().warn(RB.$("git.issue.milestone.warn", issueNumber, milestoneTitle));
+                }
+            } else if (applyMilestone == Apply.FORCE) {
+                if (!milestoneTitle.equals(targetMilestoneTitle)) {
+                    context.getLogger().warn(RB.$("git.issue.milestone.force", targetMilestoneTitle, issueNumber, milestoneTitle));
+                    ghIssue.setMilestone(targetMilestone);
+                } else {
+                    context.getLogger().debug(uncapitalize(RB.$("git.issue.milestone.warn", issueNumber, milestoneTitle)));
+                }
             }
         }
     }

@@ -29,6 +29,7 @@ import org.jreleaser.gradle.plugin.dsl.release.BaseReleaser
 import org.jreleaser.gradle.plugin.dsl.release.Changelog
 import org.jreleaser.model.Active
 import org.jreleaser.model.UpdateSection
+import org.jreleaser.model.api.common.Apply
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -328,19 +329,29 @@ abstract class BaseReleaserImpl implements BaseReleaser {
     static class IssuesImpl implements Issues {
         final Property<Boolean> enabled
         final Property<String> comment
+        final Property<Apply> applyMilestone
         final LabelImpl label
 
         @Inject
         IssuesImpl(ObjectFactory objects) {
             enabled = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
             comment = objects.property(String).convention(Providers.<String> notDefined())
+            applyMilestone = objects.property(Apply).convention(Providers.<Apply> notDefined())
             label = objects.newInstance(LabelImpl, objects)
+        }
+
+        @Override
+        void setApplyMilestone(String str) {
+            if (isNotBlank(str)) {
+                applyMilestone.set(Apply.of(str.trim()))
+            }
         }
 
         @Internal
         boolean isSet() {
             enabled.present ||
                 comment.present ||
+                applyMilestone.present ||
                 label.isSet()
         }
 
@@ -358,6 +369,7 @@ abstract class BaseReleaserImpl implements BaseReleaser {
             org.jreleaser.model.internal.release.BaseReleaser.Issues issues = new org.jreleaser.model.internal.release.BaseReleaser.Issues()
             if (enabled.present) issues.enabled = enabled.get()
             if (comment.present) issues.comment = comment.get()
+            if (applyMilestone.present) issues.applyMilestone = applyMilestone.get()
             if (label.isSet()) issues.label = label.toModel()
             issues
         }

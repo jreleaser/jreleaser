@@ -115,4 +115,8 @@ public interface GiteaAPI {
     @RequestLine("POST /repos/{owner}/{repo}/issues/{issueNumber}/comments")
     @Headers("Content-Type: application/json")
     void commentIssue(Map<String, String> params, @Param("owner") String owner, @Param("repo") String repo, @Param("issueNumber") Integer issueNumber);
+
+    @RequestLine("PATCH /repos/{owner}/{repo}/issues/{index}")
+    @Headers("Content-Type: application/json")
+    void updateIssue(Map<String, Object> params, @Param("owner") String owner, @Param("repo") String repo, @Param("index") Integer index);
 }

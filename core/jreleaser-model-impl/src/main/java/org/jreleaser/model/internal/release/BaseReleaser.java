@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.api.common.Apply;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.CommitAuthor;
@@ -965,7 +966,7 @@ public abstract class BaseReleaser<S extends BaseReleaser<S>> extends AbstractMo
         }
 
         public String getConfiguredName() {
-            return Env.env(org.jreleaser.model.api.release.Releaser.Milestone.MILESTONE_NAME, cachedName);
+            return Env.env(org.jreleaser.model.api.release.Releaser.MILESTONE_NAME, cachedName);
         }
 
         public String getResolvedName(Map<String, Object> props) {
@@ -1017,6 +1018,7 @@ public abstract class BaseReleaser<S extends BaseReleaser<S>> extends AbstractMo
 
     public static final class Issues extends AbstractModelObject<Issues> implements Domain, EnabledAware {
         private final Label label = new Label();
+        private Apply applyMilestone;
         private String comment;
         private Boolean enabled;
 
@@ -1024,6 +1026,11 @@ public abstract class BaseReleaser<S extends BaseReleaser<S>> extends AbstractMo
             @Override
             public String getComment() {
                 return comment;
+            }
+
+            @Override
+            public Apply getApplyMilestone() {
+                return applyMilestone;
             }
 
             @Override
@@ -1050,6 +1057,7 @@ public abstract class BaseReleaser<S extends BaseReleaser<S>> extends AbstractMo
         public void merge(Issues source) {
             this.comment = merge(this.comment, source.comment);
             this.enabled = merge(this.enabled, source.enabled);
+            this.applyMilestone = merge(this.applyMilestone, source.applyMilestone);
             setLabel(source.label);
         }
 
@@ -1084,12 +1092,25 @@ public abstract class BaseReleaser<S extends BaseReleaser<S>> extends AbstractMo
             this.label.merge(label);
         }
 
+        public Apply getApplyMilestone() {
+            return applyMilestone;
+        }
+
+        public void setApplyMilestone(Apply applyMilestone) {
+            this.applyMilestone = applyMilestone;
+        }
+
+        public void setApplyMilestone(String str) {
+            setApplyMilestone(Apply.of(str));
+        }
+
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("enabled", isEnabled());
             map.put("comment", comment);
             map.put("label", label.asMap(full));
+            map.put("applyMilestone", applyMilestone);
             return map;
         }
 

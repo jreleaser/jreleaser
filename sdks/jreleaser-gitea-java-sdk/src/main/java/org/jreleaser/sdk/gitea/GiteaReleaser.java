@@ -20,6 +20,7 @@ package org.jreleaser.sdk.gitea;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.api.common.Apply;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.util.VersionUtils;
 import org.jreleaser.model.spi.release.AbstractReleaser;
@@ -50,6 +51,7 @@ import java.util.regex.Pattern;
 
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.capitalize;
+import static org.jreleaser.util.StringUtils.uncapitalize;
 
 /**
  * @author Andres Almiray
@@ -330,19 +332,60 @@ public class GiteaReleaser extends AbstractReleaser {
             throw new IllegalStateException(RB.$("ERROR_git_releaser_fetch_label", tagName, labelName), e);
         }
 
-        for (String issueNumber : issueNumbers) {
-            try {
-                Optional<GtIssue> op = api.findIssue(gitea.getOwner(), gitea.getName(), Integer.parseInt(issueNumber));
-                if (!op.isPresent()) continue;
+        Optional<GtMilestone> milestone = Optional.empty();
+        Apply applyMilestone = gitea.getIssues().getApplyMilestone();
+        if (gitea.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
+            milestone = api.findMilestoneByName(
+                gitea.getOwner(),
+                gitea.getName(),
+                gitea.getMilestone().getEffectiveName());
 
-                GtIssue gtIssue = op.get();
-                if (gtIssue.getState().equals("closed") && gtIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
-                    context.getLogger().debug(RB.$("git.issue.release", issueNumber));
-                    api.addLabelToIssue(gitea.getOwner(), gitea.getName(), gtIssue, gtLabel);
-                    api.commentOnIssue(gitea.getOwner(), gitea.getName(), gtIssue, comment);
+            if (!milestone.isPresent()) {
+                milestone = api.findClosedMilestoneByName(
+                    gitea.getOwner(),
+                    gitea.getName(),
+                    gitea.getMilestone().getEffectiveName());
+            }
+        }
+
+        for (String issueNumber : issueNumbers) {
+            Optional<GtIssue> op = api.findIssue(gitea.getOwner(), gitea.getName(), Integer.parseInt(issueNumber));
+            if (!op.isPresent()) continue;
+
+            GtIssue gtIssue = op.get();
+            if (gtIssue.getState().equals("closed") && gtIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
+                context.getLogger().debug(RB.$("git.issue.release", issueNumber));
+                api.addLabelToIssue(gitea.getOwner(), gitea.getName(), gtIssue, gtLabel);
+                api.commentOnIssue(gitea.getOwner(), gitea.getName(), gtIssue, comment);
+
+                milestone.ifPresent(gtMilestone -> applyMilestone(gitea, api, issueNumber, gtIssue, applyMilestone, gtMilestone));
+            }
+        }
+    }
+
+    private void applyMilestone(org.jreleaser.model.internal.release.GiteaReleaser gitea, Gitea api, String issueNumber, GtIssue gtIssue, Apply applyMilestone, GtMilestone targetMilestone) {
+        GtMilestone issueMilestone = gtIssue.getMilestone();
+        String targetMilestoneTitle = targetMilestone.getTitle();
+
+        if (null == issueMilestone) {
+            context.getLogger().debug(RB.$("git.issue.milestone.apply", targetMilestoneTitle, issueNumber));
+            api.setMilestoneOnIssue(gitea.getOwner(), gitea.getName(), gtIssue, targetMilestone);
+        } else {
+            String milestoneTitle = issueMilestone.getTitle();
+
+            if (applyMilestone == Apply.ALWAYS) {
+                context.getLogger().debug(uncapitalize(RB.$("git.issue.milestone.warn", issueNumber, milestoneTitle)));
+            } else if (applyMilestone == Apply.WARN) {
+                if (!milestoneTitle.equals(targetMilestoneTitle)) {
+                    context.getLogger().warn(RB.$("git.issue.milestone.warn", issueNumber, milestoneTitle));
                 }
-            } catch (IOException e) {
-                throw new IllegalStateException(RB.$("ERROR_git_releaser_cannot_release", tagName, issueNumber), e);
+            } else if (applyMilestone == Apply.FORCE) {
+                if (!milestoneTitle.equals(targetMilestoneTitle)) {
+                    context.getLogger().warn(RB.$("git.issue.milestone.force", targetMilestoneTitle, issueNumber, milestoneTitle));
+                    api.setMilestoneOnIssue(gitea.getOwner(), gitea.getName(), gtIssue, targetMilestone);
+                } else {
+                    context.getLogger().debug(uncapitalize(RB.$("git.issue.milestone.warn", issueNumber, milestoneTitle)));
+                }
             }
         }
     }

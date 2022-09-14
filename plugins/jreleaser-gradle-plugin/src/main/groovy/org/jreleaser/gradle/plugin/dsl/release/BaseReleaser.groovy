@@ -24,6 +24,7 @@ import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.common.CommitAuthor
 import org.jreleaser.model.Active
 import org.jreleaser.model.UpdateSection
+import org.jreleaser.model.api.common.Apply
 
 /**
  *
@@ -146,6 +147,10 @@ interface BaseReleaser extends Releaser {
         Property<Boolean> getEnabled()
 
         Property<String> getComment()
+
+        Property<Apply> getApplyMilestone()
+
+        void setApplyMilestone(String str)
 
         void label(Action<? super Label> action)
 

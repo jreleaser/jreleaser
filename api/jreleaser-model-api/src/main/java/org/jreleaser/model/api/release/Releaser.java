@@ -19,6 +19,7 @@ package org.jreleaser.model.api.release;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.api.common.Apply;
 import org.jreleaser.model.api.common.CommitAuthorAware;
 import org.jreleaser.model.api.common.Domain;
 import org.jreleaser.model.api.common.EnabledAware;
@@ -45,6 +46,7 @@ public interface Releaser extends Domain, EnabledAware, CommitAuthorAware, Owner
     String SKIP_RELEASE = "SKIP_RELEASE";
     String BRANCH = "BRANCH";
     String PRERELEASE_PATTERN = "PRERELEASE_PATTERN";
+    String MILESTONE_NAME = "MILESTONE_NAME";
 
     String getServiceName();
 
@@ -129,8 +131,6 @@ public interface Releaser extends Domain, EnabledAware, CommitAuthorAware, Owner
     }
 
     interface Milestone extends Domain {
-        String MILESTONE_NAME = "MILESTONE_NAME";
-
         boolean isClose();
 
         String getName();
@@ -140,6 +140,8 @@ public interface Releaser extends Domain, EnabledAware, CommitAuthorAware, Owner
         String getComment();
 
         Label getLabel();
+
+        Apply getApplyMilestone();
 
         interface Label extends Domain {
             String getName();
