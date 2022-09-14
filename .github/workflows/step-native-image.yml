@@ -39,6 +39,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: artifacts
+          path: plugins
 
       - name: Download jlink
         uses: actions/download-artifact@v3
