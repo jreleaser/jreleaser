@@ -20,11 +20,31 @@ package org.jreleaser.extensions.api;
 import java.util.Set;
 
 /**
+ * Provides a collection of {@code ExtensionPoints}.
+ * <p>
+ * Every extension must define a unique name.
+ * <p>
+ * Extensions are loaded using the standard ServiceProvider mechanism,
+ * (see <a href="https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">
+ * https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html</a>
+ * for more details).
+ *
  * @author Andres Almiray
  * @since 1.3.0
  */
 public interface Extension {
+    /**
+     * The given name of the extension.
+     *
+     * @return a non {@code null} String.
+     */
     String getName();
 
+    /**
+     * A collection of {@code ExtensionPoint} instances.
+     * <p>
+     *
+     * @return a non {@code null} collection.
+     */
     Set<? extends ExtensionPoint> provides();
 }

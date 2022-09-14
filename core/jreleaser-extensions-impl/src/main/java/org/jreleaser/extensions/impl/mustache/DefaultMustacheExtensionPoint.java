@@ -46,26 +46,26 @@ import static org.jreleaser.util.ChecksumUtils.checksum;
  * @since 1.3.0
  */
 public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoint {
-    public void apply(Map<String, Object> props) {
-        ZonedDateTime now = (ZonedDateTime) props.get(Constants.KEY_ZONED_DATE_TIME_NOW);
+    public void apply(Map<String, Object> context) {
+        ZonedDateTime now = (ZonedDateTime) context.get(Constants.KEY_ZONED_DATE_TIME_NOW);
         if (null == now) {
             now = ZonedDateTime.now();
         }
-        props.put("f_now", new TimeFormatFunction(now));
+        context.put("f_now", new TimeFormatFunction(now));
 
-        props.put("f_trim", new TrimFunction());
-        props.put("f_underscore", new UnderscoreFunction());
-        props.put("f_dash", new DashFunction());
-        props.put("f_slash", new SlashFunction());
-        props.put("f_upper", new UpperFunction());
-        props.put("f_lower", new LowerFunction());
-        props.put("f_capitalize", new CapitalizeFunction());
-        props.put("f_uncapitalize", new UncapitalizeFunction());
-        props.put("f_md2html", new MarkdownToHtmlFunction());
-        props.put("f_file_read", new FileReadFunction());
-        props.put("f_file_size", new FileSizeFunction());
+        context.put("f_trim", new TrimFunction());
+        context.put("f_underscore", new UnderscoreFunction());
+        context.put("f_dash", new DashFunction());
+        context.put("f_slash", new SlashFunction());
+        context.put("f_upper", new UpperFunction());
+        context.put("f_lower", new LowerFunction());
+        context.put("f_capitalize", new CapitalizeFunction());
+        context.put("f_uncapitalize", new UncapitalizeFunction());
+        context.put("f_md2html", new MarkdownToHtmlFunction());
+        context.put("f_file_read", new FileReadFunction());
+        context.put("f_file_size", new FileSizeFunction());
         EnumSet.allOf(Algorithm.class)
-            .forEach(algorithm -> props.put("f_checksum_" + algorithm.formatted(), new FileChecksumFunction(algorithm)));
+            .forEach(algorithm -> context.put("f_checksum_" + algorithm.formatted(), new FileChecksumFunction(algorithm)));
     }
 
 

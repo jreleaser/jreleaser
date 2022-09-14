@@ -20,10 +20,17 @@ package org.jreleaser.extensions.api;
 import java.util.Map;
 
 /**
+ * Defines an extension point for a given feature.
+ *
  * @author Andres Almiray
  * @since 1.3.0
  */
 public interface ExtensionPoint {
+    /**
+     * Initializes the extension point with values defined in the configuration DSL.
+     *
+     * @param properties a {@code Map} of key/value pairs.
+     */
     default void init(Map<String, Object> properties) {
         // noop
     }
