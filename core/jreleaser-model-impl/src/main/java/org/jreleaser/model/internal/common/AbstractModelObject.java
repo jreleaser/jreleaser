@@ -67,9 +67,7 @@ public abstract class AbstractModelObject<S extends AbstractModelObject<S>> impl
         Set<T> s1 = new LinkedHashSet<>();
         if (null != existing) s1.addAll(existing);
         if (null != incoming && !incoming.isEmpty()) {
-            Set<T> s2 = new LinkedHashSet<>(incoming);
-            s2.removeAll(s1);
-            s1.addAll(s2);
+            s1.addAll(incoming);
         }
 
         return s1;
