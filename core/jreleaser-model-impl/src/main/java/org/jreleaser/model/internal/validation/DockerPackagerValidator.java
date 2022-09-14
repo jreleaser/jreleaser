@@ -127,7 +127,8 @@ public abstract class DockerPackagerValidator extends Validator {
             Optional<String> imageName = packager.getImageNames().stream()
                 .filter(n -> n.endsWith(":{{tagName}}") || n.endsWith(":{{ tagName }}"))
                 .findFirst();
-            packager.setImageNames(singleton(imageName.orElse("{{repoOwner}}/{{distributionName}}:{{tagName}}")));
+            // use the first finding or the first imageName
+            packager.setImageNames(singleton(imageName.orElse(packager.getImageNames().iterator().next())));
         }
 
         validateCommands(packager, parentPackager);
