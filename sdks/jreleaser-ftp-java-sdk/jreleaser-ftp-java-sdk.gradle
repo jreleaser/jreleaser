@@ -19,7 +19,6 @@ dependencies {
     compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
     annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
 
-    api project(':jreleaser-model-impl')
     api project(':jreleaser-java-sdk-commons')
     api "commons-net:commons-net:$commonsNetVersion"
 }
