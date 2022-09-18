@@ -61,6 +61,22 @@ public class Release extends AbstractPlatformAwareModelCommand {
             return exclude != null ? exclude.excludedDistributions : null;
         }
 
+        String[] includedDeployerTypes() {
+            return include != null ? include.includedDeployerTypes : null;
+        }
+
+        String[] includedDeployerNames() {
+            return include != null ? include.includedDeployerNames : null;
+        }
+
+        String[] excludedDeployerTypes() {
+            return exclude != null ? exclude.excludedDeployerTypes : null;
+        }
+
+        String[] excludedDeployerNames() {
+            return exclude != null ? exclude.excludedDeployerNames : null;
+        }
+
         String[] includedUploaderTypes() {
             return include != null ? include.includedUploaderTypes : null;
         }
@@ -87,6 +103,14 @@ public class Release extends AbstractPlatformAwareModelCommand {
             paramLabel = "<distribution>")
         String[] includedDistributions;
 
+        @CommandLine.Option(names = {"-y", "--deployer"},
+            paramLabel = "<deployer>")
+        String[] includedDeployerTypes;
+
+        @CommandLine.Option(names = {"-yn", "--deployer-name"},
+            paramLabel = "<name>")
+        String[] includedDeployerNames;
+
         @CommandLine.Option(names = {"-u", "--uploader"},
             paramLabel = "<uploader>")
         String[] includedUploaderTypes;
@@ -100,6 +124,14 @@ public class Release extends AbstractPlatformAwareModelCommand {
         @CommandLine.Option(names = {"-xd", "--exclude-distribution"},
             paramLabel = "<distribution>")
         String[] excludedDistributions;
+
+        @CommandLine.Option(names = {"-xy", "--exclude-deployer"},
+            paramLabel = "<deployer>")
+        String[] excludedDeployerTypes;
+
+        @CommandLine.Option(names = {"-xyn", "--exclude-deployer-name"},
+            paramLabel = "<name>")
+        String[] excludedDeployerNames;
 
         @CommandLine.Option(names = {"-xu", "--exclude-uploader"},
             paramLabel = "<uploader>")
@@ -223,9 +255,13 @@ public class Release extends AbstractPlatformAwareModelCommand {
         JReleaserContext context = super.createContext();
         if (null != composite) {
             context.setIncludedDistributions(collectEntries(composite.includedDistributions()));
+            context.setIncludedDeployerTypes(collectEntries(composite.includedDeployerTypes(), true));
+            context.setIncludedDeployerNames(collectEntries(composite.includedDeployerNames()));
             context.setIncludedUploaderTypes(collectEntries(composite.includedUploaderTypes(), true));
             context.setIncludedUploaderNames(collectEntries(composite.includedUploaderNames()));
             context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
+            context.setExcludedDeployerTypes(collectEntries(composite.excludedDeployerTypes(), true));
+            context.setExcludedDeployerNames(collectEntries(composite.excludedDeployerNames()));
             context.setExcludedUploaderTypes(collectEntries(composite.excludedUploaderTypes(), true));
             context.setExcludedUploaderNames(collectEntries(composite.excludedUploaderNames()));
         }

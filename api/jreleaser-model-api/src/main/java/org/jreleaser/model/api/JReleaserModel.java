@@ -21,6 +21,7 @@ import org.jreleaser.model.api.announce.Announce;
 import org.jreleaser.model.api.assemble.Assemble;
 import org.jreleaser.model.api.checksum.Checksum;
 import org.jreleaser.model.api.common.Domain;
+import org.jreleaser.model.api.deploy.Deploy;
 import org.jreleaser.model.api.distributions.Distribution;
 import org.jreleaser.model.api.download.Download;
 import org.jreleaser.model.api.environment.Environment;
@@ -65,6 +66,8 @@ public interface JReleaserModel extends Domain {
     Assemble getAssemble();
 
     Download getDownload();
+
+    Deploy getDeploy();
 
     Upload getUpload();
 

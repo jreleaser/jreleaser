@@ -108,6 +108,11 @@ public class CommandExecutor {
             .directory(directory.toFile()), out);
     }
 
+    public int executeCommandCapturing(Path directory, Command command, OutputStream out, OutputStream err) throws CommandException {
+        return executeCommandCapturing(createProcessExecutor(command)
+            .directory(directory.toFile()), out, err);
+    }
+
     public int executeCommandWithInput(Command command, InputStream in) throws CommandException {
         return executeCommand(createProcessExecutor(command)
             .redirectInput(in));

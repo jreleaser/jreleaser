@@ -1,0 +1,124 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2020-2022 The JReleaser authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jreleaser.gradle.plugin.internal.dsl.deploy.maven
+
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
+import org.gradle.api.internal.provider.Providers
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.deploy.maven.MavenDeployer
+import org.jreleaser.model.Active
+import org.jreleaser.model.Http
+
+import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
+
+/**
+ *
+ * @author Andres Almiray
+ * @since 1.3.0
+ */
+@CompileStatic
+abstract class AbstractMavenDeployer implements MavenDeployer {
+    String name
+    final Property<Active> active
+    final Property<Integer> connectTimeout
+    final Property<Integer> readTimeout
+    final Property<Boolean> sign
+    final Property<Boolean> verifyPom
+    final Property<Boolean> applyMavenCentralRules
+    final Property<String> url
+    final Property<String> username
+    final Property<String> password
+    final Property<Http.Authorization> authorization
+    final ListProperty<String> stagingRepositories
+    final MapProperty<String, Object> extraProperties
+
+    @Inject
+    AbstractMavenDeployer(ObjectFactory objects) {
+        active = objects.property(Active).convention(Providers.<Active> notDefined())
+        connectTimeout = objects.property(Integer).convention(Providers.<Integer> notDefined())
+        readTimeout = objects.property(Integer).convention(Providers.<Integer> notDefined())
+        sign = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        verifyPom = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        applyMavenCentralRules = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        url = objects.property(String).convention(Providers.<String> notDefined())
+        username = objects.property(String).convention(Providers.<String> notDefined())
+        password = objects.property(String).convention(Providers.<String> notDefined())
+        authorization = objects.property(Http.Authorization).convention(Providers.<Http.Authorization> notDefined())
+        stagingRepositories = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
+        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+    }
+
+    @Internal
+    boolean isSet() {
+        active.present ||
+            connectTimeout.present ||
+            readTimeout.present ||
+            extraProperties.present ||
+            sign.present ||
+            verifyPom.present ||
+            applyMavenCentralRules.present ||
+            url.present ||
+            username.present ||
+            password.present ||
+            authorization.present ||
+            stagingRepositories.present
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
+    }
+
+    @Override
+    void setAuthorization(String authorization) {
+        this.authorization.set(Http.Authorization.of(authorization))
+    }
+
+    @Override
+    @CompileDynamic
+    void stagingRepository(String str) {
+        if (isNotBlank(str)) {
+            stagingRepositories.add(str.trim())
+        }
+    }
+
+    protected <D extends org.jreleaser.model.internal.deploy.maven.MavenDeployer> void fillProperties(D deployer) {
+        deployer.name = name
+        if (active.present) deployer.active = active.get()
+        if (connectTimeout.present) deployer.connectTimeout = connectTimeout.get()
+        if (readTimeout.present) deployer.readTimeout = readTimeout.get()
+        if (extraProperties.present) deployer.extraProperties.putAll(extraProperties.get())
+        if (sign.present) deployer.sign = sign.get()
+        if (verifyPom.present) deployer.verifyPom = verifyPom.get()
+        if (applyMavenCentralRules.present) deployer.applyMavenCentralRules = applyMavenCentralRules.get()
+        if (url.present) deployer.url = url.get()
+        if (username.present) deployer.username = username.get()
+        if (password.present) deployer.password = password.get()
+        if (authorization.present) deployer.authorization = authorization.get()
+        deployer.stagingRepositories = (List<String>) stagingRepositories.getOrElse([])
+    }
+}

@@ -1,0 +1,129 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2020-2022 The JReleaser authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jreleaser.sdk.nexus2;
+
+import org.jreleaser.bundle.RB;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.spi.deploy.DeployException;
+import org.jreleaser.sdk.commons.AbstractMavenDeployer;
+
+import java.util.Set;
+
+/**
+ * @author Andres Almiray
+ * @since 1.3.0
+ */
+public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer> {
+    private org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer deployer;
+
+    public Nexus2MavenDeployer(JReleaserContext context) {
+        super(context);
+    }
+
+    public org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer getDeployer() {
+        return deployer;
+    }
+
+    public void setDeployer(org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer deployer) {
+        this.deployer = deployer;
+    }
+
+    @Override
+    public String getType() {
+        return org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.TYPE;
+    }
+
+    @Override
+    public void deploy(String name) throws DeployException {
+        Set<Deployable> deployables = collectDeployables();
+
+        if (deployables.isEmpty()) {
+            context.getLogger().info(RB.$("artifacts.no.match"));
+        }
+
+        String baseUrl = deployer.getResolvedUrl(context.fullProps());
+        String username = deployer.getResolvedUsername();
+        String password = deployer.getResolvedPassword();
+
+        Nexus2 nexus = null;
+        if (!context.isDryrun()) {
+            nexus = new Nexus2(context.getLogger(), baseUrl, username, password,
+                deployer.getConnectTimeout(), deployer.getReadTimeout(), context.isDryrun());
+        }
+
+        String groupId = context.getModel().getProject().getJava().getGroupId();
+
+        String stagingProfileId = null;
+        String stagingRepositoryId = null;
+
+        if (!context.isDryrun()) {
+            try {
+                context.getLogger().info(RB.$("nexus.lookup.staging.profile", groupId));
+                stagingProfileId = nexus.findStagingProfileId(groupId);
+            } catch (Nexus2Exception e) {
+                context.getLogger().trace(e);
+                throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
+            }
+
+            try {
+                context.getLogger().info(RB.$("nexus.create.staging.repository", groupId));
+                stagingRepositoryId = nexus.createStagingRepository(stagingProfileId, groupId);
+            } catch (Nexus2Exception e) {
+                context.getLogger().trace(e);
+                throw new DeployException(RB.$("ERROR_nexus_create_staging_repository", groupId), e);
+            }
+        }
+
+        for (Deployable deployable : deployables) {
+            context.getLogger().info(" - {}", deployable.getFilename());
+
+            if (!context.isDryrun()) {
+                try {
+                    nexus.deploy(stagingRepositoryId, deployable.getPath(), deployable.getLocalPath());
+                } catch (Nexus2Exception e) {
+                    context.getLogger().trace(e);
+                    throw new DeployException(RB.$("ERROR_unexpected_deploy",
+                        context.getBasedir().relativize(deployable.getLocalPath())), e);
+                }
+            }
+        }
+
+        if (deployer.isCloseRepository()) {
+            if (!context.isDryrun()) {
+                try {
+                    context.getLogger().info(RB.$("nexus.close.repository", stagingRepositoryId));
+                    nexus.closeStagingRepository(stagingProfileId, stagingRepositoryId, groupId);
+                } catch (Nexus2Exception e) {
+                    context.getLogger().trace(e);
+                    throw new DeployException(RB.$("ERROR_nexus_close_repository", stagingRepositoryId), e);
+                }
+            }
+        }
+        if (deployer.isReleaseRepository()) {
+            if (!context.isDryrun()) {
+                try {
+                    context.getLogger().info(RB.$("nexus.release.repository", stagingRepositoryId));
+                    nexus.releaseStagingRepository(stagingProfileId, stagingRepositoryId, groupId);
+                } catch (Nexus2Exception e) {
+                    context.getLogger().trace(e);
+                    throw new DeployException(RB.$("ERROR_nexus_release_repository", stagingRepositoryId), e);
+                }
+            }
+        }
+    }
+}

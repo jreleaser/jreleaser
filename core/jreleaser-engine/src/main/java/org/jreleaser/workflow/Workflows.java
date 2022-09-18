@@ -64,6 +64,13 @@ public class Workflows {
         ));
     }
 
+    public static Workflow deploy(JReleaserContext context) {
+        context.setCommand(JReleaserCommand.DEPLOY);
+        return new WorkflowImpl(context, asList(
+            new DeployWorkflowItem()
+        ));
+    }
+
     public static Workflow upload(JReleaserContext context) {
         context.setCommand(JReleaserCommand.UPLOAD);
         return new WorkflowImpl(context, asList(
@@ -79,6 +86,7 @@ public class Workflows {
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem(),
+            new DeployWorkflowItem(),
             new UploadWorkflowItem(),
             new ReleaseWorkflowItem()
         ));
@@ -125,6 +133,7 @@ public class Workflows {
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem(),
+            new DeployWorkflowItem(),
             new UploadWorkflowItem(),
             new ReleaseWorkflowItem(),
             new PrepareWorkflowItem(),

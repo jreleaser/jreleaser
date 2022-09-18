@@ -119,4 +119,7 @@ public interface GiteaAPI {
     @RequestLine("PATCH /repos/{owner}/{repo}/issues/{index}")
     @Headers("Content-Type: application/json")
     void updateIssue(Map<String, Object> params, @Param("owner") String owner, @Param("repo") String repo, @Param("index") Integer index);
+
+    @RequestLine("DELETE /packages/{owner}/{type}/{name}/{version}")
+    void deletePackage(@Param("owner") String owner, @Param("type") String type, @Param("name") String name, @Param("version") String version);
 }

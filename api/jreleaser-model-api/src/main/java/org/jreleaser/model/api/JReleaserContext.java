@@ -18,6 +18,8 @@
 package org.jreleaser.model.api;
 
 import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.signing.Keyring;
+import org.jreleaser.model.api.signing.SigningException;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -72,6 +74,10 @@ public interface JReleaserContext {
 
     List<String> getIncludedDownloaderNames();
 
+    List<String> getIncludedDeployerTypes();
+
+    List<String> getIncludedDeployerNames();
+
     List<String> getIncludedUploaderTypes();
 
     List<String> getIncludedUploaderNames();
@@ -88,6 +94,10 @@ public interface JReleaserContext {
 
     List<String> getExcludedDownloaderNames();
 
+    List<String> getExcludedDeployerTypes();
+
+    List<String> getExcludedDeployerNames();
+
     List<String> getExcludedUploaderTypes();
 
     List<String> getExcludedUploaderNames();
@@ -99,6 +109,8 @@ public interface JReleaserContext {
     Map<String, Object> fullProps();
 
     void nag(String version, String message);
+
+    Keyring createKeyring() throws SigningException;
 
     enum Mode {
         CONFIG,

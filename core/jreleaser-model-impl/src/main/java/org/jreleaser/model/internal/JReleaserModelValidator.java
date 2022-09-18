@@ -24,6 +24,7 @@ import static org.jreleaser.model.internal.validation.AnnouncersValidator.valida
 import static org.jreleaser.model.internal.validation.AssemblersValidator.postValidateAssemblers;
 import static org.jreleaser.model.internal.validation.AssemblersValidator.validateAssemblers;
 import static org.jreleaser.model.internal.validation.ChecksumValidator.validateChecksum;
+import static org.jreleaser.model.internal.validation.DeployValidator.validateDeploy;
 import static org.jreleaser.model.internal.validation.DistributionsValidator.postValidateDistributions;
 import static org.jreleaser.model.internal.validation.DistributionsValidator.validateDistributions;
 import static org.jreleaser.model.internal.validation.DownloadersValidator.validateDownloaders;
@@ -70,6 +71,7 @@ public final class JReleaserModelValidator {
         }
 
         validateChecksum(context, mode, errors);
+        validateDeploy(context, mode, errors);
         validateUploaders(context, mode, errors);
         validatePackagers(context, mode, errors);
         validateDistributions(context, mode, errors);

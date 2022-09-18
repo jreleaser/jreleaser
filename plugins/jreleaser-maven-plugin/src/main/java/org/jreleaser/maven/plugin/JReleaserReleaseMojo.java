@@ -45,6 +45,30 @@ public class JReleaserReleaseMojo extends AbstractPlatformAwareJReleaserMojo {
     private String[] excludedDistributions;
 
     /**
+     * Include a deployer by type.
+     */
+    @Parameter(property = "jreleaser.deployers")
+    private String[] includedDeployers;
+
+    /**
+     * Exclude a deployer by type.
+     */
+    @Parameter(property = "jreleaser.excluded.deployers")
+    private String[] excludedDeployers;
+
+    /**
+     * Include a deployer by name.
+     */
+    @Parameter(property = "jreleaser.deployer.names")
+    private String[] includedDeployerNames;
+
+    /**
+     * Exclude a deployer by name.
+     */
+    @Parameter(property = "jreleaser.excluded.deployer.names")
+    private String[] excludedDeployerNames;
+
+    /**
      * Include an uploader by type.
      */
     @Parameter(property = "jreleaser.uploaders")
@@ -83,9 +107,13 @@ public class JReleaserReleaseMojo extends AbstractPlatformAwareJReleaserMojo {
         }
 
         JReleaserContext context = createContext();
+        context.setIncludedDeployerTypes(collectEntries(includedDeployers, true));
+        context.setIncludedDeployerNames(collectEntries(includedDeployerNames));
         context.setIncludedUploaderTypes(collectEntries(includedUploaders, true));
         context.setIncludedUploaderNames(collectEntries(includedUploaderNames));
         context.setIncludedDistributions(collectEntries(includedDistributions));
+        context.setExcludedDeployerTypes(collectEntries(excludedDeployers, true));
+        context.setExcludedDeployerNames(collectEntries(excludedDeployerNames));
         context.setExcludedUploaderTypes(collectEntries(excludedUploaders, true));
         context.setExcludedUploaderNames(collectEntries(excludedUploaderNames));
         context.setExcludedDistributions(collectEntries(excludedDistributions));

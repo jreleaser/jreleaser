@@ -15,22 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.signing;
+package org.jreleaser.model.api.deploy.maven;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 1.3.0
  */
-public class SigningException extends Exception {
-    public SigningException(String message) {
-        super(message);
-    }
+public interface GitlabMavenDeployer extends MavenDeployer {
+    String TYPE = "gitlab";
 
-    public SigningException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public SigningException(Throwable cause) {
-        super(cause);
-    }
+    String getProjectIdentifier();
 }

@@ -19,10 +19,10 @@ package org.jreleaser.sdk.tool;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext;
+import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
-import org.jreleaser.sdk.signing.SigningException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -158,7 +158,6 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
 
     public Set<Artifact> getResolvedArtifactsPattern(JReleaserContext context) {
         if (null == artifacts) {
-            // mutate(() -> setPattern(Artifacts.resolveForGlob(getPattern(), context, this)));
             setPattern(Artifacts.resolveForGlob(getPattern(), context, this));
             normalizePattern(resolveDirectory(context));
             artifacts = Artifacts.resolveFiles(context, resolveDirectory(context), Collections.singletonList(pattern));

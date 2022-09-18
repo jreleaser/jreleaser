@@ -31,15 +31,22 @@ import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.spi.release.User;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
+import org.jreleaser.sdk.github.api.GhPackageVersion;
 import org.jreleaser.sdk.github.api.GhRelease;
 import org.jreleaser.sdk.github.api.GhReleaseNotes;
 import org.jreleaser.sdk.github.api.GhReleaseNotesParams;
 import org.jreleaser.sdk.github.api.GhSearchUser;
 import org.jreleaser.sdk.github.api.GhUser;
 import org.jreleaser.sdk.github.api.GithubAPI;
+import org.jreleaser.sdk.github.internal.Page;
+import org.jreleaser.sdk.github.internal.PaginatingDecoder;
 import org.jreleaser.util.CollectionUtils;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -72,7 +79,7 @@ class XGithub {
         this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
             .client(new ApacheHttpClient())
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
-            .decoder(new JacksonDecoder(objectMapper))
+            .decoder(new PaginatingDecoder(new JacksonDecoder(objectMapper)))
             .requestInterceptor(template -> template.header("Authorization", String.format("token %s", token)))
             .target(GithubAPI.class, endpoint);
     }
@@ -110,5 +117,47 @@ class XGithub {
         logger.info(RB.$("github.generate.release.notes"), owner, repo, params.getPreviousTagName(), params.getTagName());
 
         return api.generateReleaseNotes(params, owner, repo);
+    }
+
+    List<GhPackageVersion> listPackageVersions(String packageType, String packageName) throws IOException {
+        logger.debug(RB.$("github.list.versions"), packageType, packageName);
+
+        List<GhPackageVersion> issues = new ArrayList<>();
+        Page<List<GhPackageVersion>> page = api.listPackageVersions0(packageType, packageName);
+        issues.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            try {
+                collectPackageVersions(page, issues);
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
+        }
+
+        return issues;
+    }
+
+    private void collectPackageVersions(Page<List<GhPackageVersion>> page, List<GhPackageVersion> issues) throws URISyntaxException {
+        URI next = new URI(page.getLinks().next());
+        logger.debug(next.toString());
+
+        page = api.listPackageVersions1(next);
+        issues.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            collectPackageVersions(page, issues);
+        }
+    }
+
+    void deletePackageVersion(String packageType, String packageName, String packageVersion) throws RestAPIException {
+        logger.debug(RB.$("github.delete.package.version"), packageVersion, packageName);
+
+        api.deletePackageVersion(packageType, packageName, packageVersion);
+    }
+
+    void deletePackage(String packageType, String packageName) throws RestAPIException {
+        logger.debug(RB.$("github.delete.package"), packageType, packageName);
+
+        api.deletePackage(packageType, packageName);
     }
 }

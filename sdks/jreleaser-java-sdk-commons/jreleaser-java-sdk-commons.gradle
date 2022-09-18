@@ -21,6 +21,7 @@ dependencies {
 
     api project(':jreleaser-model-impl')
     api project(':jreleaser-git-java-sdk')
+    api project(':jreleaser-tool-java-sdk')
 
     api "org.apache.tika:tika-core:$tikaVersion"
 
