@@ -17,6 +17,8 @@
  */
 package org.jreleaser.extensions.impl.mustache;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -66,8 +68,8 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         context.put("f_file_size", new FileSizeFunction());
         EnumSet.allOf(Algorithm.class)
             .forEach(algorithm -> context.put("f_checksum_" + algorithm.formatted(), new FileChecksumFunction(algorithm)));
+        context.put("f_json", new JsonFunction());
     }
-
 
     private static class TimeFormatFunction implements Function<String, String> {
         private final ZonedDateTime now;
@@ -215,6 +217,18 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
             }
 
             throw new IllegalStateException(RB.$("ERROR_invalid_file_input", input));
+        }
+    }
+
+    private static class JsonFunction implements Function<Object, String> {
+        @Override
+        public String apply(Object input) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                return objectMapper.writeValueAsString(input);
+            } catch (JsonProcessingException e) {
+                throw new IllegalStateException(RB.$("ERROR_invalid_json_input", input));
+            }
         }
     }
 }
