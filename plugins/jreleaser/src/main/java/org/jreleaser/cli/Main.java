@@ -29,7 +29,7 @@ import java.io.PrintWriter;
 @CommandLine.Command(name = "jreleaser",
     subcommands = {Init.class, Config.class, Template.class,
         Download.class, Assemble.class, Changelog.class,
-        Checksum.class, Sign.class, Upload.class,
+        Checksum.class, Sign.class, Deploy.class, Upload.class,
         Release.class, Prepare.class, Package.class,
         Publish.class, Announce.class, FullRelease.class,
         AutoComplete.GenerateCompletion.class,

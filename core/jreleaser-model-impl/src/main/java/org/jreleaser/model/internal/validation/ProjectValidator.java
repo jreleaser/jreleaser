@@ -108,8 +108,9 @@ public abstract class ProjectValidator extends Validator {
         boolean javaAssemblers = !context.getModel().getAssemble().getJlink().isEmpty() ||
             !context.getModel().getAssemble().getJpackage().isEmpty() ||
             !context.getModel().getAssemble().getNativeImage().isEmpty();
+        boolean nexusDeployers = !context.getModel().getDeploy().getMaven().getNexus2().isEmpty();
 
-        if (javaAssemblers || mode.validateConfig() && javaDistributions) {
+        if (javaAssemblers || nexusDeployers || mode.validateConfig() && javaDistributions) {
             validateJava(context, project, errors);
         }
 

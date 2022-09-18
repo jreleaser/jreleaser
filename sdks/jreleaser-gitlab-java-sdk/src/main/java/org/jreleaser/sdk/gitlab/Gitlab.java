@@ -42,6 +42,7 @@ import org.jreleaser.sdk.gitlab.api.GlIssue;
 import org.jreleaser.sdk.gitlab.api.GlLabel;
 import org.jreleaser.sdk.gitlab.api.GlLinkRequest;
 import org.jreleaser.sdk.gitlab.api.GlMilestone;
+import org.jreleaser.sdk.gitlab.api.GlPackage;
 import org.jreleaser.sdk.gitlab.api.GlProject;
 import org.jreleaser.sdk.gitlab.api.GlRelease;
 import org.jreleaser.sdk.gitlab.api.GlUser;
@@ -334,6 +335,12 @@ class Gitlab {
         api.deleteTag(project.getId(), urlEncode(tagName));
     }
 
+    void deletePackage(Integer projectIdentifier, Integer packageId) throws RestAPIException {
+        logger.debug(RB.$("gitlab.delete.package"), packageId, projectIdentifier);
+
+        api.deletePackage(projectIdentifier, packageId);
+    }
+
     void deleteRelease(String owner, String repoName, String projectIdentifier, String tagName) throws RestAPIException {
         logger.debug(RB.$("git.delete.release.from"), tagName, owner, repoName);
 
@@ -537,6 +544,39 @@ class Gitlab {
 
         if (page.hasLinks() && page.getLinks().hasNext()) {
             collectIssues(page, issues);
+        }
+    }
+
+    List<GlPackage> listPackages(Integer projectIdentifier, String packageType) throws IOException {
+        logger.debug(RB.$("gitlab.list.packages"), projectIdentifier);
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("package_type", packageType);
+
+        List<GlPackage> packages = new ArrayList<>();
+        Page<List<GlPackage>> page = api.listPackages0(projectIdentifier, params);
+        packages.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            try {
+                collectPackages(page, packages);
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
+        }
+
+        return packages;
+    }
+
+    private void collectPackages(Page<List<GlPackage>> page, List<GlPackage> packages) throws URISyntaxException {
+        URI next = new URI(page.getLinks().next());
+        logger.debug(next.toString());
+
+        page = api.listPackages1(next);
+        packages.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            collectPackages(page, packages);
         }
     }
 

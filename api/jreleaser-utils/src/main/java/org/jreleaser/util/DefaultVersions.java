@@ -25,11 +25,17 @@ import java.util.ResourceBundle;
  */
 public final class DefaultVersions {
     private static final DefaultVersions INSTANCE = new DefaultVersions();
+
     private final ResourceBundle bundle = ResourceBundle.getBundle("org.jreleaser.default_versions");
     private final String mvnVersion = bundle.getString("mvn.version");
+    private final String pomcheckerVersion = bundle.getString("pomchecker.version");
 
     public String getMvnVersion() {
         return mvnVersion;
+    }
+
+    public String getPomcheckerVersion() {
+        return pomcheckerVersion;
     }
 
     public static DefaultVersions getInstance() {

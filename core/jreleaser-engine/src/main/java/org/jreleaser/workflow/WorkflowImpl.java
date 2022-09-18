@@ -58,6 +58,10 @@ class WorkflowImpl implements Workflow {
         logFilters("workflow.excluded.distributions", context.getExcludedDistributions());
         logFilters("workflow.included.packagers", context.getIncludedPackagers());
         logFilters("workflow.excluded.packagers", context.getExcludedPackagers());
+        logFilters("workflow.included.deployer.types", context.getIncludedDeployerTypes());
+        logFilters("workflow.excluded.deployer.types", context.getExcludedDeployerTypes());
+        logFilters("workflow.included.deployer.names", context.getIncludedDeployerNames());
+        logFilters("workflow.excluded.deployer.names", context.getExcludedDeployerNames());
         logFilters("workflow.included.uploader.types", context.getIncludedUploaderTypes());
         logFilters("workflow.excluded.uploader.types", context.getExcludedUploaderTypes());
         logFilters("workflow.included.uploader.names", context.getIncludedUploaderNames());

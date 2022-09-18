@@ -15,24 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.engine.sign;
+package org.jreleaser.model.spi.deploy.maven;
 
-import com.oracle.svm.core.annotate.AutomaticFeature;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.graalvm.nativeimage.hosted.Feature;
-import org.graalvm.nativeimage.hosted.RuntimeClassInitialization;
-
-import java.security.Security;
+import org.jreleaser.model.internal.JReleaserContext;
 
 /**
  * @author Andres Almiray
- * @since 1.0.0
+ * @since 1.3.0
  */
-@AutomaticFeature
-public class BouncyCastleFeature implements Feature {
-    @Override
-    public void afterRegistration(AfterRegistrationAccess access) {
-        RuntimeClassInitialization.initializeAtBuildTime("org.bouncycastle");
-        Security.addProvider(new BouncyCastleProvider());
-    }
+public interface MavenDeployerFactory<D extends org.jreleaser.model.internal.deploy.maven.MavenDeployer, MD extends MavenDeployer<D>> {
+    String getName();
+
+    MD getMavenDeployer(JReleaserContext context);
 }

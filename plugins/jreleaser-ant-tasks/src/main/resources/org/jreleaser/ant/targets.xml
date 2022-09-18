@@ -47,6 +47,8 @@
     <property name="jreleaser.assemblers" value=""/>
     <property name="jreleaser.distributions" value=""/>
     <property name="jreleaser.packagers" value=""/>
+    <property name="jreleaser.deployer.types" value=""/>
+    <property name="jreleaser.deployer.names" value=""/>
     <property name="jreleaser.uploader.types" value=""/>
     <property name="jreleaser.uploader.names" value=""/>
     <property name="jreleaser.downloader.types" value=""/>
@@ -55,6 +57,8 @@
     <property name="jreleaser.excluded.assemblers" value=""/>
     <property name="jreleaser.excluded.distributions" value=""/>
     <property name="jreleaser.excluded.packagers" value=""/>
+    <property name="jreleaser.excluded.deployer.types" value=""/>
+    <property name="jreleaser.excluded.deployer.names" value=""/>
     <property name="jreleaser.excluded.uploader.types" value=""/>
     <property name="jreleaser.excluded.uploader.names" value=""/>
     <property name="jreleaser.excluded.downloader.types" value=""/>
@@ -146,6 +150,10 @@
                                 excludedDistributions="${jreleaser.excluded.distributions}"
                                 packagers="${jreleaser.packagers}"
                                 excludedPackagers="${jreleaser.excluded.packagers}"
+                                deployerTypes="${jreleaser.deployer.types}"
+                                excludedDeployerTypes="${jreleaser.excluded.deployer.types}"
+                                deployerNames="${jreleaser.deployer.types}"
+                                excludedDeployerNames="${jreleaser.excluded.deployer.names}"
                                 uploaderTypes="${jreleaser.uploader.types}"
                                 excludedUploaderTypes="${jreleaser.excluded.uploader.types}"
                                 uploaderNames="${jreleaser.uploader.types}"
@@ -209,6 +217,10 @@
                            outputDir="${jreleaser.outputdir}"
                            distributions="${jreleaser.distributions}"
                            excludedDistributions="${jreleaser.excluded.distributions}"
+                           deployerTypes="${jreleaser.deployer.types}"
+                           excludedDeployerTypes="${jreleaser.excluded.deployer.types}"
+                           deployerNames="${jreleaser.deployer.types}"
+                           excludedDeployerNames="${jreleaser.excluded.deployer.names}"
                            uploaderTypes="${jreleaser.uploader.types}"
                            excludedUploaderTypes="${jreleaser.excluded.uploader.types}"
                            uploaderNames="${jreleaser.uploader.types}"
@@ -225,6 +237,20 @@
                         outputDir="${jreleaser.outputdir}"
                         distributions="${jreleaser.distributions}"
                         excludedDistributions="${jreleaser.excluded.distributions}"/>
+    </target>
+
+    <target name="jreleaser-deploy">
+        <jreleaser:deploy dryrun="${jreleaser.dry.run}"
+                          selectCurrentPlatform="${jreleaser.select.current.platform}"
+                          gitRootSearch="${jreleaser.git.root.search}"
+                          skip="${jreleaser.skip}"
+                          basedir="${jreleaser.basedir}"
+                          configFile="${jreleaser.config.file}"
+                          outputDir="${jreleaser.outputdir}"
+                          deployerTypes="${jreleaser.deployer.types}"
+                          excludedDeployerTypes="${jreleaser.excluded.deployer.types}"
+                          deployerNames="${jreleaser.deployer.types}"
+                          excludedDeployerNames="${jreleaser.excluded.deployer.names}"/>
     </target>
 
     <target name="jreleaser-upload">

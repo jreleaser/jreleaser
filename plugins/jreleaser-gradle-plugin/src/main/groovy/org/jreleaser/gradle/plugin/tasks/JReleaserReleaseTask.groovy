@@ -38,6 +38,22 @@ import javax.inject.Inject
 abstract class JReleaserReleaseTask extends AbstractJReleaserDistributionTask {
     @Input
     @Optional
+    final ListProperty<String> deployerTypes
+
+    @Input
+    @Optional
+    final ListProperty<String> excludedDeployerTypes
+
+    @Input
+    @Optional
+    final ListProperty<String> deployerNames
+
+    @Input
+    @Optional
+    final ListProperty<String> excludedDeployerNames
+    
+    @Input
+    @Optional
     final ListProperty<String> uploaderTypes
 
     @Input
@@ -55,12 +71,36 @@ abstract class JReleaserReleaseTask extends AbstractJReleaserDistributionTask {
     @Inject
     JReleaserReleaseTask(ObjectFactory objects) {
         super(objects)
+        deployerTypes = objects.listProperty(String).convention([])
+        excludedDeployerTypes = objects.listProperty(String).convention([])
+        deployerNames = objects.listProperty(String).convention([])
+        excludedDeployerNames = objects.listProperty(String).convention([])
         uploaderTypes = objects.listProperty(String).convention([])
         excludedUploaderTypes = objects.listProperty(String).convention([])
         uploaderNames = objects.listProperty(String).convention([])
         excludedUploaderNames = objects.listProperty(String).convention([])
     }
 
+    @Option(option = 'deployer', description = 'Include a deployer by type (OPTIONAL).')
+    void setDeployerType(List<String> deployerTypes) {
+        this.deployerTypes.set(deployerTypes)
+    }
+
+    @Option(option = 'exclude-deployer', description = 'Exclude a deployer by type (OPTIONAL).')
+    void setExcludeDeployerType(List<String> excludedDeployerTypes) {
+        this.excludedDeployerTypes.set(excludedDeployerTypes)
+    }
+
+    @Option(option = 'deployer-name', description = 'Include a deployer by name (OPTIONAL).')
+    void setDeployerName(List<String> deployerNames) {
+        this.deployerNames.set(deployerNames)
+    }
+
+    @Option(option = 'exclude-deployer-name', description = 'Exclude a deployer by name (OPTIONAL).')
+    void setExcludeDeployerName(List<String> excludedDeployerNames) {
+        this.excludedDeployerNames.set(excludedDeployerNames)
+    }
+    
     @Option(option = 'uploader', description = 'Include an uploader by type (OPTIONAL).')
     void setUploaderType(List<String> uploaderTypes) {
         this.uploaderTypes.set(uploaderTypes)
@@ -88,6 +128,10 @@ abstract class JReleaserReleaseTask extends AbstractJReleaserDistributionTask {
 
     protected JReleaserContext setupContext() {
         JReleaserContext ctx = super.setupContext()
+        ctx.includedDeployerTypes = deployerTypes.orNull
+        ctx.excludedDeployerTypes = excludedDeployerTypes.orNull
+        ctx.includedDeployerNames = deployerNames.orNull
+        ctx.excludedDeployerNames = excludedDeployerNames.orNull
         ctx.includedUploaderTypes = uploaderTypes.orNull
         ctx.excludedUploaderTypes = excludedUploaderTypes.orNull
         ctx.includedUploaderNames = uploaderNames.orNull

@@ -25,6 +25,7 @@ import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.announce.Announce
 import org.jreleaser.gradle.plugin.dsl.assemble.Assemble
 import org.jreleaser.gradle.plugin.dsl.checksum.Checksum
+import org.jreleaser.gradle.plugin.dsl.deploy.Deploy
 import org.jreleaser.gradle.plugin.dsl.distributions.Distribution
 import org.jreleaser.gradle.plugin.dsl.download.Download
 import org.jreleaser.gradle.plugin.dsl.environment.Environment
@@ -55,45 +56,34 @@ interface JReleaserExtension {
 
     Property<Boolean> getGitRootSearch()
 
-    @Deprecated
     Environment getEnvironment()
 
-    @Deprecated
     Hooks getHooks()
 
-    @Deprecated
     Project getProject()
 
-    @Deprecated
     Platform getPlatform()
 
-    @Deprecated
     Release getRelease()
 
-    @Deprecated
+    Deploy getDeploy()
+
     Upload getUpload()
 
-    @Deprecated
     Download getDownload()
 
-    @Deprecated
     Packagers getPackagers()
 
-    @Deprecated
     Announce getAnnounce()
 
-    @Deprecated
     Assemble getAssemble()
 
-    @Deprecated
     Signing getSigning()
 
-    @Deprecated
     Checksum getChecksum()
 
     // NamedDomainObjectContainer<Extension> getExtensions()
 
-    @Deprecated
     NamedDomainObjectContainer<Distribution> getDistributions()
 
     void environment(Action<? super Environment> action)
@@ -107,6 +97,8 @@ interface JReleaserExtension {
     void files(Action<? super Files> action)
 
     void release(Action<? super Release> action)
+
+    void deploy(Action<? super Deploy> action)
 
     void upload(Action<? super Upload> action)
 
@@ -137,6 +129,8 @@ interface JReleaserExtension {
     void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Files) Closure<Void> action)
 
     void release(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Release) Closure<Void> action)
+
+    void deploy(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Deploy) Closure<Void> action)
 
     void upload(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upload) Closure<Void> action)
 

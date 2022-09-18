@@ -17,6 +17,8 @@
  */
 dependencies {
     api project(':jreleaser-command-java-sdk')
+    api project(':jreleaser-tool-java-sdk')
 
     api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
+    compileOnly "org.graalvm.nativeimage:svm:$graalVersion"
 }

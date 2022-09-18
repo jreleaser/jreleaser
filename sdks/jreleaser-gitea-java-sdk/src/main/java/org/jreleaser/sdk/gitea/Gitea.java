@@ -298,6 +298,12 @@ class Gitea {
         api.deleteTag(owner, repo, tagName);
     }
 
+    void deletePackage(String owner, String type, String name, String version) throws RestAPIException {
+        logger.debug(RB.$("gitea.delete.package"), owner, type, name, version);
+
+        api.deletePackage(owner, type, name, version);
+    }
+
     GtRelease createRelease(String owner, String repo, GtRelease release) throws RestAPIException {
         logger.debug(RB.$("git.create.release"), owner, repo, release.getTagName());
 

@@ -42,6 +42,14 @@ public class FullRelease extends AbstractPlatformAwareModelCommand {
             headingKey = "exclude.filter.header")
         Exclude exclude;
 
+        String[] includedDeployerTypes() {
+            return include != null ? include.includedDeployerTypes : null;
+        }
+
+        String[] includedDeployerNames() {
+            return include != null ? include.includedDeployerNames : null;
+        }
+
         String[] includedUploaderTypes() {
             return include != null ? include.includedUploaderTypes : null;
         }
@@ -60,6 +68,14 @@ public class FullRelease extends AbstractPlatformAwareModelCommand {
 
         String[] includedAnnouncers() {
             return include != null ? include.includedAnnouncers : null;
+        }
+
+        String[] excludedDeployerTypes() {
+            return exclude != null ? exclude.excludedDeployerTypes : null;
+        }
+
+        String[] excludedDeployerNames() {
+            return exclude != null ? exclude.excludedDeployerNames : null;
         }
 
         String[] excludedUploaderTypes() {
@@ -84,6 +100,14 @@ public class FullRelease extends AbstractPlatformAwareModelCommand {
     }
 
     static class Include {
+        @CommandLine.Option(names = {"-y", "--deployer"},
+            paramLabel = "<deployer>")
+        String[] includedDeployerTypes;
+
+        @CommandLine.Option(names = {"-yn", "--deployer-name"},
+            paramLabel = "<name>")
+        String[] includedDeployerNames;
+
         @CommandLine.Option(names = {"-u", "--uploader"},
             paramLabel = "<uploader>")
         String[] includedUploaderTypes;
@@ -106,6 +130,14 @@ public class FullRelease extends AbstractPlatformAwareModelCommand {
     }
 
     static class Exclude {
+        @CommandLine.Option(names = {"-xy", "--exclude-deployer"},
+            paramLabel = "<deployer>")
+        String[] excludedDeployerTypes;
+
+        @CommandLine.Option(names = {"-xyn", "--exclude-deployer-name"},
+            paramLabel = "<name>")
+        String[] excludedDeployerNames;
+
         @CommandLine.Option(names = {"-xu", "--exclude-uploader"},
             paramLabel = "<uploader>")
         String[] excludedUploaderTypes;
@@ -130,11 +162,15 @@ public class FullRelease extends AbstractPlatformAwareModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {
         if (null != composite) {
+            context.setIncludedDeployerTypes(collectEntries(composite.includedDeployerTypes(), true));
+            context.setIncludedDeployerNames(collectEntries(composite.includedDeployerNames()));
             context.setIncludedUploaderTypes(collectEntries(composite.includedUploaderTypes(), true));
             context.setIncludedUploaderNames(collectEntries(composite.includedUploaderNames()));
             context.setIncludedDistributions(collectEntries(composite.includedDistributions()));
             context.setIncludedPackagers(collectEntries(composite.includedPackagers(), true));
             context.setIncludedAnnouncers(collectEntries(composite.includedAnnouncers(), true));
+            context.setExcludedDeployerTypes(collectEntries(composite.excludedDeployerTypes(), true));
+            context.setExcludedDeployerNames(collectEntries(composite.excludedDeployerNames()));
             context.setExcludedUploaderTypes(collectEntries(composite.excludedUploaderTypes(), true));
             context.setExcludedUploaderNames(collectEntries(composite.excludedUploaderNames()));
             context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));

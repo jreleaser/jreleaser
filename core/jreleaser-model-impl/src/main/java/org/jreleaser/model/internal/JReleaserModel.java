@@ -26,6 +26,7 @@ import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.internal.announce.Announce;
 import org.jreleaser.model.internal.assemble.Assemble;
 import org.jreleaser.model.internal.checksum.Checksum;
+import org.jreleaser.model.internal.deploy.Deploy;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.download.Download;
 import org.jreleaser.model.internal.environment.Environment;
@@ -75,6 +76,7 @@ public class JReleaserModel {
     private final Announce announce = new Announce();
     private final Download download = new Download();
     private final Assemble assemble = new Assemble();
+    private final Deploy deploy = new Deploy();
     private final Upload upload = new Upload();
     private final Checksum checksum = new Checksum();
     private final Signing signing = new Signing();
@@ -151,6 +153,11 @@ public class JReleaserModel {
         @Override
         public org.jreleaser.model.api.download.Download getDownload() {
             return download.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.deploy.Deploy getDeploy() {
+            return deploy.asImmutable();
         }
 
         @Override
@@ -301,6 +308,14 @@ public class JReleaserModel {
         this.download.merge(download);
     }
 
+    public Deploy getDeploy() {
+        return deploy;
+    }
+
+    public void setDeploy(Deploy deploy) {
+        this.deploy.merge(deploy);
+    }
+
     public Upload getUpload() {
         return upload;
     }
@@ -405,6 +420,7 @@ public class JReleaserModel {
         if (full || packagers.hasEnabledPackagers()) map.put("packagers", packagers.asMap(full));
         if (full || download.isEnabled()) map.put("download", download.asMap(full));
         if (full || assemble.isEnabled()) map.put("assemble", assemble.asMap(full));
+        if (full || deploy.isEnabled()) map.put("deploy", deploy.asMap(full));
         if (full || upload.isEnabled()) map.put("upload", upload.asMap(full));
 
         List<Map<String, Object>> distributions = this.distributions.values()

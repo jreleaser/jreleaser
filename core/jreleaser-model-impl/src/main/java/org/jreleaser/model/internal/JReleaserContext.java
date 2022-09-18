@@ -25,6 +25,8 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.Signing;
 import org.jreleaser.model.api.JReleaserCommand;
+import org.jreleaser.model.api.signing.Keyring;
+import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.internal.assemble.Assembler;
 import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.common.Artifact;
@@ -34,8 +36,6 @@ import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.spi.release.Releaser;
 import org.jreleaser.sdk.signing.FilesKeyring;
 import org.jreleaser.sdk.signing.InMemoryKeyring;
-import org.jreleaser.sdk.signing.Keyring;
-import org.jreleaser.sdk.signing.SigningException;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
@@ -110,6 +110,8 @@ public class JReleaserContext {
     private final List<String> includedPackagers = new ArrayList<>();
     private final List<String> includedDownloaderTypes = new ArrayList<>();
     private final List<String> includedDownloaderNames = new ArrayList<>();
+    private final List<String> includedDeployerTypes = new ArrayList<>();
+    private final List<String> includedDeployerNames = new ArrayList<>();
     private final List<String> includedUploaderTypes = new ArrayList<>();
     private final List<String> includedUploaderNames = new ArrayList<>();
     private final List<String> excludedAnnouncers = new ArrayList<>();
@@ -118,6 +120,8 @@ public class JReleaserContext {
     private final List<String> excludedPackagers = new ArrayList<>();
     private final List<String> excludedDownloaderTypes = new ArrayList<>();
     private final List<String> excludedDownloaderNames = new ArrayList<>();
+    private final List<String> excludedDeployerTypes = new ArrayList<>();
+    private final List<String> excludedDeployerNames = new ArrayList<>();
     private final List<String> excludedUploaderTypes = new ArrayList<>();
     private final List<String> excludedUploaderNames = new ArrayList<>();
 
@@ -237,6 +241,16 @@ public class JReleaserContext {
         }
 
         @Override
+        public List<String> getIncludedDeployerTypes() {
+            return unmodifiableList(JReleaserContext.this.getIncludedDeployerTypes());
+        }
+
+        @Override
+        public List<String> getIncludedDeployerNames() {
+            return unmodifiableList(JReleaserContext.this.getIncludedDeployerNames());
+        }
+
+        @Override
         public List<String> getIncludedUploaderTypes() {
             return unmodifiableList(JReleaserContext.this.getIncludedUploaderTypes());
         }
@@ -277,6 +291,16 @@ public class JReleaserContext {
         }
 
         @Override
+        public List<String> getExcludedDeployerTypes() {
+            return unmodifiableList(JReleaserContext.this.getExcludedDeployerTypes());
+        }
+
+        @Override
+        public List<String> getExcludedDeployerNames() {
+            return unmodifiableList(JReleaserContext.this.getExcludedDeployerNames());
+        }
+
+        @Override
         public List<String> getExcludedUploaderTypes() {
             return unmodifiableList(JReleaserContext.this.getExcludedUploaderTypes());
         }
@@ -304,6 +328,11 @@ public class JReleaserContext {
         @Override
         public void nag(String version, String message) {
             JReleaserContext.this.nag(version, message);
+        }
+
+        @Override
+        public Keyring createKeyring() throws SigningException {
+            return JReleaserContext.this.createKeyring();
         }
     };
 
@@ -619,6 +648,24 @@ public class JReleaserContext {
         this.includedDownloaderNames.addAll(includedDownloaderNames);
     }
 
+    public List<String> getIncludedDeployerTypes() {
+        return includedDeployerTypes;
+    }
+
+    public void setIncludedDeployerTypes(List<String> includedDeployerTypes) {
+        this.includedDeployerTypes.clear();
+        this.includedDeployerTypes.addAll(normalize(includedDeployerTypes));
+    }
+
+    public List<String> getIncludedDeployerNames() {
+        return includedDeployerNames;
+    }
+
+    public void setIncludedDeployerNames(List<String> includedDeployerNames) {
+        this.includedDeployerNames.clear();
+        this.includedDeployerNames.addAll(includedDeployerNames);
+    }
+
     public List<String> getIncludedUploaderTypes() {
         return includedUploaderTypes;
     }
@@ -689,6 +736,24 @@ public class JReleaserContext {
     public void setExcludedDownloaderNames(List<String> excludedDownloaderNames) {
         this.excludedDownloaderNames.clear();
         this.excludedDownloaderNames.addAll(excludedDownloaderNames);
+    }
+
+    public List<String> getExcludedDeployerTypes() {
+        return excludedDeployerTypes;
+    }
+
+    public void setExcludedDeployerTypes(List<String> excludedDeployerTypes) {
+        this.excludedDeployerTypes.clear();
+        this.excludedDeployerTypes.addAll(normalize(excludedDeployerTypes));
+    }
+
+    public List<String> getExcludedDeployerNames() {
+        return excludedDeployerNames;
+    }
+
+    public void setExcludedDeployerNames(List<String> excludedDeployerNames) {
+        this.excludedDeployerNames.clear();
+        this.excludedDeployerNames.addAll(excludedDeployerNames);
     }
 
     public List<String> getExcludedUploaderTypes() {

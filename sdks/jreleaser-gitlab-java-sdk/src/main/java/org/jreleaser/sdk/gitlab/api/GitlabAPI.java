@@ -128,4 +128,15 @@ public interface GitlabAPI {
     @RequestLine("POST /projects/{projectId}/issues/{issue_iid}/notes")
     @Headers("Content-Type: application/json")
     void commentIssue(Map<String, String> params, @Param("projectId") Integer projectId, @Param("issue_iid") Integer iid);
+
+    @RequestLine("GET /projects/{projectId}/packages")
+    @Headers("Content-Type: application/json")
+    Page<List<GlPackage>> listPackages0(@Param("projectId") Integer projectId, @QueryMap Map<String, Object> queryMap);
+
+    @RequestLine("GET")
+    @Headers("Content-Type: application/json")
+    Page<List<GlPackage>> listPackages1(URI uri);
+
+    @RequestLine("DELETE /projects/{projectId}/packages/{packageId}")
+    void deletePackage(@Param("projectId") Integer projectId, @Param("packageId") Integer packageId);
 }

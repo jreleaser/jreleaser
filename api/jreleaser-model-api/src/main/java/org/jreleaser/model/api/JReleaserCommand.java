@@ -29,6 +29,7 @@ public enum JReleaserCommand {
     CHANGELOG,
     CHECKSUM,
     SIGN,
+    DEPLOY,
     UPLOAD,
     RELEASE,
     PREPARE,
@@ -67,6 +68,12 @@ public enum JReleaserCommand {
     public static boolean supportsSign(JReleaserCommand command) {
         return SIGN == command ||
             UPLOAD == command ||
+            RELEASE == command ||
+            FULL_RELEASE == command;
+    }
+
+    public static boolean supportsDeploy(JReleaserCommand command) {
+        return DEPLOY == command ||
             RELEASE == command ||
             FULL_RELEASE == command;
     }

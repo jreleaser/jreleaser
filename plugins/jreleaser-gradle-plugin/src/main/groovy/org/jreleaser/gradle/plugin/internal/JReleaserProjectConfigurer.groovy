@@ -32,6 +32,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserAssembleTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChangelogTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserDeployTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserDownloadTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserFullReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPackageTask
@@ -174,6 +175,20 @@ class JReleaserProjectConfigurer {
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
                     }
+                }
+            })
+
+        project.tasks.register('jreleaserDeploy', JReleaserDeployTask,
+            new Action<JReleaserDeployTask>() {
+                @Override
+                void execute(JReleaserDeployTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Deploys all artifacts'
+                    t.dryrun.set(extension.dryrun)
+                    t.gitRootSearch.set(extension.gitRootSearch)
+                    t.model.set(model)
+                    t.jlogger.set(logger)
+                    t.outputDirectory.set(outputDirectory)
                 }
             })
 

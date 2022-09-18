@@ -46,8 +46,8 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.signing.Signing;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.signing.GpgCommandSigner;
-import org.jreleaser.sdk.signing.Keyring;
-import org.jreleaser.sdk.signing.SigningException;
+import org.jreleaser.model.api.signing.Keyring;
+import org.jreleaser.model.api.signing.SigningException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

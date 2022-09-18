@@ -16,5 +16,7 @@
  * limitations under the License.
  */
 dependencies {
-    api project(':jreleaser-model-impl')
+    api project(':jreleaser-mustache')
+    api project(':jreleaser-model-api')
+    api project(':jreleaser-command-java-sdk')
 }

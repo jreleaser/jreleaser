@@ -33,7 +33,8 @@ dependencies {
 processResources {
     filesMatching(['**/*.properties']) {
         expand(
-            mvnVersion: mavenVersion
+            mvnVersion: mavenVersion,
+            pomcheckerVersion: pomcheckerVersion
         )
     }
 }

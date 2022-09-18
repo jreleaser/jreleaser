@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.signing;
 
 import org.bouncycastle.openpgp.PGPException;
+import org.jreleaser.model.api.signing.Keyring;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
