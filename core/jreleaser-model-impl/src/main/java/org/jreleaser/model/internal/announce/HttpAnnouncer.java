@@ -52,6 +52,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer> implem
     private Method method;
     private String payload;
     private String payloadTemplate;
+    private String bearerKeyword;
 
     private final org.jreleaser.model.api.announce.HttpAnnouncer immutable = new org.jreleaser.model.api.announce.HttpAnnouncer() {
         @Override
@@ -87,6 +88,11 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer> implem
         @Override
         public Authorization getAuthorization() {
             return authorization;
+        }
+
+        @Override
+        public String getBearerKeyword() {
+            return HttpAnnouncer.this.getBearerKeyword();
         }
 
         @Override
@@ -155,6 +161,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer> implem
         this.username = merge(this.username, source.username);
         this.password = merge(this.password, source.password);
         this.authorization = merge(this.authorization, source.authorization);
+        this.bearerKeyword = merge(this.bearerKeyword, source.bearerKeyword);
         this.method = merge(this.method, source.method);
         this.payload = merge(this.payload, source.payload);
         this.payloadTemplate = merge(this.payloadTemplate, source.payloadTemplate);
@@ -246,6 +253,14 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer> implem
         this.authorization = Authorization.of(authorization);
     }
 
+    public String getBearerKeyword() {
+        return bearerKeyword;
+    }
+
+    public void setBearerKeyword(String bearerKeyword) {
+        this.bearerKeyword = bearerKeyword;
+    }
+
     public Method getMethod() {
         return method;
     }
@@ -295,6 +310,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer> implem
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("url", url);
         props.put("authorization", authorization);
+        props.put("bearerKeyword", bearerKeyword);
         props.put("method", method);
         props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
         props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);

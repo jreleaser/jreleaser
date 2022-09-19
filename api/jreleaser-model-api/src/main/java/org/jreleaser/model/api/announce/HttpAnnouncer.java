@@ -31,4 +31,6 @@ public interface HttpAnnouncer extends Announcer, Http {
     String getPayload();
 
     String getPayloadTemplate();
+
+    String getBearerKeyword();
 }

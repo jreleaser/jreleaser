@@ -44,6 +44,7 @@ class HttpAnnouncerImpl extends AbstractAnnouncer implements HttpAnnouncer {
     final Property<String> password
     final Property<Http.Method> method
     final Property<Http.Authorization> authorization
+    final Property<String> bearerKeyword
     final MapProperty<String, String> headers
     final Property<String> payload
     final RegularFileProperty payloadTemplate
@@ -56,6 +57,7 @@ class HttpAnnouncerImpl extends AbstractAnnouncer implements HttpAnnouncer {
         password = objects.property(String).convention(Providers.<String> notDefined())
         method = objects.property(Http.Method).convention(Providers.<Http.Method> notDefined())
         authorization = objects.property(Http.Authorization).convention(Providers.<Http.Authorization> notDefined())
+        bearerKeyword = objects.property(String).convention(Providers.<String> notDefined())
         headers = objects.mapProperty(String, String).convention(Providers.notDefined())
         payload = objects.property(String).convention(Providers.<String> notDefined())
         payloadTemplate = objects.fileProperty().convention(Providers.notDefined())
@@ -70,6 +72,7 @@ class HttpAnnouncerImpl extends AbstractAnnouncer implements HttpAnnouncer {
             password.present ||
             method.present ||
             authorization.present ||
+            bearerKeyword.present ||
             headers.present ||
             payload.present ||
             payloadTemplate.present
@@ -106,6 +109,7 @@ class HttpAnnouncerImpl extends AbstractAnnouncer implements HttpAnnouncer {
         if (password.present) http.password = password.get()
         if (method.present) http.method = method.get()
         if (authorization.present) http.authorization = authorization.get()
+        if (bearerKeyword.present) http.bearerKeyword = bearerKeyword.get()
         if (headers.present) http.headers.putAll(headers.get())
         if (payload.present) http.payload = payload.get()
         if (payloadTemplate.present) {
