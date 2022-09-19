@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
@@ -56,6 +57,7 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
             now = ZonedDateTime.now();
         }
         context.put("f_now", new TimeFormatFunction(now));
+        context.put("f_now_gmt", new TimeFormatFunction(now.withZoneSameInstant(ZoneId.of("GMT"))));
 
         context.put("f_trim", new TrimFunction());
         context.put("f_underscore", new UnderscoreFunction());

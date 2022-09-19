@@ -119,6 +119,16 @@ announce:
   twitter:
     active: release
     statusTemplate: src/jreleaser/twitter.tpl
+  http:
+    noticeable:
+      active: release
+      url: https://api.noticeable.io/graphql
+      authorization: bearer
+      bearerKeyword: Apikey
+      method: POST
+      headers:
+        Accept: application/json
+        Content-Type: application/json
 
 assemble:
   jlink:
