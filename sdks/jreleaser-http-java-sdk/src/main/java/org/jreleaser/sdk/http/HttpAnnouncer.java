@@ -87,7 +87,6 @@ public class HttpAnnouncer implements Announcer {
 
         String resolvedUrl = announcer.getResolvedUrl(context);
         context.getLogger().info("url: {}", resolvedUrl);
-        context.getLogger().info("payload: {}", payload);
 
         if (context.isDryrun()) return;
 
