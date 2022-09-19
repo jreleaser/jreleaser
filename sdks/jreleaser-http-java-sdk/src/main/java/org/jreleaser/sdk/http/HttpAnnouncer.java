@@ -107,7 +107,7 @@ public class HttpAnnouncer implements Announcer {
                         headers.put("Authorization", "Basic " + auth);
                         break;
                     case BEARER:
-                        headers.put("Authorization", "Bearer " + password);
+                        headers.put("Authorization", announcer.getBearerKeyword() + " " + password);
                         break;
                 }
 

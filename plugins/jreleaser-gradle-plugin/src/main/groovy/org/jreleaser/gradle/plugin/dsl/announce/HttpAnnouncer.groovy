@@ -40,6 +40,8 @@ interface HttpAnnouncer extends Announcer {
 
     Property<Http.Authorization> getAuthorization()
 
+    Property<String> getBearerKeyword()
+
     MapProperty<String, String> getHeaders()
 
     void setHeader(String key, String value)
