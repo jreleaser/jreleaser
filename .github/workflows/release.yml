@@ -161,6 +161,9 @@ jobs:
           JRELEASER_TWITTER_CONSUMER_SECRET: ${{ secrets.TWITTER_CONSUMER_SECRET }}
           JRELEASER_TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           JRELEASER_TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          JRELEASER_HTTP_NOTICEABLE_PASSWORD: ${{ secrets.NOTICEABLE_APIKEY }}
+          NOTICEABLE_AUTHOR_EMAIL: ${{ secrets.NOTICEABLE_AUTHOR_EMAIL }}
+          NOTICEABLE_PROJECTID: ${{ secrets.NOTICEABLE_PROJECTID }}
 
       - name: JReleaser release output
         if: always()
@@ -185,6 +188,9 @@ jobs:
 
       - name: Commit
         run: |
+          git merge development
+          sed -i -e "s/^\version\:\ early-access.*/version: latest/g" docs/antora.yml
+          sed -i -e "s/jreleaser-version\:\ .*/jreleaser-version: ${{ needs.precheck.outputs.VERSION }}/g" docs/antora.yml
           VERSION=${{ needs.precheck.outputs.VERSION }}
           echo ${{ needs.precheck.outputs.VERSION }} > VERSION
           git add VERSION
