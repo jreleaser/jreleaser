@@ -19,12 +19,14 @@ package org.jreleaser.extensions.impl.mustache;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.text.StringEscapeUtils;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.extensions.api.mustache.MustacheExtensionPoint;
 import org.jreleaser.model.Constants;
+import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.StringUtils;
 
@@ -69,6 +71,23 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         EnumSet.allOf(Algorithm.class)
             .forEach(algorithm -> context.put("f_checksum_" + algorithm.formatted(), new FileChecksumFunction(algorithm)));
         context.put("f_json", new JsonFunction());
+        context.put("f_escape_csv", new DelegatingFunction(StringEscapeUtils::escapeCsv));
+        context.put("f_escape_ecma_script", new DelegatingFunction(StringEscapeUtils::escapeEcmaScript));
+        context.put("f_escape_html3", new DelegatingFunction(StringEscapeUtils::escapeHtml3));
+        context.put("f_escape_html4", new DelegatingFunction(StringEscapeUtils::escapeHtml4));
+        context.put("f_escape_java", new DelegatingFunction(StringEscapeUtils::escapeJava));
+        context.put("f_escape_json", new DelegatingFunction(StringEscapeUtils::escapeJson));
+        context.put("f_escape_xml10", new DelegatingFunction(StringEscapeUtils::escapeXml10));
+        context.put("f_escape_xml11", new DelegatingFunction(StringEscapeUtils::escapeXml11));
+        context.put("f_escape_xsi", new DelegatingFunction(StringEscapeUtils::escapeXSI));
+        context.put("f_chop", new DelegatingFunction(org.apache.commons.lang3.StringUtils::chop));
+        context.put("f_delete_whitespace", new DelegatingFunction(org.apache.commons.lang3.StringUtils::deleteWhitespace));
+        context.put("f_normalize_whitespace", new DelegatingFunction(org.apache.commons.lang3.StringUtils::normalizeSpace));
+        context.put("f_reverse", new DelegatingFunction(org.apache.commons.lang3.StringUtils::reverse));
+        context.put("f_strip", new DelegatingFunction(org.apache.commons.lang3.StringUtils::strip));
+        context.put("f_swapcase", new DelegatingFunction(org.apache.commons.lang3.StringUtils::swapCase));
+
+        context.put("f_recursive_eval", new RecursiveEvalFunction(context));
     }
 
     private static class TimeFormatFunction implements Function<String, String> {
@@ -229,6 +248,32 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
             } catch (JsonProcessingException e) {
                 throw new IllegalStateException(RB.$("ERROR_invalid_json_input", input));
             }
+        }
+    }
+
+    private static class DelegatingFunction implements Function<String, String> {
+        private final Function<String, String> delegate;
+
+        private DelegatingFunction(Function<String, String> delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public String apply(String input) {
+            return delegate.apply(input);
+        }
+    }
+
+    private class RecursiveEvalFunction implements Function<String, String> {
+        private final Map<String, Object> context;
+
+        public RecursiveEvalFunction(Map<String, Object> context) {
+            this.context = context;
+        }
+
+        @Override
+        public String apply(String input) {
+            return MustacheUtils.applyTemplate(input, context);
         }
     }
 }
