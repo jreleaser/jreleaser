@@ -19,7 +19,7 @@ package org.jreleaser.model.internal;
 
 import org.jreleaser.util.Errors;
 
-import static org.jreleaser.model.internal.validation.AssemblersResolver.resolveAssemblers;
+import static org.jreleaser.model.internal.validation.assemble.AssemblersResolver.resolveAssemblers;
 
 /**
  * @author Andres Almiray

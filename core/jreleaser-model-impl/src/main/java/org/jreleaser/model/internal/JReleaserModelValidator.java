@@ -20,23 +20,23 @@ package org.jreleaser.model.internal;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.util.Errors;
 
-import static org.jreleaser.model.internal.validation.AnnouncersValidator.validateAnnouncers;
-import static org.jreleaser.model.internal.validation.AssemblersValidator.postValidateAssemblers;
-import static org.jreleaser.model.internal.validation.AssemblersValidator.validateAssemblers;
-import static org.jreleaser.model.internal.validation.ChecksumValidator.validateChecksum;
-import static org.jreleaser.model.internal.validation.DeployValidator.validateDeploy;
-import static org.jreleaser.model.internal.validation.DistributionsValidator.postValidateDistributions;
-import static org.jreleaser.model.internal.validation.DistributionsValidator.validateDistributions;
-import static org.jreleaser.model.internal.validation.DownloadersValidator.validateDownloaders;
-import static org.jreleaser.model.internal.validation.ExtensionsValidator.validateExtensions;
-import static org.jreleaser.model.internal.validation.FilesValidator.validateFiles;
-import static org.jreleaser.model.internal.validation.HooksValidator.validateHooks;
-import static org.jreleaser.model.internal.validation.PackagersValidator.validatePackagers;
-import static org.jreleaser.model.internal.validation.ProjectValidator.postValidateProject;
-import static org.jreleaser.model.internal.validation.ProjectValidator.validateProject;
-import static org.jreleaser.model.internal.validation.ReleaseValidator.validateRelease;
-import static org.jreleaser.model.internal.validation.SigningValidator.validateSigning;
-import static org.jreleaser.model.internal.validation.UploadersValidator.validateUploaders;
+import static org.jreleaser.model.internal.validation.announce.AnnouncersValidator.validateAnnouncers;
+import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.postValidateAssemblers;
+import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateAssemblers;
+import static org.jreleaser.model.internal.validation.checksum.ChecksumValidator.validateChecksum;
+import static org.jreleaser.model.internal.validation.deploy.DeployValidator.validateDeploy;
+import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.postValidateDistributions;
+import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateDistributions;
+import static org.jreleaser.model.internal.validation.download.DownloadersValidator.validateDownloaders;
+import static org.jreleaser.model.internal.validation.extensions.ExtensionsValidator.validateExtensions;
+import static org.jreleaser.model.internal.validation.files.FilesValidator.validateFiles;
+import static org.jreleaser.model.internal.validation.hooks.HooksValidator.validateHooks;
+import static org.jreleaser.model.internal.validation.packagers.PackagersValidator.validatePackagers;
+import static org.jreleaser.model.internal.validation.project.ProjectValidator.postValidateProject;
+import static org.jreleaser.model.internal.validation.project.ProjectValidator.validateProject;
+import static org.jreleaser.model.internal.validation.release.ReleaseValidator.validateRelease;
+import static org.jreleaser.model.internal.validation.signing.SigningValidator.validateSigning;
+import static org.jreleaser.model.internal.validation.upload.UploadersValidator.validateUploaders;
 
 /**
  * @author Andres Almiray
