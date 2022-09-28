@@ -282,7 +282,7 @@ public abstract class BaseReleaserValidator extends Validator {
             boolean generate = gh.getReleaseNotes().isEnabled();
 
             if (generate && changelog.isEnabled()) {
-                errors.configuration(RB.$("validation_github_releasenotesgetChangelog"));
+                errors.configuration(RB.$("validation_github_releasenotes_changelog"));
                 return;
             }
         }
